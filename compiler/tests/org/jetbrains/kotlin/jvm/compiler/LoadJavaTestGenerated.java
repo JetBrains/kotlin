@@ -2541,6 +2541,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledKotlin(fileName);
             }
 
+            @TestMetadata("NamedClassObject.kt")
+            public void testNamedClassObject() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/classObject/NamedClassObject.kt");
+                doTestCompiledKotlin(fileName);
+            }
+
             @TestMetadata("SimpleClassObject.kt")
             public void testSimpleClassObject() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/classObject/SimpleClassObject.kt");

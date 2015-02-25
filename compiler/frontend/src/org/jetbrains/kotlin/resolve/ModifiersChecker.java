@@ -171,7 +171,7 @@ public class ModifiersChecker {
         checkCompatibility(modifierList, Arrays.asList(ABSTRACT_KEYWORD, OPEN_KEYWORD, FINAL_KEYWORD),
                            Arrays.asList(ABSTRACT_KEYWORD, OPEN_KEYWORD));
 
-        if (modifierListOwner.getParent() instanceof JetClassObject || modifierListOwner instanceof JetObjectDeclaration) {
+        if (modifierListOwner instanceof JetObjectDeclaration) {
             checkIllegalModalityModifiers(modifierListOwner);
         }
         else if (modifierListOwner instanceof JetClassOrObject) {

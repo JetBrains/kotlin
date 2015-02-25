@@ -67,7 +67,7 @@ import java.util.*;
 import static org.jetbrains.kotlin.codegen.AsmUtil.asmDescByFqNameWithoutInnerClasses;
 import static org.jetbrains.kotlin.codegen.AsmUtil.method;
 import static org.jetbrains.kotlin.load.kotlin.PackageClassUtils.getPackageClassFqName;
-import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.K_PACKAGE_IMPL_TYPE;
+import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.K_PACKAGE_TYPE;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.getType;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.*;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
@@ -174,8 +174,7 @@ public class PackageCodegen {
 
                     if (member instanceof DeserializedSimpleFunctionDescriptor) {
                         DeserializedSimpleFunctionDescriptor function = (DeserializedSimpleFunctionDescriptor) member;
-                        JvmMethodSignature signature = state.getTypeMapper().mapSignature(function, OwnerKind.PACKAGE);
-                        memberCodegen.functionCodegen.generateMethod(OtherOrigin(function), signature, function,
+                        memberCodegen.functionCodegen.generateMethod(OtherOrigin(function), function,
                                                                      new FunctionGenerationStrategy() {
                                                                          @Override
                                                                          public void generateBody(
@@ -191,9 +190,8 @@ public class PackageCodegen {
                         );
 
                         memberCodegen.functionCodegen.generateDefaultIfNeeded(
-                                context.intoFunction(function), signature, function, OwnerKind.PACKAGE,
-                                DefaultParameterValueLoader.DEFAULT, null);
-
+                                context.intoFunction(function), function, OwnerKind.PACKAGE, DefaultParameterValueLoader.DEFAULT, null
+                        );
                     }
                     else if (member instanceof DeserializedPropertyDescriptor) {
                         memberCodegen.propertyCodegen.generateInPackageFacade((DeserializedPropertyDescriptor) member);
@@ -255,7 +253,7 @@ public class PackageCodegen {
 
     private void generateKotlinPackageReflectionField() {
         MethodVisitor mv = v.newMethod(NO_ORIGIN, ACC_STATIC, "<clinit>", "()V", null, null);
-        Method method = method("kPackage", K_PACKAGE_IMPL_TYPE, getType(Class.class));
+        Method method = method("createKotlinPackage", K_PACKAGE_TYPE, getType(Class.class));
         InstructionAdapter iv = new InstructionAdapter(mv);
         MemberCodegen.generateReflectionObjectField(state, packageClassType, v, method, JvmAbi.KOTLIN_PACKAGE_FIELD_NAME, iv);
         iv.areturn(Type.VOID_TYPE);
@@ -272,7 +270,7 @@ public class PackageCodegen {
             if (file.isScript()) return;
         }
 
-        DescriptorSerializer serializer = DescriptorSerializer.createTopLevel(new JvmSerializerExtension(bindings));
+        DescriptorSerializer serializer = DescriptorSerializer.createTopLevel(new JvmSerializerExtension(bindings, state.getTypeMapper()));
         Collection<PackageFragmentDescriptor> packageFragments = Lists.newArrayList();
         ContainerUtil.addIfNotNull(packageFragments, packageFragment);
         ContainerUtil.addIfNotNull(packageFragments, compiledPackageFragment);

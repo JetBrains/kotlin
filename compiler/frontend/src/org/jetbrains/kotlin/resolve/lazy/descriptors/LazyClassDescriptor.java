@@ -29,7 +29,6 @@ import org.jetbrains.annotations.Mutable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ReadOnly;
-import org.jetbrains.kotlin.resolve.lazy.LazyClassContext;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
@@ -38,10 +37,11 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
+import org.jetbrains.kotlin.resolve.lazy.LazyClassContext;
 import org.jetbrains.kotlin.resolve.lazy.LazyEntity;
 import org.jetbrains.kotlin.resolve.lazy.data.JetClassInfoUtil;
 import org.jetbrains.kotlin.resolve.lazy.data.JetClassLikeInfo;
-import org.jetbrains.kotlin.resolve.lazy.data.SyntheticClassObjectInfo;
+import org.jetbrains.kotlin.resolve.lazy.data.JetClassOrObjectInfo;
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider;
 import org.jetbrains.kotlin.resolve.scopes.*;
 import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull;
@@ -55,12 +55,8 @@ import org.jetbrains.kotlin.types.TypeUtils;
 
 import java.util.*;
 
-import static org.jetbrains.kotlin.diagnostics.Errors.CLASS_OBJECT_NOT_ALLOWED;
-import static org.jetbrains.kotlin.diagnostics.Errors.CYCLIC_INHERITANCE_HIERARCHY;
-import static org.jetbrains.kotlin.diagnostics.Errors.TYPE_PARAMETERS_IN_ENUM;
-import static org.jetbrains.kotlin.name.SpecialNames.getClassObjectName;
+import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.resolve.BindingContext.TYPE;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.isSyntheticClassObject;
 import static org.jetbrains.kotlin.resolve.ModifiersChecker.*;
 import static org.jetbrains.kotlin.resolve.source.SourcePackage.toSourceElement;
 
@@ -86,7 +82,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     private final Annotations annotations;
     private final Annotations danglingAnnotations;
     private final NullableLazyValue<LazyClassDescriptor> classObjectDescriptor;
-    private final MemoizedFunctionToNotNull<JetClassObject, ClassDescriptor> extraClassObjectDescriptors;
+    private final MemoizedFunctionToNotNull<JetObjectDeclaration, ClassDescriptor> extraClassObjectDescriptors;
 
     private final LazyClassMemberScope unsubstitutedMemberScope;
     private final JetScope staticScope = new StaticScopeForKotlinClass(this);
@@ -133,9 +129,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         }
 
         boolean isLocal = classOrObject != null && JetPsiUtil.isLocal(classOrObject);
-        this.visibility = isSyntheticClassObject(this)
-                          ? DescriptorUtils.getSyntheticClassObjectVisibility()
-                          : isLocal ? Visibilities.LOCAL : resolveVisibilityFromModifiers(modifierList, getDefaultClassVisibility(this));
+        this.visibility = isLocal ? Visibilities.LOCAL : resolveVisibilityFromModifiers(modifierList, getDefaultClassVisibility(this));
         this.isInner = isInnerClass(modifierList) && !ModifiersChecker.isIllegalInner(this);
 
         StorageManager storageManager = c.getStorageManager();
@@ -189,9 +183,9 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                 return computeClassObjectDescriptor(getClassObjectIfAllowed());
             }
         });
-        this.extraClassObjectDescriptors = storageManager.createMemoizedFunction(new Function1<JetClassObject, ClassDescriptor>() {
+        this.extraClassObjectDescriptors = storageManager.createMemoizedFunction(new Function1<JetObjectDeclaration, ClassDescriptor>() {
             @Override
-            public ClassDescriptor invoke(JetClassObject classObject) {
+            public ClassDescriptor invoke(JetObjectDeclaration classObject) {
                 return computeClassObjectDescriptor(classObject);
             }
         });
@@ -272,7 +266,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         thisScope.setImplicitReceiver(this.getThisAsReceiverParameter());
         thisScope.changeLockLevel(WritableScope.LockLevel.READING);
 
-        ClassDescriptor classObject = getClassObjectDescriptor();
+        ClassDescriptor classObject = getDefaultObjectDescriptor();
         JetScope classObjectAdapterScope = (classObject != null) ? new ClassObjectMixinScope(classObject) : JetScope.Empty.INSTANCE$;
 
         return new ChainedScope(
@@ -352,28 +346,28 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     }
 
     @Override
-    public LazyClassDescriptor getClassObjectDescriptor() {
+    public LazyClassDescriptor getDefaultObjectDescriptor() {
         return classObjectDescriptor.invoke();
     }
 
     @NotNull
     @ReadOnly
     public List<ClassDescriptor> getDescriptorsForExtraClassObjects() {
-        final JetClassObject allowedClassObject = getClassObjectIfAllowed();
+        final JetObjectDeclaration allowedClassObject = getClassObjectIfAllowed();
 
         return KotlinPackage.map(
                 KotlinPackage.filter(
                         declarationProvider.getOwnerInfo().getClassObjects(),
-                        new Function1<JetClassObject, Boolean>() {
+                        new Function1<JetObjectDeclaration, Boolean>() {
                             @Override
-                            public Boolean invoke(JetClassObject classObject) {
+                            public Boolean invoke(JetObjectDeclaration classObject) {
                                 return classObject != allowedClassObject;
                             }
                         }
                 ),
-                new Function1<JetClassObject, ClassDescriptor>() {
+                new Function1<JetObjectDeclaration, ClassDescriptor>() {
                     @Override
-                    public ClassDescriptor invoke(JetClassObject classObject) {
+                    public ClassDescriptor invoke(JetObjectDeclaration classObject) {
                         return extraClassObjectDescriptors.invoke(classObject);
                     }
                 }
@@ -381,33 +375,40 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     }
 
     @Nullable
-    private LazyClassDescriptor computeClassObjectDescriptor(@Nullable JetClassObject classObject) {
+    private LazyClassDescriptor computeClassObjectDescriptor(@Nullable JetObjectDeclaration classObject) {
         JetClassLikeInfo classObjectInfo = getClassObjectInfo(classObject);
-        if (classObjectInfo != null) {
-            return new LazyClassDescriptor(c, this, getClassObjectName(getName()), classObjectInfo);
+        if (!(classObjectInfo instanceof JetClassOrObjectInfo)) {
+            return null;
         }
-        return null;
+        Name name = ((JetClassOrObjectInfo) classObjectInfo).getName();
+        assert name != null;
+        getScopeForMemberLookup().getClassifier(name);
+        ClassDescriptor classObjectDescriptor = c.getTrace().get(BindingContext.CLASS, classObject);
+        if (classObjectDescriptor instanceof LazyClassDescriptor) {
+            assert DescriptorUtils.isClassObject(classObjectDescriptor) : "Not a class object: " + classObjectDescriptor;
+            return (LazyClassDescriptor) classObjectDescriptor;
+        }
+        else {
+            return null;
+        }
     }
 
     @Nullable
-    private JetClassLikeInfo getClassObjectInfo(@Nullable JetClassObject classObject) {
+    private JetClassLikeInfo getClassObjectInfo(@Nullable JetObjectDeclaration classObject) {
         if (classObject != null) {
             if (!isClassObjectAllowed()) {
                 c.getTrace().report(CLASS_OBJECT_NOT_ALLOWED.on(classObject));
             }
 
-            return JetClassInfoUtil.createClassLikeInfo(classObject.getObjectDeclaration());
-        }
-        else if (getKind() == ClassKind.OBJECT || getKind() == ClassKind.ENUM_ENTRY) {
-            return new SyntheticClassObjectInfo(originalClassInfo, this);
+            return JetClassInfoUtil.createClassLikeInfo(classObject);
         }
 
         return null;
     }
 
     @Nullable
-    private JetClassObject getClassObjectIfAllowed() {
-        JetClassObject classObject = declarationProvider.getOwnerInfo().getClassObject();
+    private JetObjectDeclaration getClassObjectIfAllowed() {
+        JetObjectDeclaration classObject = declarationProvider.getOwnerInfo().getClassObject();
         return (classObject != null && isClassObjectAllowed()) ? classObject : null;
     }
 
@@ -462,7 +463,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
     private void doForceResolveAllContents() {
         resolveMemberHeaders();
-        ClassDescriptor classObjectDescriptor = getClassObjectDescriptor();
+        ClassDescriptor classObjectDescriptor = getDefaultObjectDescriptor();
         if (classObjectDescriptor != null) {
             ForceResolveUtil.forceResolveAllContents(classObjectDescriptor);
         }
@@ -478,7 +479,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         ForceResolveUtil.forceResolveAllContents(getAnnotations());
         ForceResolveUtil.forceResolveAllContents(getDanglingAnnotations());
 
-        getClassObjectDescriptor();
+        getDefaultObjectDescriptor();
 
         getDescriptorsForExtraClassObjects();
 
@@ -534,15 +535,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                             return new Supertypes(Collections.<JetType>emptyList());
                         }
 
-                        JetClassLikeInfo info = declarationProvider.getOwnerInfo();
-                        if (info instanceof SyntheticClassObjectInfo) {
-                            LazyClassDescriptor descriptor = ((SyntheticClassObjectInfo) info).getClassDescriptor();
-                            if (descriptor.getKind().isSingleton()) {
-                                return new Supertypes(Collections.singleton(descriptor.getDefaultType()));
-                            }
-                        }
-
-                        JetClassOrObject classOrObject = info.getCorrespondingClassOrObject();
+                        JetClassOrObject classOrObject = declarationProvider.getOwnerInfo().getCorrespondingClassOrObject();
                         if (classOrObject == null) {
                             return new Supertypes(Collections.singleton(c.getModuleDescriptor().getBuiltIns().getAnyType()));
                         }

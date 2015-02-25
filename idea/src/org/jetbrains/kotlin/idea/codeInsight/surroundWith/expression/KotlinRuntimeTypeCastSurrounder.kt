@@ -99,7 +99,7 @@ public class KotlinRuntimeTypeCastSurrounder: KotlinExpressionSurrounder() {
                                 cast.getLeft().replace(myElement)
                                 val expr = myElement.replace(parentCast) as JetExpression
 
-                                ShortenReferences.process(expr)
+                                ShortenReferences.DEFAULT.process(expr)
 
                                 val range = expr.getTextRange()
                                 myEditor.getSelectionModel().setSelection(range.getStartOffset(), range.getEndOffset())

@@ -68,13 +68,16 @@ import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.resolve.OverridingUtil
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import com.intellij.psi.PsiPackage
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import com.intellij.refactoring.util.RefactoringUIUtil
+import com.intellij.psi.PsiMember
+import org.jetbrains.kotlin.idea.caches.resolve.getJavaMemberDescriptor
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind
+import org.jetbrains.kotlin.resolve.OverridingUtil
 
 fun <T: Any> PsiElement.getAndRemoveCopyableUserData(key: Key<T>): T? {
     val data = getCopyableUserData(key)
@@ -298,13 +301,13 @@ public fun chooseContainerElement<T>(
         editor: Editor,
         title: String,
         highlightSelection: Boolean,
-        toPsi: (T) -> JetElement,
+        toPsi: (T) -> PsiElement,
         onSelect: (T) -> Unit) {
     return getPsiElementPopup(
             editor,
             containers,
-            object : PsiElementListCellRenderer<JetElement>() {
-                private fun JetElement.renderName(): String {
+            object : PsiElementListCellRenderer<PsiElement>() {
+                private fun PsiElement.renderName(): String {
                     if (this is JetPropertyAccessor) {
                         return (getParent() as JetProperty).renderName() + if (isGetter()) ".get" else ".set"
                     }
@@ -314,9 +317,13 @@ public fun chooseContainerElement<T>(
                     return (this as? PsiNamedElement)?.getName() ?: "<anonymous>"
                 }
 
-                private fun JetElement.renderDeclaration(): String? {
+                private fun PsiElement.renderDeclaration(): String? {
+                    val descriptor = when {
+                        this is JetElement -> analyze()[BindingContext.DECLARATION_TO_DESCRIPTOR, this]
+                        this is PsiMember -> getJavaMemberDescriptor()
+                        else -> null
+                    } ?: return null
                     val name = renderName()
-                    val descriptor = this.analyze()[BindingContext.DECLARATION_TO_DESCRIPTOR, this]
                     val params = (descriptor as? FunctionDescriptor)?.let { descriptor ->
                         descriptor.getValueParameters()
                                 .map { DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(it.getType()) }
@@ -325,11 +332,11 @@ public fun chooseContainerElement<T>(
                     return "$name$params"
                 }
 
-                private fun JetElement.renderText(): String {
+                private fun PsiElement.renderText(): String {
                     return StringUtil.shortenTextWithEllipsis(getText()!!.collapseSpaces(), 53, 0)
                 }
 
-                private fun JetElement.getRepresentativeElement(): JetElement {
+                private fun PsiElement.getRepresentativeElement(): PsiElement {
                     return when (this) {
                         is JetBlockExpression -> (getParent() as? JetDeclarationWithBody) ?: this
                         is JetClassBody -> getParent() as JetClassOrObject
@@ -337,20 +344,17 @@ public fun chooseContainerElement<T>(
                     }
                 }
 
-                override fun getElementText(element: JetElement): String? {
+                override fun getElementText(element: PsiElement): String? {
                     val representativeElement = element.getRepresentativeElement()
-                    return when (representativeElement) {
-                        is JetFile, is JetDeclarationWithBody, is JetClassOrObject -> representativeElement.renderDeclaration()
-                        else -> representativeElement.renderText()
-                    }
+                    return representativeElement.renderDeclaration() ?: representativeElement.renderText()
                 }
 
-                override fun getContainerText(element: JetElement?, name: String?): String? = null
+                override fun getContainerText(element: PsiElement, name: String?): String? = null
 
                 override fun getIconFlags(): Int = 0
 
-                override fun getIcon(element: PsiElement?): Icon? =
-                        super.getIcon((element as? JetElement)?.getRepresentativeElement())
+                override fun getIcon(element: PsiElement): Icon? =
+                        super.getIcon(element.getRepresentativeElement())
             },
             title,
             highlightSelection,
@@ -367,7 +371,7 @@ public fun chooseContainerElementIfNecessary<T>(
         editor: Editor,
         title: String,
         highlightSelection: Boolean,
-        toPsi: (T) -> JetElement,
+        toPsi: (T) -> PsiElement,
         onSelect: (T) -> Unit
 ) {
     when {
@@ -389,6 +393,17 @@ public fun comparePossiblyOverridingDescriptors(currentDescriptor: DeclarationDe
     if (compareDescriptors(currentDescriptor, originalDescriptor)) return true
     if (originalDescriptor is CallableDescriptor) {
         if (!OverridingUtil.traverseOverridenDescriptors(originalDescriptor) { !compareDescriptors(currentDescriptor, it) }) return true
+        if (originalDescriptor !is CallableMemberDescriptor || currentDescriptor !is CallableMemberDescriptor) return false
+        val kind = originalDescriptor.getKind()
+        if (kind != Kind.FAKE_OVERRIDE && kind != Kind.DELEGATION) return false
+        if (currentDescriptor.getKind() != kind) return false
+
+        val originalOverriddenDescriptors = originalDescriptor.getOverriddenDescriptors()
+        val currentOverriddenDescriptors = currentDescriptor.getOverriddenDescriptors()
+        if (originalOverriddenDescriptors.size() != currentOverriddenDescriptors.size()) return false
+        return (currentOverriddenDescriptors zip originalOverriddenDescriptors ).all {
+            comparePossiblyOverridingDescriptors(it.first, it.second)
+        }
     }
 
     return false

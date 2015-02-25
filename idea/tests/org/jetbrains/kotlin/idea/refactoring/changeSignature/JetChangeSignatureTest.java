@@ -227,14 +227,14 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
             JetChangeInfo changeInfo = getChangeInfo();
             JetElement method = (JetElement) changeInfo.getMethod();
             JetChangeSignatureConfiguration empty = new JetChangeSignatureConfiguration() {
+                @NotNull
                 @Override
-                public void configure(
-                        JetChangeSignatureData data, BindingContext bindingContext
-                ) {
+                public JetMethodDescriptor configure(@NotNull JetMethodDescriptor originalDescriptor, @NotNull BindingContext bindingContext) {
+                    return originalDescriptor;
                 }
 
                 @Override
-                public boolean performSilently(Collection<? extends PsiElement> elements) {
+                public boolean performSilently(@NotNull Collection<? extends PsiElement> elements) {
                     return true;
                 }
             };
@@ -318,7 +318,8 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
     public void testFunctionJavaUsagesAndOverridesAddParam() throws Exception {
         JetChangeInfo changeInfo = getChangeInfo();
         changeInfo.addParameter(new JetParameterInfo(-1, "s", KotlinBuiltIns.getInstance().getStringType(), null, "\"abc\"", null, null));
-        changeInfo.addParameter(new JetParameterInfo(-1, "o", KotlinBuiltIns.getInstance().getNullableAnyType(), null, "\"def\"", null, null));
+        changeInfo.addParameter(
+                new JetParameterInfo(-1, "o", KotlinBuiltIns.getInstance().getNullableAnyType(), null, "\"def\"", null, null));
         doTest(changeInfo);
     }
 
@@ -356,6 +357,16 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         newParameters[2].setCurrentTypeText("U<B>");
 
         changeInfo.setNewReturnTypeText("U<C>?");
+
+        doTest(changeInfo);
+    }
+
+    public void testAddReceiverToGenericsWithOverrides() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+
+        JetParameterInfo parameterInfo = changeInfo.getNewParameters()[0];
+        parameterInfo.setCurrentTypeText("U<A>");
+        changeInfo.setReceiverParameterInfo(parameterInfo);
 
         doTest(changeInfo);
     }
@@ -579,6 +590,135 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         for (int i = changeInfo.getNewParametersCount() - 1; i >= 0; i--) {
             changeInfo.removeParameter(i);
         }
+        doTest(changeInfo);
+    }
+
+    public void testAddNewReceiver() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        JetParameterInfo parameterInfo = new JetParameterInfo(-1, "_", KotlinBuiltIns.getInstance().getAnyType(), null, "X(0)", null, null);
+        parameterInfo.setCurrentTypeText("X");
+        changeInfo.setReceiverParameterInfo(parameterInfo);
+        doTest(changeInfo);
+    }
+
+    public void testAddNewReceiverForMember() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        JetParameterInfo parameterInfo = new JetParameterInfo(-1, "_", KotlinBuiltIns.getInstance().getAnyType(), null, "X(0)", null, null);
+        parameterInfo.setCurrentTypeText("X");
+        changeInfo.setReceiverParameterInfo(parameterInfo);
+        doTest(changeInfo);
+    }
+
+    public void testAddNewReceiverForMemberConflict() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        JetParameterInfo parameterInfo = new JetParameterInfo(-1, "_", KotlinBuiltIns.getInstance().getAnyType(), null, "X(0)", null, null);
+        parameterInfo.setCurrentTypeText("X");
+        changeInfo.setReceiverParameterInfo(parameterInfo);
+        doTestConflict(changeInfo);
+    }
+
+    public void testAddNewReceiverConflict() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        JetParameterInfo parameterInfo = new JetParameterInfo(-1, "_", KotlinBuiltIns.getInstance().getAnyType(), null, "X(0)", null, null);
+        parameterInfo.setCurrentTypeText("X");
+        changeInfo.setReceiverParameterInfo(parameterInfo);
+        doTestConflict(changeInfo);
+    }
+
+    public void testRemoveReceiver() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        changeInfo.removeParameter(0);
+        doTest(changeInfo);
+    }
+
+    public void testRemoveReceiverForMember() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        changeInfo.removeParameter(0);
+        doTest(changeInfo);
+    }
+
+    public void testConvertParameterToReceiver1() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        changeInfo.setReceiverParameterInfo(changeInfo.getNewParameters()[0]);
+        doTest(changeInfo);
+    }
+
+    public void testConvertParameterToReceiver2() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        changeInfo.setReceiverParameterInfo(changeInfo.getNewParameters()[1]);
+        doTest(changeInfo);
+    }
+
+    public void testConvertReceiverToParameter1() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        changeInfo.setReceiverParameterInfo(null);
+        doTest(changeInfo);
+    }
+
+    public void testConvertReceiverToParameter2() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        changeInfo.setReceiverParameterInfo(null);
+        JetParameterInfo[] parameters = changeInfo.getNewParameters();
+        changeInfo.setNewParameter(0, parameters[1]);
+        changeInfo.setNewParameter(1, parameters[0]);
+        doTest(changeInfo);
+    }
+
+    public void testConvertParameterToReceiverForMember1() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        changeInfo.setReceiverParameterInfo(changeInfo.getNewParameters()[0]);
+        doTest(changeInfo);
+    }
+
+    public void testConvertParameterToReceiverForMember2() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        changeInfo.setReceiverParameterInfo(changeInfo.getNewParameters()[1]);
+        doTest(changeInfo);
+    }
+
+    public void testConvertParameterToReceiverForMemberConflict() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        changeInfo.setReceiverParameterInfo(changeInfo.getNewParameters()[0]);
+        doTestConflict(changeInfo);
+    }
+
+    public void testConvertReceiverToParameterForMember1() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        changeInfo.setReceiverParameterInfo(null);
+        doTest(changeInfo);
+    }
+
+    public void testConvertReceiverToParameterForMember2() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        changeInfo.setReceiverParameterInfo(null);
+        JetParameterInfo[] parameters = changeInfo.getNewParameters();
+        changeInfo.setNewParameter(0, parameters[1]);
+        changeInfo.setNewParameter(1, parameters[0]);
+        doTest(changeInfo);
+    }
+
+    public void testConvertReceiverToParameterWithNameClash() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        changeInfo.setReceiverParameterInfo(null);
+        doTest(changeInfo);
+    }
+
+    public void testConvertReceiverToParameterAndChangeName() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        changeInfo.setReceiverParameterInfo(null);
+        changeInfo.getNewParameters()[0].setName("abc");
+        doTest(changeInfo);
+    }
+
+    public void testChangeReceiver() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        changeInfo.setReceiverParameterInfo(changeInfo.getNewParameters()[1]);
+        doTest(changeInfo);
+    }
+
+    public void testChangeReceiverForMember() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        changeInfo.setReceiverParameterInfo(changeInfo.getNewParameters()[1]);
         doTest(changeInfo);
     }
 

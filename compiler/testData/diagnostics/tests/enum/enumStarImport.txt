@@ -13,16 +13,6 @@ package enum {
             public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
             public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-
-            public class object <class-object-for-CASE1> : enum.HappyEnum.CASE1 {
-                private constructor <class-object-for-CASE1>()
-                public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: enum.HappyEnum): kotlin.Int
-                public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-                public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-                public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-                public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-            }
         }
 
         public enum entry CASE2 : enum.HappyEnum {
@@ -33,16 +23,6 @@ package enum {
             public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
             public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-
-            public class object <class-object-for-CASE2> : enum.HappyEnum.CASE2 {
-                private constructor <class-object-for-CASE2>()
-                public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: enum.HappyEnum): kotlin.Int
-                public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-                public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-                public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-                public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-            }
         }
 
         private constructor HappyEnum()

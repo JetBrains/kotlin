@@ -15,12 +15,4 @@ internal object MyObject {
     internal final fun foo(/*0*/ bar: Bar): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-
-    public class object <class-object-for-MyObject> : MyObject {
-        private constructor <class-object-for-MyObject>()
-        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        internal final override /*1*/ /*fake_override*/ fun foo(/*0*/ bar: Bar): kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    }
 }

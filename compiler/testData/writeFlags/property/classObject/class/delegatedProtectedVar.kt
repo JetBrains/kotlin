@@ -20,11 +20,11 @@ class Test {
 // ABSENT: TRUE
 
 // TESTED_OBJECT_KIND: property
-// TESTED_OBJECTS: Test$object, prop
+// TESTED_OBJECTS: Test$Default, prop
 // ABSENT: TRUE
 
 // TESTED_OBJECT_KIND: property
-// TESTED_OBJECTS: Test$object, prop$delegate
+// TESTED_OBJECTS: Test$Default, prop$delegate
 // ABSENT: TRUE
 
 // TESTED_OBJECT_KIND: property

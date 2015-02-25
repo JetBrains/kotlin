@@ -28,7 +28,7 @@ public class JetScriptInfo(
     override fun getContainingPackageFqName() = fqName.parent()
     override fun getModifierList() = null
     override fun getClassObject() = null
-    override fun getClassObjects() = listOf<JetClassObject>()
+    override fun getClassObjects() = listOf<JetObjectDeclaration>()
     override fun getScopeAnchor() = script
     override fun getCorrespondingClassOrObject() = null
     override fun getTypeParameterList() = null
@@ -44,5 +44,5 @@ public fun shouldBeScriptClassMember(declaration: JetDeclaration): Boolean {
     // we only add those vals, vars and funs that have explicitly specified return types
     // (or implicit Unit for function with block body)
     return declaration is JetCallableDeclaration && declaration.getTypeReference() != null
-            || declaration is JetNamedFunction && declaration.hasBlockBody()
+           || declaration is JetNamedFunction && declaration.hasBlockBody()
 }

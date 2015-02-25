@@ -187,8 +187,8 @@ public interface Errors {
 
     // Class objects
 
-    DiagnosticFactory0<JetClassObject> MANY_CLASS_OBJECTS = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<JetClassObject> CLASS_OBJECT_NOT_ALLOWED = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetObjectDeclaration> MANY_CLASS_OBJECTS = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetObjectDeclaration> CLASS_OBJECT_NOT_ALLOWED = DiagnosticFactory0.create(ERROR);
 
     // Objects
 
@@ -481,7 +481,7 @@ public interface Errors {
     DiagnosticFactory1<JetSimpleNameExpression, ValueParameterDescriptor> UNINITIALIZED_PARAMETER = DiagnosticFactory1.create(ERROR);
 
     DiagnosticFactory1<JetNamedDeclaration, VariableDescriptor> UNUSED_VARIABLE = DiagnosticFactory1.create(WARNING, DECLARATION_NAME);
-    DiagnosticFactory1<JetNamedDeclaration, VariableDescriptor> UNUSED_PARAMETER = DiagnosticFactory1.create(WARNING, DECLARATION_NAME);
+    DiagnosticFactory1<JetParameter, VariableDescriptor> UNUSED_PARAMETER = DiagnosticFactory1.create(WARNING, DECLARATION_NAME);
 
     DiagnosticFactory1<JetNamedDeclaration, VariableDescriptor> ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE =
             DiagnosticFactory1.create(WARNING, DECLARATION_NAME);

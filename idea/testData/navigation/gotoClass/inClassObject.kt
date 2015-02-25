@@ -15,7 +15,7 @@ class InClassObject {
 }
 
 // SEARCH_TEXT: ClassObject
-// REF: (test.InClassObject).ClassObjectClass
-// REF: (test.InClassObject).ClassObjectObject
-// REF: (test.InClassObject).ClassObjectTrait
-// REF: (test.InClassObject).ClassObjectTraitWithImpl
+// REF: (test.InClassObject.Default).ClassObjectClass
+// REF: (test.InClassObject.Default).ClassObjectObject
+// REF: (test.InClassObject.Default).ClassObjectTrait
+// REF: (test.InClassObject.Default).ClassObjectTraitWithImpl

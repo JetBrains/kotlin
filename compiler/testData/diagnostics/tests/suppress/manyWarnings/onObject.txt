@@ -6,12 +6,4 @@ kotlin.suppress(names = {"REDUNDANT_NULLABLE", "UNNECESSARY_NOT_NULL_ASSERTION"}
     internal final fun foo(): kotlin.String?
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-
-    public class object <class-object-for-C> : C {
-        private constructor <class-object-for-C>()
-        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        internal final override /*1*/ /*fake_override*/ fun foo(): kotlin.String?
-        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    }
 }

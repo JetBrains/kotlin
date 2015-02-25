@@ -12,5 +12,5 @@ fun T.set(thisRef: B, desc: PropertyMetadata, value: Int) {
 class A(): T
 
 <selection>class B {
-    var a by A()
+    var v by A()
 }</selection>

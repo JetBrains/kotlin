@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.quickfix.QuickFixes
 import kotlin.platform.platformStatic
 import org.jetbrains.kotlin.idea.kdoc.KDocHighlightingVisitor
+import org.jetbrains.kotlin.psi.JetParameter
 
 public open class JetPsiChecker : Annotator, HighlightRangeExtension {
 
@@ -71,7 +72,18 @@ public open class JetPsiChecker : Annotator, HighlightRangeExtension {
         return file is JetFile
     }
 
-    private class ElementAnnotator(private val element: PsiElement, private val holder: AnnotationHolder) {
+    open protected fun shouldSuppressUnusedParameter(parameter: JetParameter): Boolean = false
+
+    fun annotateElement(element: PsiElement, holder: AnnotationHolder, diagnostics: Diagnostics) {
+        if (ProjectRootsUtil.isInProjectSource(element) || element.getContainingFile() is JetCodeFragment) {
+            val elementAnnotator = ElementAnnotator(element, holder)
+            for (diagnostic in diagnostics.forElement(element)) {
+                elementAnnotator.registerDiagnosticAnnotations(diagnostic)
+            }
+        }
+    }
+
+    private inner class ElementAnnotator(private val element: PsiElement, private val holder: AnnotationHolder) {
         private var isMarkedWithRedeclaration = false
 
         fun registerDiagnosticAnnotations(diagnostic: Diagnostic) {
@@ -130,6 +142,9 @@ public open class JetPsiChecker : Annotator, HighlightRangeExtension {
                     }
                 }
                 Severity.WARNING -> {
+                    if (factory == Errors.UNUSED_PARAMETER && shouldSuppressUnusedParameter(diagnostic.getPsiElement() as JetParameter)) {
+                        return
+                    }
                     for (textRange in textRanges) {
                         val annotation = holder.createWarningAnnotation(textRange, getDefaultMessage(diagnostic))
                         setUpAnnotation(diagnostic, annotation, if (factory in Errors.UNUSED_ELEMENT_DIAGNOSTICS)
@@ -227,14 +242,5 @@ public open class JetPsiChecker : Annotator, HighlightRangeExtension {
                 DeprecatedAnnotationVisitor(holder, bindingContext)
         )
 
-        platformStatic fun annotateElement(element: PsiElement, holder: AnnotationHolder, diagnostics: Diagnostics) {
-            if (ProjectRootsUtil.isInProjectSource(element) || element.getContainingFile() is JetCodeFragment) {
-                val elementAnnotator = ElementAnnotator(element, holder)
-                for (diagnostic in diagnostics.forElement(element)) {
-                    elementAnnotator.registerDiagnosticAnnotations(diagnostic)
-                }
-            }
-        }
     }
-
 }

@@ -28,12 +28,4 @@ internal object Z1O : X, Y {
     internal abstract override /*2*/ /*fake_override*/ fun foo(/*0*/ a: kotlin.Int = ...): kotlin.Unit
     public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
-
-    public class object <class-object-for-Z1O> : Z1O {
-        private constructor <class-object-for-Z1O>()
-        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        internal abstract override /*1*/ /*fake_override*/ fun foo(/*0*/ a: kotlin.Int = ...): kotlin.Unit
-        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    }
 }

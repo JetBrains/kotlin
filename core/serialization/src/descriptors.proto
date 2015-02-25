@@ -35,6 +35,7 @@ message QualifiedNameTable {
     enum Kind {
       CLASS = 0;
       PACKAGE = 1;
+      LOCAL = 2;
     }
   }
 
@@ -175,18 +176,11 @@ message Class {
       is_inner
    */
   optional int32 flags = 1 [default = 0 /*internal final class, no annotations*/];
-  optional string extra_visibility = 2; // for things like java-specific visibilities
 
   required int32 fq_name = 3;
 
-  message ClassObject {
-    // If this field is present, it contains serialized data for a synthetic class object, for which there's no class file.
-    // Otherwise class object was compiled to a separate class file and serialized data can be found in the annotation on that class
-    optional Class data = 1;
-  }
-
-  // This field is present if and only if the class has a class object. Its proto should be found either here or in the separate file
-  optional ClassObject class_object = 4;
+  // If this field is present, it contains the name of default object.
+  optional int32 class_object_name = 4;
 
   repeated TypeParameter type_parameter = 5;
   repeated Type supertype = 6;
@@ -246,7 +240,6 @@ message Callable {
      hasConstant
    */
   optional int32 flags = 1;
-  optional string extra_visibility = 2; // for things like java-specific visibilities
 
   /*
      isNotDefault
@@ -301,5 +294,5 @@ enum Visibility {
   PROTECTED = 0x02;
   PUBLIC = 0x03;
   PRIVATE_TO_THIS = 0x04;
-  EXTRA = 0x05; // there's an extra field for the actual visibility
+  LOCAL = 0x05;
 }

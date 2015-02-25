@@ -1,4 +1,4 @@
-// "Suppress 'REDUNDANT_NULLABLE' for class object of C" "true"
+// "Suppress 'REDUNDANT_NULLABLE' for class object Default of C" "true"
 
 class C {
     class object {

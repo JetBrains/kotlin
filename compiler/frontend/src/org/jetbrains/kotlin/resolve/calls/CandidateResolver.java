@@ -644,6 +644,9 @@ public class CandidateResolver {
         if (safeAccess && !context.dataFlowInfo.getNullability(receiverValue).canBeNull()) {
             context.tracing.unnecessarySafeCall(trace, receiverArgumentType);
         }
+
+        context.additionalTypeChecker.checkReceiver(receiverParameter, receiverArgument, safeAccess, context);
+
         return SUCCESS;
     }
 

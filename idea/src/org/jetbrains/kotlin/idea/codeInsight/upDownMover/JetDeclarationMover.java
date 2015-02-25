@@ -60,8 +60,10 @@ public class JetDeclarationMover extends AbstractJetUpDownMover {
                     }
 
                     @Override
-                    public void visitClassObject(@NotNull JetClassObject classObject) {
-                        memberSuspects.add(classObject.getClassKeyword());
+                    public void visitObjectDeclaration(@NotNull JetObjectDeclaration declaration) {
+                        if (declaration.isClassObject()) {
+                            memberSuspects.add(declaration.getClassKeyword());
+                        }
                     }
 
                     @Override

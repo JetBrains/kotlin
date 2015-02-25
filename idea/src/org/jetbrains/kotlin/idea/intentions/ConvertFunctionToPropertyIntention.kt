@@ -182,7 +182,7 @@ public class ConvertFunctionToPropertyIntention : JetSelfTargetingIntention<JetN
                     kotlinCalls.forEach { it.replace(it.getCalleeExpression()) }
                     foreignRefs.forEach { it.handleElementRename(getterName) }
 
-                    ShortenReferences.process(elementsToShorten)
+                    ShortenReferences.DEFAULT.process(elementsToShorten)
                 }
             }
         }

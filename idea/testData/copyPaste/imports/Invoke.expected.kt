@@ -1,7 +1,7 @@
 package to
 
-import a.A
 import a.invoke
+import a.A
 
 fun f(a: A) {
     a()

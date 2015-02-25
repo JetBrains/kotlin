@@ -92,6 +92,12 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             doTestWithExtraFile(fileName);
         }
 
+        @TestMetadata("factoryFunctionFromLambda.before.Main.kt")
+        public void testFactoryFunctionFromLambda() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/factoryFunctionFromLambda.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+
         @TestMetadata("falsePostfixOperator.before.Main.kt")
         public void testFalsePostfixOperator() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/falsePostfixOperator.before.Main.kt");
@@ -143,6 +149,12 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         @TestMetadata("noImportForFunInQualifiedNotFirst.before.Main.kt")
         public void testNoImportForFunInQualifiedNotFirst() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/noImportForFunInQualifiedNotFirst.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("noImportForNestedInPrivate.before.Main.kt")
+        public void testNoImportForNestedInPrivate() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/noImportForNestedInPrivate.before.Main.kt");
             doTestWithExtraFile(fileName);
         }
 

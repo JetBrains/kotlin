@@ -31,7 +31,6 @@ public class AnonymousClassContext extends ClassContext {
             @Nullable CodegenContext parentContext,
             @Nullable LocalLookup localLookup
     ) {
-        //noinspection SuspiciousMethodCalls
         super(typeMapper, contextDescriptor, contextKind, parentContext, localLookup);
     }
 

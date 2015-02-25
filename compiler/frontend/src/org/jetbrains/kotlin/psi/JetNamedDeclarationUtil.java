@@ -69,15 +69,7 @@ public final class JetNamedDeclarationUtil {
             }
         }
         else if (parent instanceof JetObjectDeclaration) {
-            if (parent.getParent() instanceof JetClassObject) {
-                JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(parent, JetClassOrObject.class);
-                if (classOrObject != null) {
-                    return getFQName(classOrObject);
-                }
-            }
-            else {
-                return getFQName((JetNamedDeclaration) parent);
-            }
+             return getFQName((JetNamedDeclaration) parent);
         }
         return null;
     }

@@ -118,7 +118,6 @@ public class IntrinsicMethods {
         declareIntrinsicFunction("Cloneable", "clone", 0, CLONE);
 
         intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, KOTLIN_ANY_FQ_NAME, "toString", 0, TO_STRING);
-        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, KOTLIN_ANY_FQ_NAME, "equals", 1, EQUALS);
         intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, KOTLIN_ANY_FQ_NAME, "identityEquals", 1, IDENTITY_EQUALS);
         intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, KOTLIN_STRING_FQ_NAME, "plus", 1, STRING_PLUS);
         intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, null, "arrayOfNulls", 1, new NewArray());

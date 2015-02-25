@@ -81,8 +81,9 @@ public val <K, V> Map.Entry<K, V>.value: V
     get() = getValue()
 
 /**
- * Returns the key component of the map entry. This method allows to use multi-declarations when working with maps,
- * for example:
+ * Returns the key component of the map entry.
+ *
+ * This method allows to use multi-declarations when working with maps, for example:
  * ```
  * for ((key, value) in map) {
  *     // do something with the key and the value
@@ -94,8 +95,8 @@ public fun <K, V> Map.Entry<K, V>.component1(): K {
 }
 
 /**
- * Returns the value component of the map entry. This method allows to use multi-declarations when working with maps,
- * for example:
+ * Returns the value component of the map entry.
+ * This method allows to use multi-declarations when working with maps, for example:
  * ```
  * for ((key, value) in map) {
  *     // do something with the key and the value

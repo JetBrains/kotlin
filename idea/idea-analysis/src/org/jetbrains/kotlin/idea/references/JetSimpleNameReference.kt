@@ -24,8 +24,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.idea.refactoring.fqName.changeQualifiedName
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
-import org.jetbrains.kotlin.psi.psiUtil.getOutermostNonInterleavingQualifiedElement
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
@@ -36,7 +34,7 @@ import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
+import org.jetbrains.kotlin.psi.psiUtil.*
 
 public class JetSimpleNameReference(
         jetSimpleNameExpression: JetSimpleNameExpression
@@ -115,7 +113,7 @@ public class JetSimpleNameReference(
         if (fqName.isRoot()) return expression
 
         val newExpression = expression.changeQualifiedName(fqName).getQualifiedElementSelector() as JetSimpleNameExpression
-        val newQualifiedElement = newExpression.getOutermostNonInterleavingQualifiedElement()
+        val newQualifiedElement = newExpression.getQualifiedElement()
 
         if (shorteningMode == ShorteningMode.NO_SHORTENING) return newExpression
 
@@ -123,7 +121,7 @@ public class JetSimpleNameReference(
                 PsiTreeUtil.getParentOfType(expression, javaClass<JetImportDirective>(), javaClass<JetPackageDirective>()) == null
         if (needToShorten) {
             if (shorteningMode == ShorteningMode.FORCED_SHORTENING) {
-                ShortenReferences.process(newQualifiedElement)
+                ShortenReferences.DEFAULT.process(newQualifiedElement)
             }
             else {
                 newQualifiedElement.addToShorteningWaitSet()

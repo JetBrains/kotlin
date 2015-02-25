@@ -21,8 +21,6 @@ import org.jetbrains.kotlin.types.Approximation.DataFlowExtras
 import org.jetbrains.kotlin.name.FqName
 import kotlin.platform.platformStatic
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqNameUnsafe
-import org.jetbrains.kotlin.name.Name
 
 public trait FlexibleTypeCapabilities {
     fun <T: TypeCapability> getCapability(capabilityClass: Class<T>, jetType: JetType, flexibility: Flexibility): T?
@@ -40,7 +38,7 @@ public trait Flexibility : TypeCapability, SubtypingRepresentatives {
         // it creates a flexible type, e.g. (Foo..Foo?).
         // This is used in tests and Evaluate Expression to have flexible types in the code,
         // but normal users should not be referencing this classifier
-        public val FLEXIBLE_TYPE_CLASSIFIER: ClassId = ClassId(FqName("kotlin.internal.flexible"), FqNameUnsafe.topLevel(Name.identifier("ft")))
+        public val FLEXIBLE_TYPE_CLASSIFIER: ClassId = ClassId.topLevel(FqName("kotlin.internal.flexible.ft"))
     }
 
     // lowerBound is a subtype of upperBound

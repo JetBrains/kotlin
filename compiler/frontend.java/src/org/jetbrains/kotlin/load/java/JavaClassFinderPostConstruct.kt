@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.resolve.jvm
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import javax.inject.Inject
 import javax.annotation.PostConstruct
 import org.jetbrains.kotlin.resolve.BindingTrace
@@ -42,19 +41,3 @@ public class JavaLazyAnalyzerPostConstruct : JavaClassFinderPostConstruct() {
         CodeAnalyzerInitializer.getInstance(project!!).initialize(trace!!, codeAnalyzer!!.getModuleDescriptor(), codeAnalyzer)
     }
 }
-
-public class JavaDescriptorResolverPostConstruct : JavaClassFinderPostConstruct() {
-    public var project: Project? = null
-        [Inject] set
-
-    public var trace: BindingTrace? = null
-        [Inject] set
-
-    public var module: ModuleDescriptor? = null
-        [Inject] set
-
-    [PostConstruct] override fun postCreate() {
-        CodeAnalyzerInitializer.getInstance(project!!).initialize(trace!!, module!!, null)
-    }
-}
-

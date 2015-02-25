@@ -9,20 +9,19 @@ JetFile: kt2172.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n\n    ')
-      CLASS_OBJECT
+      OBJECT_DECLARATION
         PsiElement(class)('class')
         PsiWhiteSpace(' ')
-        OBJECT_DECLARATION
-          PsiElement(object)('object')
-          PsiWhiteSpace(' ')
-          CLASS_BODY
-            PsiElement(LBRACE)('{')
-            PsiWhiteSpace('\n        ')
-            PROPERTY
-              PsiElement(val)('val')
-              PsiErrorElement:Expecting property name or receiver type
-                <empty list>
-            PsiWhiteSpace('\n    ')
-            PsiElement(RBRACE)('}')
+        PsiElement(object)('object')
+        PsiWhiteSpace(' ')
+        CLASS_BODY
+          PsiElement(LBRACE)('{')
+          PsiWhiteSpace('\n        ')
+          PROPERTY
+            PsiElement(val)('val')
+            PsiErrorElement:Expecting property name or receiver type
+              <empty list>
+          PsiWhiteSpace('\n    ')
+          PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')

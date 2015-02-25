@@ -60,8 +60,11 @@ public interface ClassDescriptor extends ClassifierDescriptor, MemberDescriptor,
     @Override
     JetType getClassObjectType();
 
+    /**
+     * @return nested object declared as 'default' if one is present.
+     */
     @Nullable
-    ClassDescriptor getClassObjectDescriptor();
+    ClassDescriptor getDefaultObjectDescriptor();
 
     @NotNull
     ClassKind getKind();

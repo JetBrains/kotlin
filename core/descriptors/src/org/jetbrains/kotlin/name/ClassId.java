@@ -18,6 +18,15 @@ package org.jetbrains.kotlin.name;
 
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * A class name which is used to uniquely identify a Kotlin class.
+ *
+ * If local = true, the class represented by this id is either itself local or is an inner class of some local class. This also means that
+ * the first non-class container of the class is not a package.
+ * In the case of a local class, relativeClassName consists of a single name including all callables' and class' names all the way up to
+ * the package, separated by dollar signs. If a class is an inner of local, relativeClassName would consist of two names,
+ * the second one being the class' short name.
+ */
 public final class ClassId {
     @NotNull
     public static ClassId topLevel(@NotNull FqName topLevelFqName) {
@@ -26,15 +35,18 @@ public final class ClassId {
 
     private final FqName packageFqName;
     private final FqNameUnsafe relativeClassName;
+    private final boolean local;
 
-    public ClassId(@NotNull FqName packageFqName, @NotNull FqNameUnsafe relativeClassName) {
+    public ClassId(@NotNull FqName packageFqName, @NotNull FqNameUnsafe relativeClassName, boolean local) {
         this.packageFqName = packageFqName;
-        assert !relativeClassName.isRoot() : "Class name must not be root. " + packageFqName;
+        assert !relativeClassName.isRoot() :
+                "Class name must not be root: " + packageFqName + (local ? " (local)" : "");
         this.relativeClassName = relativeClassName;
+        this.local = local;
     }
 
     public ClassId(@NotNull FqName packageFqName, @NotNull Name topLevelName) {
-        this(packageFqName, FqNameUnsafe.topLevel(topLevelName));
+        this(packageFqName, FqNameUnsafe.topLevel(topLevelName), false);
     }
 
     @NotNull
@@ -47,18 +59,22 @@ public final class ClassId {
         return relativeClassName;
     }
 
+    public boolean isLocal() {
+        return local;
+    }
+
     @NotNull
     public ClassId createNestedClassId(@NotNull Name name) {
-        return new ClassId(getPackageFqName(), relativeClassName.child(name));
+        return new ClassId(getPackageFqName(), relativeClassName.child(name), local);
     }
 
     @NotNull
     public ClassId getOuterClassId() {
-        return new ClassId(getPackageFqName(), relativeClassName.parent());
+        return new ClassId(getPackageFqName(), relativeClassName.parent(), local);
     }
 
-    public boolean isTopLevelClass() {
-        return relativeClassName.parent().isRoot();
+    public boolean isNestedClass() {
+        return !relativeClassName.parent().isRoot();
     }
 
     @NotNull
@@ -74,16 +90,16 @@ public final class ClassId {
 
         ClassId id = (ClassId) o;
 
-        if (!packageFqName.equals(id.packageFqName)) return false;
-        if (!relativeClassName.equals(id.relativeClassName)) return false;
-
-        return true;
+        return packageFqName.equals(id.packageFqName) &&
+               relativeClassName.equals(id.relativeClassName) &&
+               local == id.local;
     }
 
     @Override
     public int hashCode() {
         int result = packageFqName.hashCode();
         result = 31 * result + relativeClassName.hashCode();
+        result = 31 * result + Boolean.valueOf(local).hashCode();
         return result;
     }
 

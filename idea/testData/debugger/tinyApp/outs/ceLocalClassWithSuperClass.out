@@ -1,0 +1,16 @@
+LineBreakpoint created at ceLocalClassWithSuperClass.kt:19
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! ceLocalClassWithSuperClass.CeLocalClassWithSuperClassPackage
+Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+ceLocalClassWithSuperClass.kt:19
+Compile bytecode for class MyClass: MySuperClass() {
+    fun test() = publicFun()
+}
+
+val a = MyClass()
+a.test()
+
+// RESULT: 1: I
+
+Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+
+Process finished with exit code 0

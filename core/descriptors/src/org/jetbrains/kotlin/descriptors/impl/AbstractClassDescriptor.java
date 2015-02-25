@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
 import org.jetbrains.kotlin.resolve.scopes.InnerClassesScopeWrapper;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.resolve.scopes.SubstitutingScope;
@@ -30,8 +31,6 @@ import org.jetbrains.kotlin.types.*;
 
 import java.util.List;
 import java.util.Map;
-
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumClass;
 
 public abstract class AbstractClassDescriptor implements ClassDescriptor {
     private final Name name;
@@ -79,17 +78,7 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor {
     @Nullable
     @Override
     public JetType getClassObjectType() {
-        if (getKind() == ClassKind.OBJECT) {
-            return getDefaultType();
-        }
-
-        if (getKind() == ClassKind.ENUM_ENTRY) {
-            DeclarationDescriptor enumClass = getContainingDeclaration();
-            assert isEnumClass(enumClass) : "Enum entry should be declared in enum class: " + this;
-            return ((ClassDescriptor) enumClass).getDefaultType();
-        }
-
-        ClassDescriptor classObject = getClassObjectDescriptor();
+        ClassDescriptor classObject = DescriptorUtilPackage.getClassObjectDescriptor(this);
         return classObject == null ? null : classObject.getDefaultType();
     }
 

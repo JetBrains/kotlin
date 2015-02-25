@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments;
 
 import static org.jetbrains.kotlin.config.SettingConstants.KOTLIN_COMMON_COMPILER_ARGUMENTS_SECTION;
-import static org.jetbrains.kotlin.config.SettingConstants.KOTLIN_COMPILER_SETTINGS_PATH;
+import static org.jetbrains.kotlin.idea.compiler.configuration.BaseKotlinCompilerSettings.KOTLIN_COMPILER_SETTINGS_PATH;
 
 @State(
     name = KOTLIN_COMMON_COMPILER_ARGUMENTS_SECTION,

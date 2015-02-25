@@ -1,6 +1,6 @@
 public class ClassObjectField {
     public static void foo() {
-        k.ClassWithClassObject.OB<caret>JECT$.f();
+        k.ClassWithClassObject.De<caret>fault.f();
     }
 }
 

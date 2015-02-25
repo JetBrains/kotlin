@@ -54,6 +54,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper.ImportDescriptorResult
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.idea.refactoring.fqName.isImported
 
 public class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper() {
     /**
@@ -82,7 +83,7 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
         }
     }
 
-    override fun writeImportToFile(importPath: ImportPath, file: JetFile): JetImportDirective {
+    private fun writeImportToFile(importPath: ImportPath, file: JetFile): JetImportDirective {
         val psiFactory = JetPsiFactory(project)
         if (file is JetCodeFragment) {
             val newDirective = psiFactory.createImportDirective(importPath)
@@ -182,12 +183,14 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
             val name = target.getName()
             val topLevelScope = resolutionFacade.getFileTopLevelScope(file)
 
+            val targetFqName = target.importableFqName ?: return ImportDescriptorResult.FAIL
+
             // check if import is not needed
             when (target) {
-                is ClassDescriptor -> { if (topLevelScope.getClassifier(name) == target) return ImportDescriptorResult.ALREADY_IMPORTED }
-                is PackageViewDescriptor -> { if (topLevelScope.getPackage(name) == target) return ImportDescriptorResult.ALREADY_IMPORTED }
-                is FunctionDescriptor -> { if (topLevelScope.getFunctions(name).contains(target)) return ImportDescriptorResult.ALREADY_IMPORTED }
-                is PropertyDescriptor -> { if (topLevelScope.getProperties(name).contains(target)) return ImportDescriptorResult.ALREADY_IMPORTED }
+                is ClassDescriptor -> { if (topLevelScope.getClassifier(name)?.importableFqName == targetFqName) return ImportDescriptorResult.ALREADY_IMPORTED }
+                is PackageViewDescriptor -> { if (topLevelScope.getPackage(name)?.importableFqName == targetFqName) return ImportDescriptorResult.ALREADY_IMPORTED }
+                is FunctionDescriptor -> { if (topLevelScope.getFunctions(name).map { it.importableFqName }.contains(targetFqName)) return ImportDescriptorResult.ALREADY_IMPORTED }
+                is PropertyDescriptor -> { if (topLevelScope.getProperties(name).map { it.importableFqName }.contains(targetFqName)) return ImportDescriptorResult.ALREADY_IMPORTED }
                 else -> return ImportDescriptorResult.FAIL
             }
 

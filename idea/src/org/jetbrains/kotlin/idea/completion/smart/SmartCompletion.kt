@@ -37,6 +37,10 @@ import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.idea.util.fuzzyReturnType
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
+import org.jetbrains.kotlin.idea.util.IterableTypesDetector
+import org.jetbrains.kotlin.idea.util.nullability
+import org.jetbrains.kotlin.idea.util.TypeNullability
+import org.jetbrains.kotlin.idea.util.SmartCastCalculator
 
 trait InheritanceItemsSearcher {
     fun search(nameFilter: (String) -> Boolean, consumer: (LookupElement) -> Unit)
@@ -110,6 +114,12 @@ class SmartCompletion(
             expression
         }
 
+        val loopRangePositionResult = buildForLoopRangePosition(expressionWithType, receiver)
+        if (loopRangePositionResult != null) return loopRangePositionResult
+
+        val inOperatorArgumentResult = buildForInOperatorArgument(expressionWithType, receiver)
+        if (inOperatorArgumentResult != null) return inOperatorArgumentResult
+
         val allExpectedInfos = calcExpectedInfos(expressionWithType) ?: return null
         val filteredExpectedInfos = allExpectedInfos.filter { !it.type.isError() }
         if (filteredExpectedInfos.isEmpty()) return null
@@ -120,7 +130,7 @@ class SmartCompletion(
         else
             filteredExpectedInfos
 
-        val smartCastTypes: (VariableDescriptor) -> Collection<JetType> = TypesWithSmartCasts(bindingContext).calculate(expressionWithType, receiver)
+        val smartCastTypes: (VariableDescriptor) -> Collection<JetType> = SmartCastCalculator(bindingContext).calculate(expressionWithType, receiver)
 
         val itemsToSkip = calcItemsToSkip(expressionWithType)
 
@@ -228,7 +238,7 @@ class SmartCompletion(
             }
         }
 
-        return ExpectedInfos(bindingContext, resolutionFacade).calculate(expression)
+        return ExpectedInfos(bindingContext, resolutionFacade, moduleDescriptor, true).calculate(expression)
     }
 
     private fun implicitlyTypedDeclarationFromInitializer(expression: JetExpression): JetDeclaration? {
@@ -361,6 +371,67 @@ class SmartCompletion(
             items.add(lookupElement.addTailAndNameSimilarity(infos))
         }
         return Result(null, items, null)
+    }
+
+    private fun buildForLoopRangePosition(expressionWithType: JetExpression, receiver: JetExpression?): Result? {
+        val forExpression = (expressionWithType.getParent() as? JetContainerNode)
+                                    ?.getParent() as? JetForExpression ?: return null
+        if (expressionWithType != forExpression.getLoopRange()) return null
+
+        val loopVar = forExpression.getLoopParameter()
+        val loopVarType = if (loopVar != null && loopVar.getTypeReference() != null) {
+            val type = (resolutionFacade.resolveToDescriptor(loopVar) as VariableDescriptor).getType()
+            if (type.isError()) null else type
+        }
+        else {
+            null
+        }
+
+        val scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, expressionWithType)
+        val iterableDetector = IterableTypesDetector(project, moduleDescriptor, scope, loopVarType)
+
+        return buildResultByTypeFilter(expressionWithType, receiver, Tail.RPARENTH) { iterableDetector.isIterable(it) }
+    }
+
+    private fun buildForInOperatorArgument(expressionWithType: JetExpression, receiver: JetExpression?): Result? {
+        val binaryExpression = expressionWithType.getParent() as? JetBinaryExpression ?: return null
+        val operationToken = binaryExpression.getOperationToken()
+        if (operationToken != JetTokens.IN_KEYWORD && operationToken != JetTokens.NOT_IN || expressionWithType != binaryExpression.getRight()) return null
+
+        val leftOperandType = bindingContext.get(BindingContext.EXPRESSION_TYPE, binaryExpression.getLeft()) ?: return null
+        val scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, expressionWithType)
+        val detector = TypesWithContainsDetector(scope, leftOperandType, project, moduleDescriptor)
+
+        return buildResultByTypeFilter(expressionWithType, receiver, null) { detector.hasContains(it) }
+    }
+
+    private fun buildResultByTypeFilter(
+            position: JetExpression,
+            receiver: JetExpression?,
+            tail: Tail?,
+            typeFilter: (FuzzyType) -> Boolean
+    ): Result {
+        val smartCastTypes: (VariableDescriptor) -> Collection<JetType> = SmartCastCalculator(bindingContext).calculate(position, receiver)
+
+        fun filterDeclaration(descriptor: DeclarationDescriptor): Collection<LookupElement> {
+            val types = descriptor.fuzzyTypes(smartCastTypes)
+
+            fun createLookupElement(): LookupElement {
+                return lookupElementFactory.createLookupElement(descriptor, resolutionFacade, bindingContext, true)
+            }
+
+            if (types.any { typeFilter(it) }) {
+                return listOf(createLookupElement().addTail(tail))
+            }
+
+            if (types.any { it.nullability() == TypeNullability.NULLABLE && typeFilter(it.makeNotNullable()) }) {
+                return lookupElementsForNullable(::createLookupElement).map { it.addTail(tail) }
+            }
+
+            return listOf()
+        }
+
+        return Result(::filterDeclaration, listOf(), null)
     }
 
     private fun lookupElementForType(jetType: JetType): LookupElement? {

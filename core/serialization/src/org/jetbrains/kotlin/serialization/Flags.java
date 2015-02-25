@@ -154,7 +154,10 @@ public class Flags {
         else if (visibility == Visibilities.PROTECTED) {
             return ProtoBuf.Visibility.PROTECTED;
         }
-        return ProtoBuf.Visibility.EXTRA;
+        else if (visibility == Visibilities.LOCAL) {
+            return ProtoBuf.Visibility.LOCAL;
+        }
+        throw new IllegalArgumentException("Unknown visibility: " + visibility);
     }
 
     @NotNull
@@ -226,7 +229,12 @@ public class Flags {
             int maskUnshifted = (1 << bitWidth) - 1;
             int mask = maskUnshifted << offset;
             int value = (flags & mask) >> offset;
-            return values[value];
+            for (E e : values) {
+                if (getIntValue(e) == value) {
+                    return e;
+                }
+            }
+            throw new IllegalStateException("Flag not found: " + value);
         }
 
         public int toFlags(E value) {

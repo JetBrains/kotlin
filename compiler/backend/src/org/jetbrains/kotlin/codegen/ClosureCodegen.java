@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
-import org.jetbrains.kotlin.codegen.context.ClassContext;
+import org.jetbrains.kotlin.codegen.context.ClosureContext;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetElement;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -71,23 +70,20 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
     public ClosureCodegen(
             @NotNull GenerationState state,
             @NotNull JetElement element,
-            @NotNull FunctionDescriptor funDescriptor,
             @Nullable SamType samType,
-            @NotNull ClassContext context,
+            @NotNull ClosureContext context,
             @NotNull KotlinSyntheticClass.Kind syntheticClassKind,
             @NotNull FunctionGenerationStrategy strategy,
             @NotNull MemberCodegen<?> parentCodegen,
-            @NotNull ClassBuilder classBuilder,
-            @NotNull Type asmType
+            @NotNull ClassBuilder classBuilder
     ) {
         super(state, parentCodegen, context, element, classBuilder);
 
-        this.funDescriptor = funDescriptor;
+        this.funDescriptor = context.getFunctionDescriptor();
+        this.classDescriptor = context.getContextDescriptor();
         this.samType = samType;
         this.syntheticClassKind = syntheticClassKind;
         this.strategy = strategy;
-
-        this.classDescriptor = context.getContextDescriptor();
 
         if (samType == null) {
             this.superInterfaceTypes = new ArrayList<JetType>();
@@ -115,7 +111,7 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
         this.closure = bindingContext.get(CLOSURE, classDescriptor);
         assert closure != null : "Closure must be calculated for class: " + classDescriptor;
 
-        this.asmType = asmType;
+        this.asmType = typeMapper.mapClass(classDescriptor);
 
         visibilityFlag = AsmUtil.getVisibilityAccessFlagForAnonymous(classDescriptor);
     }
@@ -164,11 +160,12 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
             erasedInterfaceFunction = samType.getAbstractMethod().getOriginal();
         }
 
-        JvmMethodSignature jvmMethodSignature =
-                typeMapper.mapSignature(funDescriptor).replaceName(erasedInterfaceFunction.getName().toString());
-        generateBridge(typeMapper.mapSignature(erasedInterfaceFunction).getAsmMethod(), jvmMethodSignature.getAsmMethod());
+        generateBridge(
+                typeMapper.mapSignature(erasedInterfaceFunction).getAsmMethod(),
+                typeMapper.mapSignature(funDescriptor).getAsmMethod()
+        );
 
-        functionCodegen.generateMethod(OtherOrigin(element, funDescriptor), jvmMethodSignature, funDescriptor, strategy);
+        functionCodegen.generateMethod(OtherOrigin(element, funDescriptor), funDescriptor, strategy);
 
         //TODO: rewrite cause ugly hack
         if (samType != null) {
@@ -194,12 +191,9 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
 
         genClosureFields(closure, v, typeMapper);
 
-        functionCodegen.generateDefaultIfNeeded(context.intoFunction(funDescriptor),
-                                                typeMapper.mapSignature(funDescriptor),
-                                                funDescriptor,
-                                                context.getContextKind(),
-                                                DefaultParameterValueLoader.DEFAULT,
-                                                null);
+        functionCodegen.generateDefaultIfNeeded(
+                context.intoFunction(funDescriptor), funDescriptor, context.getContextKind(), DefaultParameterValueLoader.DEFAULT, null
+        );
     }
 
     @Override
@@ -209,7 +203,7 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
 
     @Override
     protected void done() {
-        writeOuterClassAndEnclosingMethod(classDescriptor, funDescriptor, typeMapper, v);
+        writeOuterClassAndEnclosingMethod();
         super.done();
     }
 

@@ -1,10 +1,22 @@
 package Jet86
 
 class A {
+  <!REDECLARATION!>class object<!> {
+    val x = 1
+  }
+  <!MANY_CLASS_OBJECTS, REDECLARATION!>class object<!> {
+    val x = 1
+  }
+}
+
+class AA {
   class object {
     val x = 1
   }
-  <!MANY_CLASS_OBJECTS!>class object<!> { // error
+  <!MANY_CLASS_OBJECTS!>class object A<!> {
+    val x = 1
+  }
+    <!MANY_CLASS_OBJECTS!>class object AA<!> {
     val x = 1
   }
 }

@@ -1,11 +1,12 @@
-LineBreakpoint created at frameThis0.kt:15
+LineBreakpoint created at frameThis0.kt:16
 !JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! frameThis0.FrameThis0Package
 Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
-frameThis0.kt:15
+frameThis0.kt:16
 Compile bytecode for val1
 Compile bytecode for val2
 Compile bytecode for prop1
 Compile bytecode for prop1 + val1 + val2
+Compile bytecode for myFun()
 package frameThis0
 
 fun main(args: Array<String>) {
@@ -14,6 +15,7 @@ fun main(args: Array<String>) {
 
 class A {
     val prop1 = 1
+    fun myFun() = 1
 
     fun test() {
         val val1 = 1

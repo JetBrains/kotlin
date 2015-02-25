@@ -11,8 +11,8 @@ fun test() {
 
 Resolved call:
 
-Resulting descriptor: val baz: Foo defined in Foo.<class-object-for-Foo>
+Resulting descriptor: val baz: Foo defined in Foo.Default
 
 Explicit receiver kind = DISPATCH_RECEIVER
-Dispatch receiver = Foo {<class-object-for-Foo>}
+Dispatch receiver = Foo {Default}
 Extension receiver = NO_RECEIVER

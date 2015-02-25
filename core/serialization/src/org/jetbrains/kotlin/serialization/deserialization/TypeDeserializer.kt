@@ -90,8 +90,14 @@ public class TypeDeserializer(
             typeParameterDescriptors().get(proto.getId())?.getTypeConstructor() ?:
             parent?.typeParameterTypeConstructor(proto)
 
-    private fun computeClassDescriptor(fqNameIndex: Int): ClassDescriptor? =
-            c.components.moduleDescriptor.findClassAcrossModuleDependencies(c.nameResolver.getClassId(fqNameIndex))
+    private fun computeClassDescriptor(fqNameIndex: Int): ClassDescriptor? {
+        val id = c.nameResolver.getClassId(fqNameIndex)
+        if (id.isLocal()) {
+            // Local classes can't be found in scopes
+            return c.components.deserializeClass(id)
+        }
+        return c.components.moduleDescriptor.findClassAcrossModuleDependencies(id)
+    }
 
     fun typeArguments(protos: List<ProtoBuf.Type.Argument>): List<TypeProjection> =
             protos.map { proto ->

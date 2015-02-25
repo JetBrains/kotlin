@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.psi.JetReferenceExpression;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.StatementFilter;
+import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker;
 import org.jetbrains.kotlin.resolve.calls.context.*;
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
 import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
@@ -56,13 +57,14 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments,
             @NotNull CallChecker callChecker,
+            @NotNull AdditionalTypeChecker additionalTypeChecker,
             @NotNull StatementFilter statementFilter,
             @NotNull Collection<MutableResolvedCall<F>> resolvedCalls,
             boolean isAnnotationContext,
             boolean collectAllCandidates
     ) {
         super(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, resolutionResultsCache,
-              dataFlowInfoForArguments, callChecker, statementFilter, isAnnotationContext, collectAllCandidates);
+              dataFlowInfoForArguments, callChecker, additionalTypeChecker, statementFilter, isAnnotationContext, collectAllCandidates);
         this.lazyCandidates = lazyCandidates;
         this.resolvedCalls = resolvedCalls;
         this.tracing = tracing;
@@ -77,7 +79,7 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
              context.trace, context.scope, context.call,
              context.expectedType, context.dataFlowInfo, context.contextDependency, context.checkArguments,
              context.resolutionResultsCache, context.dataFlowInfoForArguments,
-             context.callChecker, context.statementFilter, Lists.<MutableResolvedCall<F>>newArrayList(),
+             context.callChecker, context.additionalTypeChecker, context.statementFilter, Lists.<MutableResolvedCall<F>>newArrayList(),
              context.isAnnotationContext, context.collectAllCandidates);
     }
 
@@ -121,7 +123,7 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
     ) {
         return new ResolutionTask<D, F>(
                 lazyCandidates, tracing, trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments,
-                resolutionResultsCache, dataFlowInfoForArguments, callChecker, statementFilter, resolvedCalls,
+                resolutionResultsCache, dataFlowInfoForArguments, callChecker, additionalTypeChecker, statementFilter, resolvedCalls,
                 isAnnotationContext, collectAllCandidates);
     }
 
@@ -132,7 +134,7 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
     public ResolutionTask<D, F> replaceCall(@NotNull Call newCall) {
         return new ResolutionTask<D, F>(
                 lazyCandidates, tracing, trace, scope, newCall, expectedType, dataFlowInfo, contextDependency, checkArguments,
-                resolutionResultsCache, dataFlowInfoForArguments, callChecker, statementFilter, resolvedCalls,
+                resolutionResultsCache, dataFlowInfoForArguments, callChecker, additionalTypeChecker, statementFilter, resolvedCalls,
                 isAnnotationContext, collectAllCandidates);
     }
 

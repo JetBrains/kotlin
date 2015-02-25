@@ -35,9 +35,9 @@ class Outer {
 
     }<!>
 
-    <!REDECLARATION!>object <!SYNTAX!><!>{
+    <!REDECLARATION!>object<!> <!SYNTAX!><!>{
 
-    }<!>
+    }
 
     <!REDECLARATION!>trait<!SYNTAX!><!> {
 

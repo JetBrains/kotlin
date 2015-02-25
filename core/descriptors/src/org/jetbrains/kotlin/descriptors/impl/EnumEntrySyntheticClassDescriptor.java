@@ -23,7 +23,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.resolve.DescriptorFactory;
 import org.jetbrains.kotlin.resolve.OverridingUtil;
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
@@ -44,12 +43,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
-    private final ClassKind kind;
     private final TypeConstructor typeConstructor;
     private final ConstructorDescriptor primaryConstructor;
     private final JetScope scope;
     private final JetScope staticScope = new StaticScopeForKotlinClass(this);
-    private final EnumEntrySyntheticClassDescriptor classObjectDescriptor;
     private final NotNullLazyValue<Collection<Name>> enumMemberNames;
 
     /**
@@ -66,7 +63,7 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
     ) {
         JetType enumType = enumClass.getDefaultType();
 
-        return new EnumEntrySyntheticClassDescriptor(storageManager, enumClass, enumType, name, ClassKind.ENUM_ENTRY, enumMemberNames, source);
+        return new EnumEntrySyntheticClassDescriptor(storageManager, enumClass, enumType, name, enumMemberNames, source);
     }
 
     private EnumEntrySyntheticClassDescriptor(
@@ -74,12 +71,11 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
             @NotNull ClassDescriptor containingClass,
             @NotNull JetType supertype,
             @NotNull Name name,
-            @NotNull ClassKind kind,
             @NotNull NotNullLazyValue<Collection<Name>> enumMemberNames,
             @NotNull SourceElement source
     ) {
         super(storageManager, containingClass, name, source);
-        this.kind = kind;
+        assert containingClass.getKind() == ClassKind.ENUM_CLASS;
 
         this.typeConstructor =
                 TypeConstructorImpl.createForClass(this, getAnnotations(), true, "enum entry", Collections.<TypeParameterDescriptor>emptyList(),
@@ -91,12 +87,6 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
         ConstructorDescriptorImpl primaryConstructor = DescriptorFactory.createPrimaryConstructorForObject(this, source);
         primaryConstructor.setReturnType(getDefaultType());
         this.primaryConstructor = primaryConstructor;
-
-        this.classObjectDescriptor =
-                kind == ClassKind.CLASS_OBJECT
-                ? null
-                : new EnumEntrySyntheticClassDescriptor(storageManager, this, getDefaultType(), SpecialNames.getClassObjectName(name),
-                                                        ClassKind.CLASS_OBJECT, enumMemberNames, SourceElement.NO_SOURCE);
     }
 
     @NotNull
@@ -125,14 +115,14 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
 
     @Nullable
     @Override
-    public ClassDescriptor getClassObjectDescriptor() {
-        return classObjectDescriptor;
+    public ClassDescriptor getDefaultObjectDescriptor() {
+        return null;
     }
 
     @NotNull
     @Override
     public ClassKind getKind() {
-        return kind;
+        return ClassKind.ENUM_ENTRY;
     }
 
     @NotNull

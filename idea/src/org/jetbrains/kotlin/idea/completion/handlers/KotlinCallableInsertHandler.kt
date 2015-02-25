@@ -77,7 +77,7 @@ public abstract class KotlinCallableInsertHandler : BaseDeclarationInsertHandler
 
                     if (DescriptorUtils.isTopLevelDeclaration(descriptor)) {
                         ApplicationManager.getApplication()?.runWriteAction {
-                            ImportInsertHelper.getInstance(context.getProject()).addImportDirectiveIfNeeded(DescriptorUtils.getFqNameSafe(descriptor), file)
+                            ImportInsertHelper.getInstance(context.getProject()).importDescriptor(file, descriptor)
                         }
                     }
                 }
@@ -269,7 +269,7 @@ object CastReceiverInsertHandler : KotlinCallableInsertHandler() {
 
             val expr = receiver.replace(parentCast) as JetParenthesizedExpression
 
-            ShortenReferences.process((expr.getExpression() as JetBinaryExpressionWithTypeRHS).getRight())
+            ShortenReferences.DEFAULT.process((expr.getExpression() as JetBinaryExpressionWithTypeRHS).getRight())
         }
     }
 }

@@ -6,13 +6,6 @@ internal final enum class In : kotlin.Enum<test.In> {
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.In): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-
-        public class object <class-object-for-A> : test.In.A {
-            /*primary*/ private constructor <class-object-for-A>()
-            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.In): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-        }
     }
 
     /*primary*/ private constructor In()
@@ -31,13 +24,6 @@ private final enum class Pr : kotlin.Enum<test.Pr> {
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Pr): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-
-        public class object <class-object-for-A> : test.Pr.A {
-            /*primary*/ private constructor <class-object-for-A>()
-            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Pr): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-        }
     }
 
     /*primary*/ private constructor Pr()
@@ -56,13 +42,6 @@ public final enum class Pu : kotlin.Enum<test.Pu> {
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Pu): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-
-        public class object <class-object-for-A> : test.Pu.A {
-            /*primary*/ private constructor <class-object-for-A>()
-            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Pu): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-        }
     }
 
     /*primary*/ private constructor Pu()

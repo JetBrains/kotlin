@@ -22,7 +22,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.load.java.AbiVersionUtil;
 import org.jetbrains.kotlin.load.java.JvmAbi;
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinClass;
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 
 import java.lang.annotation.Annotation;
@@ -30,7 +33,9 @@ import java.util.Collection;
 import java.util.List;
 
 import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.ABI_VERSION_FIELD_NAME;
-import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass;
+import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.KIND_FIELD_NAME;
+import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinClass.Kind.ANONYMOUS_OBJECT;
+import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinClass.Kind.LOCAL_CLASS;
 import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass.Kind.*;
 
 public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
@@ -43,114 +48,166 @@ public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
     }
 
     public void testPackagePart() {
-        doTest("fun foo() = 42",
-               "$",
-               PACKAGE_PART, false);
+        doTestKotlinSyntheticClass(
+                "fun foo() = 42",
+                "$",
+                PACKAGE_PART
+        );
     }
 
     public void testTraitImpl() {
-        doTest("trait A { fun foo() = 42 }",
-               JvmAbi.TRAIT_IMPL_SUFFIX,
-               TRAIT_IMPL, true);
+        doTestKotlinSyntheticClass(
+                "trait A { fun foo() = 42 }",
+                JvmAbi.TRAIT_IMPL_SUFFIX,
+                TRAIT_IMPL
+        );
     }
 
     public void testSamWrapper() {
-        doTest("val f = {}\nval foo = Thread(f)",
-               "$sam",
-               SAM_WRAPPER, false);
+        doTestKotlinSyntheticClass(
+                "val f = {}\nval foo = Thread(f)",
+                "$sam",
+                SAM_WRAPPER
+        );
     }
 
     public void testSamLambda() {
-        doTest("val foo = Thread { }",
-               "$1",
-               SAM_LAMBDA, true);
+        doTestKotlinSyntheticClass(
+                "val foo = Thread { }",
+                "$1",
+                SAM_LAMBDA
+        );
     }
 
     public void testCallableReferenceWrapper() {
-        doTest("val f = String::get",
-               "$1",
-               CALLABLE_REFERENCE_WRAPPER, true);
+        doTestKotlinSyntheticClass(
+                "val f = String::get",
+                "$1",
+                CALLABLE_REFERENCE_WRAPPER
+        );
     }
 
     public void testLocalFunction() {
-        doTest("fun foo() { fun bar() {} }",
-               "$1",
-               LOCAL_FUNCTION, true);
+        doTestKotlinSyntheticClass(
+                "fun foo() { fun bar() {} }",
+                "$1",
+                LOCAL_FUNCTION
+        );
     }
 
     public void testAnonymousFunction() {
-        doTest("val f = {}",
-               "$1",
-               ANONYMOUS_FUNCTION, true);
+        doTestKotlinSyntheticClass(
+                "val f = {}",
+                "$1",
+                ANONYMOUS_FUNCTION
+        );
     }
 
     public void testLocalClass() {
-        doTest("fun foo() { class Local }",
-               "Local",
-               LOCAL_CLASS, true);
+        doTestKotlinClass(
+                "fun foo() { class Local }",
+                "Local",
+                LOCAL_CLASS
+        );
     }
 
     public void testLocalTraitImpl() {
-        doTest("fun foo() { trait Local { fun bar() = 42 } }",
-               "Local$$TImpl",
-               LOCAL_CLASS, true);
+        doTestKotlinSyntheticClass(
+                "fun foo() { trait Local { fun bar() = 42 } }",
+                "Local$$TImpl.class",
+                LOCAL_TRAIT_IMPL
+        );
     }
 
     public void testLocalTraitInterface() {
-        doTest("fun foo() { trait Local { fun bar() = 42 } }",
-               "Local",
-               LOCAL_CLASS, true);
+        doTestKotlinClass(
+                "fun foo() { trait Local { fun bar() = 42 } }",
+                "Local.class",
+                LOCAL_CLASS
+        );
     }
 
     public void testInnerClassOfLocalClass() {
-        doTest("fun foo() { class Local { inner class Inner } }",
-               "Inner",
-               LOCAL_CLASS, true);
+        doTestKotlinClass(
+                "fun foo() { class Local { inner class Inner } }",
+                "Inner",
+                LOCAL_CLASS
+        );
     }
 
     public void testAnonymousObject() {
-        doTest("val o = object {}",
-               "$1",
-               ANONYMOUS_OBJECT, true);
+        doTestKotlinClass(
+                "val o = object {}",
+                "$1",
+                ANONYMOUS_OBJECT
+        );
+    }
+
+    public void testWhenMappings() {
+        doTestKotlinSyntheticClass(
+                "enum class E { A }\n" +
+                "val x = when (E.A) { E.A -> 1; else -> 0; }",
+                "WhenMappings",
+                WHEN_ON_ENUM_MAPPINGS
+        );
+    }
+
+    private void doTestKotlinSyntheticClass(
+            @NotNull String code,
+            @NotNull String classFilePart,
+            @NotNull KotlinSyntheticClass.Kind expectedKind
+    ) {
+        doTest(code, classFilePart, KotlinSyntheticClass.CLASS_NAME, expectedKind.toString());
+    }
+
+    private void doTestKotlinClass(
+            @NotNull String code,
+            @NotNull String classFilePart,
+            @NotNull KotlinClass.Kind expectedKind
+    ) {
+        doTest(code, classFilePart, KotlinClass.CLASS_NAME, expectedKind.toString());
     }
 
     private void doTest(
             @NotNull String code,
-            @NotNull final String classNamePart,
-            @NotNull KotlinSyntheticClass.Kind expectedKind,
-            final boolean endWithNotContains
+            @NotNull final String classFilePart,
+            @NotNull JvmClassName annotationName,
+            @NotNull String expectedKind
     ) {
         loadText("package " + PACKAGE_NAME + "\n\n" + code);
         List<OutputFile> output = generateClassesInFile().asList();
         Collection<OutputFile> files = Collections2.filter(output, new Predicate<OutputFile>() {
             @Override
             public boolean apply(OutputFile file) {
-                String path = file.getRelativePath();
-                return endWithNotContains ? path.endsWith(classNamePart + ".class") : path.contains(classNamePart);
+                return file.getRelativePath().contains(classFilePart);
             }
         });
-        assertFalse("No files with \"" + classNamePart + "\" in the name are found: " + output, files.isEmpty());
-        assertTrue("Exactly one file with \"" + classNamePart + "\" in the name should be found: " + files, files.size() == 1);
+        assertFalse("No files with \"" + classFilePart + "\" in the name are found: " + output, files.isEmpty());
+        assertTrue("Exactly one file with \"" + classFilePart + "\" in the name should be found: " + files, files.size() == 1);
 
         String path = files.iterator().next().getRelativePath();
         String fqName = path.substring(0, path.length() - ".class".length()).replace('/', '.');
         Class<?> aClass = generateClass(fqName);
-        assertAnnotatedWithKind(aClass, expectedKind);
+        assertAnnotatedWithKind(aClass, annotationName.getFqNameForClassNameWithoutDollars().asString(), expectedKind);
     }
 
-    private void assertAnnotatedWithKind(@NotNull Class<?> aClass, @NotNull KotlinSyntheticClass.Kind expectedKind) {
-        Class<? extends Annotation> annotationClass = loadAnnotationClassQuietly(
-                KotlinSyntheticClass.CLASS_NAME.getFqNameForClassNameWithoutDollars().asString());
-        assertTrue("No KotlinSyntheticClass annotation found", aClass.isAnnotationPresent(annotationClass));
+    private void assertAnnotatedWithKind(
+            @NotNull Class<?> aClass,
+            @NotNull String annotationFqName,
+            @NotNull String expectedKind
+    ) {
+        Class<? extends Annotation> annotationClass = loadAnnotationClassQuietly(annotationFqName);
+        assertTrue("No annotation " + annotationFqName + " found in " + aClass, aClass.isAnnotationPresent(annotationClass));
 
         Annotation annotation = aClass.getAnnotation(annotationClass);
 
         Integer version = (Integer) CodegenTestUtil.getAnnotationAttribute(annotation, ABI_VERSION_FIELD_NAME);
         assertNotNull(version);
-        assertTrue("KotlinSyntheticClass annotation is written with an unsupported format", AbiVersionUtil.isAbiVersionCompatible(version));
+        assertTrue("Annotation " + annotationFqName + " is written with an unsupported format",
+                   AbiVersionUtil.isAbiVersionCompatible(version));
 
-        Object actualKind = CodegenTestUtil.getAnnotationAttribute(annotation, KotlinSyntheticClass.KIND_FIELD_NAME.asString());
+        Object actualKind = CodegenTestUtil.getAnnotationAttribute(annotation, KIND_FIELD_NAME);
         assertNotNull(actualKind);
-        assertEquals("KotlinSyntheticClass annotation has the wrong kind", expectedKind.toString(), actualKind.toString());
+        assertEquals("Annotation " + annotationFqName + " has the wrong kind", expectedKind, actualKind.toString());
     }
 }

@@ -4,7 +4,7 @@ class A {
   class object {
     val x = 1
   }
-  <error descr="[MANY_CLASS_OBJECTS] Only one class object is allowed per class">class object</error> { // error
+  <error descr="[MANY_CLASS_OBJECTS] Only one class object is allowed per class">class object Another</error> { // error
     val x = 1
   }
 }

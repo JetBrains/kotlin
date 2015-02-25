@@ -13,7 +13,7 @@
       </element>
       <element id="extracted-dir" path="$PROJECT_DIR$/dependencies/cli-parser-1.1.1.jar" path-in-jar="/" />
       <element id="module-output" name="cli-common" />
-      <element id="module-output" name="ide-compiler-runner" />
+      <element id="module-output" name="idea-jps-common" />
       <element id="module-output" name="jps-plugin" />
       <element id="module-output" name="preloader" />
       <element id="module-output" name="util" />

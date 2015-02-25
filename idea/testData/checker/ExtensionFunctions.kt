@@ -58,7 +58,7 @@ fun Int.foo() = this
 
             command.foo
 
-            command.equals(null)
+            command<error descr="[UNSAFE_CALL] Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type Command?">.</error>equals(null)
             command?.equals(null)
             command.equals1(null)
             command?.equals1(null)

@@ -69,7 +69,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
     ) {
         List<DescriptorClassMember> members = new ArrayList<DescriptorClassMember>();
         for (CallableMemberDescriptor memberDescriptor : missingImplementations) {
-            PsiElement declaration = DescriptorToDeclarationUtil.INSTANCE$.getDeclaration(file, memberDescriptor);
+            PsiElement declaration = DescriptorToDeclarationUtil.INSTANCE$.getDeclaration(file.getProject(), memberDescriptor);
             if (declaration == null) {
                 LOG.error("Can not find declaration for descriptor " + memberDescriptor);
             }
@@ -114,7 +114,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
                     elementsToCompact.add((JetElement) added);
                 }
 
-                ShortenReferences.INSTANCE$.process(elementsToCompact);
+                ShortenReferences.DEFAULT.process(elementsToCompact);
 
                 if (firstGenerated == null) return;
 

@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="cli-parser">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/dependencies/cli-parser-1.1.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/dependencies/cli-parser-1.1.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

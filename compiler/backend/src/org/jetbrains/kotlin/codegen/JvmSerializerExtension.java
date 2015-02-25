@@ -19,29 +19,33 @@ package org.jetbrains.kotlin.codegen;
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.serialization.deserialization.NameResolver;
-import org.jetbrains.kotlin.serialization.ProtoBuf;
-import org.jetbrains.kotlin.serialization.SerializerExtension;
-import org.jetbrains.kotlin.serialization.StringTable;
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor;
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor;
+import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.load.kotlin.SignatureDeserializer;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.serialization.ProtoBuf;
+import org.jetbrains.kotlin.serialization.SerializerExtension;
+import org.jetbrains.kotlin.serialization.StringTable;
+import org.jetbrains.kotlin.serialization.deserialization.NameResolver;
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor;
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor;
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 
 import java.util.Arrays;
 
+import static org.jetbrains.kotlin.codegen.AsmUtil.shortNameByAsmType;
 import static org.jetbrains.kotlin.codegen.JvmSerializationBindings.*;
 
 public class JvmSerializerExtension extends SerializerExtension {
     private final JvmSerializationBindings bindings;
+    private final JetTypeMapper typeMapper;
 
-    public JvmSerializerExtension(@NotNull JvmSerializationBindings bindings) {
+    public JvmSerializerExtension(@NotNull JvmSerializationBindings bindings, @NotNull JetTypeMapper typeMapper) {
         this.bindings = bindings;
+        this.typeMapper = typeMapper;
     }
 
     @Override
@@ -64,6 +68,12 @@ public class JvmSerializerExtension extends SerializerExtension {
         if (index != null) {
             proto.setExtension(JvmProtoBuf.index, index);
         }
+    }
+
+    @Override
+    @NotNull
+    public String getLocalClassName(@NotNull ClassDescriptor descriptor) {
+        return shortNameByAsmType(typeMapper.mapClass(descriptor));
     }
 
     private void saveSignature(

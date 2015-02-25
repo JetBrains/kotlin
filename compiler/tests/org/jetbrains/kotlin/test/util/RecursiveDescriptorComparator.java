@@ -20,7 +20,6 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -86,8 +85,9 @@ public class RecursiveDescriptorComparator {
 
     public String serializeRecursively(@NotNull DeclarationDescriptor declarationDescriptor) {
         StringBuilder result = new StringBuilder();
-        appendDeclarationRecursively(declarationDescriptor, DescriptorUtils.getContainingModule(declarationDescriptor), new Printer(result, 1), true);
-        return result.toString();
+        appendDeclarationRecursively(declarationDescriptor, DescriptorUtils.getContainingModule(declarationDescriptor),
+                                     new Printer(result, 1), true);
+        return JetTestUtils.replaceHashWithStar(result.toString());
     }
 
     private void appendDeclarationRecursively(
@@ -116,7 +116,7 @@ public class RecursiveDescriptorComparator {
             if (descriptor instanceof ClassDescriptor) {
                 ClassDescriptor klass = (ClassDescriptor) descriptor;
                 appendSubDescriptors(descriptor, module,
-                                     klass.getDefaultType().getMemberScope(), getConstructorsAndClassObject(klass), printer);
+                                     klass.getDefaultType().getMemberScope(), klass.getConstructors(), printer);
                 JetScope staticScope = klass.getStaticScope();
                 if (!staticScope.getAllDescriptors().isEmpty()) {
                     printer.println();
@@ -164,14 +164,6 @@ public class RecursiveDescriptorComparator {
         }
     }
 
-    @NotNull
-    private static List<DeclarationDescriptor> getConstructorsAndClassObject(@NotNull ClassDescriptor klass) {
-        List<DeclarationDescriptor> constructorsAndClassObject = Lists.newArrayList();
-        constructorsAndClassObject.addAll(klass.getConstructors());
-        ContainerUtil.addIfNotNull(constructorsAndClassObject, klass.getClassObjectDescriptor());
-        return constructorsAndClassObject;
-    }
-
     private boolean shouldSkip(@NotNull DeclarationDescriptor subDescriptor) {
         boolean isFunctionFromAny = subDescriptor.getContainingDeclaration() instanceof ClassDescriptor
                                     && subDescriptor instanceof FunctionDescriptor
@@ -183,7 +175,7 @@ public class RecursiveDescriptorComparator {
             @NotNull DeclarationDescriptor descriptor,
             @NotNull ModuleDescriptor module,
             @NotNull JetScope memberScope,
-            @NotNull Collection<DeclarationDescriptor> extraSubDescriptors,
+            @NotNull Collection<? extends DeclarationDescriptor> extraSubDescriptors,
             @NotNull Printer printer
     ) {
         if (!module.equals(DescriptorUtils.getContainingModule(descriptor))) {

@@ -18,5 +18,9 @@ package org.jetbrains.kotlin.idea.inspections
 
 import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArguments
 import org.jetbrains.kotlin.psi.JetTypeArgumentList
+import com.intellij.codeInspection.ProblemHighlightType
 
-public class RemoveExplicitTypeArgsInspection : IntentionBasedInspection<JetTypeArgumentList>(RemoveExplicitTypeArguments())
+public class RemoveExplicitTypeArgsInspection : IntentionBasedInspection<JetTypeArgumentList>(RemoveExplicitTypeArguments()) {
+    override val problemHighlightType: ProblemHighlightType
+        get() = ProblemHighlightType.LIKE_UNUSED_SYMBOL
+}

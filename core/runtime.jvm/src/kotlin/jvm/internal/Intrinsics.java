@@ -16,7 +16,6 @@
 
 package kotlin.jvm.internal;
 
-import kotlin.IntRange;
 import kotlin.KotlinNullPointerException;
 
 import java.util.Arrays;
@@ -92,12 +91,6 @@ public class Intrinsics {
 
     public static boolean areEqual(Object first, Object second) {
         return first == null ? second == null : first.equals(second);
-    }
-
-    // This method is not used from generated code anymore but kept for backwards compatibility
-    @Deprecated
-    public static IntRange arrayIndices(int length) {
-        return new IntRange(0, length - 1);
     }
 
     private static void throwUndefinedForReified() {

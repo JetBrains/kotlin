@@ -132,7 +132,7 @@ public class ChangeFunctionLiteralReturnTypeFix extends JetIntentionAction<JetFu
         if (functionLiteralReturnTypeRef != null) {
             JetTypeReference newTypeRef = JetPsiFactory(file).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type));
             newTypeRef = (JetTypeReference) functionLiteralReturnTypeRef.replace(newTypeRef);
-            ShortenReferences.INSTANCE$.process(newTypeRef);
+            ShortenReferences.DEFAULT.process(newTypeRef);
         }
         if (appropriateQuickFix != null && appropriateQuickFix.isAvailable(project, editor, file)) {
             appropriateQuickFix.invoke(project, editor, file);

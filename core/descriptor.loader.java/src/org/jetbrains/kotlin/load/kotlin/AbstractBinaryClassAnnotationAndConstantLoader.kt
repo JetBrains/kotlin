@@ -62,7 +62,7 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
 
     override fun loadClassAnnotations(classProto: ProtoBuf.Class, nameResolver: NameResolver): List<A> {
         val classId = nameResolver.getClassId(classProto.getFqName())
-        val kotlinClass = findKotlinClassById(classId)
+        val kotlinClass = kotlinClassFinder.findKotlinClass(classId)
         if (kotlinClass == null) {
             // This means that the resource we're constructing the descriptor from is no longer present: KotlinClassFinder had found the
             // class earlier, but it can't now
@@ -160,19 +160,19 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
         val classId = nameResolver.getClassId(classProto.getFqName())
         if (classKind == ProtoBuf.Class.Kind.CLASS_OBJECT && isStaticFieldInOuter(proto)) {
             // Backing fields of properties of a class object are generated in the outer class
-            return findKotlinClassById(classId.getOuterClassId())
+            return kotlinClassFinder.findKotlinClass(classId.getOuterClassId())
         }
         else if (classKind == ProtoBuf.Class.Kind.TRAIT && annotatedCallableKind == AnnotatedCallableKind.PROPERTY) {
             if (proto.hasExtension(implClassName)) {
                 val parentPackageFqName = classId.getPackageFqName()
                 val tImplName = nameResolver.getName(proto.getExtension(implClassName))
                 // TODO: store accurate name for nested traits
-                return findKotlinClassById(ClassId(parentPackageFqName, tImplName))
+                return kotlinClassFinder.findKotlinClass(ClassId(parentPackageFqName, tImplName))
             }
             return null
         }
 
-        return findKotlinClassById(classId)
+        return kotlinClassFinder.findKotlinClass(classId)
     }
 
     private fun findPackagePartClass(
@@ -181,13 +181,9 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
             nameResolver: NameResolver
     ): KotlinJvmBinaryClass? {
         if (proto.hasExtension(implClassName)) {
-            return findKotlinClassById(ClassId(packageFqName, nameResolver.getName(proto.getExtension(implClassName))))
+            return kotlinClassFinder.findKotlinClass(ClassId(packageFqName, nameResolver.getName(proto.getExtension(implClassName))))
         }
         return null
-    }
-
-    private fun findKotlinClassById(classId: ClassId): KotlinJvmBinaryClass? {
-        return kotlinClassFinder.findKotlinClass(DeserializedResolverUtils.kotlinClassIdToJavaClassId(classId))
     }
 
     private fun isStaticFieldInOuter(proto: ProtoBuf.Callable): Boolean {

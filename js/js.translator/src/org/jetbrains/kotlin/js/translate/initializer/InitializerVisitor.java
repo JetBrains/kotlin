@@ -65,7 +65,9 @@ public final class InitializerVisitor extends TranslatorVisitor<Void> {
 
     @Override
     public Void visitObjectDeclaration(@NotNull JetObjectDeclaration declaration, @NotNull TranslationContext context) {
-        InitializerUtils.generateObjectInitializer(declaration, result, context);
+        if (!declaration.isClassObject()) {
+            InitializerUtils.generateObjectInitializer(declaration, result, context);
+        }
         return null;
     }
 }

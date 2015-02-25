@@ -31,8 +31,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.JetDelegationSpecifierList
 import org.jetbrains.kotlin.psi.JetDelegatorToSuperClass
 import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.name.SpecialNames.getClassObjectName
-import org.jetbrains.kotlin.psi.JetClassObject
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinModifierListStubImpl
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
@@ -68,6 +66,7 @@ private class ClassClsStubBuilder(
             supertypeIds
         }
     }
+    private val classObjectName = if (classProto.hasClassObjectName()) c.nameResolver.getName(classProto.getClassObjectName()) else null
 
     private val classOrObjectStub = createClassOrObjectStubAndModifierListStub()
 
@@ -80,20 +79,10 @@ private class ClassClsStubBuilder(
     }
 
     private fun createClassOrObjectStubAndModifierListStub(): StubElement<out PsiElement> {
-        val isClassObject = classKind == ProtoBuf.Class.Kind.CLASS_OBJECT
-        if (isClassObject) {
-            val classObjectStub = KotlinPlaceHolderStubImpl<JetClassObject>(parentStub, JetStubElementTypes.CLASS_OBJECT)
-            val modifierList = createModifierListForClass(classObjectStub)
-            val objectDeclarationStub = doCreateClassOrObjectStub(classObjectStub)
-            createAnnotationStubs(c.components.annotationLoader.loadClassAnnotations(classProto, c.nameResolver), modifierList)
-            return objectDeclarationStub
-        }
-        else {
-            val classOrObjectStub = doCreateClassOrObjectStub(parentStub)
-            val modifierList = createModifierListForClass(classOrObjectStub)
-            createAnnotationStubs(c.components.annotationLoader.loadClassAnnotations(classProto, c.nameResolver), modifierList)
-            return classOrObjectStub
-        }
+        val classOrObjectStub = doCreateClassOrObjectStub()
+        val modifierList = createModifierListForClass(classOrObjectStub)
+        createAnnotationStubs(c.components.annotationLoader.loadClassAnnotations(classProto, c.nameResolver), modifierList)
+        return classOrObjectStub
     }
 
     private fun createModifierListForClass(parent: StubElement<out PsiElement>): KotlinModifierListStubImpl {
@@ -110,10 +99,10 @@ private class ClassClsStubBuilder(
         return createModifierListStubForDeclaration(parent, classProto.getFlags(), relevantFlags, additionalModifiers)
     }
 
-    private fun doCreateClassOrObjectStub(parent: StubElement<out PsiElement>): StubElement<out PsiElement> {
+    private fun doCreateClassOrObjectStub(): StubElement<out PsiElement> {
         val isClassObject = classKind == ProtoBuf.Class.Kind.CLASS_OBJECT
-        val fqName = if (!isClassObject) outerContext.memberFqNameProvider.getMemberFqName(classId.getRelativeClassName().shortName()) else null
-        val shortName = fqName?.shortName()?.ref()
+        val fqName = outerContext.containerFqName.child(classId.getRelativeClassName().shortName())
+        val shortName = fqName.shortName()?.ref()
         val superTypeRefs = supertypeIds.filter {
             //TODO: filtering function types should go away
             !KotlinBuiltIns.isExactFunctionType(it.asSingleFqName()) && !KotlinBuiltIns.isExactExtensionFunctionType(it.asSingleFqName())
@@ -121,8 +110,8 @@ private class ClassClsStubBuilder(
         return when (classKind) {
             ProtoBuf.Class.Kind.OBJECT, ProtoBuf.Class.Kind.CLASS_OBJECT -> {
                 KotlinObjectStubImpl(
-                        parent, shortName, fqName, superTypeRefs,
-                        isTopLevel = classId.isTopLevelClass(),
+                        parentStub, shortName, fqName, superTypeRefs,
+                        isTopLevel = !classId.isNestedClass(),
                         isClassObject = isClassObject,
                         isLocal = false,
                         isObjectLiteral = false
@@ -131,14 +120,14 @@ private class ClassClsStubBuilder(
             else -> {
                 KotlinClassStubImpl(
                         JetClassElementType.getStubType(classKind == ProtoBuf.Class.Kind.ENUM_ENTRY),
-                        parent,
-                        fqName?.ref(),
+                        parentStub,
+                        fqName.ref(),
                         shortName,
                         superTypeRefs,
                         isTrait = classKind == ProtoBuf.Class.Kind.TRAIT,
                         isEnumEntry = classKind == ProtoBuf.Class.Kind.ENUM_ENTRY,
                         isLocal = false,
-                        isTopLevel = classId.isTopLevelClass()
+                        isTopLevel = !classId.isNestedClass()
                 )
             }
         }
@@ -181,11 +170,11 @@ private class ClassClsStubBuilder(
     }
 
     private fun createClassObjectStub(classBody: KotlinPlaceHolderStubImpl<JetClassBody>) {
-        if (!classProto.hasClassObject() || classKind == ProtoBuf.Class.Kind.OBJECT) {
+        if (classObjectName == null) {
             return
         }
 
-        val classObjectId = classId.createNestedClassId(getClassObjectName(classId.getRelativeClassName().shortName()))
+        val classObjectId = classId.createNestedClassId(classObjectName)
         createNestedClassStub(classBody, classObjectId)
     }
 
@@ -195,7 +184,7 @@ private class ClassClsStubBuilder(
             KotlinClassStubImpl(
                     JetStubElementTypes.ENUM_ENTRY,
                     classBody,
-                    qualifiedName = c.memberFqNameProvider.getMemberFqName(name).ref(),
+                    qualifiedName = c.containerFqName.child(name).ref(),
                     name = name.ref(),
                     superNames = array(),
                     isTrait = false,
@@ -208,7 +197,7 @@ private class ClassClsStubBuilder(
 
     private fun createCallableMemberStubs(classBody: KotlinPlaceHolderStubImpl<JetClassBody>) {
         val container = ProtoContainer(classProto, null)
-        for (callableProto in sortCallableStubs(classProto.getMemberList())) {
+        for (callableProto in classProto.getMemberList()) {
             createCallableStub(classBody, callableProto, c, container)
         }
     }
@@ -221,8 +210,11 @@ private class ClassClsStubBuilder(
 
     private fun createInnerAndNestedClasses(classBody: KotlinPlaceHolderStubImpl<JetClassBody>) {
         classProto.getNestedClassNameList().forEach { id ->
-            val nestedClassId = classId.createNestedClassId(c.nameResolver.getName(id))
-            createNestedClassStub(classBody, nestedClassId)
+            val nestedClassName = c.nameResolver.getName(id)
+            if (nestedClassName != classObjectName) {
+                val nestedClassId = classId.createNestedClassId(nestedClassName)
+                createNestedClassStub(classBody, nestedClassId)
+            }
         }
     }
 

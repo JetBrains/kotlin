@@ -84,7 +84,13 @@ class KotlinEvaluateExpressionCache(val project: Project) {
         }
     }
 
-    data class CompiledDataDescriptor(val bytecodes: ByteArray, val sourcePosition: SourcePosition, val funName: String, val parameters: ParametersDescriptor)
+    data class CompiledDataDescriptor(
+            val bytecodes: ByteArray,
+            val additionalClasses: List<Pair<String, ByteArray>>,
+            val sourcePosition: SourcePosition,
+            val funName: String,
+            val parameters: ParametersDescriptor
+    )
 
     class ParametersDescriptor : Iterable<Pair<String, JetType>> {
         private val list = ArrayList<Pair<String, JetType>>()

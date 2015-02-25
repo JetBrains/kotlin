@@ -6,6 +6,7 @@ fun main(args: Array<String>) {
 
 class A {
     val prop = 1
+    fun myFun() = 1
 }
 
 fun A.foo() {
@@ -16,4 +17,7 @@ fun A.foo() {
 // PRINT_FRAME
 
 // EXPRESSION: prop
+// RESULT: 1: I
+
+// EXPRESSION: myFun()
 // RESULT: 1: I

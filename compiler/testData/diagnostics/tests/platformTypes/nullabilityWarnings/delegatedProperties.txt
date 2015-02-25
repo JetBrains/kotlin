@@ -1,0 +1,5 @@
+package
+
+internal var A: kotlin.String!
+internal var B: kotlin.String!
+internal var C: kotlin.String!

@@ -33,6 +33,7 @@ import com.theoryinpractice.testng.configuration.TestNGConfigurationProducer;
 import com.theoryinpractice.testng.util.TestNGUtil;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.asJava.LightClassUtil;
+import org.jetbrains.kotlin.idea.project.ProjectStructureUtil;
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil;
 import org.jetbrains.kotlin.psi.*;
 
@@ -61,6 +62,10 @@ public class JetTestNgConfigurationProducer extends TestNGConfigurationProducer 
         }
 
         JetFile jetFile = (JetFile) leaf.getContainingFile();
+
+        if (ProjectStructureUtil.isJsKotlinModule(jetFile)) {
+            return false;
+        }
 
         JetNamedFunction function = PsiTreeUtil.getParentOfType(leaf, JetNamedFunction.class, false);
         if (function != null) {

@@ -27,7 +27,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
-import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
@@ -36,12 +35,9 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.load.java.JavaVisibilities;
 import org.jetbrains.kotlin.load.java.JvmAbi;
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
-import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationsPackage;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
@@ -62,7 +58,6 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isInterface;
-import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.asmTypeForAnonymousClass;
 import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.ABI_VERSION_FIELD_NAME;
 import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
@@ -527,10 +522,6 @@ public class AsmUtil {
             return StackValue.cmp(opToken, leftType, left, right);
         }
 
-        if (opToken == JetTokens.EQEQEQ || opToken == JetTokens.EXCLEQEQEQ) {
-            return StackValue.cmp(opToken, leftType, left, right);
-        }
-
         return StackValue.operation(Type.BOOLEAN_TYPE, new Function1<InstructionAdapter, Unit>() {
             @Override
             public Unit invoke(InstructionAdapter v) {
@@ -831,9 +822,11 @@ public class AsmUtil {
     public static void writeKotlinSyntheticClassAnnotation(@NotNull ClassBuilder v, @NotNull KotlinSyntheticClass.Kind kind) {
         AnnotationVisitor av = v.newAnnotation(Type.getObjectType(KotlinSyntheticClass.CLASS_NAME.getInternalName()).getDescriptor(), true);
         av.visit(ABI_VERSION_FIELD_NAME, JvmAbi.VERSION);
-        av.visitEnum(KotlinSyntheticClass.KIND_FIELD_NAME.asString(),
-                     Type.getObjectType(KotlinSyntheticClass.KIND_INTERNAL_NAME).getDescriptor(),
-                     kind.toString());
+        av.visitEnum(
+                JvmAnnotationNames.KIND_FIELD_NAME,
+                Type.getObjectType(KotlinSyntheticClass.KIND_INTERNAL_NAME).getDescriptor(),
+                kind.toString()
+        );
         av.visitEnd();
     }
 
@@ -857,54 +850,6 @@ public class AsmUtil {
     @NotNull
     public static String internalNameByFqNameWithoutInnerClasses(@NotNull FqName fqName) {
         return JvmClassName.byFqNameWithoutInnerClasses(fqName).getInternalName();
-    }
-
-    public static void writeOuterClassAndEnclosingMethod(
-            @NotNull ClassDescriptor descriptor,
-            @NotNull DeclarationDescriptor originalDescriptor,
-            @NotNull JetTypeMapper typeMapper,
-            @NotNull ClassBuilder v
-    ) {
-        String outerClassName = getOuterClassName(descriptor, originalDescriptor, typeMapper);
-
-        FunctionDescriptor function = DescriptorUtils.getParentOfType(descriptor, FunctionDescriptor.class);
-        while (function != null && JvmCodegenUtil.isLambdaWhichWillBeInlined(typeMapper.getBindingContext(), function)) {
-            function = DescriptorUtils.getParentOfType(function, FunctionDescriptor.class);
-        }
-
-        if (function != null) {
-            Method method = typeMapper.mapSignature(function).getAsmMethod();
-            v.visitOuterClass(outerClassName, method.getName(), method.getDescriptor());
-        }
-        else {
-            v.visitOuterClass(outerClassName, null, null);
-        }
-    }
-
-    @NotNull
-    private static String getOuterClassName(
-            @NotNull ClassDescriptor classDescriptor,
-            @NotNull DeclarationDescriptor originalDescriptor,
-            @NotNull JetTypeMapper typeMapper
-    ) {
-        BindingContext bindingContext = typeMapper.getBindingContext();
-
-        DeclarationDescriptor container = classDescriptor.getContainingDeclaration();
-        while (container != null) {
-            if (container instanceof ClassDescriptor) {
-                return typeMapper.mapClass((ClassDescriptor) container).getInternalName();
-            }
-            else if (CodegenBinding.isLocalFunOrLambda(container) &&
-                     !JvmCodegenUtil.isLambdaWhichWillBeInlined(bindingContext, container)) {
-                return asmTypeForAnonymousClass(bindingContext, (FunctionDescriptor) container).getInternalName();
-            }
-
-            container = container.getContainingDeclaration();
-        }
-
-        JetFile containingFile = DescriptorToSourceUtils.getContainingFile(originalDescriptor);
-        assert containingFile != null : "Containing file should be present for " + classDescriptor;
-        return PackagePartClassUtils.getPackagePartInternalName(containingFile);
     }
 
     public static void putJavaLangClassInstance(@NotNull InstructionAdapter v, @NotNull Type type) {

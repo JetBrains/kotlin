@@ -22,12 +22,16 @@ import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.UserDataProperty
 import com.intellij.openapi.util.Key
 import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
-import java.util.HashSet
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.SmartPointerManager
 import com.intellij.openapi.diagnostic.Logger
+import org.jetbrains.kotlin.idea.util.ShortenReferences.Options
+import org.jetbrains.kotlin.idea.util.ShortenReferences
+import java.util.*
 
-private var Project.elementsToShorten: MutableSet<SmartPsiElementPointer<JetElement>>?
+class ShorteningRequest(val pointer: SmartPsiElementPointer<JetElement>, val options: Options)
+
+private var Project.elementsToShorten: MutableSet<ShorteningRequest>?
         by UserDataProperty(Key.create("ELEMENTS_TO_SHORTEN_KEY"))
 
 /*
@@ -37,28 +41,32 @@ private var Project.elementsToShorten: MutableSet<SmartPsiElementPointer<JetElem
 public var Project.ensureElementsToShortenIsEmptyBeforeRefactoring: Boolean
         by NotNullableUserDataProperty(Key.create("ENSURE_ELEMENTS_TO_SHORTEN_IS_EMPTY"), true)
 
-private fun Project.getOrCreateElementsToShorten(): MutableSet<SmartPsiElementPointer<JetElement>> {
+private fun Project.getOrCreateElementsToShorten(): MutableSet<ShorteningRequest> {
     var elements = elementsToShorten
     if (elements == null) {
-        elements = HashSet()
+        elements = LinkedHashSet()
         elementsToShorten = elements
     }
 
     return elements!!
 }
 
-public fun JetElement.addToShorteningWaitSet() {
+public fun JetElement.addToShorteningWaitSet(options: Options = Options.DEFAULT) {
     assert (ApplicationManager.getApplication()!!.isWriteAccessAllowed(), "Write access needed")
     val project = getProject()
-    project.getOrCreateElementsToShorten().add(SmartPointerManager.getInstance(project).createSmartPsiElementPointer(this))
+    val elementPointer = SmartPointerManager.getInstance(project).createSmartPsiElementPointer(this)
+    project.getOrCreateElementsToShorten().add(ShorteningRequest(elementPointer, options))
 }
 
-public fun withElementsToShorten(project: Project, f: (Set<SmartPsiElementPointer<JetElement>>) -> Unit) {
-    project.elementsToShorten?.let { bindRequests ->
+public fun performDelayedShortening(project: Project) {
+    project.elementsToShorten?.let { requests ->
         project.elementsToShorten = null
-        f(bindRequests)
+        val elements = requests.map { it.pointer.getElement() }
+        val options = requests.map { it.options }
+        val elementToOptions = (elements zip options).toMap()
+        //TODO: this is not correct because it should not shorten deep into the elements!
+        ShortenReferences({ elementToOptions[it] ?: ShortenReferences.Options.DEFAULT }).process(elements.filterNotNull())
     }
-
 }
 
 private val LOG = Logger.getInstance(javaClass<Project>().getCanonicalName())

@@ -23,5 +23,18 @@ import java.lang.annotation.RetentionPolicy;
 public @interface KotlinClass {
     int abiVersion();
 
+    Kind kind();
+
     String[] data();
+
+    enum Kind {
+        CLASS,
+
+        /**
+         * A class has this kind if and only if its first non-class container is not a package.
+         */
+        LOCAL_CLASS,
+
+        ANONYMOUS_OBJECT,
+    }
 }

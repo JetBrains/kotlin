@@ -11,8 +11,8 @@ kotlin.js.native() internal final class A {
     kotlin.js.nativeInvoke() internal final fun kotlin.Int.ext(): kotlin.Int
     kotlin.js.nativeInvoke() internal final fun kotlin.Int.invoke(/*0*/ a: kotlin.String, /*1*/ b: kotlin.Int): kotlin.String
 
-    internal class object <class-object-for-A> {
-        private constructor <class-object-for-A>()
+    internal class object Default {
+        private constructor Default()
         kotlin.js.nativeInvoke() internal final val foo: kotlin.Int = 0
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         kotlin.js.nativeInvoke() internal final fun foo(): kotlin.Unit
@@ -27,13 +27,6 @@ kotlin.js.native() internal final class A {
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-
-            public class object <class-object-for-Obj2> : A.Obj2 {
-                private constructor <class-object-for-Obj2>()
-                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-            }
         }
     }
 
@@ -42,12 +35,5 @@ kotlin.js.native() internal final class A {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-
-        public class object <class-object-for-Obj1> : A.Obj1 {
-            private constructor <class-object-for-Obj1>()
-            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-        }
     }
 }

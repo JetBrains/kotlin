@@ -9,13 +9,5 @@ package kt1736 {
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         internal final fun method(): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-
-        public class object <class-object-for-Obj> : kt1736.Obj {
-            private constructor <class-object-for-Obj>()
-            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-            internal final override /*1*/ /*fake_override*/ fun method(): kotlin.Unit
-            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-        }
     }
 }

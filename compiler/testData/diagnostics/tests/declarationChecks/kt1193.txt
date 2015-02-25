@@ -12,17 +12,6 @@ package kt1193 {
             public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
             public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-
-            public class object <class-object-for-A> : kt1193.MyEnum.A {
-                private constructor <class-object-for-A>()
-                internal final override /*1*/ /*fake_override*/ val i: kotlin.Int
-                public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kt1193.MyEnum): kotlin.Int
-                public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-                public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-                public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-                public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-            }
         }
 
         public enum entry B : kt1193.MyEnum {
@@ -34,17 +23,6 @@ package kt1193 {
             public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
             public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-
-            public class object <class-object-for-B> : kt1193.MyEnum.B {
-                private constructor <class-object-for-B>()
-                internal final override /*1*/ /*fake_override*/ val i: kotlin.Int
-                public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kt1193.MyEnum): kotlin.Int
-                public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-                public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-                public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-                public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-            }
         }
 
         private constructor MyEnum(/*0*/ i: kotlin.Int)

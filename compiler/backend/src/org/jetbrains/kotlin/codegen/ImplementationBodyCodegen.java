@@ -36,7 +36,9 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinClass;
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
+import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -71,7 +73,6 @@ import static org.jetbrains.kotlin.codegen.AsmUtil.*;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.enumEntryNeedSubclass;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.isLocalNamedFun;
-import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass;
 import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.classDescriptorToDeclaration;
 import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
@@ -150,7 +151,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             isStatic = !jetClass.isInner();
         }
         else {
-            isStatic = myClass.getParent() instanceof JetClassObject;
+            isStatic = myClass instanceof JetObjectDeclaration && ((JetObjectDeclaration) myClass).isClassObject() ;
             isFinal = true;
         }
 
@@ -217,29 +218,34 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     @Override
     protected void generateKotlinAnnotation() {
-        if (isAnonymousObject(descriptor)) {
-            writeKotlinSyntheticClassAnnotation(v, KotlinSyntheticClass.Kind.ANONYMOUS_OBJECT);
-            return;
-        }
-
-        if (!isTopLevelOrInnerClass(descriptor)) {
-            // LOCAL_CLASS is also written to inner classes of local classes
-            writeKotlinSyntheticClassAnnotation(v, KotlinSyntheticClass.Kind.LOCAL_CLASS);
-            return;
-        }
-
         if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
 
+        KotlinClass.Kind kind;
+        if (isAnonymousObject(descriptor)) {
+            kind = KotlinClass.Kind.ANONYMOUS_OBJECT;
+        }
+        else if (isTopLevelOrInnerClass(descriptor)) {
+            kind = KotlinClass.Kind.CLASS;
+        }
+        else {
+            // LOCAL_CLASS is also written to inner classes of local classes
+            kind = KotlinClass.Kind.LOCAL_CLASS;
+        }
+
         DescriptorSerializer serializer =
-                DescriptorSerializer.create(descriptor, new JvmSerializerExtension(v.getSerializationBindings()));
+                DescriptorSerializer.create(descriptor, new JvmSerializerExtension(v.getSerializationBindings(), typeMapper));
 
         ProtoBuf.Class classProto = serializer.classProto(descriptor).build();
 
         ClassData data = new ClassData(createNameResolver(serializer.getStringTable()), classProto);
 
         AnnotationVisitor av = v.getVisitor().visitAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_CLASS), true);
-        //noinspection ConstantConditions
         av.visit(JvmAnnotationNames.ABI_VERSION_FIELD_NAME, JvmAbi.VERSION);
+        av.visitEnum(
+                JvmAnnotationNames.KIND_FIELD_NAME,
+                Type.getObjectType(KotlinClass.KIND_INTERNAL_NAME).getDescriptor(),
+                kind.toString()
+        );
         AnnotationVisitor array = av.visitArray(JvmAnnotationNames.DATA_FIELD_NAME);
         for (String string : BitEncoding.encodeBytes(data.toBytes())) {
             array.visit(null, string);
@@ -249,16 +255,14 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void writeEnclosingMethod() {
-        //JVMS7: A class must have an EnclosingMethod attribute if and only if it is a local class or an anonymous class.
-        DeclarationDescriptor parentDescriptor = descriptor.getContainingDeclaration();
-
-        boolean isObjectLiteral = DescriptorUtils.isAnonymousObject(descriptor);
-
-        boolean isLocalOrAnonymousClass = isObjectLiteral ||
-                                          !(parentDescriptor instanceof PackageFragmentDescriptor || parentDescriptor instanceof ClassDescriptor);
         // Do not emit enclosing method in "light-classes mode" since currently we generate local light classes as if they're top level
-        if (isLocalOrAnonymousClass && state.getClassBuilderMode() != ClassBuilderMode.LIGHT_CLASSES) {
-            writeOuterClassAndEnclosingMethod(descriptor, descriptor, typeMapper, v);
+        if (state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES) {
+            return;
+        }
+
+        //JVMS7: A class must have an EnclosingMethod attribute if and only if it is a local class or an anonymous class.
+        if (isAnonymousObject(descriptor) || !(descriptor.getContainingDeclaration() instanceof ClassOrPackageFragmentDescriptor)) {
+            writeOuterClassAndEnclosingMethod();
         }
     }
 
@@ -406,7 +410,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             return;
         }
 
-        generateReflectionObjectField(state, classAsmType, v, method("kClassFromKotlin", K_CLASS_IMPL_TYPE, getType(Class.class)),
+        generateReflectionObjectField(state, classAsmType, v, method("createKotlinClass", K_CLASS_TYPE, getType(Class.class)),
                                       JvmAbi.KOTLIN_CLASS_FIELD_NAME, createOrGetClInitCodegen().v);
     }
 
@@ -498,6 +502,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     KotlinBuiltIns.getInstance().getBoolean(),
                     KotlinBuiltIns.getInstance().getAny()
             );
+
+            assert equalsFunction != null : String.format("Should be called only for classes with non-trivial '%s'. In %s, %s",
+                                                          CodegenUtil.EQUALS_METHOD_NAME, descriptor.getName(), descriptor);
+
             MethodContext context = ImplementationBodyCodegen.this.context.intoFunction(equalsFunction);
             MethodVisitor mv = v.newMethod(OtherOrigin(equalsFunction), ACC_PUBLIC, "equals", "(Ljava/lang/Object;)Z", null, null);
             InstructionAdapter iv = new InstructionAdapter(mv);
@@ -567,6 +575,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     descriptor, Name.identifier(CodegenUtil.HASH_CODE_METHOD_NAME),
                     KotlinBuiltIns.getInstance().getInt()
             );
+
+            assert hashCodeFunction != null : String.format("Should be called only for classes with non-trivial '%s'. In %s, %s",
+                                                            CodegenUtil.HASH_CODE_METHOD_NAME, descriptor.getName(), descriptor);
+
             MethodContext context = ImplementationBodyCodegen.this.context.intoFunction(hashCodeFunction);
             MethodVisitor mv = v.newMethod(OtherOrigin(hashCodeFunction), ACC_PUBLIC, "hashCode", "()I", null, null);
             InstructionAdapter iv = new InstructionAdapter(mv);
@@ -619,6 +631,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     descriptor, Name.identifier(CodegenUtil.TO_STRING_METHOD_NAME),
                     KotlinBuiltIns.getInstance().getString()
             );
+
+            assert toString != null : String.format("Should be called only for classes with non-trivial '%s'. In %s, %s",
+                                                    CodegenUtil.TO_STRING_METHOD_NAME, descriptor.getName(), descriptor);
+
             MethodContext context = ImplementationBodyCodegen.this.context.intoFunction(toString);
             MethodVisitor mv = v.newMethod(OtherOrigin(toString), ACC_PUBLIC, "toString", "()Ljava/lang/String;", null, null);
             InstructionAdapter iv = new InstructionAdapter(mv);
@@ -683,7 +699,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         @Override
         public void generateComponentFunction(@NotNull FunctionDescriptor function, @NotNull final ValueParameterDescriptor parameter) {
             PsiElement originalElement = DescriptorToSourceUtils.descriptorToDeclaration(parameter);
-            functionCodegen.generateMethod(OtherOrigin(originalElement, function), typeMapper.mapSignature(function), function, new FunctionGenerationStrategy() {
+            functionCodegen.generateMethod(OtherOrigin(originalElement, function), function, new FunctionGenerationStrategy() {
                 @Override
                 public void generateBody(
                         @NotNull MethodVisitor mv,
@@ -708,11 +724,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         @Override
         public void generateCopyFunction(@NotNull final FunctionDescriptor function, @NotNull List<JetParameter> constructorParameters) {
-            JvmMethodSignature methodSignature = typeMapper.mapSignature(function);
-
             final Type thisDescriptorType = typeMapper.mapType(descriptor);
 
-            functionCodegen.generateMethod(OtherOrigin(myClass, function), methodSignature, function, new FunctionGenerationStrategy() {
+            functionCodegen.generateMethod(OtherOrigin(myClass, function), function, new FunctionGenerationStrategy() {
                 @Override
                 public void generateBody(
                         @NotNull MethodVisitor mv,
@@ -757,7 +771,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             });
 
             functionCodegen.generateDefaultIfNeeded(
-                    context.intoFunction(function), methodSignature, function, OwnerKind.IMPLEMENTATION,
+                    context.intoFunction(function), function, OwnerKind.IMPLEMENTATION,
                     new DefaultParameterValueLoader() {
                         @Override
                         public StackValue genValue(ValueParameterDescriptor valueParameter, ExpressionCodegen codegen) {
@@ -836,7 +850,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             FunctionDescriptor bridge = (FunctionDescriptor) entry.getValue();
             final FunctionDescriptor original = (FunctionDescriptor) entry.getKey();
             functionCodegen.generateMethod(
-                    Synthetic(null, original), typeMapper.mapSignature(bridge), bridge,
+                    Synthetic(null, original), bridge,
                     new FunctionGenerationStrategy.CodegenBased<FunctionDescriptor>(state, bridge) {
                         @Override
                         public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
@@ -891,9 +905,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             PropertyGetterDescriptor getter = bridge.getGetter();
             assert getter != null;
             functionCodegen.generateMethod(Synthetic(null, original.getGetter() != null ? original.getGetter() : original),
-                                           typeMapper.mapSignature(getter),
-                                           getter,
-                                           new PropertyAccessorStrategy(getter));
+                                           getter, new PropertyAccessorStrategy(getter));
 
 
             if (bridge.isVar()) {
@@ -901,9 +913,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 assert setter != null;
 
                 functionCodegen.generateMethod(Synthetic(null, original.getSetter() != null ? original.getSetter() : original),
-                                               typeMapper.mapSignature(setter),
-                                               setter,
-                                               new PropertyAccessorStrategy(setter));
+                                               setter, new PropertyAccessorStrategy(setter));
             }
         }
         else {
@@ -954,39 +964,42 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void generateFieldForSingleton() {
-        if (isEnumEntry(descriptor)) return;
-
-        ClassDescriptor classObjectDescriptor = descriptor.getClassObjectDescriptor();
-        ClassDescriptor fieldTypeDescriptor;
-        JetClassOrObject original;
-        if (isObject(descriptor)) {
-            original = myClass;
-            fieldTypeDescriptor = descriptor;
-        }
-        else if (classObjectDescriptor != null) {
-            JetClassObject classObject = ((JetClass) myClass).getClassObject();
-            assert classObject != null : "Class object not found: " + myClass.getText();
-            original = classObject.getObjectDeclaration();
-            fieldTypeDescriptor = classObjectDescriptor;
-        }
-        else {
-            return;
-        }
-
-        StackValue.Field field = StackValue.singleton(fieldTypeDescriptor, typeMapper);
-
-        v.newField(OtherOrigin(original), ACC_PUBLIC | ACC_STATIC | ACC_FINAL, field.name, field.type.getDescriptor(), null, null);
-
-        if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
+        if (isEnumEntry(descriptor) || isClassObject(descriptor)) return;
 
         if (isObject(descriptor)) {
+            StackValue.Field field = StackValue.singleton(descriptor, typeMapper);
+            v.newField(OtherOrigin(myClass), ACC_PUBLIC | ACC_STATIC | ACC_FINAL, field.name, field.type.getDescriptor(), null, null);
+
+            if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
+
             // Invoke the object constructor but ignore the result because INSTANCE$ will be initialized in the first line of <init>
             InstructionAdapter v = createOrGetClInitCodegen().v;
             v.anew(classAsmType);
             v.invokespecial(classAsmType.getInternalName(), "<init>", "()V", false);
+            return;
         }
-        else if (!isClassObjectWithBackingFieldsInOuter(fieldTypeDescriptor)) {
-            generateClassObjectInitializer(fieldTypeDescriptor);
+
+        ClassDescriptor classObjectDescriptor = descriptor.getDefaultObjectDescriptor();
+        if (classObjectDescriptor == null) {
+            return;
+        }
+
+        JetObjectDeclaration classObject = ((JetClass) myClass).getClassObject();
+        assert classObject != null : "Class object not found: " + myClass.getText();
+
+        StackValue.Field field = StackValue.singleton(classObjectDescriptor, typeMapper);
+        v.newField(OtherOrigin(classObject), ACC_PUBLIC | ACC_STATIC | ACC_FINAL, field.name, field.type.getDescriptor(), null, null);
+
+        StackValue.Field deprecatedField = StackValue.deprecatedClassObjectAccessor(classObjectDescriptor, typeMapper);
+        FieldVisitor fv = v.newField(OtherOrigin(classObject), ACC_PUBLIC | ACC_STATIC | ACC_FINAL | ACC_DEPRECATED,
+                                     deprecatedField.name, deprecatedField.type.getDescriptor(), null, null);
+
+        fv.visitAnnotation(asmDescByFqNameWithoutInnerClasses(new FqName("java.lang.Deprecated")), true).visitEnd();
+
+        if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
+
+        if (!isClassObjectWithBackingFieldsInOuter(classObjectDescriptor)) {
+            generateClassObjectInitializer(classObjectDescriptor);
         }
     }
 
@@ -997,7 +1010,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             PropertyDescriptor property = info.descriptor;
 
             Type type = typeMapper.mapType(property);
-            FieldVisitor fv = v.newField(OtherOrigin(property), ACC_STATIC | ACC_FINAL | ACC_PUBLIC, context.getFieldName(property, false),
+            FieldVisitor fv = v.newField(Synthetic(DescriptorToSourceUtils.descriptorToDeclaration(property), property),
+                                         ACC_STATIC | ACC_FINAL | ACC_PUBLIC, context.getFieldName(property, false),
                                          type.getDescriptor(), typeMapper.mapFieldSignature(property.getType()),
                                          info.defaultValue);
 
@@ -1017,7 +1031,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     private int putClassObjectInLocalVar(ExpressionCodegen codegen) {
         FrameMap frameMap = codegen.myFrameMap;
-        ClassDescriptor classObjectDescriptor = descriptor.getClassObjectDescriptor();
+        ClassDescriptor classObjectDescriptor = descriptor.getDefaultObjectDescriptor();
         int classObjectIndex = frameMap.getIndex(classObjectDescriptor);
         if (classObjectIndex == -1) {
             classObjectIndex = frameMap.enter(classObjectDescriptor, OBJECT_TYPE);
@@ -1038,7 +1052,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         ExpressionCodegen codegen = createOrGetClInitCodegen();
         FunctionDescriptor constructor = codegen.accessibleFunctionDescriptor(KotlinPackage.single(classObject.getConstructors()));
         generateMethodCallTo(constructor, codegen.v);
-        StackValue.singleton(classObject, typeMapper).store(StackValue.onStack(typeMapper.mapClass(classObject)), codegen.v, true);
+        codegen.v.dup();
+        StackValue instance = StackValue.onStack(typeMapper.mapClass(classObject));
+        StackValue.singleton(classObject, typeMapper).store(instance, codegen.v, true);
+        StackValue.deprecatedClassObjectAccessor(classObject, typeMapper).store(instance, codegen.v, true);
     }
 
     private void generatePrimaryConstructor(final DelegationFieldsInfo delegationFieldsInfo) {
@@ -1055,9 +1072,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             lookupConstructorExpressionsInClosureIfPresent(constructorContext);
         }
 
-        JvmMethodSignature signature = typeMapper.mapSignature(constructorDescriptor);
-
-        functionCodegen.generateMethod(OtherOrigin(myClass, constructorDescriptor), signature, constructorDescriptor, constructorContext,
+        functionCodegen.generateMethod(OtherOrigin(myClass, constructorDescriptor), constructorDescriptor, constructorContext,
                    new FunctionGenerationStrategy.CodegenBased<ConstructorDescriptor>(state, constructorDescriptor) {
                        @Override
                        public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
@@ -1066,7 +1081,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                    }
         );
 
-        functionCodegen.generateDefaultIfNeeded(constructorContext, signature, constructorDescriptor, OwnerKind.IMPLEMENTATION,
+        functionCodegen.generateDefaultIfNeeded(constructorContext, constructorDescriptor, OwnerKind.IMPLEMENTATION,
                                                 DefaultParameterValueLoader.DEFAULT, null);
 
         CallableMethod callableMethod = typeMapper.mapToCallableMethod(constructorDescriptor);
@@ -1127,7 +1142,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         if (isClassObjectWithBackingFieldsInOuter(descriptor)) {
             final ImplementationBodyCodegen parentCodegen = (ImplementationBodyCodegen) getParentCodegen();
-            //generate OBJECT$
             parentCodegen.generateClassObjectInitializer(descriptor);
             generateInitializers(new Function0<ExpressionCodegen>() {
                 @Override
@@ -1350,7 +1364,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private void generateDelegationToTraitImpl(@NotNull final FunctionDescriptor traitFun, @NotNull FunctionDescriptor inheritedFun) {
         functionCodegen.generateMethod(
                 DelegationToTraitImpl(descriptorToDeclaration(traitFun), traitFun),
-                typeMapper.mapSignature(inheritedFun),
                 inheritedFun,
                 new FunctionGenerationStrategy.CodegenBased<FunctionDescriptor>(state, inheritedFun) {
                     @Override
@@ -1614,7 +1627,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
     }
 
-    public void addClassObjectPropertyToCopy(PropertyDescriptor descriptor, Object defaultValue) {
+    public void addClassObjectPropertyToCopy(@NotNull PropertyDescriptor descriptor, Object defaultValue) {
         if (classObjectPropertiesToCopy == null) {
             classObjectPropertiesToCopy = new ArrayList<PropertyAndDefaultValue>();
         }
@@ -1634,7 +1647,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         public final PropertyDescriptor descriptor;
         public final Object defaultValue;
 
-        public PropertyAndDefaultValue(PropertyDescriptor descriptor, Object defaultValue) {
+        public PropertyAndDefaultValue(@NotNull PropertyDescriptor descriptor, Object defaultValue) {
             this.descriptor = descriptor;
             this.defaultValue = defaultValue;
         }

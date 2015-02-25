@@ -61,9 +61,4 @@ public class ScriptContext extends FieldOwnerContext<ClassDescriptor> {
         }
         return "script$" + (index + 1);
     }
-
-    @Override
-    public boolean isStatic() {
-        return true;
-    }
 }

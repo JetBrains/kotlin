@@ -17,20 +17,16 @@
 package org.jetbrains.kotlin.idea.refactoring.move
 
 import org.jetbrains.kotlin.idea.codeInsight.JetFileReferencesResolver
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.idea.JetFileType
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToDeclarationUtil
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import java.util.Collections
-import org.jetbrains.kotlin.name.isImported
+import org.jetbrains.kotlin.idea.refactoring.fqName.isImported
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
@@ -40,14 +36,10 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.refactoring.util.MoveRenameUsageInfo
 import org.jetbrains.kotlin.idea.references.JetReference
-import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.psi.JetImportDirective
 import java.util.ArrayList
 import com.intellij.refactoring.util.NonCodeUsageInfo
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
-import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
-import org.jetbrains.kotlin.psi.JetThisExpression
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference.ShorteningMode
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.util.Comparing
@@ -60,6 +52,9 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.idea.caches.resolve.*
+import org.jetbrains.kotlin.asJava.*
 
 public class PackageNameInfo(val oldPackageName: FqName, val newPackageName: FqName)
 
@@ -83,7 +78,7 @@ public fun JetElement.getInternalReferencesToUpdateOnPackageNameChange(packageNa
     fun processReference(refExpr: JetSimpleNameExpression, bindingContext: BindingContext): UsageInfo? {
         val descriptor = bindingContext[BindingContext.REFERENCE_TARGET, refExpr]?.getImportableDescriptor() ?: return null
 
-        val declaration = DescriptorToDeclarationUtil.getDeclaration(file, descriptor) ?: return null
+        val declaration = DescriptorToDeclarationUtil.getDeclaration(getProject(), descriptor) ?: return null
         if (isAncestor(declaration, false)) return null
 
         val isCallable = descriptor is CallableDescriptor
@@ -210,9 +205,9 @@ fun postProcessMoveUsages(usages: List<UsageInfo>,
             }
 
             is MoveRenameUsageInfoForExtension -> {
-                val element = counterpart(usage.getReferencedElement()!!)
                 val file = with(usage) { if (addImportToOriginalFile) originalFile else counterpart(originalFile) } as JetFile
-                ImportInsertHelper.getInstance(element.getProject()).addImportDirectiveIfNeeded(element.getKotlinFqName()!!, file)
+                val declaration = counterpart(usage.getReferencedElement()!!).unwrapped as JetDeclaration
+                ImportInsertHelper.getInstance(usage.getProject()).importDescriptor(file, declaration.resolveToDescriptor())
             }
 
             is MoveRenameUsageInfo -> {

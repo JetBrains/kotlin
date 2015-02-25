@@ -54,9 +54,9 @@ public fun OtherOrigin(element: PsiElement?, descriptor: DeclarationDescriptor?)
             JvmDeclarationOrigin.NO_ORIGIN
         else JvmDeclarationOrigin(OTHER, element, descriptor)
 
-public fun OtherOrigin(element: PsiElement?): JvmDeclarationOrigin = OtherOrigin(element, null)
+public fun OtherOrigin(element: PsiElement): JvmDeclarationOrigin = OtherOrigin(element, null)
 
-public fun OtherOrigin(descriptor: DeclarationDescriptor?): JvmDeclarationOrigin = OtherOrigin(null, descriptor)
+public fun OtherOrigin(descriptor: DeclarationDescriptor): JvmDeclarationOrigin = OtherOrigin(null, descriptor)
 
 public fun PackageFacade(descriptor: PackageFragmentDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(PACKAGE_FACADE, null, descriptor)
 public fun PackagePart(file: JetFile, descriptor: PackageFragmentDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(PACKAGE_PART, file, descriptor)

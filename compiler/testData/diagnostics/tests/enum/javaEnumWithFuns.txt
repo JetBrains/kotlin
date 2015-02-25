@@ -12,17 +12,6 @@ public final enum class A : kotlin.Enum<A!> {
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun s(): kotlin.String!
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-
-        public class object <class-object-for-ENTRY> : A.ENTRY {
-            private constructor <class-object-for-ENTRY>()
-            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: A!): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-            public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-            public open override /*1*/ /*fake_override*/ fun s(): kotlin.String!
-            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-        }
     }
 
     public enum entry ANOTHER : A {
@@ -34,17 +23,6 @@ public final enum class A : kotlin.Enum<A!> {
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun s(): kotlin.String!
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-
-        public class object <class-object-for-ANOTHER> : A.ANOTHER {
-            private constructor <class-object-for-ANOTHER>()
-            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: A!): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-            public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-            public open override /*1*/ /*fake_override*/ fun s(): kotlin.String!
-            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-        }
     }
 
     public constructor A()

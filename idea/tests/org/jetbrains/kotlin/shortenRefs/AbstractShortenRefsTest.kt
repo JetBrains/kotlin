@@ -24,7 +24,8 @@ public abstract class AbstractShortenRefsTest : AbstractImportsTest() {
     override fun doTest(file: JetFile) {
         val selectionModel = myFixture.getEditor().getSelectionModel()
         if (!selectionModel.hasSelection()) error("No selection in input file")
-        ShortenReferences.process(file, selectionModel.getSelectionStart(), selectionModel.getSelectionEnd())
+        ShortenReferences { ShortenReferences.Options(removeThis = true, removeThisLabels = true) }
+                .process(file, selectionModel.getSelectionStart(), selectionModel.getSelectionEnd())
         selectionModel.removeSelection()
     }
 

@@ -25,19 +25,20 @@ import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies;
-import org.jetbrains.kotlin.di.InjectorForJavaDescriptorResolver;
-import org.jetbrains.kotlin.di.InjectorForJavaDescriptorResolverUtil;
 import org.jetbrains.kotlin.load.java.JavaBindingContext;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap;
+import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.jvm.kotlinSignature.TypeTransformingVisitor;
+import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -75,17 +76,17 @@ public abstract class AbstractSdkAnnotationsValidityTest extends UsefulTestCase 
                 JetCoreEnvironment commonEnvironment = createEnvironment(parentDisposable);
 
                 BindingTrace trace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
-                InjectorForJavaDescriptorResolver injector =
-                        InjectorForJavaDescriptorResolverUtil.create(commonEnvironment.getProject(), trace, false);
+                ModuleDescriptor module = LazyResolveTestUtil.resolve(
+                        commonEnvironment.getProject(), trace, Collections.<JetFile>emptyList()
+                );
 
-                BindingContext bindingContext = trace.getBindingContext();
-
-                AlternativeSignatureErrorFindingVisitor visitor = new AlternativeSignatureErrorFindingVisitor(bindingContext, errors);
+                AlternativeSignatureErrorFindingVisitor visitor =
+                        new AlternativeSignatureErrorFindingVisitor(trace.getBindingContext(), errors);
 
                 int chunkStart = chunkIndex * CLASSES_IN_CHUNK;
                 for (FqName javaClass : affectedClasses.subList(chunkStart, Math.min(chunkStart + CLASSES_IN_CHUNK, affectedClasses.size()))) {
-                    ClassDescriptor topLevelClass = resolveTopLevelClass(injector.getModule(), javaClass);
-                    PackageViewDescriptor topLevelPackage = injector.getModule().getPackage(javaClass);
+                    ClassDescriptor topLevelClass = resolveTopLevelClass(module, javaClass);
+                    PackageViewDescriptor topLevelPackage = module.getPackage(javaClass);
                     if (topLevelClass == null) {
                         continue;
                     }

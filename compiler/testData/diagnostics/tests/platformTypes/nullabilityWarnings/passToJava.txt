@@ -1,0 +1,3 @@
+package
+
+internal fun test(/*0*/ n: p.J?, /*1*/ nn: p.J): kotlin.Unit

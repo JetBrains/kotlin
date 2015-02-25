@@ -51,7 +51,6 @@ public class JvmClassName {
         return byFqNameWithoutInnerClasses(new FqName(fqName));
     }
 
-    private final static String CLASS_OBJECT_REPLACE_GUARD = "<class_object>";
     private final static String TRAIT_IMPL_REPLACE_GUARD = "<trait_impl>";
 
     // Internal name:  kotlin/Map$Entry
@@ -71,12 +70,10 @@ public class JvmClassName {
     public FqName getFqNameForClassNameWithoutDollars() {
         if (fqName == null) {
             String fqName = internalName
-                    .replace(JvmAbi.CLASS_OBJECT_CLASS_NAME, CLASS_OBJECT_REPLACE_GUARD)
                     .replace(JvmAbi.TRAIT_IMPL_CLASS_NAME, TRAIT_IMPL_REPLACE_GUARD)
                     .replace('$', '.')
                     .replace('/', '.')
-                    .replace(TRAIT_IMPL_REPLACE_GUARD, JvmAbi.TRAIT_IMPL_CLASS_NAME)
-                    .replace(CLASS_OBJECT_REPLACE_GUARD, JvmAbi.CLASS_OBJECT_CLASS_NAME);
+                    .replace(TRAIT_IMPL_REPLACE_GUARD, JvmAbi.TRAIT_IMPL_CLASS_NAME);
             this.fqName = new FqName(fqName);
         }
         return fqName;

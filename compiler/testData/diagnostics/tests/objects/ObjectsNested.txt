@@ -15,15 +15,6 @@ package nestedObejcts {
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-        public class object <class-object-for-A> : nestedObejcts.A {
-            private constructor <class-object-for-A>()
-            internal final override /*1*/ /*fake_override*/ val b: nestedObejcts.A.B
-            internal final override /*1*/ /*fake_override*/ val d: nestedObejcts.A.B.A
-            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-        }
-
         internal object B {
             private constructor B()
             internal final val a: nestedObejcts.A.B.A
@@ -31,15 +22,6 @@ package nestedObejcts {
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-
-            public class object <class-object-for-B> : nestedObejcts.A.B {
-                private constructor <class-object-for-B>()
-                internal final override /*1*/ /*fake_override*/ val a: nestedObejcts.A.B.A
-                internal final override /*1*/ /*fake_override*/ val e: nestedObejcts.A.B.A
-                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-            }
 
             internal object A {
                 private constructor A()
@@ -50,17 +32,6 @@ package nestedObejcts {
                 public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
                 public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
                 public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-
-                public class object <class-object-for-A> : nestedObejcts.A.B.A {
-                    private constructor <class-object-for-A>()
-                    internal final override /*1*/ /*fake_override*/ val a: nestedObejcts.A.B.A
-                    internal final override /*1*/ /*fake_override*/ val b: nestedObejcts.A.B
-                    internal final override /*1*/ /*fake_override*/ val x: nestedObejcts.A.B.A
-                    internal final override /*1*/ /*fake_override*/ val y: [ERROR : Type for this@A]
-                    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-                    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-                    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-                }
             }
         }
     }
@@ -72,14 +43,5 @@ package nestedObejcts {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-
-        public class object <class-object-for-B> : nestedObejcts.B {
-            private constructor <class-object-for-B>()
-            internal final override /*1*/ /*fake_override*/ val b: nestedObejcts.B
-            internal final override /*1*/ /*fake_override*/ val c: nestedObejcts.A.B
-            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-        }
     }
 }

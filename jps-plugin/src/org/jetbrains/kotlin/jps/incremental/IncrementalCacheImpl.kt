@@ -30,11 +30,9 @@ import org.jetbrains.org.objectweb.asm.*
 import com.intellij.util.io.EnumeratorStringDescriptor
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import java.util.HashSet
 import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCache
 import java.util.HashMap
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
-import com.intellij.openapi.util.io.FileUtil
 import java.security.MessageDigest
 import org.jetbrains.jps.incremental.storage.StorageOwner
 import org.jetbrains.jps.builders.storage.StorageProvider
@@ -121,19 +119,14 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
 
     private fun getRecompilationDecision(protoChanged: Boolean, constantsChanged: Boolean, inlinesChanged: Boolean) =
             when {
-                inlinesChanged -> RECOMPILE_ALL
-                constantsChanged -> COMPILE_OTHERS
-                protoChanged -> COMPILE_OTHERS
+                inlinesChanged -> RECOMPILE_ALL_IN_CHUNK_AND_DEPENDANTS
+                constantsChanged -> RECOMPILE_OTHER_IN_CHUNK_AND_DEPENDANTS
+                protoChanged -> RECOMPILE_OTHER_KOTLIN_IN_CHUNK
                 else -> DO_NOTHING
             }
 
-    public fun saveFileToCache(sourceFiles: Collection<File>, classFile: File): RecompilationDecision {
-        if (classFile.extension.toLowerCase() != "class") return DO_NOTHING
-
+    public fun saveFileToCache(sourceFiles: Collection<File>, kotlinClass: LocalFileKotlinClass): RecompilationDecision {
         cacheFormatVersion.saveIfNeeded()
-
-        val kotlinClass = LocalFileKotlinClass.create(classFile)
-        if (kotlinClass == null) return DO_NOTHING
 
         val fileBytes = kotlinClass.getFileContents()
         val className = JvmClassName.byClassId(kotlinClass.getClassId())
@@ -142,40 +135,34 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
         dirtyOutputClassesMap.notDirty(className.getInternalName())
         sourceFiles.forEach { sourceToClassesMap.addSourceToClass(it, className) }
 
-        val annotationDataEncoded = header.annotationData
-        if (annotationDataEncoded != null) {
-            val data = BitEncoding.decodeBytes(annotationDataEncoded)
-            return when {
-                header.isCompatiblePackageFacadeKind() ->
-                    getRecompilationDecision(
-                            protoChanged = protoMap.put(className, data),
-                            constantsChanged = false,
-                            inlinesChanged = false
-                    )
-                header.isCompatibleClassKind() ->
-                    getRecompilationDecision(
-                            protoChanged = protoMap.put(className, data),
-                            constantsChanged = constantsMap.process(className, fileBytes),
-                            inlinesChanged = inlineFunctionsMap.process(className, fileBytes)
-                    )
-                else -> {
-                    throw IllegalStateException("Unexpected kind with annotationData: ${header.kind}, isCompatible: ${header.isCompatibleAbiVersion}")
-                }
+        return when {
+            header.isCompatiblePackageFacadeKind() ->
+                getRecompilationDecision(
+                        protoChanged = protoMap.put(className, BitEncoding.decodeBytes(header.annotationData)),
+                        constantsChanged = false,
+                        inlinesChanged = false
+                )
+            header.isCompatibleClassKind() ->
+                getRecompilationDecision(
+                        protoChanged = protoMap.put(className, BitEncoding.decodeBytes(header.annotationData)),
+                        constantsChanged = constantsMap.process(className, fileBytes),
+                        inlinesChanged = inlineFunctionsMap.process(className, fileBytes)
+                )
+            header.syntheticClassKind == JvmAnnotationNames.KotlinSyntheticClass.Kind.PACKAGE_PART -> {
+                assert(sourceFiles.size() == 1) { "Package part from several source files: $sourceFiles" }
+
+                packagePartMap.addPackagePart(className)
+
+                getRecompilationDecision(
+                        protoChanged = false,
+                        constantsChanged = constantsMap.process(className, fileBytes),
+                        inlinesChanged = inlineFunctionsMap.process(className, fileBytes)
+                )
+            }
+            else -> {
+                DO_NOTHING
             }
         }
-        if (header.syntheticClassKind == JvmAnnotationNames.KotlinSyntheticClass.Kind.PACKAGE_PART) {
-            assert(sourceFiles.size() == 1) { "Package part from several source files: $sourceFiles" }
-
-            packagePartMap.addPackagePart(className)
-
-            return getRecompilationDecision(
-                    protoChanged = false,
-                    constantsChanged = constantsMap.process(className, fileBytes),
-                    inlinesChanged = inlineFunctionsMap.process(className, fileBytes)
-            )
-        }
-
-        return DO_NOTHING
     }
 
     public fun clearCacheForRemovedClasses(): RecompilationDecision {
@@ -602,8 +589,8 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
 
     enum class RecompilationDecision {
         DO_NOTHING
-        COMPILE_OTHERS
-        RECOMPILE_ALL
+        RECOMPILE_OTHER_IN_CHUNK_AND_DEPENDANTS
+        RECOMPILE_ALL_IN_CHUNK_AND_DEPENDANTS
 
         fun merge(other: RecompilationDecision): RecompilationDecision {
             return if (other.ordinal() > this.ordinal()) other else this

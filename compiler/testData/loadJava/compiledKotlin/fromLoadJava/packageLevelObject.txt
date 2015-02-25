@@ -2,8 +2,4 @@ package test
 
 internal object Bar {
     /*primary*/ private constructor Bar()
-
-    public class object <class-object-for-Bar> : test.Bar {
-        /*primary*/ private constructor <class-object-for-Bar>()
-    }
 }

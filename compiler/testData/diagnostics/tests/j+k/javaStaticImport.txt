@@ -32,8 +32,8 @@ package frontend {
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-        public class object <class-object-for-JvmDeclarationOrigin> {
-            private constructor <class-object-for-JvmDeclarationOrigin>()
+        public class object Default {
+            private constructor Default()
             public final val NO_ORIGIN: frontend.JvmDeclarationOrigin
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

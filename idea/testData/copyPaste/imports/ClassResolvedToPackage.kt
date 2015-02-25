@@ -1,6 +1,5 @@
 package a
 
-//NOTE: this case can be improved by using shorten reference after importing
 class a {
     class object {
     }

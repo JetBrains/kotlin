@@ -33,10 +33,7 @@ import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.*;
 
-import static org.jetbrains.kotlin.codegen.AsmUtil.CAPTURED_THIS_FIELD;
 import static org.jetbrains.kotlin.codegen.AsmUtil.getVisibilityAccessFlag;
-import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.anonymousClassForFunction;
-import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.canHaveOuter;
 import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_PRIVATE;
 import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_PROTECTED;
 
@@ -49,10 +46,10 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     private final ClassDescriptor thisDescriptor;
     public final MutableClosure closure;
     private final LocalLookup enclosingLocalLookup;
+    private final NullableLazyValue<StackValue.Field> outerExpression;
 
     private Map<DeclarationDescriptor, DeclarationDescriptor> accessors;
     private Map<DeclarationDescriptor, CodegenContext> childContexts;
-    private NullableLazyValue<StackValue.Field> lazyOuterExpression;
 
     public CodegenContext(
             @NotNull T contextDescriptor,
@@ -60,14 +57,20 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             @Nullable CodegenContext parentContext,
             @Nullable MutableClosure closure,
             @Nullable ClassDescriptor thisDescriptor,
-            @Nullable LocalLookup expressionCodegen
+            @Nullable LocalLookup localLookup
     ) {
         this.contextDescriptor = contextDescriptor;
         this.contextKind = contextKind;
         this.parentContext = parentContext;
         this.closure = closure;
         this.thisDescriptor = thisDescriptor;
-        this.enclosingLocalLookup = expressionCodegen;
+        this.enclosingLocalLookup = localLookup;
+        this.outerExpression = LockBasedStorageManager.NO_LOCKS.createNullableLazyValue(new Function0<StackValue.Field>() {
+            @Override
+            public StackValue.Field invoke() {
+                return computeOuterExpression();
+            }
+        });
 
         if (parentContext != null) {
             parentContext.addChild(this);
@@ -116,7 +119,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     }
 
     private StackValue getOuterExpression(@Nullable StackValue prefix, boolean ignoreNoOuter, boolean captureThis) {
-        if (lazyOuterExpression == null || lazyOuterExpression.invoke() == null) {
+        if (outerExpression.invoke() == null) {
             if (!ignoreNoOuter) {
                 throw new UnsupportedOperationException("Don't know how to generate outer expression for " + getContextDescriptor());
             }
@@ -128,7 +131,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             }
             closure.setCaptureThis();
         }
-        return StackValue.changeReceiverForFieldAndSharedVar(lazyOuterExpression.invoke(), prefix);
+        return StackValue.changeReceiverForFieldAndSharedVar(outerExpression.invoke(), prefix);
     }
 
     @NotNull
@@ -187,13 +190,12 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     }
 
     @NotNull
-    public ClassContext intoClosure(
+    public ClosureContext intoClosure(
             @NotNull FunctionDescriptor funDescriptor,
             @NotNull LocalLookup localLookup,
             @NotNull JetTypeMapper typeMapper
     ) {
-        ClassDescriptor classDescriptor = anonymousClassForFunction(typeMapper.getBindingContext(), funDescriptor);
-        return new ClosureContext(typeMapper, classDescriptor, this, localLookup);
+        return new ClosureContext(typeMapper, funDescriptor, this, localLookup);
     }
 
     @Nullable
@@ -257,21 +259,9 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         return accessor;
     }
 
-    public abstract boolean isStatic();
-
-    protected void initOuterExpression(@NotNull final JetTypeMapper typeMapper, @NotNull final ClassDescriptor classDescriptor) {
-        lazyOuterExpression = LockBasedStorageManager.NO_LOCKS.createNullableLazyValue(new Function0<StackValue.Field>() {
-            @Override
-            public StackValue.Field invoke() {
-                ClassDescriptor enclosingClass = getEnclosingClass();
-                if (enclosingClass == null) return null;
-
-                return canHaveOuter(typeMapper.getBindingContext(), classDescriptor)
-                       ? StackValue.field(typeMapper.mapType(enclosingClass), typeMapper.mapType(classDescriptor),
-                                          CAPTURED_THIS_FIELD, false, StackValue.LOCAL_0)
-                       : null;
-            }
-        });
+    @Nullable
+    protected StackValue.Field computeOuterExpression() {
+        return null;
     }
 
     public StackValue lookupInContext(DeclarationDescriptor d, @Nullable StackValue result, GenerationState state, boolean ignoreNoOuter) {

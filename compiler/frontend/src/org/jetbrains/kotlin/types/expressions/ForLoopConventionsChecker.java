@@ -22,27 +22,21 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
-import org.jetbrains.kotlin.descriptors.VariableDescriptor;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.kotlin.resolve.BindingTraceContext;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.kotlin.types.JetType;
-import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
 
 import javax.inject.Inject;
 import java.util.Collections;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
 
 public class ForLoopConventionsChecker {
@@ -72,21 +66,8 @@ public class ForLoopConventionsChecker {
         this.builtIns = builtIns;
     }
 
-    public boolean isVariableIterable(@NotNull VariableDescriptor variableDescriptor, @NotNull JetScope scope) {
-        JetExpression expression = JetPsiFactory(project).createExpression("fake");
-        ExpressionReceiver expressionReceiver = new ExpressionReceiver(expression, variableDescriptor.getType());
-        ExpressionTypingContext context = ExpressionTypingContext.newContext(
-                expressionTypingServices,
-                new BindingTraceContext(),
-                scope,
-                DataFlowInfo.EMPTY,
-                TypeUtils.NO_EXPECTED_TYPE
-        );
-        return checkIterableConvention(expressionReceiver, context) != null;
-    }
-
     @Nullable
-    /*package*/ JetType checkIterableConvention(@NotNull ExpressionReceiver loopRange, ExpressionTypingContext context) {
+    public JetType checkIterableConvention(@NotNull ExpressionReceiver loopRange, ExpressionTypingContext context) {
         JetExpression loopRangeExpression = loopRange.getExpression();
 
         // Make a fake call loopRange.iterator(), and try to resolve it

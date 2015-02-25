@@ -6,10 +6,12 @@ fun main(args: Array<String>) {
 
 class A {
     val aProp = 1
+    fun aMyFun() = 1
 }
 
 class Outer {
     val outerProp = 1
+    fun outerMyFun() = 1
 
     fun A.foo() {
         val valFoo = 1
@@ -37,6 +39,7 @@ class Outer {
 
 class B {
     val bProp = 1
+    fun bMyFun() = 1
 }
 
 fun lambda(f: () -> Unit) {
@@ -58,4 +61,13 @@ fun lambda(f: () -> Unit) {
 // RESULT: 1: I
 
 // EXPRESSION: bProp
+// RESULT: 1: I
+
+// EXPRESSION: aMyFun()
+// RESULT: 1: I
+
+// EXPRESSION: outerMyFun()
+// RESULT: 1: I
+
+// EXPRESSION: bMyFun()
 // RESULT: 1: I

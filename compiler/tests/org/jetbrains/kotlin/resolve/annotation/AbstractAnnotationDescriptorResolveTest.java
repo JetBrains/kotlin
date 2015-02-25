@@ -201,7 +201,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
 
     @NotNull
     private static ClassDescriptor getClassObjectDescriptor(@NotNull ClassDescriptor classDescriptor) {
-        ClassDescriptor objectDescriptor = classDescriptor.getClassObjectDescriptor();
+        ClassDescriptor objectDescriptor = classDescriptor.getDefaultObjectDescriptor();
         assert objectDescriptor != null : "Cannot find class object for class " + classDescriptor.getName();
         return objectDescriptor;
     }

@@ -72,7 +72,6 @@ import org.jetbrains.kotlin.psi.JetParameter
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.psi.JetCallableDeclaration
-import org.jetbrains.kotlin.psi.JetClassObject
 import org.jetbrains.kotlin.psi.JetTypeParameter
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
@@ -694,9 +693,6 @@ public class JetPsiUnifier(
 
                 e1 is JetMultiDeclaration && e2 is JetMultiDeclaration ->
                     if (matchMultiDeclarations(e1, e2)) null else UNMATCHED
-
-                e1 is JetClassObject && e2 is JetClassObject ->
-                    e1.getObjectDeclaration().matchDeclarations(e2.getObjectDeclaration())
 
                 e1 is JetClassInitializer && e2 is JetClassInitializer ->
                     null

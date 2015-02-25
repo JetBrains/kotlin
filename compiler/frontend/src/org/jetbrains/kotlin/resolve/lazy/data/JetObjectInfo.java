@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.resolve.lazy.data;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.ClassKind;
-import org.jetbrains.kotlin.psi.JetClassObject;
 import org.jetbrains.kotlin.psi.JetObjectDeclaration;
 import org.jetbrains.kotlin.psi.JetParameter;
 import org.jetbrains.kotlin.psi.JetTypeParameterList;
@@ -39,7 +38,7 @@ public class JetObjectInfo extends JetClassOrObjectInfo<JetObjectDeclaration> {
     }
 
     @Override
-    public JetClassObject getClassObject() {
+    public JetObjectDeclaration getClassObject() {
         return null;
     }
 

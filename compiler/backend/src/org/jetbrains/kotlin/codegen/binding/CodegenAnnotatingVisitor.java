@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.codegen.when.SwitchCodegenUtil;
 import org.jetbrains.kotlin.codegen.when.WhenByEnumsMapping;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl;
-import org.jetbrains.kotlin.load.java.JvmAbi;
+import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptor;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
@@ -190,59 +190,37 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
 
     @Override
     public void visitEnumEntry(@NotNull JetEnumEntry enumEntry) {
-        ClassDescriptor descriptor = bindingContext.get(CLASS, enumEntry);
-        assert descriptor != null :
-                String.format("No descriptor for enum entry \n---\n%s\n---\n", JetPsiUtil.getElementTextWithContext(enumEntry));
-
         if (enumEntry.getDeclarations().isEmpty()) {
             for (JetDelegationSpecifier specifier : enumEntry.getDelegationSpecifiers()) {
                 specifier.accept(this);
             }
+            return;
         }
-        else {
-            bindingTrace.record(ENUM_ENTRY_CLASS_NEED_SUBCLASS, descriptor);
-            super.visitEnumEntry(enumEntry);
-        }
-    }
 
-    @Override
-    public void visitClassObject(@NotNull JetClassObject classObject) {
-        ClassDescriptor classDescriptor = bindingContext.get(CLASS, classObject.getObjectDeclaration());
+        ClassDescriptor descriptor = bindingContext.get(CLASS, enumEntry);
+        // working around a problem with shallow analysis
+        if (descriptor == null) return;
 
-        assert classDescriptor != null : String.format("No class found in binding context for: \n---\n%s\n---\n",
-                                                       JetPsiUtil.getElementTextWithContext(classObject));
-
-        String name = peekFromStack(nameStack) + JvmAbi.CLASS_OBJECT_SUFFIX;
-        recordClosure(classDescriptor, name);
-
-        classStack.push(classDescriptor);
-        nameStack.push(name);
-        super.visitClassObject(classObject);
-        nameStack.pop();
-        classStack.pop();
+        bindingTrace.record(ENUM_ENTRY_CLASS_NEED_SUBCLASS, descriptor);
+        super.visitEnumEntry(enumEntry);
     }
 
     @Override
     public void visitObjectDeclaration(@NotNull JetObjectDeclaration declaration) {
-        if (declaration.getParent() instanceof JetClassObject) {
-            super.visitObjectDeclaration(declaration);
-        }
-        else {
-            if (!filter.shouldProcessClass(declaration)) return;
+        if (!filter.shouldProcessClass(declaration)) return;
 
-            ClassDescriptor classDescriptor = bindingContext.get(CLASS, declaration);
-            // working around a problem with shallow analysis
-            if (classDescriptor == null) return;
+        ClassDescriptor classDescriptor = bindingContext.get(CLASS, declaration);
+        // working around a problem with shallow analysis
+        if (classDescriptor == null) return;
 
-            String name = getName(classDescriptor);
-            recordClosure(classDescriptor, name);
+        String name = getName(classDescriptor);
+        recordClosure(classDescriptor, name);
 
-            classStack.push(classDescriptor);
-            nameStack.push(name);
-            super.visitObjectDeclaration(declaration);
-            nameStack.pop();
-            classStack.pop();
-        }
+        classStack.push(classDescriptor);
+        nameStack.push(name);
+        super.visitObjectDeclaration(declaration);
+        nameStack.pop();
+        classStack.pop();
     }
 
     @Override
@@ -414,6 +392,8 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         CallableDescriptor descriptor = call.getResultingDescriptor();
         if (!(descriptor instanceof FunctionDescriptor)) return;
 
+        recordSamConstructorIfNeeded(expression, call);
+
         FunctionDescriptor original = SamCodegenUtil.getOriginalIfSamAdapter((FunctionDescriptor) descriptor);
         if (original == null) return;
 
@@ -434,6 +414,26 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
 
             bindingTrace.record(CodegenBinding.SAM_VALUE, argumentExpression, samType);
         }
+    }
+
+    private void recordSamConstructorIfNeeded(@NotNull JetCallExpression expression, @NotNull ResolvedCall<?> call) {
+        CallableDescriptor callableDescriptor = call.getResultingDescriptor();
+        if (!(callableDescriptor.getOriginal() instanceof SamConstructorDescriptor)) return;
+
+        List<ResolvedValueArgument> valueArguments = call.getValueArgumentsByIndex();
+        if (valueArguments == null || valueArguments.size() != 1) return;
+
+        ResolvedValueArgument valueArgument = valueArguments.get(0);
+        if (!(valueArgument instanceof ExpressionValueArgument)) return;
+        ValueArgument argument = ((ExpressionValueArgument) valueArgument).getValueArgument();
+        if (argument == null) return;
+
+        JetExpression argumentExpression = argument.getArgumentExpression();
+        bindingTrace.record(SAM_CONSTRUCTOR_TO_ARGUMENT, expression, argumentExpression);
+
+        //noinspection ConstantConditions
+        SamType samType = SamType.create(callableDescriptor.getReturnType());
+        bindingTrace.record(SAM_VALUE, argumentExpression, samType);
     }
 
     @Override

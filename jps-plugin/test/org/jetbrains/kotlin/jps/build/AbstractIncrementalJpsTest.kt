@@ -20,6 +20,7 @@ import org.jetbrains.jps.builders.JpsBuildTestCase
 import kotlin.properties.Delegates
 import com.intellij.openapi.util.io.FileUtil
 import java.io.File
+import org.jetbrains.kotlin.test.JetTestUtils
 import org.jetbrains.jps.builders.CompileScopeTestBuilder
 import org.jetbrains.jps.builders.impl.logging.ProjectBuilderLoggerBase
 import org.jetbrains.jps.builders.logging.BuildLoggingManager
@@ -34,7 +35,6 @@ import java.util.HashMap
 import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.jps.incremental.messages.BuildMessage
 import kotlin.test.assertFalse
-import java.util.regex.Pattern
 import kotlin.test.assertEquals
 import org.jetbrains.jps.model.JpsModuleRootModificationUtil
 import com.intellij.openapi.util.io.FileUtilRt
@@ -42,6 +42,13 @@ import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.jps.cmdline.ProjectDescriptor
 import junit.framework.TestCase
 import org.jetbrains.kotlin.jps.incremental.getKotlinCache
+import java.io.ByteArrayOutputStream
+import java.io.PrintStream
+import org.jetbrains.jps.incremental.IncProjectBuilder
+import org.jetbrains.jps.builders.BuildResult
+import org.jetbrains.jps.incremental.BuilderRegistry
+import org.jetbrains.jps.api.CanceledStatus
+import org.jetbrains.jps.builders.java.dependencyView.Callbacks
 
 public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
     class object {
@@ -65,15 +72,22 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
         super.tearDown()
     }
 
-    protected open val customTest: Boolean
+    protected open val allowNoFilesWithSuffixInTestData: Boolean
         get() = false
+
+    protected open val mockConstantSearch: Callbacks.ConstantAffectionResolver?
+        get() = null
 
     fun build(scope: CompileScopeTestBuilder = CompileScopeTestBuilder.make().all()): MakeResult {
         val workDirPath = FileUtil.toSystemIndependentName(workDir.getAbsolutePath())
         val logger = MyLogger(workDirPath)
         val descriptor = createProjectDescriptor(BuildLoggingManager(logger))
         try {
-            val buildResult = doBuild(descriptor, scope)!!
+            val builder = IncProjectBuilder(descriptor, BuilderRegistry.getInstance(), myBuildParams, CanceledStatus.NULL, mockConstantSearch, true)
+            val buildResult = BuildResult()
+            builder.addMessageHandler(buildResult)
+            builder.build(scope.build(), false)
+
             if (!buildResult.isSuccessful()) {
                 val errorMessages =
                         buildResult
@@ -145,7 +159,7 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
             fail("Bad test data format: files ending with both unnumbered and numbered \".new\"/\".delete\" were found")
         }
         if (!haveFilesWithoutNumbers && !haveFilesWithNumbers) {
-            if (customTest) {
+            if (allowNoFilesWithSuffixInTestData) {
                 return listOf(listOf())
             }
             else {
@@ -223,7 +237,8 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
 
     private fun createMappingsDump(project: ProjectDescriptor) =
             createKotlinIncrementalCacheDump(project) + "\n\n\n" +
-            createCommonMappingsDump(project)
+            createCommonMappingsDump(project) + "\n\n\n" +
+            createJavaMappingsDump(project)
 
     private fun createKotlinIncrementalCacheDump(project: ProjectDescriptor): String {
         return StringBuilder {
@@ -261,6 +276,14 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
         result.println("End of SourceToOutputMap")
 
         return resultBuf.toString()
+    }
+
+    private fun createJavaMappingsDump(project: ProjectDescriptor): String {
+        val byteArrayOutputStream = ByteArrayOutputStream()
+        PrintStream(byteArrayOutputStream).use {
+            project.dataManager.getMappings().toStream(it)
+        }
+        return byteArrayOutputStream.toString()
     }
 
     private data class MakeResult(val log: String, val makeFailed: Boolean, val mappingsDump: String?)
@@ -336,20 +359,7 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
         override fun isEnabled(): Boolean = true
 
         override fun logLine(message: String?) {
-            fun String.replaceHashWithStar(): String {
-                val matcher = STRIP_PACKAGE_PART_HASH_PATTERN.matcher(this)
-                if (matcher.find()) {
-                    return matcher.replaceAll("\\$*")
-                }
-                return this
-            }
-
-            logBuf.append(message!!.trimLeading(rootPath + "/").replaceHashWithStar()).append('\n')
-        }
-
-        class object {
-            // We suspect sequences of eight consecutive hexadecimal digits to be a package part hash code
-            val STRIP_PACKAGE_PART_HASH_PATTERN = Pattern.compile("\\$([0-9a-f]{8})")
+            logBuf.append(JetTestUtils.replaceHashWithStar(message!!.trimLeading(rootPath + "/"))).append('\n')
         }
     }
 

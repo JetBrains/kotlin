@@ -137,7 +137,7 @@ public class InjectorForLazyTopDownAnalyzerBasic {
         this.kotlinBuiltIns = module.getBuiltIns();
         this.platformToKotlinClassMap = module.getPlatformToKotlinClassMap();
         this.declarationProviderFactory = declarationProviderFactory;
-        this.resolveSession = new ResolveSession(project, globalContext, module, declarationProviderFactory, bindingTrace);
+        this.resolveSession = new ResolveSession(project, globalContext, getModule(), declarationProviderFactory, bindingTrace);
         this.scopeProvider = new ScopeProvider(getResolveSession());
         this.lazyTopDownAnalyzerForTopLevel = new LazyTopDownAnalyzerForTopLevel();
         this.defaultProvider = DefaultProvider.INSTANCE$;
@@ -154,10 +154,10 @@ public class InjectorForLazyTopDownAnalyzerBasic {
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
         this.flexibleTypeCapabilitiesProvider = new FlexibleTypeCapabilitiesProvider();
         this.lazinessToken = new LazinessToken();
-        this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, module, flexibleTypeCapabilitiesProvider, storageManager, lazinessToken, dynamicTypesSettings);
+        this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, getModule(), flexibleTypeCapabilitiesProvider, storageManager, lazinessToken, dynamicTypesSettings);
         this.localClassifierAnalyzer = new LocalClassifierAnalyzer(descriptorResolver, typeResolver, annotationResolver);
         this.delegatedPropertyResolver = new DelegatedPropertyResolver();
-        this.reflectionTypes = new ReflectionTypes(module);
+        this.reflectionTypes = new ReflectionTypes(getModule());
         this.callExpressionResolver = new CallExpressionResolver();
         this.statementFilter = new StatementFilter();
         this.candidateResolver = new CandidateResolver();
@@ -301,6 +301,10 @@ public class InjectorForLazyTopDownAnalyzerBasic {
 
     @PreDestroy
     public void destroy() {
+    }
+
+    public ModuleDescriptorImpl getModule() {
+        return this.module;
     }
 
     public ResolveSession getResolveSession() {

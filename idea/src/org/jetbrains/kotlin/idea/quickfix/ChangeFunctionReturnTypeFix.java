@@ -112,7 +112,7 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
                 JetTypeReference newTypeRef = JetPsiFactory(project).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type));
                 newTypeRef = element.setTypeReference(newTypeRef);
                 assert newTypeRef != null;
-                ShortenReferences.INSTANCE$.process(newTypeRef);
+                ShortenReferences.DEFAULT.process(newTypeRef);
             }
             else {
                 element.setTypeReference(null);

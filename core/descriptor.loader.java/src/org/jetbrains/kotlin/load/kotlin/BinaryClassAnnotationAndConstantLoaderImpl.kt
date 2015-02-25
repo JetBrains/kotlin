@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils
 import org.jetbrains.kotlin.load.java.components.ErrorReporter
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor
 import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.load.kotlin.DeserializedResolverUtils.javaClassIdToKotlinClassId
 import org.jetbrains.kotlin.storage.StorageManager
 import java.util.*
 import org.jetbrains.kotlin.descriptors.*
@@ -139,8 +138,7 @@ public class BinaryClassAnnotationAndConstantLoaderImpl(
         }
     }
 
-    private fun resolveClass(javaClassId: ClassId): ClassDescriptor {
-        val classId = javaClassIdToKotlinClassId(javaClassId)
+    private fun resolveClass(classId: ClassId): ClassDescriptor {
         return module.findClassAcrossModuleDependencies(classId)
                ?: ErrorUtils.createErrorClass(classId.asSingleFqName().asString())
     }

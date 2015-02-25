@@ -35,17 +35,16 @@ PsiJetFileStubImpl[package=a.b.c.test.enum]
                       REFERENCE_EXPRESSION:[referencedName=enum]
                     REFERENCE_EXPRESSION:[referencedName=Enum]
     CLASS_BODY:
-      CLASS_OBJECT:
+      OBJECT_DECLARATION:[fqName=a.b.c.test.enum.Enum.Default, isClassObject=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Default, superNames=[]]
         MODIFIER_LIST:[internal]
-        OBJECT_DECLARATION:[fqName=null, isClassObject=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=null, superNames=[]]
-          CLASS_BODY:
-            PROPERTY:[fqName=a.b.c.test.enum.Enum.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=c]
-              MODIFIER_LIST:[internal final]
-              TYPE_REFERENCE:
+        CLASS_BODY:
+          PROPERTY:[fqName=a.b.c.test.enum.Enum.Default.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=c]
+            MODIFIER_LIST:[internal final]
+            TYPE_REFERENCE:
+              USER_TYPE:[isAbsoluteInRootPackage=false]
                 USER_TYPE:[isAbsoluteInRootPackage=false]
-                  USER_TYPE:[isAbsoluteInRootPackage=false]
-                    REFERENCE_EXPRESSION:[referencedName=kotlin]
-                  REFERENCE_EXPRESSION:[referencedName=Int]
+                  REFERENCE_EXPRESSION:[referencedName=kotlin]
+                REFERENCE_EXPRESSION:[referencedName=Int]
       ENUM_ENTRY:[fqName=a.b.c.test.enum.Enum.A, isEnumEntry=true, isLocal=false, isTopLevel=false, isTrait=false, name=A, superNames=[]]
       ENUM_ENTRY:[fqName=a.b.c.test.enum.Enum.B, isEnumEntry=true, isLocal=false, isTopLevel=false, isTrait=false, name=B, superNames=[]]
       ENUM_ENTRY:[fqName=a.b.c.test.enum.Enum.C, isEnumEntry=true, isLocal=false, isTopLevel=false, isTrait=false, name=C, superNames=[]]

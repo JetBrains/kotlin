@@ -62,7 +62,7 @@ class ArtificialElementInsertHandler(
 
 fun shortenReferences(context: InsertionContext, startOffset: Int, endOffset: Int) {
     PsiDocumentManager.getInstance(context.getProject()).commitAllDocuments();
-    ShortenReferences.process(context.getFile() as JetFile, startOffset, endOffset)
+    ShortenReferences.DEFAULT.process(context.getFile() as JetFile, startOffset, endOffset)
 }
 
 fun mergeTails(tails: Collection<Tail?>): Tail? {
@@ -171,6 +171,14 @@ fun<TDescriptor: DeclarationDescriptor?> MutableCollection<LookupElement>.addLoo
 }
 
 private fun MutableCollection<LookupElement>.addLookupElementsForNullable(factory: () -> LookupElement?, matchedInfos: Collection<ExpectedInfo>) {
+    for (element in lookupElementsForNullable(factory)) {
+        add(element.addTailAndNameSimilarity(matchedInfos))
+    }
+}
+
+private fun lookupElementsForNullable(factory: () -> LookupElement?): Collection<LookupElement> {
+    val result = ArrayList<LookupElement>(2)
+
     var lookupElement = factory()
     if (lookupElement != null) {
         lookupElement = object: LookupElementDecorator<LookupElement>(lookupElement!!) {
@@ -184,7 +192,7 @@ private fun MutableCollection<LookupElement>.addLookupElementsForNullable(factor
         }
         lookupElement = lookupElement!!.suppressAutoInsertion()
         lookupElement = lookupElement!!.assignSmartCompletionPriority(SmartCompletionItemPriority.NULLABLE)
-        add(lookupElement!!.addTailAndNameSimilarity(matchedInfos))
+        result.add(lookupElement)
     }
 
     lookupElement = factory()
@@ -200,8 +208,10 @@ private fun MutableCollection<LookupElement>.addLookupElementsForNullable(factor
         }
         lookupElement = lookupElement!!.suppressAutoInsertion()
         lookupElement = lookupElement!!.assignSmartCompletionPriority(SmartCompletionItemPriority.NULLABLE)
-        add(lookupElement!!.addTailAndNameSimilarity(matchedInfos))
+        result.add(lookupElement)
     }
+
+    return result
 }
 
 fun functionType(function: FunctionDescriptor): JetType? {

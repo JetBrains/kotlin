@@ -23,6 +23,8 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiTreeUtil;
+import kotlin.ExtensionFunction0;
+import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
@@ -31,9 +33,7 @@ import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.refactoring.JetNameValidator;
 import org.jetbrains.kotlin.idea.refactoring.SimpleCollectingValidator;
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeSignatureConfiguration;
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeSignatureData;
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo;
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.*;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.psi.JetCallElement;
 import org.jetbrains.kotlin.psi.JetExpression;
@@ -120,39 +120,47 @@ public class AddFunctionParametersFix extends ChangeFunctionSignatureFix {
 
     private JetChangeSignatureConfiguration addParameterConfiguration() {
         return new JetChangeSignatureConfiguration() {
+            @NotNull
             @Override
-            public void configure(@NotNull JetChangeSignatureData changeSignatureData, @NotNull BindingContext bindingContext) {
-                List<ValueParameterDescriptor> parameters = functionDescriptor.getValueParameters();
-                List<? extends ValueArgument> arguments = callElement.getValueArguments();
-                JetNameValidator validator = new SimpleCollectingValidator();
+            public JetMethodDescriptor configure(@NotNull JetMethodDescriptor originalDescriptor, @NotNull final BindingContext bindingContext) {
+                return ChangeSignaturePackage.modify(
+                        originalDescriptor,
+                        new ExtensionFunction0<JetMutableMethodDescriptor, Unit>() {
+                            @Override
+                            public Unit invoke(JetMutableMethodDescriptor descriptor) {
+                                List<ValueParameterDescriptor> parameters = functionDescriptor.getValueParameters();
+                                List<? extends ValueArgument> arguments = callElement.getValueArguments();
+                                JetNameValidator validator = new SimpleCollectingValidator();
 
-                for (int i = 0; i < arguments.size(); i ++) {
-                    ValueArgument argument = arguments.get(i);
-                    JetExpression expression = argument.getArgumentExpression();
+                                for (int i = 0; i < arguments.size(); i ++) {
+                                    ValueArgument argument = arguments.get(i);
+                                    JetExpression expression = argument.getArgumentExpression();
 
-                    if (i < parameters.size()) {
-                        validator.validateName(parameters.get(i).getName().asString());
-                        JetType argumentType = expression != null ? bindingContext.get(BindingContext.EXPRESSION_TYPE, expression) : null;
-                        JetType parameterType = parameters.get(i).getType();
+                                    if (i < parameters.size()) {
+                                        validator.validateName(parameters.get(i).getName().asString());
+                                        JetType argumentType = expression != null ? bindingContext.get(BindingContext.EXPRESSION_TYPE, expression) : null;
+                                        JetType parameterType = parameters.get(i).getType();
 
-                        if (argumentType != null && !JetTypeChecker.DEFAULT.isSubtypeOf(argumentType, parameterType)) {
-                            changeSignatureData.getParameters().get(i).setCurrentTypeText(
-                                    IdeDescriptorRenderers.SOURCE_CODE.renderType(argumentType)
-                            );
-                            typesToShorten.add(argumentType);
+                                        if (argumentType != null && !JetTypeChecker.DEFAULT.isSubtypeOf(argumentType, parameterType)) {
+                                            descriptor.getParameters().get(i).setCurrentTypeText(IdeDescriptorRenderers.SOURCE_CODE.renderType(argumentType));
+                                            typesToShorten.add(argumentType);
+                                        }
+                                    }
+                                    else {
+                                        JetParameterInfo parameterInfo = getNewParameterInfo(bindingContext, argument, validator);
+                                        typesToShorten.add(parameterInfo.getOriginalType());
+
+                                        if (expression != null) {
+                                            parameterInfo.setDefaultValueForCall(expression.getText());
+                                        }
+
+                                        descriptor.addParameter(parameterInfo);
+                                    }
+                                }
+                                return null;
+                            }
                         }
-                    }
-                    else {
-                        JetParameterInfo parameterInfo = getNewParameterInfo(bindingContext, argument, validator);
-                        typesToShorten.add(parameterInfo.getOriginalType());
-
-                        if (expression != null) {
-                            parameterInfo.setDefaultValueForCall(expression.getText());
-                        }
-
-                        changeSignatureData.addParameter(parameterInfo);
-                    }
-                }
+                );
             }
 
             @Override

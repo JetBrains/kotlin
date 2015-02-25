@@ -38,7 +38,10 @@ import org.jetbrains.kotlin.load.kotlin.nativeDeclarations.NativeDeclarationsPac
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.SpecialNames;
+import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.JetFunctionLiteral;
+import org.jetbrains.kotlin.psi.JetFunctionLiteralExpression;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -336,14 +339,7 @@ public class JetTypeMapper {
         assert container instanceof ClassDescriptor : "Unexpected container: " + container + " for " + klass;
 
         String containerInternalName = computeAsmTypeImpl((ClassDescriptor) container);
-        switch (klass.getKind()) {
-            case ENUM_ENTRY:
-                return containerInternalName;
-            case CLASS_OBJECT:
-                return containerInternalName + JvmAbi.CLASS_OBJECT_SUFFIX;
-            default:
-                return containerInternalName + "$" + name;
-        }
+        return klass.getKind() == ClassKind.ENUM_ENTRY ? containerInternalName : containerInternalName + "$" + name;
     }
 
     @NotNull
@@ -584,7 +580,7 @@ public class JetTypeMapper {
     }
 
     @NotNull
-    private static String mapFunctionName(@NotNull FunctionDescriptor descriptor) {
+    private String mapFunctionName(@NotNull FunctionDescriptor descriptor) {
         String platformName = getPlatformName(descriptor);
         if (platformName != null) return platformName;
 
@@ -601,7 +597,21 @@ public class JetTypeMapper {
                 return PropertyCodegen.setterName(property.getName());
             }
         }
-        else if (isLocalNamedFun(descriptor) || descriptor instanceof AnonymousFunctionDescriptor) {
+        else if (isLocalNamedFun(descriptor)) {
+            return "invoke";
+        }
+        else if (descriptor instanceof AnonymousFunctionDescriptor) {
+            PsiElement element = DescriptorToSourceUtils.callableDescriptorToDeclaration(descriptor);
+            if (element instanceof JetFunctionLiteral) {
+                PsiElement expression = element.getParent();
+                if (expression instanceof JetFunctionLiteralExpression) {
+                    SamType samType = bindingContext.get(SAM_VALUE, (JetExpression) expression);
+                    if (samType != null) {
+                        return samType.getAbstractMethod().getName().asString();
+                    }
+                }
+            }
+
             return "invoke";
         }
         else {

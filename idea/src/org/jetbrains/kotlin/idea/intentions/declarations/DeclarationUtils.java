@@ -20,8 +20,8 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
-import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
+import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.types.JetType;
@@ -82,7 +82,7 @@ public class DeclarationUtils {
         );
 
         if (inferredType != null) {
-            ShortenReferences.INSTANCE$.process(property.getTypeReference());
+            ShortenReferences.DEFAULT.process(property.getTypeReference());
         }
 
         return newInitializer;

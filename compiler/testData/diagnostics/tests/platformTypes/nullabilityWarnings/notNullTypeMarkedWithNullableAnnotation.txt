@@ -1,0 +1,3 @@
+package
+
+internal fun list(/*0*/ j: p.J): kotlin.Any

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2013 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,24 +26,27 @@ import kotlin.KotlinPackage;
 import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
+import org.jetbrains.kotlin.idea.util.ShortenReferences;
+import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.typeRefHelpers.TypeRefHelpersPackage;
+import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
+import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.TypeSubstitutor;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.util.ShortenReferences.Options;
 import org.jetbrains.kotlin.idea.codeInsight.shorten.ShortenPackage;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.ChangeSignaturePackage;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetValVar;
-import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
-import org.jetbrains.kotlin.types.JetType;
-import org.jetbrains.kotlin.types.TypeSubstitutor;
 
 import java.util.List;
 
@@ -185,7 +188,10 @@ public class JetFunctionDefinitionUsage<T extends PsiElement> extends JetUsageIn
 
                 //TODO use ChangeFunctionReturnTypeFix.invoke when JetTypeCodeFragment.getType() is ready
                 if (!KotlinBuiltIns.getInstance().getUnitType().toString().equals(returnTypeText)) {
-                    ShortenPackage.addToShorteningWaitSet(function.setTypeReference(JetPsiFactory(function).createType(returnTypeText)));
+                    ShortenPackage.addToShorteningWaitSet(
+                            function.setTypeReference(JetPsiFactory(function).createType(returnTypeText)),
+                            Options.DEFAULT
+                    );
                 }
             }
         }
@@ -205,7 +211,17 @@ public class JetFunctionDefinitionUsage<T extends PsiElement> extends JetUsageIn
                 paramIndex++;
             }
 
-            ShortenPackage.addToShorteningWaitSet(parameterList);
+            ShortenPackage.addToShorteningWaitSet(parameterList, Options.DEFAULT);
+        }
+
+        if (element instanceof JetFunction && changeInfo.isReceiverTypeChanged()) {
+            //noinspection unchecked
+            String receiverTypeText = changeInfo.renderReceiverType((JetFunctionDefinitionUsage<PsiElement>) this);
+            JetTypeReference receiverTypeRef = receiverTypeText != null ? psiFactory.createType(receiverTypeText) : null;
+            JetTypeReference newReceiverTypeRef = TypeRefHelpersPackage.setReceiverTypeReference((JetFunction) element, receiverTypeRef);
+            if (newReceiverTypeRef != null) {
+                ShortenPackage.addToShorteningWaitSet(newReceiverTypeRef, ShortenReferences.Options.DEFAULT);
+            }
         }
 
         if (changeInfo.isVisibilityChanged() && !JetPsiUtil.isLocal((JetDeclaration) element)) {
@@ -221,7 +237,7 @@ public class JetFunctionDefinitionUsage<T extends PsiElement> extends JetUsageIn
             JetParameterList parameterList,
             JetPsiFactory psiFactory
     ) {
-        int parametersCount = changeInfo.getNewParametersCount();
+        int parametersCount = changeInfo.getNonReceiverParametersCount();
         boolean isLambda = element instanceof JetFunctionLiteral;
         boolean canReplaceEntireList = false;
 
@@ -284,7 +300,7 @@ public class JetFunctionDefinitionUsage<T extends PsiElement> extends JetUsageIn
         }
 
         if (newParameterList != null) {
-            ShortenPackage.addToShorteningWaitSet(newParameterList);
+            ShortenPackage.addToShorteningWaitSet(newParameterList, Options.DEFAULT);
         }
     }
 

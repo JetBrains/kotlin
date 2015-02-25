@@ -143,7 +143,7 @@ deprecated("Use toByteArray(charset) instead to emphasize copy behaviour")
 public fun String.getBytes(charset: String): ByteArray = (this as java.lang.String).getBytes(charset)
 
 /**
- * Returns a subsequence specified by given range.
+ * Returns a subsequence specified by given [range].
  */
 public fun CharSequence.slice(range: IntRange): CharSequence {
     return subSequence(range.start, range.end + 1) // inclusive
@@ -158,31 +158,36 @@ public fun String.toRegex(flags: Int = 0): java.util.regex.Pattern {
     return java.util.regex.Pattern.compile(this, flags)
 }
 
+/**
+ * Creates a new [StringReader] for reading the contents of this string.
+ */
 public val String.reader: StringReader
     get() = StringReader(this)
 
 /**
- * Returns a copy of this string capitalised if it is not empty or already starting with an uppper case letter, otherwise returns this
+ * Returns a copy of this string capitalised if it is not empty or already starting with an upper case letter,
+ * otherwise returns this.
  *
- * @includeFunctionBody ../../test/text/StringTest.kt capitalize
+ * @sample test.text.StringJVMTest.capitalize
  */
 public fun String.capitalize(): String {
     return if (isNotEmpty() && charAt(0).isLowerCase()) substring(0, 1).toUpperCase() + substring(1) else this
 }
 
 /**
- * Returns a copy of this string with the first letter lower case if it is not empty or already starting with a lower case letter, otherwise returns this
+ * Returns a copy of this string with the first letter lowercased if it is not empty or already starting with
+ * a lower case letter, otherwise returns this.
  *
- * @includeFunctionBody ../../test/text/StringTest.kt decapitalize
+ * @sample test.text.StringJVMTest.decapitalize
  */
 public fun String.decapitalize(): String {
     return if (isNotEmpty() && charAt(0).isUpperCase()) substring(0, 1).toLowerCase() + substring(1) else this
 }
 
 /**
- * Repeats a given string n times.
- * When n < 0, IllegalArgumentException is thrown.
- * @includeFunctionBody ../../test/text/StringTest.kt repeat
+ * Repeats a given string [n] times.
+ * @throws IllegalArgumentException when n < 0
+ * @sample test.text.StringJVMTest.repeat
  */
 public fun String.repeat(n: Int): String {
     if (n < 0)
@@ -196,9 +201,8 @@ public fun String.repeat(n: Int): String {
 }
 
 /**
- * Returns an Appendable containing the everything but the first characters that satisfy the given *predicate*
- *
- * @includeFunctionBody ../../test/text/StringTest.kt dropWhile
+ * Appends the contents of this string, excluding the first characters that satisfy the given [predicate],
+ * to the given Appendable.
  */
 public inline fun <T : Appendable> String.dropWhileTo(result: T, predicate: (Char) -> Boolean): T {
     var start = true
@@ -214,9 +218,7 @@ public inline fun <T : Appendable> String.dropWhileTo(result: T, predicate: (Cha
 }
 
 /**
- * Returns an Appendable containing the first characters that satisfy the given *predicate*
- *
- * @includeFunctionBody ../../test/text/StringTest.kt takeWhile
+ * Appends the first characters from this string that satisfy the given [predicate] to the given Appendable.
  */
 public inline fun <T : Appendable> String.takeWhileTo(result: T, predicate: (Char) -> Boolean): T {
     for (c in this) if (predicate(c)) result.append(c) else break
@@ -224,8 +226,8 @@ public inline fun <T : Appendable> String.takeWhileTo(result: T, predicate: (Cha
 }
 
 /**
- * Replaces every *regexp* occurence in the text with the value retruned by the given function *body* that can handle
- * particular occurance using [[MatchResult]] provided.
+ * Replaces every [regexp] occurence in the text with the value returned by the given function [body] that
+ * takes a [MatchResult].
  */
 public fun String.replaceAll(regexp: String, body: (java.util.regex.MatchResult) -> String): String {
     val sb = StringBuilder(this.length())

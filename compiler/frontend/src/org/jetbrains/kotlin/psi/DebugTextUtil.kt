@@ -188,11 +188,6 @@ private object DebugTextBuildingVisitor : JetVisitor<String, Unit>() {
         return "initializer in " + (containingDeclaration?.getDebugText() ?: "...")
     }
 
-    override fun visitClassObject(classObject: JetClassObject, data: Unit?): String? {
-        val containingDeclaration = JetStubbedPsiUtil.getContainingDeclaration(classObject)
-        return "class object in " + (containingDeclaration?.getDebugText() ?: "...")
-    }
-
     override fun visitClassBody(classBody: JetClassBody, data: Unit?): String? {
         val containingDeclaration = JetStubbedPsiUtil.getContainingDeclaration(classBody)
         return "class body for " + (containingDeclaration?.getDebugText() ?: "...")
@@ -242,6 +237,9 @@ private object DebugTextBuildingVisitor : JetVisitor<String, Unit>() {
         return buildText {
             append("STUB: ")
             appendInn(declaration.getModifierList(), suffix = " ")
+            if (declaration.isClassObject()) {
+                append("class ")
+            }
             append("object ")
             appendInn(declaration.getNameAsName())
             appendInn(declaration.getDelegationSpecifierList(), prefix = " : ")

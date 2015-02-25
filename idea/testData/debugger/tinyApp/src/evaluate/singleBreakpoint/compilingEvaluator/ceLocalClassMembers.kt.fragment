@@ -1,0 +1,8 @@
+class MyClass {
+    fun test() = publicFun() + publicVal + protectedFun() + protectedVal + privateFun() + privateFun()
+}
+
+val a = MyClass()
+a.test()
+
+// RESULT: 6: I

@@ -31,21 +31,20 @@ public class ClassDeserializer(private val components: DeserializationComponents
     private fun createClass(key: ClassKey): DeserializedClassDescriptor? {
         val classId = key.classId
         val classData = key.classData ?: components.classDataFinder.findClassData(classId) ?: return null
-        val outerContext = if (classId.isTopLevelClass()) {
+        val outerContext = if (classId.isNestedClass()) {
+            deserializeClass(classId.getOuterClassId())?.c ?: return null
+        }
+        else {
             val fragments = components.packageFragmentProvider.getPackageFragments(classId.getPackageFqName())
             assert(fragments.size() == 1) { "There should be exactly one package: $fragments, class id is $classId" }
             components.createContext(fragments.single(), classData.getNameResolver())
-        }
-        else {
-            deserializeClass(classId.getOuterClassId())?.c ?: return null
         }
 
         return DeserializedClassDescriptor(outerContext, classData.getClassProto(), classData.getNameResolver())
     }
 
-    private inner class ClassKey(val classId: ClassId, val classData: ClassData?) {
-        override fun equals(other: Any?): Boolean = other is ClassKey && classId == other.classId
-        override fun hashCode(): Int = classId.hashCode()
-        override fun toString(): String = classId.toString()
+    private data class ClassKey(val classId: ClassId, classData: ClassData?) {
+        // This property is not declared in the constructor because it shouldn't participate in equals/hashCode
+        val classData: ClassData? = classData
     }
 }

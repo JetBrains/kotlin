@@ -5,5 +5,7 @@ class A {
     }
 }
 
+val v: A? = null
+
 fun f(p: a.A.B) {
 }

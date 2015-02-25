@@ -34,16 +34,21 @@ public class MethodContext extends CodegenContext<CallableMemberDescriptor> {
     private Label methodStartLabel;
     private Label methodEndLabel;
 
+    // Note: in case of code inside property accessors, functionDescriptor will be that accessor,
+    // but CodegenContext#contextDescriptor will be the corresponding property
+    private final FunctionDescriptor functionDescriptor;
+
     protected MethodContext(
-            @NotNull FunctionDescriptor contextDescriptor,
+            @NotNull FunctionDescriptor functionDescriptor,
             @NotNull OwnerKind contextKind,
             @NotNull CodegenContext parentContext,
             @Nullable MutableClosure closure,
             boolean isInliningLambda
     ) {
-        super(JvmCodegenUtil.getDirectMember(contextDescriptor), contextKind, parentContext, closure,
+        super(JvmCodegenUtil.getDirectMember(functionDescriptor), contextKind, parentContext, closure,
               parentContext.hasThisDescriptor() ? parentContext.getThisDescriptor() : null, null);
         this.isInliningLambda = isInliningLambda;
+        this.functionDescriptor = functionDescriptor;
     }
 
     @NotNull
@@ -76,11 +81,6 @@ public class MethodContext extends CodegenContext<CallableMemberDescriptor> {
         }
         ReceiverParameterDescriptor parameter = descriptor.getExtensionReceiverParameter();
         return lookupInContext(parameter, StackValue.LOCAL_0, state, ignoreNoOuter);
-    }
-
-    @Override
-    public boolean isStatic() {
-        return getParentContext().isStatic();
     }
 
     @Override
@@ -123,4 +123,8 @@ public class MethodContext extends CodegenContext<CallableMemberDescriptor> {
         return isInliningLambda;
     }
 
+    @NotNull
+    public FunctionDescriptor getFunctionDescriptor() {
+        return functionDescriptor;
+    }
 }

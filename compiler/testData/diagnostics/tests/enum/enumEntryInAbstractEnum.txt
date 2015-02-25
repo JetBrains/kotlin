@@ -11,18 +11,6 @@ internal final enum class EnumClass : kotlin.Enum<EnumClass> {
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-
-        public class object <class-object-for-E1> : EnumClass.E1 {
-            private constructor <class-object-for-E1>()
-            internal open override /*1*/ /*fake_override*/ val bar: kotlin.String
-            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: EnumClass): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-            internal open override /*1*/ /*fake_override*/ fun foo(): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-        }
     }
 
     public enum entry E2 : EnumClass {
@@ -35,18 +23,6 @@ internal final enum class EnumClass : kotlin.Enum<EnumClass> {
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-
-        public class object <class-object-for-E2> : EnumClass.E2 {
-            private constructor <class-object-for-E2>()
-            internal abstract override /*1*/ /*fake_override*/ val bar: kotlin.String
-            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: EnumClass): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-            internal abstract override /*1*/ /*fake_override*/ fun foo(): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-        }
     }
 
     private constructor EnumClass()

@@ -43,7 +43,7 @@ fun visibility(visibility: ProtoBuf.Visibility) = when (visibility) {
     ProtoBuf.Visibility.PRIVATE_TO_THIS -> Visibilities.PRIVATE_TO_THIS
     ProtoBuf.Visibility.PROTECTED -> Visibilities.PROTECTED
     ProtoBuf.Visibility.PUBLIC -> Visibilities.PUBLIC
-    ProtoBuf.Visibility.EXTRA -> throw UnsupportedOperationException("Extra visibilities are not supported yet")
+    ProtoBuf.Visibility.LOCAL -> Visibilities.LOCAL
 }
 
 public fun classKind(kind: ProtoBuf.Class.Kind): ClassKind = when (kind) {

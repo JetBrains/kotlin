@@ -1,0 +1,11 @@
+package test
+
+fun foo(n: Int) {
+
+}
+
+class A(val n: Int) {
+    fun test() {
+        foo(this)
+    }
+}

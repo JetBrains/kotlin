@@ -17,21 +17,28 @@
 package org.jetbrains.kotlin.idea.refactoring.changeSignature
 
 import com.intellij.lang.Language
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiModifier
 import com.intellij.psi.PsiType
 import com.intellij.refactoring.changeSignature.*
 import com.intellij.usageView.UsageInfo
+import com.intellij.util.Function
 import com.intellij.util.VisibilityUtil
+import com.intellij.util.containers.ContainerUtil
+import kotlin.Function1
+import kotlin.Pair
 import org.jetbrains.kotlin.asJava.*
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.psi.JetFunction
 import org.jetbrains.kotlin.psi.JetFunctionLiteral
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.idea.JetLanguage
@@ -40,6 +47,9 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.JetFunctionD
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import java.util.HashMap
 import kotlin.properties.Delegates
+import java.util.ArrayList
+import java.util.Collections
+import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 
 public class JetChangeInfo(
         val methodDescriptor: JetMethodDescriptor,
@@ -48,8 +58,17 @@ public class JetChangeInfo(
         var newReturnTypeText: String,
         var newVisibility: Visibility,
         parameterInfos: List<JetParameterInfo>,
+        receiver: JetParameterInfo?,
         val context: PsiElement
 ): ChangeInfo {
+    var receiverParameterInfo: JetParameterInfo? = receiver
+        set(value: JetParameterInfo?) {
+            if (value != null && value !in newParameters) {
+                newParameters.add(value)
+            }
+            $receiverParameterInfo = value
+        }
+
     private val newParameters = parameterInfos.toArrayList()
     private val originalPsiMethod: PsiMethod? = getCurrentPsiMethod()
 
@@ -63,8 +82,10 @@ public class JetChangeInfo(
     }
 
     public val isParameterSetOrOrderChanged: Boolean by Delegates.lazy {
-        newParameters.size() != methodDescriptor.getParametersCount() ||
-        newParameters.indices.any { i -> newParameters.get(i).getOldIndex() != i }
+        val signatureParameters = getNonReceiverParameters()
+        methodDescriptor.receiver != receiverParameterInfo ||
+        signatureParameters.size() != methodDescriptor.getParametersCount() ||
+        signatureParameters.indices.any { i -> signatureParameters[i].getOldIndex() != i }
     }
 
     private var isPrimaryMethodUpdated: Boolean = false
@@ -88,6 +109,12 @@ public class JetChangeInfo(
 
     override fun getNewParameters(): Array<JetParameterInfo> = newParameters.copyToArray()
 
+    fun getNonReceiverParametersCount(): Int = newParameters.size() - (if (receiverParameterInfo != null) 1 else 0)
+
+    fun getNonReceiverParameters(): List<JetParameterInfo> {
+        return receiverParameterInfo?.let { receiver -> newParameters.filter { it != receiver } } ?: newParameters
+    }
+
     public fun setNewParameter(index: Int, parameterInfo: JetParameterInfo) {
         newParameters.set(index, parameterInfo)
     }
@@ -97,8 +124,14 @@ public class JetChangeInfo(
     }
 
     public fun removeParameter(index: Int) {
-        newParameters.remove(index);
+        val parameterInfo = newParameters.remove(index);
+        if (parameterInfo == receiverParameterInfo) {
+            receiverParameterInfo = null
+        }
     }
+
+    public fun hasParameter(parameterInfo: JetParameterInfo): Boolean =
+            parameterInfo in newParameters
 
     override fun isGenerateDelegate(): Boolean = false
 
@@ -118,6 +151,8 @@ public class JetChangeInfo(
 
     override fun isReturnTypeChanged(): Boolean = newReturnTypeText != methodDescriptor.renderOriginalReturnType()
 
+    fun isReceiverTypeChanged(): Boolean = receiverParameterInfo?.getTypeText() != methodDescriptor.renderOriginalReceiverType()
+
     override fun getLanguage(): Language = JetLanguage.INSTANCE
 
     public fun getNewSignature(inheritedFunction: JetFunctionDefinitionUsage<PsiElement>): String {
@@ -135,8 +170,14 @@ public class JetChangeInfo(
                 buffer.append(newVisibility).append(' ')
             }
 
-            buffer.append(JetTokens.FUN_KEYWORD).append(' ').append(name)
+            buffer.append(JetTokens.FUN_KEYWORD).append(' ')
         }
+
+        receiverParameterInfo?.let {
+            buffer.append(it.currentTypeText).append('.')
+        }
+
+        buffer.append(name)
 
         buffer.append(getNewParametersSignature(inheritedFunction))
 
@@ -152,14 +193,23 @@ public class JetChangeInfo(
     }
 
     public fun getNewParametersSignature(inheritedFunction: JetFunctionDefinitionUsage<PsiElement>): String {
+        val signatureParameters = getNonReceiverParameters()
+
         val isLambda = inheritedFunction.getDeclaration() is JetFunctionLiteral
-        if (isLambda && newParameters.size() == 1 && !newParameters.get(0).requiresExplicitType(inheritedFunction)) {
-            return newParameters.get(0).getDeclarationSignature(0, inheritedFunction)
+        if (isLambda && signatureParameters.size() == 1 && !signatureParameters.get(0).requiresExplicitType(inheritedFunction)) {
+            return signatureParameters.get(0).getDeclarationSignature(0, inheritedFunction)
         }
 
-        return newParameters.indices
-                .map { i -> newParameters[i].getDeclarationSignature(i, inheritedFunction) }
+        return signatureParameters.indices
+                .map { i -> signatureParameters[i].getDeclarationSignature(i, inheritedFunction) }
                 .joinToString(prefix = "(", separator = ", ", postfix = ")")
+    }
+
+    public fun renderReceiverType(inheritedFunction: JetFunctionDefinitionUsage<PsiElement>): String? {
+        val receiverTypeText = receiverParameterInfo?.currentTypeText ?: return null
+        val typeSubstitutor = inheritedFunction.getOrCreateTypeSubstitutor() ?: return receiverTypeText
+        val currentBaseFunction = inheritedFunction.getBaseFunction().getCurrentFunctionDescriptor() ?: return receiverTypeText
+        return currentBaseFunction.getExtensionReceiverParameter()!!.getType().renderTypeWithSubstitution(typeSubstitutor, receiverTypeText, false)
     }
 
     public fun renderReturnType(inheritedFunction: JetFunctionDefinitionUsage<PsiElement>): String {
@@ -190,13 +240,24 @@ public class JetChangeInfo(
             else
                 PsiModifier.PACKAGE_LOCAL
 
-            val newJavaParameters = newParameters.withIndex().map { pair ->
+            val newParameterList = receiverParameterInfo.singletonOrEmptyList() + getNonReceiverParameters()
+            val newJavaParameters = newParameterList.withIndex().map { pair ->
                 val (i, info) = pair
+
                 val type = if (isPrimaryMethodUpdated)
                     currentPsiMethod.getParameterList().getParameters()[i].getType()
                 else
                     PsiType.VOID
-                ParameterInfoImpl(info.getOldIndex(), info.getName(), type, info.defaultValueForCall)
+
+                val oldIndex = info.getOldIndex()
+                val javaOldIndex = when {
+                    methodDescriptor.receiver == null -> oldIndex
+                    info == methodDescriptor.receiver -> 0
+                    oldIndex >= 0 -> oldIndex + 1
+                    else -> -1
+                }
+
+                ParameterInfoImpl(javaOldIndex, info.getName(), type, info.defaultValueForCall)
             }.copyToArray()
 
             val returnType = if (isPrimaryMethodUpdated) currentPsiMethod.getReturnType() else PsiType.VOID
@@ -257,5 +318,6 @@ public fun ChangeInfo.toJetChangeInfo(originalChangeSignatureDescriptor: JetMeth
                           returnTypeText,
                           functionDescriptor.getVisibility(),
                           newParameters,
+                          null,
                           method)
 }

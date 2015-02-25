@@ -20,6 +20,7 @@
     <patterns>
       <pattern testClass="org.jetbrains.kotlin.jps.build.IncrementalJpsTestGenerated" />
       <pattern testClass="org.jetbrains.kotlin.jps.build.IncrementalCacheVersionChangedTest" />
+      <pattern testClass="org.jetbrains.kotlin.jps.build.IncrementalConstantSearchTest" />
     </patterns>
     <RunnerSettings RunnerId="Debug">
       <option name="DEBUG_PORT" value="" />

@@ -16,6 +16,17 @@
 
 package kotlin.platform
 
+/**
+ * Specifies the name for the target platform element (Java class, method or field, JavaScript function)
+ * which is generated from this element.
+ * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/java-interop.html#handling-signature-clashes-with-platformname)
+ * for more information.
+ */
 public annotation class platformName(public val name: String)
 
+/**
+ * Specifies that a static method or field needs to be generated from this element.
+ * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/java-interop.html#static-methods-and-fields)
+ * for more information.
+ */
 public annotation class platformStatic

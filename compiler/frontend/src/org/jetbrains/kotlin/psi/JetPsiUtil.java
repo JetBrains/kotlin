@@ -59,7 +59,7 @@ public class JetPsiUtil {
         JetExpression getBaseExpression();
     }
 
-    public static <D> void visitChildren(@NotNull JetElement element, @NotNull JetTreeVisitor<D> visitor, D data) {
+    public static <D> void visitChildren(@NotNull JetElement element, @NotNull JetVisitor<Void, D> visitor, D data) {
         PsiElement child = element.getFirstChild();
         while (child != null) {
             if (child instanceof JetElement) {
@@ -430,11 +430,6 @@ public class JetPsiUtil {
 
             if (parent instanceof PsiFile) {
                 return current;
-            }
-            if (parent instanceof JetClassObject) {
-                // current class IS the class object declaration
-                parent = parent.getParent();
-                assert parent instanceof JetClassBody : "Parent of class object is not a class body: " + parent;
             }
             if (!(parent instanceof JetClassBody)) {
                 // It is a local class, no legitimate outer

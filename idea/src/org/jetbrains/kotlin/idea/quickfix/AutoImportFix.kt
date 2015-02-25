@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.idea.caches.JetShortNamesCache
 import org.jetbrains.kotlin.idea.caches.KotlinIndicesHelper
 import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
-import org.jetbrains.kotlin.idea.util.JetPsiHeuristicsUtil
 import java.util.ArrayList
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -142,7 +141,7 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
         val indicesHelper = KotlinIndicesHelper(file.getProject(), resolutionFacade, bindingContext, searchScope, moduleDescriptor, ::isVisible)
 
         if (!element.isImportDirectiveExpression() && !JetPsiUtil.isSelectorInQualified(element)) {
-            result.addAll(getClasses(referenceName, file, searchScope))
+            getClasses(referenceName, file, searchScope).filterTo(result, ::isVisible)
             result.addAll(getTopLevelCallables(referenceName, element, indicesHelper))
         }
 
@@ -159,7 +158,6 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
 
     private fun getClasses(name: String, file: JetFile, searchScope: GlobalSearchScope): Collection<DeclarationDescriptor>
             = getShortNamesCache(file).getClassesByName(name, searchScope)
-            .filter { JetPsiHeuristicsUtil.isAccessible(it, file) }
             .map { element.getResolutionFacade().psiClassToDescriptor(it) }
             .filterNotNull()
             .toSet()

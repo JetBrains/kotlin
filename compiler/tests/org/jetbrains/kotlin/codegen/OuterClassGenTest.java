@@ -16,11 +16,14 @@
 
 package org.jetbrains.kotlin.codegen;
 
+import com.intellij.openapi.util.Ref;
 import com.intellij.util.lang.UrlClassLoader;
 import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
+import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.org.objectweb.asm.ClassReader;
 import org.jetbrains.org.objectweb.asm.ClassVisitor;
@@ -41,7 +44,7 @@ public class OuterClassGenTest extends CodegenTestCase {
     }
 
     public void testClassObject() throws Exception {
-        doTest("foo.Foo$object", "outerClassInfo");
+        doTest("foo.Foo$" + SpecialNames.DEFAULT_NAME_FOR_DEFAULT_OBJECT.asString(), "outerClassInfo");
     }
 
     public void testInnerClass() throws Exception {
@@ -168,17 +171,17 @@ public class OuterClassGenTest extends CodegenTestCase {
             @NotNull String testDataFile
     ) {
         ClassReader kotlinReader = getKotlinClassReader(internalNameRegexp, testDataFile);
-        OuterClassInfo kotlinInfo = getOuterClassInfo(kotlinReader);
+        OuterClassInfo kotlinInfo = readOuterClassInfo(kotlinReader);
         String message = "Error in enclosingMethodInfo info for class: " + kotlinReader.getClassName();
-        if (kotlinInfo.owner == null) {
-            assertNull(expectedInfo.owner);
+        if (kotlinInfo == null) {
+            assertNull(expectedInfo.getOwner());
         }
         else {
-            assertTrue(message + "\n" + kotlinInfo.owner + " doesn't start with " + expectedInfo.owner,
-                       kotlinInfo.owner.startsWith(expectedInfo.owner));
+            assertTrue(message + "\n" + kotlinInfo.getOwner() + " doesn't start with " + expectedInfo.getOwner(),
+                       kotlinInfo.getOwner().startsWith(expectedInfo.getOwner()));
         }
-        assertEquals(message, expectedInfo.method, kotlinInfo.method);
-        assertEquals(message, expectedInfo.descriptor, kotlinInfo.descriptor);
+        assertEquals(message, expectedInfo.getMethodName(), kotlinInfo.getMethodName());
+        assertEquals(message, expectedInfo.getMethodDesc(), kotlinInfo.getMethodDesc());
     }
 
     @NotNull
@@ -194,64 +197,28 @@ public class OuterClassGenTest extends CodegenTestCase {
     }
 
     private static void checkInfo(@NotNull ClassReader kotlinReader, @NotNull ClassReader javaReader) {
-        OuterClassInfo kotlinInfo = getOuterClassInfo(kotlinReader);
-        OuterClassInfo javaInfo = getOuterClassInfo(javaReader);
-        //noinspection ConstantConditions
+        OuterClassInfo kotlinInfo = readOuterClassInfo(kotlinReader);
+        OuterClassInfo javaInfo = readOuterClassInfo(javaReader);
         compareInfo(kotlinReader.getClassName(), kotlinInfo, javaInfo);
     }
 
     private static void compareInfo(
             @NotNull String kotlinClassName,
-            @NotNull OuterClassInfo kotlinInfo,
-            @NotNull OuterClassInfo expectedJavaInfo
+            @Nullable OuterClassInfo kotlinInfo,
+            @Nullable OuterClassInfo expectedJavaInfo
     ) {
         assertEquals("Error in enclosingMethodInfo info for: " + kotlinClassName + " class", expectedJavaInfo, kotlinInfo);
     }
 
-    public static OuterClassInfo getOuterClassInfo(ClassReader reader) {
-        final OuterClassInfo info = new OuterClassInfo();
+    @Nullable
+    private static OuterClassInfo readOuterClassInfo(@NotNull ClassReader reader) {
+        final Ref<OuterClassInfo> info = Ref.create();
         reader.accept(new ClassVisitor(Opcodes.ASM5) {
             @Override
-            public void visitOuterClass(@NotNull String owner, String name, String desc) {
-                info.owner = owner;
-                info.method = name;
-                info.descriptor = desc;
+            public void visitOuterClass(@NotNull String owner, @Nullable String name, @Nullable String desc) {
+                info.set(new OuterClassInfo(owner, name, desc));
             }
         }, 0);
-        return info;
-    }
-
-    private static class OuterClassInfo {
-        private String owner;
-        private String method;
-        private String descriptor;
-
-        private OuterClassInfo(String owner, String method, String descriptor) {
-            this.owner = owner;
-            this.method = method;
-            this.descriptor = descriptor;
-        }
-
-        private OuterClassInfo() {
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof OuterClassInfo)) return false;
-
-            OuterClassInfo info = (OuterClassInfo) o;
-
-            if (descriptor != null ? !descriptor.equals(info.descriptor) : info.descriptor != null) return false;
-            if (method != null ? !method.equals(info.method) : info.method != null) return false;
-            if (owner != null ? !owner.equals(info.owner) : info.owner != null) return false;
-
-            return true;
-        }
-
-        @Override
-        public String toString() {
-            return "[owner=" + owner + ", method=" + method + ", descriptor="+ descriptor + "]";
-        }
+        return info.get();
     }
 }

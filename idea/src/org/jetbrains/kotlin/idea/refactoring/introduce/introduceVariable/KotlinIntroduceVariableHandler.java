@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.analyzer.AnalyzerPackage;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils;
-import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.idea.intentions.ConvertToBlockBodyAction;
 import org.jetbrains.kotlin.idea.intentions.RemoveCurlyBracesFromTemplateIntention;
 import org.jetbrains.kotlin.idea.refactoring.JetNameSuggester;
@@ -48,6 +47,7 @@ import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil;
 import org.jetbrains.kotlin.idea.refactoring.introduce.KotlinIntroduceHandlerBase;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
+import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiRange;
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiUnifier;
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.PatternMatchingPackage;
@@ -425,7 +425,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                 }
                 propertyRef.set(property);
                 if (noTypeInference) {
-                    ShortenReferences.INSTANCE$.process(property);
+                    ShortenReferences.DEFAULT.process(property);
                 }
             }
 

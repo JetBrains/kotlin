@@ -1,7 +1,7 @@
 package to
 
-import a.A
 import a.get
+import a.A
 
 fun f() {
     A()[""]

@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/shortenRefs")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({ShortenRefsTestGenerated.Constructor.class, ShortenRefsTestGenerated.Imports.class, ShortenRefsTestGenerated.Java.class, ShortenRefsTestGenerated.Type.class})
+@InnerTestClasses({ShortenRefsTestGenerated.Constructor.class, ShortenRefsTestGenerated.Imports.class, ShortenRefsTestGenerated.Java.class, ShortenRefsTestGenerated.This.class, ShortenRefsTestGenerated.Type.class})
 @RunWith(JUnit3RunnerWithInners.class)
 public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
     public void testAllFilesPresentInShortenRefs() throws Exception {
@@ -46,6 +46,12 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
     @TestMetadata("classObject.kt")
     public void testClassObject() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/classObject.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("descriptorsChangeAfterImportInsertion.kt")
+    public void testDescriptorsChangeAfterImportInsertion() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/descriptorsChangeAfterImportInsertion.kt");
         doTest(fileName);
     }
 
@@ -138,6 +144,12 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
         @TestMetadata("NoImportNeeded3.kt")
         public void testNoImportNeeded3() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/constructor/NoImportNeeded3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("SAMConstructorFromLambda.kt")
+        public void testSAMConstructorFromLambda() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/constructor/SAMConstructorFromLambda.kt");
             doTest(fileName);
         }
 
@@ -234,6 +246,63 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
         @TestMetadata("staticMethodOnDemandImport.kt")
         public void testStaticMethodOnDemandImport() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/java/staticMethodOnDemandImport.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/shortenRefs/this")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class This extends AbstractShortenRefsTest {
+        public void testAllFilesPresentInThis() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/shortenRefs/this"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("cantShortenThis.kt")
+        public void testCantShortenThis() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/this/cantShortenThis.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("cantShortenThisLabel.kt")
+        public void testCantShortenThisLabel() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/this/cantShortenThisLabel.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("shortenExtensionThis.kt")
+        public void testShortenExtensionThis() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/this/shortenExtensionThis.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("shortenThis.kt")
+        public void testShortenThis() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/this/shortenThis.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("shortenThisBothReceivers.kt")
+        public void testShortenThisBothReceivers() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/this/shortenThisBothReceivers.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("shortenThisLabel.kt")
+        public void testShortenThisLabel() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/this/shortenThisLabel.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("shortenThisWithLabel.kt")
+        public void testShortenThisWithLabel() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/this/shortenThisWithLabel.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("visitorConflict.kt")
+        public void testVisitorConflict() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/this/visitorConflict.kt");
             doTest(fileName);
         }
     }

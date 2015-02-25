@@ -6,6 +6,9 @@ import java.util.Arrays
 import kotlin.jvm.internal.Intrinsic
 
 // Array "constructor"
+/**
+ * Returns an array containing the specified elements.
+ */
 [Intrinsic("kotlin.arrays.array")] public fun <reified T> array(vararg t : T) : Array<T> = t as Array<T>
 
 // "constructors" for primitive types array

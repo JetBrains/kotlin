@@ -80,7 +80,7 @@ public class MakeTypeExplicitInLambdaIntention : JetSelfTargetingIntention<JetFu
                 functionLiteral.addAfter(psiFactory.createNewLine(), openBraceElement)
             }
         }
-        ShortenReferences.process(element.getValueParameters())
+        ShortenReferences.DEFAULT.process(element.getValueParameters())
 
         // Step 2: make the return type explicit
         val expectedReturnType = func.getReturnType()
@@ -90,7 +90,7 @@ public class MakeTypeExplicitInLambdaIntention : JetSelfTargetingIntention<JetFu
             val returnTypeExpr = psiFactory.createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(expectedReturnType))
             functionLiteral.addAfter(returnTypeExpr, paramList)
             functionLiteral.addAfter(returnTypeColon, paramList)
-            ShortenReferences.process(functionLiteral.getTypeReference()!!)
+            ShortenReferences.DEFAULT.process(functionLiteral.getTypeReference()!!)
         }
 
         // Step 3: make the receiver type explicit
@@ -99,7 +99,7 @@ public class MakeTypeExplicitInLambdaIntention : JetSelfTargetingIntention<JetFu
             val receiverTypeString = IdeDescriptorRenderers.SOURCE_CODE.renderType(expectedReceiverType)
             val dot = functionLiteral.addBefore(psiFactory.createDot(), functionLiteral.getValueParameterList())
             functionLiteral.addBefore(psiFactory.createType(receiverTypeString), dot)
-            ShortenReferences.process(functionLiteral.getReceiverTypeReference()!!)
+            ShortenReferences.DEFAULT.process(functionLiteral.getReceiverTypeReference()!!)
         }
     }
 

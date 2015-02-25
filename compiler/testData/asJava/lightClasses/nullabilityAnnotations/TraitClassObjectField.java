@@ -1,9 +1,14 @@
 public interface TraitClassObjectField {
-    TraitClassObjectField.object OBJECT$;
+    TraitClassObjectField.Default Default;
+    /**
+     * @deprecated
+     */
+    @java.lang.Deprecated
+    TraitClassObjectField.Default OBJECT$;
     @org.jetbrains.annotations.Nullable
     java.lang.String x = "";
 
-    static final class object implements kotlin.jvm.internal.KObject {
+    static final class Default implements kotlin.jvm.internal.KObject {
         @org.jetbrains.annotations.Nullable
         private final java.lang.String x = "";
         private final java.lang.String y = "";
@@ -13,6 +18,6 @@ public interface TraitClassObjectField {
 
         private final java.lang.String getY() { /* compiled code */ }
 
-        private object() { /* compiled code */ }
+        private Default() { /* compiled code */ }
     }
 }

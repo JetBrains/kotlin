@@ -45,13 +45,26 @@ fun FuzzyType.nullability() = type.nullability()
 
 class FuzzyType(
         val type: JetType,
-        val freeParameters: Collection<TypeParameterDescriptor>
+        freeParameters: Collection<TypeParameterDescriptor>
 ) {
-    private val usedTypeParameters: HashSet<TypeParameterDescriptor>? = if (freeParameters.isNotEmpty()) HashSet() else null
+    private val usedTypeParameters: HashSet<TypeParameterDescriptor>?
+    public val freeParameters: Set<TypeParameterDescriptor>
 
     ;{
-        usedTypeParameters?.addUsedTypeParameters(type)
+        if (freeParameters.isNotEmpty()) {
+            usedTypeParameters = HashSet()
+            usedTypeParameters!!.addUsedTypeParameters(type)
+            this.freeParameters = freeParameters.filter { it in usedTypeParameters }.toSet()
+        }
+        else {
+            usedTypeParameters = null
+            this.freeParameters = setOf()
+        }
     }
+
+    override fun equals(other: Any?) = other is FuzzyType && other.type == type && other.freeParameters == freeParameters
+
+    override fun hashCode() = type.hashCode()
 
     private fun MutableSet<TypeParameterDescriptor>.addUsedTypeParameters(type: JetType) {
         addIfNotNull(type.getConstructor().getDeclarationDescriptor() as? TypeParameterDescriptor)
@@ -90,9 +103,7 @@ class FuzzyType(
         val constraintSystem = ConstraintSystemImpl()
         val typeVariables = LinkedHashMap<TypeParameterDescriptor, Variance>()
         for (typeParameter in freeParameters) {
-            if (typeParameter in usedTypeParameters) {
-                typeVariables[typeParameter] = Variance.INVARIANT
-            }
+            typeVariables[typeParameter] = Variance.INVARIANT
         }
         constraintSystem.registerTypeVariables(typeVariables)
 

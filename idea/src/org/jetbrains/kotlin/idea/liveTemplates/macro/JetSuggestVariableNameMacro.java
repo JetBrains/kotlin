@@ -20,8 +20,7 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.VariableDescriptor;
 import org.jetbrains.kotlin.idea.JetBundle;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
-import org.jetbrains.kotlin.types.expressions.ExpressionTypingComponents;
+import org.jetbrains.kotlin.idea.util.IterableTypesDetector;
 
 public class JetSuggestVariableNameMacro extends BaseJetVariableMacro {
     @Override
@@ -37,9 +36,8 @@ public class JetSuggestVariableNameMacro extends BaseJetVariableMacro {
     @Override
     protected boolean isSuitable(
             @NotNull VariableDescriptor variableDescriptor,
-            @NotNull JetScope scope,
             @NotNull Project project,
-            @NotNull ExpressionTypingComponents components
+            @NotNull IterableTypesDetector iterableTypesDetector
     ) {
         return variableDescriptor.getType().isMarkedNullable();
     }

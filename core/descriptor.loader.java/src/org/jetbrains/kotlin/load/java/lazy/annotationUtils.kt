@@ -41,11 +41,9 @@ class LazyJavaAnnotations(
         return annotationDescriptors(jAnnotation)
     }
 
-    [suppress("UNCHECKED_CAST")] // any iterator can be cast to MutableIterator
-    override fun iterator(): MutableIterator<AnnotationDescriptor>
-            = annotationOwner.getAnnotations().stream().map { annotationDescriptors(it) }.filterNotNull().iterator() as MutableIterator
+    override fun iterator() = annotationOwner.getAnnotations().stream().map { annotationDescriptors(it) }.filterNotNull().iterator()
 
-    override fun isEmpty() = iterator().hasNext()
+    override fun isEmpty() = !iterator().hasNext()
 }
 
 fun LazyJavaResolverContext.resolveAnnotations(annotationsOwner: JavaAnnotationOwner): Annotations

@@ -58,12 +58,14 @@ import java.net.URL;
 import java.util.*;
 
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.unwrapFakeOverride;
+import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getClassId;
+import static org.jetbrains.kotlin.serialization.deserialization.DeserializationPackage.findClassAcrossModuleDependencies;
 
 public class BuiltInsReferenceResolver extends AbstractProjectComponent {
     private static final File BUILT_INS_COMPILABLE_SRC_DIR =
             new File("core/builtins/src", KotlinBuiltIns.BUILT_INS_PACKAGE_NAME.asString());
 
-    private volatile BindingContext bindingContext;
+    private volatile ModuleDescriptor moduleDescriptor;
     private volatile Set<JetFile> builtInsSources;
     private volatile PackageFragmentDescriptor builtinsPackageFragment;
 
@@ -87,7 +89,7 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
     }
 
     private void initialize() {
-        assert bindingContext == null : "Attempt to initialize twice";
+        assert moduleDescriptor == null : "Attempt to initialize twice";
 
         final Set<JetFile> jetBuiltInsFiles = getJetBuiltInsFiles();
 
@@ -100,28 +102,30 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
                 TopDownAnalysisParameters topDownAnalysisParameters = TopDownAnalysisParameters.create(
                         globalContext.getStorageManager(),
                         globalContext.getExceptionTracker(),
-                        Predicates.<PsiFile>alwaysFalse(), true, false);
+                        Predicates.<PsiFile>alwaysFalse(), true, false
+                );
+
                 ModuleDescriptorImpl module = new ModuleDescriptorImpl(
-                        Name.special("<fake_module>"), Collections.<ImportPath>emptyList(), PlatformToKotlinClassMap.EMPTY);
+                        Name.special("<built-ins resolver module>"), Collections.<ImportPath>emptyList(), PlatformToKotlinClassMap.EMPTY
+                );
                 module.addDependencyOnModule(module);
                 module.seal();
-                BindingTraceContext trace = new BindingTraceContext();
 
                 FileBasedDeclarationProviderFactory declarationFactory =
                         new FileBasedDeclarationProviderFactory(topDownAnalysisParameters.getStorageManager(), jetBuiltInsFiles);
 
                 LazyTopDownAnalyzerForTopLevel analyzer = new InjectorForLazyTopDownAnalyzerBasic(
-                        myProject, topDownAnalysisParameters, trace, module, declarationFactory).getLazyTopDownAnalyzerForTopLevel();
+                        myProject, topDownAnalysisParameters, new BindingTraceContext(), module, declarationFactory
+                ).getLazyTopDownAnalyzerForTopLevel();
 
                 analyzer.analyzeFiles(topDownAnalysisParameters, jetBuiltInsFiles, Collections.<PackageFragmentProvider>emptyList());
 
                 List<PackageFragmentDescriptor> fragments =
                         module.getPackageFragmentProvider().getPackageFragments(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME);
 
+                moduleDescriptor = module;
                 builtinsPackageFragment = KotlinPackage.single(fragments);
-
                 builtInsSources = Sets.newHashSet(jetBuiltInsFiles);
-                bindingContext = trace.getBindingContext();
             }
         };
 
@@ -181,18 +185,6 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
     }
 
     @Nullable
-    private DeclarationDescriptor findCurrentDescriptorForClass(@NotNull ClassDescriptor originalDescriptor) {
-        // BindingContext doesn't contain an information about class descriptor of class object. For example see testEmptyRange.
-        if (DescriptorUtils.isClassObject(originalDescriptor)) {
-            DeclarationDescriptor currentParent = findCurrentDescriptor(originalDescriptor.getContainingDeclaration());
-            if (currentParent == null) return null;
-            return ((ClassDescriptor) currentParent).getClassObjectDescriptor();
-        }
-
-        return bindingContext.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, DescriptorUtils.getFqName(originalDescriptor));
-    }
-
-    @Nullable
     private DeclarationDescriptor findCurrentDescriptorForMember(@NotNull MemberDescriptor originalDescriptor) {
         if (originalDescriptor instanceof CallableMemberDescriptor &&
             ((CallableMemberDescriptor) originalDescriptor).getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
@@ -224,8 +216,9 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
     @Nullable
     private DeclarationDescriptor findCurrentDescriptor(@NotNull DeclarationDescriptor originalDescriptor) {
         if (originalDescriptor instanceof ClassDescriptor) {
-            if (!isFromBuiltinModule(originalDescriptor)) return null;
-            return findCurrentDescriptorForClass((ClassDescriptor) originalDescriptor);
+            return isFromBuiltinModule(originalDescriptor)
+                   ? findClassAcrossModuleDependencies(moduleDescriptor, getClassId((ClassDescriptor) originalDescriptor))
+                   : null;
         }
         else if (originalDescriptor instanceof PackageFragmentDescriptor) {
             return isFromBuiltinModule(originalDescriptor)
@@ -249,7 +242,7 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
 
     @NotNull
     public Collection<PsiElement> resolveBuiltInSymbol(@NotNull DeclarationDescriptor declarationDescriptor) {
-        if (bindingContext == null) {
+        if (moduleDescriptor == null) {
             return Collections.emptyList();
         }
 
@@ -261,6 +254,7 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
     }
 
     public static boolean isFromBuiltIns(@NotNull PsiElement element) {
+        //noinspection SuspiciousMethodCalls
         return element.getProject().getComponent(BuiltInsReferenceResolver.class).builtInsSources.contains(element.getContainingFile());
     }
 

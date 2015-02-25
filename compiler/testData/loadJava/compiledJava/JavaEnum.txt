@@ -6,13 +6,6 @@ public final enum class JavaEnum : kotlin.Enum<test.JavaEnum!> {
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.JavaEnum!): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-
-        public class object <class-object-for-ENTRY> : test.JavaEnum.ENTRY {
-            private constructor <class-object-for-ENTRY>()
-            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.JavaEnum!): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-        }
     }
 
     public enum entry ANOTHER : test.JavaEnum {
@@ -20,13 +13,6 @@ public final enum class JavaEnum : kotlin.Enum<test.JavaEnum!> {
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.JavaEnum!): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-
-        public class object <class-object-for-ANOTHER> : test.JavaEnum.ANOTHER {
-            private constructor <class-object-for-ANOTHER>()
-            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.JavaEnum!): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-        }
     }
 
     private constructor JavaEnum()

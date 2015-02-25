@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve.lazy;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.Sets;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.TopDownAnalysisParameters;
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -42,27 +44,31 @@ public class LazyResolveTestUtil {
     private LazyResolveTestUtil() {
     }
 
-    public static ModuleDescriptor resolve(List<JetFile> files, JetCoreEnvironment environment) {
-        return doResolve(files, environment);
+    @NotNull
+    public static ModuleDescriptor resolveProject(@NotNull Project project) {
+        return resolve(project, Collections.<JetFile>emptyList());
     }
 
-    private static ModuleDescriptor doResolve(List<JetFile> files, JetCoreEnvironment environment) {
+    @NotNull
+    public static ModuleDescriptor resolve(@NotNull Project project, @NotNull List<JetFile> sourceFiles) {
+        return resolve(project, new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(), sourceFiles);
+    }
+
+    @NotNull
+    public static ModuleDescriptor resolve(@NotNull Project project, @NotNull BindingTrace trace, @NotNull List<JetFile> sourceFiles) {
+        ModuleDescriptorImpl module = TopDownAnalyzerFacadeForJVM.createSealedJavaModule();
+
         GlobalContextImpl globalContext = ContextPackage.GlobalContext();
         TopDownAnalysisParameters params = TopDownAnalysisParameters.create(
                 globalContext.getStorageManager(),
                 globalContext.getExceptionTracker(),
                 Predicates.<PsiFile>alwaysTrue(),
-                false, false);
-        BindingTrace trace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
-        ModuleDescriptorImpl sharedModule = TopDownAnalyzerFacadeForJVM.createSealedJavaModule();
+                false, false
+        );
 
-        TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationNoIncremental(
-                environment.getProject(),
-                files,
-                trace,
-                params, sharedModule);
+        TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationNoIncremental(project, sourceFiles, trace, params, module);
 
-        return sharedModule;
+        return module;
     }
 
     @NotNull

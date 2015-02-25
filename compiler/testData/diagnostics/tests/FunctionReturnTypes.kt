@@ -193,7 +193,7 @@ fun testFunctionLiterals() {
     val <!UNUSED_VARIABLE!>endsWithObjectDeclaration<!> : () -> Int = {
         var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>x<!> = 1
         x = <!UNUSED_VALUE!>333<!>
-        <!EXPECTED_TYPE_MISMATCH!><!LOCAL_OBJECT_NOT_ALLOWED!>object A<!> {}<!>
+        <!LOCAL_OBJECT_NOT_ALLOWED, EXPECTED_TYPE_MISMATCH!>object A<!> {}
     }
 
     val <!UNUSED_VARIABLE!>expectedUnitReturnType1<!> = { () : Unit ->

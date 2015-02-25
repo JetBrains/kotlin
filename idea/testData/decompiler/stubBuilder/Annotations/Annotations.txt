@@ -33,15 +33,14 @@ PsiJetFileStubImpl[package=]
               REFERENCE_EXPRESSION:[referencedName=kotlin]
             REFERENCE_EXPRESSION:[referencedName=Int]
     CLASS_BODY:
-      CLASS_OBJECT:
+      OBJECT_DECLARATION:[fqName=Annotations.Default, isClassObject=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Default, superNames=[]]
         MODIFIER_LIST:[private]
           ANNOTATION_ENTRY:[hasValueArguments=false, shortName=b]
             CONSTRUCTOR_CALLEE:
               TYPE_REFERENCE:
                 USER_TYPE:[isAbsoluteInRootPackage=false]
                   REFERENCE_EXPRESSION:[referencedName=b]
-        OBJECT_DECLARATION:[fqName=null, isClassObject=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=null, superNames=[]]
-          CLASS_BODY:
+        CLASS_BODY:
       PROPERTY:[fqName=Annotations.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=c]
         MODIFIER_LIST:[private final]
           ANNOTATION_ENTRY:[hasValueArguments=false, shortName=b]

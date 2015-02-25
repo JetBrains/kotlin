@@ -33,7 +33,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
-import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.inline.*;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethod;
@@ -264,10 +263,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
         try {
             if (selector instanceof JetExpression) {
-                JetExpression expression = (JetExpression) selector;
-                SamType samType = bindingContext.get(CodegenBinding.SAM_VALUE, expression);
-                if (samType != null) {
-                    return genSamInterfaceValue(expression, samType, visitor);
+                StackValue samValue = genSamInterfaceValue((JetExpression) selector, visitor);
+                if (samValue != null) {
+                    return samValue;
                 }
             }
 
@@ -1390,13 +1388,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             @Nullable SamType samType,
             @NotNull KotlinSyntheticClass.Kind kind
     ) {
-        Type asmType = asmTypeForAnonymousClass(bindingContext, descriptor);
-        ClassBuilder cv = state.getFactory().newVisitor(OtherOrigin(declaration, descriptor), asmType, declaration.getContainingFile());
-        ClassContext closureContext = context.intoClosure(descriptor, this, typeMapper);
+        ClassBuilder cv = state.getFactory().newVisitor(
+                OtherOrigin(declaration, descriptor),
+                asmTypeForAnonymousClass(bindingContext, descriptor),
+                declaration.getContainingFile()
+        );
 
         ClosureCodegen closureCodegen = new ClosureCodegen(
-                state, declaration, descriptor, samType, closureContext, kind,
-                strategy, parentCodegen, cv, asmType
+                state, declaration, samType, context.intoClosure(descriptor, this, typeMapper), kind, strategy, parentCodegen, cv
         );
 
         closureCodegen.generate();
@@ -1410,7 +1409,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @Override
-    public StackValue visitObjectLiteralExpression(@NotNull final JetObjectLiteralExpression expression, final StackValue receiver) {
+    public StackValue visitObjectLiteralExpression(@NotNull JetObjectLiteralExpression expression, StackValue receiver) {
         final ObjectLiteralResult objectLiteralResult = generateObjectLiteral(expression);
         final ClassDescriptor classDescriptor = objectLiteralResult.classDescriptor;
         final Type type = typeMapper.mapType(classDescriptor);
@@ -1916,7 +1915,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 Type type = typeMapper.mapType((ClassDescriptor) enumClass);
                 return StackValue.field(type, type, descriptor.getName().asString(), true, StackValue.none());
             }
-            ClassDescriptor classObjectDescriptor = classDescriptor.getClassObjectDescriptor();
+            ClassDescriptor classObjectDescriptor = classDescriptor.getDefaultObjectDescriptor();
             if (classObjectDescriptor != null) {
                 return StackValue.singleton(classObjectDescriptor, typeMapper);
             }
@@ -2107,50 +2106,29 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         if (funDescriptor.getOriginal() instanceof SamConstructorDescriptor) {
-            //noinspection ConstantConditions
-            SamType samType = SamType.create(funDescriptor.getReturnType());
-            assert samType != null : "SamType is not created for SAM constructor: " + funDescriptor;
-            return invokeSamConstructor(expression, resolvedCall, samType);
+            JetExpression argumentExpression = bindingContext.get(SAM_CONSTRUCTOR_TO_ARGUMENT, expression);
+            assert argumentExpression != null : "Argument expression is not saved for a SAM constructor: " + funDescriptor;
+            return genSamInterfaceValue(argumentExpression, this);
         }
 
         return invokeFunction(resolvedCall, receiver);
     }
 
-    @NotNull
-    private StackValue invokeSamConstructor(
-            @NotNull JetCallExpression expression,
-            @NotNull ResolvedCall<?> resolvedCall,
-            @NotNull SamType samType
-    ) {
-        List<ResolvedValueArgument> arguments = resolvedCall.getValueArgumentsByIndex();
-        if (arguments == null) {
-            throw new IllegalStateException("Failed to arrange value arguments by index: " + resolvedCall.getResultingDescriptor());
-        }
-        ResolvedValueArgument argument = arguments.get(0);
-        if (!(argument instanceof ExpressionValueArgument)) {
-            throw new IllegalStateException(
-                    "argument of SAM constructor is " + argument.getClass().getName() + " " + expression.getText());
-        }
-        ValueArgument valueArgument = ((ExpressionValueArgument) argument).getValueArgument();
-        assert valueArgument != null : "getValueArgument() is null for " + expression.getText();
-        JetExpression argumentExpression = valueArgument.getArgumentExpression();
-        assert argumentExpression != null : "getArgumentExpression() is null for " + expression.getText();
-
-        return genSamInterfaceValue(argumentExpression, samType, this);
-    }
-
-    @NotNull
+    @Nullable
     private StackValue genSamInterfaceValue(
             @NotNull final JetExpression expression,
-            @NotNull final SamType samType,
             @NotNull final JetVisitor<StackValue, StackValue> visitor
     ) {
+        final SamType samType = bindingContext.get(SAM_VALUE, expression);
+        if (samType == null) return null;
+
         if (expression instanceof JetFunctionLiteralExpression) {
             return genClosure(((JetFunctionLiteralExpression) expression).getFunctionLiteral(), samType,
                               KotlinSyntheticClass.Kind.SAM_LAMBDA);
         }
 
-        final Type asmType = state.getSamWrapperClasses().getSamWrapperClass(samType, expression.getContainingJetFile(), getParentCodegen());
+        final Type asmType =
+                state.getSamWrapperClasses().getSamWrapperClass(samType, expression.getContainingJetFile(), getParentCodegen());
 
         return StackValue.operation(asmType, new Function1<InstructionAdapter, Unit>() {
             @Override
@@ -2481,8 +2459,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     public StackValue generateThisOrOuter(@NotNull ClassDescriptor calleeContainingClass, boolean isSuper) {
         boolean isSingleton = calleeContainingClass.getKind().isSingleton();
         if (isSingleton) {
-            if (context.hasThisDescriptor() &&
-                context.getThisDescriptor().equals(calleeContainingClass) &&
+            if (calleeContainingClass.equals(context.getThisDescriptor()) &&
                 !AnnotationsPackage.isPlatformStaticInObjectOrClass(context.getContextDescriptor())) {
                 return StackValue.local(0, typeMapper.mapType(calleeContainingClass));
             }
@@ -2663,57 +2640,59 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         final ReceiverParameterDescriptor receiverParameter = descriptor.getExtensionReceiverParameter();
         final Method factoryMethod;
         if (receiverParameter != null) {
-            Type[] parameterTypes = new Type[] {JAVA_STRING_TYPE, K_PACKAGE_IMPL_TYPE, getType(Class.class)};
+            Type[] parameterTypes = new Type[] {JAVA_STRING_TYPE, K_PACKAGE_TYPE, getType(Class.class)};
             factoryMethod = descriptor.isVar()
-                            ? method("mutableTopLevelExtensionProperty", K_MUTABLE_TOP_LEVEL_EXTENSION_PROPERTY_IMPL_TYPE, parameterTypes)
-                            : method("topLevelExtensionProperty", K_TOP_LEVEL_EXTENSION_PROPERTY_IMPL_TYPE, parameterTypes);
+                            ? method("mutableTopLevelExtensionProperty", K_MUTABLE_TOP_LEVEL_EXTENSION_PROPERTY_TYPE, parameterTypes)
+                            : method("topLevelExtensionProperty", K_TOP_LEVEL_EXTENSION_PROPERTY_TYPE, parameterTypes);
         }
         else {
-            Type[] parameterTypes = new Type[] {JAVA_STRING_TYPE, K_PACKAGE_IMPL_TYPE};
+            Type[] parameterTypes = new Type[] {JAVA_STRING_TYPE, K_PACKAGE_TYPE};
             factoryMethod = descriptor.isVar()
-                            ? method("mutableTopLevelVariable", K_MUTABLE_TOP_LEVEL_VARIABLE_IMPL_TYPE, parameterTypes)
-                            : method("topLevelVariable", K_TOP_LEVEL_VARIABLE_IMPL_TYPE, parameterTypes);
+                            ? method("mutableTopLevelVariable", K_MUTABLE_TOP_LEVEL_VARIABLE_TYPE, parameterTypes)
+                            : method("topLevelVariable", K_TOP_LEVEL_VARIABLE_TYPE, parameterTypes);
         }
 
         return StackValue.operation(factoryMethod.getReturnType(), new Function1<InstructionAdapter, Unit>() {
             @Override
             public Unit invoke(InstructionAdapter v) {
                 v.visitLdcInsn(descriptor.getName().asString());
-                v.getstatic(packageClassInternalName, JvmAbi.KOTLIN_PACKAGE_FIELD_NAME, K_PACKAGE_IMPL_TYPE.getDescriptor());
+                v.getstatic(packageClassInternalName, JvmAbi.KOTLIN_PACKAGE_FIELD_NAME, K_PACKAGE_TYPE.getDescriptor());
 
                 if (receiverParameter != null) {
                     putJavaLangClassInstance(v, typeMapper.mapType(receiverParameter));
                 }
 
-                v.invokestatic(REFLECTION_INTERNAL_PACKAGE, factoryMethod.getName(), factoryMethod.getDescriptor(), false);
+                v.invokestatic(REFLECTION, factoryMethod.getName(), factoryMethod.getDescriptor(), false);
                 return Unit.INSTANCE$;
             }
         });
     }
 
     @NotNull
-    private StackValue generateMemberPropertyReference(@NotNull final VariableDescriptor descriptor, @NotNull final ClassDescriptor containingClass) {
-        final Type classAsmType = typeMapper.mapClass(containingClass);
-
+    private StackValue generateMemberPropertyReference(
+            @NotNull final VariableDescriptor descriptor,
+            @NotNull final ClassDescriptor containingClass
+    ) {
         final Method factoryMethod = descriptor.isVar()
-                               ? method("mutableMemberProperty", K_MUTABLE_MEMBER_PROPERTY_TYPE, JAVA_STRING_TYPE)
-                               : method("memberProperty", K_MEMBER_PROPERTY_TYPE, JAVA_STRING_TYPE);
+                                     ? method("mutableMemberProperty", K_MUTABLE_MEMBER_PROPERTY_TYPE, JAVA_STRING_TYPE, K_CLASS_TYPE)
+                                     : method("memberProperty", K_MEMBER_PROPERTY_TYPE, JAVA_STRING_TYPE, K_CLASS_TYPE);
 
         return StackValue.operation(factoryMethod.getReturnType(), new Function1<InstructionAdapter, Unit>() {
             @Override
             public Unit invoke(InstructionAdapter v) {
+                v.visitLdcInsn(descriptor.getName().asString());
+
+                Type classAsmType = typeMapper.mapClass(containingClass);
+
                 if (containingClass instanceof JavaClassDescriptor) {
                     v.aconst(classAsmType);
-                    v.invokestatic(REFLECTION_INTERNAL_PACKAGE, "foreignKotlinClass",
-                                   Type.getMethodDescriptor(K_CLASS_IMPL_TYPE, getType(Class.class)), false);
+                    v.invokestatic(REFLECTION, "foreignKotlinClass", Type.getMethodDescriptor(K_CLASS_TYPE, getType(Class.class)), false);
                 }
                 else {
-                    v.getstatic(classAsmType.getInternalName(), JvmAbi.KOTLIN_CLASS_FIELD_NAME, K_CLASS_IMPL_TYPE.getDescriptor());
+                    v.getstatic(classAsmType.getInternalName(), JvmAbi.KOTLIN_CLASS_FIELD_NAME, K_CLASS_TYPE.getDescriptor());
                 }
 
-
-                v.visitLdcInsn(descriptor.getName().asString());
-                v.invokevirtual(K_CLASS_IMPL_TYPE.getInternalName(), factoryMethod.getName(), factoryMethod.getDescriptor(), false);
+                v.invokestatic(REFLECTION, factoryMethod.getName(), factoryMethod.getDescriptor(), false);
 
                 return Unit.INSTANCE$;
             }
@@ -3056,7 +3035,16 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             rightType = boxType(rightType);
         }
 
-        return genEqualsForExpressionsOnStack(opToken, genLazy(left, leftType), genLazy(right, rightType));
+        StackValue leftValue = genLazy(left, leftType);
+        StackValue rightValue = genLazy(right, rightType);
+
+        if (opToken == JetTokens.EQEQEQ || opToken == JetTokens.EXCLEQEQEQ) {
+            // TODO: always casting to the type of the left operand in case of primitives looks wrong
+            Type operandType = isPrimitive(leftType) ? leftType : OBJECT_TYPE;
+            return StackValue.cmp(opToken, operandType, leftValue, rightValue);
+        }
+
+        return genEqualsForExpressionsOnStack(opToken, leftValue, rightValue);
     }
 
     private boolean isIntZero(JetExpression expr, Type exprType) {

@@ -68,16 +68,6 @@ public class DeclarationScopeProviderImpl implements DeclarationScopeProvider {
             return classDescriptor.getScopeForMemberDeclarationResolution();
         }
 
-        if (parentDeclaration instanceof JetClassObject) {
-            assert jetDeclaration instanceof JetObjectDeclaration : "Should be situation for getting scope for object in class [object {...}]";
-
-            JetClassObject classObject = (JetClassObject) parentDeclaration;
-            LazyClassDescriptor classObjectDescriptor =
-                    (LazyClassDescriptor) lazyDeclarationResolver.getClassObjectDescriptor(classObject).getContainingDeclaration();
-
-            return classObjectDescriptor.getScopeForMemberDeclarationResolution();
-        }
-
         throw new IllegalStateException("Don't call this method for local declarations: " + jetDeclaration + "\n" +
                                         JetPsiUtil.getElementTextWithContext(jetDeclaration));
     }

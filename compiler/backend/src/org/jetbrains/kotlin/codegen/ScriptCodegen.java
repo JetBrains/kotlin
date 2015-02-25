@@ -102,7 +102,7 @@ public class ScriptCodegen extends MemberCodegen<JetScript> {
                       "java/lang/Object",
                       ArrayUtil.EMPTY_STRING_ARRAY);
 
-        generateReflectionObjectField(state, classType, v, method("kClassFromKotlin", K_CLASS_IMPL_TYPE, getType(Class.class)),
+        generateReflectionObjectField(state, classType, v, method("createKotlinClass", K_CLASS_TYPE, getType(Class.class)),
                                       JvmAbi.KOTLIN_CLASS_FIELD_NAME, createOrGetClInitCodegen().v);
     }
 

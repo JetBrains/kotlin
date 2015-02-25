@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.load.kotlin.AbstractBinaryClassAnnotationAndConstant
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
-import org.jetbrains.kotlin.name.SpecialNames
 
 
 class ClsStubBuilderComponents(
@@ -38,15 +37,8 @@ class ClsStubBuilderComponents(
             nameResolver: NameResolver,
             packageFqName: FqName
     ): ClsStubBuilderContext {
-        return ClsStubBuilderContext(this, nameResolver, MemberFqNameProvider(packageFqName), EmptyTypeParameters)
+        return ClsStubBuilderContext(this, nameResolver, packageFqName, EmptyTypeParameters)
     }
-}
-
-class MemberFqNameProvider(val fqName: FqName) {
-    fun getMemberFqName(name: Name): FqName = fqName.child(name)
-
-    fun child(name: Name?): MemberFqNameProvider =
-            if (name == null || SpecialNames.isClassObjectName(name)) this else MemberFqNameProvider(fqName.child(name))
 }
 
 trait TypeParameters {
@@ -73,7 +65,7 @@ class TypeParametersImpl(
 class ClsStubBuilderContext(
         val components: ClsStubBuilderComponents,
         val nameResolver: NameResolver,
-        val memberFqNameProvider: MemberFqNameProvider,
+        val containerFqName: FqName,
         val typeParameters: TypeParameters
 )
 
@@ -81,7 +73,7 @@ private fun ClsStubBuilderContext.child(typeParameterList: List<ProtoBuf.TypePar
     return ClsStubBuilderContext(
             this.components,
             this.nameResolver,
-            this.memberFqNameProvider.child(name),
+            if (name != null) this.containerFqName.child(name) else this.containerFqName,
             this.typeParameters.child(nameResolver, typeParameterList)
     )
 }
@@ -90,7 +82,7 @@ private fun ClsStubBuilderContext.child(nameResolver: NameResolver): ClsStubBuil
     return ClsStubBuilderContext(
             this.components,
             nameResolver,
-            this.memberFqNameProvider,
+            this.containerFqName,
             this.typeParameters
     )
 }

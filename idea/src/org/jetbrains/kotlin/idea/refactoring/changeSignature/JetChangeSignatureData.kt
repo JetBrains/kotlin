@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,31 +32,54 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.JetFunctionD
 
 import java.util.*
 import kotlin.properties.Delegates
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.idea.refactoring.CollectingValidator
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.idea.refactoring.JetNameSuggester
 
 public class JetChangeSignatureData(
         override val baseDescriptor: FunctionDescriptor,
         override val baseDeclaration: PsiElement,
         private val descriptorsForSignatureChange: Collection<FunctionDescriptor>
 ) : JetMethodDescriptor {
-    private val parameters: MutableList<JetParameterInfo>
+    private val parameters: List<JetParameterInfo>
+    override val receiver: JetParameterInfo?
 
-            ;{
+    ;{
+        $receiver = createReceiverInfoIfNeeded()
+
         val valueParameters = when {
             baseDeclaration is JetFunction -> baseDeclaration.getValueParameters()
             baseDeclaration is JetClass -> baseDeclaration.getPrimaryConstructorParameters()
             else -> null
         }
-        parameters = baseDescriptor.getValueParameters().mapTo(ArrayList()) { parameterDescriptor ->
-            val jetParameter = valueParameters?.get(parameterDescriptor.getIndex())
-            JetParameterInfo(
-                    originalIndex = parameterDescriptor.getIndex(),
-                    name = parameterDescriptor.getName().asString(),
-                    type = parameterDescriptor.getType(),
-                    defaultValueForParameter = jetParameter?.getDefaultValue(),
-                    valOrVarNode = jetParameter?.getValOrVarNode(),
-                    modifierList = jetParameter?.getModifierList()
-            )
-        }
+        parameters = baseDescriptor.getValueParameters()
+                .mapTo(receiver?.let{ arrayListOf(it) } ?: arrayListOf()) { parameterDescriptor ->
+                    val jetParameter = valueParameters?.get(parameterDescriptor.getIndex())
+                    JetParameterInfo(
+                            originalIndex = parameterDescriptor.getIndex(),
+                            name = parameterDescriptor.getName().asString(),
+                            type = parameterDescriptor.getType(),
+                            defaultValueForParameter = jetParameter?.getDefaultValue(),
+                            valOrVarNode = jetParameter?.getValOrVarNode(),
+                            modifierList = jetParameter?.getModifierList()
+                    )
+                }
+    }
+
+    private fun createReceiverInfoIfNeeded(): JetParameterInfo? {
+        val function = baseDeclaration as? JetFunction ?: return null
+        val bodyScope = function.getBodyExpression()?.let { it.analyze()[BindingContext.RESOLUTION_SCOPE, it] }
+        val paramNames = baseDescriptor.getValueParameters().map { it.getName().asString() }
+        val validator = bodyScope?.let { bodyScope ->
+            CollectingValidator(paramNames) {
+                val name = Name.identifier(it)
+                bodyScope.getLocalVariable(name) == null && bodyScope.getProperties(name).isEmpty()
+            }
+        } ?: CollectingValidator(paramNames)
+        val receiverType = baseDescriptor.getExtensionReceiverParameter()?.getType() ?: return null
+        val receiverName = JetNameSuggester.suggestNames(receiverType, validator, "receiver").first()
+        return JetParameterInfo(name = receiverName, type = receiverType)
     }
 
     override val primaryFunctions: Collection<JetFunctionDefinitionUsage<PsiElement>> by Delegates.lazy {
@@ -89,18 +112,6 @@ public class JetChangeSignatureData(
 
     override fun getParameters(): List<JetParameterInfo> {
         return parameters
-    }
-
-    public fun addParameter(parameter: JetParameterInfo) {
-        parameters.add(parameter)
-    }
-
-    public fun removeParameter(index: Int) {
-        parameters.remove(index)
-    }
-
-    public fun clearParameters() {
-        parameters.clear()
     }
 
     override fun getName(): String {

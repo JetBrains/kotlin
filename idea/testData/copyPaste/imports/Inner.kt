@@ -18,6 +18,6 @@ class Outer {
     annotation class NestedAnnotation
 }
 
-<selection>fun f(i: Inner, n: Nested, e: NestedEnum, o: NestedObj, t: NestedTrait, a: NestedAnnotation) {
+<selection>fun f(i: Inner, n: Nested, e: NestedEnum, o: NestedObj, t: NestedTrait, aa: NestedAnnotation) {
     Outer().Inner2()
 }</selection>

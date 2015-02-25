@@ -31,8 +31,8 @@ public trait Foo {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    public class object <class-object-for-Foo> {
-        private constructor <class-object-for-Foo>()
+    public class object Default {
+        private constructor Default()
         public final val EMPTY: Foo
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

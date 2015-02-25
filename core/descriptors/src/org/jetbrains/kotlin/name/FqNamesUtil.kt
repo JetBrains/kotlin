@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.name
 
-import org.jetbrains.kotlin.resolve.ImportPath
-
 public fun FqName.isSubpackageOf(packageName: FqName): Boolean {
     return when {
         this == packageName -> true
@@ -26,56 +24,36 @@ public fun FqName.isSubpackageOf(packageName: FqName): Boolean {
     }
 }
 
-public fun FqName.isParent(child: FqName): Boolean = child.isSubpackageOf(this)
+private fun isSubpackageOf(subpackageNameStr: String, packageNameStr: String): Boolean {
+    return subpackageNameStr.startsWith(packageNameStr) && subpackageNameStr[packageNameStr.length()] == '.'
+}
 
 public fun FqName.isOneSegmentFQN(): Boolean = !isRoot() && parent().isRoot()
 
-public fun FqName.withoutFirstSegment(): FqName {
-    if (isRoot() || parent().isRoot()) return FqName.ROOT
-
-    val fqNameStr = asString()
-    return FqName(fqNameStr.substring(fqNameStr.indexOf('.') + 1, fqNameStr.length()))
-}
-
-public fun FqName.numberOfSegments(): Int {
-    return if (isRoot()) 0 else 1 + parent().numberOfSegments()
-}
-
 /**
- * Get tail part of the full fqn by subtracting head part.
+ * Get the tail part of the FQ name by stripping a prefix. If FQ name does not begin with the given prefix, it will be returned as is.
  *
- * @param headFQN
- * @return tail fqn. If first part is not a begging of the full fqn, fullFQN will be returned.
+ * Examples:
+ * "org.jetbrains.kotlin".tail("org") = "jetbrains.kotlin"
+ * "org.jetbrains.kotlin".tail("") = "org.jetbrains.kotlin"
+ * "org.jetbrains.kotlin".tail("org.jetbrains.kotlin") = ""
+ * "org.jetbrains.kotlin".tail("org.jetbrains.gogland") = "org.jetbrains.kotlin"
  */
-public fun FqName.tail(headFQN: FqName): FqName {
+public fun FqName.tail(prefix: FqName): FqName {
     return when {
-        !isSubpackageOf(headFQN) || headFQN.isRoot() -> this
-        this == headFQN -> FqName.ROOT
-        else -> FqName(asString().substring(headFQN.asString().length + 1))
+        !isSubpackageOf(prefix) || prefix.isRoot() -> this
+        this == prefix -> FqName.ROOT
+        else -> FqName(asString().substring(prefix.asString().length() + 1))
     }
 }
 
-public fun FqName.isImported(importPath: ImportPath, skipAliasedImports: Boolean = true): Boolean {
-    return when {
-        skipAliasedImports && importPath.hasAlias() -> false
-        importPath.isAllUnder() && !isRoot() -> importPath.fqnPart() == this.parent()
-        else -> importPath.fqnPart() == this
-    }
-}
-
-public fun ImportPath.isImported(alreadyImported: ImportPath): Boolean {
-    return if (isAllUnder() || hasAlias()) this == alreadyImported else fqnPart().isImported(alreadyImported)
-}
-
-public fun ImportPath.isImported(imports: Iterable<ImportPath>): Boolean = imports.any { isImported(it) }
-
-// Check that it is javaName(\.javaName)* or an empty string
 private enum class State {
     BEGINNING
     MIDDLE
     AFTER_DOT
 }
 
+// Check that it is javaName(\.javaName)* or an empty string
 public fun isValidJavaFqName(qualifiedName: String?): Boolean {
     if (qualifiedName == null) return false
 
@@ -97,23 +75,4 @@ public fun isValidJavaFqName(qualifiedName: String?): Boolean {
     }
 
     return state != State.AFTER_DOT
-}
-
-public fun FqName.getFirstSegment(): Name = this.pathSegments().first()
-
-tailRecursive
-public fun FqName.each(operation: (FqName) -> Boolean) {
-    if (operation(this) && !isRoot()) {
-        parent().each(operation)
-    }
-}
-
-private fun isSubpackageOf(subpackageNameStr: String, packageNameStr: String): Boolean {
-    return subpackageNameStr == packageNameStr ||
-        (subpackageNameStr.startsWith(packageNameStr) && subpackageNameStr[packageNameStr.length()] == '.')
-}
-
-private fun getFirstSegment(fqn: String): String {
-    val dotIndex = fqn.indexOf('.')
-    return if ((dotIndex != -1)) fqn.substring(0, dotIndex) else fqn
 }

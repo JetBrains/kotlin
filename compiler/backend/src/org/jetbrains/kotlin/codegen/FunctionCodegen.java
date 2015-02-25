@@ -106,39 +106,34 @@ public class FunctionCodegen {
         assert functionDescriptor != null : "No descriptor for function " + function.getText() + "\n" +
                                             "in " + function.getContainingFile().getVirtualFile();
 
-        OwnerKind kind = owner.getContextKind();
-        JvmMethodSignature method = typeMapper.mapSignature(functionDescriptor, kind);
-
-        if (kind != OwnerKind.TRAIT_IMPL || function.hasBody()) {
-            generateMethod(OtherOrigin(function, functionDescriptor),
-                           method, functionDescriptor,
+        if (owner.getContextKind() != OwnerKind.TRAIT_IMPL || function.hasBody()) {
+            generateMethod(OtherOrigin(function, functionDescriptor), functionDescriptor,
                            new FunctionGenerationStrategy.FunctionDefault(state, functionDescriptor, function));
         }
 
-        generateDefaultIfNeeded(owner.intoFunction(functionDescriptor), method, functionDescriptor, kind,
+        generateDefaultIfNeeded(owner.intoFunction(functionDescriptor), functionDescriptor, owner.getContextKind(),
                                 DefaultParameterValueLoader.DEFAULT, function);
     }
 
     public void generateMethod(
             @NotNull JvmDeclarationOrigin origin,
-            @NotNull JvmMethodSignature jvmSignature,
-            @NotNull FunctionDescriptor functionDescriptor,
+            @NotNull FunctionDescriptor descriptor,
             @NotNull FunctionGenerationStrategy strategy
     ) {
-        generateMethod(origin, jvmSignature, functionDescriptor, owner.intoFunction(functionDescriptor), strategy);
+        generateMethod(origin, descriptor, owner.intoFunction(descriptor), strategy);
     }
 
     public void generateMethod(
             @NotNull JvmDeclarationOrigin origin,
-            @NotNull JvmMethodSignature jvmSignature,
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull MethodContext methodContext,
             @NotNull FunctionGenerationStrategy strategy
     ) {
-        OwnerKind methodContextKind = methodContext.getContextKind();
+        OwnerKind contextKind = methodContext.getContextKind();
+        JvmMethodSignature jvmSignature = typeMapper.mapSignature(functionDescriptor, contextKind);
         Method asmMethod = jvmSignature.getAsmMethod();
 
-        int flags = getMethodAsmFlags(functionDescriptor, methodContextKind);
+        int flags = getMethodAsmFlags(functionDescriptor, contextKind);
         boolean isNative = NativeDeclarationsPackage.hasNativeAnnotation(functionDescriptor);
 
         if (isNative && owner instanceof PackageContext && !(owner instanceof PackageFacadeContext)) {
@@ -176,7 +171,7 @@ public class FunctionCodegen {
             parentBodyCodegen.addAdditionalTask(new PlatformStaticGenerator(functionDescriptor, origin, state));
         }
 
-        if (state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES || isAbstractMethod(functionDescriptor, methodContextKind)) {
+        if (state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES || isAbstractMethod(functionDescriptor, contextKind)) {
             generateLocalVariableTable(
                     mv,
                     jvmSignature,
@@ -184,7 +179,7 @@ public class FunctionCodegen {
                     getThisTypeForFunction(functionDescriptor, methodContext, typeMapper),
                     new Label(),
                     new Label(),
-                    methodContextKind
+                    contextKind
             );
 
             mv.visitEnd();
@@ -595,7 +590,6 @@ public class FunctionCodegen {
 
     void generateDefaultIfNeeded(
             @NotNull MethodContext owner,
-            @NotNull JvmMethodSignature signature,
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull OwnerKind kind,
             @NotNull DefaultParameterValueLoader loadStrategy,
@@ -613,18 +607,19 @@ public class FunctionCodegen {
             return;
         }
 
-        Method jvmSignature = signature.getAsmMethod();
-
-        int flags = getVisibilityAccessFlag(functionDescriptor) | getDeprecatedAccessFlag(functionDescriptor);
-
-        boolean isConstructor = "<init>".equals(jvmSignature.getName());
+        int flags = getVisibilityAccessFlag(functionDescriptor) |
+                    getDeprecatedAccessFlag(functionDescriptor) |
+                    (functionDescriptor instanceof ConstructorDescriptor ? 0 : ACC_STATIC);
 
         Method defaultMethod = typeMapper.mapDefaultMethod(functionDescriptor, kind, owner);
 
-        MethodVisitor mv = v.newMethod(Synthetic(function, functionDescriptor), flags | (isConstructor ? 0 : ACC_STATIC),
-                                       defaultMethod.getName(),
-                                       defaultMethod.getDescriptor(), null,
-                                       getThrownExceptions(functionDescriptor, typeMapper));
+        MethodVisitor mv = v.newMethod(
+                Synthetic(function, functionDescriptor),
+                flags,
+                defaultMethod.getName(),
+                defaultMethod.getDescriptor(), null,
+                getThrownExceptions(functionDescriptor, typeMapper)
+        );
 
         if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
             if (this.owner instanceof PackageFacadeContext) {
@@ -633,36 +628,25 @@ public class FunctionCodegen {
                 endVisit(mv, "default method delegation", callableDescriptorToDeclaration(functionDescriptor));
             }
             else {
-                generateDefaultImpl(owner, signature, functionDescriptor, isStaticMethod(kind, functionDescriptor), mv, loadStrategy, function);
+                mv.visitCode();
+                generateDefaultImplBody(owner, functionDescriptor, mv, loadStrategy, function, memberCodegen);
+                endVisit(mv, "default method", callableDescriptorToDeclaration(functionDescriptor));
             }
         }
     }
 
-    private void generateDefaultImpl(
-            @NotNull MethodContext methodContext,
-            @NotNull JvmMethodSignature signature,
-            @NotNull FunctionDescriptor functionDescriptor,
-            boolean isStatic,
-            @NotNull MethodVisitor mv,
-            @NotNull DefaultParameterValueLoader loadStrategy,
-            @Nullable JetNamedFunction function
-    ) {
-        mv.visitCode();
-        generateDefaultImplBody(methodContext, signature, functionDescriptor, isStatic, mv, loadStrategy, function, memberCodegen, state);
-        endVisit(mv, "default method", callableDescriptorToDeclaration(functionDescriptor));
-    }
-
     public static void generateDefaultImplBody(
             @NotNull MethodContext methodContext,
-            @NotNull JvmMethodSignature signature,
             @NotNull FunctionDescriptor functionDescriptor,
-            boolean isStatic,
             @NotNull MethodVisitor mv,
             @NotNull DefaultParameterValueLoader loadStrategy,
             @Nullable JetNamedFunction function,
-            @NotNull MemberCodegen<?> parentCodegen,
-            @NotNull GenerationState state
+            @NotNull MemberCodegen<?> parentCodegen
     ) {
+        GenerationState state = parentCodegen.state;
+        JvmMethodSignature signature = state.getTypeMapper().mapSignature(functionDescriptor, methodContext.getContextKind());
+
+        boolean isStatic = isStaticMethod(methodContext.getContextKind(), functionDescriptor);
         FrameMap frameMap = createFrameMap(state, functionDescriptor, signature, isStatic);
 
         ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, signature.getReturnType(), methodContext, state, parentCodegen);
@@ -841,20 +825,18 @@ public class FunctionCodegen {
         endVisit(mv, "bridge method", origin);
     }
 
-    public void genDelegate(FunctionDescriptor functionDescriptor, FunctionDescriptor overriddenDescriptor, StackValue field) {
+    public void genDelegate(@NotNull FunctionDescriptor functionDescriptor, FunctionDescriptor overriddenDescriptor, StackValue field) {
         genDelegate(functionDescriptor, overriddenDescriptor.getOriginal(), (ClassDescriptor) overriddenDescriptor.getContainingDeclaration(), field);
     }
 
     public void genDelegate(
-            final FunctionDescriptor delegateFunction,
+            @NotNull final FunctionDescriptor delegateFunction,
             final FunctionDescriptor delegatedTo,
             final ClassDescriptor toClass,
             final StackValue field
     ) {
-        final JvmMethodSignature jvmDelegateMethodSignature = typeMapper.mapSignature(delegateFunction);
-        final JvmMethodSignature jvmDelegateToMethodSignature = typeMapper.mapSignature(delegatedTo);
         generateMethod(
-                OtherOrigin(delegateFunction), jvmDelegateMethodSignature, delegateFunction,
+                OtherOrigin(delegateFunction), delegateFunction,
                 new FunctionGenerationStrategy() {
                     @Override
                     public void generateBody(
@@ -864,8 +846,8 @@ public class FunctionCodegen {
                             @NotNull MethodContext context,
                             @NotNull MemberCodegen<?> parentCodegen
                     ) {
-                        Method delegateToMethod = jvmDelegateToMethodSignature.getAsmMethod();
-                        Method delegateMethod = jvmDelegateMethodSignature.getAsmMethod();
+                        Method delegateToMethod = typeMapper.mapSignature(delegatedTo).getAsmMethod();
+                        Method delegateMethod = typeMapper.mapSignature(delegateFunction).getAsmMethod();
 
                         Type[] argTypes = delegateMethod.getArgumentTypes();
                         Type[] originalArgTypes = delegateToMethod.getArgumentTypes();
@@ -893,7 +875,8 @@ public class FunctionCodegen {
                                 TypesPackage.getApproximationTo(
                                         delegatedTo.getReturnType(),
                                         delegateFunction.getReturnType(),
-                                        new Approximation.DataFlowExtras.OnlyMessage(delegatedTo.getName() + "(...)"))
+                                        new Approximation.DataFlowExtras.OnlyMessage(delegatedTo.getName() + "(...)")
+                                )
                         );
 
                         stackValue.put(delegateMethod.getReturnType(), iv);

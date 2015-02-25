@@ -1,0 +1,9 @@
+class A {
+    fun test(b: B) {
+        b()
+    }
+}
+
+class B() {
+    fun A.invoke() {}
+}

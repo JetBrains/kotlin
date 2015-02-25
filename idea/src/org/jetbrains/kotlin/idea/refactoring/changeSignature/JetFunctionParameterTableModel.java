@@ -17,57 +17,77 @@
 package org.jetbrains.kotlin.idea.refactoring.changeSignature;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiCodeFragment;
 import com.intellij.psi.PsiElement;
-import com.intellij.refactoring.changeSignature.ParameterTableModelBase;
 import com.intellij.refactoring.changeSignature.ParameterTableModelItemBase;
+import com.intellij.refactoring.ui.StringTableCellEditor;
+import com.intellij.ui.BooleanTableCellRenderer;
 import com.intellij.util.ui.ColumnInfo;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.JetFileType;
-import org.jetbrains.kotlin.psi.JetPsiFactory;
 
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
 
-public class JetFunctionParameterTableModel extends ParameterTableModelBase<JetParameterInfo, ParameterTableModelItemBase<JetParameterInfo>> {
-    private final Project project;
-
-    protected JetFunctionParameterTableModel(PsiElement context, ColumnInfo... columnInfos) {
-        super(context, context, columnInfos);
-        project = context.getProject();
-    }
-
-    public JetFunctionParameterTableModel(PsiElement context) {
-        this(context,
-             new NameColumn(context.getProject()),
-             new TypeColumn(context.getProject(), JetFileType.INSTANCE),
-             new DefaultValueColumn<JetParameterInfo, ParameterTableModelItemBase<JetParameterInfo>>(context.getProject(), JetFileType.INSTANCE));
+public class JetFunctionParameterTableModel extends JetCallableParameterTableModel {
+    public JetFunctionParameterTableModel(JetMethodDescriptor methodDescriptor, PsiElement context) {
+        super(context,
+              new NameColumn(context.getProject()),
+              new TypeColumn(context.getProject(), JetFileType.INSTANCE),
+              new DefaultValueColumn<JetParameterInfo, ParameterTableModelItemBase<JetParameterInfo>>(context.getProject(),
+                                                                                                      JetFileType.INSTANCE),
+              new ReceiverColumn(context.getProject(), methodDescriptor));
     }
 
     @Override
-    protected ParameterTableModelItemBase<JetParameterInfo> createRowItem(@Nullable JetParameterInfo parameterInfo) {
-        if (parameterInfo == null) {
-            parameterInfo = new JetParameterInfo(-1, "", null, null, "", null, null);
+    @Nullable
+    public JetParameterInfo getReceiver() {
+        return ((ReceiverColumn)getColumnInfos()[getColumnCount() - 1]).receiver;
+    }
+
+    public void setReceiver(@Nullable JetParameterInfo receiver) {
+        ((ReceiverColumn)getColumnInfos()[getColumnCount() - 1]).receiver = receiver;
+    }
+
+    public static boolean isReceiverColumn(ColumnInfo column) {
+        return column instanceof ReceiverColumn;
+    }
+
+    protected static class ReceiverColumn<TableItem extends ParameterTableModelItemBase<JetParameterInfo>>
+            extends ColumnInfoBase<JetParameterInfo, TableItem, Boolean> {
+        private final Project project;
+        @Nullable
+        private JetParameterInfo receiver;
+
+        public ReceiverColumn(Project project, @Nullable JetMethodDescriptor methodDescriptor) {
+            super("Receiver:");
+            this.project = project;
+            this.receiver = methodDescriptor != null ? methodDescriptor.getReceiver() : null;
         }
-        JetPsiFactory psiFactory = JetPsiFactory(project);
-        PsiCodeFragment paramTypeCodeFragment = psiFactory.createTypeCodeFragment(parameterInfo.getTypeText(), myTypeContext);
-        PsiCodeFragment defaultValueCodeFragment = psiFactory.createExpressionCodeFragment(parameterInfo.getDefaultValueForCall(), myDefaultValueContext);
-        return new ParameterTableModelItemBase<JetParameterInfo>(parameterInfo, paramTypeCodeFragment, defaultValueCodeFragment) {
-            @Override
-            public boolean isEllipsisType() {
-                return false;
-            }
-        };
-    }
 
-    public static boolean isTypeColumn(ColumnInfo column) {
-        return column instanceof TypeColumn;
-    }
+        @Override
+        public Boolean valueOf(TableItem item) {
+            return item.parameter == receiver;
+        }
 
-    public static boolean isNameColumn(ColumnInfo column) {
-        return column instanceof NameColumn;
-    }
+        @Override
+        public void setValue(TableItem item, Boolean value) {
+            if (value == null) return;
+            receiver = value ? item.parameter : null;
+        }
 
-    public static boolean isDefaultValueColumn(ColumnInfo column) {
-        return column instanceof DefaultValueColumn;
+        @Override
+        public boolean isCellEditable(TableItem pParameterTableModelItemBase) {
+            return true;
+        }
+
+        @Override
+        public TableCellRenderer doCreateRenderer(TableItem item) {
+            return new BooleanTableCellRenderer();
+        }
+
+        @Override
+        public TableCellEditor doCreateEditor(TableItem o) {
+            return new StringTableCellEditor(project);
+        }
     }
 }

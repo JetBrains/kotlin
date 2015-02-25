@@ -29,7 +29,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StringStubIndexExtension;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.ContainerUtil;
 import gnu.trove.THashSet;
 import kotlin.KotlinPackage;
@@ -80,28 +79,7 @@ public class JetSourceNavigationHelper {
 
     @Nullable
     public static JetClassOrObject getSourceClassOrObject(@NotNull JetClassOrObject decompiledClassOrObject) {
-        if (decompiledClassOrObject instanceof JetObjectDeclaration && decompiledClassOrObject.getParent() instanceof JetClassObject) {
-            return getSourceClassObject((JetClassObject) decompiledClassOrObject.getParent());
-        }
         return getSourceForNamedClassOrObject(decompiledClassOrObject);
-    }
-
-    private static JetClassOrObject getSourceClassObject(JetClassObject decompiledClassObject) {
-        JetClass decompiledClass = PsiTreeUtil.getParentOfType(decompiledClassObject, JetClass.class);
-        assert decompiledClass != null;
-
-        JetClass sourceClass = (JetClass) getSourceForNamedClassOrObject(decompiledClass);
-        if (sourceClass == null) {
-            return null;
-        }
-
-        if (sourceClass.hasModifier(JetTokens.ENUM_KEYWORD)) {
-            return sourceClass;
-        }
-
-        JetClassObject classObject = sourceClass.getClassObject();
-        assert classObject != null;
-        return classObject.getObjectDeclaration();
     }
 
     @NotNull
@@ -456,11 +434,6 @@ public class JetSourceNavigationHelper {
         @Override
         public JetDeclaration visitObjectDeclaration(@NotNull JetObjectDeclaration declaration, Void data) {
             return getSourceClassOrObject(declaration);
-        }
-
-        @Override
-        public JetDeclaration visitClassObject(@NotNull JetClassObject classObject, Void data) {
-            return getSourceClassObject(classObject);
         }
 
         @Override

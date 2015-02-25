@@ -29,15 +29,6 @@ internal final class Test {
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         internal final fun more(): Test.InnerClass
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-
-        public class object <class-object-for-Some> : Test.Some {
-            private constructor <class-object-for-Some>()
-            internal final override /*1*/ /*fake_override*/ val a: Test.InnerClass
-            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-            internal final override /*1*/ /*fake_override*/ fun more(): Test.InnerClass
-            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-        }
     }
 }
 
@@ -52,12 +43,5 @@ internal final class TestSome</*0*/ P> {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-
-        public class object <class-object-for-Some> : TestSome.Some {
-            private constructor <class-object-for-Some>()
-            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-        }
     }
 }

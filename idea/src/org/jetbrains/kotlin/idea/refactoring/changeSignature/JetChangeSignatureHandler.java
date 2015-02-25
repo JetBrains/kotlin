@@ -138,11 +138,11 @@ public class JetChangeSignatureHandler implements ChangeSignatureHandler {
 
     private static JetChangeSignatureConfiguration emptyConfiguration() {
         return new JetChangeSignatureConfiguration() {
+            @NotNull
             @Override
-            public void configure(
-                    @NotNull JetChangeSignatureData changeSignatureData, @NotNull BindingContext bindingContext
-            ) {
+            public JetMethodDescriptor configure(@NotNull JetMethodDescriptor originalDescriptor, @NotNull BindingContext bindingContext) {
                 //do nothing
+                return originalDescriptor;
             }
 
             @Override

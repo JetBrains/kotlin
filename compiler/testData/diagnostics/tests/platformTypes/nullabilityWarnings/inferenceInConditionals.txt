@@ -1,0 +1,5 @@
+package
+
+internal fun elvis(/*0*/ c: p.J): kotlin.Any?
+internal fun ifelse(/*0*/ c: p.J): kotlin.Any?
+internal fun safeCall(/*0*/ c: p.J?): kotlin.Unit

@@ -7,7 +7,7 @@ fun box(): Boolean {
     if (!(a equals 2.0)) return false
     val c = "a"
     if (!("a" equals c)) return false
-    if (!(null equals null)) return false
+    if (!((null : Any?)?.equals(null) ?: true)) return false
     val d = 5.6
     if (!(d.toShort() equals 5.toShort())) return false
     if (!(d.toByte() equals 5.toByte())) return false

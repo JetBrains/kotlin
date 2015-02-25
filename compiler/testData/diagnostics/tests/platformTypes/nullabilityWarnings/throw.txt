@@ -1,0 +1,5 @@
+package
+
+internal fun test(): kotlin.Unit
+internal fun test1(): kotlin.Unit
+internal fun test2(): kotlin.Unit

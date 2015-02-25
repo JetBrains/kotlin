@@ -84,19 +84,16 @@ public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
     }
 
     @Override
-    public Void visitClassObject(@NotNull JetClassObject classObject, TranslationContext context) {
-        JetObjectDeclaration declaration = classObject.getObjectDeclaration();
+    public Void visitObjectDeclaration(@NotNull JetObjectDeclaration declaration, TranslationContext context) {
+        if (!declaration.isClassObject()) {
+            // parsed it in initializer visitor => no additional actions are needed
+            return null;
+        }
         JsExpression value = ClassTranslator.generateClassCreation(declaration, context);
 
         ClassDescriptor descriptor = getClassDescriptor(context.bindingContext(), declaration);
         JsFunction fun = TranslationUtils.simpleReturnFunction(context.getScopeForDescriptor(descriptor), value);
         staticResult.add(createClassObjectInitializer(fun, context));
-        return null;
-    }
-
-    @Override
-    public Void visitObjectDeclaration(@NotNull JetObjectDeclaration declaration, TranslationContext context) {
-        // parsed it in initializer visitor => no additional actions are needed
         return null;
     }
 

@@ -101,7 +101,7 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
 
     @Nullable
     @Override
-    public ClassDescriptor getClassObjectDescriptor() {
+    public ClassDescriptor getDefaultObjectDescriptor() {
         return null;
     }
 

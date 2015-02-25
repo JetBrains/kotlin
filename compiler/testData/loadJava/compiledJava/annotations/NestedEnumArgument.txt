@@ -15,13 +15,6 @@ public open class NestedEnumArgument {
             public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.NestedEnumArgument.E!): kotlin.Int
             public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
             public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-
-            public class object <class-object-for-FIRST> : test.NestedEnumArgument.E.FIRST {
-                private constructor <class-object-for-FIRST>()
-                public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.NestedEnumArgument.E!): kotlin.Int
-                public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-                public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-            }
         }
 
         private constructor E()

@@ -14,13 +14,13 @@ public fun File.recurse(block: (File) -> Unit): Unit {
 }
 
 /**
- * Returns this if the file is a directory or the parent if it is a file inside a directory
+ * Returns `this` if this file is a directory, or the parent if it is a file inside a directory
  */
 public val File.directory: File
     get() = if (isDirectory()) this else getParentFile()!!
 
 /**
- * Returns the canonical path of the file
+ * Returns the canonical path of this file.
  */
 public val File.canonicalPath: String
     get() = getCanonicalPath()
@@ -38,7 +38,7 @@ public val File.path: String
     get() = getPath()
 
 /**
- * Returns file's extension or an empty string if it doesn't have one
+ * Returns the extension of this file (not including the dot), or an empty string if it doesn't have one.
  */
 public val File.extension: String
     get() {
@@ -46,14 +46,14 @@ public val File.extension: String
     }
 
 /**
- * Returns true if the given file is in the same directory or a descendant directory
+ * Returns true if the given [file] is in the same directory as this file or a descendant directory.
  */
 public fun File.isDescendant(file: File): Boolean {
     return file.directory.canonicalPath.startsWith(directory.canonicalPath)
 }
 
 /**
- * Returns the relative path of the given descendant of this file if it is a descendant
+ * Returns the relative path of the given descendant of this file if it is a descendant, or an empty string otherwise.
  */
 public fun File.relativePath(descendant: File): String {
     val prefix = directory.canonicalPath
@@ -69,7 +69,9 @@ public fun File.relativePath(descendant: File): String {
 }
 
 /**
- * Copies this file to the given output file, returning the number of bytes copied
+ * Copies this file to the given output [file].
+ * @param bufferSize the buffer size to use when copying.
+ * @return the number of bytes copied
  */
 public fun File.copyTo(file: File, bufferSize: Int = defaultBufferSize): Long {
     file.directory.mkdirs()
@@ -83,7 +85,7 @@ public fun File.copyTo(file: File, bufferSize: Int = defaultBufferSize): Long {
 }
 
 /**
- * Returns an array of files and directories in the directory that satisfy the specified filter
+ * Returns an array of files and directories in this directory that satisfy the specified [filter],
  * or null if this file does not denote a directory.
  */
 public fun File.listFiles(filter: (file: File) -> Boolean): Array<File>? = listFiles(

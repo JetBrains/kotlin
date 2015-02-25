@@ -97,13 +97,9 @@ public class KotlinLightClassForPackage private(
         (getDelegate().getContainingFile() as ClsFileImpl).getStub()
     }
 
-    // TODO: this is a temporary workaround for a strange compilation error
-    suppress("VIRTUAL_MEMBER_HIDDEN")
-    public fun getOrigin(): JetClassOrObject? = null
+    override fun getOrigin(): JetClassOrObject? = null
 
-    // TODO: this is a temporary workaround for a strange compilation error
-    suppress("VIRTUAL_MEMBER_HIDDEN")
-    public fun getFqName(): FqName = packageClassFqName
+    override fun getFqName(): FqName = packageClassFqName
 
     override fun getModifierList() = modifierList
 

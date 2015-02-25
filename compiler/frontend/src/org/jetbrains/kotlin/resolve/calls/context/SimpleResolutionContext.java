@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.context;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.StatementFilter;
+import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker;
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
@@ -33,12 +34,13 @@ public class SimpleResolutionContext extends ResolutionContext<SimpleResolutionC
             @NotNull ContextDependency contextDependency,
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @NotNull CallChecker callChecker,
+            @NotNull AdditionalTypeChecker additionalTypeChecker,
             @NotNull StatementFilter statementFilter,
             boolean isAnnotationContext,
             boolean collectAllCandidates
     ) {
-        super(trace, scope, expectedType, dataFlowInfo, contextDependency, resolutionResultsCache, callChecker, statementFilter,
-              isAnnotationContext, collectAllCandidates);
+        super(trace, scope, expectedType, dataFlowInfo, contextDependency, resolutionResultsCache, callChecker, additionalTypeChecker,
+              statementFilter, isAnnotationContext, collectAllCandidates);
     }
 
     public SimpleResolutionContext(
@@ -48,10 +50,11 @@ public class SimpleResolutionContext extends ResolutionContext<SimpleResolutionC
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull ContextDependency contextDependency,
             @NotNull CallChecker callChecker,
+            @NotNull AdditionalTypeChecker additionalTypeChecker,
             @NotNull StatementFilter statementFilter
     ) {
         this(trace, scope, expectedType, dataFlowInfo, contextDependency, new ResolutionResultsCacheImpl(),
-             callChecker, statementFilter, false, false);
+             callChecker, additionalTypeChecker, statementFilter, false, false);
     }
 
     @Override
@@ -66,7 +69,7 @@ public class SimpleResolutionContext extends ResolutionContext<SimpleResolutionC
             boolean collectAllCandidates
     ) {
         return new SimpleResolutionContext(
-                trace, scope, expectedType, dataFlowInfo, contextDependency, resolutionResultsCache, callChecker, statementFilter,
-                isAnnotationContext, collectAllCandidates);
+                trace, scope, expectedType, dataFlowInfo, contextDependency, resolutionResultsCache, callChecker, additionalTypeChecker,
+                statementFilter, isAnnotationContext, collectAllCandidates);
     }
 }

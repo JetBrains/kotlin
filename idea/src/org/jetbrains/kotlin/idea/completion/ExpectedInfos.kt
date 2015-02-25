@@ -69,6 +69,8 @@ import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
+import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 
 enum class Tail {
     COMMA
@@ -88,7 +90,12 @@ class PositionalArgumentExpectedInfo(type: JetType, name: String?, tail: Tail?, 
             = function.hashCode()
 }
 
-class ExpectedInfos(val bindingContext: BindingContext, val resolutionFacade: ResolutionFacade) {
+class ExpectedInfos(
+        val bindingContext: BindingContext,
+        val resolutionFacade: ResolutionFacade,
+        val moduleDescriptor: ModuleDescriptor,
+        val useHeuristicSignatures: Boolean
+) {
     public fun calculate(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
         return calculateForArgument(expressionWithType)
             ?: calculateForFunctionLiteralArgument(expressionWithType)
@@ -172,6 +179,7 @@ class ExpectedInfos(val bindingContext: BindingContext, val resolutionFacade: Re
                 ContextDependency.INDEPENDENT,
                 CheckValueArgumentsMode.ENABLED,
                 CompositeChecker(listOf()),
+                AdditionalTypeChecker.Composite(listOf()),
                 false).replaceCollectAllCandidates(true)
         val callResolver = InjectorForMacros(
                 callElement.getProject(),
@@ -205,7 +213,11 @@ class ExpectedInfos(val bindingContext: BindingContext, val resolutionFacade: Re
 
                 val parameter = parameters[argumentIndex]
                 val expectedName = if (descriptor.hasSynthesizedParameterNames()) null else parameter.getName().asString()
-                expectedInfos.add(PositionalArgumentExpectedInfo(parameter.getType(), expectedName, tail, descriptor, argumentIndex))
+                val parameterType = if (useHeuristicSignatures)
+                    HeuristicSignatures.correctedParameterType(descriptor, argumentIndex, moduleDescriptor, callElement.getProject()) ?: parameter.getType()
+                else
+                    parameter.getType()
+                expectedInfos.add(PositionalArgumentExpectedInfo(parameterType, expectedName, tail, descriptor, argumentIndex))
             }
         }
         return expectedInfos

@@ -6,14 +6,16 @@ import java.util.SortedMap
 import java.util.TreeMap
 import java.util.Properties
 
-/** Provides indexed write access to mutable maps */
+/**
+ * Allows to use the index operator for storing values in a mutable map.
+ */
 // this code is JVM-specific, because JS has native set function
 public fun <K, V> MutableMap<K, V>.set(key: K, value: V): V? = put(key, value)
 
 /**
  * Converts this [Map] to a [SortedMap] so iteration order will be in key order
  *
- * @includeFunctionBody ../../test/collections/MapTest.kt toSortedMap
+ * @sample test.collections.MapJVMTest.toSortedMap
  */
 public fun <K : Any, V> Map<K, V>.toSortedMap(): SortedMap<K, V> = TreeMap(this)
 
@@ -51,7 +53,7 @@ public fun <K, V> sortedMapOf(vararg values: Pair<K, V>): SortedMap<K, V> {
 /**
  * Converts this [Map] to a [Properties] object
  *
- * @includeFunctionBody ../../test/collections/MapTest.kt toProperties
+ * @sample test.collections.MapJVMTest.toProperties
  */
 public fun Map<String, String>.toProperties(): Properties {
     val answer = Properties()

@@ -36,8 +36,8 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
-import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
+import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -182,7 +182,7 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
             public void templateFinished(Template template, boolean brokenOff) {
                 JetTypeReference typeRef = declaration.getTypeReference();
                 if (typeRef != null) {
-                    ShortenReferences.INSTANCE$.process(typeRef);
+                    ShortenReferences.DEFAULT.process(typeRef);
                 }
             }
         };

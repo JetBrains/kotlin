@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
 public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluateExpressionTest {
     @TestMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({SingleBreakpoint.ExtraVariables.class, SingleBreakpoint.Frame.class, SingleBreakpoint.Lambdas.class})
+    @InnerTestClasses({SingleBreakpoint.CompilingEvaluator.class, SingleBreakpoint.ExtraVariables.class, SingleBreakpoint.Frame.class, SingleBreakpoint.Lambdas.class, SingleBreakpoint.Renderer.class})
     @RunWith(JUnit3RunnerWithInners.class)
     public static class SingleBreakpoint extends AbstractKotlinEvaluateExpressionTest {
         @TestMetadata("abstractFunCall.kt")
@@ -224,6 +224,63 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
         public void test_kt() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/.kt.kt");
             doSingleBreakpointTest(fileName);
+        }
+
+        @TestMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/compilingEvaluator")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class CompilingEvaluator extends AbstractKotlinEvaluateExpressionTest {
+            public void testAllFilesPresentInCompilingEvaluator() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/compilingEvaluator"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("ceLambda.kt")
+            public void testCeLambda() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/compilingEvaluator/ceLambda.kt");
+                doSingleBreakpointTest(fileName);
+            }
+
+            @TestMetadata("ceLocalClass.kt")
+            public void testCeLocalClass() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/compilingEvaluator/ceLocalClass.kt");
+                doSingleBreakpointTest(fileName);
+            }
+
+            @TestMetadata("ceLocalClassMembers.kt")
+            public void testCeLocalClassMembers() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/compilingEvaluator/ceLocalClassMembers.kt");
+                doSingleBreakpointTest(fileName);
+            }
+
+            @TestMetadata("ceLocalClassWithSuperClass.kt")
+            public void testCeLocalClassWithSuperClass() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/compilingEvaluator/ceLocalClassWithSuperClass.kt");
+                doSingleBreakpointTest(fileName);
+            }
+
+            @TestMetadata("ceMembers.kt")
+            public void testCeMembers() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/compilingEvaluator/ceMembers.kt");
+                doSingleBreakpointTest(fileName);
+            }
+
+            @TestMetadata("ceObject.kt")
+            public void testCeObject() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/compilingEvaluator/ceObject.kt");
+                doSingleBreakpointTest(fileName);
+            }
+
+            @TestMetadata("ceSeveralLambdas.kt")
+            public void testCeSeveralLambdas() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/compilingEvaluator/ceSeveralLambdas.kt");
+                doSingleBreakpointTest(fileName);
+            }
+
+            @TestMetadata("ceSuperAccess.kt")
+            public void testCeSuperAccess() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/compilingEvaluator/ceSuperAccess.kt");
+                doSingleBreakpointTest(fileName);
+            }
         }
 
         @TestMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/extraVariables")
@@ -470,6 +527,12 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
         @TestMetadata("exceptions.kt")
         public void testExceptions() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/exceptions.kt");
+            doMultipleBreakpointsTest(fileName);
+        }
+
+        @TestMetadata("funFromOuterClassInLamdba.kt")
+        public void testFunFromOuterClassInLamdba() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/funFromOuterClassInLamdba.kt");
             doMultipleBreakpointsTest(fileName);
         }
 

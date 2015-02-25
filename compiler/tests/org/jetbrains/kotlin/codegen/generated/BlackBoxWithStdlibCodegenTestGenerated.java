@@ -2444,16 +2444,129 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
 
         @TestMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing")
         @TestDataPath("$PROJECT_ROOT")
-        @InnerTestClasses({Enclosing.InsideLambda.class, Enclosing.Lambda.class})
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Enclosing extends AbstractBlackBoxCodegenTest {
             public void testAllFilesPresentInEnclosing() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/reflection/enclosing"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("anonymousObjectInInlinedLambda.kt")
+            public void testAnonymousObjectInInlinedLambda() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/anonymousObjectInInlinedLambda.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("classInLambda.kt")
+            public void testClassInLambda() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/classInLambda.kt");
+                doTestWithStdlib(fileName);
+            }
+
             @TestMetadata("kt6368.kt")
             public void testKt6368() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/kt6368.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("kt6691_lambdaInSamConstructor.kt")
+            public void testKt6691_lambdaInSamConstructor() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/kt6691_lambdaInSamConstructor.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("lambdaInClassObject.kt")
+            public void testLambdaInClassObject() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambdaInClassObject.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("lambdaInConstructor.kt")
+            public void testLambdaInConstructor() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambdaInConstructor.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("lambdaInFunction.kt")
+            public void testLambdaInFunction() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambdaInFunction.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("lambdaInLambda.kt")
+            public void testLambdaInLambda() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambdaInLambda.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("lambdaInLocalClassConstructor.kt")
+            public void testLambdaInLocalClassConstructor() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambdaInLocalClassConstructor.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("lambdaInLocalClassSuperCall.kt")
+            public void testLambdaInLocalClassSuperCall() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambdaInLocalClassSuperCall.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("lambdaInLocalFunction.kt")
+            public void testLambdaInLocalFunction() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambdaInLocalFunction.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("lambdaInMemberFunction.kt")
+            public void testLambdaInMemberFunction() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambdaInMemberFunction.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("lambdaInMemberFunctionInLocalClass.kt")
+            public void testLambdaInMemberFunctionInLocalClass() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambdaInMemberFunctionInLocalClass.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("lambdaInMemberFunctionInNestedClass.kt")
+            public void testLambdaInMemberFunctionInNestedClass() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambdaInMemberFunctionInNestedClass.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("lambdaInObjectDeclaration.kt")
+            public void testLambdaInObjectDeclaration() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambdaInObjectDeclaration.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("lambdaInObjectExpression.kt")
+            public void testLambdaInObjectExpression() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambdaInObjectExpression.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("lambdaInObjectLiteralSuperCall.kt")
+            public void testLambdaInObjectLiteralSuperCall() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambdaInObjectLiteralSuperCall.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("lambdaInPackage.kt")
+            public void testLambdaInPackage() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambdaInPackage.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("lambdaInPropertyGetter.kt")
+            public void testLambdaInPropertyGetter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambdaInPropertyGetter.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("lambdaInPropertySetter.kt")
+            public void testLambdaInPropertySetter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambdaInPropertySetter.kt");
                 doTestWithStdlib(fileName);
             }
 
@@ -2463,118 +2576,10 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 doTestWithStdlib(fileName);
             }
 
-            @TestMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/insideLambda")
-            @TestDataPath("$PROJECT_ROOT")
-            @RunWith(JUnit3RunnerWithInners.class)
-            public static class InsideLambda extends AbstractBlackBoxCodegenTest {
-                public void testAllFilesPresentInInsideLambda() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/insideLambda"), Pattern.compile("^(.+)\\.kt$"), true);
-                }
-
-                @TestMetadata("classInLambda.kt")
-                public void testClassInLambda() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/insideLambda/classInLambda.kt");
-                    doTestWithStdlib(fileName);
-                }
-
-                @TestMetadata("objectInLambda.kt")
-                public void testObjectInLambda() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/insideLambda/objectInLambda.kt");
-                    doTestWithStdlib(fileName);
-                }
-            }
-
-            @TestMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambda")
-            @TestDataPath("$PROJECT_ROOT")
-            @RunWith(JUnit3RunnerWithInners.class)
-            public static class Lambda extends AbstractBlackBoxCodegenTest {
-                public void testAllFilesPresentInLambda() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambda"), Pattern.compile("^(.+)\\.kt$"), true);
-                }
-
-                @TestMetadata("lambdaInConstructor.kt")
-                public void testLambdaInConstructor() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambda/lambdaInConstructor.kt");
-                    doTestWithStdlib(fileName);
-                }
-
-                @TestMetadata("lambdaInFunction.kt")
-                public void testLambdaInFunction() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambda/lambdaInFunction.kt");
-                    doTestWithStdlib(fileName);
-                }
-
-                @TestMetadata("lambdaInLambda.kt")
-                public void testLambdaInLambda() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambda/lambdaInLambda.kt");
-                    doTestWithStdlib(fileName);
-                }
-
-                @TestMetadata("lambdaInLocalClassConstructor.kt")
-                public void testLambdaInLocalClassConstructor() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambda/lambdaInLocalClassConstructor.kt");
-                    doTestWithStdlib(fileName);
-                }
-
-                @TestMetadata("lambdaInLocalClassSuperCall.kt")
-                public void testLambdaInLocalClassSuperCall() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambda/lambdaInLocalClassSuperCall.kt");
-                    doTestWithStdlib(fileName);
-                }
-
-                @TestMetadata("lambdaInLocalFunction.kt")
-                public void testLambdaInLocalFunction() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambda/lambdaInLocalFunction.kt");
-                    doTestWithStdlib(fileName);
-                }
-
-                @TestMetadata("lambdaInMemberFunction.kt")
-                public void testLambdaInMemberFunction() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambda/lambdaInMemberFunction.kt");
-                    doTestWithStdlib(fileName);
-                }
-
-                @TestMetadata("lambdaInMemberFunctionInLocalClass.kt")
-                public void testLambdaInMemberFunctionInLocalClass() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambda/lambdaInMemberFunctionInLocalClass.kt");
-                    doTestWithStdlib(fileName);
-                }
-
-                @TestMetadata("lambdaInMemberFunctionInNestedClass.kt")
-                public void testLambdaInMemberFunctionInNestedClass() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambda/lambdaInMemberFunctionInNestedClass.kt");
-                    doTestWithStdlib(fileName);
-                }
-
-                @TestMetadata("lambdaInObjectExpression.kt")
-                public void testLambdaInObjectExpression() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambda/lambdaInObjectExpression.kt");
-                    doTestWithStdlib(fileName);
-                }
-
-                @TestMetadata("lambdaInObjectLiteralSuperCall.kt")
-                public void testLambdaInObjectLiteralSuperCall() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambda/lambdaInObjectLiteralSuperCall.kt");
-                    doTestWithStdlib(fileName);
-                }
-
-                @TestMetadata("lambdaInPackage.kt")
-                public void testLambdaInPackage() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambda/lambdaInPackage.kt");
-                    doTestWithStdlib(fileName);
-                }
-
-                @TestMetadata("lambdaInPropertyGetter.kt")
-                public void testLambdaInPropertyGetter() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambda/lambdaInPropertyGetter.kt");
-                    doTestWithStdlib(fileName);
-                }
-
-                @TestMetadata("lambdaInPropertySetter.kt")
-                public void testLambdaInPropertySetter() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambda/lambdaInPropertySetter.kt");
-                    doTestWithStdlib(fileName);
-                }
+            @TestMetadata("objectInLambda.kt")
+            public void testObjectInLambda() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/objectInLambda.kt");
+                doTestWithStdlib(fileName);
             }
         }
 

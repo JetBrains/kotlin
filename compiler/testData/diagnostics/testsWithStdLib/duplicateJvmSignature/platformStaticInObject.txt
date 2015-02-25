@@ -15,13 +15,4 @@ internal object Derived : Base {
     internal final override /*1*/ /*fake_override*/ fun `foo$default`(/*0*/ i: kotlin.Int, /*1*/ mask: kotlin.Int): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-
-    public class object <class-object-for-Derived> : Derived {
-        private constructor <class-object-for-Derived>()
-        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        kotlin.platform.platformStatic() internal final override /*1*/ /*fake_override*/ fun foo(/*0*/ i: kotlin.Int = ...): kotlin.Unit
-        internal final override /*1*/ /*fake_override*/ fun `foo$default`(/*0*/ i: kotlin.Int, /*1*/ mask: kotlin.Int): kotlin.Unit
-        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    }
 }

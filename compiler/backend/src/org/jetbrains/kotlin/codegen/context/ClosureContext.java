@@ -20,18 +20,28 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.OwnerKind;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 
-class ClosureContext extends ClassContext {
+import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.anonymousClassForFunction;
+
+public class ClosureContext extends ClassContext {
+    private final FunctionDescriptor functionDescriptor;
 
     public ClosureContext(
             @NotNull JetTypeMapper typeMapper,
-            @NotNull ClassDescriptor classDescriptor,
+            @NotNull FunctionDescriptor functionDescriptor,
             @Nullable CodegenContext parentContext,
-            @Nullable LocalLookup localLookup
+            @NotNull LocalLookup localLookup
     ) {
-        //noinspection SuspiciousMethodCalls
-        super(typeMapper, classDescriptor, OwnerKind.IMPLEMENTATION, parentContext, localLookup);
+        super(typeMapper, anonymousClassForFunction(typeMapper.getBindingContext(), functionDescriptor),
+              OwnerKind.IMPLEMENTATION, parentContext, localLookup);
+
+        this.functionDescriptor = functionDescriptor;
+    }
+
+    @NotNull
+    public FunctionDescriptor getFunctionDescriptor() {
+        return functionDescriptor;
     }
 
     @Override

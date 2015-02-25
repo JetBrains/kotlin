@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.psi;
 
+import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.TokenSet;
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
 import java.util.Arrays;
 import java.util.List;
 
+import static kotlin.KotlinPackage.firstOrNull;
 import static org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes.*;
 
 public class JetClassBody extends JetElementImplStub<KotlinPlaceHolderStub<JetClassBody>> implements JetDeclarationContainer {
@@ -65,13 +67,19 @@ public class JetClassBody extends JetElementImplStub<KotlinPlaceHolderStub<JetCl
     }
 
     @Nullable
-    public JetClassObject getClassObject() {
-        return getStubOrPsiChild(CLASS_OBJECT);
+    public JetObjectDeclaration getClassObject() {
+        return firstOrNull(getAllClassObjects());
     }
 
     @NotNull
-    public List<JetClassObject> getAllClassObjects() {
-        return getStubOrPsiChildrenAsList(JetStubElementTypes.CLASS_OBJECT);
+    public List<JetObjectDeclaration> getAllClassObjects() {
+        List<JetObjectDeclaration> result = Lists.newArrayList();
+        for (JetObjectDeclaration declaration : getStubOrPsiChildrenAsList(JetStubElementTypes.OBJECT_DECLARATION)) {
+            if (declaration.isClassObject()) {
+                result.add(declaration);
+            }
+        }
+        return result;
     }
 
     @Nullable

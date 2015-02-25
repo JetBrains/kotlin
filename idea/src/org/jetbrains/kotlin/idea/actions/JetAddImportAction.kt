@@ -28,7 +28,6 @@ import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
-import com.intellij.util.PlatformIcons
 import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.name.FqName
@@ -37,13 +36,13 @@ import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import com.intellij.openapi.module.ModuleUtilCore
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
-import org.jetbrains.kotlin.idea.codeInsight.DescriptorToDeclarationUtil
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.idea.imports.importableFqNameSafe
-import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
+import org.jetbrains.kotlin.idea.JetDescriptorIconProvider
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToDeclarationUtil
 
 /**
  * Automatically adds import directive to the file for resolving reference.
@@ -65,7 +64,7 @@ public class JetAddImportAction(
     }
 
     private fun detectPriority(descriptor: DeclarationDescriptor): Priority {
-        val declaration = DescriptorToDeclarationUtil.getDeclaration(element.getContainingJetFile(), descriptor)
+        val declaration = DescriptorToDeclarationUtil.getDeclaration(project, descriptor)
         return when {
             declaration == null -> Priority.OTHER
             ModuleUtilCore.findModuleForPsiElement(declaration) == module -> Priority.MODULE
@@ -91,6 +90,7 @@ public class JetAddImportAction(
                     }
                 }.first()
             }
+        val declarationToImport = DescriptorToDeclarationUtil.getDeclaration(project, descriptorToImport)
     }
 
     private val variants = candidates
@@ -146,8 +146,7 @@ public class JetAddImportAction(
 
             override fun getTextFor(value: Variant) = value.fqName.asString()
 
-            // TODO: change icon
-            override fun getIconFor(aValue: Variant) = PlatformIcons.CLASS_ICON
+            override fun getIconFor(value: Variant) = JetDescriptorIconProvider.getIcon(value.descriptorToImport, value.declarationToImport, 0)
         }
     }
 

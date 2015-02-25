@@ -81,7 +81,7 @@ public class ChangeAccessorTypeFix extends JetIntentionAction<JetPropertyAccesso
         assert typeReference != null;
 
         newTypeReference = (JetTypeReference) typeReference.replace(newTypeReference);
-        ShortenReferences.INSTANCE$.process(newTypeReference);
+        ShortenReferences.DEFAULT.process(newTypeReference);
     }
 
     public static JetSingleIntentionActionFactory createFactory() {

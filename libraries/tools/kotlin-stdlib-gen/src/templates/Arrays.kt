@@ -23,5 +23,23 @@ fun arrays(): List<GenericFunction> {
         }
     }
 
+    templates add pval("lastIndex") {
+        only(ArraysOfObjects, ArraysOfPrimitives)
+        doc { "Returns the last valid index for the array" }
+        returns("Int")
+        body {
+            "get() = size - 1"
+        }
+    }
+
+    templates add pval("indices") {
+        only(ArraysOfObjects, ArraysOfPrimitives)
+        doc { "Returns the range of valid indices for the array" }
+        returns("IntRange")
+        body {
+            "get() = IntRange(0, lastIndex)"
+        }
+    }
+
     return templates
 }

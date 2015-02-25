@@ -61,6 +61,8 @@ public class CodegenBinding {
 
     public static final WritableSlice<JetExpression, SamType> SAM_VALUE = Slices.createSimpleSlice();
 
+    public static final WritableSlice<JetCallExpression, JetExpression> SAM_CONSTRUCTOR_TO_ARGUMENT = Slices.createSimpleSlice();
+
     public static final WritableSlice<JetWhenExpression, WhenByEnumsMapping> MAPPING_FOR_WHEN_BY_ENUM =
             Slices.<JetWhenExpression, WhenByEnumsMapping>sliceBuilder().build();
 

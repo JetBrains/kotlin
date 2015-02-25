@@ -16,7 +16,8 @@
 
 package org.jetbrains.kotlin.serialization;
 
-import gnu.trove.TObjectHashingStrategy;
+import kotlin.Function1;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassOrPackageFragmentDescriptor;
@@ -30,27 +31,40 @@ import java.util.List;
 import static org.jetbrains.kotlin.serialization.ProtoBuf.QualifiedNameTable.QualifiedName;
 
 public class StringTable {
-    public static final TObjectHashingStrategy<QualifiedName.Builder> QUALIFIED_NAME_BUILDER_HASHING =
-            new TObjectHashingStrategy<ProtoBuf.QualifiedNameTable.QualifiedName.Builder>() {
-                @Override
-                public int computeHashCode(QualifiedName.Builder object) {
-                    int result = 13;
-                    result = 31 * result + object.getParentQualifiedName();
-                    result = 31 * result + object.getShortName();
-                    result = 31 * result + object.getKind().hashCode();
-                    return result;
-                }
+    private static final class FqNameProto {
+        public final QualifiedName.Builder fqName;
 
-                @Override
-                public boolean equals(QualifiedName.Builder o1, QualifiedName.Builder o2) {
-                    return o1.getParentQualifiedName() == o2.getParentQualifiedName()
-                           && o1.getShortName() == o2.getShortName()
-                           && o1.getKind() == o2.getKind();
-                }
-            };
+        public FqNameProto(@NotNull QualifiedName.Builder fqName) {
+            this.fqName = fqName;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 13;
+            result = 31 * result + fqName.getParentQualifiedName();
+            result = 31 * result + fqName.getShortName();
+            result = 31 * result + fqName.getKind().hashCode();
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == null || getClass() != obj.getClass()) return false;
+
+            QualifiedName.Builder other = ((FqNameProto) obj).fqName;
+            return fqName.getParentQualifiedName() == other.getParentQualifiedName()
+                   && fqName.getShortName() == other.getShortName()
+                   && fqName.getKind() == other.getKind();
+        }
+    }
 
     private final Interner<String> strings = new Interner<String>();
-    private final Interner<QualifiedName.Builder> qualifiedNames = new Interner<QualifiedName.Builder>(QUALIFIED_NAME_BUILDER_HASHING);
+    private final Interner<FqNameProto> qualifiedNames = new Interner<FqNameProto>();
+    private final SerializerExtension extension;
+
+    public StringTable(@NotNull SerializerExtension extension) {
+        this.extension = extension;
+    }
 
     @NotNull
     public List<String> getStrings() {
@@ -59,7 +73,12 @@ public class StringTable {
 
     @NotNull
     public List<QualifiedName.Builder> getFqNames() {
-        return qualifiedNames.getAllInternedObjects();
+        return KotlinPackage.map(qualifiedNames.getAllInternedObjects(), new Function1<FqNameProto, QualifiedName.Builder>() {
+            @Override
+            public QualifiedName.Builder invoke(FqNameProto proto) {
+                return proto.fqName;
+            }
+        });
     }
 
     public int getSimpleNameIndex(@NotNull Name name) {
@@ -75,24 +94,34 @@ public class StringTable {
         if (descriptor instanceof ClassDescriptor) {
             builder.setKind(QualifiedName.Kind.CLASS);
         }
-        builder.setShortName(getSimpleNameIndex(descriptor.getName()));
 
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
+        int shortName;
         if (containingDeclaration instanceof PackageFragmentDescriptor) {
+            shortName = getSimpleNameIndex(descriptor.getName());
             PackageFragmentDescriptor fragment = (PackageFragmentDescriptor) containingDeclaration;
             if (!fragment.getFqName().isRoot()) {
                 builder.setParentQualifiedName(getFqNameIndex(fragment.getFqName()));
             }
         }
         else if (containingDeclaration instanceof ClassDescriptor) {
+            shortName = getSimpleNameIndex(descriptor.getName());
             ClassDescriptor outerClass = (ClassDescriptor) containingDeclaration;
             builder.setParentQualifiedName(getFqNameIndex(outerClass));
         }
         else {
-            throw new IllegalStateException("FQ names are only stored for top-level or inner classes: " + descriptor);
+            if (descriptor instanceof ClassDescriptor) {
+                builder.setKind(QualifiedName.Kind.LOCAL);
+                shortName = getStringIndex(extension.getLocalClassName((ClassDescriptor) descriptor));
+            }
+            else {
+                throw new IllegalStateException("Package container should be a package: " + descriptor);
+            }
         }
 
-        return qualifiedNames.intern(builder);
+        builder.setShortName(shortName);
+
+        return qualifiedNames.intern(new FqNameProto(builder));
     }
 
     public int getFqNameIndex(@NotNull FqName fqName) {
@@ -103,7 +132,7 @@ public class StringTable {
             if (result != -1) {
                 builder.setParentQualifiedName(result);
             }
-            result = qualifiedNames.intern(builder);
+            result = qualifiedNames.intern(new FqNameProto(builder));
         }
         return result;
     }

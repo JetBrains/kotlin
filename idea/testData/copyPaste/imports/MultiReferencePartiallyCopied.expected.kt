@@ -1,9 +1,9 @@
 package to
 
-import a.A
-import a.B
 import a.next
 import a.hasNext
+import a.A
+import a.B
 
 fun A.iterator() = B()
 

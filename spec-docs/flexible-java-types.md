@@ -121,3 +121,22 @@ Constructs in question: anything that provides an expected type, i.e.
  - explicit expected type (foo: Bar)
  - for booleans: if (foo), foo || bar, foo && bar (!foo is a call)
  - argument of throw
+
+## Warnings on nullability misuse
+
+A type loaded from Java is said to *bear* a `@Nullable`/`@NotNull` annotation when
+ - it's a return type a method so annotated;
+ - it's a type of a field or a parameter so annotated;
+ - it's a so annotated type (Java 8 and later).
+
+A value is `@Nullable`/`@NotNull` when its type bears such an annotation.
+
+Inside this section, a value is *nullable*/*not-null* when
+ - it's `@Nullable`/`@NotNull`, or
+ - it's type in Kotlin when refined with data flow info is nullable/not-null.
+
+The compiler issues warnings specific to `@Nullable`/`@NotNull` in the following situations:
+ - a `@Nullable` value is assigned to a not-null location (including passing parameters and receivers to functions/properties);
+ - a nullable value is assigned to a `@NotNull` location;
+ - a `@NotNull` value is dereferenced with a safe call (`?.`), used in `!!` or on the left-hand side of an elvis operator `?:`;
+ - a `@NotNull` value is compared with `null` through `==`, `!=`, `===` or `!==`

@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.resolve.lazy;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
@@ -33,6 +32,7 @@ import org.jetbrains.kotlin.psi.JetNamedDeclaration;
 import org.jetbrains.kotlin.psi.JetNamedDeclarationUtil;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -42,83 +42,53 @@ public class ResolveSessionUtils {
     }
 
     @NotNull
-    public static Collection<ClassDescriptor> getClassDescriptorsByFqName(@NotNull ModuleDescriptor moduleDescriptor, @NotNull FqName fqName) {
-        return getClassOrObjectDescriptorsByFqName(moduleDescriptor, fqName, Predicates.<ClassDescriptor>alwaysTrue());
+    public static Collection<ClassDescriptor> getClassDescriptorsByFqName(@NotNull ModuleDescriptor module, @NotNull FqName fqName) {
+        return getClassOrObjectDescriptorsByFqName(module, fqName, Predicates.<ClassDescriptor>alwaysTrue());
     }
 
     @NotNull
     public static Collection<ClassDescriptor> getClassOrObjectDescriptorsByFqName(
-            @NotNull ModuleDescriptor moduleDescriptor,
+            @NotNull ModuleDescriptor module,
             @NotNull FqName fqName,
             @NotNull Predicate<ClassDescriptor> filter
     ) {
         if (fqName.isRoot()) return Collections.emptyList();
 
-        Collection<ClassDescriptor> classDescriptors = Lists.newArrayList();
+        Collection<ClassDescriptor> result = new ArrayList<ClassDescriptor>(1);
 
         FqName packageFqName = fqName.parent();
         while (true) {
-            PackageViewDescriptor packageDescriptor = moduleDescriptor.getPackage(packageFqName);
+            PackageViewDescriptor packageDescriptor = module.getPackage(packageFqName);
             if (packageDescriptor != null) {
-                FqName classInPackagePath = NamePackage.tail(fqName, packageFqName);
-                ClassDescriptor classDescriptor = findByQualifiedName(packageDescriptor.getMemberScope(), classInPackagePath, filter);
-                if (classDescriptor != null) {
-                    classDescriptors.add(classDescriptor);
+                FqName relativeClassFqName = NamePackage.tail(fqName, packageFqName);
+                ClassDescriptor classDescriptor = findByQualifiedName(packageDescriptor.getMemberScope(), relativeClassFqName);
+                if (classDescriptor != null && filter.apply(classDescriptor)) {
+                    result.add(classDescriptor);
                 }
             }
 
             if (packageFqName.isRoot()) {
                 break;
             }
-            else {
-                packageFqName = packageFqName.parent();
-            }
+
+            packageFqName = packageFqName.parent();
         }
 
-        return classDescriptors;
+        return result;
     }
 
     @Nullable
-    public static ClassDescriptor findByQualifiedName(@NotNull JetScope packageScope, @NotNull FqName path) {
-        return findByQualifiedName(packageScope, path, Predicates.<ClassDescriptor>alwaysTrue());
-    }
-
-    @Nullable
-    private static ClassDescriptor findByQualifiedName(
-            @NotNull JetScope jetScope,
-            @NotNull FqName path,
-            @NotNull Predicate<ClassDescriptor> filter
-    ) {
+    public static ClassDescriptor findByQualifiedName(@NotNull JetScope outerScope, @NotNull FqName path) {
         if (path.isRoot()) return null;
 
-        if (NamePackage.isOneSegmentFQN(path)) {
-            Name shortName = path.shortName();
-            ClassifierDescriptor classifier = jetScope.getClassifier(shortName);
-            if (classifier instanceof ClassDescriptor) {
-                ClassDescriptor resultDescriptor = (ClassDescriptor) classifier;
-
-                if (filter.apply(resultDescriptor)) {
-                    return resultDescriptor;
-                }
-            }
-
-            return null;
+        JetScope scope = outerScope;
+        for (Name name : path.pathSegments()) {
+            ClassifierDescriptor classifier = scope.getClassifier(name);
+            if (!(classifier instanceof ClassDescriptor)) return null;
+            scope = ((ClassDescriptor) classifier).getUnsubstitutedInnerClassesScope();
         }
 
-        Name firstName = NamePackage.getFirstSegment(path);
-
-        // Search in internal class
-        ClassifierDescriptor classifier = jetScope.getClassifier(firstName);
-        if (classifier instanceof ClassDescriptor) {
-            return findByQualifiedName(
-                    ((ClassDescriptor) classifier).getUnsubstitutedInnerClassesScope(),
-                    NamePackage.withoutFirstSegment(path),
-                    filter);
-        }
-
-        // TODO: search in class object
-
-        return null;
+        return (ClassDescriptor) scope.getContainingDeclaration();
     }
 
     @NotNull

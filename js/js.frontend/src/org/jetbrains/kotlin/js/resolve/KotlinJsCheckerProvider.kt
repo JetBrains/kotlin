@@ -35,7 +35,8 @@ import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 
 public object KotlinJsCheckerProvider : AdditionalCheckerProvider(
         annotationCheckers = listOf(NativeInvokeChecker(), NativeGetterChecker(), NativeSetterChecker()),
-        additionalCallCheckers = listOf()
+        additionalCallCheckers = listOf(),
+        additionalTypeCheckers = listOf()
 )
 
 private abstract class AbstractNativeAnnotationsChecker(private val requiredAnnotation: PredefinedAnnotation) : AnnotationChecker {

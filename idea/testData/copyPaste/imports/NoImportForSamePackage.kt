@@ -44,7 +44,7 @@ class ClassObject {
     }
 }
 
-<selection>fun f(a: A, t: T) {
+<selection>fun f(p: A, t: T) {
     g(A(c).ext())
     O1.f()
     O2

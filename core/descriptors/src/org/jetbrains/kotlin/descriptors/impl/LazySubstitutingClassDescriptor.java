@@ -169,8 +169,8 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
     }
 
     @Override
-    public ClassDescriptor getClassObjectDescriptor() {
-        return original.getClassObjectDescriptor();
+    public ClassDescriptor getDefaultObjectDescriptor() {
+        return original.getDefaultObjectDescriptor();
     }
 
     @NotNull

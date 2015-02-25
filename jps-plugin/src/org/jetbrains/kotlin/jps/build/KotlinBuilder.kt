@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.compilerRunner.CompilerEnvironment
-import org.jetbrains.kotlin.compilerRunner.CompilerRunnerConstants
+import org.jetbrains.kotlin.config.CompilerRunnerConstants
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.config.IncrementalCompilation
@@ -43,7 +43,7 @@ import java.io.File
 import java.util.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation.NO_LOCATION
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
-import org.jetbrains.kotlin.compilerRunner.CompilerRunnerConstants.INTERNAL_ERROR_PREFIX
+import org.jetbrains.kotlin.config.CompilerRunnerConstants.INTERNAL_ERROR_PREFIX
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerRunner.runK2JsCompiler
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerRunner.runK2JvmCompiler
 import org.jetbrains.kotlin.utils.keysToMap
@@ -54,9 +54,17 @@ import org.jetbrains.jps.builders.java.JavaBuilderUtil
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.jps.model.JpsProject
+import java.io.FileFilter
+import org.jetbrains.kotlin.jps.incremental.IncrementalCacheImpl.RecompilationDecision.*
 import org.jetbrains.kotlin.compilerRunner.SimpleOutputItem
 import org.jetbrains.kotlin.utils.LibraryUtils
 import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCache
+import org.jetbrains.jps.incremental.fs.CompilationRound
+import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
+import org.jetbrains.kotlin.load.kotlin.header.isCompatiblePackageFacadeKind
+import org.jetbrains.jps.builders.java.dependencyView.Mappings
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.utils.sure
 
 public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     class object {
@@ -136,16 +144,18 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         }
 
         val compilationErrors = Utils.ERRORS_DETECTED_KEY[context, false]
-        val outputsItemsAndTargets = getOutputItemsAndTargets(chunk, outputItemCollector)
+        val generatedFiles = getGeneratedFiles(chunk, outputItemCollector)
 
-        registerOutputItems(outputConsumer, outputsItemsAndTargets)
+        registerOutputItems(outputConsumer, generatedFiles)
 
         val recompilationDecision: IncrementalCacheImpl.RecompilationDecision
         if (JpsUtils.isJsKotlinModule(chunk.representativeTarget())) {
-            recompilationDecision = IncrementalCacheImpl.RecompilationDecision.DO_NOTHING
+            recompilationDecision = DO_NOTHING
         }
         else {
-            recompilationDecision = updateKotlinIncrementalCache(compilationErrors, incrementalCaches, outputsItemsAndTargets)
+            val generatedClasses = generatedFiles as List<GeneratedJvmClass>
+            recompilationDecision = updateKotlinIncrementalCache(compilationErrors, incrementalCaches, generatedClasses)
+            updateJavaMappings(chunk, compilationErrors, context, dirtyFilesHolder, filesToCompile, generatedClasses)
         }
 
         if (compilationErrors) {
@@ -157,15 +167,27 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         }
 
         if (IncrementalCompilation.ENABLED) {
-            if (recompilationDecision == IncrementalCacheImpl.RecompilationDecision.RECOMPILE_ALL) {
-                allCompiledFiles.clear()
-                return CHUNK_REBUILD_REQUIRED
-            }
-            if (recompilationDecision == IncrementalCacheImpl.RecompilationDecision.COMPILE_OTHERS) {
-                // TODO should mark dependencies as dirty, as well
-                FSOperations.markDirty(context, chunk, { file ->
-                    KotlinSourceFileCollector.isKotlinSourceFile(file) && file !in allCompiledFiles
-                })
+            when (recompilationDecision) {
+                RECOMPILE_ALL_IN_CHUNK_AND_DEPENDANTS -> {
+                    allCompiledFiles.clear()
+                    FSOperations.markDirtyRecursively(context, chunk)
+                }
+                RECOMPILE_OTHER_IN_CHUNK_AND_DEPENDANTS -> {
+                    // Workaround for IDEA 14.0-14.0.2: extended version of markDirtyRecursively is not available
+                    try {
+                        Class.forName("org.jetbrains.jps.incremental.fs.CompilationRound")
+
+                        FSOperations.markDirtyRecursively(context, CompilationRound.NEXT, chunk, { file -> file !in allCompiledFiles })
+                    } catch (e: ClassNotFoundException) {
+                        allCompiledFiles.clear()
+                        FSOperations.markDirtyRecursively(context, chunk)
+                    }
+                }
+                RECOMPILE_OTHER_KOTLIN_IN_CHUNK -> {
+                    FSOperations.markDirty(context, chunk, { file ->
+                        KotlinSourceFileCollector.isKotlinSourceFile(file) && file !in allCompiledFiles
+                    })
+                }
             }
             return ADDITIONAL_PASS_REQUIRED
         }
@@ -188,10 +210,10 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         )
     }
 
-    private fun getOutputItemsAndTargets(
+    private fun getGeneratedFiles(
             chunk: ModuleChunk,
             outputItemCollector: OutputItemsCollectorImpl
-    ): List<Pair<SimpleOutputItem, ModuleBuildTarget>> {
+    ): List<GeneratedFile> {
         // If there's only one target, this map is empty: get() always returns null, and the representativeTarget will be used below
         val sourceToTarget = HashMap<File, ModuleBuildTarget>()
         if (chunk.getTargets().size() > 1) {
@@ -202,12 +224,14 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             }
         }
 
-        val result = ArrayList<Pair<SimpleOutputItem, ModuleBuildTarget>>()
+        val result = ArrayList<GeneratedFile>()
 
         val representativeTarget = chunk.representativeTarget()
         for (outputItem in outputItemCollector.getOutputs()) {
             var target: ModuleBuildTarget? = null
             val sourceFiles = outputItem.getSourceFiles()
+            val outputFile = outputItem.getOutputFile()
+
             if (!sourceFiles.isEmpty()) {
                 target = sourceToTarget[sourceFiles.iterator().next()]
             }
@@ -216,29 +240,85 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
                 target = representativeTarget
             }
 
-            result.add(Pair(outputItem, target!!))
+            if (outputFile.getName().endsWith(".class")) {
+                result.add(GeneratedJvmClass(target!!, sourceFiles, outputFile))
+            }
+            else {
+                result.add(GeneratedFile(target!!, sourceFiles, outputFile))
+            }
         }
         return result
     }
 
-    private fun registerOutputItems(outputConsumer: ModuleLevelBuilder.OutputConsumer, outputsItemsAndTargets: List<Pair<SimpleOutputItem, ModuleBuildTarget>>) {
-        for ((outputItem, target) in outputsItemsAndTargets) {
-            outputConsumer.registerOutputFile(target, outputItem.getOutputFile(), outputItem.getSourceFiles().map { it.getPath() })
+    private fun updateJavaMappings(
+            chunk: ModuleChunk,
+            compilationErrors: Boolean,
+            context: CompileContext,
+            dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>,
+            filesToCompile: MultiMap<ModuleBuildTarget, File>,
+            generatedClasses: List<GeneratedJvmClass>
+    ) {
+        fun getOldSourceFiles(generatedClass: GeneratedJvmClass, previousMappings: Mappings): Collection<File> {
+            if (!generatedClass.outputFile.getName().endsWith(PackageClassUtils.PACKAGE_CLASS_NAME_SUFFIX + ".class")) return emptySet()
+
+            val kotlinClass = generatedClass.outputClass
+            if (!kotlinClass.getClassHeader().isCompatiblePackageFacadeKind()) return emptySet()
+
+            val classInternalName = JvmClassName.byClassId(kotlinClass.getClassId()).getInternalName()
+            val oldClassSources = previousMappings.getClassSources(previousMappings.getName(classInternalName))
+            if (oldClassSources == null) return emptySet()
+
+            val sources = THashSet(FileUtil.FILE_HASHING_STRATEGY)
+            sources.addAll(oldClassSources)
+            sources.removeAll(filesToCompile[generatedClass.target])
+            sources.removeAll(dirtyFilesHolder.getRemovedFiles(generatedClass.target).map { File(it) })
+            return sources
+        }
+
+        if (!IncrementalCompilation.ENABLED) {
+            return
+        }
+
+        val previousMappings = context.getProjectDescriptor().dataManager.getMappings()
+        val delta = previousMappings.createDelta()
+        val callback = delta.getCallback()
+
+        for (generatedClass in generatedClasses) {
+            val outputFile = generatedClass.outputFile
+            val outputClass = generatedClass.outputClass
+
+            // For package facade classes: we need to report all source files for it, not only currently compiled
+            val allSourcesIncludingOld = getOldSourceFiles(generatedClass, previousMappings) + generatedClass.sourceFiles
+
+            callback.associate(FileUtil.toSystemIndependentName(outputFile.getAbsolutePath()),
+                               allSourcesIncludingOld.map { FileUtil.toSystemIndependentName(it.getAbsolutePath()) },
+                               ClassReader(outputClass.getFileContents())
+            )
+        }
+
+        val allCompiled = filesToCompile.values()
+        val compiledInThisRound = if (compilationErrors) listOf<File>() else allCompiled
+        JavaBuilderUtil.updateMappings(context, delta, dirtyFilesHolder, chunk, allCompiled, compiledInThisRound)
+    }
+
+    private fun registerOutputItems(outputConsumer: ModuleLevelBuilder.OutputConsumer, generatedFiles: List<GeneratedFile>) {
+        for (generatedFile in generatedFiles) {
+            outputConsumer.registerOutputFile(generatedFile.target, generatedFile.outputFile, generatedFile.sourceFiles.map { it.getPath() })
         }
     }
 
     private fun updateKotlinIncrementalCache(
             compilationErrors: Boolean,
             incrementalCaches: Map<ModuleBuildTarget, IncrementalCacheImpl>,
-            outputsItemsAndTargets: List<Pair<SimpleOutputItem, ModuleBuildTarget>>
+            generatedClasses: List<GeneratedJvmClass>
     ): IncrementalCacheImpl.RecompilationDecision {
         if (!IncrementalCompilation.ENABLED) {
-            return IncrementalCacheImpl.RecompilationDecision.DO_NOTHING
+            return DO_NOTHING
         }
 
-        var recompilationDecision = IncrementalCacheImpl.RecompilationDecision.DO_NOTHING
-        for ((outputItem, target) in outputsItemsAndTargets) {
-            val newDecision = incrementalCaches[target]!!.saveFileToCache(outputItem.getSourceFiles(), outputItem.getOutputFile())
+        var recompilationDecision = DO_NOTHING
+        for (generatedClass in generatedClasses) {
+            val newDecision = incrementalCaches[generatedClass.target]!!.saveFileToCache(generatedClass.sourceFiles, generatedClass.outputClass)
             recompilationDecision = recompilationDecision.merge(newDecision)
         }
 
@@ -419,4 +499,19 @@ private fun hasKotlinDirtyOrRemovedFiles(
     }
 
     return chunk.getTargets().any { !KotlinSourceFileCollector.getRemovedKotlinFiles(dirtyFilesHolder, it).isEmpty() }
+}
+
+private open class GeneratedFile(
+        val target: ModuleBuildTarget,
+        val sourceFiles: Collection<File>,
+        val outputFile: File
+)
+
+private class GeneratedJvmClass (
+        target: ModuleBuildTarget,
+        sourceFiles: Collection<File>,
+        outputFile: File
+) : GeneratedFile(target, sourceFiles, outputFile) {
+    val outputClass = LocalFileKotlinClass.create(outputFile).sure(
+            "Couldn't load KotlinClass from $outputFile; it may happen because class doesn't have valid Kotlin annotations")
 }

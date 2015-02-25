@@ -23,20 +23,17 @@ import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingComponents;
 import org.jetbrains.kotlin.resolve.calls.CallResolver;
+import org.jetbrains.kotlin.resolve.TypeResolver;
 import org.jetbrains.kotlin.context.GlobalContext;
 import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.resolve.AdditionalCheckerProvider.DefaultProvider;
 import org.jetbrains.kotlin.resolve.AnnotationResolver;
-import org.jetbrains.kotlin.resolve.TypeResolver;
-import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver;
-import org.jetbrains.kotlin.resolve.TypeResolver.FlexibleTypeCapabilitiesProvider;
-import org.jetbrains.kotlin.context.LazinessToken;
-import org.jetbrains.kotlin.types.DynamicTypesSettings;
 import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver;
 import org.jetbrains.kotlin.resolve.DescriptorResolver;
 import org.jetbrains.kotlin.resolve.DelegatedPropertyResolver;
 import org.jetbrains.kotlin.resolve.StatementFilter;
 import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils;
+import org.jetbrains.kotlin.types.DynamicTypesSettings;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.kotlin.types.expressions.ForLoopConventionsChecker;
 import org.jetbrains.kotlin.types.expressions.LocalClassifierAnalyzer;
@@ -45,6 +42,9 @@ import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.kotlin.resolve.calls.CallCompleter;
 import org.jetbrains.kotlin.resolve.calls.CandidateResolver;
 import org.jetbrains.kotlin.resolve.calls.tasks.TaskPrioritizer;
+import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver;
+import org.jetbrains.kotlin.resolve.TypeResolver.FlexibleTypeCapabilitiesProvider;
+import org.jetbrains.kotlin.context.LazinessToken;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
 
@@ -59,20 +59,17 @@ public class InjectorForMacros {
     private final ExpressionTypingServices expressionTypingServices;
     private final ExpressionTypingComponents expressionTypingComponents;
     private final CallResolver callResolver;
+    private final TypeResolver typeResolver;
     private final GlobalContext globalContext;
     private final StorageManager storageManager;
     private final DefaultProvider defaultProvider;
     private final AnnotationResolver annotationResolver;
-    private final TypeResolver typeResolver;
-    private final QualifiedExpressionResolver qualifiedExpressionResolver;
-    private final FlexibleTypeCapabilitiesProvider flexibleTypeCapabilitiesProvider;
-    private final LazinessToken lazinessToken;
-    private final DynamicTypesSettings dynamicTypesSettings;
     private final CallExpressionResolver callExpressionResolver;
     private final DescriptorResolver descriptorResolver;
     private final DelegatedPropertyResolver delegatedPropertyResolver;
     private final StatementFilter statementFilter;
     private final ControlStructureTypingUtils controlStructureTypingUtils;
+    private final DynamicTypesSettings dynamicTypesSettings;
     private final ExpressionTypingUtils expressionTypingUtils;
     private final ForLoopConventionsChecker forLoopConventionsChecker;
     private final LocalClassifierAnalyzer localClassifierAnalyzer;
@@ -81,6 +78,9 @@ public class InjectorForMacros {
     private final CallCompleter callCompleter;
     private final CandidateResolver candidateResolver;
     private final TaskPrioritizer taskPrioritizer;
+    private final QualifiedExpressionResolver qualifiedExpressionResolver;
+    private final FlexibleTypeCapabilitiesProvider flexibleTypeCapabilitiesProvider;
+    private final LazinessToken lazinessToken;
 
     public InjectorForMacros(
         @NotNull Project project,
@@ -93,15 +93,15 @@ public class InjectorForMacros {
         this.expressionTypingComponents = new ExpressionTypingComponents();
         this.expressionTypingServices = new ExpressionTypingServices(getExpressionTypingComponents());
         this.callResolver = new CallResolver();
-        this.globalContext = org.jetbrains.kotlin.context.ContextPackage.GlobalContext();
-        this.storageManager = globalContext.getStorageManager();
-        this.defaultProvider = DefaultProvider.INSTANCE$;
         this.annotationResolver = new AnnotationResolver();
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
         this.flexibleTypeCapabilitiesProvider = new FlexibleTypeCapabilitiesProvider();
+        this.globalContext = org.jetbrains.kotlin.context.ContextPackage.GlobalContext();
+        this.storageManager = globalContext.getStorageManager();
         this.lazinessToken = new LazinessToken();
         this.dynamicTypesSettings = new DynamicTypesSettings();
         this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, moduleDescriptor, flexibleTypeCapabilitiesProvider, storageManager, lazinessToken, dynamicTypesSettings);
+        this.defaultProvider = DefaultProvider.INSTANCE$;
         this.callExpressionResolver = new CallExpressionResolver();
         this.descriptorResolver = new DescriptorResolver();
         this.delegatedPropertyResolver = new DelegatedPropertyResolver();
@@ -109,7 +109,7 @@ public class InjectorForMacros {
         this.controlStructureTypingUtils = new ControlStructureTypingUtils(getExpressionTypingServices());
         this.expressionTypingUtils = new ExpressionTypingUtils(getExpressionTypingServices(), getCallResolver(), kotlinBuiltIns);
         this.forLoopConventionsChecker = new ForLoopConventionsChecker();
-        this.localClassifierAnalyzer = new LocalClassifierAnalyzer(descriptorResolver, typeResolver, annotationResolver);
+        this.localClassifierAnalyzer = new LocalClassifierAnalyzer(descriptorResolver, getTypeResolver(), annotationResolver);
         this.reflectionTypes = new ReflectionTypes(moduleDescriptor);
         this.argumentTypeResolver = new ArgumentTypeResolver();
         this.candidateResolver = new CandidateResolver();
@@ -189,6 +189,10 @@ public class InjectorForMacros {
 
     public CallResolver getCallResolver() {
         return this.callResolver;
+    }
+
+    public TypeResolver getTypeResolver() {
+        return this.typeResolver;
     }
 
 }

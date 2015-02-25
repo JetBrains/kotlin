@@ -1,8 +1,9 @@
-LineBreakpoint created at frameClassObject.kt:15
+LineBreakpoint created at frameClassObject.kt:16
 !JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! frameClassObject.FrameClassObjectPackage
 Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
-frameClassObject.kt:15
+frameClassObject.kt:16
 Compile bytecode for prop
+Compile bytecode for myFun()
 package frameClassObject
 
 fun main(args: Array<String>) {
@@ -12,6 +13,7 @@ fun main(args: Array<String>) {
 class A {
     class object {
         val prop = 1
+        fun myFun() = 1
     }
 
     fun test() {

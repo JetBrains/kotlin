@@ -22,13 +22,6 @@ package arrays {
         public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
-
-        public class object <class-object-for-CAB> : arrays.CAB {
-            private constructor <class-object-for-CAB>()
-            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-        }
     }
 
     internal object DAB : arrays.A, arrays.B {
@@ -36,12 +29,5 @@ package arrays {
         public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
-
-        public class object <class-object-for-DAB> : arrays.DAB {
-            private constructor <class-object-for-DAB>()
-            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-        }
     }
 }

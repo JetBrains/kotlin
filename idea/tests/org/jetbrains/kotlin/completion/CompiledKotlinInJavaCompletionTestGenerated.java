@@ -55,6 +55,12 @@ public class CompiledKotlinInJavaCompletionTestGenerated extends AbstractCompile
         doTest(fileName);
     }
 
+    @TestMetadata("ClassObjectField.java")
+    public void testClassObjectField() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/injava/ClassObjectField.java");
+        doTest(fileName);
+    }
+
     @TestMetadata("ClassesFromNamespace.java")
     public void testClassesFromNamespace() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/injava/ClassesFromNamespace.java");

@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.psi.stubs.KotlinPropertyStub
 import kotlin.test.assertEquals
 import org.jetbrains.kotlin.psi.JetClassBody
 import org.jetbrains.kotlin.psi.JetClassInitializer
-import org.jetbrains.kotlin.psi.JetClassObject
 import org.jetbrains.kotlin.psi.debugText.getDebugText
 
 public class DebugTextByStubTest : LightCodeInsightFixtureTestCase() {
@@ -201,10 +200,10 @@ public class DebugTextByStubTest : LightCodeInsightFixtureTestCase() {
     }
 
     fun testClassObject() {
-        val tree = createStubTree("class A { class object {} }")
+        val tree = createStubTree("class A { class object Def {} }")
         val classObject = tree.findChildStubByType(JetStubElementTypes.CLASS)!!.findChildStubByType(JetStubElementTypes.CLASS_BODY)!!
-                .findChildStubByType(JetStubElementTypes.CLASS_OBJECT)
-        assertEquals("class object in STUB: class A", JetClassObject(classObject as KotlinPlaceHolderStub).getDebugText())
+                .findChildStubByType(JetStubElementTypes.OBJECT_DECLARATION)
+        assertEquals("STUB: class object Def", JetObjectDeclaration(classObject as KotlinObjectStub).getDebugText())
     }
 
     fun testPropertyAccessors() {

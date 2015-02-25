@@ -8,28 +8,20 @@ internal final class A {
     internal final fun test(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    internal class object <class-object-for-A> {
-        private constructor <class-object-for-A>()
-        kotlin.platform.platformStatic() internal final fun a1(): kotlin.Unit
-        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    }
-
     internal object A {
         private constructor A()
         kotlin.platform.platformStatic() internal final fun a2(): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
 
-        public class object <class-object-for-A> : A.A {
-            private constructor <class-object-for-A>()
-            kotlin.platform.platformStatic() internal final override /*1*/ /*fake_override*/ fun a2(): kotlin.Unit
-            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-        }
+    internal class object Default {
+        private constructor Default()
+        kotlin.platform.platformStatic() internal final fun a1(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 }
 
@@ -40,27 +32,19 @@ internal trait B {
     internal open fun test(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    internal class object <class-object-for-B> {
-        private constructor <class-object-for-B>()
-        kotlin.platform.platformStatic() internal final fun a1(): kotlin.Unit
-        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    }
-
     internal object A {
         private constructor A()
         kotlin.platform.platformStatic() internal final fun a2(): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
 
-        public class object <class-object-for-A> : B.A {
-            private constructor <class-object-for-A>()
-            kotlin.platform.platformStatic() internal final override /*1*/ /*fake_override*/ fun a2(): kotlin.Unit
-            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-        }
+    internal class object Default {
+        private constructor Default()
+        kotlin.platform.platformStatic() internal final fun a1(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 }

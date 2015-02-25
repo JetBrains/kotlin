@@ -78,6 +78,7 @@ import com.intellij.openapi.diagnostic.Attachment
 import org.jetbrains.kotlin.idea.util.attachment.mergeAttachments
 import com.sun.jdi.ClassType
 import com.sun.jdi.InvocationException
+import org.jetbrains.kotlin.idea.debugger.evaluate.compilingEvaluator.loadClasses
 
 private val RECEIVER_NAME = "\$receiver"
 private val THIS_NAME = "this"
@@ -116,6 +117,10 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
                       val sourcePosition: SourcePosition
 ) : Evaluator {
     override fun evaluate(context: EvaluationContextImpl): Any? {
+        if (codeFragment.getText().isEmpty()) {
+            return context.getDebugProcess().getVirtualMachineProxy().mirrorOf()
+        }
+
         var isCompiledDataFromCache = true
         try {
             val compiledData = KotlinEvaluateExpressionCache.getOrCreateCompiledData(codeFragment, sourcePosition, context) {
@@ -165,18 +170,36 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
             val classFileFactory = createClassFileFactory(codeFragment, extractedFunction)
 
             // KT-4509
-            val outputFiles = (classFileFactory : OutputFileCollection).asList().filter { it.relativePath != "$packageInternalName.class" }
-            if (outputFiles.size() != 1) exception("Expression compiles to more than one class file. Note that lambdas, classes and objects are unsupported yet. List of files: ${outputFiles.joinToString(",")}")
+            val outputFiles = (classFileFactory : OutputFileCollection).asList()
+                                    .filter { it.relativePath != "$packageInternalName.class" }
+                                    .sortBy { it.relativePath.length() }
 
             val funName = extractedFunction.getName()
             if (funName == null) {
                 throw IllegalStateException("Extracted function should have a name: ${extractedFunction.getText()}")
             }
-            return CompiledDataDescriptor(outputFiles.first().asByteArray(), sourcePosition, funName, extractedFunction.getParametersForDebugger())
+
+            val additionalFiles = if (outputFiles.size() < 2) emptyList()
+                                  else outputFiles.subList(1, outputFiles.size()).map { getClassName(it.relativePath) to it.asByteArray() }
+
+            return CompiledDataDescriptor(
+                    outputFiles.first().asByteArray(),
+                    additionalFiles,
+                    sourcePosition,
+                    funName,
+                    extractedFunction.getParametersForDebugger())
+        }
+
+        private fun getClassName(fileName: String): String {
+            return fileName.substringBeforeLast(".class").replaceAll("/", ".")
         }
 
         private fun runEval4j(context: EvaluationContextImpl, compiledData: CompiledDataDescriptor): InterpreterResult {
             val virtualMachine = context.getDebugProcess().getVirtualMachineProxy().getVirtualMachine()
+
+            if (compiledData.additionalClasses.isNotEmpty()) {
+                loadClasses(context, compiledData.additionalClasses)
+            }
 
             var resultValue: InterpreterResult? = null
             ClassReader(compiledData.bytecodes).accept(object : ClassVisitor(ASM5) {
@@ -409,15 +432,17 @@ fun EvaluationContextImpl.findLocalVariable(name: String, asmType: Type?, checkT
                 if (`$this` != null) return `$this`
             }
             else -> {
-                val eval4j = JDIEval(frame.virtualMachine()!!,
-                                     getClassLoader()!!,
-                                     getSuspendContext().getThread()?.getThreadReference()!!,
-                                     getSuspendContext().getInvokePolicy())
 
-                fun JDIEval.getField(owner: Value, name: String, asmType: Type?, checkType: Boolean): Value? {
-                    val fieldDescription = FieldDescription(owner.asmType.getInternalName(), name, asmType?.getDescriptor() ?: "", isStatic = false)
+                fun getField(owner: Value, name: String, asmType: Type?, checkType: Boolean): Value? {
                     try {
-                        val fieldValue = getField(owner, fieldDescription)
+                        val obj = owner.asJdiValue(frame.virtualMachine(), owner.asmType)
+                        if (obj !is ObjectReference) return null
+
+                        val _class = obj.referenceType()
+                        val field = _class.fieldByName(name)
+                        if (field == null) return null
+
+                        val fieldValue = obj.getValue(field).asValue()
                         if (isValueOfCorrectType(fieldValue, asmType, checkType)) return fieldValue
                         return null
                     }
@@ -430,8 +455,8 @@ fun EvaluationContextImpl.findLocalVariable(name: String, asmType: Type?, checkT
                     return expectedType != null && this.asmType == StackValue.sharedTypeForType(expectedType)
                 }
 
-                fun JDIEval.getValueForSharedVar(value: Value, expectedType: Type?, checkType: Boolean): Value? {
-                    val sharedVarValue = this.getField(value, "element", expectedType, checkType)
+                fun getValueForSharedVar(value: Value, expectedType: Type?, checkType: Boolean): Value? {
+                    val sharedVarValue = getField(value, "element", expectedType, checkType)
                     if (sharedVarValue != null && isValueOfCorrectType(sharedVarValue, expectedType, checkType)) {
                         return sharedVarValue
                     }
@@ -442,7 +467,7 @@ fun EvaluationContextImpl.findLocalVariable(name: String, asmType: Type?, checkT
                 if (localVariable != null) {
                     val eval4jValue = frame.getValue(localVariable).asValue()
                     if (eval4jValue.isSharedVar(asmType)) {
-                        val sharedVarValue = eval4j.getValueForSharedVar(eval4jValue, asmType, checkType)
+                        val sharedVarValue = getValueForSharedVar(eval4jValue, asmType, checkType)
                         if (sharedVarValue != null) {
                             return sharedVarValue
                         }
@@ -457,9 +482,9 @@ fun EvaluationContextImpl.findLocalVariable(name: String, asmType: Type?, checkT
                     var thisObj: Value? = thisObject.asValue()
 
                     while (result == null && thisObj != null) {
-                        result = eval4j.getField(thisObj!!, name, asmType, checkType)
+                        result = getField(thisObj!!, name, asmType, checkType)
                         if (result == null) {
-                            thisObj = eval4j.getField(thisObj!!, AsmUtil.CAPTURED_THIS_FIELD, null, false)
+                            thisObj = getField(thisObj!!, AsmUtil.CAPTURED_THIS_FIELD, null, false)
                         }
                     }
                     return result
@@ -469,7 +494,7 @@ fun EvaluationContextImpl.findLocalVariable(name: String, asmType: Type?, checkT
                 val capturedVal = findCapturedVal(capturedValName)
                 if (capturedVal != null) {
                     if (capturedVal.isSharedVar(asmType)) {
-                        val sharedVarValue = eval4j.getValueForSharedVar(capturedVal, asmType, checkType)
+                        val sharedVarValue = getValueForSharedVar(capturedVal, asmType, checkType)
                         if (sharedVarValue != null) {
                             return sharedVarValue
                         }

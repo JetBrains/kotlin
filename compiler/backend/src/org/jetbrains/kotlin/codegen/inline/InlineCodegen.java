@@ -187,12 +187,10 @@ public class InlineCodegen extends CallGenerator {
             //for maxLocals calculation
             MethodVisitor maxCalcAdapter = InlineCodegenUtil.wrapWithMaxLocalCalc(node);
             MethodContext methodContext = context.getParentContext().intoFunction(functionDescriptor);
-            MemberCodegen<?> parentCodegen = codegen.getParentCodegen();
             if (callDefault) {
-                boolean isStatic = AsmUtil.isStaticMethod(context.getContextKind(), functionDescriptor);
                 FunctionCodegen.generateDefaultImplBody(
-                        methodContext, jvmSignature, functionDescriptor, isStatic, maxCalcAdapter, DefaultParameterValueLoader.DEFAULT,
-                        (JetNamedFunction) element, parentCodegen, state
+                        methodContext, functionDescriptor, maxCalcAdapter, DefaultParameterValueLoader.DEFAULT,
+                        (JetNamedFunction) element, codegen.getParentCodegen()
                 );
             }
             else {

@@ -40,13 +40,10 @@ class PlatformStaticGenerator(
     override fun invoke(codegen: ImplementationBodyCodegen, classBuilder: ClassBuilder) {
         val staticFunctionDescriptor = createStaticFunctionDescriptor(descriptor)
 
-        val jvmMethodSignature = state.getTypeMapper().mapSignature(staticFunctionDescriptor)
-
         codegen.functionCodegen.generateMethod(
                 Synthetic(declarationOrigin.element, staticFunctionDescriptor),
-                jvmMethodSignature,
                 staticFunctionDescriptor,
-                object: FunctionGenerationStrategy() {
+                object : FunctionGenerationStrategy() {
                     override fun generateBody(
                             mv: MethodVisitor,
                             frameMap: FrameMap,
@@ -86,7 +83,7 @@ class PlatformStaticGenerator(
             val copies = CodegenUtil.copyFunctions(
                     memberDescriptor,
                     memberDescriptor,
-                    descriptor.getContainingDeclaration()?.getContainingDeclaration(),
+                    descriptor.getContainingDeclaration().getContainingDeclaration(),
                     descriptor.getModality(),
                     descriptor.getVisibility(),
                     CallableMemberDescriptor.Kind.SYNTHESIZED,

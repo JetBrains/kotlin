@@ -51,10 +51,11 @@ public object PositioningStrategies {
                     }
                     return markRange(objectKeyword, delegationSpecifierList)
                 }
-                is JetClassObject -> {
-                    val classKeyword = element.getClassKeyword()
-                    val objectKeyword = element.getObjectDeclaration().getObjectKeyword()
-                    return markRange(classKeyword, objectKeyword)
+                is JetObjectDeclaration -> {
+                    return markRange(
+                            element.getClassKeyword() ?: element.getObjectKeyword(),
+                            element.getNameIdentifier() ?: element.getObjectKeyword()
+                    )
                 }
                 else -> {
                     return super.mark(element)
@@ -99,17 +100,7 @@ public object PositioningStrategies {
                 }
                 return markElement(nameIdentifier)
             }
-            if (element is JetObjectDeclaration) {
-                val objectKeyword = element.getObjectKeyword()
-                val parent = element.getParent()
-                if (parent is JetClassObject) {
-                    val classKeyword = parent.getClassKeyword()
-                    val start = classKeyword ?: objectKeyword
-                    return markRange(start, objectKeyword)
-                }
-                return markElement(objectKeyword)
-            }
-            return super.mark(element)
+            return DEFAULT.mark(element)
         }
     }
 
@@ -182,6 +173,8 @@ public object PositioningStrategies {
                 else -> null
             }
 
+            if (nameIdentifier == null && element is JetObjectDeclaration) return DEFAULT.mark(element)
+
             return markElement(nameIdentifier ?: element)
         }
     }
@@ -240,7 +233,6 @@ public object PositioningStrategies {
                 is JetObjectDeclaration -> element.getObjectKeyword()
                 is JetPropertyAccessor -> element.getNamePlaceholder()
                 is JetClassInitializer -> element
-                is JetClassObject -> element.getObjectDeclaration().getObjectKeyword()
                 else -> throw IllegalArgumentException(
                         "Can't find text range for element '${element.javaClass.getCanonicalName()}' with the text '${element.getText()}'")
             }

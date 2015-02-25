@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassKind;
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -32,16 +33,28 @@ public class FieldInfo {
             throw new UnsupportedOperationException("Can't create singleton field for class: " + classDescriptor);
         }
 
-        ClassDescriptor ownerDescriptor = kind == ClassKind.OBJECT
-                                          ? classDescriptor
-                                          : DescriptorUtils.getParentOfType(classDescriptor, ClassDescriptor.class);
-        assert ownerDescriptor != null : "Owner not found for class: " + classDescriptor;
-        Type ownerType = typeMapper.mapType(ownerDescriptor);
+        if (kind == ClassKind.OBJECT) {
+            Type type = typeMapper.mapType(classDescriptor);
+            return new FieldInfo(type, type, JvmAbi.INSTANCE_FIELD, true);
+        }
+        else {
+            ClassDescriptor ownerDescriptor = DescriptorUtils.getParentOfType(classDescriptor, ClassDescriptor.class);
+            assert ownerDescriptor != null : "Owner not found for class: " + classDescriptor;
+            Type ownerType = typeMapper.mapType(ownerDescriptor);
+            return new FieldInfo(ownerType, typeMapper.mapType(classDescriptor), classDescriptor.getName().asString(), true);
+        }
+    }
 
-        String fieldName = kind == ClassKind.ENUM_ENTRY
-                           ? classDescriptor.getName().asString()
-                           : classDescriptor.getKind() == ClassKind.CLASS_OBJECT ? JvmAbi.CLASS_OBJECT_FIELD : JvmAbi.INSTANCE_FIELD;
-        return new FieldInfo(ownerType, typeMapper.mapType(classDescriptor), fieldName, true);
+    @SuppressWarnings("deprecation")
+    @NotNull
+    public static FieldInfo deprecatedFieldForClassObject(@NotNull ClassDescriptor classObject, @NotNull JetTypeMapper typeMapper) {
+        assert DescriptorUtils.isClassObject(classObject) : "Not a class object: " + classObject;
+        return new FieldInfo(
+                typeMapper.mapType((ClassifierDescriptor) classObject.getContainingDeclaration()),
+                typeMapper.mapType(classObject),
+                JvmAbi.DEPRECATED_CLASS_OBJECT_FIELD,
+                true
+        );
     }
 
     @NotNull

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.types.expressions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.StatementFilter;
+import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker;
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionResultsCache;
@@ -41,14 +42,16 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
     ) {
         return newContext(trace, scope, dataFlowInfo, expectedType,
                           ContextDependency.INDEPENDENT, new ResolutionResultsCacheImpl(),
-                          expressionTypingServices.getCallChecker(), StatementFilter.NONE, false);
+                          expressionTypingServices.getCallChecker(), expressionTypingServices.getAdditionalTypeChecker(),
+                          StatementFilter.NONE, false);
     }
 
     @NotNull
     public static ExpressionTypingContext newContext(@NotNull ResolutionContext context) {
         return new ExpressionTypingContext(
                 context.trace, context.scope, context.dataFlowInfo, context.expectedType,
-                context.contextDependency, context.resolutionResultsCache, context.callChecker, context.statementFilter,
+                context.contextDependency, context.resolutionResultsCache, context.callChecker, context.additionalTypeChecker,
+                context.statementFilter,
                 context.isAnnotationContext, context.collectAllCandidates
         );
     }
@@ -62,11 +65,12 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull ContextDependency contextDependency,
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @NotNull CallChecker callChecker,
+            @NotNull AdditionalTypeChecker additionalTypeChecker,
             @NotNull StatementFilter statementFilter,
             boolean isAnnotationContext
     ) {
         return new ExpressionTypingContext(
-                trace, scope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache, callChecker,
+                trace, scope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache, callChecker, additionalTypeChecker,
                 statementFilter, isAnnotationContext, false);
     }
 
@@ -80,11 +84,12 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull ContextDependency contextDependency,
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @NotNull CallChecker callChecker,
+            @NotNull AdditionalTypeChecker additionalTypeChecker,
             @NotNull StatementFilter statementFilter,
             boolean isAnnotationContext,
             boolean collectAllCandidates
     ) {
-        super(trace, scope, expectedType, dataFlowInfo, contextDependency, resolutionResultsCache, callChecker,
+        super(trace, scope, expectedType, dataFlowInfo, contextDependency, resolutionResultsCache, callChecker, additionalTypeChecker,
               statementFilter, isAnnotationContext, collectAllCandidates);
     }
 
@@ -100,7 +105,7 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             boolean collectAllCandidates
     ) {
         return new ExpressionTypingContext(trace, scope, dataFlowInfo,
-                                           expectedType, contextDependency, resolutionResultsCache, callChecker,
+                                           expectedType, contextDependency, resolutionResultsCache, callChecker, additionalTypeChecker,
                                            statementFilter, isAnnotationContext, collectAllCandidates);
     }
 
