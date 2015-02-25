@@ -338,6 +338,7 @@ public fun chooseContainerElement<T>(
 
                 private fun PsiElement.renderDeclaration(): String? {
                     val descriptor = when {
+                        this is JetFile -> getName()
                         this is JetElement -> analyze()[BindingContext.DECLARATION_TO_DESCRIPTOR, this]
                         this is PsiMember -> getJavaMemberDescriptor()
                         else -> null
