@@ -28,13 +28,8 @@ import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.JetFile
 import javax.xml.parsers.SAXParser
 import java.util.HashMap
-import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.openapi.vfs.VirtualFileAdapter
-import com.intellij.openapi.vfs.VirtualFileEvent
 import com.intellij.openapi.project.Project
 import java.util.concurrent.ConcurrentLinkedQueue
-import com.intellij.openapi.util.Key
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.psi.PsiManager
 import java.io.FileInputStream
@@ -53,7 +48,10 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.CachedValueProvider.Result
 import java.util.concurrent.atomic.AtomicInteger
 import com.intellij.openapi.roots.ProjectRootModificationTracker
-import com.intellij.openapi.util.ModificationTracker
+import com.intellij.openapi.util.*
+import com.intellij.openapi.vfs.impl.*
+import com.intellij.openapi.vfs.*
+import kotlin.properties.*
 
 public abstract class AndroidUIXmlProcessor(protected val project: Project) {
 
@@ -64,28 +62,35 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
             "android.view.View",
             "android.widget.*")
 
-    //TODO
-    private val cachedSources = cachedValue {
-        Result.create(parse(), ProjectRootModificationTracker.getInstance(project))
-    }
-
-    private val cachedJetFiles = cachedValue {
-        val psiManager = PsiManager.getInstance(project)
-        val applicationPackage = resourceManager.androidModuleInfo?.applicationPackage
-
-        val jetFiles = cachedSources.getValue().mapIndexed { (index, text) ->
-            val virtualFile = LightVirtualFile(AndroidConst.SYNTHETIC_FILENAME + index + ".kt", text)
-            val jetFile = psiManager.findFile(virtualFile) as JetFile
-            if (applicationPackage != null) {
-                jetFile.putUserData(AndroidConst.ANDROID_USER_PACKAGE, applicationPackage)
-            }
-            jetFile
-        }
-
-        Result.create(jetFiles, cachedSources)
-    }
-
     public abstract val resourceManager: AndroidResourceManager
+
+    private val vfsTracker: VfsModificationTracker by Delegates.lazy {
+        VfsModificationTracker(project, resourceManager.getMainLayoutDirectory())
+    }
+
+    private val cachedSources: CachedValue<List<String>> by Delegates.lazy {
+        cachedValue {
+            Result.create(parse(), vfsTracker)
+        }
+    }
+
+    private val cachedJetFiles: CachedValue<List<JetFile>> by Delegates.lazy {
+        cachedValue {
+            val psiManager = PsiManager.getInstance(project)
+            val applicationPackage = resourceManager.androidModuleInfo?.applicationPackage
+
+            val jetFiles = cachedSources.getValue().mapIndexed { (index, text) ->
+                val virtualFile = LightVirtualFile(AndroidConst.SYNTHETIC_FILENAME + index + ".kt", text)
+                val jetFile = psiManager.findFile(virtualFile) as JetFile
+                if (applicationPackage != null) {
+                    jetFile.putUserData(AndroidConst.ANDROID_USER_PACKAGE, applicationPackage)
+                }
+                jetFile
+            }
+
+            Result.create(jetFiles, cachedSources)
+        }
+    }
 
     protected val LOG: Logger = Logger.getInstance(javaClass)
 
@@ -132,3 +137,57 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
     }
 
 }
+
+private class VfsModificationTracker(project: Project, resDirectory: VirtualFile?): SimpleModificationTracker() {
+    {
+        val connection = project.getMessageBus().connect();
+        connection.subscribe(VirtualFileManager.VFS_CHANGES, BulkVirtualFileListenerAdapter(
+                object : VirtualFileListener {
+                    fun incModificationCountIfLayout(file: VirtualFile) {
+                        if (resDirectory == null) {
+                            incModificationCount()
+                        } else {
+                            val probablyLayoutDir = file.getParent()
+                            val probablyResDir = file.getParent()?.getParent()
+                            if (resDirectory == probablyResDir && probablyLayoutDir?.getName()?.startsWith("layout") ?: false) {
+                                incModificationCount()
+                            }
+                        }
+                    }
+
+                    override fun contentsChanged(event: VirtualFileEvent) {
+                        incModificationCountIfLayout(event.getFile())
+                    }
+
+                    override fun propertyChanged(event: VirtualFilePropertyEvent) {
+                        incModificationCountIfLayout(event.getFile())
+                    }
+
+                    override fun fileCreated(event: VirtualFileEvent) {
+                        incModificationCountIfLayout(event.getFile())
+                    }
+
+                    override fun fileDeleted(event: VirtualFileEvent) {
+                        incModificationCountIfLayout(event.getFile())
+                    }
+
+                    override fun fileMoved(event: VirtualFileMoveEvent) {
+                        incModificationCountIfLayout(event.getFile())
+                    }
+
+                    override fun fileCopied(event: VirtualFileCopyEvent) {
+                        incModificationCountIfLayout(event.getFile())
+                    }
+
+                    override fun beforePropertyChange(event: VirtualFilePropertyEvent) {}
+
+                    override fun beforeContentsChange(event: VirtualFileEvent) {}
+
+                    override fun beforeFileDeletion(event: VirtualFileEvent) {}
+
+                    override fun beforeFileMovement(event: VirtualFileMoveEvent) {}
+                }
+        ))
+    }
+}
+

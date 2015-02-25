@@ -19,9 +19,10 @@ package org.jetbrains.kotlin.lang.resolve.android
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiElement
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
-import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.util.*
+import com.intellij.openapi.vfs.impl.*
+import com.intellij.openapi.vfs.*
 
 public abstract class AndroidResourceManager(val project: Project) {
 
@@ -60,6 +61,11 @@ public abstract class AndroidResourceManager(val project: Project) {
                 .sortBy { it.getName() }
     }
 
-    inner class NoLayoutXmlFound : Exception("No android UI xmls found in " + androidModuleInfo?.mainResDirectory)
+    fun getMainLayoutDirectory(): VirtualFile? {
+        val info = androidModuleInfo
+        if (info == null) return null
+        return VirtualFileManager.getInstance().findFileByUrl("file://" + info.mainResDirectory)
+    }
 
 }
+
