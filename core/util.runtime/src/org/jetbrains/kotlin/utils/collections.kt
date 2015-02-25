@@ -103,3 +103,5 @@ public fun <E> newHashSetWithExpectedSize(expectedSize: Int): HashSet<E> {
 
 public fun <T> Collection<T>.toReadOnlyList(): List<T> =
         if (isEmpty()) Collections.emptyList() else ArrayList(this)
+
+public fun <T: Any> T?.singletonOrEmptyList(): List<T> = if (this != null) Collections.singletonList(this) else Collections.emptyList()

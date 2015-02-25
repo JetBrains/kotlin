@@ -201,7 +201,7 @@ message Class {
 
   // This field is present if and only if the class has a primary constructor
   optional PrimaryConstructor primary_constructor = 13;
-  // todo: other constructors?
+  repeated Callable secondary_constructor = 14;
 
   extensions 100 to 199;
 }
