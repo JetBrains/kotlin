@@ -22,17 +22,10 @@ import com.intellij.psi.PsiFile
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.editor.ScrollType
-import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
-import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil
-import com.intellij.refactoring.HelpID
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ui.KotlinExtractFunctionDialog
 import org.jetbrains.kotlin.psi.JetFile
-import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.psi.JetElement
 import com.intellij.openapi.application.ApplicationManager
-import org.jetbrains.kotlin.psi.psiUtil.getOutermostParentContainedIn
 import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.psi.JetBlockExpression
@@ -46,9 +39,9 @@ import com.intellij.ui.awt.RelativePoint
 import com.intellij.openapi.ui.popup.Balloon.Position
 import org.jetbrains.kotlin.psi.JetFunctionLiteral
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
-import org.jetbrains.kotlin.idea.refactoring.chooseContainerElementIfNecessary
 import org.jetbrains.kotlin.idea.refactoring.getExtractionContainers
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
+import org.jetbrains.kotlin.idea.refactoring.introduce.*
 
 public open class ExtractKotlinFunctionHandlerHelper {
     open fun adjustExtractionData(data: ExtractionData): ExtractionData = data
@@ -112,7 +105,7 @@ public class ExtractKotlinFunctionHandler(
         val message = analysisResult.messages.map { it.renderMessage() }.joinToString("\n")
         when (analysisResult.status) {
             Status.CRITICAL_ERROR -> {
-                showErrorHint(project, editor, message)
+                showErrorHint(project, editor, message, EXTRACT_FUNCTION)
             }
 
             Status.NON_CRITICAL_ERROR -> {
@@ -141,12 +134,19 @@ public class ExtractKotlinFunctionHandler(
         }
     }
 
+    fun selectElements(editor: Editor, file: PsiFile, continuation: (elements: List<PsiElement>, targetSibling: PsiElement) -> Unit) {
+        selectElements(
+                EXTRACT_FUNCTION,
+                editor,
+                file,
+                {(elements, parent) -> parent.getExtractionContainers(elements.size() == 1, allContainersEnabled) },
+                continuation
+        )
+    }
+
     override fun invoke(project: Project, editor: Editor, file: PsiFile, dataContext: DataContext?) {
         if (file !is JetFile) return
-
-        selectElements(editor, file, allContainersEnabled) { (elements, targetSibling) ->
-            doInvoke(editor, file, elements, targetSibling)
-        }
+        selectElements(editor, file) { (elements, targetSibling) -> doInvoke(editor, file, elements, targetSibling) }
     }
 
     override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext?) {
@@ -154,92 +154,4 @@ public class ExtractKotlinFunctionHandler(
     }
 }
 
-private val EXTRACT_FUNCTION: String = JetRefactoringBundle.message("extract.function")!!
-
-private fun showErrorHint(project: Project, editor: Editor, message: String) {
-    CodeInsightUtils.showErrorHint(project, editor, message, EXTRACT_FUNCTION, HelpID.EXTRACT_METHOD)
-}
-
-private fun showErrorHintByKey(project: Project, editor: Editor, key: String) {
-    showErrorHint(project, editor, JetRefactoringBundle.message(key)!!)
-}
-
-fun selectElements(
-        editor: Editor,
-        file: PsiFile,
-        allContainersEnabled: Boolean = false,
-        continuation: (elements: List<PsiElement>, targetSibling: PsiElement) -> Unit
-) {
-    fun noExpressionError() {
-        showErrorHintByKey(file.getProject(), editor, "cannot.refactor.no.expression")
-    }
-
-    fun noContainerError() {
-        showErrorHintByKey(file.getProject(), editor, "cannot.refactor.no.container")
-    }
-
-    fun onSelectionComplete(parent: PsiElement, elements: List<PsiElement>, targetContainer: JetElement) {
-        if (parent == targetContainer) {
-            continuation(elements, elements.first())
-            return
-        }
-
-        val outermostParent = parent.getOutermostParentContainedIn(targetContainer)
-        if (outermostParent == null) {
-            noContainerError()
-            return
-        }
-
-        continuation(elements, outermostParent)
-    }
-
-    fun selectTargetContainer(elements: List<PsiElement>) {
-        val parent = PsiTreeUtil.findCommonParent(elements)
-            ?: throw AssertionError("Should have at least one parent: ${elements.joinToString("\n")}")
-
-        val containers = parent.getExtractionContainers(elements.size() == 1, allContainersEnabled)
-        if (containers.isEmpty()) {
-            noContainerError()
-            return
-        }
-
-        chooseContainerElementIfNecessary(
-                containers,
-                editor,
-                "Select target code block",
-                true,
-                { it },
-                { onSelectionComplete(parent, elements, it) }
-        )
-    }
-
-    fun selectMultipleExpressions() {
-        val startOffset = editor.getSelectionModel().getSelectionStart()
-        val endOffset = editor.getSelectionModel().getSelectionEnd()
-
-        val elements = CodeInsightUtils.findStatements(file, startOffset, endOffset)
-        if (elements.isEmpty()) {
-            noExpressionError()
-            return
-        }
-
-        selectTargetContainer(elements.toList())
-    }
-
-    fun selectSingleExpression() {
-        JetRefactoringUtil.selectExpression(editor, file, false) { expr ->
-            if (expr != null) {
-                selectTargetContainer(listOf(expr))
-            }
-            else {
-                if (!editor.getSelectionModel().hasSelection()) {
-                    editor.getSelectionModel().selectLineAtCaret()
-                }
-                selectMultipleExpressions()
-            }
-        }
-    }
-
-    editor.getScrollingModel().scrollToCaret(ScrollType.MAKE_VISIBLE)
-    selectSingleExpression()
-}
+private val EXTRACT_FUNCTION: String = JetRefactoringBundle.message("extract.function")

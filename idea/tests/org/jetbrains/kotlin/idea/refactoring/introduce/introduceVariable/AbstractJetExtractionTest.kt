@@ -21,7 +21,6 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ExtractKotlinFunctionHandler
 import java.io.File
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.selectElements
 import org.jetbrains.kotlin.psi.JetTreeVisitorVoid
 import com.intellij.psi.PsiComment
 import com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsException
@@ -106,12 +105,11 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
             val renderer = DescriptorRenderer.DEBUG_TEXT
 
             val editor = fixture.getEditor()
-            selectElements(editor, file) {(elements, previousSibling) ->
-                ExtractKotlinFunctionHandler(
-                        helper = object : ExtractKotlinFunctionHandlerHelper() {
-                            override fun adjustExtractionData(data: ExtractionData): ExtractionData {
-                                return data.copy(options = extractionOptions)
-                            }
+            val handler = ExtractKotlinFunctionHandler(
+                    helper = object : ExtractKotlinFunctionHandlerHelper() {
+                        override fun adjustExtractionData(data: ExtractionData): ExtractionData {
+                            return data.copy(options = extractionOptions)
+                        }
 
                             override fun adjustGeneratorOptions(options: ExtractionGeneratorOptions): ExtractionGeneratorOptions {
                                 return options.copy(extractAsProperty = extractAsProperty)
@@ -124,13 +122,15 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
                                     it.getParameterTypeCandidates(extractionOptions.allowSpecialClassNames).map { renderer.renderType(it) }.joinToString(", ", "[", "]")
                                 }.joinToString()
 
-                                assertEquals(expectedDescriptors, actualDescriptors, "Expected descriptors mismatch.")
-                                assertEquals(expectedTypes, actualTypes, "Expected types mismatch.")
+                            assertEquals(expectedDescriptors, actualDescriptors, "Expected descriptors mismatch.")
+                            assertEquals(expectedTypes, actualTypes, "Expected types mismatch.")
 
-                                return if (descriptor.name == "") descriptor.copy(name = "__dummyTestFun__") else descriptor
-                            }
+                            return if (descriptor.name == "") descriptor.copy(name = "__dummyTestFun__") else descriptor
                         }
-                ).doInvoke(editor, file, elements, explicitPreviousSibling ?: previousSibling)
+                    }
+            )
+            handler.selectElements(editor, file) {(elements, previousSibling) ->
+                handler.doInvoke(editor, file, elements, explicitPreviousSibling ?: previousSibling)
             }
         }
     }
