@@ -1,9 +1,9 @@
 package first
 
+import fourth.X
 import second.A
 import third.B
 import third.D
-import fourth.X
 
 fun test() {
     val a = A()

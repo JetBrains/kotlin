@@ -1,15 +1,15 @@
 package to
 
-import d.g
-import d.c
-import d.ext
 import d.A
-import d.T
-import d.Outer
+import d.ClassObject
+import d.E
 import d.O1
 import d.O2
-import d.E
-import d.ClassObject
+import d.Outer
+import d.T
+import d.c
+import d.ext
+import d.g
 
 fun f(a: A, t: T) {
     g(A(c).ext())

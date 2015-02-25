@@ -63,7 +63,7 @@ public final class KotlinBinaryClassCache implements Disposable {
                 @Override
                 public VirtualFileKotlinClass compute() {
                     //noinspection deprecation
-                    return VirtualFileKotlinClass.OBJECT$.create(file);
+                    return VirtualFileKotlinClass.Factory.create(file);
                 }
             });
 

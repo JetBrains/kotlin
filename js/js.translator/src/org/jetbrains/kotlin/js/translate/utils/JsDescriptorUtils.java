@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsPackage;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetExpression;
@@ -158,16 +159,6 @@ public final class JsDescriptorUtils {
     @Nullable
     public static Name getNameIfStandardType(@NotNull JetExpression expression, @NotNull TranslationContext context) {
         JetType type = context.bindingContext().get(BindingContext.EXPRESSION_TYPE, expression);
-        return type != null ? getNameIfStandardType(type) : null;
-    }
-
-    @Nullable
-    public static Name getNameIfStandardType(@NotNull JetType type) {
-        ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
-        if (descriptor != null && descriptor.getContainingDeclaration() == KotlinBuiltIns.getInstance().getBuiltInsPackageFragment()) {
-            return descriptor.getName();
-        }
-
-        return null;
+        return type != null ? DescriptorUtilsPackage.getNameIfStandardType(type) : null;
     }
 }

@@ -31,11 +31,11 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
-import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
+import org.jetbrains.kotlin.resolve.diagnostics.JsCallChecker
 
 public object KotlinJsCheckerProvider : AdditionalCheckerProvider(
         annotationCheckers = listOf(NativeInvokeChecker(), NativeGetterChecker(), NativeSetterChecker()),
-        additionalCallCheckers = listOf(),
+        additionalCallCheckers = listOf(JsCallChecker()),
         additionalTypeCheckers = listOf()
 )
 

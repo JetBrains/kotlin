@@ -214,7 +214,7 @@ public class KotlinLightClassForPackage private(
         }
     }
 
-    class object {
+    class object Factory {
         public fun create(
                 manager: PsiManager,
                 qualifiedName: FqName,

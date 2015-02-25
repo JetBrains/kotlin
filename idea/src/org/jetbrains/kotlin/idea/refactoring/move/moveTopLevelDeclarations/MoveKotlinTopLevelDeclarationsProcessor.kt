@@ -65,7 +65,7 @@ import com.intellij.util.VisibilityUtil
 import com.intellij.openapi.util.Ref
 import org.jetbrains.kotlin.idea.search.projectScope
 import org.jetbrains.kotlin.idea.refactoring.move.getInternalReferencesToUpdateOnPackageNameChange
-import org.jetbrains.kotlin.idea.refactoring.move.createMoveUsageInfo
+import org.jetbrains.kotlin.idea.refactoring.move.createMoveUsageInfoIfPossible
 import org.jetbrains.kotlin.idea.refactoring.move.postProcessMoveUsages
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference.ShorteningMode
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
@@ -127,7 +127,7 @@ public class MoveKotlinTopLevelDeclarationsProcessor(
                         .search(lightElement, projectScope, false)
                         .mapTo(ArrayList<UsageInfo?>()) { ref ->
                             if (foundReferences.add(ref) && elementsToMove.all { !it.isAncestor(ref.getElement())}) {
-                                createMoveUsageInfo(ref, lightElement, true)
+                                createMoveUsageInfoIfPossible(ref, lightElement, true)
                             }
                             else null
                         }

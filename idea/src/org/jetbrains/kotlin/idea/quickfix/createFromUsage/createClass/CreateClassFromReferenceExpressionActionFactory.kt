@@ -39,9 +39,19 @@ import org.jetbrains.kotlin.psi.JetReferenceExpression
 import java.util.Arrays
 import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
 import org.jetbrains.kotlin.psi.psiUtil.isDotReceiver
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiElement
 
 public object CreateClassFromReferenceExpressionActionFactory : JetIntentionActionsFactory() {
     override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction> {
+        fun isEnum(element: PsiElement): Boolean {
+            return when (element) {
+                is JetClass -> element.isEnum()
+                is PsiClass -> element.isEnum()
+                else -> false
+            }
+        }
+
         val refExpr = diagnostic.getPsiElement() as? JetSimpleNameExpression ?: return Collections.emptyList()
         if (refExpr.getNonStrictParentOfType<JetTypeReference>() != null) return Collections.emptyList()
 
@@ -77,7 +87,7 @@ public object CreateClassFromReferenceExpressionActionFactory : JetIntentionActi
                     .filter {
                         when (it) {
                             ClassKind.ANNOTATION_CLASS -> inImport
-                            ClassKind.ENUM_ENTRY -> inImport && targetParent is JetClass && targetParent.isEnum()
+                            ClassKind.ENUM_ENTRY -> inImport && isEnum(targetParent)
                             else -> true
                         }
                     }
@@ -104,7 +114,7 @@ public object CreateClassFromReferenceExpressionActionFactory : JetIntentionActi
                 .filter {
                     filter(it) && when (it) {
                         ClassKind.OBJECT -> true
-                        ClassKind.ENUM_ENTRY -> targetParent is JetClass && targetParent.isEnum()
+                        ClassKind.ENUM_ENTRY -> isEnum(targetParent)
                         else -> false
                     }
                 }

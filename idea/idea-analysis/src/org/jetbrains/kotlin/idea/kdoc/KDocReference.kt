@@ -102,7 +102,10 @@ public fun getParamDescriptors(fromDescriptor: DeclarationDescriptor): List<Decl
         is ClassifierDescriptor -> {
             val typeParams = fromDescriptor.getTypeConstructor().getParameters()
             if (fromDescriptor is ClassDescriptor) {
-                return typeParams + fromDescriptor.getUnsubstitutedPrimaryConstructor().getValueParameters()
+                val constructorDescriptor = fromDescriptor.getUnsubstitutedPrimaryConstructor()
+                if (constructorDescriptor != null) {
+                    return typeParams + constructorDescriptor.getValueParameters()
+                }
             }
             return typeParams
         }

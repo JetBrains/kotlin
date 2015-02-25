@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.js.test;
 
 import com.google.common.collect.Lists;
 import com.google.dart.compiler.backend.js.ast.JsNode;
+import com.google.dart.compiler.backend.js.ast.JsProgram;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.StandardFileSystems;
@@ -39,8 +40,9 @@ import org.jetbrains.kotlin.js.config.Config;
 import org.jetbrains.kotlin.js.config.EcmaVersion;
 import org.jetbrains.kotlin.js.config.LibrarySourcesConfig;
 import org.jetbrains.kotlin.js.config.LibrarySourcesConfigWithCaching;
+import org.jetbrains.kotlin.js.facade.K2JSTranslator;
 import org.jetbrains.kotlin.js.facade.MainCallParameters;
-import org.jetbrains.kotlin.js.facade.Status;
+import org.jetbrains.kotlin.js.facade.TranslationResult;
 import org.jetbrains.kotlin.js.test.rhino.RhinoResultChecker;
 import org.jetbrains.kotlin.js.test.utils.JsTestUtils;
 import org.jetbrains.kotlin.js.translate.context.Namer;
@@ -57,7 +59,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static org.jetbrains.kotlin.js.facade.K2JSTranslator.translateWithMainCallParameters;
 import static org.jetbrains.kotlin.js.test.rhino.RhinoUtils.runRhinoTest;
 import static org.jetbrains.kotlin.js.test.utils.JsTestUtils.convertFileNameToDotJsFile;
 
@@ -175,15 +176,18 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
             @NotNull MainCallParameters mainCallParameters,
             @NotNull Config config
     ) throws Exception {
-        Status<OutputFileCollection> status = translateWithMainCallParameters(mainCallParameters, jetFiles, outputFile,
-                                                                              getOutputPrefixFile(), getOutputPostfixFile(),
-                                                                              config, getConsumer());
+        K2JSTranslator translator = new K2JSTranslator(config);
+        TranslationResult translationResult = translator.translate(jetFiles, mainCallParameters);
 
-        if (status.isFail()) return;
+        if (!(translationResult instanceof TranslationResult.Success)) return;
 
+        TranslationResult.Success successResult = (TranslationResult.Success) translationResult;
+        processJsProgram(successResult.getProgram());
+
+        OutputFileCollection outputFiles = successResult.getOutputFiles(outputFile, getOutputPrefixFile(), getOutputPostfixFile());
         File outputDir = outputFile.getParentFile();
         assert outputDir != null : "Parent file for output file should not be null, outputFilePath: " + outputFile.getPath();
-        OutputUtilsPackage.writeAllTo(status.getResult(), outputDir);
+        OutputUtilsPackage.writeAllTo(outputFiles, outputDir);
     }
 
     protected File getOutputPostfixFile() {
@@ -202,10 +206,7 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
         return false;
     }
 
-    protected Consumer<JsNode> getConsumer() {
-        //noinspection unchecked
-        return Consumer.EMPTY_CONSUMER;
-    }
+    protected void processJsProgram(@NotNull JsProgram program) throws Exception { }
 
     protected void runRhinoTests(
             @NotNull String testName,

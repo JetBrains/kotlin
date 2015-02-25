@@ -45,7 +45,7 @@ internal trait Test</*0*/ in I, /*1*/ out O, /*2*/ P> {
     internal abstract var neOk32: [ERROR : Inv]
     internal abstract var neOk33: Inv<[ERROR : No type element]>
     internal abstract var neOk34: Inv<[ERROR : C]>
-    internal abstract var neOk35: [ERROR : Inv<P, P>]
+    internal abstract var neOk35: [ERROR : Inv]<P, P>
     internal abstract var neOk4: Inv<I>
     internal abstract var neOk5: Inv<O>
     internal abstract var neOk6: In<In<O>>

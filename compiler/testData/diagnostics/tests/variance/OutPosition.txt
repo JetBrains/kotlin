@@ -37,7 +37,7 @@ internal trait Test</*0*/ in I, /*1*/ out O, /*2*/ P> {
     internal abstract fun neOk32(): [ERROR : Inv]
     internal abstract fun neOk33(): Inv<[ERROR : No type element]>
     internal abstract fun neOk34(): Inv<[ERROR : C]>
-    internal abstract fun neOk35(): [ERROR : Inv<P, P>]
+    internal abstract fun neOk35(): [ERROR : Inv]<P, P>
     internal abstract fun neOk4(): Inv<I>
     internal abstract fun neOk5(): Inv<O>
     internal abstract fun neOk6(): Pair<In<O>, I>

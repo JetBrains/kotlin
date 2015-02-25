@@ -147,7 +147,7 @@ private fun QualifierReceiver.resolveAsReceiverInQualifiedExpression(context: Ex
         context.trace.report(TYPE_PARAMETER_ON_LHS_OF_DOT.on(referenceExpression, classifier as TypeParameterDescriptor))
     }
     else if (classifier is ClassDescriptor && classifier.classObjectDescriptor != null) {
-        context.trace.record(EXPRESSION_TYPE, referenceExpression, classifier.getClassObjectType())
+        context.trace.record(EXPRESSION_TYPE, expression, classifier.getClassObjectType())
     }
 }
 

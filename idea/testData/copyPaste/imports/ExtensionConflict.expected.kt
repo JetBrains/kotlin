@@ -2,10 +2,10 @@ package to
 
 import a.A
 import a.ext
-import a.plus
 import a.infix
 import a.minus
 import a.p
+import a.plus
 
 fun A.ext() {
 }

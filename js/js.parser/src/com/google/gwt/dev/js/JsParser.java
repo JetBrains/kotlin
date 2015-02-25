@@ -18,6 +18,7 @@ package com.google.gwt.dev.js;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.backend.js.ast.JsLiteral.JsBooleanLiteral;
 import com.google.dart.compiler.common.SourceInfo;
+import com.google.gwt.dev.js.parserExceptions.JsParserException;
 import com.google.gwt.dev.js.rhino.*;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +27,6 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
 
@@ -86,7 +86,8 @@ public class JsParser {
     }
 
     private static JsParserException createParserException(String msg, Node offender) {
-        return new JsParserException(msg, offender.getLineno(), null, 0, SOURCE_NAME_STUB);
+        CodePosition position = new CodePosition(offender.getLineno(), 0);
+        return new JsParserException("Parser encountered internal error: " + msg, position);
     }
 
     private JsScope getScope() {

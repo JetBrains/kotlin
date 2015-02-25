@@ -1059,6 +1059,18 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
                 doTest(fileName);
             }
 
+            @TestMetadata("ExtensionOnFQObject.kt")
+            public void testExtensionOnFQObject() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/extensions/ExtensionOnFQObject.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ExtensionOnNestedClassObject.kt")
+            public void testExtensionOnNestedClassObject() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/extensions/ExtensionOnNestedClassObject.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("Extensions.kt")
             public void testExtensions() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/extensions/Extensions.kt");

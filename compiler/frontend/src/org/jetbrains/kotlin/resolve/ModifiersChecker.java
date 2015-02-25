@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.kotlin.diagnostics.Errors;
+import org.jetbrains.kotlin.diagnostics.*;
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.name.FqName;
@@ -195,8 +195,18 @@ public class ModifiersChecker {
 
     private void checkInnerModifier(@NotNull JetModifierListOwner modifierListOwner, @NotNull DeclarationDescriptor descriptor) {
         if (modifierListOwner.hasModifier(INNER_KEYWORD)) {
-            if (isIllegalInner(descriptor)) {
-                checkIllegalInThisContextModifiers(modifierListOwner, Collections.singletonList(INNER_KEYWORD));
+            switch (checkIllegalInner(descriptor)) {
+                case ALLOWED:
+                    break;
+                case ILLEGAL_POSITION:
+                    checkIllegalInThisContextModifiers(modifierListOwner, Collections.singletonList(INNER_KEYWORD));
+                    break;
+                case IN_TRAIT:
+                    trace.report(INNER_CLASS_IN_TRAIT.on(modifierListOwner));
+                    break;
+                case IN_OBJECT:
+                    trace.report(INNER_CLASS_IN_OBJECT.on(modifierListOwner));
+                    break;
             }
             return;
         }
@@ -210,12 +220,35 @@ public class ModifiersChecker {
     }
 
     public static boolean isIllegalInner(@NotNull DeclarationDescriptor descriptor) {
-        if (!(descriptor instanceof ClassDescriptor)) return true;
+        return checkIllegalInner(descriptor) != InnerModifierCheckResult.ALLOWED;
+    }
+
+    private enum InnerModifierCheckResult {
+        ALLOWED,
+        ILLEGAL_POSITION,
+        IN_TRAIT,
+        IN_OBJECT,
+    }
+
+    @NotNull
+    private static InnerModifierCheckResult checkIllegalInner(DeclarationDescriptor descriptor) {
+        if (!(descriptor instanceof ClassDescriptor)) return InnerModifierCheckResult.ILLEGAL_POSITION;
         ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
-        if (classDescriptor.getKind() != ClassKind.CLASS) return true;
+
+        if (classDescriptor.getKind() != ClassKind.CLASS) return InnerModifierCheckResult.ILLEGAL_POSITION;
+
         DeclarationDescriptor containingDeclaration = classDescriptor.getContainingDeclaration();
-        if (!(containingDeclaration instanceof ClassDescriptor)) return true;
-        return ((ClassDescriptor) containingDeclaration).getKind() == ClassKind.TRAIT;
+        if (!(containingDeclaration instanceof ClassDescriptor)) return InnerModifierCheckResult.ILLEGAL_POSITION;
+
+        if (DescriptorUtils.isTrait(containingDeclaration)) {
+            return InnerModifierCheckResult.IN_TRAIT;
+        }
+        else if (DescriptorUtils.isClassObject(containingDeclaration) || DescriptorUtils.isObject(containingDeclaration)) {
+            return InnerModifierCheckResult.IN_OBJECT;
+        }
+        else {
+            return InnerModifierCheckResult.ALLOWED;
+        }
     }
 
     private static boolean isIllegalNestedClass(@NotNull DeclarationDescriptor descriptor) {

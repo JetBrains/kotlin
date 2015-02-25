@@ -48,6 +48,8 @@
 
 package com.google.gwt.dev.js.rhino;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.lang.reflect.Method;
@@ -325,42 +327,18 @@ public class Context {
         return locale;
     }
 
-    /**
-     * Report a warning using the error reporter for the current thread.
-     *
-     * @param message the warning message to report
-     * @param sourceName a string describing the source, such as a filename
-     * @param lineno the starting line number
-     * @param lineSource the text of the line (may be null)
-     * @param lineOffset the offset into lineSource where problem was detected
-     */
-    public static void reportWarning(String message, String sourceName,
-                                     int lineno, String lineSource,
-                                     int lineOffset)
+    public static void reportWarning(@NotNull String message, @NotNull CodePosition startPosition, @NotNull CodePosition endPosition)
     {
         Context cx = Context.getContext();
-        cx.getErrorReporter().warning(message, sourceName, lineno,
-                                      lineSource, lineOffset);
+        cx.getErrorReporter().warning(message, startPosition, endPosition);
     }
 
-    /**
-     * Report an error using the error reporter for the current thread.
-     *
-     * @param message the error message to report
-     * @param sourceName a string describing the source, such as a filename
-     * @param lineno the starting line number
-     * @param lineSource the text of the line (may be null)
-     * @param lineOffset the offset into lineSource where problem was detected
-     */
-    public static void reportError(String message, String sourceName,
-                                   int lineno, String lineSource,
-                                   int lineOffset)
+    public static void reportError(@NotNull String message, @NotNull CodePosition startPosition, @NotNull CodePosition endPosition)
     {
         Context cx = getCurrentContext();
         if (cx != null) {
             cx.errorCount++;
-            cx.getErrorReporter().error(message, sourceName, lineno,
-                                        lineSource, lineOffset);
+            cx.getErrorReporter().error(message, startPosition, endPosition);
         } else {
             throw new EvaluatorException(message);
         }

@@ -1,4 +1,4 @@
-// "Create function 'set'" "true"
+// "Create extension function 'set'" "true"
 
 class Foo<T> {
     fun <T> x (y: Any, w: java.util.ArrayList<T>) {

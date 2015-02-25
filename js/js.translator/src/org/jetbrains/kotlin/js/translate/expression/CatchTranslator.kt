@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContextUtils.getNotNull
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.js.patterns.*;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator
 import org.jetbrains.kotlin.js.translate.general.Translation.patternTranslator
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.js.translate.general.Translation.translateAsStatemen
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.convertToBlock
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
+import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
 
 class CatchTranslator(
         val catches: List<JetCatchClause>,
@@ -113,7 +115,7 @@ class CatchTranslator(
     private val JetTypeReference.isThrowable: Boolean
         get() {
             val jetType = getNotNull(bindingContext(), BindingContext.TYPE, this)
-            val jetTypeName = TranslationUtils.getJetTypeFqName(jetType, false)
+            val jetTypeName = jetType.getJetTypeFqName(false)
 
             val throwable = KotlinBuiltIns.getInstance().getThrowable()
             val throwableClassName = DescriptorUtils.getFqNameSafe(throwable).asString()

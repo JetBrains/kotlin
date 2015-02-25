@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.storage.NullableLazyValue;
 import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.LazyType;
 
 import java.util.Collections;
 import java.util.List;
@@ -59,6 +60,11 @@ public abstract class VariableDescriptorImpl extends DeclarationDescriptorNonRoo
     @Nullable
     @Override
     public CompileTimeConstant<?> getCompileTimeInitializer() {
+        // Force computation and setting of compileTimeInitializer, if needed
+        if (compileTimeInitializer == null && outType instanceof LazyType) {
+            outType.getConstructor();
+        }
+
         if (compileTimeInitializer != null) {
             return compileTimeInitializer.invoke();
         }

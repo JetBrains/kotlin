@@ -186,6 +186,18 @@ public class AddImportTestGenerated extends AbstractAddImportTest {
         doTest(fileName);
     }
 
+    @TestMetadata("NameCountForStarNotReached.kt")
+    public void testNameCountForStarNotReached() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/NameCountForStarNotReached.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("NameCountForStarReached.kt")
+    public void testNameCountForStarReached() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/NameCountForStarReached.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("NoConflictingNameForInaccessibleClass1.kt")
     public void testNoConflictingNameForInaccessibleClass1() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/NoConflictingNameForInaccessibleClass1.kt");
@@ -219,6 +231,12 @@ public class AddImportTestGenerated extends AbstractAddImportTest {
     @TestMetadata("PropertyAlreadyImported2.kt")
     public void testPropertyAlreadyImported2() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/PropertyAlreadyImported2.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("StdlibImportsLast.kt")
+    public void testStdlibImportsLast() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/StdlibImportsLast.kt");
         doTest(fileName);
     }
 }

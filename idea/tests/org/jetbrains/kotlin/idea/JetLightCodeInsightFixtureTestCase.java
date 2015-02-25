@@ -52,13 +52,13 @@ public abstract class JetLightCodeInsightFixtureTestCase extends LightCodeInsigh
         ((StartupManagerImpl) StartupManager.getInstance(getProject())).runPostStartupActivities();
         VfsRootAccess.allowRootAccess(JetTestUtils.getHomeDirectory());
 
-        kotlinInternalModeOriginalValue = KotlinInternalMode.OBJECT$.getEnabled();
-        KotlinInternalMode.OBJECT$.setEnabled(true);
+        kotlinInternalModeOriginalValue = KotlinInternalMode.Instance.getEnabled();
+        KotlinInternalMode.Instance.setEnabled(true);
     }
 
     @Override
     protected void tearDown() throws Exception {
-        KotlinInternalMode.OBJECT$.setEnabled(kotlinInternalModeOriginalValue);
+        KotlinInternalMode.Instance.setEnabled(kotlinInternalModeOriginalValue);
         VfsRootAccess.disallowRootAccess(JetTestUtils.getHomeDirectory());
 
         Set<JetFile> builtInsSources = getProject().getComponent(BuiltInsReferenceResolver.class).getBuiltInsSources();

@@ -25,14 +25,14 @@ import org.jetbrains.kotlin.builtins.PrimitiveType;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsic;
-import org.jetbrains.kotlin.js.translate.intrinsic.functions.patterns.DescriptorPredicate;
-import org.jetbrains.kotlin.js.translate.intrinsic.functions.patterns.NamePredicate;
+import org.jetbrains.kotlin.js.patterns.DescriptorPredicate;
+import org.jetbrains.kotlin.js.patterns.NamePredicate;
 import org.jetbrains.kotlin.name.Name;
 
 import java.util.List;
 
 import static com.intellij.openapi.util.text.StringUtil.decapitalize;
-import static org.jetbrains.kotlin.js.translate.intrinsic.functions.patterns.PatternBuilder.pattern;
+import static org.jetbrains.kotlin.js.patterns.PatternBuilder.pattern;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.assignment;
 
 public final class ArrayFIF extends CompositeFIF {

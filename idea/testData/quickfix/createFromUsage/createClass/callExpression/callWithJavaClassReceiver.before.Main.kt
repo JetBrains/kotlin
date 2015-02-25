@@ -1,8 +1,6 @@
-// "Create class 'Foo'" "false"
-// ACTION: Create function 'Foo'
-// ACTION: Convert to expression body
+// "Create class 'Foo'" "true"
 // ERROR: Unresolved reference: Foo
 
-fun test(): Int {
-    return A().<caret>Foo(1, "2")
+fun test() {
+    val a = J().<caret>Foo(2)
 }

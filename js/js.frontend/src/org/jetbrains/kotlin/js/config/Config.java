@@ -49,9 +49,6 @@ public abstract class Config {
 
     private final boolean sourcemap;
 
-    @NotNull
-    private final BindingTrace trace = new BindingTraceContext();
-
     public Config(
             @NotNull Project project,
             @NotNull String moduleId,
@@ -105,11 +102,6 @@ public abstract class Config {
     @Nullable
     public BindingContext getLibraryContext() {
         return null;
-    }
-
-    @NotNull
-    public BindingTrace getTrace() {
-        return trace;
     }
 
     @Nullable

@@ -22,11 +22,11 @@ import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import com.google.dart.compiler.backend.js.ast.JsNumberLiteral;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.js.patterns.NamePredicate;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.general.Translation;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.factories.TopLevelFIF;
-import org.jetbrains.kotlin.js.translate.intrinsic.functions.patterns.NamePredicate;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -36,7 +36,7 @@ import java.util.Collections;
 
 import static org.jetbrains.kotlin.js.translate.utils.ErrorReportingUtils.message;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.sum;
-import static org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getNameIfStandardType;
+import static org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsPackage.getNameIfStandardType;
 
 public final class StringTemplateTranslator extends AbstractTranslator {
     private final JetStringTemplateEntry[] expressionEntries;

@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.di.InjectorForTopDownAnalyzerForJs;
+import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult;
 import org.jetbrains.kotlin.js.config.Config;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
@@ -61,7 +62,7 @@ public final class TopDownAnalyzerFacadeForJS {
 
     //TODO: refactor
     @NotNull
-    public static AnalysisResult analyzeFiles(
+    public static JsAnalysisResult analyzeFiles(
             @NotNull Collection<JetFile> files,
             @NotNull Predicate<PsiFile> filesToAnalyzeCompletely,
             @NotNull Config config
@@ -84,7 +85,7 @@ public final class TopDownAnalyzerFacadeForJS {
     }
 
     @NotNull
-    public static AnalysisResult analyzeFilesWithGivenTrace(
+    public static JsAnalysisResult analyzeFilesWithGivenTrace(
             @NotNull Collection<JetFile> files,
             @NotNull BindingTrace trace,
             @NotNull ModuleDescriptorImpl module,
@@ -109,7 +110,7 @@ public final class TopDownAnalyzerFacadeForJS {
         try {
             injector.getLazyTopDownAnalyzerForTopLevel().analyzeFiles(topDownAnalysisParameters, allFiles,
                                                            Collections.<PackageFragmentProvider>emptyList());
-            return AnalysisResult.success(trace.getBindingContext(), module);
+            return JsAnalysisResult.success(trace, module);
         }
         finally {
             injector.destroy();
