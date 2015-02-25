@@ -16,18 +16,21 @@
 
 package org.jetbrains.kotlin.idea.decompiler.textBuilder
 
-import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
-import org.jetbrains.kotlin.load.java.structure.JavaClass
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
-import org.jetbrains.kotlin.idea.decompiler.isKotlinWithCompatibleAbiVersion
-import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
-import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
-import org.jetbrains.kotlin.serialization.ClassData
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.idea.decompiler.isKotlinWithCompatibleAbiVersion
+import org.jetbrains.kotlin.load.java.structure.JavaClass
+import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
+import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.serialization.ClassData
+import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
+import org.jetbrains.kotlin.serialization.deserialization.LocalClassResolver
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 
 class LocalClassFinder(
         val packageDirectory: VirtualFile,
@@ -61,6 +64,10 @@ class LocalClassDataFinder(
         }
         return JvmProtoBufUtil.readClassDataFrom(data)
     }
+}
+
+object ResolveEverythingToKotlinAnyLocalClassResolver : LocalClassResolver {
+    override fun resolveLocalClass(classId: ClassId): ClassDescriptor = KotlinBuiltIns.getInstance().getAny()
 }
 
 private val JavaClass.classId: ClassId
