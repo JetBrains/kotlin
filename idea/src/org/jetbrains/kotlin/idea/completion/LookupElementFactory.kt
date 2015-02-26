@@ -187,10 +187,7 @@ public class LookupElementFactory(
             if (descriptor.getExtensionReceiverParameter() != null) {
                 val container = descriptor.getContainingDeclaration()
                 val containerPresentation = if (container is ClassDescriptor) {
-                    if (container.getKind() != ClassKind.CLASS_OBJECT)
-                        DescriptorUtils.getFqNameFromTopLevelClass(container).toString()
-                    else
-                        "class object for " + DescriptorUtils.getFqNameFromTopLevelClass(container.getContainingDeclaration())
+                    DescriptorUtils.getFqNameFromTopLevelClass(container).toString()
                 }
                 else {
                     DescriptorUtils.getFqName(container).toString()
