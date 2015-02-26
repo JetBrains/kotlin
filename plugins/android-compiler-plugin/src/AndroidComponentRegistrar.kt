@@ -238,9 +238,12 @@ public class AndroidComponentRegistrar : ComponentRegistrar {
     public override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
         val androidResPath = configuration.get(AndroidConfigurationKeys.ANDROID_RES_PATH)
         val androidManifest = configuration.get(AndroidConfigurationKeys.ANDROID_MANIFEST)
-        project.registerService(javaClass<AndroidUIXmlProcessor>(), CliAndroidUIXmlProcessor(project, androidManifest, androidResPath))
 
-        ExternalDeclarationsProvider.registerExtension(project, CliAndroidDeclarationsProvider(project))
-        ExpressionCodegenExtension.registerExtension(project, AndroidExpressionCodegen())
+        if (androidResPath != null && androidManifest != null) {
+            project.registerService(javaClass<AndroidUIXmlProcessor>(), CliAndroidUIXmlProcessor(project, androidManifest, androidResPath))
+
+            ExternalDeclarationsProvider.registerExtension(project, CliAndroidDeclarationsProvider(project))
+            ExpressionCodegenExtension.registerExtension(project, AndroidExpressionCodegen())
+        }
     }
 }
