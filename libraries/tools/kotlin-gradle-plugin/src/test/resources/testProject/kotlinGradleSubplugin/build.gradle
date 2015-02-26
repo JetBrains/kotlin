@@ -1,0 +1,39 @@
+buildscript {
+  repositories {
+    mavenCentral()
+    maven {
+        url 'file://' + pathToKotlinPlugin
+    }
+  }
+  dependencies {
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:0.1-SNAPSHOT"
+    classpath "org.jetbrains.kotlin:kotlin-gradle-subplugin-example:0.1-SNAPSHOT"
+  }
+}
+
+apply plugin: "kotlin"
+
+repositories {
+  maven {
+     url 'file://' + pathToKotlinPlugin
+  }
+  mavenCentral()
+}
+
+dependencies {
+    compile  "org.jetbrains.kotlin:kotlin-stdlib:0.1-SNAPSHOT"
+}
+
+task show << {
+   buildscript.configurations.classpath.each { println it }
+}
+
+
+compileKotlin {
+    kotlinOptions.annotations = "externalAnnotations"
+}
+
+
+task wrapper(type: Wrapper) {
+  gradleVersion="1.4"
+}

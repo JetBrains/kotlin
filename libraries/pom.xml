@@ -111,6 +111,7 @@
         <module>examples/kotlin-js-library-example</module>
         <module>examples/browser-example</module>
         <module>examples/browser-example-with-library</module>
+        <module>examples/kotlin-gradle-subplugin-example</module>
     </modules>
 
     <dependencies>
