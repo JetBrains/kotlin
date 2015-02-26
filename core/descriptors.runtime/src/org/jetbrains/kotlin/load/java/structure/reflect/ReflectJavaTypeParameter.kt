@@ -29,7 +29,7 @@ public class ReflectJavaTypeParameter(
 ) : ReflectJavaElement(), JavaTypeParameter {
     override fun getUpperBounds(): List<ReflectJavaClassifierType> {
         val bounds = typeVariable.getBounds().map { bound -> ReflectJavaClassifierType(bound) }
-        if (bounds.singleOrNull()?.classifierType == javaClass<Any>()) return emptyList()
+        if (bounds.singleOrNull()?.type == javaClass<Any>()) return emptyList()
         return bounds
     }
 
@@ -53,5 +53,8 @@ public class ReflectJavaTypeParameter(
     override fun getName() = Name.identifier(typeVariable.getName())
 
     override fun equals(other: Any?) = other is ReflectJavaTypeParameter && typeVariable == other.typeVariable
+
     override fun hashCode() = typeVariable.hashCode()
+
+    override fun toString() = javaClass.getName() + ": " + typeVariable
 }

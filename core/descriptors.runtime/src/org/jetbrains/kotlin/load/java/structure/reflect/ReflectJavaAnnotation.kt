@@ -37,4 +37,10 @@ public class ReflectJavaAnnotation(private val annotation: Annotation) : Reflect
     override fun resolve() = ReflectJavaClass(annotation.annotationType())
 
     override fun getClassId() = annotation.annotationType().classId
+
+    override fun equals(other: Any?) = other is ReflectJavaAnnotation && annotation == other.annotation
+
+    override fun hashCode() = annotation.hashCode()
+
+    override fun toString() = javaClass.getName() + ": " + annotation
 }

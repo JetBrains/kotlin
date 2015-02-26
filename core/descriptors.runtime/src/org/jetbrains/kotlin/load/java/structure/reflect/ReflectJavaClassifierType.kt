@@ -24,9 +24,9 @@ import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 import java.lang.reflect.TypeVariable
 
-public class ReflectJavaClassifierType(val classifierType: Type) : ReflectJavaType(), JavaClassifierType {
+public class ReflectJavaClassifierType(public override val type: Type) : ReflectJavaType(), JavaClassifierType {
     private val classifier: JavaClassifier = run {
-        val type = classifierType
+        val type = type
         when (type) {
             is Class<*> -> ReflectJavaClass(type)
             is TypeVariable<*> -> ReflectJavaTypeParameter(type)
@@ -41,14 +41,11 @@ public class ReflectJavaClassifierType(val classifierType: Type) : ReflectJavaTy
 
     override fun getSupertypes(): Collection<JavaClassifierType> = throw UnsupportedOperationException()
 
-    override fun getPresentableText(): String = classifierType.toString()
+    override fun getPresentableText(): String = type.toString()
 
-    override fun isRaw(): Boolean = with(classifierType) { this is Class<*> && getTypeParameters().isNotEmpty() }
+    override fun isRaw(): Boolean = with(type) { this is Class<*> && getTypeParameters().isNotEmpty() }
 
     override fun getTypeArguments(): List<JavaType> {
-        if (classifierType is ParameterizedType) {
-            return classifierType.getActualTypeArguments()!!.map { ReflectJavaType.create(it) }
-        }
-        return listOf()
+        return (type as? ParameterizedType)?.getActualTypeArguments()?.map { ReflectJavaType.create(it) } ?: listOf()
     }
 }

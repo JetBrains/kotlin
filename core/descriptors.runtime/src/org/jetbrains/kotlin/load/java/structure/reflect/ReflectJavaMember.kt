@@ -53,4 +53,10 @@ public abstract class ReflectJavaMember : ReflectJavaElement(), ReflectJavaAnnot
         }
         return result
     }
+
+    override fun equals(other: Any?) = other is ReflectJavaMember && member == other.member
+
+    override fun hashCode() = member.hashCode()
+
+    override fun toString() = javaClass.getName() + ": " + member
 }

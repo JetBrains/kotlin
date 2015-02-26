@@ -19,12 +19,12 @@ package org.jetbrains.kotlin.load.java.structure.reflect
 import org.jetbrains.kotlin.load.java.structure.JavaWildcardType
 import java.lang.reflect.WildcardType
 
-public class ReflectJavaWildcardType(private val wildcardType: WildcardType): ReflectJavaType(), JavaWildcardType {
+public class ReflectJavaWildcardType(override val type: WildcardType): ReflectJavaType(), JavaWildcardType {
     override fun getBound(): ReflectJavaType? {
-        val upperBounds = wildcardType.getUpperBounds()
-        val lowerBounds = wildcardType.getLowerBounds()
+        val upperBounds = type.getUpperBounds()
+        val lowerBounds = type.getLowerBounds()
         if (upperBounds.size() > 1 || lowerBounds.size() > 1) {
-            throw UnsupportedOperationException("Wildcard types with many bounds are not yet supported: $wildcardType")
+            throw UnsupportedOperationException("Wildcard types with many bounds are not yet supported: $type")
         }
         return when {
             lowerBounds.size() == 1 -> ReflectJavaType.create(lowerBounds.single())
@@ -33,7 +33,7 @@ public class ReflectJavaWildcardType(private val wildcardType: WildcardType): Re
         }
     }
 
-    override fun isExtends() = wildcardType.getUpperBounds().firstOrNull() != javaClass<Any>()
+    override fun isExtends() = type.getUpperBounds().firstOrNull() != javaClass<Any>()
 
     override fun getTypeProvider() = ReflectJavaTypeProvider
 }

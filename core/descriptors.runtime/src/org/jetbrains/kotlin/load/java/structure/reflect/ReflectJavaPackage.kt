@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.load.java.structure.reflect
 
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import org.jetbrains.kotlin.load.java.structure.JavaClass
+import org.jetbrains.kotlin.load.java.structure.JavaPackage
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 public class ReflectJavaPackage(private val fqName: FqName) : ReflectJavaElement(), JavaPackage {
@@ -33,4 +33,10 @@ public class ReflectJavaPackage(private val fqName: FqName) : ReflectJavaElement
         // A package at runtime can't know what sub packages it has and has not
         return listOf()
     }
+
+    override fun equals(other: Any?) = other is ReflectJavaPackage && fqName == other.fqName
+
+    override fun hashCode() = fqName.hashCode()
+
+    override fun toString() = javaClass.getName() + ": " + fqName
 }

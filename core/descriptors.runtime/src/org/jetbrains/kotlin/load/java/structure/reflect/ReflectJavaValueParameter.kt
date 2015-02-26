@@ -31,4 +31,6 @@ public class ReflectJavaValueParameter(
     override fun getName() = null // TODO: use ParameterNames on JDK 8
     override fun getType() = returnType
     override fun isVararg() = isVararg
+
+    override fun toString() = javaClass.getName() + ": " + (if (isVararg) "vararg " else "") + getName() + ": " + returnType
 }

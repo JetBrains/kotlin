@@ -18,30 +18,29 @@ package org.jetbrains.kotlin.load.java.structure.reflect
 
 import org.jetbrains.kotlin.load.java.structure.JavaArrayType
 import org.jetbrains.kotlin.load.java.structure.JavaType
-import java.lang.reflect.*
-
-private val PRIMITIVE_TYPES = setOf(
-        java.lang.Integer.TYPE, java.lang.Character.TYPE, java.lang.Byte.TYPE, java.lang.Long.TYPE,
-        java.lang.Short.TYPE, java.lang.Boolean.TYPE, java.lang.Double.TYPE, java.lang.Float.TYPE,
-        java.lang.Void.TYPE
-)
+import java.lang.reflect.GenericArrayType
+import java.lang.reflect.Type
+import java.lang.reflect.WildcardType
 
 public abstract class ReflectJavaType : JavaType {
+    protected abstract val type: Type
+
     override fun createArrayType(): JavaArrayType = throw UnsupportedOperationException()
 
-    class object {
-        fun create(reflectType: Type): ReflectJavaType {
-            return when (reflectType) {
-                in PRIMITIVE_TYPES -> ReflectJavaPrimitiveType(reflectType as Class<*>)
-                is GenericArrayType -> ReflectJavaArrayType(reflectType.getGenericComponentType()!!)
-                is Class<*> -> {
-                    if (reflectType.isArray()) ReflectJavaArrayType(reflectType.getComponentType()!!)
-                    else ReflectJavaClassifierType(reflectType)
-                }
-                is TypeVariable<*>, is ParameterizedType -> ReflectJavaClassifierType(reflectType)
-                is WildcardType -> ReflectJavaWildcardType(reflectType)
-                else -> throw UnsupportedOperationException("Unsupported type (${reflectType.javaClass}): $reflectType")
+    default object Factory {
+        fun create(type: Type): ReflectJavaType {
+            return when {
+                type is Class<*> && type.isPrimitive() -> ReflectJavaPrimitiveType(type)
+                type is GenericArrayType, type is Class<*> && type.isArray() -> ReflectJavaArrayType(type)
+                type is WildcardType -> ReflectJavaWildcardType(type)
+                else -> ReflectJavaClassifierType(type)
             }
         }
     }
+
+    override fun equals(other: Any?) = other is ReflectJavaType && type == other.type
+
+    override fun hashCode() = type.hashCode()
+
+    override fun toString() = javaClass.getName() + ": " + type
 }

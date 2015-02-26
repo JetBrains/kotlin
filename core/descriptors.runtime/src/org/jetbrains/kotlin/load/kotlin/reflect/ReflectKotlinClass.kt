@@ -60,6 +60,12 @@ public class ReflectKotlinClass private(
     override fun visitMembers(visitor: KotlinJvmBinaryClass.MemberVisitor) {
         ReflectClassStructure.visitMembers(klass, visitor)
     }
+
+    override fun equals(other: Any?) = other is ReflectKotlinClass && klass == other.klass
+
+    override fun hashCode() = klass.hashCode()
+
+    override fun toString() = javaClass.getName() + ": " + klass
 }
 
 private object ReflectClassStructure {

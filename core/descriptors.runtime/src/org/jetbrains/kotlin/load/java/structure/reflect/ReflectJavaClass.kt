@@ -102,4 +102,10 @@ public class ReflectJavaClass(private val klass: Class<*>) : ReflectJavaElement(
     override fun isFinal() = Modifier.isFinal(klass.getModifiers())
 
     override fun getVisibility() = calculateVisibility(klass.getModifiers())
+
+    override fun equals(other: Any?) = other is ReflectJavaClass && klass == other.klass
+
+    override fun hashCode() = klass.hashCode()
+
+    override fun toString() = javaClass.getName() + ": " + klass
 }
