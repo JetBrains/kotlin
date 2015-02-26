@@ -1,0 +1,6 @@
+package
+
+internal fun </*0*/ T> listOf(/*0*/ vararg values: T /*kotlin.Array<out T>*/): kotlin.List<T>
+internal fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+internal fun </*0*/ T : kotlin.Any, /*1*/ R> T.let(/*0*/ f: (T) -> R): R
+internal fun </*0*/ T> kotlin.Iterable<T>.plus(/*0*/ element: T): kotlin.List<T>

@@ -4521,6 +4521,18 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/functionLiterals"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("assignmentOperationInLambda.kt")
+            public void testAssignmentOperationInLambda() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/assignmentOperationInLambda.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("assignmentOperationInLambdaWithExpectedType.kt")
+            public void testAssignmentOperationInLambdaWithExpectedType() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/assignmentOperationInLambdaWithExpectedType.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("DanglingFunctionLiteral.kt")
             public void testDanglingFunctionLiteral() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/DanglingFunctionLiteral.kt");
@@ -4566,6 +4578,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("kt4529.kt")
             public void testKt4529() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/kt4529.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt6869.kt")
+            public void testKt6869() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/kt6869.kt");
                 doTest(fileName);
             }
 

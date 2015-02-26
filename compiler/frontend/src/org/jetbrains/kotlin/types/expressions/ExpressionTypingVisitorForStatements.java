@@ -84,7 +84,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             @NotNull ExpressionTypingContext context
     ) {
         if (assignmentType != null && !KotlinBuiltIns.isUnit(assignmentType) && !noExpectedType(context.expectedType) &&
-            TypeUtils.equalTypes(context.expectedType, assignmentType)) {
+            !context.expectedType.isError() && TypeUtils.equalTypes(context.expectedType, assignmentType)) {
             context.trace.report(Errors.ASSIGNMENT_TYPE_MISMATCH.on(expression, context.expectedType));
             return null;
         }
