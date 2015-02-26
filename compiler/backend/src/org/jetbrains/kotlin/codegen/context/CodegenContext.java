@@ -417,12 +417,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     }
 
     protected boolean shouldAddChild(@NotNull CodegenContext child) {
-        DeclarationDescriptor childContextDescriptor = child.contextDescriptor;
-        if (childContextDescriptor instanceof ClassDescriptor) {
-            ClassKind kind = ((ClassDescriptor) childContextDescriptor).getKind();
-                return kind == ClassKind.CLASS_OBJECT;
-        }
-        return false;
+        return DescriptorUtils.isClassObject(child.contextDescriptor);
     }
 
     @Nullable
