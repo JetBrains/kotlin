@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.gradle.internal.KotlinSourceSet
 import java.io.File
 import org.gradle.api.Action
 import org.gradle.api.tasks.compile.AbstractCompile
-import org.gradle.api.logging.Logging
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.LibraryExtension
@@ -38,6 +37,7 @@ import org.gradle.api.tasks.Delete
 import groovy.lang.Closure
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import java.util.ServiceLoader
+import org.gradle.api.logging.*
 
 val DEFAULT_ANNOTATIONS = "org.jebrains.kotlin.gradle.defaultAnnotations"
 
@@ -144,7 +144,7 @@ class Kotlin2JvmSourceSetProcessor(
             }
         }
 
-        loadSubplugins(project).addSubpluginArguments(project, kotlinTask)
+        loadSubplugins(project, logger).addSubpluginArguments(project, kotlinTask)
     }
 }
 
@@ -317,7 +317,7 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
             sourceSets.getByName("androidTest")
         }
 
-        val subpluginEnvironment = loadSubplugins(project)
+        val subpluginEnvironment = loadSubplugins(project, logger)
 
         for (variant in variants) {
             if (variant is LibraryVariant || variant is ApkVariant) {
@@ -421,7 +421,7 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
     }
 }
 
-private fun loadSubplugins(project: Project): SubpluginEnvironment {
+private fun loadSubplugins(project: Project, logger: Logger): SubpluginEnvironment {
     try {
         val subplugins = ServiceLoader.load(
             javaClass<KotlinGradleSubplugin>(), project.getBuildscript().getClassLoader()).toList()
@@ -438,17 +438,18 @@ private fun loadSubplugins(project: Project): SubpluginEnvironment {
             subpluginClasspaths.put(subplugin, files)
         }
 
-        return SubpluginEnvironment(subpluginClasspaths, subplugins)
+        return SubpluginEnvironment(subpluginClasspaths, subplugins, logger)
     } catch (e: NoClassDefFoundError) {
         // Skip plugin loading if KotlinGradleSubplugin is not defined.
         // It is true now for tests in kotlin-gradle-plugin-core.
-        return SubpluginEnvironment(mapOf(), listOf())
+        return SubpluginEnvironment(mapOf(), listOf(), logger)
     }
 }
 
 private class SubpluginEnvironment(
     val subpluginClasspaths: Map<KotlinGradleSubplugin, List<String>>,
-    val subplugins: List<KotlinGradleSubplugin>
+    val subplugins: List<KotlinGradleSubplugin>,
+    val logger: Logger
 ) {
 
     fun addSubpluginArguments(project: Project, compileTask: AbstractCompile) {
@@ -458,6 +459,11 @@ private class SubpluginEnvironment(
 
         subplugins.forEach { subplugin ->
             val args = subplugin.getExtraArguments(project, compileTask)
+
+            with (subplugin) {
+                logger.debug("Subplugin ${getPluginName()} (${getGroupName()}:${getArtifactName()}) loaded.")
+            }
+
             val subpluginClasspath = subpluginClasspaths[subplugin]
             if (args != null && subpluginClasspath != null) {
                 realPluginClasspaths.addAll(subpluginClasspath)
