@@ -4,6 +4,6 @@ class A {
     }
 }
 
-val v: A.Default.Inner = A.Inner()
+val v: A.Default.Inner = A.Default.Inner()
 
 // ELEMENT: Inner

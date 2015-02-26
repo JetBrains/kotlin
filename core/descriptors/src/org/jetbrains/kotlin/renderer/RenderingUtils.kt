@@ -25,7 +25,7 @@ public fun qualifiedNameForSourceCode(descriptor: ClassifierDescriptor): String 
 }
 
 private fun qualifierName(descriptor: DeclarationDescriptor): String? = when (descriptor) {
-    is ClassDescriptor -> if (descriptor.getKind() != ClassKind.CLASS_OBJECT) qualifiedNameForSourceCode(descriptor) else qualifierName(descriptor.getContainingDeclaration())
+    is ClassDescriptor -> qualifiedNameForSourceCode(descriptor)
     is PackageFragmentDescriptor -> DescriptorRenderer.COMPACT.renderFqName(descriptor.fqName)
     else -> null
 }
