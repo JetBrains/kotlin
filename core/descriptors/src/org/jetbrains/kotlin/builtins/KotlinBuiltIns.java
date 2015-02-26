@@ -97,8 +97,6 @@ public class KotlinBuiltIns {
     private final ModuleDescriptorImpl builtInsModule;
     private final BuiltinsPackageFragment builtinsPackageFragment;
 
-    private final Set<ClassDescriptor> nonPhysicalClasses;
-
     private final Map<PrimitiveType, JetType> primitiveTypeToNullableJetType;
     private final Map<PrimitiveType, JetType> primitiveTypeToArrayJetType;
     private final Map<JetType, JetType> primitiveJetTypeToJetArrayType;
@@ -127,8 +125,6 @@ public class KotlinBuiltIns {
         primitiveTypeToArrayJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);
         primitiveJetTypeToJetArrayType = new HashMap<JetType, JetType>();
         jetArrayTypeToPrimitiveJetType = new HashMap<JetType, JetType>();
-
-        nonPhysicalClasses = new HashSet<ClassDescriptor>();
     }
 
     private void doInitialize() {
