@@ -56,7 +56,7 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
 
     override fun resolveDeclarationsInPackage(packageFqName: FqName): Collection<DeclarationDescriptor> {
         assert(packageFqName == directoryPackageFqName, "Was called for $packageFqName but only $directoryPackageFqName is expected.")
-        val binaryClassForPackageClass = localClassFinder.findKotlinClass(PackageClassUtils.getPackageClassId(packageFqName))
+        val binaryClassForPackageClass = classFinder.findKotlinClass(PackageClassUtils.getPackageClassId(packageFqName))
         val annotationData = binaryClassForPackageClass?.getClassHeader()?.annotationData
         if (annotationData == null) {
             LOG.error("Could not read annotation data for $packageFqName from ${binaryClassForPackageClass?.getClassId()}")
@@ -72,13 +72,13 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
         return membersScope.getDescriptors()
     }
 
-    private val localClassFinder = LocalClassFinder(packageDirectory, directoryPackageFqName)
-    private val localClassDataFinder = LocalClassDataFinder(localClassFinder, LOG)
+    private val classFinder = DirectoryBasedClassFinder(packageDirectory, directoryPackageFqName)
+    private val classDataFinder = DirectoryBasedDataFinder(classFinder, LOG)
 
     private val storageManager = LockBasedStorageManager.NO_LOCKS
 
     private val annotationAndConstantLoader =
-            BinaryClassAnnotationAndConstantLoaderImpl(moduleDescriptor, storageManager, localClassFinder, LoggingErrorReporter(LOG))
+            BinaryClassAnnotationAndConstantLoaderImpl(moduleDescriptor, storageManager, classFinder, LoggingErrorReporter(LOG))
 
     private val packageFragmentProvider = object : PackageFragmentProvider {
         override fun getPackageFragments(fqName: FqName): List<PackageFragmentDescriptor> {
@@ -105,7 +105,7 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
     }
 
     private val deserializationComponents = DeserializationComponents(
-            storageManager, moduleDescriptor, localClassDataFinder, annotationAndConstantLoader, packageFragmentProvider,
+            storageManager, moduleDescriptor, classDataFinder, annotationAndConstantLoader, packageFragmentProvider,
             ResolveEverythingToKotlinAnyLocalClassResolver, JavaFlexibleTypeCapabilitiesDeserializer
     )
 

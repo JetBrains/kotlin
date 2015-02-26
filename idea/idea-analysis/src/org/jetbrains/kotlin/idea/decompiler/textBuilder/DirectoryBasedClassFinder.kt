@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
 import org.jetbrains.kotlin.serialization.deserialization.LocalClassResolver
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 
-class LocalClassFinder(
+class DirectoryBasedClassFinder(
         val packageDirectory: VirtualFile,
         val directoryPackageFqName: FqName
 ) : KotlinClassFinder {
@@ -51,12 +51,12 @@ class LocalClassFinder(
     }
 }
 
-class LocalClassDataFinder(
-        val localClassFinder: LocalClassFinder,
+class DirectoryBasedDataFinder(
+        val classFinder: DirectoryBasedClassFinder,
         val log: Logger
 ) : ClassDataFinder {
     override fun findClassData(classId: ClassId): ClassData? {
-        val binaryClass = localClassFinder.findKotlinClass(classId) ?: return null
+        val binaryClass = classFinder.findKotlinClass(classId) ?: return null
         val data = binaryClass.getClassHeader().annotationData
         if (data == null) {
             log.error("Annotation data missing for ${binaryClass.getClassId()}")

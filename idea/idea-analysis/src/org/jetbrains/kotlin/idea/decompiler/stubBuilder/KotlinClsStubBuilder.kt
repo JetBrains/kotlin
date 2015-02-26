@@ -16,24 +16,24 @@
 
 package org.jetbrains.kotlin.idea.decompiler.stubBuilder
 
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.compiled.ClsStubBuilder
+import com.intellij.psi.impl.compiled.ClassFileStubBuilder
+import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.util.cls.ClsFormatException
 import com.intellij.util.indexing.FileContent
-import com.intellij.psi.stubs.PsiFileStub
-import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.impl.compiled.ClassFileStubBuilder
-import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.idea.decompiler.textBuilder.LocalClassFinder
-import org.jetbrains.kotlin.idea.decompiler.textBuilder.LocalClassDataFinder
-import com.intellij.openapi.diagnostic.Logger
-import org.jetbrains.kotlin.idea.decompiler.textBuilder.LoggingErrorReporter
 import org.jetbrains.kotlin.idea.decompiler.isKotlinInternalCompiledFile
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.load.kotlin.header.isCompatiblePackageFacadeKind
-import org.jetbrains.kotlin.load.kotlin.header.isCompatibleClassKind
+import org.jetbrains.kotlin.idea.decompiler.textBuilder.DirectoryBasedClassFinder
+import org.jetbrains.kotlin.idea.decompiler.textBuilder.DirectoryBasedDataFinder
+import org.jetbrains.kotlin.idea.decompiler.textBuilder.LoggingErrorReporter
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
+import org.jetbrains.kotlin.load.kotlin.header.isCompatibleClassKind
+import org.jetbrains.kotlin.load.kotlin.header.isCompatiblePackageFacadeKind
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 
 public class KotlinClsStubBuilder : ClsStubBuilder() {
     override fun getStubVersion() = ClassFileStubBuilder.STUB_VERSION + 1
@@ -81,10 +81,10 @@ public class KotlinClsStubBuilder : ClsStubBuilder() {
     }
 
     private fun createStubBuilderComponents(file: VirtualFile, packageFqName: FqName): ClsStubBuilderComponents {
-        val localClassFinder = LocalClassFinder(file.getParent()!!, packageFqName)
-        val localClassDataFinder = LocalClassDataFinder(localClassFinder, LOG)
-        val annotationLoader = AnnotationLoaderForStubBuilder(localClassFinder, LoggingErrorReporter(LOG))
-        return ClsStubBuilderComponents(localClassDataFinder, annotationLoader)
+        val classFinder = DirectoryBasedClassFinder(file.getParent()!!, packageFqName)
+        val classDataFinder = DirectoryBasedDataFinder(classFinder, LOG)
+        val annotationLoader = AnnotationLoaderForStubBuilder(classFinder, LoggingErrorReporter(LOG))
+        return ClsStubBuilderComponents(classDataFinder, annotationLoader)
     }
 
     class object {
