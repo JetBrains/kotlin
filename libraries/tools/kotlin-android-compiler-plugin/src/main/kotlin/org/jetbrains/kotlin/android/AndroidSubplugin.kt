@@ -37,10 +37,9 @@ public class AndroidSubplugin : KotlinGradleSubplugin {
         val manifestFile = mainSourceSet.getManifest().getSrcFile()
 
         if (resourceDir != null) {
-            val layoutDir = File(resourceDir, "layout")
-            task.source(layoutDir)
+            resourceDir.listFiles { it.isDirectory() && it.name.startsWith("layout") }?.forEach { task.source(it) }
             return listOf(
-                SubpluginOption("androidRes", layoutDir.getAbsolutePath()),
+                SubpluginOption("androidRes", resourceDir.getAbsolutePath()),
                 SubpluginOption("androidManifest", manifestFile.getAbsolutePath())
             )
         }
