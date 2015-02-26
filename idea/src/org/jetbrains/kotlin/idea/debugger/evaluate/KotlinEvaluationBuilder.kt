@@ -52,13 +52,10 @@ import org.jetbrains.kotlin.codegen.CompilationErrorHandler
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import com.sun.jdi.request.EventRequest
-import com.sun.jdi.ObjectReference
 import com.intellij.debugger.engine.SuspendContext
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinEvaluateExpressionCache.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import com.sun.jdi.VirtualMachine
 import org.jetbrains.kotlin.codegen.AsmUtil
-import com.sun.jdi.InvalidStackFrameException
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.analysisContext
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -75,10 +72,11 @@ import org.jetbrains.kotlin.types.Flexibility
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.idea.util.attachment.attachmentByPsiFile
 import com.intellij.openapi.diagnostic.Attachment
+import com.sun.jdi.*
 import org.jetbrains.kotlin.idea.util.attachment.mergeAttachments
-import com.sun.jdi.ClassType
-import com.sun.jdi.InvocationException
+import org.jetbrains.eval4j.Value
 import org.jetbrains.kotlin.idea.debugger.evaluate.compilingEvaluator.loadClasses
+import org.jetbrains.org.objectweb.asm.Type
 
 private val RECEIVER_NAME = "\$receiver"
 private val THIS_NAME = "this"
@@ -197,9 +195,13 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
         private fun runEval4j(context: EvaluationContextImpl, compiledData: CompiledDataDescriptor): InterpreterResult {
             val virtualMachine = context.getDebugProcess().getVirtualMachineProxy().getVirtualMachine()
 
-            if (compiledData.additionalClasses.isNotEmpty()) {
-                loadClasses(context, compiledData.additionalClasses)
-            }
+            val classLoaderReference: ClassLoaderReference =
+                    if (compiledData.additionalClasses.isNotEmpty()) {
+                        loadClasses(context, compiledData.additionalClasses)
+                    }
+                    else {
+                        context.getClassLoader()
+                    }
 
             var resultValue: InterpreterResult? = null
             ClassReader(compiledData.bytecodes).accept(object : ClassVisitor(ASM5) {
@@ -215,7 +217,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
                                         this,
                                         makeInitialFrame(this, args),
                                         JDIEval(virtualMachine,
-                                                context.getClassLoader()!!,
+                                                classLoaderReference,
                                                 context.getSuspendContext().getThread()?.getThreadReference()!!,
                                                 context.getSuspendContext().getInvokePolicy())
                                 )

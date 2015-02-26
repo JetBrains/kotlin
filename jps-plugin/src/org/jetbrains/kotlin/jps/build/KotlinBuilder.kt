@@ -16,55 +16,50 @@
 
 package org.jetbrains.kotlin.jps.build
 
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.util.containers.MultiMap
 import gnu.trove.THashSet
-import org.jetbrains.kotlin.cli.common.KotlinVersion
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.compilerRunner.CompilerEnvironment
-import org.jetbrains.kotlin.config.CompilerRunnerConstants
-import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
-import org.jetbrains.kotlin.config.Services
-import org.jetbrains.kotlin.config.IncrementalCompilation
-import org.jetbrains.kotlin.jps.JpsKotlinCompilerSettings
-import org.jetbrains.kotlin.jps.incremental.*
-import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCacheProvider
-import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.jps.ModuleChunk
 import org.jetbrains.jps.builders.DirtyFilesHolder
 import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor
 import org.jetbrains.jps.incremental.*
+import org.jetbrains.jps.incremental.ModuleLevelBuilder.ExitCode.*
 import org.jetbrains.jps.incremental.java.JavaBuilder
 import org.jetbrains.jps.incremental.messages.BuildMessage
 import org.jetbrains.jps.incremental.messages.CompilerMessage
-import java.io.File
-import java.util.*
+import org.jetbrains.jps.model.JpsProject
+import org.jetbrains.kotlin.cli.common.KotlinVersion
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation.NO_LOCATION
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
-import org.jetbrains.kotlin.config.CompilerRunnerConstants.INTERNAL_ERROR_PREFIX
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.compilerRunner.CompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerRunner.runK2JsCompiler
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerRunner.runK2JvmCompiler
-import org.jetbrains.kotlin.utils.keysToMap
-import org.jetbrains.jps.incremental.ModuleLevelBuilder.ExitCode.*
-import com.intellij.openapi.diagnostic.Logger
-import org.jetbrains.org.objectweb.asm.ClassReader
-import org.jetbrains.jps.builders.java.JavaBuilderUtil
-import com.intellij.util.containers.MultiMap
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.jps.model.JpsProject
-import java.io.FileFilter
-import org.jetbrains.kotlin.jps.incremental.IncrementalCacheImpl.RecompilationDecision.*
-import org.jetbrains.kotlin.compilerRunner.SimpleOutputItem
-import org.jetbrains.kotlin.utils.LibraryUtils
+import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
+import org.jetbrains.kotlin.config.CompilerRunnerConstants
+import org.jetbrains.kotlin.config.CompilerRunnerConstants.INTERNAL_ERROR_PREFIX
+import org.jetbrains.kotlin.config.IncrementalCompilation
+import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.jps.JpsKotlinCompilerSettings
+import org.jetbrains.kotlin.jps.incremental.*
+import org.jetbrains.kotlin.jps.incremental.IncrementalCacheImpl.RecompilationDecision.DO_NOTHING
+import org.jetbrains.kotlin.jps.incremental.IncrementalCacheImpl.RecompilationDecision.RECOMPILE_ALL_IN_CHUNK_AND_DEPENDANTS
+import org.jetbrains.kotlin.jps.incremental.IncrementalCacheImpl.RecompilationDecision.RECOMPILE_OTHER_IN_CHUNK_AND_DEPENDANTS
 import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCache
-import org.jetbrains.jps.incremental.fs.CompilationRound
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
-import org.jetbrains.kotlin.load.kotlin.header.isCompatiblePackageFacadeKind
-import org.jetbrains.jps.builders.java.dependencyView.Mappings
-import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCacheProvider
+import org.jetbrains.kotlin.utils.LibraryUtils
+import org.jetbrains.kotlin.utils.PathUtil
+import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.kotlin.utils.sure
+import java.io.File
+import java.util.ArrayList
+import java.util.HashMap
+import java.util.HashSet
 
 public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     class object {
@@ -155,7 +150,6 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         else {
             val generatedClasses = generatedFiles as List<GeneratedJvmClass>
             recompilationDecision = updateKotlinIncrementalCache(compilationErrors, incrementalCaches, generatedClasses)
-            updateJavaMappings(chunk, compilationErrors, context, dirtyFilesHolder, filesToCompile, generatedClasses)
         }
 
         if (compilationErrors) {
@@ -170,20 +164,10 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             when (recompilationDecision) {
                 RECOMPILE_ALL_IN_CHUNK_AND_DEPENDANTS -> {
                     allCompiledFiles.clear()
-                    FSOperations.markDirtyRecursively(context, chunk)
+                    return CHUNK_REBUILD_REQUIRED
                 }
                 RECOMPILE_OTHER_IN_CHUNK_AND_DEPENDANTS -> {
-                    // Workaround for IDEA 14.0-14.0.2: extended version of markDirtyRecursively is not available
-                    try {
-                        Class.forName("org.jetbrains.jps.incremental.fs.CompilationRound")
-
-                        FSOperations.markDirtyRecursively(context, CompilationRound.NEXT, chunk, { file -> file !in allCompiledFiles })
-                    } catch (e: ClassNotFoundException) {
-                        allCompiledFiles.clear()
-                        FSOperations.markDirtyRecursively(context, chunk)
-                    }
-                }
-                RECOMPILE_OTHER_KOTLIN_IN_CHUNK -> {
+                    // TODO should mark dependencies as dirty, as well
                     FSOperations.markDirty(context, chunk, { file ->
                         KotlinSourceFileCollector.isKotlinSourceFile(file) && file !in allCompiledFiles
                     })
@@ -248,57 +232,6 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             }
         }
         return result
-    }
-
-    private fun updateJavaMappings(
-            chunk: ModuleChunk,
-            compilationErrors: Boolean,
-            context: CompileContext,
-            dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>,
-            filesToCompile: MultiMap<ModuleBuildTarget, File>,
-            generatedClasses: List<GeneratedJvmClass>
-    ) {
-        fun getOldSourceFiles(generatedClass: GeneratedJvmClass, previousMappings: Mappings): Collection<File> {
-            if (!generatedClass.outputFile.getName().endsWith(PackageClassUtils.PACKAGE_CLASS_NAME_SUFFIX + ".class")) return emptySet()
-
-            val kotlinClass = generatedClass.outputClass
-            if (!kotlinClass.getClassHeader().isCompatiblePackageFacadeKind()) return emptySet()
-
-            val classInternalName = JvmClassName.byClassId(kotlinClass.getClassId()).getInternalName()
-            val oldClassSources = previousMappings.getClassSources(previousMappings.getName(classInternalName))
-            if (oldClassSources == null) return emptySet()
-
-            val sources = THashSet(FileUtil.FILE_HASHING_STRATEGY)
-            sources.addAll(oldClassSources)
-            sources.removeAll(filesToCompile[generatedClass.target])
-            sources.removeAll(dirtyFilesHolder.getRemovedFiles(generatedClass.target).map { File(it) })
-            return sources
-        }
-
-        if (!IncrementalCompilation.ENABLED) {
-            return
-        }
-
-        val previousMappings = context.getProjectDescriptor().dataManager.getMappings()
-        val delta = previousMappings.createDelta()
-        val callback = delta.getCallback()
-
-        for (generatedClass in generatedClasses) {
-            val outputFile = generatedClass.outputFile
-            val outputClass = generatedClass.outputClass
-
-            // For package facade classes: we need to report all source files for it, not only currently compiled
-            val allSourcesIncludingOld = getOldSourceFiles(generatedClass, previousMappings) + generatedClass.sourceFiles
-
-            callback.associate(FileUtil.toSystemIndependentName(outputFile.getAbsolutePath()),
-                               allSourcesIncludingOld.map { FileUtil.toSystemIndependentName(it.getAbsolutePath()) },
-                               ClassReader(outputClass.getFileContents())
-            )
-        }
-
-        val allCompiled = filesToCompile.values()
-        val compiledInThisRound = if (compilationErrors) listOf<File>() else allCompiled
-        JavaBuilderUtil.updateMappings(context, delta, dirtyFilesHolder, chunk, allCompiled, compiledInThisRound)
     }
 
     private fun registerOutputItems(outputConsumer: ModuleLevelBuilder.OutputConsumer, generatedFiles: List<GeneratedFile>) {

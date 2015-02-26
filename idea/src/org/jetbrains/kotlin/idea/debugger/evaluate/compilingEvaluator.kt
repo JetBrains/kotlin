@@ -26,7 +26,7 @@ import com.intellij.debugger.engine.evaluation.EvaluationContext
 import com.intellij.openapi.util.SystemInfo
 import org.jetbrains.kotlin.idea.debugger.evaluate.CompilingEvaluatorUtils
 
-public fun loadClasses(evaluationContext: EvaluationContextImpl, classes: Collection<Pair<String, ByteArray>>) {
+public fun loadClasses(evaluationContext: EvaluationContextImpl, classes: Collection<Pair<String, ByteArray>>): ClassLoaderReference {
     val process = evaluationContext.getDebugProcess()
 
     val classLoader: ClassLoaderReference
@@ -51,7 +51,7 @@ public fun loadClasses(evaluationContext: EvaluationContextImpl, classes: Collec
         throw EvaluateException("Error during classes definition " + e, e)
     }
 
-    evaluationContext.setClassLoader(classLoader)
+    return classLoader
 }
 
 private fun defineClasses(

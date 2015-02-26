@@ -121,7 +121,7 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
             when {
                 inlinesChanged -> RECOMPILE_ALL_IN_CHUNK_AND_DEPENDANTS
                 constantsChanged -> RECOMPILE_OTHER_IN_CHUNK_AND_DEPENDANTS
-                protoChanged -> RECOMPILE_OTHER_KOTLIN_IN_CHUNK
+                protoChanged -> RECOMPILE_OTHER_IN_CHUNK_AND_DEPENDANTS
                 else -> DO_NOTHING
             }
 

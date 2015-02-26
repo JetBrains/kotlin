@@ -51,7 +51,7 @@ import com.intellij.psi.*
 import java.util.*
 
 //NOTE: this class is based on CopyPasteReferenceProcessor and JavaCopyPasteReferenceProcessor
-public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<KotlinReferenceTransferableData>() {
+public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<KotlinReferenceTransferableData?> {
     private val LOG = Logger.getInstance(javaClass<KotlinCopyPasteReferenceProcessor>())
 
     private val IGNORE_REFERENCES_INSIDE: Array<Class<out JetElement>?> = array(
@@ -59,13 +59,13 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
             javaClass<JetPackageDirective>()
     )
 
-    override fun extractTransferableData(content: Transferable): List<KotlinReferenceTransferableData> {
+    override fun extractTransferableData(content: Transferable): KotlinReferenceTransferableData? {
         if (CodeInsightSettings.getInstance().ADD_IMPORTS_ON_PASTE != CodeInsightSettings.NO) {
             try {
-                val flavor = KotlinReferenceData.dataFlavor ?: return listOf()
-                val data = content.getTransferData(flavor) as? KotlinReferenceTransferableData ?: return listOf()
+                val flavor = KotlinReferenceData.dataFlavor ?: return null
+                val data = content.getTransferData(flavor) as? KotlinReferenceTransferableData ?: return null
                 // copy to prevent changing of original by convertLineSeparators
-                return listOf(data.clone())
+                return data.clone()
             }
             catch (ignored: UnsupportedFlavorException) {
             }
@@ -73,7 +73,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
             }
         }
 
-        return listOf()
+        return null
     }
 
     override fun collectTransferableData(
@@ -81,8 +81,8 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
             editor: Editor,
             startOffsets: IntArray,
             endOffsets: IntArray
-    ): List<KotlinReferenceTransferableData> {
-        if (file !is JetFile || DumbService.getInstance(file.getProject()).isDumb()) return listOf()
+    ): KotlinReferenceTransferableData? {
+        if (file !is JetFile || DumbService.getInstance(file.getProject()).isDumb()) return null
 
         val collectedData = try {
             toTextRanges(startOffsets, endOffsets).flatMap {
@@ -95,16 +95,16 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
             // supposedly analysis can only be canceled from another thread
             // do not log ProcessCanceledException as it is rethrown by IdeaLogger and code won't be copied
             LOG.error("ProcessCanceledException while analyzing references in ${file.getName()}. References can't be processed.")
-            return listOf()
+            return null
         }
         catch (e: Throwable) {
             LOG.error("Exception in processing references for copy paste in file ${file.getName()}}", e)
-            return listOf()
+            return null
         }
 
-        if (collectedData.isEmpty()) return listOf()
+        if (collectedData.isEmpty()) return null
 
-        return listOf(KotlinReferenceTransferableData(collectedData.copyToArray()))
+        return KotlinReferenceTransferableData(collectedData.copyToArray())
     }
 
     private fun collectReferenceDataFromElement(
@@ -170,7 +170,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
             bounds: RangeMarker,
             caretOffset: Int,
             indented: Ref<Boolean>,
-            values: List<KotlinReferenceTransferableData>
+            value: KotlinReferenceTransferableData?
     ) {
         if (DumbService.getInstance(project).isDumb()) return
 
@@ -180,9 +180,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
 
         PsiDocumentManager.getInstance(project).commitAllDocuments()
 
-        assert(values.size() == 1)
-
-        val referenceData = values.single().data
+        val referenceData = value!!.data
         val referencesPossibleToRestore = findReferencesToRestore(file, bounds, referenceData)
 
         val selectedReferencesToRestore = showRestoreReferencesDialog(project, referencesPossibleToRestore)
