@@ -77,4 +77,9 @@ public class CliCommonTest extends CliBaseTest {
     public void pluginSimple() throws Exception {
         executeCompilerCompareOutputJVM();
     }
+
+    @Test
+    public void pluginSimpleUsage() throws Exception {
+        executeCompilerCompareOutputJVM();
+    }
 }

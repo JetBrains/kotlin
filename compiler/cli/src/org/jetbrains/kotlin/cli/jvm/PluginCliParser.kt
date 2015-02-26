@@ -16,26 +16,21 @@
 
 package org.jetbrains.kotlin.cli.jvm
 
-import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import kotlin.platform.*
 import java.util.jar.JarFile
 import java.util.jar.Attributes
-import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
 import java.util.regex.Pattern
 import com.intellij.util.containers.MultiMap
-import org.jetbrains.kotlin.compiler.plugin.CliOption
 import java.net.URLClassLoader
 import java.net.URL
 import java.io.File
-import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import java.util.ServiceLoader
 import java.io.IOException
 import java.util.Enumeration
-import org.jetbrains.kotlin.compiler.plugin.parsePluginOption
-import org.jetbrains.kotlin.compiler.plugin.CliOptionValue
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.utils.valuesToMap
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.compiler.plugin.*
 
 
 public object PluginCliParser {
@@ -85,10 +80,16 @@ public object PluginCliParser {
             for (option in processor.pluginOptions) {
                 val values = optionsToValues[option]
                 if (option.required && values.isEmpty()) {
-                    throw CliOptionProcessingException("Required plugin option not present: ${processor.pluginId}:${option.name}")
+                    throw PluginCliOptionProcessingException(
+                            processor.pluginId,
+                            processor.pluginOptions,
+                            "Required plugin option not present: ${processor.pluginId}:${option.name}")
                 }
                 if (!option.allowMultipleOccurrences && values.size() > 1) {
-                    throw CliOptionProcessingException("Multiple values not allowed for plugin option ${processor.pluginId}:${option.name}")
+                    throw PluginCliOptionProcessingException(
+                            processor.pluginId,
+                            processor.pluginOptions,
+                            "Multiple values are not allowed for plugin option ${processor.pluginId}:${option.name}")
                 }
 
                 for (value in values) {
