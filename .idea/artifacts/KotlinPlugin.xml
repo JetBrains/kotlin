@@ -26,6 +26,7 @@
           <element id="module-output" name="idea-jps-common" />
           <element id="module-output" name="preloader" />
           <element id="module-output" name="serialization" />
+          <element id="module-output" name="serialization.js" />
           <element id="module-output" name="serialization.jvm" />
           <element id="module-output" name="backend-common" />
           <element id="library" level="project" name="builtins" />
