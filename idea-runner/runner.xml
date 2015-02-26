@@ -36,13 +36,6 @@
         </if>
     </target>
 
-    <target name="join-idea-plugins">
-        <delete dir="${basedir}/../out/artifacts/KotlinPlugins"/>
-        <mkdir dir="${basedir}/../out/artifacts/KotlinPlugins"/>
-        <copydir src="${basedir}/../out/artifacts/Kotlin" dest="${basedir}/../out/artifacts/KotlinPlugins/Kotlin" />
-        <copydir src="${basedir}/../out/artifacts/KotlinAndroidExtensions" dest="${basedir}/../out/artifacts/KotlinPlugins/KotlinAndroidExtensions" />
-    </target>
-
     <target name="copy-runtime-for-idea-plugin">
         <!-- For local build and the first (bootstrap) step of the build, IDEA plugin needs the runtime it was compiled against -->
         <!-- Otherwise (on the second step of the build) we distribute the same runtime in the compiler and the plugin -->
