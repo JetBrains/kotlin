@@ -102,6 +102,18 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
             doJvmTest(fileName);
         }
 
+        @TestMetadata("pluginSimple.args")
+        public void testPluginSimple() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/jvm/pluginSimple.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("pluginSimpleUsage.args")
+        public void testPluginSimpleUsage() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/jvm/pluginSimpleUsage.args");
+            doJvmTest(fileName);
+        }
+
         @TestMetadata("signatureClash.args")
         public void testSignatureClash() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/jvm/signatureClash.args");
