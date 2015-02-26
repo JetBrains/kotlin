@@ -451,30 +451,25 @@ private class SubpluginEnvironment(
     val subplugins: List<KotlinGradleSubplugin>
 ) {
 
-    private fun AbstractCompile.setKotlinTaskProperty(methodName: String, value: Array<String>) {
-        val function = javaClass.getMethod(methodName, javaClass<Array<String>>())
-        function.invoke(this, value)
-    }
-
     fun addSubpluginArguments(project: Project, compileTask: AbstractCompile) {
         val realPluginClasspaths = arrayListOf<String>()
         val pluginArguments = arrayListOf<String>()
+        fun getPluginOptionString(pluginId: String, key: String, value: String) = "plugin:$pluginId:$key=$value"
 
         subplugins.forEach { subplugin ->
             val args = subplugin.getExtraArguments(project, compileTask)
-            if (args != null) {
-                realPluginClasspaths.addAll(subpluginClasspaths[subplugin])
+            val subpluginClasspath = subpluginClasspaths[subplugin]
+            if (args != null && subpluginClasspath != null) {
+                realPluginClasspaths.addAll(subpluginClasspath)
                 for (arg in args) {
-                    //TODO: fix (getPluginOptionString is in plugin-api)
-                    fun getPluginOptionString(pluginId: String, key: String, value: String) = "plugin:$pluginId:$key=$value"
                     val option = getPluginOptionString(subplugin.getPluginName(), arg.key, arg.value)
                     pluginArguments.add(option)
                 }
             }
         }
 
-        compileTask.setKotlinTaskProperty("setCompilerPluginClasspaths", realPluginClasspaths.copyToArray())
-        compileTask.setKotlinTaskProperty("setCompilerPluginArguments", pluginArguments.copyToArray())
+        compileTask.setProperty("compilerPluginClasspaths", realPluginClasspaths.copyToArray())
+        compileTask.setProperty("compilerPluginArguments", pluginArguments.copyToArray())
     }
 }
 
