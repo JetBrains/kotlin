@@ -19,7 +19,7 @@ class Derived: Base<String>() {
     }
 }
 
-// STEP_INTO: 2
+// STEP_INTO: 1
 
 // EXPRESSION: 1 + 1
 // RESULT: 2: I
@@ -29,3 +29,5 @@ class Derived: Base<String>() {
 
 // EXPRESSION: this.foo("a")
 // RESULT: 2: I
+
+// SKIP_SYNTHETIC_METHODS: false

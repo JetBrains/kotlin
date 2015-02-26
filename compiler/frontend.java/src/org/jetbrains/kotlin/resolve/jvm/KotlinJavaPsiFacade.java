@@ -38,7 +38,7 @@ import com.intellij.reference.SoftReference;
 import com.intellij.util.CommonProcessors;
 import com.intellij.util.ConcurrencyUtil;
 import com.intellij.util.Query;
-import com.intellij.util.containers.ConcurrentHashMap;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.messages.MessageBus;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
@@ -53,10 +53,8 @@ public class KotlinJavaPsiFacade {
     private volatile KotlinPsiElementFinderWrapper[] elementFinders;
 
     private static class PackageCache {
-        final ConcurrentMap<Pair<String, GlobalSearchScope>, PsiPackage> packageInScopeCache =
-                new ConcurrentHashMap<Pair<String, GlobalSearchScope>, PsiPackage>();
-        final ConcurrentMap<String, Boolean> hasPackageInAllScopeCache =
-                new ConcurrentHashMap<String, Boolean>();
+        final ConcurrentMap<Pair<String, GlobalSearchScope>, PsiPackage> packageInScopeCache = ContainerUtil.newConcurrentMap();
+        final ConcurrentMap<String, Boolean> hasPackageInAllScopeCache = ContainerUtil.newConcurrentMap();
     }
 
     private volatile SoftReference<PackageCache> packageCache;

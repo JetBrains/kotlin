@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.asJava;
 
 import com.intellij.lang.Language;
 import com.intellij.psi.PsiAnnotationOwner;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiModifierList;
 import com.intellij.psi.PsiParameter;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -100,6 +101,12 @@ public class KotlinLightParameter extends LightParameter implements KotlinLightE
         }
 
         return setter != null ? setter.getParameter() : null;
+    }
+
+    @Override
+    public PsiFile getContainingFile() {
+        JetDeclaration declaration = method.getOrigin();
+        return declaration != null ? declaration.getContainingFile() : super.getContainingFile();
     }
 
     @NotNull

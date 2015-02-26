@@ -2,7 +2,6 @@ LineBreakpoint created at onClassHeader.kt:6
 !JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! onClassHeader.OnClassHeaderPackage
 Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 onClassHeader.kt:6
-onClassHeader.kt:18
 onClassHeader.kt:16
 Compile bytecode for 1 + 1
 Compile bytecode for this

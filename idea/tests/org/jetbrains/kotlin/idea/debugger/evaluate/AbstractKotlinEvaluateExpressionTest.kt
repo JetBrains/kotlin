@@ -102,6 +102,7 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
         val file = File(path)
         val fileText = FileUtil.loadFile(file, true)
 
+        configureSettings(fileText)
         createAdditionalBreakpoints(fileText)
 
         val shouldPrintFrame = InTextDirectivesUtils.isDirectiveDefined(fileText, "// PRINT_FRAME")

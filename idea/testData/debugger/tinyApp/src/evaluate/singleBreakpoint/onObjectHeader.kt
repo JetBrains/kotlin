@@ -21,7 +21,9 @@ object A {
     }
 }
 
-// STEP_INTO: 7
+// STEP_INTO: 5
 
 // EXPRESSION: 1 + 1
 // RESULT: 2: I
+
+// SKIP_SYNTHETIC_METHODS: false

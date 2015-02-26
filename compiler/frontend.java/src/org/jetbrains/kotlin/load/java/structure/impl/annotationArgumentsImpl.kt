@@ -26,6 +26,9 @@ abstract class JavaAnnotationArgumentImpl(
     class object {
         fun create(argument: PsiAnnotationMemberValue, name: Name?): JavaAnnotationArgument {
             val value = JavaPsiFacade.getInstance(argument.getProject()).getConstantEvaluationHelper().computeConstantExpression(argument)
+            if (value is Enum<*>) {
+                return JavaEnumValueAnnotationArgumentImpl(argument as PsiReferenceExpression, name)
+            }
             if (value != null || argument is PsiLiteralExpression) {
                 return JavaLiteralAnnotationArgumentImpl(name, value)
             }
