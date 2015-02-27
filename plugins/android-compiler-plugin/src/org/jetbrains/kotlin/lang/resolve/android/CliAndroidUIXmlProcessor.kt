@@ -40,7 +40,7 @@ public class CliAndroidUIXmlProcessor(
 
     override fun parseSingleFile(file: PsiFile): Collection<AndroidWidget> {
         val widgets: MutableCollection<AndroidWidget> = ArrayList()
-        val handler = AndroidXmlHandler(resourceManager, { id, clazz -> widgets.add(AndroidWidget(id, clazz)) })
+        val handler = AndroidXmlHandler { id, clazz -> widgets.add(AndroidWidget(id, clazz)) }
 
         try {
             val inputStream = ByteArrayInputStream(file.getVirtualFile().contentsToByteArray())

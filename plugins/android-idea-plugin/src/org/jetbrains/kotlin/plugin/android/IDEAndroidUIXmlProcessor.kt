@@ -35,7 +35,7 @@ class IDEAndroidUIXmlProcessor(val module: Module) : AndroidUIXmlProcessor(modul
 
     override fun parseSingleFile(file: PsiFile): List<AndroidWidget> {
         val widgets = arrayListOf<AndroidWidget>()
-        file.accept(AndroidXmlVisitor(resourceManager, { id, wClass, valueElement ->
+        file.accept(AndroidXmlVisitor({ id, wClass, valueElement ->
             widgets.add(AndroidWidget(id, wClass))
         }))
 
