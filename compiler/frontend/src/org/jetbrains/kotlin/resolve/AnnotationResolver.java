@@ -348,7 +348,7 @@ public class AnnotationResolver {
         for (ValueArgument argument : resolvedValueArgument.getArguments()) {
             JetExpression argumentExpression = argument.getArgumentExpression();
             if (argumentExpression != null) {
-                CompileTimeConstant<?> constant = ConstantExpressionEvaluator.OBJECT$.evaluate(argumentExpression, trace, expectedType);
+                CompileTimeConstant<?> constant = ConstantExpressionEvaluator.evaluate(argumentExpression, trace, expectedType);
                 if (constant instanceof IntegerValueTypeConstant) {
                     JetType defaultType = ((IntegerValueTypeConstant) constant).getType(expectedType);
                     SimpleResolutionContext context =

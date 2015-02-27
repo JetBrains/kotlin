@@ -48,7 +48,7 @@ internal trait Test</*0*/ in I, /*1*/ out O, /*2*/ P> {
     internal abstract fun neOk32(/*0*/ i: [ERROR : Inv]): kotlin.Unit
     internal abstract fun neOk33(/*0*/ i: Inv<[ERROR : No type element]>): kotlin.Unit
     internal abstract fun neOk34(/*0*/ i: Inv<[ERROR : C]>): kotlin.Unit
-    internal abstract fun neOk35(/*0*/ i: [ERROR : Inv<P, P>]): kotlin.Unit
+    internal abstract fun neOk35(/*0*/ i: [ERROR : Inv]<P, P>): kotlin.Unit
     internal abstract fun neOk4(/*0*/ i: Inv<I>): kotlin.Unit
     internal abstract fun neOk5(/*0*/ i: Inv<O>): kotlin.Unit
     internal abstract fun neOk6(/*0*/ i: In<In<O>>): kotlin.Unit

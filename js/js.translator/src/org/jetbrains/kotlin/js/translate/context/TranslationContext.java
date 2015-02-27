@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.types.reflect.ReflectionTypes;
 
 import java.util.HashMap;
@@ -165,7 +166,9 @@ public class TranslationContext {
     }
 
     @NotNull
-    public DiagnosticSink getTrace() { return staticContext.getConfig().getTrace(); }
+    public BindingTrace bindingTrace() {
+        return staticContext.getBindingTrace();
+    }
 
     @NotNull
     public JsScope getScopeForDescriptor(@NotNull DeclarationDescriptor descriptor) {

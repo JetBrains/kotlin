@@ -10,10 +10,6 @@ internal final class Class {
     internal class object Default {
         /*primary*/ private constructor Default()
 
-        test.Anno() internal final inner class Inner {
-            /*primary*/ public constructor Inner()
-        }
-
         test.Anno() internal final class Nested {
             /*primary*/ public constructor Nested()
         }

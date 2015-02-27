@@ -28,9 +28,11 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowFactory;
+import com.intellij.psi.PsiElement;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.ui.content.ContentManager;
 import com.intellij.util.Alarm;
@@ -43,21 +45,26 @@ import org.jetbrains.kotlin.codegen.CompilationErrorHandler;
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.Progress;
+import org.jetbrains.kotlin.descriptors.CallableDescriptor;
+import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink;
+import org.jetbrains.kotlin.idea.caches.resolve.KotlinCacheService;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToDeclarationUtil;
 import org.jetbrains.kotlin.idea.util.InfinitePeriodicalTask;
 import org.jetbrains.kotlin.idea.util.LongRunningReadTask;
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.*;
 import java.util.List;
-import java.util.Scanner;
 
 public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
     private static final int UPDATE_DELAY = 1000;
@@ -102,20 +109,59 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
         @NotNull
         @Override
         protected String processRequest(@NotNull Location location) {
-            JetFile jetFile = location.getJetFile();
+            final JetFile jetFile = location.getJetFile();
             assert jetFile != null;
 
             GenerationState state;
             try {
                 AnalysisResult result = ResolvePackage.analyzeFullyAndGetResult(jetFile);
+                boolean disableInline = !enableInline.isSelected();
+                Ref<Set<JetElement>> ref = new Ref();
+                if (!disableInline) {
+                    result = processInlinedDeclarations(jetFile.getProject(), result, Collections.<JetElement>singleton(jetFile), 1, ref);
+                }
+
                 if (result.isError()) {
                     return printStackTraceToString(result.getError());
                 }
+
+                Set<JetFile> toProcess = new LinkedHashSet<JetFile>();
+                toProcess.add(jetFile);
+                if (ref.get() != null) {
+                    for (JetElement element: ref.get()) {
+                        JetFile file = element.getContainingJetFile();
+                        toProcess.add(file);
+                    }
+                }
+
+                GenerationState.GenerateClassFilter generateClassFilter = new GenerationState.GenerateClassFilter() {
+
+                    @Override
+                    public boolean shouldGeneratePackagePart(JetFile file) {
+                        return file == jetFile;
+                    }
+
+                    @Override
+                    public boolean shouldAnnotateClass(JetClassOrObject classOrObject) {
+                        return true;
+                    }
+
+                    @Override
+                    public boolean shouldGenerateClass(JetClassOrObject classOrObject) {
+                        return classOrObject.getContainingJetFile() == jetFile;
+                    }
+
+                    @Override
+                    public boolean shouldGenerateScript(JetScript script) {
+                        return script.getContainingJetFile() == jetFile;
+                    }
+                };
+
                 state = new GenerationState(jetFile.getProject(), ClassBuilderFactories.TEST, Progress.DEAF,
                                             result.getModuleDescriptor(), result.getBindingContext(),
-                                            Collections.singletonList(jetFile), !enableAssertions.isSelected(), !enableAssertions.isSelected(),
-                                            GenerationState.GenerateClassFilter.GENERATE_ALL,
-                                            !enableInline.isSelected(), !enableOptimization.isSelected(), null, null,
+                                            new ArrayList<JetFile>(toProcess), !enableAssertions.isSelected(), !enableAssertions.isSelected(),
+                                            generateClassFilter,
+                                            disableInline, !enableOptimization.isSelected(), null, null,
                                             DiagnosticSink.DO_NOTHING, null);
                 KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
             }
@@ -137,6 +183,43 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
             }
 
             return answer.toString();
+        }
+
+        private AnalysisResult processInlinedDeclarations(
+                @NotNull Project project,
+                @NotNull AnalysisResult result,
+                @NotNull Set<JetElement> originalElements,
+                int deep,
+                @NotNull Ref<Set<JetElement>> resultElements
+        ) {
+            if (deep >= 10 || result.isError()) {
+                resultElements.set(originalElements);
+                return result;
+            }
+            Set<JetElement> collectedElements = new HashSet<JetElement>();
+            collectedElements.addAll(originalElements);
+            Map<Call, ResolvedCall<?>> contents = result.getBindingContext().getSliceContents(BindingContext.RESOLVED_CALL);
+            Collection<ResolvedCall<?>> values = contents.values();
+            for (ResolvedCall call : values) {
+                CallableDescriptor descriptor = call.getResultingDescriptor();
+                if (!(descriptor instanceof DeserializedSimpleFunctionDescriptor)) {
+                    if (descriptor instanceof SimpleFunctionDescriptor &&
+                        ((SimpleFunctionDescriptor) descriptor).getInlineStrategy().isInline()) {
+                        PsiElement declaration =
+                                DescriptorToDeclarationUtil.INSTANCE$.getDeclaration(project, descriptor);
+                        if (declaration != null && declaration instanceof JetElement) {
+                            collectedElements.add((JetElement) declaration);
+                        }
+                    }
+                }
+            }
+            if (collectedElements.size() != originalElements.size()) {
+                AnalysisResult newResult = KotlinCacheService.getInstance(project).getAnalysisResults(collectedElements);
+                return processInlinedDeclarations(project, newResult, collectedElements, deep + 1, resultElements);
+            }
+
+            resultElements.set(collectedElements);
+            return result;
         }
 
         @Override
@@ -197,7 +280,7 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
         add(optionPanel, BorderLayout.NORTH);
 
         /*TODO: try to extract default parameter from compiler options*/
-        enableInline = new JCheckBox("Enable inline", false);
+        enableInline = new JCheckBox("Enable inline", true);
         enableOptimization = new JCheckBox("Enable optimization", true);
         enableAssertions = new JCheckBox("Enable assertions", true);
         optionPanel.add(enableInline);

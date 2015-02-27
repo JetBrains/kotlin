@@ -1,1 +1,0 @@
-fun main(args: Array<String>): Unit = js("var a = 08;")

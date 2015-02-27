@@ -16,20 +16,17 @@
 
 package org.jetbrains.kotlin.js.test.semantics;
 
-import com.google.dart.compiler.backend.js.ast.JsNode;
-import com.intellij.util.Consumer;
+import com.google.dart.compiler.backend.js.ast.JsProgram;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.js.test.MultipleFilesTranslationTest;
 import org.jetbrains.kotlin.js.test.utils.DirectiveTestUtils;
 import org.jetbrains.kotlin.js.test.utils.JsTestUtils;
-import org.jetbrains.kotlin.js.test.utils.MemoizeConsumer;
 
 import java.util.List;
 
 import static org.jetbrains.kotlin.js.test.utils.JsTestUtils.getAllFilesInDir;
 
 public final class InlineMultiFileTest extends MultipleFilesTranslationTest {
-    private final MemoizeConsumer<JsNode> nodeConsumer = new MemoizeConsumer<JsNode>();
-
     public InlineMultiFileTest() {
         super("inlineMultiFile/");
     }
@@ -37,12 +34,10 @@ public final class InlineMultiFileTest extends MultipleFilesTranslationTest {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        nodeConsumer.consume(null);
     }
 
     public void testInlineMultiFileSimple() throws Exception {
         checkFooBoxIsOk();
-        processInlineDirectives();
     }
 
     public void testBuilders() throws Exception {
@@ -71,7 +66,6 @@ public final class InlineMultiFileTest extends MultipleFilesTranslationTest {
 
     public void testTrait() throws Exception {
         checkFooBoxIsOk();
-        processInlineDirectives();
     }
 
     public void testUse() throws Exception {
@@ -154,23 +148,14 @@ public final class InlineMultiFileTest extends MultipleFilesTranslationTest {
         checkFooBoxIsOk();
     }
 
-    private void processInlineDirectives() throws Exception {
+    @Override
+    protected void processJsProgram(@NotNull JsProgram program) throws Exception {
         String dir = getTestName(true);
         List<String> fileNames = getAllFilesInDir(getInputFilePath(dir));
 
         for (String fileName : fileNames) {
             String fileText = JsTestUtils.readFile(fileName);
-
-            JsNode lastJsNode = nodeConsumer.getLastValue();
-            assert lastJsNode != null;
-
-            DirectiveTestUtils.processDirectives(lastJsNode, fileText);
+            DirectiveTestUtils.processDirectives(program, fileText);
         }
     }
-
-    @Override
-    protected Consumer<JsNode> getConsumer() {
-        return nodeConsumer;
-    }
-
 }

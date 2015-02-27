@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClas
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromConstructorCallActionFactory;
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromReferenceExpressionActionFactory;
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromTypeReferenceActionFactory;
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createFunction.*;
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable.*;
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateLocalVariableActionFactory;
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateParameterActionFactory;
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateParameterByNamedArgumentActionFactory;
@@ -113,6 +113,11 @@ public class QuickFixRegistrar {
         QuickFixes.factories.put(ILLEGAL_MODIFIER, removeModifierFactory);
         QuickFixes.factories.put(REPEATED_MODIFIER, removeModifierFactory);
 
+        JetSingleIntentionActionFactory removeInnerModifierFactory =
+                RemoveModifierFix.createRemoveModifierFromListOwnerFactory(INNER_KEYWORD);
+        QuickFixes.factories.put(INNER_CLASS_IN_TRAIT, removeInnerModifierFactory);
+        QuickFixes.factories.put(INNER_CLASS_IN_OBJECT, removeInnerModifierFactory);
+
         JetSingleIntentionActionFactory changeToBackingFieldFactory = ChangeToBackingFieldFix.createFactory();
         QuickFixes.factories.put(INITIALIZATION_USING_BACKING_FIELD_CUSTOM_SETTER, changeToBackingFieldFactory);
         QuickFixes.factories.put(INITIALIZATION_USING_BACKING_FIELD_OPEN_SETTER, changeToBackingFieldFactory);
@@ -122,7 +127,7 @@ public class QuickFixRegistrar {
         QuickFixes.factories.put(NO_BACKING_FIELD_CUSTOM_ACCESSORS, changeToPropertyNameFactory);
         QuickFixes.factories.put(INACCESSIBLE_BACKING_FIELD, changeToPropertyNameFactory);
 
-        JetSingleIntentionActionFactory unresolvedReferenceFactory = AutoImportFix.OBJECT$.createFactory();
+        JetSingleIntentionActionFactory unresolvedReferenceFactory = AutoImportFix.Default.createFactory();
         QuickFixes.factories.put(UNRESOLVED_REFERENCE, unresolvedReferenceFactory);
         QuickFixes.factories.put(UNRESOLVED_REFERENCE_WRONG_RECEIVER, unresolvedReferenceFactory);
 

@@ -110,15 +110,26 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
                     @Override
                     public GenerationState.GenerateClassFilter getGenerateClassFilter() {
                         return new GenerationState.GenerateClassFilter() {
+
                             @Override
-                            public boolean shouldProcessClass(JetClassOrObject classOrObject) {
+                            public boolean shouldGeneratePackagePart(JetFile jetFile) {
+                                return true;
+                            }
+
+                            @Override
+                            public boolean shouldAnnotateClass(JetClassOrObject classOrObject) {
+                                return shouldGenerateClass(classOrObject);
+                            }
+
+                            @Override
+                            public boolean shouldGenerateClass(JetClassOrObject classOrObject) {
                                 // Top-level classes and such should not be generated for performance reasons.
                                 // Local classes in top-level functions must still be generated
                                 return JetPsiUtil.isLocal(classOrObject);
                             }
 
                             @Override
-                            public boolean shouldProcessScript(JetScript script) {
+                            public boolean shouldGenerateScript(JetScript script) {
                                 // Scripts yield top-level classes, and should not be generated
                                 return false;
                             }
@@ -221,8 +232,19 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
                     @Override
                     public GenerationState.GenerateClassFilter getGenerateClassFilter() {
                         return new GenerationState.GenerateClassFilter() {
+
                             @Override
-                            public boolean shouldProcessClass(JetClassOrObject generatedClassOrObject) {
+                            public boolean shouldGeneratePackagePart(JetFile jetFile) {
+                                return true;
+                            }
+
+                            @Override
+                            public boolean shouldAnnotateClass(JetClassOrObject classOrObject) {
+                                return shouldGenerateClass(classOrObject);
+                            }
+
+                            @Override
+                            public boolean shouldGenerateClass(JetClassOrObject generatedClassOrObject) {
                                 // Trivial: generate and analyze class we are interested in.
                                 if (generatedClassOrObject == classOrObject) return true;
 
@@ -255,7 +277,7 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
                             }
 
                             @Override
-                            public boolean shouldProcessScript(JetScript script) {
+                            public boolean shouldGenerateScript(JetScript script) {
                                 // We generate all enclosing classes
                                 return PsiTreeUtil.isAncestor(script, classOrObject, false);
                             }

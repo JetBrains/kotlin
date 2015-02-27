@@ -31,6 +31,7 @@ import java.io.PrintWriter
 import java.io.StringWriter
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.PsiComment
+import org.jetbrains.kotlin.name.FqName
 
 public fun JetPsiFactory(project: Project?): JetPsiFactory = JetPsiFactory(project!!)
 public fun JetPsiFactory(contextElement: JetElement): JetPsiFactory = JetPsiFactory(contextElement.getProject())
@@ -264,6 +265,10 @@ public class JetPsiFactory(private val project: Project) {
     public fun createSimpleNameStringTemplateEntry(name: String): JetStringTemplateEntryWithExpression {
         val stringTemplateExpression = createExpression("\"\$$name\"") as JetStringTemplateExpression
         return stringTemplateExpression.getEntries()[0] as JetStringTemplateEntryWithExpression
+    }
+
+    public fun createPackageDirectiveIfNeeded(fqName: FqName): JetPackageDirective? {
+        return if (fqName.isRoot()) null else createFile("package ${fqName.asString()}").getPackageDirective()
     }
 
     public fun createImportDirective(path: String): JetImportDirective {

@@ -16,88 +16,212 @@
 
 package org.jetbrains.kotlin.idea.imports
 
+import com.google.common.collect.HashMultimap
 import com.intellij.lang.ImportOptimizer
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.ImportPath
-import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.formatter.JetCodeStyleSettings
 import org.jetbrains.kotlin.idea.references.JetReference
-import java.util.HashSet
-import java.util.ArrayList
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.idea.refactoring.fqName.isImported
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
+import org.jetbrains.kotlin.psi.psiUtil.isAncestor
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.ImportPath
+import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
+import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
+import java.util.ArrayList
+import java.util.HashMap
+import java.util.HashSet
 
 public class KotlinImportOptimizer() : ImportOptimizer {
 
     override fun supports(file: PsiFile?) = file is JetFile
 
     override fun processFile(file: PsiFile?) = Runnable() {
-        val jetFile = file as JetFile
-        val usedQualifiedNames = extractUsedQualifiedNames(jetFile)
+        OptimizeProcess(file as JetFile).execute()
+    }
 
-        val directives = jetFile.getImportDirectives()
+    private class OptimizeProcess(val file: JetFile) {
+        private val codeStyleSettings = JetCodeStyleSettings.getInstance(file.getProject())
+        private val aliasImports: Map<Name, FqName>
 
-        val directivesBeforeCurrent = ArrayList<JetImportDirective>()
-        val directivesAfterCurrent = ArrayList(jetFile.getImportDirectives())
-
-        ApplicationManager.getApplication()!!.runWriteAction(Runnable {
-            val importInsertHelper = ImportInsertHelper.getInstance(file.getProject())
-            // Remove only unnecessary imports
-            for (anImport in directives) {
-                directivesAfterCurrent.remove(anImport)
-
-                val importPath = anImport.getImportPath()
-                if (importPath == null) {
-                    continue
+        ;{
+            val imports = file.getImportDirectives()
+            val aliasImports = HashMap<Name, FqName>()
+            for (import in imports) {
+                val path = import.getImportPath() ?: continue
+                val aliasName = path.getAlias()
+                if (aliasName != null) {
+                    aliasImports.put(aliasName, path.fqnPart())
                 }
+            }
+            this.aliasImports = aliasImports
+        }
 
-                if (isUseful(importPath, usedQualifiedNames)
-                    && importInsertHelper.needImport(importPath, jetFile, directivesBeforeCurrent)
-                    && importInsertHelper.needImport(importPath, jetFile, directivesAfterCurrent)
-                ) {
-                    directivesBeforeCurrent.add(anImport)
+        public fun execute() {
+            val oldImports = file.getImportDirectives()
+            if (oldImports.isEmpty()) return
+
+            //TODO: keep existing imports? at least aliases (comments)
+
+            val importInsertHelper = ImportInsertHelper.getInstance(file.getProject())
+            val currentPackageName = file.getPackageFqName()
+
+            val descriptorsToImport = detectDescriptorsToImport()
+
+            val importsToGenerate = HashSet<ImportPath>()
+
+            val descriptorsByPackages = HashMultimap.create<FqName, DeclarationDescriptor>()
+            for (descriptor in descriptorsToImport) {
+                val fqName = descriptor.importableFqNameSafe
+                val parentFqName = fqName.parent()
+                if (descriptor is PackageViewDescriptor || parentFqName.isRoot()) {
+                    importsToGenerate.add(ImportPath(fqName, false))
                 }
                 else {
-                    anImport.delete()
+                    descriptorsByPackages.put(parentFqName, descriptor)
                 }
             }
-        })
-    }
 
-    private fun isUseful(importPath: ImportPath, usedNames: Collection<FqName>): Boolean {
-        // TODO: Add better analysis for aliases
-        return importPath.hasAlias() || usedNames.any { it.isImported(importPath) }
-    }
+            val classNamesToCheck = HashSet<FqName>()
 
-    private fun extractUsedQualifiedNames(jetFile: JetFile): Set<FqName> {
-        val usedQualifiedNames = HashSet<FqName>()
-        jetFile.accept(object : JetVisitorVoid() {
-            override fun visitElement(element: PsiElement) {
-                ProgressIndicatorProvider.checkCanceled()
-                element?.acceptChildren(this)
-            }
+            fun isImportedByDefault(fqName: FqName) = importInsertHelper.isImportedWithDefault(ImportPath(fqName, false), file)
 
-            override fun visitJetElement(element: JetElement) {
-                if (element.getStrictParentOfType<JetImportDirective>() != null ||
-                    element.getStrictParentOfType<JetPackageDirective>() != null) {
-                    return
-                }
-                val reference = element.getReference()
-                if (reference is JetReference) {
-                    val referencedDescriptors = reference.resolveToDescriptors()
-                    val importableDescriptors = referencedDescriptors.filter {
-                        it.canBeReferencedViaImport() && !isInReceiverScope(element, it)
+            for (packageName in descriptorsByPackages.keys()) {
+                val descriptors = descriptorsByPackages[packageName]
+                val fqNames = descriptors.map { it.importableFqNameSafe }.toSet()
+                val explicitImports = packageName != currentPackageName && fqNames.size() < codeStyleSettings.NAME_COUNT_TO_USE_STAR_IMPORT
+                if (explicitImports) {
+                    for (fqName in fqNames) {
+                        if (!isImportedByDefault(fqName)) {
+                            importsToGenerate.add(ImportPath(fqName, false))
+                        }
                     }
-                    usedQualifiedNames.addAll(importableDescriptors.map { it.importableFqName }.filterNotNull())
                 }
-                super.visitJetElement(element)
-            }
-        })
+                else {
+                    for (descriptor in descriptors) {
+                        if (descriptor is ClassDescriptor) {
+                            classNamesToCheck.add(descriptor.importableFqNameSafe)
+                        }
+                    }
 
-        return usedQualifiedNames
+                    if (packageName != currentPackageName && !fqNames.all(::isImportedByDefault)) {
+                        importsToGenerate.add(ImportPath(packageName, true))
+                    }
+                }
+            }
+
+            // now check that there are no conflicts and all classes are really imported
+            val fileWithImportsText = StringBuilder {
+                append("package ").append(IdeDescriptorRenderers.SOURCE_CODE.renderFqName(currentPackageName)).append("\n")
+                importsToGenerate.filter { it.isAllUnder() }.map { "import " + it.getPathStr() }.joinTo(this, "\n")
+            }.toString()
+            val fileWithImports = JetPsiFactory(file).createAnalyzableFile("Dummy.kt", fileWithImportsText, file)
+            val scope = fileWithImports.getResolutionFacade().getFileTopLevelScope(fileWithImports)
+
+            for (fqName in classNamesToCheck) {
+                if (scope.getClassifier(fqName.shortName())?.importableFqNameSafe != fqName) {
+                    // add explicit import if failed to import with * (or from current package)
+                    importsToGenerate.add(ImportPath(fqName, false))
+
+                    val packageName = fqName.parent()
+
+                    for (descriptor in descriptorsByPackages[packageName].filter { it.importableFqNameSafe == fqName }) {
+                        descriptorsByPackages.remove(packageName, descriptor)
+                    }
+
+                    if (descriptorsByPackages[packageName].isEmpty()) { // star import is not really needed
+                        importsToGenerate.remove(ImportPath(packageName, true))
+                    }
+                }
+            }
+
+            //TODO: drop unused aliases?
+            aliasImports.mapTo(importsToGenerate) { ImportPath(it.getValue(), false, it.getKey())}
+
+            val sortedImportsToGenerate = importsToGenerate.sortBy(importInsertHelper.importSortComparator)
+
+            //TODO: do not touch file if everything is already correct?
+
+            ApplicationManager.getApplication()!!.runWriteAction(Runnable {
+                val importList = file.getImportList()!!
+                val psiFactory = JetPsiFactory(file.getProject())
+                for (importPath in sortedImportsToGenerate) {
+                    importList.addBefore(psiFactory.createImportDirective(importPath), oldImports.lastOrNull()) // insert into the middle to keep collapsed state
+                }
+
+                // remove old imports after adding new ones to keep imports folding state
+                for (import in oldImports) {
+                    import.delete()
+                }
+            })
+        }
+
+        private fun detectDescriptorsToImport(): Set<DeclarationDescriptor> {
+            val usedDescriptors = HashSet<DeclarationDescriptor>()
+            file.accept(object : JetVisitorVoid() {
+                override fun visitElement(element: PsiElement) {
+                    ProgressIndicatorProvider.checkCanceled()
+                    element.acceptChildren(this)
+                }
+
+                override fun visitImportList(importList: JetImportList) {
+                }
+
+                override fun visitPackageDirective(directive: JetPackageDirective) {
+                }
+
+                override fun visitJetElement(element: JetElement) {
+                    val reference = element.getReference()
+                    if (reference is JetReference) {
+                        val referencedName = (element as? JetNameReferenceExpression)?.getReferencedNameAsName() //TODO: other types of references
+
+                        val targets = reference.resolveToDescriptors()
+                        for (target in targets) {
+                            if (!target.canBeReferencedViaImport()) continue
+                            if (target is PackageViewDescriptor && target.getFqName().parent() == FqName.ROOT) continue // no need to import top-level packages
+
+                            if (!target.isExtension) { // for non-extension targets, count only non-qualified simple name usages
+                                if (element !is JetNameReferenceExpression) continue
+                                if (element.getIdentifier() == null) continue // skip 'this' etc
+                                if (element.getReceiverExpression() != null) continue
+                            }
+
+                            val importableDescriptor = target.getImportableDescriptor()
+                            if (referencedName != null && importableDescriptor.getName() != referencedName) continue // resolved via alias
+
+                            if (isAccessibleAsMember(importableDescriptor, element)) continue
+
+                            usedDescriptors.add(importableDescriptor)
+                        }
+                    }
+
+                    super.visitJetElement(element)
+                }
+            })
+            return usedDescriptors
+        }
+
+        private fun isAccessibleAsMember(target: DeclarationDescriptor, place: JetElement): Boolean {
+            val container = target.getContainingDeclaration()
+            if (container !is ClassDescriptor) return false
+            val scope = if (container.getKind() == ClassKind.CLASS_OBJECT)
+                container.getContainingDeclaration() as? ClassDescriptor ?: return false
+            else
+                container
+            val classBody = (DescriptorToSourceUtils.classDescriptorToDeclaration(scope) as? JetClassOrObject)?.getBody()
+            return classBody != null && classBody.getContainingFile() == file && classBody.isAncestor(place)
+        }
     }
 }

@@ -1,7 +1,9 @@
 package a
 
+import b.test
+
 class Test {
     fun foo() {
-        b.test()
+        test()
     }
 }

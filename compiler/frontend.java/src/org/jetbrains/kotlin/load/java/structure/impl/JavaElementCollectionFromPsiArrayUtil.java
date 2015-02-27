@@ -120,7 +120,7 @@ public class JavaElementCollectionFromPsiArrayUtil {
                 String name = psiNameValuePair.getName();
                 PsiAnnotationMemberValue value = psiNameValuePair.getValue();
                 assert value != null : "Annotation argument value cannot be null: " + name;
-                return JavaAnnotationArgumentImpl.OBJECT$.create(value, name == null ? null : Name.identifier(name));
+                return JavaAnnotationArgumentImpl.Factory.create(value, name == null ? null : Name.identifier(name));
             }
         };
     }

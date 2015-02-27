@@ -36,7 +36,7 @@ public abstract class AbstractImportsTest : JetLightCodeInsightFixtureTestCase()
         val codeInsightSettings = CodeInsightSettings.getInstance()
         val codeStyleSettings = JetCodeStyleSettings.getInstance(getProject())
         val optimizeImportsBefore = codeInsightSettings.OPTIMIZE_IMPORTS_ON_THE_FLY
-        val preferAllUnderBefore = codeStyleSettings.PREFER_ALL_UNDER_IMPORTS
+        val nameCountToUseStarBefore = codeStyleSettings.NAME_COUNT_TO_USE_STAR_IMPORT
 
         try {
             val fixture = myFixture
@@ -54,7 +54,7 @@ public abstract class AbstractImportsTest : JetLightCodeInsightFixtureTestCase()
             val file = fixture.getFile() as JetFile
 
             codeInsightSettings.OPTIMIZE_IMPORTS_ON_THE_FLY = InTextDirectivesUtils.getPrefixedBoolean(file.getText(), "// OPTIMIZE_IMPORTS:") ?: false
-            codeStyleSettings.PREFER_ALL_UNDER_IMPORTS = InTextDirectivesUtils.getPrefixedBoolean(file.getText(), "// ALL_UNDER_IMPORTS:") ?: preferAllUnderImportsDefault
+            codeStyleSettings.NAME_COUNT_TO_USE_STAR_IMPORT = InTextDirectivesUtils.getPrefixedInt(file.getText(), "// NAME_COUNT_TO_USE_STAR_IMPORT:") ?: nameCountToUseStarImportDefault
 
             CommandProcessor.getInstance().executeCommand(getProject(), {
                 ApplicationManager.getApplication()!!.runWriteAction {
@@ -66,12 +66,12 @@ public abstract class AbstractImportsTest : JetLightCodeInsightFixtureTestCase()
         }
         finally {
             codeInsightSettings.OPTIMIZE_IMPORTS_ON_THE_FLY = optimizeImportsBefore
-            codeStyleSettings.PREFER_ALL_UNDER_IMPORTS = preferAllUnderBefore
+            codeStyleSettings.NAME_COUNT_TO_USE_STAR_IMPORT = nameCountToUseStarBefore
         }
     }
 
     protected abstract fun doTest(file: JetFile)
 
-    protected open val preferAllUnderImportsDefault: Boolean
-        get() = true
+    protected open val nameCountToUseStarImportDefault: Int
+        get() = 1
 }

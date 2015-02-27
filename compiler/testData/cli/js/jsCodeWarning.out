@@ -1,2 +1,0 @@
-WARNING: compiler/testData/cli/js/jsCodeWarning.kt: (1, 50) JavaScript: illegal octal literal digit 8; interpreting it as a decimal digit
-OK

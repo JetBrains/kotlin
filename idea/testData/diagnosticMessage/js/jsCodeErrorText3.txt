@@ -1,0 +1,6 @@
+<!-- jsCodeErrorText3 -->
+JavaScript: syntax error in code:
+for (var i =
+            ^
+    )
+^^^^^

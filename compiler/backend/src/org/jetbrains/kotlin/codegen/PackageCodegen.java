@@ -302,7 +302,7 @@ public class PackageCodegen {
             }
             else if (declaration instanceof JetClassOrObject) {
                 JetClassOrObject classOrObject = (JetClassOrObject) declaration;
-                if (state.getGenerateDeclaredClassFilter().shouldProcessClass(classOrObject)) {
+                if (state.getGenerateDeclaredClassFilter().shouldGenerateClass(classOrObject)) {
                     generateClassOrObject(classOrObject);
                 }
             }
@@ -310,13 +310,13 @@ public class PackageCodegen {
                 JetScript script = (JetScript) declaration;
 
                // SCRIPT: generate script code, should be separate execution branch
-                if (state.getGenerateDeclaredClassFilter().shouldProcessScript(script)) {
+                if (state.getGenerateDeclaredClassFilter().shouldGenerateScript(script)) {
                     ScriptCodegen.createScriptCodegen(script, state, packagePartContext).generate();
                 }
             }
         }
 
-        if (!generatePackagePart) return null;
+        if (!generatePackagePart || !state.getGenerateDeclaredClassFilter().shouldGeneratePackagePart(file)) return null;
 
         ClassBuilder builder = state.getFactory().newVisitor(PackagePart(file, packageFragment), packagePartType, file);
 

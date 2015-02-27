@@ -1,0 +1,2 @@
+<!-- jsCodeErrorText4 -->
+JavaScript: missing variable name

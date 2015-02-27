@@ -1,0 +1,12 @@
+// NAME_COUNT_TO_USE_STAR_IMPORT: 2
+package ppp
+
+import dependency.extFun
+import java.io.File
+import java.util.*
+
+fun foo(c: C) {
+    val v = HashMap<File, ArrayList<Int>>()
+    "".extFun()
+    "".extFun(1)
+}

@@ -1,6 +1,6 @@
 package to
 
-import a.c
 import a.b
+import a.c
 
 fun f() = c + b

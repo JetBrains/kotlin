@@ -1,0 +1,9 @@
+// NAME_COUNT_TO_USE_STAR_IMPORT: 1
+package ppp
+
+import java.sql.Date
+import java.util.*
+
+fun foo() {
+    val v = HashMap<Date, ArrayList<Int>>()
+}

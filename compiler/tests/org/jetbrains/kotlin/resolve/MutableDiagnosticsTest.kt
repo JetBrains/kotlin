@@ -18,13 +18,13 @@ package org.jetbrains.kotlin.resolve
 
 import org.junit.Assert
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
 import org.jetbrains.kotlin.resolve.lazy.KotlinTestWithEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.resolve.diagnostics.MutableDiagnosticsWithSuppression
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.psi.*
 
 class MutableDiagnosticsTest : KotlinTestWithEnvironment() {
     override fun createEnvironment(): JetCoreEnvironment? {
@@ -131,6 +131,10 @@ class MutableDiagnosticsTest : KotlinTestWithEnvironment() {
 
     private inner class DummyDiagnostic : Diagnostic {
         val dummyElement = JetPsiFactory(getEnvironment().getProject()).createType("Int")
+
+        ;{
+            dummyElement.getContainingJetFile().doNotAnalyze = null
+        }
 
         override fun getFactory() = unimplemented()
         override fun getSeverity() = unimplemented()

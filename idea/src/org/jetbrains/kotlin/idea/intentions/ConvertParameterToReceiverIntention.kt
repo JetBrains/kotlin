@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 
 public class ConvertParameterToReceiverIntention: JetSelfTargetingIntention<JetParameter>("convert.parameter.to.receiver.intention", javaClass()) {
     override fun isApplicableTo(element: JetParameter): Boolean {
+        if (element.isVarArg()) return false
         val function = element.getStrictParentOfType<JetNamedFunction>() ?: return false
         return function.getValueParameterList() == element.getParent() && function.getReceiverTypeReference() == null
     }

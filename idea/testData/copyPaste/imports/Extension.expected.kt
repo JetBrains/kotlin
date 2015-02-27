@@ -1,8 +1,8 @@
 package to
 
 import a.f
-import a.p
 import a.g
+import a.p
 
 fun foo() {
     3.f()

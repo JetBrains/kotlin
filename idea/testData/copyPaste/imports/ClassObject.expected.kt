@@ -1,8 +1,8 @@
 package to
 
-import a.T
 import a.A
 import a.B
+import a.T
 
 fun g(t: T): Int {
     g(A)

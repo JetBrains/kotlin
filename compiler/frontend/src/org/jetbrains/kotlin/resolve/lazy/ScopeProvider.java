@@ -100,7 +100,7 @@ public class ScopeProvider implements DeclarationScopeProvider, FileScopeProvide
 
     private LazyFileScope createFileScope(@NotNull JetFile file) {
         TemporaryBindingTrace tempTrace = TemporaryBindingTrace.create(resolveSession.getTrace(), "Transient trace for default imports lazy resolve");
-        return LazyFileScope.OBJECT$.create(
+        return LazyFileScope.Factory.create(
                 resolveSession,
                 file,
                 defaultImports.invoke(),

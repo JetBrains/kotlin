@@ -165,6 +165,7 @@ public class TypeResolver(
                                 else {
                                     c.trace.report(WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(type.getTypeArgumentList(), expectedArgumentCount))
                                 }
+                                result = type(ErrorUtils.createErrorTypeWithArguments("" + typeConstructor, arguments))
                             }
                             else {
                                 if (Flexibility.FLEXIBLE_TYPE_CLASSIFIER.asSingleFqName() == DescriptorUtils.getFqName(classifierDescriptor)

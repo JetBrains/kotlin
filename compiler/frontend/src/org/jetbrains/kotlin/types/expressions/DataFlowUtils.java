@@ -182,7 +182,7 @@ public class DataFlowUtils {
         }
 
         if (expression instanceof JetConstantExpression) {
-            CompileTimeConstant<?> value = ConstantExpressionEvaluator.OBJECT$.evaluate(expression, c.trace, c.expectedType);
+            CompileTimeConstant<?> value = ConstantExpressionEvaluator.evaluate(expression, c.trace, c.expectedType);
             if (value instanceof IntegerValueTypeConstant) {
                 value = EvaluatePackage.createCompileTimeConstantWithType((IntegerValueTypeConstant) value, c.expectedType);
             }

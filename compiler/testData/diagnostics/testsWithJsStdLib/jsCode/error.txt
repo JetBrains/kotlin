@@ -1,0 +1,7 @@
+package
+
+internal val code: kotlin.String = "
+    var s = "hello"
+    + );
+"
+internal fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit

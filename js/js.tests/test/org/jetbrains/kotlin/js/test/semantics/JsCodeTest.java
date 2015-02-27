@@ -85,11 +85,11 @@ public final class JsCodeTest extends SingleFileTranslationWithDirectivesTest {
     }
 
     public void testLabelSiblingClash() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 
     public void testLabelNestedClash() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 
     public void testTryCatchFinally() throws Exception {

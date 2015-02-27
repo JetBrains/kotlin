@@ -40,12 +40,13 @@ import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.JetScope
+import kotlin.platform.platformStatic
 
 private val LOG = Logger.getInstance(javaClass<KotlinCacheService>())
 
 public class KotlinCacheService(val project: Project) {
     class object {
-        public fun getInstance(project: Project): KotlinCacheService = ServiceManager.getService(project, javaClass<KotlinCacheService>())!!
+        platformStatic public fun getInstance(project: Project): KotlinCacheService = ServiceManager.getService(project, javaClass<KotlinCacheService>())!!
     }
 
     public fun getResolutionFacade(elements: List<JetElement>): ResolutionFacade {
@@ -68,7 +69,7 @@ public class KotlinCacheService(val project: Project) {
             }
 
             override fun getFileTopLevelScope(file: JetFile): JetScope {
-                return getLazyResolveSession(file).getScopeProvider().getFileScope(file)
+                return cache.getLazyResolveSession(file).getScopeProvider().getFileScope(file)
             }
 
             override fun <T> get(extension: CacheExtension<T>): T {

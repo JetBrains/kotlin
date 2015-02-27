@@ -1,8 +1,8 @@
 package to
 
-import a.plus
-import a.infix
 import a.A
+import a.infix
+import a.plus
 
 fun f(a: A) {
     a + a

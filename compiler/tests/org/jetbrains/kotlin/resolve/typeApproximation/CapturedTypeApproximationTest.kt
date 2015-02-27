@@ -98,7 +98,7 @@ public class CapturedTypeApproximationTest() : JetLiteFixture() {
 
                 appendln(testType)
 
-                if (bindingContext.getDiagnostics().any { it.getSeverity() == Severity.ERROR }) {
+                if (bindingContext.getDiagnostics().noSuppression().any { it.getSeverity() == Severity.ERROR }) {
                     appendln("  compiler error\n")
                     continue
                 }

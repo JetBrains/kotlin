@@ -1,7 +1,7 @@
 package to
 
-import a.f
 import a.ext
+import a.f
 
 fun g() {
     f {

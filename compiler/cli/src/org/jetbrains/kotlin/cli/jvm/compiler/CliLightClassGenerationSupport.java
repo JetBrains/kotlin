@@ -203,7 +203,7 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
         if (PackagePartClassUtils.getPackageFilesWithCallables(filesInPackage).isEmpty()) return Collections.emptyList();
 
         //noinspection RedundantTypeArguments
-        return UtilsPackage.<PsiClass>emptyOrSingletonList(KotlinLightClassForPackage.OBJECT$.create(psiManager, packageFqName, scope, filesInPackage));
+        return UtilsPackage.<PsiClass>emptyOrSingletonList(KotlinLightClassForPackage.Factory.create(psiManager, packageFqName, scope, filesInPackage));
     }
 
     @NotNull
