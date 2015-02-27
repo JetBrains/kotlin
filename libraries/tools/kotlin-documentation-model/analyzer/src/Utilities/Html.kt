@@ -6,4 +6,3 @@ package org.jetbrains.dokka
  * Replaces & with &amp;, < with &lt; and > with &gt;
  */
 public fun String.htmlEscape(): String = replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-
