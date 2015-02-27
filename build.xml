@@ -366,7 +366,6 @@
                 <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.javascript.stdlib}"/>
                 <attribute name="Implementation-Version" value="${build.number}"/>
                 <attribute name="Specification-Title" value="${manifest.spec.title.kotlin.javascript.lib}"/>
-                <attribute name="Kotlin-JS-Module-Name" value="stdlib"/>
             </manifest>
         </jar>
     </target>
