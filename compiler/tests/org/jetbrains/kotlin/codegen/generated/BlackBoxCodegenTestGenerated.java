@@ -6303,6 +6303,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("clashingDefaultConstructors.kt")
+        public void testClashingDefaultConstructors() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/clashingDefaultConstructors.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("dataClasses.kt")
         public void testDataClasses() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/dataClasses.kt");

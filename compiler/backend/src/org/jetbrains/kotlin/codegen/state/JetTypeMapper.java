@@ -77,6 +77,7 @@ import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class JetTypeMapper {
+    private static final String DEFAULT_CONSTRUCTOR_MARKER_INTERNAL_CLASS_NAME = "kotlin/jvm/internal/DefaultConstructorMarker";
     private final BindingContext bindingContext;
     private final ClassBuilderMode classBuilderMode;
 
@@ -713,8 +714,15 @@ public class JetTypeMapper {
             argumentsCount--;
         }
         int maskArgumentsCount = (argumentsCount + Integer.SIZE - 1) / Integer.SIZE;
-        String maskArguments = StringUtil.repeat(Type.INT_TYPE.getDescriptor(), maskArgumentsCount);
-        return descriptor.replace(")", maskArguments + ")");
+        String additionalArgs = StringUtil.repeat(Type.INT_TYPE.getDescriptor(), maskArgumentsCount);
+        if (isConstructor(method)) {
+            additionalArgs += Type.getObjectType(DEFAULT_CONSTRUCTOR_MARKER_INTERNAL_CLASS_NAME).getDescriptor();
+        }
+        return descriptor.replace(")", additionalArgs + ")");
+    }
+
+    private static boolean isConstructor(@NotNull Method method) {
+        return "<init>".equals(method.getName());
     }
 
     @NotNull
@@ -722,7 +730,7 @@ public class JetTypeMapper {
         Method jvmSignature = mapSignature(functionDescriptor, kind).getAsmMethod();
         Type ownerType = mapOwner(functionDescriptor, isCallInsideSameModuleAsDeclared(functionDescriptor, context, getOutDirectory()));
         String descriptor = getDefaultDescriptor(jvmSignature, functionDescriptor.getExtensionReceiverParameter() != null);
-        boolean isConstructor = "<init>".equals(jvmSignature.getName());
+        boolean isConstructor = isConstructor(jvmSignature);
         if (!isStaticMethod(kind, functionDescriptor) && !isConstructor) {
             descriptor = descriptor.replace("(", "(" + ownerType.getDescriptor());
         }

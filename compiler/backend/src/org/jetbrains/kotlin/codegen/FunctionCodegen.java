@@ -585,6 +585,10 @@ public class FunctionCodegen {
         for (int m : masks) {
             v.iconst(m);
         }
+
+        // constructors with default arguments has last synthetic argument of specific type
+        v.aconst(null);
+
         String desc = JetTypeMapper.getDefaultDescriptor(method.getAsmMethod(), false);
         v.invokespecial(methodOwner.getInternalName(), "<init>", desc, false);
         v.areturn(Type.VOID_TYPE);

@@ -8,7 +8,7 @@ class JavaClass {
         catch (E1 e) {}
 
         try {
-            new One(1, 0);
+            new One(1, 0, null);
         }
         catch (E1 e) {}
 
