@@ -12,6 +12,13 @@ public fun <T> streamOf(progression: Progression<T>): Stream<T> = object : Strea
     override fun iterator(): Iterator<T> = progression.iterator()
 }
 
+/**
+ * A stream that returns the values from the underlying [stream] that either match or do not match
+ * the specified [predicate].
+ *
+ * @param sendWhen If `true`, values for which the predicate returns `true` are returned. Otherwise,
+ * values for which the predicate returns `false` are returned
+ */
 public class FilteringStream<T>(private val stream: Stream<T>,
                                 private val sendWhen: Boolean = true,
                                 private val predicate: (T) -> Boolean
@@ -78,6 +85,10 @@ public class TransformingIndexedStream<T, R>(private val stream: Stream<T>, priv
     }
 }
 
+/**
+ * A stream which combines values from the underlying [stream] with their indices and returns them as
+ * [IndexedValue] objects.
+ */
 public class IndexingStream<T>(private val stream: Stream<T>) : Stream<IndexedValue<T>> {
     override fun iterator(): Iterator<IndexedValue<T>> = object : Iterator<IndexedValue<T>> {
         val iterator = stream.iterator()
@@ -248,6 +259,10 @@ public class TakeWhileStream<T>(private val stream: Stream<T>,
     }
 }
 
+/**
+ * A stream that skips the specified number of values from the underlying stream and returns
+ * all values after that.
+ */
 public class DropStream<T>(private val stream: Stream<T>,
                            private val count: Int
                           ) : Stream<T> {
@@ -280,6 +295,10 @@ public class DropStream<T>(private val stream: Stream<T>,
     }
 }
 
+/**
+ * A stream that skips the values from the underlying stream while the given [predicate] returns `true` and returns
+ * all values after that.
+ */
 public class DropWhileStream<T>(private val stream: Stream<T>,
                                 private val predicate: (T) -> Boolean
                                ) : Stream<T> {
@@ -322,6 +341,10 @@ public class DropWhileStream<T>(private val stream: Stream<T>,
     }
 }
 
+/**
+ * A stream which repeatedly calls the specified [producer] function and returns its return values, until
+ * `null` is returned from [producer].
+ */
 public class FunctionStream<T : Any>(private val producer: () -> T?) : Stream<T> {
     override fun iterator(): Iterator<T> = object : Iterator<T> {
         var nextState: Int = -1 // -1 for unknown, 0 for done, 1 for continue

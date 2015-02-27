@@ -16,10 +16,25 @@
 
 package kotlin
 
+/**
+ * The base class for all errors and exceptions. Only instances of this class can be thrown or caught.
+ *
+ * @param message the detail message string.
+ * @param cause the cause of this throwable.
+ */
 public open class Throwable(message: String? = null, cause: Throwable? = null) {
+    /**
+     * Returns the detail message of this throwable.
+     */
     public fun getMessage(): String?
 
+    /**
+     * Returns the cause of this throwable.
+     */
     public fun getCause(): Throwable?
 
+    /**
+     * Prints the stack trace of this throwable to the standard output.
+     */
     public fun printStackTrace(): Unit
 }
