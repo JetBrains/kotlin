@@ -48,6 +48,12 @@ public class AndroidBytecodeShapeTestGenerated extends AbstractAndroidBytecodeSh
         doTest(fileName);
     }
 
+    @TestMetadata("extensionFunctionsBaseClass")
+    public void testExtensionFunctionsBaseClass() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/codegen/bytecodeShape/extensionFunctionsBaseClass/");
+        doTest(fileName);
+    }
+
     @TestMetadata("fqNameInAttr")
     public void testFqNameInAttr() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/codegen/bytecodeShape/fqNameInAttr/");
