@@ -409,6 +409,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledJava(fileName);
             }
 
+            @TestMetadata("EnumArgumentWithCustomToString.java")
+            public void testEnumArgumentWithCustomToString() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/annotations/EnumArgumentWithCustomToString.java");
+                doTestCompiledJava(fileName);
+            }
+
             @TestMetadata("EnumInParam.java")
             public void testEnumInParam() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/annotations/EnumInParam.java");
@@ -1904,6 +1910,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             @TestMetadata("AnnotatedMethod.kt")
             public void testAnnotatedMethod() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/AnnotatedMethod.kt");
+                doTestCompiledKotlin(fileName);
+            }
+
+            @TestMetadata("EnumArgumentWithCustomToString.kt")
+            public void testEnumArgumentWithCustomToString() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/EnumArgumentWithCustomToString.kt");
                 doTestCompiledKotlin(fileName);
             }
 

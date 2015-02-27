@@ -22,10 +22,10 @@ import org.jetbrains.kotlin.name.Name
 abstract class ReflectJavaAnnotationArgument(
         override val name: Name?
 ) : JavaAnnotationArgument {
-    class object {
+    default object Factory {
         fun create(value: Any, name: Name?): ReflectJavaAnnotationArgument {
             return when {
-                value.javaClass.isEnum() -> ReflectJavaEnumValueAnnotationArgument(name, value)
+                value.javaClass.isEnumClassOrSpecializedEnumEntryClass() -> ReflectJavaEnumValueAnnotationArgument(name, value as Enum<*>)
                 value is Annotation -> ReflectJavaAnnotationAsAnnotationArgument(name, value)
                 value is Array<Any> -> ReflectJavaArrayAnnotationArgument(name, value)
                 value is Class<*> -> ReflectJavaClassObjectAnnotationArgument(name, value)
@@ -49,9 +49,13 @@ class ReflectJavaArrayAnnotationArgument(
 
 class ReflectJavaEnumValueAnnotationArgument(
         name: Name?,
-        private val value: Any
+        private val value: Enum<*>
 ) : ReflectJavaAnnotationArgument(name), JavaEnumValueAnnotationArgument {
-    override fun resolve() = ReflectJavaField(value.javaClass.getDeclaredField(value.toString()))
+    override fun resolve(): ReflectJavaField {
+        val clazz = value.javaClass
+        val enumClass = if (clazz.isEnum()) clazz else clazz.getEnclosingClass()
+        return ReflectJavaField(enumClass.getDeclaredField(value.name()))
+    }
 }
 
 class ReflectJavaClassObjectAnnotationArgument(

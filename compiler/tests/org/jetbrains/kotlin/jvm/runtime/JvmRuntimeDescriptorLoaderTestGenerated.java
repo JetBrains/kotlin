@@ -87,6 +87,12 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
                 doTest(fileName);
             }
 
+            @TestMetadata("EnumArgumentWithCustomToString.kt")
+            public void testEnumArgumentWithCustomToString() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/EnumArgumentWithCustomToString.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("SimpleAnnotation.kt")
             public void testSimpleAnnotation() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/SimpleAnnotation.kt");
@@ -3430,6 +3436,12 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
             @TestMetadata("EmptyArrayInParam.java")
             public void testEmptyArrayInParam() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/annotations/EmptyArrayInParam.java");
+                doTest(fileName);
+            }
+
+            @TestMetadata("EnumArgumentWithCustomToString.java")
+            public void testEnumArgumentWithCustomToString() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/annotations/EnumArgumentWithCustomToString.java");
                 doTest(fileName);
             }
 

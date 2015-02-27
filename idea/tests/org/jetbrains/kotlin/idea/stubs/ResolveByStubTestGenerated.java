@@ -81,6 +81,12 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
             doTest(fileName);
         }
 
+        @TestMetadata("EnumArgumentWithCustomToString.kt")
+        public void testEnumArgumentWithCustomToString() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/EnumArgumentWithCustomToString.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("SimpleAnnotation.kt")
         public void testSimpleAnnotation() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/SimpleAnnotation.kt");

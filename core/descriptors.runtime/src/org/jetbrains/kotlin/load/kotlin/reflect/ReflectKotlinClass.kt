@@ -159,19 +159,21 @@ private object ReflectClassStructure {
                 visitor.visit(name, value)
             }
             javaClass<Enum<*>>().isAssignableFrom(clazz) -> {
-                visitor.visitEnum(name, clazz.classId, Name.identifier(value.toString()))
+                // isEnum returns false for specialized enum constants (enum entries which are subclasses)
+                val classId = (if (clazz.isEnum()) clazz else clazz.getEnclosingClass()).classId
+                visitor.visitEnum(name, classId, Name.identifier((value as Enum<*>).name()))
             }
-            javaClass<Annotation>().isAssignableFrom(clazz) -> {
+            clazz.isAnnotation() -> {
                 // TODO: support values of annotation types
                 throw UnsupportedOperationException("Values of annotation types are not yet supported in Kotlin reflection: $value")
             }
             clazz.isArray() -> {
                 val elementVisitor = visitor.visitArray(name) ?: return
                 val componentType = clazz.getComponentType()
-                if (javaClass<Enum<*>>().isAssignableFrom(componentType)) {
-                    val componentClassName = componentType.classId
+                if (componentType.isEnum()) {
+                    val enumClassId = componentType.classId
                     for (element in value as Array<*>) {
-                        elementVisitor.visitEnum(componentClassName, Name.identifier(element.toString()))
+                        elementVisitor.visitEnum(enumClassId, Name.identifier((element as Enum<*>).name()))
                     }
                 }
                 else {

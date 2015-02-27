@@ -149,9 +149,12 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
             else if (header == null ||
                      (header.kind == KotlinClassHeader.Kind.CLASS && header.classKind == JvmAnnotationNames.KotlinClass.Kind.CLASS)) {
                 // Either a normal Kotlin class or a Java class
-                val classDescriptor = module.findClassAcrossModuleDependencies(klass.classId).sure("Couldn't resolve class $className")
-                if (DescriptorUtils.isTopLevelDeclaration(classDescriptor)) {
-                    scope.addClassifierDescriptor(classDescriptor)
+                val classId = klass.classId
+                if (!classId.isLocal()) {
+                    val classDescriptor = module.findClassAcrossModuleDependencies(classId).sure("Couldn't resolve class $className")
+                    if (DescriptorUtils.isTopLevelDeclaration(classDescriptor)) {
+                        scope.addClassifierDescriptor(classDescriptor)
+                    }
                 }
             }
         }

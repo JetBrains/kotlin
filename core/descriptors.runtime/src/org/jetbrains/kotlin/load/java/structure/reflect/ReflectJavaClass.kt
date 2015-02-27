@@ -80,7 +80,11 @@ public class ReflectJavaClass(private val klass: Class<*>) : ReflectJavaElement(
             .map(::ReflectJavaField)
             .toList()
 
-    override fun getConstructors() = klass.getDeclaredConstructors().map(::ReflectJavaConstructor)
+    override fun getConstructors() = klass.getDeclaredConstructors()
+            .stream()
+            .filter { constructor -> !constructor.isSynthetic() }
+            .map(::ReflectJavaConstructor)
+            .toList()
 
     override fun getDefaultType(): ReflectJavaClassifierType = throw UnsupportedOperationException()
 

@@ -34,6 +34,9 @@ private fun calculateVisibility(modifiers: Int): Visibility {
     }
 }
 
+public fun Class<*>.isEnumClassOrSpecializedEnumEntryClass(): Boolean =
+        javaClass<Enum<*>>().isAssignableFrom(this)
+
 public val Class<*>.fqName: FqName
     get() = classId.asSingleFqName().toSafe()
 
