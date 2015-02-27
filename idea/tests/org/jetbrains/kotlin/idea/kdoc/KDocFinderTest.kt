@@ -16,12 +16,13 @@
 
 package org.jetbrains.kotlin.idea.kdoc
 
-import org.jetbrains.kotlin.idea.PluginTestCaseBase
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
-import org.junit.Assert
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.idea.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.JetFile
+import org.junit.Assert
 
 public class KDocFinderTest() : LightPlatformCodeInsightFixtureTestCase() {
     override fun getTestDataPath(): String {
@@ -35,5 +36,14 @@ public class KDocFinderTest() : LightPlatformCodeInsightFixtureTestCase() {
         val constructorDescriptor = descriptor.getUnsubstitutedPrimaryConstructor()
         val doc = KDocFinder.findKDoc(constructorDescriptor)
         Assert.assertEquals("Doc for constructor of class C.", doc!!.getContent())
+    }
+
+    public fun testOverridden() {
+        myFixture.configureByFile(getTestName(false) + ".kt")
+        val declaration = (myFixture.getFile() as JetFile).getDeclarations().single { it.getName() == "Bar" }
+        val descriptor = declaration.resolveToDescriptor() as ClassDescriptor
+        val overriddenFunctionDescriptor = descriptor.getDefaultType().getMemberScope().getFunctions(Name.identifier("xyzzy")).single()
+        val doc = KDocFinder.findKDoc(overriddenFunctionDescriptor)
+        Assert.assertEquals("Doc for method xyzzy", doc!!.getContent())
     }
 }
