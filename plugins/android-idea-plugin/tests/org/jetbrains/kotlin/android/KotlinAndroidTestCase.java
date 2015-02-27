@@ -150,8 +150,8 @@ public abstract class KotlinAndroidTestCase extends KotlinAndroidTestCaseBase {
         ((StartupManagerImpl) StartupManager.getInstance(getProject())).runPostStartupActivities();
         VfsRootAccess.allowRootAccess(JetTestUtils.getHomeDirectory());
 
-        kotlinInternalModeOriginalValue = KotlinInternalMode.OBJECT$.getEnabled();
-        KotlinInternalMode.OBJECT$.setEnabled(true);
+        kotlinInternalModeOriginalValue = KotlinInternalMode.Instance.getEnabled();
+        KotlinInternalMode.Instance.setEnabled(true);
     }
 
     protected boolean isToAddSdk() {
@@ -233,7 +233,7 @@ public abstract class KotlinAndroidTestCase extends KotlinAndroidTestCaseBase {
 
     @Override
     public void tearDown() throws Exception {
-        KotlinInternalMode.OBJECT$.setEnabled(kotlinInternalModeOriginalValue);
+        KotlinInternalMode.Instance.setEnabled(kotlinInternalModeOriginalValue);
         VfsRootAccess.disallowRootAccess(JetTestUtils.getHomeDirectory());
 
         Set<JetFile> builtInsSources = getProject().getComponent(BuiltInsReferenceResolver.class).getBuiltInsSources();

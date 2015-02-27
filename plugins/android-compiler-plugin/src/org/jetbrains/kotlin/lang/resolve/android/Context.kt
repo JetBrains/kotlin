@@ -58,7 +58,7 @@ open class Context(val buffer: StringBuffer = StringBuffer(), private var indent
 
 
     public fun trim(num: Int) {
-        buffer.delete(buffer.length - num, buffer.length)
+        buffer.delete(buffer.length() - num, buffer.length())
     }
 
     public fun fork(newBuffer: StringBuffer = StringBuffer(),

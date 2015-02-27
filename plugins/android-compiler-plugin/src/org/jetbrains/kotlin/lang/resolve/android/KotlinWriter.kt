@@ -54,7 +54,7 @@ class KotlinStringWriter : KotlinWriter {
         body.writeln("val $name: $retType")
         body.incIndent()
         body.write("get() ")
-        if (getterBody.size > 1) {
+        if (getterBody.size() > 1) {
             body.writeNoIndent("{\n")
             body.incIndent()
             for (stmt in getterBody) {
