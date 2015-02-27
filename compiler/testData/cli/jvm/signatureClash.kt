@@ -23,7 +23,7 @@ class SubTr : Tr {
 // Clashing synthetic accessors are only reported in compiler, IDE doesn't see them
 class C {
     private fun f() {}
-    fun `f$b$0`(c: C) {}
+    fun `access$f$0`(c: C) {}
 
     class Nested {
 

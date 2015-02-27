@@ -60,6 +60,7 @@ import java.util.regex.Pattern;
         BlackBoxWithStdlibCodegenTestGenerated.Reified.class,
         BlackBoxWithStdlibCodegenTestGenerated.StoreStackBeforeInline.class,
         BlackBoxWithStdlibCodegenTestGenerated.Strings.class,
+        BlackBoxWithStdlibCodegenTestGenerated.Synthetic.class,
         BlackBoxWithStdlibCodegenTestGenerated.ToArray.class,
         BlackBoxWithStdlibCodegenTestGenerated.Vararg.class,
         BlackBoxWithStdlibCodegenTestGenerated.When.class,
@@ -3197,6 +3198,21 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
         @TestMetadata("stringPlusOnlyWorksOnString.kt")
         public void testStringPlusOnlyWorksOnString() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/strings/stringPlusOnlyWorksOnString.kt");
+            doTestWithStdlib(fileName);
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/boxWithStdlib/synthetic")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Synthetic extends AbstractBlackBoxCodegenTest {
+        public void testAllFilesPresentInSynthetic() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/synthetic"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("syntheticAccessorNames.kt")
+        public void testSyntheticAccessorNames() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/synthetic/syntheticAccessorNames.kt");
             doTestWithStdlib(fileName);
         }
     }

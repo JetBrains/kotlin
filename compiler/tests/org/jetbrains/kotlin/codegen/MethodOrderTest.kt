@@ -96,7 +96,15 @@ public class MethodOrderTest: CodegenTestCase() {
                     }
                 """,
                 "Outer",
-                listOf("<clinit>()V", "c()V", "<init>(ILjava/lang/String;)V", "getB\$b$0(LOuter;)Ljava/lang/String;", "setB\$b$0(LOuter;Ljava/lang/String;)V", "getA\$b$1(LOuter;)I", "c\$b$2(LOuter;)V")
+                listOf(
+                        "<clinit>()V",
+                        "c()V",
+                        "<init>(ILjava/lang/String;)V",
+                        "access\$getB$0(LOuter;)Ljava/lang/String;",
+                        "access\$setB$0(LOuter;Ljava/lang/String;)V",
+                        "access\$getA$1(LOuter;)I",
+                        "access\$c$2(LOuter;)V"
+                )
         )
     }
 

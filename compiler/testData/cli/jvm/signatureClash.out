@@ -1,4 +1,4 @@
-WARNING: compiler/testData/cli/jvm/signatureClash.kt: (26, 17) Parameter 'c' is never used
+WARNING: compiler/testData/cli/jvm/signatureClash.kt: (26, 22) Parameter 'c' is never used
 ERROR: compiler/testData/cli/jvm/signatureClash.kt: (6, 5) Accidental override: The following declarations have the same JVM signature (getX()I):
     fun getX(): kotlin.Int
     fun <get-x>(): kotlin.Int
@@ -20,10 +20,10 @@ ERROR: compiler/testData/cli/jvm/signatureClash.kt: (19, 7) Platform declaration
 ERROR: compiler/testData/cli/jvm/signatureClash.kt: (20, 5) Platform declaration clash: The following declarations have the same JVM signature (getTr()I):
     fun <get-tr>(): kotlin.Int
     fun getTr(): kotlin.Int
-ERROR: compiler/testData/cli/jvm/signatureClash.kt: (24, 7) Platform declaration clash: The following declarations have the same JVM signature (f$b$0(LC;)V):
-    fun `f$b$0`(c: C): kotlin.Unit
+ERROR: compiler/testData/cli/jvm/signatureClash.kt: (24, 7) Platform declaration clash: The following declarations have the same JVM signature (access$f$0(LC;)V):
+    fun `access$f$0`(c: C): kotlin.Unit
     fun f(): kotlin.Unit
-ERROR: compiler/testData/cli/jvm/signatureClash.kt: (26, 5) Platform declaration clash: The following declarations have the same JVM signature (f$b$0(LC;)V):
-    fun `f$b$0`(c: C): kotlin.Unit
+ERROR: compiler/testData/cli/jvm/signatureClash.kt: (26, 5) Platform declaration clash: The following declarations have the same JVM signature (access$f$0(LC;)V):
+    fun `access$f$0`(c: C): kotlin.Unit
     fun f(): kotlin.Unit
 COMPILATION_ERROR

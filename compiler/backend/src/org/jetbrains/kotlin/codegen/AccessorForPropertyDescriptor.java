@@ -32,6 +32,7 @@ import java.util.Collections;
 
 public class AccessorForPropertyDescriptor extends PropertyDescriptorImpl implements AccessorForCallableDescriptor<PropertyDescriptor> {
     private final PropertyDescriptor calleeDescriptor;
+    private final int accessorIndex;
 
     public AccessorForPropertyDescriptor(@NotNull PropertyDescriptor pd, @NotNull DeclarationDescriptor containingDeclaration, int index) {
         this(pd, pd.getType(), DescriptorUtils.getReceiverParameterType(pd.getExtensionReceiverParameter()), pd.getDispatchReceiverParameter(), containingDeclaration, index);
@@ -46,10 +47,11 @@ public class AccessorForPropertyDescriptor extends PropertyDescriptorImpl implem
             int index
     ) {
         super(containingDeclaration, null, Annotations.EMPTY, Modality.FINAL, Visibilities.LOCAL,
-              original.isVar(), Name.identifier(original.getName() + "$b$" + index),
+              original.isVar(), Name.identifier("access$" + getIndexedAccessorSuffix(original, index)),
               Kind.DECLARATION, SourceElement.NO_SOURCE);
 
         this.calleeDescriptor = original;
+        this.accessorIndex = index;
         setType(propertyType, Collections.<TypeParameterDescriptorImpl>emptyList(), dispatchReceiverParameter, receiverType);
         initialize(new Getter(this), new Setter(this));
     }
@@ -88,5 +90,15 @@ public class AccessorForPropertyDescriptor extends PropertyDescriptorImpl implem
     @Override
     public PropertyDescriptor getCalleeDescriptor() {
         return calleeDescriptor;
+    }
+
+    @NotNull
+    public String getIndexedAccessorSuffix() {
+        return getIndexedAccessorSuffix(calleeDescriptor, accessorIndex);
+    }
+
+    @NotNull
+    private static String getIndexedAccessorSuffix(@NotNull PropertyDescriptor original, int index) {
+        return original.getName() + "$" + index;
     }
 }

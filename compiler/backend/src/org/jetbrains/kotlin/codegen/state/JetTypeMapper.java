@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.load.kotlin.nativeDeclarations.NativeDeclarationsPackage;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetFile;
@@ -590,12 +591,16 @@ public class JetTypeMapper {
                 return property.getName().asString();
             }
 
-            if (descriptor instanceof PropertyGetterDescriptor) {
-                return PropertyCodegen.getterName(property.getName());
-            }
-            else {
-                return PropertyCodegen.setterName(property.getName());
-            }
+            boolean isAccessor = property instanceof AccessorForPropertyDescriptor;
+            Name propertyName = isAccessor
+                                ? Name.identifier(((AccessorForPropertyDescriptor) property).getIndexedAccessorSuffix())
+                                : property.getName();
+
+            String accessorName = descriptor instanceof PropertyGetterDescriptor
+                                  ? PropertyCodegen.getterName(propertyName)
+                                  : PropertyCodegen.setterName(propertyName);
+
+            return isAccessor ? "access$" + accessorName : accessorName;
         }
         else if (isLocalNamedFun(descriptor)) {
             return "invoke";
