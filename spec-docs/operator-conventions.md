@@ -135,9 +135,16 @@ Parentheses are translated to calls to invoke with appropriate number of argumen
 For the assignment operations, e.g. `a += b`, the compiler performs the following steps:
 
 * If the function from the right column is available
-  * If the corresponding binary function (i.e. `plus()` for `plusAssign()`) is available too, report error (ambiguity).
+  * If the left-hand side can be assigned to and the corresponding binary function (i.e. `plus()` for `plusAssign()`) is available, report error (ambiguity).
   * Make sure its return type is `Unit`, and report an error otherwise.
   * Generate code for `a.plusAssign(b)`
 * Otherwise, try to generate code for `a = a + b` (this includes a type check: the type of `a + b` must be a subtype of `a`).
 
 *Note*: assignments are *NOT* expressions in Kotlin.
+
+**Discussion of the ambiguity rule**:
+We raise an error when both `plus()` and `plusAssign()` are available only if the lhs is assignable. Otherwise, the availability of `plus()`
+is irrelevant, because we know that `a = a + b` can not compile. An important concern here is what happens when the lhs *becomes assignable*
+after the fact (e.g. the user changes *val* to *var* or provides a `set()` function for indexing convention): in this case, the previously
+correct call site may become incorrect, but not the other way around, which is safe, because former calls to `plusAssign()` can not be silently
+turned into calls to `plus()`.

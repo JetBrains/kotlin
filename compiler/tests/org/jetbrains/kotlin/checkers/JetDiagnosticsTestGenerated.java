@@ -8110,6 +8110,24 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/operatorsOverloading/kt3450.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("plusAssignOnArray.kt")
+            public void testPlusAssignOnArray() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/operatorsOverloading/plusAssignOnArray.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("plusAssignOnLocal.kt")
+            public void testPlusAssignOnLocal() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/operatorsOverloading/plusAssignOnLocal.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("plusAssignOnProperty.kt")
+            public void testPlusAssignOnProperty() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/operatorsOverloading/plusAssignOnProperty.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("compiler/testData/diagnostics/tests/overload")
