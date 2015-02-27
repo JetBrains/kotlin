@@ -88,7 +88,7 @@ public class CliAndroidDeclarationsProvider(private val project: Project) : Exte
     }
 }
 
-public class AndroidExpressionCodegen : ExpressionCodegenExtension {
+public class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
     default object {
         private val PROPERTY_NAME = "_\$_findViewCache"
         private val METHOD_NAME = "_\$_findCachedViewById"
@@ -243,7 +243,7 @@ public class AndroidComponentRegistrar : ComponentRegistrar {
             project.registerService(javaClass<AndroidUIXmlProcessor>(), CliAndroidUIXmlProcessor(project, androidManifest, androidResPath))
 
             ExternalDeclarationsProvider.registerExtension(project, CliAndroidDeclarationsProvider(project))
-            ExpressionCodegenExtension.registerExtension(project, AndroidExpressionCodegen())
+            ExpressionCodegenExtension.registerExtension(project, AndroidExpressionCodegenExtension())
         }
     }
 }

@@ -23,7 +23,7 @@
 
   <extensions defaultExtensionNs="org.jetbrains.kotlin">
       <externalDeclarationsProvider implementation="org.jetbrains.kotlin.plugin.android.IDEAndroidExternalDeclarationsProvider"/>
-      <expressionCodegenExtension implementation="org.jetbrains.kotlin.android.AndroidExpressionCodegen"/>
+      <expressionCodegenExtension implementation="org.jetbrains.kotlin.android.AndroidExpressionCodegenExtension"/>
       <findUsagesHandlerDecorator implementation="org.jetbrains.kotlin.plugin.android.AndroidFindUsageHandlerDecorator"/>
       <simpleNameReferenceExtension implementation="org.jetbrains.kotlin.plugin.android.AndroidSimpleNameReferenceExtension"/>
   </extensions>

@@ -20,7 +20,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.extensions.ExternalDeclarationsProvider
 import org.jetbrains.kotlin.android.AndroidConfigurationKeys
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
-import org.jetbrains.kotlin.android.AndroidExpressionCodegen
+import org.jetbrains.kotlin.android.AndroidExpressionCodegenExtension
 import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.psi.JetFile
@@ -50,6 +50,6 @@ fun UsefulTestCase.createAndroidTestEnvironment(
     val myEnvironment = JetCoreEnvironment.createForTests(getTestRootDisposable()!!, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
     val project = myEnvironment.getProject()
     ExternalDeclarationsProvider.registerExtension(project, AndroidTestExternalDeclarationsProvider(project, resPath, manifestPath))
-    ExpressionCodegenExtension.registerExtension(project, AndroidExpressionCodegen())
+    ExpressionCodegenExtension.registerExtension(project, AndroidExpressionCodegenExtension())
     return myEnvironment
 }
