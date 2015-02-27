@@ -32,9 +32,6 @@ import java.util.Map;
 
 public interface CalculatedClosure {
     @Nullable
-    ResolvedCall<ConstructorDescriptor> getSuperCall();
-
-    @Nullable
     ClassDescriptor getCaptureThis();
 
     @Nullable

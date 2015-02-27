@@ -64,6 +64,7 @@ import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant;
 import org.jetbrains.kotlin.resolve.constants.evaluate.EvaluatePackage;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.resolve.scopes.receivers.*;
 import org.jetbrains.kotlin.types.Approximation;
@@ -1428,7 +1429,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
                 pushClosureOnStack(classDescriptor, true, defaultCallGenerator);
 
-                ResolvedCall<ConstructorDescriptor> superCall = bindingContext.get(CLOSURE, classDescriptor).getSuperCall();
+                ConstructorDescriptor primaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
+                assert primaryConstructor != null : "There should be primary constructor for object literal";
+                ResolvedCall<ConstructorDescriptor> superCall = getDelegationConstructorCall(bindingContext, primaryConstructor);
                 if (superCall != null) {
                     // For an anonymous object, we should also generate all non-default arguments that it captures for its super call
                     ConstructorDescriptor superConstructor = superCall.getResultingDescriptor();
@@ -1496,10 +1499,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             callGenerator.putCapturedValueOnStack(capturedVar, sharedVarType, paramIndex++);
         }
 
-        ResolvedCall<ConstructorDescriptor> superCall = closure.getSuperCall();
-        if (superCall != null) {
+
+        ClassDescriptor superClass = DescriptorUtilPackage.getSuperClassNotAny(classDescriptor);
+        if (superClass != null) {
             pushClosureOnStack(
-                    superCall.getResultingDescriptor().getContainingDeclaration(),
+                    superClass,
                     putThis && closure.getCaptureThis() == null,
                     callGenerator
             );

@@ -30,8 +30,6 @@ import java.util.*;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.getDirectMember;
 
 public final class MutableClosure implements CalculatedClosure {
-    private final ResolvedCall<ConstructorDescriptor> superCall;
-
     private final ClassDescriptor enclosingClass;
     private final CallableDescriptor enclosingFunWithReceiverDescriptor;
 
@@ -41,13 +39,8 @@ public final class MutableClosure implements CalculatedClosure {
     private Map<DeclarationDescriptor, EnclosedValueDescriptor> captureVariables;
     private List<Pair<String, Type>> recordedFields;
 
-    MutableClosure(
-            @NotNull ClassDescriptor classDescriptor,
-            @Nullable ResolvedCall<ConstructorDescriptor> superCall,
-            @Nullable ClassDescriptor enclosingClass
-    ) {
+    MutableClosure(@NotNull ClassDescriptor classDescriptor, @Nullable ClassDescriptor enclosingClass) {
         this.enclosingClass = enclosingClass;
-        this.superCall = superCall;
         this.enclosingFunWithReceiverDescriptor = enclosingExtensionMemberForClass(classDescriptor);
     }
 
@@ -66,11 +59,6 @@ public final class MutableClosure implements CalculatedClosure {
     @Nullable
     public ClassDescriptor getEnclosingClass() {
         return enclosingClass;
-    }
-
-    @Override
-    public ResolvedCall<ConstructorDescriptor> getSuperCall() {
-        return superCall;
     }
 
     @Override

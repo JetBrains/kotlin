@@ -896,7 +896,7 @@ public class JetTypeMapper {
             }
         }
 
-        ResolvedCall<ConstructorDescriptor> superCall = closure.getSuperCall();
+        ResolvedCall<ConstructorDescriptor> superCall = getDelegationConstructorCall(bindingContext, descriptor);
         // We may generate a slightly wrong signature for a local class / anonymous object in light classes mode but we don't care,
         // because such classes are not accessible from the outside world
         if (superCall != null && classBuilderMode == ClassBuilderMode.FULL) {
