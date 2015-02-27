@@ -46,4 +46,13 @@ public class KDocFinderTest() : LightPlatformCodeInsightFixtureTestCase() {
         val doc = KDocFinder.findKDoc(overriddenFunctionDescriptor)
         Assert.assertEquals("Doc for method xyzzy", doc!!.getContent())
     }
+
+    public fun testOverriddenWithSubstitutedType() {
+        myFixture.configureByFile(getTestName(false) + ".kt")
+        val declaration = (myFixture.getFile() as JetFile).getDeclarations().single { it.getName() == "Bar" }
+        val descriptor = declaration.resolveToDescriptor() as ClassDescriptor
+        val overriddenFunctionDescriptor = descriptor.getDefaultType().getMemberScope().getFunctions(Name.identifier("xyzzy")).single()
+        val doc = KDocFinder.findKDoc(overriddenFunctionDescriptor)
+        Assert.assertEquals("Doc for method xyzzy", doc!!.getContent())
+    }
 }
