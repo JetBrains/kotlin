@@ -128,6 +128,12 @@ public fun String.toDouble(): Double = java.lang.Double.parseDouble(this)
 
 public fun String.toCharList(): List<Char> = toCharArray().toList()
 
+/**
+ * Returns a subsequence of this sequence.
+ *
+ * @param start the start index (inclusive).
+ * @param end the end index (exclusive).
+ */
 public fun CharSequence.get(start: Int, end: Int): CharSequence = subSequence(start, end)
 
 public fun String.toByteArray(charset: String): ByteArray = (this as java.lang.String).getBytes(charset)
