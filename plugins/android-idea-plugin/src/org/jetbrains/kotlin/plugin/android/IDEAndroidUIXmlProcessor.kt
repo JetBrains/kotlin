@@ -16,16 +16,22 @@
 
 package org.jetbrains.kotlin.plugin.android
 
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.module.Module
 import org.jetbrains.kotlin.plugin.android.IDEAndroidResourceManager
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.plugin.android.AndroidXmlVisitor
-import org.jetbrains.kotlin.lang.resolve.android.AndroidUIXmlProcessor
-import org.jetbrains.kotlin.lang.resolve.android.AndroidWidget
+import com.intellij.psi.impl.*
+import kotlin.properties.*
+import org.jetbrains.kotlin.lang.resolve.android.*
 
 class IDEAndroidUIXmlProcessor(val module: Module) : AndroidUIXmlProcessor(module.getProject()) {
 
     override val resourceManager: IDEAndroidResourceManager = IDEAndroidResourceManager(module)
+
+    override val psiTreeChangePreprocessor by Delegates.lazy {
+        module.getProject().getExtensions(PsiTreeChangePreprocessor.EP_NAME).first { it is AndroidPsiTreeChangePreprocessor }
+    }
 
     override fun parseSingleFile(file: PsiFile): List<AndroidWidget> {
         val widgets = arrayListOf<AndroidWidget>()

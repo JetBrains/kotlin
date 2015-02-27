@@ -37,7 +37,6 @@ import org.xml.sax.helpers.DefaultHandler
 import org.xml.sax.Attributes
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.util.PsiModificationTracker
-import com.intellij.psi.impl.PsiModificationTrackerImpl
 import java.util.Queue
 import com.intellij.psi.PsiFile
 import com.intellij.openapi.diagnostic.Logger
@@ -52,6 +51,7 @@ import com.intellij.openapi.util.*
 import com.intellij.openapi.vfs.impl.*
 import com.intellij.openapi.vfs.*
 import kotlin.properties.*
+import com.intellij.psi.impl.*
 
 public abstract class AndroidUIXmlProcessor(protected val project: Project) {
 
@@ -64,13 +64,11 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
 
     public abstract val resourceManager: AndroidResourceManager
 
-    private val vfsTracker: VfsModificationTracker by Delegates.lazy {
-        VfsModificationTracker(project, resourceManager.getMainLayoutDirectory())
-    }
+    public abstract val psiTreeChangePreprocessor: PsiTreeChangePreprocessor
 
     private val cachedSources: CachedValue<List<String>> by Delegates.lazy {
         cachedValue {
-            Result.create(parse(), vfsTracker)
+            Result.create(parse(), psiTreeChangePreprocessor)
         }
     }
 
@@ -137,57 +135,3 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
     }
 
 }
-
-private class VfsModificationTracker(project: Project, resDirectory: VirtualFile?): SimpleModificationTracker() {
-    {
-        val connection = project.getMessageBus().connect();
-        connection.subscribe(VirtualFileManager.VFS_CHANGES, BulkVirtualFileListenerAdapter(
-                object : VirtualFileListener {
-                    fun incModificationCountIfLayout(file: VirtualFile) {
-                        if (resDirectory == null) {
-                            incModificationCount()
-                        } else {
-                            val probablyLayoutDir = file.getParent()
-                            val probablyResDir = file.getParent()?.getParent()
-                            if (resDirectory == probablyResDir && probablyLayoutDir?.getName()?.startsWith("layout") ?: false) {
-                                incModificationCount()
-                            }
-                        }
-                    }
-
-                    override fun contentsChanged(event: VirtualFileEvent) {
-                        incModificationCountIfLayout(event.getFile())
-                    }
-
-                    override fun propertyChanged(event: VirtualFilePropertyEvent) {
-                        incModificationCountIfLayout(event.getFile())
-                    }
-
-                    override fun fileCreated(event: VirtualFileEvent) {
-                        incModificationCountIfLayout(event.getFile())
-                    }
-
-                    override fun fileDeleted(event: VirtualFileEvent) {
-                        incModificationCountIfLayout(event.getFile())
-                    }
-
-                    override fun fileMoved(event: VirtualFileMoveEvent) {
-                        incModificationCountIfLayout(event.getFile())
-                    }
-
-                    override fun fileCopied(event: VirtualFileCopyEvent) {
-                        incModificationCountIfLayout(event.getFile())
-                    }
-
-                    override fun beforePropertyChange(event: VirtualFilePropertyEvent) {}
-
-                    override fun beforeContentsChange(event: VirtualFileEvent) {}
-
-                    override fun beforeFileDeletion(event: VirtualFileEvent) {}
-
-                    override fun beforeFileMovement(event: VirtualFileMoveEvent) {}
-                }
-        ))
-    }
-}
-

@@ -21,6 +21,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import java.io.ByteArrayInputStream
 import kotlin.properties.Delegates
+import com.intellij.psi.impl.*
+import com.intellij.openapi.components.*
 
 public class CliAndroidUIXmlProcessor(
         project: Project,
@@ -30,6 +32,10 @@ public class CliAndroidUIXmlProcessor(
 
     override val resourceManager: CliAndroidResourceManager by Delegates.lazy {
         CliAndroidResourceManager(project, manifestPath, mainResDirectory)
+    }
+
+    override val psiTreeChangePreprocessor: PsiTreeChangePreprocessor by Delegates.lazy {
+        project.getExtensions(PsiTreeChangePreprocessor.EP_NAME).first { it is AndroidPsiTreeChangePreprocessor }
     }
 
     override fun parseSingleFile(file: PsiFile): Collection<AndroidWidget> {

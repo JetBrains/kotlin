@@ -40,9 +40,6 @@ import org.jetbrains.kotlin.psi.JetClassBody
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
-import org.jetbrains.kotlin.lang.resolve.android.AndroidConst
-import org.jetbrains.kotlin.lang.resolve.android.AndroidUIXmlProcessor
-import org.jetbrains.kotlin.lang.resolve.android.CliAndroidUIXmlProcessor
 import org.jetbrains.kotlin.resolve.scopes.receivers.ClassReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.psi.JetThisExpression
@@ -52,6 +49,9 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.codegen.state.*
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.resolve.*
+import com.intellij.openapi.extensions.*
+import com.intellij.psi.impl.*
+import org.jetbrains.kotlin.lang.resolve.android.*
 
 public object AndroidConfigurationKeys {
 
@@ -241,9 +241,12 @@ public class AndroidComponentRegistrar : ComponentRegistrar {
 
         if (androidResPath != null && androidManifest != null) {
             project.registerService(javaClass<AndroidUIXmlProcessor>(), CliAndroidUIXmlProcessor(project, androidManifest, androidResPath))
+            project.registerService(javaClass<AndroidResourceManager>(), CliAndroidResourceManager(project, androidManifest, androidResPath))
 
             ExternalDeclarationsProvider.registerExtension(project, CliAndroidDeclarationsProvider(project))
             ExpressionCodegenExtension.registerExtension(project, AndroidExpressionCodegenExtension())
+            Extensions.getArea(project).getExtensionPoint(
+                    PsiTreeChangePreprocessor.EP_NAME).registerExtension(AndroidPsiTreeChangePreprocessor())
         }
     }
 }

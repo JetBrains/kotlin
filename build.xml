@@ -662,6 +662,7 @@
             </src>
             <classpath>
                 <pathelement path="${idea.sdk}/core/intellij-core.jar"/>
+                <pathelement path="${idea.sdk}/core-analysis/intellij-core-analysis.jar"/>
                 <pathelement path="${kotlin-home}/lib/kotlin-compiler.jar"/>
                 <pathelement path="${bootstrap.runtime}"/>
             </classpath>
