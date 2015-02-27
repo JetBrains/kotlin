@@ -1,0 +1,28 @@
+package
+
+kotlin.data() internal final class A1 {
+    public constructor A1()
+    public constructor A1(/*0*/ x: kotlin.String)
+    internal final val x: kotlin.String
+    internal final /*synthesized*/ fun component1(): kotlin.String
+    public final /*synthesized*/ fun copy(/*0*/ x: kotlin.String = ...): A1
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+kotlin.data() internal final class A2 {
+    public constructor A2()
+    public constructor A2(/*0*/ x: kotlin.String)
+    public final /*synthesized*/ fun copy(): A2
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+kotlin.data() internal final class A3 {
+    public constructor A3()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

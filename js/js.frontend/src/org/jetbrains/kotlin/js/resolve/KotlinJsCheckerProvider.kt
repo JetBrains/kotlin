@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.js.resolve.diagnostics.JsCallChecker
 
 public object KotlinJsCheckerProvider : AdditionalCheckerProvider(
-        annotationCheckers = listOf(NativeInvokeChecker(), NativeGetterChecker(), NativeSetterChecker()),
+        additionalAnnotationCheckers = listOf(NativeInvokeChecker(), NativeGetterChecker(), NativeSetterChecker()),
         additionalCallCheckers = listOf(JsCallChecker()),
         additionalTypeCheckers = listOf()
 )
