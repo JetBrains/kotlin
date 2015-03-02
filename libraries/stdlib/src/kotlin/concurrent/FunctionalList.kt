@@ -1,6 +1,6 @@
 package kotlin.concurrent
 
-deprecated public abstract class FunctionalList<T>(public val size: Int) {
+public abstract class FunctionalList<T>(public val size: Int) {
     public abstract val head: T
     public abstract val tail: FunctionalList<T>
 

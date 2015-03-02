@@ -3,7 +3,7 @@ package kotlin.properties
 import java.util.HashMap
 import java.util.ArrayList
 
-deprecated public class ChangeEvent(
+public class ChangeEvent(
         public val source: Any,
         public val name: String,
         public val oldValue: Any?,
@@ -12,7 +12,7 @@ deprecated public class ChangeEvent(
     override fun toString(): String = "ChangeEvent($name, $oldValue, $newValue)"
 }
 
-deprecated public trait ChangeListener {
+public trait ChangeListener {
     public fun onPropertyChange(event: ChangeEvent): Unit
 }
 
@@ -21,7 +21,7 @@ deprecated public trait ChangeListener {
  * updates for easier binding to user interfaces, undo/redo command stacks and
  * change tracking mechanisms for persistence or distributed change notifications.
  */
-deprecated public abstract class ChangeSupport {
+public abstract class ChangeSupport {
     private var allListeners: MutableList<ChangeListener>? = null
     private var nameListeners: MutableMap<String, MutableList<ChangeListener>>? = null
 
@@ -81,3 +81,30 @@ deprecated public abstract class ChangeSupport {
         //addChangeListener(name, DelegateChangeListener(fn))
     }
 }
+
+/*
+TODO this seems to generate a compiler barf!
+see http://youtrack.jetbrains.com/issue/KT-1362
+
+    protected fun createChangeListener(fn: (ChangeEvent) -> Unit): ChangeListener {
+        return DelegateChangeListener(fn)
+    }
+
+    protected fun createChangeListener(fn: (ChangeEvent) -> Unit): ChangeListener {
+        return ChangeListener {
+            public override fun onPropertyChange(event: ChangeEvent): Unit {
+                fn(event)
+            }
+        }
+    }
+
+}
+
+
+class DelegateChangeListener(val f: (ChangeEvent) -> Unit) : ChangeListener {
+    public override fun onPropertyChange(event: ChangeEvent): Unit {
+        f(event)
+    }
+}
+
+
