@@ -229,7 +229,7 @@ public class DescriptorResolver {
     }
 
     @NotNull
-    public SimpleFunctionDescriptor resolveFunctionDescriptorWithAnnotationArguments(
+    public SimpleFunctionDescriptor resolveFunctionDescriptor(
             @NotNull DeclarationDescriptor containingDescriptor,
             @NotNull JetScope scope,
             @NotNull JetNamedFunction function,
@@ -250,18 +250,6 @@ public class DescriptorResolver {
     ) {
         return resolveFunctionDescriptor(containingDescriptor, scope, function, trace, dataFlowInfo,
                                          annotationResolver.resolveAnnotationsWithArguments(scope, function.getModifierList(), trace), true);
-    }
-
-    @NotNull
-    public SimpleFunctionDescriptor resolveFunctionDescriptor(
-            @NotNull DeclarationDescriptor containingDescriptor,
-            @NotNull JetScope scope,
-            @NotNull JetNamedFunction function,
-            @NotNull BindingTrace trace,
-            @NotNull DataFlowInfo dataFlowInfo
-    ) {
-       return resolveFunctionDescriptor(containingDescriptor, scope, function, trace, dataFlowInfo,
-                                        annotationResolver.resolveAnnotationsWithoutArguments(scope, function.getModifierList(), trace), false);
     }
 
     @NotNull
