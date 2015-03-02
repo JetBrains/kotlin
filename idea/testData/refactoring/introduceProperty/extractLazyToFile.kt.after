@@ -5,10 +5,10 @@ import kotlin.properties.Delegates
 
 val n: Int = 1
 
-fun foo(): Int {
-    return i
-}
-
 private val i: Int by Delegates.lazy {
     n + 1
+}
+
+fun foo(): Int {
+    return i
 }

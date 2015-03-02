@@ -86,9 +86,10 @@ data class ExtractionData(
     val project: Project = originalFile.getProject()
     val originalElements: List<PsiElement> = originalRange.elements
 
-    val insertBefore: Boolean = targetSibling.getStrictParentOfType<JetDeclaration>()?.let {
-        it is JetDeclarationWithBody || it is JetClassInitializer
-    } ?: false
+    val insertBefore: Boolean = options.extractAsProperty
+                                || targetSibling.getStrictParentOfType<JetDeclaration>()?.let {
+                                    it is JetDeclarationWithBody || it is JetClassInitializer
+                                } ?: false
 
     fun getExpressions(): List<JetExpression> = originalElements.filterIsInstance<JetExpression>()
 
