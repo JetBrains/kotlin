@@ -113,6 +113,12 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
                     doTest(fileName);
                 }
 
+                @TestMetadata("Constructor.kt")
+                public void testConstructor() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/Constructor.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("DelegatedProperty.kt")
                 public void testDelegatedProperty() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/DelegatedProperty.kt");
@@ -347,6 +353,12 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
                 @TestMetadata("FunctionInTrait.kt")
                 public void testFunctionInTrait() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/parameters/FunctionInTrait.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("InnerClassConstructor.kt")
+                public void testInnerClassConstructor() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/parameters/InnerClassConstructor.kt");
                     doTest(fileName);
                 }
 

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.load.kotlin.reflect
 
 import org.jetbrains.kotlin.load.java.structure.reflect.classId
+import org.jetbrains.kotlin.load.java.structure.reflect.isEnumClassOrSpecializedEnumEntryClass
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.load.kotlin.header.ReadKotlinClassHeaderAnnotationVisitor
@@ -105,20 +106,33 @@ private object ReflectClassStructure {
 
     private fun loadConstructorAnnotations(klass: Class<*>, memberVisitor: KotlinJvmBinaryClass.MemberVisitor) {
         for (constructor in klass.getDeclaredConstructors()) {
-            // TODO: load annotations on constructors
             val visitor = memberVisitor.visitMethod(Name.special("<init>"), SignatureSerializer.constructorDesc(constructor)) ?: continue
 
-            // Constructors of enums have 2 additional synthetic parameters
-            // TODO: the similar logic should probably be present for annotations on parameters of inner class constructors
-            val shift = if (klass.isEnum()) 2 else 0
-            for ((parameterIndex, annotations) in constructor.getParameterAnnotations().withIndex()) {
-                for (annotation in annotations) {
-                    val annotationType = annotation.annotationType()
-                    visitor.visitParameterAnnotation(parameterIndex + shift, annotationType.classId)?.let {
-                        processAnnotationArguments(it, annotation, annotationType)
+            for (annotation in constructor.getDeclaredAnnotations()) {
+                processAnnotation(visitor, annotation)
+            }
+
+            val parameterAnnotations = constructor.getParameterAnnotations()
+            if (parameterAnnotations.isNotEmpty()) {
+                // Constructors of some classes have additional synthetic parameters:
+                // - inner classes have one parameter, instance of the outer class
+                // - enum classes have two parameters, String name and int ordinal
+                // - local/anonymous classes may have many parameters for captured values
+                // At the moment this seems like a working heuristic for computing number of synthetic parameters for Kotlin classes,
+                // although this is wrong and likely to change, see KT-6886
+                val shift = constructor.getParameterTypes().size() - parameterAnnotations.size()
+
+                for ((parameterIndex, annotations) in parameterAnnotations.withIndex()) {
+                    for (annotation in annotations) {
+                        val annotationType = annotation.annotationType()
+                        visitor.visitParameterAnnotation(parameterIndex + shift, annotationType.classId)?.let {
+                            processAnnotationArguments(it, annotation, annotationType)
+                        }
                     }
                 }
             }
+
+            visitor.visitEnd()
         }
     }
 
@@ -158,8 +172,8 @@ private object ReflectClassStructure {
             clazz in TYPES_ELIGIBLE_FOR_SIMPLE_VISIT -> {
                 visitor.visit(name, value)
             }
-            javaClass<Enum<*>>().isAssignableFrom(clazz) -> {
-                // isEnum returns false for specialized enum constants (enum entries which are subclasses)
+            clazz.isEnumClassOrSpecializedEnumEntryClass() -> {
+                // isEnum returns false for specialized enum constants (enum entries which are anonymous enum subclasses)
                 val classId = (if (clazz.isEnum()) clazz else clazz.getEnclosingClass()).classId
                 visitor.visitEnum(name, classId, Name.identifier((value as Enum<*>).name()))
             }

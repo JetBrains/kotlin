@@ -1939,6 +1939,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                     doTestCompiledKotlin(fileName);
                 }
 
+                @TestMetadata("Constructor.kt")
+                public void testConstructor() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/Constructor.kt");
+                    doTestCompiledKotlin(fileName);
+                }
+
                 @TestMetadata("DelegatedProperty.kt")
                 public void testDelegatedProperty() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/DelegatedProperty.kt");
@@ -2173,6 +2179,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 @TestMetadata("FunctionInTrait.kt")
                 public void testFunctionInTrait() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/parameters/FunctionInTrait.kt");
+                    doTestCompiledKotlin(fileName);
+                }
+
+                @TestMetadata("InnerClassConstructor.kt")
+                public void testInnerClassConstructor() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/parameters/InnerClassConstructor.kt");
                     doTestCompiledKotlin(fileName);
                 }
 
