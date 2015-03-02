@@ -10,7 +10,7 @@ import java.util.Date
 
 // TODO this class should move into the runtime
 // in kotlin.StringTemplate
-public class StringTemplate(private val values: Array<Any?>) {
+deprecated public class StringTemplate(private val values: Array<Any?>) {
 
     /**
      * Converts the template into a String
@@ -38,7 +38,7 @@ public class StringTemplate(private val values: Array<Any?>) {
  *
  * See [[HtmlFormatter] and [[LocaleFormatter] respectively.
  */
-public fun StringTemplate.toString(formatter: Formatter): String {
+deprecated public fun StringTemplate.toString(formatter: Formatter): String {
     val buffer = StringBuilder()
     append(buffer, formatter)
     return buffer.toString()
@@ -48,7 +48,7 @@ public fun StringTemplate.toString(formatter: Formatter): String {
  * Appends the text representation of this string template to the given output
  * using the supplied formatter
  */
-public fun StringTemplate.append(out: Appendable, formatter: Formatter): Unit {
+deprecated public fun StringTemplate.append(out: Appendable, formatter: Formatter): Unit {
     var constantText = true
     this.forEach {
         if (constantText) {
@@ -69,19 +69,19 @@ public fun StringTemplate.append(out: Appendable, formatter: Formatter): Unit {
  * Converts this string template to internationalised text using the supplied
  * [[LocaleFormatter]]
  */
-public fun StringTemplate.toLocale(formatter: LocaleFormatter = LocaleFormatter()): String = toString(formatter)
+deprecated public fun StringTemplate.toLocale(formatter: LocaleFormatter = LocaleFormatter()): String = toString(formatter)
 
 /**
  * Converts this string template to HTML text
  */
-public fun StringTemplate.toHtml(formatter: HtmlFormatter = HtmlFormatter()): String = toString(formatter)
+deprecated public fun StringTemplate.toHtml(formatter: HtmlFormatter = HtmlFormatter()): String = toString(formatter)
 
 /**
  * Represents a formatter and encoder of values in a [[StringTemplate]] which understands
  * how to format values for a particular [[Locale]] such as with the [[LocaleFormatter]] or
  * to escape particular characters in different output formats such as [[HtmlFormatter]
  */
-public trait Formatter {
+deprecated public trait Formatter {
     public fun format(buffer: Appendable, value: Any?): Unit
 }
 
@@ -89,7 +89,7 @@ public trait Formatter {
  * Formats strings with no special encoding other than allowing the null text to be
  * configured
  */
-public open class ToStringFormatter : Formatter {
+deprecated public open class ToStringFormatter : Formatter {
 
     private val nullString: String = "null"
 
@@ -114,12 +114,12 @@ public open class ToStringFormatter : Formatter {
     }
 }
 
-public val defaultLocale: Locale = Locale.getDefault()
+deprecated public val defaultLocale: Locale = Locale.getDefault()
 
 /**
  * Formats values using a given [[Locale]] for internationalisation
  */
-public open class LocaleFormatter(protected val locale: Locale = defaultLocale) : ToStringFormatter() {
+deprecated public open class LocaleFormatter(protected val locale: Locale = defaultLocale) : ToStringFormatter() {
 
     override fun toString(): String = "LocaleFormatter{$locale}"
 
@@ -149,7 +149,7 @@ public open class LocaleFormatter(protected val locale: Locale = defaultLocale) 
 /**
  * Formats values for HTML encoding, escaping special characters in HTML.
  */
-public class HtmlFormatter(locale: Locale = defaultLocale) : LocaleFormatter(locale) {
+deprecated public class HtmlFormatter(locale: Locale = defaultLocale) : LocaleFormatter(locale) {
 
     override fun toString(): String = "HtmlFormatter{$locale}"
 

@@ -2,7 +2,7 @@ package kotlin.concurrent
 
 import java.util.concurrent.Executor
 
-public class FunctionalQueue<T> (
+deprecated public class FunctionalQueue<T> (
         private val input: FunctionalList<T> = FunctionalList.emptyList<T>(),
         private val output: FunctionalList<T> = FunctionalList.emptyList<T>()
 ) {
