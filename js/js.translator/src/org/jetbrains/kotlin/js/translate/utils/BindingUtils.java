@@ -76,13 +76,6 @@ public final class BindingUtils {
     }
 
     @NotNull
-    public static JetFunction getFunctionForDescriptor(@NotNull SimpleFunctionDescriptor descriptor) {
-        PsiElement result = DescriptorToSourceUtils.callableDescriptorToDeclaration(descriptor);
-        assert result instanceof JetFunction : message(descriptor, "SimpleFunctionDescriptor should have declaration of type JetFunction");
-        return (JetFunction) result;
-    }
-
-    @NotNull
     private static JetParameter getParameterForDescriptor(@NotNull ValueParameterDescriptor descriptor) {
         PsiElement result = DescriptorToSourceUtils.descriptorToDeclaration(descriptor);
         assert result instanceof JetParameter : message(descriptor, "ValueParameterDescriptor should have corresponding JetParameter");
