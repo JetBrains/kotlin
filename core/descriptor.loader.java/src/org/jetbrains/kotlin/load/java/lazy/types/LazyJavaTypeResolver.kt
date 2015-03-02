@@ -90,7 +90,6 @@ class LazyJavaTypeResolver(
     }
 
     private class LazyStarProjection(
-            c: LazyJavaResolverContext,
             val typeParameter: TypeParameterDescriptor,
             val attr: JavaTypeAttributes
     ) : TypeProjectionBase() {
@@ -198,7 +197,7 @@ class LazyJavaTypeResolver(
                         TypeProjectionImpl(projectionKind, KotlinBuiltIns.getInstance().getNullableAnyType())
                     }
                     else
-                        LazyStarProjection(c, parameter, attr)
+                        LazyStarProjection(parameter, attr)
                 }
             }
             if (isConstructorTypeParameter()) {
@@ -229,7 +228,7 @@ class LazyJavaTypeResolver(
                 is JavaWildcardType -> {
                     val bound = javaType.getBound()
                     if (bound == null)
-                        LazyStarProjection(c, typeParameter, attr)
+                        LazyStarProjection(typeParameter, attr)
                     else {
                         var projectionKind = if (javaType.isExtends()) OUT_VARIANCE else IN_VARIANCE
                         if (projectionKind == typeParameter.getVariance()) {
@@ -336,8 +335,6 @@ trait JavaTypeAttributes {
         get() = true
     val annotations: Annotations
 }
-
-fun JavaTypeAttributes.isFlexible() = flexibility != INFLEXIBLE
 
 enum class JavaTypeFlexibility {
     INFLEXIBLE
