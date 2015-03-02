@@ -89,6 +89,9 @@ public class KotlinIntroducePropertyHandler(
                         )
                         introducer.performInplaceRefactoring(LinkedHashSet(descriptor.suggestedNames))
                     }
+                    else {
+                        processDuplicatesSilently(it.duplicateReplacers, project)
+                    }
                 }
             }
             else {

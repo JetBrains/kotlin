@@ -66,6 +66,8 @@ public class KotlinInplacePropertyIntroducer(
             updatePanelControls()
         }
 
+    private var replaceAll: Boolean = true
+
     private fun isInitializer(): Boolean = currentTarget == ExtractionTarget.PROPERTY_WITH_INITIALIZER
 
     override fun initPanelControls() {
@@ -121,6 +123,20 @@ public class KotlinInplacePropertyIntroducer(
                 addPanelControl(ControlWrapper(it, condition, initializer))
             }
         }
+
+
+        val occurrenceCount = extractionResult.duplicateReplacers.size() + 1
+        if (occurrenceCount > 1) {
+            addPanelControl(
+                    ControlWrapper {
+                        val replaceAllCheckBox = NonFocusableCheckBox("Replace all occurrences ($occurrenceCount)")
+                        replaceAllCheckBox.setSelected(replaceAll)
+                        replaceAllCheckBox.setMnemonic('R')
+                        replaceAllCheckBox.addActionListener { replaceAll = replaceAllCheckBox.isSelected() }
+                        replaceAllCheckBox
+                    }
+            )
+        }
     }
 
     override fun addTypeReferenceVariable(builder: TemplateBuilderImpl) {
@@ -130,5 +146,12 @@ public class KotlinInplacePropertyIntroducer(
 
     override fun checkLocalScope(): PsiElement? {
         return myElementToRename.parents().first { it is JetClassOrObject || it is JetFile }
+    }
+
+    override fun moveOffsetAfter(success: Boolean) {
+        super.moveOffsetAfter(success)
+        if (success && replaceAll) {
+            processDuplicatesSilently(extractionResult.duplicateReplacers, myProject)
+        }
     }
 }

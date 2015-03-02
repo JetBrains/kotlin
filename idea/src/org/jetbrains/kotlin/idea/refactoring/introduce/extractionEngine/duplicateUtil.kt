@@ -111,3 +111,9 @@ public fun processDuplicates(
         project.executeWriteCommand(MethodDuplicatesHandler.REFACTORING_NAME, replacer)
     }
 }
+
+public fun processDuplicatesSilently(duplicateReplacers: Map<JetPsiRange, () -> Unit>, project: Project) {
+    project.executeWriteCommand(MethodDuplicatesHandler.REFACTORING_NAME) {
+        duplicateReplacers.values().forEach { it() }
+    }
+}

@@ -244,10 +244,11 @@ private fun makeCall(
         }
     }
 
+    val calleeName = declaration.getName()
     val callText = when (declaration) {
         is JetNamedFunction ->
-            arguments.joinToString(separator = ", ", prefix = "${extractableDescriptor.name}(", postfix = ")")
-        else -> extractableDescriptor.name
+            arguments.joinToString(separator = ", ", prefix = "$calleeName(", postfix = ")")
+        else -> calleeName
     }
 
     val anchorInBlock = stream(anchor) { it.getParent() }.firstOrNull { it.getParent() is JetBlockExpression }

@@ -2037,5 +2037,11 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceProperty/extractWithParams.kt");
             doIntroducePropertyTest(fileName);
         }
+
+        @TestMetadata("replaceDuplicates.kt")
+        public void testReplaceDuplicates() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceProperty/replaceDuplicates.kt");
+            doIntroducePropertyTest(fileName);
+        }
     }
 }
