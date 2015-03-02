@@ -33,7 +33,7 @@ public annotation class noinline
 public annotation class inline(public val strategy: InlineStrategy = InlineStrategy.AS_FUNCTION)
 
 /**
- * Specifies the strategy for JVM bytecode generation for an inline function.
+ * Specifies the strategy for code generation for an inline function.
  */
 public enum class InlineStrategy {
     /**
