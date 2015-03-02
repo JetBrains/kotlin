@@ -29,7 +29,6 @@ import kotlin.test.*
 import com.intellij.openapi.application.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceProperty.*
 import java.util.*
-import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.*
 
 public class KotlinIntroducePropertyHandler(
         val helper: ExtractionEngineHelper = KotlinIntroducePropertyHandler.InteractiveExtractionHelper
@@ -78,19 +77,15 @@ public class KotlinIntroducePropertyHandler(
                             doPostponedOperationsAndUnblockDocument(editor.getDocument())
                         }
 
-                        val introducer = KotlinInplaceVariableIntroducer(
-                                property,
-                                editor,
-                                project,
-                                INTRODUCE_PROPERTY, // title
-                                JetExpression.EMPTY_ARRAY, // occurrences
-                                null, // expr
-                                false, // replaceOccurrence
-                                property,
-                                false, // isVar
-                                true, // doNotChangeVar
-                                descriptor.controlFlow.outputValueBoxer.returnType,
-                                true // noTypeInference
+                        val introducer = KotlinInplacePropertyIntroducer(
+                                property = property,
+                                editor = editor,
+                                project = project,
+                                title = INTRODUCE_PROPERTY,
+                                doNotChangeVar = false,
+                                exprType = descriptor.controlFlow.outputValueBoxer.returnType,
+                                extractionResult = it,
+                                availableTargets = propertyTargets.filter { it.isAvailable(descriptor) }
                         )
                         introducer.performInplaceRefactoring(LinkedHashSet(descriptor.suggestedNames))
                     }
