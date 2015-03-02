@@ -32,15 +32,45 @@ public annotation class noinline
  */
 public annotation class inline(public val strategy: InlineStrategy = InlineStrategy.AS_FUNCTION)
 
+/**
+ * Specifies the strategy for JVM bytecode generation for an inline function.
+ */
 public enum class InlineStrategy {
+    /**
+     * Specifies that the body of the inline function together with the bodies of the lambdas passed to it
+     * is generated as a separate method invoked from the calling function.
+     */
     AS_FUNCTION
+
+    /**
+     * Specifies that the body of the inline function together with the bodies of the lambdas passed to it
+     * is inlined directly into the calling function.
+     */
     IN_PLACE
 }
 
 
+/**
+ * Specifies options for allowed control flow in inlined lambdas. Lambdas which are invoked directly by the
+ * receiving function are allowed to use non-local control flow statements. Lambdas which are called from
+ * a different execution context (for example, from an object) are restricted to local control flow statements.
+ */
 public annotation class inlineOptions(vararg val value: InlineOption)
 
+/**
+ * Specifies the control flow statements which are allowed to be used for non-local control flow transfer in a lambda
+ * passed as a parameter to an inline function.
+ */
 public enum class InlineOption {
+    /**
+     * This option hasn't been implemented yet.
+     */
     LOCAL_CONTINUE_AND_BREAK
+
+    /**
+     * If this option is specified, lambdas may not use non-local return statements (`return` with a label).
+     * This option must be specified if the lambda is used in an object, inner class, non-inline lambda etc.
+     * of the function where it is passed. By default, lambdas are allowed to use non-local returns.
+     */
     ONLY_LOCAL_RETURN
 }
