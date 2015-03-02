@@ -544,11 +544,15 @@ fun createJavaClass(klass: JetClass, targetClass: PsiClass): PsiMember {
     val kind = (klass.resolveToDescriptor() as ClassDescriptor).getKind()
 
     val factory = PsiElementFactory.SERVICE.getInstance(klass.getProject())
+    var methodFilter: (PsiMethod) -> Boolean = { true }
     val javaClassToAdd = when (kind) {
         ClassKind.CLASS -> factory.createClass(klass.getName())
         ClassKind.TRAIT -> factory.createInterface(klass.getName())
         ClassKind.ANNOTATION_CLASS -> factory.createAnnotationType(klass.getName())
-        ClassKind.ENUM_CLASS -> factory.createEnum(klass.getName())
+        ClassKind.ENUM_CLASS -> {
+            methodFilter = { method -> !method.isConstructor() && method.getName() != "values" && method.getName() != "valueOf" }
+            factory.createEnum(klass.getName())
+        }
         else -> throw AssertionError("Unexpected class kind: ${JetPsiUtil.getElementTextWithContext(klass)}")
     }
     val javaClass = targetClass.add(javaClassToAdd) as PsiClass
@@ -577,7 +581,7 @@ fun createJavaClass(klass: JetClass, targetClass: PsiClass): PsiMember {
     )
     implementsList?.let { javaClass.getImplementsList()?.replace(it) }
 
-    for (method in template.getMethods()) {
+    for (method in template.getMethods().filter(methodFilter)) {
         val hasParams = method.getParameterList().getParametersCount() > 0
         val needSuperCall = !template.isEnum() &&
                             (template.getSuperClass()?.getConstructors() ?: PsiMethod.EMPTY_ARRAY).all {
