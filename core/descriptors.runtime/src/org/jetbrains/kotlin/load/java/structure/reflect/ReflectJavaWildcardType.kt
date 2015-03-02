@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.structure.reflect
 
+import org.jetbrains.kotlin.load.java.structure.JavaTypeProvider
 import org.jetbrains.kotlin.load.java.structure.JavaWildcardType
 import java.lang.reflect.WildcardType
 
@@ -35,5 +36,5 @@ public class ReflectJavaWildcardType(override val type: WildcardType): ReflectJa
 
     override fun isExtends() = type.getUpperBounds().firstOrNull() != javaClass<Any>()
 
-    override fun getTypeProvider() = ReflectJavaTypeProvider
+    override fun getTypeProvider(): JavaTypeProvider = throw UnsupportedOperationException()
 }

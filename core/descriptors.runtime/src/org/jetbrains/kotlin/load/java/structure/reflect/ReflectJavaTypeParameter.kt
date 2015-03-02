@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.load.java.structure.reflect
 import org.jetbrains.kotlin.load.java.structure.JavaType
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameterListOwner
+import org.jetbrains.kotlin.load.java.structure.JavaTypeProvider
 import org.jetbrains.kotlin.name.Name
 import java.lang.reflect.Constructor
 import java.lang.reflect.Method
@@ -43,12 +44,9 @@ public class ReflectJavaTypeParameter(
         }
     }
 
-    override fun getType(): JavaType {
-        // TODO
-        throw UnsupportedOperationException()
-    }
+    override fun getType(): JavaType = throw UnsupportedOperationException()
 
-    override fun getTypeProvider() = ReflectJavaTypeProvider
+    override fun getTypeProvider(): JavaTypeProvider = throw UnsupportedOperationException()
 
     override fun getName() = Name.identifier(typeVariable.getName())
 
