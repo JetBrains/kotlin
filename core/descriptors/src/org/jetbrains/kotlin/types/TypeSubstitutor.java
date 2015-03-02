@@ -210,11 +210,11 @@ public class TypeSubstitutor {
             }
             JetType substitutedType;
             CustomTypeVariable typeVariable = TypesPackage.getCustomTypeVariable(type);
-            if (typeVariable != null) {
-                substitutedType = typeVariable.substitutionResult(replacement.getType());
-            }
-            else if (replacement.isStarProjection()) {
+            if (replacement.isStarProjection()) {
                 return replacement;
+            }
+            else if (typeVariable != null) {
+                substitutedType = typeVariable.substitutionResult(replacement.getType());
             }
             else {
                 // this is a simple type T or T?: if it's T, we should just take replacement, if T? - we make replacement nullable
