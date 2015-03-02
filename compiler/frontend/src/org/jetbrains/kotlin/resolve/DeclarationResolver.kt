@@ -14,195 +14,176 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.resolve;
+package org.jetbrains.kotlin.resolve
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
-import com.intellij.openapi.util.Pair;
-import com.intellij.psi.PsiElement;
-import com.intellij.util.containers.ContainerUtil;
-import kotlin.Function1;
-import kotlin.KotlinPackage;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.diagnostics.Errors;
-import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.JetElement;
-import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.psi.JetNamedDeclaration;
-import org.jetbrains.kotlin.psi.JetPackageDirective;
-import org.jetbrains.kotlin.resolve.lazy.FileScopeProvider;
-import org.jetbrains.kotlin.resolve.lazy.TopLevelDescriptorProvider;
-import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
-import org.jetbrains.kotlin.utils.UtilsPackage;
+import com.google.common.collect.HashMultimap
+import com.google.common.collect.Lists
+import com.google.common.collect.Multimap
+import com.google.common.collect.Sets
+import com.intellij.openapi.util.Pair
+import com.intellij.psi.PsiElement
+import com.intellij.util.containers.ContainerUtil
+import kotlin.Function1
+import kotlin.KotlinPackage
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.JetNamedDeclaration
+import org.jetbrains.kotlin.psi.JetPackageDirective
+import org.jetbrains.kotlin.resolve.lazy.FileScopeProvider
+import org.jetbrains.kotlin.resolve.lazy.TopLevelDescriptorProvider
+import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor
+import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.utils.*
 
-import javax.inject.Inject;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import javax.inject.Inject
+import java.util.HashSet
 
-import static org.jetbrains.kotlin.diagnostics.Errors.REDECLARATION;
+import org.jetbrains.kotlin.diagnostics.Errors.REDECLARATION
 
 public class DeclarationResolver {
-    private AnnotationResolver annotationResolver;
-    private BindingTrace trace;
+    private var annotationResolver: AnnotationResolver? = null
+    private var trace: BindingTrace? = null
 
 
-    @Inject
-    public void setAnnotationResolver(@NotNull AnnotationResolver annotationResolver) {
-        this.annotationResolver = annotationResolver;
+    Inject
+    public fun setAnnotationResolver(annotationResolver: AnnotationResolver) {
+        this.annotationResolver = annotationResolver
     }
 
-    @Inject
-    public void setTrace(@NotNull BindingTrace trace) {
-        this.trace = trace;
+    Inject
+    public fun setTrace(trace: BindingTrace) {
+        this.trace = trace
     }
 
 
-    public void resolveAnnotationsOnFiles(@NotNull TopDownAnalysisContext c, @NotNull final FileScopeProvider scopeProvider) {
-        Map<JetFile, JetScope> file2scope = UtilsPackage.keysToMap(c.getFiles(), new Function1<JetFile, JetScope>() {
-            @Override
-            public JetScope invoke(JetFile file) {
-                return scopeProvider.getFileScope(file);
+    public fun resolveAnnotationsOnFiles(c: TopDownAnalysisContext, scopeProvider: FileScopeProvider) {
+        val file2scope = c.getFiles().keysToMap<JetFile, JetScope>(object : Function1<JetFile, JetScope> {
+            override fun invoke(file: JetFile): JetScope {
+                return scopeProvider.getFileScope(file)
             }
-        });
+        })
 
-        resolveAnnotationsOnFiles(file2scope);
+        resolveAnnotationsOnFiles(file2scope)
     }
 
-    private void resolveAnnotationsOnFiles(@NotNull Map<JetFile, ? extends JetScope> file2scope) {
-        for (Map.Entry<JetFile, ? extends JetScope> entry : file2scope.entrySet()) {
-            JetFile file = entry.getKey();
-            JetScope fileScope = entry.getValue();
-            annotationResolver.resolveAnnotationsWithArguments(fileScope, file.getAnnotationEntries(), trace);
-            annotationResolver.resolveAnnotationsWithArguments(fileScope, file.getDanglingAnnotations(), trace);
+    private fun resolveAnnotationsOnFiles(file2scope: Map<JetFile, out JetScope>) {
+        for (entry in file2scope.entrySet()) {
+            val file = entry.getKey()
+            val fileScope = entry.getValue()
+            annotationResolver!!.resolveAnnotationsWithArguments(fileScope, file.getAnnotationEntries(), trace)
+            annotationResolver!!.resolveAnnotationsWithArguments(fileScope, file.getDanglingAnnotations(), trace)
         }
     }
 
-    @NotNull
-    public static ConstructorDescriptor getConstructorOfDataClass(@NotNull ClassDescriptor classDescriptor) {
-        Collection<ConstructorDescriptor> constructors = classDescriptor.getConstructors();
-        assert constructors.size() == 1 : "Data class must have only one constructor: " + classDescriptor.getConstructors();
-        return constructors.iterator().next();
-    }
-
-    public void checkRedeclarationsInInnerClassNames(@NotNull TopDownAnalysisContext c) {
-        for (ClassDescriptorWithResolutionScopes classDescriptor : c.getDeclaredClasses().values()) {
+    public fun checkRedeclarationsInInnerClassNames(c: TopDownAnalysisContext) {
+        for (classDescriptor in c.getDeclaredClasses().values()) {
             if (classDescriptor.getKind() == ClassKind.CLASS_OBJECT) {
                 // Class objects should be considered during analysing redeclarations in classes
-                continue;
+                continue
             }
 
-            Collection<DeclarationDescriptor> allDescriptors = classDescriptor.getScopeForMemberLookup().getOwnDeclaredDescriptors();
+            var allDescriptors: MutableCollection<DeclarationDescriptor> = classDescriptor.getScopeForMemberLookup().getOwnDeclaredDescriptors()
 
-            ClassDescriptorWithResolutionScopes classObj = classDescriptor.getDefaultObjectDescriptor();
+            val classObj = classDescriptor.getDefaultObjectDescriptor()
             if (classObj != null) {
-                Collection<DeclarationDescriptor> classObjDescriptors = classObj.getScopeForMemberLookup().getOwnDeclaredDescriptors();
+                val classObjDescriptors = classObj.getScopeForMemberLookup().getOwnDeclaredDescriptors()
                 if (!classObjDescriptors.isEmpty()) {
-                    allDescriptors = Lists.newArrayList(allDescriptors);
-                    allDescriptors.addAll(classObjDescriptors);
+                    allDescriptors = Lists.newArrayList<DeclarationDescriptor>(allDescriptors)
+                    allDescriptors.addAll(classObjDescriptors)
                 }
             }
 
-            Multimap<Name, DeclarationDescriptor> descriptorMap = HashMultimap.create();
-            for (DeclarationDescriptor desc : allDescriptors) {
-                if (desc instanceof ClassDescriptor || desc instanceof PropertyDescriptor) {
-                    descriptorMap.put(desc.getName(), desc);
+            val descriptorMap = HashMultimap.create<Name, DeclarationDescriptor>()
+            for (desc in allDescriptors) {
+                if (desc is ClassDescriptor || desc is PropertyDescriptor) {
+                    descriptorMap.put(desc.getName(), desc)
                 }
             }
 
-            reportRedeclarations(descriptorMap);
+            reportRedeclarations(descriptorMap)
         }
     }
 
-    private void reportRedeclarations(@NotNull Multimap<Name, DeclarationDescriptor> descriptorMap) {
-        Set<Pair<PsiElement, Name>> redeclarations = Sets.newHashSet();
-        for (Name name : descriptorMap.keySet()) {
-            Collection<DeclarationDescriptor> descriptors = descriptorMap.get(name);
+    private fun reportRedeclarations(descriptorMap: Multimap<Name, DeclarationDescriptor>) {
+        val redeclarations = Sets.newHashSet<Pair<PsiElement, Name>>()
+        for (name in descriptorMap.keySet()) {
+            val descriptors = descriptorMap.get(name)
             if (descriptors.size() > 1) {
                 // We mustn't compare PropertyDescriptor with PropertyDescriptor because we do this at OverloadResolver
-                for (DeclarationDescriptor descriptor : descriptors) {
-                    if (descriptor instanceof ClassDescriptor) {
-                        for (DeclarationDescriptor descriptor2 : descriptors) {
+                for (descriptor in descriptors) {
+                    if (descriptor is ClassDescriptor) {
+                        for (descriptor2 in descriptors) {
                             if (descriptor == descriptor2) {
-                                continue;
+                                continue
                             }
 
-                            redeclarations.add(Pair.create(
-                                    DescriptorToSourceUtils.classDescriptorToDeclaration((ClassDescriptor) descriptor), descriptor.getName()
-                            ));
-                            if (descriptor2 instanceof PropertyDescriptor) {
-                                redeclarations.add(Pair.create(
-                                        DescriptorToSourceUtils.descriptorToDeclaration(descriptor2), descriptor2.getName()
-                                ));
+                            redeclarations.add(Pair.create<PsiElement, Name>(DescriptorToSourceUtils.classDescriptorToDeclaration(descriptor as ClassDescriptor), descriptor.getName()))
+                            if (descriptor2 is PropertyDescriptor) {
+                                redeclarations.add(Pair.create<PsiElement, Name>(DescriptorToSourceUtils.descriptorToDeclaration(descriptor2), descriptor2.getName()))
                             }
                         }
                     }
                 }
             }
         }
-        for (Pair<PsiElement, Name> redeclaration : redeclarations) {
-            trace.report(REDECLARATION.on(redeclaration.getFirst(), redeclaration.getSecond().asString()));
+        for (redeclaration in redeclarations) {
+            trace!!.report(REDECLARATION.on(redeclaration.getFirst(), redeclaration.getSecond().asString()))
         }
     }
 
-    public void checkRedeclarationsInPackages(
-            @NotNull TopLevelDescriptorProvider topLevelDescriptorProvider,
-            @NotNull Multimap<FqName, JetElement> topLevelFqNames
-    ) {
-        for (Map.Entry<FqName, Collection<JetElement>> entry : topLevelFqNames.asMap().entrySet()) {
-            FqName fqName = entry.getKey();
-            Collection<JetElement> declarationsOrPackageDirectives = entry.getValue();
+    public fun checkRedeclarationsInPackages(topLevelDescriptorProvider: TopLevelDescriptorProvider, topLevelFqNames: Multimap<FqName, JetElement>) {
+        for (entry in topLevelFqNames.asMap().entrySet()) {
+            val fqName = entry.getKey()
+            val declarationsOrPackageDirectives = entry.getValue()
 
-            if (fqName.isRoot()) continue;
+            if (fqName.isRoot()) continue
 
-            Set<DeclarationDescriptor> descriptors = getTopLevelDescriptorsByFqName(topLevelDescriptorProvider, fqName);
+            val descriptors = getTopLevelDescriptorsByFqName(topLevelDescriptorProvider, fqName)
 
             if (descriptors.size() > 1) {
-                for (JetElement declarationOrPackageDirective : declarationsOrPackageDirectives) {
-                    PsiElement reportAt = declarationOrPackageDirective instanceof JetNamedDeclaration
-                                          ? declarationOrPackageDirective
-                                          : ((JetPackageDirective) declarationOrPackageDirective).getNameIdentifier();
-                    trace.report(Errors.REDECLARATION.on(reportAt, fqName.shortName().asString()));
+                for (declarationOrPackageDirective in declarationsOrPackageDirectives) {
+                    val reportAt = if (declarationOrPackageDirective is JetNamedDeclaration)
+                        declarationOrPackageDirective
+                    else
+                        (declarationOrPackageDirective as JetPackageDirective).getNameIdentifier()
+                    trace!!.report(Errors.REDECLARATION.on(reportAt, fqName.shortName().asString()))
                 }
             }
         }
     }
 
-    @NotNull
-    private static Set<DeclarationDescriptor> getTopLevelDescriptorsByFqName(
-            @NotNull TopLevelDescriptorProvider topLevelDescriptorProvider,
-            @NotNull FqName fqName
-    ) {
-        FqName parentFqName = fqName.parent();
+    class object {
 
-        Set<DeclarationDescriptor> descriptors = new HashSet<DeclarationDescriptor>();
-
-        LazyPackageDescriptor parentFragment = topLevelDescriptorProvider.getPackageFragment(parentFqName);
-        if (parentFragment != null) {
-            // Filter out extension properties
-            descriptors.addAll(
-                    KotlinPackage.filter(
-                            parentFragment.getMemberScope().getProperties(fqName.shortName()),
-                            new Function1<VariableDescriptor, Boolean>() {
-                                @Override
-                                public Boolean invoke(VariableDescriptor descriptor) {
-                                    return descriptor.getExtensionReceiverParameter() == null;
-                                }
-                            }
-                    )
-            );
+        public fun getConstructorOfDataClass(classDescriptor: ClassDescriptor): ConstructorDescriptor {
+            val constructors = classDescriptor.getConstructors()
+            assert(constructors.size() == 1) { "Data class must have only one constructor: " + classDescriptor.getConstructors() }
+            return constructors.iterator().next()
         }
 
-        ContainerUtil.addIfNotNull(descriptors, topLevelDescriptorProvider.getPackageFragment(fqName));
+        private fun getTopLevelDescriptorsByFqName(topLevelDescriptorProvider: TopLevelDescriptorProvider, fqName: FqName): Set<DeclarationDescriptor> {
+            val parentFqName = fqName.parent()
 
-        descriptors.addAll(topLevelDescriptorProvider.getTopLevelClassDescriptors(fqName));
-        return descriptors;
+            val descriptors = HashSet<DeclarationDescriptor>()
+
+            val parentFragment = topLevelDescriptorProvider.getPackageFragment(parentFqName)
+            if (parentFragment != null) {
+                // Filter out extension properties
+                descriptors.addAll(KotlinPackage.filter<VariableDescriptor>(parentFragment.getMemberScope().getProperties(fqName.shortName()), object : Function1<VariableDescriptor, Boolean> {
+                    override fun invoke(descriptor: VariableDescriptor): Boolean? {
+                        return descriptor.getExtensionReceiverParameter() == null
+                    }
+                }))
+            }
+
+            ContainerUtil.addIfNotNull<DeclarationDescriptor>(descriptors, topLevelDescriptorProvider.getPackageFragment(fqName))
+
+            descriptors.addAll(topLevelDescriptorProvider.getTopLevelClassDescriptors(fqName))
+            return descriptors
+        }
     }
 
 

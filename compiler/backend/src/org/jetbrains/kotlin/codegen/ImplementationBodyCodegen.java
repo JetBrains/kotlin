@@ -745,7 +745,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     iv.anew(thisDescriptorType);
                     iv.dup();
 
-                    ConstructorDescriptor constructor = DeclarationResolver.getConstructorOfDataClass(descriptor);
+                    ConstructorDescriptor constructor = getConstructorOfDataClass(descriptor);
                     assert function.getValueParameters().size() == constructor.getValueParameters().size() :
                             "Number of parameters of copy function and constructor are different. " +
                             "Copy: " + function.getValueParameters().size() + ", " +
@@ -790,6 +790,12 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     null
             );
         }
+    }
+
+    private static ConstructorDescriptor getConstructorOfDataClass(@NotNull ClassDescriptor classDescriptor) {
+        Collection<ConstructorDescriptor> constructors = classDescriptor.getConstructors();
+        assert constructors.size() == 1 : "Data class must have only one constructor: " + classDescriptor.getConstructors();
+        return constructors.iterator().next();
     }
 
     private void generateEnumMethodsAndConstInitializers() {
