@@ -53,7 +53,8 @@ public enum class InlineStrategy {
 /**
  * Specifies options for allowed control flow in inlined lambdas. Lambdas which are invoked directly by the
  * receiving function are allowed to use non-local control flow statements. Lambdas which are called from
- * a different execution context (for example, from an object) are restricted to local control flow statements.
+ * a different execution context (for example, from an object contained in the receiving function)
+ * are restricted to local control flow statements.
  */
 public annotation class inlineOptions(vararg val value: InlineOption)
 
@@ -68,9 +69,12 @@ public enum class InlineOption {
     LOCAL_CONTINUE_AND_BREAK
 
     /**
-     * If this option is specified, lambdas may not use non-local return statements (`return` with a label).
-     * This option must be specified if the lambda is used in an object, inner class, non-inline lambda etc.
-     * of the function where it is passed. By default, lambdas are allowed to use non-local returns.
+     * If this option is specified, lambdas may not use non-local return statements (statements which return from
+     * their calling function or one of its enclosing functions). This option must be specified if the lambda
+     * is not invoked directly by the receiving function but instead used in a different execution context
+     * (for example, from an object contained in the receiving function).
+     *
+     * By default, lambdas are allowed to use non-local returns.
      */
     ONLY_LOCAL_RETURN
 }
