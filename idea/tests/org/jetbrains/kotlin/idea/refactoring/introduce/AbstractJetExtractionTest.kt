@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable
+package org.jetbrains.kotlin.idea.refactoring.introduce
 
 import com.intellij.ide.DataManager
 import com.intellij.psi.PsiElement
@@ -39,6 +39,7 @@ import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.psi.JetPackageDirective
 import org.jetbrains.kotlin.utils.emptyOrSingletonList
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
+import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceProperty.KotlinIntroducePropertyHandler
 import java.util.*
 import kotlin.test.assertTrue

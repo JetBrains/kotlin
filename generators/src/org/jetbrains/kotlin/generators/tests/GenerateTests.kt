@@ -97,7 +97,7 @@ import org.jetbrains.kotlin.idea.codeInsight.AbstractJetInspectionTest
 import org.jetbrains.kotlin.idea.debugger.AbstractKotlinSteppingTest
 import org.jetbrains.kotlin.idea.debugger.AbstractJetPositionManagerTest
 import org.jetbrains.kotlin.completion.AbstractMultiFileJvmBasicCompletionTest
-import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.AbstractJetExtractionTest
+import org.jetbrains.kotlin.idea.refactoring.introduce.AbstractJetExtractionTest
 import org.jetbrains.kotlin.formatter.AbstractJetTypingIndentationTestBase
 import org.jetbrains.kotlin.idea.debugger.evaluate.AbstractKotlinEvaluateExpressionTest
 import org.jetbrains.kotlin.idea.debugger.evaluate.AbstractSelectExpressionForDebuggerTest

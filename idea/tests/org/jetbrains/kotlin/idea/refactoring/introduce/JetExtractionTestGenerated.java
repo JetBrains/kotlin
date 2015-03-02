@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable;
+package org.jetbrains.kotlin.idea.refactoring.introduce;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.InnerTestClasses;
@@ -1920,8 +1920,7 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class IntroduceProperty extends AbstractJetExtractionTest {
         public void testAllFilesPresentInIntroduceProperty() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/introduceProperty"),
-                                                         Pattern.compile("^(.+)\\.kt$"), true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/introduceProperty"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("extractLazyMultipleExpressions.kt")
