@@ -47,9 +47,7 @@ import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.jps.JpsKotlinCompilerSettings
 import org.jetbrains.kotlin.jps.incremental.*
-import org.jetbrains.kotlin.jps.incremental.IncrementalCacheImpl.RecompilationDecision.DO_NOTHING
-import org.jetbrains.kotlin.jps.incremental.IncrementalCacheImpl.RecompilationDecision.RECOMPILE_ALL_IN_CHUNK_AND_DEPENDANTS
-import org.jetbrains.kotlin.jps.incremental.IncrementalCacheImpl.RecompilationDecision.RECOMPILE_OTHER_IN_CHUNK_AND_DEPENDANTS
+import org.jetbrains.kotlin.jps.incremental.IncrementalCacheImpl.RecompilationDecision.*
 import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCacheProvider
 import org.jetbrains.kotlin.utils.LibraryUtils
@@ -162,12 +160,14 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 
         if (IncrementalCompilation.ENABLED) {
             when (recompilationDecision) {
-                RECOMPILE_ALL_IN_CHUNK_AND_DEPENDANTS -> {
+                RECOMPILE_ALL -> {
                     allCompiledFiles.clear()
                     return CHUNK_REBUILD_REQUIRED
                 }
-                RECOMPILE_OTHER_IN_CHUNK_AND_DEPENDANTS -> {
-                    // TODO should mark dependencies as dirty, as well
+                COMPILE_OTHER -> {
+                    FSOperations.markDirty(context, chunk, { file -> file !in allCompiledFiles })
+                }
+                COMPILE_OTHER_KOTLIN -> {
                     FSOperations.markDirty(context, chunk, { file ->
                         KotlinSourceFileCollector.isKotlinSourceFile(file) && file !in allCompiledFiles
                     })
