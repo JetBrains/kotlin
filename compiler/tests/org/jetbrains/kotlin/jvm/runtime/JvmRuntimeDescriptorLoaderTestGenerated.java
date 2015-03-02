@@ -3457,6 +3457,12 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
                 doTest(fileName);
             }
 
+            @TestMetadata("EnumConstructorParameter.java")
+            public void testEnumConstructorParameter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/annotations/EnumConstructorParameter.java");
+                doTest(fileName);
+            }
+
             @TestMetadata("EnumInParam.java")
             public void testEnumInParam() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/annotations/EnumInParam.java");

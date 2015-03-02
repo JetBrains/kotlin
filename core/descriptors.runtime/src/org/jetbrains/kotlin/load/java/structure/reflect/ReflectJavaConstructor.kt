@@ -21,24 +21,28 @@ import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
 import org.jetbrains.kotlin.load.java.structure.JavaValueParameter
 import java.lang.reflect.Constructor
 import java.lang.reflect.Modifier
-import java.util.Arrays
 
 public class ReflectJavaConstructor(override val member: Constructor<*>) : ReflectJavaMember(), JavaConstructor {
-    override fun getValueParameters(): List<JavaValueParameter> =
-            getValueParameters(
-                    dropSynthetic(member.getGenericParameterTypes()),
-                    dropSynthetic(member.getParameterAnnotations()),
-                    member.isVarArgs()
-            )
+    // TODO: test local/anonymous classes
+    override fun getValueParameters(): List<JavaValueParameter> {
+        val types = member.getGenericParameterTypes()
+        if (types.isEmpty()) return emptyList()
 
-    // Constructors of inner classes have one additional synthetic parameter
-    // TODO: test this code with annotations on constructor parameters of enums and inner classes
-    private inline fun <reified T> dropSynthetic(array: Array<T>): Array<T> {
         val klass = member.getDeclaringClass()
-        return if (klass.getDeclaringClass() != null && !Modifier.isStatic(klass.getModifiers())) {
-            Arrays.copyOfRange(array, 1, array.size())
+
+        val realTypes = when {
+            klass.getDeclaringClass() != null && !Modifier.isStatic(klass.getModifiers()) -> types.copyOfRange(1, types.size())
+            else -> types
         }
-        else array
+
+        val annotations = member.getParameterAnnotations()
+        val realAnnotations = when {
+            annotations.size() < realTypes.size() -> throw IllegalStateException("Illegal generic signature: $member")
+            annotations.size() > realTypes.size() -> annotations.copyOfRange(annotations.size() - realTypes.size(), annotations.size())
+            else -> annotations
+        }
+
+        return getValueParameters(realTypes, realAnnotations, member.isVarArgs())
     }
 
     override fun getTypeParameters(): List<JavaTypeParameter> {

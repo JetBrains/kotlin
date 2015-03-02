@@ -415,6 +415,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledJava(fileName);
             }
 
+            @TestMetadata("EnumConstructorParameter.java")
+            public void testEnumConstructorParameter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/annotations/EnumConstructorParameter.java");
+                doTestCompiledJava(fileName);
+            }
+
             @TestMetadata("EnumInParam.java")
             public void testEnumInParam() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/annotations/EnumInParam.java");
