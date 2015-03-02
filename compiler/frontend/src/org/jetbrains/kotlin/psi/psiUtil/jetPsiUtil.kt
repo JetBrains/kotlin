@@ -130,11 +130,17 @@ public fun JetElement.outermostLastBlockElement(predicate: (JetElement) -> Boole
     return JetPsiUtil.getOutermostLastBlockElement(this) { e -> e != null && predicate(e) }
 }
 
-public fun JetBlockExpression.appendElement(element: JetElement): JetElement =
-        addAfter(element, getRBrace()!!.getPrevSibling()!!)!! as JetElement
-
-public fun JetBlockExpression.prependElement(element: JetElement): JetElement =
-        addBefore(element, getLBrace()!!.getNextSibling()!!)!! as JetElement
+public fun JetBlockExpression.appendElement(element: JetElement): JetElement {
+    val rBrace = getRBrace()
+    val anchor = if (rBrace == null) {
+        val lastChild = getLastChild()
+        if (lastChild !is PsiWhiteSpace) addAfter(JetPsiFactory(this).createNewLine(), lastChild)!! else lastChild
+    }
+    else {
+        rBrace.getPrevSibling()!!
+    }
+    return addAfter(element, anchor)!! as JetElement
+}
 
 public fun JetElement.wrapInBlock(): JetBlockExpression {
     val block = JetPsiFactory(this).createEmptyBody()

@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.idea.util.psi.patternMatching.*
 import kotlin.test.*
 import com.intellij.openapi.application.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceProperty.*
-import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.*
 import java.util.*
+import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.*
 
 public class KotlinIntroducePropertyHandler(
         val helper: ExtractionEngineHelper = KotlinIntroducePropertyHandler.InteractiveExtractionHelper
@@ -42,8 +42,9 @@ public class KotlinIntroducePropertyHandler(
                 continuation: (ExtractionGeneratorConfiguration) -> Unit
         ) {
             val descriptor = descriptorWithConflicts.descriptor
-            if (descriptor.canGenerateProperty()) {
-                continuation(ExtractionGeneratorConfiguration(descriptor, ExtractionGeneratorOptions.DEFAULT.copy(extractAsProperty = true)))
+            val target = propertyTargets.filter { it.isAvailable(descriptor) }.firstOrNull()
+            if (target != null) {
+                continuation(ExtractionGeneratorConfiguration(descriptor, ExtractionGeneratorOptions.DEFAULT.copy(target = target)))
             }
             else {
                 showErrorHint(project, editor, "Can't introduce property for this expression", INTRODUCE_PROPERTY)

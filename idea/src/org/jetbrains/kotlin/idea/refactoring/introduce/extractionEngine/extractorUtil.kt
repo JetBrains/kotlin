@@ -17,6 +17,25 @@
 package org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.psi.JetPsiFactory.CallableBuilder
+import org.jetbrains.kotlin.psi.JetNamedDeclaration
+import org.jetbrains.kotlin.psi.JetPsiFactory
+import java.util.LinkedHashMap
+import java.util.Collections
+import org.jetbrains.kotlin.psi.psiUtil.isFunctionLiteralOutsideParentheses
+import org.jetbrains.kotlin.psi.JetFunctionLiteralArgument
+import org.jetbrains.kotlin.idea.util.psiModificationUtil.moveInsideParenthesesAndReplaceWith
+import org.jetbrains.kotlin.psi.psiUtil.appendElement
+import org.jetbrains.kotlin.psi.psiUtil.replaced
+import org.jetbrains.kotlin.psi.JetBlockExpression
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.ParameterUpdate
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.Jump
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.Initializer
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.ExpressionValue
+import org.jetbrains.kotlin.psi.JetReturnExpression
+import org.jetbrains.kotlin.idea.refactoring.JetNameValidatorImpl
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.refactoring.JetNameSuggester
 import org.jetbrains.kotlin.idea.refactoring.JetNameValidatorImpl
@@ -52,11 +71,12 @@ fun ExtractionGeneratorConfiguration.getDeclarationText(
                                                     DescriptorRenderer.FLEXIBLE_TYPES_FOR_CODE
                                                  else IdeDescriptorRenderers.SOURCE_CODE
 ): String {
-    if (!descriptor.canGenerateProperty() && generatorOptions.extractAsProperty) {
-        throw IllegalArgumentException("Can't generate property: ${descriptor.extractionData.getCodeFragmentText()}")
+    val extractionTarget = generatorOptions.target
+    if (!extractionTarget.isAvailable(descriptor)) {
+        throw IllegalArgumentException("Can't generate ${extractionTarget.name}: ${descriptor.extractionData.codeFragmentText}")
     }
 
-    val builderTarget = if (generatorOptions.extractAsProperty) Target.READ_ONLY_PROPERTY else Target.FUNCTION
+    val builderTarget = if (extractionTarget == ExtractionTarget.FUNCTION) CallableBuilder.Target.FUNCTION else CallableBuilder.Target.READ_ONLY_PROPERTY
     return CallableBuilder(builderTarget).let { builder ->
         builder.modifier(descriptor.visibility)
 
@@ -78,13 +98,22 @@ fun ExtractionGeneratorConfiguration.getDeclarationText(
         }
 
         with(descriptor.controlFlow.outputValueBoxer.returnType) {
-            if (isDefault() || isError()) builder.noReturnType() else builder.returnType(this.typeAsString())
+            if (isDefault() || isError() || extractionTarget == ExtractionTarget.PROPERTY_WITH_INITIALIZER) {
+                builder.noReturnType()
+            } else {
+                builder.returnType(typeAsString())
+            }
         }
 
         builder.typeConstraints(descriptor.typeParameters.flatMap { it.originalConstraints }.map { it.getText()!! })
 
         if (withBody) {
-            builder.blockBody(descriptor.extractionData.getCodeFragmentText())
+            val bodyText = descriptor.extractionData.codeFragmentText
+            when (extractionTarget) {
+                ExtractionTarget.FUNCTION, ExtractionTarget.PROPERTY_WITH_GETTER -> builder.blockBody(bodyText)
+                ExtractionTarget.PROPERTY_WITH_INITIALIZER -> builder.initializer(bodyText)
+                ExtractionTarget.LAZY_PROPERTY -> builder.lazyBody(bodyText)
+            }
         }
 
         builder.asString()
@@ -337,7 +366,9 @@ private fun makeCall(
     }
 }
 
-fun ExtractionGeneratorConfiguration.generateDeclaration(): ExtractionResult{
+fun ExtractionGeneratorConfiguration.generateDeclaration(
+        declarationToReplace: JetNamedDeclaration? = null
+): ExtractionResult{
     val psiFactory = JetPsiFactory(descriptor.extractionData.originalFile)
     val nameByOffset = HashMap<Int, JetElement>()
 
@@ -388,7 +419,7 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(): ExtractionResult{
     }
 
     fun adjustDeclarationBody(declaration: JetNamedDeclaration) {
-        val body = declaration.getGeneratedBlockBody()
+        val body = declaration.getGeneratedBody()
 
         val exprReplacementMap = HashMap<JetElement, (JetElement) -> JetElement>()
         val originalOffsetByExpr = LinkedHashMap<JetElement, Int>()
@@ -444,6 +475,10 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(): ExtractionResult{
             }
         }
 
+        if (generatorOptions.target == ExtractionTarget.PROPERTY_WITH_INITIALIZER) return
+
+        if (body !is JetBlockExpression) throw AssertionError("Block body expected: ${descriptor.extractionData.codeFragmentText}")
+
         val firstExpression = body.getStatements().firstOrNull()
         if (firstExpression != null) {
             for (param in descriptor.parameters) {
@@ -474,6 +509,15 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(): ExtractionResult{
         val returnExpression = descriptor.controlFlow.outputValueBoxer.getReturnExpression(getReturnArguments(defaultExpression), psiFactory)
         if (returnExpression == null) return
 
+        if (generatorOptions.target == ExtractionTarget.LAZY_PROPERTY) {
+            // In the case of lazy property absence of default value means that output values are of OutputValue.Initializer type
+            // We just add resulting expressions without return, since returns are prohibited in the body of lazy property
+            if (defaultValue == null) {
+                body.appendElement(returnExpression.getReturnedExpression()!!)
+            }
+            return
+        }
+
         when {
             defaultValue == null ->
                 body.appendElement(returnExpression)
@@ -484,6 +528,8 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(): ExtractionResult{
     }
 
     fun insertDeclaration(declaration: JetNamedDeclaration, anchor: PsiElement): JetNamedDeclaration {
+        declarationToReplace?.let { return it.replace(declaration) as JetNamedDeclaration }
+
         return with(descriptor.extractionData) {
             val targetContainer = anchor.getParent()!!
             val emptyLines = psiFactory.createWhiteSpace("\n\n")
@@ -502,7 +548,7 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(): ExtractionResult{
         }
     }
 
-    val duplicates = if (generatorOptions.inTempFile) Collections.emptyList() else descriptor.findDuplicates()
+    val duplicates = if (generatorOptions.inTempFile) Collections.emptyList() else descriptor.duplicates
 
     val anchor = with(descriptor.extractionData) {
         val anchorCandidates = duplicates.mapTo(ArrayList<PsiElement>()) { it.range.elements.first() }

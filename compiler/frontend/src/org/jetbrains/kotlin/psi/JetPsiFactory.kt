@@ -535,7 +535,7 @@ public class JetPsiFactory(private val project: Project) {
             state = State.RECEIVER
         }
 
-        private fun blockPrefix() = when (target) {
+        private fun bodyPrefix() = when (target) {
             Target.FUNCTION -> ""
             Target.READ_ONLY_PROPERTY -> "\nget()"
         }
@@ -621,19 +621,28 @@ public class JetPsiFactory(private val project: Project) {
             return this
         }
 
-        public fun simpleBody(body: String): CallableBuilder {
+        public fun blockBody(body: String): CallableBuilder {
             assert(state == State.BODY || state == State.TYPE_CONSTRAINTS)
 
-            sb.append(blockPrefix()).append(" = ").append(body)
+            sb.append(bodyPrefix()).append(" {\n").append(body).append("\n}")
             state = State.DONE
 
             return this
         }
 
-        public fun blockBody(body: String): CallableBuilder {
-            assert(state == State.BODY || state == State.TYPE_CONSTRAINTS)
+        public fun initializer(body: String): CallableBuilder {
+            assert(target == Target.READ_ONLY_PROPERTY && (state == State.BODY || state == State.TYPE_CONSTRAINTS))
 
-            sb.append(blockPrefix()).append(" {\n").append(body).append("\n}")
+            sb.append(" = ").append(body)
+            state = State.DONE
+
+            return this
+        }
+
+        public fun lazyBody(body: String): CallableBuilder {
+            assert(target == Target.READ_ONLY_PROPERTY && (state == State.BODY || state == State.TYPE_CONSTRAINTS))
+
+            sb.append(" by kotlin.properties.Delegates.lazy {\n").append(body).append("\n}")
             state = State.DONE
 
             return this

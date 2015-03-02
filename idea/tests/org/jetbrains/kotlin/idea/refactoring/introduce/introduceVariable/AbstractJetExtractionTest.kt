@@ -61,6 +61,9 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
 
     protected fun doIntroducePropertyTest(path: String) {
         doTest(path) { file ->
+            val extractionTarget = propertyTargets.single {
+                it.name == InTextDirectivesUtils.findStringWithPrefixes(file.getText(), "// EXTRACTION_TARGET: ")
+            }
             val helper = object : ExtractionEngineHelper() {
                 override fun configure(
                         descriptor: ExtractableCodeDescriptor,
@@ -68,7 +71,7 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
                 ): ExtractionGeneratorConfiguration {
                     return ExtractionGeneratorConfiguration(
                             descriptor,
-                            generatorOptions.copy(extractAsProperty = true)
+                            generatorOptions.copy(target = extractionTarget)
                     )
                 }
             }

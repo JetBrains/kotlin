@@ -69,6 +69,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.idea.refactoring.comparePossiblyOverridingDescriptors
 import org.jetbrains.kotlin.idea.util.makeNullable
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
+import org.jetbrains.kotlin.resolve.calls.callUtil.*
 
 private val DEFAULT_FUNCTION_NAME = "myFun"
 private val DEFAULT_RETURN_TYPE = KotlinBuiltIns.getInstance().getUnitType()
@@ -391,7 +392,7 @@ fun ExtractionData.createTemporaryDeclaration(functionText: String): JetNamedDec
 }
 
 private fun ExtractionData.createTemporaryCodeBlock(): JetBlockExpression =
-        (createTemporaryDeclaration("fun() {\n${getCodeFragmentText()}\n}\n") as JetNamedFunction).getBodyExpression() as JetBlockExpression
+        (createTemporaryDeclaration("fun() {\n$codeFragmentText\n}\n") as JetNamedFunction).getBodyExpression() as JetBlockExpression
 
 private fun JetType.collectReferencedTypes(processTypeArguments: Boolean): List<JetType> {
     if (!processTypeArguments) return Collections.singletonList(this)
@@ -644,7 +645,7 @@ private fun ExtractionData.inferParametersInfo(
                                 "this$label"
                             }
                             else
-                                (thisExpr ?: ref).getText() ?: throw AssertionError("'this' reference shouldn't be empty: code fragment = ${getCodeFragmentText()}")
+                                (thisExpr ?: ref).getText() ?: throw AssertionError("'this' reference shouldn't be empty: code fragment = $codeFragmentText")
 
                     MutableParameter(argumentText, descriptorToExtract, extractThis)
                 }
@@ -835,11 +836,21 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
     )
 }
 
-private fun JetNamedDeclaration.getGeneratedBlockBody() =
+private fun JetNamedDeclaration.getGeneratedBody() =
         when (this) {
             is JetNamedFunction -> getBodyExpression()
-            else -> (this as JetProperty).getGetter()!!.getBodyExpression()
-        } as? JetBlockExpression ?: throw AssertionError("Couldn't get block body for this declaration: ${JetPsiUtil.getElementTextWithContext(this)}")
+            else -> {
+                val property = this as JetProperty
+
+                property.getGetter()?.getBodyExpression()?.let { return it }
+                property.getInitializer()?.let { return it }
+                // We assume lazy property here with delegate expression 'by Delegates.lazy { body }'
+                property.getDelegateExpression()?.let {
+                    val call = it.getCalleeExpressionIfAny()?.getParent() as? JetCallExpression
+                    call?.getFunctionLiteralArguments()?.singleOrNull()?.getFunctionLiteral()?.getBodyExpression()
+                }
+            }
+        } ?: throw AssertionError("Couldn't get block body for this declaration: ${JetPsiUtil.getElementTextWithContext(this)}")
 
 fun ExtractableCodeDescriptor.validate(): ExtractableCodeDescriptorWithConflicts {
     val conflicts = MultiMap<PsiElement, String>()
@@ -847,7 +858,7 @@ fun ExtractableCodeDescriptor.validate(): ExtractableCodeDescriptorWithConflicts
     val result = ExtractionGeneratorConfiguration(this, ExtractionGeneratorOptions(inTempFile = true)).generateDeclaration()
 
     val valueParameterList = (result.declaration as? JetNamedFunction)?.getValueParameterList()
-    val bindingContext = result.declaration.getGeneratedBlockBody().analyze()
+    val bindingContext = result.declaration.getGeneratedBody().analyze()
 
     for ((originalOffset, resolveResult) in extractionData.refOffsetToDeclaration) {
         if (resolveResult.declaration.isInsideOf(extractionData.originalElements)) continue

@@ -1924,6 +1924,36 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                                                          Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("extractLazyMultipleExpressions.kt")
+        public void testExtractLazyMultipleExpressions() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceProperty/extractLazyMultipleExpressions.kt");
+            doIntroducePropertyTest(fileName);
+        }
+
+        @TestMetadata("extractLazyToClass.kt")
+        public void testExtractLazyToClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceProperty/extractLazyToClass.kt");
+            doIntroducePropertyTest(fileName);
+        }
+
+        @TestMetadata("extractLazyToFile.kt")
+        public void testExtractLazyToFile() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceProperty/extractLazyToFile.kt");
+            doIntroducePropertyTest(fileName);
+        }
+
+        @TestMetadata("extractLazyWithBlock.kt")
+        public void testExtractLazyWithBlock() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceProperty/extractLazyWithBlock.kt");
+            doIntroducePropertyTest(fileName);
+        }
+
+        @TestMetadata("extractLazyWithCallSiteReturn.kt")
+        public void testExtractLazyWithCallSiteReturn() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceProperty/extractLazyWithCallSiteReturn.kt");
+            doIntroducePropertyTest(fileName);
+        }
+
         @TestMetadata("extractToClassWithNameClash.kt")
         public void testExtractToClassWithNameClash() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceProperty/extractToClassWithNameClash.kt");
@@ -1963,6 +1993,42 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
         @TestMetadata("extractWithGetterToFile.kt")
         public void testExtractWithGetterToFile() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceProperty/extractWithGetterToFile.kt");
+            doIntroducePropertyTest(fileName);
+        }
+
+        @TestMetadata("extractWithInitializerAndBlock.kt")
+        public void testExtractWithInitializerAndBlock() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceProperty/extractWithInitializerAndBlock.kt");
+            doIntroducePropertyTest(fileName);
+        }
+
+        @TestMetadata("extractWithInitializerAndCallSiteReturn.kt")
+        public void testExtractWithInitializerAndCallSiteReturn() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceProperty/extractWithInitializerAndCallSiteReturn.kt");
+            doIntroducePropertyTest(fileName);
+        }
+
+        @TestMetadata("extractWithInitializerAndSingleElementBlock.kt")
+        public void testExtractWithInitializerAndSingleElementBlock() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceProperty/extractWithInitializerAndSingleElementBlock.kt");
+            doIntroducePropertyTest(fileName);
+        }
+
+        @TestMetadata("extractWithInitializerMultipleExpressions.kt")
+        public void testExtractWithInitializerMultipleExpressions() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceProperty/extractWithInitializerMultipleExpressions.kt");
+            doIntroducePropertyTest(fileName);
+        }
+
+        @TestMetadata("extractWithInitializerToClass.kt")
+        public void testExtractWithInitializerToClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceProperty/extractWithInitializerToClass.kt");
+            doIntroducePropertyTest(fileName);
+        }
+
+        @TestMetadata("extractWithInitializerToFile.kt")
+        public void testExtractWithInitializerToFile() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceProperty/extractWithInitializerToFile.kt");
             doIntroducePropertyTest(fileName);
         }
 

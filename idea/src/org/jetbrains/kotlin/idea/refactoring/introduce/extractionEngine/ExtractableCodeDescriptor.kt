@@ -17,37 +17,21 @@
 package org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine
 
 import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.psi.JetCallExpression
-import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import com.intellij.util.containers.MultiMap
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.psi.JetThisExpression
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference.ShorteningMode
 import org.jetbrains.kotlin.psi.psiUtil.replaced
-import org.jetbrains.kotlin.psi.JetQualifiedExpression
-import org.jetbrains.kotlin.psi.JetTypeParameter
-import org.jetbrains.kotlin.psi.JetTypeConstraint
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AnalysisResult.Status
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AnalysisResult.ErrorMessage
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.psi.JetProperty
-import org.jetbrains.kotlin.psi.JetDeclaration
 import com.intellij.openapi.util.text.StringUtil
-import org.jetbrains.kotlin.psi.JetClassBody
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import org.jetbrains.kotlin.types.CommonSupertypes
-import java.util.Collections
-import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.psi.JetReturnExpression
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.ExpressionValue
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.Jump
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.*
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.types.TypeUtils
 import kotlin.properties.Delegates
@@ -57,6 +41,8 @@ import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiRange
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.idea.util.isUnit
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
+import org.jetbrains.kotlin.psi.*
+import java.util.*
 
 trait Parameter {
     val argumentText: String
@@ -314,11 +300,62 @@ data class ExtractableCodeDescriptor(
         val controlFlow: ControlFlow
 ) {
     val name: String get() = suggestedNames.firstOrNull() ?: ""
+    val duplicates: List<DuplicateInfo> by Delegates.lazy { findDuplicates() }
 }
+
+enum class ExtractionTarget(val name: String) {
+    FUNCTION : ExtractionTarget("function") {
+        override fun isAvailable(descriptor: ExtractableCodeDescriptor) = true
+    }
+
+    PROPERTY_WITH_INITIALIZER : ExtractionTarget("property with initializer") {
+        override fun isAvailable(descriptor: ExtractableCodeDescriptor): Boolean {
+            return checkSignatureAndParent(descriptor) && checkSimpleControlFlow(descriptor) && checkSimpleBody(descriptor)
+        }
+    }
+
+    PROPERTY_WITH_GETTER : ExtractionTarget("property with getter") {
+        override fun isAvailable(descriptor: ExtractableCodeDescriptor): Boolean {
+            return checkSignatureAndParent(descriptor)
+        }
+    }
+
+    LAZY_PROPERTY : ExtractionTarget("lazy property") {
+        override fun isAvailable(descriptor: ExtractableCodeDescriptor): Boolean {
+            return checkSignatureAndParent(descriptor) && checkSimpleControlFlow(descriptor)
+        }
+    }
+
+    abstract fun isAvailable(descriptor: ExtractableCodeDescriptor): Boolean
+
+    class object {
+        fun checkSimpleBody(descriptor: ExtractableCodeDescriptor): Boolean {
+            val expression = descriptor.extractionData.getExpressions().singleOrNull()
+            return expression != null && expression !is JetDeclaration && expression !is JetBlockExpression
+        }
+
+        fun checkSimpleControlFlow(descriptor: ExtractableCodeDescriptor): Boolean {
+            val outputValue = descriptor.controlFlow.outputValues.singleOrNull()
+            return (outputValue is ExpressionValue && !outputValue.callSiteReturn) || outputValue is Initializer
+        }
+
+        fun checkSignatureAndParent(descriptor: ExtractableCodeDescriptor): Boolean {
+            if (!descriptor.parameters.isEmpty()) return false
+            if (descriptor.controlFlow.outputValueBoxer.returnType.isUnit()) return false
+
+            val parent = descriptor.extractionData.targetSibling.getParent()
+            return (parent is JetFile || parent is JetClassBody)
+        }
+    }
+}
+
+val propertyTargets: List<ExtractionTarget> = listOf(ExtractionTarget.PROPERTY_WITH_INITIALIZER,
+                                                     ExtractionTarget.PROPERTY_WITH_GETTER,
+                                                     ExtractionTarget.LAZY_PROPERTY)
 
 data class ExtractionGeneratorOptions(
         val inTempFile: Boolean = false,
-        val extractAsProperty: Boolean = false,
+        val target: ExtractionTarget = ExtractionTarget.FUNCTION,
         val flexibleTypesAllowed: Boolean = false
 ) {
     class object {
@@ -393,11 +430,3 @@ class ExtractableCodeDescriptorWithConflicts(
         val descriptor: ExtractableCodeDescriptor,
         val conflicts: MultiMap<PsiElement, String>
 )
-
-fun ExtractableCodeDescriptor.canGenerateProperty(): Boolean {
-    if (!parameters.isEmpty()) return false
-    if (controlFlow.outputValueBoxer.returnType.isUnit()) return false
-
-    val parent = extractionData.targetSibling.getParent()
-    return parent is JetFile || parent is JetClassBody
-}

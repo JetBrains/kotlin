@@ -92,7 +92,7 @@ data class ExtractionData(
 
     fun getExpressions(): List<JetExpression> = originalElements.filterIsInstance<JetExpression>()
 
-    fun getCodeFragmentTextRange(): TextRange? {
+    private fun getCodeFragmentTextRange(): TextRange? {
         val originalElements = originalElements
         return when (originalElements.size()) {
             0 -> null
@@ -105,8 +105,9 @@ data class ExtractionData(
         }
     }
 
-    fun getCodeFragmentText(): String =
-            getCodeFragmentTextRange()?.let { originalFile.getText()?.substring(it.getStartOffset(), it.getEndOffset()) } ?: ""
+    val codeFragmentText: String by Delegates.lazy {
+        getCodeFragmentTextRange()?.let { originalFile.getText()?.substring(it.getStartOffset(), it.getEndOffset()) } ?: ""
+    }
 
     val originalStartOffset = originalElements.firstOrNull()?.let { e -> e.getTextRange()!!.getStartOffset() }
 
@@ -179,6 +180,9 @@ data class ExtractionData(
 // Hack:
 // we can't get first element offset through getStatement()/getChildren() since they skip comments and whitespaces
 // So we take offset of the left brace instead and increase it by 2 (which is length of "{\n" separating block start and its first element)
-private fun JetBlockExpression.getBlockContentOffset(): Int {
-    return getLBrace()!!.getTextRange()!!.getStartOffset() + 2
+private fun JetExpression.getBlockContentOffset(): Int {
+    (this as? JetBlockExpression)?.getLBrace()?.let {
+        return it.getTextRange()!!.getStartOffset() + 2
+    }
+    return getTextRange()!!.getStartOffset()
 }
