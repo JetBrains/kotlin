@@ -51,8 +51,8 @@ public fun <T : Comparable<*>> compareValues(a: T?, b: T?): Int {
 
 /**
  * Creates a comparator using the sequence of functions to calculate a result of comparison.
- * The functions are called sequentially, receive the given values [a] and [b] and return [Comparable]
- * objects. As soon as the [Comparable] instances returned by a function for [a] and [b] values do not
+ * The functions are called sequentially, receive the given values `a` and `b` and return [Comparable]
+ * objects. As soon as the [Comparable] instances returned by a function for `a` and `b` values do not
  * compare as equal, the result of that comparison is returned from the [Comparator].
  */
 public fun <T> compareBy(vararg functions: (T) -> Comparable<*>?): Comparator<T> {
