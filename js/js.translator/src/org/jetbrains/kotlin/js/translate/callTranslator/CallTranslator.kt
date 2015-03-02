@@ -204,7 +204,7 @@ trait DelegateIntrinsic<I : CallInfo> {
 
         // Now intrinsic support only FunctionDescriptor. See DelegatePropertyAccessIntrinsic.getDescriptor()
         if (descriptor is FunctionDescriptor) {
-            val intrinsic = context.intrinsics().getFunctionIntrinsics().getIntrinsic(descriptor)
+            val intrinsic = context.intrinsics().getFunctionIntrinsic(descriptor)
             if (intrinsic.exists()) {
                 return intrinsic.apply(this, getArgs(), context)
             }

@@ -17,9 +17,16 @@
 package org.jetbrains.kotlin.js.translate.intrinsic;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.descriptors.ClassDescriptor;
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
+import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.FunctionIntrinsics;
+import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsic;
+import org.jetbrains.kotlin.js.translate.intrinsic.objects.ObjectIntrinsic;
 import org.jetbrains.kotlin.js.translate.intrinsic.objects.ObjectIntrinsics;
+import org.jetbrains.kotlin.js.translate.intrinsic.operation.BinaryOperationIntrinsic;
 import org.jetbrains.kotlin.js.translate.intrinsic.operation.BinaryOperationIntrinsics;
+import org.jetbrains.kotlin.psi.JetBinaryExpression;
 
 /**
  * Provides mechanism to substitute method calls /w native constructs directly.
@@ -30,17 +37,20 @@ public final class Intrinsics {
     private final ObjectIntrinsics objectIntrinsics = new ObjectIntrinsics();
 
     @NotNull
-    public BinaryOperationIntrinsics getBinaryOperationIntrinsics() {
-        return binaryOperationIntrinsics;
+    public BinaryOperationIntrinsic getBinaryOperationIntrinsic(
+            @NotNull JetBinaryExpression expression,
+            @NotNull TranslationContext context
+    ) {
+        return binaryOperationIntrinsics.getIntrinsic(expression, context);
     }
 
     @NotNull
-    public FunctionIntrinsics getFunctionIntrinsics() {
-        return functionIntrinsics;
+    public FunctionIntrinsic getFunctionIntrinsic(@NotNull FunctionDescriptor descriptor) {
+        return functionIntrinsics.getIntrinsic(descriptor);
     }
 
     @NotNull
-    public ObjectIntrinsics getObjectIntrinsics() {
-        return objectIntrinsics;
+    public ObjectIntrinsic getObjectIntrinsic(@NotNull ClassDescriptor classDescriptor) {
+        return objectIntrinsics.getIntrinsic(classDescriptor);
     }
 }

@@ -155,7 +155,7 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
 
     @NotNull
     private BinaryOperationIntrinsic getIntrinsicForExpression() {
-        return context().intrinsics().getBinaryOperationIntrinsics().getIntrinsic(expression, context());
+        return context().intrinsics().getBinaryOperationIntrinsic(expression, context());
     }
 
     @NotNull

@@ -67,7 +67,7 @@ public class DefaultObjectAccessTranslator extends AbstractTranslator implements
     @NotNull
     private static JsExpression generateReferenceToDefaultObject(@NotNull DeclarationDescriptor descriptor, @NotNull TranslationContext context) {
         if (descriptor instanceof ClassDescriptor) {
-            ObjectIntrinsic objectIntrinsic = context.intrinsics().getObjectIntrinsics().getIntrinsic((ClassDescriptor) descriptor);
+            ObjectIntrinsic objectIntrinsic = context.intrinsics().getObjectIntrinsic((ClassDescriptor) descriptor);
             if (objectIntrinsic.exists()) {
                 return objectIntrinsic.apply(context);
             }
