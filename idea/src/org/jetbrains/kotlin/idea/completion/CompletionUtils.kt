@@ -80,7 +80,7 @@ fun LookupElement.assignPriority(priority: ItemPriority): LookupElement {
 
 fun LookupElement.suppressAutoInsertion() = AutoCompletionPolicy.NEVER_AUTOCOMPLETE.applyPolicy(this)
 
-fun LookupElement.shouldCastReceiver(): LookupElement {
+fun LookupElement.withReceiverCast(): LookupElement {
     return object: LookupElementDecorator<LookupElement>(this) {
         override fun handleInsert(context: InsertionContext) {
             super.handleInsert(context)
@@ -335,4 +335,3 @@ fun breakOrContinueExpressionItems(position: JetElement, breakOrContinue: String
     }
     return result
 }
-

@@ -52,18 +52,18 @@ class LookupElementsCollector(
 
     public fun addDescriptorElements(descriptors: Iterable<DeclarationDescriptor>,
                                      suppressAutoInsertion: Boolean, // auto-insertion suppression is used for elements that require adding an import
-                                     shouldCastToRuntimeType: Boolean = false
+                                     withReceiverCast: Boolean = false
     ) {
         for (descriptor in descriptors) {
-            addDescriptorElements(descriptor, suppressAutoInsertion, shouldCastToRuntimeType)
+            addDescriptorElements(descriptor, suppressAutoInsertion, withReceiverCast)
         }
     }
 
-    public fun addDescriptorElements(descriptor: DeclarationDescriptor, suppressAutoInsertion: Boolean, shouldCastToRuntimeType: Boolean) {
+    public fun addDescriptorElements(descriptor: DeclarationDescriptor, suppressAutoInsertion: Boolean, withReceiverCast: Boolean) {
         run {
             var lookupElement = lookupElementFactory.createLookupElement(resolutionFacade, descriptor, true)
-            if (shouldCastToRuntimeType) {
-                lookupElement = lookupElement.shouldCastReceiver()
+            if (withReceiverCast) {
+                lookupElement = lookupElement.withReceiverCast()
             }
             if (suppressAutoInsertion) {
                 addElementWithAutoInsertionSuppressed(lookupElement)
@@ -139,9 +139,5 @@ class LookupElementsCollector(
 
     public fun addElements(elements: Iterable<LookupElement>) {
         elements.forEach { addElement(it) }
-    }
-
-    public fun addElementsWithReceiverCast(elements: Iterable<LookupElement>) {
-        elements.forEach { addElement(it.shouldCastReceiver()) }
     }
 }

@@ -169,9 +169,9 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
     // set is used only for completion in code fragments
     private var alreadyAddedDescriptors: Collection<DeclarationDescriptor> by Delegates.notNull()
 
-    protected fun getReferenceVariants(kindFilter: DescriptorKindFilter, shouldCastToRuntimeType: Boolean): Collection<DeclarationDescriptor> {
-        val descriptors = referenceVariantsHelper!!.getReferenceVariants(reference!!.expression, kindFilter, shouldCastToRuntimeType, prefixMatcher.asNameFilter())
-        if (!shouldCastToRuntimeType) {
+    protected fun getReferenceVariants(kindFilter: DescriptorKindFilter, runtimeReceiverType: Boolean): Collection<DeclarationDescriptor> {
+        val descriptors = referenceVariantsHelper!!.getReferenceVariants(reference!!.expression, kindFilter, runtimeReceiverType, prefixMatcher.asNameFilter())
+        if (!runtimeReceiverType) {
             if (position.getContainingFile() is JetCodeFragment) {
                 alreadyAddedDescriptors = descriptors
             }
@@ -277,7 +277,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
             }
 
             if (completionKind != CompletionKind.KEYWORDS_ONLY) {
-                addReferenceVariants(kindFilter, shouldCastToRuntimeType = false)
+                addReferenceVariants(kindFilter, runtimeReceiverType = false)
             }
 
             val ampIndex = prefix.indexOf("@")
@@ -319,7 +319,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
 
                 if (position.getContainingFile() is JetCodeFragment) {
                     flushToResultSet()
-                    addReferenceVariants(kindFilter, shouldCastToRuntimeType = true)
+                    addReferenceVariants(kindFilter, runtimeReceiverType = true)
                 }
             }
         }
@@ -355,11 +355,11 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         }
     }
 
-    private fun addReferenceVariants(kindFilter: DescriptorKindFilter, shouldCastToRuntimeType: Boolean) {
+    private fun addReferenceVariants(kindFilter: DescriptorKindFilter, runtimeReceiverType: Boolean) {
         collector.addDescriptorElements(
-                getReferenceVariants(kindFilter, shouldCastToRuntimeType),
+                getReferenceVariants(kindFilter, runtimeReceiverType),
                 suppressAutoInsertion = false,
-                shouldCastToRuntimeType = shouldCastToRuntimeType)
+                withReceiverCast = runtimeReceiverType)
     }
 }
 
@@ -382,14 +382,14 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
                 if (reference != null) {
                     val filter = result.declarationFilter
                     if (filter != null) {
-                        getReferenceVariants(DESCRIPTOR_KIND_MASK, false).forEach { collector.addElements(filter(it)) }
+                        getReferenceVariants(DESCRIPTOR_KIND_MASK, runtimeReceiverType = false).forEach { collector.addElements(filter(it)) }
                         flushToResultSet()
 
                         processNonImported { collector.addElements(filter(it)) }
                         flushToResultSet()
 
                         if (position.getContainingFile() is JetCodeFragment) {
-                            getReferenceVariants(DESCRIPTOR_KIND_MASK, true).forEach { collector.addElementsWithReceiverCast(filter(it)) }
+                            getReferenceVariants(DESCRIPTOR_KIND_MASK, runtimeReceiverType = true).forEach { collector.addElements(filter(it).map { it.withReceiverCast() }) }
                             flushToResultSet()
                         }
                     }
