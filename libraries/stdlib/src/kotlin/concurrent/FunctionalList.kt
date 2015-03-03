@@ -1,5 +1,6 @@
 package kotlin.concurrent
 
+deprecated("This class does not have any advantages compared to standard Java data structures and is going to be removed")
 public abstract class FunctionalList<T>(public val size: Int) {
     public abstract val head: T
     public abstract val tail: FunctionalList<T>
