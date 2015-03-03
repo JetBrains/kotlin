@@ -20,7 +20,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource;
+import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.source.SourcePackage;
 
@@ -70,11 +73,6 @@ public final class DescriptorToSourceUtils {
             }
         }
         return null;
-    }
-
-    @Nullable
-    public static PsiElement classDescriptorToDeclaration(@NotNull ClassDescriptor clazz) {
-        return getSourceFromDescriptor(clazz);
     }
 
     @Nullable

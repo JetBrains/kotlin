@@ -73,7 +73,6 @@ import static org.jetbrains.kotlin.codegen.AsmUtil.*;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.enumEntryNeedSubclass;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.isLocalNamedFun;
-import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.classDescriptorToDeclaration;
 import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
@@ -936,7 +935,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             return;
         }
 
-        PsiElement classElement = classDescriptorToDeclaration(declarationDescriptor);
+        PsiElement classElement = DescriptorToSourceUtils.getSourceFromDescriptor(declarationDescriptor);
         if (classElement != null) {
             Integer lineNumber = CodegenUtil.getLineNumberForElement(classElement, false);
             if (lineNumber != null) {

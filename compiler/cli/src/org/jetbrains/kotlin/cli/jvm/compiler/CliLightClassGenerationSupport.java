@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
-import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.*;
@@ -125,7 +124,7 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
         return ContainerUtil.mapNotNull(classDescriptors, new Function<ClassDescriptor, JetClassOrObject>() {
             @Override
             public JetClassOrObject fun(ClassDescriptor descriptor) {
-                PsiElement element = DescriptorToSourceUtils.classDescriptorToDeclaration(descriptor);
+                PsiElement element = DescriptorToSourceUtils.getSourceFromDescriptor(descriptor);
                 if (element instanceof JetClassOrObject && PsiSearchScopeUtil.isInScope(searchScope, element)) {
                     return (JetClassOrObject) element;
                 }

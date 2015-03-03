@@ -247,7 +247,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 placement is CallablePlacement.WithReceiver -> {
                     receiverClassDescriptor =
                             placement.receiverTypeCandidate.theType.getConstructor().getDeclarationDescriptor() as? ClassDescriptor
-                    val classDeclaration = receiverClassDescriptor?.let { DescriptorToSourceUtils.classDescriptorToDeclaration(it) }
+                    val classDeclaration = receiverClassDescriptor?.let { DescriptorToSourceUtils.getSourceFromDescriptor(it) }
                     containingElement = if (!config.isExtension && classDeclaration != null) classDeclaration else config.currentFile
                 }
                 else -> throw IllegalArgumentException("Unexpected placement: $placement")
@@ -835,7 +835,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
             if (config.isExtension || receiverClassDescriptor !is JavaClassDescriptor) return false
 
-            val targetClass = DescriptorToSourceUtils.classDescriptorToDeclaration(receiverClassDescriptor) as? PsiClass
+            val targetClass = DescriptorToSourceUtils.getSourceFromDescriptor(receiverClassDescriptor) as? PsiClass
             if (targetClass == null || !targetClass.canRefactor()) return false
 
             val project = declaration.getProject()

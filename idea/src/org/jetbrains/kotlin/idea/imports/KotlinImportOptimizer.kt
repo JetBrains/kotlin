@@ -227,7 +227,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
                 container.getContainingDeclaration() as? ClassDescriptor ?: return false
             else
                 container
-            val classBody = (DescriptorToSourceUtils.classDescriptorToDeclaration(scope) as? JetClassOrObject)?.getBody()
+            val classBody = (DescriptorToSourceUtils.getSourceFromDescriptor(scope) as? JetClassOrObject)?.getBody()
             return classBody != null && classBody.getContainingFile() == file && classBody.isAncestor(place)
         }
     }

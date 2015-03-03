@@ -633,7 +633,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                 @NotNull ClassDescriptor classDescriptor,
                 @NotNull ClassDescriptor superclass
         ) {
-            PsiElement psiElement = DescriptorToSourceUtils.classDescriptorToDeclaration(classDescriptor);
+            PsiElement psiElement = DescriptorToSourceUtils.getSourceFromDescriptor(classDescriptor);
 
             PsiElement elementToMark = null;
             if (psiElement instanceof JetClassOrObject) {
