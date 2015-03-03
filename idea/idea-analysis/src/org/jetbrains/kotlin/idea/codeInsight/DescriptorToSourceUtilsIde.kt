@@ -30,10 +30,13 @@ import java.util.*
 import org.jetbrains.kotlin.descriptors.*
 
 public object DescriptorToSourceUtilsIde {
+    // Returns PSI element for descriptor. If there are many relevant elements (e.g. it is fake override
+    // with multiple declarations), finds any of them. It can find declarations in builtins or decompiled code.
     public fun getAnyDeclaration(project: Project, descriptor: DeclarationDescriptor): PsiElement? {
         return getDeclarationsStream(project, descriptor).firstOrNull()
     }
 
+    // Returns all PSI elements for descriptor. It can find declarations in builtins or decompiled code.
     public fun getAllDeclarations(project: Project, targetDescriptor: DeclarationDescriptor): Collection<PsiElement> {
         val result = getDeclarationsStream(project, targetDescriptor).toHashSet()
         // filter out elements which are navigate to some other element of the result

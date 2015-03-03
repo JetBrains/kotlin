@@ -58,6 +58,9 @@ public object DescriptorToSourceUtils {
     }
 
     // NOTE this is also used by KDoc
+    // Returns PSI element for descriptor. If there are many relevant elements (e.g. it is fake override
+    // with multiple declarations), finds any of them. It can't find declarations in builtins or decompiled code.
+    // In IDE, use DescriptorToSourceUtilsIde instead.
     platformStatic
     public fun descriptorToDeclaration(descriptor: DeclarationDescriptor): PsiElement? {
         for (declarationDescriptor in getEffectiveReferencedDescriptors(descriptor.getOriginal())) {
