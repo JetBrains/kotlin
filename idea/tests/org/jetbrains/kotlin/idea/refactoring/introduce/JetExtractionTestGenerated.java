@@ -1732,6 +1732,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                     doExtractFunctionTest(fileName);
                 }
 
+                @TestMetadata("namedArguments.kt")
+                public void testNamedArguments() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/misc/namedArguments.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
                 @TestMetadata("qualifiedAnnotation.kt")
                 public void testQualifiedAnnotation() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/misc/qualifiedAnnotation.kt");

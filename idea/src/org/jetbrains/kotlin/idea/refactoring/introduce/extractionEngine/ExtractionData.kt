@@ -19,40 +19,29 @@ package org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.psi.JetFile
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.psi.JetExpression
 import com.intellij.openapi.util.TextRange
 import kotlin.properties.Delegates
 import java.util.HashMap
 import org.jetbrains.kotlin.idea.codeInsight.JetFileReferencesResolver
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import java.util.Collections
-import org.jetbrains.kotlin.psi.JetBlockExpression
-import org.jetbrains.kotlin.psi.JetQualifiedExpression
 import org.jetbrains.kotlin.psi.psiUtil.isInsideOf
 import java.util.ArrayList
 import com.intellij.psi.PsiNamedElement
-import org.jetbrains.kotlin.psi.JetSuperExpression
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.psi.JetDeclaration
-import org.jetbrains.kotlin.psi.JetDeclarationWithBody
-import org.jetbrains.kotlin.psi.JetUserType
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.psi.JetFunctionLiteral
-import org.jetbrains.kotlin.psi.JetClassInitializer
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiRange
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.idea.refactoring.compareDescriptors
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.psi.*
 
 data class ExtractionOptions(
         val inferUnitTypeForUnusedValues: Boolean = true,
@@ -127,6 +116,7 @@ data class ExtractionData(
 
             for ((ref, context) in JetFileReferencesResolver.resolve(originalFile, getExpressions())) {
                 if (ref !is JetSimpleNameExpression) continue
+                if (ref.getParent() is JetValueArgumentName) continue
 
                 val resolvedCall = ref.getResolvedCall(context)?.let {
                     (it as? VariableAsFunctionResolvedCall)?.functionCall ?: it
