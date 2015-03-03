@@ -22,6 +22,8 @@ package kotlin
  * information on enum classes.
  */
 public abstract class Enum<E : Enum<E>>(name: String, ordinal: Int): Comparable<E> {
+    class object {}
+
     /**
      * Returns the name of this enum constant, exactly as declared in its enum declaration.
      */

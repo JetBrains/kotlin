@@ -61,6 +61,8 @@ public abstract class Number {
  * values of this type are represented as values of the primitive type `double`.
  */
 public class Double private () : Number, Comparable<Double> {
+    class object : FloatingPointConstants<Double> {}
+
     public override fun compareTo(other: Double): Int
     public fun compareTo(other: Float): Int
     public fun compareTo(other: Long) : Int
@@ -135,6 +137,8 @@ public class Double private () : Number, Comparable<Double> {
  * values of this type are represented as values of the primitive type `float`.
  */
 public class Float private () : Number, Comparable<Float> {
+    class object : FloatingPointConstants<Float> {}
+
     public fun compareTo(other: Double): Int
     public override fun compareTo(other: Float): Int
     public fun compareTo(other: Long)  : Int
@@ -210,6 +214,8 @@ public class Float private () : Number, Comparable<Float> {
  * as values of the primitive type `long`.
  */
 public class Long private () : Number, Comparable<Long> {
+    class object {}
+
     public fun compareTo(other: Double): Int
     public fun compareTo(other: Float) : Int
     public override fun compareTo(other: Long): Int
@@ -293,6 +299,8 @@ public class Long private () : Number, Comparable<Long> {
  * as values of the primitive type `int`.
  */
 public class Int private () : Number, Comparable<Int> {
+    class object {}
+
     public fun compareTo(other: Double): Int
     public fun compareTo(other: Float) : Int
     public fun compareTo(other: Long)  : Int
@@ -376,6 +384,8 @@ public class Int private () : Number, Comparable<Int> {
  * as values of the primitive type `short`.
  */
 public class Short private () : Number, Comparable<Short> {
+    class object {}
+
     public fun compareTo(other: Double): Int
     public fun compareTo(other: Float) : Int
     public fun compareTo(other: Long)  : Int
@@ -451,6 +461,8 @@ public class Short private () : Number, Comparable<Short> {
  * as values of the primitive type `byte`.
  */
 public class Byte private () : Number, Comparable<Byte> {
+    class object {}
+
     public fun compareTo(other: Double): Int
     public fun compareTo(other: Float) : Int
     public fun compareTo(other: Long)  : Int

@@ -21,6 +21,8 @@ package kotlin
  * implemented as instances of this class.
  */
 public class String : Comparable<String>, CharSequence {
+    class object {}
+    
     /**
      * Returns a string obtained by concatenating this string with the string representation of the given [other] object.
      */

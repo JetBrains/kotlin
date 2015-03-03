@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TemporaryVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
+import org.jetbrains.kotlin.js.translate.intrinsic.objects.ObjectIntrinsic;
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils;
 import org.jetbrains.kotlin.psi.JetReferenceExpression;
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression;
@@ -60,13 +61,24 @@ public class DefaultObjectAccessTranslator extends AbstractTranslator implements
 
     private DefaultObjectAccessTranslator(@NotNull DeclarationDescriptor descriptor, @NotNull TranslationContext context) {
         super(context);
-        JsExpression fqReference = translateAsFQReference(descriptor, context());
+        this.referenceToDefaultObject = generateReferenceToDefaultObject(descriptor, context);
+    }
+
+    @NotNull
+    private static JsExpression generateReferenceToDefaultObject(@NotNull DeclarationDescriptor descriptor, @NotNull TranslationContext context) {
+        if (descriptor instanceof ClassDescriptor) {
+            ObjectIntrinsic objectIntrinsic = context.intrinsics().getObjectIntrinsics().getIntrinsic((ClassDescriptor) descriptor);
+            if (objectIntrinsic.exists()) {
+                return objectIntrinsic.apply(context);
+            }
+        }
+
+        JsExpression fqReference = translateAsFQReference(descriptor, context);
         if (isObject(descriptor) || isEnumEntry(descriptor)) {
-            this.referenceToDefaultObject = fqReference;
+            return fqReference;
         }
-        else {
-            this.referenceToDefaultObject = Namer.getDefaultObjectAccessor(fqReference);
-        }
+
+        return Namer.getDefaultObjectAccessor(fqReference);
     }
 
     @Override

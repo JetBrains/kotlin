@@ -4,6 +4,7 @@
       <w>accessors</w>
       <w>goto</w>
       <w>gradle</w>
+      <w>intrinsics</w>
       <w>kdoc</w>
       <w>kompiler</w>
       <w>memoize</w>

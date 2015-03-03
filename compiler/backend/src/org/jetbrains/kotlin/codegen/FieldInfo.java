@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.codegen;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicObjects;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassKind;
@@ -33,7 +34,7 @@ public class FieldInfo {
             throw new UnsupportedOperationException("Can't create singleton field for class: " + classDescriptor);
         }
 
-        if (kind == ClassKind.OBJECT) {
+        if (kind == ClassKind.OBJECT || IntrinsicObjects.INSTANCE$.hasMappingToObject(classDescriptor)) {
             Type type = typeMapper.mapType(classDescriptor);
             return new FieldInfo(type, type, JvmAbi.INSTANCE_FIELD, true);
         }

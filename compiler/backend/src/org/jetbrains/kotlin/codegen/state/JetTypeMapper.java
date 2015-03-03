@@ -20,6 +20,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicObjects;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.codegen.*;
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
@@ -294,6 +295,18 @@ public class JetTypeMapper {
         }
 
         if (descriptor instanceof ClassDescriptor) {
+            FqName defaultObjectMappedFqName = IntrinsicObjects.INSTANCE$.mapType((ClassDescriptor) descriptor);
+            if (defaultObjectMappedFqName != null) {
+                Type asmType = AsmUtil.asmTypeByFqNameWithoutInnerClasses(defaultObjectMappedFqName);
+                if (signatureVisitor != null) {
+                    signatureVisitor.writeAsmType(asmType);
+                }
+
+                return asmType;
+            }
+        }
+
+        if (descriptor instanceof ClassDescriptor) {
             Type asmType = computeAsmType((ClassDescriptor) descriptor.getOriginal());
             writeGenericType(signatureVisitor, asmType, jetType, howThisTypeIsUsed, projectionsAllowed);
             return asmType;
@@ -399,10 +412,10 @@ public class JetTypeMapper {
                 else {
                     Variance projectionKind = projectionsAllowed
                                               ? getEffectiveVariance(
-                                                        parameter.getVariance(),
-                                                        argument.getProjectionKind(),
-                                                        howThisTypeIsUsed
-                                                )
+                            parameter.getVariance(),
+                            argument.getProjectionKind(),
+                            howThisTypeIsUsed
+                    )
                                               : Variance.INVARIANT;
                     signatureVisitor.writeTypeArgument(projectionKind);
 

@@ -18,15 +18,16 @@ package org.jetbrains.kotlin.js.translate.intrinsic;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.FunctionIntrinsics;
+import org.jetbrains.kotlin.js.translate.intrinsic.objects.ObjectIntrinsics;
 import org.jetbrains.kotlin.js.translate.intrinsic.operation.BinaryOperationIntrinsics;
 
 /**
  * Provides mechanism to substitute method calls /w native constructs directly.
  */
 public final class Intrinsics {
-
-    @NotNull
     private final FunctionIntrinsics functionIntrinsics = new FunctionIntrinsics();
+    private final BinaryOperationIntrinsics binaryOperationIntrinsics = new BinaryOperationIntrinsics();
+    private final ObjectIntrinsics objectIntrinsics = new ObjectIntrinsics();
 
     @NotNull
     public BinaryOperationIntrinsics getBinaryOperationIntrinsics() {
@@ -34,10 +35,12 @@ public final class Intrinsics {
     }
 
     @NotNull
-    private final BinaryOperationIntrinsics binaryOperationIntrinsics = new BinaryOperationIntrinsics();
-
-    @NotNull
     public FunctionIntrinsics getFunctionIntrinsics() {
         return functionIntrinsics;
+    }
+
+    @NotNull
+    public ObjectIntrinsics getObjectIntrinsics() {
+        return objectIntrinsics;
     }
 }
