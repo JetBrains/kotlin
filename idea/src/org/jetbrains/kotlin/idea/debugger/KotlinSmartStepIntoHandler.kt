@@ -132,7 +132,7 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
                         if (getterDescriptor != null && !getterDescriptor.isDefault()) {
                             val delegatedResolvedCall = bindingContext[BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, getterDescriptor]
                             if (delegatedResolvedCall == null) {
-                                val getter = DescriptorToDeclarationUtil.getDeclaration(file.getProject(), getterDescriptor)
+                                val getter = DescriptorToSourceUtilsIde.getAnyDeclaration(file.getProject(), getterDescriptor)
                                 if (getter is JetPropertyAccessor && (getter.getBodyExpression() != null || getter.getEqualsToken() != null)) {
                                     val psiMethod = LightClassUtil.getLightClassAccessorMethod(getter)
                                     if (psiMethod != null) {
@@ -143,7 +143,7 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
                             else {
                                 val delegatedPropertyGetterDescriptor = delegatedResolvedCall.getResultingDescriptor()
                                 if (delegatedPropertyGetterDescriptor is CallableMemberDescriptor) {
-                                    val function = DescriptorToDeclarationUtil.getDeclaration(file.getProject(), delegatedPropertyGetterDescriptor)
+                                    val function = DescriptorToSourceUtilsIde.getAnyDeclaration(file.getProject(), delegatedPropertyGetterDescriptor)
                                     if (function is JetNamedFunction) {
                                         val psiMethod = LightClassUtil.getLightClassMethod(function)
                                         if (psiMethod != null) {
@@ -165,7 +165,7 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
                 val descriptor = resolvedCall.getResultingDescriptor()
                 if (descriptor is CallableMemberDescriptor) {
                     // TODO doesn't work for libraries
-                    val function = DescriptorToDeclarationUtil.getDeclaration(file.getProject(), descriptor)
+                    val function = DescriptorToSourceUtilsIde.getAnyDeclaration(file.getProject(), descriptor)
                     if (function is JetNamedFunction) {
                         val psiMethod = LightClassUtil.getLightClassMethod(function)
                         if (psiMethod != null) {

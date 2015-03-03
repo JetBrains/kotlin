@@ -34,7 +34,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.quickfix.JetIntentionActionsFactory
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
-import org.jetbrains.kotlin.idea.codeInsight.DescriptorToDeclarationUtil
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import com.intellij.psi.PsiClass
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.refactoring.*
@@ -124,7 +124,7 @@ object CreateFunctionOrPropertyFromCallActionFactory : JetIntentionActionsFactor
                 if (qualifierType != null) return TypeInfo(qualifierType, Variance.IN_VARIANCE)
 
                 val classifier = receiver.classifier as? JavaClassDescriptor ?: return null
-                val javaClass = DescriptorToDeclarationUtil.getDeclaration(project, classifier) as? PsiClass
+                val javaClass = DescriptorToSourceUtilsIde.getAnyDeclaration(project, classifier) as? PsiClass
                 if (javaClass == null || !javaClass.canRefactor()) return null
                 TypeInfo.StaticContextRequired(TypeInfo(classifier.getDefaultType(), Variance.IN_VARIANCE))
             }

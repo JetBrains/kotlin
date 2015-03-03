@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
 import org.jetbrains.kotlin.cfg.pseudocode.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.idea.refactoring.JetNameValidatorImpl
-import org.jetbrains.kotlin.idea.codeInsight.DescriptorToDeclarationUtil
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import com.intellij.psi.PsiNamedElement
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
@@ -199,7 +199,7 @@ private fun ExtractionData.getLocalDeclarationsWithNonLocalUsages(
     pseudocode.traverse(TraversalOrder.FORWARD) { instruction ->
         if (instruction !in localInstructions) {
             instruction.getPrimaryDeclarationDescriptorIfAny(bindingContext)?.let { descriptor ->
-                val declaration = DescriptorToDeclarationUtil.getDeclaration(project, descriptor)
+                val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor)
                 if (declaration is JetNamedDeclaration && declaration.isInsideOf(originalElements)) {
                     declarations.add(declaration)
                 }
@@ -872,7 +872,7 @@ fun ExtractableCodeDescriptor.validate(): ExtractableCodeDescriptorWithConflicts
 
         val currentDescriptor = bindingContext[BindingContext.REFERENCE_TARGET, currentRefExpr]
         val currentTarget =
-                currentDescriptor?.let { DescriptorToDeclarationUtil.getDeclaration(extractionData.project, it) } as? PsiNamedElement
+                currentDescriptor?.let { DescriptorToSourceUtilsIde.getAnyDeclaration(extractionData.project, it) } as? PsiNamedElement
         if (currentTarget is JetParameter && currentTarget.getParent() == valueParameterList) continue
         if (currentDescriptor is LocalVariableDescriptor
         && parameters.any { it.mirrorVarName == currentDescriptor.getName().asString() }) continue

@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import java.util.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.*
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.idea.codeInsight.DescriptorToDeclarationUtil
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.quickfix.QuickFixUtil
 import com.intellij.CommonBundle
 import com.intellij.refactoring.RefactoringBundle
@@ -93,7 +93,7 @@ public class JetChangeSignature(project: Project,
 
     fun createChangeSignatureDialog(descriptorsForSignatureChange: Collection<FunctionDescriptor>): JetChangeSignatureDialog? {
         val baseDescriptor = preferContainedInClass(descriptorsForSignatureChange)
-        val functionDeclaration = DescriptorToDeclarationUtil.getDeclaration(project, baseDescriptor)
+        val functionDeclaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, baseDescriptor)
         if (functionDeclaration == null) {
             LOG.error("Could not find declaration for $baseDescriptor")
             return null

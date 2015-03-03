@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
 import java.util.Collections
 import org.jetbrains.kotlin.psi.JetReferenceExpression
-import org.jetbrains.kotlin.idea.codeInsight.DescriptorToDeclarationUtil
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -101,7 +101,7 @@ public abstract class AbstractJetReference<T : JetElement>(element: T)
             return psiFacade.findPackage(fqName).singletonOrEmptyList()
         }
         else {
-            return DescriptorToDeclarationUtil.resolveToPsiElements(expression.getProject(), targetDescriptor)
+            return DescriptorToSourceUtilsIde.getAllDeclarations(expression.getProject(), targetDescriptor)
         }
     }
 

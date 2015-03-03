@@ -22,7 +22,7 @@ import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.JetBundle
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.command.CommandProcessor
-import org.jetbrains.kotlin.idea.codeInsight.DescriptorToDeclarationUtil
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.idea.refactoring.chooseContainerElementIfNecessary
 import org.jetbrains.kotlin.psi.JetClassBody
@@ -54,7 +54,7 @@ public class CreateCallableFromUsageFix(
 
     private fun getDeclarationIfApplicable(project: Project, candidate: TypeCandidate): PsiElement? {
         val descriptor = candidate.theType.getConstructor().getDeclarationDescriptor()
-        val declaration = DescriptorToDeclarationUtil.getDeclaration(project, descriptor) ?: return null
+        val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor) ?: return null
         if (declaration !is JetClassOrObject && declaration !is PsiClass) return null
         return if (isExtension || declaration.canRefactor()) declaration else null
     }

@@ -29,13 +29,19 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.*
 import java.util.*
 import org.jetbrains.kotlin.descriptors.*
 
-// TODO rename it it DescriptorToSourceIde
-public object DescriptorToDeclarationUtil {
-    public fun getDeclaration(project: Project, descriptor: DeclarationDescriptor): PsiElement? {
-        return getPsiElementsStream(project, descriptor).firstOrNull()
+public object DescriptorToSourceUtilsIde {
+    public fun getAnyDeclaration(project: Project, descriptor: DeclarationDescriptor): PsiElement? {
+        return getDeclarationsStream(project, descriptor).firstOrNull()
     }
 
-    private fun getPsiElementsStream(project: Project, targetDescriptor: DeclarationDescriptor): Stream<PsiElement> {
+    public fun getAllDeclarations(project: Project, targetDescriptor: DeclarationDescriptor): Collection<PsiElement> {
+        val result = getDeclarationsStream(project, targetDescriptor).toHashSet()
+        // filter out elements which are navigate to some other element of the result
+        // this is needed to avoid duplicated results for references to declaration in same library source file
+        return result.filter { element -> result.none { element != it && it.getNavigationElement() == element } }
+    }
+
+    private fun getDeclarationsStream(project: Project, targetDescriptor: DeclarationDescriptor): Stream<PsiElement> {
         val effectiveReferencedDescriptors = DescriptorToSourceUtils.getEffectiveReferencedDescriptors(targetDescriptor).stream()
         return effectiveReferencedDescriptors.flatMap {
             streamOf(
@@ -44,13 +50,6 @@ public object DescriptorToDeclarationUtil {
                     DecompiledNavigationUtils.getDeclarationFromDecompiledClassFile(project, it)
             )
         }.filterNotNull()
-    }
-
-    public fun resolveToPsiElements(project: Project, targetDescriptor: DeclarationDescriptor): Collection<PsiElement> {
-        val result = getPsiElementsStream(project, targetDescriptor).toHashSet()
-        // filter out elements which are navigate to some other element of the result
-        // this is needed to avoid duplicated results for references to declaration in same library source file
-        return result.filter { element -> result.none { element != it && it.getNavigationElement() == element } }
     }
 
     private fun findBuiltinDeclaration(project: Project, descriptor: DeclarationDescriptor): PsiElement? {

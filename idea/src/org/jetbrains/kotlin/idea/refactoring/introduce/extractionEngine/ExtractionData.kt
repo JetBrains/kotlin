@@ -28,7 +28,7 @@ import java.util.HashMap
 import org.jetbrains.kotlin.idea.codeInsight.JetFileReferencesResolver
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.idea.codeInsight.DescriptorToDeclarationUtil
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import java.util.Collections
 import org.jetbrains.kotlin.psi.JetBlockExpression
 import org.jetbrains.kotlin.psi.JetQualifiedExpression
@@ -135,7 +135,7 @@ data class ExtractionData(
                 val descriptor = context[BindingContext.REFERENCE_TARGET, ref]
                 if (descriptor == null) continue
 
-                val declaration = DescriptorToDeclarationUtil.getDeclaration(project, descriptor) as? PsiNamedElement
+                val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor) as? PsiNamedElement
                         ?: if (isExtractableIt(descriptor, context)) itFakeDeclaration else continue
 
                 val offset = ref.getTextRange()!!.getStartOffset() - originalStartOffset

@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.Modality;
 import org.jetbrains.kotlin.idea.JetBundle;
-import org.jetbrains.kotlin.idea.codeInsight.DescriptorToDeclarationUtil;
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.psi.JetClass;
@@ -78,7 +78,7 @@ public class JetAddFunctionToClassifierAction implements QuestionAction {
 
         PsiDocumentManager.getInstance(project).commitAllDocuments();
 
-        final JetClass classifierDeclaration = (JetClass) DescriptorToDeclarationUtil.INSTANCE$.getDeclaration(project, typeDescriptor);
+        final JetClass classifierDeclaration = (JetClass) DescriptorToSourceUtilsIde.INSTANCE$.getAnyDeclaration(project, typeDescriptor);
         CommandProcessor.getInstance().executeCommand(project, new Runnable() {
             @Override
             public void run() {

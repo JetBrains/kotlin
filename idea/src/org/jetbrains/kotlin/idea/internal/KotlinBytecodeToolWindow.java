@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink;
 import org.jetbrains.kotlin.idea.caches.resolve.KotlinCacheService;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
-import org.jetbrains.kotlin.idea.codeInsight.DescriptorToDeclarationUtil;
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde;
 import org.jetbrains.kotlin.idea.util.InfinitePeriodicalTask;
 import org.jetbrains.kotlin.idea.util.LongRunningReadTask;
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil;
@@ -206,7 +206,7 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
                     if (descriptor instanceof SimpleFunctionDescriptor &&
                         ((SimpleFunctionDescriptor) descriptor).getInlineStrategy().isInline()) {
                         PsiElement declaration =
-                                DescriptorToDeclarationUtil.INSTANCE$.getDeclaration(project, descriptor);
+                                DescriptorToSourceUtilsIde.INSTANCE$.getAnyDeclaration(project, descriptor);
                         if (declaration != null && declaration instanceof JetElement) {
                             collectedElements.add((JetElement) declaration);
                         }

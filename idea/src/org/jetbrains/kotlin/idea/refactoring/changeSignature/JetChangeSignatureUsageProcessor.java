@@ -40,7 +40,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
-import org.jetbrains.kotlin.idea.codeInsight.DescriptorToDeclarationUtil;
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde;
 import org.jetbrains.kotlin.idea.codeInsight.JetFileReferencesResolver;
 import org.jetbrains.kotlin.idea.refactoring.RefactoringPackage;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.*;
@@ -444,7 +444,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
                     //noinspection ConstantConditions
                     CallableDescriptor descriptor =
                             CallUtilPackage.getResolvedCall(originalRef, originalContext).getCandidateDescriptor();
-                    PsiElement declaration = DescriptorToDeclarationUtil.INSTANCE$.getDeclaration(callable.getProject(), descriptor);
+                    PsiElement declaration = DescriptorToSourceUtilsIde.INSTANCE$.getAnyDeclaration(callable.getProject(), descriptor);
                     String prefix = declaration != null ? RefactoringUIUtil.getDescription(declaration, true) : originalRef.getText();
                     result.putValue(
                             originalRef,
