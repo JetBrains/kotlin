@@ -614,8 +614,8 @@ public interface Errors {
 
     DiagnosticFactory1<JetParameter, JetType> EXPECTED_PARAMETER_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<JetTypeReference, JetType> EXPECTED_RETURN_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory2<JetFunctionLiteral, Integer, List<JetType>> EXPECTED_PARAMETERS_NUMBER_MISMATCH =
-            DiagnosticFactory2.create(ERROR, FUNCTION_LITERAL_PARAMETERS);
+    DiagnosticFactory2<JetFunction, Integer, List<JetType>> EXPECTED_PARAMETERS_NUMBER_MISMATCH =
+            DiagnosticFactory2.create(ERROR, FUNCTION_PARAMETERS);
 
     DiagnosticFactory2<JetElement, JetType, JetType> INCOMPATIBLE_TYPES = DiagnosticFactory2.create(ERROR);
 

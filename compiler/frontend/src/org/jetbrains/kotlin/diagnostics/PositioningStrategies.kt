@@ -342,13 +342,16 @@ public object PositioningStrategies {
         }
     }
 
-    public val FUNCTION_LITERAL_PARAMETERS: PositioningStrategy<JetFunctionLiteral> = object : PositioningStrategy<JetFunctionLiteral>() {
-        override fun mark(element: JetFunctionLiteral): List<TextRange> {
+    public val FUNCTION_PARAMETERS: PositioningStrategy<JetFunction> = object : PositioningStrategy<JetFunction>() {
+        override fun mark(element: JetFunction): List<TextRange> {
             val valueParameterList = element.getValueParameterList()
             if (valueParameterList != null) {
                 return markElement(valueParameterList)
             }
-            return markNode(element.getLBrace().getNode())
+            if (element is JetFunctionLiteral) {
+                return markNode(element.getLBrace().getNode())
+            }
+            return DECLARATION_SIGNATURE_OR_DEFAULT.mark(element)
         }
     }
 
