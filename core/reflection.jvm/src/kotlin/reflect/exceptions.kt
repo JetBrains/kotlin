@@ -17,7 +17,7 @@
 package kotlin.reflect
 
 suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
-public class IllegalAccessException(cause: java.lang.IllegalAccessException) : Exception() {
+public class IllegalPropertyAccessException(cause: IllegalAccessException) : Exception(cause.getMessage()) {
     {
         (this as java.lang.Throwable).initCause(cause)
     }

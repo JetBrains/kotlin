@@ -50,8 +50,8 @@ open class KMemberPropertyImpl<T : Any, out R>(
         try {
             return (if (getter != null) getter!!(receiver) else field!!.get(receiver)) as R
         }
-        catch (e: java.lang.IllegalAccessException) {
-            throw kotlin.reflect.IllegalAccessException(e)
+        catch (e: IllegalAccessException) {
+            throw IllegalPropertyAccessException(e)
         }
     }
 
@@ -87,8 +87,8 @@ class KMutableMemberPropertyImpl<T : Any, R>(
         try {
             if (setter != null) setter!!(receiver, value) else field!!.set(receiver, value)
         }
-        catch (e: java.lang.IllegalAccessException) {
-            throw kotlin.reflect.IllegalAccessException(e)
+        catch (e: IllegalAccessException) {
+            throw IllegalPropertyAccessException(e)
         }
     }
 

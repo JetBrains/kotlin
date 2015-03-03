@@ -36,8 +36,8 @@ open class KForeignMemberProperty<T : Any, out R>(
         try {
             return field.get(receiver) as R
         }
-        catch (e: java.lang.IllegalAccessException) {
-            throw kotlin.reflect.IllegalAccessException(e)
+        catch (e: IllegalAccessException) {
+            throw IllegalPropertyAccessException(e)
         }
     }
 
@@ -62,8 +62,8 @@ class KMutableForeignMemberProperty<T : Any, R>(
         try {
             field.set(receiver, value)
         }
-        catch (e: java.lang.IllegalAccessException) {
-            throw kotlin.reflect.IllegalAccessException(e)
+        catch (e: IllegalAccessException) {
+            throw IllegalPropertyAccessException(e)
         }
     }
 

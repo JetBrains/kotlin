@@ -38,8 +38,8 @@ open class KTopLevelExtensionPropertyImpl<T, out R>(
         try {
             return getter(null, receiver) as R
         }
-        catch (e: java.lang.IllegalAccessException) {
-            throw kotlin.reflect.IllegalAccessException(e)
+        catch (e: IllegalAccessException) {
+            throw IllegalPropertyAccessException(e)
         }
     }
 
@@ -70,8 +70,8 @@ class KMutableTopLevelExtensionPropertyImpl<T, R>(
         try {
             setter.invoke(null, receiver, value)
         }
-        catch (e: java.lang.IllegalAccessException) {
-            throw kotlin.reflect.IllegalAccessException(e)
+        catch (e: IllegalAccessException) {
+            throw IllegalPropertyAccessException(e)
         }
     }
 
