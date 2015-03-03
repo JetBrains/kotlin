@@ -29,69 +29,65 @@ import java.util.ArrayList
 
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED
+import kotlin.platform.*
 
-public class DescriptorToSourceUtils private() {
-    class object {
-        private fun collectEffectiveReferencedDescriptors(result: MutableList<DeclarationDescriptor>, descriptor: DeclarationDescriptor) {
-            if (descriptor is CallableMemberDescriptor) {
-                val kind = (descriptor as CallableMemberDescriptor).getKind()
-                if (kind != DECLARATION && kind != SYNTHESIZED) {
-                    for (overridden in (descriptor as CallableMemberDescriptor).getOverriddenDescriptors()) {
-                        collectEffectiveReferencedDescriptors(result, overridden.getOriginal())
-                    }
-                    return
+public object DescriptorToSourceUtils {
+    private fun collectEffectiveReferencedDescriptors(result: MutableList<DeclarationDescriptor>, descriptor: DeclarationDescriptor) {
+        if (descriptor is CallableMemberDescriptor) {
+            val kind = descriptor.getKind()
+            if (kind != DECLARATION && kind != SYNTHESIZED) {
+                for (overridden in descriptor.getOverriddenDescriptors()) {
+                    collectEffectiveReferencedDescriptors(result, overridden.getOriginal())
                 }
+                return
             }
-            result.add(descriptor)
         }
+        result.add(descriptor)
+    }
 
-        public fun getEffectiveReferencedDescriptors(descriptor: DeclarationDescriptor): Collection<DeclarationDescriptor> {
-            val result = ArrayList<DeclarationDescriptor>()
-            collectEffectiveReferencedDescriptors(result, descriptor.getOriginal())
-            return result
-        }
+    platformStatic
+    public fun getEffectiveReferencedDescriptors(descriptor: DeclarationDescriptor): Collection<DeclarationDescriptor> {
+        val result = ArrayList<DeclarationDescriptor>()
+        collectEffectiveReferencedDescriptors(result, descriptor.getOriginal())
+        return result
+    }
 
-        public fun getSourceFromDescriptor(descriptor: DeclarationDescriptor): PsiElement? {
-            if (!(descriptor is DeclarationDescriptorWithSource)) {
-                return null
+    platformStatic
+    public fun getSourceFromDescriptor(descriptor: DeclarationDescriptor): PsiElement? {
+        return (descriptor as? DeclarationDescriptorWithSource)?.getSource()?.getPsi()
+    }
+
+    // NOTE this is also used by KDoc
+    platformStatic
+    public fun descriptorToDeclaration(descriptor: DeclarationDescriptor): PsiElement? {
+        for (declarationDescriptor in getEffectiveReferencedDescriptors(descriptor.getOriginal())) {
+            val source = getSourceFromDescriptor(declarationDescriptor)
+            if (source != null) {
+                return source
             }
-            return (descriptor as DeclarationDescriptorWithSource).getSource().getPsi()
         }
+        return null
+    }
 
-        // NOTE this is also used by KDoc
-        public fun descriptorToDeclaration(descriptor: DeclarationDescriptor): PsiElement? {
-            for (declarationDescriptor in getEffectiveReferencedDescriptors(descriptor.getOriginal())) {
-                val source = getSourceFromDescriptor(declarationDescriptor)
-                if (source != null) {
-                    return source
-                }
-            }
-            return null
+    platformStatic
+    public fun getContainingFile(declarationDescriptor: DeclarationDescriptor): JetFile? {
+        // declarationDescriptor may describe a synthesized element which doesn't have PSI
+        // To workaround that, we find a top-level parent (which is inside a PackageFragmentDescriptor), which is guaranteed to have PSI
+        val descriptor = findTopLevelParent(declarationDescriptor) ?: return null
+
+        val declaration = descriptorToDeclaration(descriptor) ?: return null
+
+        return declaration.getContainingFile() as? JetFile
+    }
+
+    private fun findTopLevelParent(declarationDescriptor: DeclarationDescriptor): DeclarationDescriptor? {
+        var descriptor: DeclarationDescriptor? = declarationDescriptor
+        if (declarationDescriptor is PropertyAccessorDescriptor) {
+            descriptor = (descriptor as PropertyAccessorDescriptor).getCorrespondingProperty()
         }
-
-        public fun getContainingFile(declarationDescriptor: DeclarationDescriptor): JetFile? {
-            // declarationDescriptor may describe a synthesized element which doesn't have PSI
-            // To workaround that, we find a top-level parent (which is inside a PackageFragmentDescriptor), which is guaranteed to have PSI
-            val descriptor = findTopLevelParent(declarationDescriptor)
-            if (descriptor == null) return null
-
-            val declaration = descriptorToDeclaration(descriptor)
-            if (declaration == null) return null
-
-            val containingFile = declaration.getContainingFile()
-            if (!(containingFile is JetFile)) return null
-            return containingFile as JetFile
+        while (!(descriptor == null || DescriptorUtils.isTopLevelDeclaration(descriptor!!))) {
+            descriptor = descriptor!!.getContainingDeclaration()
         }
-
-        private fun findTopLevelParent(declarationDescriptor: DeclarationDescriptor): DeclarationDescriptor? {
-            var descriptor: DeclarationDescriptor? = declarationDescriptor
-            if (declarationDescriptor is PropertyAccessorDescriptor) {
-                descriptor = (descriptor as PropertyAccessorDescriptor).getCorrespondingProperty()
-            }
-            while (!(descriptor == null || DescriptorUtils.isTopLevelDeclaration(descriptor))) {
-                descriptor = descriptor!!.getContainingDeclaration()
-            }
-            return descriptor
-        }
+        return descriptor
     }
 }

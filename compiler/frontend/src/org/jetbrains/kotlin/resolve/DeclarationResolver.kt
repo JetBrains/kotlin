@@ -100,9 +100,9 @@ public class DeclarationResolver {
                             continue
                         }
 
-                        redeclarations.add(Pair(DescriptorToSourceUtils.getSourceFromDescriptor(descriptor), descriptor.getName()))
+                        redeclarations.add(Pair(DescriptorToSourceUtils.getSourceFromDescriptor(descriptor)!!, descriptor.getName()))
                         if (descriptor2 is PropertyDescriptor) {
-                            redeclarations.add(Pair(DescriptorToSourceUtils.descriptorToDeclaration(descriptor2), descriptor2.getName()))
+                            redeclarations.add(Pair(DescriptorToSourceUtils.descriptorToDeclaration(descriptor2)!!, descriptor2.getName()))
                         }
                     }
                 }
