@@ -377,7 +377,7 @@ public class ErrorUtils {
         if (type == null) return false;
         if (type.isError()) return true;
         for (TypeProjection projection : type.getArguments()) {
-            if (containsErrorType(projection.getType())) return true;
+            if (!projection.isStarProjection() && containsErrorType(projection.getType())) return true;
         }
         return false;
     }

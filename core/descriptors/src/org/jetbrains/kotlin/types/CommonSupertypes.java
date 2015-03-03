@@ -69,6 +69,10 @@ public class CommonSupertypes {
         return 1 + maxDepth(KotlinPackage.map(type.getArguments(), new Function1<TypeProjection, JetType>() {
             @Override
             public JetType invoke(TypeProjection projection) {
+                if (projection.isStarProjection()) {
+                    // any type is good enough for depth here
+                    return KotlinBuiltIns.getInstance().getAnyType();
+                }
                 return projection.getType();
             }
         }));

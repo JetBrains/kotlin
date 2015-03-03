@@ -549,7 +549,7 @@ public class TypeUtils {
     public static boolean dependsOnTypeConstructors(@NotNull JetType type, @NotNull Collection<TypeConstructor> typeParameterConstructors) {
         if (typeParameterConstructors.contains(type.getConstructor())) return true;
         for (TypeProjection typeProjection : type.getArguments()) {
-            if (dependsOnTypeConstructors(typeProjection.getType(), typeParameterConstructors)) {
+            if (!typeProjection.isStarProjection() && dependsOnTypeConstructors(typeProjection.getType(), typeParameterConstructors)) {
                 return true;
             }
         }
@@ -577,14 +577,14 @@ public class TypeUtils {
             return true;
         }
         for (TypeProjection projection : type.getArguments()) {
-            if (containsSpecialType(projection.getType(), isSpecialType)) return true;
+            if (!projection.isStarProjection() && containsSpecialType(projection.getType(), isSpecialType)) return true;
         }
         return false;
     }
 
     @NotNull
     public static TypeProjection makeStarProjection(@NotNull TypeParameterDescriptor parameterDescriptor) {
-        return new StarProjectionImpl(parameterDescriptor.getUpperBoundsAsType());
+        return new StarProjectionImpl(parameterDescriptor);
     }
 
     @Nullable

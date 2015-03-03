@@ -10901,6 +10901,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("starProjections.kt")
+            public void testStarProjections() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/substitutions/starProjections.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("upperBoundsSubstitutionForOverloadResolutionWithAmbiguity.kt")
             public void testUpperBoundsSubstitutionForOverloadResolutionWithAmbiguity() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/substitutions/upperBoundsSubstitutionForOverloadResolutionWithAmbiguity.kt");

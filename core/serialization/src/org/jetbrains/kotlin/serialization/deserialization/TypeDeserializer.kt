@@ -103,7 +103,7 @@ public class TypeDeserializer(
             protos.map { proto ->
                 val type = type(proto.getType())
                 if (proto.getProjection() == ProtoBuf.Type.Argument.Projection.STAR)
-                    StarProjectionImpl(type)
+                    TypeBasedStarProjectionImpl(type)
                 else TypeProjectionImpl(variance(proto.getProjection()), type)
             }.toReadOnlyList()
 

@@ -213,6 +213,9 @@ public class TypeSubstitutor {
             if (typeVariable != null) {
                 substitutedType = typeVariable.substitutionResult(replacement.getType());
             }
+            else if (replacement.isStarProjection()) {
+                return replacement;
+            }
             else {
                 // this is a simple type T or T?: if it's T, we should just take replacement, if T? - we make replacement nullable
                 substitutedType = TypeUtils.makeNullableIfNeeded(replacement.getType(), type.isMarkedNullable());

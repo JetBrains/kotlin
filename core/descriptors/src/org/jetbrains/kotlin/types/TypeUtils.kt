@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.types.DelegatingType
 
-fun JetType.getContainedTypeParameters(): Collection<TypeParameterDescriptor> {
+private fun JetType.getContainedTypeParameters(): Collection<TypeParameterDescriptor> {
     val declarationDescriptor = getConstructor().getDeclarationDescriptor()
     if (declarationDescriptor is TypeParameterDescriptor) return listOf(declarationDescriptor)
 
@@ -41,7 +41,7 @@ fun JetType.getContainedTypeParameters(): Collection<TypeParameterDescriptor> {
     if (flexibility != null) {
         return flexibility.lowerBound.getContainedTypeParameters() + flexibility.upperBound.getContainedTypeParameters()
     }
-    return getArguments().map { it.getType() }.flatMap { it.getContainedTypeParameters() }
+    return getArguments().filter { !it.isStarProjection() }.map { it.getType() }.flatMap { it.getContainedTypeParameters() }
 }
 
 fun DeclarationDescriptor.getCapturedTypeParameters(): Collection<TypeParameterDescriptor> {

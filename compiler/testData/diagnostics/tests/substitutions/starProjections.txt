@@ -1,0 +1,20 @@
+package
+
+internal fun testA(/*0*/ a: A<*, *>): kotlin.Unit
+internal fun testB(/*0*/ b: B<*, *>): kotlin.Unit
+
+internal trait A</*0*/ R, /*1*/ T : A<R, T>> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    internal abstract fun r(): R
+    internal abstract fun t(): T
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal trait B</*0*/ R, /*1*/ T : B<kotlin.List<R>, T>> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    internal abstract fun r(): R
+    internal abstract fun t(): T
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
