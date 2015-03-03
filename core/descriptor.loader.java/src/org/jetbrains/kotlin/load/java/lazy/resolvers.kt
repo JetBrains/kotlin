@@ -16,16 +16,17 @@
 
 package org.jetbrains.kotlin.load.java.lazy
 
-import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
-import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaTypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
-import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaTypeParameterDescriptor
+import org.jetbrains.kotlin.load.java.structure.JavaClass
+import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameterListOwner
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.utils.mapToIndex
 
 //TODO: (module refactoring) usages of this interface should be replaced by ModuleClassResolver
 trait LazyJavaClassResolver {
@@ -45,13 +46,13 @@ class LazyJavaTypeParameterResolver(
         private val containingDeclaration: DeclarationDescriptor,
         typeParameterOwner: JavaTypeParameterListOwner
 ) : TypeParameterResolver {
-    private val typeParameters = typeParameterOwner.getTypeParameters().toSet()
+    private val typeParameters: Map<JavaTypeParameter, Int> = typeParameterOwner.getTypeParameters().mapToIndex()
 
     private val resolve = c.storageManager.createMemoizedFunctionWithNullableValues {
-        (javaTypeParameter: JavaTypeParameter) ->
-        if (javaTypeParameter in typeParameters)
-            LazyJavaTypeParameterDescriptor(c.child(this), javaTypeParameter, containingDeclaration)
-        else null
+        (typeParameter: JavaTypeParameter) ->
+        typeParameters[typeParameter]?.let { index ->
+            LazyJavaTypeParameterDescriptor(c.child(this), typeParameter, index, containingDeclaration)
+        }
     }
 
     override fun resolveTypeParameter(javaTypeParameter: JavaTypeParameter): TypeParameterDescriptor? {

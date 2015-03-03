@@ -31,11 +31,6 @@ public class JavaTypeParameterImpl extends JavaClassifierImpl<PsiTypeParameter> 
         super(psiTypeParameter);
     }
 
-    @Override
-    public int getIndex() {
-        return getPsi().getIndex();
-    }
-
     @NotNull
     @Override
     public Name getName() {

@@ -77,6 +77,14 @@ public fun <K, V: Any> Iterable<K>.keysToMapExceptNulls(value: (K) -> V?): Map<K
     return map
 }
 
+public fun <K> Iterable<K>.mapToIndex(): Map<K, Int> {
+    val map = LinkedHashMap<K, Int>()
+    for ((index, k) in this.withIndex()) {
+        map[k] = index
+    }
+    return map
+}
+
 public fun <T, C: Collection<T>> C.ifEmpty(body: () -> C): C = if (isEmpty()) body() else this
 
 public fun <T: Any> emptyOrSingletonList(item: T?): List<T> = if (item == null) listOf() else listOf(item)
