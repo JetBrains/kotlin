@@ -109,7 +109,7 @@ public class LookupElementFactory(
             element = element.appendTailText(typeParams.map { it.getName() }.joinToString(", ", "<", ">"), true)
         }
 
-        val qualifiedName = psiClass.getQualifiedName()
+        val qualifiedName = psiClass.getQualifiedName()!!
         val dotIndex = qualifiedName.lastIndexOf('.')
         val packageName = if (dotIndex <= 0) "<root>" else qualifiedName.substring(0, dotIndex)
         element = element.appendTailText(" ($packageName)", true)
