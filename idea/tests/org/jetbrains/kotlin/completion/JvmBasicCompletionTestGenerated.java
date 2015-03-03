@@ -577,6 +577,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest(fileName);
         }
 
+        @TestMetadata("InsideAnonymousClass.kt")
+        public void testInsideAnonymousClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/InsideAnonymousClass.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("JavaPackage.kt")
         public void testJavaPackage() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/JavaPackage.kt");
