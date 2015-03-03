@@ -42,15 +42,33 @@ public class AndroidFindUsagesTestGenerated extends AbstractAndroidFindUsagesTes
         doTest(fileName);
     }
 
+    @TestMetadata("fqNameInAttrFragment")
+    public void testFqNameInAttrFragment() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/findUsages/fqNameInAttrFragment/");
+        doTest(fileName);
+    }
+
     @TestMetadata("fqNameInTag")
     public void testFqNameInTag() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/findUsages/fqNameInTag/");
         doTest(fileName);
     }
 
+    @TestMetadata("fqNameInTagFragment")
+    public void testFqNameInTagFragment() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/findUsages/fqNameInTagFragment/");
+        doTest(fileName);
+    }
+
     @TestMetadata("multiFile")
     public void testMultiFile() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/findUsages/multiFile/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("multiFileFragment")
+    public void testMultiFileFragment() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/findUsages/multiFileFragment/");
         doTest(fileName);
     }
 
@@ -63,6 +81,12 @@ public class AndroidFindUsagesTestGenerated extends AbstractAndroidFindUsagesTes
     @TestMetadata("wrongIdFormat")
     public void testWrongIdFormat() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/findUsages/wrongIdFormat/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("simpleFragment")
+    public void testSimpleFragment() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/findUsages/simpleFragment/");
         doTest(fileName);
     }
 }

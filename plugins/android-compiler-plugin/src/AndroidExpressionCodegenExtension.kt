@@ -42,6 +42,12 @@ import org.jetbrains.org.objectweb.asm.Opcodes.ACC_PUBLIC
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
+private enum class AndroidClassType {
+    ACTIVITY
+    FRAGMENT
+    UNKNOWN
+}
+
 public class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
     default object {
         private val PROPERTY_NAME = "_\$_findViewCache"
@@ -64,49 +70,70 @@ public class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
         val extensionReceiver = resolvedCall.getExtensionReceiver()
         val declarationDescriptor = extensionReceiver.getType().getConstructor().getDeclarationDescriptor()
 
+        if (declarationDescriptor == null) return null
+
         val supportsCache = when {
-            extensionReceiver is ClassReceiver && declarationDescriptor != null -> true
+            extensionReceiver is ClassReceiver -> true
             else -> {
-                val source = declarationDescriptor?.getSource()
+                val source = declarationDescriptor.getSource()
                 if (source is KotlinSourceElement) true else false
             }
         }
 
         if (supportsCache) {
-            val className = DescriptorUtils.getFqName(declarationDescriptor!!).toString()
+            val className = DescriptorUtils.getFqName(declarationDescriptor).toString()
             val bytecodeClassName = className.replace('.', '/')
 
             receiver.put(Type.getType("L$bytecodeClassName;"), c.v)
             c.v.getstatic(androidPackage.replace(".", "/") + "/R\$id", propertyDescriptor.getName().asString(), "I")
             c.v.invokevirtual(bytecodeClassName, METHOD_NAME, "(I)Landroid/view/View;", false)
         } else {
-            receiver.put(Type.getType("Landroid/app/Activity;"), c.v)
-            c.v.getstatic(androidPackage.replace(".", "/") + "/R\$id", propertyDescriptor.getName().asString(), "I")
-            c.v.invokevirtual("android/app/Activity", "findViewById", "(I)" + "Landroid/view/View;", false)
+            when (getClassType(declarationDescriptor)) {
+                AndroidClassType.ACTIVITY -> {
+                    receiver.put(Type.getType("Landroid/app/Activity;"), c.v)
+                    c.v.getstatic(androidPackage.replace(".", "/") + "/R\$id", propertyDescriptor.getName().asString(), "I")
+                    c.v.invokevirtual("android/app/Activity", "findViewById", "(I)Landroid/view/View;", false)
+                }
+                AndroidClassType.FRAGMENT -> {
+                    receiver.put(Type.getType("Landroid/app/Fragment;"), c.v)
+                    c.v.invokevirtual("android/app/Fragment", "getView", "()Landroid/view/View;", false)
+                    c.v.getstatic(androidPackage.replace(".", "/") + "/R\$id", propertyDescriptor.getName().asString(), "I")
+                    c.v.invokevirtual("android/view/View", "findViewById", "(I)Landroid/view/View;", false)
+                }
+                else -> return null
+            }
+
+
         }
 
         c.v.checkcast(retType)
         return StackValue.onStack(retType)
     }
 
-    private fun isClassSupported(descriptor: ClassifierDescriptor): Boolean {
-        fun classNameSupported(name: String): Boolean = when (name) {
-            "android.app.Activity" -> true
-            else -> false
+    private fun getClassType(descriptor: ClassifierDescriptor): AndroidClassType {
+        fun getClassTypeInternal(name: String): AndroidClassType? = when (name) {
+            "android.app.Activity" -> AndroidClassType.ACTIVITY
+            "android.app.Fragment" -> AndroidClassType.FRAGMENT
+            else -> null
         }
 
         if (descriptor is LazyJavaClassDescriptor) {
-            if (classNameSupported(descriptor.fqName.asString()))
-                return true
+            val androidClassType = getClassTypeInternal(descriptor.fqName.asString())
+            if (androidClassType != null) return androidClassType
         } else if (descriptor is LazyClassDescriptor) { // For tests (FakeActivity)
-            if (classNameSupported(DescriptorUtils.getFqName(descriptor).toString()))
-                return true
+            val androidClassType = getClassTypeInternal(DescriptorUtils.getFqName(descriptor).toString())
+            if (androidClassType != null) return androidClassType
         }
 
-        return descriptor.getTypeConstructor().getSupertypes().any {
-            val declarationDescriptor = it.getConstructor().getDeclarationDescriptor()
-            declarationDescriptor != null && isClassSupported(declarationDescriptor)
+        for (supertype in descriptor.getTypeConstructor().getSupertypes()) {
+            val declarationDescriptor = supertype.getConstructor().getDeclarationDescriptor()
+            if (declarationDescriptor != null) {
+                val androidClassType = getClassType(declarationDescriptor)
+                if (androidClassType != AndroidClassType.UNKNOWN) return androidClassType
+            }
         }
+
+        return AndroidClassType.UNKNOWN
     }
 
     override fun generateClassSyntheticParts(
@@ -118,7 +145,8 @@ public class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
         if (descriptor.getKind() != ClassKind.CLASS || descriptor.isInner() || DescriptorUtils.isLocal(descriptor)) return
 
         // Do not generate anything if class is not supported
-        if (!isClassSupported(descriptor)) return
+        val androidClassType = getClassType(descriptor)
+        if (androidClassType == AndroidClassType.UNKNOWN) return
 
         val classType = JetTypeMapper(bindingContext, ClassBuilderMode.FULL).mapClass(descriptor)
         val className = classType.getInternalName()
@@ -167,8 +195,17 @@ public class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
 
         // Resolve View via findViewById if not in cache
         iv.load(0, classType)
-        loadId()
-        iv.invokevirtual(className, "findViewById", "(I)Landroid/view/View;", false)
+        when (androidClassType) {
+            AndroidClassType.ACTIVITY -> {
+                loadId()
+                iv.invokevirtual(className, "findViewById", "(I)Landroid/view/View;", false)
+            }
+            AndroidClassType.FRAGMENT -> {
+                iv.invokevirtual(className, "getView", "()Landroid/view/View;", false)
+                loadId()
+                iv.invokevirtual("android/view/View", "findViewById", "(I)Landroid/view/View;", false)
+            }
+        }
         iv.store(2, viewType)
 
         // Store resolved View in cache

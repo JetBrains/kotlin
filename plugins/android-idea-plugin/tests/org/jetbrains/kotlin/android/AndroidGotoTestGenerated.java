@@ -42,9 +42,21 @@ public class AndroidGotoTestGenerated extends AbstractAndroidGotoTest {
         doTest(fileName);
     }
 
+    @TestMetadata("fqNameInAttrFragment")
+    public void testFqNameInAttrFragment() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/goto/fqNameInAttrFragment/");
+        doTest(fileName);
+    }
+
     @TestMetadata("fqNameInTag")
     public void testFqNameInTag() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/goto/fqNameInTag/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("fqNameInTagFragment")
+    public void testFqNameInTagFragment() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/goto/fqNameInTagFragment/");
         doTest(fileName);
     }
 
@@ -54,9 +66,21 @@ public class AndroidGotoTestGenerated extends AbstractAndroidGotoTest {
         doTest(fileName);
     }
 
+    @TestMetadata("multiFileFragment")
+    public void testMultiFileFragment() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/goto/multiFileFragment/");
+        doTest(fileName);
+    }
+
     @TestMetadata("simple")
     public void testSimple() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/goto/simple/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("simpleFragment")
+    public void testSimpleFragment() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/goto/simpleFragment/");
         doTest(fileName);
     }
 }

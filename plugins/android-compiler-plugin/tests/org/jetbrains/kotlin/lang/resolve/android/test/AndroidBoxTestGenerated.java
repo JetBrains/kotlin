@@ -54,6 +54,12 @@ public class AndroidBoxTestGenerated extends AbstractAndroidBoxTest {
             doCompileAgainstAndroidSdkTest(fileName);
         }
 
+        @TestMetadata("fragment")
+        public void testFragment() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/codegen/android/fragment/");
+            doCompileAgainstAndroidSdkTest(fileName);
+        }
+
         @TestMetadata("manyWidgets")
         public void testManyWidgets() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/codegen/android/manyWidgets/");
@@ -90,6 +96,12 @@ public class AndroidBoxTestGenerated extends AbstractAndroidBoxTest {
         @TestMetadata("fqNameInTag")
         public void testFqNameInTag() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/codegen/android/fqNameInTag/");
+            doFakeInvocationTest(fileName);
+        }
+
+        @TestMetadata("fragment")
+        public void testFragment() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/codegen/android/fragment/");
             doFakeInvocationTest(fileName);
         }
 

@@ -59,6 +59,7 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
 
     private val androidImports = listOf(
             "android.app.Activity",
+            "android.app.Fragment",
             "android.view.View",
             "android.widget.*")
 
@@ -101,7 +102,10 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
 
                 stringWriter.writePackage(layoutPackage)
                 stringWriter.writeAndroidImports()
-                widgets.forEach { stringWriter.writeSyntheticActivityProperty(it) }
+                widgets.forEach {
+                    stringWriter.writeSyntheticProperty("Activity", it, "findViewById(0)")
+                    stringWriter.writeSyntheticProperty("Fragment", it, "getView().findViewById(0)")
+                }
 
                 val contents = stringWriter.toStringBuffer().toString()
                 contents
@@ -122,9 +126,9 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
         return AndroidConst.SYNTHETIC_PACKAGE + getName().substringBefore('.')
     }
 
-    private fun KotlinStringWriter.writeSyntheticActivityProperty(widget: AndroidWidget) {
-        val body = arrayListOf("return findViewById(0) as ${widget.className}")
-        writeImmutableExtensionProperty(receiver = "Activity",
+    private fun KotlinStringWriter.writeSyntheticProperty(receiver: String, widget: AndroidWidget, stubCall: String) {
+        val body = arrayListOf("return $stubCall as ${widget.className}")
+        writeImmutableExtensionProperty(receiver,
                                         name = widget.id,
                                         retType = widget.className,
                                         getterBody = body)
