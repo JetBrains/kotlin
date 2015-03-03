@@ -198,7 +198,7 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
             = configuration.completeNonImportedDeclarations || prefix.length() >= 3
 
     protected fun getKotlinTopLevelCallables(): Collection<DeclarationDescriptor>
-            = indicesHelper.getTopLevelCallables({ prefixMatcher.prefixMatches(it) }, reference!!.expression)
+            = indicesHelper.getTopLevelCallables({ prefixMatcher.prefixMatches(it) })
 
     protected fun getKotlinExtensions(): Collection<CallableDescriptor>
             = indicesHelper.getCallableExtensions({ prefixMatcher.prefixMatches(it) }, reference!!.expression)
