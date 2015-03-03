@@ -14,93 +14,84 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.resolve;
+package org.jetbrains.kotlin.resolve
 
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource;
-import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor;
-import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.resolve.source.SourcePackage;
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
+import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.resolve.source.*
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.ArrayList
 
-import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION;
-import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED;
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED
 
-public final class DescriptorToSourceUtils {
-    private static void collectEffectiveReferencedDescriptors(@NotNull List<DeclarationDescriptor> result, @NotNull DeclarationDescriptor descriptor) {
-        if (descriptor instanceof CallableMemberDescriptor) {
-            CallableMemberDescriptor.Kind kind = ((CallableMemberDescriptor) descriptor).getKind();
-            if (kind != DECLARATION && kind != SYNTHESIZED) {
-                for (DeclarationDescriptor overridden: ((CallableMemberDescriptor) descriptor).getOverriddenDescriptors()) {
-                    collectEffectiveReferencedDescriptors(result, overridden.getOriginal());
+public class DescriptorToSourceUtils private() {
+    class object {
+        private fun collectEffectiveReferencedDescriptors(result: MutableList<DeclarationDescriptor>, descriptor: DeclarationDescriptor) {
+            if (descriptor is CallableMemberDescriptor) {
+                val kind = (descriptor as CallableMemberDescriptor).getKind()
+                if (kind != DECLARATION && kind != SYNTHESIZED) {
+                    for (overridden in (descriptor as CallableMemberDescriptor).getOverriddenDescriptors()) {
+                        collectEffectiveReferencedDescriptors(result, overridden.getOriginal())
+                    }
+                    return
                 }
-                return;
             }
+            result.add(descriptor)
         }
-        result.add(descriptor);
-    }
 
-    @NotNull
-    public static Collection<DeclarationDescriptor> getEffectiveReferencedDescriptors(@NotNull DeclarationDescriptor descriptor) {
-        List<DeclarationDescriptor> result = new ArrayList<DeclarationDescriptor>();
-        collectEffectiveReferencedDescriptors(result, descriptor.getOriginal());
-        return result;
-    }
-
-    @Nullable
-    public static PsiElement getSourceFromDescriptor(@NotNull DeclarationDescriptor descriptor) {
-        if (!(descriptor instanceof DeclarationDescriptorWithSource)) {
-            return null;
+        public fun getEffectiveReferencedDescriptors(descriptor: DeclarationDescriptor): Collection<DeclarationDescriptor> {
+            val result = ArrayList<DeclarationDescriptor>()
+            collectEffectiveReferencedDescriptors(result, descriptor.getOriginal())
+            return result
         }
-        return SourcePackage.getPsi(((DeclarationDescriptorWithSource) descriptor).getSource());
-    }
 
-    // NOTE this is also used by KDoc
-    @Nullable
-    public static PsiElement descriptorToDeclaration(@NotNull DeclarationDescriptor descriptor) {
-        for (DeclarationDescriptor declarationDescriptor : getEffectiveReferencedDescriptors(descriptor.getOriginal())) {
-            PsiElement source = getSourceFromDescriptor(declarationDescriptor);
-            if (source != null) {
-                return source;
+        public fun getSourceFromDescriptor(descriptor: DeclarationDescriptor): PsiElement? {
+            if (!(descriptor is DeclarationDescriptorWithSource)) {
+                return null
             }
+            return (descriptor as DeclarationDescriptorWithSource).getSource().getPsi()
         }
-        return null;
-    }
 
-    @Nullable
-    public static JetFile getContainingFile(@NotNull DeclarationDescriptor declarationDescriptor) {
-        // declarationDescriptor may describe a synthesized element which doesn't have PSI
-        // To workaround that, we find a top-level parent (which is inside a PackageFragmentDescriptor), which is guaranteed to have PSI
-        DeclarationDescriptor descriptor = findTopLevelParent(declarationDescriptor);
-        if (descriptor == null) return null;
-
-        PsiElement declaration = descriptorToDeclaration(descriptor);
-        if (declaration == null) return null;
-
-        PsiFile containingFile = declaration.getContainingFile();
-        if (!(containingFile instanceof JetFile)) return null;
-        return (JetFile) containingFile;
-    }
-
-    @Nullable
-    private static DeclarationDescriptor findTopLevelParent(@NotNull DeclarationDescriptor declarationDescriptor) {
-        DeclarationDescriptor descriptor = declarationDescriptor;
-        if (declarationDescriptor instanceof PropertyAccessorDescriptor) {
-            descriptor = ((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty();
+        // NOTE this is also used by KDoc
+        public fun descriptorToDeclaration(descriptor: DeclarationDescriptor): PsiElement? {
+            for (declarationDescriptor in getEffectiveReferencedDescriptors(descriptor.getOriginal())) {
+                val source = getSourceFromDescriptor(declarationDescriptor)
+                if (source != null) {
+                    return source
+                }
+            }
+            return null
         }
-        while (!(descriptor == null || DescriptorUtils.isTopLevelDeclaration(descriptor))) {
-            descriptor = descriptor.getContainingDeclaration();
-        }
-        return descriptor;
-    }
 
-    private DescriptorToSourceUtils() {}
+        public fun getContainingFile(declarationDescriptor: DeclarationDescriptor): JetFile? {
+            // declarationDescriptor may describe a synthesized element which doesn't have PSI
+            // To workaround that, we find a top-level parent (which is inside a PackageFragmentDescriptor), which is guaranteed to have PSI
+            val descriptor = findTopLevelParent(declarationDescriptor)
+            if (descriptor == null) return null
+
+            val declaration = descriptorToDeclaration(descriptor)
+            if (declaration == null) return null
+
+            val containingFile = declaration.getContainingFile()
+            if (!(containingFile is JetFile)) return null
+            return containingFile as JetFile
+        }
+
+        private fun findTopLevelParent(declarationDescriptor: DeclarationDescriptor): DeclarationDescriptor? {
+            var descriptor: DeclarationDescriptor? = declarationDescriptor
+            if (declarationDescriptor is PropertyAccessorDescriptor) {
+                descriptor = (descriptor as PropertyAccessorDescriptor).getCorrespondingProperty()
+            }
+            while (!(descriptor == null || DescriptorUtils.isTopLevelDeclaration(descriptor))) {
+                descriptor = descriptor!!.getContainingDeclaration()
+            }
+            return descriptor
+        }
+    }
 }
