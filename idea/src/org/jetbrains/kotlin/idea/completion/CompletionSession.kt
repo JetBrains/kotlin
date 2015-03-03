@@ -17,36 +17,38 @@
 package org.jetbrains.kotlin.idea.completion
 
 import com.intellij.codeInsight.completion.*
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.patterns.CharPattern
+import com.intellij.patterns.PatternCondition
+import com.intellij.patterns.StandardPatterns
 import com.intellij.psi.PsiElement
+import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.util.ProcessingContext
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.idea.caches.resolve.*
+import org.jetbrains.kotlin.idea.caches.KotlinIndicesHelper
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
 import org.jetbrains.kotlin.idea.completion.smart.SmartCompletion
-import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
-import org.jetbrains.kotlin.idea.caches.KotlinIndicesHelper
-import com.intellij.openapi.project.Project
-import com.intellij.psi.search.DelegatingGlobalSearchScope
-import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptorKindExclude
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastUtils
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.idea.refactoring.comparePossiblyOverridingDescriptors
-import kotlin.properties.Delegates
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.idea.util.makeNotNullable
+import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
 import org.jetbrains.kotlin.idea.util.CallType
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import com.intellij.patterns.StandardPatterns
-import com.intellij.util.ProcessingContext
-import com.intellij.patterns.PatternCondition
+import org.jetbrains.kotlin.idea.util.makeNotNullable
+import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptorKindExclude
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastUtils
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import kotlin.properties.Delegates
 
 class CompletionSessionConfiguration(
         val completeNonImportedDeclarations: Boolean,
@@ -88,18 +90,21 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
     protected val bindingContext: BindingContext? = expression?.let { resolutionFacade.analyze(it, BodyResolveMode.PARTIAL_FOR_COMPLETION) }
     protected val inDescriptor: DeclarationDescriptor? = expression?.let { bindingContext!!.get(BindingContext.RESOLUTION_SCOPE, it)?.getContainingDeclaration() }
 
+    private fun singleCharPattern(char: Char): CharPattern {
+        return StandardPatterns.character().with(
+                object : PatternCondition<Char>(char.toString()) {
+                    override fun accepts(c: Char, context: ProcessingContext) = c == char
+                })
+    }
+
+    private val kotlinIdentifierStartPattern = StandardPatterns.and(StandardPatterns.character().javaIdentifierStart(), StandardPatterns.not(singleCharPattern('$')))
+    private val kotlinIdentifierPartPattern = StandardPatterns.and(StandardPatterns.character().javaIdentifierPart(), StandardPatterns.not(singleCharPattern('$')))
+
     protected val prefix: String = CompletionUtil.findIdentifierPrefix(
             parameters.getPosition().getContainingFile(),
             parameters.getOffset(),
-            StandardPatterns.or(StandardPatterns.character().javaIdentifierPart(),
-                                StandardPatterns.character().with(
-                                        object : PatternCondition<Char>("@") {
-                                            override fun accepts(c: Char?, context: ProcessingContext?): Boolean {
-                                                return c == '@'
-                                            }
-                                        })
-            ),
-            StandardPatterns.character().javaIdentifierStart())
+            StandardPatterns.or(kotlinIdentifierPartPattern, singleCharPattern('@')),
+            kotlinIdentifierStartPattern)
 
     protected val resultSet: CompletionResultSet = resultSet
             .withPrefixMatcher(prefix)
@@ -129,7 +134,8 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
         LookupElementFactory(receiverTypes)
     }
 
-    protected val collector: LookupElementsCollector = LookupElementsCollector(prefixMatcher, parameters, resolutionFacade, lookupElementFactory)
+    protected val collector: LookupElementsCollector = LookupElementsCollector(
+            prefixMatcher, parameters, resolutionFacade, lookupElementFactory, expression?.getParent() is JetSimpleNameStringTemplateEntry)
 
     protected val project: Project = position.getProject()
 

@@ -17,11 +17,12 @@
 package org.jetbrains.kotlin.completion.handlers
 
 import com.intellij.codeInsight.completion.CompletionType
-import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.idea.JetLightProjectDescriptor
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import java.io.File
 
-public abstract class AbstractCompletionHandlerTest : CompletionHandlerTestBase() {
+public abstract class AbstractCompletionHandlerTest(private val defaultCompletionType: CompletionType) : CompletionHandlerTestBase() {
     private val INVOCATION_COUNT_PREFIX = "INVOCATION_COUNT:"
     private val LOOKUP_STRING_PREFIX = "ELEMENT:"
     private val ELEMENT_TEXT_PREFIX = "ELEMENT_TEXT:"
@@ -53,32 +54,20 @@ public abstract class AbstractCompletionHandlerTest : CompletionHandlerTestBase(
             else -> error("Unknown completion type: $completionTypeString")
         }
 
-        doTestWithTextLoaded(completionType, invocationCount, lookupString, itemText, tailText, completionChar)
+        doTestWithTextLoaded(completionType, invocationCount, lookupString, itemText, tailText, completionChar, testPath + ".after")
     }
 
     protected open fun setUpFixture(testPath: String) {
         fixture.configureByFile(testPath)
     }
 
-    protected abstract val defaultCompletionType: CompletionType
+    override fun getProjectDescriptor() = JetLightProjectDescriptor.INSTANCE
 }
 
-public abstract class AbstractBasicCompletionHandlerTest() : AbstractCompletionHandlerTest() {
-    override val defaultCompletionType: CompletionType = CompletionType.BASIC
-    override val testDataRelativePath: String = "/completion/handlers/basic"
-}
+public abstract class AbstractBasicCompletionHandlerTest() : AbstractCompletionHandlerTest(CompletionType.BASIC)
 
-public abstract class AbstractSmartCompletionHandlerTest() : AbstractCompletionHandlerTest() {
-    override val defaultCompletionType: CompletionType = CompletionType.SMART
-    override val testDataRelativePath: String = "/completion/handlers/smart"
-}
+public abstract class AbstractSmartCompletionHandlerTest() : AbstractCompletionHandlerTest(CompletionType.SMART)
 
-public abstract class AbstractCompletionCharFilterTest() : AbstractCompletionHandlerTest() {
-    override val defaultCompletionType: CompletionType = CompletionType.BASIC
-    override val testDataRelativePath: String = "/completion/handlers/charFilter"
-}
+public abstract class AbstractCompletionCharFilterTest() : AbstractCompletionHandlerTest(CompletionType.BASIC)
 
-public abstract class AbstractKeywordCompletionHandlerTest() : AbstractCompletionHandlerTest() {
-    override val defaultCompletionType: CompletionType = CompletionType.BASIC
-    override val testDataRelativePath: String = "/completion/handlers/keywords"
-}
+public abstract class AbstractKeywordCompletionHandlerTest() : AbstractCompletionHandlerTest(CompletionType.BASIC)

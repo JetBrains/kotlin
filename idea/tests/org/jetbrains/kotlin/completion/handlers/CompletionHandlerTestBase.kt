@@ -16,23 +16,20 @@
 
 package org.jetbrains.kotlin.completion.handlers
 
-import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.lookup.LookupElement
-import java.io.File
-import org.jetbrains.kotlin.idea.PluginTestCaseBase
-import com.intellij.codeInsight.lookup.impl.LookupImpl
-import com.intellij.codeInsight.lookup.LookupEvent
-import com.intellij.openapi.command.WriteCommandAction
-import com.intellij.codeInsight.lookup.LookupManager
 import com.intellij.codeInsight.lookup.LookupElementPresentation
-import org.junit.Assert
+import com.intellij.codeInsight.lookup.LookupEvent
+import com.intellij.codeInsight.lookup.LookupManager
+import com.intellij.codeInsight.lookup.impl.LookupImpl
 import com.intellij.openapi.application.Result
+import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
+import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.test.JetTestUtils
+import org.junit.Assert
 
 public abstract class CompletionHandlerTestBase() : JetLightCodeInsightFixtureTestCase() {
-    protected abstract val testDataRelativePath: String
-
     protected val fixture: JavaCodeInsightTestFixture
         get() = myFixture
 
@@ -42,7 +39,8 @@ public abstract class CompletionHandlerTestBase() : JetLightCodeInsightFixtureTe
             lookupString: String?,
             itemText: String?,
             tailText: String?,
-            completionChar: Char
+            completionChar: Char,
+            afterFilePath: String
     ) {
         fixture.complete(completionType, time)
 
@@ -53,11 +51,7 @@ public abstract class CompletionHandlerTestBase() : JetLightCodeInsightFixtureTe
             }
         }
 
-        checkResult()
-    }
-
-    protected fun checkResult(){
-        fixture.checkResultByFile(afterFileName())
+        fixture.checkResultByFile(afterFilePath)
     }
 
     private fun getExistentLookupElement(lookupString: String?, itemText: String?, tailText: String?): LookupElement? {
@@ -111,13 +105,7 @@ public abstract class CompletionHandlerTestBase() : JetLightCodeInsightFixtureTe
         return foundElement
     }
 
-    protected fun afterFileName(): String = getTestName(false) + ".kt.after"
-
-    protected override fun getTestDataPath() : String = File(PluginTestCaseBase.getTestDataPathBase(), testDataRelativePath).getPath() + File.separator
-
-    protected fun selectItem(item: LookupElement?) {
-        selectItem(item, 0.toChar())
-    }
+    override fun getTestDataPath() = JetTestUtils.getHomeDirectory()
 
     protected fun selectItem(item: LookupElement?, completionChar: Char) {
         val lookup = (fixture.getLookup() as LookupImpl)

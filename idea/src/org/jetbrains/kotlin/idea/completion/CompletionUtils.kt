@@ -89,6 +89,20 @@ fun LookupElement.withReceiverCast(): LookupElement {
     }
 }
 
+fun LookupElement.withBracesSurrounding(): LookupElement {
+    return object: LookupElementDecorator<LookupElement>(this) {
+        override fun handleInsert(context: InsertionContext) {
+            context.getDocument().insertString(context.getStartOffset(), "{")
+
+            val tailOffset = context.getTailOffset()
+            context.getDocument().insertString(tailOffset, "}")
+            context.setTailOffset(tailOffset)
+
+            super.handleInsert(context)
+        }
+    }
+}
+
 val KEEP_OLD_ARGUMENT_LIST_ON_TAB_KEY = Key<Unit>("KEEP_OLD_ARGUMENT_LIST_ON_TAB_KEY")
 
 fun LookupElement.keepOldArgumentListOnTab(): LookupElement {

@@ -78,13 +78,10 @@ public abstract class AbstractCodeFragmentCompletionTest : AbstractJvmBasicCompl
     }
 }
 
-public abstract class AbstractCodeFragmentCompletionHandlerTest : AbstractCompletionHandlerTest() {
+public abstract class AbstractCodeFragmentCompletionHandlerTest : AbstractCompletionHandlerTest(CompletionType.BASIC) {
     override fun setUpFixture(testPath: String) {
         myFixture.configureByCodeFragment(testPath)
     }
-
-    override val testDataRelativePath: String = "/completion/handlers/runtimeCast/"
-    override val defaultCompletionType: CompletionType = CompletionType.BASIC
 }
 
 private fun JavaCodeInsightTestFixture.configureByCodeFragment(filePath: String) {

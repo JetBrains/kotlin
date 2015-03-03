@@ -17,12 +17,18 @@
 package org.jetbrains.kotlin.completion.handlers
 
 import com.intellij.codeInsight.completion.CompletionType
-import org.jetbrains.kotlin.idea.formatter.JetCodeStyleSettings
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
+import org.jetbrains.kotlin.idea.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.formatter.JetCodeStyleSettings
+import java.io.File
 
 deprecated("All tests from here to be moved to the generated test")
 public class BasicCompletionHandlerTest : CompletionHandlerTestBase(){
-    override val testDataRelativePath: String = "/completion/handlers"
+    private fun checkResult(){
+        fixture.checkResultByFile(getTestName(false) + ".kt.after")
+    }
+
+    override fun getTestDataPath() = File(PluginTestCaseBase.getTestDataPathBase(), "/completion/handlers").getPath() + File.separator
 
     private fun doTest() {
         doTest(2, "*", null, null, '\n')
@@ -34,7 +40,7 @@ public class BasicCompletionHandlerTest : CompletionHandlerTestBase(){
 
     private fun doTest(time: Int, lookupString: String?, itemText: String?, tailText: String?, completionChar: Char) {
         fixture.configureByFile(fileName())
-        doTestWithTextLoaded(CompletionType.BASIC, time, lookupString, itemText, tailText, completionChar)
+        doTestWithTextLoaded(CompletionType.BASIC, time, lookupString, itemText, tailText, completionChar, fileName() + ".after")
     }
 
     fun testClassCompletionImport() = doTest(2, "SortedSet", null, '\n')

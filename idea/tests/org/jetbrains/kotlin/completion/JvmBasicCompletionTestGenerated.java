@@ -883,6 +883,18 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest(fileName);
         }
 
+        @TestMetadata("StringTemplate1.kt")
+        public void testStringTemplate1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/StringTemplate1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("StringTemplate2.kt")
+        public void testStringTemplate2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/StringTemplate2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("SubpackageInFun.kt")
         public void testSubpackageInFun() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/SubpackageInFun.kt");

@@ -35,7 +35,8 @@ class LookupElementsCollector(
         private val prefixMatcher: PrefixMatcher,
         private val completionParameters: CompletionParameters,
         private val resolutionFacade: ResolutionFacade,
-        private val lookupElementFactory: LookupElementFactory
+        private val lookupElementFactory: LookupElementFactory,
+        private val surroundCallsWithBraces: Boolean
 ) {
     private val elements = ArrayList<LookupElement>()
 
@@ -62,9 +63,15 @@ class LookupElementsCollector(
     public fun addDescriptorElements(descriptor: DeclarationDescriptor, suppressAutoInsertion: Boolean, withReceiverCast: Boolean) {
         run {
             var lookupElement = lookupElementFactory.createLookupElement(resolutionFacade, descriptor, true)
+
             if (withReceiverCast) {
                 lookupElement = lookupElement.withReceiverCast()
             }
+
+            if (surroundCallsWithBraces && descriptor is FunctionDescriptor) {
+                lookupElement = lookupElement.withBracesSurrounding()
+            }
+
             if (suppressAutoInsertion) {
                 addElementWithAutoInsertionSuppressed(lookupElement)
             }
@@ -81,8 +88,9 @@ class LookupElementsCollector(
                 if (KotlinBuiltIns.isFunctionOrExtensionFunctionType(parameterType)) {
                     val parameterCount = KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(parameterType).size()
                     if (parameterCount > 1) {
-                        val lookupElement = lookupElementFactory.createLookupElement(resolutionFacade, descriptor, true)
-                        addElement(object : LookupElementDecorator<LookupElement>(lookupElement) {
+                        var lookupElement = lookupElementFactory.createLookupElement(resolutionFacade, descriptor, true)
+
+                        lookupElement = object : LookupElementDecorator<LookupElement>(lookupElement) {
                             override fun renderElement(presentation: LookupElementPresentation) {
                                 super.renderElement(presentation)
 
@@ -95,7 +103,13 @@ class LookupElementsCollector(
                             override fun handleInsert(context: InsertionContext) {
                                 KotlinFunctionInsertHandler(CaretPosition.IN_BRACKETS, GenerateLambdaInfo(parameterType, true)).handleInsert(context, this)
                             }
-                        })
+                        }
+
+                        if (surroundCallsWithBraces) {
+                            lookupElement = lookupElement.withBracesSurrounding()
+                        }
+
+                        addElement(lookupElement)
                     }
                 }
             }

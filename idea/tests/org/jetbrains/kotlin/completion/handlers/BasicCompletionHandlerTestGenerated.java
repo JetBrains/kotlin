@@ -30,6 +30,9 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/completion/handlers/basic")
 @TestDataPath("$PROJECT_ROOT")
+@InnerTestClasses({
+        BasicCompletionHandlerTestGenerated.StringTemplate.class,
+})
 @RunWith(JUnit3RunnerWithInners.class)
 public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletionHandlerTest {
     public void testAllFilesPresentInBasic() throws Exception {
@@ -76,5 +79,50 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
     public void testSuperTypeArg() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/basic/SuperTypeArg.kt");
         doTest(fileName);
+    }
+
+    @TestMetadata("idea/testData/completion/handlers/basic/stringTemplate")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class StringTemplate extends AbstractBasicCompletionHandlerTest {
+        @TestMetadata("1.kt")
+        public void test1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/basic/stringTemplate/1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("2.kt")
+        public void test2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/basic/stringTemplate/2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("3.kt")
+        public void test3() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/basic/stringTemplate/3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("4.kt")
+        public void test4() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/basic/stringTemplate/4.kt");
+            doTest(fileName);
+        }
+
+        public void testAllFilesPresentInStringTemplate() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/completion/handlers/basic/stringTemplate"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("NotEmptyPrefix.kt")
+        public void testNotEmptyPrefix() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/basic/stringTemplate/NotEmptyPrefix.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("Replace.kt")
+        public void testReplace() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/basic/stringTemplate/Replace.kt");
+            doTest(fileName);
+        }
     }
 }
