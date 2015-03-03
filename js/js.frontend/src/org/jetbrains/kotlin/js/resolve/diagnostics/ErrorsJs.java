@@ -16,15 +16,14 @@
 
 package org.jetbrains.kotlin.js.resolve.diagnostics;
 
-import com.intellij.openapi.util.TextRange;
-import org.jetbrains.kotlin.diagnostics.*;
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0;
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1;
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory2;
+import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.psi.JetDeclaration;
 import org.jetbrains.kotlin.psi.JetElement;
 import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.kotlin.resolve.diagnostics.JsCallData;
 import org.jetbrains.kotlin.types.JetType;
-
-import java.util.List;
 
 import static org.jetbrains.kotlin.diagnostics.PositioningStrategies.*;
 import static org.jetbrains.kotlin.diagnostics.Severity.ERROR;

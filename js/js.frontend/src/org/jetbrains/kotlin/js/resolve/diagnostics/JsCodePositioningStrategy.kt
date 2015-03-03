@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.diagnostics.PositioningStrategy
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters3
 import org.jetbrains.kotlin.diagnostics.ParametrizedDiagnostic
-import org.jetbrains.kotlin.resolve.diagnostics.JsCallData
+import org.jetbrains.kotlin.js.resolve.diagnostics.JsCallData
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters1
 
