@@ -151,7 +151,8 @@ public class KotlinImportOptimizer() : ImportOptimizer {
 
             val sortedImportsToGenerate = importsToGenerate.sortBy(importInsertHelper.importSortComparator)
 
-            //TODO: do not touch file if everything is already correct?
+            // check if no changes to imports required
+            if (oldImports.size() == sortedImportsToGenerate.size() && oldImports.map { it.getImportPath() } == sortedImportsToGenerate) return
 
             ApplicationManager.getApplication()!!.runWriteAction(Runnable {
                 val importList = file.getImportList()!!

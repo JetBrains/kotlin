@@ -159,6 +159,10 @@ public class ShortenReferences(val options: (JetElement) -> Options = { Options.
             for (descriptor in descriptorsToImport) {
                 assert(descriptor !in failedToImportDescriptors)
 
+                if (importInserter.optimizeImports()) {
+                    anyChange = true
+                }
+
                 val result = importInserter.addImport(descriptor)
                 if (result != ImportInsertHelper.ImportDescriptorResult.ALREADY_IMPORTED) {
                     anyChange = true
@@ -456,7 +460,6 @@ public class ShortenReferences(val options: (JetElement) -> Options = { Options.
         private val helper = ImportInsertHelper.getInstance(file.getProject())
 
         fun addImport(target: DeclarationDescriptor): ImportInsertHelper.ImportDescriptorResult {
-            optimizeImports()
             return helper.importDescriptor(file, target)
         }
 

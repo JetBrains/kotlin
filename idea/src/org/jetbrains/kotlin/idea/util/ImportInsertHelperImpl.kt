@@ -331,14 +331,14 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
             }
         }
 
-        private fun detectNeededImports(importedDescriptors: Collection<DeclarationDescriptor>): Set<DeclarationDescriptor> {
-            if (importedDescriptors.isEmpty()) return setOf()
+        private fun detectNeededImports(importedClasses: Collection<ClassifierDescriptor>): Set<ClassifierDescriptor> {
+            if (importedClasses.isEmpty()) return setOf()
 
-            val descriptorsToCheck = importedDescriptors.map { it.getName() to it }.toMap().toLinkedMap()
-            val result = LinkedHashSet<DeclarationDescriptor>()
+            val classesToCheck = importedClasses.map { it.getName() to it }.toMap().toLinkedMap()
+            val result = LinkedHashSet<ClassifierDescriptor>()
             file.accept(object : JetVisitorVoid() {
                 override fun visitElement(element: PsiElement) {
-                    if (descriptorsToCheck.isEmpty()) return
+                    if (classesToCheck.isEmpty()) return
                     element.acceptChildren(this)
                 }
 
@@ -352,11 +352,11 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
                     if (JetPsiUtil.isSelectorInQualified(expression)) return
 
                     val refName = expression.getReferencedNameAsName()
-                    val descriptor = descriptorsToCheck[refName]
+                    val descriptor = classesToCheck[refName]
                     if (descriptor != null) {
                         val targetFqName = targetFqName(expression)
                         if (targetFqName != null && targetFqName == DescriptorUtils.getFqNameSafe(descriptor)) {
-                            descriptorsToCheck.remove(refName)
+                            classesToCheck.remove(refName)
                             result.add(descriptor)
                         }
                     }

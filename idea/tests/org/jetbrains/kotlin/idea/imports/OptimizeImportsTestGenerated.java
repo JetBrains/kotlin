@@ -81,6 +81,12 @@ public class OptimizeImportsTestGenerated extends AbstractOptimizeImportsTest {
         doTest(fileName);
     }
 
+    @TestMetadata("DoNotTouchIfNoChanges.kt")
+    public void testDoNotTouchIfNoChanges() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/DoNotTouchIfNoChanges.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("DuplicatedImports.kt")
     public void testDuplicatedImports() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/DuplicatedImports.kt");
@@ -108,6 +114,12 @@ public class OptimizeImportsTestGenerated extends AbstractOptimizeImportsTest {
     @TestMetadata("JavaStaticField.kt")
     public void testJavaStaticField() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/JavaStaticField.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("KeywordNames.kt")
+    public void testKeywordNames() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/KeywordNames.kt");
         doTest(fileName);
     }
 

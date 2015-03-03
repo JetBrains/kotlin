@@ -186,6 +186,12 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("ImportsOnTheFlyBug.kt")
+        public void testImportsOnTheFlyBug() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/imports/ImportsOnTheFlyBug.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("leaveQualifiedConstructor.kt")
         public void testLeaveQualifiedConstructor() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/imports/leaveQualifiedConstructor.kt");
