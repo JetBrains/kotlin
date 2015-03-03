@@ -601,6 +601,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             doTest(fileName);
         }
 
+        @TestMetadata("NestedClassBug.kt")
+        public void testNestedClassBug() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/NestedClassBug.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("NestedClassNameForExtension.kt")
         public void testNestedClassNameForExtension() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/NestedClassNameForExtension.kt");
