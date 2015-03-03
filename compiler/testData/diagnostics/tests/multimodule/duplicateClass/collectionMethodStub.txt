@@ -248,6 +248,10 @@ package kotlin {
         // -- Module: <built-ins lazy module> --
     }
 
+    public trait FloatingPointConstants</*0*/ T> {
+        // -- Module: <built-ins lazy module> --
+    }
+
     public trait Function0</*0*/ out R> {
         // -- Module: <built-ins lazy module> --
     }
