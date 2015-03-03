@@ -628,6 +628,12 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("packageFileAdded")
+            public void testPackageFileAdded() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/kotlinUsedInJava/packageFileAdded/");
+                doTest(fileName);
+            }
+
             @TestMetadata("propertyRenamed")
             public void testPropertyRenamed() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/kotlinUsedInJava/propertyRenamed/");
