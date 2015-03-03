@@ -51,7 +51,6 @@ public object DescriptorToDeclarationUtil {
             val psiFacade = JavaPsiFacade.getInstance(project)
             val fqName = targetDescriptor.getFqName().asString()
             result.addIfNotNull(psiFacade.findPackage(fqName))
-            result.addIfNotNull(psiFacade.findClass(fqName, project.allScope()))
         }
         // filter out elements which are navigate to some other element of the result
         // this is needed to avoid duplicated results for references to declaration in same library source file
