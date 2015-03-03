@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.resolve;
 
-import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
@@ -26,86 +25,57 @@ import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.source.SourcePackage;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED;
 
 public final class DescriptorToSourceUtils {
+    private static void collectEffectiveReferencedDescriptors(@NotNull List<DeclarationDescriptor> result, @NotNull DeclarationDescriptor descriptor) {
+        if (descriptor instanceof CallableMemberDescriptor) {
+            CallableMemberDescriptor.Kind kind = ((CallableMemberDescriptor) descriptor).getKind();
+            if (kind != DECLARATION && kind != SYNTHESIZED) {
+                for (DeclarationDescriptor overridden: ((CallableMemberDescriptor) descriptor).getOverriddenDescriptors()) {
+                    collectEffectiveReferencedDescriptors(result, overridden.getOriginal());
+                }
+                return;
+            }
+        }
+        result.add(descriptor);
+    }
+
+    @NotNull
+    public static Collection<DeclarationDescriptor> getEffectiveReferencedDescriptors(@NotNull DeclarationDescriptor descriptor) {
+        List<DeclarationDescriptor> result = new ArrayList<DeclarationDescriptor>();
+        collectEffectiveReferencedDescriptors(result, descriptor.getOriginal());
+        return result;
+    }
 
     @Nullable
-    private static PsiElement doGetDescriptorToDeclaration(@NotNull DeclarationDescriptor descriptor) {
-        DeclarationDescriptor original = descriptor.getOriginal();
-        if (!(original instanceof DeclarationDescriptorWithSource)) {
+    public static PsiElement getSourceFromDescriptor(@NotNull DeclarationDescriptor descriptor) {
+        if (!(descriptor instanceof DeclarationDescriptorWithSource)) {
             return null;
         }
-        return SourcePackage.getPsi(((DeclarationDescriptorWithSource) original).getSource());
+        return SourcePackage.getPsi(((DeclarationDescriptorWithSource) descriptor).getSource());
     }
 
     // NOTE this is also used by KDoc
     @Nullable
     public static PsiElement descriptorToDeclaration(@NotNull DeclarationDescriptor descriptor) {
-        if (descriptor instanceof CallableMemberDescriptor) {
-            return callableDescriptorToDeclaration((CallableMemberDescriptor) descriptor);
-        }
-        else if (descriptor instanceof ClassDescriptor) {
-            return classDescriptorToDeclaration((ClassDescriptor) descriptor);
-        }
-        else {
-            return doGetDescriptorToDeclaration(descriptor);
-        }
-    }
-
-    @NotNull
-    public static List<PsiElement> descriptorToDeclarations(@NotNull DeclarationDescriptor descriptor) {
-        if (descriptor instanceof CallableMemberDescriptor) {
-            return callableDescriptorToDeclarations((CallableMemberDescriptor) descriptor);
-        }
-        else {
-            PsiElement psiElement = descriptorToDeclaration(descriptor);
-            if (psiElement != null) {
-                return Lists.newArrayList(psiElement);
-            } else {
-                return Lists.newArrayList();
+        for (DeclarationDescriptor declarationDescriptor : getEffectiveReferencedDescriptors(descriptor.getOriginal())) {
+            PsiElement source = getSourceFromDescriptor(declarationDescriptor);
+            if (source != null) {
+                return source;
             }
-        }
-    }
-
-    @Nullable
-    public static PsiElement callableDescriptorToDeclaration(@NotNull CallableMemberDescriptor callable) {
-        if (callable.getKind() == DECLARATION || callable.getKind() == SYNTHESIZED) {
-            return doGetDescriptorToDeclaration(callable);
-        }
-        //TODO: should not use this method for fake_override and delegation
-        Set<? extends CallableMemberDescriptor> overriddenDescriptors = callable.getOverriddenDescriptors();
-        if (overriddenDescriptors.size() == 1) {
-            return callableDescriptorToDeclaration(overriddenDescriptors.iterator().next());
         }
         return null;
     }
 
-    @NotNull
-    public static List<PsiElement> callableDescriptorToDeclarations(@NotNull CallableMemberDescriptor callable) {
-        if (callable.getKind() == DECLARATION || callable.getKind() == SYNTHESIZED) {
-            PsiElement psiElement = doGetDescriptorToDeclaration(callable);
-            return psiElement != null ? Lists.newArrayList(psiElement) : Lists.<PsiElement>newArrayList();
-        }
-
-        List<PsiElement> r = new ArrayList<PsiElement>();
-        Set<? extends CallableMemberDescriptor> overriddenDescriptors = callable.getOverriddenDescriptors();
-        for (CallableMemberDescriptor overridden : overriddenDescriptors) {
-            r.addAll(callableDescriptorToDeclarations(overridden));
-        }
-        return r;
-    }
-
     @Nullable
     public static PsiElement classDescriptorToDeclaration(@NotNull ClassDescriptor clazz) {
-        return doGetDescriptorToDeclaration(clazz);
+        return getSourceFromDescriptor(clazz);
     }
-
-    private DescriptorToSourceUtils() {}
 
     @Nullable
     public static JetFile getContainingFile(@NotNull DeclarationDescriptor declarationDescriptor) {
@@ -133,6 +103,6 @@ public final class DescriptorToSourceUtils {
         }
         return descriptor;
     }
+
+    private DescriptorToSourceUtils() {}
 }
-
-

@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters2;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToDeclarationUtil;
 import org.jetbrains.kotlin.idea.refactoring.JetNameSuggester;
 import org.jetbrains.kotlin.idea.refactoring.JetNameValidator;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo;
@@ -44,6 +45,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 
+import java.util.Collection;
 import java.util.List;
 
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED;
@@ -80,7 +82,7 @@ public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiE
             return false;
         }
 
-        List<PsiElement> declarations = DescriptorToSourceUtils.callableDescriptorToDeclarations(functionDescriptor);
+        Collection<PsiElement> declarations = DescriptorToDeclarationUtil.INSTANCE$.resolveToPsiElements(project, functionDescriptor);
         if (declarations.isEmpty()) {
             return false;
         }

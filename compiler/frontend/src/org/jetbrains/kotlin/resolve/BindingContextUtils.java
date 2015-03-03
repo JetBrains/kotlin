@@ -175,11 +175,11 @@ public class BindingContextUtils {
     ) {
         FunctionDescriptor containingFunctionDescriptor = DescriptorUtils.getParentOfType(startDescriptor, FunctionDescriptor.class, strict);
         PsiElement containingFunction =
-                containingFunctionDescriptor != null ? DescriptorToSourceUtils.callableDescriptorToDeclaration(containingFunctionDescriptor) : null;
+                containingFunctionDescriptor != null ? DescriptorToSourceUtils.getSourceFromDescriptor(containingFunctionDescriptor) : null;
         while (containingFunction instanceof JetFunctionLiteral) {
             containingFunctionDescriptor = DescriptorUtils.getParentOfType(containingFunctionDescriptor, FunctionDescriptor.class);
             containingFunction = containingFunctionDescriptor != null ? DescriptorToSourceUtils
-                    .callableDescriptorToDeclaration(containingFunctionDescriptor) : null;
+                    .getSourceFromDescriptor(containingFunctionDescriptor) : null;
         }
 
         return new Pair<FunctionDescriptor, PsiElement>(containingFunctionDescriptor, containingFunction);

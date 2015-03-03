@@ -73,7 +73,7 @@ import static org.jetbrains.kotlin.codegen.JvmSerializationBindings.*;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.isLocalNamedFun;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION;
 import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.OLD_JET_VALUE_PARAMETER_ANNOTATION;
-import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.callableDescriptorToDeclaration;
+import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.getSourceFromDescriptor;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isFunctionLiteral;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isTrait;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
@@ -498,7 +498,7 @@ public class FunctionCodegen {
         );
 
         if (!bridgesToGenerate.isEmpty()) {
-            PsiElement origin = descriptor.getKind() == DECLARATION ? callableDescriptorToDeclaration(descriptor) : null;
+            PsiElement origin = descriptor.getKind() == DECLARATION ? getSourceFromDescriptor(descriptor) : null;
             for (Bridge<Method> bridge : bridgesToGenerate) {
                 generateBridge(origin, descriptor, bridge.getFrom(), bridge.getTo());
             }
@@ -628,12 +628,12 @@ public class FunctionCodegen {
             if (this.owner instanceof PackageFacadeContext) {
                 mv.visitCode();
                 generatePackageDelegateMethodBody(mv, defaultMethod, (PackageFacadeContext) this.owner);
-                endVisit(mv, "default method delegation", callableDescriptorToDeclaration(functionDescriptor));
+                endVisit(mv, "default method delegation", getSourceFromDescriptor(functionDescriptor));
             }
             else {
                 mv.visitCode();
                 generateDefaultImplBody(owner, functionDescriptor, mv, loadStrategy, function, memberCodegen);
-                endVisit(mv, "default method", callableDescriptorToDeclaration(functionDescriptor));
+                endVisit(mv, "default method", getSourceFromDescriptor(functionDescriptor));
             }
         }
     }

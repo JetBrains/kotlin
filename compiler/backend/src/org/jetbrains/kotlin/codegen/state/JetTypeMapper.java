@@ -619,7 +619,7 @@ public class JetTypeMapper {
             return "invoke";
         }
         else if (descriptor instanceof AnonymousFunctionDescriptor) {
-            PsiElement element = DescriptorToSourceUtils.callableDescriptorToDeclaration(descriptor);
+            PsiElement element = DescriptorToSourceUtils.getSourceFromDescriptor(descriptor);
             if (element instanceof JetFunctionLiteral) {
                 PsiElement expression = element.getParent();
                 if (expression instanceof JetFunctionLiteralExpression) {

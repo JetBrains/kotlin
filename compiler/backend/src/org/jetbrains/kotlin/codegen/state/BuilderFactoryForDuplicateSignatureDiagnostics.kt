@@ -101,9 +101,9 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
 
                     if (member.getKind() != DELEGATION) {
                         // Delegates don't have declarations in the code
-                        memberElement = origin.element ?: DescriptorToSourceUtils.callableDescriptorToDeclaration(member)
+                        memberElement = origin.element ?: DescriptorToSourceUtils.descriptorToDeclaration(member)
                         if (memberElement == null && member is PropertyAccessorDescriptor) {
-                            memberElement = DescriptorToSourceUtils.callableDescriptorToDeclaration(member.getCorrespondingProperty())
+                            memberElement = DescriptorToSourceUtils.descriptorToDeclaration(member.getCorrespondingProperty())
                         }
                     }
                 }
