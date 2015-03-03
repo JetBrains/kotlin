@@ -59,6 +59,7 @@ import java.util.regex.Pattern;
         BlackBoxCodegenTestGenerated.Labels.class,
         BlackBoxCodegenTestGenerated.LocalClasses.class,
         BlackBoxCodegenTestGenerated.MultiDecl.class,
+        BlackBoxCodegenTestGenerated.ObjectIntrinsics.class,
         BlackBoxCodegenTestGenerated.Objects.class,
         BlackBoxCodegenTestGenerated.OperatorConventions.class,
         BlackBoxCodegenTestGenerated.Package.class,
@@ -4931,6 +4932,21 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                     doTest(fileName);
                 }
             }
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/box/objectIntrinsics")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ObjectIntrinsics extends AbstractBlackBoxCodegenTest {
+        public void testAllFilesPresentInObjectIntrinsics() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/objectIntrinsics"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("objects.kt")
+        public void testObjects() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/objectIntrinsics/objects.kt");
+            doTest(fileName);
         }
     }
 

@@ -1498,6 +1498,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/classObjects"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("builtInClassObjects.kt")
+            public void testBuiltInClassObjects() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/classObjects/builtInClassObjects.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ClassObjectCannotAccessClassFields.kt")
             public void testClassObjectCannotAccessClassFields() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/classObjects/ClassObjectCannotAccessClassFields.kt");

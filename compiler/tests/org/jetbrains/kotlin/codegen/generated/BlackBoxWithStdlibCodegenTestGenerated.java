@@ -1570,6 +1570,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/intrinsics"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("defaultObjectMapping.kt")
+        public void testDefaultObjectMapping() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/intrinsics/defaultObjectMapping.kt");
+            doTestWithStdlib(fileName);
+        }
+
         @TestMetadata("kt5937.kt")
         public void testKt5937() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/intrinsics/kt5937.kt");
