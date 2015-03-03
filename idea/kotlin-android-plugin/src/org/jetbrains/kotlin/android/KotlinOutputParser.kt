@@ -16,20 +16,18 @@
 
 package org.jetbrains.kotlin.android
 
-import com.android.tools.idea.gradle.output.GradleMessage
-import com.android.tools.idea.gradle.output.parser.OutputLineReader
-import com.android.tools.idea.gradle.output.parser.ParsingFailedException
-import com.android.tools.idea.gradle.output.parser.PatternAwareOutputParser
+import com.android.ide.common.blame.output.GradleMessage
+import com.android.ide.common.blame.parser.PatternAwareOutputParser
+import com.android.ide.common.blame.parser.util.OutputLineReader
+import com.android.utils.ILogger
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.util.text.StringUtil
-
 import java.io.File
-import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 public class KotlinOutputParser : PatternAwareOutputParser {
 
-    override fun parse(line: String, reader: OutputLineReader, messages: MutableList<GradleMessage>): Boolean {
+    override fun parse(line: String, reader: OutputLineReader, messages: MutableList<GradleMessage>, logger: ILogger): Boolean {
         val colonIndex1 = line.colon()
         val severity = if (colonIndex1 >= 0) line.substringBeforeAndTrim(colonIndex1).parseSeverity() else null
         if (severity == null) return false
