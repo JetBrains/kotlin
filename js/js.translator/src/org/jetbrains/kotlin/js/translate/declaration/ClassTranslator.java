@@ -124,7 +124,7 @@ public final class ClassTranslator extends AbstractTranslator {
             declarationContext = declarationContext.newDeclaration(descriptor, definitionPlace);
         }
 
-        declarationContext = fixContextForClassObjectAccessing(declarationContext);
+        declarationContext = fixContextForDefaultObjectAccessing(declarationContext);
 
         invocationArguments.add(getSuperclassReferences(declarationContext));
         DelegationTranslator delegationTranslator = new DelegationTranslator(classDeclaration, context());
@@ -171,15 +171,15 @@ public final class ClassTranslator extends AbstractTranslator {
         return invocationArguments;
     }
 
-    private TranslationContext fixContextForClassObjectAccessing(TranslationContext declarationContext) {
-        // In Kotlin we can access to class object members without qualifier just by name, but we should translate it to access with FQ name.
-        // So create alias for class object receiver parameter.
-        ClassDescriptor classObjectDescriptor = descriptor.getDefaultObjectDescriptor();
-        if (classObjectDescriptor != null) {
-            JsExpression referenceToClass = translateAsFQReference(classObjectDescriptor.getContainingDeclaration(), declarationContext);
-            JsExpression classObjectAccessor = Namer.getClassObjectAccessor(referenceToClass);
-            ReceiverParameterDescriptor classObjectReceiver = getReceiverParameterForDeclaration(classObjectDescriptor);
-            declarationContext.aliasingContext().registerAlias(classObjectReceiver, classObjectAccessor);
+    private TranslationContext fixContextForDefaultObjectAccessing(TranslationContext declarationContext) {
+        // In Kotlin we can access to default object members without qualifier just by name, but we should translate it to access with FQ name.
+        // So create alias for default object receiver parameter.
+        ClassDescriptor defaultObjectDescriptor = descriptor.getDefaultObjectDescriptor();
+        if (defaultObjectDescriptor != null) {
+            JsExpression referenceToClass = translateAsFQReference(defaultObjectDescriptor.getContainingDeclaration(), declarationContext);
+            JsExpression defaultObjectAccessor = Namer.getDefaultObjectAccessor(referenceToClass);
+            ReceiverParameterDescriptor defaultObjectReceiver = getReceiverParameterForDeclaration(defaultObjectDescriptor);
+            declarationContext.aliasingContext().registerAlias(defaultObjectReceiver, defaultObjectAccessor);
         }
 
         // Overlap alias of class object receiver for accessing from containing class(see previous if block),

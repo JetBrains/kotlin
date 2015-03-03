@@ -230,7 +230,7 @@ public open class LazyClassMemberScope(
 
     private fun <T : CallableMemberDescriptor> generateDelegatingDescriptors(name: Name, extractor: MemberExtractor<T>, existingDescriptors: Collection<CallableDescriptor>): Collection<T> {
         val classOrObject = declarationProvider.getOwnerInfo().getCorrespondingClassOrObject()
-            ?: return setOf() // Enum class objects do not have delegated members
+            ?: return setOf() // Enum default objects do not have delegated members
 
         val lazyTypeResolver = DelegationResolver.TypeResolver { reference ->
             c.typeResolver.resolveType(thisDescriptor.getScopeForClassHeaderResolution(), reference, trace, false)

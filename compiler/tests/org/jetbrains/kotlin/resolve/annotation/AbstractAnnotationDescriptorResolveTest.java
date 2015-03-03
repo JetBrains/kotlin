@@ -75,7 +75,9 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
 
         ClassDescriptor myClass = getClassDescriptor(testPackage, "MyClass");
         checkDescriptor(expectedAnnotation, myClass);
-        checkDescriptor(expectedAnnotation, getClassObjectDescriptor(myClass));
+        ClassDescriptor defaultObjectDescriptor = myClass.getDefaultObjectDescriptor();
+        assert defaultObjectDescriptor != null : "Cannot find default object for class " + myClass.getName();
+        checkDescriptor(expectedAnnotation, defaultObjectDescriptor);
         checkDescriptor(expectedAnnotation, getInnerClassDescriptor(myClass, "InnerClass"));
 
         FunctionDescriptor foo = getFunctionDescriptor(myClass, "foo");
@@ -197,13 +199,6 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
         assertNotNull("Failed to find class: " + packageView.getName() + "." + className, aClass);
         assert aClass instanceof ClassDescriptor : "Not a class: " + aClass;
         return (ClassDescriptor) aClass;
-    }
-
-    @NotNull
-    private static ClassDescriptor getClassObjectDescriptor(@NotNull ClassDescriptor classDescriptor) {
-        ClassDescriptor objectDescriptor = classDescriptor.getDefaultObjectDescriptor();
-        assert objectDescriptor != null : "Cannot find class object for class " + classDescriptor.getName();
-        return objectDescriptor;
     }
 
     @NotNull

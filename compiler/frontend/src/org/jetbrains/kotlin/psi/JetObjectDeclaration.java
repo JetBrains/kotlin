@@ -51,7 +51,7 @@ public class JetObjectDeclaration extends JetNamedDeclarationStub<KotlinObjectSt
         }
 
         JetObjectDeclarationName nameAsDeclaration = getNameAsDeclaration();
-        if (nameAsDeclaration == null && isClassObject()) {
+        if (nameAsDeclaration == null && isDefault()) {
            //NOTE: a hack in PSI that simplifies writing frontend code
             return SpecialNames.DEFAULT_NAME_FOR_DEFAULT_OBJECT.toString();
         }
@@ -86,10 +86,10 @@ public class JetObjectDeclaration extends JetNamedDeclarationStub<KotlinObjectSt
         return (JetObjectDeclarationName) findChildByType(JetNodeTypes.OBJECT_DECLARATION_NAME);
     }
 
-    public boolean isClassObject() {
+    public boolean isDefault() {
         KotlinObjectStub stub = getStub();
         if (stub != null) {
-            return stub.isClassObject();
+            return stub.isDefault();
         }
         return getClassKeyword() != null;
     }

@@ -195,8 +195,8 @@ public class AsmUtil {
             }
         }
 
-        if (AnnotationsPackage.isPlatformStaticInClassObject(functionDescriptor)) {
-            // Native method will be a member of the class, the class object method will be delegated to it
+        if (AnnotationsPackage.isPlatformStaticInDefaultObject(functionDescriptor)) {
+            // Native method will be a member of the class, the default object method will be delegated to it
             flags &= ~Opcodes.ACC_NATIVE;
         }
 
@@ -733,7 +733,7 @@ public class AsmUtil {
 
     public static boolean isPropertyWithBackingFieldInOuterClass(@NotNull PropertyDescriptor propertyDescriptor) {
         return propertyDescriptor.getKind() != CallableMemberDescriptor.Kind.FAKE_OVERRIDE &&
-               isClassObjectWithBackingFieldsInOuter(propertyDescriptor.getContainingDeclaration());
+               isDefaultObjectWithBackingFieldsInOuter(propertyDescriptor.getContainingDeclaration());
     }
 
     public static int getVisibilityForSpecialPropertyBackingField(@NotNull PropertyDescriptor propertyDescriptor, boolean isDelegate) {
@@ -762,14 +762,14 @@ public class AsmUtil {
         DeclarationDescriptor propertyContainer = propertyDescriptor.getContainingDeclaration();
         return !propertyDescriptor.isVar()
                && !isExtensionProperty
-               && isClassObject(propertyContainer) && isTrait(propertyContainer.getContainingDeclaration())
+               && isDefaultObject(propertyContainer) && isTrait(propertyContainer.getContainingDeclaration())
                && areBothAccessorDefault(propertyDescriptor)
                && getVisibilityForSpecialPropertyBackingField(propertyDescriptor, false) == ACC_PUBLIC;
     }
 
-    public static boolean isClassObjectWithBackingFieldsInOuter(@NotNull DeclarationDescriptor classObject) {
-        DeclarationDescriptor containingClass = classObject.getContainingDeclaration();
-        return isClassObject(classObject) && (isClass(containingClass) || isEnumClass(containingClass));
+    public static boolean isDefaultObjectWithBackingFieldsInOuter(@NotNull DeclarationDescriptor defaultObject) {
+        DeclarationDescriptor containingClass = defaultObject.getContainingDeclaration();
+        return isDefaultObject(defaultObject) && (isClass(containingClass) || isEnumClass(containingClass));
     }
 
     private static boolean areBothAccessorDefault(@NotNull PropertyDescriptor propertyDescriptor) {

@@ -223,7 +223,7 @@ class SmartCompletion(
         val typeParameter = type.type.getConstructor().getDeclarationDescriptor() as? TypeParameterDescriptor ?: return false
         if (!type.freeParameters.contains(typeParameter)) return false
         return KotlinBuiltIns.isAnyOrNullableAny(typeParameter.getUpperBoundsAsType())
-        //TODO: check for class object constraint when there will be supported
+        //TODO: check for default object constraint when they are supported
     }
 
     private fun calcExpectedInfos(expression: JetExpression): Collection<ExpectedInfo>? {

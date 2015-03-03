@@ -126,8 +126,8 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
                 if (declaration is JetProperty && declaration.isLocal()) return
                 if (declaration is JetParameter && (declaration.getParent()?.getParent() !is JetClass || !declaration.hasValOrVarNode())) return
                 if (declaration is JetNamedFunction && isConventionalName(declaration)) return
-                //TODO: support this inspection for class objects
-                if (declaration is JetObjectDeclaration && declaration.isClassObject()) return
+                //TODO: support this inspection for default objects
+                if (declaration is JetObjectDeclaration && declaration.isDefault()) return
 
                 // More expensive, resolve-based checks
                 if (isEntryPoint(declaration)) return

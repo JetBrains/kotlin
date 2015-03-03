@@ -170,7 +170,7 @@ public class KotlinCallHierarchyNodeDescriptor extends HierarchyNodeDescriptor i
             if (descriptor == null) return null;
 
             if (element instanceof JetClassOrObject) {
-                if (element instanceof JetObjectDeclaration && ((JetObjectDeclaration) element).isClassObject()) {
+                if (element instanceof JetObjectDeclaration && ((JetObjectDeclaration) element).isDefault()) {
                     descriptor = descriptor.getContainingDeclaration();
                     if (!(descriptor instanceof ClassDescriptor)) return null;
 

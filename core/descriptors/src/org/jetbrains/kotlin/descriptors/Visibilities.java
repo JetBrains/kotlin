@@ -40,7 +40,7 @@ public class Visibilities {
             DeclarationDescriptor parent = what;
             while (parent != null) {
                 parent = parent.getContainingDeclaration();
-                if ((parent instanceof ClassDescriptor && !DescriptorUtils.isClassObject(parent)) ||
+                if ((parent instanceof ClassDescriptor && !DescriptorUtils.isDefaultObject(parent)) ||
                     parent instanceof PackageFragmentDescriptor) {
                     break;
                 }
@@ -97,7 +97,7 @@ public class Visibilities {
         @Override
         protected boolean isVisible(@NotNull ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
             ClassDescriptor classDescriptor = DescriptorUtils.getParentOfType(what, ClassDescriptor.class);
-            if (DescriptorUtils.isClassObject(classDescriptor)) {
+            if (DescriptorUtils.isDefaultObject(classDescriptor)) {
                 classDescriptor = DescriptorUtils.getParentOfType(classDescriptor, ClassDescriptor.class);
             }
             if (classDescriptor == null) return false;

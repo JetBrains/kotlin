@@ -36,14 +36,14 @@ import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
 // Navigation element of the resolved reference
 // For property accessor return enclosing property
-// For class object return enclosing class
+// For default object return enclosing class
 public val PsiReference.unwrappedTargets: Set<PsiElement>
     get() {
         fun PsiElement.adjust(): PsiElement? {
             val target = unwrapped?.getOriginalElement()
             return when {
                 target is JetPropertyAccessor -> target.getNonStrictParentOfType<JetProperty>()
-                target is JetObjectDeclaration && target.isClassObject() -> target.getNonStrictParentOfType<JetClass>()
+                target is JetObjectDeclaration && target.isDefault() -> target.getNonStrictParentOfType<JetClass>()
                 else -> target
             }
         }

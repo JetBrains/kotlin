@@ -81,8 +81,8 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
     private final Annotations annotations;
     private final Annotations danglingAnnotations;
-    private final NullableLazyValue<LazyClassDescriptor> classObjectDescriptor;
-    private final MemoizedFunctionToNotNull<JetObjectDeclaration, ClassDescriptor> extraClassObjectDescriptors;
+    private final NullableLazyValue<LazyClassDescriptor> defaultObjectDescriptor;
+    private final MemoizedFunctionToNotNull<JetObjectDeclaration, ClassDescriptor> extraDefaultObjectDescriptors;
 
     private final LazyClassMemberScope unsubstitutedMemberScope;
     private final JetScope staticScope = new StaticScopeForKotlinClass(this);
@@ -177,16 +177,16 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             );
         }
 
-        this.classObjectDescriptor = storageManager.createNullableLazyValue(new Function0<LazyClassDescriptor>() {
+        this.defaultObjectDescriptor = storageManager.createNullableLazyValue(new Function0<LazyClassDescriptor>() {
             @Override
             public LazyClassDescriptor invoke() {
-                return computeClassObjectDescriptor(getClassObjectIfAllowed());
+                return computeDefaultObjectDescriptor(getDefaultObjectIfAllowed());
             }
         });
-        this.extraClassObjectDescriptors = storageManager.createMemoizedFunction(new Function1<JetObjectDeclaration, ClassDescriptor>() {
+        this.extraDefaultObjectDescriptors = storageManager.createMemoizedFunction(new Function1<JetObjectDeclaration, ClassDescriptor>() {
             @Override
-            public ClassDescriptor invoke(JetObjectDeclaration classObject) {
-                return computeClassObjectDescriptor(classObject);
+            public ClassDescriptor invoke(JetObjectDeclaration defaultObject) {
+                return computeDefaultObjectDescriptor(defaultObject);
             }
         });
         this.scopeForClassHeaderResolution = storageManager.createLazyValue(new Function0<JetScope>() {
@@ -266,8 +266,8 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         thisScope.setImplicitReceiver(this.getThisAsReceiverParameter());
         thisScope.changeLockLevel(WritableScope.LockLevel.READING);
 
-        ClassDescriptor classObject = getDefaultObjectDescriptor();
-        JetScope classObjectAdapterScope = (classObject != null) ? new ClassObjectMixinScope(classObject) : JetScope.Empty.INSTANCE$;
+        ClassDescriptor defaultObjectDescriptor = getDefaultObjectDescriptor();
+        JetScope defaultObjectAdapterScope = (defaultObjectDescriptor != null) ? new DefaultObjectMixinScope(defaultObjectDescriptor) : JetScope.Empty.INSTANCE$;
 
         return new ChainedScope(
                 this,
@@ -275,7 +275,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                 thisScope,
                 getScopeForMemberLookup(),
                 getScopeForClassHeaderResolution(),
-                classObjectAdapterScope,
+                defaultObjectAdapterScope,
                 getStaticScope()
         );
     }
@@ -347,46 +347,46 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
     @Override
     public LazyClassDescriptor getDefaultObjectDescriptor() {
-        return classObjectDescriptor.invoke();
+        return defaultObjectDescriptor.invoke();
     }
 
     @NotNull
     @ReadOnly
-    public List<ClassDescriptor> getDescriptorsForExtraClassObjects() {
-        final JetObjectDeclaration allowedClassObject = getClassObjectIfAllowed();
+    public List<ClassDescriptor> getDescriptorsForExtraDefaultObjects() {
+        final JetObjectDeclaration allowedDefaultObject = getDefaultObjectIfAllowed();
 
         return KotlinPackage.map(
                 KotlinPackage.filter(
-                        declarationProvider.getOwnerInfo().getClassObjects(),
+                        declarationProvider.getOwnerInfo().getDefaultObjects(),
                         new Function1<JetObjectDeclaration, Boolean>() {
                             @Override
-                            public Boolean invoke(JetObjectDeclaration classObject) {
-                                return classObject != allowedClassObject;
+                            public Boolean invoke(JetObjectDeclaration defaultObject) {
+                                return defaultObject != allowedDefaultObject;
                             }
                         }
                 ),
                 new Function1<JetObjectDeclaration, ClassDescriptor>() {
                     @Override
-                    public ClassDescriptor invoke(JetObjectDeclaration classObject) {
-                        return extraClassObjectDescriptors.invoke(classObject);
+                    public ClassDescriptor invoke(JetObjectDeclaration defaultObject) {
+                        return extraDefaultObjectDescriptors.invoke(defaultObject);
                     }
                 }
         );
     }
 
     @Nullable
-    private LazyClassDescriptor computeClassObjectDescriptor(@Nullable JetObjectDeclaration classObject) {
-        JetClassLikeInfo classObjectInfo = getClassObjectInfo(classObject);
-        if (!(classObjectInfo instanceof JetClassOrObjectInfo)) {
+    private LazyClassDescriptor computeDefaultObjectDescriptor(@Nullable JetObjectDeclaration defaultObject) {
+        JetClassLikeInfo defaultObjectInfo = getDefaultObjectInfo(defaultObject);
+        if (!(defaultObjectInfo instanceof JetClassOrObjectInfo)) {
             return null;
         }
-        Name name = ((JetClassOrObjectInfo) classObjectInfo).getName();
+        Name name = ((JetClassOrObjectInfo) defaultObjectInfo).getName();
         assert name != null;
         getScopeForMemberLookup().getClassifier(name);
-        ClassDescriptor classObjectDescriptor = c.getTrace().get(BindingContext.CLASS, classObject);
-        if (classObjectDescriptor instanceof LazyClassDescriptor) {
-            assert DescriptorUtils.isClassObject(classObjectDescriptor) : "Not a class object: " + classObjectDescriptor;
-            return (LazyClassDescriptor) classObjectDescriptor;
+        ClassDescriptor defaultObjectDescriptor = c.getTrace().get(BindingContext.CLASS, defaultObject);
+        if (defaultObjectDescriptor instanceof LazyClassDescriptor) {
+            assert DescriptorUtils.isDefaultObject(defaultObjectDescriptor) : "Not a default object: " + defaultObjectDescriptor;
+            return (LazyClassDescriptor) defaultObjectDescriptor;
         }
         else {
             return null;
@@ -394,25 +394,25 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     }
 
     @Nullable
-    private JetClassLikeInfo getClassObjectInfo(@Nullable JetObjectDeclaration classObject) {
-        if (classObject != null) {
-            if (!isClassObjectAllowed()) {
-                c.getTrace().report(CLASS_OBJECT_NOT_ALLOWED.on(classObject));
+    private JetClassLikeInfo getDefaultObjectInfo(@Nullable JetObjectDeclaration defaultObject) {
+        if (defaultObject != null) {
+            if (!isDefaultObjectAllowed()) {
+                c.getTrace().report(DEFAULT_OBJECT_NOT_ALLOWED.on(defaultObject));
             }
 
-            return JetClassInfoUtil.createClassLikeInfo(classObject);
+            return JetClassInfoUtil.createClassLikeInfo(defaultObject);
         }
 
         return null;
     }
 
     @Nullable
-    private JetObjectDeclaration getClassObjectIfAllowed() {
-        JetObjectDeclaration classObject = declarationProvider.getOwnerInfo().getClassObject();
-        return (classObject != null && isClassObjectAllowed()) ? classObject : null;
+    private JetObjectDeclaration getDefaultObjectIfAllowed() {
+        JetObjectDeclaration defaultObject = declarationProvider.getOwnerInfo().getDefaultObject();
+        return (defaultObject != null && isDefaultObjectAllowed()) ? defaultObject : null;
     }
 
-    private boolean isClassObjectAllowed() {
+    private boolean isDefaultObjectAllowed() {
         return !(getKind().isSingleton() || isInner() || DescriptorUtils.isLocal(this));
     }
 
@@ -463,13 +463,13 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
     private void doForceResolveAllContents() {
         resolveMemberHeaders();
-        ClassDescriptor classObjectDescriptor = getDefaultObjectDescriptor();
-        if (classObjectDescriptor != null) {
-            ForceResolveUtil.forceResolveAllContents(classObjectDescriptor);
+        ClassDescriptor defaultObjectDescriptor = getDefaultObjectDescriptor();
+        if (defaultObjectDescriptor != null) {
+            ForceResolveUtil.forceResolveAllContents(defaultObjectDescriptor);
         }
 
         ForceResolveUtil.forceResolveAllContents(getConstructors());
-        ForceResolveUtil.forceResolveAllContents(getDescriptorsForExtraClassObjects());
+        ForceResolveUtil.forceResolveAllContents(getDescriptorsForExtraDefaultObjects());
         ForceResolveUtil.forceResolveAllContents(getScopeForMemberLookup());
         ForceResolveUtil.forceResolveAllContents(getTypeConstructor());
     }
@@ -481,7 +481,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
         getDefaultObjectDescriptor();
 
-        getDescriptorsForExtraClassObjects();
+        getDescriptorsForExtraDefaultObjects();
 
         getClassObjectType();
         getConstructors();

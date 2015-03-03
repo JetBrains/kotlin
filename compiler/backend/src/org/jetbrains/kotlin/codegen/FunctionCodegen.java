@@ -168,8 +168,8 @@ public class FunctionCodegen {
 
         generateBridges(functionDescriptor);
 
-        boolean staticInClassObject = AnnotationsPackage.isPlatformStaticInClassObject(functionDescriptor);
-        if (staticInClassObject) {
+        boolean staticInDefaultObject = AnnotationsPackage.isPlatformStaticInDefaultObject(functionDescriptor);
+        if (staticInDefaultObject) {
             ImplementationBodyCodegen parentBodyCodegen = (ImplementationBodyCodegen) memberCodegen.getParentCodegen();
             parentBodyCodegen.addAdditionalTask(new PlatformStaticGenerator(functionDescriptor, origin, state));
         }
@@ -192,8 +192,8 @@ public class FunctionCodegen {
         if (!isNative) {
             generateMethodBody(mv, functionDescriptor, methodContext, jvmSignature, strategy, memberCodegen);
         }
-        else if (staticInClassObject) {
-            // native platformStatic foo() in class object should delegate to the static native function moved to the outer class
+        else if (staticInDefaultObject) {
+            // native platformStatic foo() in default object should delegate to the static native function moved to the outer class
             mv.visitCode();
             FunctionDescriptor staticFunctionDescriptor = PlatformStaticGenerator.createStaticFunctionDescriptor(functionDescriptor);
             JvmMethodSignature jvmMethodSignature =

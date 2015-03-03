@@ -146,17 +146,17 @@ private fun buildDecompiledText(packageFqName: FqName, descriptors: List<Declara
                 builder.append(" {\n")
                 var firstPassed = false
                 val subindent = indent + "    "
-                val classObject = descriptor.getDefaultObjectDescriptor()
-                if (classObject != null) {
+                val defaultObject = descriptor.getDefaultObjectDescriptor()
+                if (defaultObject != null) {
                     firstPassed = true
                     builder.append(subindent)
-                    appendDescriptor(classObject, subindent)
+                    appendDescriptor(defaultObject, subindent)
                 }
                 for (member in descriptor.getDefaultType().getMemberScope().getDescriptors()) {
                     if (member.getContainingDeclaration() != descriptor) {
                         continue
                     }
-                    if (member == classObject) {
+                    if (member == defaultObject) {
                         continue
                     }
                     if (member is CallableMemberDescriptor

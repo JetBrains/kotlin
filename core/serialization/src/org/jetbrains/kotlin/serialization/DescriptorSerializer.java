@@ -131,9 +131,9 @@ public class DescriptorSerializer {
             }
         }
 
-        ClassDescriptor classObject = classDescriptor.getDefaultObjectDescriptor();
-        if (classObject != null) {
-            builder.setClassObjectName(stringTable.getSimpleNameIndex(classObject.getName()));
+        ClassDescriptor defaultObjectDescriptor = classDescriptor.getDefaultObjectDescriptor();
+        if (defaultObjectDescriptor != null) {
+            builder.setClassObjectName(stringTable.getSimpleNameIndex(defaultObjectDescriptor.getName()));
         }
 
         extension.serializeClass(classDescriptor, builder, stringTable);

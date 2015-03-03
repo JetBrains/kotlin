@@ -60,7 +60,7 @@ public class DeserializedClassDescriptor(
 
     private val containingDeclaration = outerContext.containingDeclaration
     private val primaryConstructor = c.storageManager.createNullableLazyValue { computePrimaryConstructor() }
-    private val classObjectDescriptor = c.storageManager.createNullableLazyValue { computeClassObjectDescriptor() }
+    private val defaultObjectDescriptor = c.storageManager.createNullableLazyValue { computeDefaultObjectDescriptor() }
 
     private val annotations =
             if (!Flags.HAS_ANNOTATIONS.get(classProto.getFlags())) {
@@ -109,14 +109,14 @@ public class DeserializedClassDescriptor(
         return listOf(constructor)
     }
 
-    private fun computeClassObjectDescriptor(): ClassDescriptor? {
+    private fun computeDefaultObjectDescriptor(): ClassDescriptor? {
         if (!classProto.hasClassObjectName()) return null
 
-        val classObjectName = c.nameResolver.getName(classProto.getClassObjectName())
-        return memberScope.getClassifier(classObjectName) as? ClassDescriptor
+        val defaultObjectName = c.nameResolver.getName(classProto.getClassObjectName())
+        return memberScope.getClassifier(defaultObjectName) as? ClassDescriptor
     }
 
-    override fun getDefaultObjectDescriptor(): ClassDescriptor? = classObjectDescriptor()
+    override fun getDefaultObjectDescriptor(): ClassDescriptor? = defaultObjectDescriptor()
 
     private fun computeSuperTypes(): Collection<JetType> {
         val supertypes = ArrayList<JetType>(classProto.getSupertypeCount())

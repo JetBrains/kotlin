@@ -144,7 +144,7 @@ private class JetDeclarationRemotenessWeigher(private val file: JetFile) : Looku
         }
 
         val qualifiedName = qualifiedName(o)
-        // Invalid name can be met for class object descriptor: Test.MyTest.A.<no name provided>.testOther
+        // Invalid name can be met for default object descriptor: Test.MyTest.A.<no name provided>.testOther
         if (qualifiedName != null && isValidJavaFqName(qualifiedName)) {
             val importPath = ImportPath(qualifiedName)
             val fqName = importPath.fqnPart()

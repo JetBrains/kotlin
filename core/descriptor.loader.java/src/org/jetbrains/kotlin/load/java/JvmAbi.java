@@ -46,7 +46,7 @@ public final class JvmAbi {
 
     //TODO: To be removed after kotlin M11
     @Deprecated
-    public static final String DEPRECATED_CLASS_OBJECT_FIELD = "OBJECT$";
+    public static final String DEPRECATED_DEFAULT_OBJECT_FIELD = "OBJECT$";
 
     @NotNull
     public static String getSyntheticMethodNameForAnnotatedProperty(@NotNull Name propertyName) {

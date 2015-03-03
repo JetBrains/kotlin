@@ -91,8 +91,8 @@ public abstract class WritableScopeWithImports(override val workerScope: JetScop
     protected open fun computeImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> {
         val implicitReceiverHierarchy = Lists.newArrayList<ReceiverParameterDescriptor>()
         // Imported scopes come with their receivers
-        // Example: class member resolution scope imports a scope of it's class object
-        //          members of the class object must be able to find it as an implicit receiver
+        // Example: class member resolution scope imports a scope of it's default object
+        //          members of the default object must be able to find it as an implicit receiver
         for (scope in getImports()) {
             implicitReceiverHierarchy.addAll(scope.getImplicitReceiversHierarchy())
         }

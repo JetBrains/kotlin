@@ -210,7 +210,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         }
         val typeConstraintListStub = KotlinPlaceHolderStubImpl<JetTypeConstraintList>(parent, JetStubElementTypes.TYPE_CONSTRAINT_LIST)
         for ((name, type) in protosForTypeConstraintList) {
-            val typeConstraintStub = KotlinTypeConstraintStubImpl(typeConstraintListStub, isClassObjectConstraint = false)
+            val typeConstraintStub = KotlinTypeConstraintStubImpl(typeConstraintListStub, isDefaultObjectConstraint = false)
             KotlinNameReferenceExpressionStubImpl(typeConstraintStub, name.ref())
             createTypeReferenceStub(typeConstraintStub, type)
         }

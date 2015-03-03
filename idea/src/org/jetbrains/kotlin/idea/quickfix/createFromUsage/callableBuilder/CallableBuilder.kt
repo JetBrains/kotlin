@@ -851,7 +851,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 is ConstructorInfo -> with(callableInfo.classInfo) {
                     !inner && kind != ClassKind.ENUM_ENTRY && kind != ClassKind.ENUM_CLASS
                 }
-                else -> callableInfo.receiverTypeInfo.classObjectRequired
+                else -> callableInfo.receiverTypeInfo.staticContextRequired
             }
             modifierList.setModifierProperty(PsiModifier.STATIC, needStatic)
 

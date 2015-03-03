@@ -28,7 +28,7 @@ object O {
 fun f() {
     A.c
     A.hashCode()
-    A().<!NO_CLASS_OBJECT, NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>Nested<!>
+    A().<!NO_DEFAULT_OBJECT, NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>Nested<!>
     A.Nested()
     A().Inner()
     A.Default.<!UNRESOLVED_REFERENCE!>Nested<!>

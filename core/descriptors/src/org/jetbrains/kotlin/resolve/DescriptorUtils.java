@@ -191,7 +191,7 @@ public class DescriptorUtils {
     public static ClassDescriptor getContainingClass(@NotNull DeclarationDescriptor descriptor) {
         DeclarationDescriptor containing = descriptor.getContainingDeclaration();
         while (containing != null) {
-            if (containing instanceof ClassDescriptor && !isClassObject(containing)) {
+            if (containing instanceof ClassDescriptor && !isDefaultObject(containing)) {
                 return (ClassDescriptor) containing;
             }
             containing = containing.getContainingDeclaration();
@@ -240,7 +240,7 @@ public class DescriptorUtils {
         return descriptor instanceof AnonymousFunctionDescriptor;
     }
 
-    public static boolean isClassObject(@Nullable DeclarationDescriptor descriptor) {
+    public static boolean isDefaultObject(@Nullable DeclarationDescriptor descriptor) {
         return isKindOf(descriptor, ClassKind.CLASS_OBJECT);
     }
 

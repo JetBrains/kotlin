@@ -35,7 +35,7 @@ public class FakeCallableDescriptorForObject(
 
     {
         assert(classDescriptor.getClassObjectType() != null) {
-            "FakeCallableDescriptorForObject can be created only for objects, classes with class object or enum entries: $classDescriptor"
+            "FakeCallableDescriptorForObject can be created only for objects, classes with default object or enum entries: $classDescriptor"
         }
 
     }

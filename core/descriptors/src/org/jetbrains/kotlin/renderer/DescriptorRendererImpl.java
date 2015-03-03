@@ -62,7 +62,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     private final boolean includeSynthesizedParameterNames;
     private final boolean withoutFunctionParameterNames;
     private final boolean withoutTypeParameters;
-    private final boolean renderClassObjectName;
+    private final boolean renderDefaultObjectName;
     private final boolean withoutSuperTypes;
     private final boolean receiverAfterName;
     private final boolean renderDefaultValues;
@@ -100,7 +100,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             boolean withoutFunctionParameterNames,
             boolean withoutTypeParameters,
             boolean receiverAfterName,
-            boolean renderClassObjectName,
+            boolean renderDefaultObjectName,
             boolean withoutSuperTypes,
             @NotNull Function1<JetType, JetType> typeNormalizer,
             boolean renderDefaultValues,
@@ -127,7 +127,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         this.withoutFunctionParameterNames = withoutFunctionParameterNames;
         this.withoutTypeParameters = withoutTypeParameters;
         this.receiverAfterName = receiverAfterName;
-        this.renderClassObjectName = renderClassObjectName;
+        this.renderDefaultObjectName = renderDefaultObjectName;
         this.withoutSuperTypes = withoutSuperTypes;
         this.typeNormalizer = typeNormalizer;
         this.renderDefaultValues = renderDefaultValues;
@@ -234,8 +234,8 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         builder.append(renderName(descriptor.getName()));
     }
 
-    private void renderClassObjectName(@NotNull DeclarationDescriptor descriptor, @NotNull StringBuilder builder) {
-        if (renderClassObjectName) {
+    private void renderDefaultObjectName(@NotNull DeclarationDescriptor descriptor, @NotNull StringBuilder builder) {
+        if (renderDefaultObjectName) {
             if (startFromName) {
                 builder.append("class object");
             }
@@ -956,7 +956,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             renderName(klass, builder);
         }
         else {
-            renderClassObjectName(klass, builder);
+            renderDefaultObjectName(klass, builder);
         }
 
         List<TypeParameterDescriptor> typeParameters = klass.getTypeConstructor().getParameters();

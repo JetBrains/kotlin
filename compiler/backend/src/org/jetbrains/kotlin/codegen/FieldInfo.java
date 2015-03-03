@@ -47,12 +47,12 @@ public class FieldInfo {
 
     @SuppressWarnings("deprecation")
     @NotNull
-    public static FieldInfo deprecatedFieldForClassObject(@NotNull ClassDescriptor classObject, @NotNull JetTypeMapper typeMapper) {
-        assert DescriptorUtils.isClassObject(classObject) : "Not a class object: " + classObject;
+    public static FieldInfo deprecatedFieldForDefaultObject(@NotNull ClassDescriptor defaultObject, @NotNull JetTypeMapper typeMapper) {
+        assert DescriptorUtils.isDefaultObject(defaultObject) : "Not a default object: " + defaultObject;
         return new FieldInfo(
-                typeMapper.mapType((ClassifierDescriptor) classObject.getContainingDeclaration()),
-                typeMapper.mapType(classObject),
-                JvmAbi.DEPRECATED_CLASS_OBJECT_FIELD,
+                typeMapper.mapType((ClassifierDescriptor) defaultObject.getContainingDeclaration()),
+                typeMapper.mapType(defaultObject),
+                JvmAbi.DEPRECATED_DEFAULT_OBJECT_FIELD,
                 true
         );
     }

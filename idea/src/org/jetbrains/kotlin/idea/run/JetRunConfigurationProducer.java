@@ -78,7 +78,7 @@ public class JetRunConfigurationProducer extends RuntimeConfigurationProducer im
         if (container instanceof JetFile) return PackageClassUtils.getPackageClassFqName(((JetFile) container).getPackageFqName());
         if (container instanceof JetClassOrObject) {
             JetClassOrObject classOrObject = (JetClassOrObject) container;
-            if (classOrObject instanceof JetObjectDeclaration && ((JetObjectDeclaration) classOrObject).isClassObject()) {
+            if (classOrObject instanceof JetObjectDeclaration && ((JetObjectDeclaration) classOrObject).isDefault()) {
                 classOrObject = PsiTreeUtil.getParentOfType(classOrObject, JetClass.class);
             }
             return classOrObject != null ? classOrObject.getFqName() : null;
@@ -117,7 +117,7 @@ public class JetRunConfigurationProducer extends RuntimeConfigurationProducer im
              currentElement = PsiTreeUtil.getParentOfType((PsiElement) currentElement, JetClassOrObject.class, JetFile.class)) {
             JetDeclarationContainer entryPointContainer = currentElement;
             if (entryPointContainer instanceof JetClass) {
-                entryPointContainer = ((JetClass) currentElement).getClassObject();
+                entryPointContainer = ((JetClass) currentElement).getDefaultObject();
             }
             if (entryPointContainer != null && mainFunctionDetector.hasMain(entryPointContainer.getDeclarations())) return entryPointContainer;
         }

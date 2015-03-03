@@ -361,7 +361,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         CodegenContext descriptorContext = null;
         if (!fromOutsideContext || getClassOrPackageParentContext().getContextDescriptor() != descriptor.getContainingDeclaration()) {
             DeclarationDescriptor enclosed = descriptor.getContainingDeclaration();
-            boolean isClassObjectMember = DescriptorUtils.isClassObject(enclosed);
+            boolean isDefaultObjectMember = DescriptorUtils.isDefaultObject(enclosed);
             //go upper
             if (hasThisDescriptor() && (enclosed != getThisDescriptor() || !fromOutsideContext)) {
                 CodegenContext currentContext = this;
@@ -371,12 +371,12 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
                         break;
                     }
 
-                    //accessors for private members in class object for call from class
-                    if (isClassObjectMember && currentContext instanceof ClassContext) {
+                    //accessors for private members in default object for call from class
+                    if (isDefaultObjectMember && currentContext instanceof ClassContext) {
                         ClassContext classContext = (ClassContext) currentContext;
-                        CodegenContext classObject = classContext.getClassObjectContext();
-                        if (classObject != null && classObject.getContextDescriptor() == enclosed) {
-                            descriptorContext = classObject;
+                        CodegenContext defaultObjectContext = classContext.getDefaultObjectContext();
+                        if (defaultObjectContext != null && defaultObjectContext.getContextDescriptor() == enclosed) {
+                            descriptorContext = defaultObjectContext;
                             break;
                         }
                     }
@@ -417,7 +417,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     }
 
     protected boolean shouldAddChild(@NotNull CodegenContext child) {
-        return DescriptorUtils.isClassObject(child.contextDescriptor);
+        return DescriptorUtils.isDefaultObject(child.contextDescriptor);
     }
 
     @Nullable

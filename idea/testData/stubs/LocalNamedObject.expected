@@ -4,7 +4,7 @@ PsiJetFileStubImpl[package=]
   CLASS:[fqName=T, isEnumEntry=false, isLocal=false, isTopLevel=true, isTrait=true, name=T, superNames=[]]
   FUN:[fqName=foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isProbablyNothingType=false, isTopLevel=true, name=foo]
     VALUE_PARAMETER_LIST:
-    OBJECT_DECLARATION:[fqName=null, isClassObject=false, isLocal=true, isObjectLiteral=false, isTopLevel=false, name=O, superNames=[A, T]]
+    OBJECT_DECLARATION:[fqName=null, isDefault=false, isLocal=true, isObjectLiteral=false, isTopLevel=false, name=O, superNames=[A, T]]
       DELEGATION_SPECIFIER_LIST:
         DELEGATOR_SUPER_CALL:
           CONSTRUCTOR_CALLEE:

@@ -200,7 +200,7 @@ public class JetJavaFacadeTest extends JetLightCodeInsightFixtureTestCase {
         assertTrue(instance.hasModifierProperty(PsiModifier.STATIC));
         assertTrue(instance.hasModifierProperty(PsiModifier.FINAL));
 
-        PsiField deprecatedAccessor = theClass.findFieldByName(JvmAbi.DEPRECATED_CLASS_OBJECT_FIELD, false);
+        PsiField deprecatedAccessor = theClass.findFieldByName(JvmAbi.DEPRECATED_DEFAULT_OBJECT_FIELD, false);
         assertNotNull(deprecatedAccessor);
         assertEquals("foo.TheClass." + defaultClassObjectName, deprecatedAccessor.getType().getCanonicalText());
         assertTrue(deprecatedAccessor.hasModifierProperty(PsiModifier.PUBLIC));

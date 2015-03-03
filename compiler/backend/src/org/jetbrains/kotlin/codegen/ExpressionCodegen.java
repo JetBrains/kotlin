@@ -1922,9 +1922,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 Type type = typeMapper.mapType((ClassDescriptor) enumClass);
                 return StackValue.field(type, type, descriptor.getName().asString(), true, StackValue.none());
             }
-            ClassDescriptor classObjectDescriptor = classDescriptor.getDefaultObjectDescriptor();
-            if (classObjectDescriptor != null) {
-                return StackValue.singleton(classObjectDescriptor, typeMapper);
+            ClassDescriptor defaultObjectDescriptor = classDescriptor.getDefaultObjectDescriptor();
+            if (defaultObjectDescriptor != null) {
+                return StackValue.singleton(defaultObjectDescriptor, typeMapper);
             }
             return StackValue.none();
         }
@@ -2382,7 +2382,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     public StackValue generateReceiverValue(@NotNull ReceiverValue receiverValue) {
         if (receiverValue instanceof ClassReceiver) {
             ClassDescriptor receiverDescriptor = ((ClassReceiver) receiverValue).getDeclarationDescriptor();
-            if (DescriptorUtils.isClassObject(receiverDescriptor)) {
+            if (DescriptorUtils.isDefaultObject(receiverDescriptor)) {
                 CallableMemberDescriptor contextDescriptor = context.getContextDescriptor();
                 if (contextDescriptor instanceof FunctionDescriptor && receiverDescriptor == contextDescriptor.getContainingDeclaration()) {
                     return StackValue.LOCAL_0;

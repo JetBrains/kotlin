@@ -126,7 +126,7 @@ object CreateFunctionOrPropertyFromCallActionFactory : JetIntentionActionsFactor
                 val classifier = receiver.classifier as? JavaClassDescriptor ?: return null
                 val javaClass = DescriptorToDeclarationUtil.getDeclaration(project, classifier) as? PsiClass
                 if (javaClass == null || !javaClass.canRefactor()) return null
-                TypeInfo.ClassObjectRequired(TypeInfo(classifier.getDefaultType(), Variance.IN_VARIANCE))
+                TypeInfo.StaticContextRequired(TypeInfo(classifier.getDefaultType(), Variance.IN_VARIANCE))
             }
             else -> TypeInfo(receiver.getType(), Variance.IN_VARIANCE)
         }

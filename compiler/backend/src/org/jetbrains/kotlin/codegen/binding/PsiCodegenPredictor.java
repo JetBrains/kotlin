@@ -51,7 +51,7 @@ public final class PsiCodegenPredictor {
      */
     @Nullable
     public static String getPredefinedJvmInternalName(@NotNull JetDeclaration declaration) {
-        // TODO: Method won't work for declarations inside class objects
+        // TODO: Method won't work for declarations inside default objects
         // TODO: Method won't give correct class name for traits implementations
 
         JetDeclaration parentDeclaration = JetStubbedPsiUtil.getContainingDeclaration(declaration);

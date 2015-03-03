@@ -48,7 +48,7 @@ import java.util.List;
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isInterface;
 import static org.jetbrains.kotlin.codegen.JvmSerializationBindings.*;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.isClassObject;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isDefaultObject;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isTrait;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.PROPERTY_METADATA_TYPE;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.OtherOrigin;
@@ -144,8 +144,8 @@ public class PropertyCodegen {
         // Delegated or extension properties can only be referenced via accessors
         if (declaration.hasDelegate() || declaration.getReceiverTypeReference() != null) return true;
 
-        // Class object properties always should have accessors, because their backing fields are moved/copied to the outer class
-        if (isClassObject(descriptor.getContainingDeclaration())) return true;
+        // Default object properties always should have accessors, because their backing fields are moved/copied to the outer class
+        if (isDefaultObject(descriptor.getContainingDeclaration())) return true;
 
         // Private class properties have accessors only in cases when those accessors are non-trivial
         if (kind == OwnerKind.IMPLEMENTATION && Visibilities.isPrivate(descriptor.getVisibility())) {
@@ -265,7 +265,7 @@ public class PropertyCodegen {
 
         if (AsmUtil.isPropertyWithBackingFieldCopyInOuterClass(propertyDescriptor)) {
             ImplementationBodyCodegen parentBodyCodegen = (ImplementationBodyCodegen) memberCodegen.getParentCodegen();
-            parentBodyCodegen.addClassObjectPropertyToCopy(propertyDescriptor, defaultValue);
+            parentBodyCodegen.addDefaultObjectPropertyToCopy(propertyDescriptor, defaultValue);
         }
 
         String name = backingFieldContext.getFieldName(propertyDescriptor, isDelegate);

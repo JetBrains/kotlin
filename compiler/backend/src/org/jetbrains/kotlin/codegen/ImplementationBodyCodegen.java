@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.DeclarationResolver;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationsPackage;
@@ -92,7 +91,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private JetType superClassType;
     private final Type classAsmType;
 
-    private List<PropertyAndDefaultValue> classObjectPropertiesToCopy;
+    private List<PropertyAndDefaultValue> defaultObjectPropertiesToCopy;
 
     private final List<Function2<ImplementationBodyCodegen, ClassBuilder, Unit>> additionalTasks =
             new ArrayList<Function2<ImplementationBodyCodegen, ClassBuilder, Unit>>();
@@ -152,7 +151,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             isStatic = !jetClass.isInner();
         }
         else {
-            isStatic = myClass instanceof JetObjectDeclaration && ((JetObjectDeclaration) myClass).isClassObject() ;
+            isStatic = myClass instanceof JetObjectDeclaration && ((JetObjectDeclaration) myClass).isDefault() ;
             isFinal = true;
         }
 
@@ -370,7 +369,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         generateFieldForSingleton();
 
-        generateClassObjectBackingFieldCopies();
+        generateDefaultObjectBackingFieldCopies();
 
         DelegationFieldsInfo delegationFieldsInfo = getDelegationFieldsInfo(myClass.getDelegationSpecifiers());
         try {
@@ -885,7 +884,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 @Override
                 public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
                     boolean forceField = AsmUtil.isPropertyWithBackingFieldInOuterClass(original) &&
-                                         !isClassObject(bridge.getContainingDeclaration());
+                                         !isDefaultObject(bridge.getContainingDeclaration());
                     StackValue property =
                             codegen.intermediateValueForProperty(original, forceField, null, MethodKind.SYNTHETIC_ACCESSOR,
                                                                  StackValue.none());
@@ -975,7 +974,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void generateFieldForSingleton() {
-        if (isEnumEntry(descriptor) || isClassObject(descriptor)) return;
+        if (isEnumEntry(descriptor) || isDefaultObject(descriptor)) return;
 
         if (isObject(descriptor)) {
             StackValue.Field field = StackValue.singleton(descriptor, typeMapper);
@@ -990,34 +989,34 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             return;
         }
 
-        ClassDescriptor classObjectDescriptor = descriptor.getDefaultObjectDescriptor();
-        if (classObjectDescriptor == null) {
+        ClassDescriptor defaultObjectDescriptor = descriptor.getDefaultObjectDescriptor();
+        if (defaultObjectDescriptor == null) {
             return;
         }
 
-        JetObjectDeclaration classObject = ((JetClass) myClass).getClassObject();
-        assert classObject != null : "Class object not found: " + myClass.getText();
+        JetObjectDeclaration defaultObject = ((JetClass) myClass).getDefaultObject();
+        assert defaultObject != null : "Default object not found: " + myClass.getText();
 
-        StackValue.Field field = StackValue.singleton(classObjectDescriptor, typeMapper);
-        v.newField(OtherOrigin(classObject), ACC_PUBLIC | ACC_STATIC | ACC_FINAL, field.name, field.type.getDescriptor(), null, null);
+        StackValue.Field field = StackValue.singleton(defaultObjectDescriptor, typeMapper);
+        v.newField(OtherOrigin(defaultObject), ACC_PUBLIC | ACC_STATIC | ACC_FINAL, field.name, field.type.getDescriptor(), null, null);
 
-        StackValue.Field deprecatedField = StackValue.deprecatedClassObjectAccessor(classObjectDescriptor, typeMapper);
-        FieldVisitor fv = v.newField(OtherOrigin(classObject), ACC_PUBLIC | ACC_STATIC | ACC_FINAL | ACC_DEPRECATED,
+        StackValue.Field deprecatedField = StackValue.deprecatedDefaultObjectAccessor(defaultObjectDescriptor, typeMapper);
+        FieldVisitor fv = v.newField(OtherOrigin(defaultObject), ACC_PUBLIC | ACC_STATIC | ACC_FINAL | ACC_DEPRECATED,
                                      deprecatedField.name, deprecatedField.type.getDescriptor(), null, null);
 
         fv.visitAnnotation(asmDescByFqNameWithoutInnerClasses(new FqName("java.lang.Deprecated")), true).visitEnd();
 
         if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
 
-        if (!isClassObjectWithBackingFieldsInOuter(classObjectDescriptor)) {
-            generateClassObjectInitializer(classObjectDescriptor);
+        if (!isDefaultObjectWithBackingFieldsInOuter(defaultObjectDescriptor)) {
+            generateDefaultObjectInitializer(defaultObjectDescriptor);
         }
     }
 
-    private void generateClassObjectBackingFieldCopies() {
-        if (classObjectPropertiesToCopy == null) return;
+    private void generateDefaultObjectBackingFieldCopies() {
+        if (defaultObjectPropertiesToCopy == null) return;
 
-        for (PropertyAndDefaultValue info : classObjectPropertiesToCopy) {
+        for (PropertyAndDefaultValue info : defaultObjectPropertiesToCopy) {
             PropertyDescriptor property = info.descriptor;
 
             Type type = typeMapper.mapType(property);
@@ -1033,40 +1032,40 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             // TODO: test this code
             if (state.getClassBuilderMode() == ClassBuilderMode.FULL && info.defaultValue == null) {
                 ExpressionCodegen codegen = createOrGetClInitCodegen();
-                int classObjectIndex = putClassObjectInLocalVar(codegen);
-                StackValue.local(classObjectIndex, OBJECT_TYPE).put(OBJECT_TYPE, codegen.v);
-                copyFieldFromClassObject(property);
+                int defaultObjectIndex = putDefaultObjectInLocalVar(codegen);
+                StackValue.local(defaultObjectIndex, OBJECT_TYPE).put(OBJECT_TYPE, codegen.v);
+                copyFieldFromDefaultObject(property);
             }
         }
     }
 
-    private int putClassObjectInLocalVar(ExpressionCodegen codegen) {
+    private int putDefaultObjectInLocalVar(ExpressionCodegen codegen) {
         FrameMap frameMap = codegen.myFrameMap;
-        ClassDescriptor classObjectDescriptor = descriptor.getDefaultObjectDescriptor();
-        int classObjectIndex = frameMap.getIndex(classObjectDescriptor);
-        if (classObjectIndex == -1) {
-            classObjectIndex = frameMap.enter(classObjectDescriptor, OBJECT_TYPE);
-            StackValue classObject = StackValue.singleton(classObjectDescriptor, typeMapper);
-            StackValue.local(classObjectIndex, classObject.type).store(classObject, codegen.v);
+        ClassDescriptor defaultObjectDescriptor = descriptor.getDefaultObjectDescriptor();
+        int defaultObjectIndex = frameMap.getIndex(defaultObjectDescriptor);
+        if (defaultObjectIndex == -1) {
+            defaultObjectIndex = frameMap.enter(defaultObjectDescriptor, OBJECT_TYPE);
+            StackValue defaultObject = StackValue.singleton(defaultObjectDescriptor, typeMapper);
+            StackValue.local(defaultObjectIndex, defaultObject.type).store(defaultObject, codegen.v);
         }
-        return classObjectIndex;
+        return defaultObjectIndex;
     }
 
-    private void copyFieldFromClassObject(PropertyDescriptor propertyDescriptor) {
+    private void copyFieldFromDefaultObject(PropertyDescriptor propertyDescriptor) {
         ExpressionCodegen codegen = createOrGetClInitCodegen();
         StackValue property = codegen.intermediateValueForProperty(propertyDescriptor, false, null, StackValue.none());
         StackValue.Field field = StackValue.field(property.type, classAsmType, propertyDescriptor.getName().asString(), true, StackValue.none());
         field.store(property, codegen.v);
     }
 
-    private void generateClassObjectInitializer(@NotNull ClassDescriptor classObject) {
+    private void generateDefaultObjectInitializer(@NotNull ClassDescriptor defaultObject) {
         ExpressionCodegen codegen = createOrGetClInitCodegen();
-        FunctionDescriptor constructor = codegen.accessibleFunctionDescriptor(KotlinPackage.single(classObject.getConstructors()));
+        FunctionDescriptor constructor = codegen.accessibleFunctionDescriptor(KotlinPackage.single(defaultObject.getConstructors()));
         generateMethodCallTo(constructor, codegen.v);
         codegen.v.dup();
-        StackValue instance = StackValue.onStack(typeMapper.mapClass(classObject));
-        StackValue.singleton(classObject, typeMapper).store(instance, codegen.v, true);
-        StackValue.deprecatedClassObjectAccessor(classObject, typeMapper).store(instance, codegen.v, true);
+        StackValue instance = StackValue.onStack(typeMapper.mapClass(defaultObject));
+        StackValue.singleton(defaultObject, typeMapper).store(instance, codegen.v, true);
+        StackValue.deprecatedDefaultObjectAccessor(defaultObject, typeMapper).store(instance, codegen.v, true);
     }
 
     private void generatePrimaryConstructor(final DelegationFieldsInfo delegationFieldsInfo) {
@@ -1098,7 +1097,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         CallableMethod callableMethod = typeMapper.mapToCallableMethod(constructorDescriptor);
         FunctionCodegen.generateConstructorWithoutParametersIfNeeded(state, callableMethod, constructorDescriptor, v, myClass);
 
-        if (isClassObject(descriptor)) {
+        if (isDefaultObject(descriptor)) {
             context.recordSyntheticAccessorIfNeeded(constructorDescriptor, bindingContext);
         }
     }
@@ -1151,9 +1150,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             curParam++;
         }
 
-        if (isClassObjectWithBackingFieldsInOuter(descriptor)) {
+        if (isDefaultObjectWithBackingFieldsInOuter(descriptor)) {
             final ImplementationBodyCodegen parentCodegen = (ImplementationBodyCodegen) getParentCodegen();
-            parentCodegen.generateClassObjectInitializer(descriptor);
+            parentCodegen.generateDefaultObjectInitializer(descriptor);
             generateInitializers(new Function0<ExpressionCodegen>() {
                 @Override
                 public ExpressionCodegen invoke() {
@@ -1638,11 +1637,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
     }
 
-    public void addClassObjectPropertyToCopy(@NotNull PropertyDescriptor descriptor, Object defaultValue) {
-        if (classObjectPropertiesToCopy == null) {
-            classObjectPropertiesToCopy = new ArrayList<PropertyAndDefaultValue>();
+    public void addDefaultObjectPropertyToCopy(@NotNull PropertyDescriptor descriptor, Object defaultValue) {
+        if (defaultObjectPropertiesToCopy == null) {
+            defaultObjectPropertiesToCopy = new ArrayList<PropertyAndDefaultValue>();
         }
-        classObjectPropertiesToCopy.add(new PropertyAndDefaultValue(descriptor, defaultValue));
+        defaultObjectPropertiesToCopy.add(new PropertyAndDefaultValue(descriptor, defaultValue));
     }
 
     @Override

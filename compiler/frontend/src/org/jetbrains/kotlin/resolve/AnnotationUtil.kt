@@ -38,7 +38,7 @@ public fun DeclarationDescriptor.hasIntrinsicAnnotation(): Boolean {
 public fun CallableDescriptor.isPlatformStaticInObjectOrClass(): Boolean =
         isPlatformStaticIn(ClassKind.OBJECT, ClassKind.CLASS)
 
-public fun CallableDescriptor.isPlatformStaticInClassObject(): Boolean =
+public fun CallableDescriptor.isPlatformStaticInDefaultObject(): Boolean =
         isPlatformStaticIn(ClassKind.CLASS_OBJECT)
 
 private fun CallableDescriptor.isPlatformStaticIn(vararg kinds: ClassKind): Boolean =

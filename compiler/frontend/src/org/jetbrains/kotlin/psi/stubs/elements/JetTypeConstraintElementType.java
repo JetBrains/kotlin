@@ -34,18 +34,18 @@ public class JetTypeConstraintElementType extends JetStubElementType<KotlinTypeC
 
     @Override
     public KotlinTypeConstraintStub createStub(@NotNull JetTypeConstraint psi, StubElement parentStub) {
-        return new KotlinTypeConstraintStubImpl(parentStub, psi.isClassObjectConstraint());
+        return new KotlinTypeConstraintStubImpl(parentStub, psi.isDefaultObjectConstraint());
     }
 
     @Override
     public void serialize(@NotNull KotlinTypeConstraintStub stub, @NotNull StubOutputStream dataStream) throws IOException {
-        dataStream.writeBoolean(stub.isClassObjectConstraint());
+        dataStream.writeBoolean(stub.isDefaultObjectConstraint());
     }
 
     @NotNull
     @Override
     public KotlinTypeConstraintStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
-        boolean isClassObjectConstraint = dataStream.readBoolean();
-        return new KotlinTypeConstraintStubImpl(parentStub, isClassObjectConstraint);
+        boolean isDefaultObjectConstraint = dataStream.readBoolean();
+        return new KotlinTypeConstraintStubImpl(parentStub, isDefaultObjectConstraint);
     }
 }

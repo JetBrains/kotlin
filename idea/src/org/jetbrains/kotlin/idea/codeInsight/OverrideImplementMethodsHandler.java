@@ -308,7 +308,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         PsiElement elementAtCaret = file.findElementAt(editor.getCaretModel().getOffset());
         JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(elementAtCaret, JetClassOrObject.class);
 
-        assert classOrObject != null : "ClassObject should be checked in isValidFor method";
+        assert classOrObject != null;
 
         Set<CallableMemberDescriptor> missingImplementations = collectMethodsToGenerate(classOrObject);
         if (missingImplementations.isEmpty() && !implementAll) {

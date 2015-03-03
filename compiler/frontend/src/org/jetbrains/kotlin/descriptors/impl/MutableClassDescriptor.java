@@ -44,7 +44,7 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
     private List<TypeParameterDescriptor> typeParameters;
     private Collection<JetType> supertypes = new ArrayList<JetType>();
 
-    private MutableClassDescriptor classObjectDescriptor;
+    private MutableClassDescriptor defaultObjectDescriptor;
 
     private final Set<ConstructorDescriptor> constructors = Sets.newLinkedHashSet();
     private ConstructorDescriptor primaryConstructor;
@@ -93,7 +93,7 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
     @Nullable
     @Override
     public MutableClassDescriptor getDefaultObjectDescriptor() {
-        return classObjectDescriptor;
+        return defaultObjectDescriptor;
     }
 
     @NotNull
@@ -306,8 +306,8 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
 
     public void lockScopes() {
         getScopeForMemberLookupAsWritableScope().changeLockLevel(WritableScope.LockLevel.READING);
-        if (classObjectDescriptor != null) {
-            classObjectDescriptor.lockScopes();
+        if (defaultObjectDescriptor != null) {
+            defaultObjectDescriptor.lockScopes();
         }
         scopeForSupertypeResolution.changeLockLevel(WritableScope.LockLevel.READING);
         scopeForMemberResolution.changeLockLevel(WritableScope.LockLevel.READING);

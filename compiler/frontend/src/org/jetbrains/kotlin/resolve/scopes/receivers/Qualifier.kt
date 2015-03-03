@@ -129,7 +129,7 @@ private fun QualifierReceiver.resolveAsStandaloneExpression(context: ExpressionT
         context.trace.report(TYPE_PARAMETER_IS_NOT_AN_EXPRESSION.on(referenceExpression, classifier))
     }
     else if (classifier is ClassDescriptor && classifier.getClassObjectType() == null) {
-        context.trace.report(NO_CLASS_OBJECT.on(referenceExpression, classifier))
+        context.trace.report(NO_DEFAULT_OBJECT.on(referenceExpression, classifier))
     }
     else if (packageView != null) {
         context.trace.report(EXPRESSION_EXPECTED_PACKAGE_FOUND.on(referenceExpression))

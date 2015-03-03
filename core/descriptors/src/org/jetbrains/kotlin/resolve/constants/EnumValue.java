@@ -32,7 +32,7 @@ public class EnumValue extends CompileTimeConstant<ClassDescriptor> {
     @Override
     public JetType getType(@NotNull KotlinBuiltIns kotlinBuiltIns) {
         JetType type = value.getClassObjectType();
-        assert type != null : "Enum entry should have a class object: " + value;
+        assert type != null : "Enum entry should have a default object: " + value;
         return type;
     }
 

@@ -36,45 +36,49 @@ import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getDescriptor
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isObject;
 
-public class ClassObjectAccessTranslator extends AbstractTranslator implements CachedAccessTranslator {
+public class DefaultObjectAccessTranslator extends AbstractTranslator implements CachedAccessTranslator {
     @NotNull
-    /*package*/ static ClassObjectAccessTranslator newInstance(@NotNull JetSimpleNameExpression expression,
-            @NotNull TranslationContext context) {
+    /*package*/ static DefaultObjectAccessTranslator newInstance(
+            @NotNull JetSimpleNameExpression expression,
+            @NotNull TranslationContext context
+    ) {
         DeclarationDescriptor referenceDescriptor = getDescriptorForReferenceExpression(context.bindingContext(), expression);
         assert referenceDescriptor != null : "JetSimpleName expression must reference a descriptor " + expression.getText();
-        return new ClassObjectAccessTranslator(referenceDescriptor, context);
+        return new DefaultObjectAccessTranslator(referenceDescriptor, context);
     }
 
-    /*package*/ static boolean isClassObjectReference(@NotNull JetReferenceExpression expression,
-            @NotNull TranslationContext context) {
+    /*package*/ static boolean isDefaultObjectReference(
+            @NotNull JetReferenceExpression expression,
+            @NotNull TranslationContext context
+    ) {
         DeclarationDescriptor descriptor = getDescriptorForReferenceExpression(context.bindingContext(), expression);
         return descriptor instanceof ClassDescriptor && !AnnotationsUtils.isNativeObject(descriptor);
     }
 
     @NotNull
-    private final JsExpression referenceToClassObject;
+    private final JsExpression referenceToDefaultObject;
 
-    private ClassObjectAccessTranslator(@NotNull DeclarationDescriptor descriptor, @NotNull TranslationContext context) {
+    private DefaultObjectAccessTranslator(@NotNull DeclarationDescriptor descriptor, @NotNull TranslationContext context) {
         super(context);
         JsExpression fqReference = translateAsFQReference(descriptor, context());
         if (isObject(descriptor) || isEnumEntry(descriptor)) {
-            this.referenceToClassObject = fqReference;
+            this.referenceToDefaultObject = fqReference;
         }
         else {
-            this.referenceToClassObject = Namer.getClassObjectAccessor(fqReference);
+            this.referenceToDefaultObject = Namer.getDefaultObjectAccessor(fqReference);
         }
     }
 
     @Override
     @NotNull
     public JsExpression translateAsGet() {
-        return referenceToClassObject;
+        return referenceToDefaultObject;
     }
 
     @Override
     @NotNull
     public JsExpression translateAsSet(@NotNull JsExpression toSetTo) {
-        throw new IllegalStateException("Class object can't set");
+        throw new IllegalStateException("default object can't be set");
     }
 
     @NotNull

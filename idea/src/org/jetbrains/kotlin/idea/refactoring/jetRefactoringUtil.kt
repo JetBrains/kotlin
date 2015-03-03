@@ -330,8 +330,8 @@ public fun chooseContainerElement<T>(
                     if (this is JetPropertyAccessor) {
                         return (getParent() as JetProperty).renderName() + if (isGetter()) ".get" else ".set"
                     }
-                    if (this is JetObjectDeclaration && this.isClassObject()) {
-                        return "Class object of ${getStrictParentOfType<JetClassOrObject>()?.renderName() ?: "<anonymous>"}"
+                    if (this is JetObjectDeclaration && this.isDefault()) {
+                        return "Default object of ${getStrictParentOfType<JetClassOrObject>()?.renderName() ?: "<anonymous>"}"
                     }
                     return (this as? PsiNamedElement)?.getName() ?: "<anonymous>"
                 }
