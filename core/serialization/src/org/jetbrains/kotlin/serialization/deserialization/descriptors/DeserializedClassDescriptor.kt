@@ -110,9 +110,9 @@ public class DeserializedClassDescriptor(
     }
 
     private fun computeDefaultObjectDescriptor(): ClassDescriptor? {
-        if (!classProto.hasClassObjectName()) return null
+        if (!classProto.hasDefaultObjectName()) return null
 
-        val defaultObjectName = c.nameResolver.getName(classProto.getClassObjectName())
+        val defaultObjectName = c.nameResolver.getName(classProto.getDefaultObjectName())
         return memberScope.getClassifier(defaultObjectName) as? ClassDescriptor
     }
 

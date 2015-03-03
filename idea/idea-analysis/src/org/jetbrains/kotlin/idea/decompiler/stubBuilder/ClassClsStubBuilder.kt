@@ -66,7 +66,7 @@ private class ClassClsStubBuilder(
             supertypeIds
         }
     }
-    private val defaultObjectName = if (classProto.hasClassObjectName()) c.nameResolver.getName(classProto.getClassObjectName()) else null
+    private val defaultObjectName = if (classProto.hasDefaultObjectName()) c.nameResolver.getName(classProto.getDefaultObjectName()) else null
 
     private val classOrObjectStub = createClassOrObjectStubAndModifierListStub()
 
