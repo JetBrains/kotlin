@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.j2k
 
+import com.intellij.codeInsight.NullableNotNullManager
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.*
+import com.intellij.psi.javadoc.PsiDocTag
 import org.jetbrains.kotlin.j2k.ast.*
 import org.jetbrains.kotlin.j2k.ast.Annotation
-import com.intellij.codeInsight.NullableNotNullManager
 
 class AnnotationConverter(private val converter: Converter) {
     public val annotationsToRemove: Set<String> = (NullableNotNullManager.getInstance(converter.project).getNotNulls()
@@ -31,8 +33,7 @@ class AnnotationConverter(private val converter: Converter) {
 
     private fun convertAnnotationsOnly(owner: PsiModifierListOwner): Annotations {
         val modifierList = owner.getModifierList()
-        val annotations = modifierList?.getAnnotations()?.filter { it.getQualifiedName() !in annotationsToRemove }
-        if (annotations == null || annotations.isEmpty()) return Annotations.Empty
+        val annotations = modifierList?.getAnnotations()?.filter { it.getQualifiedName() !in annotationsToRemove }.orEmpty()
 
         val newLines = run {
             if (!modifierList!!.isInSingleLine()) {
@@ -48,8 +49,28 @@ class AnnotationConverter(private val converter: Converter) {
             }
         }
 
-        val list = annotations.map { convertAnnotation(it, owner is PsiLocalVariable, newLines) }.filterNotNull() //TODO: brackets are also needed for local classes
-        return Annotations(list).assignNoPrototype()
+        var list = annotations.map { convertAnnotation(it, owner is PsiLocalVariable, newLines) }.filterNotNull() //TODO: brackets are also needed for local classes
+        if (owner is PsiDocCommentOwner) {
+            val deprecatedAnnotation = convertDeprecatedJavadocTag(owner)
+            if (deprecatedAnnotation != null) {
+                list += deprecatedAnnotation
+            }
+        }
+
+        return if (list.isEmpty()) Annotations.Empty else Annotations(list).assignNoPrototype()
+    }
+
+    private fun convertDeprecatedJavadocTag(element: PsiDocCommentOwner): Annotation? {
+        val deprecatedTag = element.getDocComment()?.findTagByName("deprecated")
+        if (deprecatedTag != null) {
+            val deferredExpression = converter.deferredElement<Expression> {
+                LiteralExpression("\"${StringUtil.escapeStringCharacters(deprecatedTag.content())}\"").assignNoPrototype()
+            }
+            return Annotation(Identifier("deprecated").assignPrototype(deprecatedTag.getNameElement()),
+                              listOf(null to deferredExpression), false, true)
+                    .assignPrototype(deprecatedTag)
+        }
+        return null
     }
 
     private fun convertModifiersToAnnotations(owner: PsiModifierListOwner): Annotations {
