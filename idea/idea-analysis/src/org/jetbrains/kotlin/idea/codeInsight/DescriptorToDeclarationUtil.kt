@@ -32,26 +32,22 @@ import org.jetbrains.kotlin.descriptors.*
 // TODO rename it it DescriptorToSourceIde
 public object DescriptorToDeclarationUtil {
     public fun getDeclaration(project: Project, descriptor: DeclarationDescriptor): PsiElement? {
-        // TODO optimize it!
-        return resolveToPsiElements(project, descriptor).firstOrNull()
+        return getPsiElementsStream(project, descriptor).firstOrNull()
+    }
+
+    private fun getPsiElementsStream(project: Project, targetDescriptor: DeclarationDescriptor): Stream<PsiElement> {
+        val effectiveReferencedDescriptors = DescriptorToSourceUtils.getEffectiveReferencedDescriptors(targetDescriptor).stream()
+        return effectiveReferencedDescriptors.flatMap {
+            streamOf(
+                    DescriptorToSourceUtils.getSourceFromDescriptor(it),
+                    findBuiltinDeclaration(project, it),
+                    DecompiledNavigationUtils.getDeclarationFromDecompiledClassFile(project, it)
+            )
+        }.filterNotNull()
     }
 
     public fun resolveToPsiElements(project: Project, targetDescriptor: DeclarationDescriptor): Collection<PsiElement> {
-        val result = HashSet<PsiElement>()
-
-        val effectiveReferencedDescriptors: Collection<DeclarationDescriptor> = DescriptorToSourceUtils.getEffectiveReferencedDescriptors(targetDescriptor)
-
-        for (descriptor in effectiveReferencedDescriptors) {
-            result.addIfNotNull(DescriptorToSourceUtils.getSourceFromDescriptor(descriptor))
-            result.addIfNotNull(findBuiltinDeclaration(project, descriptor))
-            result.addIfNotNull(DecompiledNavigationUtils.getDeclarationFromDecompiledClassFile(project, descriptor))
-        }
-
-        if (targetDescriptor is PackageViewDescriptor) {
-            val psiFacade = JavaPsiFacade.getInstance(project)
-            val fqName = targetDescriptor.getFqName().asString()
-            result.addIfNotNull(psiFacade.findPackage(fqName))
-        }
+        val result = getPsiElementsStream(project, targetDescriptor).toHashSet()
         // filter out elements which are navigate to some other element of the result
         // this is needed to avoid duplicated results for references to declaration in same library source file
         return result.filter { element -> result.none { element != it && it.getNavigationElement() == element } }
