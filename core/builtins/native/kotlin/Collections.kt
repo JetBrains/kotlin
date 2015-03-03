@@ -19,6 +19,7 @@ package kotlin
 /**
  * Classes that inherit from this trait can be represented as a sequence of elements that can
  * be iterated over.
+ * @param T the type of element being iterated over.
  */
 public trait Iterable<out T> {
     /**
@@ -41,6 +42,7 @@ public trait MutableIterable<out T> : Iterable<T> {
 /**
  * A generic collection of elements. Methods in this trait support only read-only access to the collection;
  * read/write access is supported through the [MutableCollection] trait.
+ * @param E the type of elements contained in the collection.
  */
 public trait Collection<out E> : Iterable<E> {
     // Query Operations
@@ -121,6 +123,7 @@ public trait MutableCollection<E> : Collection<E>, MutableIterable<E> {
 /**
  * A generic ordered collection of elements. Methods in this trait support only read-only access to the list;
  * read/write access is supported through the [MutableList] trait.
+ * @param E the type of elements contained in the list.
  */
 public trait List<out E> : Collection<E> {
     // Query Operations
@@ -172,6 +175,7 @@ public trait List<out E> : Collection<E> {
 
 /**
  * A generic ordered collection of elements that supports adding and removing elements.
+ * @param E the type of elements contained in the list.
  */
 public trait MutableList<E> : List<E>, MutableCollection<E> {
     // Modification Operations
@@ -223,6 +227,7 @@ public trait MutableList<E> : List<E>, MutableCollection<E> {
  * A generic unordered collection of elements that does not support duplicate elements.
  * Methods in this trait support only read-only access to the set;
  * read/write access is supported through the [MutableSet] trait.
+ * @param E the type of elements contained in the set.
  */
 public trait Set<out E> : Collection<E> {
     // Query Operations
@@ -238,6 +243,7 @@ public trait Set<out E> : Collection<E> {
 /**
  * A generic unordered collection of elements that does not support duplicate elements, and supports
  * adding and removing elements.
+ * @param E the type of elements contained in the set.
  */
 public trait MutableSet<E> : Set<E>, MutableCollection<E> {
     // Query Operations
@@ -259,11 +265,13 @@ public trait MutableSet<E> : Set<E>, MutableCollection<E> {
  * the value corresponding to each key. Map keys are unique; the map holds only one value for each key.
  * Methods in this trait support only read-only access to the map; read-write access is supported through
  * the [MutableMap] trait.
+ * @param K the type of map keys.
+ * @param V the type of map values.
  */
 public trait Map<K, out V> {
     // Query Operations
     /**
-     * Returns the size of the map.
+     * Returns the number of key/value pairs in the map.
      */
     public fun size(): Int
 
@@ -294,7 +302,7 @@ public trait Map<K, out V> {
     public fun keySet(): Set<K>
 
     /**
-     * Returns a [Collection] of all values in this map.
+     * Returns a [Collection] of all values in this map. Note that this collection may contain duplicate values.
      */
     public fun values(): Collection<V>
 
@@ -322,6 +330,8 @@ public trait Map<K, out V> {
 /**
  * A modifiable collection that holds pairs of objects (keys and values) and supports efficiently retrieving
  * the value corresponding to each key. Map keys are unique; the map holds only one value for each key.
+ * @param K the type of map keys.
+ * @param V the type of map values.
  */
 public trait MutableMap<K, V> : Map<K, V> {
     // Modification Operations
