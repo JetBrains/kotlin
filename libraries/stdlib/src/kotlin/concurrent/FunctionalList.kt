@@ -1,5 +1,6 @@
 package kotlin.concurrent
 
+deprecated("This class is unfinished work. It will be removed from the standard library and replaced by a separate persistent collections library")
 public abstract class FunctionalList<T>(public val size: Int) {
     public abstract val head: T
     public abstract val tail: FunctionalList<T>
