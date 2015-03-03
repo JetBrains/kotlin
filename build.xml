@@ -655,7 +655,7 @@
             <class-path>
                 <pathelement path="${idea.sdk}/core/intellij-core.jar"/>
                 <pathelement path="${kotlin-home}/lib/kotlin-compiler.jar"/>
-                <pathelement path="${bootstrap.runtime}"/>
+                <pathelement path="${kotlin-home}/lib/kotlin-runtime.jar"/>
             </class-path>
         </new-kotlinc>
 
@@ -877,11 +877,11 @@
             depends="builtins,stdlib,reflection,reflection-stub,pack-runtime,pack-runtime-sources"/>
 
     <target name="dist"
-            depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler,compiler-sources,android-compiler-plugin,ant-tools,jdk-annotations,android-sdk-annotations,runtime,kotlin-js-stdlib"
+            depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler,compiler-sources,ant-tools,jdk-annotations,android-sdk-annotations,runtime,kotlin-js-stdlib,android-compiler-plugin"
             description="Builds redistributables from sources"/>
 
     <target name="dist-quick"
-            depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler-quick,android-compiler-plugin,ant-tools,jdk-annotations,android-sdk-annotations,runtime,kotlin-js-stdlib"
+            depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler-quick,ant-tools,jdk-annotations,android-sdk-annotations,runtime,kotlin-js-stdlib,android-compiler-plugin"
             description="Builds everything, but classes are reused from project out dir, doesn't run proguard and javadoc"/>
 
     <target name="dist-quick-compiler-only"
