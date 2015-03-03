@@ -60,6 +60,12 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("NestedTypeArg.kt")
+    public void testNestedTypeArg() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/basic/NestedTypeArg.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("SecondTypeArg.kt")
     public void testSecondTypeArg() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/basic/SecondTypeArg.kt");
