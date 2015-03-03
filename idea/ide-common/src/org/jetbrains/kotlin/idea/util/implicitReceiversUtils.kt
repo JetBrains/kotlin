@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.util
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.JetScope
@@ -31,9 +32,14 @@ public fun JetScope.getImplicitReceiversWithInstance(): List<ReceiverParameterDe
     val withInstance = HashSet<DeclarationDescriptor>()
     var current: DeclarationDescriptor? = getContainingDeclaration()
     while (current != null) {
+        if (current is PropertyAccessorDescriptor) {
+            current =  (current as PropertyAccessorDescriptor).getCorrespondingProperty()
+        }
         withInstance.add(current)
+
         val classDescriptor = current as? ClassDescriptor
         if (classDescriptor != null && !classDescriptor.isInner() && !DescriptorUtils.isLocal(classDescriptor)) break
+
         current = current!!.getContainingDeclaration()
     }
 

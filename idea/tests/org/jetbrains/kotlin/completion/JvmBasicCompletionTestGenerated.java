@@ -823,6 +823,18 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest(fileName);
         }
 
+        @TestMetadata("RecieverMembersFromExtAccessor.kt")
+        public void testRecieverMembersFromExtAccessor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/RecieverMembersFromExtAccessor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("RecieverMembersFromExtFun.kt")
+        public void testRecieverMembersFromExtFun() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/RecieverMembersFromExtFun.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("SafeCallAfterNullable.kt")
         public void testSafeCallAfterNullable() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/SafeCallAfterNullable.kt");
