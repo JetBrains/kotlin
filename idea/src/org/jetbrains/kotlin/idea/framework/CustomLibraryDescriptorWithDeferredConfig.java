@@ -48,7 +48,7 @@ import java.util.Set;
 
 import static org.jetbrains.kotlin.idea.configuration.KotlinWithLibraryConfigurator.getFileInDir;
 
-public abstract class CustomLibraryDescriptorWithDefferConfig extends CustomLibraryDescription {
+public abstract class CustomLibraryDescriptorWithDeferredConfig extends CustomLibraryDescription {
 
     private static final String DEFAULT_LIB_DIR_NAME = "lib";
 
@@ -65,7 +65,7 @@ public abstract class CustomLibraryDescriptorWithDefferConfig extends CustomLibr
     /**
      * @param project null when project doesn't exist yet (called from project wizard)
      */
-    public CustomLibraryDescriptorWithDefferConfig(
+    public CustomLibraryDescriptorWithDeferredConfig(
             @Nullable Project project,
             @NotNull String configuratorName,
             @NotNull String libraryName,
@@ -172,8 +172,8 @@ public abstract class CustomLibraryDescriptorWithDefferConfig extends CustomLibr
         String defaultPathToJarFile = useRelativePaths ? DEFAULT_LIB_DIR_NAME
                                                        : FileUIUtils.createRelativePath(null, contextDirectory, DEFAULT_LIB_DIR_NAME);
 
-        File bundledLibJarFile = configurator.getExistedJarFile();
-        File bundledLibSourcesJarFile = configurator.getExistedSourcesJarFile();
+        File bundledLibJarFile = configurator.getExistingJarFile();
+        File bundledLibSourcesJarFile = configurator.getExistingSourcesJarFile();
 
         File libraryFile;
         File librarySrcFile;

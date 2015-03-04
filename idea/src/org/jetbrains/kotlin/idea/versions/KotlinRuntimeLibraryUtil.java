@@ -179,7 +179,7 @@ public class KotlinRuntimeLibraryUtil {
             @Nullable VirtualFile fileToReplace,
             @NotNull LibraryJarDescriptor libraryJarDescriptor
     ) {
-        if (fileToReplace == null && !libraryJarDescriptor.shouldExists) {
+        if (fileToReplace == null && !libraryJarDescriptor.shouldExist) {
             return;
         }
 
@@ -235,12 +235,12 @@ public class KotlinRuntimeLibraryUtil {
         JS_STDLIB_JAR(PathUtil.JS_LIB_JAR_NAME, true),
         JS_STDLIB_SRC_JAR(PathUtil.JS_LIB_SRC_JAR_NAME, false);
 
-        @NotNull public final String jarName;
-        private final boolean shouldExists;
+        public final String jarName;
+        private final boolean shouldExist;
 
-        LibraryJarDescriptor(@NotNull String jarName, boolean shouldExists) {
+        LibraryJarDescriptor(@NotNull String jarName, boolean shouldExist) {
             this.jarName = jarName;
-            this.shouldExists = shouldExists;
+            this.shouldExist = shouldExist;
         }
     }
 

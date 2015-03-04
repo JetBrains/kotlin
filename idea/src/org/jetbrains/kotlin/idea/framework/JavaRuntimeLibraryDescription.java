@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.idea.configuration.KotlinJavaModuleConfigurator;
 
 import java.util.Set;
 
-public class JavaRuntimeLibraryDescription extends CustomLibraryDescriptorWithDefferConfig {
+public class JavaRuntimeLibraryDescription extends CustomLibraryDescriptorWithDeferredConfig {
     public static final LibraryKind KOTLIN_JAVA_RUNTIME_KIND = LibraryKind.create("kotlin-java-runtime");
     public static final String LIBRARY_NAME = "KotlinJavaRuntime";
 

@@ -29,7 +29,7 @@ import java.util.Set;
 import static org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtils.getConfiguratorByName;
 import static org.jetbrains.kotlin.idea.configuration.KotlinJsModuleConfigurator.NAME;
 
-public class JSLibraryStdDescription extends CustomLibraryDescriptorWithDefferConfig {
+public class JSLibraryStdDescription extends CustomLibraryDescriptorWithDeferredConfig {
     public static final LibraryKind KOTLIN_JAVASCRIPT_KIND = LibraryKind.create("kotlin-js-stdlib");
     public static final String LIBRARY_NAME = "KotlinJavaScript";
 
@@ -50,6 +50,6 @@ public class JSLibraryStdDescription extends CustomLibraryDescriptorWithDefferCo
         KotlinJsModuleConfigurator configurator = (KotlinJsModuleConfigurator) getConfiguratorByName(NAME);
         assert configurator != null : "Cannot find configurator with name " + NAME;
 
-        return createConfiguration(configurator.getExistedJarFile(), configurator.getExistedSourcesJarFile());
+        return createConfiguration(configurator.getExistingJarFile(), configurator.getExistingSourcesJarFile());
     }
 }

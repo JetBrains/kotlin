@@ -99,12 +99,13 @@ public class KotlinJavaModuleConfigurator extends KotlinWithLibraryConfigurator 
 
     @Override
     @NotNull
-    public File getExistedJarFile() {
+    public File getExistingJarFile() {
         return assertFileExists(PathUtil.getKotlinPathsForIdeaPlugin().getRuntimePath());
     }
 
     @Override
-    public File getExistedSourcesJarFile() {
+    @NotNull
+    public File getExistingSourcesJarFile() {
         return assertFileExists(PathUtil.getKotlinPathsForIdeaPlugin().getRuntimeSourcesPath());
     }
 
@@ -112,7 +113,7 @@ public class KotlinJavaModuleConfigurator extends KotlinWithLibraryConfigurator 
         String dirToJarFromLibrary = getPathFromLibrary(library, OrderRootType.SOURCES);
         assert dirToJarFromLibrary != null : "Directory to file from library should be non null";
 
-        copyFileToDir(getExistedSourcesJarFile(), dirToJarFromLibrary);
+        copyFileToDir(getExistingSourcesJarFile(), dirToJarFromLibrary);
     }
 
     public boolean changeOldSourcesPathIfNeeded(@NotNull Library library) {

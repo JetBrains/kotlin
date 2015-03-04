@@ -67,9 +67,10 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
     protected abstract String getLibraryCaption();
 
     @NotNull
-    public abstract File getExistedJarFile();
+    public abstract File getExistingJarFile();
 
-    public abstract File getExistedSourcesJarFile();
+    @NotNull
+    public abstract File getExistingSourcesJarFile();
 
     @Override
     public boolean isApplicable(@NotNull Module module) {
@@ -160,16 +161,16 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
             case NON_CONFIGURED_LIBRARY:
                 switch (jarState) {
                     case EXISTS: {
-                        addJarToExistedLibrary(project, getFileInDir(getJarName(), dirToCopyJarTo));
+                        addJarToExistingLibrary(project, getFileInDir(getJarName(), dirToCopyJarTo));
                         break;
                     }
                     case COPY: {
                         File file = copyJarToDir(dirToCopyJarTo);
-                        addJarToExistedLibrary(project, file);
+                        addJarToExistingLibrary(project, file);
                         break;
                     }
                     case DO_NOT_COPY: {
-                        addJarToExistedLibrary(project, getExistedJarFile());
+                        addJarToExistingLibrary(project, getExistingJarFile());
                         break;
                     }
                 }
@@ -186,7 +187,7 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
                         break;
                     }
                     case DO_NOT_COPY: {
-                        addJarToNewLibrary(project, getExistedJarFile());
+                        addJarToNewLibrary(project, getExistingJarFile());
                         break;
                     }
                 }
@@ -209,12 +210,12 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
             }
             case COPY: {
                 assert dirToCopyJarTo != null : "Path to copy should be non-null";
-                File file = copyFileToDir(getExistedSourcesJarFile(), dirToCopyJarTo);
+                File file = copyFileToDir(getExistingSourcesJarFile(), dirToCopyJarTo);
                 addSourcesToLibraryIfNeeded(library, file);
                 break;
             }
             case DO_NOT_COPY: {
-                addSourcesToLibraryIfNeeded(library, getExistedSourcesJarFile());
+                addSourcesToLibraryIfNeeded(library, getExistingSourcesJarFile());
                 break;
             }
         }
@@ -336,7 +337,7 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
         return DependencyScope.COMPILE;
     }
 
-    private void addJarToExistedLibrary(@NotNull Project project, @NotNull File jarFile) {
+    private void addJarToExistingLibrary(@NotNull Project project, @NotNull File jarFile) {
         Library library = getKotlinLibrary(project);
         assert library != null : "Kotlin library should present, instead createNewLibrary should be invoked";
 
@@ -413,7 +414,7 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
     }
 
     private File copyJarToDir(@NotNull String toDir) {
-        return copyFileToDir(getExistedJarFile(), toDir);
+        return copyFileToDir(getExistingJarFile(), toDir);
     }
 
     protected boolean needToChooseJarPath(@NotNull Project project) {
@@ -429,13 +430,13 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
         Messages.showErrorDialog(message, getMessageForOverrideDialog());
     }
 
-    protected static enum FileState {
+    protected enum FileState {
         EXISTS,
         COPY,
         DO_NOT_COPY
     }
 
-    protected static enum LibraryState {
+    protected enum LibraryState {
         LIBRARY,
         NON_CONFIGURED_LIBRARY,
         NEW_LIBRARY,

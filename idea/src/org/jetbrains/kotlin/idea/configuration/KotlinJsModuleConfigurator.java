@@ -90,12 +90,13 @@ public class KotlinJsModuleConfigurator extends KotlinWithLibraryConfigurator {
 
     @NotNull
     @Override
-    public File getExistedJarFile() {
+    public File getExistingJarFile() {
         return assertFileExists(PathUtil.getKotlinPathsForIdeaPlugin().getJsStdLibJarPath());
     }
 
+    @NotNull
     @Override
-    public File getExistedSourcesJarFile() {
+    public File getExistingSourcesJarFile() {
         return assertFileExists(PathUtil.getKotlinPathsForIdeaPlugin().getJsStdLibSrcJarPath());
     }
 
