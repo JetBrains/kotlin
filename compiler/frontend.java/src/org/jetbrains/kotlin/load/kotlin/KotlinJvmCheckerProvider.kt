@@ -112,7 +112,7 @@ public class PlatformStaticAnnotationChecker : AnnotationChecker {
         }
 
         if (insideObject && descriptor is MemberDescriptor && descriptor.getModality().isOverridable()) {
-            diagnosticHolder.report(ErrorsJvm.OVERRIDE_CANNOT_BE_STATIC.on(declaration));
+            diagnosticHolder.report(ErrorsJvm.OPEN_CANNOT_BE_STATIC.on(declaration));
         }
     }
 }

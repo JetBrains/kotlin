@@ -15,6 +15,7 @@ internal final class A {
         internal final var p: kotlin.Int
         kotlin.platform.platformStatic() internal final val z: kotlin.Int = 1
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        kotlin.platform.platformStatic() internal open fun f(): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
