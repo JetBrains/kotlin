@@ -185,7 +185,7 @@ class SmartCompletion(
 
     private fun MutableCollection<LookupElement>.addThisItems(place: JetExpression, expectedInfos: Collection<ExpectedInfo>) {
         if (shouldCompleteThisItems(prefixMatcher)) {
-            val items = thisExpressionItems(bindingContext, place)
+            val items = thisExpressionItems(bindingContext, place, prefixMatcher.getPrefix())
             for ((factory, type) in items) {
                 val classifier = { (expectedInfo: ExpectedInfo) -> type.classifyExpectedInfo(expectedInfo) }
                 addLookupElements(null, expectedInfos, classifier) {

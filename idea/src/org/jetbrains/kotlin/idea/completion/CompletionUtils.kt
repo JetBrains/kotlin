@@ -212,22 +212,27 @@ fun shouldCompleteThisItems(prefixMatcher: PrefixMatcher): Boolean {
 
 data class ThisItemInfo(val factory: () -> LookupElement, val type: FuzzyType)
 
-fun thisExpressionItems(bindingContext: BindingContext, position: JetExpression): Collection<ThisItemInfo> {
+fun thisExpressionItems(bindingContext: BindingContext, position: JetExpression, prefix: String): Collection<ThisItemInfo> {
     val scope = bindingContext[BindingContext.RESOLUTION_SCOPE, position] ?: return listOf()
 
     val result = ArrayList<ThisItemInfo>()
     for ((i, receiver) in scope.getImplicitReceiversWithInstance().withIndex()) {
         val thisType = receiver.getType()
         val fuzzyType = FuzzyType(thisType, listOf())
-        val label = if (i == 0) null else (thisQualifierName(receiver) ?: continue)
 
-        fun createLookupElement(): LookupElement {
+        fun createLookupElement(label: String?): LookupElement {
             var element = createKeywordWithLabelElement("this", label)
             element = element.withTypeText(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(thisType))
             return element
         }
 
-        result.add(ThisItemInfo({ createLookupElement() }, fuzzyType))
+        if (i == 0) {
+            result.add(ThisItemInfo({ createLookupElement(null) }, fuzzyType))
+            if (!prefix.startsWith("this@")) continue // if prefix does not start with "this@" do not include immediate this in the form with label
+        }
+
+        val label = thisQualifierName(receiver) ?: continue
+        result.add(ThisItemInfo({ createLookupElement(label) }, fuzzyType))
     }
     return result
 }
