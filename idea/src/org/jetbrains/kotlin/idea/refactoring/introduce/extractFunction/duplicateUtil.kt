@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.refactoring.extractFunction
+package org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction
 
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiRange
 import com.intellij.openapi.application.ApplicationManager

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.refactoring.extractFunction.ui;
+package org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ui;
 
 import com.intellij.openapi.editor.event.DocumentAdapter;
 import com.intellij.openapi.editor.event.DocumentEvent;
@@ -32,7 +32,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.refactoring.JetNameSuggester;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle;
 import org.jetbrains.kotlin.idea.refactoring.RefactoringPackage;
-import org.jetbrains.kotlin.idea.refactoring.extractFunction.*;
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.*;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 
 import javax.swing.*;

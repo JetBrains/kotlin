@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.refactoring.extractFunction.ui
+package org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ui
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.JetFileType

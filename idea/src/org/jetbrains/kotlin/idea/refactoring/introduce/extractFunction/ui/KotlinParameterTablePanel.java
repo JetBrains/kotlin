@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.refactoring.extractFunction.ui;
+package org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ui;
 
 import com.intellij.ui.BooleanTableCellRenderer;
 import com.intellij.ui.TableUtil;
@@ -31,7 +31,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.refactoring.JetNameSuggester;
-import org.jetbrains.kotlin.idea.refactoring.extractFunction.Parameter;
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.Parameter;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.types.JetType;
 

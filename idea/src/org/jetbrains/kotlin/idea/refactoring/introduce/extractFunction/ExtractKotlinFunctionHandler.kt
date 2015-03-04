@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.refactoring.extractFunction
+package org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction
 
 import com.intellij.refactoring.RefactoringActionHandler
 import com.intellij.openapi.actionSystem.DataContext
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil
 import com.intellij.refactoring.HelpID
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle
-import org.jetbrains.kotlin.idea.refactoring.extractFunction.ui.KotlinExtractFunctionDialog
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ui.KotlinExtractFunctionDialog
 import org.jetbrains.kotlin.psi.JetFile
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.psi.JetElement
@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.psi.JetBlockExpression
 import kotlin.test.fail
-import org.jetbrains.kotlin.idea.refactoring.extractFunction.AnalysisResult.Status
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.AnalysisResult.Status
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.ui.MessageType
 import javax.swing.event.HyperlinkEvent

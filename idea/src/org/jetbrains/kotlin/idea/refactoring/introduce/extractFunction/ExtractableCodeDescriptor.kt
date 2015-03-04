@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.refactoring.extractFunction
+package org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction
 
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.psi.JetPsiFactory
@@ -31,9 +31,9 @@ import org.jetbrains.kotlin.psi.psiUtil.replaced
 import org.jetbrains.kotlin.psi.JetQualifiedExpression
 import org.jetbrains.kotlin.psi.JetTypeParameter
 import org.jetbrains.kotlin.psi.JetTypeConstraint
-import org.jetbrains.kotlin.idea.refactoring.extractFunction.AnalysisResult.Status
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.AnalysisResult.Status
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle
-import org.jetbrains.kotlin.idea.refactoring.extractFunction.AnalysisResult.ErrorMessage
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.AnalysisResult.ErrorMessage
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.kotlin.psi.JetDeclaration
@@ -45,9 +45,9 @@ import org.jetbrains.kotlin.types.CommonSupertypes
 import java.util.Collections
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.idea.refactoring.extractFunction.OutputValue.ExpressionValue
 import org.jetbrains.kotlin.psi.JetReturnExpression
-import org.jetbrains.kotlin.idea.refactoring.extractFunction.OutputValue.Jump
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.OutputValue.ExpressionValue
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.OutputValue.Jump
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.types.TypeUtils
 import kotlin.properties.Delegates
