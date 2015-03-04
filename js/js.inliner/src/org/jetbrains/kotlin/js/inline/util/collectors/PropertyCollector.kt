@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.js.translate.expression.InlineMetadata
 
 import java.util.IdentityHashMap
 
-class FunctionCollector : RecursiveJsVisitor() {
-    public val functions: IdentityHashMap<JsName, JsFunction> = IdentityHashMap()
+class PropertyCollector : RecursiveJsVisitor() {
+    public val properties: IdentityHashMap<JsName, JsExpression> = IdentityHashMap()
 
     override fun visitPropertyInitializer(x: JsPropertyInitializer?) {
         super.visitPropertyInitializer(x)
@@ -32,13 +32,6 @@ class FunctionCollector : RecursiveJsVisitor() {
         if (name == null) return
 
         val value = x?.getValueExpr()
-        val function = when (value) {
-            is JsFunction -> value
-            else -> InlineMetadata.decompose(value)?.function
-        }
-
-        if (function is JsFunction) {
-            functions[name] = function
-        }
+        properties[name] = value
     }
 }
