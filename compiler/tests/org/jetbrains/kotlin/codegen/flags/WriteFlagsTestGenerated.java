@@ -32,6 +32,7 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @InnerTestClasses({
         WriteFlagsTestGenerated.Class.class,
+        WriteFlagsTestGenerated.DelegatedProperty.class,
         WriteFlagsTestGenerated.Function.class,
         WriteFlagsTestGenerated.InnerClass.class,
         WriteFlagsTestGenerated.Property.class,
@@ -315,6 +316,33 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/class/visibility/public/trait.kt");
                     doTest(fileName);
                 }
+            }
+        }
+    }
+
+    @TestMetadata("compiler/testData/writeFlags/delegatedProperty")
+    @TestDataPath("$PROJECT_ROOT")
+    @InnerTestClasses({
+            DelegatedProperty.Visibility.class,
+    })
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class DelegatedProperty extends AbstractWriteFlagsTest {
+        public void testAllFilesPresentInDelegatedProperty() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/delegatedProperty"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("compiler/testData/writeFlags/delegatedProperty/visibility")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Visibility extends AbstractWriteFlagsTest {
+            public void testAllFilesPresentInVisibility() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/delegatedProperty/visibility"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("privateSet.kt")
+            public void testPrivateSet() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/delegatedProperty/visibility/privateSet.kt");
+                doTest(fileName);
             }
         }
     }
