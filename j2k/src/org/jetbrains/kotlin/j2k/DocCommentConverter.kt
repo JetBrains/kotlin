@@ -93,6 +93,15 @@ object DocCommentConverter {
 
     private class HtmlToMarkdownConverter() : XmlRecursiveElementVisitor() {
         private enum class ListType { Ordered; Unordered }
+        data class MarkdownSpan(val prefix: String, val suffix: String) {
+            class object {
+                val Empty = MarkdownSpan("", "")
+
+                fun wrap(text: String) = MarkdownSpan(text, text)
+                fun prefix(text: String) = MarkdownSpan(text, "")
+            }
+        }
+
 
         val result: String
             get() = markdownBuilder.toString()
@@ -156,35 +165,35 @@ object DocCommentConverter {
             }
         }
 
-        private fun getMarkdownForTag(tag: XmlTag, atLineStart: Boolean): Pair<String, String> = when(tag.getName()) {
-            "b", "strong" -> "**" to "**"
+        private fun getMarkdownForTag(tag: XmlTag, atLineStart: Boolean): MarkdownSpan = when(tag.getName()) {
+            "b", "strong" -> MarkdownSpan.wrap("**")
 
-            "p" -> if (atLineStart) "\n * " to "" else "\n *\n *" to ""
+            "p" -> if (atLineStart) MarkdownSpan.prefix("\n * ") else MarkdownSpan.prefix("\n *\n *")
 
-            "i", "em" -> "*" to "*"
+            "i", "em" -> MarkdownSpan.wrap("*")
 
-            "s", "del" -> "~~" to "~~"
+            "s", "del" -> MarkdownSpan.wrap("~~")
 
-            "code" -> "`" to "`"
+            "code" -> MarkdownSpan.wrap("`")
 
             "a" -> {
                 if (tag.getAttributeValue("docref") != null) {
                     val docRef = tag.getAttributeValue("docref")
                     val innerText = tag.getValue().getText()
-                    if (docRef == innerText) "[" to "]" else "[" to "][$docRef]"
+                    if (docRef == innerText) MarkdownSpan("[", "]") else MarkdownSpan("[", "][$docRef]")
                 }
                 else {
-                    "[" to "](${tag.getAttributeValue("href")})"
+                    MarkdownSpan("[", "](${tag.getAttributeValue("href")})")
                 }
             }
 
-            "ul" -> { currentListType = ListType.Unordered; "" to "" }
+            "ul" -> { currentListType = ListType.Unordered; MarkdownSpan.Empty }
 
-            "ol" -> { currentListType = ListType.Ordered; "" to "" }
+            "ol" -> { currentListType = ListType.Ordered; MarkdownSpan.Empty }
 
-            "li" -> if (currentListType == ListType.Unordered) " * " to "" else " 1. " to ""
+            "li" -> if (currentListType == ListType.Unordered) MarkdownSpan.prefix(" * ") else MarkdownSpan.prefix(" 1. ")
 
-            else -> "" to ""
+            else -> MarkdownSpan.Empty
         }
 
         private fun appendPendingText() {
