@@ -1,0 +1,16 @@
+// EXTRACTION_TARGET: property with initializer
+
+class A {
+    val i: Int
+
+    {
+        i = 1
+    }
+
+    private val i1 = 1 + 2
+
+    fun foo(): Int {
+        return i1
+    }
+}
+

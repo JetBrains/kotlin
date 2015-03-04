@@ -1965,6 +1965,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             doIntroducePropertyTest(fileName);
         }
 
+        @TestMetadata("extractToClassWithNameClashAndAnonymousInitializer.kt")
+        public void testExtractToClassWithNameClashAndAnonymousInitializer() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceProperty/extractToClassWithNameClashAndAnonymousInitializer.kt");
+            doIntroducePropertyTest(fileName);
+        }
+
         @TestMetadata("extractToFileWithNameClash.kt")
         public void testExtractToFileWithNameClash() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceProperty/extractToFileWithNameClash.kt");
