@@ -42,9 +42,9 @@ public class JetPropertyDelegationMethodsReference(element: JetPropertyDelegate)
         if (descriptor !is PropertyDescriptor) {
             return Collections.emptyList()
         }
-        return descriptor.getAccessors().map {
+        return (descriptor.getAccessors().map {
             accessor ->
             context.get(BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, accessor)?.getCandidateDescriptor()
-        }.filterNotNull()
+        } + listOf(context.get(BindingContext.DELEGATED_PROPERTY_PD_RESOLVED_CALL, descriptor)?.getCandidateDescriptor())).filterNotNull()
     }
 }

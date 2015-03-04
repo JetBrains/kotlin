@@ -421,15 +421,15 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
                 doTest(fileName);
             }
 
-            @TestMetadata("getSetExtension.kt")
-            public void testGetSetExtension() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/delegatedPropertyAccessors/inSource/getSetExtension.kt");
+            @TestMetadata("getSetPropertyDelegatedExtension.kt")
+            public void testGetSetPropertyDelegatedExtension() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/delegatedPropertyAccessors/inSource/getSetPropertyDelegatedExtension.kt");
                 doTest(fileName);
             }
 
-            @TestMetadata("getSetMember.kt")
-            public void testGetSetMember() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/delegatedPropertyAccessors/inSource/getSetMember.kt");
+            @TestMetadata("getSetPropertyDelegatedMember.kt")
+            public void testGetSetPropertyDelegatedMember() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/delegatedPropertyAccessors/inSource/getSetPropertyDelegatedMember.kt");
                 doTest(fileName);
             }
         }
