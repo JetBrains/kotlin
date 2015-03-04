@@ -136,15 +136,9 @@ public abstract class AbstractJavaToKotlinConverterSingleFileTest : AbstractJava
     override fun getProjectDescriptor()
             = JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
-    private fun String.removeFirstLine(): String {
-        val lastNewLine = indexOf('\n')
-        return if (lastNewLine == -1) "" else substring(lastNewLine)
-    }
+    private fun String.removeFirstLine() = substringAfter('\n', "")
 
-    private fun String.removeLastLine(): String {
-        val lastNewLine = lastIndexOf('\n')
-        return if (lastNewLine == -1) "" else substring(0, lastNewLine)
-    }
+    private fun String.removeLastLine() = substringBeforeLast('\n', "")
 
     private fun createJavaFile(text: String): PsiJavaFile {
         return myFixture.configureByText("converterTestFile.java", text) as PsiJavaFile

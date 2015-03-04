@@ -286,8 +286,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
                 addReferenceVariants(kindFilter, runtimeReceiverType = false)
             }
 
-            val ampIndex = prefix.indexOf("@")
-            val keywordsPrefix = if (ampIndex < 0) prefix else prefix.substring(0, ampIndex) // if there is '@' in the prefix - use shorter prefix to not loose 'this' etc
+            val keywordsPrefix = prefix.substringBefore('@') // if there is '@' in the prefix - use shorter prefix to not loose 'this' etc
             KeywordCompletion.complete(expression ?: parameters.getPosition(), keywordsPrefix) { lookupElement ->
                 val keyword = lookupElement.getLookupString()
                 when (keyword) {
