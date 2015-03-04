@@ -184,7 +184,7 @@ public final class ClassTranslator extends AbstractTranslator {
 
         // Overlap alias of class object receiver for accessing from containing class(see previous if block),
         // because inside class object we should use simple name for access.
-        if (descriptor.getKind() == ClassKind.CLASS_OBJECT) {
+        if (isDefaultObject(descriptor)) {
             declarationContext = declarationContext.innerContextWithAliased(descriptor.getThisAsReceiverParameter(), JsLiteral.THIS);
         }
 

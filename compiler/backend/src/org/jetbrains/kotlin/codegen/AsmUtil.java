@@ -344,11 +344,10 @@ public class AsmUtil {
         }
         // the following code is only for PRIVATE visibility of member
         if (memberDescriptor instanceof ConstructorDescriptor) {
-            ClassKind kind = ((ClassDescriptor) containingDeclaration).getKind();
-            if (kind == ClassKind.OBJECT || kind == ClassKind.ENUM_ENTRY) {
+            if (isNonDefaultObject(containingDeclaration) || isEnumEntry(containingDeclaration)) {
                 return NO_FLAG_PACKAGE_PRIVATE;
             }
-            if (kind == ClassKind.ENUM_CLASS) {
+            if (isEnumClass(containingDeclaration)) {
                 //TODO: should be ACC_PRIVATE
                 // see http://youtrack.jetbrains.com/issue/KT-2680
                 return ACC_PROTECTED;

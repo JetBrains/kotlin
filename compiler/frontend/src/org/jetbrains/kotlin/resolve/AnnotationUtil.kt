@@ -36,17 +36,17 @@ public fun DeclarationDescriptor.hasIntrinsicAnnotation(): Boolean {
 }
 
 public fun CallableDescriptor.isPlatformStaticInObjectOrClass(): Boolean =
-        isPlatformStaticIn(ClassKind.OBJECT, ClassKind.CLASS)
+        isPlatformStaticIn { DescriptorUtils.isNonDefaultObject(it) || DescriptorUtils.isClass(it) }
 
 public fun CallableDescriptor.isPlatformStaticInDefaultObject(): Boolean =
-        isPlatformStaticIn(ClassKind.CLASS_OBJECT)
+        isPlatformStaticIn { DescriptorUtils.isDefaultObject(it) }
 
-private fun CallableDescriptor.isPlatformStaticIn(vararg kinds: ClassKind): Boolean =
+private fun CallableDescriptor.isPlatformStaticIn(predicate: (DeclarationDescriptor) -> Boolean): Boolean =
         when (this) {
             is PropertyAccessorDescriptor -> {
                 val propertyDescriptor = getCorrespondingProperty()
-                kinds.any { DescriptorUtils.isKindOf(propertyDescriptor.getContainingDeclaration(), it) } &&
+                predicate(propertyDescriptor.getContainingDeclaration()!!) &&
                 (hasPlatformStaticAnnotation() || propertyDescriptor.hasPlatformStaticAnnotation())
             }
-            else -> kinds.any { DescriptorUtils.isKindOf(getContainingDeclaration(), it) } && hasPlatformStaticAnnotation()
+            else -> predicate(getContainingDeclaration()) && hasPlatformStaticAnnotation()
         }

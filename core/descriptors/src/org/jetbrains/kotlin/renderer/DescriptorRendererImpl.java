@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.utils.UtilsPackage;
 
 import java.util.*;
 
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isDefaultObject;
 import static org.jetbrains.kotlin.types.TypeUtils.CANT_INFER_LAMBDA_PARAM_TYPE;
 
 public class DescriptorRendererImpl implements DescriptorRenderer {
@@ -951,7 +952,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             renderClassKindPrefix(klass, builder);
         }
 
-        if (klass.getKind() != ClassKind.CLASS_OBJECT) {
+        if (!isDefaultObject(klass)) {
             if (!startFromName) renderSpaceIfNeeded(builder);
             renderName(klass, builder);
         }

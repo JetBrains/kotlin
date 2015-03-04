@@ -223,7 +223,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
         private fun isAccessibleAsMember(target: DeclarationDescriptor, place: JetElement): Boolean {
             val container = target.getContainingDeclaration()
             if (container !is ClassDescriptor) return false
-            val scope = if (container.getKind() == ClassKind.CLASS_OBJECT)
+            val scope = if (DescriptorUtils.isDefaultObject(container))
                 container.getContainingDeclaration() as? ClassDescriptor ?: return false
             else
                 container

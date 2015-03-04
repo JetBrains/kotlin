@@ -20,21 +20,21 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicObjects;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.ClassKind;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.org.objectweb.asm.Type;
 
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isNonDefaultObject;
+
 public class FieldInfo {
     @NotNull
     public static FieldInfo createForSingleton(@NotNull ClassDescriptor classDescriptor, @NotNull JetTypeMapper typeMapper) {
-        ClassKind kind = classDescriptor.getKind();
-        if (!kind.isSingleton()) {
+        if (!classDescriptor.getKind().isSingleton()) {
             throw new UnsupportedOperationException("Can't create singleton field for class: " + classDescriptor);
         }
 
-        if (kind == ClassKind.OBJECT || IntrinsicObjects.INSTANCE$.hasMappingToObject(classDescriptor)) {
+        if (isNonDefaultObject(classDescriptor) || IntrinsicObjects.INSTANCE$.hasMappingToObject(classDescriptor)) {
             Type type = typeMapper.mapType(classDescriptor);
             return new FieldInfo(type, type, JvmAbi.INSTANCE_FIELD, true);
         }

@@ -45,6 +45,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isNonDefaultObject;
+
 public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFixture {
     private static final DescriptorRenderer WITH_ANNOTATION_ARGUMENT_TYPES = new DescriptorRendererBuilder()
                                                                                     .setVerbose(true)
@@ -228,7 +230,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
     @NotNull
     private ClassDescriptor getLocalObjectDescriptor(@NotNull String name) {
         ClassDescriptor localClassDescriptor = getLocalClassDescriptor(name);
-        if (localClassDescriptor.getKind() == ClassKind.OBJECT) {
+        if (isNonDefaultObject(localClassDescriptor)) {
             return localClassDescriptor;
         }
 

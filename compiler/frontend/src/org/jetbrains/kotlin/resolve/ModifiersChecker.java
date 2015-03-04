@@ -39,6 +39,8 @@ import java.util.*;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.lexer.JetTokens.*;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isDefaultObject;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry;
 
 public class ModifiersChecker {
     private static final Collection<JetModifierKeywordToken> MODALITY_MODIFIERS =
@@ -363,11 +365,10 @@ public class ModifiersChecker {
 
     @NotNull
     public static Visibility getDefaultClassVisibility(@NotNull ClassDescriptor descriptor) {
-        ClassKind kind = descriptor.getKind();
-        if (kind == ClassKind.ENUM_ENTRY) {
+        if (isEnumEntry(descriptor)) {
             return Visibilities.PUBLIC;
         }
-        if (kind == ClassKind.CLASS_OBJECT) {
+        if (isDefaultObject(descriptor)) {
             return ((ClassDescriptor) descriptor.getContainingDeclaration()).getVisibility();
         }
         return Visibilities.INTERNAL;

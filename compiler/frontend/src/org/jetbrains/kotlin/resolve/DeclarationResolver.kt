@@ -60,7 +60,7 @@ public class DeclarationResolver {
 
     public fun checkRedeclarationsInInnerClassNames(c: TopDownAnalysisContext) {
         for (classDescriptor in c.getDeclaredClasses().values()) {
-            if (classDescriptor.getKind() == ClassKind.CLASS_OBJECT) {
+            if (DescriptorUtils.isDefaultObject(classDescriptor)) {
                 // Default objects should be considered during analysing redeclarations in classes
                 continue
             }

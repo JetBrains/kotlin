@@ -140,7 +140,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 isEnum = true;
             }
 
-            if (descriptor.getKind() == ClassKind.OBJECT || descriptor.getKind() == ClassKind.CLASS_OBJECT) {
+            if (isObject(descriptor)) {
                 isFinal = true;
             }
 

@@ -101,21 +101,19 @@ public class PlatformStaticAnnotationChecker : AnnotationChecker {
             descriptor: DeclarationDescriptor,
             diagnosticHolder: DiagnosticSink
     ) {
-        val insideObject = containerKindIs(descriptor, ClassKind.OBJECT)
-        val insideDefaultObject = containerKindIs(descriptor, ClassKind.CLASS_OBJECT)
+        val container = descriptor.getContainingDeclaration()
+        val insideObject = container != null && DescriptorUtils.isNonDefaultObject(container)
+        val insideDefaultObjectInClass =
+                container != null && DescriptorUtils.isDefaultObject(container) && DescriptorUtils.isClass(container.getContainingDeclaration())
+                container != null && DescriptorUtils.isDefaultObject(container) && DescriptorUtils.isClass(container.getContainingDeclaration())
 
-        if (!insideObject && !(insideDefaultObject && containerKindIs(descriptor.getContainingDeclaration()!!, ClassKind.CLASS))) {
+        if (!insideObject && !insideDefaultObjectInClass) {
             diagnosticHolder.report(ErrorsJvm.PLATFORM_STATIC_NOT_IN_OBJECT.on(declaration));
         }
 
         if (insideObject && descriptor is MemberDescriptor && descriptor.getModality().isOverridable()) {
             diagnosticHolder.report(ErrorsJvm.OVERRIDE_CANNOT_BE_STATIC.on(declaration));
         }
-    }
-
-    private fun containerKindIs(descriptor: DeclarationDescriptor, kind: ClassKind): Boolean {
-        val parentDeclaration = descriptor.getContainingDeclaration()
-        return parentDeclaration != null && DescriptorUtils.isKindOf(parentDeclaration, kind)
     }
 }
 

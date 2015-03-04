@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiRange
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.idea.refactoring.compareDescriptors
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 data class ExtractionOptions(
         val inferUnitTypeForUnusedValues: Boolean = true,
@@ -161,8 +162,7 @@ data class ExtractionData(
             if (parent is JetQualifiedExpression && parent.getSelectorExpression() == ref) {
                 val receiverDescriptor =
                         (originalResolveResult.resolvedCall?.getDispatchReceiver() as? ThisReceiver)?.getDeclarationDescriptor()
-                if ((receiverDescriptor as? ClassDescriptor)?.getKind() != ClassKind.CLASS_OBJECT
-                        && parent.getReceiverExpression() !is JetSuperExpression) continue
+                if (!DescriptorUtils.isDefaultObject(receiverDescriptor) && parent.getReceiverExpression() !is JetSuperExpression) continue
             }
             // Skip P in type references like 'P.Q'
             if (parent is JetUserType && (parent.getParent() as? JetUserType)?.getQualifier() == parent) continue

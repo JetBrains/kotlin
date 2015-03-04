@@ -62,6 +62,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.idea.references.JetArrayAccessReference
 import org.jetbrains.kotlin.idea.references.JetInvokeFunctionReference
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 public object UsageTypeUtils {
     public fun getUsageType(element: PsiElement?): UsageTypeEnum? {
@@ -229,9 +230,9 @@ public object UsageTypeUtils {
         val descriptor = context[BindingContext.REFERENCE_TARGET, refExpr]
 
         return when (descriptor) {
-            is ClassifierDescriptor -> when ((descriptor as? ClassDescriptor)?.getKind()) {
+            is ClassifierDescriptor -> when {
             // Treat object accesses as variables to simulate the old behaviour (when variables were created for objects)
-                ClassKind.OBJECT, ClassKind.ENUM_ENTRY -> getVariableUsageType()
+                DescriptorUtils.isNonDefaultObject(descriptor), DescriptorUtils.isEnumEntry(descriptor) -> getVariableUsageType()
                 else -> getClassUsageType()
             }
             is PackageViewDescriptor -> {
