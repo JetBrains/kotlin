@@ -10,7 +10,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="jps-plugin" scope="PROVIDED" />
     <orderEntry type="library" scope="PROVIDED" name="jps" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="android" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="android-plugin" level="project" />
     <orderEntry type="library" name="kotlin-runtime" level="project" />
     <orderEntry type="module" module-name="android-compiler-plugin" />
     <orderEntry type="module" module-name="util" scope="PROVIDED" />
