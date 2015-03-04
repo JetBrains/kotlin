@@ -1,12 +1,12 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 class A1 {
-    constructor(): <!CYCLIC_CONSTRUCTOR_DELEGATION_CALL!>this()<!> {}
+    constructor(): <!CYCLIC_CONSTRUCTOR_DELEGATION_CALL!>this<!>() {}
 }
 
 class A2(x: Byte) {
-    constructor(x1: Int): <!CYCLIC_CONSTRUCTOR_DELEGATION_CALL!>this(x1, 1)<!> {}
-    constructor(x1: Int, x2: Int): <!CYCLIC_CONSTRUCTOR_DELEGATION_CALL!>this(x1, x2, 2)<!> {}
-    constructor(x1: Int, x2: Int, x3: Int): <!CYCLIC_CONSTRUCTOR_DELEGATION_CALL!>this(x1)<!> {}
+    constructor(x1: Int): <!CYCLIC_CONSTRUCTOR_DELEGATION_CALL!>this<!>(x1, 1) {}
+    constructor(x1: Int, x2: Int): <!CYCLIC_CONSTRUCTOR_DELEGATION_CALL!>this<!>(x1, x2, 2) {}
+    constructor(x1: Int, x2: Int, x3: Int): <!CYCLIC_CONSTRUCTOR_DELEGATION_CALL!>this<!>(x1) {}
 
     // delegating to previously declared cycle
     constructor(x1: Double): this(1) {}
@@ -15,9 +15,9 @@ class A2(x: Byte) {
     // delegating to cycle declared after
     constructor(x1: String): this(1L) {}
 
-    constructor(x1: Long): <!CYCLIC_CONSTRUCTOR_DELEGATION_CALL!>this(x1, 1L)<!> {}
-    constructor(x1: Long, x2: Long): <!CYCLIC_CONSTRUCTOR_DELEGATION_CALL!>this(x1, x2, 2L)<!> {}
-    constructor(x1: Long, x2: Long, x3: Long): <!CYCLIC_CONSTRUCTOR_DELEGATION_CALL!>this(x1)<!> {}
+    constructor(x1: Long): <!CYCLIC_CONSTRUCTOR_DELEGATION_CALL!>this<!>(x1, 1L) {}
+    constructor(x1: Long, x2: Long): <!CYCLIC_CONSTRUCTOR_DELEGATION_CALL!>this<!>(x1, x2, 2L) {}
+    constructor(x1: Long, x2: Long, x3: Long): <!CYCLIC_CONSTRUCTOR_DELEGATION_CALL!>this<!>(x1) {}
 
     // no cycle, just call to primary constuctor
     constructor(x1: Double, x2: Double): this(x1, x2, 1.0) {}
@@ -26,8 +26,8 @@ class A2(x: Byte) {
 
     constructor(): this("x", "y") {}
 
-    constructor(x1: String, x2: String): <!CYCLIC_CONSTRUCTOR_DELEGATION_CALL!>this(x1, x2, "")<!> {}
-    constructor(x1: String, x2: String, x3: String): <!CYCLIC_CONSTRUCTOR_DELEGATION_CALL!>this(x1, x2)<!> {}
+    constructor(x1: String, x2: String): <!CYCLIC_CONSTRUCTOR_DELEGATION_CALL!>this<!>(x1, x2, "") {}
+    constructor(x1: String, x2: String, x3: String): <!CYCLIC_CONSTRUCTOR_DELEGATION_CALL!>this<!>(x1, x2) {}
 }
 
 open class B(x: Byte)

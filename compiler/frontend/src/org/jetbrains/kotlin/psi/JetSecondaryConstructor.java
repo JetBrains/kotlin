@@ -21,6 +21,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
@@ -179,5 +180,10 @@ public class JetSecondaryConstructor extends JetDeclarationStub<KotlinPlaceHolde
     @NotNull
     public JetClassOrObject getClassOrObject() {
         return (JetClassOrObject) getParent().getParent();
+    }
+
+    @NotNull
+    public PsiElement getConstructorKeyword() {
+        return findNotNullChildByType(JetTokens.CONSTRUCTOR_KEYWORD);
     }
 }
