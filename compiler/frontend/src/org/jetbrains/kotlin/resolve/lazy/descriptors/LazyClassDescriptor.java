@@ -439,6 +439,11 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         return isInner;
     }
 
+    @Override
+    public boolean isDefaultObject() {
+        return getKind() == ClassKind.CLASS_OBJECT;
+    }
+
     @NotNull
     @Override
     public Annotations getAnnotations() {

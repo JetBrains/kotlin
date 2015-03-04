@@ -142,6 +142,11 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
         return false;
     }
 
+    @Override
+    public boolean isDefaultObject() {
+        return false;
+    }
+
     @Nullable
     @Override
     public ConstructorDescriptor getUnsubstitutedPrimaryConstructor() {

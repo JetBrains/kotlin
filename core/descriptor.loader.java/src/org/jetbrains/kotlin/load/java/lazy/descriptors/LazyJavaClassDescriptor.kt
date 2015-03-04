@@ -100,6 +100,8 @@ class LazyJavaClassDescriptor(
 
     override fun getFunctionTypeForSamInterface(): JetType? = functionTypeForSamInterface()
 
+    override fun isDefaultObject() = false
+
     override fun toString() = "lazy java class $fqName"
 
     private inner class LazyJavaClassTypeConstructor : AbstractClassTypeConstructor() {

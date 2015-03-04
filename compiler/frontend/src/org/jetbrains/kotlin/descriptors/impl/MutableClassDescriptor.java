@@ -143,6 +143,11 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
         return isInner;
     }
 
+    @Override
+    public boolean isDefaultObject() {
+        return getKind() == ClassKind.CLASS_OBJECT;
+    }
+
     @NotNull
     @Override
     public TypeConstructor getTypeConstructor() {

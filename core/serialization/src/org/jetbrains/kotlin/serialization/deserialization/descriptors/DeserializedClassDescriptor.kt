@@ -88,6 +88,8 @@ public class DeserializedClassDescriptor(
 
     override fun getStaticScope() = staticScope
 
+    override fun isDefaultObject(): Boolean = getKind() == ClassKind.CLASS_OBJECT
+
     private fun computePrimaryConstructor(): ConstructorDescriptor? {
         if (!classProto.hasPrimaryConstructor()) return null
 
