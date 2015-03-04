@@ -44,10 +44,7 @@ public class JetPropertyDelegationMethodsReference(element: JetPropertyDelegate)
         }
         return descriptor.getAccessors().map {
             accessor ->
-            val candidateDescriptor = context.get(BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, accessor)?.getCandidateDescriptor()
-            //TODO: should not getOriginal here, because candidate descriptor should not have substituted type parameters
-            // remove after problem is solved
-            candidateDescriptor?.getOriginal()
+            context.get(BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, accessor)?.getCandidateDescriptor()
         }.filterNotNull()
     }
 }
