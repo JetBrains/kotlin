@@ -6037,9 +6037,21 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("kt3107.kt")
+        public void testKt3107() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/kt3107.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("kt3173.kt")
         public void testKt3173() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/kt3173.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt3421.kt")
+        public void testKt3421() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/kt3421.kt");
             doTest(fileName);
         }
 
@@ -6049,9 +6061,21 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("kt3903.kt")
+        public void testKt3903() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/kt3903.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("kt3999.kt")
         public void testKt3999() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/kt3999.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt4281.kt")
+        public void testKt4281() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/kt4281.kt");
             doTest(fileName);
         }
 
