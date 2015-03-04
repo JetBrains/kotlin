@@ -93,6 +93,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib(fileName);
         }
 
+        @TestMetadata("delegatedPropertySetter.kt")
+        public void testDelegatedPropertySetter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/annotations/delegatedPropertySetter.kt");
+            doTestWithStdlib(fileName);
+        }
+
         @TestMetadata("jvmFlags.kt")
         public void testJvmFlags() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/annotations/jvmFlags.kt");
