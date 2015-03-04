@@ -114,7 +114,7 @@ public abstract class ElementResolver {
         }
 
         JetDeclaration declaration = PsiTreeUtil.getParentOfType(jetElement, JetDeclaration.class, false);
-        if (declaration != null) {
+        if (declaration != null && !(declaration instanceof JetClassInitializer)) {
             // Activate descriptor resolution
             resolveSession.resolveToDescriptor(declaration);
         }
