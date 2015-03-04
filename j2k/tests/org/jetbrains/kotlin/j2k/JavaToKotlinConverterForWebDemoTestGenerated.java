@@ -51,6 +51,7 @@ import java.util.regex.Pattern;
         JavaToKotlinConverterForWebDemoTestGenerated.ContinueStatement.class,
         JavaToKotlinConverterForWebDemoTestGenerated.DeclarationStatement.class,
         JavaToKotlinConverterForWebDemoTestGenerated.DoWhileStatement.class,
+        JavaToKotlinConverterForWebDemoTestGenerated.DocComments.class,
         JavaToKotlinConverterForWebDemoTestGenerated.DropAccessors.class,
         JavaToKotlinConverterForWebDemoTestGenerated.Enum.class,
         JavaToKotlinConverterForWebDemoTestGenerated.Equals.class,
@@ -1364,6 +1365,63 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
         @TestMetadata("whileWithReturn.java")
         public void testWhileWithReturn() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/doWhileStatement/whileWithReturn.java");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("j2k/testData/fileOrElement/docComments")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class DocComments extends AbstractJavaToKotlinConverterForWebDemoTest {
+        public void testAllFilesPresentInDocComments() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/docComments"), Pattern.compile("^(.+)\\.java$"), true);
+        }
+
+        @TestMetadata("deprecatedDocTag.java")
+        public void testDeprecatedDocTag() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/docComments/deprecatedDocTag.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("docCommentWithParamTag.java")
+        public void testDocCommentWithParamTag() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/docComments/docCommentWithParamTag.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("htmlInDocComment.java")
+        public void testHtmlInDocComment() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/docComments/htmlInDocComment.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inlineTagsInDocComment.java")
+        public void testInlineTagsInDocComment() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/docComments/inlineTagsInDocComment.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("linkTag.java")
+        public void testLinkTag() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/docComments/linkTag.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("linkTagWithLabel.java")
+        public void testLinkTagWithLabel() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/docComments/linkTagWithLabel.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("onlyDeprecatedDocTag.java")
+        public void testOnlyDeprecatedDocTag() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/docComments/onlyDeprecatedDocTag.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("seeTag.java")
+        public void testSeeTag() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/docComments/seeTag.java");
             doTest(fileName);
         }
     }
