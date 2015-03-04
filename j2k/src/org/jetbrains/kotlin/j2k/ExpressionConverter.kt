@@ -79,7 +79,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
 
     override fun visitArrayInitializerExpression(expression: PsiArrayInitializerExpression) {
         val expressionType = typeConverter.convertType(expression.getType())
-        assert(expressionType is ArrayType, "Array initializer must have array type")
+        assert(expressionType is ArrayType) { "Array initializer must have array type: expressionType = $expressionType expression = $expression" }
         result = createArrayInitializerExpression(expressionType as ArrayType,
                                                   codeConverter.convertExpressions(expression.getInitializers()),
                                                   needExplicitType = true/*TODO: it's often redundant*/)
