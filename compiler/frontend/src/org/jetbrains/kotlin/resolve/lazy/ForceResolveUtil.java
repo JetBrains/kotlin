@@ -99,7 +99,9 @@ public class ForceResolveUtil {
         else {
             forceResolveAllContents(type.getConstructor());
             for (TypeProjection projection : type.getArguments()) {
-                forceResolveAllContents(projection.getType());
+                if (!projection.isStarProjection()) {
+                    forceResolveAllContents(projection.getType());
+                }
             }
         }
         return type;

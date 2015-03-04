@@ -5004,13 +5004,13 @@ public final class ProtoBuf {
        */
       org.jetbrains.kotlin.serialization.ProtoBuf.Type.Argument.Projection getProjection();
 
-      // required .org.jetbrains.kotlin.serialization.Type type = 2;
+      // optional .org.jetbrains.kotlin.serialization.Type type = 2;
       /**
-       * <code>required .org.jetbrains.kotlin.serialization.Type type = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
        */
       boolean hasType();
       /**
-       * <code>required .org.jetbrains.kotlin.serialization.Type type = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
        */
       org.jetbrains.kotlin.serialization.ProtoBuf.Type getType();
     }
@@ -5196,17 +5196,17 @@ public final class ProtoBuf {
         return projection_;
       }
 
-      // required .org.jetbrains.kotlin.serialization.Type type = 2;
+      // optional .org.jetbrains.kotlin.serialization.Type type = 2;
       public static final int TYPE_FIELD_NUMBER = 2;
       private org.jetbrains.kotlin.serialization.ProtoBuf.Type type_;
       /**
-       * <code>required .org.jetbrains.kotlin.serialization.Type type = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
        */
       public boolean hasType() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       /**
-       * <code>required .org.jetbrains.kotlin.serialization.Type type = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
        */
       public org.jetbrains.kotlin.serialization.ProtoBuf.Type getType() {
         return type_;
@@ -5221,13 +5221,11 @@ public final class ProtoBuf {
         byte isInitialized = memoizedIsInitialized;
         if (isInitialized != -1) return isInitialized == 1;
 
-        if (!hasType()) {
-          memoizedIsInitialized = 0;
-          return false;
-        }
-        if (!getType().isInitialized()) {
-          memoizedIsInitialized = 0;
-          return false;
+        if (hasType()) {
+          if (!getType().isInitialized()) {
+            memoizedIsInitialized = 0;
+            return false;
+          }
         }
         memoizedIsInitialized = 1;
         return true;
@@ -5400,13 +5398,11 @@ public final class ProtoBuf {
         }
 
         public final boolean isInitialized() {
-          if (!hasType()) {
-            
-            return false;
-          }
-          if (!getType().isInitialized()) {
-            
-            return false;
+          if (hasType()) {
+            if (!getType().isInitialized()) {
+              
+              return false;
+            }
           }
           return true;
         }
@@ -5466,22 +5462,22 @@ public final class ProtoBuf {
           return this;
         }
 
-        // required .org.jetbrains.kotlin.serialization.Type type = 2;
+        // optional .org.jetbrains.kotlin.serialization.Type type = 2;
         private org.jetbrains.kotlin.serialization.ProtoBuf.Type type_ = org.jetbrains.kotlin.serialization.ProtoBuf.Type.getDefaultInstance();
         /**
-         * <code>required .org.jetbrains.kotlin.serialization.Type type = 2;</code>
+         * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
          */
         public boolean hasType() {
           return ((bitField0_ & 0x00000002) == 0x00000002);
         }
         /**
-         * <code>required .org.jetbrains.kotlin.serialization.Type type = 2;</code>
+         * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
          */
         public org.jetbrains.kotlin.serialization.ProtoBuf.Type getType() {
           return type_;
         }
         /**
-         * <code>required .org.jetbrains.kotlin.serialization.Type type = 2;</code>
+         * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
          */
         public Builder setType(org.jetbrains.kotlin.serialization.ProtoBuf.Type value) {
           if (value == null) {
@@ -5493,7 +5489,7 @@ public final class ProtoBuf {
           return this;
         }
         /**
-         * <code>required .org.jetbrains.kotlin.serialization.Type type = 2;</code>
+         * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
          */
         public Builder setType(
             org.jetbrains.kotlin.serialization.ProtoBuf.Type.Builder builderForValue) {
@@ -5503,7 +5499,7 @@ public final class ProtoBuf {
           return this;
         }
         /**
-         * <code>required .org.jetbrains.kotlin.serialization.Type type = 2;</code>
+         * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
          */
         public Builder mergeType(org.jetbrains.kotlin.serialization.ProtoBuf.Type value) {
           if (((bitField0_ & 0x00000002) == 0x00000002) &&
@@ -5518,7 +5514,7 @@ public final class ProtoBuf {
           return this;
         }
         /**
-         * <code>required .org.jetbrains.kotlin.serialization.Type type = 2;</code>
+         * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
          */
         public Builder clearType() {
           type_ = org.jetbrains.kotlin.serialization.ProtoBuf.Type.getDefaultInstance();

@@ -1,0 +1,9 @@
+package test
+
+internal trait Rec</*0*/ R, /*1*/ out T : test.Rec<R, T>> {
+    internal abstract fun t(): T
+}
+
+internal trait Super {
+    internal open fun foo(/*0*/ p: test.Rec<*, *>): test.Rec<*, *>
+}
