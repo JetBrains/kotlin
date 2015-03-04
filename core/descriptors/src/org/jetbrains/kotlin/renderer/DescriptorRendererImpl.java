@@ -288,9 +288,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
                 // for nested classes qualified name should be used
                 DeclarationDescriptor current = klass;
                 do {
-                    if (((ClassDescriptor) current).getKind() != ClassKind.CLASS_OBJECT) {
-                        qualifiedNameElements.add(current.getName());
-                    }
+                    qualifiedNameElements.add(current.getName());
                     current = current.getContainingDeclaration();
                 }
                 while (current instanceof ClassDescriptor);
