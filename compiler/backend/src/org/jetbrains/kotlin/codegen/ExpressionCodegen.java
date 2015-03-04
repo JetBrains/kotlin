@@ -3840,6 +3840,9 @@ The "returned" value of try expression with no finally is either the last expres
                                 v.mark(nonnull);
                             }
                         }
+                        else if (value.type == Type.VOID_TYPE) {
+                            v.aconst(null);
+                        }
                         else {
                             v.dup();
                             generateInstanceOfInstruction(rightType);
