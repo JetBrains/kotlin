@@ -16,7 +16,7 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>kotlin-android-compiler-plugin</artifactId>
+    <artifactId>kotlin-android-extensions</artifactId>
     <packaging>jar</packaging>
 
     <description>Android compiler plugin for Kotlin</description>
