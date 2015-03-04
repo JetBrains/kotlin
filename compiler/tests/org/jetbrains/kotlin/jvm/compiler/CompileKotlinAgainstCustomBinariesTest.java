@@ -49,6 +49,7 @@ import java.util.jar.JarFile;
 import java.util.zip.ZipOutputStream;
 
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isNonDefaultObject;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isObject;
 import static org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.validateAndCompareDescriptorWithFile;
 
 public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
@@ -144,7 +145,7 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
         assertEquals(allDescriptors.toString(), 2, allDescriptors.size());
         for (DeclarationDescriptor descriptor : allDescriptors) {
             assertTrue("Wrong name: " + descriptor, descriptor.getName().asString().equals("Lol"));
-            assertTrue("Should be an object: " + descriptor, isNonDefaultObject(descriptor));
+            assertTrue("Should be an object: " + descriptor, isObject(descriptor));
         }
     }
 

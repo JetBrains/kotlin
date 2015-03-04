@@ -252,6 +252,10 @@ public class DescriptorUtils {
         return isKindOf(descriptor, ClassKind.OBJECT);
     }
 
+    public static boolean isObject(@NotNull DeclarationDescriptor descriptor) {
+        return isDefaultObject(descriptor) || isNonDefaultObject(descriptor);
+    }
+
     public static boolean isEnumEntry(@NotNull DeclarationDescriptor descriptor) {
         return isKindOf(descriptor, ClassKind.ENUM_ENTRY);
     }
