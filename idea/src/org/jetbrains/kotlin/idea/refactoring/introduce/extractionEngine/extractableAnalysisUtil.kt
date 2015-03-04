@@ -599,8 +599,8 @@ private fun ExtractionData.inferParametersInfo(
             when (it) {
                 is ClassDescriptor ->
                     when(it.getKind()) {
-                        ClassKind.OBJECT, ClassKind.ENUM_CLASS -> it : ClassDescriptor
-                        ClassKind.CLASS_OBJECT, ClassKind.ENUM_ENTRY -> it.getContainingDeclaration() as? ClassDescriptor
+                        ClassKind.CLASS_OBJECT, ClassKind.OBJECT, ClassKind.ENUM_CLASS -> it : ClassDescriptor
+                        ClassKind.ENUM_ENTRY -> it.getContainingDeclaration() as? ClassDescriptor
                         else -> if (ref.getNonStrictParentOfType<JetTypeReference>() != null) it : ClassDescriptor else null
                     }
 
