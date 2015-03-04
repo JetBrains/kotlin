@@ -1,8 +1,6 @@
-// EXTRACT_AS_PROPERTY
-
+// EXTRACTION_TARGET: property with getter
 val n: Int = 1
 
-// SIBLING:
 fun foo(): Int {
     return i
 }

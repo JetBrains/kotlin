@@ -1,6 +1,4 @@
-// EXTRACT_AS_PROPERTY
-
+// EXTRACTION_TARGET: property with getter
 fun foo(n: Int): Int {
-    // SIBLING:
     return {<selection>n + 1</selection>}()
 }

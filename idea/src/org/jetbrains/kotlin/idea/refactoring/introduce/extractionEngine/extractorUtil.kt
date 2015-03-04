@@ -66,15 +66,18 @@ fun ExtractionGeneratorConfiguration.getDeclarationText(
             return if (isSpecial()) DEBUG_TYPE_REFERENCE_STRING else descriptorRenderer.renderType(this)
         }
 
-        receiverParameter?.let { builder.receiver(it.getParameterType(extractionData.options.allowSpecialClassNames).typeAsString()) }
-
-        builder.name(if (name != "") name else DEFAULT_FUNCTION_NAME)
-
-        parameters.forEach { parameter ->
-            builder.param(parameter.name, parameter.getParameterType(extractionData.options.allowSpecialClassNames).typeAsString())
+        descriptor.receiverParameter?.let {
+            builder.receiver(it.getParameterType(descriptor.extractionData.options.allowSpecialClassNames).typeAsString())
         }
 
-        with(controlFlow.outputValueBoxer.returnType) {
+        builder.name(if (descriptor.name != "") descriptor.name else DEFAULT_FUNCTION_NAME)
+
+        descriptor.parameters.forEach { parameter ->
+            builder.param(parameter.name,
+                          parameter.getParameterType(descriptor.extractionData.options.allowSpecialClassNames).typeAsString())
+        }
+
+        with(descriptor.controlFlow.outputValueBoxer.returnType) {
             if (isDefault() || isError()) builder.noReturnType() else builder.returnType(this.typeAsString())
         }
 
@@ -521,10 +524,10 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(): ExtractionResult{
     adjustDeclarationBody(declaration)
 
     if (declaration is JetNamedFunction && declaration.getContainingJetFile().suppressDiagnosticsInDebugMode) {
-        declaration.getReceiverTypeReference()?.debugTypeInfo = receiverParameter?.getParameterType(true)
+        declaration.getReceiverTypeReference()?.debugTypeInfo = descriptor.receiverParameter?.getParameterType(true)
 
         for ((i, param) in declaration.getValueParameters().withIndex()) {
-            param.getTypeReference()?.debugTypeInfo = parameters[i].getParameterType(true)
+            param.getTypeReference()?.debugTypeInfo = descriptor.parameters[i].getParameterType(true)
         }
 
         if (declaration.getTypeReference() != null) {

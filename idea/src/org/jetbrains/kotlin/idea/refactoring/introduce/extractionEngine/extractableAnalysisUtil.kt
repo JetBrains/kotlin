@@ -796,10 +796,13 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
             JetNameValidatorImpl(
                     targetSibling.getParent(),
                     if (targetSibling is JetClassInitializer) targetSibling.getParent() else targetSibling,
-                    JetNameValidatorImpl.Target.FUNCTIONS_AND_CLASSES
+                    if (options.extractAsProperty) JetNameValidatorImpl.Target.PROPERTIES else JetNameValidatorImpl.Target.FUNCTIONS_AND_CLASSES
             )
-    val functionName = if (returnType.isDefault()) "" else {
-        JetNameSuggester.suggestNames(returnType, functionNameValidator, DEFAULT_FUNCTION_NAME).first()
+    val functionNames = if (returnType.isDefault()) {
+        Collections.emptyList<String>()
+    }
+    else {
+        JetNameSuggester.suggestNames(returnType, functionNameValidator, DEFAULT_FUNCTION_NAME).toList()
     }
 
     controlFlow.jumpOutputValue?.elementToInsertAfterCall?.accept(
@@ -819,7 +822,7 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
             ExtractableCodeDescriptor(
                     this,
                     bindingContext,
-                    functionName,
+                    functionNames,
                     if (isVisibilityApplicable()) "private" else "",
                     adjustedParameters.sortBy { it.name },
                     receiverParameter,

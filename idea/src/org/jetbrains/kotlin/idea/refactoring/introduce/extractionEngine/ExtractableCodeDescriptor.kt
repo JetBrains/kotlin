@@ -305,14 +305,16 @@ fun ControlFlow.toDefault(): ControlFlow =
 data class ExtractableCodeDescriptor(
         val extractionData: ExtractionData,
         val originalContext: BindingContext,
-        val name: String,
+        val suggestedNames: List<String>,
         val visibility: String,
         val parameters: List<Parameter>,
         val receiverParameter: Parameter?,
         val typeParameters: List<TypeParameter>,
         val replacementMap: Map<Int, Replacement>,
         val controlFlow: ControlFlow
-)
+) {
+    val name: String get() = suggestedNames.firstOrNull() ?: ""
+}
 
 data class ExtractionGeneratorOptions(
         val inTempFile: Boolean = false,

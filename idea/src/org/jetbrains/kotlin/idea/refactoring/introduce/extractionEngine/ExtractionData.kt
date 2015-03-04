@@ -54,12 +54,13 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.idea.refactoring.compareDescriptors
 
 data class ExtractionOptions(
-        val inferUnitTypeForUnusedValues: Boolean,
-        val enableListBoxing: Boolean,
-        val allowSpecialClassNames: Boolean
+        val inferUnitTypeForUnusedValues: Boolean = true,
+        val enableListBoxing: Boolean = false,
+        val extractAsProperty: Boolean = false,
+        val allowSpecialClassNames: Boolean = false
 ) {
     class object {
-        val DEFAULT = ExtractionOptions(true, false, false)
+        val DEFAULT = ExtractionOptions()
     }
 }
 

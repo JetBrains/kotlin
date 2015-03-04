@@ -39,6 +39,8 @@ import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.psi.JetPackageDirective
 import org.jetbrains.kotlin.utils.emptyOrSingletonList
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
+import org.jetbrains.kotlin.idea.refactoring.introduce.introduceProperty.KotlinIntroducePropertyHandler
+import java.util.*
 import kotlin.test.assertTrue
 
 public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTestCase() {
@@ -49,6 +51,28 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
     protected fun doIntroduceVariableTest(path: String) {
         doTest(path) { file ->
             KotlinIntroduceVariableHandler().invoke(
+                    fixture.getProject(),
+                    fixture.getEditor(),
+                    file,
+                    DataManager.getInstance().getDataContext(fixture.getEditor().getComponent())
+            )
+        }
+    }
+
+    protected fun doIntroducePropertyTest(path: String) {
+        doTest(path) { file ->
+            val helper = object : ExtractionEngineHelper() {
+                override fun configure(
+                        descriptor: ExtractableCodeDescriptor,
+                        generatorOptions: ExtractionGeneratorOptions
+                ): ExtractionGeneratorConfiguration {
+                    return ExtractionGeneratorConfiguration(
+                            descriptor,
+                            generatorOptions.copy(extractAsProperty = true)
+                    )
+                }
+            }
+            KotlinIntroducePropertyHandler(helper).invoke(
                     fixture.getProject(),
                     fixture.getEditor(),
                     file,
@@ -86,15 +110,12 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
                     InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, "// PARAM_DESCRIPTOR: ").joinToString()
             val expectedTypes =
                     InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, "// PARAM_TYPES: ").map { "[$it]" }.joinToString()
-            val extractAsProperty = InTextDirectivesUtils.isDirectiveDefined(fileText, "// EXTRACT_AS_PROPERTY")
 
             val extractionOptions = InTextDirectivesUtils.findListWithPrefixes(fileText, "// OPTIONS: ").let {
                 if (it.isNotEmpty()) {
                     [suppress("CAST_NEVER_SUCCEEDS")]
                     val args = it.map { it.toBoolean() }.copyToArray() as Array<Any?>
-                    val constructor = javaClass<ExtractionOptions>().getConstructors()[0]
-                    assertTrue(constructor.getParameterTypes().size() == args.size(), "Wrong number of parameters was passed for ExtractOptions constructor: expected = ${constructor.getParameterTypes().size()}, actual = ${args.size()}. \nTest directive: // OPTIONS: $it")
-                    constructor.newInstance(*args) as ExtractionOptions
+                    javaClass<ExtractionOptions>().getConstructors().first { it.getParameterTypes().size() == args.size() }.newInstance(*args) as ExtractionOptions
                 } else ExtractionOptions.DEFAULT
             }
 
@@ -114,16 +135,19 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
                             val allParameters = emptyOrSingletonList(descriptor.receiverParameter) + descriptor.parameters
                             val actualDescriptors = allParameters.map { renderer.render(it.originalDescriptor) }.joinToString()
                             val actualTypes = allParameters.map {
-                                it.parameterTypeCandidates.map { renderer.renderType(it) }.joinToString(", ", "[", "]")
+                                it.getParameterTypeCandidates(false).map { renderer.renderType(it) }.joinToString(", ", "[", "]")
                             }.joinToString()
 
                             assertEquals(expectedDescriptors, actualDescriptors, "Expected descriptors mismatch.")
                             assertEquals(expectedTypes, actualTypes, "Expected types mismatch.")
 
-                            return ExtractionGeneratorConfiguration(
-                                    if (descriptor.name == "") descriptor.copy(name = "__dummyTestFun__") else descriptor,
-                                    generatorOptions.copy(extractAsProperty = extractAsProperty)
-                            )
+                            val newDescriptor = if (descriptor.name == "") {
+                                descriptor.copy(suggestedNames = Collections.singletonList("__dummyTestFun__"))
+                            }
+                            else {
+                                descriptor
+                            }
+                            return ExtractionGeneratorConfiguration(newDescriptor, generatorOptions)
                         }
                     }
             )

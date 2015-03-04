@@ -1,5 +1,4 @@
-// EXTRACT_AS_PROPERTY
-// SIBLING:
+// EXTRACTION_TARGET: property with getter
 fun foo() {
     <selection>1 + 1</selection>
 }

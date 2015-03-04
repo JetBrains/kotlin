@@ -28,6 +28,10 @@ fun showErrorHint(project: Project, editor: Editor, message: String, title: Stri
     CodeInsightUtils.showErrorHint(project, editor, message, title, null)
 }
 
+fun showErrorHintByKey(project: Project, editor: Editor, messageKey: String, title: String) {
+    showErrorHint(project, editor, JetRefactoringBundle.message(messageKey), title)
+}
+
 fun selectElements(
         operationName: String,
         editor: Editor,
@@ -36,7 +40,7 @@ fun selectElements(
         continuation: (elements: List<PsiElement>, targetSibling: PsiElement) -> Unit
 ) {
     fun showErrorHintByKey(key: String) {
-        showErrorHint(file.getProject(), editor, JetRefactoringBundle.message(key), operationName)
+        showErrorHintByKey(file.getProject(), editor, key, operationName)
     }
 
     fun onSelectionComplete(parent: PsiElement, elements: List<PsiElement>, targetContainer: PsiElement) {

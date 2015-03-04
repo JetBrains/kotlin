@@ -36,11 +36,10 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -51,7 +50,6 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
     private KotlinFunctionSignatureComponent signaturePreviewField;
     private EditorTextField functionNameField;
     private JLabel functionNameLabel;
-    private JCheckBox propertyCheckBox;
     private KotlinParameterTablePanel parameterTablePanel;
 
     private final Project project;
@@ -145,18 +143,6 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
                     }
                 }
         );
-
-        propertyCheckBox.setEnabled(ExtractionEnginePackage.canGenerateProperty(originalDescriptor.getDescriptor()));
-        if (propertyCheckBox.isEnabled()) {
-            propertyCheckBox.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(@NotNull ActionEvent e) {
-                            update();
-                        }
-                    }
-            );
-        }
 
         parameterTablePanel = new KotlinParameterTablePanel() {
             @Override
@@ -260,7 +246,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
         return new ExtractableCodeDescriptor(
                 descriptor.getExtractionData(),
                 descriptor.getOriginalContext(),
-                getFunctionName(),
+                Collections.singletonList(getFunctionName()),
                 getVisibility(),
                 ContainerUtil.newArrayList(oldToNewParameters.values()),
                 descriptor.getReceiverParameter(),
@@ -272,11 +258,6 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
 
     @NotNull
     public ExtractionGeneratorConfiguration getCurrentConfiguration() {
-        return new ExtractionGeneratorConfiguration(currentDescriptor, getGeneratorOptions());
-    }
-
-    @NotNull
-    public ExtractionGeneratorOptions getGeneratorOptions() {
-        return new ExtractionGeneratorOptions(false, propertyCheckBox.isSelected(), false);
+        return new ExtractionGeneratorConfiguration(currentDescriptor, ExtractionGeneratorOptions.DEFAULT);
     }
 }

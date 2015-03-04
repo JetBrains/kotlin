@@ -88,9 +88,10 @@ fun getFunctionForExtractedFragment(
         val targetSibling = tmpFile.getDeclarations().firstOrNull()
         if (targetSibling == null) return null
 
-        val analysisResult = ExtractionData(
-                tmpFile, newDebugExpression.toRange(), targetSibling, ExtractionOptions(false, true, true)
-        ).performAnalysis()
+        val options = ExtractionOptions(inferUnitTypeForUnusedValues = false, 
+                                        enableListBoxing = true,
+                                        allowSpecialClassNames = true)
+        val analysisResult = ExtractionData(tmpFile, newDebugExpression.toRange(), targetSibling, options).performAnalysis()
         if (analysisResult.status != Status.SUCCESS) {
             throw EvaluateExceptionUtil.createEvaluateException(getErrorMessageForExtractFunctionResult(analysisResult))
         }

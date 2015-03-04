@@ -31,6 +31,7 @@ import java.util.regex.Pattern;
 @InnerTestClasses({
         JetExtractionTestGenerated.IntroduceVariable.class,
         JetExtractionTestGenerated.ExtractFunction.class,
+        JetExtractionTestGenerated.IntroduceProperty.class,
 })
 @RunWith(JUnit3RunnerWithInners.class)
 public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
@@ -316,7 +317,6 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
     @TestMetadata("idea/testData/refactoring/extractFunction")
     @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({
-            ExtractFunction.AsProperty.class,
             ExtractFunction.Basic.class,
             ExtractFunction.ControlFlow.class,
             ExtractFunction.DefaultContainer.class,
@@ -330,45 +330,6 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
     public static class ExtractFunction extends AbstractJetExtractionTest {
         public void testAllFilesPresentInExtractFunction() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/extractFunction"), Pattern.compile("^(.+)\\.kt$"), true);
-        }
-
-        @TestMetadata("idea/testData/refactoring/extractFunction/asProperty")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class AsProperty extends AbstractJetExtractionTest {
-            public void testAllFilesPresentInAsProperty() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/extractFunction/asProperty"), Pattern.compile("^(.+)\\.kt$"), true);
-            }
-
-            @TestMetadata("extractToClass.kt")
-            public void testExtractToClass() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/asProperty/extractToClass.kt");
-                doExtractFunctionTest(fileName);
-            }
-
-            @TestMetadata("extractToFile.kt")
-            public void testExtractToFile() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/asProperty/extractToFile.kt");
-                doExtractFunctionTest(fileName);
-            }
-
-            @TestMetadata("extractToFunction.kt")
-            public void testExtractToFunction() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/asProperty/extractToFunction.kt");
-                doExtractFunctionTest(fileName);
-            }
-
-            @TestMetadata("extractUnit.kt")
-            public void testExtractUnit() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/asProperty/extractUnit.kt");
-                doExtractFunctionTest(fileName);
-            }
-
-            @TestMetadata("extractWithParams.kt")
-            public void testExtractWithParams() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/asProperty/extractWithParams.kt");
-                doExtractFunctionTest(fileName);
-            }
         }
 
         @TestMetadata("idea/testData/refactoring/extractFunction/basic")
@@ -1951,6 +1912,64 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/typeParameters/typeParametersCombinedAndThis.kt");
                 doExtractFunctionTest(fileName);
             }
+        }
+    }
+
+    @TestMetadata("idea/testData/refactoring/introduceProperty")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class IntroduceProperty extends AbstractJetExtractionTest {
+        public void testAllFilesPresentInIntroduceProperty() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/introduceProperty"),
+                                                         Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("extractToClassWithNameClash.kt")
+        public void testExtractToClassWithNameClash() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceProperty/extractToClassWithNameClash.kt");
+            doIntroducePropertyTest(fileName);
+        }
+
+        @TestMetadata("extractToFileWithNameClash.kt")
+        public void testExtractToFileWithNameClash() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceProperty/extractToFileWithNameClash.kt");
+            doIntroducePropertyTest(fileName);
+        }
+
+        @TestMetadata("extractToFunction.kt")
+        public void testExtractToFunction() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceProperty/extractToFunction.kt");
+            doIntroducePropertyTest(fileName);
+        }
+
+        @TestMetadata("extractUnit.kt")
+        public void testExtractUnit() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceProperty/extractUnit.kt");
+            doIntroducePropertyTest(fileName);
+        }
+
+        @TestMetadata("extractWithGetterMultipleExpressions.kt")
+        public void testExtractWithGetterMultipleExpressions() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceProperty/extractWithGetterMultipleExpressions.kt");
+            doIntroducePropertyTest(fileName);
+        }
+
+        @TestMetadata("extractWithGetterToClass.kt")
+        public void testExtractWithGetterToClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceProperty/extractWithGetterToClass.kt");
+            doIntroducePropertyTest(fileName);
+        }
+
+        @TestMetadata("extractWithGetterToFile.kt")
+        public void testExtractWithGetterToFile() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceProperty/extractWithGetterToFile.kt");
+            doIntroducePropertyTest(fileName);
+        }
+
+        @TestMetadata("extractWithParams.kt")
+        public void testExtractWithParams() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceProperty/extractWithParams.kt");
+            doIntroducePropertyTest(fileName);
         }
     }
 }
