@@ -797,6 +797,10 @@ fun main(args: Array<String>) {
             model("inline/cases")
         }
 
+        testClass(javaClass<AbstractInlineJsStdlibTest>()) {
+            model("inlineStdlib/cases")
+        }
+
         testClass(javaClass<AbstractLabelTest>()) {
             model("labels/cases")
         }
