@@ -4041,6 +4041,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("innerInfixCall.kt")
+        public void testInnerInfixCall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/innerNested/innerInfixCall.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("innerLabeledThis.kt")
         public void testInnerLabeledThis() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/innerNested/innerLabeledThis.kt");

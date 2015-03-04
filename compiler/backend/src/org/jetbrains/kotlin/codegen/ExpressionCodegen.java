@@ -2910,6 +2910,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             ResolvedCall<?> resolvedCall = getResolvedCallWithAssert(expression, bindingContext);
             FunctionDescriptor descriptor = (FunctionDescriptor) resolvedCall.getResultingDescriptor();
 
+            if (descriptor instanceof ConstructorDescriptor) {
+                return generateConstructorCall(resolvedCall, expressionType(expression));
+            }
+
             Callable callable = resolveToCallable(descriptor, false);
             if (callable instanceof IntrinsicMethod) {
                 Type returnType = typeMapper.mapType(descriptor);
