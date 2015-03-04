@@ -364,7 +364,6 @@ public final class Namer {
                 return enumClassCreationMethodReference();
             case ENUM_ENTRY:
             case OBJECT:
-            case CLASS_OBJECT:
                 return objectCreationMethodReference();
             case ANNOTATION_CLASS:
             case CLASS:

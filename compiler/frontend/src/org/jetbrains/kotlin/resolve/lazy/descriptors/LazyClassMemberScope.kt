@@ -303,8 +303,7 @@ public open class LazyClassMemberScope(
                                                       ClassKind.ANNOTATION_CLASS,
                                                       ClassKind.OBJECT,
                                                       ClassKind.ENUM_CLASS,
-                                                      ClassKind.ENUM_ENTRY,
-                                                      ClassKind.CLASS_OBJECT)
+                                                      ClassKind.ENUM_ENTRY)
 
         private val EXTRACT_FUNCTIONS: MemberExtractor<FunctionDescriptor> = object : MemberExtractor<FunctionDescriptor> {
             override fun extract(extractFrom: JetType, name: Name): Collection<FunctionDescriptor> {

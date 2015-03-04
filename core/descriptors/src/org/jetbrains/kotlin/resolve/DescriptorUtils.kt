@@ -60,7 +60,7 @@ public val ClassDescriptor.classId: ClassId
 public val ClassDescriptor.classObjectDescriptor: ClassDescriptor?
     get() {
         return when (this.getKind()) {
-            CLASS_OBJECT, OBJECT -> this
+            OBJECT -> this
             ENUM_ENTRY -> {
                 val container = this.getContainingDeclaration()
                 assert(container is ClassDescriptor && container.getKind() == ENUM_CLASS)

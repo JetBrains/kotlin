@@ -241,7 +241,7 @@ public class DescriptorUtils {
     }
 
     public static boolean isDefaultObject(@Nullable DeclarationDescriptor descriptor) {
-        return isKindOf(descriptor, ClassKind.CLASS_OBJECT);
+        return isKindOf(descriptor, ClassKind.OBJECT) && ((ClassDescriptor) descriptor).isDefaultObject();
     }
 
     public static boolean isAnonymousObject(@NotNull DeclarationDescriptor descriptor) {
@@ -249,11 +249,11 @@ public class DescriptorUtils {
     }
 
     public static boolean isNonDefaultObject(@NotNull DeclarationDescriptor descriptor) {
-        return isKindOf(descriptor, ClassKind.OBJECT);
+        return isKindOf(descriptor, ClassKind.OBJECT) && !((ClassDescriptor) descriptor).isDefaultObject();
     }
 
     public static boolean isObject(@NotNull DeclarationDescriptor descriptor) {
-        return isDefaultObject(descriptor) || isNonDefaultObject(descriptor);
+        return isKindOf(descriptor, ClassKind.OBJECT);
     }
 
     public static boolean isEnumEntry(@NotNull DeclarationDescriptor descriptor) {
@@ -284,7 +284,7 @@ public class DescriptorUtils {
         return isKindOf(descriptor, ClassKind.CLASS);
     }
 
-    public static boolean isKindOf(@Nullable DeclarationDescriptor descriptor, @NotNull ClassKind classKind) {
+    private static boolean isKindOf(@Nullable DeclarationDescriptor descriptor, @NotNull ClassKind classKind) {
         return descriptor instanceof ClassDescriptor && ((ClassDescriptor) descriptor).getKind() == classKind;
     }
 

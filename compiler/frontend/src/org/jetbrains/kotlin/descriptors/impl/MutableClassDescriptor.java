@@ -70,6 +70,8 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
             @NotNull SourceElement source
     ) {
         super(LockBasedStorageManager.NO_LOCKS, containingDeclaration, name, source);
+        assert kind != ClassKind.OBJECT : "Fix isDefaultObject()";
+
         this.kind = kind;
         this.isInner = isInner;
 
@@ -145,7 +147,8 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
 
     @Override
     public boolean isDefaultObject() {
-        return getKind() == ClassKind.CLASS_OBJECT;
+        //TODO:
+        return false;
     }
 
     @NotNull

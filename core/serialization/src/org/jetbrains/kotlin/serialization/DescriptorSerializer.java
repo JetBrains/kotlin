@@ -81,8 +81,8 @@ public class DescriptorSerializer {
     public ProtoBuf.Class.Builder classProto(@NotNull ClassDescriptor classDescriptor) {
         ProtoBuf.Class.Builder builder = ProtoBuf.Class.newBuilder();
 
-        int flags = Flags.getClassFlags(hasAnnotations(classDescriptor), classDescriptor.getVisibility(),
-                                        classDescriptor.getModality(), classDescriptor.getKind(), classDescriptor.isInner());
+        int flags = Flags.getClassFlags(hasAnnotations(classDescriptor), classDescriptor.getVisibility(), classDescriptor.getModality(),
+                                        classDescriptor.getKind(), classDescriptor.isInner(), classDescriptor.isDefaultObject());
         builder.setFlags(flags);
 
         builder.setFqName(getClassId(classDescriptor));

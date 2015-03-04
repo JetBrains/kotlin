@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.resolve.lazy.LazyEntity;
 import org.jetbrains.kotlin.resolve.lazy.data.JetClassInfoUtil;
 import org.jetbrains.kotlin.resolve.lazy.data.JetClassLikeInfo;
 import org.jetbrains.kotlin.resolve.lazy.data.JetClassOrObjectInfo;
+import org.jetbrains.kotlin.resolve.lazy.data.JetObjectInfo;
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider;
 import org.jetbrains.kotlin.resolve.scopes.*;
 import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull;
@@ -92,6 +93,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     private final NotNullLazyValue<JetScope> scopeForPropertyInitializerResolution;
 
     private final NullableLazyValue<Void> forceResolveAllContents;
+    private final boolean isDefaultObject;
 
     public LazyClassDescriptor(
             @NotNull LazyClassContext c,
@@ -118,6 +120,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         this.typeConstructor = new LazyClassTypeConstructor();
 
         this.kind = classLikeInfo.getClassKind();
+        this.isDefaultObject = classLikeInfo instanceof JetObjectInfo && ((JetObjectInfo) classLikeInfo).isDefaultObject();
 
         JetModifierList modifierList = classLikeInfo.getModifierList();
         if (kind.isSingleton()) {
@@ -441,7 +444,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
     @Override
     public boolean isDefaultObject() {
-        return getKind() == ClassKind.CLASS_OBJECT;
+        return isDefaultObject;
     }
 
     @NotNull

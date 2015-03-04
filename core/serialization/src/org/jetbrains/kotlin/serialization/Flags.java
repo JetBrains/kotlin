@@ -73,17 +73,20 @@ public class Flags {
             Visibility visibility,
             Modality modality,
             ClassKind kind,
-            boolean inner
+            boolean inner,
+            boolean isDefaultObject
     ) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
                | MODALITY.toFlags(modality(modality))
                | VISIBILITY.toFlags(visibility(visibility))
-               | CLASS_KIND.toFlags(classKind(kind))
+               | CLASS_KIND.toFlags(classKind(kind, isDefaultObject))
                | INNER.toFlags(inner)
                ;
     }
 
-    private static ProtoBuf.Class.Kind classKind(ClassKind kind) {
+    private static ProtoBuf.Class.Kind classKind(ClassKind kind, boolean isDefaultObject) {
+        if (isDefaultObject) return ProtoBuf.Class.Kind.CLASS_OBJECT;
+
         switch (kind) {
             case CLASS:
                 return ProtoBuf.Class.Kind.CLASS;
@@ -97,8 +100,6 @@ public class Flags {
                 return ProtoBuf.Class.Kind.ANNOTATION_CLASS;
             case OBJECT:
                 return ProtoBuf.Class.Kind.OBJECT;
-            case CLASS_OBJECT:
-                return ProtoBuf.Class.Kind.CLASS_OBJECT;
         }
         throw new IllegalArgumentException("Unknown class kind: " + kind);
     }

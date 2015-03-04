@@ -32,9 +32,7 @@ public class JetObjectInfo extends JetClassOrObjectInfo<JetObjectDeclaration> {
 
     protected JetObjectInfo(@NotNull JetObjectDeclaration element) {
         super(element);
-        this.kind = element.isObjectLiteral()
-                    ? ClassKind.CLASS
-                    : (element.isDefault() ? ClassKind.CLASS_OBJECT : ClassKind.OBJECT);
+        this.kind = element.isObjectLiteral() ? ClassKind.CLASS : ClassKind.OBJECT;
     }
 
     @Override
@@ -58,5 +56,9 @@ public class JetObjectInfo extends JetClassOrObjectInfo<JetObjectDeclaration> {
     @Override
     public ClassKind getClassKind() {
         return kind;
+    }
+
+    public boolean isDefaultObject() {
+        return element.isDefault();
     }
 }

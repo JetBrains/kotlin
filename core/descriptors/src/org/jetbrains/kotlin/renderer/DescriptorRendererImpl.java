@@ -1001,6 +1001,9 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
 
     @NotNull
     public static String getClassKindPrefix(@NotNull ClassDescriptor klass) {
+        if (klass.isDefaultObject()) {
+            return "class object";
+        }
         switch (klass.getKind()) {
             case CLASS:
                 return "class";
@@ -1012,8 +1015,6 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
                 return "object";
             case ANNOTATION_CLASS:
                 return "annotation class";
-            case CLASS_OBJECT:
-                return "class object";
             case ENUM_ENTRY:
                 return "enum entry";
             default:
