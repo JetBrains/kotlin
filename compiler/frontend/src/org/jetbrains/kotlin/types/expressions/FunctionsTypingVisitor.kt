@@ -83,7 +83,7 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
         }
         else {
             functionDescriptor = services.getFunctionDescriptorResolver().resolveFunctionExpressionDescriptor(
-                    context.scope.getContainingDeclaration(), context.scope, function, context.trace, context.dataFlowInfo)
+                    context.scope.getContainingDeclaration(), context.scope, function, context.trace, context.dataFlowInfo, context.expectedType)
         }
 
         val functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(context.scope, functionDescriptor, context.trace)

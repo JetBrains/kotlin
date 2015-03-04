@@ -70,7 +70,7 @@ class FunctionDescriptorResolver(
                 CallableMemberDescriptor.Kind.DECLARATION,
                 function.toSourceElement()
         )
-        initializeFunctionDescriptorAndExplicitReturnType(containingDescriptor, scope, function, functionDescriptor, trace, null)
+        initializeFunctionDescriptorAndExplicitReturnType(containingDescriptor, scope, function, functionDescriptor, trace, TypeUtils.NO_EXPECTED_TYPE)
         initializeFunctionReturnTypeBasedOnFunctionBody(scope, function, functionDescriptor, trace, dataFlowInfo)
         BindingContextUtils.recordFunctionDeclarationToDescriptor(trace, function, functionDescriptor)
         return functionDescriptor
@@ -81,7 +81,8 @@ class FunctionDescriptorResolver(
             scope: JetScope,
             function: JetNamedFunction,
             trace: BindingTrace,
-            dataFlowInfo: DataFlowInfo
+            dataFlowInfo: DataFlowInfo,
+            expectedFunctionType: JetType
     ): SimpleFunctionDescriptor {
         val functionDescriptor = FunctionExpressionDescriptor(
                 containingDescriptor,
@@ -90,7 +91,7 @@ class FunctionDescriptorResolver(
                 CallableMemberDescriptor.Kind.DECLARATION,
                 function.toSourceElement()
         )
-        initializeFunctionDescriptorAndExplicitReturnType(containingDescriptor, scope, function, functionDescriptor, trace, null)
+        initializeFunctionDescriptorAndExplicitReturnType(containingDescriptor, scope, function, functionDescriptor, trace, expectedFunctionType)
         initializeFunctionReturnTypeBasedOnFunctionBody(scope, function, functionDescriptor, trace, dataFlowInfo)
         BindingContextUtils.recordFunctionDeclarationToDescriptor(trace, function, functionDescriptor)
         return functionDescriptor
@@ -128,7 +129,7 @@ class FunctionDescriptorResolver(
             function: JetFunction,
             functionDescriptor: SimpleFunctionDescriptorImpl,
             trace: BindingTrace,
-            expectedFunctionType: JetType?
+            expectedFunctionType: JetType
     ) {
         val innerScope = WritableScopeImpl(scope, functionDescriptor, TraceBasedRedeclarationHandler(trace), "Function descriptor header scope")
         innerScope.addLabeledDeclaration(functionDescriptor)
@@ -170,7 +171,7 @@ class FunctionDescriptorResolver(
             functionDescriptor: SimpleFunctionDescriptorImpl,
             innerScope: WritableScopeImpl,
             trace: BindingTrace,
-            expectedFunctionType: JetType?
+            expectedFunctionType: JetType
     ): List<ValueParameterDescriptor> {
         val expectedValueParameters = expectedFunctionType.getValueParameters(functionDescriptor)
         if (expectedValueParameters != null) {
@@ -198,11 +199,11 @@ class FunctionDescriptorResolver(
     }
 
     private fun JetType.functionTypeExpected() = !TypeUtils.noExpectedType(this) && KotlinBuiltIns.isFunctionOrExtensionFunctionType(this)
-    private fun JetType?.getReceiverType(): JetType? =
-            if (this != null && functionTypeExpected()) getReceiverType(this) else null
+    private fun JetType.getReceiverType(): JetType? =
+            if (functionTypeExpected()) KotlinBuiltIns.getReceiverType(this) else null
 
-    private fun JetType?.getValueParameters(owner: FunctionDescriptor): List<ValueParameterDescriptor>? =
-            if (this != null && functionTypeExpected()) getValueParameters(owner, this) else null
+    private fun JetType.getValueParameters(owner: FunctionDescriptor): List<ValueParameterDescriptor>? =
+            if (functionTypeExpected()) KotlinBuiltIns.getValueParameters(owner, this) else null
 
     public fun resolvePrimaryConstructorDescriptor(
             scope: JetScope,
@@ -316,7 +317,8 @@ class FunctionDescriptorResolver(
                     else {
                         type = TypeUtils.CANT_INFER_FUNCTION_PARAM_TYPE
                     }
-                } else {
+                }
+                else {
                     trace.report(VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION.on(valueParameter))
                     type = ErrorUtils.createErrorType("Type annotation was missing for parameter ${valueParameter.getNameAsSafeName()}")
                 }

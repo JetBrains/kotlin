@@ -17,7 +17,7 @@ fun testParamType() {
     bar.checkType { it : _<(String) -> Unit> }
 
     val bas: (String) -> Unit = fun (param: String) {}
-    val bag: (Int) -> Unit = <!TYPE_MISMATCH!>fun (param: String) {}<!>
+    val bag: (Int) -> Unit = <!TYPE_MISMATCH!>fun (<!EXPECTED_PARAMETER_TYPE_MISMATCH!>param: String<!>) {}<!>
 }
 
 fun testReceiverType() {
