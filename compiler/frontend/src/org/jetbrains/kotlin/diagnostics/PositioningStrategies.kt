@@ -31,7 +31,9 @@ import org.jetbrains.kotlin.psi.psiUtil.*
 public object PositioningStrategies {
     private open class DeclarationHeader<T : JetDeclaration> : PositioningStrategy<T>() {
         override fun isValid(element: T): Boolean {
-            if (element is JetNamedDeclaration && element !is JetObjectDeclaration) {
+            if (element is JetNamedDeclaration &&
+                (element !is JetObjectDeclaration && element !is JetSecondaryConstructor)
+            ) {
                 if (element.getNameIdentifier() == null) {
                     return false
                 }
@@ -136,6 +138,9 @@ public object PositioningStrategies {
                 }
                 is JetObjectDeclaration -> {
                     return DECLARATION_NAME.mark(element)
+                }
+                is JetSecondaryConstructor -> {
+                    return markRange(element.getConstructorKeyword(), element.getValueParameterList() ?: element.getConstructorKeyword())
                 }
             }
             return super.mark(element)

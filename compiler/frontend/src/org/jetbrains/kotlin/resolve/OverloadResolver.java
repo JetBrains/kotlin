@@ -71,10 +71,10 @@ public class OverloadResolver {
             DeclarationDescriptor containingDeclaration = klass.getContainingDeclaration();
             if (containingDeclaration instanceof ClassDescriptor) {
                 ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
-                inClasses.put(classDescriptor, klass.getConstructors());
+                inClasses.putValues(classDescriptor, klass.getConstructors());
             }
             else if (containingDeclaration instanceof PackageFragmentDescriptor) {
-                inPackages.put(getFqName(klass), klass.getConstructors());
+                inPackages.putValues(getFqName(klass), klass.getConstructors());
             }
             else if (containingDeclaration instanceof ScriptDescriptor) {
                 // TODO: check overload conflicts of functions with constructors in scripts
@@ -146,9 +146,6 @@ public class OverloadResolver {
         for (Map.Entry<Name, Collection<CallableMemberDescriptor>> e : functionsByName.entrySet()) {
             checkOverloadsWithSameName(e.getValue(), nameForErrorMessage(classDescriptor, klass));
         }
-
-        // Kotlin has no secondary constructors at this time
-
     }
     
     private void checkOverloadsWithSameName(
@@ -167,7 +164,7 @@ public class OverloadResolver {
         Set<Pair<JetDeclaration, CallableMemberDescriptor>> redeclarations = Sets.newLinkedHashSet();
         for (CallableMemberDescriptor member : functions) {
             for (CallableMemberDescriptor member2 : functions) {
-                if (member == member2) {
+                if (member == member2 || isConstructorsOfDifferentRedeclaredClasses(member, member2)) {
                     continue;
                 }
 
@@ -181,6 +178,18 @@ public class OverloadResolver {
             }
         }
         return redeclarations;
+    }
+
+    private static boolean isConstructorsOfDifferentRedeclaredClasses(
+            @NotNull CallableMemberDescriptor member, @NotNull CallableMemberDescriptor member2
+    ) {
+        if (!(member instanceof ConstructorDescriptor) || !(member2 instanceof ConstructorDescriptor)) return false;
+        // ignore conflicting overloads for constructors of different classes because their redeclarations will be reported
+        // but don't ignore if there's possibility that classes redeclarations will not be reported
+        // (e.g. they're declared in different packages)
+        assert member.getContainingDeclaration().getContainingDeclaration() != null : "Grandparent of constructor should not be null";
+        return member.getContainingDeclaration() != member2.getContainingDeclaration() &&
+               member.getContainingDeclaration().getContainingDeclaration().equals(member2.getContainingDeclaration().getContainingDeclaration());
     }
 
     private void reportRedeclarations(@NotNull String functionContainer,
