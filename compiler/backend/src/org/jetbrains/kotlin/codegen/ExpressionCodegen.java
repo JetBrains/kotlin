@@ -2906,7 +2906,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             return generateElvis(expression);
         }
         else if (opToken == JetTokens.IN_KEYWORD || opToken == JetTokens.NOT_IN) {
-            return generateIn(StackValue.expression(Type.INT_TYPE, expression.getLeft(), this), expression.getRight(), reference);
+            return generateIn(StackValue.expression(expressionType(expression.getLeft()), expression.getLeft(), this),
+                              expression.getRight(), reference);
         }
         else {
             ResolvedCall<?> resolvedCall = getResolvedCallWithAssert(expression, bindingContext);
@@ -2935,7 +2936,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         return StackValue.operation(Type.BOOLEAN_TYPE, new Function1<InstructionAdapter, Unit>() {
             @Override
             public Unit invoke(InstructionAdapter v) {
-                if (isIntRangeExpr(deparenthesized)) {
+                if (isIntRangeExpr(deparenthesized) && AsmUtil.isIntPrimitive(leftValue.type)) {
                     genInIntRange(leftValue, (JetBinaryExpression) deparenthesized);
                 }
                 else {
