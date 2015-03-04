@@ -66,7 +66,7 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
         JsExpression callExpression = (new CallExpressionTranslator(expression, receiver, context)).translate();
         CallableDescriptor descriptor = getFunctionDescriptor(expression, context);
 
-        if (shouldBeInlined(expression, context)) {
+        if (!resolvedCall.isSafeCall() && shouldBeInlined(expression, context)) {
             setInlineCallMetadata(callExpression, descriptor, context);
         }
 
