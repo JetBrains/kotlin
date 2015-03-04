@@ -21,8 +21,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.js.test.utils.DirectiveTestUtils;
 import org.jetbrains.kotlin.js.test.utils.JsTestUtils;
 
-public abstract class SingleFileTranslationWithDirectivesTest extends SingleFileTranslationTest {
-    public SingleFileTranslationWithDirectivesTest(@NotNull String main) {
+public abstract class AbstractSingleFileTranslationWithDirectivesTest extends SingleFileTranslationTest {
+    public AbstractSingleFileTranslationWithDirectivesTest(@NotNull String main) {
         super(main);
     }
 
