@@ -57,11 +57,7 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
 
     public class NoAndroidManifestFound : Exception("No android manifest file found in project root")
 
-    private val androidImports = listOf(
-            "android.app.Activity",
-            "android.app.Fragment",
-            "android.view.View",
-            "android.widget.*")
+    protected val LOG: Logger = Logger.getInstance(javaClass)
 
     public abstract val resourceManager: AndroidResourceManager
 
@@ -91,31 +87,42 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
         }
     }
 
-    protected val LOG: Logger = Logger.getInstance(javaClass)
-
     public fun parse(): List<String> {
-        return resourceManager.getLayoutXmlFiles().map { file ->
+        return resourceManager.getLayoutXmlFiles().flatMap { file ->
             val widgets = parseSingleFile(file)
             if (widgets.isNotEmpty()) {
                 val layoutPackage = file.genSyntheticPackageName()
-                val stringWriter = KotlinStringWriter()
 
-                stringWriter.writePackage(layoutPackage)
-                stringWriter.writeAndroidImports()
-                widgets.forEach {
-                    stringWriter.writeSyntheticProperty("Activity", it, "findViewById(0)")
-                    stringWriter.writeSyntheticProperty("Fragment", it, "getView().findViewById(0)")
+                val mainLayoutFile = renderLayoutFile(layoutPackage, widgets) {
+                    writeSyntheticProperty("Activity", it, "findViewById(0)")
+                    writeSyntheticProperty("Fragment", it, "getView().findViewById(0)")
                 }
 
-                val contents = stringWriter.toStringBuffer().toString()
-                contents
-            } else null
+                val viewLayoutFile = renderLayoutFile("$layoutPackage.view", widgets) {
+                    writeSyntheticProperty("View", it, "findViewById(0)")
+                }
+
+                listOf(mainLayoutFile, viewLayoutFile)
+            } else listOf()
         }.filterNotNull()
     }
 
     public fun parseToPsi(): List<JetFile>? = cachedJetFiles.getValue()
 
-    protected abstract fun parseSingleFile(file: PsiFile): Collection<AndroidWidget>
+    protected abstract fun parseSingleFile(file: PsiFile): List<AndroidWidget>
+
+    private fun renderLayoutFile(
+            packageName: String,
+            widgets: List<AndroidWidget>,
+            widgetWriter: KotlinStringWriter.(AndroidWidget) -> Unit
+    ): String {
+        val stringWriter = KotlinStringWriter()
+        stringWriter.writePackage(packageName)
+        stringWriter.writeAndroidImports()
+        widgets.forEach { stringWriter.widgetWriter(it) }
+
+        return stringWriter.toStringBuffer().toString()
+    }
 
     private fun KotlinStringWriter.writeAndroidImports() {
         androidImports.forEach { writeImport(it) }
@@ -136,6 +143,14 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
 
     private fun <T> cachedValue(result: () -> CachedValueProvider.Result<T>): CachedValue<T> {
         return CachedValuesManager.getManager(project).createCachedValue(result, false)
+    }
+
+    default object {
+        private val androidImports = listOf(
+                "android.app.Activity",
+                "android.app.Fragment",
+                "android.view.View",
+                "android.widget.*")
     }
 
 }

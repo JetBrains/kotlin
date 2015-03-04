@@ -38,8 +38,8 @@ public class CliAndroidUIXmlProcessor(
         project.getExtensions(PsiTreeChangePreprocessor.EP_NAME).first { it is AndroidPsiTreeChangePreprocessor }
     }
 
-    override fun parseSingleFile(file: PsiFile): Collection<AndroidWidget> {
-        val widgets: MutableCollection<AndroidWidget> = ArrayList()
+    override fun parseSingleFile(file: PsiFile): List<AndroidWidget> {
+        val widgets = arrayListOf<AndroidWidget>()
         val handler = AndroidXmlHandler { id, clazz -> widgets.add(AndroidWidget(id, clazz)) }
 
         try {

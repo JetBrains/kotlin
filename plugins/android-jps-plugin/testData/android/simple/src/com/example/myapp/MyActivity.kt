@@ -9,6 +9,7 @@ import android.view.View
 
 import kotlinx.android.synthetic.main.*
 import kotlinx.android.synthetic.fragment.*
+import kotlinx.android.synthetic.fragment.view.*
 
 public class MyActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,6 +26,6 @@ public class MyFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        textField2.setText("test fragment")
+        fragmentContainer.textField2.setText("test fragment")
     }
 }

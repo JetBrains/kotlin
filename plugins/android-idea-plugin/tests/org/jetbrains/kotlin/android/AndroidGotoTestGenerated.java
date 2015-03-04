@@ -83,4 +83,10 @@ public class AndroidGotoTestGenerated extends AbstractAndroidGotoTest {
         String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/goto/simpleFragment/");
         doTest(fileName);
     }
+
+    @TestMetadata("simpleView")
+    public void testSimpleView() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/goto/simpleView/");
+        doTest(fileName);
+    }
 }

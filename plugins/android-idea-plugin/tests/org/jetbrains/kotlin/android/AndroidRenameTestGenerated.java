@@ -83,4 +83,10 @@ public class AndroidRenameTestGenerated extends AbstractAndroidRenameTest {
         String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/rename/simpleFragment/");
         doTest(fileName);
     }
+
+    @TestMetadata("simpleView")
+    public void testSimpleView() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/rename/simpleView/");
+        doTest(fileName);
+    }
 }

@@ -83,4 +83,10 @@ public class AndroidCompletionTestGenerated extends AbstractAndroidCompletionTes
         String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/completion/propertiesSimpleFragment/");
         doTest(fileName);
     }
+
+    @TestMetadata("propertiesSimpleView")
+    public void testPropertiesSimpleView() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/completion/propertiesSimpleView/");
+        doTest(fileName);
+    }
 }

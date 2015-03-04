@@ -42,10 +42,11 @@ import org.jetbrains.org.objectweb.asm.Opcodes.ACC_PUBLIC
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-private enum class AndroidClassType {
-    ACTIVITY
-    FRAGMENT
-    UNKNOWN
+private enum class AndroidClassType(val internalClassName: String, val supportsCache: Boolean = false) {
+    ACTIVITY : AndroidClassType("android/app/Activity", true)
+    FRAGMENT : AndroidClassType("android/app/Fragment", true)
+    VIEW : AndroidClassType("android/view/View")
+    UNKNOWN : AndroidClassType("")
 }
 
 public class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
@@ -72,15 +73,10 @@ public class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
 
         if (declarationDescriptor == null) return null
 
-        val supportsCache = when {
-            extensionReceiver is ClassReceiver -> true
-            else -> {
-                val source = declarationDescriptor.getSource()
-                if (source is KotlinSourceElement) true else false
-            }
-        }
+        val supportsCache = declarationDescriptor.getSource() is KotlinSourceElement
 
-        if (supportsCache) {
+        val androidClassType = getClassType(declarationDescriptor)
+        if (supportsCache && androidClassType.supportsCache) {
             val className = DescriptorUtils.getFqName(declarationDescriptor).toString()
             val bytecodeClassName = className.replace('.', '/')
 
@@ -88,15 +84,15 @@ public class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
             c.v.getstatic(androidPackage.replace(".", "/") + "/R\$id", propertyDescriptor.getName().asString(), "I")
             c.v.invokevirtual(bytecodeClassName, METHOD_NAME, "(I)Landroid/view/View;", false)
         } else {
-            when (getClassType(declarationDescriptor)) {
-                AndroidClassType.ACTIVITY -> {
-                    receiver.put(Type.getType("Landroid/app/Activity;"), c.v)
+            when (androidClassType) {
+                AndroidClassType.ACTIVITY, AndroidClassType.VIEW -> {
+                    receiver.put(Type.getType("L${androidClassType.internalClassName};"), c.v)
                     c.v.getstatic(androidPackage.replace(".", "/") + "/R\$id", propertyDescriptor.getName().asString(), "I")
-                    c.v.invokevirtual("android/app/Activity", "findViewById", "(I)Landroid/view/View;", false)
+                    c.v.invokevirtual(androidClassType.internalClassName, "findViewById", "(I)Landroid/view/View;", false)
                 }
                 AndroidClassType.FRAGMENT -> {
-                    receiver.put(Type.getType("Landroid/app/Fragment;"), c.v)
-                    c.v.invokevirtual("android/app/Fragment", "getView", "()Landroid/view/View;", false)
+                    receiver.put(Type.getType("L${androidClassType.internalClassName};"), c.v)
+                    c.v.invokevirtual(androidClassType.internalClassName, "getView", "()Landroid/view/View;", false)
                     c.v.getstatic(androidPackage.replace(".", "/") + "/R\$id", propertyDescriptor.getName().asString(), "I")
                     c.v.invokevirtual("android/view/View", "findViewById", "(I)Landroid/view/View;", false)
                 }
@@ -114,6 +110,7 @@ public class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
         fun getClassTypeInternal(name: String): AndroidClassType? = when (name) {
             "android.app.Activity" -> AndroidClassType.ACTIVITY
             "android.app.Fragment" -> AndroidClassType.FRAGMENT
+            "android.view.View" -> AndroidClassType.VIEW
             else -> null
         }
 
@@ -196,7 +193,7 @@ public class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
         // Resolve View via findViewById if not in cache
         iv.load(0, classType)
         when (androidClassType) {
-            AndroidClassType.ACTIVITY -> {
+            AndroidClassType.ACTIVITY, AndroidClassType.VIEW -> {
                 loadId()
                 iv.invokevirtual(className, "findViewById", "(I)Landroid/view/View;", false)
             }

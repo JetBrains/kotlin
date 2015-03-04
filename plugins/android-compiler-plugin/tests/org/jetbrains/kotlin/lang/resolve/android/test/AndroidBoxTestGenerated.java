@@ -77,6 +77,12 @@ public class AndroidBoxTestGenerated extends AbstractAndroidBoxTest {
             String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/codegen/android/singleFile/");
             doCompileAgainstAndroidSdkTest(fileName);
         }
+
+        @TestMetadata("view")
+        public void testView() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/codegen/android/view/");
+            doCompileAgainstAndroidSdkTest(fileName);
+        }
     }
 
     @TestMetadata("plugins/android-compiler-plugin/testData/codegen/android")
@@ -120,6 +126,12 @@ public class AndroidBoxTestGenerated extends AbstractAndroidBoxTest {
         @TestMetadata("singleFile")
         public void testSingleFile() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/codegen/android/singleFile/");
+            doFakeInvocationTest(fileName);
+        }
+
+        @TestMetadata("view")
+        public void testView() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/codegen/android/view/");
             doFakeInvocationTest(fileName);
         }
     }
