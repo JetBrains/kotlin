@@ -465,6 +465,18 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
             doParsingTest(fileName);
         }
 
+        @TestMetadata("ParameterType.kt")
+        public void testParameterType() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/ParameterType.kt");
+            doParsingTest(fileName);
+        }
+
+        @TestMetadata("ParameterType_ERR.kt")
+        public void testParameterType_ERR() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/ParameterType_ERR.kt");
+            doParsingTest(fileName);
+        }
+
         @TestMetadata("Precedence.kt")
         public void testPrecedence() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/Precedence.kt");

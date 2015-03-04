@@ -639,7 +639,7 @@ public class JetParsing extends AbstractJetParsing {
         beforeConstructorModifiers.drop();
 
         if (at(LPAR)) {
-            parseValueParameterList(false, TokenSet.create(COLON, LBRACE));
+            parseValueParameterList(false, /* typeRequired  = */ true, TokenSet.create(COLON, LBRACE));
         }
         else if (hasConstructorModifiers) {
             // A comprehensive error message for cases like:
@@ -1253,7 +1253,7 @@ public class JetParsing extends AbstractJetParsing {
         }
 
         if (at(LPAR)) {
-            parseValueParameterList(false, valueParametersFollow);
+            parseValueParameterList(false, /* typeRequired  = */ false, valueParametersFollow);
         }
         else {
             error("Expecting '('");
@@ -1937,7 +1937,7 @@ public class JetParsing extends AbstractJetParsing {
         assert _at(LPAR) : tt();
         PsiBuilder.Marker functionType = mark();
 
-        parseValueParameterList(true, TokenSet.EMPTY);
+        parseValueParameterList(true, /* typeRequired  = */ true, TokenSet.EMPTY);
 
         expect(ARROW, "Expecting '->' to specify return type of a function type", TYPE_REF_FIRST);
         parseTypeRef();
@@ -1958,7 +1958,7 @@ public class JetParsing extends AbstractJetParsing {
      *   : parameter ("=" element)?
      *   ;
      */
-    void parseValueParameterList(boolean isFunctionTypeContents, TokenSet recoverySet) {
+    void parseValueParameterList(boolean isFunctionTypeContents, boolean typeRequired, TokenSet recoverySet) {
         assert _at(LPAR);
         PsiBuilder.Marker parameters = mark();
 
@@ -1976,7 +1976,7 @@ public class JetParsing extends AbstractJetParsing {
                 }
 
                 if (isFunctionTypeContents) {
-                    if (!tryParseValueParameter()) {
+                    if (!tryParseValueParameter(typeRequired)) {
                         PsiBuilder.Marker valueParameter = mark();
                         parseModifierList(MODIFIER_LIST, REGULAR_ANNOTATIONS_ONLY_WITH_BRACKETS); // lazy, out, ref
                         parseTypeRef();
@@ -1984,7 +1984,7 @@ public class JetParsing extends AbstractJetParsing {
                     }
                 }
                 else {
-                    parseValueParameter();
+                    parseValueParameter(typeRequired);
                 }
 
                 if (at(COMMA)) {
@@ -2008,15 +2008,15 @@ public class JetParsing extends AbstractJetParsing {
      *   : modifiers ("val" | "var")? parameter ("=" element)?
      *   ;
      */
-    private boolean tryParseValueParameter() {
-        return parseValueParameter(true);
+    private boolean tryParseValueParameter(boolean typeRequired) {
+        return parseValueParameter(true, typeRequired);
     }
 
-    public void parseValueParameter() {
-        parseValueParameter(false);
+    public void parseValueParameter(boolean typeRequired) {
+        parseValueParameter(false, typeRequired);
     }
 
-    private boolean parseValueParameter(boolean rollbackOnFailure) {
+    private boolean parseValueParameter(boolean rollbackOnFailure, boolean typeRequired) {
         PsiBuilder.Marker parameter = mark();
 
         parseModifierListWithShortAnnotations(MODIFIER_LIST, TokenSet.create(IDENTIFIER), TokenSet.create(COMMA, RPAR, COLON));
@@ -2025,7 +2025,7 @@ public class JetParsing extends AbstractJetParsing {
             advance(); // VAR_KEYWORD | VAL_KEYWORD
         }
 
-        if (!parseFunctionParameterRest() && rollbackOnFailure) {
+        if (!parseFunctionParameterRest(typeRequired) && rollbackOnFailure) {
             parameter.rollbackTo();
             return false;
         }
@@ -2039,7 +2039,7 @@ public class JetParsing extends AbstractJetParsing {
      *   : parameter ("=" element)?
      *   ;
      */
-    private boolean parseFunctionParameterRest() {
+    private boolean parseFunctionParameterRest(boolean typeRequired) {
         boolean noErrors = true;
 
         // Recovery for the case 'fun foo(Array<String>) {}'
@@ -2055,7 +2055,7 @@ public class JetParsing extends AbstractJetParsing {
                 advance(); // COLON
                 parseTypeRef();
             }
-            else {
+            else if (typeRequired) {
                 errorWithRecovery("Parameters must have type annotation", PARAMETER_NAME_RECOVERY_SET);
                 noErrors = false;
             }
