@@ -189,11 +189,11 @@ public class PropertyCodegen {
             return false;
         }
 
-        if (Boolean.TRUE.equals(bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor))) {
-            generateBackingFieldAccess(p, descriptor);
-        }
-        else if (p instanceof JetProperty && ((JetProperty) p).hasDelegate()) {
+        if (p instanceof JetProperty && ((JetProperty) p).hasDelegate()) {
             generatePropertyDelegateAccess((JetProperty) p, descriptor);
+        }
+        else if (Boolean.TRUE.equals(bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor))) {
+            generateBackingFieldAccess(p, descriptor);
         }
         else {
             return false;
