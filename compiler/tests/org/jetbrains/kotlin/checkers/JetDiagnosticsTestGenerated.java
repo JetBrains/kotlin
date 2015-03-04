@@ -3123,6 +3123,18 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("defaultGetter.kt")
+            public void testDefaultGetter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/defaultGetter.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("defaultSetter.kt")
+            public void testDefaultSetter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/defaultSetter.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("delegatedPropertyOverridedInTrait.kt")
             public void testDelegatedPropertyOverridedInTrait() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/delegatedPropertyOverridedInTrait.kt");
