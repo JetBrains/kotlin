@@ -32,6 +32,7 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Processor;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.JetPluginUtil;
@@ -136,6 +137,7 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
         Project project = module.getProject();
         RuntimeLibraryFiles files = getExistingJarFiles();
         File runtimeJar = files.getRuntimeJar();
+        File reflectJar = files.getReflectJar();
 
         switch (libraryState) {
             case LIBRARY:
@@ -145,6 +147,9 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
                     }
                     case COPY: {
                         copyFileToDir(runtimeJar, dirToCopyJarTo);
+                        if (reflectJar != null) {
+                            copyFileToDir(reflectJar, dirToCopyJarTo);
+                        }
                         break;
                     }
                     case DO_NOT_COPY: {
@@ -156,16 +161,19 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
             case NON_CONFIGURED_LIBRARY:
                 switch (jarState) {
                     case EXISTS: {
-                        addJarToExistingLibrary(project, files.getRuntimeDestination(dirToCopyJarTo));
+                        addJarsToExistingLibrary(
+                                project, files.getRuntimeDestination(dirToCopyJarTo), files.getReflectDestination(dirToCopyJarTo)
+                        );
                         break;
                     }
                     case COPY: {
-                        File file = copyFileToDir(runtimeJar, dirToCopyJarTo);
-                        addJarToExistingLibrary(project, file);
+                        addJarsToExistingLibrary(
+                                project, copyFileToDir(runtimeJar, dirToCopyJarTo), copyFileToDir(reflectJar, dirToCopyJarTo)
+                        );
                         break;
                     }
                     case DO_NOT_COPY: {
-                        addJarToExistingLibrary(project, runtimeJar);
+                        addJarsToExistingLibrary(project, runtimeJar, reflectJar);
                         break;
                     }
                 }
@@ -173,21 +181,23 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
             case NEW_LIBRARY:
                 switch (jarState) {
                     case EXISTS: {
-                        addJarToNewLibrary(project, files.getRuntimeDestination(dirToCopyJarTo));
+                        addJarsToNewLibrary(
+                                project, files.getRuntimeDestination(dirToCopyJarTo), files.getReflectDestination(dirToCopyJarTo)
+                        );
                         break;
                     }
                     case COPY: {
-                        File file = copyFileToDir(runtimeJar, dirToCopyJarTo);
-                        addJarToNewLibrary(project, file);
+                        addJarsToNewLibrary(project, copyFileToDir(runtimeJar, dirToCopyJarTo), copyFileToDir(reflectJar, dirToCopyJarTo));
                         break;
                     }
                     case DO_NOT_COPY: {
-                        addJarToNewLibrary(project, runtimeJar);
+                        addJarsToNewLibrary(project, runtimeJar, reflectJar);
                         break;
                     }
                 }
                 break;
         }
+
         addLibraryToModuleIfNeeded(module);
     }
 
@@ -234,7 +244,11 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
         return null;
     }
 
-    public File copyFileToDir(@NotNull File file, @NotNull String toDir) {
+    @Contract("!null, _ -> !null")
+    @Nullable
+    public File copyFileToDir(@Nullable File file, @NotNull String toDir) {
+        if (file == null) return null;
+
         File copy = FileUIUtils.copyWithOverwriteDialog(getMessageForOverrideDialog(), toDir, file);
         if (copy != null) {
             showInfoNotification(file.getName() + " was copied to " + toDir);
@@ -329,12 +343,15 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
         return DependencyScope.COMPILE;
     }
 
-    private void addJarToExistingLibrary(@NotNull Project project, @NotNull File jarFile) {
+    private void addJarsToExistingLibrary(@NotNull Project project, @NotNull File runtimeJar, @Nullable File reflectJar) {
         Library library = getKotlinLibrary(project);
         assert library != null : "Kotlin library should present, instead createNewLibrary should be invoked";
 
         final Library.ModifiableModel model = library.getModifiableModel();
-        model.addRoot(VfsUtil.getUrlForLibraryRoot(jarFile), OrderRootType.CLASSES);
+        model.addRoot(VfsUtil.getUrlForLibraryRoot(runtimeJar), OrderRootType.CLASSES);
+        if (reflectJar != null) {
+            model.addRoot(VfsUtil.getUrlForLibraryRoot(reflectJar), OrderRootType.CLASSES);
+        }
 
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             @Override
@@ -346,9 +363,10 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
         showInfoNotification(library.getName() + " library was configured");
     }
 
-    private void addJarToNewLibrary(
+    private void addJarsToNewLibrary(
             @NotNull Project project,
-            @NotNull final File jarFile
+            @NotNull final File runtimeJar,
+            @Nullable final File reflectJar
     ) {
         final LibraryTable table = LibraryTablesRegistrar.getInstance().getLibraryTable(project);
         final Ref<Library> library = new Ref<Library>();
@@ -357,7 +375,10 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
             public void run() {
                 library.set(table.createLibrary(getLibraryName()));
                 Library.ModifiableModel model = library.get().getModifiableModel();
-                model.addRoot(VfsUtil.getUrlForLibraryRoot(jarFile), OrderRootType.CLASSES);
+                model.addRoot(VfsUtil.getUrlForLibraryRoot(runtimeJar), OrderRootType.CLASSES);
+                if (reflectJar != null) {
+                    model.addRoot(VfsUtil.getUrlForLibraryRoot(reflectJar), OrderRootType.CLASSES);
+                }
                 model.commit();
             }
         });
