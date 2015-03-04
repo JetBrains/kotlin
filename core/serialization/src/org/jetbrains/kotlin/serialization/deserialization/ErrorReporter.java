@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.load.java.components;
+package org.jetbrains.kotlin.serialization.deserialization;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass;
+import org.jetbrains.kotlin.name.ClassId;
 
 import java.util.List;
 
 public interface ErrorReporter {
-    void reportIncompatibleAbiVersion(@NotNull KotlinJvmBinaryClass kotlinClass, int actualVersion);
+    void reportIncompatibleAbiVersion(@NotNull ClassId classId, @NotNull String filePath, int actualVersion);
 
     void reportIncompleteHierarchy(@NotNull ClassDescriptor descriptor, @NotNull List<String> unresolvedSuperClasses);
 

@@ -21,10 +21,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass;
-import org.jetbrains.kotlin.load.kotlin.VirtualFileKotlinClass;
+import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.OverrideResolver;
+import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter;
 import org.jetbrains.kotlin.util.slicedMap.Slices;
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
 
@@ -34,7 +34,17 @@ import java.util.List;
 public class TraceBasedErrorReporter implements ErrorReporter {
     private static final Logger LOG = Logger.getInstance(TraceBasedErrorReporter.class);
 
-    public static final WritableSlice<VirtualFileKotlinClass, Integer> ABI_VERSION_ERRORS = Slices.createCollectiveSlice();
+    public static class AbiVersionErrorData {
+        public final int actualVersion;
+        public final ClassId classId;
+
+        public AbiVersionErrorData(int actualVersion, @NotNull ClassId classId) {
+            this.actualVersion = actualVersion;
+            this.classId = classId;
+        }
+    }
+
+    public static final WritableSlice<String, AbiVersionErrorData> ABI_VERSION_ERRORS = Slices.createCollectiveSlice();
     public static final WritableSlice<ClassDescriptor, List<String>> INCOMPLETE_HIERARCHY = Slices.createCollectiveSlice();
 
     private BindingTrace trace;
@@ -45,8 +55,8 @@ public class TraceBasedErrorReporter implements ErrorReporter {
     }
 
     @Override
-    public void reportIncompatibleAbiVersion(@NotNull KotlinJvmBinaryClass kotlinClass, int actualVersion) {
-        trace.record(ABI_VERSION_ERRORS, (VirtualFileKotlinClass) kotlinClass, actualVersion);
+    public void reportIncompatibleAbiVersion(@NotNull ClassId classId, @NotNull String filePath, int actualVersion) {
+        trace.record(ABI_VERSION_ERRORS, filePath, new AbiVersionErrorData(actualVersion, classId));
     }
 
     @Override

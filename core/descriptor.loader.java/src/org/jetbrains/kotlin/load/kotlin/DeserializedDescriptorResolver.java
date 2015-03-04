@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
-import org.jetbrains.kotlin.load.java.components.ErrorReporter;
+import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter;
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
@@ -84,7 +84,7 @@ public final class DeserializedDescriptorResolver {
     public String[] readData(@NotNull KotlinJvmBinaryClass kotlinClass, @NotNull KotlinClassHeader.Kind expectedKind) {
         KotlinClassHeader header = kotlinClass.getClassHeader();
         if (!header.getIsCompatibleAbiVersion()) {
-            errorReporter.reportIncompatibleAbiVersion(kotlinClass, header.getVersion());
+            errorReporter.reportIncompatibleAbiVersion(kotlinClass.getClassId(), kotlinClass.getLocation(), header.getVersion());
         }
         else if (header.getKind() == expectedKind) {
             return header.getAnnotationData();

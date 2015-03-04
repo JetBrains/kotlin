@@ -43,13 +43,17 @@ public class ReflectKotlinClass private(
         private val klass: Class<*>,
         private val classHeader: KotlinClassHeader
 ) : KotlinJvmBinaryClass {
+
     default object Factory {
+
         public fun create(klass: Class<*>): ReflectKotlinClass? {
             val headerReader = ReadKotlinClassHeaderAnnotationVisitor()
             ReflectClassStructure.loadClassAnnotations(klass, headerReader)
             return ReflectKotlinClass(klass, headerReader.createHeader() ?: return null)
         }
     }
+
+    override fun getLocation() = klass.getName().replace('.', '/') + ".class"
 
     override fun getClassId() = klass.classId
 
