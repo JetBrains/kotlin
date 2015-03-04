@@ -17,40 +17,13 @@
 package org.jetbrains.kotlin.idea.findUsages
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.psi.JetForExpression
-import org.jetbrains.kotlin.psi.JetMultiDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.psi.JetReferenceExpression
-import org.jetbrains.kotlin.psi.JetImportDirective
-import org.jetbrains.kotlin.psi.JetCallableReferenceExpression
-import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
-import org.jetbrains.kotlin.psi.JetFunction
-import org.jetbrains.kotlin.psi.JetTypeParameter
-import org.jetbrains.kotlin.psi.JetTypeConstraint
-import org.jetbrains.kotlin.psi.JetDelegationSpecifier
-import org.jetbrains.kotlin.psi.JetTypedef
-import org.jetbrains.kotlin.psi.JetTypeProjection
-import org.jetbrains.kotlin.psi.JetParameter
-import org.jetbrains.kotlin.psi.JetIsExpression
-import org.jetbrains.kotlin.psi.JetBinaryExpressionWithTypeRHS
 import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
-import org.jetbrains.kotlin.psi.JetSuperExpression
-import org.jetbrains.kotlin.psi.JetDelegatorByExpressionSpecifier
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypesAndPredicate
-import org.jetbrains.kotlin.psi.JetBinaryExpression
-import org.jetbrains.kotlin.psi.JetPsiUtil
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.psi.JetAnnotationEntry
-import org.jetbrains.kotlin.psi.JetCallExpression
-import org.jetbrains.kotlin.psi.JetUnaryExpression
-import org.jetbrains.kotlin.psi.JetWhenConditionInRange
-import org.jetbrains.kotlin.psi.JetPackageDirective
-import org.jetbrains.kotlin.psi.JetQualifiedExpression
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -62,6 +35,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.idea.references.JetArrayAccessReference
 import org.jetbrains.kotlin.idea.references.JetInvokeFunctionReference
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 public object UsageTypeUtils {
@@ -69,6 +43,7 @@ public object UsageTypeUtils {
         when (element) {
             is JetForExpression -> return IMPLICIT_ITERATION
             is JetMultiDeclaration -> return READ
+            is JetPropertyDelegate -> return PROPERTY_DELEGATION
         }
 
         val refExpr = element.getNonStrictParentOfType<JetReferenceExpression>()
@@ -262,6 +237,7 @@ enum class UsageTypeEnum {
     IMPLICIT_SET
     IMPLICIT_INVOKE
     IMPLICIT_ITERATION
+    PROPERTY_DELEGATION
 
     RECEIVER
     DELEGATE

@@ -23,6 +23,7 @@ import com.google.common.collect.ImmutableSet
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.lexer.JetSingleValueToken
 import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
+import org.jetbrains.kotlin.resolve.*
 
 public val ALL_SEARCHABLE_OPERATIONS: ImmutableSet<JetToken> = ImmutableSet
         .builder<JetToken>()
@@ -59,7 +60,8 @@ public fun Name.getOperationSymbolsToSearch(): Set<JetToken> {
         IDENTITY_EQUALS -> return IDENTITY_EQUALS_OPERATIONS
         CONTAINS -> return IN_OPERATIONS_TO_SEARCH
         ITERATOR_OPERATION_NAME -> return ImmutableSet.of<JetToken>(JetTokens.IN_KEYWORD)
-        in INDEXING_OPERATION_NAMES -> return ImmutableSet.of<JetToken>(JetTokens.LBRACKET)
+        in INDEXING_OPERATION_NAMES -> return ImmutableSet.of<JetToken>(JetTokens.LBRACKET, JetTokens.BY_KEYWORD)
+        DelegatedPropertyResolver.PROPERTY_DELEGATED_FUNCTION_NAME -> return ImmutableSet.of<JetToken>(JetTokens.BY_KEYWORD)
     }
 
     if (isComponentLike(this)) return ImmutableSet.of<JetToken>(JetTokens.LPAR)

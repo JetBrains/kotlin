@@ -106,6 +106,12 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("getAsPropertyDelegate.0.kt")
+            public void testGetAsPropertyDelegate() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/conventions/getAsPropertyDelegate.0.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("identityEquals.0.kt")
             public void testIdentityEquals() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/conventions/identityEquals.0.kt");
@@ -136,9 +142,21 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("propertyDelegatedFunction.0.kt")
+            public void testPropertyDelegatedFunction() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/conventions/propertyDelegatedFunction.0.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("set.0.kt")
             public void testSet() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/conventions/set.0.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("setAsPropertyDelegate.0.kt")
+            public void testSetAsPropertyDelegate() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/conventions/setAsPropertyDelegate.0.kt");
                 doTest(fileName);
             }
 
