@@ -1947,6 +1947,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             doIntroducePropertyTest(fileName);
         }
 
+        @TestMetadata("extractLazyToTrait.kt")
+        public void testExtractLazyToTrait() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceProperty/extractLazyToTrait.kt");
+            doIntroducePropertyTest(fileName);
+        }
+
         @TestMetadata("extractLazyWithBlock.kt")
         public void testExtractLazyWithBlock() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceProperty/extractLazyWithBlock.kt");
@@ -2007,6 +2013,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             doIntroducePropertyTest(fileName);
         }
 
+        @TestMetadata("extractWithGetterToTrait.kt")
+        public void testExtractWithGetterToTrait() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceProperty/extractWithGetterToTrait.kt");
+            doIntroducePropertyTest(fileName);
+        }
+
         @TestMetadata("extractWithInitializerAndBlock.kt")
         public void testExtractWithInitializerAndBlock() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceProperty/extractWithInitializerAndBlock.kt");
@@ -2040,6 +2052,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
         @TestMetadata("extractWithInitializerToFile.kt")
         public void testExtractWithInitializerToFile() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceProperty/extractWithInitializerToFile.kt");
+            doIntroducePropertyTest(fileName);
+        }
+
+        @TestMetadata("extractWithInitializerToTrait.kt")
+        public void testExtractWithInitializerToTrait() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceProperty/extractWithInitializerToTrait.kt");
             doIntroducePropertyTest(fileName);
         }
 
