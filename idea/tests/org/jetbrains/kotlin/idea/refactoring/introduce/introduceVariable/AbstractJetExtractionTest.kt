@@ -33,12 +33,12 @@ import kotlin.test.assertEquals
 import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ExtractKotlinFunctionHandlerHelper
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ExtractionGeneratorOptions
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ExtractableCodeDescriptor
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.ExtractionGeneratorOptions
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.ExtractableCodeDescriptor
 import org.jetbrains.kotlin.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.PluginTestCaseBase
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ExtractionData
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ExtractionOptions
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.ExtractionData
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.ExtractionOptions
 import org.jetbrains.kotlin.psi.JetDeclaration
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.PsiWhiteSpace

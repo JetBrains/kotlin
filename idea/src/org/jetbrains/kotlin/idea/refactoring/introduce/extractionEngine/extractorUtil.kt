@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction
+package org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.refactoring.JetNameSuggester
 import org.jetbrains.kotlin.idea.refactoring.JetNameValidatorImpl
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.OutputValue.*
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.*
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.refactoring.isMultiLine
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.OutputValueBoxer.AsTuple
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValueBoxer.AsTuple
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiRange
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiRange.Match

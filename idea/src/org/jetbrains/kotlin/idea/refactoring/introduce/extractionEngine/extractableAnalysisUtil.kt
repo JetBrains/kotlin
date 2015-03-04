@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction
+package org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.types.*
@@ -42,8 +42,8 @@ import org.jetbrains.kotlin.utils.DFS.*
 import com.intellij.refactoring.util.RefactoringUIUtil
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.AnalysisResult.Status
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.AnalysisResult.ErrorMessage
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AnalysisResult.Status
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AnalysisResult.ErrorMessage
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
@@ -55,12 +55,12 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.getTargetFunctionDescript
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.idea.imports.importableFqNameSafe
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.OutputValue.Initializer
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.OutputValue.ParameterUpdate
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.OutputValue.ExpressionValue
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.OutputValue.Jump
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.Initializer
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.ParameterUpdate
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.ExpressionValue
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.Jump
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.traverseFollowingInstructions
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.OutputValueBoxer.AsList
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValueBoxer.AsList
 import org.jetbrains.kotlin.idea.refactoring.getContextForContainingDeclarationBody
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor

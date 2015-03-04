@@ -32,7 +32,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.refactoring.JetNameSuggester;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle;
 import org.jetbrains.kotlin.idea.refactoring.RefactoringPackage;
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.*;
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 
 import javax.swing.*;
@@ -83,7 +83,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
     }
 
     private boolean isVisibilitySectionAvailable() {
-        return ExtractFunctionPackage.isVisibilityApplicable(originalDescriptor.getDescriptor().getExtractionData());
+        return ExtractionEnginePackage.isVisibilityApplicable(originalDescriptor.getDescriptor().getExtractionData());
     }
 
     private String getFunctionName() {
@@ -110,7 +110,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
 
         setOKActionEnabled(checkNames());
         signaturePreviewField.setText(
-                ExtractFunctionPackage.getDeclarationText(currentDescriptor, getGeneratorOptions(), false,
+                ExtractionEnginePackage.getDeclarationText(currentDescriptor, getGeneratorOptions(), false,
                                                           IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES)
         );
     }
@@ -145,7 +145,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
                 }
         );
 
-        propertyCheckBox.setEnabled(ExtractFunctionPackage.canGenerateProperty(originalDescriptor.getDescriptor()));
+        propertyCheckBox.setEnabled(ExtractionEnginePackage.canGenerateProperty(originalDescriptor.getDescriptor()));
         if (propertyCheckBox.isEnabled()) {
             propertyCheckBox.addActionListener(
                     new ActionListener() {
@@ -183,7 +183,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
     @SuppressWarnings("SuspiciousMethodCalls")
     @Override
     protected void doOKAction() {
-        MultiMap<PsiElement, String> conflicts = ExtractFunctionPackage.validate(currentDescriptor).getConflicts();
+        MultiMap<PsiElement, String> conflicts = ExtractionEnginePackage.validate(currentDescriptor).getConflicts();
         conflicts.values().removeAll(originalDescriptor.getConflicts().values());
 
         RefactoringPackage.checkConflictsInteractively(

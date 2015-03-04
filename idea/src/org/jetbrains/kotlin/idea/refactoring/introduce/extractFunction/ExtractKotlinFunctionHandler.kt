@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.psi.JetBlockExpression
 import kotlin.test.fail
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.AnalysisResult.Status
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AnalysisResult.Status
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.ui.MessageType
 import javax.swing.event.HyperlinkEvent
@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.psi.JetFunctionLiteral
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
 import org.jetbrains.kotlin.idea.refactoring.chooseContainerElementIfNecessary
 import org.jetbrains.kotlin.idea.refactoring.getExtractionContainers
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
 
 public open class ExtractKotlinFunctionHandlerHelper {
     open fun adjustExtractionData(data: ExtractionData): ExtractionData = data
