@@ -170,7 +170,10 @@ private fun QualifierReceiver.resolveReferenceTarget(
         return packageView
     }
 
-    if (classifier is ClassDescriptor && classifier.classObjectDescriptor == selectorContainer) {
+    val isCallableWithReceiver = selector is CallableDescriptor &&
+                                 (selector.getDispatchReceiverParameter() != null || selector.getExtensionReceiverParameter() != null)
+
+    if (classifier is ClassDescriptor && classifier.classObjectDescriptor != null && isCallableWithReceiver) {
         if (classifier.getDefaultObjectDescriptor() != null) {
             context.trace.record(SHORT_REFERENCE_TO_DEFAULT_OBJECT, referenceExpression, classifier)
         }

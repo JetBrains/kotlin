@@ -95,6 +95,12 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
         doTest(fileName);
     }
 
+    @TestMetadata("ClassQualifierForNestedClassConstructorCall.kt")
+    public void testClassQualifierForNestedClassConstructorCall() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/ClassQualifierForNestedClassConstructorCall.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ClassReferenceInImport.kt")
     public void testClassReferenceInImport() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/ClassReferenceInImport.kt");
@@ -110,6 +116,36 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
     @TestMetadata("DataClassCopy.kt")
     public void testDataClassCopy() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/DataClassCopy.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("DefaultObjectAsExtensionReceiverForFunction.kt")
+    public void testDefaultObjectAsExtensionReceiverForFunction() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/DefaultObjectAsExtensionReceiverForFunction.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("DefaultObjectAsExtensionReceiverForProperty.kt")
+    public void testDefaultObjectAsExtensionReceiverForProperty() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/DefaultObjectAsExtensionReceiverForProperty.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("DefaultObjectAsReceiverForExtensionFunctionOnSuperType.kt")
+    public void testDefaultObjectAsReceiverForExtensionFunctionOnSuperType() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/DefaultObjectAsReceiverForExtensionFunctionOnSuperType.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("DefaultObjectAsReceiverForMemberPropertyInSuperType.kt")
+    public void testDefaultObjectAsReceiverForMemberPropertyInSuperType() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/DefaultObjectAsReceiverForMemberPropertyInSuperType.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("DefaultObjectInShortReferenceFormCall.kt")
+    public void testDefaultObjectInShortReferenceFormCall() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/DefaultObjectInShortReferenceFormCall.kt");
         doTest(fileName);
     }
 
