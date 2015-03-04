@@ -61,7 +61,8 @@ class CodeBuilder(private val topElement: PsiElement?) {
     private fun appendCommentOrWhiteSpace(element: PsiElement) {
         if (element is PsiDocComment) {
             append(DocCommentConverter.convertDocComment(element), false)
-        } else {
+        }
+        else {
             append(element.getText()!!, element.isEndOfLineComment())
         }
     }
