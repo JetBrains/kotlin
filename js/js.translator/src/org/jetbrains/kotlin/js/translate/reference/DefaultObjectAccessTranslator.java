@@ -35,7 +35,7 @@ import java.util.List;
 import static org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator.translateAsFQReference;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.isObject;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isNonDefaultObject;
 
 public class DefaultObjectAccessTranslator extends AbstractTranslator implements CachedAccessTranslator {
     @NotNull
@@ -74,7 +74,7 @@ public class DefaultObjectAccessTranslator extends AbstractTranslator implements
         }
 
         JsExpression fqReference = translateAsFQReference(descriptor, context);
-        if (isObject(descriptor) || isEnumEntry(descriptor)) {
+        if (isNonDefaultObject(descriptor) || isEnumEntry(descriptor)) {
             return fqReference;
         }
 

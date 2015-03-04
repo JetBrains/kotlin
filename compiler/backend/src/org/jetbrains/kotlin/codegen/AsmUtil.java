@@ -728,7 +728,7 @@ public class AsmUtil {
             return false;
         }
 
-        return isObject(propertyDescriptor.getContainingDeclaration()) || isPropertyWithBackingFieldInOuterClass(propertyDescriptor);
+        return isNonDefaultObject(propertyDescriptor.getContainingDeclaration()) || isPropertyWithBackingFieldInOuterClass(propertyDescriptor);
     }
 
     public static boolean isPropertyWithBackingFieldInOuterClass(@NotNull PropertyDescriptor propertyDescriptor) {

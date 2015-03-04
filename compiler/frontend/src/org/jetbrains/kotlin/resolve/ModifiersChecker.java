@@ -243,7 +243,7 @@ public class ModifiersChecker {
         if (DescriptorUtils.isTrait(containingDeclaration)) {
             return InnerModifierCheckResult.IN_TRAIT;
         }
-        else if (DescriptorUtils.isDefaultObject(containingDeclaration) || DescriptorUtils.isObject(containingDeclaration)) {
+        else if (DescriptorUtils.isDefaultObject(containingDeclaration) || DescriptorUtils.isNonDefaultObject(containingDeclaration)) {
             return InnerModifierCheckResult.IN_OBJECT;
         }
         else {

@@ -976,7 +976,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private void generateFieldForSingleton() {
         if (isEnumEntry(descriptor) || isDefaultObject(descriptor)) return;
 
-        if (isObject(descriptor)) {
+        if (isNonDefaultObject(descriptor)) {
             StackValue.Field field = StackValue.singleton(descriptor, typeMapper);
             v.newField(OtherOrigin(myClass), ACC_PUBLIC | ACC_STATIC | ACC_FINAL, field.name, field.type.getDescriptor(), null, null);
 
@@ -1125,7 +1125,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             generateDelegatorToConstructorCall(iv, codegen, constructorDescriptor);
         }
 
-        if (isObject(descriptor)) {
+        if (isNonDefaultObject(descriptor)) {
             StackValue.singleton(descriptor, typeMapper).store(StackValue.LOCAL_0, iv);
         }
 

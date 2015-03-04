@@ -248,7 +248,7 @@ public class DescriptorUtils {
         return isClass(descriptor) && descriptor.getName().equals(SpecialNames.NO_NAME_PROVIDED);
     }
 
-    public static boolean isObject(@NotNull DeclarationDescriptor descriptor) {
+    public static boolean isNonDefaultObject(@NotNull DeclarationDescriptor descriptor) {
         return isKindOf(descriptor, ClassKind.OBJECT);
     }
 

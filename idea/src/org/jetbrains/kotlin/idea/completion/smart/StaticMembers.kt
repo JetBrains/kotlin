@@ -94,7 +94,7 @@ class StaticMembers(
 
         var members = classDescriptor.getDefaultType().getMemberScope().getAllDescriptors()
         if (classDescriptor.getKind() != ClassKind.ENUM_CLASS) {
-            members = members.filter { DescriptorUtils.isObject(it) }
+            members = members.filter { DescriptorUtils.isNonDefaultObject(it) }
         }
         members.forEach(::processMember)
     }
