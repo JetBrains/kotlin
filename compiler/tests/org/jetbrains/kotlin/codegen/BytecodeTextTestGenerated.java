@@ -35,6 +35,7 @@ import java.util.regex.Pattern;
         BytecodeTextTestGenerated.Constants.class,
         BytecodeTextTestGenerated.DeadCodeElimination.class,
         BytecodeTextTestGenerated.DirectInvoke.class,
+        BytecodeTextTestGenerated.ForLoop.class,
         BytecodeTextTestGenerated.Inline.class,
         BytecodeTextTestGenerated.LazyCodegen.class,
         BytecodeTextTestGenerated.LineNumbers.class,
@@ -401,6 +402,39 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("localFun.kt")
         public void testLocalFun() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/directInvoke/localFun.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/bytecodeText/forLoop")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ForLoop extends AbstractBytecodeTextTest {
+        public void testAllFilesPresentInForLoop() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("primitiveLiteralRange1.kt")
+        public void testPrimitiveLiteralRange1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/primitiveLiteralRange1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("primitiveLiteralRange2.kt")
+        public void testPrimitiveLiteralRange2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/primitiveLiteralRange2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("primitiveProgression.kt")
+        public void testPrimitiveProgression() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/primitiveProgression.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("primitiveRange.kt")
+        public void testPrimitiveRange() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/primitiveRange.kt");
             doTest(fileName);
         }
     }

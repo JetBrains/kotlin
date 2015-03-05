@@ -107,12 +107,7 @@ public class RangeCodegenUtil {
             @NotNull ImmutableMap<FqName, PrimitiveType> map
     ) {
         ClassifierDescriptor declarationDescriptor = rangeOrProgression.getConstructor().getDeclarationDescriptor();
-        assert declarationDescriptor != null;
-        if (declarationDescriptor != KotlinBuiltIns.getInstance().getBuiltInsPackageScope().getClassifier(declarationDescriptor.getName())) {
-            // Must be a standard library class
-            return null;
-        }
-        return map.get(DescriptorUtils.getFqNameSafe(declarationDescriptor));
+        return declarationDescriptor == null ? null : map.get(DescriptorUtils.getFqNameSafe(declarationDescriptor));
     }
 
     @Nullable
