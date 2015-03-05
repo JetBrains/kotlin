@@ -19,7 +19,7 @@ inline fun test(): String {
 }
 //TODO SHOULD BE LESS
 
-//SMAP
+//SXMAP
 //objectOnInlineCallSite2.2.kt
 //Kotlin
 //*S Kotlin
@@ -30,7 +30,7 @@ inline fun test(): String {
 //1#1,42:1
 //*E
 //
-//SMAP
+//SXMAP
 //objectOnInlineCallSite2.2.kt
 //Kotlin
 //*S Kotlin

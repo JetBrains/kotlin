@@ -740,7 +740,9 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
 
     @TestMetadata("compiler/testData/codegen/boxInline/smap")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({Smap.Anonymous.class})
+    @InnerTestClasses({
+            Smap.Anonymous.class,
+    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Smap extends AbstractBlackBoxInlineCodegenTest {
         public void testAllFilesPresentInSmap() throws Exception {
@@ -812,6 +814,12 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
             @TestMetadata("objectOnInlineCallSite2.1.kt")
             public void testObjectOnInlineCallSite2() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/anonymous/objectOnInlineCallSite2.1.kt");
+                doTestMultiFileWithInlineCheck(fileName);
+            }
+
+            @TestMetadata("objectOnInlineCallSiteWithCapture.1.kt")
+            public void testObjectOnInlineCallSiteWithCapture() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/anonymous/objectOnInlineCallSiteWithCapture.1.kt");
                 doTestMultiFileWithInlineCheck(fileName);
             }
         }

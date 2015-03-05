@@ -740,7 +740,9 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
 
     @TestMetadata("compiler/testData/codegen/boxInline/smap")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({Smap.Anonymous.class})
+    @InnerTestClasses({
+            Smap.Anonymous.class,
+    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Smap extends AbstractCompileKotlinAgainstInlineKotlinTest {
         public void testAllFilesPresentInSmap() throws Exception {
@@ -812,6 +814,12 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             @TestMetadata("objectOnInlineCallSite2.1.kt")
             public void testObjectOnInlineCallSite2() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/anonymous/objectOnInlineCallSite2.1.kt");
+                doBoxTestWithInlineCheck(fileName);
+            }
+
+            @TestMetadata("objectOnInlineCallSiteWithCapture.1.kt")
+            public void testObjectOnInlineCallSiteWithCapture() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/anonymous/objectOnInlineCallSiteWithCapture.1.kt");
                 doBoxTestWithInlineCheck(fileName);
             }
         }

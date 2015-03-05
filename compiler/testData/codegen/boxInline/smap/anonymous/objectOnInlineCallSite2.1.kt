@@ -6,7 +6,7 @@ fun box(): String {
 }
 
 
-//SMAP
+//SXMAP
 //objectOnInlineCallSite2.1.kt
 //Kotlin
 //*S Kotlin
@@ -20,7 +20,7 @@ fun box(): String {
 //8#2,11:33
 //*E
 //
-//SMAP
+//SXMAP
 //objectOnInlineCallSite2.2.kt
 //Kotlin
 //*S Kotlin
