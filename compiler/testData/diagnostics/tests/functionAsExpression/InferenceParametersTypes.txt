@@ -1,0 +1,7 @@
+package
+
+internal val a: (kotlin.Int) -> kotlin.Unit
+internal val b: (kotlin.Int) -> kotlin.Unit
+internal fun </*0*/ T> listOf(): kotlin.List<T>
+internal fun test(/*0*/ a: (kotlin.Int) -> kotlin.Int): kotlin.Unit
+internal fun test2(/*0*/ a: () -> kotlin.List<kotlin.Int>): kotlin.Unit

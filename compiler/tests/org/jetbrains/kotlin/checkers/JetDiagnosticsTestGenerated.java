@@ -4634,6 +4634,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("DifficultInferenceForParameter.kt")
+            public void testDifficultInferenceForParameter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionAsExpression/DifficultInferenceForParameter.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ForbiddenNonLocalReturn.kt")
             public void testForbiddenNonLocalReturn() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionAsExpression/ForbiddenNonLocalReturn.kt");
@@ -4643,6 +4649,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("FunctionType.kt")
             public void testFunctionType() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionAsExpression/FunctionType.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("InferenceParametersTypes.kt")
+            public void testInferenceParametersTypes() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionAsExpression/InferenceParametersTypes.kt");
                 doTest(fileName);
             }
 
