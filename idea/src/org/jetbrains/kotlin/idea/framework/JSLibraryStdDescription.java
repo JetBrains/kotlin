@@ -23,6 +23,7 @@ import com.intellij.openapi.roots.libraries.NewLibraryConfiguration;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.idea.configuration.KotlinJsModuleConfigurator;
+import org.jetbrains.kotlin.idea.configuration.RuntimeLibraryFiles;
 
 import java.util.Set;
 
@@ -50,6 +51,7 @@ public class JSLibraryStdDescription extends CustomLibraryDescriptorWithDeferred
         KotlinJsModuleConfigurator configurator = (KotlinJsModuleConfigurator) getConfiguratorByName(NAME);
         assert configurator != null : "Cannot find configurator with name " + NAME;
 
-        return createConfiguration(configurator.getExistingJarFile(), configurator.getExistingSourcesJarFile());
+        RuntimeLibraryFiles files = configurator.getExistingJarFiles();
+        return createConfiguration(files.getRuntimeJar(), files.getRuntimeSourcesJar());
     }
 }
