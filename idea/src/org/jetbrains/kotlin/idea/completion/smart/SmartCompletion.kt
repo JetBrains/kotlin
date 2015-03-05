@@ -52,6 +52,7 @@ class SmartCompletion(
         val moduleDescriptor: ModuleDescriptor,
         val bindingContext: BindingContext,
         val visibilityFilter: (DeclarationDescriptor) -> Boolean,
+        val inDescriptor: DeclarationDescriptor?,
         val prefixMatcher: PrefixMatcher,
         val inheritorSearchScope: GlobalSearchScope,
         val toFromOriginalFileMapper: ToFromOriginalFileMapper,
@@ -141,9 +142,16 @@ class SmartCompletion(
 
             val result = ArrayList<LookupElement>()
             val types = descriptor.fuzzyTypes(smartCastTypes)
-            val classifier = { (expectedInfo: ExpectedInfo) -> types.classifyExpectedInfo(expectedInfo) }
-            result.addLookupElements(descriptor, expectedInfos, classifier) { descriptor ->
+            val infoClassifier = { (expectedInfo: ExpectedInfo) -> types.classifyExpectedInfo(expectedInfo) }
+
+            result.addLookupElements(descriptor, expectedInfos, infoClassifier) { descriptor ->
                 lookupElementFactory.createLookupElement(descriptor, resolutionFacade, bindingContext, true)
+            }
+
+            if (descriptor is PropertyDescriptor) {
+                result.addLookupElements(descriptor, expectedInfos, infoClassifier) { descriptor ->
+                    lookupElementFactory.createBackingFieldLookupElement(descriptor, inDescriptor, resolutionFacade)
+                }
             }
 
             if (receiver == null) {

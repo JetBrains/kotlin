@@ -16,58 +16,38 @@
 
 package org.jetbrains.kotlin.idea.completion
 
-import com.intellij.openapi.util.Key
-import com.intellij.codeInsight.lookup.LookupElement
-import com.intellij.codeInsight.lookup.AutoCompletionPolicy
-import com.intellij.openapi.progress.ProcessCanceledException
-import com.intellij.codeInsight.completion.CompletionService
 import com.intellij.codeInsight.completion.CompletionProgressIndicator
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import com.intellij.codeInsight.completion.PrefixMatcher
-import org.jetbrains.kotlin.name.Name
-import com.intellij.codeInsight.lookup.LookupElementPresentation
-import com.intellij.codeInsight.lookup.LookupElementDecorator
+import com.intellij.codeInsight.completion.CompletionService
 import com.intellij.codeInsight.completion.InsertionContext
-import org.jetbrains.kotlin.idea.completion.handlers.CastReceiverInsertHandler
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
-import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
-import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
-import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.psi.JetFunctionLiteral
-import org.jetbrains.kotlin.psi.JetFunctionLiteralExpression
-import org.jetbrains.kotlin.psi.JetValueArgument
-import org.jetbrains.kotlin.psi.JetValueArgumentList
-import org.jetbrains.kotlin.psi.JetCallExpression
-import org.jetbrains.kotlin.psi.JetExpression
-import java.util.ArrayList
-import org.jetbrains.kotlin.idea.util.getImplicitReceiversWithInstance
-import com.intellij.codeInsight.lookup.LookupElementBuilder
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.idea.util.FuzzyType
-import org.jetbrains.kotlin.psi.JetLabeledExpression
-import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.kotlin.psi.psiUtil.parents
-import org.jetbrains.kotlin.psi.JetReferenceExpression
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
-import org.jetbrains.kotlin.psi.JetDeclarationWithBody
+import com.intellij.codeInsight.completion.PrefixMatcher
+import com.intellij.codeInsight.lookup.*
+import com.intellij.openapi.progress.ProcessCanceledException
+import com.intellij.openapi.util.Key
+import com.intellij.util.PlatformIcons
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.completion.handlers.CastReceiverInsertHandler
 import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
-import org.jetbrains.kotlin.psi.JetLoopExpression
-import org.jetbrains.kotlin.renderer.DescriptorRendererBuilder
-import org.jetbrains.kotlin.renderer.NameShortness
+import org.jetbrains.kotlin.idea.util.FuzzyType
+import org.jetbrains.kotlin.idea.util.getImplicitReceiversWithInstance
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
+import org.jetbrains.kotlin.psi.psiUtil.parents
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
+import java.util.ArrayList
 
 enum class ItemPriority {
     MULTIPLE_ARGUMENTS_ITEM
     DEFAULT
+    BACKING_FIELD
     NAMED_PARAMETER
 }
 
@@ -121,7 +101,20 @@ fun rethrowWithCancelIndicator(exception: ProcessCanceledException): ProcessCanc
     return exception
 }
 
-fun PrefixMatcher.asNameFilter() = { (name: Name) -> !name.isSpecial() && prefixMatches(name.getIdentifier()) }
+fun PrefixMatcher.asNameFilter() = { (name: Name) ->
+    if (name.isSpecial()) {
+        false
+    }
+    else {
+        val identifier = name.getIdentifier()
+        if (getPrefix().startsWith("$")) { // we need properties from scope for backing field completion
+            prefixMatches("$" + identifier)
+        }
+        else {
+            prefixMatches(identifier)
+        }
+    }
+}
 
 fun LookupElementPresentation.prependTailText(text: String, grayed: Boolean) {
     val tails = getTailFragments()
@@ -353,4 +346,37 @@ fun breakOrContinueExpressionItems(position: JetElement, breakOrContinue: String
         }
     }
     return result
+}
+
+fun LookupElementFactory.createBackingFieldLookupElement(
+        property: PropertyDescriptor,
+        inDescriptor: DeclarationDescriptor?,
+        resolutionFacade: ResolutionFacade
+): LookupElement? {
+    if (inDescriptor == null) return null // no backing field accessible
+    val insideAccessor = inDescriptor is PropertyAccessorDescriptor && inDescriptor.getCorrespondingProperty() == property
+    if (!insideAccessor) {
+        val container = property.getContainingDeclaration()
+        if (container !is ClassDescriptor || !DescriptorUtils.isAncestor(container, inDescriptor, false)) return null // backing field not accessible
+    }
+
+    val declaration = (DescriptorToSourceUtils.descriptorToDeclaration(property) as? JetProperty) ?: return null
+
+    val accessors = declaration.getAccessors()
+    if (accessors.all { it.getBodyExpression() == null }) return null // makes no sense to access backing field - it's the same as accessing property directly
+
+    val bindingContext = resolutionFacade.analyze(declaration)
+    if (!bindingContext[BindingContext.BACKING_FIELD_REQUIRED, property]) return null
+
+    val lookupElement = createLookupElement(resolutionFacade, property, true)
+    return object : LookupElementDecorator<LookupElement>(lookupElement) {
+        override fun getLookupString() = "$" + super.getLookupString()
+        override fun getAllLookupStrings() = setOf(getLookupString())
+
+        override fun renderElement(presentation: LookupElementPresentation) {
+            super.renderElement(presentation)
+            presentation.setItemText("$" + presentation.getItemText())
+            presentation.setIcon(PlatformIcons.FIELD_ICON) //TODO: special icon
+        }
+    }.assignPriority(ItemPriority.BACKING_FIELD)
 }

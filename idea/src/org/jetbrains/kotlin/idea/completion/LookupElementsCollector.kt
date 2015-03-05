@@ -16,26 +16,28 @@
 
 package org.jetbrains.kotlin.idea.completion
 
+import com.intellij.codeInsight.completion.CompletionParameters
+import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.completion.InsertionContext
+import com.intellij.codeInsight.completion.PrefixMatcher
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.idea.completion.handlers.*
-import com.intellij.codeInsight.completion.PrefixMatcher
-import java.util.ArrayList
-import com.intellij.codeInsight.completion.CompletionResultSet
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import com.intellij.openapi.util.TextRange
-import com.intellij.codeInsight.completion.CompletionParameters
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.completion.handlers.*
+import java.util.ArrayList
 
 class LookupElementsCollector(
         private val prefixMatcher: PrefixMatcher,
         private val completionParameters: CompletionParameters,
         private val resolutionFacade: ResolutionFacade,
         private val lookupElementFactory: LookupElementFactory,
+        private val inDescriptor: DeclarationDescriptor?,
         private val surroundCallsWithBraces: Boolean
 ) {
     private val elements = ArrayList<LookupElement>()
@@ -112,6 +114,13 @@ class LookupElementsCollector(
                         addElement(lookupElement)
                     }
                 }
+            }
+        }
+
+        if (descriptor is PropertyDescriptor) {
+            val lookupElement = lookupElementFactory.createBackingFieldLookupElement(descriptor, inDescriptor, resolutionFacade)
+            if (lookupElement != null) {
+                addElement(lookupElement)
             }
         }
     }

@@ -20,6 +20,7 @@ import com.intellij.codeInsight.completion.*
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.patterns.CharPattern
+import com.intellij.patterns.ElementPattern
 import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.StandardPatterns
 import com.intellij.psi.PsiElement
@@ -37,10 +38,12 @@ import org.jetbrains.kotlin.idea.refactoring.comparePossiblyOverridingDescriptor
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
 import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.makeNotNullable
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptorKindExclude
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
+import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastUtils
@@ -90,6 +93,7 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
     protected val bindingContext: BindingContext? = expression?.let { resolutionFacade.analyze(it, BodyResolveMode.PARTIAL_FOR_COMPLETION) }
     protected val inDescriptor: DeclarationDescriptor? = expression?.let { bindingContext!!.get(BindingContext.RESOLUTION_SCOPE, it)?.getContainingDeclaration() }
 
+
     private fun singleCharPattern(char: Char): CharPattern {
         return StandardPatterns.character().with(
                 object : PatternCondition<Char>(char.toString()) {
@@ -97,8 +101,20 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
                 })
     }
 
-    private val kotlinIdentifierStartPattern = StandardPatterns.and(StandardPatterns.character().javaIdentifierStart(), StandardPatterns.not(singleCharPattern('$')))
-    private val kotlinIdentifierPartPattern = StandardPatterns.and(StandardPatterns.character().javaIdentifierPart(), StandardPatterns.not(singleCharPattern('$')))
+    private val kotlinIdentifierStartPattern: ElementPattern<Char>
+    private val kotlinIdentifierPartPattern: ElementPattern<Char>
+
+    ;{
+        val includeDollar = position.prevLeaf()?.getNode()?.getElementType() != JetTokens.SHORT_TEMPLATE_ENTRY_START
+        if (includeDollar) {
+            kotlinIdentifierStartPattern = StandardPatterns.character().javaIdentifierStart()
+            kotlinIdentifierPartPattern = StandardPatterns.character().javaIdentifierPart()
+        }
+        else {
+            kotlinIdentifierStartPattern = StandardPatterns.and(StandardPatterns.character().javaIdentifierStart(), StandardPatterns.not(singleCharPattern('$')))
+            kotlinIdentifierPartPattern = StandardPatterns.and(StandardPatterns.character().javaIdentifierPart(), StandardPatterns.not(singleCharPattern('$')))
+        }
+    }
 
     protected val prefix: String = CompletionUtil.findIdentifierPrefix(
             parameters.getPosition().getContainingFile(),
@@ -135,10 +151,9 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
     }
 
     protected val collector: LookupElementsCollector = LookupElementsCollector(
-            prefixMatcher, parameters, resolutionFacade, lookupElementFactory, expression?.getParent() is JetSimpleNameStringTemplateEntry)
+            prefixMatcher, parameters, resolutionFacade, lookupElementFactory, inDescriptor, expression?.getParent() is JetSimpleNameStringTemplateEntry)
 
     protected val project: Project = position.getProject()
-
 
     protected val originalSearchScope: GlobalSearchScope = parameters.getOriginalFile().getResolveScope()
 
@@ -378,7 +393,7 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
         if (expression != null) {
             val mapper = ToFromOriginalFileMapper(parameters.getOriginalFile() as JetFile, position.getContainingFile() as JetFile, parameters.getOffset())
             val completion = SmartCompletion(expression, resolutionFacade, moduleDescriptor,
-                                             bindingContext!!, { isVisibleDescriptor(it) }, prefixMatcher, originalSearchScope,
+                                             bindingContext!!, { isVisibleDescriptor(it) }, inDescriptor, prefixMatcher, originalSearchScope,
                                              mapper, lookupElementFactory)
             val result = completion.execute()
             if (result != null) {
