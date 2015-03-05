@@ -113,6 +113,12 @@ public class HighlightingTestGenerated extends AbstractHighlightingTest {
             doTest(fileName);
         }
 
+        @TestMetadata("ExtensionFunction.kt")
+        public void testExtensionFunction() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/highlighter/deprecated/ExtensionFunction.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("Function.kt")
         public void testFunction() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/highlighter/deprecated/Function.kt");
