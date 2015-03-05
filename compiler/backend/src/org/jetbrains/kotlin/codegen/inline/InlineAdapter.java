@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.codegen.inline;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Opcodes;
@@ -35,7 +36,7 @@ public class InlineAdapter extends InstructionAdapter {
 
     private int nextLocalIndexBeforeInline = -1;
 
-    public InlineAdapter(MethodVisitor mv, int localsSize, SourceMapper sourceMapper) {
+    public InlineAdapter(MethodVisitor mv, int localsSize, @NotNull SourceMapper sourceMapper) {
         super(InlineCodegenUtil.API, mv);
         nextLocalIndex = localsSize;
         this.sourceMapper = sourceMapper;
@@ -86,13 +87,7 @@ public class InlineAdapter extends InstructionAdapter {
 
     @Override
     public void visitLineNumber(int line, Label start) {
-        if (!isLambdaInlining) {
-            if (sourceMapper != null) {
-                sourceMapper.visitLineNumber(mv, line, start);
-            }
-        } else {
-            super.visitLineNumber(line, start);
-        }
+        sourceMapper.visitLineNumber(mv, line, start);
     }
 
     @Override

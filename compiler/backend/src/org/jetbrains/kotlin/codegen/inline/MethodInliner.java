@@ -54,7 +54,7 @@ public class MethodInliner {
 
     private final String errorPrefix;
 
-    private SourceMapper sourceMapper;
+    private final SourceMapper sourceMapper;
 
     private final JetTypeMapper typeMapper;
 
@@ -83,7 +83,7 @@ public class MethodInliner {
             @NotNull FieldRemapper nodeRemapper,
             boolean isSameModule,
             @NotNull String errorPrefix,
-            SourceMapper sourceMapper
+            @NotNull SourceMapper sourceMapper
     ) {
         this.node = node;
         this.parameters = parameters;
@@ -132,6 +132,7 @@ public class MethodInliner {
         //flush transformed node to output
         resultNode.accept(new InliningInstructionAdapter(adapter));
 
+        sourceMapper.endMapping();
         return result;
     }
 
@@ -216,11 +217,16 @@ public class MethodInliner {
                             new InlinedLambdaRemapper(info.getLambdaClassType().getInternalName(), nodeRemapper, lambdaParameters);
 
                     setLambdaInlining(true);
-                    MethodInliner inliner = new MethodInliner(info.getNode(), lambdaParameters,
+                    SMAP lambdaSMAP = info.getNode().getClassSMAP();
+                    SourceMapper mapper =
+                            inliningContext.classRegeneration && !inliningContext.isInliningLambda ?
+                            new NestedSourceMapper(sourceMapper, lambdaSMAP.getIntervals(), lambdaSMAP.getSourceInfo())
+                            : new InlineLambdaSourceMapper(sourceMapper.getParent(), info.getNode());
+                    MethodInliner inliner = new MethodInliner(info.getNode().getNode(), lambdaParameters,
                                                               inliningContext.subInlineLambda(info),
                                                               newCapturedRemapper, true /*cause all calls in same module as lambda*/,
                                                               "Lambda inlining " + info.getLambdaClassType().getInternalName(),
-                                                              IdenticalSourceMapper.INSTANCE$);
+                                                              mapper);
 
                     LocalVarRemapper remapper = new LocalVarRemapper(lambdaParameters, valueParamShift);
                     InlineResult lambdaResult = inliner.doInline(this.mv, remapper, true, info);//TODO add skipped this and receiver
@@ -233,6 +239,7 @@ public class MethodInliner {
                     StackValue.onStack(delegate.getReturnType()).put(bridge.getReturnType(), this);
                     setLambdaInlining(false);
                     addInlineMarker(this, false);
+                    mapper.endMapping();
                 }
                 else if (isAnonymousConstructorCall(owner, name)) { //TODO add method
                     assert anonymousObjectGen != null : "<init> call not corresponds to new call" + owner + " " + name;
@@ -271,7 +278,6 @@ public class MethodInliner {
             }
 
         };
-
 
         node.accept(lambdaInliner);
 

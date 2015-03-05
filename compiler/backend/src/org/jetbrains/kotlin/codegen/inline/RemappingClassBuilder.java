@@ -81,4 +81,5 @@ public class RemappingClassBuilder extends DelegatingClassBuilder {
     public ClassVisitor getVisitor() {
         return new RemappingClassAdapter(builder.getVisitor(), remapper);
     }
+
 }

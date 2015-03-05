@@ -44,6 +44,14 @@ public class AnonymousObjectTransformer {
 
     private MethodNode constructor;
 
+    private String sourceInfo;
+
+    private String debugInfo;
+
+    private SMAP smap;
+
+    private SourceMapper sourceMapper;
+
     private final InliningContext inliningContext;
 
     private final Type oldObjectType;
@@ -140,7 +148,28 @@ public class AnonymousObjectTransformer {
                     return super.visitField(access, name, desc, signature, value);
                 }
             }
+
+            @Override
+            public void visitSource(String source, String debug) {
+                sourceInfo = source;
+                debugInfo = debug;
+            }
+
+            @Override
+            public void visitEnd() {
+
+            }
         }, ClassReader.SKIP_FRAMES);
+
+        if (!inliningContext.isInliningLambda) {
+            assert debugInfo != null && !debugInfo.isEmpty() : "Debug info is null for " + oldObjectType;
+            smap = new SMAPParser(debugInfo, sourceInfo, "notused", 1, 2).parse();
+            sourceMapper = SourceMapper.Default.createFromSmap(smap);
+        }
+        else {
+            classBuilder.visitSource(sourceInfo, debugInfo);
+            sourceMapper = IdenticalSourceMapper.INSTANCE$;
+        }
 
         ParametersBuilder allCapturedParamBuilder = ParametersBuilder.newBuilder();
         ParametersBuilder constructorParamBuilder = ParametersBuilder.newBuilder();
@@ -158,6 +187,8 @@ public class AnonymousObjectTransformer {
                 generateConstructorAndFields(classBuilder, allCapturedParamBuilder, constructorParamBuilder, anonymousObjectGen, parentRemapper, additionalFakeParams);
 
         result.addAllClassesToRemove(constructorResult);
+
+        SourceMapper.Default.flushToClassBuilder(sourceMapper, classBuilder);
 
         classBuilder.done();
 
@@ -183,7 +214,7 @@ public class AnonymousObjectTransformer {
 
         MethodInliner inliner = new MethodInliner(sourceNode, parameters, inliningContext.subInline(inliningContext.nameGenerator.subGenerator("lambda")),
                                                   remapper, isSameModule, "Transformer for " + anonymousObjectGen.getOwnerInternalName(),
-                                                  null);
+                                                  sourceMapper);
 
         InlineResult result = inliner.doInline(resultVisitor, new LocalVarRemapper(parameters, 0), false, LabelOwner.NOT_APPLICABLE);
         result.getReifiedTypeParametersUsages().mergeAll(typeParametersToReify);
@@ -272,7 +303,7 @@ public class AnonymousObjectTransformer {
 
         MethodInliner inliner = new MethodInliner(constructor, constructorParameters, inliningContext.subInline(inliningContext.nameGenerator.subGenerator("lambda")),
                                                   remapper, isSameModule, "Transformer for constructor of " + anonymousObjectGen.getOwnerInternalName(),
-                                                  null);
+                                                  sourceMapper);
         InlineResult result = inliner.doInline(capturedFieldInitializer, new LocalVarRemapper(constructorParameters, 0), false,
                                                LabelOwner.NOT_APPLICABLE);
         constructorVisitor.visitMaxs(-1, -1);

@@ -26,11 +26,13 @@ import org.jetbrains.kotlin.builtins.InlineStrategy;
 import org.jetbrains.kotlin.builtins.InlineUtil;
 import org.jetbrains.kotlin.codegen.*;
 import org.jetbrains.kotlin.codegen.context.CodegenContext;
+import org.jetbrains.kotlin.codegen.context.FieldOwnerContext;
 import org.jetbrains.kotlin.codegen.context.MethodContext;
 import org.jetbrains.kotlin.codegen.context.PackageContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
@@ -38,7 +40,6 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
-import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
@@ -83,7 +84,7 @@ public class InlineCodegen extends CallGenerator {
 
     private LambdaInfo activeLambda;
 
-    private SourceMapper sourceMapper;
+    private final SourceMapper sourceMapper;
 
     public InlineCodegen(
             @NotNull ExpressionCodegen codegen,
@@ -113,10 +114,10 @@ public class InlineCodegen extends CallGenerator {
 
         isSameModule = JvmCodegenUtil.isCallInsideSameModuleAsDeclared(functionDescriptor, codegen.getContext(), state.getOutDirectory());
 
-        Integer lineNumbers = CodegenUtil.getLineNumberForElement(callElement.getContainingFile(), true);
-        assert lineNumbers != null : "Couldn't extract line count in " + callElement.getContainingFile();
+        Integer lastLineNumber = CodegenUtil.getLineNumberForElement(callElement.getContainingFile(), true);
+        assert lastLineNumber != null : "Couldn't extract line count in " + callElement.getContainingFile();
 
-        sourceMapper = codegen.getParentCodegen().getSourceMapper();
+        sourceMapper = codegen.getParentCodegen().getOrCreateSourceMapper();
     }
 
     @Override
@@ -176,8 +177,14 @@ public class InlineCodegen extends CallGenerator {
                     (DeserializedSimpleFunctionDescriptor) functionDescriptor);
 
             VirtualFile file = InlineCodegenUtil.getVirtualFileForCallable(containerClassId, state);
-            nodeAndSMAP = InlineCodegenUtil.getMethodNode(file.contentsToByteArray(), asmMethod.getName(), asmMethod.getDescriptor(),
-                                                          JvmClassName.byClassId(containerClassId).getInternalName());
+            if (functionDescriptor.getContainingDeclaration() instanceof PackageFragmentDescriptor) {
+                /*use facade class*/
+                containerClassId = PackageClassUtils.getPackageClassId(containerClassId.getPackageFqName());
+            }
+            nodeAndSMAP = InlineCodegenUtil.getMethodNode(file.contentsToByteArray(),
+                                                          asmMethod.getName(),
+                                                          asmMethod.getDescriptor(),
+                                                          containerClassId);
 
             if (nodeAndSMAP == null) {
                 throw new RuntimeException("Couldn't obtain compiled function body for " + descriptorName(functionDescriptor));
@@ -185,11 +192,11 @@ public class InlineCodegen extends CallGenerator {
         }
         else {
             PsiElement element = DescriptorToSourceUtils.descriptorToDeclaration(functionDescriptor);
-            Type ownerType = typeMapper.mapOwner(functionDescriptor, false);
 
-            if (element == null) {
+            if (element == null || !(element instanceof JetNamedFunction)) {
                 throw new RuntimeException("Couldn't find declaration for function " + descriptorName(functionDescriptor));
             }
+            JetNamedFunction inliningFunction = (JetNamedFunction) element;
 
             MethodNode node = new MethodNode(InlineCodegenUtil.API,
                                            getMethodAsmFlags(functionDescriptor, context.getContextKind()) | (callDefault ? Opcodes.ACC_STATIC : 0),
@@ -201,22 +208,24 @@ public class InlineCodegen extends CallGenerator {
             //for maxLocals calculation
             MethodVisitor maxCalcAdapter = InlineCodegenUtil.wrapWithMaxLocalCalc(node);
             MethodContext methodContext = context.getParentContext().intoFunction(functionDescriptor);
+
             SMAP smap;
             if (callDefault) {
-                FakeMemberCodegen parentCodegen = new FakeMemberCodegen(codegen.getParentCodegen());
+                Type ownerType = typeMapper.mapOwner(functionDescriptor, false/*use facade class*/);
+                FakeMemberCodegen parentCodegen = new FakeMemberCodegen(codegen.getParentCodegen(), inliningFunction,
+                                                                        (FieldOwnerContext) methodContext.getParentContext(),
+                                                                        ownerType.getInternalName());
                 FunctionCodegen.generateDefaultImplBody(
                         methodContext, functionDescriptor, maxCalcAdapter, DefaultParameterValueLoader.DEFAULT,
-                        (JetNamedFunction) element, parentCodegen
+                        inliningFunction, parentCodegen
                 );
-
-                smap = new SMAP(parentCodegen.mappings);
+                smap = createSMAPWithDefaultMapping(inliningFunction, parentCodegen.getOrCreateSourceMapper().getResultMappings());
             }
             else {
-                smap = generateMethodBody(maxCalcAdapter, functionDescriptor, methodContext, (JetDeclarationWithBody) element,
-                                               jvmSignature);
+                smap = generateMethodBody(maxCalcAdapter, functionDescriptor, methodContext, inliningFunction, jvmSignature, false);
             }
-            PsiFile file = element.getContainingFile();
-            nodeAndSMAP = new SMAPAndMethodNode(node, file.getName(), ownerType.getInternalName(),  smap);
+
+            nodeAndSMAP = new SMAPAndMethodNode(node, smap);
             maxCalcAdapter.visitMaxs(-1, -1);
             maxCalcAdapter.visitEnd();
         }
@@ -224,8 +233,6 @@ public class InlineCodegen extends CallGenerator {
     }
 
     private InlineResult inlineCall(SMAPAndMethodNode nodeAndSmap) {
-        sourceMapper.visitSource(nodeAndSmap.getSource(), nodeAndSmap.getSourcePath());
-
         MethodNode node = nodeAndSmap.getNode();
         ReifiedTypeParametersUsages reificationResult = reifiedTypeInliner.reifyInstructions(node.instructions);
         generateClosuresBodies();
@@ -246,7 +253,8 @@ public class InlineCodegen extends CallGenerator {
                                                        codegen.getParentCodegen().getClassName(), reifiedTypeInliner);
 
         MethodInliner inliner = new MethodInliner(node, parameters, info, new FieldRemapper(null, null, parameters), isSameModule,
-                                                  "Method inlining " + callElement.getText(), sourceMapper); //with captured
+                                                  "Method inlining " + callElement.getText(),
+                                                  createNestedSourceMapper(nodeAndSmap)); //with captured
 
         LocalVarRemapper remapper = new LocalVarRemapper(parameters, initialFrameSize);
 
@@ -287,7 +295,7 @@ public class InlineCodegen extends CallGenerator {
         }
     }
 
-    private MethodNode generateLambdaBody(LambdaInfo info) {
+    private SMAPAndMethodNode generateLambdaBody(LambdaInfo info) {
         JetFunctionLiteral declaration = info.getFunctionLiteral();
         FunctionDescriptor descriptor = info.getFunctionDescriptor();
 
@@ -301,10 +309,9 @@ public class InlineCodegen extends CallGenerator {
 
         MethodVisitor adapter = InlineCodegenUtil.wrapWithMaxLocalCalc(methodNode);
 
-        generateMethodBody(adapter, descriptor, context, declaration, jvmMethodSignature);
+        SMAP smap = generateMethodBody(adapter, descriptor, context, declaration, jvmMethodSignature, true);
         adapter.visitMaxs(-1, -1);
-
-        return methodNode;
+        return new SMAPAndMethodNode(methodNode, smap);
     }
 
     private SMAP generateMethodBody(
@@ -312,28 +319,44 @@ public class InlineCodegen extends CallGenerator {
             @NotNull FunctionDescriptor descriptor,
             @NotNull MethodContext context,
             @NotNull JetDeclarationWithBody declaration,
-            @NotNull JvmMethodSignature jvmMethodSignature
+            @NotNull JvmMethodSignature jvmMethodSignature,
+            boolean isLambda
     ) {
-        FakeMemberCodegen parentCodegen = new FakeMemberCodegen(codegen.getParentCodegen());
+        FakeMemberCodegen parentCodegen =
+                new FakeMemberCodegen(codegen.getParentCodegen(), declaration,
+                                      (FieldOwnerContext) context.getParentContext(),
+                                      isLambda ? codegen.getParentCodegen().getClassName() : typeMapper.mapOwner(descriptor, false).getInternalName());
+
         FunctionCodegen.generateMethodBody(
-            adapter, descriptor, context, jvmMethodSignature,
-            new FunctionGenerationStrategy.FunctionDefault(state, descriptor, declaration),
-            // Wrapping for preventing marking actual parent codegen as containing reifier markers
-            parentCodegen
+                adapter, descriptor, context, jvmMethodSignature,
+                new FunctionGenerationStrategy.FunctionDefault(state, descriptor, declaration),
+                // Wrapping for preventing marking actual parent codegen as containing reifier markers
+                parentCodegen
         );
 
-        return new SMAP(parentCodegen.mappings);
+        return createSMAPWithDefaultMapping(declaration, parentCodegen.getOrCreateSourceMapper().getResultMappings());
+    }
+
+    private static SMAP createSMAPWithDefaultMapping(
+            @NotNull JetDeclarationWithBody declaration,
+            @NotNull List<FileMapping> mappings
+    ) {
+        PsiFile containingFile = declaration.getContainingFile();
+        Integer lineNumbers = CodegenUtil.getLineNumberForElement(containingFile, true);
+        assert lineNumbers != null : "Couldn't extract line count in " + containingFile;
+
+        return new SMAP(mappings);
     }
 
     private static class FakeMemberCodegen extends MemberCodegen {
 
         private final MemberCodegen delegate;
+        @NotNull private final String className;
 
-        List<FileMapping> mappings = new ArrayList<FileMapping>();
-
-        public FakeMemberCodegen(@NotNull MemberCodegen wrapped) {
-            super(wrapped);
+        public FakeMemberCodegen(@NotNull MemberCodegen wrapped, @NotNull JetElement declaration, @NotNull FieldOwnerContext codegenContext, @NotNull String className) {
+            super(wrapped, declaration, codegenContext);
             delegate = wrapped;
+            this.className = className;
         }
 
         @Override
@@ -357,6 +380,11 @@ public class InlineCodegen extends CallGenerator {
             return delegate.getInlineNameGenerator();
         }
 
+        @NotNull
+        @Override
+        public String getClassName() {
+            return className;
+        }
     }
 
     @Override
@@ -625,6 +653,10 @@ public class InlineCodegen extends CallGenerator {
         for (TryCatchBlockNodeWrapper node : nodes) {
             intoNode.tryCatchBlocks.add(node.getNode());
         }
+    }
+
+    private SourceMapper createNestedSourceMapper(@NotNull SMAPAndMethodNode nodeAndSmap) {
+        return new NestedSourceMapper(sourceMapper, nodeAndSmap.getRanges(), nodeAndSmap.getClassSMAP().getSourceInfo());
     }
 
 }

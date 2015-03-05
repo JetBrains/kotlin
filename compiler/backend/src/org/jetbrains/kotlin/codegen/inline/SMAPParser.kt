@@ -16,18 +16,23 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
-class SMAPParser(val input: String?, val path: String) {
+class SMAPParser(val mappingInfo: String?, val source: String, val path: String, val methodStartLine: Int, val methodEndLine: Int) {
 
     val fileMappings = linkedMapOf<Int, FileMapping>()
 
     fun parse() : SMAP {
-        if (input == null || input.isEmpty()) {
-            return SMAP(listOf())
+        if (mappingInfo == null || mappingInfo.isEmpty()) {
+            val fm = FileMapping(source, path)
+            if (methodStartLine <= methodEndLine) {
+                //one to one
+                fm.addRangeMapping(RangeMapping(methodStartLine, methodStartLine, methodEndLine - methodStartLine + 1))
+            }
+            return SMAP(listOf(fm))
         }
 
-        val fileSectionStart = input.indexOf(SMAP.FILE_SECTION) + SMAP.FILE_SECTION.length()
-        val lineSectionAnchor = input.indexOf(SMAP.LINE_SECTION)
-        val files = input.substring(fileSectionStart, lineSectionAnchor)
+        val fileSectionStart = mappingInfo.indexOf(SMAP.FILE_SECTION) + SMAP.FILE_SECTION.length()
+        val lineSectionAnchor = mappingInfo.indexOf(SMAP.LINE_SECTION)
+        val files = mappingInfo.substring(fileSectionStart, lineSectionAnchor)
 
 
         val fileEntries = files.trim().split('+')
@@ -44,7 +49,7 @@ class SMAPParser(val input: String?, val path: String) {
         }
 
 
-        val lines = input.substring(lineSectionAnchor + SMAP.LINE_SECTION.length(), input.indexOf(SMAP.END)).trim().split('\n')
+        val lines = mappingInfo.substring(lineSectionAnchor + SMAP.LINE_SECTION.length(), mappingInfo.indexOf(SMAP.END)).trim().split('\n')
         for (lineMapping in lines) {
             /*only simple mapping now*/
             val targetSplit = lineMapping.indexOf(':')

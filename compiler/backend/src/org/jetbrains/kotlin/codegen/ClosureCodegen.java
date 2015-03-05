@@ -25,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
 import org.jetbrains.kotlin.codegen.context.ClosureContext;
+import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
@@ -141,6 +142,9 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
                       superClassAsmType.getInternalName(),
                       superInterfaceAsmTypes
         );
+
+        InlineCodegenUtil.initDefaultSourceMappingIfNeeded(context, this, state);
+
         v.visitSource(element.getContainingFile().getName(), null);
     }
 

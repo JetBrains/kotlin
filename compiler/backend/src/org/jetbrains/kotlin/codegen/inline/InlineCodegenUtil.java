@@ -24,8 +24,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
+import org.jetbrains.kotlin.codegen.MemberCodegen;
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.context.CodegenContext;
+import org.jetbrains.kotlin.codegen.context.MethodContext;
 import org.jetbrains.kotlin.codegen.context.PackageContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
@@ -43,6 +45,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.serialization.ProtoBuf;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor;
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf;
@@ -83,11 +86,14 @@ public class InlineCodegenUtil {
             byte[] classData,
             final String methodName,
             final String methodDescriptor,
-            String containerInternalName
+            ClassId classId
     ) throws ClassNotFoundException, IOException {
         ClassReader cr = new ClassReader(classData);
         final MethodNode[] node = new MethodNode[1];
-        final String [] debugInfo = new String[2];
+        final String[] debugInfo = new String[2];
+        final int[] lines = new int[2];
+        lines[0] = Integer.MAX_VALUE;
+        lines[1] = Integer.MIN_VALUE;
         cr.accept(new ClassVisitor(API) {
 
             @Override
@@ -98,22 +104,53 @@ public class InlineCodegenUtil {
             }
 
             @Override
-            public MethodVisitor visitMethod(int access, @NotNull String name, @NotNull String desc, String signature, String[] exceptions) {
+            public MethodVisitor visitMethod(
+                    int access,
+                    @NotNull String name,
+                    @NotNull String desc,
+                    String signature,
+                    String[] exceptions
+            ) {
                 if (methodName.equals(name) && methodDescriptor.equals(desc)) {
-                    node[0] = new MethodNode(access, name, desc, signature, exceptions);
+                    node[0] = new MethodNode(API, access, name, desc, signature, exceptions) {
+
+                        @Override
+                        public void visitLineNumber(int line, Label start) {
+                            super.visitLineNumber(line, start);
+                            lines[0] = Math.min(lines[0], line);
+                            lines[1] = Math.max(lines[1], line);
+                        }
+                    };
                     return node[0];
                 }
                 return null;
             }
         }, ClassReader.SKIP_FRAMES);
 
-        return new SMAPAndMethodNode(node[0], debugInfo[0], containerInternalName, new SMAPParser(debugInfo[1], "TODO").parse());
+        SMAP smap = new SMAPParser(debugInfo[1], debugInfo[0], classId.toString(), lines[0], lines[1]).parse();
+        return new SMAPAndMethodNode(node[0], smap);
     }
 
+    public static void initDefaultSourceMappingIfNeeded(@NotNull CodegenContext context, @NotNull MemberCodegen codegen, @NotNull GenerationState state) {
+        if (state.isInlineEnabled()) {
+            CodegenContext<?> parentContext = context.getParentContext();
+            while (parentContext != null) {
+                if (parentContext instanceof MethodContext) {
+                    if (((MethodContext) parentContext).isInlineFunction()) {
+                        //just init default one to one mapping
+                        codegen.getOrCreateSourceMapper();
+                        break;
+                    }
+                }
+                parentContext = parentContext.getParentContext();
+            }
+        }
+    }
 
     @NotNull
     public static VirtualFile getVirtualFileForCallable(@NotNull ClassId containerClassId, @NotNull GenerationState state) {
-        VirtualFile file = findVirtualFileWithHeader(state.getProject(), containerClassId);
+        VirtualFileFinder fileFinder = VirtualFileFinder.SERVICE.getInstance(state.getProject());
+        VirtualFile file = fileFinder.findVirtualFileWithHeader(containerClassId.asSingleFqName().toSafe());
         if (file == null) {
             throw new IllegalStateException("Couldn't find declaration file for " + containerClassId);
         }
@@ -129,8 +166,7 @@ public class InlineCodegenUtil {
                 throw new IllegalStateException("Function in namespace should have implClassName property in proto: " + deserializedDescriptor);
             }
             Name name = deserializedDescriptor.getNameResolver().getName(proto.getExtension(JvmProtoBuf.implClassName));
-            ClassId packageClassId = PackageClassUtils.getPackageClassId(((PackageFragmentDescriptor) parentDeclaration).getFqName());
-            containerClassId = new ClassId(packageClassId.getPackageFqName(), name);
+            containerClassId = new ClassId(((PackageFragmentDescriptor) parentDeclaration).getFqName(), name);
         } else {
             containerClassId = getContainerClassId(deserializedDescriptor);
         }
@@ -138,12 +174,6 @@ public class InlineCodegenUtil {
             throw new IllegalStateException("Couldn't find container FQName for " + deserializedDescriptor.getName());
         }
         return containerClassId;
-    }
-
-    @Nullable
-    public static VirtualFile findVirtualFileWithHeader(@NotNull Project project, @NotNull ClassId containerClassId) {
-        VirtualFileFinder fileFinder = VirtualFileFinder.SERVICE.getInstance(project);
-        return fileFinder.findVirtualFileWithHeader(containerClassId.asSingleFqName().toSafe());
     }
 
     @Nullable
@@ -163,8 +193,9 @@ public class InlineCodegenUtil {
         if (containerDescriptor instanceof ClassDescriptor) {
             ClassId classId = DescriptorUtilPackage.getClassId((ClassDescriptor) containerDescriptor);
             if (isTrait(containerDescriptor)) {
-                FqNameUnsafe shortName = classId.getRelativeClassName();
-                classId = new ClassId(classId.getPackageFqName(), Name.identifier(shortName.shortName().toString() + JvmAbi.TRAIT_IMPL_SUFFIX));
+                FqNameUnsafe relativeClassName = classId.getRelativeClassName();
+                //TODO test nested trait fun inlining
+                classId = new ClassId(classId.getPackageFqName(), Name.identifier(relativeClassName.shortName().asString() + JvmAbi.TRAIT_IMPL_SUFFIX));
             }
             return classId;
         }

@@ -22,23 +22,24 @@ import org.jetbrains.org.objectweb.asm.tree.LineNumberNode
 import org.jetbrains.org.objectweb.asm.Label
 import kotlin.properties.Delegates
 import java.util.Collections
+import kotlin.properties.ReadOnlyProperty
+import org.jetbrains.kotlin.codegen.SourceInfo
 
-class SMAPAndMethodNode(val node: MethodNode, val source: String, val sourcePath: String, classSMAP: SMAP) {
+//TODO comment
+class SMAPAndMethodNode(val node: MethodNode, val classSMAP: SMAP) {
 
-    val lineNumbers = Delegates.lazy {
-        InsnStream(node.instructions.getFirst(), null).filterIsInstance(javaClass<LineNumberNode>()).map {
-            val index = Collections.binarySearch(classSMAP.intervals, RangeMapping(it.line, it.line, 1), {
-                (value, key) -> if (value.contains(key.dest)) 0 else RangeMapping.Comparator.compare(value, key)
-            })
-            if (index < 0) throw IllegalStateException("Unmapped lable in inlined function " + it)
+    val lineNumbers =
+        InsnStream(node.instructions.getFirst(), null).stream().filterIsInstance<LineNumberNode>().map {
+            val index = Collections.binarySearch(classSMAP.intervals, RangeMapping(it.line, it.line, 1)) {
+                (value, key) ->
+                if (value.contains(key.dest)) 0 else RangeMapping.Comparator.compare(value, key)
+            }
+            if (index < 0)
+                throw IllegalStateException("Unmapped label in inlined function $it ${it.line}")
             LabelAndMapping(it, classSMAP.intervals[index])
-        }
-    };
+        }.toList()
 
+    val ranges = lineNumbers.stream().map { it.mapper }.toList().distinct().toList();
 }
 
-class LabelAndMapping(val lineNumberNode: LineNumberNode, val mapper: RangeMapping) {
-    val getOriginalLine = mapper.map(lineNumberNode.line)
-    val getOriginalFileName = mapper.parent!!.name
-    val getOriginalPath = mapper.parent!!.path
-}
+class LabelAndMapping(val lineNumberNode: LineNumberNode, val mapper: RangeMapping)
