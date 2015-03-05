@@ -49,7 +49,7 @@ class DefaultObjectsExtensionsTest {
         assertEquals(java.lang.Float.NaN, Float.NaN)
 
         assertEquals(java.lang.Float.MAX_VALUE, Float.MAX_VALUE)
-        assertEquals(java.lang.Float.MIN_VALUE, Float.MAX_VALUE)
+        assertEquals(java.lang.Float.MIN_VALUE, Float.MIN_VALUE)
     }
 
     test fun longTest() {
