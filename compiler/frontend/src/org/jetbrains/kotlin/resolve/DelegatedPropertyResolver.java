@@ -252,7 +252,7 @@ public class DelegatedPropertyResolver {
         JetReferenceExpression fakeCalleeExpression = psiFactory.createSimpleName(functionName.asString());
 
         ExpressionReceiver receiver = new ExpressionReceiver(delegateExpression, delegateType);
-        Call call = CallMaker.makeCallWithExpressions(fakeCalleeExpression, receiver, null, fakeCalleeExpression, arguments, Call.CallType.DEFAULT);
+        Call call = CallMaker.makeCallWithExpressions(delegateExpression, receiver, null, fakeCalleeExpression, arguments, Call.CallType.DEFAULT);
         trace.record(BindingContext.DELEGATED_PROPERTY_CALL, accessor, call);
 
         return callResolver.resolveCallWithGivenName(context, call, fakeCalleeExpression, functionName);
