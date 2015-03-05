@@ -1,0 +1,8 @@
+// EXTRACTION_TARGET: property with initializer
+class A {
+    private val i = 1 + 2
+
+    fun foo(a: Int = i) {
+
+    }
+}

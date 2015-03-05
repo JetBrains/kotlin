@@ -1935,6 +1935,18 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/introduceProperty"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("extractFromDefaultValueInConstructor.kt")
+        public void testExtractFromDefaultValueInConstructor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceProperty/extractFromDefaultValueInConstructor.kt");
+            doIntroducePropertyTest(fileName);
+        }
+
+        @TestMetadata("extractFromDefaultValueInFun.kt")
+        public void testExtractFromDefaultValueInFun() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceProperty/extractFromDefaultValueInFun.kt");
+            doIntroducePropertyTest(fileName);
+        }
+
         @TestMetadata("extractLazyMultipleExpressions.kt")
         public void testExtractLazyMultipleExpressions() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceProperty/extractLazyMultipleExpressions.kt");
