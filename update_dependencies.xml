@@ -36,7 +36,11 @@
         <execute_update base.url="http://buildserver.labs.intellij.net/guestAuth/app/rest/builds/buildType:ijplatform_IjPlatformMaster_IdeaTrunk_CommunityDist,status:SUCCESS"/>
     </target>
 
-    <target name="jb_update_continuous_140" depends="fetch-third-party,fetch-annotations">
+    <target name="jb_update_continuous_141" depends="fetch-third-party,fetch-annotations">
+        <execute_update base.url="http://buildserver.labs.intellij.net/guestAuth/app/rest/builds/buildType:ijplatform_IjPlatform141_IdeaTrunk_CommunityDist,status:SUCCESS"/>
+    </target>
+
+    <target name="jb_update_continuous_142" depends="fetch-third-party,fetch-annotations">
         <execute_update base.url="http://buildserver.labs.intellij.net/guestAuth/app/rest/builds/buildType:bt662,status:SUCCESS"/>
     </target>
 
