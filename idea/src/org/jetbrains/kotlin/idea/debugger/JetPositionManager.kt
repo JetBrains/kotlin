@@ -50,12 +50,17 @@ import org.jetbrains.kotlin.builtins.InlineUtil
 import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.util.DebuggerUtils
-
-import java.util.*
-
-import org.jetbrains.kotlin.codegen.binding.CodegenBinding.asmTypeForAnonymousClass
-import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
+import org.jetbrains.kotlin.idea.search.usagesSearch.DefaultSearchHelper
+import com.intellij.find.findUsages.FindUsagesOptions
+import org.jetbrains.kotlin.idea.findUsages.toSearchTarget
+import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.idea.search.usagesSearch.search
+import java.util.WeakHashMap
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
+import java.util.ArrayList
+import org.jetbrains.kotlin.codegen.binding.CodegenBinding
+
 
 public class JetPositionManager(private val myDebugProcess: DebugProcess) : PositionManager {
     private val myTypeMappers = WeakHashMap<Pair<FqName, IdeaModuleInfo>, CachedValue<JetTypeMapper>>()
@@ -131,9 +136,24 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Posi
         }
 
 
-        // JDI names are of form "package.Class$InnerClass"
-        val referenceFqName = location.declaringType().name()
-        val referenceInternalName = referenceFqName.replace('.', '/')
+        val referenceInternalName: String
+        try {
+            if (location.declaringType().availableStrata().contains("Kotlin")) {
+                referenceInternalName = location.sourcePath()
+            } else {
+                //no stratum or source path => use default one
+                val referenceFqName = location.declaringType().name()
+                // JDI names are of form "package.Class$InnerClass"
+                referenceInternalName = referenceFqName.replace('.', '/')
+            }
+        }
+        catch (e: AbsentInformationException) {
+            //no stratum or source path => use default one
+            val referenceFqName = location.declaringType().name()
+            // JDI names are of form "package.Class$InnerClass"
+            referenceInternalName = referenceFqName.replace('.', '/')
+        }
+
         val className = JvmClassName.byInternalName(referenceInternalName)
 
         val project = myDebugProcess.getProject()
@@ -147,20 +167,40 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Posi
         if (sourcePosition.getFile() !is JetFile) {
             throw NoDataException()
         }
-        val name = classNameForPosition(sourcePosition)
+        val names = classNameForPositionAndInlinedOnes(sourcePosition)
         val result = ArrayList<ReferenceType>()
-        if (name != null) {
+        for (name in names) {
             result.addAll(myDebugProcess.getVirtualMachineProxy().classesByName(name))
         }
         return result
     }
 
+    private fun classNameForPositionAndInlinedOnes(sourcePosition: SourcePosition): List<String> {
+        val result = arrayListOf<String>()
+        val name = classNameForPosition(sourcePosition)
+        if (name != null) {
+            result.add(name)
+        }
+        val list = findInlinedCalls(sourcePosition.getElementAt())
+        result.addAll(list)
+
+        return result;
+    }
+
     private fun classNameForPosition(sourcePosition: SourcePosition): String? {
+        val psiElement = sourcePosition.getElementAt()
+        if (psiElement == null) {
+            return null
+        }
+        return classNameForPosition(psiElement)
+    }
+
+    private fun classNameForPosition(element: PsiElement): String? {
         return runReadAction {
-            val file = sourcePosition.getFile() as JetFile
+            val file = element.getContainingFile() as JetFile
             val isInLibrary = LibraryUtil.findLibraryEntry(file.getVirtualFile(), file.getProject()) != null
-            val typeMapper = if (!isInLibrary) prepareTypeMapper(file) else createTypeMapperForLibraryFile(sourcePosition.getElementAt(), file)
-            getClassNameForElement(sourcePosition.getElementAt(), typeMapper, file, isInLibrary)
+            val typeMapper = if (!isInLibrary) prepareTypeMapper(file) else createTypeMapperForLibraryFile(element, file)
+            getClassNameForElement(element, typeMapper, file, isInLibrary)
         }
     }
 
@@ -188,7 +228,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Posi
         try {
             val line = position.getLine() + 1
             val locations = if (myDebugProcess.getVirtualMachineProxy().versionHigher("1.4"))
-                type.locationsOfLine(DebugProcess.JAVA_STRATUM, null, line)
+                type.locationsOfLine("Kotlin", null, line)
             else
                 type.locationsOfLine(line)
             if (locations == null || locations.isEmpty()) throw NoDataException()
@@ -203,11 +243,16 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Posi
         if (sourcePosition.getFile() !is JetFile) {
             throw NoDataException()
         }
-        val className = classNameForPosition(sourcePosition)
-        if (className == null) {
+        val classNames = classNameForPositionAndInlinedOnes(sourcePosition)
+        if (classNames.isEmpty()) {
             return null
         }
-        return myDebugProcess.getRequestsManager().createClassPrepareRequest(classPrepareRequestor, className.replace('/', '.'))
+        val classPrepareRequest = myDebugProcess.getRequestsManager().createClassPrepareRequest(classPrepareRequestor, classNames.first().replace('/', '.'))
+//        classNames.subList(1, classNames.size()).forEach {
+//            classPrepareRequest.addClassFilter(it.replace('/', '.'))
+//        }
+
+        return classPrepareRequest
     }
 
     TestOnly
@@ -242,7 +287,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Posi
                         return getClassNameForElement(element.getParent(), typeMapper, file, isInLibrary)
                     }
                     else {
-                        val asmType = asmTypeForAnonymousClass(typeMapper.getBindingContext(), element)
+                        val asmType = CodegenBinding.asmTypeForAnonymousClass(typeMapper.getBindingContext(), element)
                         return asmType.getInternalName()
                     }
                 }
@@ -275,7 +320,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Posi
                         return getJvmInternalNameForImpl(typeMapper, parent)
                     }
                     else if (parent != null) {
-                        val asmType = asmTypeForAnonymousClass(typeMapper.getBindingContext(), element)
+                        val asmType = CodegenBinding.asmTypeForAnonymousClass(typeMapper.getBindingContext(), element)
                         return asmType.getInternalName()
                     }
                 }
@@ -373,5 +418,37 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Posi
         }
 
         private fun createKeyForTypeMapper(file: JetFile) = Pair(file.getPackageFqName(), file.getModuleInfo())
+    }
+
+    private fun findInlinedCalls(element: PsiElement?): List<String> {
+        return runReadAction {
+            var result = emptyList<String>()
+            if (element != null) {
+                val psiElement = getElementToCalculateClassName(element)
+                if (psiElement is JetNamedFunction) {
+                    val typeMapper = prepareTypeMapper(psiElement.getContainingFile() as JetFile)
+                    val descriptor = typeMapper.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, psiElement)
+                    if (descriptor is SimpleFunctionDescriptor && descriptor.getInlineStrategy().isInline()) {
+
+                        val project = myDebugProcess.getProject()
+                        val usagesSearchTarget = FindUsagesOptions(project).toSearchTarget(psiElement, true)
+
+                        result = arrayListOf<String>()
+                        val usagesSearchRequest = DefaultSearchHelper<JetNamedFunction>(true).newRequest(usagesSearchTarget)
+                        usagesSearchRequest.search().forEach {
+                            val psiElement = it.getElement()
+                            if (psiElement is JetElement) {
+                                val name = classNameForPosition(psiElement)
+                                if (name != null) {
+                                    (result as MutableList<String>).add(name)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            result
+        }
     }
 }

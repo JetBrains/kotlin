@@ -76,25 +76,34 @@ public class InlineCodegenUtil {
     public static final String INLINE_MARKER_GOTO_TRY_CATCH_BLOCK_END = "goToTryCatchBlockEnd";
 
     @Nullable
-    public static MethodNode getMethodNode(
+    public static SMAPAndMethodNode getMethodNode(
             byte[] classData,
             final String methodName,
             final String methodDescriptor
     ) throws ClassNotFoundException, IOException {
         ClassReader cr = new ClassReader(classData);
-        final MethodNode[] methodNode = new MethodNode[1];
+        final MethodNode[] node = new MethodNode[1];
+        final String [] debugInfo = new String[2];
         cr.accept(new ClassVisitor(API) {
+
+            @Override
+            public void visitSource(String source, String debug) {
+                super.visitSource(source, debug);
+                debugInfo[0] = source;
+                debugInfo[1] = debug;
+            }
 
             @Override
             public MethodVisitor visitMethod(int access, @NotNull String name, @NotNull String desc, String signature, String[] exceptions) {
                 if (methodName.equals(name) && methodDescriptor.equals(desc)) {
-                    return methodNode[0] = new MethodNode(access, name, desc, signature, exceptions);
+                    node[0] = new MethodNode(access, name, desc, signature, exceptions);
+                    return node[0];
                 }
                 return null;
             }
         }, ClassReader.SKIP_FRAMES);
 
-        return methodNode[0];
+        return new SMAPAndMethodNode(node[0], debugInfo[0], "TODO", new SMAPParser(debugInfo[1], "TODO").parse());
     }
 
 
