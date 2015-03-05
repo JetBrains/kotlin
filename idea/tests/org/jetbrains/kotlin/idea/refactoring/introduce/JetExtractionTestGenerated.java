@@ -370,6 +370,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 doExtractFunctionTest(fileName);
             }
 
+            @TestMetadata("invisibleType.kt")
+            public void testInvisibleType() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/invisibleType.kt");
+                doExtractFunctionTest(fileName);
+            }
+
             @TestMetadata("localClassExtraction.kt")
             public void testLocalClassExtraction() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/localClassExtraction.kt");
