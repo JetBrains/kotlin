@@ -34,6 +34,9 @@ public class KDocSection(node: ASTNode) : KDocTag(node) {
     override fun getName(): String? =
             (getFirstChild() as? KDocTag)?.getName()
 
+    override fun getSubjectName(): String? =
+            (getFirstChild() as? KDocTag)?.getSubjectName()
+
     override fun getContent(): String =
             (getFirstChild() as? KDocTag)?.getContent() ?: super.getContent()
 

@@ -13,6 +13,7 @@ JetFile: ParamTag.kt
         KDOC_MARKDOWN_LINK
           KDOC_NAME
             PsiElement(IDENTIFIER)('a')
-        PsiElement(KDOC_TEXT)(' The description of a.')
+        PsiWhiteSpace(' ')
+        PsiElement(KDOC_TEXT)('The description of a.')
     PsiWhiteSpace('\n ')
     PsiElement(KDOC_END)('*/')
