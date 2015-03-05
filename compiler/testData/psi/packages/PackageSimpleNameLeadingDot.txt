@@ -1,0 +1,8 @@
+JetFile: PackageSimpleNameLeadingDot.kt
+  PACKAGE_DIRECTIVE
+    PsiElement(package)('package')
+    PsiWhiteSpace(' ')
+    PsiErrorElement:Package name must be a '.'-separated identifier list
+      PsiElement(DOT)('.')
+    REFERENCE_EXPRESSION
+      PsiElement(IDENTIFIER)('a')

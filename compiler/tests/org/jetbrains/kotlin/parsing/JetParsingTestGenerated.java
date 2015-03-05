@@ -43,6 +43,7 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
             Psi.FunctionReceivers.class,
             Psi.GreatSyntacticShift.class,
             Psi.Kdoc.class,
+            Psi.Packages.class,
             Psi.PlatformTypesRecovery.class,
             Psi.PropertyDelegate.class,
             Psi.Recovery.class,
@@ -430,18 +431,6 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
         @TestMetadata("ObjectLiteralAsStatement.kt")
         public void testObjectLiteralAsStatement() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/ObjectLiteralAsStatement.kt");
-            doParsingTest(fileName);
-        }
-
-        @TestMetadata("PackageBlockFirst.kt")
-        public void testPackageBlockFirst() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/PackageBlockFirst.kt");
-            doParsingTest(fileName);
-        }
-
-        @TestMetadata("PackageModifiers.kt")
-        public void testPackageModifiers() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/PackageModifiers.kt");
             doParsingTest(fileName);
         }
 
@@ -1196,6 +1185,81 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
             @TestMetadata("TwoTags.kt")
             public void testTwoTags() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/kdoc/TwoTags.kt");
+                doParsingTest(fileName);
+            }
+        }
+
+        @TestMetadata("compiler/testData/psi/packages")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Packages extends AbstractJetParsingTest {
+            public void testAllFilesPresentInPackages() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/psi/packages"), Pattern.compile("^(.*)\\.kts?$"), true);
+            }
+
+            @TestMetadata("PackageBlockFirst.kt")
+            public void testPackageBlockFirst() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/packages/PackageBlockFirst.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("PackageLeadingDotDoubleID.kt")
+            public void testPackageLeadingDotDoubleID() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/packages/PackageLeadingDotDoubleID.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("PackageLongNameBetweenDots.kt")
+            public void testPackageLongNameBetweenDots() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/packages/PackageLongNameBetweenDots.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("PackageLongNameDoubleID.kt")
+            public void testPackageLongNameDoubleID() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/packages/PackageLongNameDoubleID.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("PackageLongNameLeadingDot.kt")
+            public void testPackageLongNameLeadingDot() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/packages/PackageLongNameLeadingDot.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("PackageLongNameLeadingDoubleDot.kt")
+            public void testPackageLongNameLeadingDoubleDot() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/packages/PackageLongNameLeadingDoubleDot.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("PackageModifiers.kt")
+            public void testPackageModifiers() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/packages/PackageModifiers.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("PackageNameDoubleDot.kt")
+            public void testPackageNameDoubleDot() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/packages/PackageNameDoubleDot.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("PackageNameJustDot.kt")
+            public void testPackageNameJustDot() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/packages/PackageNameJustDot.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("PackageSimpleNameLeadingDot.kt")
+            public void testPackageSimpleNameLeadingDot() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/packages/PackageSimpleNameLeadingDot.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("PackageSimpleNameLeadingDoubleDot.kt")
+            public void testPackageSimpleNameLeadingDoubleDot() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/packages/PackageSimpleNameLeadingDoubleDot.kt");
                 doParsingTest(fileName);
             }
         }

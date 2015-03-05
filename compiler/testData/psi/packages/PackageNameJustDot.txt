@@ -1,0 +1,8 @@
+JetFile: PackageNameJustDot.kt
+  PACKAGE_DIRECTIVE
+    PsiElement(package)('package')
+    PsiWhiteSpace(' ')
+    PsiErrorElement:Package name must be a '.'-separated identifier list
+      PsiElement(DOT)('.')
+    PsiErrorElement:Package name must be a '.'-separated identifier list placed on a single line
+      <empty list>
