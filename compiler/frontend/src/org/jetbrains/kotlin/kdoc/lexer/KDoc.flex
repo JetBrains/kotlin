@@ -88,14 +88,14 @@ CODE_LINK=\[{QUALIFIED_NAME}\]
     /* Example: @return[x] The return value of function x
                        ^^^
     */
-    {CODE_LINK} { yybegin(CONTENTS);
+    {CODE_LINK} { yybegin(TAG_TEXT_BEGINNING);
                   return KDocTokens.MARKDOWN_LINK; }
 
     /* Example: @param aaa The value of aaa
                        ^^^
     */
     {QUALIFIED_NAME} {
-        yybegin(CONTENTS);
+        yybegin(TAG_TEXT_BEGINNING);
         return KDocTokens.MARKDOWN_LINK;
     }
 

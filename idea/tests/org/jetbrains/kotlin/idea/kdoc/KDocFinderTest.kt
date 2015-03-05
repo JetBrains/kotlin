@@ -55,4 +55,13 @@ public class KDocFinderTest() : LightPlatformCodeInsightFixtureTestCase() {
         val doc = KDocFinder.findKDoc(overriddenFunctionDescriptor)
         Assert.assertEquals("Doc for method xyzzy", doc!!.getContent())
     }
+
+    public fun testProperty() {
+        myFixture.configureByFile(getTestName(false) + ".kt")
+        val declaration = (myFixture.getFile() as JetFile).getDeclarations().single { it.getName() == "Foo" }
+        val descriptor = declaration.resolveToDescriptor() as ClassDescriptor
+        val propertyDescriptor = descriptor.getDefaultType().getMemberScope().getProperties(Name.identifier("xyzzy")).single()
+        val doc = KDocFinder.findKDoc(propertyDescriptor)
+        Assert.assertEquals("Doc for property xyzzy", doc!!.getContent())
+    }
 }
