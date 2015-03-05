@@ -39,6 +39,7 @@ import java.util.*;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.lexer.JetTokens.*;
+import static org.jetbrains.kotlin.psi.JetStubbedPsiUtil.getContainingDeclaration;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isDefaultObject;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry;
 
@@ -141,6 +142,7 @@ public class ModifiersChecker {
         }
         else {
             checkInnerModifier(modifierListOwner, descriptor);
+            checkDefaultModifier(modifierListOwner);
             checkModalityModifiers(modifierListOwner);
             checkVisibilityModifiers(modifierListOwner, descriptor);
             checkVarianceModifiersOfTypeParameters(modifierListOwner);
@@ -230,6 +232,24 @@ public class ModifiersChecker {
         ILLEGAL_POSITION,
         IN_TRAIT,
         IN_OBJECT,
+    }
+
+    private void checkDefaultModifier(@NotNull JetDeclaration declaration) {
+        if (declaration.hasModifier(DEFAULT_KEYWORD) && !isDefaultModifierAllowed(declaration)) {
+            reportIllegalModifiers(declaration, Collections.singletonList(DEFAULT_KEYWORD));
+        }
+    }
+
+    // NOTE: just checks if this is legal context for default modifier (Default object descriptor can be created)
+    // DEFAULT_OBJECT_NOT_ALLOWED can be reported later
+    public static boolean isDefaultModifierAllowed(@NotNull JetDeclaration declaration) {
+        if (declaration instanceof JetObjectDeclaration) {
+            JetDeclaration containingDeclaration = getContainingDeclaration(declaration);
+            if (containingDeclaration instanceof JetClassOrObject) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @NotNull

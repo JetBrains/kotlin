@@ -91,7 +91,7 @@ public class JetObjectDeclaration extends JetNamedDeclarationStub<KotlinObjectSt
         if (stub != null) {
             return stub.isDefault();
         }
-        return getClassKeyword() != null;
+        return getClassKeyword() != null || hasModifier(JetTokens.DEFAULT_KEYWORD);
     }
 
     @Override

@@ -1576,6 +1576,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("multipleDissallowedDefaultObjects.kt")
+            public void testMultipleDissallowedDefaultObjects() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/classObjects/multipleDissallowedDefaultObjects.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("nestedClassInPrivateClassObject.kt")
             public void testNestedClassInPrivateClassObject() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/classObjects/nestedClassInPrivateClassObject.kt");
@@ -7378,6 +7384,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
         public static class Modifiers extends AbstractJetDiagnosticsTest {
             public void testAllFilesPresentInModifiers() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/modifiers"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("defaultModifier.kt")
+            public void testDefaultModifier() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/defaultModifier.kt");
+                doTest(fileName);
             }
 
             @TestMetadata("IllegalModifiers.kt")
