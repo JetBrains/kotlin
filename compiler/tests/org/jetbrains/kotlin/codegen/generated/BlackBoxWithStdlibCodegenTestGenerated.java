@@ -2524,6 +2524,7 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
     @TestMetadata("compiler/testData/codegen/boxWithStdlib/reflection")
     @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({
+            Reflection.ClassLiterals.class,
             Reflection.Enclosing.class,
             Reflection.GenericSignature.class,
             Reflection.Mapping.class,
@@ -2534,6 +2535,21 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
     public static class Reflection extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInReflection() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/reflection"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("compiler/testData/codegen/boxWithStdlib/reflection/classLiterals")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ClassLiterals extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInClassLiterals() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/reflection/classLiterals"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("simpleClassLiteral.kt")
+            public void testSimpleClassLiteral() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/classLiterals/simpleClassLiteral.kt");
+                doTestWithStdlib(fileName);
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing")
@@ -2709,6 +2725,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             @TestMetadata("extensionProperty.kt")
             public void testExtensionProperty() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/mapping/extensionProperty.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("mappedClassIsEqualToClassLiteral.kt")
+            public void testMappedClassIsEqualToClassLiteral() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/mapping/mappedClassIsEqualToClassLiteral.kt");
                 doTestWithStdlib(fileName);
             }
 

@@ -253,8 +253,16 @@ public class JetVisitorVoid extends JetVisitor<Void, Void> {
         super.visitQualifiedExpression(expression, null);
     }
 
+    public void visitDoubleColonExpression(@NotNull JetDoubleColonExpression expression) {
+        super.visitDoubleColonExpression(expression, null);
+    }
+
     public void visitCallableReferenceExpression(@NotNull JetCallableReferenceExpression expression) {
         super.visitCallableReferenceExpression(expression, null);
+    }
+
+    public void visitClassLiteralExpression(@NotNull JetClassLiteralExpression expression) {
+        super.visitClassLiteralExpression(expression, null);
     }
 
     public void visitDotQualifiedExpression(@NotNull JetDotQualifiedExpression expression) {
@@ -759,8 +767,20 @@ public class JetVisitorVoid extends JetVisitor<Void, Void> {
     }
 
     @Override
+    public final Void visitDoubleColonExpression(@NotNull JetDoubleColonExpression expression, Void data) {
+        visitDoubleColonExpression(expression);
+        return null;
+    }
+
+    @Override
     public final Void visitCallableReferenceExpression(@NotNull JetCallableReferenceExpression expression, Void data) {
         visitCallableReferenceExpression(expression);
+        return null;
+    }
+
+    @Override
+    public final Void visitClassLiteralExpression(@NotNull JetClassLiteralExpression expression, Void data) {
+        visitClassLiteralExpression(expression);
         return null;
     }
 

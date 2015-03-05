@@ -1466,7 +1466,7 @@ public class JetControlFlowProcessor {
         }
 
         @Override
-        public void visitCallableReferenceExpression(@NotNull JetCallableReferenceExpression expression) {
+        public void visitDoubleColonExpression(@NotNull JetDoubleColonExpression expression) {
             mark(expression);
             createNonSyntheticValue(expression, MagicKind.CALLABLE_REFERENCE);
         }

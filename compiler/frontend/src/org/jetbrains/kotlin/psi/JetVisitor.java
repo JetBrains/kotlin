@@ -258,8 +258,16 @@ public class JetVisitor<R, D> extends PsiElementVisitor {
         return visitExpression(expression, data);
     }
 
-    public R visitCallableReferenceExpression(@NotNull JetCallableReferenceExpression expression, D data) {
+    public R visitDoubleColonExpression(@NotNull JetDoubleColonExpression expression, D data) {
         return visitExpression(expression, data);
+    }
+
+    public R visitCallableReferenceExpression(@NotNull JetCallableReferenceExpression expression, D data) {
+        return visitDoubleColonExpression(expression, data);
+    }
+
+    public R visitClassLiteralExpression(@NotNull JetClassLiteralExpression expression, D data) {
+        return visitDoubleColonExpression(expression, data);
     }
 
     public R visitDotQualifiedExpression(@NotNull JetDotQualifiedExpression expression, D data) {

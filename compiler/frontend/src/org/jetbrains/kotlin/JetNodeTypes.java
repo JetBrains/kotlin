@@ -135,6 +135,7 @@ public interface JetNodeTypes {
     JetNodeType INDICES                   = new JetNodeType("INDICES", JetContainerNode.class);
     IElementType DOT_QUALIFIED_EXPRESSION = JetStubElementTypes.DOT_QUALIFIED_EXPRESSION;
     JetNodeType CALLABLE_REFERENCE_EXPRESSION = new JetNodeType("CALLABLE_REFERENCE_EXPRESSION", JetCallableReferenceExpression.class);
+    JetNodeType CLASS_LITERAL_EXPRESSION  = new JetNodeType("CLASS_LITERAL_EXPRESSION", JetClassLiteralExpression.class);
     JetNodeType SAFE_ACCESS_EXPRESSION    = new JetNodeType("SAFE_ACCESS_EXPRESSION", JetSafeQualifiedExpression.class);
 
     JetNodeType OBJECT_LITERAL            = new JetNodeType("OBJECT_LITERAL", JetObjectLiteralExpression.class);

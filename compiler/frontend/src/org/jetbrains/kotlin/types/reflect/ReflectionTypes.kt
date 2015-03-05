@@ -16,15 +16,16 @@
 
 package org.jetbrains.kotlin.types.reflect
 
-import kotlin.properties.Delegates
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import java.util.ArrayList
+import kotlin.properties.Delegates
 
 private val KOTLIN_REFLECT_FQ_NAME = FqName("kotlin.reflect")
 
@@ -49,12 +50,18 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
     public fun getKExtensionFunction(n: Int): ClassDescriptor = find("KExtensionFunction$n")
     public fun getKMemberFunction(n: Int): ClassDescriptor = find("KMemberFunction$n")
 
+    public val kClass: ClassDescriptor by ClassLookup
     public val kTopLevelVariable: ClassDescriptor by ClassLookup
     public val kMutableTopLevelVariable: ClassDescriptor by ClassLookup
     public val kMemberProperty: ClassDescriptor by ClassLookup
     public val kMutableMemberProperty: ClassDescriptor by ClassLookup
     public val kTopLevelExtensionProperty: ClassDescriptor by ClassLookup
     public val kMutableTopLevelExtensionProperty: ClassDescriptor by ClassLookup
+
+    public fun getKClassType(annotations: Annotations, classDescriptor: ClassDescriptor): JetType {
+        val arguments = listOf(TypeProjectionImpl(Variance.INVARIANT, classDescriptor.getDefaultType()))
+        return JetTypeImpl(annotations, kClass.getTypeConstructor(), false, arguments, kClass.getMemberScope(arguments))
+    }
 
     public fun getKFunctionType(
             annotations: Annotations,

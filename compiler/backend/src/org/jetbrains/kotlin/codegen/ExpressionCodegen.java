@@ -30,11 +30,11 @@ import kotlin.KotlinPackage;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
 import org.jetbrains.kotlin.codegen.context.*;
+import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension;
 import org.jetbrains.kotlin.codegen.inline.*;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethod;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
@@ -2611,6 +2611,20 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @Override
+    public StackValue visitClassLiteralExpression(@NotNull JetClassLiteralExpression expression, StackValue data) {
+        JetType type = bindingContext.get(EXPRESSION_TYPE, expression);
+        assert type != null;
+
+        assert state.getReflectionTypes().getkClass().getTypeConstructor().equals(type.getConstructor())
+                : "::class expression should be type checked to a KClass: " + type;
+
+        ClassifierDescriptor typeArgument = KotlinPackage.single(type.getArguments()).getType().getConstructor().getDeclarationDescriptor();
+        assert typeArgument instanceof ClassDescriptor : "KClass argument should be a class: " + typeArgument;
+
+        return generateClassLiteralReference((ClassDescriptor) typeArgument);
+    }
+
+    @Override
     public StackValue visitCallableReferenceExpression(@NotNull JetCallableReferenceExpression expression, StackValue data) {
         ResolvedCall<?> resolvedCall = getResolvedCallWithAssert(expression.getCallableReference(), bindingContext);
         FunctionDescriptor functionDescriptor = bindingContext.get(FUNCTION, expression);
@@ -2690,18 +2704,28 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             @Override
             public Unit invoke(InstructionAdapter v) {
                 v.visitLdcInsn(descriptor.getName().asString());
+                StackValue receiverClass = generateClassLiteralReference(containingClass);
+                receiverClass.put(receiverClass.type, v);
+                v.invokestatic(REFLECTION, factoryMethod.getName(), factoryMethod.getDescriptor(), false);
 
-                Type classAsmType = typeMapper.mapClass(containingClass);
+                return Unit.INSTANCE$;
+            }
+        });
+    }
 
-                if (containingClass instanceof JavaClassDescriptor) {
+    @NotNull
+    private StackValue generateClassLiteralReference(@NotNull final ClassDescriptor descriptor) {
+        return StackValue.operation(K_CLASS_TYPE, new Function1<InstructionAdapter, Unit>() {
+            @Override
+            public Unit invoke(InstructionAdapter v) {
+                Type classAsmType = typeMapper.mapClass(descriptor);
+                if (descriptor instanceof JavaClassDescriptor) {
                     v.aconst(classAsmType);
                     v.invokestatic(REFLECTION, "foreignKotlinClass", Type.getMethodDescriptor(K_CLASS_TYPE, getType(Class.class)), false);
                 }
                 else {
                     v.getstatic(classAsmType.getInternalName(), JvmAbi.KOTLIN_CLASS_FIELD_NAME, K_CLASS_TYPE.getDescriptor());
                 }
-
-                v.invokestatic(REFLECTION, factoryMethod.getName(), factoryMethod.getDescriptor(), false);
 
                 return Unit.INSTANCE$;
             }

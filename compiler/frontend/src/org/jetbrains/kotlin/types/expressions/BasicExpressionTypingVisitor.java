@@ -453,13 +453,19 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetTypeInfo visitCallableReferenceExpression(@NotNull JetCallableReferenceExpression expression, ExpressionTypingContext context) {
-        JetTypeReference typeReference = expression.getTypeReference();
+    public JetTypeInfo visitClassLiteralExpression(@NotNull JetClassLiteralExpression expression, ExpressionTypingContext context) {
+        JetType receiverType = resolveDoubleColonExpressionType(expression, context);
+        // TODO: forbid type parameters & generic classes
+        ClassifierDescriptor classifier = receiverType.getConstructor().getDeclarationDescriptor();
+        return JetTypeInfo.create(
+                components.reflectionTypes.getKClassType(Annotations.EMPTY, (ClassDescriptor) classifier),
+                context.dataFlowInfo
+        );
+    }
 
-        JetType receiverType =
-                typeReference == null
-                ? null
-                : components.expressionTypingServices.getTypeResolver().resolveType(context.scope, typeReference, context.trace, false);
+    @Override
+    public JetTypeInfo visitCallableReferenceExpression(@NotNull JetCallableReferenceExpression expression, ExpressionTypingContext context) {
+        JetType receiverType = resolveDoubleColonExpressionType(expression, context);
 
         JetSimpleNameExpression callableReference = expression.getCallableReference();
         if (callableReference.getReferencedName().isEmpty()) {
@@ -470,6 +476,15 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         JetType result = getCallableReferenceType(expression, receiverType, context);
         return DataFlowUtils.checkType(result, expression, context, context.dataFlowInfo);
+    }
+
+    @Nullable
+    private JetType resolveDoubleColonExpressionType(@NotNull JetDoubleColonExpression expression, ExpressionTypingContext context) {
+        JetTypeReference typeReference = expression.getTypeReference();
+
+        return typeReference == null
+               ? null
+               : components.expressionTypingServices.getTypeResolver().resolveType(context.scope, typeReference, context.trace, false);
     }
 
     @Nullable
