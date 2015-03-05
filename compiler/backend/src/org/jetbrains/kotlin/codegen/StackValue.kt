@@ -26,7 +26,8 @@ class CoercionValue(
 ) : StackValue(castType, value.canHaveSideEffects()) {
 
     override fun putSelector(type: Type, v: InstructionAdapter) {
-        value.putSelector(castType, v)
+        value.putSelector(value.type, v)
+        StackValue.coerce(value.type, castType, v)
         StackValue.coerce(castType, type, v)
     }
 
