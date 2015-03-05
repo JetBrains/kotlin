@@ -60,21 +60,12 @@ class FunctionDescriptorResolver(
             trace: BindingTrace,
             dataFlowInfo: DataFlowInfo
     ): SimpleFunctionDescriptor {
-        if (function.getName() == null) {
-            trace.report(FUNCTION_DECLARATION_WITH_NO_NAME.on(function))
-        }
-        val functionDescriptor = SimpleFunctionDescriptorImpl.create(
-                containingDescriptor,
-                annotationResolver.resolveAnnotationsWithArguments(scope, function.getModifierList(), trace),
-                function.getNameAsSafeName(),
-                CallableMemberDescriptor.Kind.DECLARATION,
-                function.toSourceElement()
-        )
-        initializeFunctionDescriptorAndExplicitReturnType(containingDescriptor, scope, function, functionDescriptor, trace, TypeUtils.NO_EXPECTED_TYPE)
-        initializeFunctionReturnTypeBasedOnFunctionBody(scope, function, functionDescriptor, trace, dataFlowInfo)
-        BindingContextUtils.recordFunctionDeclarationToDescriptor(trace, function, functionDescriptor)
-        return functionDescriptor
+        if (function.getName() == null) trace.report(FUNCTION_DECLARATION_WITH_NO_NAME.on(function))
+
+        return resolveFunctionDescriptor(
+                SimpleFunctionDescriptorImpl::create, containingDescriptor, scope, function, trace, dataFlowInfo, TypeUtils.NO_EXPECTED_TYPE)
     }
+
 
     public fun resolveFunctionExpressionDescriptor(
             containingDescriptor: DeclarationDescriptor,
@@ -83,8 +74,19 @@ class FunctionDescriptorResolver(
             trace: BindingTrace,
             dataFlowInfo: DataFlowInfo,
             expectedFunctionType: JetType
+    ): SimpleFunctionDescriptor = resolveFunctionDescriptor(
+            ::FunctionExpressionDescriptor, containingDescriptor, scope, function, trace, dataFlowInfo, expectedFunctionType)
+
+    private fun resolveFunctionDescriptor(
+            functionConstructor: (DeclarationDescriptor, Annotations, Name, CallableMemberDescriptor.Kind, SourceElement) -> SimpleFunctionDescriptorImpl,
+            containingDescriptor: DeclarationDescriptor,
+            scope: JetScope,
+            function: JetNamedFunction,
+            trace: BindingTrace,
+            dataFlowInfo: DataFlowInfo,
+            expectedFunctionType: JetType
     ): SimpleFunctionDescriptor {
-        val functionDescriptor = FunctionExpressionDescriptor(
+        val functionDescriptor = functionConstructor(
                 containingDescriptor,
                 annotationResolver.resolveAnnotationsWithArguments(scope, function.getModifierList(), trace),
                 function.getNameAsSafeName(),
