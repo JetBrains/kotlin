@@ -144,7 +144,7 @@ public class KotlinCompilerRunner {
         T copy = XmlSerializerUtil.createCopy(to);
 
         for (Accessor accessor : XmlSerializerUtil.getAccessors(from.getClass())) {
-            accessor.write(copy, accessor.read(from));
+            accessor.set(copy, accessor.read(from));
         }
 
         return copy;
