@@ -1,6 +1,6 @@
 // EXTRACTION_TARGET: property with getter
 trait T {
-    private val i: Int
+    val i: Int
         get() {
             return 1
         }

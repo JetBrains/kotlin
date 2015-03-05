@@ -736,6 +736,15 @@ fun ExtractionData.isVisibilityApplicable(): Boolean {
     }
 }
 
+fun ExtractionData.getDefaultVisibility(): String {
+    if (!isVisibilityApplicable()) return ""
+
+    val parent = targetSibling.getStrictParentOfType<JetDeclaration>()
+    if (parent is JetClass && parent.isTrait()) return ""
+
+    return "private"
+}
+
 fun ExtractionData.performAnalysis(): AnalysisResult {
     if (originalElements.isEmpty()) {
         return AnalysisResult(null, Status.CRITICAL_ERROR, listOf(ErrorMessage.NO_EXPRESSION))
@@ -824,7 +833,7 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
                     this,
                     bindingContext,
                     functionNames,
-                    if (isVisibilityApplicable()) "private" else "",
+                    getDefaultVisibility(),
                     adjustedParameters.sortBy { it.name },
                     receiverParameter,
                     paramsInfo.typeParameters.sortBy { it.originalDeclaration.getName()!! },
