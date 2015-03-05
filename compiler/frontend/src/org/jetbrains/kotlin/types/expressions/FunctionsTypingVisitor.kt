@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.scopes.WritableScope
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.TypeUtils.CANT_INFER_LAMBDA_PARAM_TYPE
+import org.jetbrains.kotlin.types.TypeUtils.CANT_INFER_FUNCTION_PARAM_TYPE
 import org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE
 import org.jetbrains.kotlin.types.TypeUtils.noExpectedType
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
@@ -127,12 +127,12 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
         val expectedType = context.expectedType
         val functionTypeExpected = !noExpectedType(expectedType) && KotlinBuiltIns.isFunctionOrExtensionFunctionType(expectedType)
 
-        val functionDescriptor = createFunctionDescriptor(expression, context, functionTypeExpected)
+        val functionDescriptor = createFunctionDescriptor(expression, context)
         val safeReturnType = computeReturnType(expression, context, functionDescriptor, functionTypeExpected)
         functionDescriptor.setReturnType(safeReturnType)
 
         val resultType = createFunctionType(functionDescriptor)!!
-        if (!noExpectedType(expectedType) && KotlinBuiltIns.isFunctionOrExtensionFunctionType(expectedType)) {
+        if (functionTypeExpected) {
             // all checks were done before
             return JetTypeInfo.create(resultType, context.dataFlowInfo)
         }
@@ -142,113 +142,16 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
 
     private fun createFunctionDescriptor(
             expression: JetFunctionLiteralExpression,
-            context: ExpressionTypingContext,
-            functionTypeExpected: Boolean
+            context: ExpressionTypingContext
     ): AnonymousFunctionDescriptor {
         val functionLiteral = expression.getFunctionLiteral()
-        val receiverTypeRef = functionLiteral.getReceiverTypeReference()
         val functionDescriptor = AnonymousFunctionDescriptor(context.scope.getContainingDeclaration(), Annotations.EMPTY,
                                                              CallableMemberDescriptor.Kind.DECLARATION, functionLiteral.toSourceElement())
-
-        val valueParameterDescriptors = createValueParameterDescriptors(context, functionLiteral, functionDescriptor, functionTypeExpected)
-
-        val effectiveReceiverType: JetType?
-        if (receiverTypeRef == null) {
-            if (functionTypeExpected) {
-                effectiveReceiverType = KotlinBuiltIns.getReceiverType(context.expectedType)
-            }
-            else {
-                effectiveReceiverType = null
-            }
-        }
-        else {
-            effectiveReceiverType = components.expressionTypingServices.getTypeResolver().resolveType(context.scope, receiverTypeRef,
-                                                                                                      context.trace, true)
-        }
-        functionDescriptor.initialize(effectiveReceiverType, ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER, listOf(),
-                                      valueParameterDescriptors, /*unsubstitutedReturnType = */ null, Modality.FINAL, Visibilities.LOCAL)
+        components.expressionTypingServices.getFunctionDescriptorResolver().
+                initializeFunctionDescriptorAndExplicitReturnType(context.scope.getContainingDeclaration(), context.scope, functionLiteral,
+                                                                  functionDescriptor, context.trace, context.expectedType)
         BindingContextUtils.recordFunctionDeclarationToDescriptor(context.trace, functionLiteral, functionDescriptor)
         return functionDescriptor
-    }
-
-    private fun createValueParameterDescriptors(
-            context: ExpressionTypingContext,
-            functionLiteral: JetFunctionLiteral,
-            functionDescriptor: FunctionDescriptorImpl,
-            functionTypeExpected: Boolean
-    ): List<ValueParameterDescriptor> {
-        val valueParameterDescriptors = Lists.newArrayList<ValueParameterDescriptor>()
-        val declaredValueParameters = functionLiteral.getValueParameters()
-
-        val expectedValueParameters = if (functionTypeExpected) KotlinBuiltIns.getValueParameters(functionDescriptor, context.expectedType)
-        else null
-
-        val valueParameterList = functionLiteral.getValueParameterList()
-        val hasDeclaredValueParameters = valueParameterList != null
-        if (functionTypeExpected && !hasDeclaredValueParameters && expectedValueParameters!!.size() == 1) {
-            val valueParameterDescriptor = expectedValueParameters!!.get(0)
-            val it = ValueParameterDescriptorImpl(functionDescriptor, null, 0, Annotations.EMPTY, Name.identifier("it"),
-                                                  valueParameterDescriptor.getType(), valueParameterDescriptor.hasDefaultValue(),
-                                                  valueParameterDescriptor.getVarargElementType(), SourceElement.NO_SOURCE)
-            valueParameterDescriptors.add(it)
-            context.trace.record<ValueParameterDescriptor>(AUTO_CREATED_IT, it)
-        }
-        else {
-            if (expectedValueParameters != null && declaredValueParameters.size() != expectedValueParameters.size()) {
-                val expectedParameterTypes = ExpressionTypingUtils.getValueParametersTypes(expectedValueParameters)
-                context.trace.report(EXPECTED_PARAMETERS_NUMBER_MISMATCH.on(functionLiteral, expectedParameterTypes.size(), expectedParameterTypes))
-            }
-            for (i in declaredValueParameters.indices) {
-                val valueParameterDescriptor = createValueParameterDescriptor(context, functionDescriptor, declaredValueParameters, expectedValueParameters, i)
-                valueParameterDescriptors.add(valueParameterDescriptor)
-            }
-        }
-        return valueParameterDescriptors
-    }
-
-    private fun createValueParameterDescriptor(
-            context: ExpressionTypingContext,
-            functionDescriptor: FunctionDescriptorImpl,
-            declaredValueParameters: List<JetParameter>,
-            expectedValueParameters: List<ValueParameterDescriptor>?,
-            index: Int
-    ): ValueParameterDescriptor {
-        val declaredParameter = declaredValueParameters.get(index)
-        val typeReference = declaredParameter.getTypeReference()
-
-        val expectedType: JetType?
-        if (expectedValueParameters != null && index < expectedValueParameters.size()) {
-            expectedType = expectedValueParameters.get(index).getType()
-        }
-        else {
-            expectedType = null
-        }
-        val type: JetType
-        if (typeReference != null) {
-            type = components.expressionTypingServices.getTypeResolver().resolveType(context.scope, typeReference, context.trace, true)
-            if (expectedType != null) {
-                if (!JetTypeChecker.DEFAULT.isSubtypeOf(expectedType, type)) {
-                    context.trace.report(EXPECTED_PARAMETER_TYPE_MISMATCH.on(declaredParameter, expectedType))
-                }
-            }
-        }
-        else {
-            val containsUninferredParameter = TypeUtils.containsSpecialType(expectedType) {
-                    TypeUtils.isDontCarePlaceholder(it) || ErrorUtils.isUninferredParameter(it)
-                }
-            if (expectedType == null || containsUninferredParameter) {
-                context.trace.report(CANNOT_INFER_PARAMETER_TYPE.on(declaredParameter))
-            }
-            if (expectedType != null) {
-                type = expectedType
-            }
-            else {
-                type = CANT_INFER_LAMBDA_PARAM_TYPE
-            }
-        }
-        return components.expressionTypingServices.getDescriptorResolver()
-                .resolveValueParameterDescriptorWithAnnotationArguments(context.scope, functionDescriptor, declaredParameter,
-                                                                        index, type, context.trace)
     }
 
     private fun computeReturnType(
@@ -265,9 +168,8 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
                 return components.builtIns.getUnitType()
             }
         }
-        return returnType ?: CANT_INFER_LAMBDA_PARAM_TYPE
+        return returnType ?: CANT_INFER_FUNCTION_PARAM_TYPE
     }
-
 
     private fun computeUnsafeReturnType(
             expression: JetFunctionLiteralExpression,

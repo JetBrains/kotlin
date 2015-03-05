@@ -288,6 +288,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("FunctionParameterWithoutType.kt")
+        public void testFunctionParameterWithoutType() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/FunctionParameterWithoutType.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("FunctionReturnTypes.kt")
         public void testFunctionReturnTypes() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/FunctionReturnTypes.kt");
@@ -788,6 +794,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("onExpression.kt")
             public void testOnExpression() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/onExpression.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("onFunctionParameter.kt")
+            public void testOnFunctionParameter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/onFunctionParameter.kt");
                 doTest(fileName);
             }
 

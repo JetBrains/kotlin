@@ -171,8 +171,7 @@ public class DefaultErrorMessages {
         MAP.put(CONFLICTING_IMPORT, "Conflicting import, imported name ''{0}'' is ambiguous", STRING);
         MAP.put(PLATFORM_CLASS_MAPPED_TO_KOTLIN, "This class shouldn''t be used in Kotlin. Use {0} instead.", CLASSES_OR_SEPARATED);
 
-        MAP.put(CANNOT_INFER_PARAMETER_TYPE,
-                "Cannot infer a type for this parameter. To specify it explicitly use the {(p : Type) -> ...} notation");
+        MAP.put(CANNOT_INFER_PARAMETER_TYPE, "Cannot infer a type for this parameter. Please specify it explicitly.");
 
         MAP.put(NO_BACKING_FIELD_ABSTRACT_PROPERTY, "This property doesn't have a backing field, because it's abstract");
         MAP.put(NO_BACKING_FIELD_CUSTOM_ACCESSORS,
