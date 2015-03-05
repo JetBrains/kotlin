@@ -2,6 +2,7 @@ package kotlin.concurrent
 
 import java.util.concurrent.Executor
 
+deprecated("This class does not have any advantages compared to standard Java data structures and is going to be removed")
 public class FunctionalQueue<T> (
         private val input: FunctionalList<T> = FunctionalList.emptyList<T>(),
         private val output: FunctionalList<T> = FunctionalList.emptyList<T>()
