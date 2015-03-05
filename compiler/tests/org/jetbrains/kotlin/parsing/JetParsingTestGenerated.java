@@ -391,6 +391,12 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
             doParsingTest(fileName);
         }
 
+        @TestMetadata("namelessObjectAsEnumMember.kt")
+        public void testNamelessObjectAsEnumMember() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/namelessObjectAsEnumMember.kt");
+            doParsingTest(fileName);
+        }
+
         @TestMetadata("NestedComments.kt")
         public void testNestedComments() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/NestedComments.kt");

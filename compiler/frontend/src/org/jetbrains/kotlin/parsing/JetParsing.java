@@ -46,7 +46,7 @@ public class JetParsing extends AbstractJetParsing {
     private static final TokenSet TOPLEVEL_OBJECT_FIRST = TokenSet.create(TYPE_ALIAS_KEYWORD, TRAIT_KEYWORD, CLASS_KEYWORD,
                 FUN_KEYWORD, VAL_KEYWORD, PACKAGE_KEYWORD);
     private static final TokenSet ENUM_MEMBER_FIRST = TokenSet.create(TYPE_ALIAS_KEYWORD, TRAIT_KEYWORD, CLASS_KEYWORD,
-                FUN_KEYWORD, VAL_KEYWORD, IDENTIFIER);
+                FUN_KEYWORD, VAL_KEYWORD, IDENTIFIER, OBJECT_KEYWORD);
 
     private static final TokenSet CLASS_NAME_RECOVERY_SET = TokenSet.orSet(TokenSet.create(LT, LPAR, COLON, LBRACE), TOPLEVEL_OBJECT_FIRST);
     private static final TokenSet TYPE_PARAMETER_GT_RECOVERY_SET = TokenSet.create(WHERE_KEYWORD, LPAR, COLON, LBRACE, GT);
