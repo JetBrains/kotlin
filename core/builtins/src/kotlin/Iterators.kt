@@ -18,7 +18,7 @@
 
 package kotlin
 
-/** An iterator over a sequence of values of type Byte. */
+/** An iterator over a sequence of values of type `Byte`. */
 public abstract class ByteIterator : Iterator<Byte> {
     override final fun next() = nextByte()
 
@@ -26,7 +26,7 @@ public abstract class ByteIterator : Iterator<Byte> {
     public abstract fun nextByte(): Byte
 }
 
-/** An iterator over a sequence of values of type Char. */
+/** An iterator over a sequence of values of type `Char`. */
 public abstract class CharIterator : Iterator<Char> {
     override final fun next() = nextChar()
 
@@ -34,7 +34,7 @@ public abstract class CharIterator : Iterator<Char> {
     public abstract fun nextChar(): Char
 }
 
-/** An iterator over a sequence of values of type Short. */
+/** An iterator over a sequence of values of type `Short`. */
 public abstract class ShortIterator : Iterator<Short> {
     override final fun next() = nextShort()
 
@@ -42,7 +42,7 @@ public abstract class ShortIterator : Iterator<Short> {
     public abstract fun nextShort(): Short
 }
 
-/** An iterator over a sequence of values of type Int. */
+/** An iterator over a sequence of values of type `Int`. */
 public abstract class IntIterator : Iterator<Int> {
     override final fun next() = nextInt()
 
@@ -50,7 +50,7 @@ public abstract class IntIterator : Iterator<Int> {
     public abstract fun nextInt(): Int
 }
 
-/** An iterator over a sequence of values of type Long. */
+/** An iterator over a sequence of values of type `Long`. */
 public abstract class LongIterator : Iterator<Long> {
     override final fun next() = nextLong()
 
@@ -58,7 +58,7 @@ public abstract class LongIterator : Iterator<Long> {
     public abstract fun nextLong(): Long
 }
 
-/** An iterator over a sequence of values of type Float. */
+/** An iterator over a sequence of values of type `Float`. */
 public abstract class FloatIterator : Iterator<Float> {
     override final fun next() = nextFloat()
 
@@ -66,7 +66,7 @@ public abstract class FloatIterator : Iterator<Float> {
     public abstract fun nextFloat(): Float
 }
 
-/** An iterator over a sequence of values of type Double. */
+/** An iterator over a sequence of values of type `Double`. */
 public abstract class DoubleIterator : Iterator<Double> {
     override final fun next() = nextDouble()
 
@@ -74,7 +74,7 @@ public abstract class DoubleIterator : Iterator<Double> {
     public abstract fun nextDouble(): Double
 }
 
-/** An iterator over a sequence of values of type Boolean. */
+/** An iterator over a sequence of values of type `Boolean`. */
 public abstract class BooleanIterator : Iterator<Boolean> {
     override final fun next() = nextBoolean()
 

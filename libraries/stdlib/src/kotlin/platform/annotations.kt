@@ -21,6 +21,7 @@ package kotlin.platform
  * which is generated from this element.
  * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/java-interop.html#handling-signature-clashes-with-platformname)
  * for more information.
+ * @property name the name of the element.
  */
 public annotation class platformName(public val name: String)
 

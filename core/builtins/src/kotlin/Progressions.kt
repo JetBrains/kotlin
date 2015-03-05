@@ -19,7 +19,7 @@
 package kotlin
 
 /**
- * A progression of values of type Byte.
+ * A progression of values of type `Byte`.
  */
 public class ByteProgression(
         override val start: Byte,
@@ -46,7 +46,7 @@ public class ByteProgression(
 }
 
 /**
- * A progression of values of type Char.
+ * A progression of values of type `Char`.
  */
 public class CharProgression(
         override val start: Char,
@@ -73,7 +73,7 @@ public class CharProgression(
 }
 
 /**
- * A progression of values of type Short.
+ * A progression of values of type `Short`.
  */
 public class ShortProgression(
         override val start: Short,
@@ -100,7 +100,7 @@ public class ShortProgression(
 }
 
 /**
- * A progression of values of type Int.
+ * A progression of values of type `Int`.
  */
 public class IntProgression(
         override val start: Int,
@@ -127,7 +127,7 @@ public class IntProgression(
 }
 
 /**
- * A progression of values of type Long.
+ * A progression of values of type `Long`.
  */
 public class LongProgression(
         override val start: Long,
@@ -154,7 +154,7 @@ public class LongProgression(
 }
 
 /**
- * A progression of values of type Float.
+ * A progression of values of type `Float`.
  */
 public class FloatProgression(
         override val start: Float,
@@ -182,7 +182,7 @@ public class FloatProgression(
 }
 
 /**
- * A progression of values of type Double.
+ * A progression of values of type `Double`.
  */
 public class DoubleProgression(
         override val start: Double,

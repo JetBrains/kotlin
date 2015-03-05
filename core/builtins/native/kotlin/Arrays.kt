@@ -19,7 +19,7 @@
 package kotlin
 
 /**
- * An array of bytes. When targeting the JVM, instances of this class are represented as byte[].
+ * An array of bytes. When targeting the JVM, instances of this class are represented as `byte[]`.
  * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
  */
 public class ByteArray(size: Int) : Cloneable {
@@ -38,7 +38,7 @@ public class ByteArray(size: Int) : Cloneable {
 }
 
 /**
- * An array of chars. When targeting the JVM, instances of this class are represented as char[].
+ * An array of chars. When targeting the JVM, instances of this class are represented as `char[]`.
  * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
  */
 public class CharArray(size: Int) : Cloneable {
@@ -57,7 +57,7 @@ public class CharArray(size: Int) : Cloneable {
 }
 
 /**
- * An array of shorts. When targeting the JVM, instances of this class are represented as short[].
+ * An array of shorts. When targeting the JVM, instances of this class are represented as `short[]`.
  * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
  */
 public class ShortArray(size: Int) : Cloneable {
@@ -76,7 +76,7 @@ public class ShortArray(size: Int) : Cloneable {
 }
 
 /**
- * An array of ints. When targeting the JVM, instances of this class are represented as int[].
+ * An array of ints. When targeting the JVM, instances of this class are represented as `int[]`.
  * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
  */
 public class IntArray(size: Int) : Cloneable {
@@ -95,7 +95,7 @@ public class IntArray(size: Int) : Cloneable {
 }
 
 /**
- * An array of longs. When targeting the JVM, instances of this class are represented as long[].
+ * An array of longs. When targeting the JVM, instances of this class are represented as `long[]`.
  * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
  */
 public class LongArray(size: Int) : Cloneable {
@@ -114,7 +114,7 @@ public class LongArray(size: Int) : Cloneable {
 }
 
 /**
- * An array of floats. When targeting the JVM, instances of this class are represented as float[].
+ * An array of floats. When targeting the JVM, instances of this class are represented as `float[]`.
  * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
  */
 public class FloatArray(size: Int) : Cloneable {
@@ -133,7 +133,7 @@ public class FloatArray(size: Int) : Cloneable {
 }
 
 /**
- * An array of doubles. When targeting the JVM, instances of this class are represented as double[].
+ * An array of doubles. When targeting the JVM, instances of this class are represented as `double[]`.
  * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
  */
 public class DoubleArray(size: Int) : Cloneable {
@@ -152,7 +152,7 @@ public class DoubleArray(size: Int) : Cloneable {
 }
 
 /**
- * An array of booleans. When targeting the JVM, instances of this class are represented as boolean[].
+ * An array of booleans. When targeting the JVM, instances of this class are represented as `boolean[]`.
  * @constructor Creates a new array of the specified [size], with all elements initialized to false.
  */
 public class BooleanArray(size: Int) : Cloneable {

@@ -26,13 +26,13 @@ public annotation class data
 
 /**
  * Marks the annotated class, function or property as deprecated.
- * @param value the message explaining the deprecation and recommending an alternative API to use.
+ * @property value the message explaining the deprecation and recommending an alternative API to use.
  */
 public annotation class deprecated(val value: String)
 
 /**
  * Suppresses the given compilation warnings in the annotated element.
- * @param names names of the compiler diagnostics to suppress.
+ * @property names names of the compiler diagnostics to suppress.
  */
 public annotation class suppress(vararg val names: String)
 

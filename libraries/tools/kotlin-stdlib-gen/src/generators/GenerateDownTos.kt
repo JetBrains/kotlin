@@ -32,6 +32,11 @@ private fun generateDownTos(outputFile: File, header: String) {
         }
 
         writer.println("""
+/**
+ * Returns a progression from this value down to the specified [to] value.
+ *
+ * The [to] value has to be less than this value.
+ */
 public fun $fromType.downTo(to: $toType): $progressionType {
     return $progressionType($fromExpr, $toExpr, $incrementExpr)
 }""")

@@ -26,4 +26,7 @@ public trait PropertyMetadata {
     public val name: String
 }
 
+/**
+ * @suppress
+ */
 public class PropertyMetadataImpl(override val name: String): PropertyMetadata

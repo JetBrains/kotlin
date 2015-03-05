@@ -6,7 +6,7 @@ import kotlin.jvm.internal.unsafe.*
 import kotlin.jvm.internal.Intrinsic
 
 /**
- * This annotation indicates what exceptions should be declared by a function when compiled to a JVM method
+ * This annotation indicates what exceptions should be declared by a function when compiled to a JVM method.
  *
  * Example:
  *
@@ -20,6 +20,8 @@ import kotlin.jvm.internal.Intrinsic
  * ```
  * String readFile(String name) throws IOException {...}
  * ```
+ *
+ * @property exceptionClasses the list of checked exception classes that may be thrown by the function.
  */
 Retention(RetentionPolicy.SOURCE)
 public annotation class throws(public vararg val exceptionClasses: Class<out Throwable>)
@@ -48,5 +50,8 @@ public inline fun <R> synchronized(lock: Any, block: () -> R): R {
     }
 }
 
+/**
+ * Returns the annotation type of this annotation.
+ */
 public fun <T : Annotation> T.annotationType() : Class<out T> =
     (this as java.lang.annotation.Annotation).annotationType() as Class<out T>

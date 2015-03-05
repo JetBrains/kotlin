@@ -6,198 +6,443 @@ package kotlin
 //
 
 
+/**
+ * Returns a progression from this value down to the specified [to] value.
+ *
+ * The [to] value has to be less than this value.
+ */
 public fun Byte.downTo(to: Byte): ByteProgression {
     return ByteProgression(this, to, -1)
 }
 
+/**
+ * Returns a progression from this value down to the specified [to] value.
+ *
+ * The [to] value has to be less than this value.
+ */
 public fun Byte.downTo(to: Char): CharProgression {
     return CharProgression(this.toChar(), to, -1)
 }
 
+/**
+ * Returns a progression from this value down to the specified [to] value.
+ *
+ * The [to] value has to be less than this value.
+ */
 public fun Byte.downTo(to: Short): ShortProgression {
     return ShortProgression(this.toShort(), to, -1)
 }
 
+/**
+ * Returns a progression from this value down to the specified [to] value.
+ *
+ * The [to] value has to be less than this value.
+ */
 public fun Byte.downTo(to: Int): IntProgression {
     return IntProgression(this.toInt(), to, -1)
 }
 
+/**
+ * Returns a progression from this value down to the specified [to] value.
+ *
+ * The [to] value has to be less than this value.
+ */
 public fun Byte.downTo(to: Long): LongProgression {
     return LongProgression(this.toLong(), to, -1.toLong())
 }
 
+/**
+ * Returns a progression from this value down to the specified [to] value.
+ *
+ * The [to] value has to be less than this value.
+ */
 public fun Byte.downTo(to: Float): FloatProgression {
     return FloatProgression(this.toFloat(), to, -1.toFloat())
 }
 
+/**
+ * Returns a progression from this value down to the specified [to] value.
+ *
+ * The [to] value has to be less than this value.
+ */
 public fun Byte.downTo(to: Double): DoubleProgression {
     return DoubleProgression(this.toDouble(), to, -1.0)
 }
 
+/**
+ * Returns a progression from this value down to the specified [to] value.
+ *
+ * The [to] value has to be less than this value.
+ */
 public fun Char.downTo(to: Byte): CharProgression {
     return CharProgression(this, to.toChar(), -1)
 }
 
+/**
+ * Returns a progression from this value down to the specified [to] value.
+ *
+ * The [to] value has to be less than this value.
+ */
 public fun Char.downTo(to: Char): CharProgression {
     return CharProgression(this, to, -1)
 }
 
+/**
+ * Returns a progression from this value down to the specified [to] value.
+ *
+ * The [to] value has to be less than this value.
+ */
 public fun Char.downTo(to: Short): ShortProgression {
     return ShortProgression(this.toShort(), to, -1)
 }
 
+/**
+ * Returns a progression from this value down to the specified [to] value.
+ *
+ * The [to] value has to be less than this value.
+ */
 public fun Char.downTo(to: Int): IntProgression {
     return IntProgression(this.toInt(), to, -1)
 }
 
+/**
+ * Returns a progression from this value down to the specified [to] value.
+ *
+ * The [to] value has to be less than this value.
+ */
 public fun Char.downTo(to: Long): LongProgression {
     return LongProgression(this.toLong(), to, -1.toLong())
 }
 
+/**
+ * Returns a progression from this value down to the specified [to] value.
+ *
+ * The [to] value has to be less than this value.
+ */
 public fun Char.downTo(to: Float): FloatProgression {
     return FloatProgression(this.toFloat(), to, -1.toFloat())
 }
 
+/**
+ * Returns a progression from this value down to the specified [to] value.
+ *
+ * The [to] value has to be less than this value.
+ */
 public fun Char.downTo(to: Double): DoubleProgression {
     return DoubleProgression(this.toDouble(), to, -1.0)
 }
 
+/**
+ * Returns a progression from this value down to the specified [to] value.
+ *
+ * The [to] value has to be less than this value.
+ */
 public fun Short.downTo(to: Byte): ShortProgression {
     return ShortProgression(this, to.toShort(), -1)
 }
 
+/**
+ * Returns a progression from this value down to the specified [to] value.
+ *
+ * The [to] value has to be less than this value.
+ */
 public fun Short.downTo(to: Char): ShortProgression {
     return ShortProgression(this, to.toShort(), -1)
 }
 
+/**
+ * Returns a progression from this value down to the specified [to] value.
+ *
+ * The [to] value has to be less than this value.
+ */
 public fun Short.downTo(to: Short): ShortProgression {
     return ShortProgression(this, to, -1)
 }
 
+/**
+ * Returns a progression from this value down to the specified [to] value.
+ *
+ * The [to] value has to be less than this value.
+ */
 public fun Short.downTo(to: Int): IntProgression {
     return IntProgression(this.toInt(), to, -1)
 }
 
+/**
+ * Returns a progression from this value down to the specified [to] value.
+ *
+ * The [to] value has to be less than this value.
+ */
 public fun Short.downTo(to: Long): LongProgression {
     return LongProgression(this.toLong(), to, -1.toLong())
 }
 
+/**
+ * Returns a progression from this value down to the specified [to] value.
+ *
+ * The [to] value has to be less than this value.
+ */
 public fun Short.downTo(to: Float): FloatProgression {
     return FloatProgression(this.toFloat(), to, -1.toFloat())
 }
 
+/**
+ * Returns a progression from this value down to the specified [to] value.
+ *
+ * The [to] value has to be less than this value.
+ */
 public fun Short.downTo(to: Double): DoubleProgression {
     return DoubleProgression(this.toDouble(), to, -1.0)
 }
 
+/**
+ * Returns a progression from this value down to the specified [to] value.
+ *
+ * The [to] value has to be less than this value.
+ */
 public fun Int.downTo(to: Byte): IntProgression {
     return IntProgression(this, to.toInt(), -1)
 }
 
+/**
+ * Returns a progression from this value down to the specified [to] value.
+ *
+ * The [to] value has to be less than this value.
+ */
 public fun Int.downTo(to: Char): IntProgression {
     return IntProgression(this, to.toInt(), -1)
 }
 
+/**
+ * Returns a progression from this value down to the specified [to] value.
+ *
+ * The [to] value has to be less than this value.
+ */
 public fun Int.downTo(to: Short): IntProgression {
     return IntProgression(this, to.toInt(), -1)
 }
 
+/**
+ * Returns a progression from this value down to the specified [to] value.
+ *
+ * The [to] value has to be less than this value.
+ */
 public fun Int.downTo(to: Int): IntProgression {
     return IntProgression(this, to, -1)
 }
 
+/**
+ * Returns a progression from this value down to the specified [to] value.
+ *
+ * The [to] value has to be less than this value.
+ */
 public fun Int.downTo(to: Long): LongProgression {
     return LongProgression(this.toLong(), to, -1.toLong())
 }
 
+/**
+ * Returns a progression from this value down to the specified [to] value.
+ *
+ * The [to] value has to be less than this value.
+ */
 public fun Int.downTo(to: Float): FloatProgression {
     return FloatProgression(this.toFloat(), to, -1.toFloat())
 }
 
+/**
+ * Returns a progression from this value down to the specified [to] value.
+ *
+ * The [to] value has to be less than this value.
+ */
 public fun Int.downTo(to: Double): DoubleProgression {
     return DoubleProgression(this.toDouble(), to, -1.0)
 }
 
+/**
+ * Returns a progression from this value down to the specified [to] value.
+ *
+ * The [to] value has to be less than this value.
+ */
 public fun Long.downTo(to: Byte): LongProgression {
     return LongProgression(this, to.toLong(), -1.toLong())
 }
 
+/**
+ * Returns a progression from this value down to the specified [to] value.
+ *
+ * The [to] value has to be less than this value.
+ */
 public fun Long.downTo(to: Char): LongProgression {
     return LongProgression(this, to.toLong(), -1.toLong())
 }
 
+/**
+ * Returns a progression from this value down to the specified [to] value.
+ *
+ * The [to] value has to be less than this value.
+ */
 public fun Long.downTo(to: Short): LongProgression {
     return LongProgression(this, to.toLong(), -1.toLong())
 }
 
+/**
+ * Returns a progression from this value down to the specified [to] value.
+ *
+ * The [to] value has to be less than this value.
+ */
 public fun Long.downTo(to: Int): LongProgression {
     return LongProgression(this, to.toLong(), -1.toLong())
 }
 
+/**
+ * Returns a progression from this value down to the specified [to] value.
+ *
+ * The [to] value has to be less than this value.
+ */
 public fun Long.downTo(to: Long): LongProgression {
     return LongProgression(this, to, -1.toLong())
 }
 
+/**
+ * Returns a progression from this value down to the specified [to] value.
+ *
+ * The [to] value has to be less than this value.
+ */
 public fun Long.downTo(to: Float): FloatProgression {
     return FloatProgression(this.toFloat(), to, -1.toFloat())
 }
 
+/**
+ * Returns a progression from this value down to the specified [to] value.
+ *
+ * The [to] value has to be less than this value.
+ */
 public fun Long.downTo(to: Double): DoubleProgression {
     return DoubleProgression(this.toDouble(), to, -1.0)
 }
 
+/**
+ * Returns a progression from this value down to the specified [to] value.
+ *
+ * The [to] value has to be less than this value.
+ */
 public fun Float.downTo(to: Byte): FloatProgression {
     return FloatProgression(this, to.toFloat(), -1.toFloat())
 }
 
+/**
+ * Returns a progression from this value down to the specified [to] value.
+ *
+ * The [to] value has to be less than this value.
+ */
 public fun Float.downTo(to: Char): FloatProgression {
     return FloatProgression(this, to.toFloat(), -1.toFloat())
 }
 
+/**
+ * Returns a progression from this value down to the specified [to] value.
+ *
+ * The [to] value has to be less than this value.
+ */
 public fun Float.downTo(to: Short): FloatProgression {
     return FloatProgression(this, to.toFloat(), -1.toFloat())
 }
 
+/**
+ * Returns a progression from this value down to the specified [to] value.
+ *
+ * The [to] value has to be less than this value.
+ */
 public fun Float.downTo(to: Int): FloatProgression {
     return FloatProgression(this, to.toFloat(), -1.toFloat())
 }
 
+/**
+ * Returns a progression from this value down to the specified [to] value.
+ *
+ * The [to] value has to be less than this value.
+ */
 public fun Float.downTo(to: Long): FloatProgression {
     return FloatProgression(this, to.toFloat(), -1.toFloat())
 }
 
+/**
+ * Returns a progression from this value down to the specified [to] value.
+ *
+ * The [to] value has to be less than this value.
+ */
 public fun Float.downTo(to: Float): FloatProgression {
     return FloatProgression(this, to, -1.toFloat())
 }
 
+/**
+ * Returns a progression from this value down to the specified [to] value.
+ *
+ * The [to] value has to be less than this value.
+ */
 public fun Float.downTo(to: Double): DoubleProgression {
     return DoubleProgression(this.toDouble(), to, -1.0)
 }
 
+/**
+ * Returns a progression from this value down to the specified [to] value.
+ *
+ * The [to] value has to be less than this value.
+ */
 public fun Double.downTo(to: Byte): DoubleProgression {
     return DoubleProgression(this, to.toDouble(), -1.0)
 }
 
+/**
+ * Returns a progression from this value down to the specified [to] value.
+ *
+ * The [to] value has to be less than this value.
+ */
 public fun Double.downTo(to: Char): DoubleProgression {
     return DoubleProgression(this, to.toDouble(), -1.0)
 }
 
+/**
+ * Returns a progression from this value down to the specified [to] value.
+ *
+ * The [to] value has to be less than this value.
+ */
 public fun Double.downTo(to: Short): DoubleProgression {
     return DoubleProgression(this, to.toDouble(), -1.0)
 }
 
+/**
+ * Returns a progression from this value down to the specified [to] value.
+ *
+ * The [to] value has to be less than this value.
+ */
 public fun Double.downTo(to: Int): DoubleProgression {
     return DoubleProgression(this, to.toDouble(), -1.0)
 }
 
+/**
+ * Returns a progression from this value down to the specified [to] value.
+ *
+ * The [to] value has to be less than this value.
+ */
 public fun Double.downTo(to: Long): DoubleProgression {
     return DoubleProgression(this, to.toDouble(), -1.0)
 }
 
+/**
+ * Returns a progression from this value down to the specified [to] value.
+ *
+ * The [to] value has to be less than this value.
+ */
 public fun Double.downTo(to: Float): DoubleProgression {
     return DoubleProgression(this, to.toDouble(), -1.0)
 }
 
+/**
+ * Returns a progression from this value down to the specified [to] value.
+ *
+ * The [to] value has to be less than this value.
+ */
 public fun Double.downTo(to: Double): DoubleProgression {
     return DoubleProgression(this, to, -1.0)
 }
