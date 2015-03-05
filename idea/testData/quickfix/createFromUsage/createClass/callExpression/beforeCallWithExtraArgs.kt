@@ -2,7 +2,6 @@
 // ACTION: Create function 'Foo'
 // ACTION: Add parameter to constructor 'Foo'
 // ACTION: Split property declaration
-// ACTION: Inject language or reference
 // ERROR: Too many arguments for public constructor Foo(a: kotlin.Int) defined in Foo
 
 class Foo(a: Int)
