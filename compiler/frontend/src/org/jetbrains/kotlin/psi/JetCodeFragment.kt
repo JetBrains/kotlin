@@ -26,24 +26,28 @@ import com.intellij.testFramework.LightVirtualFile
 import org.jetbrains.kotlin.idea.JetFileType
 import java.util.HashSet
 import com.intellij.openapi.util.Key
+import com.intellij.psi.impl.PsiModificationTrackerImpl
+import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.types.JetType
+import java.util.LinkedHashSet
 
 public abstract class JetCodeFragment(
         private val _project: Project,
         name: String,
         text: CharSequence,
+        imports: String?, // Should be separated by JetCodeFragment.IMPORT_SEPARATOR
         elementType: IElementType,
         private val context: PsiElement?
 ): JetFile((PsiManager.getInstance(_project) as PsiManagerEx).getFileManager().createFileViewProvider(LightVirtualFile(name, JetFileType.INSTANCE, text), true), false), JavaCodeFragment {
 
     private var viewProvider = super<JetFile>.getViewProvider() as SingleRootFileViewProvider
-    private var myImports = HashSet<String>();
+    private var myImports = LinkedHashSet<String>();
 
     {
         getViewProvider().forceCachedPsi(this)
         init(TokenType.CODE_FRAGMENT, elementType)
         if (context != null) {
-            addImportsFromString(getImportsForElement(context))
+            initImports(context, imports)
         }
     }
 
@@ -98,6 +102,11 @@ public abstract class JetCodeFragment(
     override fun addImportsFromString(imports: String?) {
         if (imports == null || imports.isEmpty()) return
 
+        // We should increment modification tracker after inserting import in code fragment to invalidate resolve caches.
+        // Without this modification references with new import won't be resolved without any modification in code fragment.
+        // Also shorten references won't work.
+        (PsiModificationTracker.SERVICE.getInstance(getProject()) as PsiModificationTrackerImpl).incOutOfCodeBlockModificationCounter()
+
         myImports.addAll(imports.split(IMPORT_SEPARATOR))
     }
 
@@ -119,17 +128,27 @@ public abstract class JetCodeFragment(
         return true
     }
 
+    private fun initImports(context: PsiElement, imports: String?) {
+        val containingFile = context.getContainingFile()
+        if (containingFile !is JetFile) return
+
+        val importListForContextElement = containingFile.getImportList()
+        if (importListForContextElement != null) {
+            myImports.addAll(importListForContextElement.getImports().map { it.getText() })
+        }
+
+        val packageName = containingFile.getPackageDirective()?.getFqName()?.asString()
+        if (packageName != null && packageName.isNotEmpty()) {
+            myImports.add("import $packageName.*")
+        }
+
+        if (imports != null && !imports.isEmpty()) {
+            myImports.addAll(imports.split(IMPORT_SEPARATOR))
+        }
+    }
+
     class object {
         public val IMPORT_SEPARATOR: String = ","
         public val RUNTIME_TYPE_EVALUATOR: Key<Function1<JetExpression, JetType?>> = Key.create("RUNTIME_TYPE_EVALUATOR")
-
-        public fun getImportsForElement(elementAtCaret: PsiElement): String {
-            val containingFile = elementAtCaret.getContainingFile()
-            if (containingFile !is JetFile) return ""
-
-            return containingFile.getImportList()?.getImports()
-                        ?.map { it.getText() }
-                        ?.join(JetCodeFragment.IMPORT_SEPARATOR) ?: ""
-        }
     }
 }

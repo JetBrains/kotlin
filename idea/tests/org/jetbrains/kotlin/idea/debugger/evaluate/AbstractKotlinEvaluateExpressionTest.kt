@@ -331,11 +331,7 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
             try {
 
                 val evaluator =
-                        EvaluatorBuilderImpl.build(TextWithImportsImpl(
-                                codeFragmentKind,
-                                text,
-                                JetCodeFragment.getImportsForElement(contextElement),
-                                JetFileType.INSTANCE),
+                        EvaluatorBuilderImpl.build(TextWithImportsImpl(codeFragmentKind, text, "", JetFileType.INSTANCE),
                                                    contextElement,
                                                    sourcePosition)
 

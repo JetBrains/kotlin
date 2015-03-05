@@ -97,10 +97,6 @@ object KotlinEvaluationBuilder: EvaluatorBuilder {
             throw EvaluateExceptionUtil.createEvaluateException("Couldn't evaluate kotlin expression in this context")
         }
 
-        val packageName = file.getPackageDirective()?.getFqName()?.asString()
-        if (packageName != null && packageName.isNotEmpty()) {
-            codeFragment.addImportsFromString("import $packageName.*")
-        }
         return ExpressionEvaluatorImpl(KotlinEvaluator(codeFragment as JetCodeFragment, position))
     }
 }

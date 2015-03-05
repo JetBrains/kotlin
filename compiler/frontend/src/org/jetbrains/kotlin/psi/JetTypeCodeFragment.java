@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.types.JetType;
 
 public class JetTypeCodeFragment extends JetCodeFragment {
     public JetTypeCodeFragment(Project project, String name, CharSequence text, PsiElement context) {
-        super(project, name, text, JetNodeTypes.TYPE_CODE_FRAGMENT, context);
+        super(project, name, text, null, JetNodeTypes.TYPE_CODE_FRAGMENT, context);
     }
 
     @Nullable

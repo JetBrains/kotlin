@@ -40,12 +40,11 @@ import com.intellij.openapi.progress.ProgressManager
 class KotlinCodeFragmentFactory: CodeFragmentFactory() {
     override fun createCodeFragment(item: TextWithImports, context: PsiElement?, project: Project): JavaCodeFragment {
         val codeFragment = if (item.getKind() == CodeFragmentKind.EXPRESSION) {
-            JetExpressionCodeFragment(project, "fragment.kt", item.getText(), getContextElement(context))
+            JetExpressionCodeFragment(project, "fragment.kt", item.getText(), item.getImports(), getContextElement(context))
         }
         else {
-            JetBlockCodeFragment(project, "fragment.kt", item.getText(), getContextElement(context))
+            JetBlockCodeFragment(project, "fragment.kt", item.getText(), item.getImports(), getContextElement(context))
         }
-        codeFragment.addImportsFromString(item.getImports())
 
         codeFragment.putCopyableUserData(JetCodeFragment.RUNTIME_TYPE_EVALUATOR, {
             (expression: JetExpression): JetType? ->

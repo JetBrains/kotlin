@@ -66,8 +66,6 @@ public abstract class AbstractCodeFragmentHighlightingTest : AbstractJetPsiCheck
                                          .processImportReference(importDirective, scope, scope, null, BindingTraceContext(), LookupMode.EVERYTHING)
                                          .singleOrNull() ?: error("Could not resolve descriptor to import: $it")
                 ImportInsertHelper.getInstance(getProject()).importDescriptor(file, descriptor)
-                //TODO: it's a hack! we need to discuss it
-                (PsiModificationTracker.SERVICE.getInstance(getProject()) as PsiModificationTrackerImpl).incOutOfCodeBlockModificationCounter()
             }
         }
 
@@ -90,7 +88,7 @@ public abstract class AbstractCodeFragmentCompletionHandlerTest : AbstractComple
         super.doTest(testPath)
         val fragment = myFixture.getFile() as JetCodeFragment
 
-        val importList = fragment.getImportList()
+        val importList = fragment.importsAsImportList()
         val fragmentAfterFile = File(testPath + ".after.imports")
 
         if (importList != null && fragmentAfterFile.exists()) {
