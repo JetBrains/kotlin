@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.completion.ExpectedCompletionUtils
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.completion.handlers.AbstractCompletionHandlerTest
 import com.intellij.codeInsight.completion.CompletionType
+import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.resolve.JetModuleUtil
 import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver
 import org.jetbrains.kotlin.resolve.BindingTraceContext
@@ -42,6 +43,8 @@ import org.jetbrains.kotlin.idea.caches.resolve.*
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.impl.PsiModificationTrackerImpl
+import org.jetbrains.kotlin.test.JetTestUtils
+import kotlin.test.fail
 
 public abstract class AbstractCodeFragmentHighlightingTest : AbstractJetPsiCheckerTest() {
     override fun doTest(filePath: String) {
@@ -81,6 +84,21 @@ public abstract class AbstractCodeFragmentCompletionTest : AbstractJvmBasicCompl
 public abstract class AbstractCodeFragmentCompletionHandlerTest : AbstractCompletionHandlerTest(CompletionType.BASIC) {
     override fun setUpFixture(testPath: String) {
         myFixture.configureByCodeFragment(testPath)
+    }
+
+    override fun doTest(testPath: String) {
+        super.doTest(testPath)
+        val fragment = myFixture.getFile() as JetCodeFragment
+
+        val importList = fragment.getImportList()
+        val fragmentAfterFile = File(testPath + ".after.imports")
+
+        if (importList != null && fragmentAfterFile.exists()) {
+            JetTestUtils.assertEqualsToFile(fragmentAfterFile, StringUtil.convertLineSeparators(importList.getText()))
+        }
+        else if (fragmentAfterFile.exists()) {
+            fail("ImportList is empty")
+        }
     }
 }
 
