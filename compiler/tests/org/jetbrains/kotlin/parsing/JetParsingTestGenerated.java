@@ -151,6 +151,12 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
             doParsingTest(fileName);
         }
 
+        @TestMetadata("DefaultKeyword.kt")
+        public void testDefaultKeyword() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/DefaultKeyword.kt");
+            doParsingTest(fileName);
+        }
+
         @TestMetadata("DocCommentAfterFileAnnotations.kt")
         public void testDocCommentAfterFileAnnotations() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/DocCommentAfterFileAnnotations.kt");
