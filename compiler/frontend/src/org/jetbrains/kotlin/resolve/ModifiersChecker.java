@@ -137,7 +137,7 @@ public class ModifiersChecker {
 
     public void checkModifiersForDeclaration(@NotNull JetDeclaration modifierListOwner, @NotNull MemberDescriptor descriptor) {
         if (modifierListOwner instanceof JetEnumEntry) {
-            checkIllegalInThisContextModifiers(modifierListOwner, Arrays.asList(MODIFIER_KEYWORDS_ARRAY));
+            reportIllegalModifiers(modifierListOwner, Arrays.asList(MODIFIER_KEYWORDS_ARRAY));
         }
         else {
             checkInnerModifier(modifierListOwner, descriptor);
@@ -150,18 +150,18 @@ public class ModifiersChecker {
     }
 
     public void checkModifiersForLocalDeclaration(@NotNull JetDeclaration modifierListOwner, @NotNull DeclarationDescriptor descriptor) {
-        checkIllegalModalityModifiers(modifierListOwner);
-        checkIllegalVisibilityModifiers(modifierListOwner);
+        reportIllegalModalityModifiers(modifierListOwner);
+        reportIllegalVisibilityModifiers(modifierListOwner);
         checkPlatformNameApplicability(descriptor);
         runAnnotationCheckers(modifierListOwner, descriptor);
     }
 
-    public void checkIllegalModalityModifiers(@NotNull JetModifierListOwner modifierListOwner) {
-        checkIllegalInThisContextModifiers(modifierListOwner, MODALITY_MODIFIERS);
+    public void reportIllegalModalityModifiers(@NotNull JetModifierListOwner modifierListOwner) {
+        reportIllegalModifiers(modifierListOwner, MODALITY_MODIFIERS);
     }
 
-    public void checkIllegalVisibilityModifiers(@NotNull JetModifierListOwner modifierListOwner) {
-        checkIllegalInThisContextModifiers(modifierListOwner, VISIBILITY_MODIFIERS);
+    public void reportIllegalVisibilityModifiers(@NotNull JetModifierListOwner modifierListOwner) {
+        reportIllegalModifiers(modifierListOwner, VISIBILITY_MODIFIERS);
     }
 
     private void checkModalityModifiers(@NotNull JetModifierListOwner modifierListOwner) {
@@ -174,10 +174,10 @@ public class ModifiersChecker {
                            Arrays.asList(ABSTRACT_KEYWORD, OPEN_KEYWORD));
 
         if (modifierListOwner instanceof JetObjectDeclaration) {
-            checkIllegalModalityModifiers(modifierListOwner);
+            reportIllegalModalityModifiers(modifierListOwner);
         }
         else if (modifierListOwner instanceof JetClassOrObject) {
-            checkIllegalInThisContextModifiers(modifierListOwner, Collections.singletonList(OVERRIDE_KEYWORD));
+            reportIllegalModifiers(modifierListOwner, Collections.singletonList(OVERRIDE_KEYWORD));
         }
     }
 
@@ -201,7 +201,7 @@ public class ModifiersChecker {
                 case ALLOWED:
                     break;
                 case ILLEGAL_POSITION:
-                    checkIllegalInThisContextModifiers(modifierListOwner, Collections.singletonList(INNER_KEYWORD));
+                    reportIllegalModifiers(modifierListOwner, Collections.singletonList(INNER_KEYWORD));
                     break;
                 case IN_TRAIT:
                     trace.report(INNER_CLASS_IN_TRAIT.on(modifierListOwner));
@@ -298,7 +298,7 @@ public class ModifiersChecker {
         }
     }
 
-    public void checkIllegalInThisContextModifiers(
+    public void reportIllegalModifiers(
             @NotNull JetModifierListOwner modifierListOwner,
             @NotNull Collection<JetModifierKeywordToken> illegalModifiers
     ) {
