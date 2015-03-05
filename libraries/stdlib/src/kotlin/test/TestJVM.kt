@@ -26,6 +26,10 @@ public inline fun todo(block: ()-> Any) {
 
 private var _asserter: Asserter? = null
 
+/**
+ * The active implementation of [Asserter]. An implementation of [Asserter] can be provided
+ * using the [Java service loader](http://docs.oracle.com/javase/7/docs/api/java/util/ServiceLoader.html) mechanism.
+ */
 public var asserter: Asserter
     get() {
         if (_asserter == null) {
@@ -51,7 +55,7 @@ public var asserter: Asserter
 
 
 /**
- * Default implementation to avoid dependency on JUnit or TestNG
+ * Default [Asserter] implementation to avoid dependency on JUnit or TestNG.
  */
 private class DefaultAsserter() : Asserter {
 

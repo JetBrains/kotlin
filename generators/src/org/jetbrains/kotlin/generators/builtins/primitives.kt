@@ -21,10 +21,26 @@ import org.jetbrains.kotlin.generators.builtins.generateBuiltIns.BuiltInsSourceG
 import java.io.PrintWriter
 
 class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
-    private val binaryOperators: List<String> = listOf("plus", "minus", "times", "div", "mod")
-    private val unaryOperators: List<String> = listOf("inc", "dec", "plus", "minus")
-    private val shiftOperators: List<String> = listOf("shl", "shr", "ushr")
-    private val bitwiseOperators: List<String> = listOf("and", "or", "xor")
+    private val binaryOperators: Map<String, String> = mapOf(
+            "plus" to "Adds the other value to this value.",
+            "minus" to "Subtracts the other value from this value.",
+            "times" to "Multiplies this value by the other value.",
+            "div" to "Divides this value by the other value.",
+            "mod" to "Calculates the remainder of dividing this value by the other value."
+    )
+    private val unaryOperators: Map<String, String> = mapOf(
+            "inc" to "Increments this value.",
+            "dec" to "Decrements this value.",
+            "plus" to "Returns this value.",
+            "minus" to "Returns the negative of this value.")
+    private val shiftOperators: Map<String, String> = mapOf(
+            "shl" to "Shifts this value left by [bits].",
+            "shr" to "Shifts this value right by [bits], filling the leftmost bits with copies of the sign bit.",
+            "ushr" to "Shifts this value right by [bits], filling the leftmost bits with zeros.")
+    private val bitwiseOperators: Map<String, String> = mapOf(
+            "and" to "Performs a bitwise AND operation between the two values.",
+            "or" to "Performs a bitwise OR operation between the two values.",
+            "xor" to "Performs a bitwise XOR operation between the two values.")
     private val typeDescriptions: Map<PrimitiveType, String> = hashMapOf(
             PrimitiveType.DOUBLE to "double-precision 64-bit IEEE 754 floating point number",
             PrimitiveType.FLOAT to "single-precision 32-bit IEEE 754 floating point number",
@@ -61,7 +77,7 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
                 generateBitwiseOperators(className)
             }
 
-            generateConversions()
+            generateConversions(kind)
 
             out.println("}\n")
         }
@@ -76,6 +92,17 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
 
     private fun generateCompareTo(thisKind: PrimitiveType) {
         for (otherKind in PrimitiveType.exceptBoolean) {
+            out.println("/**")
+            if (thisKind == PrimitiveType.CHAR && otherKind != PrimitiveType.CHAR) {
+                out.println(" * Compares the character code of this character with the specified value for order.")
+            } else if (thisKind != PrimitiveType.CHAR && otherKind == PrimitiveType.CHAR) {
+                out.println(" * Compares this value with the character code of the specified character for order.")
+            } else {
+                out.println(" * Compares this value with the specified value for order.")
+            }
+            out.println(" * Returns zero if this value is equal to the specified other value, a negative number if its less than other, ")
+            out.println(" * or a positive number if its greater than other.")
+            out.println(" */")
             out.print("    public ")
             if (otherKind == thisKind) out.print("override ")
             out.println("fun compareTo(other: ${otherKind.capitalized}): Int")
@@ -84,17 +111,18 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
     }
 
     private fun generateBinaryOperators(thisKind: PrimitiveType) {
-        for (name in binaryOperators) {
-            generateOperator(name, thisKind)
+        for ((name, doc) in binaryOperators) {
+            generateOperator(name, doc, thisKind)
         }
     }
 
-    private fun generateOperator(name: String, thisKind: PrimitiveType) {
+    private fun generateOperator(name: String, doc: String, thisKind: PrimitiveType) {
         for (otherKind in PrimitiveType.exceptBoolean) {
             if (thisKind == PrimitiveType.CHAR && otherKind == PrimitiveType.CHAR && name != "minus") {
                 continue
             }
             val returnType = getOperatorReturnType(thisKind, otherKind)
+            out.println("    /** $doc */")
             out.println("    public fun $name(other: ${otherKind.capitalized}): $returnType")
         }
         out.println()
@@ -102,10 +130,12 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
 
     private fun generateRangeTo(thisKind: PrimitiveType) {
         if (thisKind == PrimitiveType.CHAR) {
+            out.println("     /** Creates a range from this value to the specified [other] value. */")
             out.println("    public fun rangeTo(other: Char): CharRange")
         } else {
             for (otherKind in PrimitiveType.exceptBoolean) {
                 val returnType = if (otherKind.ordinal() > thisKind.ordinal()) otherKind else thisKind
+                out.println("     /** Creates a range from this value to the specified [other] value. */")
                 out.println("    public fun rangeTo(other: ${otherKind.capitalized}): ${returnType.capitalized}Range")
             }
         }
@@ -114,28 +144,35 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
     }
 
     private fun generateUnaryOperators(kind: PrimitiveType) {
-        for (name in unaryOperators) {
+        for ((name, doc) in unaryOperators) {
             val returnType = if (kind in listOf(PrimitiveType.SHORT, PrimitiveType.BYTE, PrimitiveType.CHAR) &&
                                  name in listOf("plus", "minus")) "Int" else kind.capitalized
+            out.println("    /** $doc */")
             out.println("    public fun $name(): $returnType")
         }
         out.println()
     }
 
     private fun generateBitwiseOperators(className: String) {
-        for (name in shiftOperators) {
+        for ((name, doc) in shiftOperators) {
+            out.println("    /** $doc */")
             out.println("    public fun $name(bits: Int): $className")
         }
-        for (name in bitwiseOperators) {
+        for ((name, doc) in bitwiseOperators) {
+            out.println("    /** $doc */")
             out.println("    public fun $name(other: $className): $className")
         }
+        out.println("    /** Inverts the bits in this value/ */")
         out.println("    public fun inv(): $className")
         out.println()
     }
 
-    private fun generateConversions() {
+    private fun generateConversions(kind: PrimitiveType) {
         for (otherKind in PrimitiveType.exceptBoolean) {
             val name = otherKind.capitalized
+            if (kind == PrimitiveType.CHAR) {  // Char is not a Number and does not inherit Number's javadocs
+                out.println("    /** Returns the value of this character as a `$name`. */")
+            }
             out.println("    public override fun to$name(): $name")
         }
     }

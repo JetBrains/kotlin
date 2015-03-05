@@ -24,7 +24,7 @@ class GenerateIterators(out: PrintWriter) : BuiltInsSourceGenerator(out) {
     override fun generateBody() {
         for (kind in PrimitiveType.values()) {
             val s = kind.capitalized
-            out.println("/** An iterator over a sequence of values of type $s. */")
+            out.println("/** An iterator over a sequence of values of type `$s`. */")
             out.println("public abstract class ${s}Iterator : Iterator<$s> {"   )
             out.println("    override final fun next() = next$s()")
             out.println()

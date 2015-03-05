@@ -21,12 +21,24 @@ package kotlin
  * represented as values of the primitive type `boolean`.
  */
 public class Boolean private () : Comparable<Boolean> {
+    /**
+     * Returns the inverse of this boolean.
+     */
     public fun not(): Boolean
 
+    /**
+     * Performs a logical `and` operation between this Boolean and the [other] one.
+     */
     public fun and(other: Boolean): Boolean
 
+    /**
+     * Performs a logical `or` operation between this Boolean and the [other] one.
+     */
     public fun or(other: Boolean): Boolean
 
+    /**
+     * Performs a logical `xor` operation between this Boolean and the [other] one.
+     */
     public fun xor(other: Boolean): Boolean
 
     public override fun compareTo(other: Boolean): Int

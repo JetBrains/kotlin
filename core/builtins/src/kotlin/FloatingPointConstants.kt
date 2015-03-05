@@ -16,8 +16,22 @@
 
 package kotlin
 
+/**
+ * Holder for special values of floating point types.
+ */
 public trait FloatingPointConstants<T> {
+    /**
+     * A constant holding the positive infinity value.
+     */
     public val POSITIVE_INFINITY: T
+
+    /**
+     * A constant holding the negative infinity value.
+     */
     public val NEGATIVE_INFINITY: T
+
+    /**
+     * A constant holding the "not a number" value.
+     */
     public val NaN: T
 }

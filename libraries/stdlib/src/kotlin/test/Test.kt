@@ -89,18 +89,49 @@ public fun fails(block: () -> Unit): Throwable? {
 }
 
 /**
- * A plugin for performing assertions which can reuse JUnit or TestNG
+ * Abstracts the logic for performing assertions. Specific implementations of [Asserter] can use JUnit
+ * or TestNG assertion facilities.
  */
 public trait Asserter {
+    /**
+     * Asserts that the specified value is true.
+     *
+     * @param message the message to report if the assertion fails.
+     */
     public fun assertTrue(message: String, actual: Boolean): Unit
 
+    /**
+     * Asserts that the specified values are equal.
+     *
+     * @param message the message to report if the assertion fails.
+     */
     public fun assertEquals(message: String, expected: Any?, actual: Any?): Unit
 
+    /**
+     * Asserts that the specified values are not equal.
+     *
+     * @param message the message to report if the assertion fails.
+     */
     public fun assertNotEquals(message: String, illegal: Any?, actual: Any?): Unit
 
+    /**
+     * Asserts that the specified value is not null.
+     *
+     * @param message the message to report if the assertion fails.
+     */
     public fun assertNotNull(message: String, actual: Any?): Unit
 
+    /**
+     * Asserts that the specified value is null.
+     *
+     * @param message the message to report if the assertion fails.
+     */
     public fun assertNull(message: String, actual: Any?): Unit
 
+    /**
+     * Fails the current test with the specified message.
+     *
+     * @param message the message to report.
+     */
     public fun fail(message: String): Unit
 }
