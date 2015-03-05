@@ -28,6 +28,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.NotNullFunction;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
@@ -41,6 +42,8 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.*;
 
 import java.util.List;
+
+import static kotlin.KotlinPackage.singleOrNull;
 
 public class JetRunConfigurationProducer extends RuntimeConfigurationProducer implements Cloneable {
     @Nullable
@@ -117,7 +120,7 @@ public class JetRunConfigurationProducer extends RuntimeConfigurationProducer im
              currentElement = PsiTreeUtil.getParentOfType((PsiElement) currentElement, JetClassOrObject.class, JetFile.class)) {
             JetDeclarationContainer entryPointContainer = currentElement;
             if (entryPointContainer instanceof JetClass) {
-                entryPointContainer = ((JetClass) currentElement).getDefaultObject();
+                entryPointContainer = singleOrNull(((JetClass) currentElement).getDefaultObjects());
             }
             if (entryPointContainer != null && mainFunctionDetector.hasMain(entryPointContainer.getDeclarations())) return entryPointContainer;
         }

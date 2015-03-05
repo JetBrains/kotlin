@@ -69,6 +69,7 @@ import org.jetbrains.org.objectweb.asm.commons.Method;
 
 import java.util.*;
 
+import static kotlin.KotlinPackage.firstOrNull;
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.enumEntryNeedSubclass;
@@ -993,7 +994,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             return;
         }
 
-        JetObjectDeclaration defaultObject = ((JetClass) myClass).getDefaultObject();
+        JetObjectDeclaration defaultObject = firstOrNull(((JetClass) myClass).getDefaultObjects());
         assert defaultObject != null : "Default object not found: " + myClass.getText();
 
         StackValue.Field field = StackValue.singleton(defaultObjectDescriptor, typeMapper);

@@ -35,11 +35,6 @@ public class JetObjectInfo extends JetClassOrObjectInfo<JetObjectDeclaration> {
         this.kind = element.isObjectLiteral() ? ClassKind.CLASS : ClassKind.OBJECT;
     }
 
-    @Override
-    public JetObjectDeclaration getDefaultObject() {
-        return null;
-    }
-
     @Nullable
     @Override
     public JetTypeParameterList getTypeParameterList() {
