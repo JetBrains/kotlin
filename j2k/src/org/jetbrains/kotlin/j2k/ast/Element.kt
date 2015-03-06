@@ -95,7 +95,7 @@ abstract class Element {
 
 // this class should never be created directly - Converter.deferredElement() should be used!
 class DeferredElement<TResult : Element>(
-        private var generator: (CodeConverter) -> TResult,
+        private val generator: (CodeConverter) -> TResult,
         public val converterState: Converter.PersonalState
 ) : Element() {
 
@@ -126,14 +126,5 @@ class DeferredElement<TResult : Element>(
             assert(result != null) { "No code generated for deferred element $this. Possible reason is that it has been created directly instead of Converter.lazyElement() call." }
             return result!!
         }
-
-    public fun updateGenerator(generatorUpdater: (codeConverter: CodeConverter, prevResult: TResult) -> TResult) {
-        assert(result == null, "Cannot update generator when code has been generated")
-        val prevGenerator = generator
-        generator = { codeConverter ->
-            val prevResult = prevGenerator(codeConverter)
-            generatorUpdater(codeConverter, prevResult)
-        }
-    }
 }
 

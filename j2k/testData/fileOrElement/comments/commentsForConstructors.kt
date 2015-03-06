@@ -1,8 +1,3 @@
-// this is a secondary constructor 2
-fun A(s: String): A {
-    return A(s.length())
-} // end of secondary constructor 2 body
-
 class A// this is a primary constructor
 (p: Int = 1) {
     private val v: Int
@@ -10,6 +5,10 @@ class A// this is a primary constructor
     {
         v = 1
     } // end of primary constructor body
+
+    // this is a secondary constructor 2
+    constructor(s: String) : this(s.length()) {
+    } // end of secondary constructor 2 body
 }// this is a secondary constructor 1
 // end of secondary constructor 1 body
 

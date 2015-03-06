@@ -30,8 +30,6 @@ class Enum(
 ) : Class(name, annotations, modifiers, typeParameterList, extendsTypes, baseClassParams, implementsTypes, body) {
 
     override fun generateCode(builder: CodeBuilder) {
-        builder.append(body.factoryFunctions, "\n", "", "\n\n")
-
         builder append annotations appendWithSpaceAfter presentationModifiers() append "enum class " append name
 
         if (body.primaryConstructorSignature != null) {
