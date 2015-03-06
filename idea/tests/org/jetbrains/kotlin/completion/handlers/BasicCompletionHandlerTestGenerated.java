@@ -113,6 +113,12 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/completion/handlers/basic/stringTemplate"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("BackingField.kt")
+        public void testBackingField() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/basic/stringTemplate/BackingField.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("NotEmptyPrefix.kt")
         public void testNotEmptyPrefix() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/basic/stringTemplate/NotEmptyPrefix.kt");

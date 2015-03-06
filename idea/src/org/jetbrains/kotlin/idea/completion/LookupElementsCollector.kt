@@ -118,9 +118,12 @@ class LookupElementsCollector(
         }
 
         if (descriptor is PropertyDescriptor) {
-            val lookupElement = lookupElementFactory.createBackingFieldLookupElement(descriptor, inDescriptor, resolutionFacade)
+            var lookupElement = lookupElementFactory.createBackingFieldLookupElement(descriptor, inDescriptor, resolutionFacade)
             if (lookupElement != null) {
-                addElement(lookupElement)
+                if (surroundCallsWithBraces) {
+                    lookupElement = lookupElement!!.withBracesSurrounding()
+                }
+                addElement(lookupElement!!)
             }
         }
     }
