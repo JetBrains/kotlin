@@ -345,6 +345,7 @@ public final class Double : kotlin.Number, kotlin.Comparable<kotlin.Double> {
     public final fun minus(/*0*/ other: kotlin.Long): kotlin.Double
     public final fun minus(/*0*/ other: kotlin.Short): kotlin.Double
     public final fun mod(/*0*/ other: kotlin.Byte): kotlin.Double
+    public final fun mod(/*0*/ other: kotlin.Char): kotlin.Double
     public final fun mod(/*0*/ other: kotlin.Double): kotlin.Double
     public final fun mod(/*0*/ other: kotlin.Float): kotlin.Double
     public final fun mod(/*0*/ other: kotlin.Int): kotlin.Double
