@@ -42,6 +42,26 @@ public class TraceBasedErrorReporter implements ErrorReporter {
             this.actualVersion = actualVersion;
             this.classId = classId;
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            AbiVersionErrorData data = (AbiVersionErrorData) o;
+
+            if (actualVersion != data.actualVersion) return false;
+            if (!classId.equals(data.classId)) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = actualVersion;
+            result = 31 * result + classId.hashCode();
+            return result;
+        }
     }
 
     public static final WritableSlice<String, AbiVersionErrorData> ABI_VERSION_ERRORS = Slices.createCollectiveSlice();
