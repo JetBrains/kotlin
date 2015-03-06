@@ -94,6 +94,7 @@ private class ClassClsStubBuilder(
         val additionalModifiers = when (classKind) {
             ProtoBuf.Class.Kind.ENUM_CLASS -> listOf(JetTokens.ENUM_KEYWORD)
             ProtoBuf.Class.Kind.ANNOTATION_CLASS -> listOf(JetTokens.ANNOTATION_KEYWORD)
+            ProtoBuf.Class.Kind.CLASS_OBJECT -> listOf(JetTokens.DEFAULT_KEYWORD)
             else -> listOf<JetModifierKeywordToken>()
         }
         return createModifierListStubForDeclaration(parent, classProto.getFlags(), relevantFlags, additionalModifiers)
