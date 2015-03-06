@@ -2,7 +2,7 @@ enum class E {
     FIRST
 
     SECOND {
-        default <!DEFAULT_OBJECT_NOT_ALLOWED!>object<!> {
+        <!DEFAULT_OBJECT_NOT_ALLOWED!>default<!> object {
             fun foo() = 42
         }
     }

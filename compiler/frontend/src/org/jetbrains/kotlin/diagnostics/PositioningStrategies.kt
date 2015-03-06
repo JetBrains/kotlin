@@ -364,4 +364,13 @@ public object PositioningStrategies {
             return markRange(element.getOperationReference(), element)
         }
     }
+
+    public val DEFAULT_OBJECT: PositioningStrategy<JetObjectDeclaration> = object : PositioningStrategy<JetObjectDeclaration>() {
+        override fun mark(element: JetObjectDeclaration): List<TextRange> {
+            if (element.hasModifier(JetTokens.DEFAULT_KEYWORD)) {
+                return modifierSetPosition(JetTokens.DEFAULT_KEYWORD).mark(element)
+            }
+            return DEFAULT.mark(element)
+        }
+    }
 }

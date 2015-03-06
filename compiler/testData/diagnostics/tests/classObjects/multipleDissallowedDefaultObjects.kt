@@ -1,17 +1,17 @@
 class A {
     inner class I {
-        default <!DEFAULT_OBJECT_NOT_ALLOWED!>object A<!>
+        <!DEFAULT_OBJECT_NOT_ALLOWED!>default<!> object A
 
-        default <!MANY_DEFAULT_OBJECTS, MANY_DEFAULT_OBJECTS, DEFAULT_OBJECT_NOT_ALLOWED!>object B<!>
+        <!MANY_DEFAULT_OBJECTS, MANY_DEFAULT_OBJECTS, DEFAULT_OBJECT_NOT_ALLOWED!>default<!> object B
 
-        default <!MANY_DEFAULT_OBJECTS, MANY_DEFAULT_OBJECTS, DEFAULT_OBJECT_NOT_ALLOWED!>object C<!>
+        <!MANY_DEFAULT_OBJECTS, MANY_DEFAULT_OBJECTS, DEFAULT_OBJECT_NOT_ALLOWED!>default<!> object C
     }
 }
 
 object O {
-    default <!DEFAULT_OBJECT_NOT_ALLOWED!>object A<!>
+    <!DEFAULT_OBJECT_NOT_ALLOWED!>default<!> object A
 
-    default <!MANY_DEFAULT_OBJECTS, DEFAULT_OBJECT_NOT_ALLOWED!>object B<!>
+    <!MANY_DEFAULT_OBJECTS, DEFAULT_OBJECT_NOT_ALLOWED!>default<!> object B
 
-    default <!MANY_DEFAULT_OBJECTS, DEFAULT_OBJECT_NOT_ALLOWED!>object C<!>
+    <!MANY_DEFAULT_OBJECTS, DEFAULT_OBJECT_NOT_ALLOWED!>default<!> object C
 }

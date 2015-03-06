@@ -4,7 +4,7 @@ class A {
   default <!REDECLARATION!>object<!> {
     val x = 1
   }
-  default <!MANY_DEFAULT_OBJECTS, REDECLARATION!>object<!> {
+  <!MANY_DEFAULT_OBJECTS!>default<!> <!REDECLARATION!>object<!> {
     val x = 1
   }
 }
@@ -13,10 +13,10 @@ class AA {
   default object {
     val x = 1
   }
-  default <!MANY_DEFAULT_OBJECTS!>object A<!> {
+  <!MANY_DEFAULT_OBJECTS!>default<!> object A {
     val x = 1
   }
-    default <!MANY_DEFAULT_OBJECTS!>object AA<!> {
+    <!MANY_DEFAULT_OBJECTS!>default<!> object AA {
     val x = 1
   }
 }
@@ -26,7 +26,7 @@ class B() {
 }
 
 object b {
-  default <!DEFAULT_OBJECT_NOT_ALLOWED!>object<!> {
+  <!DEFAULT_OBJECT_NOT_ALLOWED!>default<!> object {
     val x = 1
   } // error
 }

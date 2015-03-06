@@ -18,13 +18,13 @@ class C {
 
 class D {
     default object A {
-        default <!DEFAULT_OBJECT_NOT_ALLOWED!>object<!> {
+        <!DEFAULT_OBJECT_NOT_ALLOWED!>default<!> object {
         }
     }
 }
 
 <!ILLEGAL_MODIFIER!>default<!> object G {
-    default <!DEFAULT_OBJECT_NOT_ALLOWED!>object<!>
+    <!DEFAULT_OBJECT_NOT_ALLOWED!>default<!> object
 }
 
 <!ILLEGAL_MODIFIER!>default<!> trait H {
@@ -33,7 +33,7 @@ class D {
 
 class J {
     default object C {
-        default <!DEFAULT_OBJECT_NOT_ALLOWED!>object<!>
+        <!DEFAULT_OBJECT_NOT_ALLOWED!>default<!> object
     }
 }
 
