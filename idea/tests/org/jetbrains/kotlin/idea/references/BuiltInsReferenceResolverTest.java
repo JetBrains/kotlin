@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies;
 import org.jetbrains.kotlin.idea.PluginTestCaseBase;
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde;
 import org.jetbrains.kotlin.test.JetTestUtils;
 
 import java.util.ArrayList;
@@ -86,9 +87,8 @@ public class BuiltInsReferenceResolverTest extends ResolveTestCase {
     }
 
     public void testAllReferencesResolved() {
-        BuiltInsReferenceResolver referenceResolver = getProject().getComponent(BuiltInsReferenceResolver.class);
         for (DeclarationDescriptor descriptor : getAllStandardDescriptors()) {
-            assertNotNull("Can't resolve " + descriptor, referenceResolver.resolveBuiltInSymbol(descriptor));
+            assertNotNull("Can't resolve " + descriptor, DescriptorToSourceUtilsIde.INSTANCE$.getAnyDeclaration(getProject(), descriptor));
         }
     }
 

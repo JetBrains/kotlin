@@ -367,7 +367,7 @@ class ConstructorConverter(
         val parameterList = ParameterList(parameters).assignNoPrototype()
         val constructorSignature = PrimaryConstructorSignature(Annotations.Empty, modifiers, parameterList).assignNoPrototype()
         val updatedMembers = classBody.members.filter { !propertiesToInitialize.contains(it) }
-        return ClassBody(constructorSignature, classBody.baseClassParams, updatedMembers, classBody.classObjectMembers, classBody.factoryFunctions, classBody.lBrace, classBody.rBrace)
+        return ClassBody(constructorSignature, classBody.baseClassParams, updatedMembers, classBody.defaultObjectMembers, classBody.factoryFunctions, classBody.lBrace, classBody.rBrace)
     }
 
     private fun processFactoryFunctionsWithConstructorCall(functions: List<FactoryFunction>) {

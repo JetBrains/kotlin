@@ -30,7 +30,31 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/quickfix")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({QuickFixTestGenerated.Abstract.class, QuickFixTestGenerated.AddStarProjections.class, QuickFixTestGenerated.AutoImports.class, QuickFixTestGenerated.ChangeSignature.class, QuickFixTestGenerated.CheckArguments.class, QuickFixTestGenerated.ConflictingImports.class, QuickFixTestGenerated.CreateFromUsage.class, QuickFixTestGenerated.Expressions.class, QuickFixTestGenerated.Migration.class, QuickFixTestGenerated.Modifiers.class, QuickFixTestGenerated.Nullables.class, QuickFixTestGenerated.Override.class, QuickFixTestGenerated.PlatformClasses.class, QuickFixTestGenerated.RemoveUnused.class, QuickFixTestGenerated.Supercalls.class, QuickFixTestGenerated.SupertypeInitialization.class, QuickFixTestGenerated.Suppress.class, QuickFixTestGenerated.TypeAddition.class, QuickFixTestGenerated.TypeImports.class, QuickFixTestGenerated.TypeMismatch.class, QuickFixTestGenerated.TypeProjection.class, QuickFixTestGenerated.Variables.class, QuickFixTestGenerated.When.class})
+@InnerTestClasses({
+        QuickFixTestGenerated.Abstract.class,
+        QuickFixTestGenerated.AddStarProjections.class,
+        QuickFixTestGenerated.AutoImports.class,
+        QuickFixTestGenerated.ChangeSignature.class,
+        QuickFixTestGenerated.CheckArguments.class,
+        QuickFixTestGenerated.ConflictingImports.class,
+        QuickFixTestGenerated.CreateFromUsage.class,
+        QuickFixTestGenerated.Expressions.class,
+        QuickFixTestGenerated.Migration.class,
+        QuickFixTestGenerated.Modifiers.class,
+        QuickFixTestGenerated.Nullables.class,
+        QuickFixTestGenerated.Override.class,
+        QuickFixTestGenerated.PlatformClasses.class,
+        QuickFixTestGenerated.RemoveUnused.class,
+        QuickFixTestGenerated.Supercalls.class,
+        QuickFixTestGenerated.SupertypeInitialization.class,
+        QuickFixTestGenerated.Suppress.class,
+        QuickFixTestGenerated.TypeAddition.class,
+        QuickFixTestGenerated.TypeImports.class,
+        QuickFixTestGenerated.TypeMismatch.class,
+        QuickFixTestGenerated.TypeProjection.class,
+        QuickFixTestGenerated.Variables.class,
+        QuickFixTestGenerated.When.class,
+})
 @RunWith(JUnit3RunnerWithInners.class)
 public class QuickFixTestGenerated extends AbstractQuickFixTest {
     public void testAllFilesPresentInQuickfix() throws Exception {
@@ -174,7 +198,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
 
     @TestMetadata("idea/testData/quickfix/addStarProjections")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({AddStarProjections.Cast.class, AddStarProjections.CheckType.class, AddStarProjections.JavaClass.class, AddStarProjections.When.class})
+    @InnerTestClasses({
+            AddStarProjections.Cast.class,
+            AddStarProjections.CheckType.class,
+            AddStarProjections.JavaClass.class,
+            AddStarProjections.When.class,
+    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class AddStarProjections extends AbstractQuickFixTest {
         public void testAllFilesPresentInAddStarProjections() throws Exception {
@@ -517,6 +546,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("beforeNotEditable.kt")
+        public void testNotEditable() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/beforeNotEditable.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("beforeRemoveConstructorParameter.kt")
         public void testRemoveConstructorParameter() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/beforeRemoveConstructorParameter.kt");
@@ -640,7 +675,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
 
     @TestMetadata("idea/testData/quickfix/createFromUsage")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({CreateFromUsage.CreateClass.class, CreateFromUsage.CreateFunction.class, CreateFromUsage.CreateVariable.class})
+    @InnerTestClasses({
+            CreateFromUsage.CreateClass.class,
+            CreateFromUsage.CreateFunction.class,
+            CreateFromUsage.CreateVariable.class,
+    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class CreateFromUsage extends AbstractQuickFixTest {
         public void testAllFilesPresentInCreateFromUsage() throws Exception {
@@ -649,7 +688,14 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
 
         @TestMetadata("idea/testData/quickfix/createFromUsage/createClass")
         @TestDataPath("$PROJECT_ROOT")
-        @InnerTestClasses({CreateClass.AnnotationEntry.class, CreateClass.CallExpression.class, CreateClass.DelegationSpecifier.class, CreateClass.ImportDirective.class, CreateClass.ReferenceExpression.class, CreateClass.TypeReference.class})
+        @InnerTestClasses({
+                CreateClass.AnnotationEntry.class,
+                CreateClass.CallExpression.class,
+                CreateClass.DelegationSpecifier.class,
+                CreateClass.ImportDirective.class,
+                CreateClass.ReferenceExpression.class,
+                CreateClass.TypeReference.class,
+        })
         @RunWith(JUnit3RunnerWithInners.class)
         public static class CreateClass extends AbstractQuickFixTest {
             public void testAllFilesPresentInCreateClass() throws Exception {
@@ -715,7 +761,9 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
 
             @TestMetadata("idea/testData/quickfix/createFromUsage/createClass/callExpression")
             @TestDataPath("$PROJECT_ROOT")
-            @InnerTestClasses({CallExpression.TypeArguments.class})
+            @InnerTestClasses({
+                    CallExpression.TypeArguments.class,
+            })
             @RunWith(JUnit3RunnerWithInners.class)
             public static class CallExpression extends AbstractQuickFixTest {
                 public void testAllFilesPresentInCallExpression() throws Exception {
@@ -1407,7 +1455,19 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
 
         @TestMetadata("idea/testData/quickfix/createFromUsage/createFunction")
         @TestDataPath("$PROJECT_ROOT")
-        @InnerTestClasses({CreateFunction.BinaryOperations.class, CreateFunction.Call.class, CreateFunction.Component.class, CreateFunction.DelegateAccessors.class, CreateFunction.Get.class, CreateFunction.HasNext.class, CreateFunction.Invoke.class, CreateFunction.Iterator.class, CreateFunction.Next.class, CreateFunction.Set.class, CreateFunction.UnaryOperations.class})
+        @InnerTestClasses({
+                CreateFunction.BinaryOperations.class,
+                CreateFunction.Call.class,
+                CreateFunction.Component.class,
+                CreateFunction.DelegateAccessors.class,
+                CreateFunction.Get.class,
+                CreateFunction.HasNext.class,
+                CreateFunction.Invoke.class,
+                CreateFunction.Iterator.class,
+                CreateFunction.Next.class,
+                CreateFunction.Set.class,
+                CreateFunction.UnaryOperations.class,
+        })
         @RunWith(JUnit3RunnerWithInners.class)
         public static class CreateFunction extends AbstractQuickFixTest {
             public void testAllFilesPresentInCreateFunction() throws Exception {
@@ -1509,7 +1569,9 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
 
             @TestMetadata("idea/testData/quickfix/createFromUsage/createFunction/call")
             @TestDataPath("$PROJECT_ROOT")
-            @InnerTestClasses({Call.TypeArguments.class})
+            @InnerTestClasses({
+                    Call.TypeArguments.class,
+            })
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Call extends AbstractQuickFixTest {
                 public void testAllFilesPresentInCall() throws Exception {
@@ -2144,7 +2206,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
 
         @TestMetadata("idea/testData/quickfix/createFromUsage/createVariable")
         @TestDataPath("$PROJECT_ROOT")
-        @InnerTestClasses({CreateVariable.LocalVariable.class, CreateVariable.Parameter.class, CreateVariable.Property.class})
+        @InnerTestClasses({
+                CreateVariable.LocalVariable.class,
+                CreateVariable.Parameter.class,
+                CreateVariable.Property.class,
+        })
         @RunWith(JUnit3RunnerWithInners.class)
         public static class CreateVariable extends AbstractQuickFixTest {
             public void testAllFilesPresentInCreateVariable() throws Exception {
@@ -2788,7 +2854,9 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
 
     @TestMetadata("idea/testData/quickfix/modifiers")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({Modifiers.AddOpenToClassDeclaration.class})
+    @InnerTestClasses({
+            Modifiers.AddOpenToClassDeclaration.class,
+    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Modifiers extends AbstractQuickFixTest {
         @TestMetadata("beforeAbstractModifierInEnum.kt")
@@ -2953,7 +3021,9 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
 
         @TestMetadata("idea/testData/quickfix/modifiers/addOpenToClassDeclaration")
         @TestDataPath("$PROJECT_ROOT")
-        @InnerTestClasses({AddOpenToClassDeclaration.FinalJavaClass.class})
+        @InnerTestClasses({
+                AddOpenToClassDeclaration.FinalJavaClass.class,
+        })
         @RunWith(JUnit3RunnerWithInners.class)
         public static class AddOpenToClassDeclaration extends AbstractQuickFixTest {
             public void testAllFilesPresentInAddOpenToClassDeclaration() throws Exception {
@@ -3016,7 +3086,9 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
 
             @TestMetadata("idea/testData/quickfix/modifiers/addOpenToClassDeclaration/finalJavaClass")
             @TestDataPath("$PROJECT_ROOT")
-            @InnerTestClasses({FinalJavaClass.JavaCode.class})
+            @InnerTestClasses({
+                    FinalJavaClass.JavaCode.class,
+            })
             @RunWith(JUnit3RunnerWithInners.class)
             public static class FinalJavaClass extends AbstractQuickFixTest {
                 public void testAllFilesPresentInFinalJavaClass() throws Exception {
@@ -3025,7 +3097,8 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
 
                 @TestMetadata("idea/testData/quickfix/modifiers/addOpenToClassDeclaration/finalJavaClass/javaCode")
                 @TestDataPath("$PROJECT_ROOT")
-                @InnerTestClasses({})
+                @InnerTestClasses({
+                })
                 @RunWith(JUnit3RunnerWithInners.class)
                 public static class JavaCode extends AbstractQuickFixTest {
                     public void testAllFilesPresentInJavaCode() throws Exception {
@@ -3039,7 +3112,9 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
 
     @TestMetadata("idea/testData/quickfix/nullables")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({Nullables.UnsafeInfixCall.class})
+    @InnerTestClasses({
+            Nullables.UnsafeInfixCall.class,
+    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Nullables extends AbstractQuickFixTest {
         public void testAllFilesPresentInNullables() throws Exception {
@@ -3088,7 +3163,10 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
 
     @TestMetadata("idea/testData/quickfix/override")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({Override.NothingToOverride.class, Override.TypeMismatchOnOverride.class})
+    @InnerTestClasses({
+            Override.NothingToOverride.class,
+            Override.TypeMismatchOnOverride.class,
+    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Override extends AbstractQuickFixTest {
         public void testAllFilesPresentInOverride() throws Exception {
@@ -3602,7 +3680,13 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
 
     @TestMetadata("idea/testData/quickfix/suppress")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({Suppress.AnnotationPosition.class, Suppress.Availability.class, Suppress.DeclarationKinds.class, Suppress.ErrorRecovery.class, Suppress.ForStatement.class})
+    @InnerTestClasses({
+            Suppress.AnnotationPosition.class,
+            Suppress.Availability.class,
+            Suppress.DeclarationKinds.class,
+            Suppress.ErrorRecovery.class,
+            Suppress.ForStatement.class,
+    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Suppress extends AbstractQuickFixTest {
         public void testAllFilesPresentInSuppress() throws Exception {
@@ -3857,7 +3941,9 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
 
         @TestMetadata("idea/testData/quickfix/suppress/forStatement")
         @TestDataPath("$PROJECT_ROOT")
-        @InnerTestClasses({ForStatement.Unavailable.class})
+        @InnerTestClasses({
+                ForStatement.Unavailable.class,
+        })
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ForStatement extends AbstractQuickFixTest {
             public void testAllFilesPresentInForStatement() throws Exception {
@@ -4303,7 +4389,13 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
 
     @TestMetadata("idea/testData/quickfix/typeMismatch")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({TypeMismatch.Casts.class, TypeMismatch.ComponentFunctionReturnTypeMismatch.class, TypeMismatch.FixOverloadedOperator.class, TypeMismatch.ParameterTypeMismatch.class, TypeMismatch.TypeMismatchOnReturnedExpression.class})
+    @InnerTestClasses({
+            TypeMismatch.Casts.class,
+            TypeMismatch.ComponentFunctionReturnTypeMismatch.class,
+            TypeMismatch.FixOverloadedOperator.class,
+            TypeMismatch.ParameterTypeMismatch.class,
+            TypeMismatch.TypeMismatchOnReturnedExpression.class,
+    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class TypeMismatch extends AbstractQuickFixTest {
         public void testAllFilesPresentInTypeMismatch() throws Exception {
@@ -4787,7 +4879,13 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
 
     @TestMetadata("idea/testData/quickfix/variables")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({Variables.ChangeMutability.class, Variables.ChangeToBackingField.class, Variables.ChangeToFunctionInvocation.class, Variables.ChangeToPropertyName.class, Variables.RemoveValVarFromParameter.class})
+    @InnerTestClasses({
+            Variables.ChangeMutability.class,
+            Variables.ChangeToBackingField.class,
+            Variables.ChangeToFunctionInvocation.class,
+            Variables.ChangeToPropertyName.class,
+            Variables.RemoveValVarFromParameter.class,
+    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Variables extends AbstractQuickFixTest {
         public void testAllFilesPresentInVariables() throws Exception {

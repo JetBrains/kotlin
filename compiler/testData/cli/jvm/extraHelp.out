@@ -4,6 +4,7 @@ where advanced options include:
   -Xno-param-assertions      Don't generate not-null assertions on parameters of methods accessible from Java
   -Xno-optimize              Disable optimizations
   -Xno-inline                Disable method inlining
+  -Xplugin <path>            Load plugins from the given classpath
 
 Advanced options are non-standard and may be changed or removed without any notice.
 OK

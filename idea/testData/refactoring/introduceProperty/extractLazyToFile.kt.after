@@ -1,0 +1,14 @@
+// WITH_RUNTIME
+// EXTRACTION_TARGET: lazy property
+
+import kotlin.properties.Delegates
+
+val n: Int = 1
+
+private val i: Int by Delegates.lazy {
+    n + 1
+}
+
+fun foo(): Int {
+    return i
+}

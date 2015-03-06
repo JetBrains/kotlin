@@ -23,8 +23,8 @@ import com.intellij.refactoring.changeSignature.ChangeSignatureHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeSignatureHandler;
-import org.jetbrains.kotlin.idea.refactoring.extractFunction.ExtractKotlinFunctionHandler;
-import org.jetbrains.kotlin.idea.refactoring.extractFunction.ExtractKotlinFunctionHandlerHelper;
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ExtractKotlinFunctionHandler;
+import org.jetbrains.kotlin.idea.refactoring.introduce.introduceProperty.KotlinIntroducePropertyHandler;
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler;
 import org.jetbrains.kotlin.idea.refactoring.safeDelete.SafeDeletePackage;
 import org.jetbrains.kotlin.psi.*;
@@ -41,13 +41,18 @@ public class JetRefactoringSupportProvider extends RefactoringSupportProvider {
     }
 
     @NotNull
+    public RefactoringActionHandler getIntroducePropertyHandler() {
+        return new KotlinIntroducePropertyHandler();
+    }
+
+    @NotNull
     public RefactoringActionHandler getExtractFunctionHandler() {
         return new ExtractKotlinFunctionHandler();
     }
 
     @NotNull
     public RefactoringActionHandler getExtractFunctionToScopeHandler() {
-        return new ExtractKotlinFunctionHandler(true, ExtractKotlinFunctionHandlerHelper.DEFAULT);
+        return new ExtractKotlinFunctionHandler(true, ExtractKotlinFunctionHandler.InteractiveExtractionHelper.INSTANCE$);
     }
 
     @Override

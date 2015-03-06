@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.utils.*
 
 import java.io.IOException
+import java.io.FileNotFoundException
 
 public class VirtualFileKotlinClass private(
         public val file: VirtualFile,
@@ -52,19 +53,24 @@ public class VirtualFileKotlinClass private(
         deprecated("Use KotlinBinaryClassCache")
         fun create(file: VirtualFile): VirtualFileKotlinClass? {
             assert(file.getFileType() == JavaClassFileType.INSTANCE) { "Trying to read binary data from a non-class file $file" }
-            val byteContent = file.contentsToByteArray()
-            if (byteContent.isEmpty()) return null
 
             try {
+                val byteContent = file.contentsToByteArray()
+                if (byteContent.isEmpty()) return null
+
                 return FileBasedKotlinClass.create(byteContent) {
                     name, header, innerClasses ->
                     VirtualFileKotlinClass(file, name, header, innerClasses)
                 }
             }
+            catch (e: FileNotFoundException) {
+                // Valid situation. User can delete jar file.
+            }
             catch (e: Throwable) {
                 LOG.warn(renderFileReadingErrorMessage(file))
-                return null
             }
+
+            return null
         }
 
         private fun renderFileReadingErrorMessage(file: VirtualFile): String =

@@ -94,14 +94,14 @@ class PartialBodyResolveFilter(
 
             if (statement is JetNamedDeclaration) {
                 val name = statement.getName()
-                if (name != null && nameFilter.accepts(name)) {
+                if (name != null && nameFilter(name)) {
                     statementMarks.mark(statement, MarkLevel.NEED_REFERENCE_RESOLVE)
                 }
             }
             else if (statement is JetMultiDeclaration) {
                 if (statement.getEntries().any {
                     val name = it.getName()
-                    name != null && nameFilter.accepts(name)
+                    name != null && nameFilter(name)
                 }) {
                     statementMarks.mark(statement, MarkLevel.NEED_REFERENCE_RESOLVE)
                 }
@@ -118,7 +118,7 @@ class PartialBodyResolveFilter(
             updateNameFilter()
 
             if (!nameFilter.isEmpty) {
-                val smartCastPlaces = potentialSmartCastPlaces(statement, { it.identifiers().all { nameFilter.accepts(it) } })
+                val smartCastPlaces = potentialSmartCastPlaces(statement, { it.affectsNames(nameFilter) })
                 if (!smartCastPlaces.isEmpty()) {
                     //TODO: do we really need correct resolve for ALL smart cast places?
                     smartCastPlaces.values()
@@ -179,7 +179,7 @@ class PartialBodyResolveFilter(
             override fun visitBinaryWithTypeRHSExpression(expression: JetBinaryExpressionWithTypeRHS) {
                 expression.acceptChildren(this)
 
-                if (expression.getOperationReference()?.getReferencedNameElementType() == JetTokens.AS_KEYWORD) {
+                if (expression.getOperationReference().getReferencedNameElementType() == JetTokens.AS_KEYWORD) {
                     addIfCanBeSmartCast(expression.getLeft())
                 }
             }
@@ -262,7 +262,7 @@ class PartialBodyResolveFilter(
             override fun visitIsExpression(expression: JetIsExpression) {
                 expression.acceptChildren(this)
 
-                result.addIfNotNull(expression.getLeftHandSide()?.smartCastExpressionName())
+                result.addIfNotNull(expression.getLeftHandSide().smartCastExpressionName())
             }
         })
         return result
@@ -379,18 +379,25 @@ class PartialBodyResolveFilter(
         private fun JetElement.noControlFlowInside() = this is JetFunction || this is JetClass || this is JetClassBody
     }
 
-    private data class SmartCastName(val receiverName: SmartCastName?, val selectorName: String) {
-        override fun toString(): String = if (receiverName != null) receiverName.toString() + "." + selectorName else selectorName
+    private data class SmartCastName(
+            private val receiverName: SmartCastName?,
+            private val selectorName: String? /* null means "this" (and receiverName should be null */
+    ) {
+        {
+            if (selectorName == null) {
+                assert(receiverName == null, "selectorName is allowed to be null only when receiverName is also null (which means 'this')")
+            }
+        }
 
-        fun identifiers(): Collection<String> {
-            return if (receiverName != null)
-                receiverName.identifiers() + listOf(selectorName)
-            else
-                listOf(selectorName)
+        override fun toString(): String = if (receiverName != null) receiverName.toString() + "." + selectorName else selectorName ?: "this"
+
+        fun affectsNames(nameFilter: (String) -> Boolean): Boolean {
+            if (selectorName == null) return true
+            if (!nameFilter(selectorName)) return false
+            return receiverName == null || receiverName.affectsNames(nameFilter)
         }
     }
 
-    //TODO: this can be smart-cast too!
     private fun JetExpression.smartCastExpressionName(): SmartCastName? {
         return when (this) {
             is JetSimpleNameExpression -> SmartCastName(null, this.getReferencedName())
@@ -406,15 +413,17 @@ class PartialBodyResolveFilter(
                 return SmartCastName(receiverName, selectorName)
             }
 
+            is JetThisExpression -> SmartCastName(null, null)
+
             else -> null
         }
     }
 
     //TODO: declarations with special names (e.g. "get")
-    private class NameFilter {
+    private class NameFilter : (String) -> Boolean {
         private var names: MutableSet<String>? = HashSet()
 
-        fun accepts(name: String) = names == null || name in names!!
+        override fun invoke(name: String) = names == null || name in names!!
 
         val isEmpty: Boolean
             get() = names?.isEmpty() ?: false

@@ -32,12 +32,14 @@ import java.io.StringWriter
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.PsiComment
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.analyzer.ModuleInfo
 
 public fun JetPsiFactory(project: Project?): JetPsiFactory = JetPsiFactory(project!!)
 public fun JetPsiFactory(contextElement: JetElement): JetPsiFactory = JetPsiFactory(contextElement.getProject())
 
 public var JetFile.doNotAnalyze: String? by UserDataProperty(Key.create("DO_NOT_ANALYZE"))
 public var JetFile.analysisContext: PsiElement? by UserDataProperty(Key.create("ANALYSIS_CONTEXT"))
+public var JetFile.moduleInfo: ModuleInfo? by UserDataProperty(Key.create("MODULE_INFO"))
 
 public class JetPsiFactory(private val project: Project) {
 
@@ -533,7 +535,7 @@ public class JetPsiFactory(private val project: Project) {
             state = State.RECEIVER
         }
 
-        private fun blockPrefix() = when (target) {
+        private fun bodyPrefix() = when (target) {
             Target.FUNCTION -> ""
             Target.READ_ONLY_PROPERTY -> "\nget()"
         }
@@ -619,19 +621,28 @@ public class JetPsiFactory(private val project: Project) {
             return this
         }
 
-        public fun simpleBody(body: String): CallableBuilder {
+        public fun blockBody(body: String): CallableBuilder {
             assert(state == State.BODY || state == State.TYPE_CONSTRAINTS)
 
-            sb.append(blockPrefix()).append(" = ").append(body)
+            sb.append(bodyPrefix()).append(" {\n").append(body).append("\n}")
             state = State.DONE
 
             return this
         }
 
-        public fun blockBody(body: String): CallableBuilder {
-            assert(state == State.BODY || state == State.TYPE_CONSTRAINTS)
+        public fun initializer(body: String): CallableBuilder {
+            assert(target == Target.READ_ONLY_PROPERTY && (state == State.BODY || state == State.TYPE_CONSTRAINTS))
 
-            sb.append(blockPrefix()).append(" {\n").append(body).append("\n}")
+            sb.append(" = ").append(body)
+            state = State.DONE
+
+            return this
+        }
+
+        public fun lazyBody(body: String): CallableBuilder {
+            assert(target == Target.READ_ONLY_PROPERTY && (state == State.BODY || state == State.TYPE_CONSTRAINTS))
+
+            sb.append(" by kotlin.properties.Delegates.lazy {\n").append(body).append("\n}")
             state = State.DONE
 
             return this

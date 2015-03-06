@@ -1,0 +1,6 @@
+package
+
+internal val a: (kotlin.Int) -> kotlin.String
+internal val b: kotlin.String
+internal val flag: kotlin.Boolean = true
+internal fun </*0*/ T> foo(/*0*/ f: (kotlin.Int) -> T): T

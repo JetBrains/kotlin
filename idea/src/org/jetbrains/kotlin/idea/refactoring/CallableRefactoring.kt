@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import java.util.HashSet
 import com.intellij.psi.search.searches.OverridingMethodsSearch
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.idea.codeInsight.DescriptorToDeclarationUtil
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.psi.JetCallableDeclaration
@@ -171,7 +171,7 @@ public abstract class CallableRefactoring<T: CallableDescriptor>(
 }
 
 fun getAffectedCallables(project: Project, descriptorsForChange: Collection<CallableDescriptor>): List<PsiElement> {
-    val baseCallables = descriptorsForChange.map { DescriptorToDeclarationUtil.getDeclaration(project, it) }.filterNotNull()
+    val baseCallables = descriptorsForChange.map { DescriptorToSourceUtilsIde.getAnyDeclaration(project, it) }.filterNotNull()
     return baseCallables + baseCallables.flatMap { it.toLightMethods() }.flatMapTo(HashSet<PsiElement>()) { psiMethod ->
         val overrides = OverridingMethodsSearch.search(psiMethod).findAll()
         overrides.map { method -> method.namedUnwrappedElement ?: method}

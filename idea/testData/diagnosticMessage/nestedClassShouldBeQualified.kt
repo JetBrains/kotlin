@@ -22,7 +22,7 @@ class C {
     }
 }
 
-fun C.D.text() {
+fun C.Default.D.text() {
     Nested()
     ::Nested
 }

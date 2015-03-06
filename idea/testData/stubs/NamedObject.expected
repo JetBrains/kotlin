@@ -2,7 +2,7 @@ PsiJetFileStubImpl[package=]
   PACKAGE_DIRECTIVE:
   CLASS:[fqName=A, isEnumEntry=false, isLocal=false, isTopLevel=true, isTrait=false, name=A, superNames=[]]
   CLASS:[fqName=T, isEnumEntry=false, isLocal=false, isTopLevel=true, isTrait=true, name=T, superNames=[]]
-  OBJECT_DECLARATION:[fqName=Test, isClassObject=false, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=Test, superNames=[A, T]]
+  OBJECT_DECLARATION:[fqName=Test, isDefault=false, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=Test, superNames=[A, T]]
     DELEGATION_SPECIFIER_LIST:
       DELEGATOR_SUPER_CALL:
         CONSTRUCTOR_CALLEE:

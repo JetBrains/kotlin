@@ -6,6 +6,7 @@
         <include name="src/kotlin/Functions.kt"/>
         <include name="src/kotlin/Iterators.kt"/>
         <include name="src/kotlin/Range.kt"/>
+        <include name="src/kotlin/FloatingPointConstants.kt"/>
     </fileset>
 
     <union id="js.lib.files">

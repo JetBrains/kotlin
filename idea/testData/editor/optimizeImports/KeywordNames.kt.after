@@ -1,0 +1,3 @@
+import foo.`val`.`var`
+
+var v: `var`? = null

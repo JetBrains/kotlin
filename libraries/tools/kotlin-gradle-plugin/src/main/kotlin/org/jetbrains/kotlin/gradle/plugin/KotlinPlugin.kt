@@ -37,6 +37,7 @@ import kotlin.properties.Delegates
 import org.gradle.api.tasks.Delete
 import groovy.lang.Closure
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
+import java.util.ServiceLoader
 
 val DEFAULT_ANNOTATIONS = "org.jebrains.kotlin.gradle.defaultAnnotations"
 
@@ -142,6 +143,8 @@ class Kotlin2JvmSourceSetProcessor(
                 }
             }
         }
+
+        loadSubplugins(project).addSubpluginArguments(project, kotlinTask)
     }
 }
 
@@ -314,6 +317,8 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
             sourceSets.getByName("androidTest")
         }
 
+        val subpluginEnvironment = loadSubplugins(project)
+
         for (variant in variants) {
             if (variant is LibraryVariant || variant is ApkVariant) {
                 val buildTypeSourceSetName = AndroidGradleWrapper.getVariantName(variant)
@@ -383,6 +388,8 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
                     }
                 }
 
+                subpluginEnvironment.addSubpluginArguments(project, kotlinTask)
+
                 kotlinTask doFirst {
                     var plugin = project.getPlugins().findPlugin("android")
                     if (null == plugin) {
@@ -412,9 +419,64 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
         val result = (obj as HasConvention).getConvention().getPlugins()[extensionName]
         return result as T
     }
-
 }
 
+private fun loadSubplugins(project: Project): SubpluginEnvironment {
+    try {
+        val subplugins = ServiceLoader.load(
+            javaClass<KotlinGradleSubplugin>(), project.getBuildscript().getClassLoader()).toList()
+        val subpluginDependencyNames =
+            subplugins.mapTo(hashSetOf<String>()) { it.getGroupName() + ":" + it.getArtifactName() }
+
+        val classpath = project.getBuildscript().getConfigurations().getByName("classpath")
+        val subpluginClasspaths = hashMapOf<KotlinGradleSubplugin, List<String>>()
+
+        for (subplugin in subplugins) {
+            val files = classpath.getDependencies()
+                    .filter { subpluginDependencyNames.contains(it.getGroup() + ":" + it.getName()) }
+                    .flatMap { classpath.files(it).map { it.getAbsolutePath() } }
+            subpluginClasspaths.put(subplugin, files)
+        }
+
+        return SubpluginEnvironment(subpluginClasspaths, subplugins)
+    } catch (e: NoClassDefFoundError) {
+        // Skip plugin loading if KotlinGradleSubplugin is not defined.
+        // It is true now for tests in kotlin-gradle-plugin-core.
+        return SubpluginEnvironment(mapOf(), listOf())
+    }
+}
+
+private class SubpluginEnvironment(
+    val subpluginClasspaths: Map<KotlinGradleSubplugin, List<String>>,
+    val subplugins: List<KotlinGradleSubplugin>
+) {
+
+    private fun AbstractCompile.setKotlinTaskProperty(methodName: String, value: Array<String>) {
+        val function = javaClass.getMethod(methodName, javaClass<Array<String>>())
+        function.invoke(this, value)
+    }
+
+    fun addSubpluginArguments(project: Project, compileTask: AbstractCompile) {
+        val realPluginClasspaths = arrayListOf<String>()
+        val pluginArguments = arrayListOf<String>()
+
+        subplugins.forEach { subplugin ->
+            val args = subplugin.getExtraArguments(project, compileTask)
+            if (args != null) {
+                realPluginClasspaths.addAll(subpluginClasspaths[subplugin])
+                for (arg in args) {
+                    //TODO: fix (getPluginOptionString is in plugin-api)
+                    fun getPluginOptionString(pluginId: String, key: String, value: String) = "plugin:$pluginId:$key=$value"
+                    val option = getPluginOptionString(subplugin.getPluginName(), arg.key, arg.value)
+                    pluginArguments.add(option)
+                }
+            }
+        }
+
+        compileTask.setKotlinTaskProperty("setCompilerPluginClasspaths", realPluginClasspaths.copyToArray())
+        compileTask.setKotlinTaskProperty("setCompilerPluginArguments", pluginArguments.copyToArray())
+    }
+}
 
 open class GradleUtils(val scriptHandler: ScriptHandler, val project: ProjectInternal) {
     public fun resolveDependencies(vararg coordinates: String): Collection<File> {

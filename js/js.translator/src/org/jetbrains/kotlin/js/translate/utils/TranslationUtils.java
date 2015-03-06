@@ -17,8 +17,6 @@
 package org.jetbrains.kotlin.js.translate.utils;
 
 import com.google.dart.compiler.backend.js.ast.*;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -30,7 +28,6 @@ import org.jetbrains.kotlin.js.translate.general.Translation;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.types.JetType;
-import org.jetbrains.kotlin.types.TypeProjection;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,7 +39,6 @@ import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getCallableDe
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.assignment;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.createDataDescriptor;
 import static org.jetbrains.kotlin.js.translate.utils.ManglingUtils.getMangledName;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isAnonymousObject;
 
 public final class TranslationUtils {
@@ -222,7 +218,7 @@ public final class TranslationUtils {
         if (returnType != null &&
             KotlinBuiltIns.getInstance().getCharType().equals(returnType) || (KotlinBuiltIns.getInstance().getLongType().equals(returnType))) return false;
 
-        if (context.intrinsics().getFunctionIntrinsics().getIntrinsic((FunctionDescriptor) operationDescriptor).exists()) return true;
+        if (context.intrinsics().getFunctionIntrinsic((FunctionDescriptor) operationDescriptor).exists()) return true;
 
         return false;
     }

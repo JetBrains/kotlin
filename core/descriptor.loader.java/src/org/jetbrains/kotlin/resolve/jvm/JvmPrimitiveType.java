@@ -17,21 +17,21 @@
 package org.jetbrains.kotlin.resolve.jvm;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
+import org.jetbrains.kotlin.name.FqName;
 
 import java.util.HashSet;
 import java.util.Set;
 
 public enum JvmPrimitiveType {
-    BOOLEAN(PrimitiveType.BOOLEAN, "boolean", "java.lang.Boolean"),
-    CHAR(PrimitiveType.CHAR, "char", "java.lang.Character"),
-    BYTE(PrimitiveType.BYTE, "byte", "java.lang.Byte"),
-    SHORT(PrimitiveType.SHORT, "short", "java.lang.Short"),
-    INT(PrimitiveType.INT, "int", "java.lang.Integer"),
-    FLOAT(PrimitiveType.FLOAT, "float", "java.lang.Float"),
-    LONG(PrimitiveType.LONG, "long", "java.lang.Long"),
-    DOUBLE(PrimitiveType.DOUBLE, "double", "java.lang.Double"),
+    BOOLEAN(PrimitiveType.BOOLEAN, "boolean", "Z", "java.lang.Boolean"),
+    CHAR(PrimitiveType.CHAR, "char", "C", "java.lang.Character"),
+    BYTE(PrimitiveType.BYTE, "byte", "B", "java.lang.Byte"),
+    SHORT(PrimitiveType.SHORT, "short", "S", "java.lang.Short"),
+    INT(PrimitiveType.INT, "int", "I", "java.lang.Integer"),
+    FLOAT(PrimitiveType.FLOAT, "float", "F", "java.lang.Float"),
+    LONG(PrimitiveType.LONG, "long", "J", "java.lang.Long"),
+    DOUBLE(PrimitiveType.DOUBLE, "double", "D", "java.lang.Double"),
     ;
 
     private static final Set<FqName> WRAPPERS_CLASS_NAMES;
@@ -50,11 +50,13 @@ public enum JvmPrimitiveType {
 
     private final PrimitiveType primitiveType;
     private final String name;
+    private final String desc;
     private final FqName wrapperFqName;
 
-    private JvmPrimitiveType(@NotNull PrimitiveType primitiveType, @NotNull String name, @NotNull String wrapperClassName) {
+    JvmPrimitiveType(@NotNull PrimitiveType primitiveType, @NotNull String name, @NotNull String desc, @NotNull String wrapperClassName) {
         this.primitiveType = primitiveType;
         this.name = name;
+        this.desc = desc;
         this.wrapperFqName = new FqName(wrapperClassName);
     }
 
@@ -66,6 +68,11 @@ public enum JvmPrimitiveType {
     @NotNull
     public String getName() {
         return name;
+    }
+
+    @NotNull
+    public String getDesc() {
+        return desc;
     }
 
     @NotNull

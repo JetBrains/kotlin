@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
-import org.jetbrains.kotlin.idea.codeInsight.DescriptorToDeclarationUtil
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import com.intellij.psi.JavaPsiFacade
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.guessTypes
@@ -61,7 +61,7 @@ private fun getTargetParentByQualifier(
         !isQualified ->
             file
         qualifierDescriptor is ClassDescriptor ->
-            DescriptorToDeclarationUtil.getDeclaration(project, qualifierDescriptor)
+            DescriptorToSourceUtilsIde.getAnyDeclaration(project, qualifierDescriptor)
         qualifierDescriptor is PackageViewDescriptor ->
             if (qualifierDescriptor.getFqName() != file.getPackageFqName()) {
                 JavaPsiFacade.getInstance(project).findPackage(qualifierDescriptor.getFqName().asString())

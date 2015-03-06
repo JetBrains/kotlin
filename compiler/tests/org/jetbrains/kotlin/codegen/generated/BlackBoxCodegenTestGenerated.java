@@ -30,7 +30,59 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/codegen/box")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({BlackBoxCodegenTestGenerated.Arrays.class, BlackBoxCodegenTestGenerated.BinaryOp.class, BlackBoxCodegenTestGenerated.Bridges.class, BlackBoxCodegenTestGenerated.BuiltinStubMethods.class, BlackBoxCodegenTestGenerated.Casts.class, BlackBoxCodegenTestGenerated.Classes.class, BlackBoxCodegenTestGenerated.Closures.class, BlackBoxCodegenTestGenerated.Constants.class, BlackBoxCodegenTestGenerated.ControlStructures.class, BlackBoxCodegenTestGenerated.DefaultArguments.class, BlackBoxCodegenTestGenerated.DelegatedProperty.class, BlackBoxCodegenTestGenerated.Diagnostics.class, BlackBoxCodegenTestGenerated.Elvis.class, BlackBoxCodegenTestGenerated.Enum.class, BlackBoxCodegenTestGenerated.ExclExcl.class, BlackBoxCodegenTestGenerated.ExtensionFunctions.class, BlackBoxCodegenTestGenerated.ExtensionProperties.class, BlackBoxCodegenTestGenerated.FakeOverride.class, BlackBoxCodegenTestGenerated.FieldRename.class, BlackBoxCodegenTestGenerated.Finally.class, BlackBoxCodegenTestGenerated.Functions.class, BlackBoxCodegenTestGenerated.InnerNested.class, BlackBoxCodegenTestGenerated.Instructions.class, BlackBoxCodegenTestGenerated.Intrinsics.class, BlackBoxCodegenTestGenerated.JavaInterop.class, BlackBoxCodegenTestGenerated.Labels.class, BlackBoxCodegenTestGenerated.LocalClasses.class, BlackBoxCodegenTestGenerated.MultiDecl.class, BlackBoxCodegenTestGenerated.Objects.class, BlackBoxCodegenTestGenerated.OperatorConventions.class, BlackBoxCodegenTestGenerated.Package.class, BlackBoxCodegenTestGenerated.PlatformTypes.class, BlackBoxCodegenTestGenerated.PrimitiveTypes.class, BlackBoxCodegenTestGenerated.Properties.class, BlackBoxCodegenTestGenerated.Reflection.class, BlackBoxCodegenTestGenerated.Regressions.class, BlackBoxCodegenTestGenerated.SafeCall.class, BlackBoxCodegenTestGenerated.SamConstructors.class, BlackBoxCodegenTestGenerated.StaticFields.class, BlackBoxCodegenTestGenerated.Strings.class, BlackBoxCodegenTestGenerated.Super.class, BlackBoxCodegenTestGenerated.SuperConstructorCall.class, BlackBoxCodegenTestGenerated.ToArray.class, BlackBoxCodegenTestGenerated.Traits.class, BlackBoxCodegenTestGenerated.TypeInfo.class, BlackBoxCodegenTestGenerated.TypeMapping.class, BlackBoxCodegenTestGenerated.UnaryOp.class, BlackBoxCodegenTestGenerated.Unit.class, BlackBoxCodegenTestGenerated.Vararg.class, BlackBoxCodegenTestGenerated.When.class})
+@InnerTestClasses({
+        BlackBoxCodegenTestGenerated.Arrays.class,
+        BlackBoxCodegenTestGenerated.BinaryOp.class,
+        BlackBoxCodegenTestGenerated.Bridges.class,
+        BlackBoxCodegenTestGenerated.BuiltinStubMethods.class,
+        BlackBoxCodegenTestGenerated.Casts.class,
+        BlackBoxCodegenTestGenerated.Classes.class,
+        BlackBoxCodegenTestGenerated.Closures.class,
+        BlackBoxCodegenTestGenerated.Constants.class,
+        BlackBoxCodegenTestGenerated.ControlStructures.class,
+        BlackBoxCodegenTestGenerated.DefaultArguments.class,
+        BlackBoxCodegenTestGenerated.DelegatedProperty.class,
+        BlackBoxCodegenTestGenerated.Diagnostics.class,
+        BlackBoxCodegenTestGenerated.Elvis.class,
+        BlackBoxCodegenTestGenerated.Enum.class,
+        BlackBoxCodegenTestGenerated.ExclExcl.class,
+        BlackBoxCodegenTestGenerated.ExtensionFunctions.class,
+        BlackBoxCodegenTestGenerated.ExtensionProperties.class,
+        BlackBoxCodegenTestGenerated.FakeOverride.class,
+        BlackBoxCodegenTestGenerated.FieldRename.class,
+        BlackBoxCodegenTestGenerated.Finally.class,
+        BlackBoxCodegenTestGenerated.Functions.class,
+        BlackBoxCodegenTestGenerated.InnerNested.class,
+        BlackBoxCodegenTestGenerated.Instructions.class,
+        BlackBoxCodegenTestGenerated.Intrinsics.class,
+        BlackBoxCodegenTestGenerated.JavaInterop.class,
+        BlackBoxCodegenTestGenerated.Labels.class,
+        BlackBoxCodegenTestGenerated.LocalClasses.class,
+        BlackBoxCodegenTestGenerated.MultiDecl.class,
+        BlackBoxCodegenTestGenerated.ObjectIntrinsics.class,
+        BlackBoxCodegenTestGenerated.Objects.class,
+        BlackBoxCodegenTestGenerated.OperatorConventions.class,
+        BlackBoxCodegenTestGenerated.Package.class,
+        BlackBoxCodegenTestGenerated.PlatformTypes.class,
+        BlackBoxCodegenTestGenerated.PrimitiveTypes.class,
+        BlackBoxCodegenTestGenerated.Properties.class,
+        BlackBoxCodegenTestGenerated.Reflection.class,
+        BlackBoxCodegenTestGenerated.Regressions.class,
+        BlackBoxCodegenTestGenerated.SafeCall.class,
+        BlackBoxCodegenTestGenerated.SamConstructors.class,
+        BlackBoxCodegenTestGenerated.StaticFields.class,
+        BlackBoxCodegenTestGenerated.Strings.class,
+        BlackBoxCodegenTestGenerated.Super.class,
+        BlackBoxCodegenTestGenerated.SuperConstructorCall.class,
+        BlackBoxCodegenTestGenerated.ToArray.class,
+        BlackBoxCodegenTestGenerated.Traits.class,
+        BlackBoxCodegenTestGenerated.TypeInfo.class,
+        BlackBoxCodegenTestGenerated.TypeMapping.class,
+        BlackBoxCodegenTestGenerated.UnaryOp.class,
+        BlackBoxCodegenTestGenerated.Unit.class,
+        BlackBoxCodegenTestGenerated.Vararg.class,
+        BlackBoxCodegenTestGenerated.When.class,
+})
 @RunWith(JUnit3RunnerWithInners.class)
 public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     public void testAllFilesPresentInBox() throws Exception {
@@ -297,7 +349,9 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
 
     @TestMetadata("compiler/testData/codegen/box/bridges")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({Bridges.SubstitutionInSuperClass.class})
+    @InnerTestClasses({
+            Bridges.SubstitutionInSuperClass.class,
+    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Bridges extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInBridges() throws Exception {
@@ -640,7 +694,9 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
 
     @TestMetadata("compiler/testData/codegen/box/builtinStubMethods")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({BuiltinStubMethods.ExtendJavaCollections.class})
+    @InnerTestClasses({
+            BuiltinStubMethods.ExtendJavaCollections.class,
+    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class BuiltinStubMethods extends AbstractBlackBoxCodegenTest {
         @TestMetadata("abstractMember.kt")
@@ -872,6 +928,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("notIs.kt")
         public void testNotIs() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/casts/notIs.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("unitNullableCast.kt")
+        public void testUnitNullableCast() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/casts/unitNullableCast.kt");
             doTest(fileName);
         }
     }
@@ -1493,7 +1555,10 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
 
     @TestMetadata("compiler/testData/codegen/box/closures")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({Closures.CaptureOuterProperty.class, Closures.ClosureInsideClosure.class})
+    @InnerTestClasses({
+            Closures.CaptureOuterProperty.class,
+            Closures.ClosureInsideClosure.class,
+    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Closures extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInClosures() throws Exception {
@@ -2121,7 +2186,10 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
 
     @TestMetadata("compiler/testData/codegen/box/defaultArguments")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({DefaultArguments.Constructor.class, DefaultArguments.Function.class})
+    @InnerTestClasses({
+            DefaultArguments.Constructor.class,
+            DefaultArguments.Function.class,
+    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class DefaultArguments extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInDefaultArguments() throws Exception {
@@ -2347,7 +2415,9 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
 
     @TestMetadata("compiler/testData/codegen/box/delegatedProperty")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({DelegatedProperty.PropertyDelegatedMethod.class})
+    @InnerTestClasses({
+            DelegatedProperty.PropertyDelegatedMethod.class,
+    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class DelegatedProperty extends AbstractBlackBoxCodegenTest {
         @TestMetadata("accessTopLevelDelegatedPropertyInClinit.kt")
@@ -2630,7 +2700,10 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
 
     @TestMetadata("compiler/testData/codegen/box/diagnostics")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({Diagnostics.Functions.class, Diagnostics.Vararg.class})
+    @InnerTestClasses({
+            Diagnostics.Functions.class,
+            Diagnostics.Vararg.class,
+    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Diagnostics extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInDiagnostics() throws Exception {
@@ -2639,7 +2712,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
 
         @TestMetadata("compiler/testData/codegen/box/diagnostics/functions")
         @TestDataPath("$PROJECT_ROOT")
-        @InnerTestClasses({Functions.Inference.class, Functions.Invoke.class, Functions.TailRecursion.class})
+        @InnerTestClasses({
+                Functions.Inference.class,
+                Functions.Invoke.class,
+                Functions.TailRecursion.class,
+        })
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Functions extends AbstractBlackBoxCodegenTest {
             public void testAllFilesPresentInFunctions() throws Exception {
@@ -2663,7 +2740,9 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
 
             @TestMetadata("compiler/testData/codegen/box/diagnostics/functions/invoke")
             @TestDataPath("$PROJECT_ROOT")
-            @InnerTestClasses({Invoke.OnObjects.class})
+            @InnerTestClasses({
+                    Invoke.OnObjects.class,
+            })
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Invoke extends AbstractBlackBoxCodegenTest {
                 public void testAllFilesPresentInInvoke() throws Exception {
@@ -3506,7 +3585,10 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
 
     @TestMetadata("compiler/testData/codegen/box/functions")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({Functions.Invoke.class, Functions.LocalFunctions.class})
+    @InnerTestClasses({
+            Functions.Invoke.class,
+            Functions.LocalFunctions.class,
+    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Functions extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInFunctions() throws Exception {
@@ -3966,6 +4048,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("innerInfixCall.kt")
+        public void testInnerInfixCall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/innerNested/innerInfixCall.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("innerLabeledThis.kt")
         public void testInnerLabeledThis() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/innerNested/innerLabeledThis.kt");
@@ -4029,7 +4117,9 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
 
     @TestMetadata("compiler/testData/codegen/box/instructions")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({Instructions.Swap.class})
+    @InnerTestClasses({
+            Instructions.Swap.class,
+    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Instructions extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInInstructions() throws Exception {
@@ -4117,7 +4207,10 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
 
     @TestMetadata("compiler/testData/codegen/box/javaInterop")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({JavaInterop.NotNullAssertions.class, JavaInterop.ObjectMethods.class})
+    @InnerTestClasses({
+            JavaInterop.NotNullAssertions.class,
+            JavaInterop.ObjectMethods.class,
+    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class JavaInterop extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInJavaInterop() throws Exception {
@@ -4373,7 +4466,10 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
 
     @TestMetadata("compiler/testData/codegen/box/multiDecl")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({MultiDecl.ForIterator.class, MultiDecl.ForRange.class})
+    @InnerTestClasses({
+            MultiDecl.ForIterator.class,
+            MultiDecl.ForRange.class,
+    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class MultiDecl extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInMultiDecl() throws Exception {
@@ -4448,7 +4544,9 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
 
         @TestMetadata("compiler/testData/codegen/box/multiDecl/forIterator")
         @TestDataPath("$PROJECT_ROOT")
-        @InnerTestClasses({ForIterator.LongIterator.class})
+        @InnerTestClasses({
+                ForIterator.LongIterator.class,
+        })
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ForIterator extends AbstractBlackBoxCodegenTest {
             public void testAllFilesPresentInForIterator() throws Exception {
@@ -4521,7 +4619,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
 
         @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange")
         @TestDataPath("$PROJECT_ROOT")
-        @InnerTestClasses({ForRange.ExplicitRangeTo.class, ForRange.ExplicitRangeToWithDot.class, ForRange.Int.class, ForRange.Long.class})
+        @InnerTestClasses({
+                ForRange.ExplicitRangeTo.class,
+                ForRange.ExplicitRangeToWithDot.class,
+                ForRange.Int.class,
+                ForRange.Long.class,
+        })
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ForRange extends AbstractBlackBoxCodegenTest {
             public void testAllFilesPresentInForRange() throws Exception {
@@ -4560,7 +4663,10 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
 
             @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo")
             @TestDataPath("$PROJECT_ROOT")
-            @InnerTestClasses({ExplicitRangeTo.Int.class, ExplicitRangeTo.Long.class})
+            @InnerTestClasses({
+                    ExplicitRangeTo.Int.class,
+                    ExplicitRangeTo.Long.class,
+            })
             @RunWith(JUnit3RunnerWithInners.class)
             public static class ExplicitRangeTo extends AbstractBlackBoxCodegenTest {
                 public void testAllFilesPresentInExplicitRangeTo() throws Exception {
@@ -4666,7 +4772,10 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
 
             @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot")
             @TestDataPath("$PROJECT_ROOT")
-            @InnerTestClasses({ExplicitRangeToWithDot.Int.class, ExplicitRangeToWithDot.Long.class})
+            @InnerTestClasses({
+                    ExplicitRangeToWithDot.Int.class,
+                    ExplicitRangeToWithDot.Long.class,
+            })
             @RunWith(JUnit3RunnerWithInners.class)
             public static class ExplicitRangeToWithDot extends AbstractBlackBoxCodegenTest {
                 public void testAllFilesPresentInExplicitRangeToWithDot() throws Exception {
@@ -4835,6 +4944,21 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                     doTest(fileName);
                 }
             }
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/box/objectIntrinsics")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ObjectIntrinsics extends AbstractBlackBoxCodegenTest {
+        public void testAllFilesPresentInObjectIntrinsics() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/objectIntrinsics"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("objects.kt")
+        public void testObjects() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/objectIntrinsics/objects.kt");
+            doTest(fileName);
         }
     }
 
@@ -5077,7 +5201,9 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
 
     @TestMetadata("compiler/testData/codegen/box/operatorConventions")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({OperatorConventions.CompareTo.class})
+    @InnerTestClasses({
+            OperatorConventions.CompareTo.class,
+    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class OperatorConventions extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInOperatorConventions() throws Exception {
@@ -5243,7 +5369,9 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
 
     @TestMetadata("compiler/testData/codegen/box/platformTypes")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({PlatformTypes.Primitives.class})
+    @InnerTestClasses({
+            PlatformTypes.Primitives.class,
+    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class PlatformTypes extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInPlatformTypes() throws Exception {
@@ -5937,9 +6065,21 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("kt3107.kt")
+        public void testKt3107() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/kt3107.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("kt3173.kt")
         public void testKt3173() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/kt3173.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt3421.kt")
+        public void testKt3421() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/kt3421.kt");
             doTest(fileName);
         }
 
@@ -5949,9 +6089,21 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("kt3903.kt")
+        public void testKt3903() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/kt3903.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("kt3999.kt")
         public void testKt3999() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/kt3999.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt4281.kt")
+        public void testKt4281() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/kt4281.kt");
             doTest(fileName);
         }
 
@@ -6501,7 +6653,9 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
 
     @TestMetadata("compiler/testData/codegen/box/traits")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({Traits.WithRequired.class})
+    @InnerTestClasses({
+            Traits.WithRequired.class,
+    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Traits extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInTraits() throws Exception {

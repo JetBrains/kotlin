@@ -30,6 +30,7 @@ import kotlin.KotlinPackage;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
@@ -87,6 +88,8 @@ import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.getNotNull;
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.isVarCapturedInClosure;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isObject;
 import static org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage.getResolvedCall;
 import static org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage.getResolvedCallWithAssert;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
@@ -1814,7 +1817,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             }
 
             PsiElement element = bindingContext.get(LABEL_TARGET, expression.getTargetLabel());
-            if (element != DescriptorToSourceUtils.callableDescriptorToDeclaration(context.getContextDescriptor())) {
+            if (element != DescriptorToSourceUtils.getSourceFromDescriptor(context.getContextDescriptor())) {
                 DeclarationDescriptor elementDescriptor = typeMapper.getBindingContext().get(DECLARATION_TO_DESCRIPTOR, element);
                 assert element != null : "Expression should be not null " + expression.getText();
                 assert elementDescriptor != null : "Descriptor should be not null: " + element.getText();
@@ -1888,6 +1891,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         if (descriptor instanceof PropertyDescriptor) {
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
 
+            for (ExpressionCodegenExtension extension : ExpressionCodegenExtension.OBJECT$.getInstances(state.getProject())) {
+                StackValue result = extension.apply(receiver, resolvedCall, new ExpressionCodegenExtension.Context(typeMapper, v));
+
+                if (result != null) return result;
+            }
+
             boolean directToField =
                     expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER && contextKind() != OwnerKind.TRAIT_IMPL;
             JetExpression r = getReceiverForSelector(expression);
@@ -1906,18 +1915,18 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         if (descriptor instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
-            if (classDescriptor.getKind() == ClassKind.OBJECT || classDescriptor.getKind() == ClassKind.CLASS_OBJECT) {
+            if (isObject(classDescriptor)) {
                 return StackValue.singleton(classDescriptor, typeMapper);
             }
-            if (classDescriptor.getKind() == ClassKind.ENUM_ENTRY) {
+            if (isEnumEntry(classDescriptor)) {
                 DeclarationDescriptor enumClass = classDescriptor.getContainingDeclaration();
                 assert DescriptorUtils.isEnumClass(enumClass) : "Enum entry should be declared in enum class: " + descriptor;
                 Type type = typeMapper.mapType((ClassDescriptor) enumClass);
                 return StackValue.field(type, type, descriptor.getName().asString(), true, StackValue.none());
             }
-            ClassDescriptor classObjectDescriptor = classDescriptor.getDefaultObjectDescriptor();
-            if (classObjectDescriptor != null) {
-                return StackValue.singleton(classObjectDescriptor, typeMapper);
+            ClassDescriptor defaultObjectDescriptor = classDescriptor.getDefaultObjectDescriptor();
+            if (defaultObjectDescriptor != null) {
+                return StackValue.singleton(defaultObjectDescriptor, typeMapper);
             }
             return StackValue.none();
         }
@@ -2375,7 +2384,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     public StackValue generateReceiverValue(@NotNull ReceiverValue receiverValue) {
         if (receiverValue instanceof ClassReceiver) {
             ClassDescriptor receiverDescriptor = ((ClassReceiver) receiverValue).getDeclarationDescriptor();
-            if (DescriptorUtils.isClassObject(receiverDescriptor)) {
+            if (DescriptorUtils.isDefaultObject(receiverDescriptor)) {
                 CallableMemberDescriptor contextDescriptor = context.getContextDescriptor();
                 if (contextDescriptor instanceof FunctionDescriptor && receiverDescriptor == contextDescriptor.getContainingDeclaration()) {
                     return StackValue.LOCAL_0;
@@ -2897,11 +2906,16 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             return generateElvis(expression);
         }
         else if (opToken == JetTokens.IN_KEYWORD || opToken == JetTokens.NOT_IN) {
-            return generateIn(StackValue.expression(Type.INT_TYPE, expression.getLeft(), this), expression.getRight(), reference);
+            return generateIn(StackValue.expression(expressionType(expression.getLeft()), expression.getLeft(), this),
+                              expression.getRight(), reference);
         }
         else {
             ResolvedCall<?> resolvedCall = getResolvedCallWithAssert(expression, bindingContext);
             FunctionDescriptor descriptor = (FunctionDescriptor) resolvedCall.getResultingDescriptor();
+
+            if (descriptor instanceof ConstructorDescriptor) {
+                return generateConstructorCall(resolvedCall, expressionType(expression));
+            }
 
             Callable callable = resolveToCallable(descriptor, false);
             if (callable instanceof IntrinsicMethod) {
@@ -2922,7 +2936,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         return StackValue.operation(Type.BOOLEAN_TYPE, new Function1<InstructionAdapter, Unit>() {
             @Override
             public Unit invoke(InstructionAdapter v) {
-                if (isIntRangeExpr(deparenthesized)) {
+                if (isIntRangeExpr(deparenthesized) && AsmUtil.isIntPrimitive(leftValue.type)) {
                     genInIntRange(leftValue, (JetBinaryExpression) deparenthesized);
                 }
                 else {
@@ -3825,6 +3839,9 @@ The "returned" value of try expression with no finally is either the last expres
                                                                         DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(rightType));
                                 v.mark(nonnull);
                             }
+                        }
+                        else if (value.type == Type.VOID_TYPE) {
+                            v.aconst(null);
                         }
                         else {
                             v.dup();

@@ -154,7 +154,7 @@ public class DeclarationsChecker {
 
         for (JetTypeConstraint constraint : jetClass.getTypeConstraints()) {
             checkBoundsForTypeInClassHeader(constraint.getBoundTypeReference());
-            checkFinalUpperBounds(constraint.getBoundTypeReference(), constraint.isClassObjectConstraint());
+            checkFinalUpperBounds(constraint.getBoundTypeReference(), constraint.isDefaultObjectConstraint());
         }
     }
 
@@ -167,11 +167,11 @@ public class DeclarationsChecker {
         }
     }
 
-    private void checkFinalUpperBounds(@Nullable JetTypeReference typeReference, boolean isClassObjectConstraint) {
+    private void checkFinalUpperBounds(@Nullable JetTypeReference typeReference, boolean isDefaultObjectConstraint) {
         if (typeReference != null) {
             JetType type = trace.getBindingContext().get(TYPE, typeReference);
             if (type != null) {
-                DescriptorResolver.checkUpperBoundType(typeReference, type, isClassObjectConstraint, trace);
+                DescriptorResolver.checkUpperBoundType(typeReference, type, isDefaultObjectConstraint, trace);
             }
         }
     }
@@ -210,7 +210,7 @@ public class DeclarationsChecker {
                 if (conflictingTypes.size() > 1) {
                     DeclarationDescriptor containingDeclaration = typeParameterDescriptor.getContainingDeclaration();
                     assert containingDeclaration instanceof ClassDescriptor : containingDeclaration;
-                    JetClassOrObject psiElement = (JetClassOrObject) DescriptorToSourceUtils.classDescriptorToDeclaration(classDescriptor);
+                    JetClassOrObject psiElement = (JetClassOrObject) DescriptorToSourceUtils.getSourceFromDescriptor(classDescriptor);
                     JetDelegationSpecifierList delegationSpecifierList = psiElement.getDelegationSpecifierList();
                     assert delegationSpecifierList != null;
                     //                        trace.getErrorHandler().genericError(delegationSpecifierList.getNode(), "Type parameter " + typeParameterDescriptor.getName() + " of " + containingDeclaration.getName() + " has inconsistent values: " + conflictingTypes);
@@ -260,7 +260,7 @@ public class DeclarationsChecker {
 
     private void checkObject(JetObjectDeclaration declaration, ClassDescriptor classDescriptor) {
         reportErrorIfHasIllegalModifier(declaration);
-        if  (declaration.isLocal() && !declaration.isClassObject() && !declaration.isObjectLiteral()) {
+        if  (declaration.isLocal() && !declaration.isDefault() && !declaration.isObjectLiteral()) {
             trace.report(LOCAL_OBJECT_NOT_ALLOWED.on(declaration, classDescriptor));
         }
     }

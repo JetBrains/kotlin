@@ -1,14 +1,14 @@
 open class Base {
-    open fun `foo$b$0`(d: Derived) {}
+    open fun `access$foo$0`(d: Derived) {}
 
-    open fun `getBar$b$1`(d: Derived): Int = 1
-    open fun `setBar$b$1`(d: Derived, i: Int) {}
+    open fun `access$getBar$1`(d: Derived): Int = 1
+    open fun `access$setBar$1`(d: Derived, i: Int) {}
 
-    open fun `getBaz$b$2`(d: Derived): Int = 1
+    open fun `access$getBaz$2`(d: Derived): Int = 1
 
-    open fun `getBoo$b$3`(d: Derived): Int = 1
+    open fun `access$getBoo$3`(d: Derived): Int = 1
 
-    open fun `setBar1$b$4`(d: Derived, i: Int) {}
+    open fun `access$setBar1$4`(d: Derived, i: Int) {}
 }
 
 class Derived : Base() {

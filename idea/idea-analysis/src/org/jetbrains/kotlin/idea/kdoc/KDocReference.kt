@@ -58,6 +58,9 @@ public class KDocReference(element: KDocName): JetMultiReference<KDocName>(eleme
             return arrayListOf()
         }
         val declarationDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration]
+        if (declarationDescriptor == null) {
+            return arrayListOf()
+        }
         val kdocLink = getElement().getStrictParentOfType<KDocLink>()!!
         return resolveKDocLink(session, declarationDescriptor, kdocLink.getTagIfSubject(), getElement().getQualifiedName())
     }

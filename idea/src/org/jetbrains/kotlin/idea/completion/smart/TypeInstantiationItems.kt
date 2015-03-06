@@ -134,7 +134,7 @@ class TypeInstantiationItems(
     ): LookupElement? {
         var lookupElement = lookupElementFactory.createLookupElement(classifier, resolutionFacade, bindingContext, false)
 
-        if (classifier.getKind() == ClassKind.OBJECT) {
+        if (DescriptorUtils.isNonDefaultObject(classifier)) {
             return lookupElement.addTail(tail)
         }
 

@@ -52,6 +52,7 @@ public object JetUsageTypeProvider : UsageTypeProviderEx {
             IMPLICIT_SET -> JetUsageTypes.IMPLICIT_SET
             IMPLICIT_INVOKE -> JetUsageTypes.IMPLICIT_INVOKE
             IMPLICIT_ITERATION -> JetUsageTypes.IMPLICIT_ITERATION
+            PROPERTY_DELEGATION -> JetUsageTypes.PROPERTY_DELEGATION
 
             RECEIVER -> JetUsageTypes.RECEIVER
             DELEGATE -> JetUsageTypes.DELEGATE
@@ -92,6 +93,7 @@ object JetUsageTypes {
     val IMPLICIT_SET = UsageType(JetBundle.message("usageType.implicit.set"))
     val IMPLICIT_INVOKE = UsageType(JetBundle.message("usageType.implicit.invoke"))
     val IMPLICIT_ITERATION = UsageType(JetBundle.message("usageType.implicit.iteration"))
+    val PROPERTY_DELEGATION = UsageType(JetBundle.message("usageType.property.delegation"))
 
     // values
     val RECEIVER = UsageType(JetBundle.message("usageType.receiver"))

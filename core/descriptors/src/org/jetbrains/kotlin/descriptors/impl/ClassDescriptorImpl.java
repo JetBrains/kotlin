@@ -112,6 +112,11 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
     }
 
     @Override
+    public boolean isDefaultObject() {
+        return false;
+    }
+
+    @Override
     public ConstructorDescriptor getUnsubstitutedPrimaryConstructor() {
         return primaryConstructor;
     }

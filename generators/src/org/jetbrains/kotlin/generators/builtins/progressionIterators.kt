@@ -31,7 +31,8 @@ fun integerProgressionIterator(kind: ProgressionKind): String {
         else -> "" to ""
     }
 
-    return """class ${t}ProgressionIterator(start: $t, end: $t, val increment: $incrementType) : ${t}Iterator() {
+    return """/** An iterator over a progression of values of type $t. */
+class ${t}ProgressionIterator(start: $t, end: $t, val increment: $incrementType) : ${t}Iterator() {
     private var next = start$toInt
     private val finalElement: $t = getProgressionFinalElement(start$toInt, end$toInt, increment)$toType
     private var hasNext: Boolean = if (increment > 0) start <= end else start >= end
@@ -54,7 +55,8 @@ fun integerProgressionIterator(kind: ProgressionKind): String {
 fun floatingPointProgressionIterator(kind: ProgressionKind): String {
     val t = kind.capitalized
 
-    return """class ${t}ProgressionIterator(start: $t, val end: $t, val increment: $t) : ${t}Iterator() {
+    return """/** An iterator over a progression of values of type $t. */
+class ${t}ProgressionIterator(start: $t, val end: $t, val increment: $t) : ${t}Iterator() {
     private var next = start
 
     override fun hasNext(): Boolean = if (increment > 0) next <= end else next >= end

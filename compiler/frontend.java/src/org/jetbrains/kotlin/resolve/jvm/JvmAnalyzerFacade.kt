@@ -34,6 +34,11 @@ import org.jetbrains.kotlin.analyzer.ModuleContent
 import org.jetbrains.kotlin.di.InjectorForLazyResolveWithJava
 import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
 import com.intellij.psi.search.GlobalSearchScope
+import java.util.ArrayList
+import org.jetbrains.kotlin.extensions.ExternalDeclarationsProvider
+import kotlin.platform.platformStatic
+import com.intellij.openapi.module.Module
+import org.jetbrains.kotlin.psi.JetFile
 
 public class JvmResolverForModule(
         override val lazyResolveSession: ResolveSession,
@@ -56,8 +61,10 @@ public object JvmAnalyzerFacade : AnalyzerFacade<JvmResolverForModule, JvmPlatfo
             resolverForProject: ResolverForProject<M, JvmResolverForModule>
     ): JvmResolverForModule {
         val (syntheticFiles, moduleContentScope) = moduleContent
+        val filesToAnalyze = getAllFilesToAnalyze(project, moduleInfo, syntheticFiles)
         val declarationProviderFactory = DeclarationProviderFactoryService.createDeclarationProviderFactory(
-                project, globalContext.storageManager, syntheticFiles, if (moduleInfo.isLibrary) GlobalSearchScope.EMPTY_SCOPE else moduleContentScope
+                project, globalContext.storageManager, filesToAnalyze,
+                if (moduleInfo.isLibrary) GlobalSearchScope.EMPTY_SCOPE else moduleContentScope
         )
 
         val moduleClassResolver = ModuleClassResolverImpl { javaClass ->
@@ -80,5 +87,13 @@ public object JvmAnalyzerFacade : AnalyzerFacade<JvmResolverForModule, JvmPlatfo
 
     override val defaultImports = TopDownAnalyzerFacadeForJVM.DEFAULT_IMPORTS
     override val platformToKotlinClassMap = JavaToKotlinClassMap.INSTANCE
+
+    public platformStatic fun getAllFilesToAnalyze(project: Project, moduleInfo: ModuleInfo?, baseFiles: Collection<JetFile>): List<JetFile> {
+        val allFiles = ArrayList(baseFiles)
+        for (externalDeclarationsProvider in ExternalDeclarationsProvider.getInstances(project)) {
+            allFiles.addAll(externalDeclarationsProvider.getExternalDeclarations(moduleInfo))
+        }
+        return allFiles
+    }
 
 }

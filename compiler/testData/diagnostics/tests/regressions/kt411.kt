@@ -5,7 +5,7 @@ package kt411
 fun f() {
     invoker(
     @l{
-        <!RETURN_NOT_ALLOWED_EXPLICIT_RETURN_TYPE_REQUIRED!>return@l 11<!> // expects Function, but should expect Int
+        return@l 11 // expects Function, but should expect Int
     }
     )
 }
@@ -21,7 +21,7 @@ fun t1() {
 fun t2() : String {
     val <!UNUSED_VARIABLE!>g<!> : ()-> Int = @l{
         if (true) {
-            <!RETURN_NOT_ALLOWED_EXPLICIT_RETURN_TYPE_REQUIRED!>return@l 1<!>
+            return@l 1
         }
         <!RETURN_NOT_ALLOWED!>return "s"<!>
     }
@@ -37,7 +37,7 @@ fun t3() : String {
         else {
             <!RETURN_NOT_ALLOWED!>return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>2<!><!>
         }
-        <!RETURN_NOT_ALLOWED_EXPLICIT_RETURN_TYPE_REQUIRED, UNREACHABLE_CODE!>return@l 0<!>
+        <!UNREACHABLE_CODE!>return@l 0<!>
     }
     )
     invoker(
@@ -55,7 +55,7 @@ fun t3() : String {
 
 fun t4() : Int {
     val <!UNUSED_VARIABLE!>h<!> :  ()-> String = @l{
-        <!RETURN_NOT_ALLOWED_EXPLICIT_RETURN_TYPE_REQUIRED!>return@l "a"<!>
+        return@l "a"
     }
     val <!UNUSED_VARIABLE!>g<!> :  ()-> String = @l{ () : String ->
         return@l "a"

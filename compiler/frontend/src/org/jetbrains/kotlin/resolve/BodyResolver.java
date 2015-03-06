@@ -514,12 +514,12 @@ public class BodyResolver {
             @NotNull JetScope propertyScope
     ) {
         JetPropertyAccessor getter = jetProperty.getGetter();
-        if (getter != null) {
+        if (getter != null && getter.hasBody()) {
             trace.report(ACCESSOR_FOR_DELEGATED_PROPERTY.on(getter));
         }
 
         JetPropertyAccessor setter = jetProperty.getSetter();
-        if (setter != null) {
+        if (setter != null && setter.hasBody()) {
             trace.report(ACCESSOR_FOR_DELEGATED_PROPERTY.on(setter));
         }
 

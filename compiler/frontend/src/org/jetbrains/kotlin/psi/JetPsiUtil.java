@@ -781,7 +781,10 @@ public class JetPsiUtil {
 
         int inFileParentOffset = elementContextOffset - startContextOffset;
 
-        return new StringBuilder(inFileParent.getText()).insert(inFileParentOffset, "<caret>").toString();
+        return new StringBuilder(inFileParent.getText())
+                .insert(inFileParentOffset, "<caret>")
+                .insert(0, String.format("File name: %s\n", element.getContainingFile().getName()))
+                .toString();
     }
 
     @Nullable

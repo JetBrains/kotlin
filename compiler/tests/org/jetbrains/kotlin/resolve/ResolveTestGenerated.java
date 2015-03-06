@@ -30,7 +30,14 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/resolve")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({ResolveTestGenerated.CandidatesPriority.class, ResolveTestGenerated.DelegatedProperty.class, ResolveTestGenerated.Imports.class, ResolveTestGenerated.Labels.class, ResolveTestGenerated.Regressions.class, ResolveTestGenerated.Varargs.class})
+@InnerTestClasses({
+        ResolveTestGenerated.CandidatesPriority.class,
+        ResolveTestGenerated.DelegatedProperty.class,
+        ResolveTestGenerated.Imports.class,
+        ResolveTestGenerated.Labels.class,
+        ResolveTestGenerated.Regressions.class,
+        ResolveTestGenerated.Varargs.class,
+})
 @RunWith(JUnit3RunnerWithInners.class)
 public class ResolveTestGenerated extends AbstractResolveTest {
     public void testAllFilesPresentInResolve() throws Exception {

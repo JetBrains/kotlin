@@ -186,6 +186,12 @@ public class AddImportTestGenerated extends AbstractAddImportTest {
         doTest(fileName);
     }
 
+    @TestMetadata("KeywordNames.kt")
+    public void testKeywordNames() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/KeywordNames.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("NameCountForStarNotReached.kt")
     public void testNameCountForStarNotReached() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/NameCountForStarNotReached.kt");

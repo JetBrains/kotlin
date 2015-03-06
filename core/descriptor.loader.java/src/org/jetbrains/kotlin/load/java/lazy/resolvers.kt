@@ -33,10 +33,8 @@ trait LazyJavaClassResolver {
 }
 
 trait TypeParameterResolver {
-    class object {
-        object EMPTY : TypeParameterResolver {
-            override fun resolveTypeParameter(javaTypeParameter: JavaTypeParameter): TypeParameterDescriptor? = null
-        }
+    object EMPTY : TypeParameterResolver {
+        override fun resolveTypeParameter(javaTypeParameter: JavaTypeParameter): TypeParameterDescriptor? = null
     }
 
     fun resolveTypeParameter(javaTypeParameter: JavaTypeParameter): TypeParameterDescriptor?

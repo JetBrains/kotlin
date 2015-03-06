@@ -30,7 +30,11 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/resolve/references")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({ReferenceResolveTestGenerated.DelegatedPropertyAccessors.class, ReferenceResolveTestGenerated.ForLoopIn.class, ReferenceResolveTestGenerated.Invoke.class})
+@InnerTestClasses({
+        ReferenceResolveTestGenerated.DelegatedPropertyAccessors.class,
+        ReferenceResolveTestGenerated.ForLoopIn.class,
+        ReferenceResolveTestGenerated.Invoke.class,
+})
 @RunWith(JUnit3RunnerWithInners.class)
 public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest {
     public void testAllFilesPresentInReferences() throws Exception {
@@ -79,6 +83,24 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
         doTest(fileName);
     }
 
+    @TestMetadata("ClassObjectClassLiteralReference.kt")
+    public void testClassObjectClassLiteralReference() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/ClassObjectClassLiteralReference.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ClassObjectClassLiteralReferenceWithField.kt")
+    public void testClassObjectClassLiteralReferenceWithField() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/ClassObjectClassLiteralReferenceWithField.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ClassQualifierForNestedClassConstructorCall.kt")
+    public void testClassQualifierForNestedClassConstructorCall() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/ClassQualifierForNestedClassConstructorCall.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ClassReferenceInImport.kt")
     public void testClassReferenceInImport() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/ClassReferenceInImport.kt");
@@ -94,6 +116,36 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
     @TestMetadata("DataClassCopy.kt")
     public void testDataClassCopy() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/DataClassCopy.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("DefaultObjectAsExtensionReceiverForFunction.kt")
+    public void testDefaultObjectAsExtensionReceiverForFunction() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/DefaultObjectAsExtensionReceiverForFunction.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("DefaultObjectAsExtensionReceiverForProperty.kt")
+    public void testDefaultObjectAsExtensionReceiverForProperty() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/DefaultObjectAsExtensionReceiverForProperty.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("DefaultObjectAsReceiverForExtensionFunctionOnSuperType.kt")
+    public void testDefaultObjectAsReceiverForExtensionFunctionOnSuperType() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/DefaultObjectAsReceiverForExtensionFunctionOnSuperType.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("DefaultObjectAsReceiverForMemberPropertyInSuperType.kt")
+    public void testDefaultObjectAsReceiverForMemberPropertyInSuperType() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/DefaultObjectAsReceiverForMemberPropertyInSuperType.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("DefaultObjectInShortReferenceFormCall.kt")
+    public void testDefaultObjectInShortReferenceFormCall() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/DefaultObjectInShortReferenceFormCall.kt");
         doTest(fileName);
     }
 
@@ -321,7 +373,10 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
 
     @TestMetadata("idea/testData/resolve/references/delegatedPropertyAccessors")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({DelegatedPropertyAccessors.InSource.class, DelegatedPropertyAccessors.InStandardLibrary.class})
+    @InnerTestClasses({
+            DelegatedPropertyAccessors.InSource.class,
+            DelegatedPropertyAccessors.InStandardLibrary.class,
+    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class DelegatedPropertyAccessors extends AbstractReferenceResolveTest {
         public void testAllFilesPresentInDelegatedPropertyAccessors() throws Exception {
@@ -366,15 +421,15 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
                 doTest(fileName);
             }
 
-            @TestMetadata("getSetExtension.kt")
-            public void testGetSetExtension() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/delegatedPropertyAccessors/inSource/getSetExtension.kt");
+            @TestMetadata("getSetPropertyDelegatedExtension.kt")
+            public void testGetSetPropertyDelegatedExtension() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/delegatedPropertyAccessors/inSource/getSetPropertyDelegatedExtension.kt");
                 doTest(fileName);
             }
 
-            @TestMetadata("getSetMember.kt")
-            public void testGetSetMember() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/delegatedPropertyAccessors/inSource/getSetMember.kt");
+            @TestMetadata("getSetPropertyDelegatedMember.kt")
+            public void testGetSetPropertyDelegatedMember() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/delegatedPropertyAccessors/inSource/getSetPropertyDelegatedMember.kt");
                 doTest(fileName);
             }
         }
@@ -403,7 +458,11 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
 
     @TestMetadata("idea/testData/resolve/references/forLoopIn")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({ForLoopIn.InBuiltIns.class, ForLoopIn.InLibrary.class, ForLoopIn.InSource.class})
+    @InnerTestClasses({
+            ForLoopIn.InBuiltIns.class,
+            ForLoopIn.InLibrary.class,
+            ForLoopIn.InSource.class,
+    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ForLoopIn extends AbstractReferenceResolveTest {
         public void testAllFilesPresentInForLoopIn() throws Exception {

@@ -69,7 +69,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
     ) {
         List<DescriptorClassMember> members = new ArrayList<DescriptorClassMember>();
         for (CallableMemberDescriptor memberDescriptor : missingImplementations) {
-            PsiElement declaration = DescriptorToDeclarationUtil.INSTANCE$.getDeclaration(file.getProject(), memberDescriptor);
+            PsiElement declaration = DescriptorToSourceUtilsIde.INSTANCE$.getAnyDeclaration(file.getProject(), memberDescriptor);
             if (declaration == null) {
                 LOG.error("Can not find declaration for descriptor " + memberDescriptor);
             }
@@ -308,7 +308,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         PsiElement elementAtCaret = file.findElementAt(editor.getCaretModel().getOffset());
         JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(elementAtCaret, JetClassOrObject.class);
 
-        assert classOrObject != null : "ClassObject should be checked in isValidFor method";
+        assert classOrObject != null;
 
         Set<CallableMemberDescriptor> missingImplementations = collectMethodsToGenerate(classOrObject);
         if (missingImplementations.isEmpty() && !implementAll) {

@@ -1,6 +1,6 @@
 //no nested class access via instance reference error
 fun test() {
-    A.f(<!TYPE_MISMATCH!>""<!>)
+    A.Default.f(<!TYPE_MISMATCH!>""<!>)
 }
 
 class A() {

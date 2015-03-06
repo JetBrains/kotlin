@@ -26,7 +26,7 @@ public fun ClassDescriptor.getClassObjectReferenceTarget(): ClassDescriptor = ge
 
 public fun DeclarationDescriptor.getImportableDescriptor(): DeclarationDescriptor {
     return when {
-        this is ConstructorDescriptor, DescriptorUtils.isClassObject(this) -> getContainingDeclaration()!!
+        this is ConstructorDescriptor -> getContainingDeclaration()
         this is PropertyAccessorDescriptor -> getCorrespondingProperty()
         else -> this
     }
@@ -60,7 +60,7 @@ public val ClassDescriptor.classId: ClassId
 public val ClassDescriptor.classObjectDescriptor: ClassDescriptor?
     get() {
         return when (this.getKind()) {
-            CLASS_OBJECT, OBJECT -> this
+            OBJECT -> this
             ENUM_ENTRY -> {
                 val container = this.getContainingDeclaration()
                 assert(container is ClassDescriptor && container.getKind() == ENUM_CLASS)

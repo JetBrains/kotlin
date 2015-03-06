@@ -27,7 +27,7 @@ class Example(a : Foo, i : Int) : Bar(i), Some {
 */
 
 memberDeclaration
-  : classObject
+  : defaultObject
   : object
   : function
   : property
@@ -40,12 +40,9 @@ anonymousInitializer
   : block
   ;
 
-classObject
+defaultObject
   : modifiers "class" object
   ;
-/**
-See [Class objects](classes.html#class-objects)
-*/
 
 valueParameters
   : "(" functionParameter{","}? ")" // default values

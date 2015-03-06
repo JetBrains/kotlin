@@ -16,14 +16,15 @@
 
 package org.jetbrains.kotlin.j2k
 
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.*
-import java.util.HashSet
+import com.intellij.psi.javadoc.PsiDocComment
+import org.jetbrains.kotlin.j2k.ast.CommentsAndSpacesInheritance
+import org.jetbrains.kotlin.j2k.ast.Element
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import java.util.ArrayList
-import org.jetbrains.kotlin.j2k.ast.Element
+import java.util.HashSet
 import kotlin.platform.platformName
-import org.jetbrains.kotlin.j2k.ast.CommentsAndSpacesInheritance
-import com.intellij.openapi.util.text.StringUtil
 
 fun<T> CodeBuilder.append(generators: Collection<() -> T>, separator: String, prefix: String = "", suffix: String = ""): CodeBuilder {
     if (generators.isNotEmpty()) {
@@ -57,8 +58,14 @@ class CodeBuilder(private val topElement: PsiElement?) {
     public fun append(text: String): CodeBuilder
             = append(text, false)
 
-    private fun appendCommentOrWhiteSpace(element: PsiElement)
-            = append(element.getText()!!, element.isEndOfLineComment())
+    private fun appendCommentOrWhiteSpace(element: PsiElement) {
+        if (element is PsiDocComment) {
+            append(DocCommentConverter.convertDocComment(element), false)
+        }
+        else {
+            append(element.getText()!!, element.isEndOfLineComment())
+        }
+    }
 
     private fun append(text: String, endOfLineComment: Boolean = false): CodeBuilder {
         if (text.isEmpty()) {

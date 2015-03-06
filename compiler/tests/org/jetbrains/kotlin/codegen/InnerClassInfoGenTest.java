@@ -44,14 +44,14 @@ public class InnerClassInfoGenTest extends CodegenTestCase {
     public void testInnerClassInfo() {
         InnerClassAttribute innerB = new InnerClassAttribute("A$B", "A", "B", ACC_PUBLIC | ACC_STATIC | ACC_FINAL);
         InnerClassAttribute innerC = new InnerClassAttribute("A$B$C", "A$B", "C", ACC_PUBLIC | ACC_FINAL);
-        String classObjectDefaultName = SpecialNames.DEFAULT_NAME_FOR_DEFAULT_OBJECT.asString();
-        InnerClassAttribute innerAClassObject = new InnerClassAttribute(
-                "A$" + classObjectDefaultName, "A", classObjectDefaultName, ACC_PUBLIC | ACC_STATIC | ACC_FINAL);
+        String defaultObjectDefaultName = SpecialNames.DEFAULT_NAME_FOR_DEFAULT_OBJECT.asString();
+        InnerClassAttribute innerADefaultObject = new InnerClassAttribute(
+                "A$" + defaultObjectDefaultName, "A", defaultObjectDefaultName, ACC_PUBLIC | ACC_STATIC | ACC_FINAL);
 
-        extractAndCompareInnerClasses("A", innerB, innerAClassObject);
+        extractAndCompareInnerClasses("A", innerB, innerADefaultObject);
         extractAndCompareInnerClasses("A$B", innerB, innerC);
         extractAndCompareInnerClasses("A$B$C", innerB, innerC);
-        extractAndCompareInnerClasses("A$" + classObjectDefaultName, innerAClassObject);
+        extractAndCompareInnerClasses("A$" + defaultObjectDefaultName, innerADefaultObject);
     }
 
     public void testLocalClass() {

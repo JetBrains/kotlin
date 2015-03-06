@@ -56,7 +56,7 @@ import org.jetbrains.kotlin.codegen.PropertyCodegen
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.idea.refactoring.reportDeclarationConflict
 import org.jetbrains.kotlin.idea.refactoring.getContainingScope
-import org.jetbrains.kotlin.idea.codeInsight.DescriptorToDeclarationUtil
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 
 public class ConvertPropertyToFunctionIntention : JetSelfTargetingIntention<JetProperty>(
         "convert.property.to.function.intention", javaClass()
@@ -110,7 +110,7 @@ public class ConvertPropertyToFunctionIntention : JetSelfTargetingIntention<JetP
                     callableDescriptor.getContainingScope(bindingContext)
                             ?.getFunctions(callableDescriptor.getName())
                             ?.firstOrNull { it.getValueParameters().isEmpty() }
-                            ?.let { DescriptorToDeclarationUtil.getDeclaration(project, it) }
+                            ?.let { DescriptorToSourceUtilsIde.getAnyDeclaration(project, it) }
                             ?.let { reportDeclarationConflict(conflicts, it) { "$it already exists" } }
                 }
                 else if (callable is PsiMethod) {

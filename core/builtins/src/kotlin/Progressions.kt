@@ -18,6 +18,9 @@
 
 package kotlin
 
+/**
+ * A progression of values of type Byte.
+ */
 public class ByteProgression(
         override val start: Byte,
         override val end: Byte,
@@ -29,6 +32,7 @@ public class ByteProgression(
 
     override fun iterator(): ByteIterator = ByteProgressionIterator(start, end, increment)
 
+    /** Checks if the progression is empty. */
     public fun isEmpty(): Boolean = if (increment > 0) start > end else start < end
 
     override fun equals(other: Any?): Boolean =
@@ -41,6 +45,9 @@ public class ByteProgression(
     override fun toString(): String = if (increment > 0) "$start..$end step $increment" else "$start downTo $end step ${-increment}"
 }
 
+/**
+ * A progression of values of type Char.
+ */
 public class CharProgression(
         override val start: Char,
         override val end: Char,
@@ -52,6 +59,7 @@ public class CharProgression(
 
     override fun iterator(): CharIterator = CharProgressionIterator(start, end, increment)
 
+    /** Checks if the progression is empty. */
     public fun isEmpty(): Boolean = if (increment > 0) start > end else start < end
 
     override fun equals(other: Any?): Boolean =
@@ -64,6 +72,9 @@ public class CharProgression(
     override fun toString(): String = if (increment > 0) "$start..$end step $increment" else "$start downTo $end step ${-increment}"
 }
 
+/**
+ * A progression of values of type Short.
+ */
 public class ShortProgression(
         override val start: Short,
         override val end: Short,
@@ -75,6 +86,7 @@ public class ShortProgression(
 
     override fun iterator(): ShortIterator = ShortProgressionIterator(start, end, increment)
 
+    /** Checks if the progression is empty. */
     public fun isEmpty(): Boolean = if (increment > 0) start > end else start < end
 
     override fun equals(other: Any?): Boolean =
@@ -87,6 +99,9 @@ public class ShortProgression(
     override fun toString(): String = if (increment > 0) "$start..$end step $increment" else "$start downTo $end step ${-increment}"
 }
 
+/**
+ * A progression of values of type Int.
+ */
 public class IntProgression(
         override val start: Int,
         override val end: Int,
@@ -98,6 +113,7 @@ public class IntProgression(
 
     override fun iterator(): IntIterator = IntProgressionIterator(start, end, increment)
 
+    /** Checks if the progression is empty. */
     public fun isEmpty(): Boolean = if (increment > 0) start > end else start < end
 
     override fun equals(other: Any?): Boolean =
@@ -110,6 +126,9 @@ public class IntProgression(
     override fun toString(): String = if (increment > 0) "$start..$end step $increment" else "$start downTo $end step ${-increment}"
 }
 
+/**
+ * A progression of values of type Long.
+ */
 public class LongProgression(
         override val start: Long,
         override val end: Long,
@@ -121,6 +140,7 @@ public class LongProgression(
 
     override fun iterator(): LongIterator = LongProgressionIterator(start, end, increment)
 
+    /** Checks if the progression is empty. */
     public fun isEmpty(): Boolean = if (increment > 0) start > end else start < end
 
     override fun equals(other: Any?): Boolean =
@@ -133,6 +153,9 @@ public class LongProgression(
     override fun toString(): String = if (increment > 0) "$start..$end step $increment" else "$start downTo $end step ${-increment}"
 }
 
+/**
+ * A progression of values of type Float.
+ */
 public class FloatProgression(
         override val start: Float,
         override val end: Float,
@@ -145,6 +168,7 @@ public class FloatProgression(
 
     override fun iterator(): FloatIterator = FloatProgressionIterator(start, end, increment)
 
+    /** Checks if the progression is empty. */
     public fun isEmpty(): Boolean = if (increment > 0) start > end else start < end
 
     override fun equals(other: Any?): Boolean =
@@ -157,6 +181,9 @@ public class FloatProgression(
     override fun toString(): String = if (increment > 0) "$start..$end step $increment" else "$start downTo $end step ${-increment}"
 }
 
+/**
+ * A progression of values of type Double.
+ */
 public class DoubleProgression(
         override val start: Double,
         override val end: Double,
@@ -169,6 +196,7 @@ public class DoubleProgression(
 
     override fun iterator(): DoubleIterator = DoubleProgressionIterator(start, end, increment)
 
+    /** Checks if the progression is empty. */
     public fun isEmpty(): Boolean = if (increment > 0) start > end else start < end
 
     override fun equals(other: Any?): Boolean =

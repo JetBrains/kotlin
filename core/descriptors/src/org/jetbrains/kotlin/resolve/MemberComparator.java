@@ -143,6 +143,10 @@ public class MemberComparator implements Comparator<DeclarationDescriptor> {
             if (class1.getKind().ordinal() != class2.getKind().ordinal()) {
                 return class1.getKind().ordinal() - class2.getKind().ordinal();
             }
+
+            if (class1.isDefaultObject() != class2.isDefaultObject()) {
+                return class1.isDefaultObject() ? 1 : -1;
+            }
         }
         else {
             throw new AssertionError(String.format(

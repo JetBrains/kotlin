@@ -1,0 +1,4 @@
+package
+
+internal fun box(): kotlin.String
+internal fun test(/*0*/ a: kotlin.Any): kotlin.Unit

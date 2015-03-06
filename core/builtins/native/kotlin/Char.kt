@@ -16,6 +16,10 @@
 
 package kotlin
 
+/**
+ * Represents a singe 16-bit Unicode character. On the JVM, non-nullable values of this type are represented
+ * as values of the primitive type `char`.
+ */
 public class Char private () : Comparable<Char> {
     public fun compareTo(other: Double): Int
     public fun compareTo(other: Float) : Int

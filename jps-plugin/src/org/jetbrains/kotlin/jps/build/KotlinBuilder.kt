@@ -40,6 +40,7 @@ import org.jetbrains.jps.incremental.java.JavaBuilder
 import org.jetbrains.jps.incremental.messages.BuildMessage
 import org.jetbrains.jps.incremental.messages.CompilerMessage
 import java.io.File
+import java.lang.reflect.Modifier
 import java.util.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation.NO_LOCATION
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
@@ -64,7 +65,9 @@ import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.load.kotlin.header.isCompatiblePackageFacadeKind
 import org.jetbrains.jps.builders.java.dependencyView.Mappings
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.kotlin.utils.sure
+import org.jetbrains.kotlin.jps.build.KotlinJpsCompilerArgumentsProvider
 
 public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     class object {
@@ -134,6 +137,25 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
                     val removedAndDirtyFiles = filesToCompile[target] + dirtyFilesHolder.getRemovedFiles(target).map { File(it) }
                     cache.markOutputClassesDirty(removedAndDirtyFiles)
                 }
+            }
+
+            val representativeTarget = chunk.representativeTarget()
+
+            fun concatenate(strings: Array<String>?, cp: List<String>) = array(*(strings ?: array<String>()), *cp.copyToArray())
+
+            for (argumentProvider in ServiceLoader.load(javaClass<KotlinJpsCompilerArgumentsProvider>())) {
+                // appending to pluginOptions
+                commonArguments.pluginOptions = concatenate(commonArguments.pluginOptions,
+                                                            argumentProvider.getExtraArguments(representativeTarget, context))
+                // appending to classpath
+                commonArguments.pluginClasspaths = concatenate(commonArguments.pluginClasspaths,
+                                                               argumentProvider.getClasspath(representativeTarget, context))
+
+                messageCollector.report(
+                        INFO,
+                        "Plugin loaded: ${argumentProvider.javaClass.getSimpleName()}",
+                        NO_LOCATION
+                )
             }
 
             compileToJvm(allCompiledFiles, chunk, commonArguments, context, dirtyFilesHolder, environment, filesToCompile, messageCollector)

@@ -1,0 +1,1 @@
+Can't generate property with initializer: val a = 1 + 2         val b = a*2

@@ -19,8 +19,8 @@ fun foo(c: Consumer<Int>, p: Producer<Int>, u: Usual<Int>) {
 
 //Arrays copy example
 class Array<T>(val length : Int, val t : T) {
-    fun get(<!UNUSED_PARAMETER!>index<!> : Int) : T { return t }
-    fun set(<!UNUSED_PARAMETER!>index<!> : Int, <!UNUSED_PARAMETER!>value<!> : T) { /* ... */ }
+    fun get(index : Int) : T { return t }
+    fun set(index : Int, value : T) { /* ... */ }
 }
 
 fun copy1(<!UNUSED_PARAMETER!>from<!> : Array<Any>, <!UNUSED_PARAMETER!>to<!> : Array<Any>) {}

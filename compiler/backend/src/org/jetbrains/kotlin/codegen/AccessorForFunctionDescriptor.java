@@ -41,7 +41,7 @@ public class AccessorForFunctionDescriptor extends SimpleFunctionDescriptorImpl 
             int index
     ) {
         super(containingDeclaration, null, Annotations.EMPTY,
-              Name.identifier((descriptor instanceof ConstructorDescriptor ? "$init" : descriptor.getName()) + "$b$" + index),
+              Name.identifier("access$" + (descriptor instanceof ConstructorDescriptor ? "init" : descriptor.getName()) + "$" + index),
               Kind.DECLARATION, SourceElement.NO_SOURCE);
         this.calleeDescriptor = descriptor;
 

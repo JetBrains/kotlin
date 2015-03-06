@@ -30,7 +30,11 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/writeSignature")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({WriteSignatureTestGenerated.Constructor.class, WriteSignatureTestGenerated.DeclarationSiteVariance.class, WriteSignatureTestGenerated.Nothing.class})
+@InnerTestClasses({
+        WriteSignatureTestGenerated.Constructor.class,
+        WriteSignatureTestGenerated.DeclarationSiteVariance.class,
+        WriteSignatureTestGenerated.Nothing.class,
+})
 @RunWith(JUnit3RunnerWithInners.class)
 public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
     public void testAllFilesPresentInWriteSignature() throws Exception {

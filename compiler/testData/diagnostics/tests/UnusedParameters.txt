@@ -1,6 +1,11 @@
 package
 
 internal fun f(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int, /*2*/ c: kotlin.Int = ...): kotlin.Unit
+internal fun get(/*0*/ p: kotlin.Any): kotlin.Unit
+internal fun set(/*0*/ p: kotlin.Any): kotlin.Unit
+internal fun kotlin.Any.get(/*0*/ thisRef: kotlin.Any?, /*1*/ prop: kotlin.PropertyMetadata): kotlin.String
+internal fun kotlin.Any.propertyDelegated(/*0*/ prop: kotlin.PropertyMetadata): kotlin.Unit
+internal fun kotlin.Any.set(/*0*/ thisRef: kotlin.Any?, /*1*/ prop: kotlin.PropertyMetadata, /*2*/ value: kotlin.String): kotlin.Unit
 
 internal final class C {
     public constructor C(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int, /*2*/ c: kotlin.Int, /*3*/ d: kotlin.Int, /*4*/ e: kotlin.Int = ..., /*5*/ f: kotlin.String)

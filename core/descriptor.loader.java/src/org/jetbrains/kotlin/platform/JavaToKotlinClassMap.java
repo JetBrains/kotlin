@@ -97,14 +97,11 @@ public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements
     protected void register(
             @NotNull Class<?> javaClass,
             @NotNull ClassDescriptor kotlinDescriptor,
-            @NotNull ClassDescriptor kotlinMutableDescriptor,
-            @NotNull Direction direction
+            @NotNull ClassDescriptor kotlinMutableDescriptor
     ) {
-        if (direction == Direction.BOTH || direction == Direction.JAVA_TO_KOTLIN) {
-            FqName javaClassName = fqNameByClass(javaClass);
-            register(javaClassName, kotlinDescriptor);
-            registerCovariant(javaClassName, kotlinMutableDescriptor);
-        }
+        FqName javaClassName = fqNameByClass(javaClass);
+        register(javaClassName, kotlinDescriptor);
+        registerCovariant(javaClassName, kotlinMutableDescriptor);
     }
 
     private void register(@NotNull FqName javaClassName, @NotNull ClassDescriptor kotlinDescriptor) {

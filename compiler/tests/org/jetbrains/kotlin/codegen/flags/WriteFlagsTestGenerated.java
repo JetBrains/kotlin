@@ -30,7 +30,13 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/writeFlags")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({WriteFlagsTestGenerated.Class.class, WriteFlagsTestGenerated.Function.class, WriteFlagsTestGenerated.InnerClass.class, WriteFlagsTestGenerated.Property.class})
+@InnerTestClasses({
+        WriteFlagsTestGenerated.Class.class,
+        WriteFlagsTestGenerated.DelegatedProperty.class,
+        WriteFlagsTestGenerated.Function.class,
+        WriteFlagsTestGenerated.InnerClass.class,
+        WriteFlagsTestGenerated.Property.class,
+})
 @RunWith(JUnit3RunnerWithInners.class)
 public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
     public void testAllFilesPresentInWriteFlags() throws Exception {
@@ -39,7 +45,11 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
 
     @TestMetadata("compiler/testData/writeFlags/class")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({Class.AccessFlags.class, Class.DeprecatedFlag.class, Class.Visibility.class})
+    @InnerTestClasses({
+            Class.AccessFlags.class,
+            Class.DeprecatedFlag.class,
+            Class.Visibility.class,
+    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Class extends AbstractWriteFlagsTest {
         public void testAllFilesPresentInClass() throws Exception {
@@ -126,7 +136,11 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
 
         @TestMetadata("compiler/testData/writeFlags/class/visibility")
         @TestDataPath("$PROJECT_ROOT")
-        @InnerTestClasses({Visibility.Internal.class, Visibility.Private.class, Visibility.Public.class})
+        @InnerTestClasses({
+                Visibility.Internal.class,
+                Visibility.Private.class,
+                Visibility.Public.class,
+        })
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Visibility extends AbstractWriteFlagsTest {
             public void testAllFilesPresentInVisibility() throws Exception {
@@ -306,9 +320,40 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
         }
     }
 
+    @TestMetadata("compiler/testData/writeFlags/delegatedProperty")
+    @TestDataPath("$PROJECT_ROOT")
+    @InnerTestClasses({
+            DelegatedProperty.Visibility.class,
+    })
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class DelegatedProperty extends AbstractWriteFlagsTest {
+        public void testAllFilesPresentInDelegatedProperty() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/delegatedProperty"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("compiler/testData/writeFlags/delegatedProperty/visibility")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Visibility extends AbstractWriteFlagsTest {
+            public void testAllFilesPresentInVisibility() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/delegatedProperty/visibility"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("privateSet.kt")
+            public void testPrivateSet() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/delegatedProperty/visibility/privateSet.kt");
+                doTest(fileName);
+            }
+        }
+    }
+
     @TestMetadata("compiler/testData/writeFlags/function")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({Function.ClassObjectPrivate.class, Function.Constructors.class, Function.DeprecatedFlag.class})
+    @InnerTestClasses({
+            Function.ClassObjectPrivate.class,
+            Function.Constructors.class,
+            Function.DeprecatedFlag.class,
+    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Function extends AbstractWriteFlagsTest {
         public void testAllFilesPresentInFunction() throws Exception {
@@ -459,7 +504,9 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
 
     @TestMetadata("compiler/testData/writeFlags/innerClass")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({InnerClass.Visibility.class})
+    @InnerTestClasses({
+            InnerClass.Visibility.class,
+    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class InnerClass extends AbstractWriteFlagsTest {
         public void testAllFilesPresentInInnerClass() throws Exception {
@@ -514,7 +561,11 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
 
     @TestMetadata("compiler/testData/writeFlags/property")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({Property.ClassObject.class, Property.DeprecatedFlag.class, Property.Visibility.class})
+    @InnerTestClasses({
+            Property.ClassObject.class,
+            Property.DeprecatedFlag.class,
+            Property.Visibility.class,
+    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Property extends AbstractWriteFlagsTest {
         public void testAllFilesPresentInProperty() throws Exception {
@@ -523,7 +574,11 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
 
         @TestMetadata("compiler/testData/writeFlags/property/classObject")
         @TestDataPath("$PROJECT_ROOT")
-        @InnerTestClasses({ClassObject.Class.class, ClassObject.Rename.class, ClassObject.Trait.class})
+        @InnerTestClasses({
+                ClassObject.Class.class,
+                ClassObject.Rename.class,
+                ClassObject.Trait.class,
+        })
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ClassObject extends AbstractWriteFlagsTest {
             public void testAllFilesPresentInClassObject() throws Exception {

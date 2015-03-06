@@ -10,4 +10,4 @@ class R {
     }
 }
 
-// EXIST: { itemText: "f", tailText: "() for B in class object for R" }
+// EXIST: { itemText: "f", tailText: "() for B in R.Default" }

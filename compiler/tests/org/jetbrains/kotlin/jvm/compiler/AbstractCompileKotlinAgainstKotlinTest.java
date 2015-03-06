@@ -105,24 +105,23 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends TestCaseWit
     }
 
     private void invokeMain() throws Exception {
-        URLClassLoader classLoader = new URLClassLoader(
-                new URL[]{ aDir.toURI().toURL(), bDir.toURI().toURL(), ForTestCompileRuntime.runtimeJarForTests().toURI().toURL() },
-                AbstractCompileKotlinAgainstKotlinTest.class.getClassLoader()
-        );
-        Class<?> clazz = classLoader.loadClass(PackageClassUtils.getPackageClassName(FqName.ROOT));
-        Method main = clazz.getMethod("main", String[].class);
+        Method main = generatedClass().getMethod("main", String[].class);
         main.invoke(null, new Object[] {ArrayUtil.EMPTY_STRING_ARRAY});
     }
 
     private void invokeBox() throws Exception {
-        URLClassLoader classLoader = new URLClassLoader(
-                new URL[]{ bDir.toURI().toURL(), aDir.toURI().toURL(), ForTestCompileRuntime.runtimeJarForTests().toURI().toURL() },
-                AbstractCompileKotlinAgainstKotlinTest.class.getClassLoader()
-        );
-        Class<?> clazz = classLoader.loadClass(PackageClassUtils.getPackageClassName(FqName.ROOT));
-        Method box = clazz.getMethod("box");
+        Method box = generatedClass().getMethod("box");
         String result = (String) box.invoke(null);
         assertEquals("OK", result);
+    }
+
+    @NotNull
+    private Class<?> generatedClass() throws Exception {
+        URLClassLoader classLoader = new URLClassLoader(
+                new URL[]{ bDir.toURI().toURL(), aDir.toURI().toURL() },
+                ForTestCompileRuntime.runtimeJarClassLoader()
+        );
+        return classLoader.loadClass(PackageClassUtils.getPackageClassName(FqName.ROOT));
     }
 
     private OutputFileCollection compileA(@NotNull File ktAFile) throws IOException {

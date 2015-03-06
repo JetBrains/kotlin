@@ -30,7 +30,8 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/completion/injava")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({})
+@InnerTestClasses({
+})
 @RunWith(JUnit3RunnerWithInners.class)
 public class CompiledKotlinInJavaCompletionTestGenerated extends AbstractCompiledKotlinInJavaCompletionTest {
     public void testAllFilesPresentInInjava() throws Exception {

@@ -12,20 +12,44 @@ import kotlin.jvm.internal.Intrinsic
 [Intrinsic("kotlin.arrays.array")] public fun <reified T> array(vararg t : T) : Array<T> = t as Array<T>
 
 // "constructors" for primitive types array
+/**
+ * Returns an array containing the specified [Double] numbers.
+ */
 [Intrinsic("kotlin.arrays.array")] public fun doubleArray(vararg content : Double) : DoubleArray    = content
 
+/**
+ * Returns an array containing the specified [Float] numbers.
+ */
 [Intrinsic("kotlin.arrays.array")] public fun floatArray(vararg content : Float) : FloatArray       = content
 
+/**
+ * Returns an array containing the specified [Long] numbers.
+ */
 [Intrinsic("kotlin.arrays.array")] public fun longArray(vararg content : Long) : LongArray          = content
 
+/**
+ * Returns an array containing the specified [Int] numbers.
+ */
 [Intrinsic("kotlin.arrays.array")] public fun intArray(vararg content : Int) : IntArray             = content
 
+/**
+ * Returns an array containing the specified characters.
+ */
 [Intrinsic("kotlin.arrays.array")] public fun charArray(vararg content : Char) : CharArray          = content
 
+/**
+ * Returns an array containing the specified [Short] numbers.
+ */
 [Intrinsic("kotlin.arrays.array")] public fun shortArray(vararg content : Short) : ShortArray       = content
 
+/**
+ * Returns an array containing the specified [Byte] numbers.
+ */
 [Intrinsic("kotlin.arrays.array")] public fun byteArray(vararg content : Byte) : ByteArray          = content
 
+/**
+ * Returns an array containing the specified boolean values.
+ */
 [Intrinsic("kotlin.arrays.array")] public fun booleanArray(vararg content : Boolean) : BooleanArray = content
 
 /**

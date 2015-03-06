@@ -179,8 +179,8 @@ public class JvmCodegenUtil {
         // Delegated and extension properties have no backing fields
         if (isDelegated || property.getExtensionReceiverParameter() != null) return false;
 
-        // Class object properties cannot be accessed directly because their backing fields are stored in the containing class
-        if (DescriptorUtils.isClassObject(property.getContainingDeclaration())) return false;
+        // Default object properties cannot be accessed directly because their backing fields are stored in the containing class
+        if (DescriptorUtils.isDefaultObject(property.getContainingDeclaration())) return false;
 
         PropertyAccessorDescriptor accessor = forGetter ? property.getGetter() : property.getSetter();
 

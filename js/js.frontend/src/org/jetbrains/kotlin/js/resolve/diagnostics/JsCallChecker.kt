@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.resolve.diagnostics
+package org.jetbrains.kotlin.js.resolve.diagnostics
 
 import com.google.gwt.dev.js.parserExceptions.AbortParsingException
 import com.google.gwt.dev.js.rhino.*

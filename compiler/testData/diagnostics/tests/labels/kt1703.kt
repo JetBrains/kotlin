@@ -6,7 +6,7 @@ public inline fun <reified T> Array(n: Int, block: (Int) -> T): Array<T> = null!
 fun test() {
     val ints = Array<Int?>(2, { null })
     ints.forEach @lit {
-        if (it == null) <!RETURN_NOT_ALLOWED_EXPLICIT_RETURN_TYPE_REQUIRED!>return @lit<!>
+        if (it == null) return @lit
         use(<!DEBUG_INFO_SMARTCAST!>it<!> + 5)
     }
 }

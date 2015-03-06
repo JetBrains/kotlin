@@ -201,9 +201,9 @@ public class DebugTextByStubTest : LightCodeInsightFixtureTestCase() {
 
     fun testClassObject() {
         val tree = createStubTree("class A { class object Def {} }")
-        val classObject = tree.findChildStubByType(JetStubElementTypes.CLASS)!!.findChildStubByType(JetStubElementTypes.CLASS_BODY)!!
+        val defaultObject = tree.findChildStubByType(JetStubElementTypes.CLASS)!!.findChildStubByType(JetStubElementTypes.CLASS_BODY)!!
                 .findChildStubByType(JetStubElementTypes.OBJECT_DECLARATION)
-        assertEquals("STUB: class object Def", JetObjectDeclaration(classObject as KotlinObjectStub).getDebugText())
+        assertEquals("STUB: class object Def", JetObjectDeclaration(defaultObject as KotlinObjectStub).getDebugText())
     }
 
     fun testPropertyAccessors() {

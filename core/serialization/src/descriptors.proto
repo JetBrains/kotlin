@@ -180,7 +180,7 @@ message Class {
   required int32 fq_name = 3;
 
   // If this field is present, it contains the name of default object.
-  optional int32 class_object_name = 4;
+  optional int32 default_object_name = 4;
 
   repeated TypeParameter type_parameter = 5;
   repeated Type supertype = 6;

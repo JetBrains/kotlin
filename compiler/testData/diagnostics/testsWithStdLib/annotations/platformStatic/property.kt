@@ -29,10 +29,12 @@ class A {
 
         [platformStatic] val z = 1;
 
-        <!OVERRIDE_CANNOT_BE_STATIC!>[platformStatic] override val base1: Int<!> = 0
+        <!OPEN_CANNOT_BE_STATIC!>[platformStatic] override val base1: Int<!> = 0
+
+        <!OPEN_CANNOT_BE_STATIC!>platformStatic open fun f()<!> {}
 
         override val base2: Int = 0
-            <!OVERRIDE_CANNOT_BE_STATIC!>[platformStatic] get<!>
+            <!OPEN_CANNOT_BE_STATIC!>[platformStatic] get<!>
     }
 
     var p:Int = 1

@@ -7,9 +7,9 @@ trait Base {
 }
 
 class Delegate(val multiplier: Int) {
-    fun get(state: State, desc: PropertyMetadataImpl): Int  = multiplier * state.value
+    fun get(state: State, desc: PropertyMetadata): Int  = multiplier * state.value
 
-    fun set(state: State, desc: PropertyMetadataImpl, value: Int) {
+    fun set(state: State, desc: PropertyMetadata, value: Int) {
         state.value = value / multiplier
     }
 

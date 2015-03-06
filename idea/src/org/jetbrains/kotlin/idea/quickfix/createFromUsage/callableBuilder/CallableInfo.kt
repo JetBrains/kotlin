@@ -75,12 +75,12 @@ abstract class TypeInfo(val variance: Variance) {
         override val substitutionsAllowed: Boolean = false
     }
 
-    class ClassObjectRequired(delegate: TypeInfo): DelegatingTypeInfo(delegate) {
-        override val classObjectRequired: Boolean = true
+    class StaticContextRequired(delegate: TypeInfo): DelegatingTypeInfo(delegate) {
+        override val staticContextRequired: Boolean = true
     }
 
     open val substitutionsAllowed: Boolean = true
-    open val classObjectRequired: Boolean = false
+    open val staticContextRequired: Boolean = false
     open val possibleNamesFromExpression: Array<String> get() = ArrayUtil.EMPTY_STRING_ARRAY
     abstract fun getPossibleTypes(builder: CallableBuilder): List<JetType>
 

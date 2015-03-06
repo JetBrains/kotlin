@@ -30,7 +30,8 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("j2k/testData/multiFile")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({})
+@InnerTestClasses({
+})
 @RunWith(JUnit3RunnerWithInners.class)
 public class JavaToKotlinConverterMultiFileTestGenerated extends AbstractJavaToKotlinConverterMultiFileTest {
     public void testAllFilesPresentInMultiFile() throws Exception {

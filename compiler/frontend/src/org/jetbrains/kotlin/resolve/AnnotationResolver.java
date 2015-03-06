@@ -154,7 +154,11 @@ public class AnnotationResolver {
             return ErrorUtils.createErrorType("No type reference: " + entryElement.getText());
         }
 
-        return typeResolver.resolveType(scope, typeReference, new BindingTraceContext(), true);
+        JetType type = typeResolver.resolveType(scope, typeReference, new BindingTraceContext(), true);
+        if (!(type.getConstructor().getDeclarationDescriptor() instanceof ClassDescriptor)) {
+            return ErrorUtils.createErrorType("Not an annotation: " + type);
+        }
+        return type;
     }
 
     public static void checkAnnotationType(

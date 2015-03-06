@@ -765,7 +765,7 @@ public class JetParsing extends AbstractJetParsing {
      *   ;
      *
      * memberDeclaration'
-     *   : classObject
+     *   : defaultObject
      *   : constructor
      *   : function
      *   : property
@@ -798,7 +798,7 @@ public class JetParsing extends AbstractJetParsing {
         IElementType declType = null;
         if (keywordToken == CLASS_KEYWORD) {
             if (lookahead(1) == OBJECT_KEYWORD) {
-                declType = parseClassObject();
+                declType = parseDefaultObject();
             }
             else {
                 declType = parseClass(isEnum);
@@ -876,11 +876,11 @@ public class JetParsing extends AbstractJetParsing {
     }
 
     /*
-     * classObject
+     * defaultObject
      *   : modifiers "class" object
      *   ;
      */
-    private IElementType parseClassObject() {
+    private IElementType parseDefaultObject() {
         assert _at(CLASS_KEYWORD) && lookahead(1) == OBJECT_KEYWORD;
         advance(); // CLASS_KEYWORD
         parseObject(NameParsingMode.ALLOWED, true);

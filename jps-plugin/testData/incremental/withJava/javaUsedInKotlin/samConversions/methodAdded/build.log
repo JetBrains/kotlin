@@ -18,6 +18,6 @@ src/usageWithFunctionLiteral.kt
 End of files
 COMPILATION FAILED
 Expression 'SamInterface' cannot be invoked as a function. The function invoke() is not found
-Please specify constructor invocation; classifier 'SamInterface' does not have a class object
+Please specify constructor invocation; classifier 'SamInterface' does not have a default object
 Expression 'SamInterface' cannot be invoked as a function. The function invoke() is not found
-Please specify constructor invocation; classifier 'SamInterface' does not have a class object
+Please specify constructor invocation; classifier 'SamInterface' does not have a default object

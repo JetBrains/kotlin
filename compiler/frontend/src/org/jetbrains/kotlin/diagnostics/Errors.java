@@ -100,6 +100,7 @@ public interface Errors {
     // Imports
 
     DiagnosticFactory1<JetSimpleNameExpression, DeclarationDescriptor> CANNOT_IMPORT_FROM_ELEMENT = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<JetSimpleNameExpression, ClassDescriptor> CANNOT_IMPORT_ON_DEMAND_FROM_SINGLETON = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<JetSimpleNameExpression, DeclarationDescriptor> CANNOT_BE_IMPORTED = DiagnosticFactory1.create(ERROR);
 
     DiagnosticFactory1<JetExpression, String> CONFLICTING_IMPORT = DiagnosticFactory1.create(ERROR);
@@ -185,10 +186,10 @@ public interface Errors {
     DiagnosticFactory1<JetTypeReference, ClassDescriptor> ENUM_ENTRY_ILLEGAL_TYPE = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<JetClass, ClassDescriptor> LOCAL_ENUM_NOT_ALLOWED = DiagnosticFactory1.create(ERROR, DECLARATION_NAME);
 
-    // Class objects
+    // Default objects
 
-    DiagnosticFactory0<JetObjectDeclaration> MANY_CLASS_OBJECTS = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<JetObjectDeclaration> CLASS_OBJECT_NOT_ALLOWED = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetObjectDeclaration> MANY_DEFAULT_OBJECTS = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetObjectDeclaration> DEFAULT_OBJECT_NOT_ALLOWED = DiagnosticFactory0.create(ERROR);
 
     // Objects
 
@@ -197,12 +198,12 @@ public interface Errors {
     // Type parameter declarations
 
     DiagnosticFactory1<JetTypeReference, JetType> FINAL_UPPER_BOUND = DiagnosticFactory1.create(WARNING);
-    DiagnosticFactory1<JetTypeReference, JetType> FINAL_CLASS_OBJECT_UPPER_BOUND = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<JetTypeReference, JetType> FINAL_DEFAULT_OBJECT_UPPER_BOUND = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<JetTypeReference> DYNAMIC_UPPER_BOUND = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory1<JetNamedDeclaration, TypeParameterDescriptor> CONFLICTING_UPPER_BOUNDS =
             DiagnosticFactory1.create(ERROR, DECLARATION_NAME);
-    DiagnosticFactory1<JetNamedDeclaration, TypeParameterDescriptor> CONFLICTING_CLASS_OBJECT_UPPER_BOUNDS
+    DiagnosticFactory1<JetNamedDeclaration, TypeParameterDescriptor> CONFLICTING_DEFAULT_OBJECT_UPPER_BOUNDS
             = DiagnosticFactory1.create(ERROR, DECLARATION_NAME);
 
     DiagnosticFactory2<JetSimpleNameExpression, JetTypeConstraint, JetTypeParameterListOwner> NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER =
@@ -596,7 +597,6 @@ public interface Errors {
     DiagnosticFactory0<JetSimpleNameExpression> EXPRESSION_EXPECTED_PACKAGE_FOUND = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<JetReturnExpression> RETURN_NOT_ALLOWED = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<JetReturnExpression> RETURN_NOT_ALLOWED_EXPLICIT_RETURN_TYPE_REQUIRED = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetReturnExpression> RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetDeclarationWithBody>
             NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY = DiagnosticFactory0.create(ERROR, DECLARATION_WITH_BODY);
@@ -605,7 +605,7 @@ public interface Errors {
 
     DiagnosticFactory0<JetThisExpression> NO_THIS = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetRootPackageExpression> PACKAGE_IS_NOT_AN_EXPRESSION = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory1<JetSimpleNameExpression, ClassifierDescriptor> NO_CLASS_OBJECT = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<JetSimpleNameExpression, ClassifierDescriptor> NO_DEFAULT_OBJECT = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<JetSimpleNameExpression, TypeParameterDescriptor> TYPE_PARAMETER_IS_NOT_AN_EXPRESSION = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<JetSimpleNameExpression, TypeParameterDescriptor> TYPE_PARAMETER_ON_LHS_OF_DOT = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<JetExpression, ClassDescriptor> NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE = DiagnosticFactory1.create(ERROR);

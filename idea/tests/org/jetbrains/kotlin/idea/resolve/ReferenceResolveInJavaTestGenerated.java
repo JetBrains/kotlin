@@ -60,6 +60,18 @@ public class ReferenceResolveInJavaTestGenerated extends AbstractReferenceResolv
         doTest(fileName);
     }
 
+    @TestMetadata("DelegatedMethodFromTraitNoImpl.java")
+    public void testDelegatedMethodFromTraitNoImpl() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceInJava/DelegatedMethodFromTraitNoImpl.java");
+        doTest(fileName);
+    }
+
+    @TestMetadata("DelegatedMethodFromTraitWithImpl.java")
+    public void testDelegatedMethodFromTraitWithImpl() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceInJava/DelegatedMethodFromTraitWithImpl.java");
+        doTest(fileName);
+    }
+
     @TestMetadata("DeprecatedClassObjectField.java")
     public void testDeprecatedClassObjectField() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceInJava/DeprecatedClassObjectField.java");

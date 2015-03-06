@@ -36,7 +36,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static org.jetbrains.kotlin.diagnostics.Errors.MANY_CLASS_OBJECTS;
+import static org.jetbrains.kotlin.diagnostics.Errors.MANY_DEFAULT_OBJECTS;
 import static org.jetbrains.kotlin.diagnostics.Errors.UNSUPPORTED;
 
 public class LazyTopDownAnalyzer {
@@ -191,19 +191,19 @@ public class LazyTopDownAnalyzer {
                             registerDeclarations(classOrObject.getDeclarations());
                             registerTopLevelFqName(topLevelFqNames, classOrObject, descriptor);
 
-                            checkManyClassObjects(classOrObject);
+                            checkManyDefaultObjects(classOrObject);
                         }
 
-                        private void checkManyClassObjects(JetClassOrObject classOrObject) {
-                            boolean classObjectAlreadyFound = false;
+                        private void checkManyDefaultObjects(JetClassOrObject classOrObject) {
+                            boolean defaultObjectAlreadyFound = false;
                             for (JetDeclaration jetDeclaration : classOrObject.getDeclarations()) {
                                 jetDeclaration.accept(this);
 
-                                if (jetDeclaration instanceof JetObjectDeclaration && ((JetObjectDeclaration) jetDeclaration).isClassObject()) {
-                                    if (classObjectAlreadyFound) {
-                                        trace.report(MANY_CLASS_OBJECTS.on((JetObjectDeclaration) jetDeclaration));
+                                if (jetDeclaration instanceof JetObjectDeclaration && ((JetObjectDeclaration) jetDeclaration).isDefault()) {
+                                    if (defaultObjectAlreadyFound) {
+                                        trace.report(MANY_DEFAULT_OBJECTS.on((JetObjectDeclaration) jetDeclaration));
                                     }
-                                    classObjectAlreadyFound = true;
+                                    defaultObjectAlreadyFound = true;
                                 }
                             }
                         }

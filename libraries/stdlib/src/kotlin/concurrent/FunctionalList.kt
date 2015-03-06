@@ -1,5 +1,6 @@
 package kotlin.concurrent
 
+deprecated("This class is unfinished work. It will be removed from the standard library and replaced by a separate persistent collections library")
 public abstract class FunctionalList<T>(public val size: Int) {
     public abstract val head: T
     public abstract val tail: FunctionalList<T>
@@ -38,16 +39,16 @@ public abstract class FunctionalList<T>(public val size: Int) {
         override fun hasNext(): Boolean = !cur.empty
     }
 
+    private class Empty<T>() : FunctionalList<T>(0) {
+        override val head: T
+            get() = throw java.util.NoSuchElementException()
+        override val tail: FunctionalList<T>
+            get() = throw java.util.NoSuchElementException()
+    }
+
+    private class Standard<T>(override val head: T, override val tail: FunctionalList<T>) : FunctionalList<T>(tail.size + 1)
+
     class object {
-        private class Empty<T>() : FunctionalList<T>(0) {
-            override val head: T
-                get() = throw java.util.NoSuchElementException()
-            override val tail: FunctionalList<T>
-                get() = throw java.util.NoSuchElementException()
-        }
-
-        private class Standard<T>(override val head: T, override val tail: FunctionalList<T>) : FunctionalList<T>(tail.size + 1)
-
         public fun <T> emptyList(): FunctionalList<T> = Empty<T>()
 
         public fun <T> of(element: T): FunctionalList<T> = FunctionalList.Standard<T>(element, emptyList())

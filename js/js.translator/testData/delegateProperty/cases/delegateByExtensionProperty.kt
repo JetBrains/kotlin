@@ -8,12 +8,12 @@ fun format(event: String, property: String, value: Int): String
 object LoggerDelegate {
     var log = ""
 
-    fun get(state: State, desc: PropertyMetadataImpl): Int {
+    fun get(state: State, desc: PropertyMetadata): Int {
         log += format("get", desc.name, state.realValue)
         return state.realValue
     }
 
-    fun set(state: State, desc: PropertyMetadataImpl, value: Int) {
+    fun set(state: State, desc: PropertyMetadata, value: Int) {
         log += format("set", desc.name, value)
         state.realValue = value
     }

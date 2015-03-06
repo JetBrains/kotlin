@@ -30,7 +30,9 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/resolveAnnotations/parameters")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({AnnotationParameterTestGenerated.Expressions.class})
+@InnerTestClasses({
+        AnnotationParameterTestGenerated.Expressions.class,
+})
 @RunWith(JUnit3RunnerWithInners.class)
 public class AnnotationParameterTestGenerated extends AbstractAnnotationParameterTest {
     public void testAllFilesPresentInParameters() throws Exception {

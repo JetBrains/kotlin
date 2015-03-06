@@ -5,5 +5,5 @@ class Test {
 }
 
 fun test() {
-    Test.S<caret>
+    Test.Default.S<caret>
 }

@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils;
-import org.jetbrains.kotlin.idea.codeInsight.DescriptorToDeclarationUtil;
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.idea.util.string.StringPackage;
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
@@ -139,7 +139,7 @@ public class JetRefactoringUtil {
         Project project = declaration.getProject();
         Map<PsiElement, CallableDescriptor> overriddenElementsToDescriptor = new HashMap<PsiElement, CallableDescriptor>();
         for (CallableDescriptor overriddenDescriptor : DescriptorUtils.getAllOverriddenDescriptors(declarationDescriptor)) {
-            PsiElement overriddenDeclaration = DescriptorToDeclarationUtil.INSTANCE$.getDeclaration(project, overriddenDescriptor);
+            PsiElement overriddenDeclaration = DescriptorToSourceUtilsIde.INSTANCE$.getAnyDeclaration(project, overriddenDescriptor);
             if (PsiTreeUtil.instanceOf(overriddenDeclaration, JetNamedFunction.class, JetProperty.class, PsiMethod.class)) {
                 overriddenElementsToDescriptor.put(overriddenDeclaration, overriddenDescriptor);
             }

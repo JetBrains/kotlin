@@ -63,7 +63,10 @@ class GenerateRanges(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             }
 
             out.println(
-"""public class $range(override val start: $t, override val end: $t) : Range<$t>, Progression<$t> {
+"""/**
+ * A range of values of type $t.
+ */
+public class $range(override val start: $t, override val end: $t) : Range<$t>, Progression<$t> {
     override val increment: $incrementType
         get() = $increment
 
@@ -80,6 +83,7 @@ class GenerateRanges(out: PrintWriter) : BuiltInsSourceGenerator(out) {
     override fun hashCode(): Int $hashCode
 
     class object {
+        /** An empty range of values of type $t. */
         public val EMPTY: $range = $range($emptyBounds)
     }
 }""")

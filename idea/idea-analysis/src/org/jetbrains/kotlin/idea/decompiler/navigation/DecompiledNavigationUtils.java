@@ -45,8 +45,7 @@ public final class DecompiledNavigationUtils {
             @NotNull Project project,
             @NotNull DeclarationDescriptor referencedDescriptor
     ) {
-        DeclarationDescriptor effectiveReferencedDescriptor = getEffectiveReferencedDescriptor(referencedDescriptor);
-        VirtualFile virtualFile = findVirtualFileContainingDescriptor(project, effectiveReferencedDescriptor);
+        VirtualFile virtualFile = findVirtualFileContainingDescriptor(project, referencedDescriptor);
 
         if (virtualFile == null || !DecompilerPackage.isKotlinCompiledFile(virtualFile)) return null;
 
@@ -55,18 +54,8 @@ public final class DecompiledNavigationUtils {
             return null;
         }
 
-        return ((JetClsFile) psiFile).getDeclarationForDescriptor(effectiveReferencedDescriptor);
+        return ((JetClsFile) psiFile).getDeclarationForDescriptor(referencedDescriptor);
     }
-
-    //TODO: should be done via some generic mechanism
-    @NotNull
-    private static DeclarationDescriptor getEffectiveReferencedDescriptor(@NotNull DeclarationDescriptor descriptor) {
-        if (descriptor instanceof CallableMemberDescriptor) {
-            return DescriptorUtils.unwrapFakeOverride((CallableMemberDescriptor) descriptor);
-        }
-        return descriptor;
-    }
-
 
     /*
         Find virtual file which contains the declaration of descriptor we're navigating to.

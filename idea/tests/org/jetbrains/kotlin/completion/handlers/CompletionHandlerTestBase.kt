@@ -98,7 +98,7 @@ public abstract class CompletionHandlerTestBase() : JetLightCodeInsightFixtureTe
 
                     if (tailOk) {
                         if (foundElement != null) {
-                            Assert.fail("Several elements satisfy to completion restrictions")
+                            Assert.fail("Several elements satisfy to completion restrictions: \n    $foundElement\n    $lookupElement")
                         }
 
                         foundElement = lookupElement

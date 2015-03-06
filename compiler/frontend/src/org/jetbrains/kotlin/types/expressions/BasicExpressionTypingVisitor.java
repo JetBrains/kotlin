@@ -837,33 +837,43 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         return !context.dataFlowInfo.getNullability(dataFlowValue).canBeNull();
     }
 
-    public static void checkLValue(@NotNull BindingTrace trace, @NotNull JetExpression expression) {
-        checkLValue(trace, expression, false);
+    /**
+     * @return {@code true} iff expression can be assigned to
+     */
+    public static boolean checkLValue(@NotNull BindingTrace trace, @NotNull JetExpression expression) {
+        return checkLValue(trace, expression, false);
     }
 
-    private static void checkLValue(@NotNull BindingTrace trace, @NotNull JetExpression expressionWithParenthesis, boolean canBeThis) {
+    private static boolean checkLValue(@NotNull BindingTrace trace, @NotNull JetExpression expressionWithParenthesis, boolean canBeThis) {
         JetExpression expression = JetPsiUtil.deparenthesize(expressionWithParenthesis);
         if (expression instanceof JetArrayAccessExpression) {
             JetExpression arrayExpression = ((JetArrayAccessExpression) expression).getArrayExpression();
-            if (arrayExpression != null) {
-                checkLValue(trace, arrayExpression, true);
-            }
-            return;
+            if (arrayExpression == null) return false;
+
+            return checkLValue(trace, arrayExpression, true);
         }
-        if (canBeThis && expression instanceof JetThisExpression) return;
+        if (canBeThis && expression instanceof JetThisExpression) return true;
         VariableDescriptor variable = BindingContextUtils.extractVariableDescriptorIfAny(trace.getBindingContext(), expression, true);
 
+        boolean result = true;
         JetExpression reportOn = expression != null ? expression : expressionWithParenthesis;
         if (variable instanceof PropertyDescriptor) {
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) variable;
             if (propertyDescriptor.isSetterProjectedOut()) {
                 trace.report(SETTER_PROJECTED_OUT.on(reportOn, propertyDescriptor));
+                result = false;
             }
         }
 
         if (variable == null) {
             trace.report(VARIABLE_EXPECTED.on(reportOn));
+            result = false;
         }
+        else if (!variable.isVar()) {
+            result = false;
+        }
+
+        return result;
     }
 
     @Override

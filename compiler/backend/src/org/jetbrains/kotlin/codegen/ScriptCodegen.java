@@ -123,7 +123,7 @@ public class ScriptCodegen extends MemberCodegen<JetScript> {
             @NotNull ScriptDescriptor scriptDescriptor,
             @NotNull ClassDescriptor classDescriptorForScript,
             @NotNull ClassBuilder classBuilder,
-            @NotNull final MethodContext methodContext
+            @NotNull MethodContext methodContext
     ) {
         //noinspection ConstantConditions
         Type blockType = typeMapper.mapType(scriptDescriptor.getScriptCodeDescriptor().getReturnType());
@@ -143,7 +143,7 @@ public class ScriptCodegen extends MemberCodegen<JetScript> {
         if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
             mv.visitCode();
 
-            final InstructionAdapter iv = new InstructionAdapter(mv);
+            InstructionAdapter iv = new InstructionAdapter(mv);
 
             Type classType = typeMapper.mapType(classDescriptorForScript);
 
@@ -152,7 +152,7 @@ public class ScriptCodegen extends MemberCodegen<JetScript> {
 
             iv.load(0, classType);
 
-            final FrameMap frameMap = new FrameMap();
+            FrameMap frameMap = new FrameMap();
             frameMap.enterTemp(OBJECT_TYPE);
 
             for (ScriptDescriptor importedScript : context.getEarlierScripts()) {
@@ -166,13 +166,6 @@ public class ScriptCodegen extends MemberCodegen<JetScript> {
                 ValueParameterDescriptor parameter = scriptDescriptor.getScriptCodeDescriptor().getValueParameters().get(i);
                 frameMap.enter(parameter, argTypes[i + add]);
             }
-
-            generateInitializers(new Function0<ExpressionCodegen>() {
-                @Override
-                public ExpressionCodegen invoke() {
-                    return new ExpressionCodegen(iv, frameMap, Type.VOID_TYPE, methodContext, state, ScriptCodegen.this);
-                }
-            });
 
             int offset = 1;
 
@@ -192,9 +185,16 @@ public class ScriptCodegen extends MemberCodegen<JetScript> {
                 iv.putfield(classType.getInternalName(), parameter.getName().getIdentifier(), parameterType.getDescriptor());
             }
 
-            StackValue stackValue =
-                    new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, methodContext, state, this)
-                            .gen(scriptDeclaration.getBlockExpression());
+            final ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, methodContext, state, this);
+
+            generateInitializers(new Function0<ExpressionCodegen>() {
+                @Override
+                public ExpressionCodegen invoke() {
+                    return codegen;
+                }
+            });
+
+            StackValue stackValue = codegen.gen(scriptDeclaration.getBlockExpression());
             if (stackValue.type != Type.VOID_TYPE) {
                 StackValue.Field resultValue = StackValue
                         .field(blockType, classType, ScriptDescriptor.LAST_EXPRESSION_VALUE_FIELD_NAME, false, StackValue.LOCAL_0);

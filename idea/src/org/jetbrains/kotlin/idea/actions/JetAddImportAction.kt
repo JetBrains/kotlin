@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.idea.imports.importableFqNameSafe
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
 import org.jetbrains.kotlin.idea.JetDescriptorIconProvider
-import org.jetbrains.kotlin.idea.codeInsight.DescriptorToDeclarationUtil
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 
 /**
  * Automatically adds import directive to the file for resolving reference.
@@ -64,7 +64,7 @@ public class JetAddImportAction(
     }
 
     private fun detectPriority(descriptor: DeclarationDescriptor): Priority {
-        val declaration = DescriptorToDeclarationUtil.getDeclaration(project, descriptor)
+        val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor)
         return when {
             declaration == null -> Priority.OTHER
             ModuleUtilCore.findModuleForPsiElement(declaration) == module -> Priority.MODULE
@@ -90,7 +90,7 @@ public class JetAddImportAction(
                     }
                 }.first()
             }
-        val declarationToImport = DescriptorToDeclarationUtil.getDeclaration(project, descriptorToImport)
+        val declarationToImport = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptorToImport)
     }
 
     private val variants = candidates

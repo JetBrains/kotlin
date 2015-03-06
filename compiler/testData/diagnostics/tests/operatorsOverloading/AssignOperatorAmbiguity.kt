@@ -8,7 +8,7 @@ class MyInt(val i: Int) {
 fun Any.plusAssign(<!UNUSED_PARAMETER!>a<!>: Any) {}
 
 fun test(m: MyInt) {
-    m <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> m
+    m += m
 
     var i = 1
     i <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> 34

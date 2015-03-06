@@ -142,10 +142,10 @@ public class JetClass extends JetTypeParameterListOwnerStub<KotlinClassStub> imp
     }
 
     @Nullable
-    public JetObjectDeclaration getClassObject() {
+    public JetObjectDeclaration getDefaultObject() {
         JetClassBody body = getBody();
         if (body == null) return null;
-        return body.getClassObject();
+        return body.getDefaultObject();
     }
 
     public List<JetProperty> getProperties() {

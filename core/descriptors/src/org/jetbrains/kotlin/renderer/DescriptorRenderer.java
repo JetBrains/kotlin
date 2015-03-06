@@ -53,13 +53,14 @@ public interface DescriptorRenderer extends Renderer<DeclarationDescriptor> {
             .setWithoutTypeParameters(true)
             .setWithoutFunctionParameterNames(true)
             .setReceiverAfterName(true)
-            .setRenderClassObjectName(true)
+            .setRenderDefaultObjectName(true)
             .setWithoutSuperTypes(true)
             .setStartFromName(true).build();
 
     DescriptorRenderer FQ_NAMES_IN_TYPES = new DescriptorRendererBuilder().build();
 
-    DescriptorRenderer SHORT_NAMES_IN_TYPES = new DescriptorRendererBuilder().setNameShortness(NameShortness.SHORT).setIncludeSynthesizedParameterNames(false).build();
+    DescriptorRenderer SHORT_NAMES_IN_TYPES = new DescriptorRendererBuilder().setNameShortness(
+            NameShortness.SHORT).setIncludeSynthesizedParameterNames(false).build();
 
     DescriptorRenderer DEBUG_TEXT = new DescriptorRendererBuilder()
             .setDebugMode(true)
@@ -77,7 +78,7 @@ public interface DescriptorRenderer extends Renderer<DeclarationDescriptor> {
     DescriptorRenderer HTML_NAMES_WITH_SHORT_TYPES = new DescriptorRendererBuilder()
             .setWithDefinedIn(false)
             .setNameShortness(NameShortness.SHORT)
-            .setRenderClassObjectName(true)
+            .setRenderDefaultObjectName(true)
             .setTextFormat(TextFormat.HTML).build();
 
     DescriptorRenderer HTML = new DescriptorRendererBuilder().setTextFormat(TextFormat.HTML).build();

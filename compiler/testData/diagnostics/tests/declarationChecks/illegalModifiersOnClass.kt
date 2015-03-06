@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -MANY_CLASS_OBJECTS -REDECLARATION
+// !DIAGNOSTICS: -MANY_DEFAULT_OBJECTS -REDECLARATION
 
 // KT-3464 Front-end shouldn't allow override modifier in class declaration
 

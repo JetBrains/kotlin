@@ -35,13 +35,13 @@ fun main(args: Array<String>) {
 }
 
 class MyArray() {
-    fun get(<!UNUSED_PARAMETER!>i<!>: Int): Int = 1
-    fun set(<!UNUSED_PARAMETER!>i<!>: Int, <!UNUSED_PARAMETER!>value<!>: Int): Int = 1
+    fun get(i: Int): Int = 1
+    fun set(i: Int, value: Int): Int = 1
 }
 
 class MyArray1() {
-    fun get(<!UNUSED_PARAMETER!>i<!>: Int): Int = 1
-    fun set(<!UNUSED_PARAMETER!>i<!>: Int, <!UNUSED_PARAMETER!>value<!>: Int) {}
+    fun get(i: Int): Int = 1
+    fun set(i: Int, value: Int) {}
 }
 
 class MyNumber() {

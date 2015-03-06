@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils.isAncestor
 import com.google.dart.compiler.backend.js.ast.JsName
 import org.jetbrains.kotlin.js.translate.utils.ManglingUtils.getSuggestedName
 import com.google.dart.compiler.backend.js.ast.JsFunctionScope
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 private val CAPTURED_RECEIVER_NAME_PREFIX : String = "this$"
 
@@ -97,8 +98,8 @@ private fun ReceiverParameterDescriptor.getNameForCapturedReceiver(): String {
         "receiverDescriptor = $this, " +"containingDeclaration = $containingDeclaration"
     }
 
-    if (containingDeclaration is ClassDescriptor && containingDeclaration.getKind() == ClassKind.CLASS_OBJECT) {
-        return containingDeclaration.getContainingDeclaration().getNameForCapturedDescriptor(namePostfix = "$")
+    if (DescriptorUtils.isDefaultObject(containingDeclaration)) {
+        return containingDeclaration.getContainingDeclaration()!!.getNameForCapturedDescriptor(namePostfix = "$")
     }
 
     return containingDeclaration.getNameForCapturedDescriptor()

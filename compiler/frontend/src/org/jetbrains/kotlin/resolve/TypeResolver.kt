@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.resolve.lazy.LazyEntity
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.psi.debugText.getDebugText
+import org.jetbrains.kotlin.psi.codeFragmentUtil.debugTypeInfo
 
 public class TypeResolver(
         private val annotationResolver: AnnotationResolver,
@@ -66,6 +67,12 @@ public class TypeResolver(
     public fun resolvePossiblyBareType(c: TypeResolutionContext, typeReference: JetTypeReference): PossiblyBareType {
         val cachedType = c.trace.getBindingContext().get(BindingContext.TYPE, typeReference)
         if (cachedType != null) return type(cachedType)
+
+        if (typeReference.debugTypeInfo != null) {
+            val debugType = typeReference.debugTypeInfo
+            c.trace.record(BindingContext.TYPE, typeReference, debugType)
+            return type(debugType)
+        }
 
         if (!c.allowBareTypes && lazinessToken.isLazy()) {
             // Bare types can be allowed only inside expressions; lazy type resolution is only relevant for declarations

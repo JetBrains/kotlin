@@ -18,12 +18,10 @@ package org.jetbrains.kotlin.resolve.scopes.receivers
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.scopes.ChainedScope
 import java.util.ArrayList
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.resolve.BindingContext.*
@@ -35,6 +33,7 @@ import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.resolve.bindingContextUtil.recordScopeAndDataFlowInfo
 import kotlin.properties.Delegates
 import org.jetbrains.kotlin.resolve.descriptorUtil.classObjectDescriptor
+import org.jetbrains.kotlin.resolve.scopes.*
 
 public trait Qualifier: ReceiverValue {
 
@@ -67,7 +66,10 @@ class QualifierReceiver (
     override var resultingDescriptor: DeclarationDescriptor by Delegates.notNull()
 
     override val scope: JetScope get() {
-        val scopes = listOf(classifier?.getClassObjectType()?.getMemberScope(), getNestedClassesAndPackageMembersScope()).filterNotNull().copyToArray()
+        val classObjectTypeScope = classifier?.getClassObjectType()?.getMemberScope()?.let {
+            FilteringScope(it) { it !is ClassDescriptor }
+        }
+        val scopes = listOf(classObjectTypeScope, getNestedClassesAndPackageMembersScope()).filterNotNull().copyToArray()
         return ChainedScope(descriptor, "Member scope for " + name + " as package or class or object", *scopes)
     }
 
@@ -81,12 +83,6 @@ class QualifierReceiver (
 
         if (classifier is ClassDescriptor) {
             scopes.add(classifier.getStaticScope())
-
-            val classObjectDescriptor = classifier.getDefaultObjectDescriptor()
-            if (classObjectDescriptor != null) {
-                // non-static members are resolved through class object receiver
-                scopes.add(DescriptorUtils.getStaticNestedClassesScope(classObjectDescriptor))
-            }
 
             if (classifier.getKind() != ClassKind.ENUM_ENTRY) {
                 scopes.add(DescriptorUtils.getStaticNestedClassesScope(classifier))
@@ -133,7 +129,7 @@ private fun QualifierReceiver.resolveAsStandaloneExpression(context: ExpressionT
         context.trace.report(TYPE_PARAMETER_IS_NOT_AN_EXPRESSION.on(referenceExpression, classifier))
     }
     else if (classifier is ClassDescriptor && classifier.getClassObjectType() == null) {
-        context.trace.report(NO_CLASS_OBJECT.on(referenceExpression, classifier))
+        context.trace.report(NO_DEFAULT_OBJECT.on(referenceExpression, classifier))
     }
     else if (packageView != null) {
         context.trace.report(EXPRESSION_EXPECTED_PACKAGE_FOUND.on(referenceExpression))
@@ -152,29 +148,35 @@ private fun QualifierReceiver.resolveAsReceiverInQualifiedExpression(context: Ex
 }
 
 private fun QualifierReceiver.resolveAndRecordReferenceTarget(context: ExpressionTypingContext, selector: DeclarationDescriptor?) {
-    resultingDescriptor = resolveReferenceTarget(selector)
+    resultingDescriptor = resolveReferenceTarget(context, selector)
     context.trace.record(REFERENCE_TARGET, referenceExpression, resultingDescriptor)
 }
 
-private fun QualifierReceiver.resolveReferenceTarget(selector: DeclarationDescriptor?): DeclarationDescriptor {
+private fun QualifierReceiver.resolveReferenceTarget(
+        context: ExpressionTypingContext,
+        selector: DeclarationDescriptor?
+): DeclarationDescriptor {
     if (classifier is TypeParameterDescriptor) {
         return classifier
     }
 
-    val containingDeclaration = when {
+    val selectorContainer = when {
         selector is ConstructorDescriptor -> selector.getContainingDeclaration().getContainingDeclaration()
         else -> selector?.getContainingDeclaration()
     }
 
-    if (packageView != null && (containingDeclaration is PackageFragmentDescriptor || containingDeclaration is PackageViewDescriptor)
-            && getFqName(packageView) == getFqName(containingDeclaration)) {
+    if (packageView != null && (selectorContainer is PackageFragmentDescriptor || selectorContainer is PackageViewDescriptor)
+            && getFqName(packageView) == getFqName(selectorContainer)) {
         return packageView
     }
 
-    if (classifier != null && containingDeclaration is ClassDescriptor && classifier == containingDeclaration) {
-        return classifier
-    }
-    if (classifier is ClassDescriptor && classifier.classObjectDescriptor != null) {
+    val isCallableWithReceiver = selector is CallableDescriptor &&
+                                 (selector.getDispatchReceiverParameter() != null || selector.getExtensionReceiverParameter() != null)
+
+    if (classifier is ClassDescriptor && classifier.classObjectDescriptor != null && isCallableWithReceiver) {
+        if (classifier.getDefaultObjectDescriptor() != null) {
+            context.trace.record(SHORT_REFERENCE_TO_DEFAULT_OBJECT, referenceExpression, classifier)
+        }
         return classifier.getClassObjectReferenceTarget()
     }
 

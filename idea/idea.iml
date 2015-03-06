@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="JAVA_MODULE" version="4">
-  <component name="DevKit.ModuleBuildProperties" url="file://$MODULE_DIR$/src/META-INF/plugin.xml" />
   <component name="EclipseModuleManager">
     <libelement value="jar://$MODULE_DIR$/../lib/asm-util-3.3.1.jar!/" />
     <src_description expected_position="1">
@@ -44,5 +43,7 @@
     <orderEntry type="module" module-name="js.frontend" />
     <orderEntry type="library" scope="PROVIDED" name="coverage-plugin" level="project" />
     <orderEntry type="module" module-name="util" />
+    <orderEntry type="module" module-name="android-compiler-plugin" scope="TEST" />
+    <orderEntry type="module" module-name="android-idea-plugin" scope="TEST" />
   </component>
 </module>

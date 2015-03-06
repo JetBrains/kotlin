@@ -30,7 +30,21 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/codegen/bytecodeText")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({BytecodeTextTestGenerated.BoxingOptimization.class, BytecodeTextTestGenerated.Constants.class, BytecodeTextTestGenerated.DeadCodeElimination.class, BytecodeTextTestGenerated.DirectInvoke.class, BytecodeTextTestGenerated.Inline.class, BytecodeTextTestGenerated.LazyCodegen.class, BytecodeTextTestGenerated.LineNumbers.class, BytecodeTextTestGenerated.Statements.class, BytecodeTextTestGenerated.StaticFields.class, BytecodeTextTestGenerated.StoreStackBeforeInline.class, BytecodeTextTestGenerated.When.class, BytecodeTextTestGenerated.WhenEnumOptimization.class, BytecodeTextTestGenerated.WhenStringOptimization.class})
+@InnerTestClasses({
+        BytecodeTextTestGenerated.BoxingOptimization.class,
+        BytecodeTextTestGenerated.Constants.class,
+        BytecodeTextTestGenerated.DeadCodeElimination.class,
+        BytecodeTextTestGenerated.DirectInvoke.class,
+        BytecodeTextTestGenerated.Inline.class,
+        BytecodeTextTestGenerated.LazyCodegen.class,
+        BytecodeTextTestGenerated.LineNumbers.class,
+        BytecodeTextTestGenerated.Statements.class,
+        BytecodeTextTestGenerated.StaticFields.class,
+        BytecodeTextTestGenerated.StoreStackBeforeInline.class,
+        BytecodeTextTestGenerated.When.class,
+        BytecodeTextTestGenerated.WhenEnumOptimization.class,
+        BytecodeTextTestGenerated.WhenStringOptimization.class,
+})
 @RunWith(JUnit3RunnerWithInners.class)
 public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
     @TestMetadata("accessorForProtected.kt")

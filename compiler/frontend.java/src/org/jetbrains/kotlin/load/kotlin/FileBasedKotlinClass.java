@@ -81,7 +81,7 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
     @NotNull
     protected abstract byte[] getFileContents();
 
-    // TODO public to be accessible in class object of subclass, workaround for KT-3974
+    // TODO public to be accessible in default object of subclass, workaround for KT-3974
     @Nullable
     public static <T extends FileBasedKotlinClass> T create(
             @NotNull byte[] fileContents,

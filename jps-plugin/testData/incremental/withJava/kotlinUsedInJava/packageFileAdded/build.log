@@ -1,0 +1,20 @@
+Cleaning output files:
+out/production/module/Usage.class
+End of files
+Compiling files:
+src/b.kt
+End of files
+Compiling files:
+src/Usage.java
+End of files
+Cleaning output files:
+out/production/module/Usage.class
+out/production/module/test/TestPackage$a$*.class
+out/production/module/test/TestPackage.class
+End of files
+Compiling files:
+src/a.kt
+End of files
+Compiling files:
+src/Usage.java
+End of files

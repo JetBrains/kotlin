@@ -32,7 +32,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.isObject;
 
 public class DescriptorSerializer {
 
@@ -82,8 +81,8 @@ public class DescriptorSerializer {
     public ProtoBuf.Class.Builder classProto(@NotNull ClassDescriptor classDescriptor) {
         ProtoBuf.Class.Builder builder = ProtoBuf.Class.newBuilder();
 
-        int flags = Flags.getClassFlags(hasAnnotations(classDescriptor), classDescriptor.getVisibility(),
-                                        classDescriptor.getModality(), classDescriptor.getKind(), classDescriptor.isInner());
+        int flags = Flags.getClassFlags(hasAnnotations(classDescriptor), classDescriptor.getVisibility(), classDescriptor.getModality(),
+                                        classDescriptor.getKind(), classDescriptor.isInner(), classDescriptor.isDefaultObject());
         builder.setFlags(flags);
 
         builder.setFqName(getClassId(classDescriptor));
@@ -131,9 +130,9 @@ public class DescriptorSerializer {
             }
         }
 
-        ClassDescriptor classObject = classDescriptor.getDefaultObjectDescriptor();
-        if (classObject != null) {
-            builder.setClassObjectName(stringTable.getSimpleNameIndex(classObject.getName()));
+        ClassDescriptor defaultObjectDescriptor = classDescriptor.getDefaultObjectDescriptor();
+        if (defaultObjectDescriptor != null) {
+            builder.setDefaultObjectName(stringTable.getSimpleNameIndex(defaultObjectDescriptor.getName()));
         }
 
         extension.serializeClass(classDescriptor, builder, stringTable);

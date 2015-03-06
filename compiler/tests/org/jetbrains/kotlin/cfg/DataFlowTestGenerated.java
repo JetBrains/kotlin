@@ -30,7 +30,11 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/cfg-variables")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({DataFlowTestGenerated.Basic.class, DataFlowTestGenerated.Bugs.class, DataFlowTestGenerated.LexicalScopes.class})
+@InnerTestClasses({
+        DataFlowTestGenerated.Basic.class,
+        DataFlowTestGenerated.Bugs.class,
+        DataFlowTestGenerated.LexicalScopes.class,
+})
 @RunWith(JUnit3RunnerWithInners.class)
 public class DataFlowTestGenerated extends AbstractDataFlowTest {
     public void testAllFilesPresentInCfg_variables() throws Exception {

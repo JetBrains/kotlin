@@ -77,10 +77,10 @@ class ClassBodyConverter(private val psiClass: PsiClass,
             convertedMembers.remove(member)
         }
 
-        val useClassObject = shouldGenerateClassObject(convertedMembers)
+        val useDefaultObject = shouldGenerateDefaultObject(convertedMembers)
 
         val members = ArrayList<Member>()
-        val classObjectMembers = ArrayList<Member>()
+        val defaultObjectMembers = ArrayList<Member>()
         val factoryFunctions = ArrayList<FactoryFunction>()
         var primaryConstructorSignature: PrimaryConstructorSignature? = null
         for ((psiMember, member) in convertedMembers) {
@@ -92,9 +92,9 @@ class ClassBodyConverter(private val psiClass: PsiClass,
             else if (member is FactoryFunction) {
                 factoryFunctions.add(member)
             }
-            else if (useClassObject
-                     && (if (member is Class) shouldGenerateIntoClassObject(member) else psiMember.hasModifierProperty(PsiModifier.STATIC))) {
-                classObjectMembers.add(member)
+            else if (useDefaultObject
+                     && (if (member is Class) shouldGenerateIntoDefaultObject(member) else psiMember.hasModifierProperty(PsiModifier.STATIC))) {
+                defaultObjectMembers.add(member)
             }
             else {
                 members.add(member)
@@ -103,7 +103,7 @@ class ClassBodyConverter(private val psiClass: PsiClass,
 
         val lBrace = LBrace().assignPrototype(psiClass.getLBrace())
         val rBrace = RBrace().assignPrototype(psiClass.getRBrace())
-        val classBody = ClassBody(primaryConstructorSignature, constructorConverter?.baseClassParams ?: listOf(), members, classObjectMembers, factoryFunctions, lBrace, rBrace)
+        val classBody = ClassBody(primaryConstructorSignature, constructorConverter?.baseClassParams ?: listOf(), members, defaultObjectMembers, factoryFunctions, lBrace, rBrace)
 
         return if (constructorConverter != null) constructorConverter.postProcessConstructors(classBody) else classBody
     }
@@ -120,17 +120,17 @@ class ClassBodyConverter(private val psiClass: PsiClass,
         }
     }
 
-    // do not convert private static methods into class object if possible
-    private fun shouldGenerateClassObject(convertedMembers: Map<PsiMember, Member>): Boolean {
+    // do not convert private static methods into default object if possible
+    private fun shouldGenerateDefaultObject(convertedMembers: Map<PsiMember, Member>): Boolean {
         if (psiClass.isEnum()) return false
 
-        if (convertedMembers.values().any { it is Class && shouldGenerateIntoClassObject(it) }) return true
+        if (convertedMembers.values().any { it is Class && shouldGenerateIntoDefaultObject(it) }) return true
 
         val members = convertedMembers.keySet().filter { !it.isConstructor() }
-        val classObjectMembers = members.filter { it !is PsiClass && it.hasModifierProperty(PsiModifier.STATIC) }
+        val defaultObjectMembers = members.filter { it !is PsiClass && it.hasModifierProperty(PsiModifier.STATIC) }
         val nestedClasses = members.filterIsInstance<PsiClass>().filter { it.hasModifierProperty(PsiModifier.STATIC) }
-        if (classObjectMembers.all { it is PsiMethod && it.hasModifierProperty(PsiModifier.PRIVATE) }) {
-            return nestedClasses.any { nestedClass -> classObjectMembers.any { converter.referenceSearcher.findMethodCalls(it as PsiMethod, nestedClass).isNotEmpty() } }
+        if (defaultObjectMembers.all { it is PsiMethod && it.hasModifierProperty(PsiModifier.PRIVATE) }) {
+            return nestedClasses.any { nestedClass -> defaultObjectMembers.any { converter.referenceSearcher.findMethodCalls(it as PsiMethod, nestedClass).isNotEmpty() } }
         }
         else {
             return true
@@ -138,7 +138,7 @@ class ClassBodyConverter(private val psiClass: PsiClass,
     }
 
     // we generate nested classes with factory functions into class object as a workaround until secondary constructors supported by Kotlin
-    private fun shouldGenerateIntoClassObject(nestedClass: Class)
+    private fun shouldGenerateIntoDefaultObject(nestedClass: Class)
             = !nestedClass.modifiers.contains(Modifier.INNER) && nestedClass.body.factoryFunctions.isNotEmpty()
 
     private fun processAccessorsToDrop() {

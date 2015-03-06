@@ -30,7 +30,23 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/codegen/boxInline")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({BlackBoxInlineCodegenTestGenerated.AnonymousObject.class, BlackBoxInlineCodegenTestGenerated.Builders.class, BlackBoxInlineCodegenTestGenerated.Capture.class, BlackBoxInlineCodegenTestGenerated.Complex.class, BlackBoxInlineCodegenTestGenerated.DefaultValues.class, BlackBoxInlineCodegenTestGenerated.LambdaClassClash.class, BlackBoxInlineCodegenTestGenerated.LambdaTransformation.class, BlackBoxInlineCodegenTestGenerated.LocalFunInLambda.class, BlackBoxInlineCodegenTestGenerated.NoInline.class, BlackBoxInlineCodegenTestGenerated.NonLocalReturns.class, BlackBoxInlineCodegenTestGenerated.Reified.class, BlackBoxInlineCodegenTestGenerated.Simple.class, BlackBoxInlineCodegenTestGenerated.Special.class, BlackBoxInlineCodegenTestGenerated.Trait.class, BlackBoxInlineCodegenTestGenerated.TryCatchFinally.class})
+@InnerTestClasses({
+        BlackBoxInlineCodegenTestGenerated.AnonymousObject.class,
+        BlackBoxInlineCodegenTestGenerated.Builders.class,
+        BlackBoxInlineCodegenTestGenerated.Capture.class,
+        BlackBoxInlineCodegenTestGenerated.Complex.class,
+        BlackBoxInlineCodegenTestGenerated.DefaultValues.class,
+        BlackBoxInlineCodegenTestGenerated.LambdaClassClash.class,
+        BlackBoxInlineCodegenTestGenerated.LambdaTransformation.class,
+        BlackBoxInlineCodegenTestGenerated.LocalFunInLambda.class,
+        BlackBoxInlineCodegenTestGenerated.NoInline.class,
+        BlackBoxInlineCodegenTestGenerated.NonLocalReturns.class,
+        BlackBoxInlineCodegenTestGenerated.Reified.class,
+        BlackBoxInlineCodegenTestGenerated.Simple.class,
+        BlackBoxInlineCodegenTestGenerated.Special.class,
+        BlackBoxInlineCodegenTestGenerated.Trait.class,
+        BlackBoxInlineCodegenTestGenerated.TryCatchFinally.class,
+})
 @RunWith(JUnit3RunnerWithInners.class)
 public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     public void testAllFilesPresentInBoxInline() throws Exception {
@@ -330,7 +346,10 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxCodegenT
 
     @TestMetadata("compiler/testData/codegen/boxInline/nonLocalReturns")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({NonLocalReturns.Deparenthesize.class, NonLocalReturns.TryFinally.class})
+    @InnerTestClasses({
+            NonLocalReturns.Deparenthesize.class,
+            NonLocalReturns.TryFinally.class,
+    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class NonLocalReturns extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInNonLocalReturns() throws Exception {
@@ -402,7 +421,11 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxCodegenT
 
         @TestMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally")
         @TestDataPath("$PROJECT_ROOT")
-        @InnerTestClasses({TryFinally.CallSite.class, TryFinally.DeclSite.class, TryFinally.ExceptionTable.class})
+        @InnerTestClasses({
+                TryFinally.CallSite.class,
+                TryFinally.DeclSite.class,
+                TryFinally.ExceptionTable.class,
+        })
         @RunWith(JUnit3RunnerWithInners.class)
         public static class TryFinally extends AbstractBlackBoxCodegenTest {
             public void testAllFilesPresentInTryFinally() throws Exception {

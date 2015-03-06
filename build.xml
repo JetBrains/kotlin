@@ -102,6 +102,7 @@
         <include name="compiler/cli/cli-common/src"/>
         <include name="compiler/util/src"/>
         <include name="compiler/light-classes/src"/>
+        <include name="compiler/plugin-api/src"/>
         <include name="compiler/builtins-serializer/src"/>
         <include name="js/js.dart-ast/src"/>
         <include name="js/js.translator/src"/>
@@ -125,6 +126,7 @@
         <include name="util/**"/>
         <include name="util.runtime/**"/>
         <include name="light-classes/**"/>
+        <include name="plugin-api/**"/>
         <include name="builtins-serializer/**"/>
         <include name="js.dart-ast/**"/>
         <include name="js.translator/**"/>
@@ -191,6 +193,7 @@
             <fileset dir="compiler/cli/cli-common/src"/>
             <fileset dir="compiler/util/src"/>
             <fileset dir="compiler/light-classes/src"/>
+            <fileset dir="compiler/plugin-api/src"/>
             <fileset dir="compiler/builtins-serializer"/>
             <fileset dir="js/js.dart-ast/src"/>
             <fileset dir="js/js.translator/src"/>
@@ -559,6 +562,24 @@
                         public protected *;
                     }
 
+                    -keep class org.jetbrains.kotlin.compiler.plugin.** {
+                        public protected *;
+                    }
+
+                    -keep class org.jetbrains.kotlin.extensions.** {
+                        public protected *;
+                    }
+
+                    -keep class org.jetbrains.org.objectweb.asm.Opcodes { *; }
+
+                    -keep class org.jetbrains.kotlin.codegen.extensions.** {
+                        public protected *;
+                    }
+
+                    -keepclassmembers class com.intellij.openapi.vfs.VirtualFile {
+                        public InputStream getInputStream();
+                    }
+
                     -keep class jet.** {
                         public protected *;
                     }
@@ -621,6 +642,27 @@
 
                 <attribute name="Main-Class" value="org.jetbrains.kotlin.cli.jvm.K2JVMCompiler"/>
             </manifest>
+        </jar>
+    </target>
+
+    <target name="android-compiler-plugin">
+        <cleandir dir="${output}/classes/android-compiler-plugin"/>
+
+        <new-kotlinc output="${output}/classes/android-compiler-plugin">
+            <src>
+                <include name="plugins/android-compiler-plugin/src"/>
+            </src>
+            <class-path>
+                <pathelement path="${idea.sdk}/core/intellij-core.jar"/>
+                <pathelement path="${kotlin-home}/lib/kotlin-compiler.jar"/>
+                <pathelement path="${kotlin-home}/lib/kotlin-runtime.jar"/>
+            </class-path>
+        </new-kotlinc>
+
+        <jar destfile="${kotlin-home}/lib/android-compiler-plugin.jar">
+            <fileset dir="${output}/classes/android-compiler-plugin"/>
+            <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
+            <fileset dir="${basedir}/plugins/android-compiler-plugin/src" includes="META-INF/services/**"/>
         </jar>
     </target>
 
@@ -835,11 +877,11 @@
             depends="builtins,stdlib,reflection,reflection-stub,pack-runtime,pack-runtime-sources"/>
 
     <target name="dist"
-            depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler,compiler-sources,ant-tools,jdk-annotations,android-sdk-annotations,runtime,kotlin-js-stdlib"
+            depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler,compiler-sources,ant-tools,jdk-annotations,android-sdk-annotations,runtime,kotlin-js-stdlib,android-compiler-plugin"
             description="Builds redistributables from sources"/>
 
     <target name="dist-quick"
-            depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler-quick,ant-tools,jdk-annotations,android-sdk-annotations,runtime,kotlin-js-stdlib"
+            depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler-quick,ant-tools,jdk-annotations,android-sdk-annotations,runtime,kotlin-js-stdlib,android-compiler-plugin"
             description="Builds everything, but classes are reused from project out dir, doesn't run proguard and javadoc"/>
 
     <target name="dist-quick-compiler-only"

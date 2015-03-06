@@ -649,10 +649,15 @@ public class JetFlowInformationProvider {
                                         DeclarationDescriptor descriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, owner);
                                         assert descriptor instanceof FunctionDescriptor : owner.getText();
                                         FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
-                                        if (!isMain && !functionDescriptor.getModality().isOverridable()
-                                                && functionDescriptor.getOverriddenDescriptors().isEmpty()) {
-                                            report(Errors.UNUSED_PARAMETER.on((JetParameter) element, variableDescriptor), ctxt);
+                                        String functionName = functionDescriptor.getName().asString();
+                                        if (isMain
+                                            || functionDescriptor.getModality().isOverridable()
+                                            || !functionDescriptor.getOverriddenDescriptors().isEmpty()
+                                            || "get".equals(functionName) || "set".equals(functionName) || "propertyDelegated".equals(functionName)
+                                                ) {
+                                            return;
                                         }
+                                        report(Errors.UNUSED_PARAMETER.on((JetParameter) element, variableDescriptor), ctxt);
                                     } else if (owner instanceof JetClass) {
                                         if (!((JetParameter) element).hasValOrVarNode() && !((JetClass) owner).isAnnotation()) {
                                             report(Errors.UNUSED_PARAMETER.on((JetParameter) element, variableDescriptor), ctxt);

@@ -84,6 +84,7 @@ public interface BindingContext {
     WritableSlice<JetTypeReference, JetType> TYPE = Slices.createSimpleSlice();
     WritableSlice<JetExpression, JetType> EXPRESSION_TYPE = new BasicWritableSlice<JetExpression, JetType>(DO_NOTHING);
     WritableSlice<JetExpression, JetType> EXPECTED_EXPRESSION_TYPE = new BasicWritableSlice<JetExpression, JetType>(DO_NOTHING);
+    WritableSlice<JetFunction, JetType> EXPECTED_RETURN_TYPE = new BasicWritableSlice<JetFunction, JetType>(DO_NOTHING);
     WritableSlice<JetExpression, DataFlowInfo> EXPRESSION_DATA_FLOW_INFO = new BasicWritableSlice<JetExpression, DataFlowInfo>(DO_NOTHING);
     WritableSlice<JetExpression, Approximation.Info> EXPRESSION_RESULT_APPROXIMATION = new BasicWritableSlice<JetExpression, Approximation.Info>(DO_NOTHING);
     WritableSlice<JetExpression, DataFlowInfo> DATAFLOW_INFO_AFTER_CONDITION = Slices.createSimpleSlice();
@@ -95,6 +96,9 @@ public interface BindingContext {
 
     WritableSlice<JetReferenceExpression, DeclarationDescriptor> REFERENCE_TARGET =
             new BasicWritableSlice<JetReferenceExpression, DeclarationDescriptor>(DO_NOTHING);
+    // if 'A' really means 'A.Default' then this slice stores class descriptor for A, REFERENCE_TARGET stores descriptor Default in this case
+    WritableSlice<JetReferenceExpression, ClassDescriptor> SHORT_REFERENCE_TO_DEFAULT_OBJECT =
+            new BasicWritableSlice<JetReferenceExpression, ClassDescriptor>(DO_NOTHING);
 
     @KotlinSignature("val RESOLVED_CALL: WritableSlice<Call, ResolvedCall<out CallableDescriptor>>")
     WritableSlice<Call, ResolvedCall<?>> RESOLVED_CALL = new BasicWritableSlice<Call, ResolvedCall<?>>(DO_NOTHING);

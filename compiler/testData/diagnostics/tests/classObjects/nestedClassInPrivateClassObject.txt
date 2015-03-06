@@ -1,6 +1,6 @@
 package
 
-internal fun f1(): A.B.C.Default
+internal fun f1(): A.Default.B.C.Default
 internal fun f2(): kotlin.Unit
 
 internal final class A {

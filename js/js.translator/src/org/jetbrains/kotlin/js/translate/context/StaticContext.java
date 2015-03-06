@@ -267,10 +267,10 @@ public final class StaticContext {
                     return scope.declareFreshName(getSuggestedName(descriptor));
                 }
             };
-            Rule<JsName> constructorOrClassObjectHasTheSameNameAsTheClass = new Rule<JsName>() {
+            Rule<JsName> constructorOrDefaultObjectHasTheSameNameAsTheClass = new Rule<JsName>() {
                 @Override
                 public JsName apply(@NotNull DeclarationDescriptor descriptor) {
-                    if (descriptor instanceof ConstructorDescriptor || (DescriptorUtils.isClassObject(descriptor))) {
+                    if (descriptor instanceof ConstructorDescriptor || (DescriptorUtils.isDefaultObject(descriptor))) {
                         //noinspection ConstantConditions
                         return getNameForDescriptor(descriptor.getContainingDeclaration());
                     }
@@ -355,7 +355,7 @@ public final class StaticContext {
 
             addRule(namesForDynamic);
             addRule(namesForStandardClasses);
-            addRule(constructorOrClassObjectHasTheSameNameAsTheClass);
+            addRule(constructorOrDefaultObjectHasTheSameNameAsTheClass);
             addRule(propertyOrPropertyAccessor);
             addRule(predefinedObjectsHasUnobfuscatableNames);
             addRule(overridingDescriptorsReferToOriginalName);
@@ -501,10 +501,10 @@ public final class StaticContext {
                     return element.getContainingFile().getUserData(LibrarySourcesConfig.EXTERNAL_MODULE_NAME);
                 }
             };
-            Rule<JsExpression> constructorOrClassObjectHasTheSameQualifierAsTheClass = new Rule<JsExpression>() {
+            Rule<JsExpression> constructorOrDefaultObjectHasTheSameQualifierAsTheClass = new Rule<JsExpression>() {
                 @Override
                 public JsExpression apply(@NotNull DeclarationDescriptor descriptor) {
-                    if (descriptor instanceof ConstructorDescriptor || DescriptorUtils.isClassObject(descriptor)) {
+                    if (descriptor instanceof ConstructorDescriptor || DescriptorUtils.isDefaultObject(descriptor)) {
                         //noinspection ConstantConditions
                         return getQualifierForDescriptor(descriptor.getContainingDeclaration());
                     }
@@ -548,7 +548,7 @@ public final class StaticContext {
             };
 
             addRule(libraryObjectsHaveKotlinQualifier);
-            addRule(constructorOrClassObjectHasTheSameQualifierAsTheClass);
+            addRule(constructorOrDefaultObjectHasTheSameQualifierAsTheClass);
             addRule(standardObjectsHaveKotlinQualifier);
             addRule(packageLevelDeclarationsHaveEnclosingPackagesNamesAsQualifier);
             addRule(nativeObjectsHaveNativePartOfFullQualifier);

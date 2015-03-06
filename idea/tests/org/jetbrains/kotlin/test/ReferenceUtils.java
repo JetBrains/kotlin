@@ -39,8 +39,8 @@ public final class ReferenceUtils {
     public static String renderAsGotoImplementation(@NotNull PsiElement element) {
         PsiElement navigationElement = element.getNavigationElement();
 
-        if (navigationElement instanceof JetObjectDeclaration && ((JetObjectDeclaration) navigationElement).isClassObject()) {
-            //default presenter return null for class object
+        if (navigationElement instanceof JetObjectDeclaration && ((JetObjectDeclaration) navigationElement).isDefault()) {
+            //default presenter return null for default object
             JetClass containingClass = PsiTreeUtil.getParentOfType(navigationElement, JetClass.class);
             assert containingClass != null;
             return "class object of " + renderAsGotoImplementation(containingClass);
