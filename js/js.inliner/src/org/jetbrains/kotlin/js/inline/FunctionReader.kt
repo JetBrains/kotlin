@@ -16,8 +16,16 @@
 
 package org.jetbrains.kotlin.js.inline
 
+import com.google.dart.compiler.backend.js.ast.*
+import com.google.dart.compiler.common.SourceInfoImpl
+import com.google.gwt.dev.js.JsParser
+import com.google.gwt.dev.js.ThrowExceptionOnErrorReporter
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.js.config.LibrarySourcesConfig
+import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
+import org.jetbrains.kotlin.js.translate.expression.InlineMetadata
+import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.*
 import org.jetbrains.kotlin.utils.*
 
 import java.io.*
@@ -52,5 +60,51 @@ public class FunctionReader(private val context: TranslationContext) {
             }
         }
     }
+    
+    private fun readFunction(descriptor: CallableDescriptor): JsFunction? {
+        if (descriptor !in this) return null
 
+        val moduleName = getExternalModuleName(descriptor)
+        val file = requireNotNull(moduleJsDefinition[moduleName], "Module $moduleName file have not been read")
+        val function = readFunctionFromSource(descriptor, file)
+        return function
+    }
+
+    private fun readFunctionFromSource(descriptor: CallableDescriptor, source: String): JsFunction? {
+        val startTag = Namer.getInlineStartTag(descriptor)
+        val endTag = Namer.getInlineEndTag(descriptor)
+
+        val startIndex = source.indexOf(startTag)
+        if (startIndex < 0) return null
+
+        val endIndex = source.indexOf(endTag, startIndex)
+        if (endIndex < 0) return null
+
+        val metadataString = source.substring(startIndex - 1, endIndex + endTag.length() + 1)
+        val statements = parseJavaScript(metadataString)
+        val statement = statements.firstOrNull()
+
+        if (statement !is JsExpressionStatement) throw IllegalStateException("Expected JsExpressionStatement, got: $statement")
+        val expression = statement.getExpression()
+
+        val metadata = InlineMetadata.decompose(expression)
+        if (metadata == null) {
+            throw IllegalStateException("Could not get inline metadata from expression: $expression")
+        }
+
+        val function = metadata.function
+        return function
+    }
+
+    private fun parseJavaScript(source: String): List<JsStatement> {
+        try {
+            val info = SourceInfoImpl(null, 0, 0, 0, 0)
+            val scope = JsRootScope(context.program())
+            val reader = StringReader(source)
+            return JsParser.parse(info, scope, reader, ThrowExceptionOnErrorReporter, /* insideFunction= */ false)
+        }
+        catch (e: Exception) {
+            throw RuntimeException(e)
+        }
+    }
 }
