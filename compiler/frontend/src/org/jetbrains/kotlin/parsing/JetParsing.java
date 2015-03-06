@@ -228,8 +228,16 @@ public class JetParsing extends AbstractJetParsing {
                 break;
             }
 
+            if (at(DOT)) {
+                advance(); // DOT
+                qualifiedExpression.error("Package name must be a '.'-separated identifier list");
+                qualifiedExpression = mark();
+                continue;
+            }
+
             PsiBuilder.Marker nsName = mark();
-            if (expect(IDENTIFIER, "Package name must be a '.'-separated identifier list", PACKAGE_NAME_RECOVERY_SET)) {
+            boolean simpleNameFound = expect(IDENTIFIER, "Package name must be a '.'-separated identifier list", PACKAGE_NAME_RECOVERY_SET);
+            if (simpleNameFound) {
                 nsName.done(REFERENCE_EXPRESSION);
             }
             else {
@@ -243,8 +251,15 @@ public class JetParsing extends AbstractJetParsing {
             }
 
             if (at(DOT)) {
-                simpleName = false;
                 advance(); // DOT
+
+                if (simpleName && !simpleNameFound) {
+                    qualifiedExpression.drop();
+                    qualifiedExpression = mark();
+                }
+                else {
+                    simpleName = false;
+                }
             }
             else {
                 break;

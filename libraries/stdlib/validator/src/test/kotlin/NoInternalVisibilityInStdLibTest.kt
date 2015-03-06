@@ -75,7 +75,7 @@ class NoInternalVisibilityInStdLibTest {
             if (internalDescriptors.isEmpty()) return
 
             val byFile = internalDescriptors.groupBy { descriptor ->
-                DescriptorToSourceUtils.descriptorToDeclarations(descriptor).firstOrNull()?.getContainingFile() as JetFile
+                DescriptorToSourceUtils.getSourceFromDescriptor(descriptor)?.getContainingFile() as JetFile
             }
             val byPackage = byFile.keySet().groupBy { it.getPackageFqName() }
 

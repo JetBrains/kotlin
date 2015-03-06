@@ -1,0 +1,18 @@
+JetFile: PackageLeadingDotDoubleID.kt
+  PACKAGE_DIRECTIVE
+    PsiElement(package)('package')
+    PsiWhiteSpace(' ')
+    PsiErrorElement:Package name must be a '.'-separated identifier list
+      PsiElement(DOT)('.')
+    REFERENCE_EXPRESSION
+      PsiElement(IDENTIFIER)('a')
+  PsiWhiteSpace(' ')
+  MODIFIER_LIST
+    ANNOTATION_ENTRY
+      CONSTRUCTOR_CALLEE
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('b')
+  PsiErrorElement:Expecting a top level declaration
+    <empty list>

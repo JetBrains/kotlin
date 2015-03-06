@@ -20,6 +20,7 @@ import com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.lexer.JetToken
 import org.jetbrains.kotlin.lexer.JetTokens
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.psi.psiUtil.*
 
 object JetQualifiedExpressionImpl {
     public fun JetQualifiedExpression.getOperationTokenNode(): ASTNode {
@@ -31,20 +32,15 @@ object JetQualifiedExpressionImpl {
         return this.getOperationTokenNode().getElementType() as JetToken
     }
 
+    private fun JetQualifiedExpression.getExpression(afterOperation: Boolean): JetExpression? {
+        return getOperationTokenNode()?.getPsi()?.siblings(afterOperation, false)?.firstOrNull { it is JetExpression } as? JetExpression
+    }
+
     public fun JetQualifiedExpression.getReceiverExpression(): JetExpression {
-        val left = PsiTreeUtil.findChildOfType(this, javaClass<JetExpression>())
-        return left!!
+        return getExpression(false) ?: throw AssertionError("No receiver found: ${JetPsiUtil.getElementTextWithContext(this)}")
     }
 
     public fun JetQualifiedExpression.getSelectorExpression(): JetExpression? {
-        var node: ASTNode? = getOperationTokenNode()
-        while (node != null) {
-            val psi = node!!.getPsi()
-            if (psi is JetExpression) {
-                return (psi as JetExpression)
-            }
-            node = node!!.getTreeNext()
-        }
-        return null
+        return getExpression(true)
     }
 }

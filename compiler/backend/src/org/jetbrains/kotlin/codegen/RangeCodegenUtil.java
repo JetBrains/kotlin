@@ -19,11 +19,11 @@ package org.jetbrains.kotlin.codegen;
 import com.google.common.collect.ImmutableMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -107,12 +107,10 @@ public class RangeCodegenUtil {
             @NotNull ImmutableMap<FqName, PrimitiveType> map
     ) {
         ClassifierDescriptor declarationDescriptor = rangeOrProgression.getConstructor().getDeclarationDescriptor();
-        assert declarationDescriptor != null;
-        if (declarationDescriptor != KotlinBuiltIns.getInstance().getBuiltInsPackageScope().getClassifier(declarationDescriptor.getName())) {
-            // Must be a standard library class
-            return null;
-        }
-        return map.get(DescriptorUtils.getFqNameSafe(declarationDescriptor));
+        if (declarationDescriptor == null) return null;
+        FqNameUnsafe fqName = DescriptorUtils.getFqName(declarationDescriptor);
+        if (!fqName.isSafe()) return null;
+        return map.get(fqName.toSafe());
     }
 
     @Nullable

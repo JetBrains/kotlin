@@ -17,28 +17,19 @@
 package org.jetbrains.kotlin.idea.refactoring.changeSignature
 
 import com.intellij.lang.Language
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiModifier
 import com.intellij.psi.PsiType
 import com.intellij.refactoring.changeSignature.*
 import com.intellij.usageView.UsageInfo
-import com.intellij.util.Function
 import com.intellij.util.VisibilityUtil
-import com.intellij.util.containers.ContainerUtil
-import kotlin.Function1
-import kotlin.Pair
 import org.jetbrains.kotlin.asJava.*
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.psi.JetFunction
-import org.jetbrains.kotlin.psi.JetFunctionLiteral
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.idea.JetLanguage
@@ -47,9 +38,9 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.JetFunctionD
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import java.util.HashMap
 import kotlin.properties.Delegates
-import java.util.ArrayList
-import java.util.Collections
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
+import org.jetbrains.kotlin.idea.project.*
+import org.jetbrains.kotlin.psi.*
 
 public class JetChangeInfo(
         val methodDescriptor: JetMethodDescriptor,
@@ -224,6 +215,8 @@ public class JetChangeInfo(
     }
 
     public fun getOrCreateJavaChangeInfo(): JavaChangeInfo? {
+        if (ProjectStructureUtil.isJsKotlinModule(getMethod().getContainingFile() as JetFile)) return null
+
         if (javaChangeInfo == null) {
             val currentPsiMethod = getCurrentPsiMethod()
             if (originalPsiMethod == null || currentPsiMethod == null) return null

@@ -1,0 +1,9 @@
+trait T{
+    fun foo(): Int {
+        return i()
+    }
+
+    fun i(): Int {
+        return 1
+    }
+}

@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.DFS.*
 import com.intellij.refactoring.util.RefactoringUIUtil
 import com.intellij.util.containers.MultiMap
-import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AnalysisResult.Status
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AnalysisResult.ErrorMessage
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.*
@@ -70,6 +69,9 @@ import org.jetbrains.kotlin.idea.refactoring.comparePossiblyOverridingDescriptor
 import org.jetbrains.kotlin.idea.util.makeNullable
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.callUtil.*
+import org.jetbrains.kotlin.diagnostics.*
+import java.util.logging.*
+import com.intellij.openapi.diagnostic.Logger
 
 private val DEFAULT_FUNCTION_NAME = "myFun"
 private val DEFAULT_RETURN_TYPE = KotlinBuiltIns.getInstance().getUnitType()
@@ -736,6 +738,15 @@ fun ExtractionData.isVisibilityApplicable(): Boolean {
     }
 }
 
+fun ExtractionData.getDefaultVisibility(): String {
+    if (!isVisibilityApplicable()) return ""
+
+    val parent = targetSibling.getStrictParentOfType<JetDeclaration>()
+    if (parent is JetClass && parent.isTrait()) return ""
+
+    return "private"
+}
+
 fun ExtractionData.performAnalysis(): AnalysisResult {
     if (originalElements.isEmpty()) {
         return AnalysisResult(null, Status.CRITICAL_ERROR, listOf(ErrorMessage.NO_EXPRESSION))
@@ -824,7 +835,7 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
                     this,
                     bindingContext,
                     functionNames,
-                    if (isVisibilityApplicable()) "private" else "",
+                    getDefaultVisibility(),
                     adjustedParameters.sortBy { it.name },
                     receiverParameter,
                     paramsInfo.typeParameters.sortBy { it.originalDeclaration.getName()!! },
@@ -853,63 +864,82 @@ private fun JetNamedDeclaration.getGeneratedBody() =
         } ?: throw AssertionError("Couldn't get block body for this declaration: ${JetPsiUtil.getElementTextWithContext(this)}")
 
 fun ExtractableCodeDescriptor.validate(): ExtractableCodeDescriptorWithConflicts {
+    fun getDeclarationMessage(declaration: PsiNamedElement, messageKey: String, capitalize: Boolean = true): String {
+        val message = JetRefactoringBundle.message(messageKey, RefactoringUIUtil.getDescription(declaration, true))
+        return if (capitalize) message.capitalize() else message
+    }
+
     val conflicts = MultiMap<PsiElement, String>()
 
     val result = ExtractionGeneratorConfiguration(this, ExtractionGeneratorOptions(inTempFile = true)).generateDeclaration()
 
     val valueParameterList = (result.declaration as? JetNamedFunction)?.getValueParameterList()
-    val bindingContext = result.declaration.getGeneratedBody().analyze()
+    val body = result.declaration.getGeneratedBody()
+    val bindingContext = body.analyze()
 
-    for ((originalOffset, resolveResult) in extractionData.refOffsetToDeclaration) {
-        if (resolveResult.declaration.isInsideOf(extractionData.originalElements)) continue
+    fun validateBody() {
+        for ((originalOffset, resolveResult) in extractionData.refOffsetToDeclaration) {
+            if (resolveResult.declaration.isInsideOf(extractionData.originalElements)) continue
 
-        val currentRefExpr = result.nameByOffset[originalOffset] as JetSimpleNameExpression?
-        if (currentRefExpr == null) continue
+            val currentRefExpr = result.nameByOffset[originalOffset] as JetSimpleNameExpression?
+            if (currentRefExpr == null) continue
 
-        if (currentRefExpr.getParent() is JetThisExpression) continue
+            if (currentRefExpr.getParent() is JetThisExpression) continue
 
-        val diagnostics = bindingContext.getDiagnostics().forElement(currentRefExpr)
+            val diagnostics = bindingContext.getDiagnostics().forElement(currentRefExpr)
 
-        val currentDescriptor = bindingContext[BindingContext.REFERENCE_TARGET, currentRefExpr]
-        val currentTarget =
-                currentDescriptor?.let { DescriptorToSourceUtilsIde.getAnyDeclaration(extractionData.project, it) } as? PsiNamedElement
-        if (currentTarget is JetParameter && currentTarget.getParent() == valueParameterList) continue
-        if (currentDescriptor is LocalVariableDescriptor
-        && parameters.any { it.mirrorVarName == currentDescriptor.getName().asString() }) continue
+            val currentDescriptor = bindingContext[BindingContext.REFERENCE_TARGET, currentRefExpr]
+            val currentTarget =
+                    currentDescriptor?.let { DescriptorToSourceUtilsIde.getAnyDeclaration(extractionData.project, it) } as? PsiNamedElement
+            if (currentTarget is JetParameter && currentTarget.getParent() == valueParameterList) continue
+            if (currentDescriptor is LocalVariableDescriptor
+                && parameters.any { it.mirrorVarName == currentDescriptor.getName().asString() }) continue
 
-        if (diagnostics.any { it.getFactory() == Errors.UNRESOLVED_REFERENCE }
+            if (diagnostics.any { it.getFactory() == Errors.UNRESOLVED_REFERENCE }
                 || (currentDescriptor != null
-                && !ErrorUtils.isError(currentDescriptor)
-                && !comparePossiblyOverridingDescriptors(currentDescriptor, resolveResult.descriptor))) {
-            conflicts.putValue(
-                    resolveResult.originalRefExpr,
-                    JetRefactoringBundle.message(
-                            "0.will.no.longer.be.accessible.after.extraction",
-                            RefactoringUIUtil.getDescription(resolveResult.declaration, true)
-                    ).capitalize()
-            )
-            continue
-        }
-
-        diagnostics.firstOrNull { it.getFactory() in Errors.INVISIBLE_REFERENCE_DIAGNOSTICS }?.let {
-            val message = when (it.getFactory()) {
-                Errors.INVISIBLE_SETTER ->
-                    JetRefactoringBundle.message(
-                            "setter.of.0.will.become.invisible.after.extraction",
-                            RefactoringUIUtil.getDescription(resolveResult.declaration, true)
-                    )
-
-                else ->
-                    JetRefactoringBundle.message(
-                            "0.will.become.invisible.after.extraction",
-                            RefactoringUIUtil.getDescription(resolveResult.declaration, true).capitalize()
-                    )
+                    && !ErrorUtils.isError(currentDescriptor)
+                    && !comparePossiblyOverridingDescriptors(currentDescriptor, resolveResult.descriptor))) {
+                conflicts.putValue(
+                        resolveResult.originalRefExpr,
+                        getDeclarationMessage(resolveResult.declaration, "0.will.no.longer.be.accessible.after.extraction")
+                )
+                continue
             }
 
-            conflicts.putValue(resolveResult.originalRefExpr, message)
+            diagnostics.firstOrNull { it.getFactory() in Errors.INVISIBLE_REFERENCE_DIAGNOSTICS }?.let {
+                val message = when (it.getFactory()) {
+                    Errors.INVISIBLE_SETTER ->
+                        getDeclarationMessage(resolveResult.declaration, "setter.of.0.will.become.invisible.after.extraction", false)
+                    else ->
+                        getDeclarationMessage(resolveResult.declaration, "0.will.become.invisible.after.extraction")
+                }
+                conflicts.putValue(resolveResult.originalRefExpr, message)
+            }
         }
     }
+
+    result.declaration.accept(
+            object : JetTreeVisitorVoid() {
+                override fun visitUserType(userType: JetUserType) {
+                    val refExpr = userType.getReferenceExpression() ?: return
+                    val declaration = refExpr.getReference()?.resolve() as? PsiNamedElement ?: return
+                    val diagnostics = bindingContext.getDiagnostics().forElement(refExpr)
+                    diagnostics.firstOrNull { it.getFactory() == Errors.INVISIBLE_REFERENCE }?.let {
+                        conflicts.putValue(declaration, getDeclarationMessage(declaration, "0.will.become.invisible.after.extraction"))
+                    }
+                }
+
+                override fun visitJetElement(element: JetElement) {
+                    if (element == body) {
+                        validateBody()
+                        return
+                    }
+                    super.visitJetElement(element)
+                }
+            }
+    )
 
     return ExtractableCodeDescriptorWithConflicts(this, conflicts)
 }
 
+private val LOG = Logger.getInstance(javaClass<ExtractionEngine>())
