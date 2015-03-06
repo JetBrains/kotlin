@@ -16,30 +16,22 @@
 
 package org.jetbrains.kotlin.js.inline.util.collectors
 
-import com.google.dart.compiler.backend.js.ast.RecursiveJsVisitor
-import com.google.dart.compiler.backend.js.ast.JsPropertyInitializer
-import com.google.dart.compiler.backend.js.ast.JsNameRef
-import com.google.dart.compiler.backend.js.ast.JsFunction
-import com.google.dart.compiler.backend.js.ast.JsName
+import com.google.dart.compiler.backend.js.ast.*
+import org.jetbrains.kotlin.js.translate.expression.InlineMetadata
 
 import java.util.IdentityHashMap
 
-class FunctionCollector : RecursiveJsVisitor() {
-    public val functions: IdentityHashMap<JsName, JsFunction> = IdentityHashMap()
+class PropertyCollector : RecursiveJsVisitor() {
+    public val properties: IdentityHashMap<JsName, JsExpression> = IdentityHashMap()
 
     override fun visitPropertyInitializer(x: JsPropertyInitializer?) {
         super.visitPropertyInitializer(x)
 
-        val label = x?.getLabelExpr()
+        val label = x?.getLabelExpr() as? JsNameRef
+        val name = label?.getName()
+        if (name == null) return
+
         val value = x?.getValueExpr()
-
-        if (label is JsNameRef && value is JsFunction) {
-            val name = label.getName()
-            val function = value as JsFunction
-
-            if (name != null) {
-                functions[name] = function
-            }
-        }
+        properties[name] = value
     }
 }

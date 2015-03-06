@@ -2,7 +2,7 @@ package test
 
 trait Test {
 
-  class object {
+  default object {
     public val valProp: Int = 10
   }
 

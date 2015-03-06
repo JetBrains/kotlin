@@ -93,7 +93,7 @@ native public trait DOMError {
     public val severity: Short
     public val type: String
 
-    public class object {
+    public default object {
         public val SEVERITY_ERROR: Short = 2
         public val SEVERITY_FATAL_ERROR: Short = 3
         public val SEVERITY_WARNING: Short = 1
@@ -221,7 +221,7 @@ native public trait Node {
     public fun replaceChild(arg1: Node, arg2: Node): Node = noImpl
     public fun setUserData(arg1: String?, arg2: Any, arg3: UserDataHandler): Any = noImpl
 
-    public class object {
+    public default object {
         public val ATTRIBUTE_NODE: Short = 2
         public val CDATA_SECTION_NODE: Short = 4
         public val COMMENT_NODE: Short = 8
@@ -270,7 +270,7 @@ native public trait TypeInfo {
     public val typeNamespace: String
     public fun isDerivedFrom(arg1: String?, arg2: String?, arg3: Int): Boolean = noImpl
 
-    public class object {
+    public default object {
         public val DERIVATION_EXTENSION: Int = 2
         public val DERIVATION_LIST: Int = 8
         public val DERIVATION_RESTRICTION: Int = 1
@@ -281,7 +281,7 @@ native public trait TypeInfo {
 native public trait UserDataHandler {
     public fun handle(arg1: Short, arg2: String?, arg3: Any, arg4: Node, arg5: Node): Unit = noImpl
 
-    public class object {
+    public default object {
         public val NODE_ADOPTED: Short = 5
         public val NODE_CLONED: Short = 1
         public val NODE_DELETED: Short = 3

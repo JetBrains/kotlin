@@ -66,6 +66,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest(fileName);
     }
 
+    @TestMetadata("BackingFields.kt")
+    public void testBackingFields() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/BackingFields.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("BeforeArgumentWithBinaryOperation.kt")
     public void testBeforeArgumentWithBinaryOperation() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/BeforeArgumentWithBinaryOperation.kt");

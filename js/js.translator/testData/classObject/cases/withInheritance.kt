@@ -5,13 +5,13 @@ open class A {
     fun foo(): Int {
         return 5
     }
-    class object: A() {
+    default object: A() {
         val c = a
     }
 }
 
 class B {
-    class object: A() {
+    default object: A() {
     }
 }
 

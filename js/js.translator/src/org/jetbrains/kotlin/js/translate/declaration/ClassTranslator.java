@@ -182,8 +182,8 @@ public final class ClassTranslator extends AbstractTranslator {
             declarationContext.aliasingContext().registerAlias(defaultObjectReceiver, defaultObjectAccessor);
         }
 
-        // Overlap alias of class object receiver for accessing from containing class(see previous if block),
-        // because inside class object we should use simple name for access.
+        // Overlap alias of default object receiver for accessing from containing class(see previous if block),
+        // because inside default object we should use simple name for access.
         if (isDefaultObject(descriptor)) {
             declarationContext = declarationContext.innerContextWithAliased(descriptor.getThisAsReceiverParameter(), JsLiteral.THIS);
         }

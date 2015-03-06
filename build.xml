@@ -301,7 +301,7 @@
                  classpath="${dependencies.dir}/closure-compiler.jar"/>
 
         <!-- value should be one of: whitespace, simple, advanced -->
-        <property name="compilationLevel" value="simple"/>
+        <property name="compilationLevel" value="whitespace"/>
         <!-- value should be one of: default, quiet, verbose -->
         <property name="warningLevel" value="default"/>
 

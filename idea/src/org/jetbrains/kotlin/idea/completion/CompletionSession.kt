@@ -17,36 +17,41 @@
 package org.jetbrains.kotlin.idea.completion
 
 import com.intellij.codeInsight.completion.*
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.patterns.CharPattern
+import com.intellij.patterns.ElementPattern
+import com.intellij.patterns.PatternCondition
+import com.intellij.patterns.StandardPatterns
 import com.intellij.psi.PsiElement
+import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.util.ProcessingContext
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.idea.caches.resolve.*
+import org.jetbrains.kotlin.idea.caches.KotlinIndicesHelper
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
 import org.jetbrains.kotlin.idea.completion.smart.SmartCompletion
-import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
-import org.jetbrains.kotlin.idea.caches.KotlinIndicesHelper
-import com.intellij.openapi.project.Project
-import com.intellij.psi.search.DelegatingGlobalSearchScope
-import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptorKindExclude
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastUtils
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.idea.refactoring.comparePossiblyOverridingDescriptors
-import kotlin.properties.Delegates
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.idea.util.makeNotNullable
+import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
 import org.jetbrains.kotlin.idea.util.CallType
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import com.intellij.patterns.StandardPatterns
-import com.intellij.util.ProcessingContext
-import com.intellij.patterns.PatternCondition
+import org.jetbrains.kotlin.idea.util.makeNotNullable
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptorKindExclude
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
+import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastUtils
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import kotlin.properties.Delegates
 
 class CompletionSessionConfiguration(
         val completeNonImportedDeclarations: Boolean,
@@ -88,18 +93,34 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
     protected val bindingContext: BindingContext? = expression?.let { resolutionFacade.analyze(it, BodyResolveMode.PARTIAL_FOR_COMPLETION) }
     protected val inDescriptor: DeclarationDescriptor? = expression?.let { bindingContext!!.get(BindingContext.RESOLUTION_SCOPE, it)?.getContainingDeclaration() }
 
+
+    private fun singleCharPattern(char: Char): CharPattern {
+        return StandardPatterns.character().with(
+                object : PatternCondition<Char>(char.toString()) {
+                    override fun accepts(c: Char, context: ProcessingContext) = c == char
+                })
+    }
+
+    private val kotlinIdentifierStartPattern: ElementPattern<Char>
+    private val kotlinIdentifierPartPattern: ElementPattern<Char>
+
+    ;{
+        val includeDollar = position.prevLeaf()?.getNode()?.getElementType() != JetTokens.SHORT_TEMPLATE_ENTRY_START
+        if (includeDollar) {
+            kotlinIdentifierStartPattern = StandardPatterns.character().javaIdentifierStart()
+            kotlinIdentifierPartPattern = StandardPatterns.character().javaIdentifierPart()
+        }
+        else {
+            kotlinIdentifierStartPattern = StandardPatterns.and(StandardPatterns.character().javaIdentifierStart(), StandardPatterns.not(singleCharPattern('$')))
+            kotlinIdentifierPartPattern = StandardPatterns.and(StandardPatterns.character().javaIdentifierPart(), StandardPatterns.not(singleCharPattern('$')))
+        }
+    }
+
     protected val prefix: String = CompletionUtil.findIdentifierPrefix(
             parameters.getPosition().getContainingFile(),
             parameters.getOffset(),
-            StandardPatterns.or(StandardPatterns.character().javaIdentifierPart(),
-                                StandardPatterns.character().with(
-                                        object : PatternCondition<Char>("@") {
-                                            override fun accepts(c: Char?, context: ProcessingContext?): Boolean {
-                                                return c == '@'
-                                            }
-                                        })
-            ),
-            StandardPatterns.character().javaIdentifierStart())
+            StandardPatterns.or(kotlinIdentifierPartPattern, singleCharPattern('@')),
+            kotlinIdentifierStartPattern)
 
     protected val resultSet: CompletionResultSet = resultSet
             .withPrefixMatcher(prefix)
@@ -129,10 +150,10 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
         LookupElementFactory(receiverTypes)
     }
 
-    protected val collector: LookupElementsCollector = LookupElementsCollector(prefixMatcher, parameters, resolutionFacade, lookupElementFactory)
+    protected val collector: LookupElementsCollector = LookupElementsCollector(
+            prefixMatcher, parameters, resolutionFacade, lookupElementFactory, inDescriptor, expression?.getParent() is JetSimpleNameStringTemplateEntry)
 
     protected val project: Project = position.getProject()
-
 
     protected val originalSearchScope: GlobalSearchScope = parameters.getOriginalFile().getResolveScope()
 
@@ -169,9 +190,9 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
     // set is used only for completion in code fragments
     private var alreadyAddedDescriptors: Collection<DeclarationDescriptor> by Delegates.notNull()
 
-    protected fun getReferenceVariants(kindFilter: DescriptorKindFilter, shouldCastToRuntimeType: Boolean): Collection<DeclarationDescriptor> {
-        val descriptors = referenceVariantsHelper!!.getReferenceVariants(reference!!.expression, kindFilter, shouldCastToRuntimeType, prefixMatcher.asNameFilter())
-        if (!shouldCastToRuntimeType) {
+    protected fun getReferenceVariants(kindFilter: DescriptorKindFilter, runtimeReceiverType: Boolean): Collection<DeclarationDescriptor> {
+        val descriptors = referenceVariantsHelper!!.getReferenceVariants(reference!!.expression, kindFilter, runtimeReceiverType, prefixMatcher.asNameFilter())
+        if (!runtimeReceiverType) {
             if (position.getContainingFile() is JetCodeFragment) {
                 alreadyAddedDescriptors = descriptors
             }
@@ -198,7 +219,7 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
             = configuration.completeNonImportedDeclarations || prefix.length() >= 3
 
     protected fun getKotlinTopLevelCallables(): Collection<DeclarationDescriptor>
-            = indicesHelper.getTopLevelCallables({ prefixMatcher.prefixMatches(it) }, reference!!.expression)
+            = indicesHelper.getTopLevelCallables({ prefixMatcher.prefixMatches(it) })
 
     protected fun getKotlinExtensions(): Collection<CallableDescriptor>
             = indicesHelper.getCallableExtensions({ prefixMatcher.prefixMatches(it) }, reference!!.expression)
@@ -277,18 +298,17 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
             }
 
             if (completionKind != CompletionKind.KEYWORDS_ONLY) {
-                addReferenceVariants(kindFilter, shouldCastToRuntimeType = false)
+                addReferenceVariants(kindFilter, runtimeReceiverType = false)
             }
 
-            val ampIndex = prefix.indexOf("@")
-            val keywordsPrefix = if (ampIndex < 0) prefix else prefix.substring(0, ampIndex) // if there is '@' in the prefix - use shorter prefix to not loose 'this' etc
+            val keywordsPrefix = prefix.substringBefore('@') // if there is '@' in the prefix - use shorter prefix to not loose 'this' etc
             KeywordCompletion.complete(expression ?: parameters.getPosition(), keywordsPrefix) { lookupElement ->
                 val keyword = lookupElement.getLookupString()
                 when (keyword) {
                     // if "this" is parsed correctly in the current context - insert it and all this@xxx items
                     "this" -> {
                         if (expression != null) {
-                            collector.addElements(thisExpressionItems(bindingContext!!, expression).map { it.factory() })
+                            collector.addElements(thisExpressionItems(bindingContext!!, expression, prefix).map { it.factory() })
                         }
                     }
 
@@ -319,7 +339,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
 
                 if (position.getContainingFile() is JetCodeFragment) {
                     flushToResultSet()
-                    addReferenceVariants(kindFilter, shouldCastToRuntimeType = true)
+                    addReferenceVariants(kindFilter, runtimeReceiverType = true)
                 }
             }
         }
@@ -355,11 +375,11 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         }
     }
 
-    private fun addReferenceVariants(kindFilter: DescriptorKindFilter, shouldCastToRuntimeType: Boolean) {
+    private fun addReferenceVariants(kindFilter: DescriptorKindFilter, runtimeReceiverType: Boolean) {
         collector.addDescriptorElements(
-                getReferenceVariants(kindFilter, shouldCastToRuntimeType),
+                getReferenceVariants(kindFilter, runtimeReceiverType),
                 suppressAutoInsertion = false,
-                shouldCastToRuntimeType = shouldCastToRuntimeType)
+                withReceiverCast = runtimeReceiverType)
     }
 }
 
@@ -373,7 +393,7 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
         if (expression != null) {
             val mapper = ToFromOriginalFileMapper(parameters.getOriginalFile() as JetFile, position.getContainingFile() as JetFile, parameters.getOffset())
             val completion = SmartCompletion(expression, resolutionFacade, moduleDescriptor,
-                                             bindingContext!!, { isVisibleDescriptor(it) }, prefixMatcher, originalSearchScope,
+                                             bindingContext!!, { isVisibleDescriptor(it) }, inDescriptor, prefixMatcher, originalSearchScope,
                                              mapper, lookupElementFactory)
             val result = completion.execute()
             if (result != null) {
@@ -382,14 +402,14 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
                 if (reference != null) {
                     val filter = result.declarationFilter
                     if (filter != null) {
-                        getReferenceVariants(DESCRIPTOR_KIND_MASK, false).forEach { collector.addElements(filter(it)) }
+                        getReferenceVariants(DESCRIPTOR_KIND_MASK, runtimeReceiverType = false).forEach { collector.addElements(filter(it)) }
                         flushToResultSet()
 
                         processNonImported { collector.addElements(filter(it)) }
                         flushToResultSet()
 
                         if (position.getContainingFile() is JetCodeFragment) {
-                            getReferenceVariants(DESCRIPTOR_KIND_MASK, true).forEach { collector.addElementsWithReceiverCast(filter(it)) }
+                            getReferenceVariants(DESCRIPTOR_KIND_MASK, runtimeReceiverType = true).forEach { collector.addElements(filter(it).map { it.withReceiverCast() }) }
                             flushToResultSet()
                         }
                     }

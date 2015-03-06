@@ -1,7 +1,7 @@
 var global: C = C()
 
 abstract class C {
-    class object {
+    default object {
         val INSTANCE = C()
     }
 }

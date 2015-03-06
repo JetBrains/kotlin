@@ -13,7 +13,7 @@ object Obj {
 }
 
 class AClass() {
-    class object {
+    default object {
         val y : Any? = 2
     }
 }

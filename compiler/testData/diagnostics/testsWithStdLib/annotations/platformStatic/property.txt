@@ -20,7 +20,7 @@ internal final class A {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal class object Default : B {
+    internal default object Default : B {
         private constructor Default()
         kotlin.platform.platformStatic() public open override /*1*/ val base1: kotlin.Int = 0
         public open override /*1*/ val base2: kotlin.Int = 0

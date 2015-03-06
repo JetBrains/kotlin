@@ -12,5 +12,6 @@
     <orderEntry type="module" module-name="js.dart-ast" />
     <orderEntry type="module" module-name="js.translator" />
     <orderEntry type="module" module-name="util" />
+    <orderEntry type="module" module-name="js.parser" />
   </component>
 </module>

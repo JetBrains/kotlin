@@ -1,4 +1,4 @@
-// NO_FLAGS because we put enum in class object of foo. When it will be fixed - MyClass should have ACC_PRIVATE flag
+// NO_FLAGS because we put enum in default object of foo. When it will be fixed - MyClass should have ACC_PRIVATE flag
 
 class Foo {
   private enum class MyClass() {

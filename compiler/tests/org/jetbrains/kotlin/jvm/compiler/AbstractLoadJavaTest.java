@@ -16,10 +16,8 @@
 
 package org.jetbrains.kotlin.jvm.compiler;
 
-import com.google.common.base.Predicates;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.psi.PsiFile;
 import junit.framework.ComparisonFailure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
@@ -152,7 +150,6 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         TopDownAnalysisParameters parameters = TopDownAnalysisParameters.create(
                 new LockBasedStorageManager(),
                 new ExceptionTracker(), // dummy
-                Predicates.<PsiFile>alwaysFalse(),
                 false,
                 false
         );
@@ -192,7 +189,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         JetFile jetFile = JetTestUtils.createFile(kotlinSrc.getPath(), FileUtil.loadFile(kotlinSrc, true), environment.getProject());
 
         AnalysisResult result = JvmResolveUtil.analyzeFilesWithJavaIntegrationAndCheckForErrors(
-                environment.getProject(), Collections.singleton(jetFile), Predicates.<PsiFile>alwaysTrue()
+                environment.getProject(), Collections.singleton(jetFile)
         );
         PackageViewDescriptor packageView = result.getModuleDescriptor().getPackage(TEST_PACKAGE_FQNAME);
         assertNotNull(packageView);

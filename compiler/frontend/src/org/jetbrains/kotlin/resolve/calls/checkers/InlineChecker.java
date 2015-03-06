@@ -45,6 +45,7 @@ import java.util.Set;
 
 import static org.jetbrains.kotlin.resolve.InlineDescriptorUtils.allowsNonLocalReturns;
 import static org.jetbrains.kotlin.resolve.InlineDescriptorUtils.checkNonLocalReturnUsage;
+import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getIsEffectivelyPublicApi;
 
 class InlineChecker implements CallChecker {
 
@@ -57,7 +58,7 @@ class InlineChecker implements CallChecker {
     public InlineChecker(@NotNull SimpleFunctionDescriptor descriptor) {
         assert descriptor.getInlineStrategy().isInline() : "This extension should be created only for inline functions but not " + descriptor;
         this.descriptor = descriptor;
-        this.isEffectivelyPublicApiFunction = isEffectivelyPublicApi(descriptor);
+        this.isEffectivelyPublicApiFunction = getIsEffectivelyPublicApi(descriptor);
 
         for (ValueParameterDescriptor param : descriptor.getValueParameters()) {
             if (isInlinableParameter(param)) {
@@ -242,24 +243,22 @@ class InlineChecker implements CallChecker {
     }
 
     private void checkVisibility(@NotNull CallableDescriptor declarationDescriptor, @NotNull JetElement expression, @NotNull BasicCallResolutionContext context){
-        if (isEffectivelyPublicApiFunction && !isEffectivelyPublicApi(declarationDescriptor) && declarationDescriptor.getVisibility() != Visibilities.LOCAL) {
+        boolean declarationDescriptorIsPublicApi = getIsEffectivelyPublicApi(declarationDescriptor) || isDefinedInInlineFunction(declarationDescriptor);
+        if (isEffectivelyPublicApiFunction && !declarationDescriptorIsPublicApi && declarationDescriptor.getVisibility() != Visibilities.LOCAL) {
             context.trace.report(Errors.INVISIBLE_MEMBER_FROM_INLINE.on(expression, declarationDescriptor, descriptor));
         }
     }
 
-    private boolean isEffectivelyPublicApi(@NotNull DeclarationDescriptorWithVisibility startDescriptor) {
+    private boolean isDefinedInInlineFunction(@NotNull DeclarationDescriptorWithVisibility startDescriptor) {
         DeclarationDescriptorWithVisibility parent = startDescriptor;
+
         while (parent != null) {
-            if (!parent.getVisibility().isPublicAPI()) {
-                if (parent.getContainingDeclaration() == descriptor) {
-                    //skip all defined in inline function
-                    return true;
-                }
-                return false;
-            }
+            if (parent.getContainingDeclaration() == descriptor) return true;
+
             parent = DescriptorUtils.getParentOfType(parent, DeclarationDescriptorWithVisibility.class);
         }
-        return true;
+
+        return false;
     }
 
     private void checkNonLocalReturn(

@@ -10,7 +10,7 @@ class MyClass {
         val a = 1
     }
 
-    class object {
+    default object {
         val coProp = 1
     }
 }

@@ -1,5 +1,5 @@
 class A {
-    class object {
+    default object {
         class Inner {}
     }
 }

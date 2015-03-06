@@ -15,7 +15,7 @@ package test {
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         }
 
-        internal class object Default {
+        internal default object Default {
             private constructor Default()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -36,7 +36,7 @@ package test {
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         }
 
-        internal class object Named {
+        internal default object Named {
             private constructor Named()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -57,7 +57,7 @@ package test {
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         }
 
-        internal class object Named {
+        internal default object Named {
             private constructor Named()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

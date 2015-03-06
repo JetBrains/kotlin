@@ -3,7 +3,7 @@
 package server
 
 open class <caret>Server {
-    class object {
+    default object {
         val NAME = "Server"
     }
 

@@ -1,6 +1,6 @@
 class C {
     suppress("warnings")
-    class object {
+    default object {
         val foo: String?? = null as Nothing?
     }
 }

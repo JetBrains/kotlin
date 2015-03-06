@@ -47,16 +47,13 @@ public class KotlinIndicesHelper(
         private val moduleDescriptor: ModuleDescriptor,
         private val visibilityFilter: (DeclarationDescriptor) -> Boolean
 ) {
-    public fun getTopLevelCallablesByName(name: String, context: JetExpression /*TODO: to be dropped*/): Collection<CallableDescriptor> {
-        val resolutionScope = bindingContext[BindingContext.RESOLUTION_SCOPE, context] ?: return listOf()
-
+    public fun getTopLevelCallablesByName(name: String): Collection<CallableDescriptor> {
         val declarations = HashSet<JetNamedDeclaration>()
         declarations.addTopLevelNonExtensionCallablesByName(JetFunctionShortNameIndex.getInstance(), name)
         declarations.addTopLevelNonExtensionCallablesByName(JetPropertyShortNameIndex.getInstance(), name)
         return declarations.flatMap {
             if (it.getContainingJetFile().isCompiled()) {
-                val importDirective = JetPsiFactory(project).createImportDirective(it.getFqName().asString())
-                analyzeImportReference(importDirective, resolutionScope, BindingTraceContext()).filterIsInstance<CallableDescriptor>()
+                analyzeImportReference(it.getFqName()!!).filterIsInstance<CallableDescriptor>()
             }
             else {
                 (resolutionFacade.resolveToDescriptor(it) as? CallableDescriptor).singletonOrEmptyList()
@@ -71,15 +68,12 @@ public class KotlinIndicesHelper(
         index.get(name, project, scope).filterTo(this) { it.getParent() is JetFile && it.getReceiverTypeReference() == null }
     }
 
-    public fun getTopLevelCallables(nameFilter: (String) -> Boolean, context: JetExpression /*TODO: to be dropped*/): Collection<CallableDescriptor> {
+    public fun getTopLevelCallables(nameFilter: (String) -> Boolean): Collection<CallableDescriptor> {
         val sourceNames = JetTopLevelFunctionFqnNameIndex.getInstance().getAllKeys(project).stream() + JetTopLevelPropertyFqnNameIndex.getInstance().getAllKeys(project).stream()
         val allFqNames = sourceNames.map { FqName(it) }
-
-        val jetScope = bindingContext[BindingContext.RESOLUTION_SCOPE, context] ?: return listOf()
-
         return allFqNames.filter { nameFilter(it.shortName().asString()) }
                 .toSet()
-                .flatMap { findTopLevelCallables(it, context, jetScope).filter(visibilityFilter) }
+                .flatMap { findTopLevelCallables(it).filter(visibilityFilter) }
     }
 
     public fun getCallableExtensions(nameFilter: (String) -> Boolean, expression: JetSimpleNameExpression): Collection<CallableDescriptor> {
@@ -113,12 +107,10 @@ public class KotlinIndicesHelper(
             val expressionType = bindingContext[BindingContext.EXPRESSION_TYPE, receiverExpression]
             if (expressionType == null || expressionType.isError()) return
 
-            val resolutionScope = bindingContext[BindingContext.RESOLUTION_SCOPE, receiverExpression] ?: return
-
             val receiverValue = ExpressionReceiver(receiverExpression, expressionType)
 
             matchingNames.flatMapTo(this) {
-                findSuitableExtensions(it, index, receiverValue, dataFlowInfo, callType, resolutionScope, bindingContext)
+                findSuitableExtensions(it, index, receiverValue, dataFlowInfo, callType, bindingContext)
             }
         }
         else {
@@ -126,7 +118,7 @@ public class KotlinIndicesHelper(
 
             for (receiver in resolutionScope.getImplicitReceiversWithInstance()) {
                 matchingNames.flatMapTo(this) {
-                    findSuitableExtensions(it, index, receiver.getValue(), dataFlowInfo, CallType.NORMAL, resolutionScope, bindingContext)
+                    findSuitableExtensions(it, index, receiver.getValue(), dataFlowInfo, CallType.NORMAL, bindingContext)
                 }
             }
         }
@@ -140,13 +132,10 @@ public class KotlinIndicesHelper(
                                        receiverValue: ReceiverValue,
                                        dataFlowInfo: DataFlowInfo,
                                        callType: CallType,
-                                       resolutionScope: JetScope,
                                        bindingContext: BindingContext): Stream<CallableDescriptor> {
-        val fqnString = callableFQN.asString()
-        val extensions = index.get(fqnString, project, scope).filter { it.getReceiverTypeReference() != null }
+        val extensions = index.get(callableFQN.asString(), project, scope).filter { it.getReceiverTypeReference() != null }
         val descriptors = if (extensions.any { it.getContainingJetFile().isCompiled() } ) {
-            val importDirective = JetPsiFactory(project).createImportDirective(fqnString)
-            analyzeImportReference(importDirective, resolutionScope, BindingTraceContext())
+            analyzeImportReference(callableFQN)
                     .filterIsInstance<CallableDescriptor>()
                     .filter { it.getExtensionReceiverParameter() != null }
         }
@@ -177,15 +166,15 @@ public class KotlinIndicesHelper(
                 .filter(visibilityFilter)
     }
 
-    private fun findTopLevelCallables(fqName: FqName, context: JetExpression, jetScope: JetScope): Collection<CallableDescriptor> {
-        val importDirective = JetPsiFactory(context.getProject()).createImportDirective(ImportPath(fqName, false))
-        val allDescriptors = analyzeImportReference(importDirective, jetScope, BindingTraceContext())
-        return allDescriptors.filterIsInstance<CallableDescriptor>().filter { it.getExtensionReceiverParameter() == null }
+    private fun findTopLevelCallables(fqName: FqName): Collection<CallableDescriptor> {
+        return analyzeImportReference(fqName)
+                .filterIsInstance<CallableDescriptor>()
+                .filter { it.getExtensionReceiverParameter() == null }
     }
 
-    private fun analyzeImportReference(
-            importDirective: JetImportDirective, scope: JetScope, trace: BindingTrace
-    ): Collection<DeclarationDescriptor> {
-        return QualifiedExpressionResolver().processImportReference(importDirective, scope, scope, null, trace, LookupMode.EVERYTHING)
+    private fun analyzeImportReference(fqName: FqName): Collection<DeclarationDescriptor> {
+        val importDirective = JetPsiFactory(project).createImportDirective(ImportPath(fqName, false))
+        val scope = JetModuleUtil.getSubpackagesOfRootScope(moduleDescriptor)
+        return QualifiedExpressionResolver().processImportReference(importDirective, scope, scope, null, BindingTraceContext(), LookupMode.EVERYTHING)
     }
 }

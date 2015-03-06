@@ -3,7 +3,7 @@ package test
 internal final class TestFirst {
     /*primary*/ public constructor TestFirst()
 
-    internal class object Default {
+    internal default object Default {
         /*primary*/ private constructor Default()
         internal final fun testing(/*0*/ a: test.TestFirst.InnerClass): kotlin.Int
         internal final fun testing(/*0*/ a: test.TestFirst.NotInnerClass): kotlin.Int

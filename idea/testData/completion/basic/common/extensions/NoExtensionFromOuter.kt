@@ -1,7 +1,7 @@
 class C {
     fun String.memberExtForString(){}
 
-    class object {
+    default object {
         fun foo() {
             "".<caret>
         }

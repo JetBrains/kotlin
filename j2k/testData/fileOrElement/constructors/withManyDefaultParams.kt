@@ -20,7 +20,7 @@ public class Test(private val myName: String) {
     protected var f: Short = 0
     protected var g: Char = ' '
 
-    class object {
+    default object {
 
         fun foo(n: String): String {
             return ""
@@ -29,7 +29,7 @@ public class Test(private val myName: String) {
 }
 
 public class User {
-    class object {
+    default object {
         public fun main() {
             val t = Test("name")
         }

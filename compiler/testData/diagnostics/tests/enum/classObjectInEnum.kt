@@ -1,7 +1,7 @@
 enum class E {
     ENTRY
 
-    class object {
+    default object {
         fun entry() = ENTRY
     }
 }

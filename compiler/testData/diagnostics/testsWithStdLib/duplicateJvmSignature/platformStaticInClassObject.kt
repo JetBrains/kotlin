@@ -5,7 +5,7 @@ open class Base {
 }
 
 class Derived : Base() {
-    class object {
+    default object {
         <!ACCIDENTAL_OVERRIDE!>platformStatic fun foo()<!> {}
     }
 }

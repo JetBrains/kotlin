@@ -2,7 +2,7 @@ class CallbackBlock {}
 
 public class Foo
 {
-    class object {
+    default object {
         private var bar = 0
     }
 

@@ -3,7 +3,7 @@ class S {
         return true
     }
 
-    class object {
+    default object {
         var myI = 10
     }
 }

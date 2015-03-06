@@ -2,7 +2,7 @@ class Foo {
 
   {Foo.test}
 
-  class object {
+  default object {
     private var test = "String"
   }
 }

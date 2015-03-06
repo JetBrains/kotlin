@@ -61,7 +61,7 @@ public abstract class AbstractLocalClassProtoTest : TestCaseWithTmpdir() {
         val module = TopDownAnalyzerFacadeForJVM.createSealedJavaModule()
         val globalContext = GlobalContext()
         val params = TopDownAnalysisParameters.create(
-                globalContext.storageManager, globalContext.exceptionTracker, Predicates.alwaysTrue(), false, false
+                globalContext.storageManager, globalContext.exceptionTracker, false, false
         )
         val providerFactory = FileBasedDeclarationProviderFactory(globalContext.storageManager, emptyList())
 

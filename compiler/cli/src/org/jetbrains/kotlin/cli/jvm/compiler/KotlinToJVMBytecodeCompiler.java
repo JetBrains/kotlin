@@ -16,12 +16,10 @@
 
 package org.jetbrains.kotlin.cli.jvm.compiler;
 
-import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.psi.PsiFile;
 import com.intellij.util.ArrayUtil;
 import kotlin.Function0;
 import kotlin.Function1;
@@ -304,7 +302,6 @@ public class KotlinToJVMBytecodeCompiler {
                                 ContextPackage.GlobalContext(),
                                 environment.getSourceFiles(),
                                 sharedTrace,
-                                Predicates.<PsiFile>alwaysTrue(),
                                 analyzeModule,
                                 environment.getConfiguration().get(JVMConfigurationKeys.MODULE_IDS),
                                 environment.getConfiguration().get(JVMConfigurationKeys.INCREMENTAL_CACHE_PROVIDER)

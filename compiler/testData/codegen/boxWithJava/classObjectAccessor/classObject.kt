@@ -1,12 +1,12 @@
 class A {
-    class object {
+    default object {
         val i1 = 1
         val i2 = 2
     }
 }
 
 class B {
-    class object Named {
+    default object Named {
         val i1 = 3
         val i2 = 4
     }

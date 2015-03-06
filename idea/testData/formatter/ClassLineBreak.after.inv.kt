@@ -1,10 +1,10 @@
 class A {
-    class object {
+    default object {
     }
 }
 
 class A {
-    class object {
+    default object {
     }
 }
 

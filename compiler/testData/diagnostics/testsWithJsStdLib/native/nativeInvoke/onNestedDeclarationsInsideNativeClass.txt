@@ -24,7 +24,7 @@ kotlin.js.native() internal final class A {
             kotlin.js.nativeInvoke() internal final fun kotlin.Int.invoke(/*0*/ a: kotlin.String, /*1*/ b: kotlin.Int): kotlin.String
         }
 
-        internal class object Default {
+        internal default object Default {
             private constructor Default()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             kotlin.js.nativeInvoke() internal final fun foo(): kotlin.Unit

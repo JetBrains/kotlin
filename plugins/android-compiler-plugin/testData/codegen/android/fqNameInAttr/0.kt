@@ -8,7 +8,7 @@ import kotlinx.android.synthetic.layout.*
 
 class R {
     class id {
-        class object {
+        default object {
             val login = 5
         }
     }

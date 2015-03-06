@@ -48,7 +48,7 @@ public abstract class FunctionalList<T>(public val size: Int) {
 
     private class Standard<T>(override val head: T, override val tail: FunctionalList<T>) : FunctionalList<T>(tail.size + 1)
 
-    class object {
+    default object {
         public fun <T> emptyList(): FunctionalList<T> = Empty<T>()
 
         public fun <T> of(element: T): FunctionalList<T> = FunctionalList.Standard<T>(element, emptyList())

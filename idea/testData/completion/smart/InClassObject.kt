@@ -1,5 +1,5 @@
 class C {
-    class object {
+    default object {
         fun foo(): C {
             return <caret>
         }

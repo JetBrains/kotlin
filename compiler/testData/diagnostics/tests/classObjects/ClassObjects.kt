@@ -1,22 +1,22 @@
 package Jet86
 
 class A {
-  <!REDECLARATION!>class object<!> {
+  default <!REDECLARATION!>object<!> {
     val x = 1
   }
-  <!MANY_DEFAULT_OBJECTS, REDECLARATION!>class object<!> {
+  <!MANY_DEFAULT_OBJECTS!>default<!> <!REDECLARATION!>object<!> {
     val x = 1
   }
 }
 
 class AA {
-  class object {
+  default object {
     val x = 1
   }
-  <!MANY_DEFAULT_OBJECTS!>class object A<!> {
+  <!MANY_DEFAULT_OBJECTS!>default<!> object A {
     val x = 1
   }
-    <!MANY_DEFAULT_OBJECTS!>class object AA<!> {
+    <!MANY_DEFAULT_OBJECTS!>default<!> object AA {
     val x = 1
   }
 }
@@ -26,7 +26,7 @@ class B() {
 }
 
 object b {
-  <!DEFAULT_OBJECT_NOT_ALLOWED!>class object<!> {
+  <!DEFAULT_OBJECT_NOT_ALLOWED!>default<!> object {
     val x = 1
   } // error
 }

@@ -69,3 +69,16 @@ public val ClassDescriptor.classObjectDescriptor: ClassDescriptor?
             else -> getDefaultObjectDescriptor()
         }
     }
+
+public val DeclarationDescriptorWithVisibility.isEffectivelyPublicApi: Boolean
+    get() {
+        var parent: DeclarationDescriptorWithVisibility? = this
+
+        while (parent != null) {
+            if (!parent!!.getVisibility().isPublicAPI()) return false
+
+            parent = DescriptorUtils.getParentOfType(parent, javaClass<DeclarationDescriptorWithVisibility>())
+        }
+
+        return true
+    }

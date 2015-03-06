@@ -4,7 +4,7 @@
 package test
 
 internal final class ClassWithClassObject() {
-    internal class object {
+    internal default object {
         internal final val a: test.A /* compiled code */
 
         public final var b: test.B /* compiled code */

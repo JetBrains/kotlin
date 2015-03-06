@@ -1,5 +1,5 @@
 class Test {
-  class object {
+  default object {
     public val prop: Int = 0
       get() {
         return $prop

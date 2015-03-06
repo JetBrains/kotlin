@@ -1,5 +1,5 @@
 class C {
-    class object {
+    default object {
         val defaultGetter: Int = 1
             [native] get
 

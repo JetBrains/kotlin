@@ -1,6 +1,6 @@
 class TestObject()
 {
-    class object {
+    default object {
         var prop: Int = 1
             get() = $prop++
     }

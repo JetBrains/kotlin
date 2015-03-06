@@ -4,7 +4,7 @@ public class LibClass {
     public fun foo() {
     }
 
-    class object {
+    default object {
         fun classObjectFun() {
         }
 
@@ -40,9 +40,9 @@ public fun String.topLevelExtFunction(): String = ""
 public var topLevelVar: String = ""
 
 class F() {
-    class object {
+    default object {
         class F {
-            class object {
+            default object {
                 object F {
                 }
             }

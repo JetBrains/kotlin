@@ -79,6 +79,48 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/completion/basic/common"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("BackingFields1.kt")
+        public void testBackingFields1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/BackingFields1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("BackingFields2.kt")
+        public void testBackingFields2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/BackingFields2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("BackingFields3.kt")
+        public void testBackingFields3() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/BackingFields3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("BackingFields4.kt")
+        public void testBackingFields4() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/BackingFields4.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("BackingFields5.kt")
+        public void testBackingFields5() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/BackingFields5.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("BackingFields6.kt")
+        public void testBackingFields6() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/BackingFields6.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("BackingFieldsInStringTemplate.kt")
+        public void testBackingFieldsInStringTemplate() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/BackingFieldsInStringTemplate.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("BasicAny.kt")
         public void testBasicAny() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/BasicAny.kt");
@@ -577,6 +619,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest(fileName);
         }
 
+        @TestMetadata("InsideAnonymousClass.kt")
+        public void testInsideAnonymousClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/InsideAnonymousClass.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("JavaPackage.kt")
         public void testJavaPackage() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/JavaPackage.kt");
@@ -598,6 +646,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
         @TestMetadata("NamedObject.kt")
         public void testNamedObject() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/NamedObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NestedClassBug.kt")
+        public void testNestedClassBug() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/NestedClassBug.kt");
             doTest(fileName);
         }
 
@@ -811,6 +865,18 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest(fileName);
         }
 
+        @TestMetadata("RecieverMembersFromExtAccessor.kt")
+        public void testRecieverMembersFromExtAccessor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/RecieverMembersFromExtAccessor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("RecieverMembersFromExtFun.kt")
+        public void testRecieverMembersFromExtFun() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/RecieverMembersFromExtFun.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("SafeCallAfterNullable.kt")
         public void testSafeCallAfterNullable() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/SafeCallAfterNullable.kt");
@@ -856,6 +922,18 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
         @TestMetadata("StandardJetDoubleFirst.kt")
         public void testStandardJetDoubleFirst() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/StandardJetDoubleFirst.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("StringTemplate1.kt")
+        public void testStringTemplate1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/StringTemplate1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("StringTemplate2.kt")
+        public void testStringTemplate2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/StringTemplate2.kt");
             doTest(fileName);
         }
 

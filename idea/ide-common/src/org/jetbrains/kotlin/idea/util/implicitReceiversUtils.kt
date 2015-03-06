@@ -16,12 +16,14 @@
 
 package org.jetbrains.kotlin.idea.util
 
-import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import java.util.LinkedHashSet
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
+import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.scopes.JetScope
 import java.util.HashSet
+import java.util.LinkedHashSet
 
 public fun JetScope.getImplicitReceiversWithInstance(): List<ReceiverParameterDescriptor> {
     // we use a set to workaround a bug with receiver for default object present twice in the result of getImplicitReceiversHierarchy()
@@ -30,9 +32,14 @@ public fun JetScope.getImplicitReceiversWithInstance(): List<ReceiverParameterDe
     val withInstance = HashSet<DeclarationDescriptor>()
     var current: DeclarationDescriptor? = getContainingDeclaration()
     while (current != null) {
+        if (current is PropertyAccessorDescriptor) {
+            current =  (current as PropertyAccessorDescriptor).getCorrespondingProperty()
+        }
         withInstance.add(current)
+
         val classDescriptor = current as? ClassDescriptor
-        if (classDescriptor != null && !classDescriptor.isInner()) break
+        if (classDescriptor != null && !classDescriptor.isInner() && !DescriptorUtils.isLocal(classDescriptor)) break
+
         current = current!!.getContainingDeclaration()
     }
 

@@ -4,7 +4,7 @@ import java.io.*
 
 open class AllEvenNum() {
 
-    class object {
+    default object {
         open public fun main(args : Array<String?>?) : Unit {
             var i : Int = 1
             while ((i <= 100)) {

@@ -1,5 +1,5 @@
 class Test {
-  class object {
+  default object {
     var prop: Int
       get() {
         return 10

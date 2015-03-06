@@ -4,7 +4,7 @@ class C {
     inner class InnerClass
     object AnObject
 
-    class object {
+    default object {
         val classObjectField = 0
         class ClassObjectClass
 

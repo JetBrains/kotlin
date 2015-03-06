@@ -14,7 +14,7 @@ internal final class Test</*0*/ in I> {
     internal final fun </*0*/ I> test(/*0*/ t: Test<I>): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    internal class object Default {
+    internal default object Default {
         private constructor Default()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

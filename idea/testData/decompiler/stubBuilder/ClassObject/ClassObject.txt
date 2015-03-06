@@ -8,7 +8,7 @@ PsiJetFileStubImpl[package=test.class_object]
     VALUE_PARAMETER_LIST:
     CLASS_BODY:
       OBJECT_DECLARATION:[fqName=test.class_object.ClassObject.Default, isDefault=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Default, superNames=[]]
-        MODIFIER_LIST:[public]
+        MODIFIER_LIST:[public default]
         CLASS_BODY:
           PROPERTY:[fqName=test.class_object.ClassObject.Default.j, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=j]
             MODIFIER_LIST:[internal final]
@@ -68,21 +68,21 @@ PsiJetFileStubImpl[package=test.class_object]
         VALUE_PARAMETER_LIST:
         CLASS_BODY:
           OBJECT_DECLARATION:[fqName=test.class_object.ClassObject.B.Default, isDefault=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Default, superNames=[]]
-            MODIFIER_LIST:[internal]
+            MODIFIER_LIST:[internal default]
             CLASS_BODY:
               CLASS:[fqName=test.class_object.ClassObject.B.Default.C, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=C, superNames=[]]
                 MODIFIER_LIST:[internal final]
                 VALUE_PARAMETER_LIST:
                 CLASS_BODY:
                   OBJECT_DECLARATION:[fqName=test.class_object.ClassObject.B.Default.C.Default, isDefault=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Default, superNames=[]]
-                    MODIFIER_LIST:[internal]
+                    MODIFIER_LIST:[internal default]
                     CLASS_BODY:
                       CLASS:[fqName=test.class_object.ClassObject.B.Default.C.Default.D, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=D, superNames=[]]
                         MODIFIER_LIST:[internal final]
                         VALUE_PARAMETER_LIST:
                         CLASS_BODY:
                           OBJECT_DECLARATION:[fqName=test.class_object.ClassObject.B.Default.C.Default.D.Default, isDefault=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Default, superNames=[]]
-                            MODIFIER_LIST:[internal]
+                            MODIFIER_LIST:[internal default]
                             CLASS_BODY:
                               PROPERTY:[fqName=test.class_object.ClassObject.B.Default.C.Default.D.Default.i, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=i]
                                 MODIFIER_LIST:[internal final]

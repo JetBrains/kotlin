@@ -9,7 +9,7 @@ internal final annotation class Anno : kotlin.Annotation {
 test.Anno(t = ElementType.METHOD: java.lang.annotation.ElementType) internal final class Class {
     /*primary*/ public constructor Class()
 
-    test.Anno(t = ElementType.ANNOTATION_TYPE: java.lang.annotation.ElementType) internal class object Default {
+    test.Anno(t = ElementType.ANNOTATION_TYPE: java.lang.annotation.ElementType) internal default object Default {
         /*primary*/ private constructor Default()
     }
 

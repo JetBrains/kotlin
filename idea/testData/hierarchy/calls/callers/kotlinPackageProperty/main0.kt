@@ -7,7 +7,7 @@ class KClient {
         packageVal = ""
     }
 
-    class object {
+    default object {
         val a = packageVal
     }
 

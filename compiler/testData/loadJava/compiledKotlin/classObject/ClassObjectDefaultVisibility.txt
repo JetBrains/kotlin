@@ -3,7 +3,7 @@ package test
 internal final class Int {
     /*primary*/ public constructor Int()
 
-    internal class object Default {
+    internal default object Default {
         /*primary*/ private constructor Default()
     }
 }
@@ -11,7 +11,7 @@ internal final class Int {
 private final class Pri {
     /*primary*/ public constructor Pri()
 
-    private class object Default {
+    private default object Default {
         /*primary*/ private constructor Default()
     }
 }
@@ -19,7 +19,7 @@ private final class Pri {
 public final class Pub {
     /*primary*/ public constructor Pub()
 
-    public class object Default {
+    public default object Default {
         /*primary*/ private constructor Default()
     }
 }

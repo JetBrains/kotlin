@@ -5,7 +5,7 @@ trait JPAEntityClass<D> {
 }
 
 class Foo {
-    class object : JPAEntityClass<Foo>
+    default object : JPAEntityClass<Foo>
 }
 
 fun main(args: Array<String>) {

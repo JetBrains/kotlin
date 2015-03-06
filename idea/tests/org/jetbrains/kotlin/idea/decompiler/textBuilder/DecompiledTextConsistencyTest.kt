@@ -66,10 +66,7 @@ class ProjectBasedResolverForDecompiler(project: Project) : ResolverForDecompile
         module.addDependencyOnModule(module)
         module.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule())
         module.seal()
-        TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(
-                project, GlobalContext(), listOf(), BindingTraceContext(), { false },
-                module, null, null
-        ).moduleDescriptor
+        TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(project, GlobalContext(), listOf(), BindingTraceContext(), module, null, null).moduleDescriptor
     }
 
     override fun resolveTopLevelClass(classId: ClassId): ClassDescriptor? {

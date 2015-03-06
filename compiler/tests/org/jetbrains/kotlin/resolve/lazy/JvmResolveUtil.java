@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.lazy;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -48,21 +45,20 @@ public class JvmResolveUtil {
 
     @NotNull
     public static AnalysisResult analyzeOneFileWithJavaIntegration(@NotNull JetFile file) {
-        return analyzeFilesWithJavaIntegration(file.getProject(), Collections.singleton(file),
-                                               Predicates.<PsiFile>alwaysTrue());
+        return analyzeFilesWithJavaIntegration(file.getProject(), Collections.singleton(file)
+        );
     }
 
     @NotNull
     public static AnalysisResult analyzeFilesWithJavaIntegrationAndCheckForErrors(
             @NotNull Project project,
-            @NotNull Collection<JetFile> files,
-            @NotNull Predicate<PsiFile> filesToAnalyzeCompletely
+            @NotNull Collection<JetFile> files
     ) {
         for (JetFile file : files) {
             AnalyzingUtils.checkForSyntacticErrors(file);
         }
 
-        AnalysisResult analysisResult = analyzeFilesWithJavaIntegration(project, files, filesToAnalyzeCompletely);
+        AnalysisResult analysisResult = analyzeFilesWithJavaIntegration(project, files);
 
         AnalyzingUtils.throwExceptionOnErrors(analysisResult.getBindingContext());
 
@@ -72,8 +68,7 @@ public class JvmResolveUtil {
     @NotNull
     public static AnalysisResult analyzeFilesWithJavaIntegration(
             @NotNull Project project,
-            @NotNull Collection<JetFile> files,
-            @NotNull Predicate<PsiFile> filesToAnalyzeCompletely
+            @NotNull Collection<JetFile> files
     ) {
         ModuleDescriptorImpl module = TopDownAnalyzerFacadeForJVM.createJavaModule("<module>");
         module.addDependencyOnModule(module);
@@ -83,6 +78,6 @@ public class JvmResolveUtil {
         BindingTrace trace = new CliLightClassGenerationSupport.CliBindingTrace();
 
         return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(
-                project, ContextPackage.GlobalContext(), files, trace, filesToAnalyzeCompletely, module, null, null);
+                project, ContextPackage.GlobalContext(), files, trace, module, null, null);
     }
 }

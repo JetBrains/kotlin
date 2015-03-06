@@ -15,7 +15,7 @@ class MyClass() {
     deprecated("Use A instead") val test2: String = ""
     deprecated("Use A instead") var test5: String = ""
 
-    class object {
+    default object {
          deprecated("Use A instead") val test3: String = ""
          deprecated("Use A instead") var test6: String = ""
     }

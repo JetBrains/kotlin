@@ -5,7 +5,7 @@ class TestDelegate() {
 }
 
 class Test {
-  class object {
+  default object {
     public val prop: Int by TestDelegate()
   }
 }

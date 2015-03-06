@@ -13,7 +13,7 @@ class A {
     // val prop4: 2
     val prop4 = A.a + 1
 
-    class object {
+    default object {
         val a = 1
     }
 }

@@ -25,7 +25,7 @@ public class Identifier(public val name: String, private val myHasDollar: Boolea
 }
 
 public class User {
-    class object {
+    default object {
         public fun main() {
             val i1 = Identifier("name", false, true)
             val i2 = Identifier("name", false)

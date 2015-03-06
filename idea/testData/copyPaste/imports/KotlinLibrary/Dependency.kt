@@ -38,6 +38,6 @@ class Outer {
 }
 
 class ClassObject {
-    class object {
+    default object {
     }
 }

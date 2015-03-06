@@ -2,7 +2,7 @@
 package test
 
 class TestFirst {
-  class object {
+  default object {
     fun testing(a: InnerClass) = 45
     fun testing(a: NotInnerClass) = 45
   }

@@ -2,7 +2,7 @@
 import kotlin.platform.platformStatic
 
 class A {
-    class object {
+    default object {
         platformStatic fun a1() {
 
         }
@@ -28,7 +28,7 @@ class A {
 }
 
 trait B {
-    class object {
+    default object {
         <!PLATFORM_STATIC_NOT_IN_OBJECT!>platformStatic fun a1()<!> {
 
         }

@@ -1,8 +1,8 @@
-// "Suppress 'REDUNDANT_NULLABLE' for class object Default of C" "true"
+// "Suppress 'REDUNDANT_NULLABLE' for default object Default of C" "true"
 
 class C {
     [suppress("REDUNDANT_NULLABLE")]
-    class object {
+    default object {
         var foo: String?<caret>? = null
     }
 }

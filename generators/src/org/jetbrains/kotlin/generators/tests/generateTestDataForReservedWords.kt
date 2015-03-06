@@ -56,8 +56,8 @@ fun box(): String {
         ) {
             commonCasesWithTestNotRenamed()
 
-            case("class", "class $KEYWORD_MARKER { class object {} }", "", testNotRenamedByName)
-            case("trait", "trait $KEYWORD_MARKER { class object {} }", "", testNotRenamedByName)
+            case("class", "class $KEYWORD_MARKER { default object {} }", "", testNotRenamedByName)
+            case("trait", "trait $KEYWORD_MARKER { default object {} }", "", testNotRenamedByName)
             case("enum", "enum class $KEYWORD_MARKER { foo }", "", testNotRenamed("$KEYWORD_MARKER.foo"))
             case("object", "object $KEYWORD_MARKER {}", "", testNotRenamedByName)
         }
@@ -106,7 +106,7 @@ fun box(): String {
         suite("insideClassObject",
 """
 class TestClass {
-    class object {
+    default object {
         $DEFINITION_MARKER
 
         fun test() {

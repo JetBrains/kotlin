@@ -2,7 +2,7 @@ import kotlin.jvm.*
 import kotlin.platform.*
 
 class C {
-    class object {
+    default object {
         private platformStatic native fun foo()
     }
 

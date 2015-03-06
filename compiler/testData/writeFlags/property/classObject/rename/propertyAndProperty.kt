@@ -2,7 +2,7 @@ class Test {
 
   public var prop: Int = 0;
 
-  class object {
+  default object {
     public val prop: Int = 0;
   }
 }

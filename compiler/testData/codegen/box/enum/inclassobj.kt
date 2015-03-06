@@ -2,7 +2,7 @@ fun box() = if(Context.operatingSystemType == Context.Default.OsType.OTHER) "OK"
 
 public class Context
 {
-        class object
+        default object
         {
                 public enum class OsType {
                         LINUX;

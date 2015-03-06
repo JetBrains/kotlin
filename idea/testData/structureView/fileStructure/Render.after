@@ -12,7 +12,7 @@
   Inner1
   Inner2
  -A6
-  -class object of A6
+  -default object of A6
    test(): Unit
  -A7
   <class initializer>

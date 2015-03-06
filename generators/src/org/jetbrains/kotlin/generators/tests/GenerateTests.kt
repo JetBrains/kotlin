@@ -147,6 +147,7 @@ import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidBytecodeSha
 import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidXml2KConversionTest
 import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidBoxTest
 import org.jetbrains.kotlin.android.AbstractParserResultEqualityTest
+import org.jetbrains.kotlin.js.test.*
 import org.jetbrains.kotlin.js.test.semantics.*
 
 fun main(args: Array<String>) {
@@ -790,6 +791,22 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractMultiModuleTest>()) {
             model("multiModule/cases", extension = null, recursive=false)
+        }
+
+        testClass(javaClass<AbstractInlineJsTest>()) {
+            model("inline/cases")
+        }
+
+        testClass(javaClass<AbstractInlineJsStdlibTest>()) {
+            model("inlineStdlib/cases")
+        }
+
+        testClass(javaClass<AbstractLabelTest>()) {
+            model("labels/cases")
+        }
+
+        testClass(javaClass<AbstractJsCodeTest>()) {
+            model("jsCode/cases")
         }
     }
 

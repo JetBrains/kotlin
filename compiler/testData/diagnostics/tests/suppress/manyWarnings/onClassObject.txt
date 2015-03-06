@@ -6,7 +6,7 @@ internal final class C {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    kotlin.suppress(names = {"REDUNDANT_NULLABLE", "UNNECESSARY_NOT_NULL_ASSERTION"}: kotlin.Array<out kotlin.String>) internal class object Default {
+    kotlin.suppress(names = {"REDUNDANT_NULLABLE", "UNNECESSARY_NOT_NULL_ASSERTION"}: kotlin.Array<out kotlin.String>) internal default object Default {
         private constructor Default()
         internal final val foo: kotlin.String?
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

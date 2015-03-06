@@ -14,7 +14,7 @@ object B {
 }
 
 class C {
-    class object {
+    default object {
         fun ov() = "d"
     }
     object query {

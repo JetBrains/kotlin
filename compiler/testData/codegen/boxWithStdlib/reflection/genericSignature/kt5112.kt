@@ -5,13 +5,13 @@ class G<T>(val s: T) {
 }
 
 public trait ErrorsJvmTrait {
-    class object {
+    default object {
         public val param : G<String> = G("STRING")
     }
 }
 
 public class ErrorsJvmClass {
-    class object {
+    default object {
         public val param : G<String> = G("STRING")
     }
 }

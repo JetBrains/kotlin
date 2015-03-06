@@ -1,7 +1,7 @@
 package demo
 
 public class SwitchDemo {
-    class object {
+    default object {
         public fun print(o: Any) {
             System.out.println(o)
         }

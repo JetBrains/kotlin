@@ -20,7 +20,7 @@ fun foo() {
             println(2)
         }
 
-        class object {
+        default object {
             fun f() = 1
             val g = f() - 1
         }
@@ -39,7 +39,7 @@ fun foo() {
 
         val p = 1
 
-        class object {
+        default object {
             fun f() = 1
             val g = f() - 1
         }
@@ -77,7 +77,7 @@ fun foo() {
             println(2)
         }
 
-        class object {
+        default object {
             fun f() = 1
             val g = f() - 1
         }
@@ -103,7 +103,7 @@ fun foo() {
             println(2)
         }
 
-        class object {
+        default object {
             fun f() = 1
             val g = f() - 1
         }
@@ -129,7 +129,7 @@ fun foo() {
             println(2)
         }
 
-        class object {
+        default object {
             fun f() = 1
             val g = f() - 1
         }

@@ -238,7 +238,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     private void renderDefaultObjectName(@NotNull DeclarationDescriptor descriptor, @NotNull StringBuilder builder) {
         if (renderDefaultObjectName) {
             if (startFromName) {
-                builder.append("class object");
+                builder.append("default object");
             }
             renderSpaceIfNeeded(builder);
             DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
@@ -1002,7 +1002,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     @NotNull
     public static String getClassKindPrefix(@NotNull ClassDescriptor klass) {
         if (klass.isDefaultObject()) {
-            return "class object";
+            return "default object";
         }
         switch (klass.getKind()) {
             case CLASS:

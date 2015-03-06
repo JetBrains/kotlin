@@ -8,7 +8,7 @@ fun some() {
 }
 
 class Some {
-  class object {
+  default object {
     object NamedObjectInClassObject
   }
 }

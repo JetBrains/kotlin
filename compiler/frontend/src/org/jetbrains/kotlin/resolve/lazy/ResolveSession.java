@@ -171,7 +171,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
                                 ResolveSession.this,
                                 scriptBodyResolver,
                                 script,
-                                ScriptHeaderResolver.getScriptPriority(script)
+                                ScriptPriorities.getScriptPriority(script)
                         );
                     }
                 }

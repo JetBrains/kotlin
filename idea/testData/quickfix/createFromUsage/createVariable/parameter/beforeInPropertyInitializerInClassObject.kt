@@ -3,7 +3,7 @@
 // ERROR: Unresolved reference: foo
 
 class A {
-    class object {
+    default object {
         val test: Int = <caret>foo
     }
 }

@@ -3,7 +3,7 @@
 package foo
 
 class Foo() {
-    class object {
+    default object {
         val bar = "Foo.bar ";
         var boo = "FAIL";
         fun baz() = "Foo.baz() "

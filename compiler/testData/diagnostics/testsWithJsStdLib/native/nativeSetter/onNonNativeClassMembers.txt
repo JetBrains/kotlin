@@ -9,7 +9,7 @@ internal final class A {
     kotlin.js.nativeSetter() internal final fun set(/*0*/ a: kotlin.String, /*1*/ v: kotlin.Any?): kotlin.Any?
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    internal class object Default {
+    internal default object Default {
         private constructor Default()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         kotlin.js.nativeSetter() internal final fun foo(/*0*/ a: kotlin.Int, /*1*/ v: kotlin.String): kotlin.Unit
@@ -27,7 +27,7 @@ internal final class B {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    internal class object Default {
+    internal default object Default {
         private constructor Default()
         kotlin.js.nativeSetter() internal final val foo: kotlin.Int = 0
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

@@ -11,7 +11,7 @@ object Foo {
 
     // RUN: q.Foo.InnerFoo
     class InnerFoo {
-        class object {
+        default object {
             // RUN: q.Foo.InnerFoo
             platformStatic fun main(s: Array<String>) {
                 println("InnerFoo")
@@ -38,7 +38,7 @@ object Foo2 {
 
 // RUN: q.Bar
 class Bar {
-    class object {
+    default object {
         // RUN: q.Bar
         platformStatic fun main(s: Array<String>) {
             println("Bar")
@@ -48,7 +48,7 @@ class Bar {
 
 // RUN: q.QPackage
 class Bar2 {
-    class object {
+    default object {
         // RUN: q.QPackage
         fun main(s: Array<String>) {
             println("Bar2")

@@ -1,7 +1,7 @@
 package `package`
 
 class `class` {
-    class object {
+    default object {
         val `val` = `class`()
     }
 }

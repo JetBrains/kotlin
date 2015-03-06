@@ -1,7 +1,7 @@
 package sample
 
 class K {
-    class object {
+    default object {
         val foo: K = K()
         fun bar(): K = K()
         val x: String = ""

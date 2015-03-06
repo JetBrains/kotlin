@@ -2,7 +2,7 @@ package foo
 
 class A {
     fun foo() = "O"
-    class object {
+    default object {
         fun bar() = "K"
     }
 

@@ -19,23 +19,21 @@ package org.jetbrains.kotlin.resolve;
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.collect.Maps;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.impl.MutableClassDescriptor;
-import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
-import org.jetbrains.kotlin.resolve.scopes.WritableScope;
 import org.jetbrains.kotlin.storage.ExceptionTracker;
 import org.jetbrains.kotlin.storage.StorageManager;
 
 import java.io.PrintStream;
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class TopDownAnalysisContext implements BodiesResolveContext {
 
@@ -43,22 +41,13 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
 
     private final Map<JetClassOrObject, ClassDescriptorWithResolutionScopes> classes = Maps.newLinkedHashMap();
     private final Map<JetClassInitializer, ClassDescriptorWithResolutionScopes> anonymousInitializers = Maps.newLinkedHashMap();
-    protected final Map<JetFile, MutablePackageFragmentDescriptor> packageFragments = Maps.newHashMap();
-    protected final Set<JetFile> files = new LinkedHashSet<JetFile>();
-    private List<MutableClassDescriptor> classesTopologicalOrder = null;
+    private final Set<JetFile> files = new LinkedHashSet<JetFile>();
 
     private final Map<JetDeclaration, JetScope> declaringScopes = Maps.newHashMap();
     private final Map<JetNamedFunction, SimpleFunctionDescriptor> functions = Maps.newLinkedHashMap();
     private final Map<JetProperty, PropertyDescriptor> properties = Maps.newLinkedHashMap();
     private final Map<JetParameter, PropertyDescriptor> primaryConstructorParameterProperties = Maps.newHashMap();
     private Map<JetCallableDeclaration, CallableMemberDescriptor> members = null;
-
-    // File scopes - package scope extended with imports
-    protected final Map<JetFile, WritableScope> fileScopes = Maps.newHashMap();
-
-    public final Map<JetDeclarationContainer, DeclarationDescriptor> forDeferredResolver = Maps.newHashMap();
-
-    public final Map<JetDeclarationContainer, JetScope> normalScope = Maps.newHashMap();
 
     private final Map<JetScript, ScriptDescriptor> scripts = Maps.newLinkedHashMap();
 
@@ -97,16 +86,6 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
     }
 
     @Override
-    public boolean completeAnalysisNeeded(@NotNull PsiElement element) {
-        PsiFile containingFile = element.getContainingFile();
-        boolean result = containingFile != null && topDownAnalysisParameters.getAnalyzeCompletely().apply(containingFile);
-        if (!result) {
-            debug(containingFile);
-        }
-        return result;
-    }
-
-    @Override
     public Map<JetClassOrObject, ClassDescriptorWithResolutionScopes> getDeclaredClasses() {
         return classes;
     }
@@ -114,14 +93,6 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
     @Override
     public Map<JetClassInitializer, ClassDescriptorWithResolutionScopes> getAnonymousInitializers() {
         return anonymousInitializers;
-    }
-
-    public Map<JetFile, WritableScope> getFileScopes() {
-        return fileScopes;
-    }
-
-    public Map<JetFile, MutablePackageFragmentDescriptor> getPackageFragments() {
-        return packageFragments;
     }
 
     @NotNull
@@ -183,15 +154,6 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
             members.putAll(primaryConstructorParameterProperties);
         }
         return members;
-    }
-
-    @NotNull
-    public List<MutableClassDescriptor> getClassesTopologicalOrder() {
-        return classesTopologicalOrder;
-    }
-
-    public void setClassesTopologicalOrder(@NotNull List<MutableClassDescriptor> classesTopologicalOrder) {
-        this.classesTopologicalOrder = classesTopologicalOrder;
     }
 
     @Override

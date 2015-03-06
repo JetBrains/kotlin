@@ -3,7 +3,7 @@ package test
 internal final class Test {
     /*primary*/ public constructor Test()
 
-    internal class object Default {
+    internal default object Default {
         /*primary*/ private constructor Default()
         public final val prop1: kotlin.Int = 10
             public final fun <get-prop1>(): kotlin.Int

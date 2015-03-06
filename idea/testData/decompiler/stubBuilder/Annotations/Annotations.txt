@@ -34,7 +34,7 @@ PsiJetFileStubImpl[package=]
             REFERENCE_EXPRESSION:[referencedName=Int]
     CLASS_BODY:
       OBJECT_DECLARATION:[fqName=Annotations.Default, isDefault=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Default, superNames=[]]
-        MODIFIER_LIST:[private]
+        MODIFIER_LIST:[private default]
           ANNOTATION_ENTRY:[hasValueArguments=false, shortName=b]
             CONSTRUCTOR_CALLEE:
               TYPE_REFERENCE:

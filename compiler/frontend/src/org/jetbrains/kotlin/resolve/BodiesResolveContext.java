@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.resolve;
 
 import com.google.common.base.Function;
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Mutable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.ReadOnly;
@@ -63,6 +62,4 @@ public interface BodiesResolveContext extends GlobalContext {
 
     @NotNull
     TopDownAnalysisParameters getTopDownAnalysisParameters();
-
-    boolean completeAnalysisNeeded(@NotNull PsiElement element);
 }

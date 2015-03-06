@@ -11,7 +11,7 @@ trait B {
 class C() : A(), B
 
 class D() {
-  class object : A(), B {}
+  default object : A(), B {}
 }
 
 class Test1<T : A>()

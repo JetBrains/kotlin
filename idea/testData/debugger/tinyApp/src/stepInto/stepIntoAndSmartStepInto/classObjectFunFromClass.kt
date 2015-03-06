@@ -6,7 +6,7 @@ class A {
         foo()
     }
 
-    class object {
+    default object {
         fun foo() {
             val a = 1
         }

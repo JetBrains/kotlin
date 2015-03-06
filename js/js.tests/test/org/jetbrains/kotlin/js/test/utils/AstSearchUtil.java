@@ -16,26 +16,41 @@
 
 package org.jetbrains.kotlin.js.test.utils;
 
+import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsFunction;
 import com.google.dart.compiler.backend.js.ast.JsName;
 import com.google.dart.compiler.backend.js.ast.JsNode;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
 import static org.jetbrains.kotlin.js.inline.util.UtilPackage.collectNamedFunctions;
+import static org.jetbrains.kotlin.js.inline.util.UtilPackage.collectJsProperties;
 
 public class AstSearchUtil {
     @NotNull
     public static JsFunction getFunction(@NotNull JsNode searchRoot, String name) {
-        Map<JsName, JsFunction> functions = collectNamedFunctions(searchRoot);
+        JsFunction function = findByIdent(collectNamedFunctions(searchRoot), name);
+        assert function != null: "Function `" + name + "` was not found";
+        return function;
+    }
 
-        for (Map.Entry<JsName, JsFunction> entry : functions.entrySet()) {
+    @NotNull
+    public static JsExpression getProperty(@NotNull JsNode searchRoot, @NotNull String name) {
+        JsExpression property = findByIdent(collectJsProperties(searchRoot), name);
+        assert property != null: "Property `" + name + "` was not found";
+        return property;
+    }
+
+    @Nullable
+    private static <T extends JsExpression> T findByIdent(@NotNull Map<JsName, T> properties, @NotNull String name) {
+        for (Map.Entry<JsName, T> entry : properties.entrySet()) {
             if (entry.getKey().getIdent().equals(name)) {
                 return entry.getValue();
             }
         }
 
-        throw new AssertionError("Function `" + name + "` was not found");
+        return null;
     }
 }

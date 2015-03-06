@@ -1,7 +1,7 @@
 fun devNull(<!UNUSED_PARAMETER!>obj<!>: Any?) {}
 
 open class A {
-    class object {
+    default object {
         val internal_val = 1
         public val public_val: Int = 2
         private val private_val = 3

@@ -12,7 +12,7 @@ class A {
         y : KMemberFunction0<A, Inner>
     }
     
-    class object {
+    default object {
         fun main() {
             ::<!INACCESSIBLE_OUTER_CLASS_EXPRESSION!>Inner<!>
             val y = A::Inner

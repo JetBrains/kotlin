@@ -16,9 +16,7 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import com.google.common.base.Predicates;
 import com.intellij.openapi.util.SystemInfo;
-import com.intellij.psi.PsiFile;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -53,8 +51,7 @@ public class CodegenTestUtil {
     public static ClassFileFactory generateFiles(@NotNull JetCoreEnvironment environment, @NotNull CodegenTestFiles files) {
         AnalysisResult analysisResult = JvmResolveUtil.analyzeFilesWithJavaIntegrationAndCheckForErrors(
                 environment.getProject(),
-                files.getPsiFiles(),
-                Predicates.<PsiFile>alwaysTrue()
+                files.getPsiFiles()
         );
         analysisResult.throwIfError();
         AnalyzingUtils.throwExceptionOnErrors(analysisResult.getBindingContext());

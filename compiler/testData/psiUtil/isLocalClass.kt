@@ -2,7 +2,7 @@ class A {
   class B
   object G
 
-  class object {
+  default object {
     class C
     object H
 

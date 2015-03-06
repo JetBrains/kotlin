@@ -7,7 +7,7 @@ class Outer {
 }
 
 // ABSENT: this
-// ABSENT: "this@foo"
+// EXIST: { lookupString: "this@foo", itemText: "this", tailText: "@foo", typeText: "String", attributes: "bold" }
 // EXIST: { lookupString: "this@Inner", itemText: "this", tailText: "@Inner", typeText: "Outer.Inner", attributes: "bold" }
 // EXIST: { lookupString: "this@Outer", itemText: "this", tailText: "@Outer", typeText: "Outer", attributes: "bold" }
-// NUMBER: 2
+// NUMBER: 3

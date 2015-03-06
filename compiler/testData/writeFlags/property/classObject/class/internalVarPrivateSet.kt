@@ -1,5 +1,5 @@
 class Test {
-  class object {
+  default object {
     var prop: Int = 0
       private set
   }

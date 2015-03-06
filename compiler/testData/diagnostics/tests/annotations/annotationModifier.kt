@@ -1,7 +1,7 @@
 annotation class B
 
 class A {
-   <!ILLEGAL_ANNOTATION_KEYWORD!>annotation<!> class object {}
+   <!ILLEGAL_ANNOTATION_KEYWORD!>annotation<!> default object {}
 }
 
 <!ILLEGAL_ANNOTATION_KEYWORD!>annotation<!> object O {}

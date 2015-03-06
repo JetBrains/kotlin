@@ -32,6 +32,6 @@ class C1 [anno("constructor")] () {
     anno("nested class")
     class C2
 
-    anno("class object")
-    class object {}
+    anno("default object")
+    default object {}
 }

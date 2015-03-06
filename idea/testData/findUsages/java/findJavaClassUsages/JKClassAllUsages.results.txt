@@ -12,7 +12,7 @@ Parameter type (10: 16) fun foo(a: A) {
 Parameter type (32: 14) fun X.bar(a: A = A()) {
 Super type qualifier (20: 15) super<A>.foo()
 Supertype (1: 39) public class X(bar: String? = A.BAR): A() {
-Supertype (23: 19) class object: A() {
+Supertype (23: 21) default object: A() {
 Supertype (28: 11) object O: A() {
 Target type of 'is' operation (37: 24) return if (this is A) this as A else null
 Usage in cast target type (37: 35) return if (this is A) this as A else null

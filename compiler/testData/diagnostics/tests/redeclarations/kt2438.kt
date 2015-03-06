@@ -12,7 +12,7 @@ class B {
 class A {
     class <!REDECLARATION!>B<!>
     
-    class object {
+    default object {
         class <!REDECLARATION!>B<!>
         class <!REDECLARATION!>B<!>
     }

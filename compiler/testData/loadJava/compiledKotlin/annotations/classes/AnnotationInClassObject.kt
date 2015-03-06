@@ -1,7 +1,7 @@
 package test
 
 class A {
-    class object {
+    default object {
         annotation class Anno1
 
         class B {

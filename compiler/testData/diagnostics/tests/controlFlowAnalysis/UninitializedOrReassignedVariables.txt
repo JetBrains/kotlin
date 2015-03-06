@@ -49,7 +49,7 @@ package uninitialized_reassigned_variables {
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-        internal class object Default {
+        internal default object Default {
             private constructor Default()
             internal final val x: kotlin.Int
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

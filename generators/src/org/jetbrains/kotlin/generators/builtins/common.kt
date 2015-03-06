@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.generators.builtins
 
 import org.jetbrains.kotlin.generators.builtins.ProgressionKind.*
+import kotlin.properties.Delegates
 
 enum class PrimitiveType {
     BYTE
@@ -29,6 +30,9 @@ enum class PrimitiveType {
     BOOLEAN
 
     val capitalized: String get() = name().toLowerCase().capitalize()
+    class object {
+        val exceptBoolean: Iterable<PrimitiveType> by Delegates.lazy { PrimitiveType.values().filterNot { it == BOOLEAN } }
+    }
 }
 
 enum class ProgressionKind {

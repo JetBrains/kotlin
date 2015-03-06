@@ -3,7 +3,7 @@ package f
 import f.A.Default.B
 
 class A {
-    class object {
+    default object {
         class B
     }
 }

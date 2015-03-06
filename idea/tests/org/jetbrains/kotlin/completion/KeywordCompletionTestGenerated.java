@@ -330,6 +330,12 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
         doTest(fileName);
     }
 
+    @TestMetadata("QualifiedThisInAccessor.kt")
+    public void testQualifiedThisInAccessor() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/QualifiedThisInAccessor.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("Return1.kt")
     public void testReturn1() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/Return1.kt");

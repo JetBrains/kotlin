@@ -5,7 +5,7 @@ class A {
         i = 10
     }
 
-    class object {
+    default object {
 
         fun getByte(): Byte {
             return 0

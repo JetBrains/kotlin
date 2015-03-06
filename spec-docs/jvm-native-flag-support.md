@@ -38,7 +38,7 @@ Intuition: a JVM method whose source declaration is native is marked with the `A
 A native member of an object marked `native` and `platformStatic` is translated in a straightforward way:
 there is only one JVM method corresponding to it, and it is marked as `ACC_NATIVE`.
 
-A member of a class object of class `C` marked `native` and `platformStatic` yields two JVM methods:
+A member of a default object of class `C` marked `native` and `platformStatic` yields two JVM methods:
  - static member of `C` that is marked `ACC_NATIVE`;
  - instance member of `C$object` that is not marked `ACC_NATIVE` and its body delegates to the native static method.
 

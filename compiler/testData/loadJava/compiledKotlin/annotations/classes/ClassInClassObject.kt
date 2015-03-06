@@ -3,7 +3,7 @@ package test
 annotation class Anno
 
 class Class {
-    class object {
+    default object {
         Anno class Nested
     }
 }

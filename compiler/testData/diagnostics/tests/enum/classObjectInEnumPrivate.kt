@@ -1,7 +1,7 @@
 enum class E {
     ENTRY
 
-    private class object
+    private default object
 }
 
 fun foo() = E.values()

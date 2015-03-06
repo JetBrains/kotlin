@@ -17,11 +17,13 @@
 package org.jetbrains.kotlin.js.translate.utils;
 
 import com.intellij.openapi.util.Condition;
+import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.js.config.LibrarySourcesConfig;
 import org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsPackage;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.name.Name;
@@ -37,7 +39,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import static org.jetbrains.kotlin.js.config.LibrarySourcesConfig.BUILTINS_JS_MODULE_NAME;
 import static org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.isNativeObject;
+import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 
 public final class JsDescriptorUtils {
@@ -160,5 +164,33 @@ public final class JsDescriptorUtils {
     public static Name getNameIfStandardType(@NotNull JetExpression expression, @NotNull TranslationContext context) {
         JetType type = context.bindingContext().get(BindingContext.EXPRESSION_TYPE, expression);
         return type != null ? DescriptorUtilsPackage.getNameIfStandardType(type) : null;
+    }
+
+    @NotNull
+    public static String getModuleName(@NotNull DeclarationDescriptor descriptor) {
+        String externalModuleName = getExternalModuleName(descriptor);
+        if (externalModuleName != null) return externalModuleName;
+
+        return getModuleNameFromDescriptorName(descriptor);
+    }
+
+    @Nullable
+    public static String getExternalModuleName(@NotNull DeclarationDescriptor descriptor) {
+        if (isBuiltin(descriptor)) return BUILTINS_JS_MODULE_NAME;
+
+        PsiElement element = descriptorToDeclaration(descriptor);
+        if (element == null && descriptor instanceof PropertyAccessorDescriptor) {
+            element = descriptorToDeclaration(((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty());
+        }
+
+        if (element == null) return getModuleNameFromDescriptorName(descriptor);
+
+        return element.getContainingFile().getUserData(LibrarySourcesConfig.EXTERNAL_MODULE_NAME);
+    }
+
+    private static String getModuleNameFromDescriptorName(DeclarationDescriptor descriptor) {
+        ModuleDescriptor moduleDescriptor = DescriptorUtils.getContainingModule(descriptor);
+        String moduleName = moduleDescriptor.getName().asString();
+        return moduleName.substring(1, moduleName.length() - 1);
     }
 }

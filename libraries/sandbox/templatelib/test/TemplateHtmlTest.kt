@@ -42,7 +42,7 @@ html {
   }
 }
 
-/** Create a bad element which doesn't have a class object create() method */
+/** Create a bad element which doesn't have a default object create() method */
 class BadElem() : BodyTag("bad") {
 }
 

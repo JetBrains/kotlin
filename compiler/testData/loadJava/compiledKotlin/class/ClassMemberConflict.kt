@@ -2,7 +2,7 @@
 package test
 
 class ConstructorTypeParamClassObjectTypeConflict<test> {
-    class object {
+    default object {
         trait test
     }
 
@@ -10,7 +10,7 @@ class ConstructorTypeParamClassObjectTypeConflict<test> {
 }
 
 class ConstructorTypeParamClassObjectConflict<test> {
-    class object {
+    default object {
         val test = 12
     }
 
@@ -18,7 +18,7 @@ class ConstructorTypeParamClassObjectConflict<test> {
 }
 
 class TestConstructorParamClassObjectConflict(test: String) {
-    class object {
+    default object {
         val test = 12
     }
 
@@ -27,7 +27,7 @@ class TestConstructorParamClassObjectConflict(test: String) {
 
 
 class TestConstructorValClassObjectConflict(val test: String) {
-    class object {
+    default object {
         val test = 12
     }
 
@@ -35,7 +35,7 @@ class TestConstructorValClassObjectConflict(val test: String) {
 }
 
 class TestClassObjectAndClassConflict {
-    class object {
+    default object {
         val bla = 12
     }
 

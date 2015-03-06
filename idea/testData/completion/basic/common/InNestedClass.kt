@@ -9,7 +9,7 @@ class C {
         }
     }
 
-    class object {
+    default object {
         fun fromClassObject(){}
     }
 }

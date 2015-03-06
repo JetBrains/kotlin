@@ -1,5 +1,5 @@
 class Some {
-    class object {
+    default object {
         val coProp = 12
 
         fun coFun = 12

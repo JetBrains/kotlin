@@ -3,7 +3,7 @@ package test
 annotation class Anno
 
 trait Trait {
-    class object {
+    default object {
         [Anno] val property: Int
             get() = 42
     }

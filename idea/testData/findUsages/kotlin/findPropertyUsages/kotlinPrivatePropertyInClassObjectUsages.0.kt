@@ -3,7 +3,7 @@
 class Outer {
     val x = Outer.t
 
-    class object {
+    default object {
         private val <caret>t = 1
     }
 }

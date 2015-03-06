@@ -43,7 +43,7 @@ public final class ReferenceUtils {
             //default presenter return null for default object
             JetClass containingClass = PsiTreeUtil.getParentOfType(navigationElement, JetClass.class);
             assert containingClass != null;
-            return "class object of " + renderAsGotoImplementation(containingClass);
+            return "default object of " + renderAsGotoImplementation(containingClass);
         }
 
         Assert.assertTrue(navigationElement instanceof NavigationItem);

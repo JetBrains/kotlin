@@ -16,31 +16,33 @@
 
 package org.jetbrains.kotlin.types;
 
-import com.google.common.base.Predicates;
-import com.intellij.psi.PsiFile;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.kotlin.context.ContextPackage;
+import org.jetbrains.kotlin.context.GlobalContextImpl;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
-import org.jetbrains.kotlin.descriptors.impl.MutableClassDescriptor;
+import org.jetbrains.kotlin.di.InjectorForLazyResolve;
 import org.jetbrains.kotlin.di.InjectorForTests;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.resolve.AdditionalCheckerProvider;
 import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.BindingTraceContext;
 import org.jetbrains.kotlin.resolve.DescriptorResolver;
-import org.jetbrains.kotlin.resolve.TopDownAnalysisParameters;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
+import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
+import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.kotlin.resolve.scopes.WritableScope;
 import org.jetbrains.kotlin.resolve.scopes.WritableScopeImpl;
-import org.jetbrains.kotlin.storage.ExceptionTracker;
-import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.JetLiteFixture;
 import org.jetbrains.kotlin.test.JetTestUtils;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
@@ -97,14 +99,19 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
         }
 
         private ClassDescriptorWithResolutionScopes createClassDescriptor(ClassKind kind, JetClass aClass) {
-            MutableClassDescriptor classDescriptor =
-                    new MutableClassDescriptor(root, scope, kind, false, aClass.getNameAsSafeName(), SourceElement.NO_SOURCE);
-            TopDownAnalysisParameters parameters = TopDownAnalysisParameters.create(
-                    LockBasedStorageManager.NO_LOCKS, new ExceptionTracker(), Predicates.<PsiFile>alwaysTrue(), false, false
-            );
-            descriptorResolver.resolveMutableClassDescriptor(
-                    parameters, aClass, classDescriptor, JetTestUtils.DUMMY_TRACE);
-            return classDescriptor;
+            GlobalContextImpl globalContext = ContextPackage.GlobalContext();
+            ResolveSession resolveSession = new InjectorForLazyResolve(
+                    getProject(),
+                    globalContext,
+                    root,
+                    new FileBasedDeclarationProviderFactory(globalContext.getStorageManager(),
+                                                            Collections.singleton(aClass.getContainingJetFile())),
+                    new BindingTraceContext(),
+                    AdditionalCheckerProvider.DefaultProvider.INSTANCE$,
+                    new DynamicTypesSettings()
+            ).getResolveSession();
+
+            return (ClassDescriptorWithResolutionScopes) resolveSession.getClassDescriptor(aClass);
         }
 
         private void testClassModality(String classDeclaration, ClassKind kind, Modality expectedModality) {

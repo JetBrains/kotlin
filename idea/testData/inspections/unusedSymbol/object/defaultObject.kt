@@ -1,17 +1,17 @@
 package defaultObject
 
 class A {
-    class object {
+    default object {
     }
 }
 
 class B {
-    class object NamedUnused {
+    default object NamedUnused {
     }
 }
 
 class C {
-    class object NamedUsed {
+    default object NamedUsed {
     }
 }
 

@@ -188,8 +188,8 @@ public interface Errors {
 
     // Default objects
 
-    DiagnosticFactory0<JetObjectDeclaration> MANY_DEFAULT_OBJECTS = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<JetObjectDeclaration> DEFAULT_OBJECT_NOT_ALLOWED = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetObjectDeclaration> MANY_DEFAULT_OBJECTS = DiagnosticFactory0.create(ERROR, DEFAULT_OBJECT);
+    DiagnosticFactory0<JetObjectDeclaration> DEFAULT_OBJECT_NOT_ALLOWED = DiagnosticFactory0.create(ERROR, DEFAULT_OBJECT);
 
     // Objects
 

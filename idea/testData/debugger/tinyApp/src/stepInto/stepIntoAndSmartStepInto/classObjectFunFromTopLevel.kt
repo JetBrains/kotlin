@@ -1,7 +1,7 @@
 package classObjectFunFromTopLevel
 
 class A {
-    class object {
+    default object {
         fun bar() {
             val a = 1
         }

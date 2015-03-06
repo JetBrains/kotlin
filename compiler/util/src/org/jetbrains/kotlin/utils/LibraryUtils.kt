@@ -28,6 +28,7 @@ import java.util.jar.JarFile
 import java.util.jar.Manifest
 import java.util.zip.ZipFile
 import kotlin.platform.platformStatic
+import org.jetbrains.kotlin.utils.fileUtils.*
 
 public object LibraryUtils {
     private val LOG = Logger.getInstance(javaClass<LibraryUtils>())
@@ -107,41 +108,75 @@ public object LibraryUtils {
         }
     }
 
-    private fun copyJsFilesFromDirectory(dir: File, outputLibraryJsPath: String) {
+    platformStatic
+    public fun readJsFiles(libraries: List<String>): List<String> {
+        val files = arrayListOf<String>()
+        val libs = libraries.map { File(it) }.filter { it.exists() }
+
+        for (lib in libs) {
+            when {
+                lib.isDirectory() ->
+                    traverseDirectoryWithReportingIOException(lib) { (file, path) ->
+                        files.add(FileUtil.loadFile(file))
+                    }
+                FileUtil.isJarOrZip(lib) ->
+                    traverseArchiveWithReportingIOException(lib) { (content, path) ->
+                        files.add(content)
+                    }
+                else ->
+                    throw IllegalArgumentException("Unknown library format (directory or zip expected): $lib")
+            }
+        }
+
+        return files
+    }
+
+    private fun processDirectory(dir: File, action: (File, String) -> Unit) {
         FileUtil.processFilesRecursively(dir, object : Processor<File> {
             override fun process(file: File): Boolean {
-                var relativePath = FileUtil.getRelativePath(dir, file)
-                assert(relativePath != null) { "relativePath should not be null " + dir + " " + file }
-                if (file.isFile() && relativePath!!.endsWith(JS_EXT)) {
-                    relativePath = getSuggestedPath(relativePath)
-                    if (relativePath == null) return true
+                val relativePath = FileUtil.getRelativePath(dir, file) ?: throw IllegalArgumentException("relativePath should not be null " + dir + " " + file)
+                if (file.isFile() && relativePath.endsWith(JS_EXT)) {
+                    val suggestedRelativePath = getSuggestedPath(relativePath)
+                    if (suggestedRelativePath == null) return true
 
-                    try {
-                        val copyFile = File(outputLibraryJsPath, relativePath)
-                        FileUtil.copy(file, copyFile)
-                    }
-                    catch (ex: IOException) {
-                        LOG.error("Could not copy " + relativePath + " from " + dir + ": " + ex.getMessage())
-                    }
-
+                    action(file, suggestedRelativePath)
                 }
                 return true
             }
         })
     }
 
-    private fun copyJsFilesFromZip(file: File, outputLibraryJsPath: String) {
-        try {
-            traverseArchive(file, outputLibraryJsPath)
+    private fun copyJsFilesFromDirectory(dir: File, outputLibraryJsPath: String) {
+        traverseDirectoryWithReportingIOException(dir) {
+            file, relativePath -> FileUtil.copy(file, File(outputLibraryJsPath, relativePath))
         }
-        catch (ex: IOException) {
-            LOG.error("Could not extract javascript files from  " + file.getName() + ": " + ex.getMessage())
-        }
-
     }
 
-    throws(javaClass<IOException>())
-    private fun traverseArchive(file: File, outputLibraryJsPath: String) {
+    private fun traverseDirectoryWithReportingIOException(dir: File, action: (File, String) -> Unit) {
+        try {
+            processDirectory(dir, action)
+        }
+        catch (ex: IOException) {
+            LOG.error("Could not read files from directory ${dir.getName()}: ${ex.getMessage()}")
+        }
+    }
+
+    private fun copyJsFilesFromZip(file: File, outputLibraryJsPath: String) {
+        traverseArchiveWithReportingIOException(file) { content, relativePath ->
+            FileUtil.writeToFile(File(outputLibraryJsPath, relativePath), content)
+        }
+    }
+
+    private fun traverseArchiveWithReportingIOException(file: File, action: (String, String) -> Unit) {
+        try {
+            traverseArchive(file, action)
+        }
+        catch (ex: IOException) {
+            LOG.error("Could not extract files from archive ${file.getName()}: ${ex.getMessage()}")
+        }
+    }
+
+    private fun traverseArchive(file: File, action: (String, String) -> Unit) {
         val zipFile = ZipFile(file.getPath())
         try {
             val zipEntries = zipFile.entries()
@@ -154,8 +189,7 @@ public object LibraryUtils {
 
                     val stream = zipFile.getInputStream(entry)
                     val content = FileUtil.loadTextAndClose(stream)
-                    val outputFile = File(outputLibraryJsPath, relativePath)
-                    FileUtil.writeToFile(outputFile, content)
+                    action(content, relativePath)
                 }
             }
         }

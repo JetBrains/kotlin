@@ -8,7 +8,7 @@ import kotlinx.android.synthetic.layout1.*
 
 class R {
     class id {
-        class object {
+        default object {
             val item_detail_container = 0
             val textView1 = 1
             val password = 2

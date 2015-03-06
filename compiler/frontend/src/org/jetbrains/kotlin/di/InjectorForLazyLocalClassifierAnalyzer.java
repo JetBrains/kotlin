@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
 import org.jetbrains.kotlin.resolve.AdditionalCheckerProvider;
 import org.jetbrains.kotlin.types.DynamicTypesSettings;
-import org.jetbrains.kotlin.types.expressions.LocalClassDescriptorManager;
+import org.jetbrains.kotlin.types.expressions.LocalClassDescriptorHolder;
 import org.jetbrains.kotlin.resolve.LazyTopDownAnalyzer;
 import org.jetbrains.kotlin.resolve.lazy.NoTopLevelDescriptorProvider;
 import org.jetbrains.kotlin.resolve.lazy.NoFileScopeProvider;
@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.resolve.DelegatedPropertyResolver;
 import org.jetbrains.kotlin.resolve.TypeResolver;
 import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver;
 import org.jetbrains.kotlin.resolve.TypeResolver.FlexibleTypeCapabilitiesProvider;
-import org.jetbrains.kotlin.context.LazinessToken;
+import org.jetbrains.kotlin.context.TypeLazinessToken;
 import org.jetbrains.kotlin.types.reflect.ReflectionTypes;
 import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver;
 import org.jetbrains.kotlin.resolve.StatementFilter;
@@ -78,7 +78,7 @@ public class InjectorForLazyLocalClassifierAnalyzer {
     private final PlatformToKotlinClassMap platformToKotlinClassMap;
     private final AdditionalCheckerProvider additionalCheckerProvider;
     private final DynamicTypesSettings dynamicTypesSettings;
-    private final LocalClassDescriptorManager localClassDescriptorManager;
+    private final LocalClassDescriptorHolder localClassDescriptorHolder;
     private final LazyTopDownAnalyzer lazyTopDownAnalyzer;
     private final NoTopLevelDescriptorProvider noTopLevelDescriptorProvider;
     private final NoFileScopeProvider noFileScopeProvider;
@@ -99,7 +99,7 @@ public class InjectorForLazyLocalClassifierAnalyzer {
     private final TypeResolver typeResolver;
     private final QualifiedExpressionResolver qualifiedExpressionResolver;
     private final FlexibleTypeCapabilitiesProvider flexibleTypeCapabilitiesProvider;
-    private final LazinessToken lazinessToken;
+    private final TypeLazinessToken typeLazinessToken;
     private final ReflectionTypes reflectionTypes;
     private final CallExpressionResolver callExpressionResolver;
     private final StatementFilter statementFilter;
@@ -123,7 +123,7 @@ public class InjectorForLazyLocalClassifierAnalyzer {
         @NotNull ModuleDescriptor module,
         @NotNull AdditionalCheckerProvider additionalCheckerProvider,
         @NotNull DynamicTypesSettings dynamicTypesSettings,
-        @NotNull LocalClassDescriptorManager localClassDescriptorManager
+        @NotNull LocalClassDescriptorHolder localClassDescriptorHolder
     ) {
         this.project = project;
         this.globalContext = globalContext;
@@ -134,12 +134,12 @@ public class InjectorForLazyLocalClassifierAnalyzer {
         this.platformToKotlinClassMap = module.getPlatformToKotlinClassMap();
         this.additionalCheckerProvider = additionalCheckerProvider;
         this.dynamicTypesSettings = dynamicTypesSettings;
-        this.localClassDescriptorManager = localClassDescriptorManager;
+        this.localClassDescriptorHolder = localClassDescriptorHolder;
         this.lazyTopDownAnalyzer = new LazyTopDownAnalyzer();
         this.noTopLevelDescriptorProvider = NoTopLevelDescriptorProvider.INSTANCE$;
         this.noFileScopeProvider = NoFileScopeProvider.INSTANCE$;
-        this.localLazyDeclarationResolver = new LocalLazyDeclarationResolver(globalContext, bindingTrace, localClassDescriptorManager);
-        this.declarationScopeProviderForLocalClassifierAnalyzer = new DeclarationScopeProviderForLocalClassifierAnalyzer(localLazyDeclarationResolver, localClassDescriptorManager);
+        this.localLazyDeclarationResolver = new LocalLazyDeclarationResolver(globalContext, bindingTrace, localClassDescriptorHolder);
+        this.declarationScopeProviderForLocalClassifierAnalyzer = new DeclarationScopeProviderForLocalClassifierAnalyzer(localLazyDeclarationResolver, localClassDescriptorHolder);
         this.bodyResolver = new BodyResolver();
         this.annotationResolver = new AnnotationResolver();
         this.callResolver = new CallResolver();
@@ -152,8 +152,8 @@ public class InjectorForLazyLocalClassifierAnalyzer {
         this.descriptorResolver = new DescriptorResolver();
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
         this.flexibleTypeCapabilitiesProvider = new FlexibleTypeCapabilitiesProvider();
-        this.lazinessToken = new LazinessToken();
-        this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, module, flexibleTypeCapabilitiesProvider, storageManager, lazinessToken, dynamicTypesSettings);
+        this.typeLazinessToken = new TypeLazinessToken();
+        this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, module, flexibleTypeCapabilitiesProvider, storageManager, typeLazinessToken, dynamicTypesSettings);
         this.localClassifierAnalyzer = new LocalClassifierAnalyzer(descriptorResolver, typeResolver, annotationResolver);
         this.delegatedPropertyResolver = new DelegatedPropertyResolver();
         this.reflectionTypes = new ReflectionTypes(module);

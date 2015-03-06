@@ -3,7 +3,7 @@ package test
 public final class Outer {
     /*primary*/ public constructor Outer()
 
-    public class object Default {
+    public default object Default {
         /*primary*/ private constructor Default()
 
         public object Obj {

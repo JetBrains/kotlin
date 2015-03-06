@@ -1,6 +1,6 @@
 class Outer {
     class Nested {
-        class object {
+        default object {
             val O = "O"
             val K = "K"
         }

@@ -1,6 +1,6 @@
 // SIBLING:
 public class A {
-    class object {
+    default object {
         private val t: Int = 1
     }
     fun f() {

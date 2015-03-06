@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.js.translate.context;
 import com.google.common.collect.Maps;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.intellij.openapi.util.Factory;
-import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,12 +39,10 @@ import org.jetbrains.kotlin.types.reflect.ReflectionTypes;
 
 import java.util.Map;
 
-import static org.jetbrains.kotlin.js.config.LibrarySourcesConfig.BUILTINS_JS_MODULE_NAME;
 import static org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.*;
 import static org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.*;
 import static org.jetbrains.kotlin.js.translate.utils.ManglingUtils.getMangledName;
 import static org.jetbrains.kotlin.js.translate.utils.ManglingUtils.getSuggestedName;
-import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isExtension;
 
 /**
@@ -484,21 +481,7 @@ public final class StaticContext {
                     }
 
                     return JsAstUtils.replaceRootReference(
-                            result, new JsArrayAccess(namer.kotlin("modules"), program.getStringLiteral(moduleName)));
-                }
-
-                private String getExternalModuleName(DeclarationDescriptor descriptor) {
-                    if (isBuiltin(descriptor)) return BUILTINS_JS_MODULE_NAME;
-
-                    PsiElement element = descriptorToDeclaration(descriptor);
-                    if (element == null && descriptor instanceof PropertyAccessorDescriptor) {
-                        element = descriptorToDeclaration(((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty());
-                    }
-
-                    if (element == null) {
-                        return null;
-                    }
-                    return element.getContainingFile().getUserData(LibrarySourcesConfig.EXTERNAL_MODULE_NAME);
+                            result, namer.getModuleReference(program.getStringLiteral(moduleName)));
                 }
             };
             Rule<JsExpression> constructorOrDefaultObjectHasTheSameQualifierAsTheClass = new Rule<JsExpression>() {

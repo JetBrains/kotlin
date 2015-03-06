@@ -1,7 +1,7 @@
 package test
 
 class InClassObject {
-    class object {
+    default object {
         class ClassObjectClass {}
 
         trait ClassObjectTrait {}

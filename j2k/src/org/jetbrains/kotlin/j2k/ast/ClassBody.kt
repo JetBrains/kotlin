@@ -45,6 +45,6 @@ class ClassBody (
     private fun appendDefaultObject(builder: CodeBuilder, blankLineBefore: Boolean) {
         if (defaultObjectMembers.isEmpty()) return
         if (blankLineBefore) builder.append("\n\n")
-        builder.append(defaultObjectMembers, "\n", "class object {\n", "\n}")
+        builder.append(defaultObjectMembers, "\n", "default object {\n", "\n}")
     }
 }

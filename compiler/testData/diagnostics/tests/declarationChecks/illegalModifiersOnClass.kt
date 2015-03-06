@@ -3,10 +3,10 @@
 // KT-3464 Front-end shouldn't allow override modifier in class declaration
 
 <!ILLEGAL_MODIFIER!>override<!> class A {
-    <!ILLEGAL_MODIFIER!>override<!> class object {}
-    <!ILLEGAL_MODIFIER!>open<!> class object {}
-    <!ILLEGAL_MODIFIER!>abstract<!> class object {}
-    <!ILLEGAL_MODIFIER!>final<!> class object {}
+    <!ILLEGAL_MODIFIER!>override<!> default object {}
+    <!ILLEGAL_MODIFIER!>open<!> default object {}
+    <!ILLEGAL_MODIFIER!>abstract<!> default object {}
+    <!ILLEGAL_MODIFIER!>final<!> default object {}
 }
 
 <!ILLEGAL_MODIFIER!>override<!> object B1 {}

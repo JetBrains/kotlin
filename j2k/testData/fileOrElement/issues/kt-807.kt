@@ -5,7 +5,7 @@
 import java.io.*
 
 class FileRead {
-    class object {
+    default object {
         public fun main(args: Array<String>) {
             try {
                 val fstream = FileInputStream()

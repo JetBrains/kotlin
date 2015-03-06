@@ -7,7 +7,7 @@ fun C(p: Int): C {
 }
 
 class C {
-    class object {
+    default object {
         private val staticField1 = 0
         private val staticField2 = 0
     }

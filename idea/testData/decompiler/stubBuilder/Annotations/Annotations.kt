@@ -17,7 +17,7 @@ a public class Annotations private [a] (private [a] val c1: Int, [a] val c2: Int
         [a] private set
 
 
-    private b(E.E2) class object {
+    private b(E.E2) default object {
 
     }
 }
