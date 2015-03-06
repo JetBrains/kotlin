@@ -191,6 +191,8 @@ public interface Errors {
     DiagnosticFactory0<JetObjectDeclaration> MANY_DEFAULT_OBJECTS = DiagnosticFactory0.create(ERROR, DEFAULT_OBJECT);
     DiagnosticFactory0<JetObjectDeclaration> DEFAULT_OBJECT_NOT_ALLOWED = DiagnosticFactory0.create(ERROR, DEFAULT_OBJECT);
 
+    DiagnosticFactory0<JetObjectDeclaration> DEPRECATED_CLASS_OBJECT_SYNTAX = DiagnosticFactory0.create(WARNING);
+
     // Objects
 
     DiagnosticFactory1<JetObjectDeclaration, ClassDescriptor> LOCAL_OBJECT_NOT_ALLOWED = DiagnosticFactory1.create(ERROR, DECLARATION_NAME);
