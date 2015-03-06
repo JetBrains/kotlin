@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.JetNodeType;
 import org.jetbrains.kotlin.lexer.JetKeywordToken;
+import org.jetbrains.kotlin.lexer.JetTokens;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -46,7 +47,7 @@ public class JetParsing extends AbstractJetParsing {
     private static final TokenSet TOPLEVEL_OBJECT_FIRST = TokenSet.create(TYPE_ALIAS_KEYWORD, TRAIT_KEYWORD, CLASS_KEYWORD,
                 FUN_KEYWORD, VAL_KEYWORD, PACKAGE_KEYWORD);
     private static final TokenSet ENUM_MEMBER_FIRST = TokenSet.create(TYPE_ALIAS_KEYWORD, TRAIT_KEYWORD, CLASS_KEYWORD,
-                FUN_KEYWORD, VAL_KEYWORD, IDENTIFIER);
+                FUN_KEYWORD, VAL_KEYWORD, IDENTIFIER, OBJECT_KEYWORD);
 
     private static final TokenSet CLASS_NAME_RECOVERY_SET = TokenSet.orSet(TokenSet.create(LT, LPAR, COLON, LBRACE), TOPLEVEL_OBJECT_FIRST);
     private static final TokenSet TYPE_PARAMETER_GT_RECOVERY_SET = TokenSet.create(WHERE_KEYWORD, LPAR, COLON, LBRACE, GT);
@@ -354,7 +355,7 @@ public class JetParsing extends AbstractJetParsing {
     private void parseTopLevelObject() {
         PsiBuilder.Marker decl = mark();
 
-        TokenDetector detector = new TokenDetector(ENUM_KEYWORD);
+        ModifierDetector detector = new ModifierDetector();
         parseModifierList(MODIFIER_LIST, detector, REGULAR_ANNOTATIONS_ALLOW_SHORTS);
 
         IElementType keywordToken = tt();
@@ -364,7 +365,7 @@ public class JetParsing extends AbstractJetParsing {
 //        }
 //        else
         if (keywordToken == CLASS_KEYWORD || keywordToken == TRAIT_KEYWORD) {
-            declType = parseClass(detector.isDetected());
+            declType = parseClass(detector.isEnumDetected());
         }
         else if (keywordToken == FUN_KEYWORD) {
             declType = parseFunction();
@@ -682,8 +683,8 @@ public class JetParsing extends AbstractJetParsing {
 
             TokenSet constructorNameFollow = TokenSet.create(SEMICOLON, COLON, LPAR, LT, LBRACE);
             int lastId = findLastBefore(ENUM_MEMBER_FIRST, constructorNameFollow, false);
-            TokenDetector enumDetector = new TokenDetector(ENUM_KEYWORD);
-            createTruncatedBuilder(lastId).parseModifierList(MODIFIER_LIST, enumDetector, REGULAR_ANNOTATIONS_ONLY_WITH_BRACKETS);
+            ModifierDetector detector = new ModifierDetector();
+            createTruncatedBuilder(lastId).parseModifierList(MODIFIER_LIST, detector, REGULAR_ANNOTATIONS_ONLY_WITH_BRACKETS);
 
             IElementType type;
             if (at(IDENTIFIER)) {
@@ -691,7 +692,7 @@ public class JetParsing extends AbstractJetParsing {
                 type = ENUM_ENTRY;
             }
             else {
-                type = parseMemberDeclarationRest(enumDetector.isDetected());
+                type = parseMemberDeclarationRest(detector.isEnumDetected(), detector.isDefaultDetected());
             }
 
             if (type == null) {
@@ -779,10 +780,10 @@ public class JetParsing extends AbstractJetParsing {
     private void parseMemberDeclaration() {
         PsiBuilder.Marker decl = mark();
 
-        TokenDetector enumDetector = new TokenDetector(ENUM_KEYWORD);
-        parseModifierList(MODIFIER_LIST, enumDetector, REGULAR_ANNOTATIONS_ALLOW_SHORTS);
+        ModifierDetector detector = new ModifierDetector();
+        parseModifierList(MODIFIER_LIST, detector, REGULAR_ANNOTATIONS_ALLOW_SHORTS);
 
-        IElementType declType = parseMemberDeclarationRest(enumDetector.isDetected());
+        IElementType declType = parseMemberDeclarationRest(detector.isEnumDetected(), detector.isDefaultDetected());
 
         if (declType == null) {
             errorWithRecovery("Expecting member declaration", TokenSet.create(RBRACE));
@@ -793,12 +794,12 @@ public class JetParsing extends AbstractJetParsing {
         }
     }
 
-    private IElementType parseMemberDeclarationRest(boolean isEnum) {
+    private IElementType parseMemberDeclarationRest(boolean isEnum, boolean isDefault) {
         IElementType keywordToken = tt();
         IElementType declType = null;
         if (keywordToken == CLASS_KEYWORD) {
             if (lookahead(1) == OBJECT_KEYWORD) {
-                declType = parseDefaultObject();
+                declType = parseDeprecatedClassObject();
             }
             else {
                 declType = parseClass(isEnum);
@@ -817,7 +818,7 @@ public class JetParsing extends AbstractJetParsing {
             declType = parseTypeAlias();
         }
         else if (keywordToken == OBJECT_KEYWORD) {
-            parseObject(NameParsingMode.REQUIRED, true);
+            parseObject(isDefault ? NameParsingMode.ALLOWED : NameParsingMode.REQUIRED, true);
             declType = OBJECT_DECLARATION;
         }
         else if (keywordToken == LBRACE) {
@@ -880,7 +881,7 @@ public class JetParsing extends AbstractJetParsing {
      *   : modifiers "class" object
      *   ;
      */
-    private IElementType parseDefaultObject() {
+    private IElementType parseDeprecatedClassObject() {
         assert _at(CLASS_KEYWORD) && lookahead(1) == OBJECT_KEYWORD;
         advance(); // CLASS_KEYWORD
         parseObject(NameParsingMode.ALLOWED, true);
@@ -1990,24 +1991,26 @@ public class JetParsing extends AbstractJetParsing {
         return createForTopLevel(builder);
     }
 
-    /*package*/ static class TokenDetector implements Consumer<IElementType> {
-
-        private boolean detected = false;
-        private final TokenSet tokens;
-
-        public TokenDetector(JetKeywordToken token) {
-            this.tokens = TokenSet.create(token);
-        }
+    /*package*/ static class ModifierDetector implements Consumer<IElementType> {
+        private boolean enumDetected = false;
+        private boolean defaultDetected = false;
 
         @Override
         public void consume(IElementType item) {
-            if (tokens.contains(item)) {
-                detected = true;
+            if (item == JetTokens.ENUM_KEYWORD) {
+                enumDetected = true;
+            }
+            else if (item == JetTokens.DEFAULT_KEYWORD) {
+                defaultDetected = true;
             }
         }
 
-        public boolean isDetected() {
-            return detected;
+        public boolean isEnumDetected() {
+            return enumDetected;
+        }
+
+        public boolean isDefaultDetected() {
+            return defaultDetected;
         }
     }
 

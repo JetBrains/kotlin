@@ -954,10 +954,10 @@ public class JetExpressionParsing extends AbstractJetParsing {
      */
     private boolean parseLocalDeclaration() {
         PsiBuilder.Marker decl = mark();
-        JetParsing.TokenDetector enumDetector = new JetParsing.TokenDetector(ENUM_KEYWORD);
-        myJetParsing.parseModifierList(MODIFIER_LIST, enumDetector, REGULAR_ANNOTATIONS_ONLY_WITH_BRACKETS);
+        JetParsing.ModifierDetector detector = new JetParsing.ModifierDetector();
+        myJetParsing.parseModifierList(MODIFIER_LIST, detector, REGULAR_ANNOTATIONS_ONLY_WITH_BRACKETS);
 
-        IElementType declType = parseLocalDeclarationRest(enumDetector.isDetected());
+        IElementType declType = parseLocalDeclarationRest(detector.isEnumDetected());
 
         if (declType != null) {
             // we do not attach preceding comments (non-doc) to local variables because they are likely commenting a few statements below

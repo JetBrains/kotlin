@@ -366,7 +366,7 @@ public class DeclarationsChecker {
             checkPropertyAbstractness(property, propertyDescriptor, (ClassDescriptor) containingDeclaration);
         }
         else {
-            modifiersChecker.checkIllegalModalityModifiers(property);
+            modifiersChecker.reportIllegalModalityModifiers(property);
         }
         checkPropertyInitializer(property, propertyDescriptor);
         checkAccessors(property, propertyDescriptor);
@@ -516,7 +516,7 @@ public class DeclarationsChecker {
             }
             return;
         }
-        modifiersChecker.checkIllegalModalityModifiers(function);
+        modifiersChecker.reportIllegalModalityModifiers(function);
         if (!function.hasBody() && !hasAbstractModifier) {
             trace.report(NON_MEMBER_FUNCTION_NO_BODY.on(function, functionDescriptor));
         }
@@ -527,7 +527,7 @@ public class DeclarationsChecker {
             PropertyAccessorDescriptor propertyAccessorDescriptor = accessor.isGetter() ? propertyDescriptor.getGetter() : propertyDescriptor.getSetter();
             assert propertyAccessorDescriptor != null : "No property accessor descriptor for " + property.getText();
             modifiersChecker.checkModifiersForDeclaration(accessor, propertyAccessorDescriptor);
-            modifiersChecker.checkIllegalModalityModifiers(accessor);
+            modifiersChecker.reportIllegalModalityModifiers(accessor);
         }
         JetPropertyAccessor getter = property.getGetter();
         PropertyGetterDescriptor getterDescriptor = propertyDescriptor.getGetter();

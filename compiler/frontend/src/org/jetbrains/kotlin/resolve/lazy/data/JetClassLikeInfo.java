@@ -33,9 +33,6 @@ public interface JetClassLikeInfo extends JetDeclarationContainer {
     @Nullable
     JetModifierList getModifierList();
 
-    @Nullable
-    JetObjectDeclaration getDefaultObject();
-
     @NotNull
     @ReadOnly
     List<JetObjectDeclaration> getDefaultObjects();

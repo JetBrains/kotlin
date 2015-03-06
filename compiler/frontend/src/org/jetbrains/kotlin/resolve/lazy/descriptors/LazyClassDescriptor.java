@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.types.TypeUtils;
 
 import java.util.*;
 
+import static kotlin.KotlinPackage.firstOrNull;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.resolve.BindingContext.TYPE;
 import static org.jetbrains.kotlin.resolve.ModifiersChecker.*;
@@ -411,7 +412,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
     @Nullable
     private JetObjectDeclaration getDefaultObjectIfAllowed() {
-        JetObjectDeclaration defaultObject = declarationProvider.getOwnerInfo().getDefaultObject();
+        JetObjectDeclaration defaultObject = firstOrNull(declarationProvider.getOwnerInfo().getDefaultObjects());
         return (defaultObject != null && isDefaultObjectAllowed()) ? defaultObject : null;
     }
 

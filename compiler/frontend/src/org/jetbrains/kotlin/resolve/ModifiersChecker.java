@@ -39,6 +39,7 @@ import java.util.*;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.lexer.JetTokens.*;
+import static org.jetbrains.kotlin.psi.JetStubbedPsiUtil.getContainingDeclaration;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isDefaultObject;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry;
 
@@ -137,10 +138,11 @@ public class ModifiersChecker {
 
     public void checkModifiersForDeclaration(@NotNull JetDeclaration modifierListOwner, @NotNull MemberDescriptor descriptor) {
         if (modifierListOwner instanceof JetEnumEntry) {
-            checkIllegalInThisContextModifiers(modifierListOwner, Arrays.asList(MODIFIER_KEYWORDS_ARRAY));
+            reportIllegalModifiers(modifierListOwner, Arrays.asList(MODIFIER_KEYWORDS_ARRAY));
         }
         else {
             checkInnerModifier(modifierListOwner, descriptor);
+            checkDefaultModifier(modifierListOwner);
             checkModalityModifiers(modifierListOwner);
             checkVisibilityModifiers(modifierListOwner, descriptor);
             checkVarianceModifiersOfTypeParameters(modifierListOwner);
@@ -150,18 +152,18 @@ public class ModifiersChecker {
     }
 
     public void checkModifiersForLocalDeclaration(@NotNull JetDeclaration modifierListOwner, @NotNull DeclarationDescriptor descriptor) {
-        checkIllegalModalityModifiers(modifierListOwner);
-        checkIllegalVisibilityModifiers(modifierListOwner);
+        reportIllegalModalityModifiers(modifierListOwner);
+        reportIllegalVisibilityModifiers(modifierListOwner);
         checkPlatformNameApplicability(descriptor);
         runAnnotationCheckers(modifierListOwner, descriptor);
     }
 
-    public void checkIllegalModalityModifiers(@NotNull JetModifierListOwner modifierListOwner) {
-        checkIllegalInThisContextModifiers(modifierListOwner, MODALITY_MODIFIERS);
+    public void reportIllegalModalityModifiers(@NotNull JetModifierListOwner modifierListOwner) {
+        reportIllegalModifiers(modifierListOwner, MODALITY_MODIFIERS);
     }
 
-    public void checkIllegalVisibilityModifiers(@NotNull JetModifierListOwner modifierListOwner) {
-        checkIllegalInThisContextModifiers(modifierListOwner, VISIBILITY_MODIFIERS);
+    public void reportIllegalVisibilityModifiers(@NotNull JetModifierListOwner modifierListOwner) {
+        reportIllegalModifiers(modifierListOwner, VISIBILITY_MODIFIERS);
     }
 
     private void checkModalityModifiers(@NotNull JetModifierListOwner modifierListOwner) {
@@ -174,10 +176,10 @@ public class ModifiersChecker {
                            Arrays.asList(ABSTRACT_KEYWORD, OPEN_KEYWORD));
 
         if (modifierListOwner instanceof JetObjectDeclaration) {
-            checkIllegalModalityModifiers(modifierListOwner);
+            reportIllegalModalityModifiers(modifierListOwner);
         }
         else if (modifierListOwner instanceof JetClassOrObject) {
-            checkIllegalInThisContextModifiers(modifierListOwner, Collections.singletonList(OVERRIDE_KEYWORD));
+            reportIllegalModifiers(modifierListOwner, Collections.singletonList(OVERRIDE_KEYWORD));
         }
     }
 
@@ -201,7 +203,7 @@ public class ModifiersChecker {
                 case ALLOWED:
                     break;
                 case ILLEGAL_POSITION:
-                    checkIllegalInThisContextModifiers(modifierListOwner, Collections.singletonList(INNER_KEYWORD));
+                    reportIllegalModifiers(modifierListOwner, Collections.singletonList(INNER_KEYWORD));
                     break;
                 case IN_TRAIT:
                     trace.report(INNER_CLASS_IN_TRAIT.on(modifierListOwner));
@@ -230,6 +232,24 @@ public class ModifiersChecker {
         ILLEGAL_POSITION,
         IN_TRAIT,
         IN_OBJECT,
+    }
+
+    private void checkDefaultModifier(@NotNull JetDeclaration declaration) {
+        if (declaration.hasModifier(DEFAULT_KEYWORD) && !isDefaultModifierAllowed(declaration)) {
+            reportIllegalModifiers(declaration, Collections.singletonList(DEFAULT_KEYWORD));
+        }
+    }
+
+    // NOTE: just checks if this is legal context for default modifier (Default object descriptor can be created)
+    // DEFAULT_OBJECT_NOT_ALLOWED can be reported later
+    public static boolean isDefaultModifierAllowed(@NotNull JetDeclaration declaration) {
+        if (declaration instanceof JetObjectDeclaration) {
+            JetDeclaration containingDeclaration = getContainingDeclaration(declaration);
+            if (containingDeclaration instanceof JetClassOrObject) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @NotNull
@@ -298,7 +318,7 @@ public class ModifiersChecker {
         }
     }
 
-    public void checkIllegalInThisContextModifiers(
+    public void reportIllegalModifiers(
             @NotNull JetModifierListOwner modifierListOwner,
             @NotNull Collection<JetModifierKeywordToken> illegalModifiers
     ) {

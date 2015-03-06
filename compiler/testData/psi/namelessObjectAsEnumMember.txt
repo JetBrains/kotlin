@@ -1,0 +1,37 @@
+JetFile: namelessObjectAsEnumMember.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  CLASS
+    PsiComment(EOL_COMMENT)('// test that inner keyword is not parsed as enum entry')
+    PsiWhiteSpace('\n')
+    MODIFIER_LIST
+      PsiElement(public)('public')
+      PsiWhiteSpace(' ')
+      PsiElement(enum)('enum')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('A')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      ENUM_ENTRY
+        OBJECT_DECLARATION_NAME
+          PsiElement(IDENTIFIER)('A')
+      PsiWhiteSpace('\n    ')
+      ENUM_ENTRY
+        OBJECT_DECLARATION_NAME
+          PsiElement(IDENTIFIER)('B')
+      PsiWhiteSpace('\n\n    ')
+      OBJECT_DECLARATION
+        MODIFIER_LIST
+          PsiElement(inner)('inner')
+        PsiWhiteSpace(' ')
+        PsiElement(object)('object')
+        PsiWhiteSpace('\n')
+        OBJECT_DECLARATION_NAME
+          PsiErrorElement:Name expected
+            PsiElement(RBRACE)('}')
+      PsiErrorElement:Expecting '}' to close enum class body
+        <empty list>

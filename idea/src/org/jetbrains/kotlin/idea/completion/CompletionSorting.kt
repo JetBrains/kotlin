@@ -72,7 +72,7 @@ private object KindWeigher : LookupElementWeigher("kotlin.kind") {
         variable // variable or property
         function
         keyword
-        default
+        `default`
         packages
     }
 
@@ -128,7 +128,7 @@ private class JetDeclarationRemotenessWeigher(private val file: JetFile) : Looku
         thisFile
         preciseImport
         allUnderImport
-        default
+        `default`
         hasImportFromSamePackage
         notImported
         notToBeUsedInKotlin

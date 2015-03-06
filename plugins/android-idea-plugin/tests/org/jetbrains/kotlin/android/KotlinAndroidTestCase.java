@@ -21,6 +21,7 @@ import com.android.ide.common.rendering.RenderSecurityManager;
 import com.intellij.analysis.AnalysisScope;
 import com.intellij.codeInspection.GlobalInspectionTool;
 import com.intellij.codeInspection.InspectionManager;
+import com.intellij.codeInspection.ex.GlobalInspectionContextImpl;
 import com.intellij.codeInspection.ex.GlobalInspectionToolWrapper;
 import com.intellij.codeInspection.ex.InspectionManagerEx;
 import com.intellij.facet.FacetManager;
@@ -40,13 +41,14 @@ import com.intellij.psi.impl.file.impl.FileManager;
 import com.intellij.testFramework.InspectionTestUtil;
 import com.intellij.testFramework.TestLogger;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
-import com.intellij.testFramework.fixtures.*;
+import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
+import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
+import com.intellij.testFramework.fixtures.JavaTestFixtureFactory;
+import com.intellij.testFramework.fixtures.TestFixtureBuilder;
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
-import com.intellij.testFramework.fixtures.impl.GlobalInspectionContextForTests;
 import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.AndroidRootUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.android.KotlinAndroidTestCaseBase;
 import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode;
 import org.jetbrains.kotlin.idea.references.BuiltInsReferenceResolver;
 import org.jetbrains.kotlin.psi.JetFile;
@@ -294,10 +296,10 @@ public abstract class KotlinAndroidTestCase extends KotlinAndroidTestCaseBase {
         scope.invalidate();
 
         final InspectionManagerEx inspectionManager = (InspectionManagerEx)InspectionManager.getInstance(getProject());
-        final GlobalInspectionContextForTests globalContext =
+        final GlobalInspectionContextImpl globalContext =
                 CodeInsightTestFixtureImpl.createGlobalContextForTool(scope, getProject(), inspectionManager, wrapper);
 
-        InspectionTestUtil.runTool(wrapper, scope, globalContext);
+        InspectionTestUtil.runTool(wrapper, scope, globalContext, new InspectionManagerEx(getProject()));
         InspectionTestUtil.compareToolResults(globalContext, wrapper, false, getTestDataPath() + globalTestDir);
     }
 
