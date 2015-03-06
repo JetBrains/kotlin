@@ -153,9 +153,9 @@ public final class AnalyzerWithCompilerReport {
             assert data != null;
             String path = toSystemDependentName(kotlinClass);
             messageCollectorWrapper.report(CompilerMessageSeverity.ERROR,
-                                           "Class '" + JvmClassName.byClassId(data.classId) +
+                                           "Class '" + JvmClassName.byClassId(data.getClassId()) +
                                            "' was compiled with an incompatible version of Kotlin. " +
-                                           "Its ABI version is " + data.actualVersion + ", expected ABI version is " + JvmAbi.VERSION,
+                                           "Its ABI version is " + data.getActualVersion() + ", expected ABI version is " + JvmAbi.VERSION,
                                            CompilerMessageLocation.create(path, 0, 0));
         }
     }

@@ -14,83 +14,56 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.load.java.components;
+package org.jetbrains.kotlin.load.java.components
 
-import com.intellij.openapi.diagnostic.Logger;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.name.ClassId;
-import org.jetbrains.kotlin.resolve.BindingTrace;
-import org.jetbrains.kotlin.resolve.OverrideResolver;
-import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter;
-import org.jetbrains.kotlin.util.slicedMap.Slices;
-import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
+import com.intellij.openapi.diagnostic.Logger
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.OverrideResolver
+import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
+import org.jetbrains.kotlin.util.slicedMap.Slices
+import org.jetbrains.kotlin.util.slicedMap.WritableSlice
 
-import javax.inject.Inject;
-import java.util.List;
+import javax.inject.Inject
 
-public class TraceBasedErrorReporter implements ErrorReporter {
-    private static final Logger LOG = Logger.getInstance(TraceBasedErrorReporter.class);
+public class TraceBasedErrorReporter : ErrorReporter {
 
-    public static class AbiVersionErrorData {
-        public final int actualVersion;
-        public final ClassId classId;
+    class object {
+        private val LOG = Logger.getInstance(javaClass<TraceBasedErrorReporter>())
 
-        public AbiVersionErrorData(int actualVersion, @NotNull ClassId classId) {
-            this.actualVersion = actualVersion;
-            this.classId = classId;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            AbiVersionErrorData data = (AbiVersionErrorData) o;
-
-            if (actualVersion != data.actualVersion) return false;
-            if (!classId.equals(data.classId)) return false;
-
-            return true;
-        }
-
-        @Override
-        public int hashCode() {
-            int result = actualVersion;
-            result = 31 * result + classId.hashCode();
-            return result;
-        }
+        public val ABI_VERSION_ERRORS: WritableSlice<String, AbiVersionErrorData> = Slices.createCollectiveSlice()
+        // TODO: MutableList is a workaround for KT-5792 Covariant types in Kotlin translated to wildcard types in Java
+        public val INCOMPLETE_HIERARCHY: WritableSlice<ClassDescriptor, MutableList<String>> = Slices.createCollectiveSlice()
     }
 
-    public static final WritableSlice<String, AbiVersionErrorData> ABI_VERSION_ERRORS = Slices.createCollectiveSlice();
-    public static final WritableSlice<ClassDescriptor, List<String>> INCOMPLETE_HIERARCHY = Slices.createCollectiveSlice();
+    public data class AbiVersionErrorData(
+            public val actualVersion: Int,
+            public val classId: ClassId
+    )
 
-    private BindingTrace trace;
+    private var trace: BindingTrace? = null
 
-    @Inject
-    public void setTrace(BindingTrace trace) {
-        this.trace = trace;
+    Inject
+    public fun setTrace(trace: BindingTrace) {
+        this.trace = trace
     }
 
-    @Override
-    public void reportIncompatibleAbiVersion(@NotNull ClassId classId, @NotNull String filePath, int actualVersion) {
-        trace.record(ABI_VERSION_ERRORS, filePath, new AbiVersionErrorData(actualVersion, classId));
+    override fun reportIncompatibleAbiVersion(classId: ClassId, filePath: String, actualVersion: Int) {
+        trace!!.record(ABI_VERSION_ERRORS, filePath, AbiVersionErrorData(actualVersion, classId))
     }
 
-    @Override
-    public void reportIncompleteHierarchy(@NotNull ClassDescriptor descriptor, @NotNull List<String> unresolvedSuperClasses) {
-        trace.record(INCOMPLETE_HIERARCHY, descriptor, unresolvedSuperClasses);
+    override fun reportIncompleteHierarchy(descriptor: ClassDescriptor, unresolvedSuperClasses: List<String>) {
+        // TODO: MutableList is a workaround for KT-5792 Covariant types in Kotlin translated to wildcard types in Java
+        trace!!.record(INCOMPLETE_HIERARCHY, descriptor, unresolvedSuperClasses as MutableList)
     }
 
-    @Override
-    public void reportCannotInferVisibility(@NotNull CallableMemberDescriptor descriptor) {
-        OverrideResolver.createCannotInferVisibilityReporter(trace).invoke(descriptor);
+    override fun reportCannotInferVisibility(descriptor: CallableMemberDescriptor) {
+        OverrideResolver.createCannotInferVisibilityReporter(trace!!).invoke(descriptor)
     }
 
-    @Override
-    public void reportLoadingError(@NotNull String message, @Nullable Exception exception) {
-        LOG.error(message, exception);
+    override fun reportLoadingError(message: String, exception: Exception?) {
+        LOG.error(message, exception)
     }
 }
