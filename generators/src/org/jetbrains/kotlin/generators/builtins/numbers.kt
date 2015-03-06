@@ -31,13 +31,12 @@ class GenerateNumbers(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             PrimitiveType.LONG to "64-bit signed integer",
             PrimitiveType.INT to "32-bit signed integer",
             PrimitiveType.SHORT to "16-bit signed integer",
-            PrimitiveType.BYTE to "8-bit signed integer"
+            PrimitiveType.BYTE to "8-bit signed integer",
+            PrimitiveType.CHAR to "16-bit Unicode character"
     )
 
-
     override fun generateBody() {
-        for (kind in PrimitiveType.values()) {
-            if (kind == PrimitiveType.BOOLEAN || kind == PrimitiveType.CHAR) continue
+        for (kind in PrimitiveType.exceptBoolean) {
             val className = kind.capitalized
             generateDoc(kind)
             out.println("public class $className private () : Number, Comparable<$className> {")
@@ -88,6 +87,9 @@ class GenerateNumbers(out: PrintWriter) : BuiltInsSourceGenerator(out) {
 
     private fun generateOperator(name: String, thisKind: PrimitiveType) {
         for (otherKind in PrimitiveType.exceptBoolean) {
+            if (thisKind == PrimitiveType.CHAR && otherKind == PrimitiveType.CHAR && name != "minus") {
+                continue
+            }
             val returnType = getOperatorReturnType(thisKind, otherKind)
             out.println("    public fun $name(other: ${otherKind.capitalized}): $returnType")
         }
@@ -95,9 +97,13 @@ class GenerateNumbers(out: PrintWriter) : BuiltInsSourceGenerator(out) {
     }
 
     private fun generateRangeTo(thisKind: PrimitiveType) {
-        for (otherKind in PrimitiveType.exceptBoolean) {
-            val returnType = if (otherKind.ordinal() > thisKind.ordinal()) otherKind else thisKind
-            out.println("    public fun rangeTo(other: ${otherKind.capitalized}): ${returnType.capitalized}Range")
+        if (thisKind == PrimitiveType.CHAR) {
+            out.println("    public fun rangeTo(other: Char): CharRange")
+        } else {
+            for (otherKind in PrimitiveType.exceptBoolean) {
+                val returnType = if (otherKind.ordinal() > thisKind.ordinal()) otherKind else thisKind
+                out.println("    public fun rangeTo(other: ${otherKind.capitalized}): ${returnType.capitalized}Range")
+            }
         }
         out.println()
 
@@ -105,7 +111,7 @@ class GenerateNumbers(out: PrintWriter) : BuiltInsSourceGenerator(out) {
 
     private fun generateUnaryOperators(kind: PrimitiveType) {
         for (name in unaryOperators) {
-            val returnType = if (kind in listOf(PrimitiveType.SHORT, PrimitiveType.BYTE) &&
+            val returnType = if (kind in listOf(PrimitiveType.SHORT, PrimitiveType.BYTE, PrimitiveType.CHAR) &&
                                  name in listOf("plus", "minus")) "Int" else kind.capitalized
             out.println("    public fun $name(): $returnType")
         }
