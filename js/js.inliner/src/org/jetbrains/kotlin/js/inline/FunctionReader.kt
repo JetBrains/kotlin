@@ -92,6 +92,19 @@ public class FunctionReader(private val context: TranslationContext) {
         }
     }
 
+    private val functionCache = object : SLRUCache<CallableDescriptor, JsFunction>(50, 50) {
+        override fun createValue(descriptor: CallableDescriptor): JsFunction =
+                requireNotNull(readFunction(descriptor), "Could not read function: $descriptor")
+    }
+
+    public fun contains(descriptor: CallableDescriptor): Boolean {
+        val moduleName = getExternalModuleName(descriptor)
+        val currentModuleName = context.getConfig().getModuleId()
+        return currentModuleName != moduleName && moduleName in moduleJsDefinition
+    }
+
+    public fun get(descriptor: CallableDescriptor): JsFunction = functionCache.get(descriptor)
+    
     private fun readFunction(descriptor: CallableDescriptor): JsFunction? {
         if (descriptor !in this) return null
 

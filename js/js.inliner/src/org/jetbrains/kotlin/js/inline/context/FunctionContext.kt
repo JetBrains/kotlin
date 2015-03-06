@@ -27,10 +27,13 @@ import org.jetbrains.kotlin.js.inline.util.isFunctionCreator
 
 import com.intellij.util.containers.ContainerUtil
 import java.util.IdentityHashMap
+import org.jetbrains.kotlin.js.inline.FunctionReader
+import com.google.dart.compiler.backend.js.ast.metadata.descriptor
 
 abstract class FunctionContext(
         private val function: JsFunction,
-        private val inliningContext: InliningContext
+        private val inliningContext: InliningContext,
+        private val functionReader: FunctionReader
 ) {
     /**
      * Caches function with captured arguments applied.
@@ -109,6 +112,9 @@ abstract class FunctionContext(
      *    in case of local function with closure.
      */
     private fun getFunctionDefinitionImpl(call: JsInvocation): JsFunction? {
+        val descriptor = call.descriptor
+        if (descriptor != null && descriptor in functionReader) return functionReader[descriptor]
+
         /** remove ending `()` */
         var callQualifier = call.getQualifier()
 

@@ -162,7 +162,7 @@ public final class Translation {
     }
 
     @NotNull
-    public static JsProgram generateAst(@NotNull BindingTrace bindingTrace,
+    public static TranslationContext generateAst(@NotNull BindingTrace bindingTrace,
             @NotNull Collection<JetFile> files, @NotNull MainCallParameters mainCallParameters,
             @NotNull ModuleDescriptor moduleDescriptor,
             @NotNull Config config)
@@ -179,7 +179,7 @@ public final class Translation {
     }
 
     @NotNull
-    private static JsProgram doGenerateAst(@NotNull BindingTrace bindingTrace, @NotNull Collection<JetFile> files,
+    private static TranslationContext doGenerateAst(@NotNull BindingTrace bindingTrace, @NotNull Collection<JetFile> files,
             @NotNull MainCallParameters mainCallParameters,
             @NotNull ModuleDescriptor moduleDescriptor,
             @NotNull Config config) throws MainFunctionNotFoundException {
@@ -203,7 +203,7 @@ public final class Translation {
             }
         }
         mayBeGenerateTests(files, config, rootBlock, context);
-        return context.program();
+        return context;
     }
 
     private static void defineModule(@NotNull TranslationContext context, @NotNull List<JsStatement> statements, @NotNull String moduleId) {
