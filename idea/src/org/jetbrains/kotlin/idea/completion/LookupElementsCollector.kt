@@ -25,6 +25,7 @@ import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -70,7 +71,7 @@ class LookupElementsCollector(
                 lookupElement = lookupElement.withReceiverCast()
             }
 
-            if (surroundCallsWithBraces && descriptor is FunctionDescriptor) {
+            if (surroundCallsWithBraces && (descriptor is FunctionDescriptor || descriptor is ClassifierDescriptor)) {
                 lookupElement = lookupElement.withBracesSurrounding()
             }
 

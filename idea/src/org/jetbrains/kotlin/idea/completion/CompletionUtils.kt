@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.idea.completion
 
-import com.intellij.codeInsight.completion.CompletionProgressIndicator
-import com.intellij.codeInsight.completion.CompletionService
-import com.intellij.codeInsight.completion.InsertionContext
-import com.intellij.codeInsight.completion.PrefixMatcher
+import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.lookup.*
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.util.Key
@@ -72,7 +69,9 @@ fun LookupElement.withReceiverCast(): LookupElement {
 fun LookupElement.withBracesSurrounding(): LookupElement {
     return object: LookupElementDecorator<LookupElement>(this) {
         override fun handleInsert(context: InsertionContext) {
-            context.getDocument().insertString(context.getStartOffset(), "{")
+            val startOffset = context.getStartOffset()
+            context.getDocument().insertString(startOffset, "{")
+            context.getOffsetMap().addOffset(CompletionInitializationContext.START_OFFSET, startOffset + 1)
 
             val tailOffset = context.getTailOffset()
             context.getDocument().insertString(tailOffset, "}")
