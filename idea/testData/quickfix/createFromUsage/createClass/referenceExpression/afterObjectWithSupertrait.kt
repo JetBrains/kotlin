@@ -3,10 +3,10 @@ package p
 
 fun foo(): X = A
 
-trait X {
+object A : X {
 
 }
 
-object A : X {
+trait X {
 
 }

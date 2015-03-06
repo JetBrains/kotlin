@@ -529,12 +529,37 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                     return Math.max(lineBreaksNeeded - lineBreaksPresent, 0)
                 }
 
-                val declarationInPlace = when (containingElement) {
-                    is JetFile -> containingElement.add(declaration) as JetNamedDeclaration
+                fun addNextToOriginalElementContainer(addBefore: Boolean): JetNamedDeclaration {
+                    val actualContainer = (containingElement as? JetClassOrObject)?.getBody() ?: containingElement
+                    val sibling = config.originalElement.parents().first { it.getParent() == actualContainer }
+                    return if (addBefore) {
+                        actualContainer.addBefore(declaration, sibling)
+                    }
+                    else {
+                        actualContainer.addAfter(declaration, sibling)
+                    } as JetNamedDeclaration
+                }
 
-                    is PsiClass -> jetFileToEdit.add(declaration) as JetNamedDeclaration
+                val declarationInPlace = when {
+                    containingElement.isAncestor(config.originalElement, true) -> {
+                        val insertToBlock = containingElement is JetBlockExpression
+                        if (insertToBlock) {
+                            val parent = containingElement.getParent()
+                            if (parent is JetFunctionLiteral) {
+                                if (!parent.isMultiLine()) {
+                                    parent.addBefore(newLine, containingElement)
+                                    parent.addAfter(newLine, containingElement)
+                                }
+                            }
+                        }
+                        addNextToOriginalElementContainer(insertToBlock || declaration is JetProperty)
+                    }
 
-                    is JetClassOrObject -> {
+                    containingElement is JetFile -> containingElement.add(declaration) as JetNamedDeclaration
+
+                    containingElement is PsiClass -> jetFileToEdit.add(declaration) as JetNamedDeclaration
+
+                    containingElement is JetClassOrObject -> {
                         var classBody = containingElement.getBody()
                         if (classBody == null) {
                             classBody = containingElement.add(psiFactory.createEmptyClassBody()) as JetClassBody
@@ -550,20 +575,6 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                         }
                         else classBody.addAfter(declaration, classBody!!.getLBrace()!!) as JetNamedDeclaration
                     }
-
-                    is JetBlockExpression -> {
-                        val parent = containingElement.getParent()
-                        if (parent is JetFunctionLiteral) {
-                            if (!parent.isMultiLine()) {
-                                parent.addBefore(newLine, containingElement)
-                                parent.addAfter(newLine, containingElement)
-                            }
-                        }
-
-                        val sibling = config.originalElement.parents().first { it.getParent() == containingElement }
-                        containingElement.addBefore(declaration, sibling) as JetNamedDeclaration
-                    }
-
                     else -> throw AssertionError("Invalid containing element: ${containingElement.getText()}")
                 }
 
