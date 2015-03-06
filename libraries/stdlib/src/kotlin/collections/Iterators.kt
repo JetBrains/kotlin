@@ -21,6 +21,10 @@ public fun <T> Iterator<T>.iterator(): Iterator<T> = this
  */
 public data class IndexedValue<out T>(public val index: Int, public val value: T)
 
+/**
+ * A wrapper over another [Iterable] (or any other object that can produce an [Iterator]) that returns
+ * an indexing iterator.
+ */
 public class IndexingIterable<out T>(private val iteratorFactory: () -> Iterator<T>) : Iterable<IndexedValue<T>> {
     override fun iterator(): Iterator<IndexedValue<T>> = IndexingIterator(iteratorFactory())
 }

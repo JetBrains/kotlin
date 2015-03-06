@@ -19,16 +19,16 @@ package org.jetbrains.kotlin.idea.imports
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.*
 
 public val DeclarationDescriptor.importableFqName: FqName?
     get() {
@@ -59,4 +59,13 @@ public fun DeclarationDescriptor.canBeReferencedViaImport(): Boolean {
 public fun JetType.canBeReferencedViaImport(): Boolean {
     val descriptor = getConstructor().getDeclarationDescriptor()
     return descriptor != null && descriptor.canBeReferencedViaImport()
+}
+
+// for cases when class qualifier refers default object treats it like reference to class itself
+public fun JetReferenceExpression.getImportableTargets(bindingContext: BindingContext): Collection<DeclarationDescriptor> {
+    val targets = bindingContext[BindingContext.SHORT_REFERENCE_TO_DEFAULT_OBJECT, this]?.let { listOf(it) }
+                     ?: bindingContext[BindingContext.REFERENCE_TARGET, this]?.let { listOf(it) }
+                     ?: bindingContext[BindingContext.AMBIGUOUS_REFERENCE_TARGET, this]
+                     ?: listOf()
+    return targets.map { it.getImportableDescriptor() }.toSet()
 }

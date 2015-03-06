@@ -21,6 +21,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import jline.console.ConsoleReader;
 import jline.console.history.FileHistory;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.cli.common.KotlinVersion;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.utils.UtilsPackage;
 
@@ -88,7 +89,8 @@ public class ReplFromTerminal {
 
     private void doRun() {
         try {
-            System.out.println("Kotlin interactive shell");
+            System.out.println("Welcome to Kotlin version " + KotlinVersion.VERSION +
+                               " (JRE " + System.getProperty("java.runtime.version") + ")");
             System.out.println("Type :help for help, :quit for quit");
             WhatNextAfterOneLine next = WhatNextAfterOneLine.READ_LINE;
             while (true) {
@@ -165,8 +167,7 @@ public class ReplFromTerminal {
     private boolean oneCommand(@NotNull String command) throws Exception {
         List<String> split = splitCommand(command);
         if (split.size() >= 1 && command.equals("help")) {
-            System.out.println("This is Kotlin REPL help");
-            System.out.println("Available commands are:");
+            System.out.println("Available commands:");
             System.out.println(":help                   show this help");
             System.out.println(":quit                   exit the interpreter");
             System.out.println(":dump bytecode          dump classes to terminal");

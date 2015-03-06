@@ -42,7 +42,7 @@ public class NeedSyntheticChecker implements CallChecker {
 
     //Necessary synthetic accessors in outer classes generated via old logic: CodegenContext.getAccessor
     //Generation of accessors in nested classes (to invoke from outer,
-    //      e.g.: from class to classobject) controlled via NEED_SYNTHETIC_ACCESSOR slice
+    //      e.g.: from class to default object) controlled via NEED_SYNTHETIC_ACCESSOR slice
     private boolean needSyntheticAccessor(JetScope invokationScope, CallableDescriptor targetDescriptor) {
         return targetDescriptor instanceof CallableMemberDescriptor &&
                Visibilities.isPrivate(targetDescriptor.getVisibility()) &&

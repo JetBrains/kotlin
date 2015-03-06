@@ -2,7 +2,7 @@
 
 class A {
     inner class B {
-        <!CLASS_OBJECT_NOT_ALLOWED!>class object<!> { }
+        <!DEFAULT_OBJECT_NOT_ALLOWED!>class object<!> { }
     }
 }
 

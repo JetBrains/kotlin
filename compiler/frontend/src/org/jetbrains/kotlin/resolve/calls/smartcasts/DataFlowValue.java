@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve.calls.smartcasts;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 
@@ -25,6 +26,7 @@ public class DataFlowValue {
     
     public static final DataFlowValue NULL = new DataFlowValue(new Object(), KotlinBuiltIns.getInstance().getNullableNothingType(), false, Nullability.NULL);
     public static final DataFlowValue NULLABLE = new DataFlowValue(new Object(), KotlinBuiltIns.getInstance().getNullableAnyType(), false, Nullability.UNKNOWN);
+    public static final DataFlowValue ERROR = new DataFlowValue(new Object(), ErrorUtils.createErrorType("Error type for data flow"), false, Nullability.IMPOSSIBLE);
 
     private final boolean stableIdentifier;
     private final JetType type;

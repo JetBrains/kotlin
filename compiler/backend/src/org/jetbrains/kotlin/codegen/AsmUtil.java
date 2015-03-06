@@ -62,7 +62,6 @@ import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.ABI_VERSION_FIEL
 import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
-import static org.jetbrains.kotlin.resolve.jvm.types.PrimitiveTypesUtil.asmTypeForPrimitive;
 import static org.jetbrains.kotlin.types.TypeUtils.isNullableType;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
@@ -109,7 +108,7 @@ public class AsmUtil {
         ImmutableMap.Builder<Integer, JvmPrimitiveType> typeBySortBuilder = ImmutableMap.builder();
         ImmutableMap.Builder<Type, Type> typeByWrapperBuilder = ImmutableMap.builder();
         for (JvmPrimitiveType primitiveType : JvmPrimitiveType.values()) {
-            Type asmType = asmTypeForPrimitive(primitiveType);
+            Type asmType = Type.getType(primitiveType.getDesc());
             typeBySortBuilder.put(asmType.getSort(), primitiveType);
             typeByWrapperBuilder.put(asmTypeByFqNameWithoutInnerClasses(primitiveType.getWrapperFqName()), asmType);
         }
@@ -196,8 +195,8 @@ public class AsmUtil {
             }
         }
 
-        if (AnnotationsPackage.isPlatformStaticInClassObject(functionDescriptor)) {
-            // Native method will be a member of the class, the class object method will be delegated to it
+        if (AnnotationsPackage.isPlatformStaticInDefaultObject(functionDescriptor)) {
+            // Native method will be a member of the class, the default object method will be delegated to it
             flags &= ~Opcodes.ACC_NATIVE;
         }
 
@@ -345,11 +344,10 @@ public class AsmUtil {
         }
         // the following code is only for PRIVATE visibility of member
         if (memberDescriptor instanceof ConstructorDescriptor) {
-            ClassKind kind = ((ClassDescriptor) containingDeclaration).getKind();
-            if (kind == ClassKind.OBJECT || kind == ClassKind.ENUM_ENTRY) {
+            if (isNonDefaultObject(containingDeclaration) || isEnumEntry(containingDeclaration)) {
                 return NO_FLAG_PACKAGE_PRIVATE;
             }
-            if (kind == ClassKind.ENUM_CLASS) {
+            if (isEnumClass(containingDeclaration)) {
                 //TODO: should be ACC_PRIVATE
                 // see http://youtrack.jetbrains.com/issue/KT-2680
                 return ACC_PROTECTED;
@@ -729,12 +727,12 @@ public class AsmUtil {
             return false;
         }
 
-        return isObject(propertyDescriptor.getContainingDeclaration()) || isPropertyWithBackingFieldInOuterClass(propertyDescriptor);
+        return isNonDefaultObject(propertyDescriptor.getContainingDeclaration()) || isPropertyWithBackingFieldInOuterClass(propertyDescriptor);
     }
 
     public static boolean isPropertyWithBackingFieldInOuterClass(@NotNull PropertyDescriptor propertyDescriptor) {
         return propertyDescriptor.getKind() != CallableMemberDescriptor.Kind.FAKE_OVERRIDE &&
-               isClassObjectWithBackingFieldsInOuter(propertyDescriptor.getContainingDeclaration());
+               isDefaultObjectWithBackingFieldsInOuter(propertyDescriptor.getContainingDeclaration());
     }
 
     public static int getVisibilityForSpecialPropertyBackingField(@NotNull PropertyDescriptor propertyDescriptor, boolean isDelegate) {
@@ -763,14 +761,14 @@ public class AsmUtil {
         DeclarationDescriptor propertyContainer = propertyDescriptor.getContainingDeclaration();
         return !propertyDescriptor.isVar()
                && !isExtensionProperty
-               && isClassObject(propertyContainer) && isTrait(propertyContainer.getContainingDeclaration())
+               && isDefaultObject(propertyContainer) && isTrait(propertyContainer.getContainingDeclaration())
                && areBothAccessorDefault(propertyDescriptor)
                && getVisibilityForSpecialPropertyBackingField(propertyDescriptor, false) == ACC_PUBLIC;
     }
 
-    public static boolean isClassObjectWithBackingFieldsInOuter(@NotNull DeclarationDescriptor classObject) {
-        DeclarationDescriptor containingClass = classObject.getContainingDeclaration();
-        return isClassObject(classObject) && (isClass(containingClass) || isEnumClass(containingClass));
+    public static boolean isDefaultObjectWithBackingFieldsInOuter(@NotNull DeclarationDescriptor defaultObject) {
+        DeclarationDescriptor containingClass = defaultObject.getContainingDeclaration();
+        return isDefaultObject(defaultObject) && (isClass(containingClass) || isEnumClass(containingClass));
     }
 
     private static boolean areBothAccessorDefault(@NotNull PropertyDescriptor propertyDescriptor) {

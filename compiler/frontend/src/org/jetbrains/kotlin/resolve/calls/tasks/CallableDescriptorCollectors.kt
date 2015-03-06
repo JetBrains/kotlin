@@ -17,15 +17,14 @@
 package org.jetbrains.kotlin.resolve.calls.tasks.collectors
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.JetType
 
-import org.jetbrains.kotlin.resolve.LibrarySourceHacks.filterOutMembersFromLibrarySource
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isStaticNestedClass
+import org.jetbrains.kotlin.resolve.*
 
 public trait CallableDescriptorCollector<D : CallableDescriptor> {
 
@@ -38,25 +37,32 @@ public trait CallableDescriptorCollector<D : CallableDescriptor> {
     public fun getExtensionsByName(scope: JetScope, name: Name, bindingTrace: BindingTrace): Collection<D>
 }
 
-private val FUNCTIONS_COLLECTOR = FilteredCollector(FunctionCollector)
-private val VARIABLES_COLLECTOR = FilteredCollector(VariableCollector)
-private val PROPERTIES_COLLECTOR = FilteredCollector(PropertyCollector)
+private fun <D : CallableDescriptor> CallableDescriptorCollector<D>.withDefaultFilter() = filtered { !LibrarySourceHacks.shouldSkip(it) }
 
-public class CallableDescriptorCollectors<D : CallableDescriptor>(vararg collectors: CallableDescriptorCollector<D>) : Iterable<CallableDescriptorCollector<D>> {
-    private val collectors = collectors.toList()
+private val FUNCTIONS_COLLECTOR = FunctionCollector.withDefaultFilter()
+private val VARIABLES_COLLECTOR = VariableCollector.withDefaultFilter()
+private val PROPERTIES_COLLECTOR = PropertyCollector.withDefaultFilter()
+
+public class CallableDescriptorCollectors<D : CallableDescriptor>(val collectors: List<CallableDescriptorCollector<D>>) :
+        Iterable<CallableDescriptorCollector<D>> {
     override fun iterator(): Iterator<CallableDescriptorCollector<D>> = collectors.iterator()
 
     [suppress("UNCHECKED_CAST")]
     class object {
         public val FUNCTIONS_AND_VARIABLES: CallableDescriptorCollectors<CallableDescriptor> =
-                CallableDescriptorCollectors(FUNCTIONS_COLLECTOR as CallableDescriptorCollector<CallableDescriptor>,
-                                             VARIABLES_COLLECTOR as CallableDescriptorCollector<CallableDescriptor>)
+                CallableDescriptorCollectors(listOf(
+                        FUNCTIONS_COLLECTOR as CallableDescriptorCollector<CallableDescriptor>,
+                        VARIABLES_COLLECTOR as CallableDescriptorCollector<CallableDescriptor>
+                ))
         public val FUNCTIONS: CallableDescriptorCollectors<CallableDescriptor> =
-                CallableDescriptorCollectors(FUNCTIONS_COLLECTOR as CallableDescriptorCollector<CallableDescriptor>)
-        public val VARIABLES: CallableDescriptorCollectors<VariableDescriptor> = CallableDescriptorCollectors(VARIABLES_COLLECTOR)
-        public val PROPERTIES: CallableDescriptorCollectors<VariableDescriptor> = CallableDescriptorCollectors(PROPERTIES_COLLECTOR)
+                CallableDescriptorCollectors(listOf(FUNCTIONS_COLLECTOR as CallableDescriptorCollector<CallableDescriptor>))
+        public val VARIABLES: CallableDescriptorCollectors<VariableDescriptor> = CallableDescriptorCollectors(listOf(VARIABLES_COLLECTOR))
+        public val PROPERTIES: CallableDescriptorCollectors<VariableDescriptor> = CallableDescriptorCollectors(listOf(PROPERTIES_COLLECTOR))
     }
 }
+
+public fun <D : CallableDescriptor> CallableDescriptorCollectors<D>.filtered(filter: (D) -> Boolean): CallableDescriptorCollectors<D> =
+        CallableDescriptorCollectors(this.collectors.map { it.filtered(filter) })
 
 private object FunctionCollector : CallableDescriptorCollector<FunctionDescriptor> {
 
@@ -150,25 +156,27 @@ private object PropertyCollector : CallableDescriptorCollector<VariableDescripto
     override fun toString() = "PROPERTIES"
 }
 
-private class FilteredCollector<D : CallableDescriptor>(private val delegate: CallableDescriptorCollector<D>) : CallableDescriptorCollector<D> {
+private fun <D : CallableDescriptor> CallableDescriptorCollector<D>.filtered(filter: (D) -> Boolean): CallableDescriptorCollector<D> {
+    val delegate = this
+    return object : CallableDescriptorCollector<D> {
+        override fun getNonExtensionsByName(scope: JetScope, name: Name, bindingTrace: BindingTrace): Collection<D> {
+            return delegate.getNonExtensionsByName(scope, name, bindingTrace).filter(filter)
+        }
 
-    override fun getNonExtensionsByName(scope: JetScope, name: Name, bindingTrace: BindingTrace): Collection<D> {
-        return filterOutMembersFromLibrarySource(delegate.getNonExtensionsByName(scope, name, bindingTrace))
-    }
+        override fun getMembersByName(receiver: JetType, name: Name, bindingTrace: BindingTrace): Collection<D> {
+            return delegate.getMembersByName(receiver, name, bindingTrace).filter(filter)
+        }
 
-    override fun getMembersByName(receiver: JetType, name: Name, bindingTrace: BindingTrace): Collection<D> {
-        return filterOutMembersFromLibrarySource(delegate.getMembersByName(receiver, name, bindingTrace))
-    }
+        override fun getStaticMembersByName(receiver: JetType, name: Name, bindingTrace: BindingTrace): Collection<D> {
+            return delegate.getStaticMembersByName(receiver, name, bindingTrace).filter(filter)
+        }
 
-    override fun getStaticMembersByName(receiver: JetType, name: Name, bindingTrace: BindingTrace): Collection<D> {
-        return filterOutMembersFromLibrarySource(delegate.getStaticMembersByName(receiver, name, bindingTrace))
-    }
+        override fun getExtensionsByName(scope: JetScope, name: Name, bindingTrace: BindingTrace): Collection<D> {
+            return delegate.getExtensionsByName(scope, name, bindingTrace).filter(filter)
+        }
 
-    override fun getExtensionsByName(scope: JetScope, name: Name, bindingTrace: BindingTrace): Collection<D> {
-        return filterOutMembersFromLibrarySource(delegate.getExtensionsByName(scope, name, bindingTrace))
-    }
-
-    override fun toString(): String {
-        return delegate.toString()
+        override fun toString(): String {
+            return delegate.toString()
+        }
     }
 }

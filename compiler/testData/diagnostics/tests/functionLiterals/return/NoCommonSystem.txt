@@ -1,0 +1,6 @@
+package
+
+internal fun commonSystemFailed(/*0*/ a: kotlin.List<kotlin.Int>): kotlin.Unit
+internal fun </*0*/ T> listOf(): kotlin.List<T>
+internal fun </*0*/ T> listOf(/*0*/ vararg values: T /*kotlin.Array<out T>*/): kotlin.List<T>
+internal fun </*0*/ T, /*1*/ R> kotlin.Iterable<T>.map(/*0*/ transform: (T) -> R): kotlin.List<R>

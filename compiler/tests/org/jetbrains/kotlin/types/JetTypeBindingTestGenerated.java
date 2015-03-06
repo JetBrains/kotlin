@@ -30,7 +30,10 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/type/binding")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({JetTypeBindingTestGenerated.Explicit.class, JetTypeBindingTestGenerated.Implicit.class})
+@InnerTestClasses({
+        JetTypeBindingTestGenerated.Explicit.class,
+        JetTypeBindingTestGenerated.Implicit.class,
+})
 @RunWith(JUnit3RunnerWithInners.class)
 public class JetTypeBindingTestGenerated extends AbstractJetTypeBindingTest {
     public void testAllFilesPresentInBinding() throws Exception {

@@ -513,8 +513,8 @@ public abstract class StackValue {
         return field(FieldInfo.createForSingleton(classDescriptor, typeMapper));
     }
 
-    public static Field deprecatedClassObjectAccessor(ClassDescriptor classDescriptor, JetTypeMapper typeMapper) {
-        return field(FieldInfo.deprecatedFieldForClassObject(classDescriptor, typeMapper));
+    public static Field deprecatedDefaultObjectAccessor(ClassDescriptor classDescriptor, JetTypeMapper typeMapper) {
+        return field(FieldInfo.deprecatedFieldForDefaultObject(classDescriptor, typeMapper));
     }
 
     public static StackValue operation(Type type, Function1<InstructionAdapter, Unit> lambda) {

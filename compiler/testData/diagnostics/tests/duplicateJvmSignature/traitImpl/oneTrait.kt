@@ -2,6 +2,6 @@ trait T {
     fun getX() = 1
 }
 
-class C : T {
+class <!CONFLICTING_JVM_DECLARATIONS!>C<!> : T {
     <!CONFLICTING_JVM_DECLARATIONS!>val x<!> = 1
 }

@@ -16,21 +16,18 @@
 
 package org.jetbrains.kotlin.idea.references
 
-import com.intellij.psi.PsiPolyVariantReference
-import com.intellij.psi.PsiPolyVariantReferenceBase
-import com.intellij.psi.PsiElement
-import com.intellij.psi.ResolveResult
-import com.intellij.psi.PsiElementResolveResult
+import com.intellij.psi.*
 import com.intellij.util.IncorrectOperationException
-import com.intellij.psi.PsiReference
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
 import java.util.Collections
 import org.jetbrains.kotlin.psi.JetReferenceExpression
-import org.jetbrains.kotlin.idea.codeInsight.DescriptorToDeclarationUtil
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 
 public trait JetReference : PsiPolyVariantReference {
     public fun resolveToDescriptors(): Collection<DeclarationDescriptor>
@@ -81,12 +78,12 @@ public abstract class AbstractJetReference<T : JetElement>(element: T)
     }
 
     override fun resolveMap(): Map<DeclarationDescriptor, Collection<PsiElement>> {
-        return getTargetDescriptors(expression.analyze()) keysToMap { DescriptorToDeclarationUtil.resolveToPsiElements(expression.getProject(), it) }
+        return getTargetDescriptors(expression.analyze()) keysToMap { resolveToPsiElements(it) }
     }
 
     private fun resolveToPsiElements(context: BindingContext, targetDescriptors: Collection<DeclarationDescriptor>): Collection<PsiElement> {
         if (targetDescriptors.isNotEmpty()) {
-            return targetDescriptors flatMap { target -> DescriptorToDeclarationUtil.resolveToPsiElements(expression.getProject(), target) }
+            return targetDescriptors flatMap { target -> resolveToPsiElements(target) }
         }
 
         val labelTargets = getLabelTargets(context)
@@ -95,6 +92,17 @@ public abstract class AbstractJetReference<T : JetElement>(element: T)
         }
 
         return Collections.emptySet()
+    }
+
+    private fun resolveToPsiElements(targetDescriptor: DeclarationDescriptor): Collection<PsiElement> {
+        if (targetDescriptor is PackageViewDescriptor) {
+            val psiFacade = JavaPsiFacade.getInstance(expression.getProject())
+            val fqName = targetDescriptor.getFqName().asString()
+            return psiFacade.findPackage(fqName).singletonOrEmptyList()
+        }
+        else {
+            return DescriptorToSourceUtilsIde.getAllDeclarations(expression.getProject(), targetDescriptor)
+        }
     }
 
     protected abstract fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor>

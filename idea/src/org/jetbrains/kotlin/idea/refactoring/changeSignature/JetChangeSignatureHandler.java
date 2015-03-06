@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils;
-import org.jetbrains.kotlin.idea.codeInsight.DescriptorToDeclarationUtil;
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle;
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.psi.*;
@@ -109,7 +109,7 @@ public class JetChangeSignatureHandler implements ChangeSignatureHandler {
         }
 
         if (functionDescriptor instanceof JavaCallableMemberDescriptor) {
-            PsiElement declaration = DescriptorToDeclarationUtil.INSTANCE$.getDeclaration(project, functionDescriptor);
+            PsiElement declaration = DescriptorToSourceUtilsIde.INSTANCE$.getAnyDeclaration(project, functionDescriptor);
             assert declaration instanceof PsiMethod : "PsiMethod expected: " + functionDescriptor;
             ChangeSignatureUtil.invokeChangeSignatureOn((PsiMethod) declaration, project);
             return;

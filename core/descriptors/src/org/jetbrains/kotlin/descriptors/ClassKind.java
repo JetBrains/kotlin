@@ -22,10 +22,9 @@ public enum ClassKind {
     ENUM_CLASS,
     ENUM_ENTRY,
     ANNOTATION_CLASS,
-    OBJECT,
-    CLASS_OBJECT;
+    OBJECT;
 
     public boolean isSingleton() {
-        return this == OBJECT || this == CLASS_OBJECT || this == ENUM_ENTRY;
+        return this == OBJECT || this == ENUM_ENTRY;
     }
 }

@@ -40,3 +40,11 @@ object PlatformStaticFun {
 trait TraitNoImpl {
     fun foo()
 }
+
+public class TraitWithDelegatedNoImpl(f: TraitNoImpl): TraitNoImpl by f
+
+trait TraitWithImpl {
+    fun foo() = 1
+}
+
+public class TraitWithDelegatedWithImpl(f: TraitWithImpl): TraitWithImpl by f

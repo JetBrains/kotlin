@@ -30,12 +30,12 @@ import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.resolve.descriptorUtil.getClassObjectReferenceTarget
 
 public class FakeCallableDescriptorForObject(
-        private val classDescriptor: ClassDescriptor
+        public val classDescriptor: ClassDescriptor
 ) : DeclarationDescriptorWithVisibility by classDescriptor.getClassObjectReferenceTarget(), VariableDescriptor {
 
     {
         assert(classDescriptor.getClassObjectType() != null) {
-            "FakeCallableDescriptorForObject can be created only for objects, classes with class object or enum entries: $classDescriptor"
+            "FakeCallableDescriptorForObject can be created only for objects, classes with default object or enum entries: $classDescriptor"
         }
 
     }

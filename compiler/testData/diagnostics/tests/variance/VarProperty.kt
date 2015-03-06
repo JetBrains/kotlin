@@ -3,8 +3,8 @@ trait Out<out T>
 trait Inv<T>
 
 class Delegate<T> {
-    fun get(<!UNUSED_PARAMETER(t)!>t<!>: Any, <!UNUSED_PARAMETER(p)!>p<!>: PropertyMetadata): T = null!!
-    fun set(<!UNUSED_PARAMETER(t)!>t<!>: Any, <!UNUSED_PARAMETER(p)!>p<!>: PropertyMetadata, <!UNUSED_PARAMETER(varue)!>varue<!>: T) {}
+    fun get(t: Any, p: PropertyMetadata): T = null!!
+    fun set(t: Any, p: PropertyMetadata, varue: T) {}
 }
 
 fun <T> getT(): T = null!!

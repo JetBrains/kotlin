@@ -105,5 +105,5 @@ public class DirectiveBasedActionUtils {
     }
 
     private static final Collection<String> IRRELEVANT_ACTION_PREFIXES =
-            Arrays.asList("Disable ", "Edit intention settings", "Edit inspection profile setting", "Inject Language/Reference");
+            Arrays.asList("Disable ", "Edit intention settings", "Edit inspection profile setting", "Inject language or reference");
 }

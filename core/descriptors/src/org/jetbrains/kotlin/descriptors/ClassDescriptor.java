@@ -82,6 +82,8 @@ public interface ClassDescriptor extends ClassifierDescriptor, MemberDescriptor,
      */
     boolean isInner();
 
+    boolean isDefaultObject();
+
     @NotNull
     ReceiverParameterDescriptor getThisAsReceiverParameter();
 

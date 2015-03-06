@@ -18,13 +18,13 @@ class <error descr="[PLATFORM_STATIC_ILLEGAL_USAGE] This declaration does not su
 
     fun test() {
         val <warning descr="[UNUSED_VARIABLE] Variable 's' is never used">s</warning> = object {
-            <error descr="[PLATFORM_STATIC_NOT_IN_OBJECT] Only functions in named objects and class objects of classes can be annotated with 'platformStatic'">platformStatic fun a3()</error> {
+            <error descr="[PLATFORM_STATIC_NOT_IN_OBJECT] Only functions in named objects and default objects of classes can be annotated with 'platformStatic'">platformStatic fun a3()</error> {
 
             }
         }
     }
 
-    <error descr="[PLATFORM_STATIC_NOT_IN_OBJECT] Only functions in named objects and class objects of classes can be annotated with 'platformStatic'">platformStatic fun a4()</error> {
+    <error descr="[PLATFORM_STATIC_NOT_IN_OBJECT] Only functions in named objects and default objects of classes can be annotated with 'platformStatic'">platformStatic fun a4()</error> {
 
     }
 }
@@ -32,7 +32,7 @@ class <error descr="[PLATFORM_STATIC_ILLEGAL_USAGE] This declaration does not su
 platformStatic
 trait <error descr="[PLATFORM_STATIC_ILLEGAL_USAGE] This declaration does not support 'platformStatic'">B</error> {
     class object {
-        <error descr="[PLATFORM_STATIC_NOT_IN_OBJECT] Only functions in named objects and class objects of classes can be annotated with 'platformStatic'">platformStatic fun a1()</error> {
+        <error descr="[PLATFORM_STATIC_NOT_IN_OBJECT] Only functions in named objects and default objects of classes can be annotated with 'platformStatic'">platformStatic fun a1()</error> {
 
         }
     }
@@ -45,13 +45,13 @@ trait <error descr="[PLATFORM_STATIC_ILLEGAL_USAGE] This declaration does not su
 
     fun test() {
         val <warning descr="[UNUSED_VARIABLE] Variable 's' is never used">s</warning> = object {
-            <error descr="[PLATFORM_STATIC_NOT_IN_OBJECT] Only functions in named objects and class objects of classes can be annotated with 'platformStatic'">platformStatic fun a3()</error> {
+            <error descr="[PLATFORM_STATIC_NOT_IN_OBJECT] Only functions in named objects and default objects of classes can be annotated with 'platformStatic'">platformStatic fun a3()</error> {
 
             }
         }
     }
 
-    <error descr="[PLATFORM_STATIC_NOT_IN_OBJECT] Only functions in named objects and class objects of classes can be annotated with 'platformStatic'">platformStatic fun a4()</error> {
+    <error descr="[PLATFORM_STATIC_NOT_IN_OBJECT] Only functions in named objects and default objects of classes can be annotated with 'platformStatic'">platformStatic fun a4()</error> {
 
     }
 }

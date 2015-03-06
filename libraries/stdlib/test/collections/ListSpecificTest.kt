@@ -28,7 +28,7 @@ class ListSpecificTest {
         assertEquals(listOf('C', 'A', 'D'), list.slice(iter))
     }
 
-    Test fun utils() {
+    Test fun lastIndex() {
         assertEquals(-1, empty.lastIndex)
         assertEquals(1, data.lastIndex)
     }

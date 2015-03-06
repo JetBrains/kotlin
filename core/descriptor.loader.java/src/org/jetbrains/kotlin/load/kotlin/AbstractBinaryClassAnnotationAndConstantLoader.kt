@@ -159,7 +159,7 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
         val classKind = Flags.CLASS_KIND[classProto.getFlags()]
         val classId = nameResolver.getClassId(classProto.getFqName())
         if (classKind == ProtoBuf.Class.Kind.CLASS_OBJECT && isStaticFieldInOuter(proto)) {
-            // Backing fields of properties of a class object are generated in the outer class
+            // Backing fields of properties of a default object are generated in the outer class
             return kotlinClassFinder.findKotlinClass(classId.getOuterClassId())
         }
         else if (classKind == ProtoBuf.Class.Kind.TRAIT && annotatedCallableKind == AnnotatedCallableKind.PROPERTY) {

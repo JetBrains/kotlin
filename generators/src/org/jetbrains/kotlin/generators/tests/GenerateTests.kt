@@ -97,7 +97,7 @@ import org.jetbrains.kotlin.idea.codeInsight.AbstractJetInspectionTest
 import org.jetbrains.kotlin.idea.debugger.AbstractKotlinSteppingTest
 import org.jetbrains.kotlin.idea.debugger.AbstractJetPositionManagerTest
 import org.jetbrains.kotlin.completion.AbstractMultiFileJvmBasicCompletionTest
-import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.AbstractJetExtractionTest
+import org.jetbrains.kotlin.idea.refactoring.introduce.AbstractJetExtractionTest
 import org.jetbrains.kotlin.formatter.AbstractJetTypingIndentationTestBase
 import org.jetbrains.kotlin.idea.debugger.evaluate.AbstractKotlinEvaluateExpressionTest
 import org.jetbrains.kotlin.idea.debugger.evaluate.AbstractSelectExpressionForDebuggerTest
@@ -118,9 +118,7 @@ import org.jetbrains.kotlin.psi.patternMatching.AbstractJetPsiUnifierTest
 import org.jetbrains.kotlin.completion.weighers.AbstractBasicCompletionWeigherTest
 import org.jetbrains.kotlin.completion.weighers.AbstractSmartCompletionWeigherTest
 import org.jetbrains.kotlin.generators.tests.reservedWords.generateTestDataForReservedWords
-import org.jetbrains.kotlin.js.test.semantics.AbstractReservedWordTest
 import org.jetbrains.kotlin.idea.resolve.AbstractReferenceResolveInJavaTest
-import org.jetbrains.kotlin.js.test.semantics.AbstractBridgeTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterMultiFileTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterForWebDemoTest
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.AbstractDecompiledTextTest
@@ -134,6 +132,7 @@ import org.jetbrains.kotlin.types.AbstractJetTypeBindingTest
 import org.jetbrains.kotlin.idea.debugger.evaluate.AbstractCodeFragmentCompletionHandlerTest
 import org.jetbrains.kotlin.js.test.semantics.AbstractDynamicTest
 import org.jetbrains.kotlin.js.test.semantics.AbstractMultiModuleTest
+import org.jetbrains.kotlin.idea.coverage.AbstractKotlinCoverageOutputFilesTest
 import org.jetbrains.kotlin.completion.handlers.AbstractBasicCompletionHandlerTest
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.AbstractClsStubBuilderTest
 import org.jetbrains.kotlin.codegen.AbstractLineNumberTest
@@ -141,6 +140,16 @@ import org.jetbrains.kotlin.completion.handlers.AbstractKeywordCompletionHandler
 import org.jetbrains.kotlin.idea.kdoc.AbstractKDocHighlightingTest
 import org.jetbrains.kotlin.addImport.AbstractAddImportTest
 import org.jetbrains.kotlin.idea.highlighter.*
+import org.jetbrains.kotlin.android.AbstractAndroidCompletionTest
+import org.jetbrains.kotlin.android.AbstractAndroidGotoTest
+import org.jetbrains.kotlin.jps.build.android.AbstractAndroidJpsTestCase
+import org.jetbrains.kotlin.android.AbstractAndroidRenameTest
+import org.jetbrains.kotlin.android.AbstractAndroidFindUsagesTest
+import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidBytecodeShapeTest
+import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidXml2KConversionTest
+import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidBoxTest
+import org.jetbrains.kotlin.android.AbstractParserResultEqualityTest
+import org.jetbrains.kotlin.js.test.semantics.*
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -671,6 +680,7 @@ fun main(args: Array<String>) {
         testClass(javaClass<AbstractJetExtractionTest>()) {
             model("refactoring/introduceVariable", extension = "kt", testMethod = "doIntroduceVariableTest")
             model("refactoring/extractFunction", extension = "kt", testMethod = "doExtractFunctionTest")
+            model("refactoring/introduceProperty", extension = "kt", testMethod = "doIntroducePropertyTest")
         }
 
         testClass(javaClass<AbstractSelectExpressionForDebuggerTest>()) {
@@ -689,7 +699,7 @@ fun main(args: Array<String>) {
         testClass(javaClass<AbstractReferenceResolveTest>(), "org.jetbrains.kotlin.idea.kdoc.KdocResolveTestGenerated") {
             model("kdoc/resolve")
         }
-
+        
         testClass(javaClass<AbstractKDocHighlightingTest>()) {
             model("kdoc/highlighting")
         }
@@ -729,6 +739,50 @@ fun main(args: Array<String>) {
         }
     }
 
+    testGroup("plugins/android-compiler-plugin/tests", "plugins/android-compiler-plugin/testData") {
+        testClass(javaClass<AbstractAndroidXml2KConversionTest>()) {
+            model("android/converter/simple", recursive = false, extension = null)
+            model("android/converter/exceptions", recursive = false, extension = null, testMethod = "doNoManifestTest")
+        }
+
+        testClass(javaClass<AbstractAndroidBoxTest>()) {
+            model("codegen/android", recursive = false, extension = null, testMethod = "doCompileAgainstAndroidSdkTest")
+            model("codegen/android", recursive = false, extension = null, testMethod = "doFakeInvocationTest", testClassName = "Invoke")
+        }
+
+        testClass(javaClass<AbstractAndroidBytecodeShapeTest>()) {
+            model("codegen/bytecodeShape", recursive = false, extension = null)
+        }
+    }
+
+    testGroup("plugins/android-idea-plugin/tests", "plugins/android-idea-plugin/testData") {
+        testClass(javaClass<AbstractParserResultEqualityTest>()) {
+            model("android/parserResultEquality", recursive = false, extension = null)
+        }
+
+        testClass(javaClass<AbstractAndroidCompletionTest>()) {
+            model("android/completion", recursive = false, extension = null)
+        }
+
+        testClass(javaClass<AbstractAndroidGotoTest>()) {
+            model("android/goto", recursive = false, extension = null)
+        }
+
+        testClass(javaClass<AbstractAndroidRenameTest>()) {
+            model("android/rename", recursive = false, extension = null)
+        }
+
+        testClass(javaClass<AbstractAndroidFindUsagesTest>()) {
+            model("android/findUsages", recursive = false, extension = null)
+        }
+    }
+
+    testGroup("plugins/android-jps-plugin/tests", "plugins/android-jps-plugin/testData") {
+        testClass(javaClass<AbstractAndroidJpsTestCase>()) {
+            model("android", recursive = false, extension = null)
+        }
+    }
+
     generateTestDataForReservedWords()
 
     testGroup("js/js.tests/test", "js/js.translator/testData") {
@@ -748,6 +802,10 @@ fun main(args: Array<String>) {
     testGroup("js/js.tests/test", "compiler/testData") {
         testClass(javaClass<AbstractBridgeTest>()) {
             model("codegen/box/bridges", targetBackend = TargetBackend.JS)
+        }
+
+        testClass(javaClass<AbstractDefaultObjectTest>()) {
+            model("codegen/box/objectIntrinsics", targetBackend = TargetBackend.JS)
         }
     }
 }

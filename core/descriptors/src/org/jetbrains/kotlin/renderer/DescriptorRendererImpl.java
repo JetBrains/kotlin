@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.utils.UtilsPackage;
 
 import java.util.*;
 
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isDefaultObject;
 import static org.jetbrains.kotlin.types.TypeUtils.CANT_INFER_LAMBDA_PARAM_TYPE;
 
 public class DescriptorRendererImpl implements DescriptorRenderer {
@@ -62,7 +63,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     private final boolean includeSynthesizedParameterNames;
     private final boolean withoutFunctionParameterNames;
     private final boolean withoutTypeParameters;
-    private final boolean renderClassObjectName;
+    private final boolean renderDefaultObjectName;
     private final boolean withoutSuperTypes;
     private final boolean receiverAfterName;
     private final boolean renderDefaultValues;
@@ -100,7 +101,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             boolean withoutFunctionParameterNames,
             boolean withoutTypeParameters,
             boolean receiverAfterName,
-            boolean renderClassObjectName,
+            boolean renderDefaultObjectName,
             boolean withoutSuperTypes,
             @NotNull Function1<JetType, JetType> typeNormalizer,
             boolean renderDefaultValues,
@@ -127,7 +128,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         this.withoutFunctionParameterNames = withoutFunctionParameterNames;
         this.withoutTypeParameters = withoutTypeParameters;
         this.receiverAfterName = receiverAfterName;
-        this.renderClassObjectName = renderClassObjectName;
+        this.renderDefaultObjectName = renderDefaultObjectName;
         this.withoutSuperTypes = withoutSuperTypes;
         this.typeNormalizer = typeNormalizer;
         this.renderDefaultValues = renderDefaultValues;
@@ -234,8 +235,8 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         builder.append(renderName(descriptor.getName()));
     }
 
-    private void renderClassObjectName(@NotNull DeclarationDescriptor descriptor, @NotNull StringBuilder builder) {
-        if (renderClassObjectName) {
+    private void renderDefaultObjectName(@NotNull DeclarationDescriptor descriptor, @NotNull StringBuilder builder) {
+        if (renderDefaultObjectName) {
             if (startFromName) {
                 builder.append("class object");
             }
@@ -287,9 +288,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
                 // for nested classes qualified name should be used
                 DeclarationDescriptor current = klass;
                 do {
-                    if (((ClassDescriptor) current).getKind() != ClassKind.CLASS_OBJECT) {
-                        qualifiedNameElements.add(current.getName());
-                    }
+                    qualifiedNameElements.add(current.getName());
                     current = current.getContainingDeclaration();
                 }
                 while (current instanceof ClassDescriptor);
@@ -951,12 +950,12 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             renderClassKindPrefix(klass, builder);
         }
 
-        if (klass.getKind() != ClassKind.CLASS_OBJECT) {
+        if (!isDefaultObject(klass)) {
             if (!startFromName) renderSpaceIfNeeded(builder);
             renderName(klass, builder);
         }
         else {
-            renderClassObjectName(klass, builder);
+            renderDefaultObjectName(klass, builder);
         }
 
         List<TypeParameterDescriptor> typeParameters = klass.getTypeConstructor().getParameters();
@@ -1002,6 +1001,9 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
 
     @NotNull
     public static String getClassKindPrefix(@NotNull ClassDescriptor klass) {
+        if (klass.isDefaultObject()) {
+            return "class object";
+        }
         switch (klass.getKind()) {
             case CLASS:
                 return "class";
@@ -1013,8 +1015,6 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
                 return "object";
             case ANNOTATION_CLASS:
                 return "annotation class";
-            case CLASS_OBJECT:
-                return "class object";
             case ENUM_ENTRY:
                 return "enum entry";
             default:

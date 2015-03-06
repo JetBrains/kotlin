@@ -64,10 +64,10 @@ package p {
         public final val a: p.A
         public final val b: p.A.B
         public final val c: p.A.C
-        public final val d: p.A.D
-        public final val e: p.A.D.E
+        public final val d: p.A.Default.D
+        public final val e: p.A.Default.D.E
         public final val f: p.A.F
-        public final val g: p.A.G
+        public final val g: p.A.Default.G
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -82,8 +82,8 @@ package p {
     public fun a(/*0*/ p: p.A): kotlin.Unit
     public fun b(/*0*/ p: p.A.B): kotlin.Unit
     public fun c(/*0*/ p: p.A.C): kotlin.Unit
-    public fun d(/*0*/ p: p.A.D): kotlin.Unit
-    public fun e(/*0*/ p: p.A.D.E): kotlin.Unit
+    public fun d(/*0*/ p: p.A.Default.D): kotlin.Unit
+    public fun e(/*0*/ p: p.A.Default.D.E): kotlin.Unit
     public fun f(/*0*/ p: p.A.F): kotlin.Unit
     public fun g(/*0*/ p: p.A.G): kotlin.Unit
 
@@ -154,8 +154,8 @@ package p {
     public fun a(/*0*/ p: p.A): kotlin.Unit
     public fun b(/*0*/ p: p.A.B): kotlin.Unit
     public fun c(/*0*/ p: p.A.C): kotlin.Unit
-    public fun d(/*0*/ p: p.A.D): kotlin.Unit
-    public fun e(/*0*/ p: p.A.D.E): kotlin.Unit
+    public fun d(/*0*/ p: p.A.Default.D): kotlin.Unit
+    public fun e(/*0*/ p: p.A.Default.D.E): kotlin.Unit
     public fun f(/*0*/ p: p.A.F): kotlin.Unit
     public fun g(/*0*/ p: p.A.G): kotlin.Unit
 

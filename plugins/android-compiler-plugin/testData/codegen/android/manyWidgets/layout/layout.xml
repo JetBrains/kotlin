@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_width="fill_parent"
+                    android:layout_height="?android:attr/listPreferredItemHeight"
+                    android:padding="6dip">
+        <ImageView
+            android:id="@+id/req_who_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginRight="6dip"
+            android:gravity="left"
+            android:src="@drawable/icon" />
+        <TextView
+            android:id="@+id/req_state_who"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/req_who_icon"
+            android:textSize="10dip"
+            android:layout_alignParentRight="false"
+            android:layout_alignParentTop="false"
+            android:layout_alignWithParentIfMissing="true"
+            android:gravity="left"
+            android:text="who" />
+        <TextView
+            android:id="@+id/req_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/req_state_who"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignWithParentIfMissing="true"
+            android:gravity="right"
+            android:text="No summary"
+            android:textSize="10dip"
+            android:textColor="#FFFF00" />
+        <TextView
+            android:id="@+id/req_summary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/req_header"
+            android:layout_toRightOf="@id/req_state_who"
+            android:layout_alignParentRight="true"
+            android:layout_alignWithParentIfMissing="true"
+            android:gravity="right"
+            android:textSize="10dip"
+            android:text="No summary" />
+        <TextView
+            android:id="@+id/req_description"
+            android:layout_below="@id/req_summary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/req_state_who"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:gravity="right"
+            android:ellipsize="marquee"
+            android:text="No description"
+            android:textSize="10dip" />
+        <ImageView
+            android:id="@+id/req_state_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/req_description"
+            android:layout_marginRight="6dip"/>
+        </RelativeLayout>

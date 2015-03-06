@@ -52,8 +52,7 @@ public fun classKind(kind: ProtoBuf.Class.Kind): ClassKind = when (kind) {
     ProtoBuf.Class.Kind.ENUM_CLASS -> ClassKind.ENUM_CLASS
     ProtoBuf.Class.Kind.ENUM_ENTRY -> ClassKind.ENUM_ENTRY
     ProtoBuf.Class.Kind.ANNOTATION_CLASS -> ClassKind.ANNOTATION_CLASS
-    ProtoBuf.Class.Kind.OBJECT -> ClassKind.OBJECT
-    ProtoBuf.Class.Kind.CLASS_OBJECT -> ClassKind.CLASS_OBJECT
+    ProtoBuf.Class.Kind.OBJECT, ProtoBuf.Class.Kind.CLASS_OBJECT -> ClassKind.OBJECT
 }
 
 fun variance(variance: TypeParameter.Variance) = when (variance) {

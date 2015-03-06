@@ -18,6 +18,9 @@
 
 package kotlin
 
+/**
+ * A range of values of type Byte.
+ */
 public class ByteRange(override val start: Byte, override val end: Byte) : Range<Byte>, Progression<Byte> {
     override val increment: Int
         get() = 1
@@ -36,10 +39,14 @@ public class ByteRange(override val start: Byte, override val end: Byte) : Range
         if (isEmpty()) -1 else (31 * start.toInt() + end)
 
     class object {
+        /** An empty range of values of type Byte. */
         public val EMPTY: ByteRange = ByteRange(1, 0)
     }
 }
 
+/**
+ * A range of values of type Char.
+ */
 public class CharRange(override val start: Char, override val end: Char) : Range<Char>, Progression<Char> {
     override val increment: Int
         get() = 1
@@ -58,10 +65,14 @@ public class CharRange(override val start: Char, override val end: Char) : Range
         if (isEmpty()) -1 else (31 * start.toInt() + end)
 
     class object {
+        /** An empty range of values of type Char. */
         public val EMPTY: CharRange = CharRange(1.toChar(), 0.toChar())
     }
 }
 
+/**
+ * A range of values of type Short.
+ */
 public class ShortRange(override val start: Short, override val end: Short) : Range<Short>, Progression<Short> {
     override val increment: Int
         get() = 1
@@ -80,10 +91,14 @@ public class ShortRange(override val start: Short, override val end: Short) : Ra
         if (isEmpty()) -1 else (31 * start.toInt() + end)
 
     class object {
+        /** An empty range of values of type Short. */
         public val EMPTY: ShortRange = ShortRange(1, 0)
     }
 }
 
+/**
+ * A range of values of type Int.
+ */
 public class IntRange(override val start: Int, override val end: Int) : Range<Int>, Progression<Int> {
     override val increment: Int
         get() = 1
@@ -102,10 +117,14 @@ public class IntRange(override val start: Int, override val end: Int) : Range<In
         if (isEmpty()) -1 else (31 * start + end)
 
     class object {
+        /** An empty range of values of type Int. */
         public val EMPTY: IntRange = IntRange(1, 0)
     }
 }
 
+/**
+ * A range of values of type Long.
+ */
 public class LongRange(override val start: Long, override val end: Long) : Range<Long>, Progression<Long> {
     override val increment: Long
         get() = 1
@@ -124,10 +143,14 @@ public class LongRange(override val start: Long, override val end: Long) : Range
         if (isEmpty()) -1 else (31 * (start xor (start ushr 32)) + (end xor (end ushr 32))).toInt()
 
     class object {
+        /** An empty range of values of type Long. */
         public val EMPTY: LongRange = LongRange(1, 0)
     }
 }
 
+/**
+ * A range of values of type Float.
+ */
 public class FloatRange(override val start: Float, override val end: Float) : Range<Float>, Progression<Float> {
     override val increment: Float
         get() = 1.0f
@@ -146,10 +169,14 @@ public class FloatRange(override val start: Float, override val end: Float) : Ra
         if (isEmpty()) -1 else (31 * java.lang.Float.floatToIntBits(start) + java.lang.Float.floatToIntBits(end))
 
     class object {
+        /** An empty range of values of type Float. */
         public val EMPTY: FloatRange = FloatRange(1.0f, 0.0f)
     }
 }
 
+/**
+ * A range of values of type Double.
+ */
 public class DoubleRange(override val start: Double, override val end: Double) : Range<Double>, Progression<Double> {
     override val increment: Double
         get() = 1.0
@@ -173,6 +200,7 @@ public class DoubleRange(override val start: Double, override val end: Double) :
     }
 
     class object {
+        /** An empty range of values of type Double. */
         public val EMPTY: DoubleRange = DoubleRange(1.0, 0.0)
     }
 }

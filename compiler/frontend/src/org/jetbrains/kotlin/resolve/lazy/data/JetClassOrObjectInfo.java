@@ -20,9 +20,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.name.FqName;
 
 import java.util.Collections;
 import java.util.List;
@@ -58,12 +58,12 @@ public abstract class JetClassOrObjectInfo<E extends JetClassOrObject> implement
 
     @NotNull
     @Override
-    public List<JetObjectDeclaration> getClassObjects() {
+    public List<JetObjectDeclaration> getDefaultObjects() {
         JetClassBody body = element.getBody();
         if (body == null) {
             return Collections.emptyList();
         }
-        return body.getAllClassObjects();
+        return body.getAllDefaultObjects();
     }
 
     @NotNull

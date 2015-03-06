@@ -2,5 +2,5 @@ package to
 
 import a.Outer
 
-fun f(i: Outer.Inner, n: Outer.Nested, e: Outer.NestedEnum, o: Outer.NestedObj, t: Outer.NestedTrait, a: Outer.NestedAnnotation) {
+fun f(n: Outer.Default.Nested, e: Outer.Default.NestedEnum, o: Outer.Default.NestedObj, t: Outer.Default.NestedTrait, a: Outer.Default.NestedAnnotation) {
 }

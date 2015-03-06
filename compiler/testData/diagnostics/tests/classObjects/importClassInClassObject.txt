@@ -1,7 +1,7 @@
 package
 
 package f {
-    internal fun test(): f.A.B
+    internal fun test(): f.A.Default.B
 
     internal final class A {
         public constructor A()

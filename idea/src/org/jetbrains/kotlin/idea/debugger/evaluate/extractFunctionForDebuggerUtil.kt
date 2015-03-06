@@ -17,28 +17,22 @@
 package org.jetbrains.kotlin.idea.debugger.evaluate
 
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.idea.refactoring.extractFunction.AnalysisResult
-import org.jetbrains.kotlin.idea.refactoring.extractFunction.AnalysisResult.ErrorMessage
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AnalysisResult.ErrorMessage
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.refactoring.createTempCopy
 import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.idea.refactoring.extractFunction.ExtractionData
-import org.jetbrains.kotlin.idea.refactoring.extractFunction.performAnalysis
-import org.jetbrains.kotlin.idea.refactoring.extractFunction.AnalysisResult.Status
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AnalysisResult.Status
 import com.intellij.debugger.engine.evaluation.EvaluateExceptionUtil
-import org.jetbrains.kotlin.idea.refactoring.extractFunction.validate
-import org.jetbrains.kotlin.idea.refactoring.extractFunction.ExtractionOptions
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.PsiModificationTrackerImpl
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.idea.intentions.InsertExplicitTypeArguments
-import org.jetbrains.kotlin.idea.refactoring.extractFunction.ExtractionGeneratorOptions
-import org.jetbrains.kotlin.idea.refactoring.extractFunction.generateDeclaration
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
 import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
 import org.jetbrains.kotlin.psi.psiUtil.replaced
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
 
 fun getFunctionForExtractedFragment(
         codeFragment: JetCodeFragment,
@@ -94,9 +88,10 @@ fun getFunctionForExtractedFragment(
         val targetSibling = tmpFile.getDeclarations().firstOrNull()
         if (targetSibling == null) return null
 
-        val analysisResult = ExtractionData(
-                tmpFile, newDebugExpression.toRange(), targetSibling, ExtractionOptions(false, true)
-        ).performAnalysis()
+        val options = ExtractionOptions(inferUnitTypeForUnusedValues = false, 
+                                        enableListBoxing = true,
+                                        allowSpecialClassNames = true)
+        val analysisResult = ExtractionData(tmpFile, newDebugExpression.toRange(), targetSibling, options).performAnalysis()
         if (analysisResult.status != Status.SUCCESS) {
             throw EvaluateExceptionUtil.createEvaluateException(getErrorMessageForExtractFunctionResult(analysisResult))
         }
@@ -106,9 +101,11 @@ fun getFunctionForExtractedFragment(
             throw EvaluateExceptionUtil.createEvaluateException("Following declarations are unavailable in debug scope: ${validationResult.conflicts.keySet().map { it.getText() }.joinToString(",")}")
         }
 
-        return validationResult.descriptor
-                .generateDeclaration(ExtractionGeneratorOptions(inTempFile = true, flexibleTypesAllowed = true))
-                .declaration as JetNamedFunction
+        val config = ExtractionGeneratorConfiguration(
+                validationResult.descriptor,
+                ExtractionGeneratorOptions(inTempFile = true, flexibleTypesAllowed = true)
+        )
+        return config.generateDeclaration().declaration as JetNamedFunction
     }
 
     return runReadAction { generateFunction() }

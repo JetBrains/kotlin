@@ -108,6 +108,10 @@ public final class Byte : kotlin.Number, kotlin.Comparable<kotlin.Byte> {
     public open override /*1*/ fun toInt(): kotlin.Int
     public open override /*1*/ fun toLong(): kotlin.Long
     public open override /*1*/ fun toShort(): kotlin.Short
+
+    public class object Default {
+        /*primary*/ private constructor Default()
+    }
 }
 
 public final class ByteArray : kotlin.Cloneable {
@@ -375,6 +379,16 @@ public final class Double : kotlin.Number, kotlin.Comparable<kotlin.Double> {
     public open override /*1*/ fun toInt(): kotlin.Int
     public open override /*1*/ fun toLong(): kotlin.Long
     public open override /*1*/ fun toShort(): kotlin.Short
+
+    public class object Default : kotlin.FloatingPointConstants<kotlin.Double> {
+        /*primary*/ private constructor Default()
+        public abstract override /*1*/ /*fake_override*/ val NEGATIVE_INFINITY: kotlin.Double
+            public abstract override /*1*/ /*fake_override*/ fun <get-NEGATIVE_INFINITY>(): kotlin.Double
+        public abstract override /*1*/ /*fake_override*/ val NaN: kotlin.Double
+            public abstract override /*1*/ /*fake_override*/ fun <get-NaN>(): kotlin.Double
+        public abstract override /*1*/ /*fake_override*/ val POSITIVE_INFINITY: kotlin.Double
+            public abstract override /*1*/ /*fake_override*/ fun <get-POSITIVE_INFINITY>(): kotlin.Double
+    }
 }
 
 public final class DoubleArray : kotlin.Cloneable {
@@ -443,6 +457,10 @@ public abstract class Enum</*0*/ E : kotlin.Enum<E>> : kotlin.Comparable<E> {
     public final override /*1*/ fun compareTo(/*0*/ other: E): kotlin.Int
     public final fun name(): kotlin.String
     public final fun ordinal(): kotlin.Int
+
+    public class object Default {
+        /*primary*/ private constructor Default()
+    }
 }
 
 public trait ExtensionFunction0</*0*/ in T, /*1*/ out R> {
@@ -599,6 +617,16 @@ public final class Float : kotlin.Number, kotlin.Comparable<kotlin.Float> {
     public open override /*1*/ fun toInt(): kotlin.Int
     public open override /*1*/ fun toLong(): kotlin.Long
     public open override /*1*/ fun toShort(): kotlin.Short
+
+    public class object Default : kotlin.FloatingPointConstants<kotlin.Float> {
+        /*primary*/ private constructor Default()
+        public abstract override /*1*/ /*fake_override*/ val NEGATIVE_INFINITY: kotlin.Float
+            public abstract override /*1*/ /*fake_override*/ fun <get-NEGATIVE_INFINITY>(): kotlin.Float
+        public abstract override /*1*/ /*fake_override*/ val NaN: kotlin.Float
+            public abstract override /*1*/ /*fake_override*/ fun <get-NaN>(): kotlin.Float
+        public abstract override /*1*/ /*fake_override*/ val POSITIVE_INFINITY: kotlin.Float
+            public abstract override /*1*/ /*fake_override*/ fun <get-POSITIVE_INFINITY>(): kotlin.Float
+    }
 }
 
 public final class FloatArray : kotlin.Cloneable {
@@ -660,6 +688,15 @@ public final class FloatRange : kotlin.Range<kotlin.Float>, kotlin.Progression<k
         public final val EMPTY: kotlin.FloatRange
             public final fun <get-EMPTY>(): kotlin.FloatRange
     }
+}
+
+public trait FloatingPointConstants</*0*/ T> {
+    public abstract val NEGATIVE_INFINITY: T
+        public abstract fun <get-NEGATIVE_INFINITY>(): T
+    public abstract val NaN: T
+        public abstract fun <get-NaN>(): T
+    public abstract val POSITIVE_INFINITY: T
+        public abstract fun <get-POSITIVE_INFINITY>(): T
 }
 
 public trait Function0</*0*/ out R> {
@@ -873,6 +910,10 @@ public final class Int : kotlin.Number, kotlin.Comparable<kotlin.Int> {
     public open override /*1*/ fun toShort(): kotlin.Short
     public final fun ushr(/*0*/ bits: kotlin.Int): kotlin.Int
     public final fun xor(/*0*/ other: kotlin.Int): kotlin.Int
+
+    public class object Default {
+        /*primary*/ private constructor Default()
+    }
 }
 
 public final class IntArray : kotlin.Cloneable {
@@ -1040,6 +1081,10 @@ public final class Long : kotlin.Number, kotlin.Comparable<kotlin.Long> {
     public open override /*1*/ fun toShort(): kotlin.Short
     public final fun ushr(/*0*/ bits: kotlin.Int): kotlin.Long
     public final fun xor(/*0*/ other: kotlin.Long): kotlin.Long
+
+    public class object Default {
+        /*primary*/ private constructor Default()
+    }
 }
 
 public final class LongArray : kotlin.Cloneable {
@@ -1332,6 +1377,10 @@ public final class Short : kotlin.Number, kotlin.Comparable<kotlin.Short> {
     public open override /*1*/ fun toInt(): kotlin.Int
     public open override /*1*/ fun toLong(): kotlin.Long
     public open override /*1*/ fun toShort(): kotlin.Short
+
+    public class object Default {
+        /*primary*/ private constructor Default()
+    }
 }
 
 public final class ShortArray : kotlin.Cloneable {
@@ -1406,6 +1455,10 @@ public final class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequenc
     public open override /*1*/ fun length(): kotlin.Int
     public final fun plus(/*0*/ other: kotlin.Any?): kotlin.String
     public open override /*1*/ fun subSequence(/*0*/ start: kotlin.Int, /*1*/ end: kotlin.Int): kotlin.CharSequence
+
+    public class object Default {
+        /*primary*/ private constructor Default()
+    }
 }
 
 public open class Throwable {

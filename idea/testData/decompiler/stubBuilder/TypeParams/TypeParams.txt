@@ -47,7 +47,7 @@ PsiJetFileStubImpl[package=test]
             REFERENCE_EXPRESSION:[referencedName=Any]
     VALUE_PARAMETER_LIST:
     TYPE_CONSTRAINT_LIST:
-      TYPE_CONSTRAINT:[isClassObjectConstraint=false]
+      TYPE_CONSTRAINT:[isDefaultObjectConstraint=false]
         REFERENCE_EXPRESSION:[referencedName=T1]
         TYPE_REFERENCE:
           NULLABLE_TYPE:
@@ -55,7 +55,7 @@ PsiJetFileStubImpl[package=test]
               USER_TYPE:[isAbsoluteInRootPackage=false]
                 REFERENCE_EXPRESSION:[referencedName=kotlin]
               REFERENCE_EXPRESSION:[referencedName=Any]
-      TYPE_CONSTRAINT:[isClassObjectConstraint=false]
+      TYPE_CONSTRAINT:[isDefaultObjectConstraint=false]
         REFERENCE_EXPRESSION:[referencedName=T1]
         TYPE_REFERENCE:
           NULLABLE_TYPE:
@@ -63,14 +63,14 @@ PsiJetFileStubImpl[package=test]
               USER_TYPE:[isAbsoluteInRootPackage=false]
                 REFERENCE_EXPRESSION:[referencedName=kotlin]
               REFERENCE_EXPRESSION:[referencedName=Int]
-      TYPE_CONSTRAINT:[isClassObjectConstraint=false]
+      TYPE_CONSTRAINT:[isDefaultObjectConstraint=false]
         REFERENCE_EXPRESSION:[referencedName=T1]
         TYPE_REFERENCE:
           USER_TYPE:[isAbsoluteInRootPackage=false]
             USER_TYPE:[isAbsoluteInRootPackage=false]
               REFERENCE_EXPRESSION:[referencedName=kotlin]
             REFERENCE_EXPRESSION:[referencedName=Int]
-      TYPE_CONSTRAINT:[isClassObjectConstraint=false]
+      TYPE_CONSTRAINT:[isDefaultObjectConstraint=false]
         REFERENCE_EXPRESSION:[referencedName=T7]
         TYPE_REFERENCE:
           USER_TYPE:[isAbsoluteInRootPackage=false]
@@ -353,14 +353,14 @@ PsiJetFileStubImpl[package=test]
               REFERENCE_EXPRESSION:[referencedName=kotlin]
             REFERENCE_EXPRESSION:[referencedName=Unit]
         TYPE_CONSTRAINT_LIST:
-          TYPE_CONSTRAINT:[isClassObjectConstraint=false]
+          TYPE_CONSTRAINT:[isDefaultObjectConstraint=false]
             REFERENCE_EXPRESSION:[referencedName=G3]
             TYPE_REFERENCE:
               USER_TYPE:[isAbsoluteInRootPackage=false]
                 USER_TYPE:[isAbsoluteInRootPackage=false]
                   REFERENCE_EXPRESSION:[referencedName=kotlin]
                 REFERENCE_EXPRESSION:[referencedName=String]
-          TYPE_CONSTRAINT:[isClassObjectConstraint=false]
+          TYPE_CONSTRAINT:[isDefaultObjectConstraint=false]
             REFERENCE_EXPRESSION:[referencedName=G3]
             TYPE_REFERENCE:
               NULLABLE_TYPE:

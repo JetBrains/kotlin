@@ -1379,7 +1379,7 @@ public final class JvmProtoBuf {
      * <code>optional bool is_static_in_outer = 3 [default = false];</code>
      *
      * <pre>
-     * True iff this field is a backing field for a class object and is really present as a static
+     * True iff this field is a backing field for a default object and is really present as a static
      * field in the outer class, not as an instance field here
      * </pre>
      */
@@ -1388,7 +1388,7 @@ public final class JvmProtoBuf {
      * <code>optional bool is_static_in_outer = 3 [default = false];</code>
      *
      * <pre>
-     * True iff this field is a backing field for a class object and is really present as a static
+     * True iff this field is a backing field for a default object and is really present as a static
      * field in the outer class, not as an instance field here
      * </pre>
      */
@@ -1526,7 +1526,7 @@ public final class JvmProtoBuf {
      * <code>optional bool is_static_in_outer = 3 [default = false];</code>
      *
      * <pre>
-     * True iff this field is a backing field for a class object and is really present as a static
+     * True iff this field is a backing field for a default object and is really present as a static
      * field in the outer class, not as an instance field here
      * </pre>
      */
@@ -1537,7 +1537,7 @@ public final class JvmProtoBuf {
      * <code>optional bool is_static_in_outer = 3 [default = false];</code>
      *
      * <pre>
-     * True iff this field is a backing field for a class object and is really present as a static
+     * True iff this field is a backing field for a default object and is really present as a static
      * field in the outer class, not as an instance field here
      * </pre>
      */
@@ -1880,7 +1880,7 @@ public final class JvmProtoBuf {
        * <code>optional bool is_static_in_outer = 3 [default = false];</code>
        *
        * <pre>
-       * True iff this field is a backing field for a class object and is really present as a static
+       * True iff this field is a backing field for a default object and is really present as a static
        * field in the outer class, not as an instance field here
        * </pre>
        */
@@ -1891,7 +1891,7 @@ public final class JvmProtoBuf {
        * <code>optional bool is_static_in_outer = 3 [default = false];</code>
        *
        * <pre>
-       * True iff this field is a backing field for a class object and is really present as a static
+       * True iff this field is a backing field for a default object and is really present as a static
        * field in the outer class, not as an instance field here
        * </pre>
        */
@@ -1902,7 +1902,7 @@ public final class JvmProtoBuf {
        * <code>optional bool is_static_in_outer = 3 [default = false];</code>
        *
        * <pre>
-       * True iff this field is a backing field for a class object and is really present as a static
+       * True iff this field is a backing field for a default object and is really present as a static
        * field in the outer class, not as an instance field here
        * </pre>
        */
@@ -1916,7 +1916,7 @@ public final class JvmProtoBuf {
        * <code>optional bool is_static_in_outer = 3 [default = false];</code>
        *
        * <pre>
-       * True iff this field is a backing field for a class object and is really present as a static
+       * True iff this field is a backing field for a default object and is really present as a static
        * field in the outer class, not as an instance field here
        * </pre>
        */

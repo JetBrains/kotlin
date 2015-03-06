@@ -24,9 +24,6 @@ import java.lang.reflect.Modifier
 
 public trait JetScope {
 
-    /**
-     * Should not return object (class object or enum entry) class descriptors.
-     */
     public fun getClassifier(name: Name): ClassifierDescriptor?
 
     public fun getPackage(name: Name): PackageViewDescriptor?

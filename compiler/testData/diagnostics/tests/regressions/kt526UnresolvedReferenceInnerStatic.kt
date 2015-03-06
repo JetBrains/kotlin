@@ -10,6 +10,6 @@ class Foo {
 }
 class User {
     fun main() : Unit {
-        var <!UNUSED_VARIABLE!>boo<!> : Foo.Bar? /* <-- this reference is red */ = Foo.Bar()
+        var <!UNUSED_VARIABLE!>boo<!> : Foo.Default.Bar? /* <-- this reference is red */ = Foo.Default.Bar()
     }
 }

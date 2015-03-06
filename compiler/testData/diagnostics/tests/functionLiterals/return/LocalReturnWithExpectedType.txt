@@ -1,0 +1,6 @@
+package
+
+internal val a: () -> kotlin.List<kotlin.Int>
+internal val flag: kotlin.Boolean = true
+internal fun </*0*/ T> listOf(): kotlin.List<T>
+internal fun </*0*/ T> listOf(/*0*/ vararg values: T /*kotlin.Array<out T>*/): kotlin.List<T>

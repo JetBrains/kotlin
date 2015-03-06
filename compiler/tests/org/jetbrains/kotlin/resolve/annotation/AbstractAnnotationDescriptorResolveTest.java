@@ -45,6 +45,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isNonDefaultObject;
+
 public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFixture {
     private static final DescriptorRenderer WITH_ANNOTATION_ARGUMENT_TYPES = new DescriptorRendererBuilder()
                                                                                     .setVerbose(true)
@@ -75,7 +77,9 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
 
         ClassDescriptor myClass = getClassDescriptor(testPackage, "MyClass");
         checkDescriptor(expectedAnnotation, myClass);
-        checkDescriptor(expectedAnnotation, getClassObjectDescriptor(myClass));
+        ClassDescriptor defaultObjectDescriptor = myClass.getDefaultObjectDescriptor();
+        assert defaultObjectDescriptor != null : "Cannot find default object for class " + myClass.getName();
+        checkDescriptor(expectedAnnotation, defaultObjectDescriptor);
         checkDescriptor(expectedAnnotation, getInnerClassDescriptor(myClass, "InnerClass"));
 
         FunctionDescriptor foo = getFunctionDescriptor(myClass, "foo");
@@ -200,13 +204,6 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
     }
 
     @NotNull
-    private static ClassDescriptor getClassObjectDescriptor(@NotNull ClassDescriptor classDescriptor) {
-        ClassDescriptor objectDescriptor = classDescriptor.getDefaultObjectDescriptor();
-        assert objectDescriptor != null : "Cannot find class object for class " + classDescriptor.getName();
-        return objectDescriptor;
-    }
-
-    @NotNull
     private static ClassDescriptor getInnerClassDescriptor(@NotNull ClassDescriptor classDescriptor, @NotNull String name) {
         Name propertyName = Name.identifier(name);
         JetScope memberScope = classDescriptor.getMemberScope(Collections.<TypeProjection>emptyList());
@@ -233,7 +230,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
     @NotNull
     private ClassDescriptor getLocalObjectDescriptor(@NotNull String name) {
         ClassDescriptor localClassDescriptor = getLocalClassDescriptor(name);
-        if (localClassDescriptor.getKind() == ClassKind.OBJECT) {
+        if (isNonDefaultObject(localClassDescriptor)) {
             return localClassDescriptor;
         }
 

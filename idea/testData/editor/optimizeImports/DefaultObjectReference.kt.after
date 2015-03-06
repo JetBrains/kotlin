@@ -1,0 +1,9 @@
+package p
+
+import d.A
+import d.B.F
+
+fun main(args: Array<String>) {
+    F.c
+    A.c
+}

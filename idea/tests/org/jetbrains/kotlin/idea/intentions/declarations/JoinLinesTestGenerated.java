@@ -30,7 +30,11 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/joinLines")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({JoinLinesTestGenerated.DeclarationAndAssignment.class, JoinLinesTestGenerated.NestedIfs.class, JoinLinesTestGenerated.RemoveBraces.class})
+@InnerTestClasses({
+        JoinLinesTestGenerated.DeclarationAndAssignment.class,
+        JoinLinesTestGenerated.NestedIfs.class,
+        JoinLinesTestGenerated.RemoveBraces.class,
+})
 @RunWith(JUnit3RunnerWithInners.class)
 public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
     public void testAllFilesPresentInJoinLines() throws Exception {

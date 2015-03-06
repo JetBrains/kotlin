@@ -16,31 +16,27 @@
 
 package org.jetbrains.kotlin.serialization
 
-import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil
-import org.jetbrains.kotlin.test.TestCaseWithTmpdir
-import java.io.File
-import org.jetbrains.kotlin.test.ConfigurationKind
-import java.net.URLClassLoader
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.test.JetTestUtils
-import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
-import org.jetbrains.kotlin.test.TestJdkKind
+import com.google.common.base.Predicates
+import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.context.GlobalContext
+import org.jetbrains.kotlin.di.InjectorForTopDownAnalyzerForJvm
+import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.di.InjectorForTopDownAnalyzerForJvm
-import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
-import org.jetbrains.kotlin.context.GlobalContext
-import org.jetbrains.kotlin.resolve.TopDownAnalysisParameters
-import com.google.common.base.Predicates
-import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
-import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
-import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator
 import org.jetbrains.kotlin.name.FqNameUnsafe
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.TopDownAnalysisParameters
+import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
+import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
+import org.jetbrains.kotlin.test.*
+import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator
+import java.io.File
+import java.net.URLClassLoader
 
 public abstract class AbstractLocalClassProtoTest : TestCaseWithTmpdir() {
     protected fun doTest(filename: String) {
@@ -50,7 +46,7 @@ public abstract class AbstractLocalClassProtoTest : TestCaseWithTmpdir() {
         val classNameSuffix = InTextDirectivesUtils.findStringWithPrefixes(source.readText(), "// CLASS_NAME_SUFFIX: ")
                               ?: error("CLASS_NAME_SUFFIX directive not found in test data")
 
-        val classLoader = URLClassLoader(array(tmpdir.toURI().toURL(), ForTestCompileRuntime.runtimeJarForTests().toURI().toURL()), null)
+        val classLoader = URLClassLoader(array(tmpdir.toURI().toURL()), ForTestCompileRuntime.runtimeJarClassLoader())
 
         val classFile = tmpdir.listFiles().singleOrNull { it.getPath().endsWith("$classNameSuffix.class") }
                         ?: error("Local class with suffix `$classNameSuffix` is not found in: ${tmpdir.listFiles().toList()}")

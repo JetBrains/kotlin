@@ -66,7 +66,7 @@ private class ClassClsStubBuilder(
             supertypeIds
         }
     }
-    private val classObjectName = if (classProto.hasClassObjectName()) c.nameResolver.getName(classProto.getClassObjectName()) else null
+    private val defaultObjectName = if (classProto.hasDefaultObjectName()) c.nameResolver.getName(classProto.getDefaultObjectName()) else null
 
     private val classOrObjectStub = createClassOrObjectStubAndModifierListStub()
 
@@ -100,7 +100,7 @@ private class ClassClsStubBuilder(
     }
 
     private fun doCreateClassOrObjectStub(): StubElement<out PsiElement> {
-        val isClassObject = classKind == ProtoBuf.Class.Kind.CLASS_OBJECT
+        val isDefaultObject = classKind == ProtoBuf.Class.Kind.CLASS_OBJECT
         val fqName = outerContext.containerFqName.child(classId.getRelativeClassName().shortName())
         val shortName = fqName.shortName()?.ref()
         val superTypeRefs = supertypeIds.filter {
@@ -112,7 +112,7 @@ private class ClassClsStubBuilder(
                 KotlinObjectStubImpl(
                         parentStub, shortName, fqName, superTypeRefs,
                         isTopLevel = !classId.isNestedClass(),
-                        isClassObject = isClassObject,
+                        isDefault = isDefaultObject,
                         isLocal = false,
                         isObjectLiteral = false
                 )
@@ -163,19 +163,19 @@ private class ClassClsStubBuilder(
 
     private fun createClassBodyAndMemberStubs() {
         val classBody = KotlinPlaceHolderStubImpl<JetClassBody>(classOrObjectStub, JetStubElementTypes.CLASS_BODY)
-        createClassObjectStub(classBody)
+        createDefaultObjectStub(classBody)
         createEnumEntryStubs(classBody)
         createCallableMemberStubs(classBody)
         createInnerAndNestedClasses(classBody)
     }
 
-    private fun createClassObjectStub(classBody: KotlinPlaceHolderStubImpl<JetClassBody>) {
-        if (classObjectName == null) {
+    private fun createDefaultObjectStub(classBody: KotlinPlaceHolderStubImpl<JetClassBody>) {
+        if (defaultObjectName == null) {
             return
         }
 
-        val classObjectId = classId.createNestedClassId(classObjectName)
-        createNestedClassStub(classBody, classObjectId)
+        val defaultObjectId = classId.createNestedClassId(defaultObjectName)
+        createNestedClassStub(classBody, defaultObjectId)
     }
 
     private fun createEnumEntryStubs(classBody: KotlinPlaceHolderStubImpl<JetClassBody>) {
@@ -211,7 +211,7 @@ private class ClassClsStubBuilder(
     private fun createInnerAndNestedClasses(classBody: KotlinPlaceHolderStubImpl<JetClassBody>) {
         classProto.getNestedClassNameList().forEach { id ->
             val nestedClassName = c.nameResolver.getName(id)
-            if (nestedClassName != classObjectName) {
+            if (nestedClassName != defaultObjectName) {
                 val nestedClassId = classId.createNestedClassId(nestedClassName)
                 createNestedClassStub(classBody, nestedClassId)
             }

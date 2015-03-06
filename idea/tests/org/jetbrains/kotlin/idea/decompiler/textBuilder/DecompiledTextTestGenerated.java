@@ -30,7 +30,8 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/decompiler/decompiledText")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({})
+@InnerTestClasses({
+})
 @RunWith(JUnit3RunnerWithInners.class)
 public class DecompiledTextTestGenerated extends AbstractDecompiledTextTest {
     public void testAllFilesPresentInDecompiledText() throws Exception {

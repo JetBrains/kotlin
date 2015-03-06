@@ -1,5 +1,5 @@
 // "Import" "true"
-// ERROR: Please specify constructor invocation; classifier 'ArrayList' does not have a class object
+// ERROR: Please specify constructor invocation; classifier 'ArrayList' does not have a default object
 
 // KT-4000
 

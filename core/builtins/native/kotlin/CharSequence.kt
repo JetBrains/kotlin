@@ -16,10 +16,25 @@
 
 package kotlin
 
+/**
+ * Represents a readable sequence of [Char] values.
+ */
 public trait CharSequence {
+    /**
+     * Returns the length of this character sequence.
+     */
     public fun length(): Int
 
+    /**
+     * Returns the character at the specified [index] in the sequence.
+     */
     public fun charAt(index: Int): Char
 
+    /**
+     * Returns a subsequence of this sequence.
+     *
+     * @param start the start index (inclusive).
+     * @param end the end index (exclusive).
+     */
     public fun subSequence(start: Int, end: Int): CharSequence
 }

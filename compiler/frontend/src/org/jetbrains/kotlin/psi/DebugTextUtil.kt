@@ -237,7 +237,7 @@ private object DebugTextBuildingVisitor : JetVisitor<String, Unit>() {
         return buildText {
             append("STUB: ")
             appendInn(declaration.getModifierList(), suffix = " ")
-            if (declaration.isClassObject()) {
+            if (declaration.isDefault()) {
                 append("class ")
             }
             append("object ")
@@ -273,7 +273,7 @@ private object DebugTextBuildingVisitor : JetVisitor<String, Unit>() {
 
     override fun visitTypeConstraint(constraint: JetTypeConstraint, data: Unit?): String? {
         return buildText {
-            if (constraint.isClassObjectConstraint()) {
+            if (constraint.isDefaultObjectConstraint()) {
                 append("class object ")
             }
             appendInn(constraint.getSubjectTypeParameterName())

@@ -42,12 +42,14 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetClassOrObject;
 import org.jetbrains.kotlin.psi.JetNamedFunction;
 import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationsPackage;
 import org.jetbrains.kotlin.resolve.calls.CallResolverUtil;
 import org.jetbrains.kotlin.resolve.constants.ArrayValue;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.JavaClassValue;
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
@@ -71,10 +73,11 @@ import static org.jetbrains.kotlin.codegen.JvmSerializationBindings.*;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.isLocalNamedFun;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION;
 import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.OLD_JET_VALUE_PARAMETER_ANNOTATION;
-import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.callableDescriptorToDeclaration;
+import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.getSourceFromDescriptor;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isFunctionLiteral;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isTrait;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
+import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.Delegation;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.OtherOrigin;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.Synthetic;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
@@ -165,8 +168,8 @@ public class FunctionCodegen {
 
         generateBridges(functionDescriptor);
 
-        boolean staticInClassObject = AnnotationsPackage.isPlatformStaticInClassObject(functionDescriptor);
-        if (staticInClassObject) {
+        boolean staticInDefaultObject = AnnotationsPackage.isPlatformStaticInDefaultObject(functionDescriptor);
+        if (staticInDefaultObject) {
             ImplementationBodyCodegen parentBodyCodegen = (ImplementationBodyCodegen) memberCodegen.getParentCodegen();
             parentBodyCodegen.addAdditionalTask(new PlatformStaticGenerator(functionDescriptor, origin, state));
         }
@@ -189,8 +192,8 @@ public class FunctionCodegen {
         if (!isNative) {
             generateMethodBody(mv, functionDescriptor, methodContext, jvmSignature, strategy, memberCodegen);
         }
-        else if (staticInClassObject) {
-            // native platformStatic foo() in class object should delegate to the static native function moved to the outer class
+        else if (staticInDefaultObject) {
+            // native platformStatic foo() in default object should delegate to the static native function moved to the outer class
             mv.visitCode();
             FunctionDescriptor staticFunctionDescriptor = PlatformStaticGenerator.createStaticFunctionDescriptor(functionDescriptor);
             JvmMethodSignature jvmMethodSignature =
@@ -495,7 +498,7 @@ public class FunctionCodegen {
         );
 
         if (!bridgesToGenerate.isEmpty()) {
-            PsiElement origin = descriptor.getKind() == DECLARATION ? callableDescriptorToDeclaration(descriptor) : null;
+            PsiElement origin = descriptor.getKind() == DECLARATION ? getSourceFromDescriptor(descriptor) : null;
             for (Bridge<Method> bridge : bridgesToGenerate) {
                 generateBridge(origin, descriptor, bridge.getFrom(), bridge.getTo());
             }
@@ -625,12 +628,12 @@ public class FunctionCodegen {
             if (this.owner instanceof PackageFacadeContext) {
                 mv.visitCode();
                 generatePackageDelegateMethodBody(mv, defaultMethod, (PackageFacadeContext) this.owner);
-                endVisit(mv, "default method delegation", callableDescriptorToDeclaration(functionDescriptor));
+                endVisit(mv, "default method delegation", getSourceFromDescriptor(functionDescriptor));
             }
             else {
                 mv.visitCode();
                 generateDefaultImplBody(owner, functionDescriptor, mv, loadStrategy, function, memberCodegen);
-                endVisit(mv, "default method", callableDescriptorToDeclaration(functionDescriptor));
+                endVisit(mv, "default method", getSourceFromDescriptor(functionDescriptor));
             }
         }
     }
@@ -799,7 +802,7 @@ public class FunctionCodegen {
     ) {
         int flags = ACC_PUBLIC | ACC_BRIDGE | ACC_SYNTHETIC; // TODO.
 
-        MethodVisitor mv = v.newMethod(OtherOrigin(descriptor), flags, delegateTo.getName(), bridge.getDescriptor(), null, null);
+        MethodVisitor mv = v.newMethod(DiagnosticsPackage.Bridge(descriptor, origin), flags, delegateTo.getName(), bridge.getDescriptor(), null, null);
         if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
 
         mv.visitCode();
@@ -836,7 +839,7 @@ public class FunctionCodegen {
             final StackValue field
     ) {
         generateMethod(
-                OtherOrigin(delegateFunction), delegateFunction,
+                Delegation(DescriptorToSourceUtils.descriptorToDeclaration(delegatedTo), delegateFunction), delegateFunction,
                 new FunctionGenerationStrategy() {
                     @Override
                     public void generateBody(

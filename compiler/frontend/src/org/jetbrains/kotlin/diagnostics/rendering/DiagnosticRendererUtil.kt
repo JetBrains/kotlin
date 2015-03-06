@@ -18,15 +18,8 @@ package org.jetbrains.kotlin.diagnostics.rendering
 
 import org.jetbrains.kotlin.renderer.Renderer
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.resolve.DescriptorUtils.isClassObject
 import org.jetbrains.kotlin.renderer.DescriptorRendererImpl
 
 public fun <P> renderParameter(parameter: P, renderer: Renderer<P>?): Any = renderer?.render(parameter) ?: parameter
 
-public fun ClassDescriptor.renderKindWithName(): String {
-    val kind = DescriptorRendererImpl.getClassKindPrefix(this)
-    if (isClassObject(this)) {
-        return "$kind of '${getContainingDeclaration().getName()}'"
-    }
-    return "$kind '${getName()}'"
-}
+public fun ClassDescriptor.renderKindWithName(): String = "${DescriptorRendererImpl.getClassKindPrefix(this)} '${getName()}'"

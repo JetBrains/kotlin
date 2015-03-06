@@ -1,11 +1,13 @@
 package a
 
-import a.Outer.*
+import a.Outer.Default.Nested
+import a.Outer.Default.NestedEnum
+import a.Outer.Default.NestedObj
+import a.Outer.Default.NestedTrait
+import a.Outer.Default.NestedAnnotation
 
 class Outer {
     class object {
-        inner class Inner {
-        }
         class Nested {
         }
         enum class NestedEnum {
@@ -18,5 +20,5 @@ class Outer {
     }
 }
 
-<selection>fun f(i: Inner, n: Nested, e: NestedEnum, o: NestedObj, t: NestedTrait, a: NestedAnnotation) {
+<selection>fun f(n: Nested, e: NestedEnum, o: NestedObj, t: NestedTrait, a: NestedAnnotation) {
 }</selection>

@@ -7,7 +7,7 @@ fun test() {
    MyTrait.<warning descr="'MyTrait.Default' is deprecated. Use A instead">Default</warning>
    <warning descr="'MyTrait.Default' is deprecated. Use A instead">MyTrait</warning>
    MyClass.<warning descr="'MyClass.Default' is deprecated. Use A instead">Default</warning>
-   <warning descr="'MyClass.Default' is deprecated. Use A instead">MyClass</warning>.<warning descr="'MyClass.Default' is deprecated. Use A instead">Default</warning>.test
+   MyClass.<warning descr="'MyClass.Default' is deprecated. Use A instead">Default</warning>.test
 
    a == b
 }

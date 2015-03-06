@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.psi.JetValueArgument
 import org.jetbrains.kotlin.psi.JetCallElement
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.idea.codeInsight.DescriptorToDeclarationUtil
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import org.jetbrains.kotlin.psi.JetFunction
 import org.jetbrains.kotlin.psi.JetClass
@@ -46,7 +46,7 @@ public object CreateParameterByNamedArgumentActionFactory: JetSingleIntentionAct
 
         val callElement = argument.getStrictParentOfType<JetCallElement>() ?: return null
         val functionDescriptor = callElement.getResolvedCall(context)?.getResultingDescriptor() as? FunctionDescriptor ?: return null
-        val callable = DescriptorToDeclarationUtil.getDeclaration(callElement.getProject(), functionDescriptor) ?: return null
+        val callable = DescriptorToSourceUtilsIde.getAnyDeclaration(callElement.getProject(), functionDescriptor) ?: return null
         if (!((callable is JetFunction || callable is JetClass) && callable.canRefactor())) return null
 
         val anyType = KotlinBuiltIns.getInstance().getAnyType()

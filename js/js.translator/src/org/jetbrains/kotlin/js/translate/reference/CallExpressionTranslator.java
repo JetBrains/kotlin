@@ -48,7 +48,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage.getFunctionResolvedCallWithAssert;
-import static org.jetbrains.kotlin.resolve.diagnostics.JsCallChecker.isJsCall;
+import static org.jetbrains.kotlin.js.resolve.diagnostics.JsCallChecker.isJsCall;
 
 public final class CallExpressionTranslator extends AbstractCallExpressionTranslator {
 

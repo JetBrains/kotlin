@@ -45,7 +45,9 @@ public class DeserializedClassDescriptor(
 ) {
     private val modality = deserialization.modality(Flags.MODALITY.get(classProto.getFlags()))
     private val visibility = deserialization.visibility(Flags.VISIBILITY.get(classProto.getFlags()))
-    private val kind = deserialization.classKind(Flags.CLASS_KIND.get(classProto.getFlags()))
+    private val kindFromProto = Flags.CLASS_KIND.get(classProto.getFlags())
+    private val kind = deserialization.classKind(kindFromProto)
+    private val isDefault = kindFromProto == ProtoBuf.Class.Kind.CLASS_OBJECT
     private val isInner = Flags.INNER.get(classProto.getFlags())
 
     val c = outerContext.childContext(this, classProto.getTypeParameterList(), nameResolver)
@@ -60,7 +62,7 @@ public class DeserializedClassDescriptor(
 
     private val containingDeclaration = outerContext.containingDeclaration
     private val primaryConstructor = c.storageManager.createNullableLazyValue { computePrimaryConstructor() }
-    private val classObjectDescriptor = c.storageManager.createNullableLazyValue { computeClassObjectDescriptor() }
+    private val defaultObjectDescriptor = c.storageManager.createNullableLazyValue { computeDefaultObjectDescriptor() }
 
     private val annotations =
             if (!Flags.HAS_ANNOTATIONS.get(classProto.getFlags())) {
@@ -88,6 +90,8 @@ public class DeserializedClassDescriptor(
 
     override fun getStaticScope() = staticScope
 
+    override fun isDefaultObject(): Boolean = isDefault
+
     private fun computePrimaryConstructor(): ConstructorDescriptor? {
         if (!classProto.hasPrimaryConstructor()) return null
 
@@ -109,14 +113,14 @@ public class DeserializedClassDescriptor(
         return listOf(constructor)
     }
 
-    private fun computeClassObjectDescriptor(): ClassDescriptor? {
-        if (!classProto.hasClassObjectName()) return null
+    private fun computeDefaultObjectDescriptor(): ClassDescriptor? {
+        if (!classProto.hasDefaultObjectName()) return null
 
-        val classObjectName = c.nameResolver.getName(classProto.getClassObjectName())
-        return memberScope.getClassifier(classObjectName) as? ClassDescriptor
+        val defaultObjectName = c.nameResolver.getName(classProto.getDefaultObjectName())
+        return memberScope.getClassifier(defaultObjectName) as? ClassDescriptor
     }
 
-    override fun getDefaultObjectDescriptor(): ClassDescriptor? = classObjectDescriptor()
+    override fun getDefaultObjectDescriptor(): ClassDescriptor? = defaultObjectDescriptor()
 
     private fun computeSuperTypes(): Collection<JetType> {
         val supertypes = ArrayList<JetType>(classProto.getSupertypeCount())

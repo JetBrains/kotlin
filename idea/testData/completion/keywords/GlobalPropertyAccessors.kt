@@ -35,4 +35,4 @@ var a : Int
 // EXIST:  var
 // EXIST:  vararg
 /*why?*/
-// NUMBER: 23
+// NUMBER: 24

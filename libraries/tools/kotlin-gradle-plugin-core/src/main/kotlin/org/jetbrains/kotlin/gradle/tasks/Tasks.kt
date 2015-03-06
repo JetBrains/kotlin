@@ -30,6 +30,7 @@ import com.intellij.ide.highlighter.JavaFileType
 import org.jetbrains.kotlin.idea.JetFileType
 import org.jetbrains.kotlin.utils.LibraryUtils
 import com.intellij.openapi.util.io.FileUtil
+import org.apache.commons.io.FilenameUtils
 
 val DEFAULT_ANNOTATIONS = "org.jebrains.kotlin.gradle.defaultAnnotations"
 
@@ -45,6 +46,9 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
 
     private val logger = Logging.getLogger(this.javaClass)
     override fun getLogger() = logger
+
+    var compilerPluginClasspaths: Array<String> = array()
+    var compilerPluginArguments: Array<String> = array()
 
     [TaskAction]
     override fun compile() {
@@ -62,10 +66,14 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
         afterCompileHook(args)
     }
 
-    protected fun isJava(it: File): Boolean = it.extension.equalsIgnoreCase(JavaFileType.INSTANCE.getDefaultExtension())
-    protected fun isKotlin(it: File): Boolean = it.extension.equalsIgnoreCase(JetFileType.INSTANCE.getDefaultExtension())
+    private fun getKotlinSources(): List<File> = getSource().filter { it.isKotlinFile() }
 
-    private fun getKotlinSources(): List<File> = getSource().filter{ isKotlin(it) }
+    private fun File.isKotlinFile(): Boolean {
+        return when (FilenameUtils.getExtension(getName()).toLowerCase()) {
+            "kt", "kts" -> true
+            else -> false
+        }
+    }
 
     private fun populateCommonArgs(args: T, sources: List<File>) {
         args.freeArgs = sources.map { it.getAbsolutePath() }
@@ -74,7 +82,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
         args.version = kotlinOptions.version
         args.noInline = kotlinOptions.noInline
     }
-
 
     private fun callCompiler(args: T) {
         val messageCollector = GradleMessageCollector(getLogger())
@@ -97,6 +104,9 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
     val srcDirsSources = HashSet<SourceDirectorySet>()
 
     override fun populateTargetSpecificArgs(args: K2JVMCompilerArguments) {
+        args.pluginClasspaths = compilerPluginClasspaths
+        args.pluginOptions = compilerPluginArguments
+
         if (StringUtils.isEmpty(kotlinOptions.classpath)) {
             val existingClasspathEntries = getClasspath().filter({ it != null && it.exists() })
             val effectiveClassPath = (getJavaSourceRoots() + existingClasspathEntries).makeString(File.pathSeparator)
@@ -110,9 +120,11 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
         }
 
         val embeddedAnnotations = getAnnotations(getProject(), getLogger())
-        val userAnnotations = (kotlinOptions.annotations ?: "").split(File.pathSeparatorChar).toList()
+        val userAnnotations = kotlinOptions.annotations?.split(File.pathSeparatorChar)?.toList() ?: emptyList()
         val allAnnotations = if (kotlinOptions.noJdkAnnotations) userAnnotations else userAnnotations.plus(embeddedAnnotations.map { it.getPath() })
-        args.annotations = allAnnotations.makeString(File.pathSeparator)
+        if (allAnnotations.isNotEmpty()) {
+            args.annotations = allAnnotations.join(File.pathSeparator)
+        }
 
         args.noStdlib = true
         args.noJdkAnnotations = true
@@ -124,10 +136,12 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
 
     private fun getJavaSourceRoots(): Set<File> =
             getSource()
-            .filter { isJava(it) }
+            .filter { it.isJavaFile() }
             .map { findSrcDirRoot(it) }
             .filterNotNull()
             .toSet()
+
+    private fun File.isJavaFile() = extension.equalsIgnoreCase(JavaFileType.INSTANCE.getDefaultExtension())
 
     override fun afterCompileHook(args: K2JVMCompilerArguments) {
         getLogger().debug("Copying resulting files to classes")

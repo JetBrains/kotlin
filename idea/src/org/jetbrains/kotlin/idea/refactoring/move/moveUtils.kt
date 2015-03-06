@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.idea.JetFileType
-import org.jetbrains.kotlin.idea.codeInsight.DescriptorToDeclarationUtil
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import java.util.Collections
 import org.jetbrains.kotlin.idea.refactoring.fqName.isImported
@@ -80,7 +80,7 @@ public fun JetElement.getInternalReferencesToUpdateOnPackageNameChange(packageNa
     fun processReference(refExpr: JetSimpleNameExpression, bindingContext: BindingContext): UsageInfo? {
         val descriptor = bindingContext[BindingContext.REFERENCE_TARGET, refExpr]?.getImportableDescriptor() ?: return null
 
-        val declaration = DescriptorToDeclarationUtil.getDeclaration(getProject(), descriptor) ?: return null
+        val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(getProject(), descriptor) ?: return null
         if (isAncestor(declaration, false)) return null
 
         val isCallable = descriptor is CallableDescriptor

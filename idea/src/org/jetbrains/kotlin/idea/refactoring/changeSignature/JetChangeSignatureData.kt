@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.idea.caches.resolve.*
-import org.jetbrains.kotlin.idea.codeInsight.DescriptorToDeclarationUtil
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.JetFunctionDefinitionUsage
 
 import java.util.*
@@ -84,7 +84,7 @@ public class JetChangeSignatureData(
 
     override val primaryFunctions: Collection<JetFunctionDefinitionUsage<PsiElement>> by Delegates.lazy {
         descriptorsForSignatureChange.map {
-            val declaration = DescriptorToDeclarationUtil.getDeclaration(baseDeclaration.getProject(), it)
+            val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(baseDeclaration.getProject(), it)
             assert(declaration != null) { "No declaration found for " + baseDescriptor }
             JetFunctionDefinitionUsage<PsiElement>(declaration, it, null, null)
         }

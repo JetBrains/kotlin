@@ -30,7 +30,9 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/editor/optimizeImports")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({OptimizeImportsTestGenerated.AllUnderImports.class})
+@InnerTestClasses({
+        OptimizeImportsTestGenerated.AllUnderImports.class,
+})
 @RunWith(JUnit3RunnerWithInners.class)
 public class OptimizeImportsTestGenerated extends AbstractOptimizeImportsTest {
     public void testAllFilesPresentInOptimizeImports() throws Exception {
@@ -73,6 +75,18 @@ public class OptimizeImportsTestGenerated extends AbstractOptimizeImportsTest {
         doTest(fileName);
     }
 
+    @TestMetadata("DefaultObjectReference.kt")
+    public void testDefaultObjectReference() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/DefaultObjectReference.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("DoNotTouchIfNoChanges.kt")
+    public void testDoNotTouchIfNoChanges() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/DoNotTouchIfNoChanges.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("DuplicatedImports.kt")
     public void testDuplicatedImports() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/DuplicatedImports.kt");
@@ -100,6 +114,12 @@ public class OptimizeImportsTestGenerated extends AbstractOptimizeImportsTest {
     @TestMetadata("JavaStaticField.kt")
     public void testJavaStaticField() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/JavaStaticField.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("KeywordNames.kt")
+    public void testKeywordNames() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/KeywordNames.kt");
         doTest(fileName);
     }
 

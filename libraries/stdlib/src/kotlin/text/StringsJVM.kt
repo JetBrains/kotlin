@@ -3,6 +3,8 @@ package kotlin
 import java.io.StringReader
 import java.util.ArrayList
 import java.util.Locale
+import java.util.regex.MatchResult
+import java.util.regex.Pattern
 import java.nio.charset.Charset
 
 public fun String.lastIndexOf(str: String): Int = (this as java.lang.String).lastIndexOf(str)
@@ -128,6 +130,12 @@ public fun String.toDouble(): Double = java.lang.Double.parseDouble(this)
 
 public fun String.toCharList(): List<Char> = toCharArray().toList()
 
+/**
+ * Returns a subsequence of this sequence.
+ *
+ * @param start the start index (inclusive).
+ * @param end the end index (exclusive).
+ */
 public fun CharSequence.get(start: Int, end: Int): CharSequence = subSequence(start, end)
 
 public fun String.toByteArray(charset: String): ByteArray = (this as java.lang.String).getBytes(charset)
@@ -150,8 +158,8 @@ public fun CharSequence.slice(range: IntRange): CharSequence {
 }
 
 /**
- * Converts the string into a regular expression [[Pattern]] optionally
- * with the specified flags from [[Pattern]] or'd together
+ * Converts the string into a regular expression [Pattern] optionally
+ * with the specified flags from [Pattern] or'd together
  * so that strings can be split or matched on.
  */
 public fun String.toRegex(flags: Int = 0): java.util.regex.Pattern {
@@ -168,7 +176,7 @@ public val String.reader: StringReader
  * Returns a copy of this string capitalised if it is not empty or already starting with an upper case letter,
  * otherwise returns this.
  *
- * @sample test.text.StringJVMTest.capitalize
+ * @sample test.text.StringTest.capitalize
  */
 public fun String.capitalize(): String {
     return if (isNotEmpty() && charAt(0).isLowerCase()) substring(0, 1).toUpperCase() + substring(1) else this
@@ -178,7 +186,7 @@ public fun String.capitalize(): String {
  * Returns a copy of this string with the first letter lowercased if it is not empty or already starting with
  * a lower case letter, otherwise returns this.
  *
- * @sample test.text.StringJVMTest.decapitalize
+ * @sample test.text.StringTest.decapitalize
  */
 public fun String.decapitalize(): String {
     return if (isNotEmpty() && charAt(0).isUpperCase()) substring(0, 1).toLowerCase() + substring(1) else this

@@ -16,6 +16,12 @@
 
 package kotlin
 
+/**
+ * Classes that inherit from this trait support creating field-by-field copies of their instances.
+ */
 public trait Cloneable {
+    /**
+     * Creates and returns a field-by-field copy of this object.
+     */
     protected fun clone(): Any { /* intrinsic */ }
 }

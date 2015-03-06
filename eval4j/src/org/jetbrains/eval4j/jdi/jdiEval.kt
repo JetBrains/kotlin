@@ -29,7 +29,7 @@ val BOOTSTRAP_CLASS_DESCRIPTORS = setOf("Ljava/lang/String;", "Ljava/lang/ClassL
 
 public class JDIEval(
         private val vm: jdi.VirtualMachine,
-        private val classLoader: jdi.ClassLoaderReference,
+        private val classLoader: jdi.ClassLoaderReference?,
         private val thread: jdi.ThreadReference,
         private val invokePolicy: Int
 ) : Eval {
@@ -53,19 +53,32 @@ public class JDIEval(
                 return loadedClass.classObject().asValue()
             }
         }
-        return invokeStaticMethod(
-                MethodDescription(
-                        CLASS.getInternalName(),
-                        "forName",
-                        "(Ljava/lang/String;ZLjava/lang/ClassLoader;)Ljava/lang/Class;",
-                        true
-                ),
-                listOf(
-                        vm.mirrorOf(classType.getInternalName().replace('/', '.')).asValue(),
-                        boolean(true),
-                        classLoader.asValue()
-                )
-        )
+        if (classLoader == null) {
+            return invokeStaticMethod(
+                    MethodDescription(
+                            CLASS.getInternalName(),
+                            "forName",
+                            "(Ljava/lang/String;)Ljava/lang/Class;",
+                            true
+                    ),
+                    listOf(vm.mirrorOf(classType.getInternalName().replace('/', '.')).asValue())
+            )
+        }
+        else {
+            return invokeStaticMethod(
+                    MethodDescription(
+                            CLASS.getInternalName(),
+                            "forName",
+                            "(Ljava/lang/String;ZLjava/lang/ClassLoader;)Ljava/lang/Class;",
+                            true
+                    ),
+                    listOf(
+                            vm.mirrorOf(classType.getInternalName().replace('/', '.')).asValue(),
+                            boolean(true),
+                            classLoader.asValue()
+                    )
+            )
+        }
     }
 
     override fun loadString(str: String): Value = vm.mirrorOf(str).asValue()

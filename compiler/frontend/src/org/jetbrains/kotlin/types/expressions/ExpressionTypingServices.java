@@ -311,7 +311,7 @@ public class ExpressionTypingServices {
             @NotNull CoercionStrategy coercionStrategyForLastExpression,
             @NotNull ExpressionTypingInternals blockLevelVisitor
     ) {
-        if (!noExpectedType(context.expectedType) || context.expectedType == UNIT_EXPECTED_TYPE) {
+        if (context.expectedType != NO_EXPECTED_TYPE) {
             JetType expectedType;
             if (context.expectedType == UNIT_EXPECTED_TYPE ||//the first check is necessary to avoid invocation 'isUnit(UNIT_EXPECTED_TYPE)'
                 (coercionStrategyForLastExpression == COERCION_TO_UNIT && KotlinBuiltIns.isUnit(context.expectedType))) {

@@ -56,14 +56,14 @@ public final class ReferenceTranslator {
         // Ignore qualifier if expression is EnumEntry or default object reference and use always use FQ name.
         DeclarationDescriptor descriptor = BindingUtils.getDescriptorForReferenceExpression(context.bindingContext(), expression);
         //TODO: should go away when objects inside classes are supported
-        if (DescriptorUtils.isClassObject(descriptor) && !AnnotationsUtils.isNativeObject(descriptor)) {
+        if (DescriptorUtils.isDefaultObject(descriptor) && !AnnotationsUtils.isNativeObject(descriptor)) {
             return simpleName;
         }
         if (descriptor instanceof ClassDescriptor) {
             ClassDescriptor entryClass = (ClassDescriptor) descriptor;
             if (entryClass.getKind() == ClassKind.ENUM_ENTRY) {
                 DeclarationDescriptor enumClass = entryClass.getContainingDeclaration();
-                qualifier = Namer.getClassObjectAccessor(translateAsFQReference(enumClass, context));
+                qualifier = Namer.getDefaultObjectAccessor(translateAsFQReference(enumClass, context));
             }
         }
 
@@ -109,8 +109,8 @@ public final class ReferenceTranslator {
         if (canBePropertyAccess(referenceExpression, context)) {
             return VariableAccessTranslator.newInstance(context, referenceExpression, receiver);
         }
-        if (ClassObjectAccessTranslator.isClassObjectReference(referenceExpression, context)) {
-            return ClassObjectAccessTranslator.newInstance(referenceExpression, context);
+        if (DefaultObjectAccessTranslator.isDefaultObjectReference(referenceExpression, context)) {
+            return DefaultObjectAccessTranslator.newInstance(referenceExpression, context);
         }
         return ReferenceAccessTranslator.newInstance(referenceExpression, context);
     }

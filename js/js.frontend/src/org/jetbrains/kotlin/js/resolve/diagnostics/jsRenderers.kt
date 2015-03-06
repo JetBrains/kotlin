@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.js.resolve.diagnostics
 
 import org.jetbrains.kotlin.renderer.Renderer
-import org.jetbrains.kotlin.resolve.diagnostics.JsCallData
-import org.jetbrains.kotlin.resolve.diagnostics.JsCallDataWithCode
+import org.jetbrains.kotlin.js.resolve.diagnostics.JsCallData
+import org.jetbrains.kotlin.js.resolve.diagnostics.JsCallDataWithCode
 import com.google.gwt.dev.js.rhino.Utils.isEndOfLine
 
 abstract class JsCallDataRenderer : Renderer<JsCallData> {

@@ -8,6 +8,6 @@ class Outer() {
 }
 
 fun box (): String {
-    val inner = Outer.Inner()
+    val inner = Outer.Default.Inner()
     return "OK"
 }

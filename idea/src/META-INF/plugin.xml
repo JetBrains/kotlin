@@ -96,9 +96,14 @@
       <add-to-group group-id="KotlinToolsGroup"/>
     </action>
 
-    <action id="ExtractFunction" class="org.jetbrains.kotlin.idea.refactoring.extractFunction.ExtractFunctionAction"
+    <action id="ExtractFunction" class="org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ExtractFunctionAction"
             text="Extract _Function..." use-shortcut-of="ExtractMethod">
       <add-to-group group-id="IntroduceActionsGroup" anchor="after" relative-to-action="ExtractMethod"/>
+    </action>
+
+    <action id="IntroduceProperty" class="org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.IntroducePropertyAction"
+            text="Introduce _Property..." use-shortcut-of="IntroduceField">
+        <add-to-group group-id="IntroduceActionsGroup" anchor="after" relative-to-action="IntroduceField"/>
     </action>
 
     <action id="CopyAsDiagnosticTest" class="org.jetbrains.kotlin.idea.actions.internal.CopyAsDiagnosticTestAction"
@@ -125,7 +130,7 @@
       <add-to-group group-id="KotlinToolsGroup" anchor="last"/>
     </action>
 
-    <action id="ExtractFunctionToScope" class="org.jetbrains.kotlin.idea.refactoring.extractFunction.ExtractFunctionToScopeAction"
+    <action id="ExtractFunctionToScope" class="org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ExtractFunctionToScopeAction"
             text="Extract Function to _Scope...">
       <keyboard-shortcut keymap="$default" first-keystroke="control alt shift M"/>
       <add-to-group group-id="IntroduceActionsGroup" anchor="after" relative-to-action="ExtractFunction"/>

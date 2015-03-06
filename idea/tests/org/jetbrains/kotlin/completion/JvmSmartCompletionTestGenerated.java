@@ -30,7 +30,24 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/completion/smart")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({JvmSmartCompletionTestGenerated.AfterAs.class, JvmSmartCompletionTestGenerated.AnonymousObject.class, JvmSmartCompletionTestGenerated.Constructor.class, JvmSmartCompletionTestGenerated.ForLoopRange.class, JvmSmartCompletionTestGenerated.FunctionLiterals.class, JvmSmartCompletionTestGenerated.FunctionReference.class, JvmSmartCompletionTestGenerated.Generics.class, JvmSmartCompletionTestGenerated.HeuristicSignatures.class, JvmSmartCompletionTestGenerated.IfValue.class, JvmSmartCompletionTestGenerated.InElvisOperator.class, JvmSmartCompletionTestGenerated.InOperator.class, JvmSmartCompletionTestGenerated.Inheritors.class, JvmSmartCompletionTestGenerated.MultipleArgsItem.class, JvmSmartCompletionTestGenerated.SmartCasts.class, JvmSmartCompletionTestGenerated.This.class, JvmSmartCompletionTestGenerated.WhenEntry.class})
+@InnerTestClasses({
+        JvmSmartCompletionTestGenerated.AfterAs.class,
+        JvmSmartCompletionTestGenerated.AnonymousObject.class,
+        JvmSmartCompletionTestGenerated.Constructor.class,
+        JvmSmartCompletionTestGenerated.ForLoopRange.class,
+        JvmSmartCompletionTestGenerated.FunctionLiterals.class,
+        JvmSmartCompletionTestGenerated.FunctionReference.class,
+        JvmSmartCompletionTestGenerated.Generics.class,
+        JvmSmartCompletionTestGenerated.HeuristicSignatures.class,
+        JvmSmartCompletionTestGenerated.IfValue.class,
+        JvmSmartCompletionTestGenerated.InElvisOperator.class,
+        JvmSmartCompletionTestGenerated.InOperator.class,
+        JvmSmartCompletionTestGenerated.Inheritors.class,
+        JvmSmartCompletionTestGenerated.MultipleArgsItem.class,
+        JvmSmartCompletionTestGenerated.SmartCasts.class,
+        JvmSmartCompletionTestGenerated.This.class,
+        JvmSmartCompletionTestGenerated.WhenEntry.class,
+})
 @RunWith(JUnit3RunnerWithInners.class)
 public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionTest {
     @TestMetadata("AfterExclSign.kt")

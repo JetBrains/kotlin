@@ -1,16 +1,34 @@
 package p.q
 
-fun foo(): Int {
+fun foo(myC: MyClass, def: MyClass.Default, nes: MyClass.Default.Nested) {
     MyClass.foo()
-    return MyClass.coProp + 10
+    MyClass.coProp
+    MyClass
+    MyClass
+    MyClass.coProp
+    MyClass.foo()
+    MyClass.bar(MyClass)
+    MyClass.bar(MyClass)
+    MyClass.Default.Nested
+    MyClass.Default.Nested.c
+    MyClass
 }
 
 class MyClass {
     class object {
         val coProp = 1
 
+        class Nested {
+            class object {
+                val c: Int = 1
+            }
+        }
+
         fun foo() {
 
+        }
+
+        fun bar(p: MyClass.Default) {
         }
     }
 }

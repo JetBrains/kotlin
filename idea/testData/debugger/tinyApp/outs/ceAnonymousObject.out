@@ -1,0 +1,13 @@
+LineBreakpoint created at ceAnonymousObject.kt:18
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! ceAnonymousObject.CeAnonymousObjectPackage
+Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+ceAnonymousObject.kt:18
+Compile bytecode for publicTopLevelObject
+Compile bytecode for privateTopLevelObject
+Compile bytecode for publicObject
+Compile bytecode for protectedObject
+Compile bytecode for localObject
+Compile bytecode for localObject.test()
+Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+
+Process finished with exit code 0

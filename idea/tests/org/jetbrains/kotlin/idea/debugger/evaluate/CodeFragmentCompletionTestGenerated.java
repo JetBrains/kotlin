@@ -30,7 +30,9 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/completion/basic/codeFragments")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({CodeFragmentCompletionTestGenerated.RuntimeType.class})
+@InnerTestClasses({
+        CodeFragmentCompletionTestGenerated.RuntimeType.class,
+})
 @RunWith(JUnit3RunnerWithInners.class)
 public class CodeFragmentCompletionTestGenerated extends AbstractCodeFragmentCompletionTest {
     public void testAllFilesPresentInCodeFragments() throws Exception {

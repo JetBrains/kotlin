@@ -46,7 +46,7 @@ object KDocFinder {
 
         if (declaration is CallableDescriptor) {
             for (baseDescriptor in declaration.getOverriddenDescriptors()) {
-                val baseKDoc = findKDoc(baseDescriptor)
+                val baseKDoc = findKDoc(baseDescriptor.getOriginal())
                 if (baseKDoc != null) {
                     return baseKDoc
                 }

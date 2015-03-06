@@ -17,23 +17,24 @@
 package org.jetbrains.kotlin.codegen;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicObjects;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.ClassKind;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.org.objectweb.asm.Type;
 
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isNonDefaultObject;
+
 public class FieldInfo {
     @NotNull
     public static FieldInfo createForSingleton(@NotNull ClassDescriptor classDescriptor, @NotNull JetTypeMapper typeMapper) {
-        ClassKind kind = classDescriptor.getKind();
-        if (!kind.isSingleton()) {
+        if (!classDescriptor.getKind().isSingleton()) {
             throw new UnsupportedOperationException("Can't create singleton field for class: " + classDescriptor);
         }
 
-        if (kind == ClassKind.OBJECT) {
+        if (isNonDefaultObject(classDescriptor) || IntrinsicObjects.INSTANCE$.hasMappingToObject(classDescriptor)) {
             Type type = typeMapper.mapType(classDescriptor);
             return new FieldInfo(type, type, JvmAbi.INSTANCE_FIELD, true);
         }
@@ -47,12 +48,12 @@ public class FieldInfo {
 
     @SuppressWarnings("deprecation")
     @NotNull
-    public static FieldInfo deprecatedFieldForClassObject(@NotNull ClassDescriptor classObject, @NotNull JetTypeMapper typeMapper) {
-        assert DescriptorUtils.isClassObject(classObject) : "Not a class object: " + classObject;
+    public static FieldInfo deprecatedFieldForDefaultObject(@NotNull ClassDescriptor defaultObject, @NotNull JetTypeMapper typeMapper) {
+        assert DescriptorUtils.isDefaultObject(defaultObject) : "Not a default object: " + defaultObject;
         return new FieldInfo(
-                typeMapper.mapType((ClassifierDescriptor) classObject.getContainingDeclaration()),
-                typeMapper.mapType(classObject),
-                JvmAbi.DEPRECATED_CLASS_OBJECT_FIELD,
+                typeMapper.mapType((ClassifierDescriptor) defaultObject.getContainingDeclaration()),
+                typeMapper.mapType(defaultObject),
+                JvmAbi.DEPRECATED_DEFAULT_OBJECT_FIELD,
                 true
         );
     }

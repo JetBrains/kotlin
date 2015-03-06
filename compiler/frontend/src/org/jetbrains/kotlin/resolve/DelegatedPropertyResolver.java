@@ -59,7 +59,7 @@ public class DelegatedPropertyResolver {
     private CallResolver callResolver;
     private KotlinBuiltIns builtIns;
 
-    private static final String PD_METHOD_NAME = "propertyDelegated";
+    public static final Name PROPERTY_DELEGATED_FUNCTION_NAME = Name.identifier("propertyDelegated");
 
     @Inject
     public void setExpressionTypingServices(@NotNull ExpressionTypingServices expressionTypingServices) {
@@ -128,7 +128,8 @@ public class DelegatedPropertyResolver {
         return psiFactory.createExpression(builtIns.getPropertyMetadataImpl().getName().asString() +
                                            "(\"" +
                                            propertyDescriptor.getName().asString() +
-                                           "\")");
+                                           "\"): " +
+                                           builtIns.getPropertyMetadata().getName().asString());
     }
 
     public void resolveDelegatedPropertyPDMethod(
@@ -146,13 +147,12 @@ public class DelegatedPropertyResolver {
         List<JetExpression> arguments = Lists.newArrayList();
         JetPsiFactory psiFactory = JetPsiFactory(delegateExpression);
         arguments.add(createExpressionForPropertyMetadata(psiFactory, propertyDescriptor));
-        Name functionName = Name.identifier(PD_METHOD_NAME);
-        JetReferenceExpression fakeCalleeExpression = psiFactory.createSimpleName(functionName.asString());
+        JetReferenceExpression fakeCalleeExpression = psiFactory.createSimpleName(PROPERTY_DELEGATED_FUNCTION_NAME.asString());
         ExpressionReceiver receiver = new ExpressionReceiver(delegateExpression, delegateType);
         Call call = CallMaker.makeCallWithExpressions(fakeCalleeExpression, receiver, null, fakeCalleeExpression, arguments, Call.CallType.DEFAULT);
 
         OverloadResolutionResults<FunctionDescriptor> functionResults =
-                callResolver.resolveCallWithGivenName(context, call, fakeCalleeExpression, functionName);
+                callResolver.resolveCallWithGivenName(context, call, fakeCalleeExpression, PROPERTY_DELEGATED_FUNCTION_NAME);
 
         if (!functionResults.isSuccess()) {
             String expectedFunction = renderCall(call, traceToResolvePDMethod.getBindingContext());

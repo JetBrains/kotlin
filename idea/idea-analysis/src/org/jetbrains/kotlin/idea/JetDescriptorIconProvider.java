@@ -111,8 +111,6 @@ public final class JetDescriptorIconProvider {
                     return PlatformIcons.ANNOTATION_TYPE_ICON;
                 case OBJECT:
                     return JetIcons.OBJECT;
-                case CLASS_OBJECT:
-                    return JetIcons.OBJECT;
                 case CLASS:
                     return JetIcons.CLASS;
                 default:

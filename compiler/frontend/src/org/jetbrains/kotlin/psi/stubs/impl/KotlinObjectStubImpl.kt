@@ -31,7 +31,7 @@ public class KotlinObjectStubImpl(
         private val fqName: FqName?,
         private val superNames: Array<StringRef>,
         private val isTopLevel: Boolean,
-        private val isClassObject: Boolean,
+        private val isDefault: Boolean,
         private val isLocal: Boolean,
         private val isObjectLiteral: Boolean
 ) : KotlinStubBaseImpl<JetObjectDeclaration>(parent, JetStubElementTypes.OBJECT_DECLARATION), KotlinObjectStub {
@@ -39,7 +39,7 @@ public class KotlinObjectStubImpl(
     override fun getName() = StringRef.toString(name)
     override fun getSuperNames() = superNames map { it.toString() }
     override fun isTopLevel() = isTopLevel
-    override fun isClassObject() = isClassObject
+    override fun isDefault() = isDefault
     override fun isObjectLiteral() = isObjectLiteral
     override fun isLocal() = isLocal
 }

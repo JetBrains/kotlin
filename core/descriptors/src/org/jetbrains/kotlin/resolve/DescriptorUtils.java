@@ -104,20 +104,14 @@ public class DescriptorUtils {
 
     @NotNull
     private static FqNameUnsafe getFqNameUnsafe(@NotNull DeclarationDescriptor descriptor) {
-        DeclarationDescriptor containingDeclaration = getContainingDeclarationSkippingClassObjects(descriptor);
+        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
         assert containingDeclaration != null : "Not package/module descriptor doesn't have containing declaration: " + descriptor;
         return getFqName(containingDeclaration).child(descriptor.getName());
     }
 
-    @Nullable
-    private static DeclarationDescriptor getContainingDeclarationSkippingClassObjects(@NotNull DeclarationDescriptor descriptor) {
-        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-        return isClassObject(containingDeclaration) ? containingDeclaration.getContainingDeclaration() : containingDeclaration;
-    }
-
     @NotNull
     public static FqName getFqNameFromTopLevelClass(@NotNull DeclarationDescriptor descriptor) {
-        DeclarationDescriptor containingDeclaration = getContainingDeclarationSkippingClassObjects(descriptor);
+        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
         Name name = descriptor.getName();
         if (!(containingDeclaration instanceof ClassDescriptor)) {
             return FqName.topLevel(name);
@@ -197,7 +191,7 @@ public class DescriptorUtils {
     public static ClassDescriptor getContainingClass(@NotNull DeclarationDescriptor descriptor) {
         DeclarationDescriptor containing = descriptor.getContainingDeclaration();
         while (containing != null) {
-            if (containing instanceof ClassDescriptor && !isClassObject(containing)) {
+            if (containing instanceof ClassDescriptor && !isDefaultObject(containing)) {
                 return (ClassDescriptor) containing;
             }
             containing = containing.getContainingDeclaration();
@@ -246,12 +240,16 @@ public class DescriptorUtils {
         return descriptor instanceof AnonymousFunctionDescriptor;
     }
 
-    public static boolean isClassObject(@Nullable DeclarationDescriptor descriptor) {
-        return isKindOf(descriptor, ClassKind.CLASS_OBJECT);
+    public static boolean isDefaultObject(@Nullable DeclarationDescriptor descriptor) {
+        return isKindOf(descriptor, ClassKind.OBJECT) && ((ClassDescriptor) descriptor).isDefaultObject();
     }
 
     public static boolean isAnonymousObject(@NotNull DeclarationDescriptor descriptor) {
         return isClass(descriptor) && descriptor.getName().equals(SpecialNames.NO_NAME_PROVIDED);
+    }
+
+    public static boolean isNonDefaultObject(@NotNull DeclarationDescriptor descriptor) {
+        return isKindOf(descriptor, ClassKind.OBJECT) && !((ClassDescriptor) descriptor).isDefaultObject();
     }
 
     public static boolean isObject(@NotNull DeclarationDescriptor descriptor) {
@@ -286,7 +284,7 @@ public class DescriptorUtils {
         return isKindOf(descriptor, ClassKind.CLASS);
     }
 
-    public static boolean isKindOf(@Nullable DeclarationDescriptor descriptor, @NotNull ClassKind classKind) {
+    private static boolean isKindOf(@Nullable DeclarationDescriptor descriptor, @NotNull ClassKind classKind) {
         return descriptor instanceof ClassDescriptor && ((ClassDescriptor) descriptor).getKind() == classKind;
     }
 

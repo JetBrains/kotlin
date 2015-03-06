@@ -50,8 +50,7 @@ public class CollectionClassMapping extends JavaToKotlinClassMapBuilder {
     protected void register(
             @NotNull Class<?> javaClass,
             @NotNull ClassDescriptor kotlinDescriptor,
-            @NotNull ClassDescriptor kotlinMutableDescriptor,
-            @NotNull Direction direction
+            @NotNull ClassDescriptor kotlinMutableDescriptor
     ) {
         mapBuilder.put(kotlinMutableDescriptor, kotlinDescriptor);
     }

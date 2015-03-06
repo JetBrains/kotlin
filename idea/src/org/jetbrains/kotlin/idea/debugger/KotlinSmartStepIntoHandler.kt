@@ -34,12 +34,12 @@ import com.intellij.debugger.engine.BasicStepMethodFilter
 import com.intellij.debugger.engine.DebugProcessImpl
 import com.sun.jdi.Location
 import com.intellij.psi.PsiMethod
-import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.codeInsight.*
 
 public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
 
@@ -132,7 +132,7 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
                         if (getterDescriptor != null && !getterDescriptor.isDefault()) {
                             val delegatedResolvedCall = bindingContext[BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, getterDescriptor]
                             if (delegatedResolvedCall == null) {
-                                val getter = DescriptorToSourceUtils.callableDescriptorToDeclaration(getterDescriptor)
+                                val getter = DescriptorToSourceUtilsIde.getAnyDeclaration(file.getProject(), getterDescriptor)
                                 if (getter is JetPropertyAccessor && (getter.getBodyExpression() != null || getter.getEqualsToken() != null)) {
                                     val psiMethod = LightClassUtil.getLightClassAccessorMethod(getter)
                                     if (psiMethod != null) {
@@ -143,7 +143,7 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
                             else {
                                 val delegatedPropertyGetterDescriptor = delegatedResolvedCall.getResultingDescriptor()
                                 if (delegatedPropertyGetterDescriptor is CallableMemberDescriptor) {
-                                    val function = DescriptorToSourceUtils.callableDescriptorToDeclaration(delegatedPropertyGetterDescriptor)
+                                    val function = DescriptorToSourceUtilsIde.getAnyDeclaration(file.getProject(), delegatedPropertyGetterDescriptor)
                                     if (function is JetNamedFunction) {
                                         val psiMethod = LightClassUtil.getLightClassMethod(function)
                                         if (psiMethod != null) {
@@ -164,7 +164,8 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
 
                 val descriptor = resolvedCall.getResultingDescriptor()
                 if (descriptor is CallableMemberDescriptor) {
-                    val function = DescriptorToSourceUtils.callableDescriptorToDeclaration(descriptor)
+                    // TODO doesn't work for libraries
+                    val function = DescriptorToSourceUtilsIde.getAnyDeclaration(file.getProject(), descriptor)
                     if (function is JetNamedFunction) {
                         val psiMethod = LightClassUtil.getLightClassMethod(function)
                         if (psiMethod != null) {

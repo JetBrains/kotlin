@@ -31,4 +31,4 @@ public class Test {
 // EXIST:  var
 // EXIST:  vararg
 /*why?*/
-// NUMBER: 20
+// NUMBER: 21

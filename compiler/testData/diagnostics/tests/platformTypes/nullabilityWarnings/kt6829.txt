@@ -1,0 +1,4 @@
+package
+
+internal fun foo(/*0*/ collection: kotlin.Collection<p.J>): kotlin.Unit
+public fun </*0*/ T, /*1*/ R> kotlin.Iterable<T>.map(/*0*/ transform: (T) -> R): kotlin.List<R>

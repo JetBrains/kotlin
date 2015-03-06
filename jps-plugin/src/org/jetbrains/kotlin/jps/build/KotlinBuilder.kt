@@ -29,6 +29,9 @@ import org.jetbrains.jps.incremental.ModuleLevelBuilder.ExitCode.*
 import org.jetbrains.jps.incremental.java.JavaBuilder
 import org.jetbrains.jps.incremental.messages.BuildMessage
 import org.jetbrains.jps.incremental.messages.CompilerMessage
+import java.io.File
+import java.lang.reflect.Modifier
+import java.util.*
 import org.jetbrains.jps.model.JpsProject
 import org.jetbrains.kotlin.cli.common.KotlinVersion
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
@@ -49,11 +52,17 @@ import org.jetbrains.kotlin.jps.JpsKotlinCompilerSettings
 import org.jetbrains.kotlin.jps.incremental.*
 import org.jetbrains.kotlin.jps.incremental.IncrementalCacheImpl.RecompilationDecision.*
 import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCache
+import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
+import org.jetbrains.kotlin.load.kotlin.header.isCompatiblePackageFacadeKind
+import org.jetbrains.jps.builders.java.dependencyView.Mappings
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCacheProvider
 import org.jetbrains.kotlin.utils.LibraryUtils
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.kotlin.utils.sure
+import org.jetbrains.kotlin.jps.build.KotlinJpsCompilerArgumentsProvider
 import java.io.File
 import java.util.ArrayList
 import java.util.HashMap
@@ -127,6 +136,25 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
                     val removedAndDirtyFiles = filesToCompile[target] + dirtyFilesHolder.getRemovedFiles(target).map { File(it) }
                     cache.markOutputClassesDirty(removedAndDirtyFiles)
                 }
+            }
+
+            val representativeTarget = chunk.representativeTarget()
+
+            fun concatenate(strings: Array<String>?, cp: List<String>) = array(*(strings ?: array<String>()), *cp.copyToArray())
+
+            for (argumentProvider in ServiceLoader.load(javaClass<KotlinJpsCompilerArgumentsProvider>())) {
+                // appending to pluginOptions
+                commonArguments.pluginOptions = concatenate(commonArguments.pluginOptions,
+                                                            argumentProvider.getExtraArguments(representativeTarget, context))
+                // appending to classpath
+                commonArguments.pluginClasspaths = concatenate(commonArguments.pluginClasspaths,
+                                                               argumentProvider.getClasspath(representativeTarget, context))
+
+                messageCollector.report(
+                        INFO,
+                        "Plugin loaded: ${argumentProvider.javaClass.getSimpleName()}",
+                        NO_LOCATION
+                )
             }
 
             compileToJvm(allCompiledFiles, chunk, commonArguments, context, dirtyFilesHolder, environment, filesToCompile, messageCollector)

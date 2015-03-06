@@ -57,7 +57,7 @@ import org.jetbrains.kotlin.idea.refactoring.getUsageContext
 import org.jetbrains.kotlin.psi.psiUtil.isInsideOf
 import org.jetbrains.kotlin.idea.codeInsight.JetFileReferencesResolver
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.idea.codeInsight.DescriptorToDeclarationUtil
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.psi.JetModifierListOwner
 import com.intellij.psi.PsiModifierListOwner
 import com.intellij.psi.PsiModifier
@@ -192,7 +192,7 @@ public class MoveKotlinTopLevelDeclarationsProcessor(
                 val referenceToContext = JetFileReferencesResolver.resolve(element = declaration, resolveQualifiers = false)
                 for ((refExpr, bindingContext) in referenceToContext) {
                     val refTarget = bindingContext[BindingContext.REFERENCE_TARGET, refExpr]?.let { descriptor ->
-                        DescriptorToDeclarationUtil.getDeclaration(declaration.getProject(), descriptor)
+                        DescriptorToSourceUtilsIde.getAnyDeclaration(declaration.getProject(), descriptor)
                     }
                     if (refTarget == null || refTarget.isInsideOf(elementsToMove)) continue
 

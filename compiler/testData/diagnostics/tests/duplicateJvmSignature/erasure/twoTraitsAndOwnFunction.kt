@@ -8,6 +8,6 @@ trait Bar<T> {
     fun foo(l: List<T>) {}
 }
 
-class Baz(): Foo<String>, Bar<Int> {
+class <!CONFLICTING_JVM_DECLARATIONS!>Baz()<!>: Foo<String>, Bar<Int> {
     <!CONFLICTING_JVM_DECLARATIONS!>fun foo(l: List<Long>)<!> {}
 }

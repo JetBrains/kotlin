@@ -99,7 +99,7 @@ private object DeclarationKindDetector : JetVisitor<AnnotationHostKind?, Unit?>(
     override fun visitParameter(d: JetParameter, _: Unit?) = detect(d, "parameter", newLineNeeded = false)
 
     override fun visitObjectDeclaration(d: JetObjectDeclaration, _: Unit?): AnnotationHostKind? {
-        if (d.isClassObject()) return detect(d, "class object", name = "${d.getName()} of ${d.getStrictParentOfType<JetClass>()?.getName()}")
+        if (d.isDefault()) return detect(d, "class object", name = "${d.getName()} of ${d.getStrictParentOfType<JetClass>()?.getName()}")
         if (d.getParent() is JetObjectLiteralExpression) return null
         return detect(d, "object")
     }

@@ -1,0 +1,14 @@
+// EXTRACTION_TARGET: property with getter
+class A(val n: Int = 1) {
+    val m: Int = 2
+
+    private val i: Int
+        get() {
+            return m + n + 1
+        }
+
+    fun foo(): Int {
+        return i
+    }
+}
+

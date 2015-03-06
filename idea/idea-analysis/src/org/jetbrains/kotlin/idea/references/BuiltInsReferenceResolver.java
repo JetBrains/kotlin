@@ -57,7 +57,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.unwrapFakeOverride;
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getClassId;
 import static org.jetbrains.kotlin.serialization.deserialization.DeserializationPackage.findClassAcrossModuleDependencies;
 
@@ -186,11 +185,6 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
 
     @Nullable
     private DeclarationDescriptor findCurrentDescriptorForMember(@NotNull MemberDescriptor originalDescriptor) {
-        if (originalDescriptor instanceof CallableMemberDescriptor &&
-            ((CallableMemberDescriptor) originalDescriptor).getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
-            return findCurrentDescriptorForMember(unwrapFakeOverride((CallableMemberDescriptor) originalDescriptor).getOriginal());
-        }
-
         if (!isFromBuiltinModule(originalDescriptor)) return null;
 
         DeclarationDescriptor containingDeclaration = findCurrentDescriptor(originalDescriptor.getContainingDeclaration());
@@ -240,17 +234,17 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
         return KotlinBuiltIns.getInstance().getBuiltInsModule() == DescriptorUtils.getContainingModule(originalDescriptor);
     }
 
-    @NotNull
-    public Collection<PsiElement> resolveBuiltInSymbol(@NotNull DeclarationDescriptor declarationDescriptor) {
+    @Nullable
+    public PsiElement resolveBuiltInSymbol(@NotNull DeclarationDescriptor declarationDescriptor) {
         if (moduleDescriptor == null) {
-            return Collections.emptyList();
+            return null;
         }
 
-        DeclarationDescriptor descriptor = findCurrentDescriptor(declarationDescriptor.getOriginal());
+        DeclarationDescriptor descriptor = findCurrentDescriptor(declarationDescriptor);
         if (descriptor != null) {
-            return DescriptorToSourceUtils.descriptorToDeclarations(descriptor);
+            return DescriptorToSourceUtils.getSourceFromDescriptor(descriptor);
         }
-        return Collections.emptyList();
+        return null;
     }
 
     public static boolean isFromBuiltIns(@NotNull PsiElement element) {

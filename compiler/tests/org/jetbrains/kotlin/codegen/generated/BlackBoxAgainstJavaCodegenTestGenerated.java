@@ -30,7 +30,22 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/codegen/boxAgainstJava")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({BlackBoxAgainstJavaCodegenTestGenerated.Annotations.class, BlackBoxAgainstJavaCodegenTestGenerated.CallableReference.class, BlackBoxAgainstJavaCodegenTestGenerated.Constructor.class, BlackBoxAgainstJavaCodegenTestGenerated.Delegation.class, BlackBoxAgainstJavaCodegenTestGenerated.Enum.class, BlackBoxAgainstJavaCodegenTestGenerated.Functions.class, BlackBoxAgainstJavaCodegenTestGenerated.InnerClass.class, BlackBoxAgainstJavaCodegenTestGenerated.NotNullAssertions.class, BlackBoxAgainstJavaCodegenTestGenerated.PlatformTypes.class, BlackBoxAgainstJavaCodegenTestGenerated.Property.class, BlackBoxAgainstJavaCodegenTestGenerated.Reflection.class, BlackBoxAgainstJavaCodegenTestGenerated.Sam.class, BlackBoxAgainstJavaCodegenTestGenerated.StaticFun.class, BlackBoxAgainstJavaCodegenTestGenerated.Visibility.class})
+@InnerTestClasses({
+        BlackBoxAgainstJavaCodegenTestGenerated.Annotations.class,
+        BlackBoxAgainstJavaCodegenTestGenerated.CallableReference.class,
+        BlackBoxAgainstJavaCodegenTestGenerated.Constructor.class,
+        BlackBoxAgainstJavaCodegenTestGenerated.Delegation.class,
+        BlackBoxAgainstJavaCodegenTestGenerated.Enum.class,
+        BlackBoxAgainstJavaCodegenTestGenerated.Functions.class,
+        BlackBoxAgainstJavaCodegenTestGenerated.InnerClass.class,
+        BlackBoxAgainstJavaCodegenTestGenerated.NotNullAssertions.class,
+        BlackBoxAgainstJavaCodegenTestGenerated.PlatformTypes.class,
+        BlackBoxAgainstJavaCodegenTestGenerated.Property.class,
+        BlackBoxAgainstJavaCodegenTestGenerated.Reflection.class,
+        BlackBoxAgainstJavaCodegenTestGenerated.Sam.class,
+        BlackBoxAgainstJavaCodegenTestGenerated.StaticFun.class,
+        BlackBoxAgainstJavaCodegenTestGenerated.Visibility.class,
+})
 @RunWith(JUnit3RunnerWithInners.class)
 public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     public void testAllFilesPresentInBoxAgainstJava() throws Exception {
@@ -315,7 +330,9 @@ public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxCod
 
     @TestMetadata("compiler/testData/codegen/boxAgainstJava/reflection")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({Reflection.Mapping.class})
+    @InnerTestClasses({
+            Reflection.Mapping.class,
+    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Reflection extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInReflection() throws Exception {
@@ -346,7 +363,9 @@ public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxCod
 
     @TestMetadata("compiler/testData/codegen/boxAgainstJava/sam")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({Sam.Adapters.class})
+    @InnerTestClasses({
+            Sam.Adapters.class,
+    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Sam extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInSam() throws Exception {
@@ -367,7 +386,9 @@ public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxCod
 
         @TestMetadata("compiler/testData/codegen/boxAgainstJava/sam/adapters")
         @TestDataPath("$PROJECT_ROOT")
-        @InnerTestClasses({Adapters.Operators.class})
+        @InnerTestClasses({
+                Adapters.Operators.class,
+        })
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Adapters extends AbstractBlackBoxCodegenTest {
             public void testAllFilesPresentInAdapters() throws Exception {
@@ -606,7 +627,11 @@ public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxCod
 
     @TestMetadata("compiler/testData/codegen/boxAgainstJava/visibility")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({Visibility.Package.class, Visibility.ProtectedAndPackage.class, Visibility.ProtectedStatic.class})
+    @InnerTestClasses({
+            Visibility.Package.class,
+            Visibility.ProtectedAndPackage.class,
+            Visibility.ProtectedStatic.class,
+    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Visibility extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInVisibility() throws Exception {

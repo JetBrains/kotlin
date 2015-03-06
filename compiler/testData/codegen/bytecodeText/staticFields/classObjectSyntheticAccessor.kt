@@ -5,4 +5,4 @@ class A {
 }
 // A and class object constructor call
 // 2 ALOAD 0
-// 1 synthetic getR
+// 1 synthetic access\$getR

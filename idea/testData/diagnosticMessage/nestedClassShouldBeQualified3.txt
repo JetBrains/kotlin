@@ -1,2 +1,2 @@
 <!-- nestedClassShouldBeQualified3 -->
-Nested class 'Nested' should be qualified as 'C.D.Nested'
+Nested class 'Nested' should be qualified as 'C.Default.D.Nested'

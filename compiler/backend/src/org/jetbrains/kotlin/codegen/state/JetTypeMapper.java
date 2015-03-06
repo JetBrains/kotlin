@@ -20,6 +20,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicObjects;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.codegen.*;
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
@@ -37,6 +38,7 @@ import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.load.kotlin.nativeDeclarations.NativeDeclarationsPackage;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetFile;
@@ -293,6 +295,18 @@ public class JetTypeMapper {
         }
 
         if (descriptor instanceof ClassDescriptor) {
+            FqName defaultObjectMappedFqName = IntrinsicObjects.INSTANCE$.mapType((ClassDescriptor) descriptor);
+            if (defaultObjectMappedFqName != null) {
+                Type asmType = AsmUtil.asmTypeByFqNameWithoutInnerClasses(defaultObjectMappedFqName);
+                if (signatureVisitor != null) {
+                    signatureVisitor.writeAsmType(asmType);
+                }
+
+                return asmType;
+            }
+        }
+
+        if (descriptor instanceof ClassDescriptor) {
             Type asmType = computeAsmType((ClassDescriptor) descriptor.getOriginal());
             writeGenericType(signatureVisitor, asmType, jetType, howThisTypeIsUsed, projectionsAllowed);
             return asmType;
@@ -398,10 +412,10 @@ public class JetTypeMapper {
                 else {
                     Variance projectionKind = projectionsAllowed
                                               ? getEffectiveVariance(
-                                                        parameter.getVariance(),
-                                                        argument.getProjectionKind(),
-                                                        howThisTypeIsUsed
-                                                )
+                            parameter.getVariance(),
+                            argument.getProjectionKind(),
+                            howThisTypeIsUsed
+                    )
                                               : Variance.INVARIANT;
                     signatureVisitor.writeTypeArgument(projectionKind);
 
@@ -590,18 +604,22 @@ public class JetTypeMapper {
                 return property.getName().asString();
             }
 
-            if (descriptor instanceof PropertyGetterDescriptor) {
-                return PropertyCodegen.getterName(property.getName());
-            }
-            else {
-                return PropertyCodegen.setterName(property.getName());
-            }
+            boolean isAccessor = property instanceof AccessorForPropertyDescriptor;
+            Name propertyName = isAccessor
+                                ? Name.identifier(((AccessorForPropertyDescriptor) property).getIndexedAccessorSuffix())
+                                : property.getName();
+
+            String accessorName = descriptor instanceof PropertyGetterDescriptor
+                                  ? PropertyCodegen.getterName(propertyName)
+                                  : PropertyCodegen.setterName(propertyName);
+
+            return isAccessor ? "access$" + accessorName : accessorName;
         }
         else if (isLocalNamedFun(descriptor)) {
             return "invoke";
         }
         else if (descriptor instanceof AnonymousFunctionDescriptor) {
-            PsiElement element = DescriptorToSourceUtils.callableDescriptorToDeclaration(descriptor);
+            PsiElement element = DescriptorToSourceUtils.getSourceFromDescriptor(descriptor);
             if (element instanceof JetFunctionLiteral) {
                 PsiElement expression = element.getParent();
                 if (expression instanceof JetFunctionLiteralExpression) {

@@ -58,7 +58,7 @@ import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.idea.refactoring.reportDeclarationConflict
 import org.jetbrains.kotlin.idea.refactoring.getContainingScope
-import org.jetbrains.kotlin.idea.codeInsight.DescriptorToDeclarationUtil
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 
 public class ConvertFunctionToPropertyIntention : JetSelfTargetingIntention<JetNamedFunction>(
@@ -128,7 +128,7 @@ public class ConvertFunctionToPropertyIntention : JetSelfTargetingIntention<JetN
                     callableDescriptor.getContainingScope(bindingContext)
                             ?.getProperties(callableDescriptor.getName())
                             ?.firstOrNull()
-                            ?.let { DescriptorToDeclarationUtil.getDeclaration(project, it) }
+                            ?.let { DescriptorToSourceUtilsIde.getAnyDeclaration(project, it) }
                             ?.let { reportDeclarationConflict(conflicts, it) { "$it already exists" } }
                 }
 

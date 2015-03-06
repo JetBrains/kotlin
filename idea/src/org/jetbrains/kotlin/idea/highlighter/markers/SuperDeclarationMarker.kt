@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import com.intellij.psi.NavigatablePsiElement
 import java.awt.event.MouseEvent
-import org.jetbrains.kotlin.idea.codeInsight.DescriptorToDeclarationUtil
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator
 import org.jetbrains.kotlin.idea.JetBundle
@@ -82,7 +82,7 @@ public class SuperDeclarationMarkerNavigationHandler : GutterIconNavigationHandl
 
         val superDeclarations = ArrayList<NavigatablePsiElement>()
         for (overriddenMember in overriddenDescriptors) {
-            val declarations = DescriptorToDeclarationUtil.resolveToPsiElements(element.getProject(), overriddenMember)
+            val declarations = DescriptorToSourceUtilsIde.getAllDeclarations(element.getProject(), overriddenMember)
             for (declaration in declarations) {
                 if (declaration is NavigatablePsiElement) {
                     superDeclarations.add(declaration as NavigatablePsiElement)

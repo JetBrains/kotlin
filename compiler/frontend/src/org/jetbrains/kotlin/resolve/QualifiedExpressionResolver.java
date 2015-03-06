@@ -21,6 +21,7 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.psi.util.PsiTreeUtil;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.Mutable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -52,6 +53,25 @@ public class QualifiedExpressionResolver {
 
         // Resolve all descriptors
         EVERYTHING
+    }
+
+    public static boolean canAllUnderImportFrom(@NotNull Collection<DeclarationDescriptor> descriptors) {
+        if (descriptors.isEmpty()) {
+            return true;
+        }
+        for (DeclarationDescriptor descriptor : descriptors) {
+            if (!(descriptor instanceof ClassDescriptor)) {
+                return true;
+            }
+            if (canAllUnderImportFromClass((ClassDescriptor) descriptor)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean canAllUnderImportFromClass(@NotNull ClassDescriptor descriptor) {
+        return !descriptor.getKind().isSingleton();
     }
 
     @NotNull
@@ -88,6 +108,11 @@ public class QualifiedExpressionResolver {
 
         JetSimpleNameExpression referenceExpression = JetPsiUtil.getLastReference(importedReference);
         if (importDirective.isAllUnder()) {
+            if (!canAllUnderImportFrom(descriptors) && referenceExpression != null) {
+                ClassDescriptor toReportOn = KotlinPackage.filterIsInstance(descriptors, ClassDescriptor.class).iterator().next();
+                trace.report(CANNOT_IMPORT_ON_DEMAND_FROM_SINGLETON.on(referenceExpression, toReportOn));
+            }
+
             if (referenceExpression == null || !canImportMembersFrom(descriptors, referenceExpression, trace, lookupMode)) {
                 return Collections.emptyList();
             }
@@ -150,7 +175,7 @@ public class QualifiedExpressionResolver {
         if (descriptor instanceof PackageViewDescriptor) {
             return true;
         }
-        if (descriptor instanceof ClassDescriptor && !((ClassDescriptor) descriptor).getKind().isSingleton()) {
+        if (descriptor instanceof ClassDescriptor) {
             return true;
         }
         trace.report(CANNOT_IMPORT_FROM_ELEMENT.on(reference, descriptor));
@@ -275,11 +300,6 @@ public class QualifiedExpressionResolver {
         results.add(lookupSimpleNameReference(selector, scope, lookupMode, false));
 
         results.add(lookupSimpleNameReference(selector, descriptor.getStaticScope(), lookupMode, true));
-
-        ClassDescriptor classObject = descriptor.getDefaultObjectDescriptor();
-        if (classObject != null) {
-            addResultsForClass(results, selector, lookupMode, classObject);
-        }
     }
 
 

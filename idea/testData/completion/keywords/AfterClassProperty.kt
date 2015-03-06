@@ -30,4 +30,4 @@ class MouseMovedEventArgs
 // EXIST:  var
 // EXIST:  vararg
 /*why?*/
-// NUMBER: 23
+// NUMBER: 24

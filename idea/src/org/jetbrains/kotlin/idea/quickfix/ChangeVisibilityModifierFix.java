@@ -102,6 +102,11 @@ public class ChangeVisibilityModifierFix extends JetIntentionAction<JetModifierL
         if (maxVisibility == memberDescriptor.getVisibility()) {
             return null;
         }
+
+        if (maxVisibility == null) {
+            return null;
+        }
+
         return JetRefactoringUtil.getVisibilityToken(maxVisibility);
     }
 

@@ -1,0 +1,6 @@
+private val i = 1 + 2
+
+// EXTRACTION_TARGET: property with initializer
+class A(val a: Int = i) {
+
+}

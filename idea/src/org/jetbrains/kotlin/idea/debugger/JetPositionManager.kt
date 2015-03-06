@@ -249,7 +249,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Posi
                 element is JetClassInitializer -> {
                     val parent = getElementToCalculateClassName(element.getParent())
                     // Class-object initializer
-                    if (parent is JetObjectDeclaration && parent.isClassObject()) {
+                    if (parent is JetObjectDeclaration && parent.isDefault()) {
                         return getClassNameForElement(parent.getParent(), typeMapper, file, isInLibrary)
                     }
                     return getClassNameForElement(element, typeMapper, file, isInLibrary)

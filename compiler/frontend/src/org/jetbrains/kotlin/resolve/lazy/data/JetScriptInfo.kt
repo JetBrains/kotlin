@@ -27,8 +27,7 @@ public class JetScriptInfo(
     public val fqName: FqName = ScriptNameUtil.classNameForScript(script)
     override fun getContainingPackageFqName() = fqName.parent()
     override fun getModifierList() = null
-    override fun getClassObject() = null
-    override fun getClassObjects() = listOf<JetObjectDeclaration>()
+    override fun getDefaultObjects() = listOf<JetObjectDeclaration>()
     override fun getScopeAnchor() = script
     override fun getCorrespondingClassOrObject() = null
     override fun getTypeParameterList() = null

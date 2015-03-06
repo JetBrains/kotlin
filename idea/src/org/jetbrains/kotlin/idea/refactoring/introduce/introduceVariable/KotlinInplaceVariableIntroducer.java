@@ -27,12 +27,15 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.markup.RangeHighlighter;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.Pass;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.refactoring.introduce.inplace.InplaceVariableIntroducer;
 import com.intellij.ui.NonFocusableCheckBox;
+import kotlin.Function0;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyAction;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
@@ -47,19 +50,73 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.List;
 
 public class KotlinInplaceVariableIntroducer extends InplaceVariableIntroducer<JetExpression> {
+    private static final Function0<Boolean> TRUE = new Function0<Boolean>() {
+        @Override
+        public Boolean invoke() {
+            return true;
+        }
+    };
+
+    private static final Pass<JComponent> DO_NOTHING = new Pass<JComponent>() {
+        @Override
+        public void pass(JComponent component) {
+
+        }
+    };
+
+    protected static final class ControlWrapper {
+        @NotNull
+        private final Function0<JComponent> factory;
+        @NotNull
+        private final Function0<Boolean> condition;
+        @NotNull
+        private final Pass<JComponent> initializer;
+        private JComponent component;
+
+        public ControlWrapper(
+                @NotNull Function0<JComponent> factory,
+                @NotNull Function0<Boolean> condition,
+                @NotNull Pass<JComponent> initializer) {
+            this.factory = factory;
+            this.condition = condition;
+            this.initializer = initializer;
+        }
+
+        public ControlWrapper(@NotNull Function0<JComponent> factory) {
+            this(factory, TRUE, DO_NOTHING);
+        }
+
+        public boolean isAvailable() {
+            return condition.invoke();
+        }
+
+        public void initialize() {
+            initializer.pass(getComponent());
+        }
+
+        @NotNull
+        public JComponent getComponent() {
+            if (component == null) {
+                component = factory.invoke();
+            }
+            return component;
+        }
+    }
 
     private final boolean myReplaceOccurrence;
-    private final JetProperty myProperty;
+    protected JetProperty myProperty;
     private final boolean isVar;
     private final boolean myDoNotChangeVar;
     @Nullable private final JetType myExprType;
     private final boolean noTypeInference;
-    private JCheckBox myVarCheckbox;
-    private JCheckBox myExprTypeCheckbox;
+    private final List<ControlWrapper> panelControls = new ArrayList<ControlWrapper>();
+    private JPanel contentPanel;
 
     public KotlinInplaceVariableIntroducer(
             PsiNamedElement elementToRename, Editor editor, Project project,
@@ -77,116 +134,181 @@ public class KotlinInplaceVariableIntroducer extends InplaceVariableIntroducer<J
         this.noTypeInference = noTypeInference;
     }
 
-    @Override
-    @Nullable
-    protected JComponent getComponent() {
-        if (!myDoNotChangeVar) {
-            myVarCheckbox = new NonFocusableCheckBox("Declare with var");
-            myVarCheckbox.setSelected(isVar);
-            myVarCheckbox.setMnemonic('v');
-            myVarCheckbox.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    new WriteCommandAction(myProject, getCommandName(), getCommandName()) {
-                        @Override
-                        protected void run(Result result) throws Throwable {
-                            PsiDocumentManager.getInstance(myProject).commitDocument(myEditor.getDocument());
-                            KotlinChangePropertyActions.declareValueOrVariable(myVarCheckbox.isSelected(), myProperty);
-                        }
-                    }.execute();
-                }
-            });
+    @NotNull
+    private JPanel getContentPanel() {
+        if (contentPanel == null) {
+            contentPanel = new JPanel(new GridBagLayout());
+            contentPanel.setBorder(null);
         }
 
-        if (myExprType != null && !noTypeInference) {
-            myExprTypeCheckbox = new NonFocusableCheckBox("Specify type explicitly");
-            myExprTypeCheckbox.setSelected(false);
-            myExprTypeCheckbox.setMnemonic('t');
-            myExprTypeCheckbox.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    final Ref<Boolean> greedyToRight = new Ref<Boolean>();
-                    new WriteCommandAction(myProject, getCommandName(), getCommandName()) {
-                        @Override
-                        protected void run(Result result) throws Throwable {
-                            PsiDocumentManager.getInstance(myProject).commitDocument(myEditor.getDocument());
-                            if (myExprTypeCheckbox.isSelected()) {
-                                ASTNode identifier = myProperty.getNode().findChildByType(JetTokens.IDENTIFIER);
-                                if (identifier != null) {
-                                    TextRange range = identifier.getTextRange();
-                                    RangeHighlighter[] highlighters = myEditor.getMarkupModel().getAllHighlighters();
-                                    for (RangeHighlighter highlighter : highlighters) {
-                                        if (highlighter.getStartOffset() == range.getStartOffset()) {
-                                            if (highlighter.getEndOffset() == range.getEndOffset()) {
-                                                greedyToRight.set(highlighter.isGreedyToRight());
-                                                highlighter.setGreedyToRight(false);
-                                            }
-                                        }
-                                    }
-                                }
-                                String renderedType = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(myExprType);
-                                myProperty.setTypeReference(new JetPsiFactory(myProject).createType(renderedType));
-                            }
-                            else {
-                                myProperty.setTypeReference(null);
-                            }
+        return contentPanel;
+    }
 
-                            TemplateState templateState =
-                                    TemplateManagerImpl.getTemplateState(InjectedLanguageUtil.getTopLevelEditor(myEditor));
-                            if (templateState != null) {
-                                myEditor.putUserData(INTRODUCE_RESTART, true);
-                                templateState.cancelTemplate();
-                            }
-                        }
-                    }.execute();
-                    ApplicationManager.getApplication().runReadAction(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (myExprTypeCheckbox.isSelected()) {
-                                ASTNode identifier = myProperty.getNode().findChildByType(JetTokens.IDENTIFIER);
-                                if (identifier != null) {
-                                    TextRange range = identifier.getTextRange();
-                                    RangeHighlighter[] highlighters = myEditor.getMarkupModel().getAllHighlighters();
-                                    for (RangeHighlighter highlighter : highlighters) {
-                                        if (highlighter.getStartOffset() == range.getStartOffset()) {
-                                            if (highlighter.getEndOffset() == range.getEndOffset()) {
-                                                highlighter.setGreedyToRight(greedyToRight.get());
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    });
+    protected final void addPanelControl(@NotNull ControlWrapper panelControl) {
+        panelControls.add(panelControl);
+    }
 
-                    if (myEditor.getUserData(INTRODUCE_RESTART) == Boolean.TRUE) {
-                        myInitialName = myProperty.getName();
-                        performInplaceRefactoring(getSuggestionsForNextRun());
-                    }
-                }
-            });
+    protected final void addPanelControl(@Nullable Function0<JComponent> initializer) {
+        if (initializer != null) {
+            addPanelControl(new ControlWrapper(initializer));
         }
+    }
 
-        JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBorder(null);
+    protected void initPanelControls() {
+        addPanelControl(getCreateVarCheckBox());
+        addPanelControl(getCreateExplicitTypeCheckBox());
+    }
+
+    protected final void updatePanelControls() {
+        JPanel panel = getContentPanel();
+
+        panel.removeAll();
+
         int count = 1;
-        if (myVarCheckbox != null) {
-            panel.add(myVarCheckbox, new GridBagConstraints(0, count, 1, 1, 1, 0, GridBagConstraints.NORTHWEST,
-                                                            GridBagConstraints.HORIZONTAL,
-                                                            new Insets(5, 5, 5, 5), 0, 0));
-            ++count;
-        }
-
-        if (myExprTypeCheckbox != null) {
-            panel.add(myExprTypeCheckbox, new GridBagConstraints(0, count, 1, 1, 1, 0, GridBagConstraints.NORTHWEST,
-                                                            GridBagConstraints.HORIZONTAL,
-                                                            new Insets(5, 5, 5, 5), 0, 0));
+        for (ControlWrapper panelControl : panelControls) {
+            if (!panelControl.isAvailable()) continue;
+            panelControl.initialize();
+            panel.add(panelControl.getComponent(), new GridBagConstraints(0, count, 1, 1, 1, 0, GridBagConstraints.NORTHWEST,
+                                                                          GridBagConstraints.HORIZONTAL,
+                                                                          new Insets(0, 5, 0, 5), 0, 0));
             ++count;
         }
         panel.add(Box.createVerticalBox(), new GridBagConstraints(0, count, 1, 1, 1, 1, GridBagConstraints.NORTHWEST,
                                                                   GridBagConstraints.BOTH,
                                                                   new Insets(0, 0, 0, 0), 0, 0));
-        return panel;
+    }
+
+    @Override
+    @Nullable
+    protected final JComponent getComponent() {
+        panelControls.clear();
+        initPanelControls();
+
+        updatePanelControls();
+
+        return getContentPanel();
+    }
+
+    @Nullable
+    protected final Function0<JComponent> getCreateExplicitTypeCheckBox() {
+        if (myExprType == null || noTypeInference) return null;
+
+        return new Function0<JComponent>() {
+            @Override
+            public JComponent invoke() {
+                final JCheckBox exprTypeCheckbox = new NonFocusableCheckBox("Specify type explicitly");
+                exprTypeCheckbox.setSelected(false);
+                exprTypeCheckbox.setMnemonic('t');
+                exprTypeCheckbox.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(@NotNull ActionEvent e) {
+                        runWriteActionAndRestartRefactoring(
+                                new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (exprTypeCheckbox.isSelected()) {
+                                            String renderedType =
+                                                    IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(myExprType);
+                                            myProperty.setTypeReference(new JetPsiFactory(myProject).createType(renderedType));
+                                        }
+                                        else {
+                                            myProperty.setTypeReference(null);
+                                        }
+                                    }
+                                }
+                        );
+                    }
+                });
+
+                return exprTypeCheckbox;
+            }
+        };
+    }
+
+    @Nullable
+    protected final Function0<JComponent> getCreateVarCheckBox() {
+        if (myDoNotChangeVar) return null;
+
+        return new Function0<JComponent>() {
+            @Override
+            public JComponent invoke() {
+                final JCheckBox varCheckbox = new NonFocusableCheckBox("Declare with var");
+                varCheckbox.setSelected(isVar);
+                varCheckbox.setMnemonic('v');
+                varCheckbox.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(@NotNull ActionEvent e) {
+                        new WriteCommandAction(myProject, getCommandName(), getCommandName()) {
+                            @Override
+                            protected void run(@NotNull Result result) throws Throwable {
+                                PsiDocumentManager.getInstance(myProject).commitDocument(myEditor.getDocument());
+
+                                JetPsiFactory psiFactory = new JetPsiFactory(myProject);
+                                ASTNode node = varCheckbox.isSelected() ? psiFactory.createVarNode() : psiFactory.createValNode();
+                                myProperty.getValOrVarNode().getPsi().replace(node.getPsi());
+                            }
+                        }.execute();
+                    }
+                });
+
+                return varCheckbox;
+            }
+        };
+    }
+
+    protected final void runWriteActionAndRestartRefactoring(final Runnable runnable) {
+        final Ref<Boolean> greedyToRight = new Ref<Boolean>();
+        new WriteCommandAction(myProject, getCommandName(), getCommandName()) {
+            @Override
+            protected void run(@NotNull Result result) throws Throwable {
+                PsiDocumentManager.getInstance(myProject).commitDocument(myEditor.getDocument());
+
+                ASTNode identifier = myProperty.getNode().findChildByType(JetTokens.IDENTIFIER);
+                if (identifier != null) {
+                    TextRange range = identifier.getTextRange();
+                    RangeHighlighter[] highlighters = myEditor.getMarkupModel().getAllHighlighters();
+                    for (RangeHighlighter highlighter : highlighters) {
+                        if (highlighter.getStartOffset() == range.getStartOffset()) {
+                            if (highlighter.getEndOffset() == range.getEndOffset()) {
+                                greedyToRight.set(highlighter.isGreedyToRight());
+                                highlighter.setGreedyToRight(false);
+                            }
+                        }
+                    }
+                }
+
+                runnable.run();
+
+                TemplateState templateState =
+                        TemplateManagerImpl.getTemplateState(InjectedLanguageUtil.getTopLevelEditor(myEditor));
+                if (templateState != null) {
+                    myEditor.putUserData(INTRODUCE_RESTART, true);
+                    templateState.cancelTemplate();
+                }
+            }
+        }.execute();
+        ApplicationManager.getApplication().runReadAction(new Runnable() {
+            @Override
+            public void run() {
+                ASTNode identifier = myProperty.getNode().findChildByType(JetTokens.IDENTIFIER);
+                if (identifier != null) {
+                    TextRange range = identifier.getTextRange();
+                    RangeHighlighter[] highlighters = myEditor.getMarkupModel().getAllHighlighters();
+                    for (RangeHighlighter highlighter : highlighters) {
+                        if (highlighter.getStartOffset() == range.getStartOffset()) {
+                            if (highlighter.getEndOffset() == range.getEndOffset()) {
+                                highlighter.setGreedyToRight(greedyToRight.get());
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        if (myEditor.getUserData(INTRODUCE_RESTART) == Boolean.TRUE) {
+            myInitialName = myProperty.getName();
+            performInplaceRefactoring(getSuggestionsForNextRun());
+        }
     }
 
     private LinkedHashSet<String> getSuggestionsForNextRun() {
@@ -203,12 +325,16 @@ public class KotlinInplaceVariableIntroducer extends InplaceVariableIntroducer<J
         return nameSuggestions;
     }
 
-    @Override
-    protected void addAdditionalVariables(TemplateBuilderImpl builder) {
+    protected void addTypeReferenceVariable(TemplateBuilderImpl builder) {
         JetTypeReference typeReference = myProperty.getTypeReference();
         if (typeReference != null) {
             builder.replaceElement(typeReference, SpecifyTypeExplicitlyAction.createTypeExpressionForTemplate(myExprType));
         }
+    }
+
+    @Override
+    protected void addAdditionalVariables(TemplateBuilderImpl builder) {
+        addTypeReferenceVariable(builder);
     }
 
     @Override

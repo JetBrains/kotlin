@@ -30,7 +30,9 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/highlighter")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({HighlightingTestGenerated.Deprecated.class})
+@InnerTestClasses({
+        HighlightingTestGenerated.Deprecated.class,
+})
 @RunWith(JUnit3RunnerWithInners.class)
 public class HighlightingTestGenerated extends AbstractHighlightingTest {
     public void testAllFilesPresentInHighlighter() throws Exception {
@@ -108,6 +110,12 @@ public class HighlightingTestGenerated extends AbstractHighlightingTest {
         @TestMetadata("ClassObject.kt")
         public void testClassObject() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/highlighter/deprecated/ClassObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ExtensionFunction.kt")
+        public void testExtensionFunction() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/highlighter/deprecated/ExtensionFunction.kt");
             doTest(fileName);
         }
 

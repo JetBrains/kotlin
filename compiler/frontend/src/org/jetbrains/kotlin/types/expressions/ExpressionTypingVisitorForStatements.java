@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.resolve.TemporaryBindingTrace;
 import org.jetbrains.kotlin.resolve.calls.context.TemporaryTraceAndCache;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
+import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsImpl;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsUtil;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue;
@@ -84,7 +85,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             @NotNull ExpressionTypingContext context
     ) {
         if (assignmentType != null && !KotlinBuiltIns.isUnit(assignmentType) && !noExpectedType(context.expectedType) &&
-            TypeUtils.equalTypes(context.expectedType, assignmentType)) {
+            !context.expectedType.isError() && TypeUtils.equalTypes(context.expectedType, assignmentType)) {
             context.trace.report(Errors.ASSIGNMENT_TYPE_MISMATCH.on(expression, context.expectedType));
             return null;
         }
@@ -276,15 +277,24 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         JetType assignmentOperationType = OverloadResolutionResultsUtil.getResultingType(assignmentOperationDescriptors,
                                                                                          context.contextDependency);
 
-        // Check for '+'
-        Name counterpartName = OperatorConventions.BINARY_OPERATION_NAMES.get(OperatorConventions.ASSIGNMENT_OPERATION_COUNTERPARTS.get(operationType));
+        OverloadResolutionResults<FunctionDescriptor> binaryOperationDescriptors;
+        JetType binaryOperationType;
         TemporaryTraceAndCache temporaryForBinaryOperation = TemporaryTraceAndCache.create(
                 context, "trace to check binary operation like '+' for", expression);
-        OverloadResolutionResults<FunctionDescriptor> binaryOperationDescriptors = components.callResolver.resolveBinaryCall(
-                context.replaceTraceAndCache(temporaryForBinaryOperation).replaceScope(scope),
-                receiver, expression, counterpartName
-        );
-        JetType binaryOperationType = OverloadResolutionResultsUtil.getResultingType(binaryOperationDescriptors, context.contextDependency);
+        boolean lhsAssignable = BasicExpressionTypingVisitor.checkLValue(TemporaryBindingTrace.create(context.trace, "Trace for checking assignability"), left);
+        if (assignmentOperationType == null || lhsAssignable) {
+            // Check for '+'
+            Name counterpartName = OperatorConventions.BINARY_OPERATION_NAMES.get(OperatorConventions.ASSIGNMENT_OPERATION_COUNTERPARTS.get(operationType));
+            binaryOperationDescriptors = components.callResolver.resolveBinaryCall(
+                    context.replaceTraceAndCache(temporaryForBinaryOperation).replaceScope(scope),
+                    receiver, expression, counterpartName
+            );
+            binaryOperationType = OverloadResolutionResultsUtil.getResultingType(binaryOperationDescriptors, context.contextDependency);
+        }
+        else {
+            binaryOperationDescriptors = OverloadResolutionResultsImpl.nameNotFound();
+            binaryOperationType = null;
+        }
 
         JetType type = assignmentOperationType != null ? assignmentOperationType : binaryOperationType;
         if (assignmentOperationDescriptors.isSuccess() && binaryOperationDescriptors.isSuccess()) {

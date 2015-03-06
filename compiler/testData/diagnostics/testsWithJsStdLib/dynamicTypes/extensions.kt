@@ -3,7 +3,9 @@
 fun test(d: dynamic) {
     d.<!DEBUG_INFO_DYNAMIC!>onAny<!>()
     d?.<!DEBUG_INFO_DYNAMIC!>onAny<!>()
-    d!!.<!DEBUG_INFO_DYNAMIC!>onAny<!>()
+    run {
+        d!!.<!DEBUG_INFO_DYNAMIC!>onAny<!>()
+    }
 
     d.<!DEBUG_INFO_DYNAMIC!>onAny<!>(1)
 

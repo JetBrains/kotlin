@@ -121,7 +121,7 @@ public class OverloadResolver {
             return name;
         }
         if (jetClass instanceof JetObjectDeclaration) {
-            // must be class object
+            // must be default object
             name = classDescriptor.getContainingDeclaration().getName().asString();
             return "class object " + name;
         }

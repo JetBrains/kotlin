@@ -25,4 +25,4 @@ class TestClass {
 // EXIST:  var
 // EXIST:  vararg
 /*why?*/
-// NUMBER: 20
+// NUMBER: 21

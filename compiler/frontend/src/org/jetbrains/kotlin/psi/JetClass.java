@@ -141,13 +141,6 @@ public class JetClass extends JetTypeParameterListOwnerStub<KotlinClassStub> imp
         return getStubOrPsiChild(JetStubElementTypes.CLASS_BODY);
     }
 
-    @Nullable
-    public JetObjectDeclaration getClassObject() {
-        JetClassBody body = getBody();
-        if (body == null) return null;
-        return body.getClassObject();
-    }
-
     public List<JetProperty> getProperties() {
         JetClassBody body = getBody();
         if (body == null) return Collections.emptyList();
@@ -235,5 +228,14 @@ public class JetClass extends JetTypeParameterListOwnerStub<KotlinClassStub> imp
             return stub.isLocal();
         }
         return JetPsiUtil.isLocal(this);
+    }
+
+    @NotNull
+    public List<JetObjectDeclaration> getDefaultObjects() {
+        JetClassBody body = getBody();
+        if (body == null) {
+            return Collections.emptyList();
+        }
+        return body.getAllDefaultObjects();
     }
 }

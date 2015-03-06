@@ -26,4 +26,4 @@ package Test
 // EXIST:  var
 // EXIST:  vararg
 /*why?*/
-// NUMBER: 21
+// NUMBER: 22

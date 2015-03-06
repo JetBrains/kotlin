@@ -1,7 +1,7 @@
 PsiJetFileStubImpl[package=]
   PACKAGE_DIRECTIVE:
   PROPERTY:[fqName=p, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReceiverTypeRef=false, hasReturnTypeRef=false, isProbablyNothingType=false, isTopLevel=true, isVar=false, name=p]
-    OBJECT_DECLARATION:[fqName=null, isClassObject=false, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[]]
+    OBJECT_DECLARATION:[fqName=null, isDefault=false, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[]]
       CLASS_BODY:
         FUN:[fqName=null, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isProbablyNothingType=false, isTopLevel=false, name=f]
           VALUE_PARAMETER_LIST:

@@ -45,7 +45,8 @@ public class DataFlowValueFactory {
             JetConstantExpression constantExpression = (JetConstantExpression) expression;
             if (constantExpression.getNode().getElementType() == JetNodeTypes.NULL) return DataFlowValue.NULL;
         }
-        if (TypeUtils.equalTypes(type, KotlinBuiltIns.getInstance().getNullableNothingType())) return DataFlowValue.NULL; // 'null' is the only inhabitant of 'Nothing?'
+        if (type.isError()) return DataFlowValue.ERROR;
+        if (KotlinBuiltIns.getInstance().getNullableNothingType().equals(type)) return DataFlowValue.NULL; // 'null' is the only inhabitant of 'Nothing?'
         IdentifierInfo result = getIdForStableIdentifier(expression, bindingContext);
         return new DataFlowValue(result == NO_IDENTIFIER_INFO ? expression : result.id, type, result.isStable, getImmanentNullability(type));
     }

@@ -114,7 +114,7 @@ public class JetExpectedResolveDataUtil {
         ModuleDescriptor module = LazyResolveTestUtil.resolveProject(project);
         ClassDescriptor classDescriptor = DescriptorUtilPackage.resolveTopLevelClass(module, new FqName(qualifiedName));
         assertNotNull("Class descriptor wasn't resolved: " + qualifiedName, classDescriptor);
-        PsiClass psiClass = (PsiClass) DescriptorToSourceUtils.classDescriptorToDeclaration(classDescriptor);
+        PsiClass psiClass = (PsiClass) DescriptorToSourceUtils.getSourceFromDescriptor(classDescriptor);
         assertNotNull("Class declaration wasn't found: " + classDescriptor, psiClass);
         return psiClass;
     }

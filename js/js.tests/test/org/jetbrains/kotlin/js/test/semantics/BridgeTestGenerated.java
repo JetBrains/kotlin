@@ -30,7 +30,9 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/codegen/box/bridges")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({BridgeTestGenerated.SubstitutionInSuperClass.class})
+@InnerTestClasses({
+        BridgeTestGenerated.SubstitutionInSuperClass.class,
+})
 @RunWith(JUnit3RunnerWithInners.class)
 public class BridgeTestGenerated extends AbstractBridgeTest {
     @TestMetadata("objectClone.kt")

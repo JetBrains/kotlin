@@ -88,7 +88,7 @@ public class ReferenceVariantsHelper(
 
             val qualifier = context[BindingContext.QUALIFIER, receiverExpression]
             if (qualifier != null) {
-                // It's impossible to add extension function for package or class (if it's class object, expression type is not null)
+                // It's impossible to add extension function for package or class (if it's default object, expression type is not null)
                 qualifier.scope.getDescriptorsFiltered(kindFilter exclude DescriptorKindExclude.Extensions, nameFilter).filterTo(descriptors)  { callType.canCall(it) }
             }
 

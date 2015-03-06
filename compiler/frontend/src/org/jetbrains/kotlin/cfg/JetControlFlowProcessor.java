@@ -1379,7 +1379,7 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitTypeProjection(@NotNull JetTypeProjection typeProjection) {
-            // TODO : Support Type Arguments. Class object may be initialized at this point");
+            // TODO : Support Type Arguments. Default object may be initialized at this point");
         }
 
         @Override

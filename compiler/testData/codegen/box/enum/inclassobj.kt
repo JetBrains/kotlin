@@ -1,4 +1,4 @@
-fun box() = if(Context.operatingSystemType == Context.OsType.OTHER) "OK" else "fail"
+fun box() = if(Context.operatingSystemType == Context.Default.OsType.OTHER) "OK" else "fail"
 
 public class Context
 {

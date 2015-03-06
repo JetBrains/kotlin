@@ -30,7 +30,13 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/shortenRefs")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({ShortenRefsTestGenerated.Constructor.class, ShortenRefsTestGenerated.Imports.class, ShortenRefsTestGenerated.Java.class, ShortenRefsTestGenerated.This.class, ShortenRefsTestGenerated.Type.class})
+@InnerTestClasses({
+        ShortenRefsTestGenerated.Constructor.class,
+        ShortenRefsTestGenerated.Imports.class,
+        ShortenRefsTestGenerated.Java.class,
+        ShortenRefsTestGenerated.This.class,
+        ShortenRefsTestGenerated.Type.class,
+})
 @RunWith(JUnit3RunnerWithInners.class)
 public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
     public void testAllFilesPresentInShortenRefs() throws Exception {
@@ -177,6 +183,12 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
         @TestMetadata("importGlobalCallables.kt")
         public void testImportGlobalCallables() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/imports/importGlobalCallables.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ImportsOnTheFlyBug.kt")
+        public void testImportsOnTheFlyBug() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/imports/ImportsOnTheFlyBug.kt");
             doTest(fileName);
         }
 

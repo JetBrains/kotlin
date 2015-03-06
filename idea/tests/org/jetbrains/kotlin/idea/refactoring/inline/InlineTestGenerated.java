@@ -30,7 +30,12 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/refactoring/inline")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({InlineTestGenerated.AddParenthesis.class, InlineTestGenerated.ExplicateParameterTypes.class, InlineTestGenerated.ExplicateTypeArgument.class, InlineTestGenerated.Property.class})
+@InnerTestClasses({
+        InlineTestGenerated.AddParenthesis.class,
+        InlineTestGenerated.ExplicateParameterTypes.class,
+        InlineTestGenerated.ExplicateTypeArgument.class,
+        InlineTestGenerated.Property.class,
+})
 @RunWith(JUnit3RunnerWithInners.class)
 public class InlineTestGenerated extends AbstractInlineTest {
     public void testAllFilesPresentInInline() throws Exception {

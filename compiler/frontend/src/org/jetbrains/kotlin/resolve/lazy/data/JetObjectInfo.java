@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind;
 import org.jetbrains.kotlin.psi.JetObjectDeclaration;
 import org.jetbrains.kotlin.psi.JetParameter;
 import org.jetbrains.kotlin.psi.JetTypeParameterList;
+import org.jetbrains.kotlin.resolve.ModifiersChecker;
 
 import java.util.Collections;
 import java.util.List;
@@ -32,14 +33,7 @@ public class JetObjectInfo extends JetClassOrObjectInfo<JetObjectDeclaration> {
 
     protected JetObjectInfo(@NotNull JetObjectDeclaration element) {
         super(element);
-        this.kind = element.isObjectLiteral()
-                    ? ClassKind.CLASS
-                    : (element.isClassObject() ? ClassKind.CLASS_OBJECT : ClassKind.OBJECT);
-    }
-
-    @Override
-    public JetObjectDeclaration getClassObject() {
-        return null;
+        this.kind = element.isObjectLiteral() ? ClassKind.CLASS : ClassKind.OBJECT;
     }
 
     @Nullable
@@ -58,5 +52,9 @@ public class JetObjectInfo extends JetClassOrObjectInfo<JetObjectDeclaration> {
     @Override
     public ClassKind getClassKind() {
         return kind;
+    }
+
+    public boolean isDefaultObject() {
+        return element.isDefault() && ModifiersChecker.isDefaultModifierAllowed(element);
     }
 }

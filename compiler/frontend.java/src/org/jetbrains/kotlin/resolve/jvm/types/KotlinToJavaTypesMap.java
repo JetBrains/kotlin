@@ -32,8 +32,6 @@ import org.jetbrains.org.objectweb.asm.Type;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.jetbrains.kotlin.resolve.jvm.types.PrimitiveTypesUtil.asmTypeForPrimitive;
-
 public class KotlinToJavaTypesMap extends JavaToKotlinClassMapBuilder {
     private static KotlinToJavaTypesMap instance = null;
 
@@ -56,18 +54,17 @@ public class KotlinToJavaTypesMap extends JavaToKotlinClassMapBuilder {
 
     private void initPrimitives() {
         FqName builtInsFqName = KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME;
-        for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
-            PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
-            Type asmType = asmTypeForPrimitive(jvmPrimitiveType);
+        for (JvmPrimitiveType type : JvmPrimitiveType.values()) {
+            PrimitiveType primitiveType = type.getPrimitiveType();
             FqName fqName = builtInsFqName.child(primitiveType.getTypeName());
 
-            register(fqName, asmType);
+            register(fqName, Type.getType(type.getDesc()));
 
-            FqName wrapperFqName = jvmPrimitiveType.getWrapperFqName();
+            FqName wrapperFqName = type.getWrapperFqName();
             registerNullable(fqName, Type.getObjectType(JvmClassName.byFqNameWithoutInnerClasses(wrapperFqName).getInternalName()));
             registerFqName(fqName, wrapperFqName);
 
-            register(builtInsFqName.child(primitiveType.getArrayTypeName()), Type.getType("[" + asmType.getDescriptor()));
+            register(builtInsFqName.child(primitiveType.getArrayTypeName()), Type.getType("[" + type.getDesc()));
         }
     }
 
@@ -107,13 +104,10 @@ public class KotlinToJavaTypesMap extends JavaToKotlinClassMapBuilder {
     protected void register(
             @NotNull Class<?> javaClass,
             @NotNull ClassDescriptor kotlinDescriptor,
-            @NotNull ClassDescriptor kotlinMutableDescriptor,
-            @NotNull Direction direction
+            @NotNull ClassDescriptor kotlinMutableDescriptor
     ) {
-        if (direction == Direction.BOTH || direction == Direction.KOTLIN_TO_JAVA) {
-            register(javaClass, kotlinDescriptor);
-            register(javaClass, kotlinMutableDescriptor);
-        }
+        register(javaClass, kotlinDescriptor, Direction.BOTH);
+        register(javaClass, kotlinMutableDescriptor, Direction.BOTH);
     }
 
     private void register(@NotNull FqName fqName, @NotNull Type type) {

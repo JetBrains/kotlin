@@ -30,7 +30,17 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/resolvedCalls")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({ResolvedCallsTestGenerated.Arguments.class, ResolvedCallsTestGenerated.DifferentCallElements.class, ResolvedCallsTestGenerated.Dynamic.class, ResolvedCallsTestGenerated.FunctionTypes.class, ResolvedCallsTestGenerated.Invoke.class, ResolvedCallsTestGenerated.ObjectsAndClassObjects.class, ResolvedCallsTestGenerated.RealExamples.class, ResolvedCallsTestGenerated.Resolve.class, ResolvedCallsTestGenerated.ThisOrSuper.class})
+@InnerTestClasses({
+        ResolvedCallsTestGenerated.Arguments.class,
+        ResolvedCallsTestGenerated.DifferentCallElements.class,
+        ResolvedCallsTestGenerated.Dynamic.class,
+        ResolvedCallsTestGenerated.FunctionTypes.class,
+        ResolvedCallsTestGenerated.Invoke.class,
+        ResolvedCallsTestGenerated.ObjectsAndClassObjects.class,
+        ResolvedCallsTestGenerated.RealExamples.class,
+        ResolvedCallsTestGenerated.Resolve.class,
+        ResolvedCallsTestGenerated.ThisOrSuper.class,
+})
 @RunWith(JUnit3RunnerWithInners.class)
 public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
     public void testAllFilesPresentInResolvedCalls() throws Exception {
@@ -87,7 +97,14 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
 
     @TestMetadata("compiler/testData/resolvedCalls/arguments")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({Arguments.FunctionLiterals.class, Arguments.GenericCalls.class, Arguments.NamedArguments.class, Arguments.OneArgument.class, Arguments.RealExamples.class, Arguments.SeveralCandidates.class})
+    @InnerTestClasses({
+            Arguments.FunctionLiterals.class,
+            Arguments.GenericCalls.class,
+            Arguments.NamedArguments.class,
+            Arguments.OneArgument.class,
+            Arguments.RealExamples.class,
+            Arguments.SeveralCandidates.class,
+    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Arguments extends AbstractResolvedCallsTest {
         public void testAllFilesPresentInArguments() throws Exception {

@@ -5,9 +5,11 @@
     </ANNOTATIONS>
     <CLASSES>
       <root url="file://$PROJECT_DIR$/ideaSDK/plugins/android/lib" />
+      <root url="file://$PROJECT_DIR$/ideaSDK/plugins/android/lib/jps" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
     <jarDirectory url="file://$PROJECT_DIR$/ideaSDK/plugins/android/lib" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/ideaSDK/plugins/android/lib/jps" recursive="false" />
   </library>
 </component>
