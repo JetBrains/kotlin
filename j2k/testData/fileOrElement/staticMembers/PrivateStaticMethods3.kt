@@ -9,7 +9,7 @@ class A {
         privateStatic2()
     }
 
-    class object {
+    default object {
 
         private fun privateStatic1() {
         }

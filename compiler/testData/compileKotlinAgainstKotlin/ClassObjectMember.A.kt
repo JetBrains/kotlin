@@ -1,5 +1,5 @@
 class A {
-    class object {
+    default object {
         fun foo() = 42
         val bar = "OK"
     }

@@ -9,7 +9,7 @@ internal final class A {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    internal class object Default : T {
+    internal default object Default : T {
         private constructor Default()
         internal final override /*1*/ /*fake_override*/ val x: kotlin.Int?
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -24,7 +24,7 @@ internal final class B {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    internal class object Default : T {
+    internal default object Default : T {
         private constructor Default()
         internal final override /*1*/ /*fake_override*/ val x: kotlin.Int?
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

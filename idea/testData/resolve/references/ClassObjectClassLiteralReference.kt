@@ -1,7 +1,7 @@
 package t
 
 class A {
-    class object Named {
+    default object Named {
     }
 }
 

@@ -1,7 +1,7 @@
 // KT-588 Unresolved static method
 
 class Test() : Thread("Test") {
-    class object {
+    default object {
         fun init2() {
 
         }

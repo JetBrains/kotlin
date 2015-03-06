@@ -1,5 +1,5 @@
 class Test {
-    class object {
+    default object {
         var str: String
         {
             str = "Ola"

@@ -20,7 +20,7 @@ class A {
     nativeInvoke
     <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>object Obj1<!> {}
 
-    class object {
+    default object {
         nativeInvoke
         fun foo() {}
 

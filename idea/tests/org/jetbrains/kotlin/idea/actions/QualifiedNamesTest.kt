@@ -35,7 +35,7 @@ public class QualifiedNamesTest: LightCodeInsightTestCase() {
                     class Klass {
                         class Nested
 
-                        class object {
+                        default object {
                         }
                     }
 

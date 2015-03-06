@@ -1,7 +1,7 @@
 enum class E {
     ENTRY
 
-    class object {
+    default object {
         fun foo(): E = ENTRY
         fun bar(): Array<E> = values()
         fun baz(): E = valueOf("ENTRY")

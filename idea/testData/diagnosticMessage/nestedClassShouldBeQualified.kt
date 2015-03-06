@@ -15,7 +15,7 @@ fun A.B.test() {
 }
 
 class C {
-    class object {
+    default object {
         class D {
             class Nested
         }
@@ -29,7 +29,7 @@ fun C.Default.D.text() {
 
 class E {
     class F {
-        class object
+        default object
     }
 }
 

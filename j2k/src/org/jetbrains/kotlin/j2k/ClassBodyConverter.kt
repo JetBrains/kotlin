@@ -137,7 +137,7 @@ class ClassBodyConverter(private val psiClass: PsiClass,
         }
     }
 
-    // we generate nested classes with factory functions into class object as a workaround until secondary constructors supported by Kotlin
+    // we generate nested classes with factory functions into default object as a workaround until secondary constructors supported by Kotlin
     private fun shouldGenerateIntoDefaultObject(nestedClass: Class)
             = !nestedClass.modifiers.contains(Modifier.INNER) && nestedClass.body.factoryFunctions.isNotEmpty()
 

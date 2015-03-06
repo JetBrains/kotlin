@@ -1,5 +1,5 @@
 class O {
-    class object {
+    default object {
         // Currently we consider <clinit> in class O as the enclosing method of this lambda,
         // so we write outer class = O and enclosing method = null
         val f = {}

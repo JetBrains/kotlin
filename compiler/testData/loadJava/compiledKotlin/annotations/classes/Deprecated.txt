@@ -3,7 +3,7 @@ package test
 kotlin.deprecated(value = "Class": kotlin.String) internal final class Class {
     /*primary*/ public constructor Class()
 
-    kotlin.deprecated(value = "class object": kotlin.String) internal class object Default {
+    kotlin.deprecated(value = "default object": kotlin.String) internal default object Default {
         /*primary*/ private constructor Default()
     }
 

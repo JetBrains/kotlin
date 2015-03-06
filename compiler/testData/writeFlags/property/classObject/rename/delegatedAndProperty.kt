@@ -17,7 +17,7 @@ class Test {
 
   public var prop: String = ""
 
-  class object {
+  default object {
     public var prop: Int by TestDelegate({10})
   }
 }

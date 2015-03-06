@@ -13,7 +13,7 @@ New instance creation (6: 32) var next: Outer.A? = Outer.A()
 Parameter type (14: 22) fun foo(a: Outer.A) {
 Parameter type (36: 20) fun X.bar(a: Outer.A = Outer.A()) {
 Super type qualifier (24: 21) super<Outer.A>.foo()
-Supertype (27: 25) class object: Outer.A() {
+Supertype (27: 27) default object: Outer.A() {
 Supertype (32: 17) object O: Outer.A() {
 Supertype (5: 51) public class X(bar: String? = Outer.A.bar): Outer.A() {
 Target type of 'is' operation (41: 30) return if (this is Outer.A) this as Outer.A else null

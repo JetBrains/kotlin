@@ -2,7 +2,7 @@ class A {
     class Nested
     inner class Inner
 
-    class object Named {
+    default object Named {
         class Nested2
         val c: Int = 1
         object Obj2

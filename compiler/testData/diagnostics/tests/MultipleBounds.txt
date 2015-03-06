@@ -52,7 +52,7 @@ package Jet87 {
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-        internal class object Default : Jet87.A, Jet87.B {
+        internal default object Default : Jet87.A, Jet87.B {
             private constructor Default()
             internal open override /*1*/ /*fake_override*/ fun bar(): kotlin.Double
             public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

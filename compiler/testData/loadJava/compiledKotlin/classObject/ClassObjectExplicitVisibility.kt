@@ -1,37 +1,37 @@
 package test
 
 public class PubPri {
-    private class object {}
+    private default object {}
 }
 
 public class PubInt {
-    internal class object {}
+    internal default object {}
 }
 
 public class PubPub {
-    public class object {}
+    public default object {}
 }
 
 internal class IntPri {
-    private class object {}
+    private default object {}
 }
 
 internal class IntInt {
-    internal class object {}
+    internal default object {}
 }
 
 internal class IntPub {
-    public class object {}
+    public default object {}
 }
 
 private class PriPri {
-    private class object {}
+    private default object {}
 }
 
 private class PriInt {
-    internal class object {}
+    internal default object {}
 }
 
 private class PriPub {
-    public class object {}
+    public default object {}
 }

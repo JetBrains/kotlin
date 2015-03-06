@@ -1,5 +1,5 @@
 class S {
-    class object {
+    default object {
         fun sB(): Boolean {
             return true
         }

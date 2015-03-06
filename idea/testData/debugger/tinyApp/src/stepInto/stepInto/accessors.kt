@@ -12,7 +12,7 @@ class A {
         prop = 2
     }
 
-    class object {
+    default object {
         private fun foo() {
             val a = 1
         }

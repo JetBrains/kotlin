@@ -11,7 +11,7 @@ trait SomeTrait {
 class Some() {
   val testInClass = 12
 
-  class object {
+  default object {
     val testInClassObject = 12
   }
 }

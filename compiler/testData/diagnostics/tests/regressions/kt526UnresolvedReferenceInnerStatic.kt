@@ -4,7 +4,7 @@
 package demo
 
 class Foo {
-    class object {
+    default object {
         class Bar() { }
     }
 }

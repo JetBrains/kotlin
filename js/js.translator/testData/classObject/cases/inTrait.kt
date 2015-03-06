@@ -1,7 +1,7 @@
 package foo
 
 trait A {
-    class object {
+    default object {
         val OK: String = "OK"
     }
 }

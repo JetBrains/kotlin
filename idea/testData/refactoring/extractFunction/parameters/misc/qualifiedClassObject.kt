@@ -6,7 +6,7 @@ class MyClass {
     }
 
     public class P {
-        class object {
+        default object {
             val a = 1
             fun foo() = 1
         }

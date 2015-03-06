@@ -6,7 +6,7 @@ import pack.A.*
 class A(nested: Nested = Nested(Nested.FIELD)) {
 
     class Nested(p: Int) {
-        class object {
+        default object {
 
             public val FIELD: Int = 0
         }

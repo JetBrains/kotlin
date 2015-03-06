@@ -3,7 +3,7 @@ package test
 internal final class IntInt {
     /*primary*/ public constructor IntInt()
 
-    internal class object Default {
+    internal default object Default {
         /*primary*/ private constructor Default()
     }
 }
@@ -11,7 +11,7 @@ internal final class IntInt {
 internal final class IntPri {
     /*primary*/ public constructor IntPri()
 
-    private class object Default {
+    private default object Default {
         /*primary*/ private constructor Default()
     }
 }
@@ -19,7 +19,7 @@ internal final class IntPri {
 internal final class IntPub {
     /*primary*/ public constructor IntPub()
 
-    public class object Default {
+    public default object Default {
         /*primary*/ private constructor Default()
     }
 }
@@ -27,7 +27,7 @@ internal final class IntPub {
 private final class PriInt {
     /*primary*/ public constructor PriInt()
 
-    internal class object Default {
+    internal default object Default {
         /*primary*/ private constructor Default()
     }
 }
@@ -35,7 +35,7 @@ private final class PriInt {
 private final class PriPri {
     /*primary*/ public constructor PriPri()
 
-    private class object Default {
+    private default object Default {
         /*primary*/ private constructor Default()
     }
 }
@@ -43,7 +43,7 @@ private final class PriPri {
 private final class PriPub {
     /*primary*/ public constructor PriPub()
 
-    public class object Default {
+    public default object Default {
         /*primary*/ private constructor Default()
     }
 }
@@ -51,7 +51,7 @@ private final class PriPub {
 public final class PubInt {
     /*primary*/ public constructor PubInt()
 
-    internal class object Default {
+    internal default object Default {
         /*primary*/ private constructor Default()
     }
 }
@@ -59,7 +59,7 @@ public final class PubInt {
 public final class PubPri {
     /*primary*/ public constructor PubPri()
 
-    private class object Default {
+    private default object Default {
         /*primary*/ private constructor Default()
     }
 }
@@ -67,7 +67,7 @@ public final class PubPri {
 public final class PubPub {
     /*primary*/ public constructor PubPub()
 
-    public class object Default {
+    public default object Default {
         /*primary*/ private constructor Default()
     }
 }

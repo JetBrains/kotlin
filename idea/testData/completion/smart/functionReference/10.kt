@@ -5,7 +5,7 @@ class C {
         listOf("a").filter(<caret>)
     }
 
-    class object {
+    default object {
         fun staticFoo(s: String): Boolean = true
     }
 }

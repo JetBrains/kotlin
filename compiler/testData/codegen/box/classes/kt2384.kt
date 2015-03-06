@@ -1,5 +1,5 @@
 class A {
-    class object {
+    default object {
         val b = 0
         val c = b
         

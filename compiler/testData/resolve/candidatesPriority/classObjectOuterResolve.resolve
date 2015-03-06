@@ -1,7 +1,7 @@
 fun ~test~test() = 1
 
 class Test {
-    class object {
+    default object {
         fun call() = `test`test()
     }
 

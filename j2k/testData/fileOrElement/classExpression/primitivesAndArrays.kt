@@ -1,5 +1,5 @@
 public class A {
-    class object {
+    default object {
         public fun main(args: Array<String>) {
             System.out.println(Void.TYPE)
             System.out.println(Integer.TYPE)

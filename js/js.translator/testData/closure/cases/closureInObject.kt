@@ -8,7 +8,7 @@ object A {
 }
 
 class B {
-    class object {
+    default object {
         val a = 21
         fun foo() = 3
 

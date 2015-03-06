@@ -6,5 +6,5 @@ deprecated("Class") class Class {
 
     deprecated("Inner") inner class Inner
 
-    deprecated("class object") class object
+    deprecated("default object") default object
 }

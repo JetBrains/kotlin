@@ -2,7 +2,7 @@
 package test
 
 class A {
-  class object {
+  default object {
     val some = 1
   }
 

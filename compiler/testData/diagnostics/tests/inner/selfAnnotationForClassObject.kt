@@ -1,7 +1,7 @@
 class Test {
     [ClassObjectAnnotation]
     [NestedAnnotation]
-    class object {
+    default object {
         annotation class ClassObjectAnnotation
     }
 

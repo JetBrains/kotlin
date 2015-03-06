@@ -1,13 +1,13 @@
 package foo
 
 trait Named {
-    class object Bar {
+    default object Bar {
         val g = "a";
     }
 }
 
 class Foo {
-    class object {
+    default object {
         val g = "b";
     }
 }

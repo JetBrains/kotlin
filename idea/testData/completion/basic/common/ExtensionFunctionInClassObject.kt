@@ -3,7 +3,7 @@ package p
 class B
 
 class R {
-    class object {
+    default object {
         fun B.f() {
             this.<caret>
         }

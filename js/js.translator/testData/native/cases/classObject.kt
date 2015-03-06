@@ -3,7 +3,7 @@ package foo
 native
 class A(val c: Int) {
     native
-    class object {
+    default object {
         val g: Int = noImpl
         val c: String = noImpl
     }

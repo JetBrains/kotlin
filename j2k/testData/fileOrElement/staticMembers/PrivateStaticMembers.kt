@@ -5,7 +5,7 @@ class A {
         privateStatic2()
     }
 
-    class object {
+    default object {
         private val s = "abc"
 
         private fun privateStatic1() {

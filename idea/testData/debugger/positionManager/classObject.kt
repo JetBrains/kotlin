@@ -1,5 +1,5 @@
 class A {
-    class object {
+    default object {
 
         {
             1 + 1 // A
@@ -37,7 +37,7 @@ class A {
 }
 
 trait T {
-    class object {
+    default object {
         val prop = 1 // T\$Default
     }
 }

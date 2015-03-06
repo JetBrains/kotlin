@@ -1,7 +1,7 @@
 package testing
 
 object Testing {
-    class object {
+    default object {
         <caret>va
     }
 }

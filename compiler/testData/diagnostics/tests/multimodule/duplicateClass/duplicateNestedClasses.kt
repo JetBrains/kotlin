@@ -7,7 +7,7 @@ package p
 public class A {
     public class B
     public object C
-    class object {
+    default object {
         public class D {
             public object E
         }
@@ -35,7 +35,7 @@ package p
 public class A {
     public class B
     public class C
-    class object {
+    default object {
         public class D {
             public class E
         }

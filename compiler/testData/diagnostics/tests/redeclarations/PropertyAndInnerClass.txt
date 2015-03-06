@@ -21,7 +21,7 @@ public final class B {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    public class object Default {
+    public default object Default {
         private constructor Default()
         public final val FOO: kotlin.String = "test"
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

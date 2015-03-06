@@ -1,4 +1,4 @@
-//KT-3833 Invoke method not working inside class object?
+//KT-3833 Invoke method not working inside default object?
 package m
 
 class Either1 {
@@ -26,7 +26,7 @@ object Foo{
 }
 
 class C{
-    class object {
+    default object {
         fun f(){
             Foo.v()
         }

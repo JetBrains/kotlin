@@ -1,6 +1,6 @@
 class Test(val prop: String) {
 
-  class object {
+  default object {
     public val prop : String = "CO";
   }
 

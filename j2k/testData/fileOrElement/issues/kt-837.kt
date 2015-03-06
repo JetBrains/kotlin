@@ -8,7 +8,7 @@ public class Language(protected var code: String) : Serializable {
         return other.toString() == this.toString()
     }
 
-    class object {
+    default object {
         public var ENGLISH: Language = Language("en")
         public var SWEDISH: Language = Language("sv")
         private val serialVersionUID = -2442762969929206780

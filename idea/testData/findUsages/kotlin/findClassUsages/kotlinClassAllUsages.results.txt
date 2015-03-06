@@ -8,7 +8,7 @@ Nested class/object (7: 16) val name = Server.NAME
 Parameter type (32: 19) fun Client.bar(s: Server = Server.NAME) {
 Parameter type (9: 16) fun foo(s: Server) {
 Super type qualifier (19: 15) super<Server>.work()
-Supertype (23: 19) class object: Server() {
+Supertype (23: 21) default object: Server() {
 Supertype (28: 22) object ClientObject: Server() {
 Supertype (5: 43) class Client(name: String = Server.NAME): Server() {
 Target type of 'is' operation (41: 24) return if (this is Server) this as Server else null

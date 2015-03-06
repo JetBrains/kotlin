@@ -18,7 +18,7 @@ class A {
             <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>nativeSetter
             fun set5(a: Double, v: String): CharSequence<!> = "OK"
 
-            class object {
+            default object {
                 <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>nativeSetter
                 fun set(a: String, v: Any?): Any?<!> = null
 
@@ -37,7 +37,7 @@ class A {
             nativeSetter
             <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>object Obj1<!> {}
 
-            class object {
+            default object {
                 <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>nativeSetter
                 val foo<!> = 0
 

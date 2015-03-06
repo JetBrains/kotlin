@@ -1,5 +1,5 @@
 open class Test {
-    class object {
+    default object {
         fun testStatic(ic: InnerClass): NotInnerClass = NotInnerClass(ic.value)
     }
 

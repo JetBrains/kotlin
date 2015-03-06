@@ -5,7 +5,7 @@ fun main(args: Array<String>) {
 }
 
 class A {
-    class object {
+    default object {
         val prop = 1
         fun myFun() = 1
     }

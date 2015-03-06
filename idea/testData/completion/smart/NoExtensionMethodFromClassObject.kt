@@ -1,5 +1,5 @@
 class X {
-    class object {
+    default object {
         fun String.f(): X = X()
         fun g(): X = X()
     }

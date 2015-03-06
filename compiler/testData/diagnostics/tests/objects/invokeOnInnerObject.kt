@@ -4,7 +4,7 @@ fun test() {
 }
 
 class A() {
-    class object {
+    default object {
         object f {
             fun invoke(i: Int) = i
         }

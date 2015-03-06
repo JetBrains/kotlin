@@ -1,7 +1,7 @@
 package test
 
 class KotlinClass {
-    class object {
+    default object {
         val FOO: Int = 10
     }
 }

@@ -12,7 +12,7 @@ class KClient {
         KA()
     }
 
-    class object {
+    default object {
         val a = KA()
     }
 

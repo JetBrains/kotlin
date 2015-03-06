@@ -1,7 +1,7 @@
 class C() {
     val a: Int = 1
 
-    class object {
+    default object {
         val x : Int
 
         {

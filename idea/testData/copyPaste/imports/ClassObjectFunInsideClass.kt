@@ -7,7 +7,7 @@ class A {
         f()
     }</selection>
 
-    class object {
+    default object {
         fun f()
     }
 }

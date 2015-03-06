@@ -3,7 +3,7 @@ class S {
         return true
     }
 
-    class object {
+    default object {
         fun sI(): Int {
             return 1
         }

@@ -8,7 +8,7 @@ class D {
         class Nested
     }
 
-    class object {
+    default object {
         class NestedInClassObject
     }
 }

@@ -1,5 +1,5 @@
 class C() {
-    class object Foo {
+    default object Foo {
         fun create() = 3
     }
 }

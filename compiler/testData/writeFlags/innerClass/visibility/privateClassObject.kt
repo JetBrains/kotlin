@@ -1,5 +1,5 @@
 class Foo {
-  private class object {
+  private default object {
   }
 }
 

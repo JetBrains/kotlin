@@ -15,11 +15,11 @@ package p.q
 }</selection>
 
 class MyClass {
-    class object {
+    default object {
         val coProp = 1
 
         class Nested {
-            class object {
+            default object {
                 val c: Int = 1
             }
         }

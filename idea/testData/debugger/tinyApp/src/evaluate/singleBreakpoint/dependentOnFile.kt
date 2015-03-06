@@ -8,7 +8,7 @@ fun main(args: Array<String>) {
 class TestClass {
     fun testFun() = 1
 
-    class object {
+    default object {
         val p = 1
     }
 }

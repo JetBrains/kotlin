@@ -2,7 +2,7 @@ package foo
 
 class Foo {
 
-  class object {
+  default object {
       fun objectFoo() { }
   }
 

@@ -1,4 +1,4 @@
-class C { class object {
+class C { default object {
     fun foo() {
     }
 }

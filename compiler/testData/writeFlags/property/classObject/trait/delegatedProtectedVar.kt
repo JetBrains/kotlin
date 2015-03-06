@@ -9,7 +9,7 @@ class TestDelegate() {
 }
 
 trait Test {
-  class object {
+  default object {
     protected var prop: Int by TestDelegate()
   }
 }

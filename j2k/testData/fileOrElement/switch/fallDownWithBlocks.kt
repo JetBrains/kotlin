@@ -1,5 +1,5 @@
 public class C {
-    class object {
+    default object {
         public fun main(args: Array<String>) {
             when (args.size) {
                 1 -> {

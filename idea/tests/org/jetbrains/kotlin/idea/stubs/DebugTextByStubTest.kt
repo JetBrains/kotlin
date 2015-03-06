@@ -133,7 +133,6 @@ public class DebugTextByStubTest : LightCodeInsightFixtureTestCase() {
         function("fun <T> T.foo(b: T): List<T>")
         function("fun <T, G> f() where T : G")
         function("fun <T, G> f() where T : G, G : T")
-        function("fun <T, G> f() where class object T : G")
         function("private final fun f()")
     }
 
@@ -200,10 +199,10 @@ public class DebugTextByStubTest : LightCodeInsightFixtureTestCase() {
     }
 
     fun testClassObject() {
-        val tree = createStubTree("class A { class object Def {} }")
+        val tree = createStubTree("class A { default object Def {} }")
         val defaultObject = tree.findChildStubByType(JetStubElementTypes.CLASS)!!.findChildStubByType(JetStubElementTypes.CLASS_BODY)!!
                 .findChildStubByType(JetStubElementTypes.OBJECT_DECLARATION)
-        assertEquals("STUB: class object Def", JetObjectDeclaration(defaultObject as KotlinObjectStub).getDebugText())
+        assertEquals("STUB: default object Def", JetObjectDeclaration(defaultObject as KotlinObjectStub).getDebugText())
     }
 
     fun testPropertyAccessors() {

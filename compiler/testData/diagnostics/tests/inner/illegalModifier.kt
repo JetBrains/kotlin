@@ -11,7 +11,7 @@ class D {
     <!ILLEGAL_MODIFIER!>inner<!> object G
     <!ILLEGAL_MODIFIER!>inner<!> enum class R
     <!ILLEGAL_MODIFIER!>inner<!> annotation class S
-    <!ILLEGAL_MODIFIER!>inner<!> class object
+    <!ILLEGAL_MODIFIER!>inner<!> default object
 }
 
 enum class H {
@@ -31,7 +31,7 @@ object N {
 }
 
 class P {
-    class object {
+    default object {
         <!INNER_CLASS_IN_OBJECT!>inner<!> class Q
     }
 }

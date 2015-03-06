@@ -16,7 +16,7 @@ public fun topLevelFun() {
 }
 
 public class ClassWithClassObject {
-    class object {
+    default object {
         fun f() = 1
     }
 }
@@ -26,7 +26,7 @@ public object KotlinObject {
 }
 
 public trait StaticFieldInClassObjectInTrait {
-    class object {
+    default object {
         public val XX: String = "xx"
     }
 }

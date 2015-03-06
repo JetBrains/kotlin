@@ -2,7 +2,7 @@ package foo
 
 class A {
     val a = 3
-    class object {
+    default object {
         val a = 2
         val b = 5
     }

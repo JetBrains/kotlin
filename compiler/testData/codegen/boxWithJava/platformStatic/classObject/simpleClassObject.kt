@@ -2,7 +2,7 @@ import kotlin.platform.platformStatic
 
 class A {
 
-    class object {
+    default object {
         val b: String = "OK"
 
         platformStatic val c: String = "OK"

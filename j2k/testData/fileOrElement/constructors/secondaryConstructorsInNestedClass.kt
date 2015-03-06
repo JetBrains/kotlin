@@ -1,5 +1,5 @@
 class Outer {
-    class object {
+    default object {
 
         private fun Nested1(a: Int): Nested1 {
             return Nested1()

@@ -10,7 +10,7 @@ class InlineAll {
         return s()
     }
 
-    class object {
+    default object {
         inline fun inline(s: () -> String): String {
             return s()
         }

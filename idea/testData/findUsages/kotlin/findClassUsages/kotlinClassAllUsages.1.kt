@@ -20,7 +20,7 @@ class Client(name: String = Server.NAME): Server() {
         println("Client")
     }
 
-    class object: Server() {
+    default object: Server() {
 
     }
 }

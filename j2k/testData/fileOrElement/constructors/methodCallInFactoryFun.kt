@@ -12,7 +12,7 @@ class C(private val arg1: Int, private val arg2: Int, private val arg3: Int) {
         return p
     }
 
-    class object {
+    default object {
         private fun staticFoo(p: Int): Int {
             return p
         }

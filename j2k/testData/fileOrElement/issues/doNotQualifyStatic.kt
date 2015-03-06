@@ -6,7 +6,7 @@ class Outer {
         }
     }
 
-    class object {
+    default object {
         public var o: Any? = Object()
     }
 }

@@ -1,9 +1,9 @@
 fun test() {
     class A {
-        <!DEFAULT_OBJECT_NOT_ALLOWED!>class object<!> {}
+        default <!DEFAULT_OBJECT_NOT_ALLOWED!>object<!> {}
     }
 
     object {
-        <!DEFAULT_OBJECT_NOT_ALLOWED!>class object<!> {}
+        default <!DEFAULT_OBJECT_NOT_ALLOWED!>object<!> {}
     }
 }

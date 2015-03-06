@@ -1,7 +1,7 @@
 import kotlin.platform.*
 
 class C {
-    class object {
+    default object {
         private platformStatic fun foo(): String {
             return "OK"
         }

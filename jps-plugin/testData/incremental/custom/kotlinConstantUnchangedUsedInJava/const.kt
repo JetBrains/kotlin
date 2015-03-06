@@ -1,7 +1,7 @@
 package test
 
 class Klass {
-    class object {
+    default object {
         val CONST = "bar"
     }
 }

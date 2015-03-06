@@ -11,7 +11,7 @@ class A {
     nativeGetter
     fun foo(a: Double): String? = null
 
-    class object {
+    default object {
         nativeGetter
         fun get(a: String): Any? = null
 
@@ -31,7 +31,7 @@ class B {
     nativeGetter
     <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>object Obj1<!> {}
 
-    class object {
+    default object {
         <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>nativeGetter
         val foo<!> = 0
 
@@ -66,7 +66,7 @@ class C {
     nativeGetter
     fun baz(<!NATIVE_INDEXER_CAN_NOT_HAVE_DEFAULT_ARGUMENTS!>a: String = "foo"<!>): Int? = 0
 
-    class object {
+    default object {
         <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>nativeGetter
         fun Int.get(a: String): Int?<!> = 1
 

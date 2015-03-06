@@ -13,7 +13,7 @@ package Jet86 {
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-        internal class object Default {
+        internal default object Default {
             private constructor Default()
             internal final val x: kotlin.Int = 1
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -21,7 +21,7 @@ package Jet86 {
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         }
 
-        internal class object Default {
+        internal default object Default {
             private constructor Default()
             internal final val x: kotlin.Int = 1
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -36,7 +36,7 @@ package Jet86 {
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-        internal class object A {
+        internal default object A {
             private constructor A()
             internal final val x: kotlin.Int = 1
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -44,7 +44,7 @@ package Jet86 {
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         }
 
-        internal class object AA {
+        internal default object AA {
             private constructor AA()
             internal final val x: kotlin.Int = 1
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -52,7 +52,7 @@ package Jet86 {
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         }
 
-        internal class object Default {
+        internal default object Default {
             private constructor Default()
             internal final val x: kotlin.Int = 1
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -75,7 +75,7 @@ package Jet86 {
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-        internal class object Default {
+        internal default object Default {
             private constructor Default()
             internal final val x: kotlin.Int = 1
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

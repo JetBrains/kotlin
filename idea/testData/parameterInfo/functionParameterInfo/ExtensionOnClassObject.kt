@@ -3,7 +3,7 @@ trait A
 fun A.foo(i: Int) = i
 
 class B {
-    class object : A
+    default object : A
 }
 
 fun test() {

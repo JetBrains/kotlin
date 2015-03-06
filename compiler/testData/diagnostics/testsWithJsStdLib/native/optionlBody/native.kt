@@ -23,7 +23,7 @@ trait T {
     fun foo()
     fun bar() {}
 
-    class object {
+    default object {
         val baz: Int
         val boo: Int = noImpl
 
@@ -40,7 +40,7 @@ class C {
     fun foo()
     fun bar() {}
 
-    class object {
+    default object {
         val baz: Int
         val boo: Int = noImpl
 

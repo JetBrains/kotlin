@@ -2,7 +2,7 @@ import A.Nested
 
 class A {
     class Nested {
-        class object {
+        default object {
             fun invoke(i: Int) = i
         }
     }

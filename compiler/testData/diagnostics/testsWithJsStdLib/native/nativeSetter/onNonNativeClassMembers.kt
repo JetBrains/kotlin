@@ -10,7 +10,7 @@ class A {
     <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>nativeSetter
     fun foo(a: Int, v: String)<!> {}
 
-    class object {
+    default object {
         <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>nativeSetter
         fun set(a: String, v: Any?): Any?<!> = null
 
@@ -29,7 +29,7 @@ class B {
     nativeSetter
     <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>object Obj1<!> {}
 
-    class object {
+    default object {
         <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>nativeSetter
         val foo<!> = 0
 

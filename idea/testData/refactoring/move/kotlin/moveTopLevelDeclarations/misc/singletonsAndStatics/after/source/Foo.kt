@@ -3,7 +3,7 @@ package source
 import library.*
 
 class Bar {
-    class object {
+    default object {
         val c : Int
     }
 }

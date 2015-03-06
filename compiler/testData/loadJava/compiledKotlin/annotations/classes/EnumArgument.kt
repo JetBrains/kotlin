@@ -10,5 +10,5 @@ Anno(ElementType.METHOD) class Class {
     
     Anno(ElementType.TYPE) class Nested
 
-    Anno(ElementType.ANNOTATION_TYPE) class object
+    Anno(ElementType.ANNOTATION_TYPE) default object
 }

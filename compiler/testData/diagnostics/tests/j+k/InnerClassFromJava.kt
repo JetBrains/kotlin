@@ -6,7 +6,7 @@ public interface I extends Boo {
 
 // FILE: Baz.kt
 public trait Foo {
-    class object {
+    default object {
         public val EMPTY: Foo = object : Foo{}
     }
 }

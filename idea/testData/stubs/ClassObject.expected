@@ -3,6 +3,7 @@ PsiJetFileStubImpl[package=]
   CLASS:[fqName=C, isEnumEntry=false, isLocal=false, isTopLevel=true, isTrait=false, name=C, superNames=[]]
     CLASS_BODY:
       OBJECT_DECLARATION:[fqName=C.Default, isDefault=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Default, superNames=[]]
+        MODIFIER_LIST:[default]
         CLASS_BODY:
           FUN:[fqName=C.Default.foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isProbablyNothingType=false, isTopLevel=false, name=foo]
             VALUE_PARAMETER_LIST:

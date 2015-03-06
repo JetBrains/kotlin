@@ -1,5 +1,5 @@
 class A {
-  class object {
+  default object {
     fun Int.foo(a: Int = 1): Int {
         return a
     }

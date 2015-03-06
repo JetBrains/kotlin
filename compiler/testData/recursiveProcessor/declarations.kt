@@ -13,7 +13,7 @@ abstract class Class<T4> : Trait<Any> {
     fun classFunc(): Unit {}
     val classProp: Any? = null
 
-    class object {
+    default object {
         fun classObjFunc(): Unit {}
         val classObjProp: Any? = null
     }
@@ -30,7 +30,7 @@ trait Outer {
     }
 
     abstract class NestedClass {
-        class object {
+        default object {
             fun nestedClassObjFunc(): Unit {}
         }
     }

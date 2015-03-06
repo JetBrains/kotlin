@@ -14,7 +14,7 @@ public class SeleniumTest(val id: String) {
         println("Testing $id")
     }
 
-    class object {
+    default object {
         Parameters public fun findSeleniumUris(): List<String> {
             return arrayList("a", "b")
         }

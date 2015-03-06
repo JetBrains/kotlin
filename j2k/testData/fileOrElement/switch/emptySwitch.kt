@@ -1,5 +1,5 @@
 public class NonDefault {
-    class object {
+    default object {
         public fun main(args: Array<String>) {
 
             val value = 3

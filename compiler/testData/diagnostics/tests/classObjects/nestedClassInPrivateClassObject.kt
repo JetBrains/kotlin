@@ -1,8 +1,8 @@
 class A {
-    private class object {
+    private default object {
         class B {
             class C {
-                class object {
+                default object {
                     fun foo() {}
                 }
             }

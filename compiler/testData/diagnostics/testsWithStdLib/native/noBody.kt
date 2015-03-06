@@ -5,7 +5,7 @@ native fun foo()
 class C {
     native fun foo()
 
-    class object {
+    default object {
         native fun foo()
     }
 }

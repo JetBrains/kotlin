@@ -30,7 +30,7 @@ class A {
         object J
     }
 
-    class object CO {
+    default object CO {
         object H
     }
 }

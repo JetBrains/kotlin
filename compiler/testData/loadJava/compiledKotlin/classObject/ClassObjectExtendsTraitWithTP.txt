@@ -6,7 +6,7 @@ internal trait Bbb</*0*/ P> {
 internal final class ClassObjectExtendsTraitWithTP {
     /*primary*/ public constructor ClassObjectExtendsTraitWithTP()
 
-    internal class object Default : test.Bbb<kotlin.String> {
+    internal default object Default : test.Bbb<kotlin.String> {
         /*primary*/ private constructor Default()
     }
 }

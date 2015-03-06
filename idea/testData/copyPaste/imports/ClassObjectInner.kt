@@ -7,7 +7,7 @@ import a.Outer.Default.NestedTrait
 import a.Outer.Default.NestedAnnotation
 
 class Outer {
-    class object {
+    default object {
         class Nested {
         }
         enum class NestedEnum {

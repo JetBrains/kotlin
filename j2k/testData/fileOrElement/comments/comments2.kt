@@ -21,7 +21,7 @@ class A {
     protected /*it's protected*/ fun foo(c: Char) {
     }
 
-    class object {
+    default object {
 
         public /*it's public*//*and static*//*and final*/ val C: Int = 1
     }

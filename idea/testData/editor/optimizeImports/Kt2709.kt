@@ -5,7 +5,7 @@ fun main() {
 }
 
 class MyClass {
-    class object {
+    default object {
         object TEST {}
     }
 }

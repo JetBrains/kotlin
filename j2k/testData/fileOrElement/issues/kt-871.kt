@@ -1,7 +1,7 @@
 package demo
 
 class Program {
-    class object {
+    default object {
         public fun main(args: Array<String>) {
             System.out.println("Halo!")
         }

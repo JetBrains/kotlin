@@ -24,7 +24,7 @@ class A {
             fun invoke(a: String): Int<!> = 0
         }
 
-        class object {
+        default object {
             <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>nativeInvoke
             fun foo()<!> {}
 

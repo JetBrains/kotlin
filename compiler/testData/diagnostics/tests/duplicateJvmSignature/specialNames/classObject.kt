@@ -1,11 +1,11 @@
 class C {
-    <!REDECLARATION!>class object<!> {}
+    default <!REDECLARATION!>object<!> {}
 
     val <!REDECLARATION!>Default<!> = C
 }
 
 class D {
-    <!CONFLICTING_JVM_DECLARATIONS!>class object<!> {}
+    default <!CONFLICTING_JVM_DECLARATIONS!>object<!> {}
 
     <!CONFLICTING_JVM_DECLARATIONS!>val `OBJECT$`<!> = D
 }

@@ -1,5 +1,5 @@
 class Test {
-  class object {
+  default object {
     private var prop = 0;
   }
 }

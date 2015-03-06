@@ -9,7 +9,7 @@ fun test() {
 }
 
 class A() {
-  public class object {
+  public default object {
     val d = 3
     private object f {
 
@@ -19,12 +19,12 @@ class A() {
 
 class B {
     class D {
-        private class object
+        private default object
     }
 }
 
 class CCC() {
-  private class object {
+  private default object {
     val classObjectVar = 3
   }
 }

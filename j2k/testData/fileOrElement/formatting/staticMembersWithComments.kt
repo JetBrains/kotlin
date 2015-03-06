@@ -1,5 +1,5 @@
 class F {
-    class object {
+    default object {
 
         //c1
 

@@ -1,5 +1,5 @@
 class WithClassObject {
-    class object {
+    default object {
         fun foo() {}
 
         val value: Int = 0

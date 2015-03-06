@@ -1,7 +1,7 @@
 // ClassObjectField
 
 class ClassObjectField {
-    class object {
+    default object {
         val x: String? = ""
         private val y: String? = ""
     }

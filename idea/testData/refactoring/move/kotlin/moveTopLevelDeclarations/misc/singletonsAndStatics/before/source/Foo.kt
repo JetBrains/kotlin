@@ -21,7 +21,7 @@ class <caret>Foo {
 }
 
 class Bar {
-    class object {
+    default object {
         val c : Int
     }
 }

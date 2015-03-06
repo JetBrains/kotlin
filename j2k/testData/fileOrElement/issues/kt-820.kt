@@ -5,7 +5,7 @@ class Container {
 }
 
 class One {
-    class object {
+    default object {
         var myContainer = Container()
     }
 }

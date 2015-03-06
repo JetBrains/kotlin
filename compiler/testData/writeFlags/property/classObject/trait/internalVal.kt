@@ -1,5 +1,5 @@
 trait Test {
-  class object {
+  default object {
     val prop: Int = 0;
   }
 }

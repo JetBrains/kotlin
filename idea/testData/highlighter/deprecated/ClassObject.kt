@@ -13,13 +13,13 @@ fun test() {
 }
 
 class MyClass(): MyTrait {
-    deprecated("Use A instead") class object {
+    deprecated("Use A instead") default object {
         val test: String = ""
     }
 }
 
 trait MyTrait {
-    deprecated("Use A instead") class object {
+    deprecated("Use A instead") default object {
         val test: String = ""
     }
 }

@@ -1,5 +1,5 @@
 class A {
-    class object {
+    default object {
         class Foo(val a: Int = 1) {}
     }
 }

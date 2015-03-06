@@ -22,7 +22,7 @@ package a {
             }
         }
 
-        internal class object CO {
+        internal default object CO {
             private constructor CO()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

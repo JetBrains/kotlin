@@ -1,5 +1,5 @@
 trait Test {
-  class object {
+  default object {
     protected var prop: Int = 0
       private set
   }

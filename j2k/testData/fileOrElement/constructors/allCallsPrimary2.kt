@@ -23,7 +23,7 @@ class C(val myArg1: Int) {
 }
 
 public class User {
-    class object {
+    default object {
         public fun main() {
             val c1 = C(100, 100, 100)
             val c2 = C(100, 100)

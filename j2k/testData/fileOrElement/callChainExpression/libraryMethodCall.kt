@@ -1,5 +1,5 @@
 class Library {
-    class object {
+    default object {
         fun call() {
         }
 
