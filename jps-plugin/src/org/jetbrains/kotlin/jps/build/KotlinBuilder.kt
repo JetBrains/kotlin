@@ -29,9 +29,6 @@ import org.jetbrains.jps.incremental.ModuleLevelBuilder.ExitCode.*
 import org.jetbrains.jps.incremental.java.JavaBuilder
 import org.jetbrains.jps.incremental.messages.BuildMessage
 import org.jetbrains.jps.incremental.messages.CompilerMessage
-import java.io.File
-import java.lang.reflect.Modifier
-import java.util.*
 import org.jetbrains.jps.model.JpsProject
 import org.jetbrains.kotlin.cli.common.KotlinVersion
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
@@ -50,23 +47,21 @@ import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.jps.JpsKotlinCompilerSettings
 import org.jetbrains.kotlin.jps.incremental.*
-import org.jetbrains.kotlin.jps.incremental.IncrementalCacheImpl.RecompilationDecision.*
+import org.jetbrains.kotlin.jps.incremental.IncrementalCacheImpl.RecompilationDecision.COMPILE_OTHER
+import org.jetbrains.kotlin.jps.incremental.IncrementalCacheImpl.RecompilationDecision.COMPILE_OTHER_KOTLIN
+import org.jetbrains.kotlin.jps.incremental.IncrementalCacheImpl.RecompilationDecision.DO_NOTHING
+import org.jetbrains.kotlin.jps.incremental.IncrementalCacheImpl.RecompilationDecision.RECOMPILE_ALL
 import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCache
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
-import org.jetbrains.kotlin.load.kotlin.header.isCompatiblePackageFacadeKind
-import org.jetbrains.jps.builders.java.dependencyView.Mappings
-import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCacheProvider
 import org.jetbrains.kotlin.utils.LibraryUtils
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.kotlin.utils.sure
-import org.jetbrains.kotlin.jps.build.KotlinJpsCompilerArgumentsProvider
 import java.io.File
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.HashSet
+import java.util.ServiceLoader
 
 public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     class object {
