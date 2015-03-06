@@ -294,5 +294,7 @@ public class QuickFixRegistrar {
         QuickFixes.factories.put(UNRESOLVED_REFERENCE, CreateClassFromTypeReferenceActionFactory.INSTANCE$);
         QuickFixes.factories.put(UNRESOLVED_REFERENCE, CreateClassFromReferenceExpressionActionFactory.INSTANCE$);
         QuickFixes.factories.put(UNRESOLVED_REFERENCE, CreateClassFromCallWithConstructorCalleeActionFactory.INSTANCE$);
+
+        QuickFixes.factories.put(DEPRECATED_CLASS_OBJECT_SYNTAX, ClassObjectToDefaultObjectFix.Factory);
     }
 }

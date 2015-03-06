@@ -95,4 +95,4 @@ private val MODIFIERS_ORDER = listOf(PUBLIC_KEYWORD, PROTECTED_KEYWORD, PRIVATE_
                                      FINAL_KEYWORD, OPEN_KEYWORD, ABSTRACT_KEYWORD,
                                      OVERRIDE_KEYWORD,
                                      INNER_KEYWORD,
-                                     ANNOTATION_KEYWORD, ENUM_KEYWORD)
+                                     ANNOTATION_KEYWORD, ENUM_KEYWORD, DEFAULT_KEYWORD)
