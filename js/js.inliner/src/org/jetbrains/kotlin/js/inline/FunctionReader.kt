@@ -17,18 +17,33 @@
 package org.jetbrains.kotlin.js.inline
 
 import com.google.dart.compiler.backend.js.ast.*
+import com.google.dart.compiler.backend.js.ast.metadata.inlineStrategy
 import com.google.dart.compiler.common.SourceInfoImpl
 import com.google.gwt.dev.js.JsParser
 import com.google.gwt.dev.js.ThrowExceptionOnErrorReporter
+import com.google.gwt.dev.js.parserExceptions.AbortParsingException
+import com.google.gwt.dev.js.parserExceptions.JsParserException
+import com.google.gwt.dev.js.rhino.ErrorReporter
+import com.google.gwt.dev.js.rhino.EvaluatorException
+import org.jetbrains.kotlin.builtins.InlineStrategy
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.js.config.LibrarySourcesConfig
+import org.jetbrains.kotlin.js.inline.util.IdentitySet
+import org.jetbrains.kotlin.js.inline.util.isCallInvocation
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.expression.InlineMetadata
+import org.jetbrains.kotlin.js.translate.reference.CallExpressionTranslator
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.*
+import org.jetbrains.kotlin.resolve.descriptorUtil.*
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.utils.*
 
+import com.intellij.util.containers.SLRUCache
 import java.io.*
+import java.net.URL
 
 // TODO: add hash checksum to defineModule?
 /**
@@ -76,13 +91,14 @@ public class FunctionReader(private val context: TranslationContext) {
             }
         }
     }
-    
+
     private fun readFunction(descriptor: CallableDescriptor): JsFunction? {
         if (descriptor !in this) return null
 
         val moduleName = getExternalModuleName(descriptor)
         val file = requireNotNull(moduleJsDefinition[moduleName], "Module $moduleName file have not been read")
         val function = readFunctionFromSource(descriptor, file)
+        function?.markInlineArguments(descriptor)
         return function
     }
 
@@ -130,6 +146,49 @@ public class FunctionReader(private val context: TranslationContext) {
             throw RuntimeException(e)
         }
     }
+}
+
+private fun JsFunction.markInlineArguments(descriptor: CallableDescriptor) {
+    val params = descriptor.getValueParameters()
+    val paramsJs = getParameters()
+    val inlineFuns = IdentitySet<JsName>()
+    val inlineExtensionFuns = IdentitySet<JsName>()
+    val offset = if (descriptor.isExtension) 1 else 0
+
+    for ((i, param) in params.withIndex()) {
+        if (!CallExpressionTranslator.shouldBeInlined(descriptor)) continue
+
+        val type = param.getType()
+        if (!KotlinBuiltIns.isFunctionOrExtensionFunctionType(type)) continue
+
+        val namesSet = if (KotlinBuiltIns.isExtensionFunctionType(type)) inlineExtensionFuns else inlineFuns
+        namesSet.add(paramsJs[i + offset].getName())
+    }
+
+    val visitor = object: JsVisitorWithContextImpl() {
+        override fun endVisit(x: JsInvocation?, ctx: JsContext?) {
+            if (x == null || ctx == null) return
+
+            val qualifier: JsExpression?
+            val namesSet: Set<JsName>
+
+            if (isCallInvocation(x)) {
+                qualifier = (x.getQualifier() as? JsNameRef)?.getQualifier()
+                namesSet = inlineExtensionFuns
+            } else {
+                qualifier = x.getQualifier()
+                namesSet = inlineFuns
+            }
+
+            val name = (qualifier as? JsNameRef)?.getName()
+
+            if (name in namesSet) {
+                x.inlineStrategy = InlineStrategy.IN_PLACE
+            }
+        }
+    }
+
+    visitor.accept(this)
 }
 
 private fun replaceExternalNames(function: JsFunction, externalReplacements: Map<String, JsExpression>) {
