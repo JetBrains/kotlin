@@ -17,26 +17,22 @@
 package org.jetbrains.kotlin.j2k
 
 import com.intellij.psi.*
+import com.intellij.psi.CommonClassNames.JAVA_LANG_DOUBLE
+import com.intellij.psi.CommonClassNames.JAVA_LANG_FLOAT
+import com.intellij.psi.CommonClassNames.JAVA_LANG_INTEGER
+import com.intellij.psi.CommonClassNames.JAVA_LANG_LONG
 import com.intellij.psi.tree.IElementType
-import org.jetbrains.kotlin.j2k.ast.*
-import org.jetbrains.kotlin.types.expressions.OperatorConventions
-import com.intellij.psi.CommonClassNames.*
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.builtins.PrimitiveType
-import org.jetbrains.kotlin.j2k.*
-import org.jetbrains.kotlin.asJava.KotlinLightMethod
-import org.jetbrains.kotlin.psi.JetProperty
-import org.jetbrains.kotlin.psi.JetFunction
-import org.jetbrains.kotlin.psi.JetClassOrObject
-import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
-import org.jetbrains.kotlin.psi.JetPropertyAccessor
-import org.jetbrains.kotlin.psi.JetParameter
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
-import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.asJava.KotlinLightField
-import org.jetbrains.kotlin.psi.JetObjectDeclaration
+import org.jetbrains.kotlin.asJava.KotlinLightMethod
+import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.j2k.ast.*
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
+import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 trait ExpressionConverter {
     fun convertExpression(expression: PsiExpression, codeConverter: CodeConverter): Expression
@@ -357,7 +353,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
 
         var identifier = Identifier(referenceName, isNullable).assignNoPrototype()
         if (qualifier != null && qualifier.getType() is PsiArrayType && referenceName == "length") {
-            identifier = Identifier("size", isNullable).assignNoPrototype()
+            identifier = Identifier("size()", isNullable).assignNoPrototype()
         }
         else if (qualifier != null) {
             if (target is KotlinLightField<*, *> && target.getOrigin() is JetObjectDeclaration) {
