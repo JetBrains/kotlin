@@ -75,8 +75,8 @@ public class Byte private () : Number, Comparable<Byte> {
 
     public fun inc(): Byte
     public fun dec(): Byte
-    public fun plus(): Byte
-    public fun minus(): Byte
+    public fun plus(): Int
+    public fun minus(): Int
 
     public fun rangeTo(other: Byte): ByteRange
     public fun rangeTo(other: Char): CharRange
@@ -152,8 +152,8 @@ public class Short private () : Number, Comparable<Short> {
 
     public fun inc(): Short
     public fun dec(): Short
-    public fun plus(): Short
-    public fun minus(): Short
+    public fun plus(): Int
+    public fun minus(): Int
 
     public fun rangeTo(other: Byte): ShortRange
     public fun rangeTo(other: Char): ShortRange

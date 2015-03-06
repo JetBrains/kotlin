@@ -51,7 +51,7 @@ class GenerateNumbers(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             generateCompareTo(kind)
 
             generateBinaryOperators(kind)
-            generateUnaryOperators(className)
+            generateUnaryOperators(kind)
             generateRangeTo(kind)
 
             if (kind == PrimitiveType.INT || kind == PrimitiveType.LONG) {
@@ -103,9 +103,11 @@ class GenerateNumbers(out: PrintWriter) : BuiltInsSourceGenerator(out) {
 
     }
 
-    private fun generateUnaryOperators(className: String) {
+    private fun generateUnaryOperators(kind: PrimitiveType) {
         for (name in unaryOperators) {
-            out.println("    public fun $name(): $className")
+            val returnType = if (kind in listOf(PrimitiveType.SHORT, PrimitiveType.BYTE) &&
+                                 name in listOf("plus", "minus")) "Int" else kind.capitalized
+            out.println("    public fun $name(): $returnType")
         }
         out.println()
     }
