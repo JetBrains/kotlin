@@ -496,15 +496,15 @@
 
         <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${basedir}/dependencies/ant-contrib.jar"/>
 
-        <condition property="android.os.tag" value="windows">
+        <condition property="android_studio.os.tag" value="windows">
             <os family="windows"/>
         </condition>
 
-        <condition property="android.os.tag" value="mac">
+        <condition property="android_studio.os.tag" value="mac">
             <os family="mac"/>
         </condition>
 
-        <condition property="android.os.tag" value="linux">
+        <condition property="android_studio.os.tag" value="linux">
             <and>
                 <os family="unix"/>
                 <not>
@@ -551,7 +551,7 @@
 
         <echo message="Download android studio: ${android.version} ${android.build.version}"/>
 
-        <property name="android.file.name" value="android-studio-ide-${android.build.version}-${android.os.tag}.zip"/>
+        <property name="android.file.name" value="android-studio-ide-${android.build.version}-${android_studio.os.tag}.zip"/>
         <property name="android.studio.url"
                   value="http://dl.google.com/dl/android/studio/ide-zips/${android.version}/${android.file.name}"/>
 
