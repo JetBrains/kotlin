@@ -16,14 +16,13 @@
 
 package org.jetbrains.kotlin.idea.kdoc
 
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
-import org.jetbrains.kotlin.resolve.source.PsiSourceElement
-import org.jetbrains.kotlin.psi.JetDeclaration
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
+import org.jetbrains.kotlin.kdoc.psi.api.KDoc
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag
+import org.jetbrains.kotlin.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 
 object KDocFinder {
     fun findKDoc(declaration: DeclarationDescriptor): KDocTag? {
@@ -40,6 +39,20 @@ object KDocFinder {
                         }
                     }
                     return kdoc.getDefaultSection()
+                }
+            }
+        }
+
+        if (declaration is PropertyDescriptor) {
+            val containingClassDescriptor = declaration.getContainingDeclaration() as? ClassDescriptor
+            if (containingClassDescriptor != null) {
+                val classKDoc = findKDoc(containingClassDescriptor)?.getParentOfType<KDoc>(false)
+                if (classKDoc != null) {
+                    val propertySection = classKDoc.findSectionByTag(KDocKnownTag.PROPERTY,
+                                                                     declaration.getName().asString())
+                    if (propertySection != null) {
+                        return propertySection
+                    }
                 }
             }
         }

@@ -27,4 +27,5 @@ public trait KDoc : PsiComment {
     public fun getDefaultSection(): KDocSection
     public fun findSectionByName(name: String): KDocSection?
     public fun findSectionByTag(tag: KDocKnownTag): KDocSection?
+    public fun findSectionByTag(tag: KDocKnownTag, subjectName: String): KDocSection?
 }
