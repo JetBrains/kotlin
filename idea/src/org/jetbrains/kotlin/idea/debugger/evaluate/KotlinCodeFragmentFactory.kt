@@ -107,6 +107,11 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
                 return getContextElement(elementAt.getOrigin())
             }
 
+            // If label for some variable is set
+            if (elementAt.getParent() is JetCodeFragment) {
+                return elementAt.getParent().getContext()
+            }
+
             val expressionAtOffset = PsiTreeUtil.findElementOfClassAtOffset(elementAt.getContainingFile()!!, elementAt.getTextOffset(), javaClass<JetExpression>(), false)
             if (expressionAtOffset != null) {
                 return expressionAtOffset
