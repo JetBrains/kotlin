@@ -42,7 +42,19 @@ public class FunctionReader(private val context: TranslationContext) {
      * Maps module name to .js file content, that contains this module definition.
      * One file can contain more than one module definition.
      */
-    private val moduleJsDefinition = hashMapOf<String, String>();
+    private val moduleJsDefinition = hashMapOf<String, String>()
+
+    /**
+     * Maps module name to variable, that is used to call functions inside module.
+     * The default variable is _, but it can be renamed by minifier.
+     */
+    private val moduleRootVariable = hashMapOf<String, String>()
+
+    /**
+     * Maps moduleName to kotlin object variable.
+     * The default variable is Kotlin, but it can be renamed by minifier.
+     */
+    private val moduleKotlinVariable = hashMapOf<String, String>();
 
     {
         val config = context.getConfig() as LibrarySourcesConfig
@@ -55,8 +67,12 @@ public class FunctionReader(private val context: TranslationContext) {
 
             while (matcher.find()) {
                 val moduleName = matcher.group(3)
+                val moduleVariable = matcher.group(4)
+                val kotlinVariable = matcher.group(1)
                 assert(moduleName !in moduleJsDefinition) { "Module is defined in more, than one file" }
                 moduleJsDefinition[moduleName] = file
+                moduleRootVariable[moduleName] = moduleVariable
+                moduleKotlinVariable[moduleName] = kotlinVariable
             }
         }
     }
@@ -93,6 +109,13 @@ public class FunctionReader(private val context: TranslationContext) {
         }
 
         val function = metadata.function
+        val moduleName = getExternalModuleName(descriptor)!!
+        val moduleNameLiteral = context.program().getStringLiteral(moduleName)
+        val moduleReference =  context.namer().getModuleReference(moduleNameLiteral)
+
+        val replacements = hashMapOf(moduleRootVariable[moduleName] to moduleReference,
+                                     moduleKotlinVariable[moduleName] to Namer.KOTLIN_OBJECT_REF)
+        replaceExternalNames(function, replacements)
         return function
     }
 
@@ -107,4 +130,22 @@ public class FunctionReader(private val context: TranslationContext) {
             throw RuntimeException(e)
         }
     }
+}
+
+private fun replaceExternalNames(function: JsFunction, externalReplacements: Map<String, JsExpression>) {
+    val replacements = externalReplacements.filterKeys { !function.getScope().hasOwnName(it) }
+
+    if (replacements.isEmpty()) return
+
+    val visitor = object: JsVisitorWithContextImpl() {
+        override fun endVisit(x: JsNameRef?, ctx: JsContext?) {
+            if (x == null || x.getQualifier() != null) return
+
+            replacements[x.getIdent()]?.let {
+                ctx?.replaceMe(it)
+            }
+        }
+    }
+
+    visitor.accept(function)
 }

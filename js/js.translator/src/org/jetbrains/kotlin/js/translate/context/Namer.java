@@ -268,6 +268,9 @@ public final class Namer {
     @NotNull
     private final JsName isTypeName;
 
+    @NotNull
+    private final JsExpression modulesMap;
+
     private Namer(@NotNull JsScope rootScope) {
         kotlinName = rootScope.declareName(KOTLIN_NAME);
         kotlinScope = JsObjectScope(rootScope, "Kotlin standard object");
@@ -290,6 +293,7 @@ public final class Namer {
         callableRefForExtensionProperty = kotlinScope.declareName(CALLABLE_REF_FOR_EXTENSION_PROPERTY);
 
         isTypeName = kotlinScope.declareName("isType");
+        modulesMap = kotlin("modules");
     }
 
     @NotNull
@@ -420,5 +424,10 @@ public final class Namer {
     @NotNull
     public JsExpression getCallSetProperty() {
         return callSetProperty;
+    }
+
+    @NotNull
+    public JsExpression getModuleReference(@NotNull JsStringLiteral moduleName) {
+        return new JsArrayAccess(modulesMap, moduleName);
     }
 }

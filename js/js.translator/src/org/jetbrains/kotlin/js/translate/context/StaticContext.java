@@ -481,7 +481,7 @@ public final class StaticContext {
                     }
 
                     return JsAstUtils.replaceRootReference(
-                            result, new JsArrayAccess(namer.kotlin("modules"), program.getStringLiteral(moduleName)));
+                            result, namer.getModuleReference(program.getStringLiteral(moduleName)));
                 }
             };
             Rule<JsExpression> constructorOrDefaultObjectHasTheSameQualifierAsTheClass = new Rule<JsExpression>() {
