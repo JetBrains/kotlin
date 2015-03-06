@@ -1,5 +1,5 @@
 fun foo() {
-    var a: String
+    var a: String = ""
     if () {
         a = "aaa"
     }

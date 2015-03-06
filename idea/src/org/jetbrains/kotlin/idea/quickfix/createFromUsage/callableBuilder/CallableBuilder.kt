@@ -79,6 +79,7 @@ import org.jetbrains.kotlin.idea.refactoring.*
 import org.jetbrains.kotlin.idea.util.*
 import com.intellij.openapi.ui.*
 import com.intellij.codeInsight.template.impl.*
+import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.util.application.*
 
 private val TYPE_PARAMETER_LIST_VARIABLE_NAME = "typeParameterList"
@@ -324,7 +325,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                     returnTypeCandidate?.theType?.isUnit() ?: false
                 CallableKind.CONSTRUCTOR ->
                     callableInfo.returnTypeInfo == TypeInfo.Empty || returnTypeCandidate?.theType?.isAny() ?: false
-                CallableKind.PROPERTY -> false
+                CallableKind.PROPERTY -> containingElement is JetBlockExpression
             }
 
             // figure out type parameter renames to avoid conflicts
@@ -883,6 +884,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
         private fun setupEditor(declaration: JetNamedDeclaration) {
             val caretModel = containingFileEditor.getCaretModel()
+            val selectionModel = containingFileEditor.getSelectionModel()
 
             caretModel.moveToOffset(declaration.getNameIdentifier().getTextRange().getEndOffset())
 
@@ -892,7 +894,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 val startOffset = from.getTextRange().getStartOffset()
                 val endOffset = to.getTextRange().getEndOffset()
                 caretModel.moveToOffset(endOffset)
-                containingFileEditor.getSelectionModel().setSelection(startOffset, endOffset)
+                selectionModel.setSelection(startOffset, endOffset)
             }
 
             when (declaration) {
@@ -903,9 +905,15 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                     caretModel.moveToOffset(declaration.getTextRange().getStartOffset())
                 }
                 is JetProperty -> {
-                    if (!declaration.hasInitializer()) {
-                        caretModel.moveToOffset(declaration.getTextRange().getEndOffset())
+                    if (!declaration.hasInitializer() && containingElement is JetBlockExpression) {
+                        val defaultValueType = typeCandidates[callableInfo.returnTypeInfo].firstOrNull()?.theType
+                                               ?: KotlinBuiltIns.getInstance().getAnyType()
+                        val defaultValue = CodeInsightUtils.defaultInitializer(defaultValueType) ?: "null"
+                        val initializer = declaration.setInitializer(JetPsiFactory(declaration).createExpression(defaultValue))!!
+                        val range = initializer.getTextRange()
+                        selectionModel.setSelection(range.getStartOffset(), range.getEndOffset())
                     }
+                    caretModel.moveToOffset(declaration.getTextRange().getEndOffset())
                 }
             }
             containingFileEditor.getScrollingModel().scrollToCaret(ScrollType.RELATIVE)

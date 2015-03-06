@@ -182,6 +182,7 @@ public class CodeInsightUtils {
         return element;
     }
 
+    @Nullable
     public static String defaultInitializer(JetType type) {
         KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
         if (type.isMarkedNullable()) {
@@ -202,6 +203,12 @@ public class CodeInsightUtils {
         }
         else if (type.equals(builtIns.getBooleanType())) {
             return "false";
+        }
+        else if (type.equals(builtIns.getUnitType())) {
+            return "Unit";
+        }
+        else if (type.equals(builtIns.getStringType())) {
+            return "\"\"";
         }
 
         return null;
