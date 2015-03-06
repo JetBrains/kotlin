@@ -29,4 +29,4 @@ class Some {
 // EXIST:  var
 // EXIST:  vararg
 /*why?*/
-// NUMBER: 23
+// NUMBER: 24

@@ -25,4 +25,4 @@
 // EXIST:  var
 // EXIST:  vararg
 /*why?*/
-// NUMBER: 22
+// NUMBER: 23
