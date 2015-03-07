@@ -61,7 +61,7 @@ public val KMemberProperty<*, *>.javaField: Field?
 
 // TODO: getstatic $kotlinClass or go to foreignKClasses
 public val <T> Class<T>.kotlin: KClass<T>
-    get() = KClassImpl(this, false)
+    get() = KClassImpl(this)
 
 // TODO: getstatic $kotlinPackage
 public val Class<*>.kotlinPackage: KPackage
@@ -71,7 +71,7 @@ public val Class<*>.kotlinPackage: KPackage
 public val Field.kotlin: KProperty<*>
     get() {
         val clazz = getDeclaringClass()
-        val name = getName()!!
+        val name = getName()
         val modifiers = getModifiers()
         val static = Modifier.isStatic(modifiers)
         val final = Modifier.isFinal(modifiers)
@@ -84,4 +84,3 @@ public val Field.kotlin: KProperty<*>
             return if (final) Reflection.memberProperty(name, kClass) else Reflection.mutableMemberProperty(name, kClass)
         }
     }
-

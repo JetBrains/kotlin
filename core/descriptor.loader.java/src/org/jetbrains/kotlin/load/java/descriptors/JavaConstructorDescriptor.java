@@ -78,13 +78,15 @@ public class JavaConstructorDescriptor extends ConstructorDescriptorImpl impleme
             @NotNull Kind kind
     ) {
         if (kind != Kind.DECLARATION && kind != Kind.SYNTHESIZED) {
-            throw new IllegalStateException("Attempt at creating a constructor that is not a declaration: \n" +
-                                            "copy from: " + this + "\n" +
-                                            "newOwner: " + newOwner + "\n" +
-                                            "kind: " + kind);
+            throw new IllegalStateException(
+                    "Attempt at creating a constructor that is not a declaration: \n" +
+                    "copy from: " + this + "\n" +
+                    "newOwner: " + newOwner + "\n" +
+                    "kind: " + kind
+            );
         }
         JavaConstructorDescriptor result = new JavaConstructorDescriptor(
-                (ClassDescriptor) newOwner, this, Annotations.EMPTY /* TODO */, isPrimary, kind, SourceElement.NO_SOURCE
+                (ClassDescriptor) newOwner, this, getAnnotations(), isPrimary, kind, SourceElement.NO_SOURCE
         );
         result.setHasStableParameterNames(hasStableParameterNames());
         result.setHasSynthesizedParameterNames(hasSynthesizedParameterNames());

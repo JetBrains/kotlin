@@ -17,27 +17,14 @@
 package kotlin.reflect.jvm.internal
 
 import java.lang.reflect.Method
-import kotlin.jvm.internal.Intrinsic
 
-// TODO: use stdlib?
-suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
 private fun String.capitalizeWithJavaBeanConvention(): String {
-    // The code is a bit crooked because otherwise there are overload resolution ambiguities caused by the fact
-    // that we compile it with the built-ins both in source and as a compiled library
-    val l = length()
-    if (l > 1 && Character.isUpperCase(get(1))) return this
-    val first = get(0)
-    this as java.lang.String
-    return "" + Character.toUpperCase(first) + substring(1, l)
+    if (length() > 1 && Character.isUpperCase(this[1])) return this
+    return Character.toUpperCase(this[0]) + substring(1, length())
 }
 
 private fun getterName(propertyName: String): String = "get" + propertyName.capitalizeWithJavaBeanConvention()
 private fun setterName(propertyName: String): String = "set" + propertyName.capitalizeWithJavaBeanConvention()
-
-
-// A local copy of javaClass() from stdlib is needed because there's no dependency on stdlib in runtime.jvm
-[Intrinsic("kotlin.javaClass.function")]
-fun <reified T> javaClassOf(): Class<T> = throw UnsupportedOperationException()
 
 
 private fun Class<*>.getMaybeDeclaredMethod(name: String, vararg parameterTypes: Class<*>): Method {

@@ -17,13 +17,13 @@
     <property name="bootstrap.runtime" value="${bootstrap.compiler.home}/lib/kotlin-runtime.jar"/>
     <property name="bootstrap.runtime.minimal" value="${bootstrap.compiler.home}/lib/kotlin-runtime-minimal.jar"/>
 
-    <property name="output.relative" value="dist"/>
-    <property name="output" value="${basedir}/${output.relative}"/>
+    <property name="output" value="${basedir}/dist"/>
     <property name="kotlin-home" value="${output}/kotlinc"/>
     <property name="build.number" value="snapshot"/>
     <property name="bootstrap.build.no.tests" value="false"/>
-    <property name="output.name" value="kotlin-compiler-${build.number}"/>
     <property name="idea.sdk" value="${basedir}/ideaSDK"/>
+    <property name="protobuf.jar" value="${idea.sdk}/lib/protobuf-2.5.0.jar"/>
+    <property name="javax.inject.jar" value="${basedir}/lib/javax.inject.jar"/>
 
     <property name="java.target" value="1.6"/>
 
@@ -58,7 +58,7 @@
     <path id="classpath">
         <file file="${bootstrap.runtime}"/>
         <fileset dir="${idea.sdk}" includes="core/*.jar"/>
-        <fileset dir="${idea.sdk}" includes="lib/protobuf-2.5.0.jar"/>
+        <pathelement location="${protobuf.jar}"/>
 
         <fileset dir="${basedir}/lib" includes="**/*.jar"/>
         <fileset dir="${dependencies.dir}" includes="jline.jar"/>
@@ -437,12 +437,12 @@
 
                 <zipgroupfileset dir="${basedir}/lib" includes="*.jar"/>
                 <zipgroupfileset dir="${basedir}/ideaSDK/core" includes="*.jar" excludes="util.jar"/>
-                <zipgroupfileset dir="${basedir}/ideaSDK/lib" includes="jna-utils.jar"/>
-                <zipgroupfileset dir="${basedir}/ideaSDK/lib" includes="oromatcher.jar"/>
-                <zipgroupfileset dir="${basedir}/ideaSDK/lib" includes="protobuf-2.5.0.jar"/>
-                <zipgroupfileset dir="${basedir}/ideaSDK/jps" includes="jps-model.jar"/>
-                <zipgroupfileset dir="${dependencies.dir}" includes="jline.jar"/>
-                <zipgroupfileset dir="${dependencies.dir}" includes="cli-parser-1.1.1.jar"/>
+                <zipfileset src="${idea.sdk}/lib/jna-utils.jar"/>
+                <zipfileset src="${idea.sdk}/lib/oromatcher.jar"/>
+                <zipfileset src="${idea.sdk}/jps/jps-model.jar"/>
+                <zipfileset src="${dependencies.dir}/jline.jar"/>
+                <zipfileset src="${dependencies.dir}/cli-parser-1.1.1.jar"/>
+                <zipfileset src="${protobuf.jar}"/>
 
                 <manifest>
                     <attribute name="Built-By" value="${manifest.impl.vendor}"/>
@@ -778,7 +778,7 @@
                 <include name="libraries/stdlib/src"/>
             </src>
             <class-path>
-                <pathelement path="${output.relative}/classes/builtins"/>
+                <pathelement path="${output}/classes/builtins"/>
             </class-path>
         </new-kotlinc>
     </target>
@@ -789,34 +789,23 @@
                 <include name="core/reflection.jvm/src"/>
             </src>
             <class-path>
-                <pathelement path="${output.relative}/classes/builtins"/>
-                <pathelement path="${output.relative}/classes/stdlib"/>
-            </class-path>
-        </new-kotlinc>
-    </target>
-
-    <target name="reflection-stub">
-        <new-kotlinc output="${output}/classes/reflection-stub">
-            <src>
-                <include name="core/reflection.stub.jvm/src"/>
-            </src>
-            <class-path>
-                <pathelement path="${output.relative}/classes/builtins"/>
+                <pathelement path="${output}/classes/builtins"/>
+                <pathelement path="${output}/classes/stdlib"/>
             </class-path>
         </new-kotlinc>
     </target>
 
     <target name="pack-runtime">
         <macrodef name="do-pack-runtime">
-            <attribute name="reflection-module"/>
             <attribute name="jar-name"/>
             <attribute name="implementation-title"/>
+            <element name="reflection-classes" optional="true"/>
 
             <sequential>
                 <jar destfile="${kotlin-home}/lib/@{jar-name}" duplicate="fail">
                     <fileset dir="${output}/classes/builtins"/>
                     <fileset dir="${output}/classes/stdlib"/>
-                    <fileset dir="${output}/classes/@{reflection-module}"/>
+                    <reflection-classes/>
                     <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
 
                     <manifest>
@@ -829,20 +818,20 @@
             </sequential>
         </macrodef>
 
-        <do-pack-runtime reflection-module="reflection"
-                         jar-name="kotlin-runtime.jar"
-                         implementation-title="${manifest.impl.title.kotlin.jvm.runtime}"/>
+        <do-pack-runtime jar-name="kotlin-runtime.jar" implementation-title="${manifest.impl.title.kotlin.jvm.runtime}">
+            <reflection-classes>
+                <fileset dir="${output}/classes/reflection"/>
+            </reflection-classes>
+        </do-pack-runtime>
 
-        <do-pack-runtime reflection-module="reflection-stub"
-                         jar-name="kotlin-runtime-minimal.jar"
-                         implementation-title="${manifest.impl.title.kotlin.jvm.runtime.minimal}"/>
+        <do-pack-runtime jar-name="kotlin-runtime-minimal.jar" implementation-title="${manifest.impl.title.kotlin.jvm.runtime.minimal}"/>
     </target>
 
     <target name="pack-runtime-sources">
         <macrodef name="do-pack-runtime-sources">
-            <attribute name="reflection-module"/>
             <attribute name="jar-name"/>
             <attribute name="implementation-title"/>
+            <element name="reflection-sources" optional="true"/>
 
             <sequential>
                 <jar destfile="${kotlin-home}/lib/@{jar-name}" duplicate="fail">
@@ -850,7 +839,7 @@
                     <fileset dir="${basedir}/core/builtins/src" includes="**/*"/>
                     <fileset dir="${basedir}/core/runtime.jvm/src" includes="**/*"/>
                     <fileset dir="${basedir}/core/reflection/src" includes="**/*"/>
-                    <fileset dir="${basedir}/core/@{reflection-module}/src" includes="**/*"/>
+                    <reflection-sources/>
                     <fileset dir="${basedir}/libraries/stdlib/src" includes="**/*"/>
                     <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
 
@@ -864,17 +853,19 @@
             </sequential>
         </macrodef>
 
-        <do-pack-runtime-sources reflection-module="reflection.jvm"
-                                 jar-name="kotlin-runtime-sources.jar"
-                                 implementation-title="${manifest.impl.title.kotlin.jvm.runtime.sources}"/>
+        <do-pack-runtime-sources jar-name="kotlin-runtime-sources.jar"
+                                 implementation-title="${manifest.impl.title.kotlin.jvm.runtime.sources}">
+            <reflection-sources>
+                <fileset dir="${basedir}/core/reflection.jvm/src" includes="**/*"/>
+            </reflection-sources>
+        </do-pack-runtime-sources>
 
-        <do-pack-runtime-sources reflection-module="reflection.stub.jvm"
-                                 jar-name="kotlin-runtime-minimal-sources.jar"
+        <do-pack-runtime-sources jar-name="kotlin-runtime-minimal-sources.jar"
                                  implementation-title="${manifest.impl.title.kotlin.jvm.runtime.minimal.sources}"/>
     </target>
 
     <target name="runtime"
-            depends="builtins,stdlib,reflection,reflection-stub,pack-runtime,pack-runtime-sources"/>
+            depends="builtins,stdlib,reflection,pack-runtime,pack-runtime-sources"/>
 
     <target name="dist"
             depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler,compiler-sources,ant-tools,jdk-annotations,android-sdk-annotations,runtime,kotlin-js-stdlib,android-compiler-plugin"
@@ -889,7 +880,7 @@
             description="Builds compiler jar from project out dir"/>
 
     <target name="zip-compiler">
-        <zip destfile="${output}/${output.name}.zip">
+        <zip destfile="${output}/kotlin-compiler-${build.number}.zip">
             <zipfileset prefix="kotlinc" dir="${kotlin-home}" excludes="bin/*"/>
             <zipfileset prefix="kotlinc/bin" dir="${kotlin-home}/bin" includes="*.bat" filemode="644"/>
             <zipfileset prefix="kotlinc/bin" dir="${kotlin-home}/bin" excludes="*.bat" filemode="755"/>

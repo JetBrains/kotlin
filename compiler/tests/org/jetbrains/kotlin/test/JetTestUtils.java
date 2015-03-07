@@ -731,7 +731,8 @@ public class JetTestUtils {
             @NotNull Class<?> testCaseClass,
             @NotNull File testDataDir,
             @NotNull Pattern filenamePattern,
-            boolean recursive
+            boolean recursive,
+            @NotNull String... excludeDirs
     ) {
         TestMetadata testClassMetadata = testCaseClass.getAnnotation(TestMetadata.class);
         Assert.assertNotNull("No metadata for class: " + testCaseClass, testClassMetadata);
@@ -739,12 +740,13 @@ public class JetTestUtils {
         File rootFile = new File(rootPath);
 
         Set<String> filePaths = collectPathsMetadata(testCaseClass);
+        Set<String> exclude = KotlinPackage.setOf(excludeDirs);
 
         File[] files = testDataDir.listFiles();
         if (files != null) {
             for (File file : files) {
                 if (file.isDirectory()) {
-                    if (recursive && containsTestData(file, filenamePattern)) {
+                    if (recursive && containsTestData(file, filenamePattern) && !exclude.contains(file.getName())) {
                         assertTestClassPresentByMetadata(testCaseClass, file);
                     }
                 }

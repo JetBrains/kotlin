@@ -34,7 +34,7 @@ public class Reflection {
         catch (ClassCastException e) { impl = null; }
         catch (ClassNotFoundException e) { impl = null; }
         catch (InstantiationException e) { impl = null; }
-        catch (java.lang.IllegalAccessException e) { impl = null; }
+        catch (IllegalAccessException e) { impl = null; }
 
         factory = impl != null ? impl : new ReflectionFactory();
     }

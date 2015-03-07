@@ -16,20 +16,23 @@
 
 package org.jetbrains.kotlin.idea.decompiler.textBuilder
 
-import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
-import org.jetbrains.kotlin.load.java.structure.JavaClass
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
-import org.jetbrains.kotlin.idea.decompiler.isKotlinWithCompatibleAbiVersion
-import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
-import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
-import org.jetbrains.kotlin.serialization.ClassData
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.idea.decompiler.isKotlinWithCompatibleAbiVersion
+import org.jetbrains.kotlin.load.java.structure.JavaClass
+import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
+import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.serialization.ClassData
+import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
+import org.jetbrains.kotlin.serialization.deserialization.LocalClassResolver
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 
-class LocalClassFinder(
+class DirectoryBasedClassFinder(
         val packageDirectory: VirtualFile,
         val directoryPackageFqName: FqName
 ) : KotlinClassFinder {
@@ -48,12 +51,12 @@ class LocalClassFinder(
     }
 }
 
-class LocalClassDataFinder(
-        val localClassFinder: LocalClassFinder,
+class DirectoryBasedDataFinder(
+        val classFinder: DirectoryBasedClassFinder,
         val log: Logger
 ) : ClassDataFinder {
     override fun findClassData(classId: ClassId): ClassData? {
-        val binaryClass = localClassFinder.findKotlinClass(classId) ?: return null
+        val binaryClass = classFinder.findKotlinClass(classId) ?: return null
         val data = binaryClass.getClassHeader().annotationData
         if (data == null) {
             log.error("Annotation data missing for ${binaryClass.getClassId()}")
@@ -61,6 +64,10 @@ class LocalClassDataFinder(
         }
         return JvmProtoBufUtil.readClassDataFrom(data)
     }
+}
+
+object ResolveEverythingToKotlinAnyLocalClassResolver : LocalClassResolver {
+    override fun resolveLocalClass(classId: ClassId): ClassDescriptor = KotlinBuiltIns.getInstance().getAny()
 }
 
 private val JavaClass.classId: ClassId

@@ -20,45 +20,40 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.platform.JavaToKotlinClassMap;
-import org.jetbrains.kotlin.resolve.ImportPath;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.kotlin.types.reflect.ReflectionTypes;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
+import static org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM.createJavaModule;
 
 public class JvmRuntimeTypes {
     private final ReflectionTypes reflectionTypes;
 
     private final ClassDescriptor functionImpl;
+    private final ClassDescriptor memberFunctionImpl;
     private final ClassDescriptor extensionFunctionImpl;
-    private final ClassDescriptor kFunctionImpl;
-    private final ClassDescriptor kMemberFunctionImpl;
-    private final ClassDescriptor kExtensionFunctionImpl;
 
     public JvmRuntimeTypes(@NotNull ReflectionTypes reflectionTypes) {
         this.reflectionTypes = reflectionTypes;
 
-        ModuleDescriptor fakeModule = new ModuleDescriptorImpl(Name.special("<fake module for functions impl>"),
-                                                               Collections.<ImportPath>emptyList(), JavaToKotlinClassMap.INSTANCE);
-
-        PackageFragmentDescriptor kotlinJvmInternal =
-                new MutablePackageFragmentDescriptor(fakeModule, new FqName("kotlin.jvm.internal"));
-        PackageFragmentDescriptor kotlinReflectJvmInternal =
-                new MutablePackageFragmentDescriptor(fakeModule, new FqName("kotlin.reflect.jvm.internal"));
+        PackageFragmentDescriptor kotlinJvmInternal = new MutablePackageFragmentDescriptor(
+                createJavaModule("<jvm functions impl>"),
+                new FqName("kotlin.jvm.internal")
+        );
 
         this.functionImpl = createClass(kotlinJvmInternal, "FunctionImpl", "out R");
+        this.memberFunctionImpl = createClass(kotlinJvmInternal, "MemberFunctionImpl", "in T", "out R");
         this.extensionFunctionImpl = createClass(kotlinJvmInternal, "ExtensionFunctionImpl", "in T", "out R");
-        this.kFunctionImpl = createClass(kotlinReflectJvmInternal, "KFunctionImpl", "out R");
-        this.kExtensionFunctionImpl = createClass(kotlinReflectJvmInternal, "KExtensionFunctionImpl", "in T", "out R");
-        this.kMemberFunctionImpl = createClass(kotlinReflectJvmInternal, "KMemberFunctionImpl", "in T", "out R");
     }
 
     @NotNull
@@ -67,8 +62,8 @@ public class JvmRuntimeTypes {
             @NotNull String name,
             @NotNull String... typeParameters
     ) {
-        MutableClassDescriptor descriptor = new MutableClassDescriptor(packageFragment, packageFragment.getMemberScope(),
-                                                                       ClassKind.CLASS, false, Name.identifier(name), SourceElement.NO_SOURCE);
+        MutableClassDescriptor descriptor = new MutableClassDescriptor(packageFragment, packageFragment.getMemberScope(), ClassKind.CLASS,
+                                                                       false, Name.identifier(name), SourceElement.NO_SOURCE);
         List<TypeParameterDescriptor> typeParameterDescriptors = new ArrayList<TypeParameterDescriptor>(typeParameters.length);
         for (int i = 0; i < typeParameters.length; i++) {
             String[] s = typeParameters[i].split(" ");
@@ -135,24 +130,24 @@ public class JvmRuntimeTypes {
         ClassDescriptor classDescriptor;
         JetType receiverType;
         if (extensionReceiver != null) {
-            classDescriptor = kExtensionFunctionImpl;
+            classDescriptor = extensionFunctionImpl;
             receiverType = extensionReceiver.getType();
             typeArguments.add(new TypeProjectionImpl(receiverType));
         }
         else if (dispatchReceiver != null) {
-            classDescriptor = kMemberFunctionImpl;
+            classDescriptor = memberFunctionImpl;
             receiverType = dispatchReceiver.getType();
             typeArguments.add(new TypeProjectionImpl(receiverType));
         }
         else {
-            classDescriptor = kFunctionImpl;
+            classDescriptor = functionImpl;
             receiverType = null;
         }
 
         //noinspection ConstantConditions
         typeArguments.add(new TypeProjectionImpl(descriptor.getReturnType()));
 
-        JetType kFunctionImplType = new JetTypeImpl(
+        JetType functionImplType = new JetTypeImpl(
                 classDescriptor.getDefaultType().getAnnotations(),
                 classDescriptor.getTypeConstructor(),
                 false,
@@ -168,6 +163,6 @@ public class JvmRuntimeTypes {
                 extensionReceiver != null
         );
 
-        return Arrays.asList(kFunctionImplType, kFunctionType);
+        return Arrays.asList(functionImplType, kFunctionType);
     }
 }

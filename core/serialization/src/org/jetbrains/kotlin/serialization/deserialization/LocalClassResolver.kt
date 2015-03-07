@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package kotlin.reflect.jvm.internal
+package org.jetbrains.kotlin.serialization.deserialization
 
-import java.io.Serializable
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.name.ClassId
 
-public abstract class KMemberFunctionImpl<in T, out R> : Serializable {
-    override fun toString() = "${javaClass.getGenericInterfaces().first()}"
+public trait LocalClassResolver {
+    public fun resolveLocalClass(classId: ClassId): ClassDescriptor?
 }

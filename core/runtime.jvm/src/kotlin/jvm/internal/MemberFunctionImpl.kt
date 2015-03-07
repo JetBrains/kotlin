@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package kotlin.reflect.jvm.internal;
+package kotlin.jvm.internal
 
-import kotlin.jvm.internal.FunctionImpl;
+import java.io.Serializable
 
-public abstract class KFunctionImpl extends FunctionImpl {
+public abstract class MemberFunctionImpl<in T, out R> : Serializable {
+    override fun toString() = "${(this as Object).getClass().getGenericInterfaces()[0]}"
 }

@@ -77,7 +77,13 @@
         <module>tools/kotlin-compiler</module>
         <module>tools/kotlin-jdk-annotations</module>
         <module>tools/kotlin-android-sdk-annotations</module>
+        <module>tools/kotlin-maven-plugin</module>
+
         <module>tools/runtime</module>
+        <module>stdlib</module>
+        <module>stdlib/validator</module>
+        <module>tools/kotlin-reflect</module>
+
         <!--NB! kotlin-js-library should be built before kotlin-gradle-plugin-->
         <!--because it is used in tests but cannot be added as test-dependency-->
         <!--(kotlin-gradle-plugin module will be recognized as kotlin-js module)-->
@@ -86,15 +92,11 @@
         <module>tools/kotlin-gradle-plugin-core</module>
         <module>tools/kotlin-gradle-plugin-api</module>
         <module>tools/kotlin-android-compiler-plugin</module>
-        <module>tools/kotlin-maven-plugin</module>
         <module>tools/kotlin-maven-plugin-test</module>
         <module>tools/kotlin-js-tests</module>
         <module>tools/kotlin-js-tests-junit</module>
         <module>tools/kdoc</module>
         <module>tools/kdoc-maven-plugin</module>
-
-        <module>stdlib</module>
-        <module>stdlib/validator</module>
 
         <module>kunit</module>
         <module>kotlin-jdbc</module>

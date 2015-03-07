@@ -14,18 +14,22 @@
  * limitations under the License.
  */
 
-package kotlin.reflect
+package org.jetbrains.kotlin.serialization.deserialization
 
-suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
-public class IllegalPropertyAccessException(cause: IllegalAccessException) : Exception(cause.getMessage()) {
-    {
-        (this as java.lang.Throwable).initCause(cause)
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.name.ClassId
+import javax.inject.Inject
+import kotlin.properties.Delegates
+
+public class LocalClassResolverImpl : LocalClassResolver {
+    public var components: DeserializationComponents by Delegates.notNull()
+
+    Inject
+    public fun setDeserializationComponents(components: DeserializationComponents) {
+        this.components = components
     }
-}
 
-suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
-public class NoSuchPropertyException(cause: Exception) : Exception() {
-    {
-        (this as java.lang.Throwable).initCause(cause)
+    override fun resolveLocalClass(classId: ClassId): ClassDescriptor? {
+        return components.deserializeClass(classId)
     }
 }

@@ -1,4 +1,4 @@
-import kotlin.reflect.IllegalAccessException
+import kotlin.reflect.IllegalPropertyAccessException
 import kotlin.reflect.jvm.accessible
 
 class A(param: String) {
@@ -14,12 +14,12 @@ fun box(): String {
     try {
         f.get(a)
         return "Fail: protected property getter is accessible by default"
-    } catch (e: IllegalAccessException) { }
+    } catch (e: IllegalPropertyAccessException) { }
 
     try {
         f.set(a, ":D")
         return "Fail: protected property setter is accessible by default"
-    } catch (e: IllegalAccessException) { }
+    } catch (e: IllegalPropertyAccessException) { }
 
     f.accessible = true
 
