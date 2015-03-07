@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import org.junit.After
+import org.junit.Before
 import org.junit.Test
 import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -51,6 +53,8 @@ private val ADDITIONALLY_REQUIRED_PACKAGES_FOR_JS = listOf("kotlin.js", "kotlin.
 private val KOTLIN_ROOT_PATH = "../../../"
 
 class NoInternalVisibilityInStdLibTest {
+    private var disposable: Disposable? = null
+
     private class OutputSink(private val requiredPackages: List<FqName>) {
         private val internalDescriptors = ArrayList<DeclarationDescriptor>()
         private val validatedPackages = HashSet<FqName>()
@@ -102,6 +106,15 @@ class NoInternalVisibilityInStdLibTest {
         }
     }
 
+    Before fun setUp() {
+        disposable = Disposer.newDisposable()
+    }
+
+    After fun tearDown() {
+        Disposer.dispose(disposable)
+        disposable = null
+    }
+
     Test fun testJvmStdlib() {
         doTest(ANALYZE_PACKAGE_ROOTS_FOR_JVM, ADDITIONALLY_REQUIRED_PACKAGES_FOR_JVM) {
             val configuration = CompilerConfiguration()
@@ -109,7 +122,7 @@ class NoInternalVisibilityInStdLibTest {
             configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, "../src/generated")
             configuration.addAll(JVMConfigurationKeys.CLASSPATH_KEY, PathUtil.getJdkClassesRoots())
 
-            val environment = JetCoreEnvironment.createForProduction(it, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+            val environment = JetCoreEnvironment.createForProduction(disposable!!, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
             val module = TopDownAnalyzerFacadeForJVM.createJavaModule("<module for validating std lib>")
             module.addDependencyOnModule(module)
@@ -130,7 +143,7 @@ class NoInternalVisibilityInStdLibTest {
     Test fun testJsStdlibJar() {
         doTest(ANALYZE_PACKAGE_ROOTS_FOR_JS, ADDITIONALLY_REQUIRED_PACKAGES_FOR_JS) {
             val configuration = CompilerConfiguration()
-            val environment = JetCoreEnvironment.createForProduction(it, configuration, EnvironmentConfigFiles.JS_CONFIG_FILES)
+            val environment = JetCoreEnvironment.createForProduction(disposable!!, configuration, EnvironmentConfigFiles.JS_CONFIG_FILES)
             val project = environment.getProject()
             val pathToJsStdlibJar = KOTLIN_ROOT_PATH + PathUtil.getKotlinPathsForDistDirectory().getJsStdLibJarPath().path
             val config = LibrarySourcesConfig(project, "testModule", listOf(pathToJsStdlibJar), EcmaVersion.defaultVersion(), false, false)
@@ -142,15 +155,9 @@ class NoInternalVisibilityInStdLibTest {
     private fun doTest(
             testPackages: List<String>,
             additionallyRequiredPackages: List<String>,
-            createTestModule: (disposable: Disposable) -> ModuleDescriptor
+            createTestModule: () -> ModuleDescriptor
     ) {
-        val disposable = Disposer.newDisposable()
-        val module = try {
-            createTestModule(disposable)
-        }
-        finally {
-            Disposer.dispose(disposable)
-        }
+        val module = createTestModule()
 
         val requiredPackages = testPackages + additionallyRequiredPackages
         val sink = OutputSink(requiredPackages map { FqName(it) })
