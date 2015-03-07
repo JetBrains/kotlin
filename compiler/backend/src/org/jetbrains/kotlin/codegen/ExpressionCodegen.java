@@ -2719,8 +2719,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             @Override
             public Unit invoke(InstructionAdapter v) {
                 Type classAsmType = typeMapper.mapClass(descriptor);
-                if (descriptor instanceof JavaClassDescriptor) {
-                    v.aconst(classAsmType);
+                ModuleDescriptor module = DescriptorUtils.getContainingModule(descriptor);
+                if (descriptor instanceof JavaClassDescriptor || module == module.getBuiltIns().getBuiltInsModule()) {
+                    putJavaLangClassInstance(v, classAsmType);
                     v.invokestatic(REFLECTION, "foreignKotlinClass", Type.getMethodDescriptor(K_CLASS_TYPE, getType(Class.class)), false);
                 }
                 else {

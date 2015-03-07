@@ -17,6 +17,8 @@
 package kotlin.reflect
 
 public trait KClass<T> {
+    public val simpleName: String?
+
     public fun getProperties(): Collection<KMemberProperty<T, *>>
 
     public fun getExtensionProperties(): Collection<KMemberExtensionProperty<T, *, *>>

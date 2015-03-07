@@ -38,6 +38,11 @@ class KClassImpl<T>(override val jClass: Class<T>) : KCallableContainerImpl(), K
 
     override val scope: JetScope get() = descriptor.getDefaultType().getMemberScope()
 
+    override val simpleName: String? get() {
+        val name = descriptor.getName()
+        return if (name.isSpecial()) null else name.asString()
+    }
+
     override fun getProperties(): Collection<KMemberProperty<T, *>> {
         return scope.getAllDescriptors().stream()
                 .filterIsInstance<PropertyDescriptor>()
