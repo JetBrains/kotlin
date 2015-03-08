@@ -2848,6 +2848,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 doTestWithStdlib(fileName);
             }
 
+            @TestMetadata("genericClassLiteralPropertyReceiverIsStar.kt")
+            public void testGenericClassLiteralPropertyReceiverIsStar() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/properties/genericClassLiteralPropertyReceiverIsStar.kt");
+                doTestWithStdlib(fileName);
+            }
+
             @TestMetadata("getExtensionPropertiesMutableVsReadonly.kt")
             public void testGetExtensionPropertiesMutableVsReadonly() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/properties/getExtensionPropertiesMutableVsReadonly.kt");
