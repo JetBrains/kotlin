@@ -1,0 +1,37 @@
+package
+
+internal val a1: kotlin.reflect.KClass<A<*>>
+internal val a2: [ERROR : Unresolved class]
+internal val a3: [ERROR : Unresolved class]
+internal val a4: [ERROR : Unresolved class]
+internal val b1: kotlin.reflect.KClass<kotlin.Int>
+internal val b2: kotlin.reflect.KClass<kotlin.Nothing>
+internal val i1: kotlin.reflect.KClass<A.Inner<*>>
+internal val i2: [ERROR : Unresolved class]
+internal val i3: [ERROR : Unresolved class]
+internal val m1: kotlin.reflect.KClass<kotlin.Map<*, *>>
+internal val m2: [ERROR : Unresolved class]
+internal val m3: kotlin.reflect.KClass<kotlin.Map.Entry<*, *>>
+internal val n1: kotlin.reflect.KClass<A.Nested<*>>
+internal val n2: [ERROR : Unresolved class]
+
+internal final class A</*0*/ T> {
+    public constructor A</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    internal final inner class Inner</*0*/ I> {
+        public constructor Inner</*0*/ I>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final class Nested</*0*/ N> {
+        public constructor Nested</*0*/ N>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

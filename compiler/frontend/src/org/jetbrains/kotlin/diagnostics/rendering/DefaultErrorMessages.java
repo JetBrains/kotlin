@@ -594,7 +594,9 @@ public class DefaultErrorMessages {
 
         MAP.put(EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED,
                 "''{0}'' is a member and an extension at the same time. References to such elements are not allowed", NAME);
-        MAP.put(CALLABLE_REFERENCE_LHS_NOT_A_CLASS, "Callable reference left-hand side cannot be a type parameter");
+        MAP.put(CALLABLE_REFERENCE_LHS_NOT_A_CLASS, "Left hand side of a callable reference cannot be a type parameter");
+
+        MAP.put(CLASS_LITERAL_LHS_NOT_A_CLASS, "Only classes are allowed on the left hand side of a class literal");
 
         //Inline
         MAP.put(INVISIBLE_MEMBER_FROM_INLINE, "Cannot access effectively non-public-api ''{0}'' member from effectively public-api ''{1}''", SHORT_NAMES_IN_TYPES, SHORT_NAMES_IN_TYPES);

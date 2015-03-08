@@ -607,6 +607,18 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/classLiteral"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("genericClasses.kt")
+        public void testGenericClasses() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/classLiteral/genericClasses.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nonClassesOnLHS.kt")
+        public void testNonClassesOnLHS() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/classLiteral/nonClassesOnLHS.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("simpleClassLiteral.kt")
         public void testSimpleClassLiteral() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/classLiteral/simpleClassLiteral.kt");

@@ -409,6 +409,8 @@ public interface Errors {
     DiagnosticFactory1<JetExpression, CallableMemberDescriptor> EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<JetExpression> CALLABLE_REFERENCE_LHS_NOT_A_CLASS = DiagnosticFactory0.create(ERROR);
 
+    DiagnosticFactory0<JetExpression> CLASS_LITERAL_LHS_NOT_A_CLASS = DiagnosticFactory0.create(ERROR);
+
     // Multi-declarations
 
     DiagnosticFactory0<JetMultiDeclaration> INITIALIZER_REQUIRED_FOR_MULTIDECLARATION = DiagnosticFactory0.create(ERROR, DEFAULT);
