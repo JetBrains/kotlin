@@ -39,7 +39,11 @@ class GenerateNumbers(out: PrintWriter) : BuiltInsSourceGenerator(out) {
         for (kind in PrimitiveType.exceptBoolean) {
             val className = kind.capitalized
             generateDoc(kind)
-            out.println("public class $className private () : Number, Comparable<$className> {")
+            out.print("public class $className private () : ")
+            if (kind != PrimitiveType.CHAR) {
+                out.print("Number, ")
+            }
+            out.println("Comparable<$className> {")
 
             out.print("    class object")
             if (kind == PrimitiveType.FLOAT || kind == PrimitiveType.DOUBLE) {

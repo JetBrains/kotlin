@@ -99,7 +99,7 @@ public class Byte private () : Number, Comparable<Byte> {
  * Represents a 16-bit Unicode character.
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `char`.
  */
-public class Char private () : Number, Comparable<Char> {
+public class Char private () : Comparable<Char> {
     class object {}
 
     public fun compareTo(other: Byte): Int
