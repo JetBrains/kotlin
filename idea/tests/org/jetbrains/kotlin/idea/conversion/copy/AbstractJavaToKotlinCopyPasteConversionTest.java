@@ -20,11 +20,12 @@ import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.idea.JetWithJdkAndRuntimeLightProjectDescriptor;
 import org.jetbrains.kotlin.idea.PluginTestCaseBase;
 import org.jetbrains.kotlin.idea.editor.JetEditorOptions;
 
-public abstract class AbstractJavaToKotlinCopyPasteConversionTest extends LightCodeInsightFixtureTestCase {
+public abstract class AbstractJavaToKotlinCopyPasteConversionTest extends JetLightCodeInsightFixtureTestCase {
 
     private static final String BASE_PATH = PluginTestCaseBase.getTestDataPathBase() + "/copyPaste/conversion";
     private JetEditorOptions oldState = null;
