@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.FunctionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
+import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -135,7 +136,7 @@ public class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
 
     override fun generateClassSyntheticParts(
             classBuilder: ClassBuilder,
-            bindingContext: BindingContext,
+            state: GenerationState,
             classOrObject: JetClassOrObject,
             descriptor: ClassDescriptor
     ) {
@@ -145,7 +146,7 @@ public class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
         val androidClassType = getClassType(descriptor)
         if (androidClassType == AndroidClassType.UNKNOWN) return
 
-        val classType = JetTypeMapper(bindingContext, ClassBuilderMode.FULL).mapClass(descriptor)
+        val classType = state.getTypeMapper().mapClass(descriptor)
         val className = classType.getInternalName()
 
         val viewType = Type.getObjectType("android/view/View")

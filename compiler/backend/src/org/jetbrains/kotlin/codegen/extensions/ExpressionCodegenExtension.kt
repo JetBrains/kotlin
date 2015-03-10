@@ -22,6 +22,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.codegen.ClassBuilder
+import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.*
@@ -39,7 +40,7 @@ public trait ExpressionCodegenExtension {
 
     public fun generateClassSyntheticParts(
             classBuilder: ClassBuilder,
-            bindingContext: BindingContext,
+            state: GenerationState,
             classOrObject: JetClassOrObject,
             descriptor: ClassDescriptor
     ) {}
