@@ -78,12 +78,6 @@ public class AndroidFindUsagesTestGenerated extends AbstractAndroidFindUsagesTes
         doTest(fileName);
     }
 
-    @TestMetadata("wrongIdFormat")
-    public void testWrongIdFormat() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/findUsages/wrongIdFormat/");
-        doTest(fileName);
-    }
-
     @TestMetadata("simpleFragment")
     public void testSimpleFragment() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/findUsages/simpleFragment/");
@@ -93,6 +87,12 @@ public class AndroidFindUsagesTestGenerated extends AbstractAndroidFindUsagesTes
     @TestMetadata("simpleView")
     public void testSimpleView() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/findUsages/simpleView/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("wrongIdFormat")
+    public void testWrongIdFormat() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/findUsages/wrongIdFormat/");
         doTest(fileName);
     }
 }

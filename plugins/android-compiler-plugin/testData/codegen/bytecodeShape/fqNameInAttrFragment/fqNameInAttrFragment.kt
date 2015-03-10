@@ -9,7 +9,7 @@ class MyFragment: Fragment() {
 }
 
 // 2 GETSTATIC
-// 6 INVOKEVIRTUAL
+// 7 INVOKEVIRTUAL
 // 3 CHECKCAST
 // 3  _\$_findCachedViewById
 // 1 findViewById

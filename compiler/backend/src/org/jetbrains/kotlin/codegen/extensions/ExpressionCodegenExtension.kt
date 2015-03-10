@@ -35,8 +35,9 @@ public trait ExpressionCodegenExtension {
             public val v: InstructionAdapter
     )
 
-    // return null if not applicable
-    public fun apply(receiver: StackValue, resolvedCall: ResolvedCall<*>, c: Context): StackValue?
+    // Function is responsible to put the value on stack by itself.
+    // Returns false if not applicable, and if stack was not modified.
+    public fun apply(receiver: StackValue, resolvedCall: ResolvedCall<*>, c: Context): Boolean
 
     public fun generateClassSyntheticParts(
             classBuilder: ClassBuilder,

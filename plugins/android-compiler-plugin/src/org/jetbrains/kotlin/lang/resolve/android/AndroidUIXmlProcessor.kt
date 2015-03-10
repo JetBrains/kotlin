@@ -87,7 +87,13 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
         }
     }
 
-    public fun parse(): List<String> {
+    public fun parse(generateCommonFiles: Boolean = true): List<String> {
+        val commonFiles = if (generateCommonFiles) {
+            val clearCacheFile = renderLayoutFile("kotlinx.android.synthetic") {} +
+                             renderClearCacheFunction("Activity") + renderClearCacheFunction("Fragment")
+            listOf(clearCacheFile)
+        } else listOf()
+
         return resourceManager.getLayoutXmlFiles().flatMap { file ->
             val widgets = parseSingleFile(file)
             if (widgets.isNotEmpty()) {
@@ -104,7 +110,7 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
 
                 listOf(mainLayoutFile, viewLayoutFile)
             } else listOf()
-        }.filterNotNull()
+        }.filterNotNull() + commonFiles
     }
 
     public fun parseToPsi(): List<JetFile>? = cachedJetFiles.getValue()
@@ -113,7 +119,7 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
 
     private fun renderLayoutFile(
             packageName: String,
-            widgets: List<AndroidWidget>,
+            widgets: List<AndroidWidget> = listOf(),
             widgetWriter: KotlinStringWriter.(AndroidWidget) -> Unit
     ): String {
         val stringWriter = KotlinStringWriter()
@@ -140,6 +146,8 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
                                         retType = widget.className,
                                         getterBody = body)
     }
+
+    private fun renderClearCacheFunction(receiver: String) = "public fun $receiver.${AndroidConst.CLEAR_FUNCTION_NAME}() {}\n"
 
     private fun <T> cachedValue(result: () -> CachedValueProvider.Result<T>): CachedValue<T> {
         return CachedValuesManager.getManager(project).createCachedValue(result, false)

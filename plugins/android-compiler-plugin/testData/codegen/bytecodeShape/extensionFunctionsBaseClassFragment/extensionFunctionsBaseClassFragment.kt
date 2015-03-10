@@ -15,7 +15,7 @@ fun Fragment.b() {
 }
 
 // 2 GETSTATIC
-// 8 INVOKEVIRTUAL
+// 9 INVOKEVIRTUAL
 // 3 CHECKCAST
 // 1  _\$_findCachedViewById
 // 3 findViewById

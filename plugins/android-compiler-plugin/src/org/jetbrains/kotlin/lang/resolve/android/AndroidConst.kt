@@ -30,6 +30,8 @@ public object AndroidConst {
 
     val ID_DECLARATION_PREFIX = "@+id/"
     val ID_USAGE_PREFIX = "@id/"
+
+    val CLEAR_FUNCTION_NAME = "clearFindViewByIdCache"
 }
 
 public fun nameToIdDeclaration(name: String): String = AndroidConst.ID_DECLARATION_PREFIX + name

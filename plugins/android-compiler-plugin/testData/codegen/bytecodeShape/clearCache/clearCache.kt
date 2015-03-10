@@ -3,14 +3,12 @@ package com.myapp
 import android.app.Activity
 import android.os.Bundle
 import java.io.File
-import kotlinx.android.synthetic.layout.*
+import kotlinx.android.synthetic.*
 
 public class MyActivity : Activity() {
-    {login}
+    {clearFindViewByIdCache()}
 }
 
-// 1 GETSTATIC
 // 5 INVOKEVIRTUAL
-// 2 CHECKCAST
-// 2  _\$_findCachedViewById
-// 1 findViewById
+// 1 CHECKCAST
+// 2  _\$_clearFindViewByIdCache

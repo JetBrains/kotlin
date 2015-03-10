@@ -48,6 +48,18 @@ public class AndroidBytecodeShapeTestGenerated extends AbstractAndroidBytecodeSh
         doTest(fileName);
     }
 
+    @TestMetadata("clearCache")
+    public void testClearCache() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/codegen/bytecodeShape/clearCache/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("clearCacheBaseClass")
+    public void testClearCacheBaseClass() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/codegen/bytecodeShape/clearCacheBaseClass/");
+        doTest(fileName);
+    }
+
     @TestMetadata("extensionFunctions")
     public void testExtensionFunctions() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/codegen/bytecodeShape/extensionFunctions/");
