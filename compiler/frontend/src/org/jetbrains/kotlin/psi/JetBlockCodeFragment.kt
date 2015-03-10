@@ -24,8 +24,9 @@ public class JetBlockCodeFragment(
         project: Project,
         name: String,
         text: CharSequence,
+        imports: String?,
         context: PsiElement?
-) : JetCodeFragment(project, name, text, JetNodeTypes.BLOCK_CODE_FRAGMENT, context) {
+) : JetCodeFragment(project, name, text, imports, JetNodeTypes.BLOCK_CODE_FRAGMENT, context) {
 
     override fun getContentElement() = findChildByClass(javaClass<JetBlockExpression>())
                                                 ?: throw IllegalStateException("Block expression should be parsed for BlockCodeFragment")

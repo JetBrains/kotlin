@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinEvaluateExpressionCache.CompiledDataDescriptor
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinEvaluateExpressionCache.ParametersDescriptor
 import org.jetbrains.kotlin.idea.debugger.evaluate.compilingEvaluator.loadClasses
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.ExtractionResult
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.attachment.attachmentByPsiFile
 import org.jetbrains.kotlin.idea.util.attachment.mergeAttachments
@@ -97,10 +98,6 @@ object KotlinEvaluationBuilder: EvaluatorBuilder {
             throw EvaluateExceptionUtil.createEvaluateException("Couldn't evaluate kotlin expression in this context")
         }
 
-        val packageName = file.getPackageDirective()?.getFqName()?.asString()
-        if (packageName != null && packageName.isNotEmpty()) {
-            codeFragment.addImportsFromString("import $packageName.*")
-        }
         return ExpressionEvaluatorImpl(KotlinEvaluator(codeFragment as JetCodeFragment, position))
     }
 }
@@ -156,10 +153,11 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
         private fun extractAndCompile(codeFragment: JetCodeFragment, sourcePosition: SourcePosition, context: EvaluationContextImpl): CompiledDataDescriptor {
             codeFragment.checkForErrors()
 
-            val extractedFunction = getFunctionForExtractedFragment(codeFragment, sourcePosition.getFile(), sourcePosition.getLine())
-            if (extractedFunction == null) {
+            val extractionResult = getFunctionForExtractedFragment(codeFragment, sourcePosition.getFile(), sourcePosition.getLine())
+            if (extractionResult == null) {
                 throw IllegalStateException("Code fragment cannot be extracted to function")
             }
+            val extractedFunction = extractionResult.declaration as JetNamedFunction
 
             val classFileFactory = createClassFileFactory(codeFragment, extractedFunction, context)
 
@@ -181,7 +179,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
                     additionalFiles,
                     sourcePosition,
                     funName,
-                    extractedFunction.getParametersForDebugger())
+                    extractionResult.getParametersForDebugger())
         }
 
         private fun getClassName(fileName: String): String {
@@ -243,21 +241,22 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
             return jdiValue.asJdiValue(vm, jdiValue.asmType)
         }
 
-        private fun JetNamedFunction.getParametersForDebugger(): ParametersDescriptor {
+        private fun ExtractionResult.getParametersForDebugger(): ParametersDescriptor {
             return runReadAction {
                 val parameters = ParametersDescriptor()
-                val bindingContext = analyzeFullyAndGetResult().bindingContext
-                val descriptor = bindingContext[BindingContext.FUNCTION, this]
-                if (descriptor != null) {
-                    val receiver = descriptor.getExtensionReceiverParameter()
-                    if (receiver != null) {
-                        parameters.add(THIS_NAME, receiver.getType())
-                    }
+                val receiver = config.descriptor.receiverParameter
+                if (receiver != null) {
+                    parameters.add(THIS_NAME, receiver.getParameterType(true))
+                }
 
-                    descriptor.getValueParameters().forEach {
-                        param ->
-                        parameters.add(param.getName().asString(), param.getType())
+                for (param in config.descriptor.parameters) {
+                    val paramName = if (param.argumentText.contains("@")) {
+                        param.argumentText.substringBefore("@")
                     }
+                    else {
+                       param.argumentText
+                    }
+                    parameters.add(paramName, param.getParameterType(true))
                 }
                 parameters
             }

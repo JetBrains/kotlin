@@ -30,7 +30,7 @@ public abstract class AbstractCompletionHandlerTest(private val defaultCompletio
     private val COMPLETION_CHAR_PREFIX = "CHAR:"
     private val COMPLETION_TYPE_PREFIX = "COMPLETION_TYPE:"
 
-    protected fun doTest(testPath: String) {
+    protected open fun doTest(testPath: String) {
         setUpFixture(testPath)
 
         val fileText = FileUtil.loadFile(File(testPath))
