@@ -10523,6 +10523,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("noDefaultIfEmptySecondary.kt")
+            public void testNoDefaultIfEmptySecondary() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/noDefaultIfEmptySecondary.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("noPrimaryConstructor.kt")
             public void testNoPrimaryConstructor() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/noPrimaryConstructor.kt");
