@@ -223,13 +223,17 @@ public final class Char : kotlin.Comparable<kotlin.Char> {
     public final fun times(/*0*/ other: kotlin.Int): kotlin.Int
     public final fun times(/*0*/ other: kotlin.Long): kotlin.Long
     public final fun times(/*0*/ other: kotlin.Short): kotlin.Int
-    public final fun toByte(): kotlin.Byte
-    public final fun toChar(): kotlin.Char
-    public final fun toDouble(): kotlin.Double
-    public final fun toFloat(): kotlin.Float
-    public final fun toInt(): kotlin.Int
-    public final fun toLong(): kotlin.Long
-    public final fun toShort(): kotlin.Short
+    public open fun toByte(): kotlin.Byte
+    public open fun toChar(): kotlin.Char
+    public open fun toDouble(): kotlin.Double
+    public open fun toFloat(): kotlin.Float
+    public open fun toInt(): kotlin.Int
+    public open fun toLong(): kotlin.Long
+    public open fun toShort(): kotlin.Short
+
+    public default object Default {
+        /*primary*/ private constructor Default()
+    }
 }
 
 public final class CharArray : kotlin.Cloneable {

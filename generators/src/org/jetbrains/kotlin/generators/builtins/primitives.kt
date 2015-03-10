@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.generators.builtins.PrimitiveType
 import org.jetbrains.kotlin.generators.builtins.generateBuiltIns.BuiltInsSourceGenerator
 import java.io.PrintWriter
 
-class GenerateNumbers(out: PrintWriter) : BuiltInsSourceGenerator(out) {
+class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
     private val binaryOperators: List<String> = listOf("plus", "minus", "times", "div", "mod")
     private val unaryOperators: List<String> = listOf("inc", "dec", "plus", "minus")
     private val shiftOperators: List<String> = listOf("shl", "shr", "ushr")
