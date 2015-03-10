@@ -18,14 +18,17 @@ package com.google.dart.compiler.backend.js.ast.metadata
 
 import com.google.dart.compiler.backend.js.ast.*
 import org.jetbrains.kotlin.builtins.InlineStrategy
-import kotlin.properties.Delegates
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+
+import com.intellij.psi.PsiElement
 
 public var JsName.staticRef: JsNode? by MetadataProperty(default = null)
 
 public var JsInvocation.inlineStrategy: InlineStrategy? by MetadataProperty(default = null)
 
 public var JsInvocation.descriptor: CallableDescriptor? by MetadataProperty(default = null)
+
+public var JsInvocation.psiElement: PsiElement? by MetadataProperty(default = null)
 
 public var JsFunction.isLocal: Boolean by MetadataProperty(default = false)
 

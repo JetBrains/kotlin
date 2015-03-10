@@ -19,9 +19,14 @@ package org.jetbrains.kotlin.js.translate.utils;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.descriptors.CallableDescriptor;
+import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.lexer.JetToken;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
+import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
 
 import java.util.Collections;
 import java.util.List;
@@ -131,5 +136,20 @@ public final class PsiUtils {
         JetExpression rangeExpression = expression.getLoopRange();
         assert rangeExpression != null;
         return rangeExpression;
+    }
+
+    @NotNull
+    public static CallableDescriptor getFunctionDescriptor(
+            @NotNull JetCallExpression expression,
+            @NotNull TranslationContext context
+    ) {
+        ResolvedCall<?> resolvedCall = CallUtilPackage.getResolvedCall(expression, context.bindingContext());
+        assert resolvedCall != null;
+
+        if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
+            return  ((VariableAsFunctionResolvedCall) resolvedCall).getVariableCall().getCandidateDescriptor();
+        }
+
+        return resolvedCall.getCandidateDescriptor();
     }
 }
