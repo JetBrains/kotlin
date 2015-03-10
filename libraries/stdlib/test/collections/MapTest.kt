@@ -1,6 +1,8 @@
 package test.collections
 
-import kotlin.test.*
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 import org.junit.Test as test
 
 class MapTest {
@@ -62,6 +64,12 @@ class MapTest {
 
         assertEquals(6, list.size())
         assertEquals("beverage,beer,location,Mells,name,James", list.join(","))
+    }
+
+    test fun stream() {
+        val map = mapOf("beverage" to "beer", "location" to "Mells", "name" to "James")
+        val named = map.stream().filter { it.key == "name" }.single()
+        assertEquals("James", named.value)
     }
 
     test fun iterateWithProperties() {
@@ -236,4 +244,113 @@ class MapTest {
         assertEquals(2, extended["c"])
         assertEquals(3, extended["b"])
     }
+
+    test fun plusAssignList() {
+        val extended = hashMapOf(Pair("b", 3))
+        extended += listOf("C" to 3, "D" to 4)
+        assertEquals(3, extended.size())
+        assertEquals(3, extended["C"])
+        assertEquals(4, extended["D"])
+    }
+
+    test fun plusAssignMap() {
+        val extended = hashMapOf(Pair("b", 3))
+        extended += mapOf("C" to 3, "D" to 4)
+        assertEquals(3, extended.size())
+        assertEquals(3, extended["C"])
+        assertEquals(4, extended["D"])
+    }
+
+    test fun plus() {
+        val original = mapOf("A" to 1, "B" to 2)
+        val extended = original + ("C" to 3)
+        assertEquals(extended["A"], 1)
+        assertEquals(extended["B"], 2)
+        assertEquals(extended["C"], 3)
+    }
+
+    test fun plusList() {
+        val original = mapOf("A" to 1, "B" to 2)
+        val extended = original + listOf("C" to 3, "D" to 4)
+        assertEquals(extended["A"], 1)
+        assertEquals(extended["B"], 2)
+        assertEquals(extended["C"], 3)
+        assertEquals(extended["D"], 4)
+    }
+
+    test fun plusMap() {
+        val original = mapOf("A" to 1, "B" to 2)
+        val extended = original + mapOf("C" to 3, "D" to 4)
+        assertEquals(extended["A"], 1)
+        assertEquals(extended["B"], 2)
+        assertEquals(extended["C"], 3)
+        assertEquals(extended["D"], 4)
+    }
+
+    test fun plusListOverload() {
+        val original = mapOf("A" to 1, "B" to 2)
+        val extended = original + listOf("B" to 3, "C" to 4)
+        assertEquals(extended["A"], 1)
+        assertEquals(extended["B"], 3)
+        assertEquals(extended["C"], 4)
+    }
+
+    test fun plusEmptyList() {
+        val original = mapOf("A" to 1, "B" to 2)
+        val extended = original + listOf()
+        assertEquals(extended["A"], 1)
+        assertEquals(extended["B"], 2)
+    }
+
+    test fun plusEmptySet() {
+        val original = mapOf("A" to 1, "B" to 2)
+        val extended = original + setOf()
+        assertEquals(extended["A"], 1)
+        assertEquals(extended["B"], 2)
+    }
+
+    test fun minus() {
+        val original = mapOf("A" to 1, "B" to 2)
+        val shortened = original - "B"
+        assertEquals(shortened["A"], 1)
+        assertFalse(shortened.contains("B"))
+    }
+
+    test fun minusNotElem() {
+        val original = mapOf("A" to 1, "B" to 2)
+        val shortened = original - "C"
+        assertEquals(shortened["A"], 1)
+        assertEquals(shortened["B"], 2)
+    }
+
+    test fun minusList() {
+        val original = mapOf("A" to 1, "B" to 2)
+        val shortened = original - listOf("B", "C")
+        assertEquals(shortened["A"], 1)
+        assertFalse(shortened.contains("B"))
+        assertFalse(shortened.contains("C"))
+    }
+
+    test fun minusListNotElem() {
+        val original = mapOf("A" to 1, "B" to 2)
+        val shortened = original - listOf("C", "D")
+        assertEquals(shortened["A"], 1)
+        assertEquals(shortened["B"], 2)
+    }
+
+    test fun minusSet() {
+        val original = mapOf("A" to 1, "B" to 2)
+        val shortened = original - setOf("B", "C")
+        assertEquals(shortened["A"], 1)
+        assertFalse(shortened.contains("B"))
+        assertFalse(shortened.contains("C"))
+    }
+
+    test fun minusEmptySet() {
+        val original = mapOf("A" to 1, "B" to 2)
+        val shortened = original - setOf()
+        assertEquals(shortened["A"], 1)
+        assertEquals(shortened["B"], 2)
+    }
+
 }

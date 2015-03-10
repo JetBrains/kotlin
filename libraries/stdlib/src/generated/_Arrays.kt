@@ -10,6 +10,87 @@ import java.util.*
 import java.util.Collections // TODO: it's temporary while we have java.util.Collections in js
 
 /**
+ * Returns the Iterable that wraps the original array
+ */
+public fun <T> Array<out T>.asIterable(): Iterable<T> {
+    return object : Iterable<T> {
+        override fun iterator(): Iterator<T> = this@asIterable.iterator()
+    }
+}
+
+/**
+ * Returns the Iterable that wraps the original array
+ */
+public fun BooleanArray.asIterable(): Iterable<Boolean> {
+    return object : Iterable<Boolean> {
+        override fun iterator(): Iterator<Boolean> = this@asIterable.iterator()
+    }
+}
+
+/**
+ * Returns the Iterable that wraps the original array
+ */
+public fun ByteArray.asIterable(): Iterable<Byte> {
+    return object : Iterable<Byte> {
+        override fun iterator(): Iterator<Byte> = this@asIterable.iterator()
+    }
+}
+
+/**
+ * Returns the Iterable that wraps the original array
+ */
+public fun CharArray.asIterable(): Iterable<Char> {
+    return object : Iterable<Char> {
+        override fun iterator(): Iterator<Char> = this@asIterable.iterator()
+    }
+}
+
+/**
+ * Returns the Iterable that wraps the original array
+ */
+public fun DoubleArray.asIterable(): Iterable<Double> {
+    return object : Iterable<Double> {
+        override fun iterator(): Iterator<Double> = this@asIterable.iterator()
+    }
+}
+
+/**
+ * Returns the Iterable that wraps the original array
+ */
+public fun FloatArray.asIterable(): Iterable<Float> {
+    return object : Iterable<Float> {
+        override fun iterator(): Iterator<Float> = this@asIterable.iterator()
+    }
+}
+
+/**
+ * Returns the Iterable that wraps the original array
+ */
+public fun IntArray.asIterable(): Iterable<Int> {
+    return object : Iterable<Int> {
+        override fun iterator(): Iterator<Int> = this@asIterable.iterator()
+    }
+}
+
+/**
+ * Returns the Iterable that wraps the original array
+ */
+public fun LongArray.asIterable(): Iterable<Long> {
+    return object : Iterable<Long> {
+        override fun iterator(): Iterator<Long> = this@asIterable.iterator()
+    }
+}
+
+/**
+ * Returns the Iterable that wraps the original array
+ */
+public fun ShortArray.asIterable(): Iterable<Short> {
+    return object : Iterable<Short> {
+        override fun iterator(): Iterator<Short> = this@asIterable.iterator()
+    }
+}
+
+/**
  * Returns the range of valid indices for the array
  */
 public val <T> Array<out T>.indices: IntRange

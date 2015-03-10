@@ -6,6 +6,7 @@ fun streams(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
 
     templates add f("stream()") {
+        include(Maps)
         doc { "Returns a stream from the given collection" }
         returns("Stream<T>")
         body {

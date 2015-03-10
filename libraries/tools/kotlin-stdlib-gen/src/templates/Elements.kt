@@ -24,7 +24,7 @@ fun elements(): List<GenericFunction> {
     }
 
     templates add f("indexOf(element: T)") {
-        exclude(Strings)
+        exclude(Strings, Lists) // has native implementation
         doc { "Returns first index of [element], or -1 if the collection does not contain element" }
         returns("Int")
         body {
@@ -70,7 +70,7 @@ fun elements(): List<GenericFunction> {
     }
 
     templates add f("lastIndexOf(element: T)") {
-        exclude(Strings) // has native implementation
+        exclude(Strings, Lists) // has native implementation
         doc { "Returns last index of *element*, or -1 if the collection does not contain element" }
         returns("Int")
         body {
@@ -86,7 +86,7 @@ fun elements(): List<GenericFunction> {
             """
         }
 
-        body(Lists, ArraysOfObjects) {
+        body(ArraysOfObjects) {
             """
             if (element == null) {
                 for (index in indices.reverse()) {
@@ -113,6 +113,65 @@ fun elements(): List<GenericFunction> {
             }
             return -1
            """
+        }
+    }
+
+    templates add f("indexOfFirst(predicate: (T) -> Boolean)") {
+        inline(true)
+
+        doc { "Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element" }
+        returns("Int")
+        body {
+            """
+            var index = 0
+            for (item in this) {
+                if (predicate(item))
+                    return index
+                index++
+            }
+            return -1
+            """
+        }
+
+        body(Lists, Strings, ArraysOfPrimitives, ArraysOfObjects) {
+            """
+            for (index in indices) {
+                if (predicate(this[index])) {
+                    return index
+                }
+            }
+            return -1
+            """
+        }
+    }
+
+    templates add f("indexOfLast(predicate: (T) -> Boolean)") {
+        inline(true)
+
+        doc { "Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element" }
+        returns("Int")
+        body {
+            """
+            var lastIndex = -1
+            var index = 0
+            for (item in this) {
+                if (predicate(item))
+                    lastIndex = index
+                index++
+            }
+            return lastIndex
+            """
+        }
+
+        body(Lists, Strings, ArraysOfPrimitives, ArraysOfObjects) {
+            """
+            for (index in indices.reversed()) {
+                if (predicate(this[index])) {
+                    return index
+                }
+            }
+            return -1
+            """
         }
     }
 

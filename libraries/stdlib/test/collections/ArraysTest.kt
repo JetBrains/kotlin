@@ -1,6 +1,9 @@
 package test.collections
 
-import kotlin.test.*
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
+import kotlin.test.expect
 import org.junit.Test as test
 
 fun <T> checkContent(iter: Iterator<T>, length: Int, value: (Int) -> T) {
@@ -162,7 +165,37 @@ class ArraysTest {
         expect(0) { array("cat", "dog", "bird").indexOf("cat") }
         expect(1) { array("cat", "dog", "bird").indexOf("dog") }
         expect(2) { array("cat", "dog", "bird").indexOf("bird") }
-        expect(0) { array(null, "dog", null).indexOf(null) }
+        expect(0) { array(null, "dog", null).indexOf(null : String?)}
+
+        expect(-1) { array("cat", "dog", "bird").indexOfFirst { it.contains("p") } }
+        expect(0) { array("cat", "dog", "bird").indexOfFirst { it.startsWith('c') } }
+        expect(1) { array("cat", "dog", "bird").indexOfFirst { it.startsWith('d') } }
+        expect(2) { array("cat", "dog", "bird").indexOfFirst { it.endsWith('d') } }
+
+        expect(-1) { streamOf("cat", "dog", "bird").indexOfFirst { it.contains("p") } }
+        expect(0) { streamOf("cat", "dog", "bird").indexOfFirst { it.startsWith('c') } }
+        expect(1) { streamOf("cat", "dog", "bird").indexOfFirst { it.startsWith('d') } }
+        expect(2) { streamOf("cat", "dog", "bird").indexOfFirst { it.endsWith('d') } }
+    }
+
+    test fun lastIndexOf() {
+        expect(-1) { array("cat", "dog", "bird").lastIndexOf("mouse") }
+        expect(0) { array("cat", "dog", "bird").lastIndexOf("cat") }
+        expect(1) { array("cat", "dog", "bird").lastIndexOf("dog") }
+        expect(2) { array(null, "dog", null).lastIndexOf(null : String?)}
+        expect(3) { array("cat", "dog", "bird", "dog").lastIndexOf("dog") }
+
+        expect(-1) { array("cat", "dog", "bird").indexOfLast { it.contains("p") } }
+        expect(0) { array("cat", "dog", "bird").indexOfLast { it.startsWith('c') } }
+        expect(2) { array("cat", "dog", "cap", "bird").indexOfLast { it.startsWith('c') } }
+        expect(2) { array("cat", "dog", "bird").indexOfLast { it.endsWith('d') } }
+        expect(3) { array("cat", "dog", "bird", "red").indexOfLast { it.endsWith('d') } }
+
+        expect(-1) { streamOf("cat", "dog", "bird").indexOfLast { it.contains("p") } }
+        expect(0) { streamOf("cat", "dog", "bird").indexOfLast { it.startsWith('c') } }
+        expect(2) { streamOf("cat", "dog", "cap", "bird").indexOfLast { it.startsWith('c') } }
+        expect(2) { streamOf("cat", "dog", "bird").indexOfLast { it.endsWith('d') } }
+        expect(3) { streamOf("cat", "dog", "bird", "red").indexOfLast { it.endsWith('d') } }
     }
 
     test fun plus() {
@@ -212,6 +245,28 @@ class ArraysTest {
         assertTrue(array<Long>().toSortedList().none())
         assertEquals(listOf(1), array(1).toSortedList())
         assertEquals(listOf("aab", "aba", "ac"), array("ac", "aab", "aba").toSortedList())
+    }
+
+    test fun asIterable() {
+        val arr1 = intArray(1, 2, 3, 4, 5)
+        val iter1 = arr1.asIterable()
+        assertEquals(arr1.toList(), iter1.toList())
+        arr1[0] = 0
+        assertEquals(arr1.toList(), iter1.toList())
+
+        val arr2 = array("one", "two", "three")
+        val iter2 = arr2.asIterable()
+        assertEquals(arr2.toList(), iter2.toList())
+        arr2[0] = ""
+        assertEquals(arr2.toList(), iter2.toList())
+
+        val arr3 = IntArray(0)
+        val iter3 = arr3.asIterable()
+        assertEquals(iter3.toList(), emptyList<Int>())
+
+        val arr4 = Array(0, { "$it" })
+        val iter4 = arr4.asIterable()
+        assertEquals(iter4.toList(), emptyList<String>())
     }
 
     /*
