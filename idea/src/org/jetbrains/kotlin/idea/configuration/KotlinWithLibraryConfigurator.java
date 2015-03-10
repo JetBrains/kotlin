@@ -52,12 +52,6 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
     protected abstract String getLibraryName();
 
     @NotNull
-    public abstract String getJarName();
-
-    @NotNull
-    public abstract String getSourcesJarName();
-
-    @NotNull
     protected abstract String getMessageForOverrideDialog();
 
     @NotNull
@@ -67,9 +61,7 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
     protected abstract String getLibraryCaption();
 
     @NotNull
-    public abstract File getExistedJarFile();
-
-    public abstract File getExistedSourcesJarFile();
+    public abstract RuntimeLibraryFiles getExistingJarFiles();
 
     @Override
     public boolean isApplicable(@NotNull Module module) {
@@ -118,16 +110,18 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
     ) {
         Project project = module.getProject();
 
+        RuntimeLibraryFiles files = getExistingJarFiles();
         LibraryState libraryState = getLibraryState(project);
         String dirToCopyJar = getPathToCopyFileTo(project, OrderRootType.CLASSES, defaultPath, pathFromDialog);
-        FileState runtimeState = getJarState(project, getJarName(), OrderRootType.CLASSES, dirToCopyJar, pathFromDialog == null);
+        FileState runtimeState =
+                getJarState(project, files.getRuntimeDestination(dirToCopyJar), OrderRootType.CLASSES, pathFromDialog == null);
 
         configureModuleWithLibraryClasses(module, libraryState, runtimeState, dirToCopyJar);
 
         Library library = getKotlinLibrary(project);
         assert library != null : "Kotlin library should exists when adding sources root";
         String dirToCopySourcesJar = getPathToCopyFileTo(project, OrderRootType.SOURCES, defaultPath, pathFromDialog);
-        FileState sourcesState = getJarState(project, getSourcesJarName(), OrderRootType.SOURCES, dirToCopySourcesJar,
+        FileState sourcesState = getJarState(project, files.getRuntimeSourcesDestination(dirToCopySourcesJar), OrderRootType.SOURCES,
                                              pathFromDialog == null);
 
         configureModuleWithLibrarySources(library, sourcesState, dirToCopySourcesJar);
@@ -140,6 +134,8 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
             @NotNull String dirToCopyJarTo
     ) {
         Project project = module.getProject();
+        RuntimeLibraryFiles files = getExistingJarFiles();
+        File runtimeJar = files.getRuntimeJar();
 
         switch (libraryState) {
             case LIBRARY:
@@ -148,7 +144,7 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
                         break;
                     }
                     case COPY: {
-                        copyJarToDir(dirToCopyJarTo);
+                        copyFileToDir(runtimeJar, dirToCopyJarTo);
                         break;
                     }
                     case DO_NOT_COPY: {
@@ -160,16 +156,16 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
             case NON_CONFIGURED_LIBRARY:
                 switch (jarState) {
                     case EXISTS: {
-                        addJarToExistedLibrary(project, getFileInDir(getJarName(), dirToCopyJarTo));
+                        addJarToExistingLibrary(project, files.getRuntimeDestination(dirToCopyJarTo));
                         break;
                     }
                     case COPY: {
-                        File file = copyJarToDir(dirToCopyJarTo);
-                        addJarToExistedLibrary(project, file);
+                        File file = copyFileToDir(runtimeJar, dirToCopyJarTo);
+                        addJarToExistingLibrary(project, file);
                         break;
                     }
                     case DO_NOT_COPY: {
-                        addJarToExistedLibrary(project, getExistedJarFile());
+                        addJarToExistingLibrary(project, runtimeJar);
                         break;
                     }
                 }
@@ -177,16 +173,16 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
             case NEW_LIBRARY:
                 switch (jarState) {
                     case EXISTS: {
-                        addJarToNewLibrary(project, getFileInDir(getJarName(), dirToCopyJarTo));
+                        addJarToNewLibrary(project, files.getRuntimeDestination(dirToCopyJarTo));
                         break;
                     }
                     case COPY: {
-                        File file = copyJarToDir(dirToCopyJarTo);
+                        File file = copyFileToDir(runtimeJar, dirToCopyJarTo);
                         addJarToNewLibrary(project, file);
                         break;
                     }
                     case DO_NOT_COPY: {
-                        addJarToNewLibrary(project, getExistedJarFile());
+                        addJarToNewLibrary(project, runtimeJar);
                         break;
                     }
                 }
@@ -200,29 +196,26 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
             @NotNull FileState jarState,
             @Nullable String dirToCopyJarTo
     ) {
+        RuntimeLibraryFiles files = getExistingJarFiles();
+        File runtimeSourcesJar = files.getRuntimeSourcesJar();
         switch (jarState) {
             case EXISTS: {
                 if (dirToCopyJarTo != null) {
-                    addSourcesToLibraryIfNeeded(library, getFileInDir(getSourcesJarName(), dirToCopyJarTo));
+                    addSourcesToLibraryIfNeeded(library, files.getRuntimeSourcesDestination(dirToCopyJarTo));
                 }
                 break;
             }
             case COPY: {
                 assert dirToCopyJarTo != null : "Path to copy should be non-null";
-                File file = copyFileToDir(getExistedSourcesJarFile(), dirToCopyJarTo);
+                File file = copyFileToDir(runtimeSourcesJar, dirToCopyJarTo);
                 addSourcesToLibraryIfNeeded(library, file);
                 break;
             }
             case DO_NOT_COPY: {
-                addSourcesToLibraryIfNeeded(library, getExistedSourcesJarFile());
+                addSourcesToLibraryIfNeeded(library, runtimeSourcesJar);
                 break;
             }
         }
-    }
-
-    @NotNull
-    public static File getFileInDir(@NotNull String fileName, @NotNull String dirToJar) {
-        return new File(dirToJar + "/" + fileName);
     }
 
     @Nullable
@@ -336,7 +329,7 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
         return DependencyScope.COMPILE;
     }
 
-    private void addJarToExistedLibrary(@NotNull Project project, @NotNull File jarFile) {
+    private void addJarToExistingLibrary(@NotNull Project project, @NotNull File jarFile) {
         Library library = getKotlinLibrary(project);
         assert library != null : "Kotlin library should present, instead createNewLibrary should be invoked";
 
@@ -403,8 +396,10 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
             return true;
         }
 
+        String fileName = getExistingJarFiles().getRuntimeJar().getName();
+
         for (VirtualFile root : library.getFiles(OrderRootType.CLASSES)) {
-            if (root.getName().equals(getJarName())) {
+            if (root.getName().equals(fileName)) {
                 return true;
             }
         }
@@ -412,13 +407,9 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
         return false;
     }
 
-    private File copyJarToDir(@NotNull String toDir) {
-        return copyFileToDir(getExistedJarFile(), toDir);
-    }
-
     protected boolean needToChooseJarPath(@NotNull Project project) {
         String defaultPath = getDefaultPathToJarFile(project);
-        return !isProjectLibraryPresent(project) && !getFileInDir(getJarName(), defaultPath).exists();
+        return !isProjectLibraryPresent(project) && !getExistingJarFiles().getRuntimeDestination(defaultPath).exists();
     }
 
     protected String getDefaultPathToJarFile(@NotNull Project project) {
@@ -429,13 +420,13 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
         Messages.showErrorDialog(message, getMessageForOverrideDialog());
     }
 
-    protected static enum FileState {
+    protected enum FileState {
         EXISTS,
         COPY,
         DO_NOT_COPY
     }
 
-    protected static enum LibraryState {
+    protected enum LibraryState {
         LIBRARY,
         NON_CONFIGURED_LIBRARY,
         NEW_LIBRARY,
@@ -455,16 +446,14 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
     @NotNull
     protected FileState getJarState(
             @NotNull Project project,
-            @NotNull String jarName,
+            @NotNull File targetFile,
             @NotNull OrderRootType jarType,
-            @NotNull String copyPath,
             boolean useBundled
     ) {
-        String pathFromLibrary = getPathFromLibrary(project, jarType);
-        if (getFileInDir(jarName, copyPath).exists()) {
+        if (targetFile.exists()) {
            return FileState.EXISTS;
         }
-        else if (pathFromLibrary != null) {
+        else if (getPathFromLibrary(project, jarType) != null) {
             return FileState.COPY;
         }
         else if (useBundled) {

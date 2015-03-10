@@ -76,8 +76,8 @@ public class KotlinModuleSettingStep extends ModuleWizardStep {
                 if (libraryCompositionSettings != null) {
                     libraryCompositionSettings.addLibraries(rootModel, new ArrayList<Library>(), librariesContainer);
 
-                    if (customLibraryDescription instanceof CustomLibraryDescriptorWithDefferConfig) {
-                        ((CustomLibraryDescriptorWithDefferConfig) customLibraryDescription).finishLibConfiguration(module, rootModel);
+                    if (customLibraryDescription instanceof CustomLibraryDescriptorWithDeferredConfig) {
+                        ((CustomLibraryDescriptorWithDeferredConfig) customLibraryDescription).finishLibConfiguration(module, rootModel);
                     }
                 }
             }

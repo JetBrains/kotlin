@@ -36,6 +36,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtils;
 import org.jetbrains.kotlin.idea.configuration.KotlinWithLibraryConfigurator;
+import org.jetbrains.kotlin.idea.configuration.RuntimeLibraryFiles;
 import org.jetbrains.kotlin.idea.framework.ui.CreateLibraryDialog;
 import org.jetbrains.kotlin.idea.framework.ui.FileUIUtils;
 import org.jetbrains.kotlin.idea.util.projectStructure.ProjectStructurePackage;
@@ -46,9 +47,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import static org.jetbrains.kotlin.idea.configuration.KotlinWithLibraryConfigurator.getFileInDir;
-
-public abstract class CustomLibraryDescriptorWithDefferConfig extends CustomLibraryDescription {
+public abstract class CustomLibraryDescriptorWithDeferredConfig extends CustomLibraryDescription {
 
     private static final String DEFAULT_LIB_DIR_NAME = "lib";
 
@@ -65,7 +64,7 @@ public abstract class CustomLibraryDescriptorWithDefferConfig extends CustomLibr
     /**
      * @param project null when project doesn't exist yet (called from project wizard)
      */
-    public CustomLibraryDescriptorWithDefferConfig(
+    public CustomLibraryDescriptorWithDeferredConfig(
             @Nullable Project project,
             @NotNull String configuratorName,
             @NotNull String libraryName,
@@ -172,44 +171,45 @@ public abstract class CustomLibraryDescriptorWithDefferConfig extends CustomLibr
         String defaultPathToJarFile = useRelativePaths ? DEFAULT_LIB_DIR_NAME
                                                        : FileUIUtils.createRelativePath(null, contextDirectory, DEFAULT_LIB_DIR_NAME);
 
-        File bundledLibJarFile = configurator.getExistedJarFile();
-        File bundledLibSourcesJarFile = configurator.getExistedSourcesJarFile();
+        RuntimeLibraryFiles files = configurator.getExistingJarFiles();
 
         File libraryFile;
         File librarySrcFile;
 
-        File stdJarInDefaultPath = getFileInDir(configurator.getJarName(), defaultPathToJarFile);
+        File stdJarInDefaultPath = files.getRuntimeDestination(defaultPathToJarFile);
         if (!useRelativePaths && stdJarInDefaultPath.exists()) {
             libraryFile = stdJarInDefaultPath;
 
-            File sourcesJar = getFileInDir(configurator.getSourcesJarName(), defaultPathToJarFile);
+            File sourcesJar = files.getRuntimeSourcesDestination(defaultPathToJarFile);
             if (sourcesJar.exists()) {
                 librarySrcFile = sourcesJar;
             }
             else {
-                deferredCopyFileRequests.addCopyWithReplaceRequest(bundledLibSourcesJarFile, libraryFile.getParent());
-                librarySrcFile = bundledLibSourcesJarFile;
+                librarySrcFile = files.getRuntimeSourcesJar();
+                deferredCopyFileRequests.addCopyWithReplaceRequest(librarySrcFile, libraryFile.getParent());
             }
         }
         else {
-            CreateLibraryDialog dialog =new CreateLibraryDialog(defaultPathToJarFile, dialogTitle, modulesSeparatorCaption);
+            CreateLibraryDialog dialog = new CreateLibraryDialog(defaultPathToJarFile, dialogTitle, modulesSeparatorCaption);
             dialog.show();
 
             if (!dialog.isOK()) return null;
 
             String copyIntoPath = dialog.getCopyIntoPath();
             if (copyIntoPath != null) {
-                deferredCopyFileRequests.addCopyWithReplaceRequest(bundledLibJarFile, copyIntoPath);
-                deferredCopyFileRequests.addCopyWithReplaceRequest(bundledLibSourcesJarFile, copyIntoPath);
+                for (File file : files.getAllJars()) {
+                    deferredCopyFileRequests.addCopyWithReplaceRequest(file, copyIntoPath);
+                }
             }
 
-            libraryFile = bundledLibJarFile;
-            librarySrcFile = bundledLibSourcesJarFile;
+            libraryFile = files.getRuntimeJar();
+            librarySrcFile = files.getRuntimeSourcesJar();
         }
 
         return createConfiguration(libraryFile, librarySrcFile);
     }
 
+    @NotNull
     protected NewLibraryConfiguration createConfiguration(@NotNull File libraryFile, @NotNull File librarySrcFile) {
         final String libraryFileUrl = VfsUtil.getUrlForLibraryRoot(libraryFile);
         final String libraryFileSrcUrl = VfsUtil.getUrlForLibraryRoot(librarySrcFile);
