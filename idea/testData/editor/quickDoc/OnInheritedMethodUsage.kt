@@ -14,4 +14,5 @@ fun test() {
     D().f<caret>oo()
 }
 
-// INFO: <b>internal</b> <b>open</b> <b>fun</b> foo(): Int<br/><p>This method returns zero.</p>
+//INFO: <b>internal</b> <b>open</b> <b>fun</b> foo(): Int<br/><p>This method returns zero.
+//INFO: </p>
