@@ -210,6 +210,12 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("localAndNonlocalReturnsWithFinally.kt")
+            public void testLocalAndNonlocalReturnsWithFinally() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/controlStructures/localAndNonlocalReturnsWithFinally.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("OnlyWhileInFunctionBody.kt")
             public void testOnlyWhileInFunctionBody() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/controlStructures/OnlyWhileInFunctionBody.kt");
