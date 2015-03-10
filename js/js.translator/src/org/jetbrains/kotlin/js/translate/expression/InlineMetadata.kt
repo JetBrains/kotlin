@@ -24,35 +24,17 @@ import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.*
 
 import kotlin.platform.platformStatic
 
-private val METADATA_PROPERTIES_COUNT = 3
+private val METADATA_PROPERTIES_COUNT = 2
 
-public class InlineMetadata(
-        val startTag: JsStringLiteral,
-        val function: JsFunction,
-        val endTag: JsStringLiteral
-) {
-    class object {
+public class InlineMetadata(val tag: JsStringLiteral, val function: JsFunction) {
+    companion object {
         platformStatic
         fun compose(function: JsFunction, descriptor: CallableDescriptor): InlineMetadata {
             val program = function.getScope().getProgram()
-            val startTag = program.getStringLiteral(Namer.getInlineStartTag(descriptor))
-            val endTag = program.getStringLiteral(Namer.getInlineEndTag(descriptor))
-            return InlineMetadata(startTag, function, endTag)
+            val tag = program.getStringLiteral(Namer.getFunctionTag(descriptor))
+            return InlineMetadata(tag, function)
         }
 
-        /**
-         * Reads metadata from expression.
-         *
-         * To read metadata from source one needs to:
-         * 1. find index of startTag and endTag in source;
-         * 2. parse substring between startTagIndex - 1 (for opening quote)
-         *    and endTagIndex + endTag.length() + 1 (for closing quote)
-         * 3. call InlineMetadata#decompose on resulting expression
-         *
-         * @see Namer#getInlineStartTag
-         * @see Namer#getInlineEndTag
-         * @see com.google.gwt.dev.js.JsParser
-         */
         platformStatic
         fun decompose(expression: JsExpression?): InlineMetadata? =
                 when (expression) {
@@ -89,19 +71,17 @@ public class InlineMetadata(
         private fun decomposePropertiesList(properties: List<JsExpression>): InlineMetadata? {
             if (properties.size() != METADATA_PROPERTIES_COUNT) return null
 
-            val startTag = properties[0] as? JsStringLiteral
+            val tag = properties[0] as? JsStringLiteral
             val function = properties[1] as? JsFunction
-            val endTag = properties[2] as? JsStringLiteral
+            if (tag == null || function == null) return null
 
-            if (startTag == null || function == null || endTag == null) return null
-
-            return InlineMetadata(startTag, function, endTag)
+            return InlineMetadata(tag, function)
         }
     }
 
     public val functionWithMetadata: JsExpression
         get() {
-            val propertiesList = listOf(startTag, function, endTag)
+            val propertiesList = listOf(tag, function)
             return JsInvocation(Namer.CREATE_INLINE_FUNCTION, propertiesList)
         }
 }
