@@ -29,7 +29,7 @@ import kotlin.platform.*
  * Parses the contents of a Markdown link in KDoc. Uses the standard Kotlin lexer.
  */
 class KDocLinkParser(): PsiParser {
-    class object {
+    default object {
         platformStatic public fun parseMarkdownLink(root: IElementType, chameleon: ASTNode): ASTNode {
             val parentElement = chameleon.getTreeParent().getPsi()
             val project = parentElement.getProject()

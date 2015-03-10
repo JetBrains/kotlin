@@ -21,7 +21,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.find.findUsages.FindUsagesHandler
 
 public trait KotlinFindUsagesHandlerDecorator {
-    class object {
+    default object {
         public val EP_NAME: ExtensionPointName<KotlinFindUsagesHandlerDecorator> = ExtensionPointName.create("org.jetbrains.kotlin.findUsagesHandlerDecorator")!!
     }
 

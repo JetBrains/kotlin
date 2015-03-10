@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 
 public class OperatorToFunctionIntention : JetSelfTargetingIntention<JetExpression>("operator.to.function", javaClass()) {
-    class object {
+    default object {
         private fun isApplicablePrefix(element: JetPrefixExpression): Boolean {
             return when (element.getOperationReference().getReferencedNameElementType()) {
                 JetTokens.PLUS, JetTokens.MINUS, JetTokens.PLUSPLUS, JetTokens.MINUSMINUS, JetTokens.EXCL -> true

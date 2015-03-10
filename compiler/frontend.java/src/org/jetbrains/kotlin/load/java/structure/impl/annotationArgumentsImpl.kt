@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.name.Name
 abstract class JavaAnnotationArgumentImpl(
         override val name: Name?
 ) : JavaAnnotationArgument {
-    class object Factory {
+    default object Factory {
         fun create(argument: PsiAnnotationMemberValue, name: Name?): JavaAnnotationArgument {
             val value = JavaPsiFacade.getInstance(argument.getProject()).getConstantEvaluationHelper().computeConstantExpression(argument)
             if (value is Enum<*>) {

@@ -132,7 +132,7 @@ public class JetPsiUnifier(
         parameters: Collection<UnifierParameter> = Collections.emptySet(),
         val allowWeakMatches: Boolean = false
 ) {
-    class object {
+    default object {
         val DEFAULT = JetPsiUnifier()
     }
 

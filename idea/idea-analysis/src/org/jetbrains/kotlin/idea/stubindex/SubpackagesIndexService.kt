@@ -78,7 +78,7 @@ public class SubpackagesIndexService(private val project: Project) {
         }
     }
 
-    class object {
+    default object {
         public fun getInstance(project: Project): SubpackagesIndex {
             return ServiceManager.getService(project, javaClass<SubpackagesIndexService>())!!.cachedValue.getValue()!!
         }

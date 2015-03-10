@@ -30,7 +30,7 @@ enum class PrimitiveType {
     BOOLEAN
 
     val capitalized: String get() = name().toLowerCase().capitalize()
-    class object {
+    default object {
         val exceptBoolean: Iterable<PrimitiveType> by Delegates.lazy { PrimitiveType.values().filterNot { it == BOOLEAN } }
     }
 }

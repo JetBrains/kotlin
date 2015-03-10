@@ -36,7 +36,7 @@ import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.PsiWhiteSpace
 
 public class KotlinEnterHandler: EnterHandlerDelegateAdapter() {
-    class object {
+    default object {
         private val LOG = Logger.getInstance(javaClass<KotlinEnterHandler>())
         private val FORCE_INDENT_IN_LAMBDA_AFTER = TokenSet.create(JetTokens.ARROW, JetTokens.LBRACE)
     }

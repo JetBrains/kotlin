@@ -36,7 +36,7 @@ public trait Diagnostics : Iterable<Diagnostic> {
 
     override fun iterator() = all().iterator()
 
-    class object {
+    default object {
         public val EMPTY: Diagnostics = object : Diagnostics {
             override fun noSuppression(): Diagnostics = this
             override val modificationTracker: ModificationTracker = ModificationTracker.NEVER_CHANGED

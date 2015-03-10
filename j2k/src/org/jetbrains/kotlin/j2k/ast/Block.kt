@@ -31,7 +31,7 @@ class Block(val statements: List<Statement>, val lBrace: LBrace, val rBrace: RBr
         builder.append(lBrace).append(statements, "\n", "\n", "\n").append(rBrace)
     }
 
-    class object {
+    default object {
         val Empty = Block(listOf(), LBrace(), RBrace())
     }
 }

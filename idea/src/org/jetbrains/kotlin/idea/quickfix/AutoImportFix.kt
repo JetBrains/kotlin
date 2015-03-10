@@ -164,7 +164,7 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
             PsiShortNamesCache.getInstance(jetFile.getProject())
     }
 
-    class object {
+    default object {
         private val ERRORS = setOf(Errors.UNRESOLVED_REFERENCE, Errors.UNRESOLVED_REFERENCE_WRONG_RECEIVER)
 
         public fun createFactory(): JetSingleIntentionActionFactory {

@@ -80,7 +80,7 @@ public abstract class KotlinRuntimeTypeEvaluator(
         throw EvaluateExceptionUtil.createEvaluateException(DebuggerBundle.message("evaluation.error.surrounded.expression.null"))
     }
 
-    class object {
+    default object {
         private fun getCastableRuntimeType(project: Project, value: Value): JetType? {
             val myValue = value.asValue()
             var psiClass = myValue.asmType.getClassDescriptor(project)

@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParameterMappings?) {
 
-    class object {
+    default object {
         public val NEW_ARRAY_MARKER_METHOD_NAME: String = "reifyNewArray"
         public val CHECKCAST_MARKER_METHOD_NAME: String = "reifyCheckcast"
         public val INSTANCEOF_MARKER_METHOD_NAME: String = "reifyInstanceof"

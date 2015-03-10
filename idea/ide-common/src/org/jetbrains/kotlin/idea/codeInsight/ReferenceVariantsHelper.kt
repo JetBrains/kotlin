@@ -48,7 +48,7 @@ public class ReferenceVariantsHelper(
             public val receivers: Collection<ReceiverValue>,
             public val callType: CallType
     ) {
-        class object {
+        default object {
             val Empty = ReceiversData(listOf(), CallType.NORMAL)
         }
     }
@@ -216,7 +216,7 @@ public class ReferenceVariantsHelper(
         return resolutionScope.getDescriptorsFiltered(DescriptorKindFilter.PACKAGES, nameFilter).filter(visibilityFilter)
     }
 
-    class object {
+    default object {
         public fun getExplicitReceiverData(expression: JetSimpleNameExpression): Pair<JetExpression, CallType>? {
             val receiverExpression = expression.getReceiverExpression() ?: return null
             val parent = expression.getParent()

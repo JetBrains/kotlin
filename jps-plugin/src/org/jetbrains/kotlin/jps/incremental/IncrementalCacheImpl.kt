@@ -55,7 +55,7 @@ private val CACHE_DIRECTORY_NAME = "kotlin"
 
 
 class CacheFormatVersion(targetDataRoot: File) {
-    class object {
+    default object {
         // Change this when incremental cache format changes
         private val INCREMENTAL_CACHE_OWN_VERSION = 2
         private val CACHE_FORMAT_VERSION: Int = INCREMENTAL_CACHE_OWN_VERSION * 1000000 + JvmAbi.VERSION
@@ -82,7 +82,7 @@ class CacheFormatVersion(targetDataRoot: File) {
 }
 
 public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, IncrementalCache {
-    class object {
+    default object {
         val PROTO_MAP = "proto.tab"
         val CONSTANTS_MAP = "constants.tab"
         val INLINE_FUNCTIONS = "inline-functions.tab"

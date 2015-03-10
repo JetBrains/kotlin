@@ -41,7 +41,7 @@ public class JetForLoopInReference(element: JetForExpression) : JetMultiReferenc
         return LOOP_RANGE_KEYS.map { key -> context.get(key, loopRange)?.getCandidateDescriptor() }.filterNotNull()
     }
 
-    class object {
+    default object {
         private val LOOP_RANGE_KEYS = array(
                 BindingContext.LOOP_RANGE_ITERATOR_RESOLVED_CALL,
                 BindingContext.LOOP_RANGE_NEXT_RESOLVED_CALL,

@@ -79,7 +79,7 @@ class VarianceChecker(private val trace: BindingTrace) {
             val occurrencePosition: Variance
     )
 
-    class object {
+    default object {
         platformStatic fun recordPrivateToThisIfNeeded(trace: BindingTrace, descriptor: CallableMemberDescriptor) {
             if (isIrrelevant(descriptor) || descriptor.getVisibility() != Visibilities.PRIVATE) return
 

@@ -52,7 +52,7 @@ class KotlinEditorTextProvider : EditorTextProvider {
         return Pair(expression, expression.getTextRange())
     }
 
-    class object {
+    default object {
         fun findExpressionInner(element: PsiElement, allowMethodCalls: Boolean): JetExpression? {
             if (PsiTreeUtil.getParentOfType(element, javaClass<JetUserType>(), javaClass<JetImportDirective>(), javaClass<JetPackageDirective>()) != null) {
                 return null

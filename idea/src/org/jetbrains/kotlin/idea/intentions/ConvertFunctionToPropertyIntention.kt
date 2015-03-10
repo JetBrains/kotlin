@@ -64,7 +64,7 @@ import org.jetbrains.kotlin.idea.util.ShortenReferences
 public class ConvertFunctionToPropertyIntention : JetSelfTargetingIntention<JetNamedFunction>(
         "convert.function.to.property.intention", javaClass()
 ) {
-    class object {
+    default object {
         private var JetNamedFunction.typeFqNameToAdd: String? by UserDataProperty(Key.create("TYPE_FQ_NAME_TO_ADD"))
     }
 

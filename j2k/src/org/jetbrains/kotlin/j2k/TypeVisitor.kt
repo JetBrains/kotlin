@@ -115,7 +115,7 @@ class TypeVisitor(
         return VarArgType(typeConverter.convertType(ellipsisType.getComponentType()))
     }
 
-    class object {
+    default object {
         private val toKotlinTypesMap: Map<String, String> = mapOf(
                 CommonClassNames.JAVA_LANG_OBJECT to "kotlin.Any",
                 CommonClassNames.JAVA_LANG_BYTE to "kotlin.Byte",

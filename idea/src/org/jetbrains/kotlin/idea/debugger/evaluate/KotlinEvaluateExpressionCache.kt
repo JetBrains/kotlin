@@ -40,7 +40,7 @@ class KotlinEvaluateExpressionCache(val project: Project) {
                         MultiMap.create(), PsiModificationTracker.MODIFICATION_COUNT)
             }, false)
 
-    class object {
+    default object {
         private val LOG = Logger.getLogger(javaClass<KotlinEvaluateExpressionCache>())!!
 
         fun getInstance(project: Project) = ServiceManager.getService(project, javaClass<KotlinEvaluateExpressionCache>())!!

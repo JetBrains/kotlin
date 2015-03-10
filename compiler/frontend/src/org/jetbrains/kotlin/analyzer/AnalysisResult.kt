@@ -39,7 +39,7 @@ public data open class AnalysisResult protected (
 
     private class Error(bindingContext: BindingContext, val exception: Throwable) : AnalysisResult(bindingContext, ErrorUtils.getErrorModule())
 
-    class object {
+    default object {
         public val EMPTY: AnalysisResult = success(BindingContext.EMPTY, ErrorUtils.getErrorModule())
 
         platformStatic public fun success(bindingContext: BindingContext, module: ModuleDescriptor): AnalysisResult {

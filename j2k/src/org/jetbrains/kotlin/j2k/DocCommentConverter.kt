@@ -94,7 +94,7 @@ object DocCommentConverter {
     private class HtmlToMarkdownConverter() : XmlRecursiveElementVisitor() {
         private enum class ListType { Ordered; Unordered }
         data class MarkdownSpan(val prefix: String, val suffix: String) {
-            class object {
+            default object {
                 val Empty = MarkdownSpan("", "")
 
                 fun wrap(text: String) = MarkdownSpan(text, text)

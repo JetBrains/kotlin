@@ -79,7 +79,7 @@ public class CallInstruction private(
     override fun toString() =
             renderInstruction("call", "${render(element)}, ${resolvedCall.getResultingDescriptor()!!.getName()}")
 
-    class object Factory {
+    default object Factory {
         fun create (
                 element: JetElement,
                 lexicalScope: LexicalScope,
@@ -115,7 +115,7 @@ public class MagicInstruction(
 
     override fun toString() = renderInstruction("magic[$kind]", render(element))
 
-    class object Factory {
+    default object Factory {
         fun create(
                 element: JetElement,
                 valueElement: JetElement?,
@@ -165,7 +165,7 @@ class MergeInstruction private(
 
     override fun toString() = renderInstruction("merge", render(element))
 
-    class object Factory {
+    default object Factory {
         fun create(
                 element: JetElement,
                 lexicalScope: LexicalScope,

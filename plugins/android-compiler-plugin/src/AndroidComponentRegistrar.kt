@@ -61,7 +61,7 @@ public object AndroidConfigurationKeys {
 }
 
 public class AndroidCommandLineProcessor : CommandLineProcessor {
-    class object {
+    default object {
         public val ANDROID_COMPILER_PLUGIN_ID: String = "org.jetbrains.kotlin.android"
 
         public val RESOURCE_PATH_OPTION: CliOption = CliOption("androidRes", "<path>", "Android resources path")
@@ -89,7 +89,7 @@ public class CliAndroidDeclarationsProvider(private val project: Project) : Exte
 }
 
 public class AndroidExpressionCodegen : ExpressionCodegenExtension {
-    class object {
+    default object {
         private val PROPERTY_NAME = "_\$_findViewCache"
         private val METHOD_NAME = "_\$_findCachedViewById"
     }

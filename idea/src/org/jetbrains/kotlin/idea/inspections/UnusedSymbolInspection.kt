@@ -72,7 +72,7 @@ import java.awt.GridBagLayout
 import javax.swing.JPanel
 
 public class UnusedSymbolInspection : AbstractKotlinInspection() {
-    class object {
+    default object {
         private val javaInspection = UnusedDeclarationInspection()
 
         public fun isEntryPoint(declaration: JetNamedDeclaration): Boolean {
