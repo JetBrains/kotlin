@@ -112,6 +112,12 @@ public class JetSecondaryConstructor extends JetDeclarationStub<KotlinPlaceHolde
         return false;
     }
 
+    @Override
+    @NotNull
+    public String getName() {
+        return "<init>";
+    }
+
     @Nullable
     @Override
     public JetTypeParameterList getTypeParameterList() {
@@ -139,7 +145,7 @@ public class JetSecondaryConstructor extends JetDeclarationStub<KotlinPlaceHolde
     @NotNull
     @Override
     public Name getNameAsSafeName() {
-        return Name.special("<init>");
+        return Name.special(getName());
     }
 
     @Nullable

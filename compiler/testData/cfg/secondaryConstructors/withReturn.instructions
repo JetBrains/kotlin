@@ -1,0 +1,61 @@
+== A ==
+class A {
+    val x: Int
+    constructor() {
+        if (1 == 1) {
+            return
+        }
+        else null!!
+        x = 1
+    }
+}
+---------------------
+L0:
+  1 <START>
+L1:
+    <END>      NEXT:[<SINK>]
+error:
+    <ERROR>    PREV:[]
+sink:
+    <SINK>     PREV:[<ERROR>, <END>]
+=====================
+== <init> ==
+constructor() {
+        if (1 == 1) {
+            return
+        }
+        else null!!
+        x = 1
+    }
+---------------------
+L0:
+  1 <START>
+    mark()
+    call(, <init>) -> <v0>
+    v(val x: Int)
+  2 mark({ if (1 == 1) { return } else null!! x = 1 })
+    mark(if (1 == 1) { return } else null!!)
+    r(1) -> <v1>
+    r(1) -> <v2>
+    mark(1 == 1)
+    call(1 == 1, equals|<v1>, <v2>) -> <v3>
+    jf(L2|<v3>)                                                      NEXT:[r(null) -> <v5>, mark({ return })]
+  3 mark({ return })
+    ret L1                                                           NEXT:[<END>]
+- 2 jmp(L3)                                                          NEXT:[merge(if (1 == 1) { return } else null!!|!<v4>, <v6>) -> <v7>]    PREV:[]
+L2 [else branch]:
+    r(null) -> <v5>                                                  PREV:[jf(L2|<v3>)]
+    magic[NOT_NULL_ASSERTION](null!!|<v5>) -> <v6>
+    jmp(error)                                                       NEXT:[<ERROR>]
+L3 ['if' expression result]:
+-   merge(if (1 == 1) { return } else null!!|!<v4>, <v6>) -> <v7>    PREV:[]
+-   magic[IMPLICIT_RECEIVER](x) -> <v8>                              PREV:[]
+-   r(1) -> <v9>                                                     PREV:[]
+-   w(x|<v8>, <v9>)                                                  PREV:[]
+L1:
+  1 <END>                                                            NEXT:[<SINK>]                                                           PREV:[ret L1]
+error:
+    <ERROR>                                                          PREV:[jmp(error)]
+sink:
+    <SINK>                                                           PREV:[<ERROR>, <END>]
+=====================

@@ -1,0 +1,215 @@
+== B ==
+open class B(x: Int)
+---------------------
+L0:
+  1 <START>
+    v(x: Int)
+    magic[FAKE_INITIALIZER](x: Int) -> <v0>
+    w(x|<v0>)
+L1:
+    <END>                                      NEXT:[<SINK>]
+error:
+    <ERROR>                                    PREV:[]
+sink:
+    <SINK>                                     PREV:[<ERROR>, <END>]
+=====================
+== A ==
+class A : B {
+    val x: Int
+    var y: Int
+    val z: Int
+    val v = -1
+
+    constructor(): super(11) {
+        x = 1
+        y = 2
+    }
+    constructor(a: Int, b: Int = 3): super(b) {
+        x = a
+        y = x
+    }
+
+    // anonymous
+    init {
+        z = 8
+    }
+
+    constructor(a: String, b: Int = 4): this() {
+        y = 5
+    }
+    constructor(a: Double, b: Int = 6): this(a.toInt()) {
+        y = 7
+    }
+
+    // anonymous
+    init {
+        y = 9
+    }
+}
+---------------------
+L0:
+  1 <START>
+L1:
+    <END>      NEXT:[<SINK>]
+error:
+    <ERROR>    PREV:[]
+sink:
+    <SINK>     PREV:[<ERROR>, <END>]
+=====================
+== <init> ==
+constructor(): super(11) {
+        x = 1
+        y = 2
+    }
+---------------------
+L0:
+  1 <START>
+    r(11) -> <v0>
+    mark(super(11))
+    call(super(11), <init>|<v0>) -> <v1>
+    v(val x: Int)
+    v(var y: Int)
+    v(val z: Int)
+    v(val v = -1)
+    r(1) -> <v2>
+    mark(-1)
+    call(-1, minus|<v2>) -> <v3>
+    w(v|<v3>)
+  2 mark({ z = 8 })
+    magic[IMPLICIT_RECEIVER](z) -> <v4>
+    r(8) -> <v5>
+    w(z|<v4>, <v5>)
+    mark({ y = 9 })
+    magic[IMPLICIT_RECEIVER](y) -> <v7>
+    r(9) -> <v8>
+    w(y|<v7>, <v8>)
+    mark({ x = 1 y = 2 })
+    magic[IMPLICIT_RECEIVER](x) -> <v10>
+    r(1) -> <v11>
+    w(x|<v10>, <v11>)
+    magic[IMPLICIT_RECEIVER](y) -> <v12>
+    r(2) -> <v13>
+    w(y|<v12>, <v13>)
+L1:
+  1 <END>                                   NEXT:[<SINK>]
+error:
+    <ERROR>                                 PREV:[]
+sink:
+    <SINK>                                  PREV:[<ERROR>, <END>]
+=====================
+== <init> ==
+constructor(a: Int, b: Int = 3): super(b) {
+        x = a
+        y = x
+    }
+---------------------
+L0:
+  1 <START>
+    v(a: Int)
+    magic[FAKE_INITIALIZER](a: Int) -> <v0>
+    w(a|<v0>)
+    v(b: Int = 3)
+    jmp?(L2)                                       NEXT:[magic[FAKE_INITIALIZER](b: Int = 3) -> <v2>, r(3) -> <v1>]
+    r(3) -> <v1>
+L2 [after default value for parameter b]:
+    magic[FAKE_INITIALIZER](b: Int = 3) -> <v2>    PREV:[jmp?(L2), r(3) -> <v1>]
+    merge(b: Int = 3|<v1>, <v2>) -> <v3>
+    w(b|<v3>)
+    r(b) -> <v4>
+    mark(super(b))
+    call(super(b), <init>|<v4>) -> <v5>
+    v(val x: Int)
+    v(var y: Int)
+    v(val z: Int)
+    v(val v = -1)
+    r(1) -> <v6>
+    mark(-1)
+    call(-1, minus|<v6>) -> <v7>
+    w(v|<v7>)
+  2 mark({ z = 8 })
+    magic[IMPLICIT_RECEIVER](z) -> <v8>
+    r(8) -> <v9>
+    w(z|<v8>, <v9>)
+    mark({ y = 9 })
+    magic[IMPLICIT_RECEIVER](y) -> <v11>
+    r(9) -> <v12>
+    w(y|<v11>, <v12>)
+    mark({ x = a y = x })
+    magic[IMPLICIT_RECEIVER](x) -> <v14>
+    r(a) -> <v15>
+    w(x|<v14>, <v15>)
+    magic[IMPLICIT_RECEIVER](y) -> <v16>
+    magic[IMPLICIT_RECEIVER](x) -> <v17>
+    r(x|<v17>) -> <v18>
+    w(y|<v16>, <v18>)
+L1:
+  1 <END>                                          NEXT:[<SINK>]
+error:
+    <ERROR>                                        PREV:[]
+sink:
+    <SINK>                                         PREV:[<ERROR>, <END>]
+=====================
+== <init> ==
+constructor(a: String, b: Int = 4): this() {
+        y = 5
+    }
+---------------------
+L0:
+  1 <START>
+    v(a: String)
+    magic[FAKE_INITIALIZER](a: String) -> <v0>
+    w(a|<v0>)
+    v(b: Int = 4)
+    jmp?(L2)                                       NEXT:[magic[FAKE_INITIALIZER](b: Int = 4) -> <v2>, r(4) -> <v1>]
+    r(4) -> <v1>
+L2 [after default value for parameter b]:
+    magic[FAKE_INITIALIZER](b: Int = 4) -> <v2>    PREV:[jmp?(L2), r(4) -> <v1>]
+    merge(b: Int = 4|<v1>, <v2>) -> <v3>
+    w(b|<v3>)
+    mark(this())
+    call(this(), <init>) -> <v4>
+  2 mark({ y = 5 })
+    magic[IMPLICIT_RECEIVER](y) -> <v5>
+    r(5) -> <v6>
+    w(y|<v5>, <v6>)
+L1:
+  1 <END>                                          NEXT:[<SINK>]
+error:
+    <ERROR>                                        PREV:[]
+sink:
+    <SINK>                                         PREV:[<ERROR>, <END>]
+=====================
+== <init> ==
+constructor(a: Double, b: Int = 6): this(a.toInt()) {
+        y = 7
+    }
+---------------------
+L0:
+  1 <START>
+    v(a: Double)
+    magic[FAKE_INITIALIZER](a: Double) -> <v0>
+    w(a|<v0>)
+    v(b: Int = 6)
+    jmp?(L2)                                       NEXT:[magic[FAKE_INITIALIZER](b: Int = 6) -> <v2>, r(6) -> <v1>]
+    r(6) -> <v1>
+L2 [after default value for parameter b]:
+    magic[FAKE_INITIALIZER](b: Int = 6) -> <v2>    PREV:[jmp?(L2), r(6) -> <v1>]
+    merge(b: Int = 6|<v1>, <v2>) -> <v3>
+    w(b|<v3>)
+    mark(a.toInt())
+    r(a) -> <v4>
+    mark(toInt())
+    call(toInt(), toInt|<v4>) -> <v5>
+    mark(this(a.toInt()))
+    call(this(a.toInt()), <init>|<v5>) -> <v6>
+  2 mark({ y = 7 })
+    magic[IMPLICIT_RECEIVER](y) -> <v7>
+    r(7) -> <v8>
+    w(y|<v7>, <v8>)
+L1:
+  1 <END>                                          NEXT:[<SINK>]
+error:
+    <ERROR>                                        PREV:[]
+sink:
+    <SINK>                                         PREV:[<ERROR>, <END>]
+=====================

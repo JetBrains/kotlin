@@ -10439,6 +10439,18 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("propertyInitializationWithPrimary.kt")
+            public void testPropertyInitializationWithPrimary() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/propertyInitializationWithPrimary.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("propertyInitializationWithoutPrimary.kt")
+            public void testPropertyInitializationWithoutPrimary() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/propertyInitializationWithoutPrimary.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("return.kt")
             public void testReturn() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/return.kt");
@@ -10460,6 +10472,24 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("thisNonExisting.kt")
             public void testThisNonExisting() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/thisNonExisting.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("unreachableCode.kt")
+            public void testUnreachableCode() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/unreachableCode.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("useOfPropertiesWithPrimary.kt")
+            public void testUseOfPropertiesWithPrimary() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/useOfPropertiesWithPrimary.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("useOfPropertiesWithoutPrimary.kt")
+            public void testUseOfPropertiesWithoutPrimary() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/useOfPropertiesWithoutPrimary.kt");
                 doTest(fileName);
             }
 

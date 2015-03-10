@@ -577,8 +577,8 @@ public class JetFlowInformationProvider {
         for (VariableDescriptor variable : declaredVariables) {
             if (variable instanceof PropertyDescriptor) {
                 PseudocodeVariablesData.VariableInitState variableInitState = initializers.getIncoming().get(variable);
-                if (variableInitState == null) return;
-                trace.record(BindingContext.IS_INITIALIZED, (PropertyDescriptor) variable, variableInitState.isInitialized);
+                if (variableInitState != null && variableInitState.isInitialized) continue;
+                trace.record(BindingContext.IS_UNINITIALIZED, (PropertyDescriptor) variable);
             }
         }
     }

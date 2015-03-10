@@ -456,7 +456,7 @@ public class DeclarationsChecker {
         if (initializer == null && delegate == null) {
             boolean error = false;
             if (backingFieldRequired && !inTrait &&
-                Boolean.FALSE.equals(trace.getBindingContext().get(BindingContext.IS_INITIALIZED, propertyDescriptor))) {
+                Boolean.TRUE.equals(trace.getBindingContext().get(BindingContext.IS_UNINITIALIZED, propertyDescriptor))) {
                 if (!(containingDeclaration instanceof ClassDescriptor) || hasAccessorImplementation) {
                     error = true;
                     trace.report(MUST_BE_INITIALIZED.on(property));
