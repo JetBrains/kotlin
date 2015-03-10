@@ -17,14 +17,13 @@
 package org.jetbrains.kotlin.js.translate.reference;
 
 import com.google.dart.compiler.backend.js.ast.*;
-import com.google.dart.compiler.common.SourceInfoImpl;
-import com.google.gwt.dev.js.JsAstMapper;
 import com.google.gwt.dev.js.ThrowExceptionOnErrorReporter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.InlineUtil;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.js.parser.ParserPackage;
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.psi.JetCallExpression;
@@ -39,7 +38,6 @@ import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluat
 import org.jetbrains.kotlin.types.JetType;
 
 import java.io.IOException;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -137,18 +135,6 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
         assert constant != null: "jsCode must be compile time string " + jsCodeExpression;
         String jsCode = (String) constant.getValue();
         assert jsCode != null: jsCodeExpression.toString();
-
-        List<JsStatement> statements = new ArrayList<JsStatement>();
-
-        try {
-            SourceInfoImpl info = new SourceInfoImpl(null, 0, 0, 0, 0);
-            JsScope scope = context().scope();
-            StringReader reader = new StringReader(jsCode);
-            statements.addAll(JsAstMapper.parse(info, scope, reader, ThrowExceptionOnErrorReporter.INSTANCE$, /* insideFunction= */ true));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        return statements;
+        return ParserPackage.parse(jsCode, ThrowExceptionOnErrorReporter.INSTANCE$, /* insideFunction= */ true);
     }
 }
