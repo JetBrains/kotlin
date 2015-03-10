@@ -1794,6 +1794,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("beforeSmartCastWithIs.kt")
+                public void testSmartCastWithIs() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/beforeSmartCastWithIs.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("beforeSmartCastWithNullCheck.kt")
+                public void testSmartCastWithNullCheck() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/beforeSmartCastWithNullCheck.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("beforeThisInClass.kt")
                 public void testThisInClass() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/beforeThisInClass.kt");
