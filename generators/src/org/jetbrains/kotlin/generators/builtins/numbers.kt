@@ -42,7 +42,7 @@ class GenerateNumbers(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             generateDoc(kind)
             out.println("public class $className private () : Number, Comparable<$className> {")
 
-            out.print("    class object")
+            out.print("    default object")
             if (kind == PrimitiveType.FLOAT || kind == PrimitiveType.DOUBLE) {
                 out.print(" : FloatingPointConstants<$className>")
             }

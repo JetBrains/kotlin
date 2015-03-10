@@ -82,7 +82,7 @@ public class $range(override val start: $t, override val end: $t) : Range<$t>, P
 
     override fun hashCode(): Int $hashCode
 
-    class object {
+    default object {
         /** An empty range of values of type $t. */
         public val EMPTY: $range = $range($emptyBounds)
     }
