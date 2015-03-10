@@ -91,8 +91,6 @@ public final class Namer {
     public static final String CAPTURED_VAR_FIELD = "v";
 
     public static final JsNameRef CREATE_INLINE_FUNCTION = new JsNameRef("defineInlineFunction", KOTLIN_OBJECT_REF);
-    private static final String INLINE_START_TAG = "inlineStartTag";
-    private static final String INLINE_END_TAG = "inlineEndTag";
 
     @NotNull
     public static final JsExpression UNDEFINED_EXPRESSION = new JsPrefixOperation(JsUnaryOperator.VOID, JsNumberLiteral.ZERO);
@@ -108,24 +106,11 @@ public final class Namer {
     }
 
     @NotNull
-    public static String getInlineStartTag(@NotNull CallableDescriptor functionDescriptor) {
-        return formatInlineTag(functionDescriptor, INLINE_START_TAG);
-    }
-
-    @NotNull
-    public static String getInlineEndTag(@NotNull CallableDescriptor functionDescriptor) {
-        return formatInlineTag(functionDescriptor, INLINE_END_TAG);
-    }
-
-    @NotNull
-    private static String formatInlineTag(
-            @NotNull CallableDescriptor functionDescriptor,
-            @NotNull String tag
-    ) {
+    public static String getFunctionTag(@NotNull CallableDescriptor functionDescriptor) {
         FqName fqName = getFqNameSafe(functionDescriptor);
         String mangledName = getSuggestedName(functionDescriptor);
         String moduleName = getModuleName(functionDescriptor);
-        return StringUtil.join(Arrays.asList(tag, moduleName, fqName, mangledName), ".");
+        return StringUtil.join(Arrays.asList(moduleName, fqName, mangledName), ".");
     }
 
     @NotNull

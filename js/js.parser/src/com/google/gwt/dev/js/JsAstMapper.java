@@ -17,66 +17,23 @@ package com.google.gwt.dev.js;
 
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.backend.js.ast.JsLiteral.JsBooleanLiteral;
-import com.google.dart.compiler.common.SourceInfo;
 import com.google.gwt.dev.js.parserExceptions.JsParserException;
 import com.google.gwt.dev.js.rhino.*;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.google.dart.compiler.util.AstUtil.toFunctionScope;
-
-/**
- * Parses JavaScript source.
- */
 public class JsAstMapper {
 
     private final JsProgram program;
     private final ScopeContext scopeContext;
 
-    public static List<JsStatement> parse(
-            SourceInfo rootSourceInfo,
-            JsScope scope, Reader r,
-            ErrorReporter errorReporter,
-            boolean insideFunction
-    ) throws IOException, JsParserException {
-        return new JsAstMapper(scope).parseImpl(rootSourceInfo, r, errorReporter, insideFunction);
-    }
-
-    /**
-     * since source maps are not mapped to kotlin source maps
-     */
-    private static final String SOURCE_NAME_STUB = "jsCode";
-
-    private JsAstMapper(@NotNull JsScope scope) {
+    public JsAstMapper(@NotNull JsScope scope) {
         scopeContext = new ScopeContext(scope);
         program = scope.getProgram();
-    }
-
-    List<JsStatement> parseImpl(
-            final SourceInfo rootSourceInfo,
-            Reader r,
-            ErrorReporter errorReporter,
-            boolean insideFunction
-    ) throws JsParserException, IOException {
-        // Create a custom error handler so that we can throw our own exceptions.
-        Context.enter().setErrorReporter(errorReporter);
-        try {
-            // Parse using the Rhino parser.
-            //
-            TokenStream ts = new TokenStream(r, SOURCE_NAME_STUB, rootSourceInfo.getLine());
-            Parser parser = new Parser(new IRFactory(ts), insideFunction);
-            Node topNode = (Node) parser.parse(ts);
-            return mapStatements(topNode);
-        }
-        finally {
-            Context.exit();
-        }
     }
 
     private static JsParserException createParserException(String msg, Node offender) {
@@ -594,8 +551,9 @@ public class JsAstMapper {
         }
     }
 
-    private JsExpression mapFunction(Node fnNode) throws JsParserException {
-
+    public JsFunction mapFunction(Node fnNode) throws JsParserException {
+        int nodeType = fnNode.getType();
+        assert nodeType == TokenStream.FUNCTION: "Expected function node, got: " + TokenStream.tokenToName(nodeType);
         Node fromFnNameNode = fnNode.getFirstChild();
         Node fromParamNode = fnNode.getFirstChild().getNext().getFirstChild();
         Node fromBodyNode = fnNode.getFirstChild().getNext().getNext();
@@ -954,7 +912,7 @@ public class JsAstMapper {
         }
     }
 
-    private List<JsStatement> mapStatements(Node nodeStmts)
+    public List<JsStatement> mapStatements(Node nodeStmts)
             throws JsParserException {
         List<JsStatement> stmts = new ArrayList<JsStatement>();
         mapStatements(stmts, nodeStmts);
