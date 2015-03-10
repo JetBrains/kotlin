@@ -93,6 +93,12 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
             doTest(fileName);
         }
 
+        @TestMetadata("arraySetNoRHS.kt")
+        public void testArraySetNoRHS() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/arrays/arraySetNoRHS.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("arraySetPlusAssign.kt")
         public void testArraySetPlusAssign() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/arrays/arraySetPlusAssign.kt");

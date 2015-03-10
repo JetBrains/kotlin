@@ -485,7 +485,9 @@ public class JetControlFlowProcessor {
             if (setResolvedCall == null) {
                 generateArrayAccess(lhs, null);
 
-                List<PseudoValue> arguments = Arrays.asList(getBoundOrUnreachableValue(lhs), rhsDeferredValue.invoke());
+                List<PseudoValue> arguments = KotlinPackage.filterNotNull(
+                        Arrays.asList(getBoundOrUnreachableValue(lhs), rhsDeferredValue.invoke())
+                );
                 builder.magic(parentExpression, parentExpression, arguments, defaultTypeMap(arguments), MagicKind.UNRESOLVED_CALL);
 
                 return;

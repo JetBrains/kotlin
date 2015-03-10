@@ -1,0 +1,23 @@
+== foo ==
+fun foo(a: Array<Int>) {
+    a[1] =
+}
+---------------------
+L0:
+  1 <START>
+    v(a: Array<Int>)
+    magic[FAKE_INITIALIZER](a: Array<Int>) -> <v0>
+    w(a|<v0>)
+  2 mark({ a[1] = })
+    mark(a[1])
+    magic[UNRESOLVED_CALL](a) -> <v1>
+    r(1) -> <v2>
+    magic[UNRESOLVED_CALL](a[1]|<v1>, <v2>) -> <v3>
+    magic[UNRESOLVED_CALL](a[1] =|<v3>) -> <v4>
+L1:
+  1 <END>                                              NEXT:[<SINK>]
+error:
+    <ERROR>                                            PREV:[]
+sink:
+    <SINK>                                             PREV:[<ERROR>, <END>]
+=====================
