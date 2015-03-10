@@ -71,12 +71,14 @@ public final class K2JSTranslator {
         BindingTrace bindingTrace = analysisResult.getBindingTrace();
         TopDownAnalyzerFacadeForJS.checkForErrors(Config.withJsLibAdded(files, config), bindingTrace.getBindingContext());
         ModuleDescriptor moduleDescriptor = analysisResult.getModuleDescriptor();
-        TranslationContext context = Translation.generateAst(bindingTrace, files, mainCallParameters, moduleDescriptor, config);
         Diagnostics diagnostics = bindingTrace.getBindingContext().getDiagnostics();
 
+        TranslationContext context = Translation.generateAst(bindingTrace, files, mainCallParameters, moduleDescriptor, config);
         if (hasError(diagnostics)) return new TranslationResult.Fail(diagnostics);
 
         JsProgram program = JsInliner.process(context);
+        if (hasError(diagnostics)) return new TranslationResult.Fail(diagnostics);
+
         return new TranslationResult.Success(config, files, program, diagnostics);
     }
 }
