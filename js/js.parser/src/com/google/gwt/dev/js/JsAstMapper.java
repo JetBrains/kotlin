@@ -34,7 +34,7 @@ import static com.google.dart.compiler.util.AstUtil.toFunctionScope;
 /**
  * Parses JavaScript source.
  */
-public class JsParser {
+public class JsAstMapper {
 
     private final JsProgram program;
     private final ScopeContext scopeContext;
@@ -45,7 +45,7 @@ public class JsParser {
             ErrorReporter errorReporter,
             boolean insideFunction
     ) throws IOException, JsParserException {
-        return new JsParser(scope).parseImpl(rootSourceInfo, r, errorReporter, insideFunction);
+        return new JsAstMapper(scope).parseImpl(rootSourceInfo, r, errorReporter, insideFunction);
     }
 
     /**
@@ -53,7 +53,7 @@ public class JsParser {
      */
     private static final String SOURCE_NAME_STUB = "jsCode";
 
-    private JsParser(@NotNull JsScope scope) {
+    private JsAstMapper(@NotNull JsScope scope) {
         scopeContext = new ScopeContext(scope);
         program = scope.getProgram();
     }
