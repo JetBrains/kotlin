@@ -135,6 +135,10 @@ fun main(args: Array<String>) {
             model("diagnostics/testsWithJsStdLib")
         }
 
+        testClass(javaClass<AbstractJetDiagnosticsTestWithJsStdLibAndBackendCompilation>()) {
+            model("diagnostics/testsWithJsStdLibAndBackendCompilation")
+        }
+
         testClass(javaClass<AbstractResolveTest>()) {
             model("resolve", extension = "resolve")
         }
