@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.js.inline
 import com.google.dart.compiler.backend.js.ast.*
 import com.google.dart.compiler.backend.js.ast.metadata.inlineStrategy
 import com.google.dart.compiler.common.SourceInfoImpl
-import com.google.gwt.dev.js.JsParser
+import com.google.gwt.dev.js.JsAstMapper
 import com.google.gwt.dev.js.ThrowExceptionOnErrorReporter
 import com.google.gwt.dev.js.parserExceptions.AbortParsingException
 import com.google.gwt.dev.js.parserExceptions.JsParserException
@@ -152,7 +152,7 @@ public class FunctionReader(private val context: TranslationContext) {
             val info = SourceInfoImpl(null, 0, 0, 0, 0)
             val scope = JsRootScope(context.program())
             val reader = StringReader(source)
-            return JsParser.parse(info, scope, reader, ThrowExceptionOnErrorReporter, /* insideFunction= */ false)
+            return JsAstMapper.parse(info, scope, reader, ThrowExceptionOnErrorReporter, /* insideFunction= */ false)
         }
         catch (e: Exception) {
             throw RuntimeException(e)

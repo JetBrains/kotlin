@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.js.translate.reference;
 
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.common.SourceInfoImpl;
-import com.google.gwt.dev.js.JsParser;
+import com.google.gwt.dev.js.JsAstMapper;
 import com.google.gwt.dev.js.ThrowExceptionOnErrorReporter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -144,7 +144,7 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
             SourceInfoImpl info = new SourceInfoImpl(null, 0, 0, 0, 0);
             JsScope scope = context().scope();
             StringReader reader = new StringReader(jsCode);
-            statements.addAll(JsParser.parse(info, scope, reader, ThrowExceptionOnErrorReporter.INSTANCE$, /* insideFunction= */ true));
+            statements.addAll(JsAstMapper.parse(info, scope, reader, ThrowExceptionOnErrorReporter.INSTANCE$, /* insideFunction= */ true));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
