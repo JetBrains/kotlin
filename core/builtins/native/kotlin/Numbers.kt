@@ -96,6 +96,73 @@ public class Byte private () : Number, Comparable<Byte> {
 }
 
 /**
+ * Represents a 16-bit Unicode character.
+ * On the JVM, non-nullable values of this type are represented as values of the primitive type `char`.
+ */
+public class Char private () : Comparable<Char> {
+    class object {}
+
+    public fun compareTo(other: Byte): Int
+    public override fun compareTo(other: Char): Int
+    public fun compareTo(other: Short): Int
+    public fun compareTo(other: Int): Int
+    public fun compareTo(other: Long): Int
+    public fun compareTo(other: Float): Int
+    public fun compareTo(other: Double): Int
+
+    public fun plus(other: Byte): Int
+    public fun plus(other: Short): Int
+    public fun plus(other: Int): Int
+    public fun plus(other: Long): Long
+    public fun plus(other: Float): Float
+    public fun plus(other: Double): Double
+
+    public fun minus(other: Byte): Int
+    public fun minus(other: Char): Int
+    public fun minus(other: Short): Int
+    public fun minus(other: Int): Int
+    public fun minus(other: Long): Long
+    public fun minus(other: Float): Float
+    public fun minus(other: Double): Double
+
+    public fun times(other: Byte): Int
+    public fun times(other: Short): Int
+    public fun times(other: Int): Int
+    public fun times(other: Long): Long
+    public fun times(other: Float): Float
+    public fun times(other: Double): Double
+
+    public fun div(other: Byte): Int
+    public fun div(other: Short): Int
+    public fun div(other: Int): Int
+    public fun div(other: Long): Long
+    public fun div(other: Float): Float
+    public fun div(other: Double): Double
+
+    public fun mod(other: Byte): Int
+    public fun mod(other: Short): Int
+    public fun mod(other: Int): Int
+    public fun mod(other: Long): Long
+    public fun mod(other: Float): Float
+    public fun mod(other: Double): Double
+
+    public fun inc(): Char
+    public fun dec(): Char
+    public fun plus(): Int
+    public fun minus(): Int
+
+    public fun rangeTo(other: Char): CharRange
+
+    public override fun toByte(): Byte
+    public override fun toChar(): Char
+    public override fun toShort(): Short
+    public override fun toInt(): Int
+    public override fun toLong(): Long
+    public override fun toFloat(): Float
+    public override fun toDouble(): Double
+}
+
+/**
  * Represents a 16-bit signed integer.
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `short`.
  */
