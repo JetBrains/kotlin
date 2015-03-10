@@ -45,7 +45,8 @@ class AndroidXmlVisitor(
             val attributeValue = attribute.getValue()
             if (attributeValue != null) {
                 val classNameAttr = tag?.getAttribute(AndroidConst.CLASS_ATTRIBUTE_NO_NAMESPACE)?.getValue() ?: tag?.getLocalName()
-                elementCallback(idToName(attributeValue), classNameAttr!!, attribute)
+                val name = idToName(attributeValue)
+                if (name != null) elementCallback(name, classNameAttr!!, attribute)
             }
         }
         tag?.acceptChildren(this)

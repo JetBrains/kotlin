@@ -129,7 +129,9 @@ public class AndroidRenameProcessor : RenamePsiElementProcessor() {
         if (element == null) return
         val oldPropName = AndroidResourceUtil.getResourceNameByReferenceText(attribute.getValue())
         val newPropName = idToName(newName)
-        renameSyntheticProperties(allRenames, newPropName, oldPropName, processor)
+        if (oldPropName != null && newPropName != null) {
+            renameSyntheticProperties(allRenames, newPropName, oldPropName, processor)
+        }
     }
 
     private fun renameSyntheticProperties(

@@ -59,4 +59,10 @@ public class AndroidFindUsagesTestGenerated extends AbstractAndroidFindUsagesTes
         String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/findUsages/simple/");
         doTest(fileName);
     }
+
+    @TestMetadata("wrongIdFormat")
+    public void testWrongIdFormat() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/findUsages/wrongIdFormat/");
+        doTest(fileName);
+    }
 }
