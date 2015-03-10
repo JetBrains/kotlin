@@ -192,7 +192,7 @@ fun elements(): List<GenericFunction> {
             throw IndexOutOfBoundsException("Collection doesn't contain element at index")
             """
         }
-        body(Streams) {
+        body(Sequences) {
             """
             val iterator = iterator()
             var count = 0
@@ -331,7 +331,7 @@ fun elements(): List<GenericFunction> {
             }
             """
         }
-        body(Streams) {
+        body(Sequences) {
             """
             val iterator = iterator()
             if (!iterator.hasNext())
@@ -371,7 +371,7 @@ fun elements(): List<GenericFunction> {
             }
             """
         }
-        body(Streams) {
+        body(Sequences) {
             """
             val iterator = iterator()
             if (!iterator.hasNext())

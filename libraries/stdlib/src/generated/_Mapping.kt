@@ -94,7 +94,16 @@ public inline fun <R> String.flatMap(transform: (Char) -> Iterable<R>): List<R> 
 }
 
 /**
- * Returns a single stream of all elements streamed from results of *transform* function being invoked on each element of original stream
+ * Returns a single sequence of all elements from results of *transform* function being invoked on each element of original sequence
+ */
+public fun <T, R> Sequence<T>.flatMap(transform: (T) -> Sequence<R>): Sequence<R> {
+    return FlatteningSequence(this, transform)
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
+/**
+ * Returns a single stream of all elements from results of *transform* function being invoked on each element of original stream
  */
 public fun <T, R> Stream<T>.flatMap(transform: (T) -> Stream<R>): Stream<R> {
     return FlatteningStream(this, transform)
@@ -233,6 +242,19 @@ public inline fun <R, C : MutableCollection<in R>> String.flatMapTo(destination:
 }
 
 /**
+ * Appends all elements yielded from results of *transform* function being invoked on each element of original sequence, to the given *destination*
+ */
+public inline fun <T, R, C : MutableCollection<in R>> Sequence<T>.flatMapTo(destination: C, transform: (T) -> Sequence<R>): C {
+    for (element in this) {
+        val list = transform(element)
+        destination.addAll(list)
+    }
+    return destination
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
+/**
  * Appends all elements yielded from results of *transform* function being invoked on each element of original stream, to the given *destination*
  */
 public inline fun <T, R, C : MutableCollection<in R>> Stream<T>.flatMapTo(destination: C, transform: (T) -> Stream<R>): C {
@@ -313,6 +335,15 @@ public inline fun <T, K> Iterable<T>.groupBy(toKey: (T) -> K): Map<K, List<T>> {
     return groupByTo(LinkedHashMap<K, MutableList<T>>(), toKey)
 }
 
+/**
+ * Returns a map of the elements in original collection grouped by the result of given *toKey* function
+ */
+public inline fun <T, K> Sequence<T>.groupBy(toKey: (T) -> K): Map<K, List<T>> {
+    return groupByTo(LinkedHashMap<K, MutableList<T>>(), toKey)
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
 /**
  * Returns a map of the elements in original collection grouped by the result of given *toKey* function
  */
@@ -450,6 +481,20 @@ public inline fun <T, K> Iterable<T>.groupByTo(map: MutableMap<K, MutableList<T>
 /**
  * Appends elements from original collection grouped by the result of given *toKey* function to the given *map*
  */
+public inline fun <T, K> Sequence<T>.groupByTo(map: MutableMap<K, MutableList<T>>, toKey: (T) -> K): Map<K, MutableList<T>> {
+    for (element in this) {
+        val key = toKey(element)
+        val list = map.getOrPut(key) { ArrayList<T>() }
+        list.add(element)
+    }
+    return map
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
+/**
+ * Appends elements from original collection grouped by the result of given *toKey* function to the given *map*
+ */
 public inline fun <T, K> Stream<T>.groupByTo(map: MutableMap<K, MutableList<T>>, toKey: (T) -> K): Map<K, MutableList<T>> {
     for (element in this) {
         val key = toKey(element)
@@ -549,6 +594,15 @@ public inline fun <K, V, R> Map<K, V>.map(transform: (Map.Entry<K, V>) -> R): Li
 }
 
 /**
+ * Returns a sequence containing the results of applying the given *transform* function to each element of the original sequence
+ */
+public fun <T, R> Sequence<T>.map(transform: (T) -> R): Sequence<R> {
+    return TransformingSequence(this, transform)
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
+/**
  * Returns a stream containing the results of applying the given *transform* function to each element of the original stream
  */
 public fun <T, R> Stream<T>.map(transform: (T) -> R): Stream<R> {
@@ -632,6 +686,15 @@ public inline fun <T, R> Iterable<T>.mapIndexed(transform: (Int, T) -> R): List<
     return mapIndexedTo(ArrayList<R>(collectionSizeOrDefault(10)), transform)
 }
 
+/**
+ * Returns a sequence containing the results of applying the given *transform* function to each element and its index of the original sequence
+ */
+public fun <T, R> Sequence<T>.mapIndexed(transform: (Int, T) -> R): Sequence<R> {
+    return TransformingIndexedSequence(this, transform)
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
 /**
  * Returns a stream containing the results of applying the given *transform* function to each element and its index of the original stream
  */
@@ -771,6 +834,19 @@ public inline fun <K, V, R, C : MutableCollection<in R>> Map<K, V>.mapIndexedTo(
  * Appends transformed elements and their indices of the original collection using the given *transform* function
  * to the given *destination*
  */
+public inline fun <T, R, C : MutableCollection<in R>> Sequence<T>.mapIndexedTo(destination: C, transform: (Int, T) -> R): C {
+    var index = 0
+    for (item in this)
+        destination.add(transform(index++, item))
+    return destination
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
+/**
+ * Appends transformed elements and their indices of the original collection using the given *transform* function
+ * to the given *destination*
+ */
 public inline fun <T, R, C : MutableCollection<in R>> Stream<T>.mapIndexedTo(destination: C, transform: (Int, T) -> R): C {
     var index = 0
     for (item in this)
@@ -804,6 +880,15 @@ public inline fun <T : Any, R> Iterable<T?>.mapNotNull(transform: (T) -> R): Lis
 }
 
 /**
+ * Returns a sequence containing the results of applying the given *transform* function to each non-null element of the original sequence
+ */
+public fun <T : Any, R> Sequence<T?>.mapNotNull(transform: (T) -> R): Sequence<R> {
+    return TransformingSequence(FilteringSequence(this, false, { it == null }) as Sequence<T>, transform)
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
+/**
  * Returns a stream containing the results of applying the given *transform* function to each non-null element of the original stream
  */
 public fun <T : Any, R> Stream<T?>.mapNotNull(transform: (T) -> R): Stream<R> {
@@ -836,6 +921,21 @@ public inline fun <T : Any, R, C : MutableCollection<in R>> Iterable<T?>.mapNotN
     return destination
 }
 
+/**
+ * Appends transformed non-null elements of original collection using the given *transform* function
+ * to the given *destination*
+ */
+public inline fun <T : Any, R, C : MutableCollection<in R>> Sequence<T?>.mapNotNullTo(destination: C, transform: (T) -> R): C {
+    for (element in this) {
+        if (element != null) {
+            destination.add(transform(element))
+        }
+    }
+    return destination
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
 /**
  * Appends transformed non-null elements of original collection using the given *transform* function
  * to the given *destination*
@@ -963,6 +1063,18 @@ public inline fun <K, V, R, C : MutableCollection<in R>> Map<K, V>.mapTo(destina
  * Appends transformed elements of the original collection using the given *transform* function
  * to the given *destination*
  */
+public inline fun <T, R, C : MutableCollection<in R>> Sequence<T>.mapTo(destination: C, transform: (T) -> R): C {
+    for (item in this)
+        destination.add(transform(item))
+    return destination
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
+/**
+ * Appends transformed elements of the original collection using the given *transform* function
+ * to the given *destination*
+ */
 public inline fun <T, R, C : MutableCollection<in R>> Stream<T>.mapTo(destination: C, transform: (T) -> R): C {
     for (item in this)
         destination.add(transform(item))
@@ -1049,6 +1161,15 @@ public fun <T> Iterable<T>.withIndex(): Iterable<IndexedValue<T>> {
     return IndexingIterable { iterator() }
 }
 
+/**
+ * Returns a sequence of [IndexedValue] for each element of the original sequence
+ */
+public fun <T> Sequence<T>.withIndex(): Sequence<IndexedValue<T>> {
+    return IndexingSequence(this)
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
 /**
  * Returns a stream of [IndexedValue] for each element of the original stream
  */
@@ -1153,6 +1274,17 @@ public fun <T> Iterable<T>.withIndices(): List<Pair<Int, T>> {
     return mapTo(ArrayList<Pair<Int, T>>(), { index++ to it })
 }
 
+/**
+ * Returns a sequence containing pairs of each element of the original collection and their index
+ */
+deprecated("Use withIndex() instead.")
+public fun <T> Sequence<T>.withIndices(): Sequence<Pair<Int, T>> {
+    var index = 0
+    return TransformingSequence(this, { index++ to it })
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
 /**
  * Returns a stream containing pairs of each element of the original collection and their index
  */

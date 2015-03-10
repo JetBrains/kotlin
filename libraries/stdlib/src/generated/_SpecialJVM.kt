@@ -468,6 +468,15 @@ public inline fun <reified R> Iterable<*>.filterIsInstance(): List<R> {
 }
 
 /**
+ * Returns a sequence containing all elements that are instances of specified type parameter R
+ */
+public inline fun <reified R> Sequence<*>.filterIsInstance(): Sequence<R> {
+    return FilteringSequence(this, true, { it is R }) as Sequence<R>
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
+/**
  * Returns a stream containing all elements that are instances of specified type parameter R
  */
 public inline fun <reified R> Stream<*>.filterIsInstance(): Stream<R> {
@@ -488,6 +497,15 @@ public fun <R> Iterable<*>.filterIsInstance(klass: Class<R>): List<R> {
     return filterIsInstanceTo(ArrayList<R>(), klass)
 }
 
+/**
+ * Returns a sequence containing all elements that are instances of specified class
+ */
+public fun <R> Sequence<*>.filterIsInstance(klass: Class<R>): Sequence<R> {
+    return FilteringSequence(this, true, { klass.isInstance(it) }) as Sequence<R>
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
 /**
  * Returns a stream containing all elements that are instances of specified class
  */
@@ -514,6 +532,16 @@ public inline fun <reified R, C : MutableCollection<in R>> Iterable<*>.filterIsI
 /**
  * Appends all elements that are instances of specified type parameter R to the given *destination*
  */
+public inline fun <reified R, C : MutableCollection<in R>> Sequence<*>.filterIsInstanceTo(destination: C): C {
+    for (element in this) if (element is R) destination.add(element)
+    return destination
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
+/**
+ * Appends all elements that are instances of specified type parameter R to the given *destination*
+ */
 public inline fun <reified R, C : MutableCollection<in R>> Stream<*>.filterIsInstanceTo(destination: C): C {
     for (element in this) if (element is R) destination.add(element)
     return destination
@@ -535,6 +563,16 @@ public fun <C : MutableCollection<in R>, R> Iterable<*>.filterIsInstanceTo(desti
     return destination
 }
 
+/**
+ * Appends all elements that are instances of specified class to the given *destination*
+ */
+public fun <C : MutableCollection<in R>, R> Sequence<*>.filterIsInstanceTo(destination: C, klass: Class<R>): C {
+    for (element in this) if (klass.isInstance(element)) destination.add(element as R)
+    return destination
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
 /**
  * Appends all elements that are instances of specified class to the given *destination*
  */

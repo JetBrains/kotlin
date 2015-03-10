@@ -6,7 +6,7 @@ fun sets(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
 
     templates add f("toMutableSet()") {
-        exclude(Strings, Streams)
+        exclude(Strings, Sequences)
         doc { "Returns a mutable set containing all distinct elements from the given collection." }
         returns("MutableSet<T>")
         body {
@@ -27,7 +27,7 @@ fun sets(): List<GenericFunction> {
     }
 
     templates add f("distinct()") {
-        exclude(Strings, Streams)
+        exclude(Strings, Sequences)
         doc { "Returns a set containing all distinct elements from the given collection." }
 
         returns("Set<T>")
@@ -39,7 +39,7 @@ fun sets(): List<GenericFunction> {
     }
 
     templates add f("union(other: Iterable<T>)") {
-        exclude(Strings, Streams)
+        exclude(Strings, Sequences)
         doc { "Returns a set containing all distinct elements from both collections." }
         returns("Set<T>")
         body {
@@ -52,7 +52,7 @@ fun sets(): List<GenericFunction> {
     }
 
     templates add f("intersect(other: Iterable<T>)") {
-        exclude(Strings, Streams)
+        exclude(Strings, Sequences)
         doc { "Returns a set containing all distinct elements from both collections." }
         returns("Set<T>")
         body {
@@ -65,7 +65,7 @@ fun sets(): List<GenericFunction> {
     }
 
     templates add f("subtract(other: Iterable<T>)") {
-        exclude(Strings, Streams)
+        exclude(Strings, Sequences)
         doc { "Returns a set containing all distinct elements from both collections." }
         returns("Set<T>")
         body {

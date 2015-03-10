@@ -17,17 +17,17 @@ fun generators(): List<GenericFunction> {
             """
         }
 
-        doc(Streams) { "Returns a stream containing all elements of original stream and then the given element" }
-        returns(Streams) { "Stream<T>" }
-        body(Streams) {
+        doc(Sequences) { "Returns a sequence containing all elements of original sequence and then the given element" }
+        returns(Sequences) { "Sequence<T>" }
+        body(Sequences) {
             """
-            return Multistream(streamOf(this, streamOf(element)))
+            return MultiSequence(sequenceOf(this, sequenceOf(element)))
             """
         }
     }
 
     templates add f("plus(collection: Iterable<T>)") {
-        exclude(Strings, Streams)
+        exclude(Strings, Sequences)
         doc { "Returns a list containing all elements of original collection and then all elements of the given *collection*" }
         returns("List<T>")
         body {
@@ -40,7 +40,7 @@ fun generators(): List<GenericFunction> {
     }
 
     templates add f("plus(array: Array<out T>)") {
-        exclude(Strings, Streams)
+        exclude(Strings, Sequences)
         doc { "Returns a list containing all elements of original collection and then all elements of the given *collection*" }
         returns("List<T>")
         body {
@@ -53,23 +53,23 @@ fun generators(): List<GenericFunction> {
     }
 
     templates add f("plus(collection: Iterable<T>)") {
-        only(Streams)
-        doc { "Returns a stream containing all elements of original stream and then all elements of the given *collection*" }
-        returns("Stream<T>")
+        only(Sequences)
+        doc { "Returns a sequence containing all elements of original sequence and then all elements of the given [collection]" }
+        returns("Sequence<T>")
         body {
             """
-            return Multistream(streamOf(this, collection.stream()))
+            return MultiSequence(sequenceOf(this, collection.sequence()))
             """
         }
     }
 
-    templates add f("plus(stream: Stream<T>)") {
-        only(Streams)
-        doc { "Returns a stream containing all elements of original stream and then all elements of the given *stream*" }
-        returns("Stream<T>")
+    templates add f("plus(sequence: Sequence<T>)") {
+        only(Sequences)
+        doc { "Returns a sequence containing all elements of original sequence and then all elements of the given [sequence]" }
+        returns("Sequence<T>")
         body {
             """
-            return Multistream(streamOf(this, stream))
+            return MultiSequence(sequenceOf(this, sequence))
             """
         }
     }
@@ -84,7 +84,7 @@ fun generators(): List<GenericFunction> {
             while *second* collection contains elements for which predicate yielded *false*
             """
         }
-        // TODO: Stream variant
+        // TODO: Sequence variant
         returns("Pair<List<T>, List<T>>")
         body {
             """
@@ -119,7 +119,7 @@ fun generators(): List<GenericFunction> {
     }
 
     templates add f("merge(other: Iterable<R>, transform: (T, R) -> V)") {
-        exclude(Streams, Strings)
+        exclude(Sequences, Strings)
         doc {
             """
             Returns a list of values built from elements of both collections with same indexes using provided *transform*. List has length of shortest collection.
@@ -154,7 +154,7 @@ fun generators(): List<GenericFunction> {
     }
 
     templates add f("merge(array: Array<out R>, transform: (T, R) -> V)") {
-        exclude(Streams, Strings)
+        exclude(Sequences, Strings)
         doc {
             """
             Returns a list of values built from elements of both collections with same indexes using provided *transform*. List has length of shortest collection.
@@ -190,26 +190,26 @@ fun generators(): List<GenericFunction> {
     }
 
 
-    templates add f("merge(stream: Stream<R>, transform: (T, R) -> V)") {
-        only(Streams)
+    templates add f("merge(sequence: Sequence<R>, transform: (T, R) -> V)") {
+        only(Sequences)
         doc {
             """
-            Returns a stream of values built from elements of both collections with same indexes using provided *transform*. Stream has length of shortest stream.
+            Returns a sequence of values built from elements of both collections with same indexes using provided *transform*. Resulting sequence has length of shortest input sequences.
             """
         }
         typeParam("R")
         typeParam("V")
-        returns("Stream<V>")
+        returns("Sequence<V>")
         body {
             """
-            return MergingStream(this, stream, transform)
+            return MergingSequence(this, sequence, transform)
             """
         }
     }
 
 
     templates add f("zip(other: Iterable<R>)") {
-        exclude(Streams, Strings)
+        exclude(Sequences, Strings)
         doc {
             """
             Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
@@ -246,7 +246,7 @@ fun generators(): List<GenericFunction> {
     }
 
     templates add f("zip(array: Array<out R>)") {
-        exclude(Streams, Strings)
+        exclude(Sequences, Strings)
         doc {
             """
             Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
@@ -261,18 +261,19 @@ fun generators(): List<GenericFunction> {
         }
     }
 
-    templates add f("zip(stream: Stream<R>)") {
-        only(Streams)
+    templates add f("zip(sequence: Sequence<R>)") {
+        only(Sequences)
         doc {
             """
-            Returns a stream of pairs built from elements of both collections with same indexes. Stream has length of shortest stream.
+            Returns a sequence of pairs built from elements of both collections with same indexes.
+            Resulting sequence has length of shortest input sequences.
             """
         }
         typeParam("R")
-        returns("Stream<Pair<T, R>>")
+        returns("Sequence<Pair<T, R>>")
         body {
             """
-            return MergingStream(this, stream) { (t1, t2) -> t1 to t2 }
+            return MergingSequence(this, sequence) { (t1, t2) -> t1 to t2 }
             """
         }
     }
