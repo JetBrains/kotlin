@@ -51,6 +51,7 @@ import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.openapi.util.*
 import com.intellij.openapi.vfs.impl.*
 import com.intellij.openapi.vfs.*
+import org.jetbrains.kotlin.resolve.SimpleModificationTracker
 import kotlin.properties.*
 
 public abstract class AndroidUIXmlProcessor(protected val project: Project) {
