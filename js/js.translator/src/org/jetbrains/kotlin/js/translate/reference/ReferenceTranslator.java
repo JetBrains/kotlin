@@ -53,7 +53,7 @@ public final class ReferenceTranslator {
     ) {
         JsExpression simpleName = translateSimpleName(expression, context);
 
-        // Ignore qualifier if expression is EnumEntry or default object reference and use always use FQ name.
+        // Ignore qualifier if expression is EnumEntry or default object reference and always use FQ name.
         DeclarationDescriptor descriptor = BindingUtils.getDescriptorForReferenceExpression(context.bindingContext(), expression);
         //TODO: should go away when objects inside classes are supported
         if (DescriptorUtils.isDefaultObject(descriptor) && !AnnotationsUtils.isNativeObject(descriptor)) {
@@ -61,7 +61,7 @@ public final class ReferenceTranslator {
         }
         if (descriptor instanceof ClassDescriptor) {
             ClassDescriptor entryClass = (ClassDescriptor) descriptor;
-            if (entryClass.getKind() == ClassKind.ENUM_ENTRY) {
+            if (entryClass.getKind() == ClassKind.ENUM_ENTRY && !AnnotationsUtils.isNativeObject(entryClass)) {
                 DeclarationDescriptor enumClass = entryClass.getContainingDeclaration();
                 qualifier = Namer.getDefaultObjectAccessor(translateAsFQReference(enumClass, context));
             }
