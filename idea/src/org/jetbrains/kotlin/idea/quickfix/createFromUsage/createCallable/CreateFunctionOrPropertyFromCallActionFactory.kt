@@ -96,7 +96,7 @@ object CreateFunctionOrPropertyFromCallActionFactory : JetIntentionActionsFactor
                             it.getArgumentName()?.getReferenceExpression()?.getReferencedName()
                     )
                 }
-                val typeParameters = callExpr.getTypeArguments().map { TypeInfo(it.getTypeReference(), Variance.INVARIANT) }
+                val typeParameters = callExpr.getTypeInfoForTypeArguments()
                 val returnType = TypeInfo(fullCallExpr, Variance.OUT_VARIANCE)
                 FunctionInfo(calleeExpr.getReferencedName(), receiverType, returnType, possibleContainers, parameters, typeParameters)
             }

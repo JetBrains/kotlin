@@ -231,3 +231,7 @@ private fun JetType.substitute(substitution: JetTypeSubstitution, variance: Vari
 }
 
 fun JetExpression.getExpressionForTypeGuess() = getAssignmentByLHS()?.getRight() ?: this
+
+fun JetCallElement.getTypeInfoForTypeArguments(): List<TypeInfo> {
+    return getTypeArguments().map { it.getTypeReference()?.let { TypeInfo(it, Variance.INVARIANT) } }.filterNotNull()
+}

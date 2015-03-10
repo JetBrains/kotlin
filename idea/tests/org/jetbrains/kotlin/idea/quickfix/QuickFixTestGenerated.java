@@ -958,6 +958,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createClass/callExpression/typeArguments"), Pattern.compile("^before(\\w+)\\.kt$"), true);
                     }
 
+                    @TestMetadata("beforeCallWithStarProjection.kt")
+                    public void testCallWithStarProjection() throws Exception {
+                        String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/callExpression/typeArguments/beforeCallWithStarProjection.kt");
+                        doTest(fileName);
+                    }
+
                     @TestMetadata("beforeClassMember.kt")
                     public void testClassMember() throws Exception {
                         String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/callExpression/typeArguments/beforeClassMember.kt");
@@ -1382,6 +1388,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 @TestMetadata("beforeClassNotQualifierNoTypeArgs.kt")
                 public void testClassNotQualifierNoTypeArgs() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/typeReference/beforeClassNotQualifierNoTypeArgs.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("beforeClassNotQualifierWithStarProjection.kt")
+                public void testClassNotQualifierWithStarProjection() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/typeReference/beforeClassNotQualifierWithStarProjection.kt");
                     doTest(fileName);
                 }
 
@@ -1842,6 +1854,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 public static class TypeArguments extends AbstractQuickFixTest {
                     public void testAllFilesPresentInTypeArguments() throws Exception {
                         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createFunction/call/typeArguments"), Pattern.compile("^before(\\w+)\\.kt$"), true);
+                    }
+
+                    @TestMetadata("beforeCallWithStarProjection.kt")
+                    public void testCallWithStarProjection() throws Exception {
+                        String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/typeArguments/beforeCallWithStarProjection.kt");
+                        doTest(fileName);
                     }
 
                     @TestMetadata("beforeClassMember.kt")
