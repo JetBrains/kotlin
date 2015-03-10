@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.actions.internal
 import com.intellij.ide.util.PropertiesComponent
 
 public class KotlinInternalMode {
-    public class object Instance {
+    public default object Instance {
         val INTERNAL_MODE_PROPERTY = "kotlin.internal.mode.enabled"
 
         public var enabled: Boolean

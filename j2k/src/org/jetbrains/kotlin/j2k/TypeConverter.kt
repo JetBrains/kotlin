@@ -410,7 +410,7 @@ class TypeConverter(val converter: Converter) {
         }
     }
 
-    class object {
+    default object {
         private val boxingTypes: Set<String> = setOf(
                 CommonClassNames.JAVA_LANG_BYTE,
                 CommonClassNames.JAVA_LANG_CHARACTER,

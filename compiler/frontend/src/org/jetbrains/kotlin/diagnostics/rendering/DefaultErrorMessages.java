@@ -272,6 +272,9 @@ public class DefaultErrorMessages {
 
         MAP.put(MANY_DEFAULT_OBJECTS, "Only one default object is allowed per class");
         MAP.put(DEFAULT_OBJECT_NOT_ALLOWED, "A default object is not allowed here");
+
+        MAP.put(DEPRECATED_CLASS_OBJECT_SYNTAX, "'class object' syntax for default objects was deprecated. Use 'default' modifier instead");
+
         MAP.put(LOCAL_OBJECT_NOT_ALLOWED, "Named object ''{0}'' is a singleton and cannot be local. Try to use anonymous object instead", NAME);
         MAP.put(LOCAL_ENUM_NOT_ALLOWED, "Enum class ''{0}'' cannot be local", NAME);
         MAP.put(DELEGATION_IN_TRAIT, "Traits cannot use delegation");

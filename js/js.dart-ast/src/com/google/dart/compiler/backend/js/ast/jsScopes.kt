@@ -80,7 +80,7 @@ public class JsFunctionScope(parent: JsScope, description: String) : JsScope(par
                 || getParent()?.hasOwnName(name) ?: false
     }
 
-    class object {
+    default object {
         public val RESERVED_WORDS: Set<String> = setOf(
                 // keywords
                 "await", "break", "case", "catch", "continue", "debugger", "default", "delete", "do", "else", "finally", "for", "function", "if",

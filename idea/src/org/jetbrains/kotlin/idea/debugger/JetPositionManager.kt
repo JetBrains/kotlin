@@ -218,7 +218,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Posi
         myTypeMappers.put(key, value)
     }
 
-    class object {
+    default object {
         public fun createTypeMapper(file: JetFile, moduleInfo: IdeaModuleInfo): JetTypeMapper {
             val project = file.getProject()
             val packageFacadeScope = moduleInfo.contentScope()

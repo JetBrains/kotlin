@@ -28,7 +28,7 @@ public enum class PredefinedAnnotation(fqName: String) {
 
     public val fqName: FqName = FqName(fqName)
 
-    class object {
+    default object {
         // TODO: replace with straight assignment when KT-5761 will be fixed
         val WITH_CUSTOM_NAME by Delegates.lazy { setOf(LIBRARY, NATIVE) }
     }

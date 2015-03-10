@@ -32,7 +32,7 @@ import com.intellij.openapi.util.SimpleModificationTracker
 import kotlin.platform.platformStatic
 
 class ModuleTypeCacheManager private (project: Project) {
-    class object {
+    default object {
         platformStatic fun getInstance(project: Project) = ServiceManager.getService(project, javaClass<ModuleTypeCacheManager>())
     }
 

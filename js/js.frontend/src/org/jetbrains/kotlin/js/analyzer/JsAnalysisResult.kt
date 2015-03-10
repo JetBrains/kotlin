@@ -28,7 +28,7 @@ public class JsAnalysisResult(
         moduleDescriptor: ModuleDescriptor
 ) : AnalysisResult(bindingTrace.getBindingContext(), moduleDescriptor) {
 
-    class object {
+    default object {
         platformStatic public fun success(trace: BindingTrace, module: ModuleDescriptor): JsAnalysisResult {
             return JsAnalysisResult(trace, module)
         }

@@ -147,7 +147,7 @@ public abstract class JetCodeFragment(
         }
     }
 
-    class object {
+    default object {
         public val IMPORT_SEPARATOR: String = ","
         public val RUNTIME_TYPE_EVALUATOR: Key<Function1<JetExpression, JetType?>> = Key.create("RUNTIME_TYPE_EVALUATOR")
     }

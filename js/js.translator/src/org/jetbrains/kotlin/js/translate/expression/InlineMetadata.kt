@@ -31,7 +31,7 @@ public class InlineMetadata(
         val function: JsFunction,
         val endTag: JsStringLiteral
 ) {
-    class object {
+    default object {
         platformStatic
         fun compose(function: JsFunction, descriptor: CallableDescriptor): InlineMetadata {
             val program = function.getScope().getProgram()

@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.name.Name
 // The purpose of this class is to hold a unique signature of either a method or a field, so that annotations on a member can be put
 // into a map indexed by these signatures
 data class MemberSignature private(private val signature: String) {
-    class object {
+    default object {
         platformStatic public fun fromMethodNameAndDesc(nameAndDesc: String): MemberSignature {
             return MemberSignature(nameAndDesc)
         }

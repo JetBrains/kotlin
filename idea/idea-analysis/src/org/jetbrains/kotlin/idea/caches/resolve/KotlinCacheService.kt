@@ -45,7 +45,7 @@ import kotlin.platform.platformStatic
 private val LOG = Logger.getInstance(javaClass<KotlinCacheService>())
 
 public class KotlinCacheService(val project: Project) {
-    class object {
+    default object {
         platformStatic public fun getInstance(project: Project): KotlinCacheService = ServiceManager.getService(project, javaClass<KotlinCacheService>())!!
     }
 

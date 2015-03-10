@@ -31,7 +31,7 @@ import com.intellij.codeInsight.ExternalAnnotationsListener
 import com.intellij.psi.PsiModifierListOwner
 
 class LibraryModificationTracker(project: Project) : SimpleModificationTracker() {
-    class object {
+    default object {
         platformStatic fun getInstance(project: Project) = ServiceManager.getService(project, javaClass<LibraryModificationTracker>())!!
     }
 

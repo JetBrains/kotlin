@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.utils.PathUtil
  * with a "newer" version in sources, and check that this class resolves to the one from sources by calling a method absent in the runtime
  */
 public class ClasspathOrderTest : TestCaseWithTmpdir() {
-    class object {
+    default object {
         val sourceDir = File(JetTestUtils.getTestDataPathBase() + "/classpathOrder").getAbsoluteFile()
     }
 

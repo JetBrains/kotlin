@@ -38,7 +38,7 @@ public class ByteRange(override val start: Byte, override val end: Byte) : Range
     override fun hashCode(): Int =
         if (isEmpty()) -1 else (31 * start.toInt() + end)
 
-    class object {
+    default object {
         /** An empty range of values of type Byte. */
         public val EMPTY: ByteRange = ByteRange(1, 0)
     }
@@ -64,7 +64,7 @@ public class CharRange(override val start: Char, override val end: Char) : Range
     override fun hashCode(): Int =
         if (isEmpty()) -1 else (31 * start.toInt() + end)
 
-    class object {
+    default object {
         /** An empty range of values of type Char. */
         public val EMPTY: CharRange = CharRange(1.toChar(), 0.toChar())
     }
@@ -90,7 +90,7 @@ public class ShortRange(override val start: Short, override val end: Short) : Ra
     override fun hashCode(): Int =
         if (isEmpty()) -1 else (31 * start.toInt() + end)
 
-    class object {
+    default object {
         /** An empty range of values of type Short. */
         public val EMPTY: ShortRange = ShortRange(1, 0)
     }
@@ -116,7 +116,7 @@ public class IntRange(override val start: Int, override val end: Int) : Range<In
     override fun hashCode(): Int =
         if (isEmpty()) -1 else (31 * start + end)
 
-    class object {
+    default object {
         /** An empty range of values of type Int. */
         public val EMPTY: IntRange = IntRange(1, 0)
     }
@@ -142,7 +142,7 @@ public class LongRange(override val start: Long, override val end: Long) : Range
     override fun hashCode(): Int =
         if (isEmpty()) -1 else (31 * (start xor (start ushr 32)) + (end xor (end ushr 32))).toInt()
 
-    class object {
+    default object {
         /** An empty range of values of type Long. */
         public val EMPTY: LongRange = LongRange(1, 0)
     }
@@ -168,7 +168,7 @@ public class FloatRange(override val start: Float, override val end: Float) : Ra
     override fun hashCode(): Int =
         if (isEmpty()) -1 else (31 * java.lang.Float.floatToIntBits(start) + java.lang.Float.floatToIntBits(end))
 
-    class object {
+    default object {
         /** An empty range of values of type Float. */
         public val EMPTY: FloatRange = FloatRange(1.0f, 0.0f)
     }
@@ -199,7 +199,7 @@ public class DoubleRange(override val start: Double, override val end: Double) :
         return (31 * result + (temp xor (temp ushr 32))).toInt()
     }
 
-    class object {
+    default object {
         /** An empty range of values of type Double. */
         public val EMPTY: DoubleRange = DoubleRange(1.0, 0.0)
     }

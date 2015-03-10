@@ -70,7 +70,7 @@ import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.kotlin.jps.build.KotlinJpsCompilerArgumentsProvider
 
 public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
-    class object {
+    default object {
         public val KOTLIN_BUILDER_NAME: String = "Kotlin Builder"
 
         private val LOG = Logger.getInstance("#org.jetbrains.jps.cmdline.BuildSession")

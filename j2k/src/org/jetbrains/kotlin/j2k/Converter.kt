@@ -57,7 +57,7 @@ class Converter private(
 
     public val specialContext: PsiElement? = personalState.specialContext
 
-    class object {
+    default object {
         public fun create(elementToConvert: PsiElement, settings: ConverterSettings, conversionScope: ConversionScope,
                           referenceSearcher: ReferenceSearcher, resolverForConverter: ResolverForConverter, postProcessor: PostProcessor?,
                           usageProcessingsCollector: (UsageProcessing) -> Unit): Converter {

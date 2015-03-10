@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.JetStringTemplateEntryWithExpression
 public class RemoveCurlyBracesFromTemplateIntention : JetSelfTargetingIntention<JetBlockStringTemplateEntry>(
         "remove.unnecessary.curly.brackets.from.string.template", javaClass()) {
 
-    class object {
+    default object {
         val INSTANCE = RemoveCurlyBracesFromTemplateIntention()
         val pattern = Pattern.compile("[a-zA-Z0-9_].*")
     }

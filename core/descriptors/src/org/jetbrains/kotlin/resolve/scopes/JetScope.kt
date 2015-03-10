@@ -76,7 +76,7 @@ public trait JetScope {
         }
     }
 
-    class object {
+    default object {
         public val ALL_NAME_FILTER: (Name) -> Boolean = { true }
     }
 }
@@ -141,7 +141,7 @@ public class DescriptorKindFilter(
         }
     }
 
-    class object {
+    default object {
         public val NON_SINGLETON_CLASSIFIERS_MASK: Int = 0x01
         public val SINGLETON_CLASSIFIERS_MASK: Int = 0x02
         public val PACKAGES_MASK: Int = 0x04

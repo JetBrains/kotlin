@@ -1,15 +1,19 @@
 trait G
 
 class A {
-    class object A {
+    <!DEPRECATED_CLASS_OBJECT_SYNTAX!>class object A<!> {
 
     }
 }
 
 trait B {
-    class object : G {
+    <!DEPRECATED_CLASS_OBJECT_SYNTAX!>class object<!> : G {
 
     }
+}
+
+class C {
+    default <!DEPRECATED_CLASS_OBJECT_SYNTAX!>class object<!>
 }
 
 fun main() {

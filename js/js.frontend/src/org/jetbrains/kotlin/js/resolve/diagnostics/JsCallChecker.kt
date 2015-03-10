@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 
 public class JsCallChecker : CallChecker {
 
-    class object {
+    default object {
         private val JS_PATTERN: DescriptorPredicate = PatternBuilder.pattern("kotlin.js.js(String)")
 
         platformStatic

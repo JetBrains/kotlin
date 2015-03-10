@@ -47,7 +47,7 @@ public class JvmDeclarationOrigin(
         public val element: PsiElement?,
         public val descriptor: DeclarationDescriptor?
 ) {
-    class object {
+    default object {
         public val NO_ORIGIN: JvmDeclarationOrigin = JvmDeclarationOrigin(OTHER, null, null)
     }
 }

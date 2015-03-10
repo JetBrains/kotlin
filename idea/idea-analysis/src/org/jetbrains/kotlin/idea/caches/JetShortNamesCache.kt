@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.idea.stubindex.JetFunctionShortNameIndex
 
 // used in Upsource, what's why in idea-analysis module
 public class JetShortNamesCache(private val project: com.intellij.openapi.project.Project) : com.intellij.psi.search.PsiShortNamesCache() {
-    class object {
+    default object {
         public fun getKotlinInstance(project: com.intellij.openapi.project.Project): org.jetbrains.kotlin.idea.caches.JetShortNamesCache
                 = com.intellij.openapi.extensions.Extensions.getArea(project).getExtensionPoint<com.intellij.psi.search.PsiShortNamesCache>(com.intellij.psi.search.PsiShortNamesCache.EP_NAME).getExtensions()
                 .firstIsInstance<JetShortNamesCache>()

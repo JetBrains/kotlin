@@ -23,6 +23,7 @@ import com.intellij.lang.annotation.Annotation
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.editor.colors.CodeInsightColors
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.psi.MultiRangeReference
@@ -147,6 +148,9 @@ public open class JetPsiChecker : Annotator, HighlightRangeExtension {
                     }
                     for (textRange in textRanges) {
                         val annotation = holder.createWarningAnnotation(textRange, getDefaultMessage(diagnostic))
+
+                        if (factory == Errors.DEPRECATED_CLASS_OBJECT_SYNTAX) annotation.setTextAttributes(CodeInsightColors.DEPRECATED_ATTRIBUTES)
+
                         setUpAnnotation(diagnostic, annotation, if (factory in Errors.UNUSED_ELEMENT_DIAGNOSTICS)
                             ProblemHighlightType.LIKE_UNUSED_SYMBOL
                         else
@@ -218,7 +222,7 @@ public open class JetPsiChecker : Annotator, HighlightRangeExtension {
         }
     }
 
-    class object {
+    default object {
         var namesHighlightingEnabled = true
             [TestOnly] set
 

@@ -52,7 +52,7 @@ public class DeclarationDescriptorLookupObject(
         return descriptorsEqualWithSubstitution(descriptor, lookupObject.descriptor)
     }
 
-    class object {
+    default object {
         private val LOG = Logger.getInstance("#" + javaClass<DeclarationDescriptorLookupObject>().getName())
     }
 }

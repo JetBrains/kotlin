@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.lexer.JetTokens
 import com.intellij.codeInsight.editorActions.ExtendWordSelectionHandlerBase
 
 public class KotlinListSelectioner : ExtendWordSelectionHandlerBase() {
-    class object {
+    default object {
         fun canSelect(e: PsiElement)
             = e is JetParameterList || e is JetValueArgumentList || e is JetTypeParameterList || e is JetTypeArgumentList
     }

@@ -23,7 +23,7 @@ package kotlin
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `byte`.
  */
 public class Byte private () : Number, Comparable<Byte> {
-    class object {}
+    default object {}
 
     public override fun compareTo(other: Byte): Int
     public fun compareTo(other: Char): Int
@@ -100,7 +100,7 @@ public class Byte private () : Number, Comparable<Byte> {
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `short`.
  */
 public class Short private () : Number, Comparable<Short> {
-    class object {}
+    default object {}
 
     public fun compareTo(other: Byte): Int
     public fun compareTo(other: Char): Int
@@ -177,7 +177,7 @@ public class Short private () : Number, Comparable<Short> {
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `int`.
  */
 public class Int private () : Number, Comparable<Int> {
-    class object {}
+    default object {}
 
     public fun compareTo(other: Byte): Int
     public fun compareTo(other: Char): Int
@@ -262,7 +262,7 @@ public class Int private () : Number, Comparable<Int> {
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `long`.
  */
 public class Long private () : Number, Comparable<Long> {
-    class object {}
+    default object {}
 
     public fun compareTo(other: Byte): Int
     public fun compareTo(other: Char): Int
@@ -347,7 +347,7 @@ public class Long private () : Number, Comparable<Long> {
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `float`.
  */
 public class Float private () : Number, Comparable<Float> {
-    class object : FloatingPointConstants<Float> {}
+    default object : FloatingPointConstants<Float> {}
 
     public fun compareTo(other: Byte): Int
     public fun compareTo(other: Char): Int
@@ -424,7 +424,7 @@ public class Float private () : Number, Comparable<Float> {
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `double`.
  */
 public class Double private () : Number, Comparable<Double> {
-    class object : FloatingPointConstants<Double> {}
+    default object : FloatingPointConstants<Double> {}
 
     public fun compareTo(other: Byte): Int
     public fun compareTo(other: Char): Int

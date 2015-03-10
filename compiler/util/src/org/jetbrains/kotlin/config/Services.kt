@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.config
 import java.util.HashMap
 
 public class Services private(private val map: Map<Class<*>, Any>) {
-    class object {
+    default object {
         public val EMPTY: Services = Builder().build()
     }
 

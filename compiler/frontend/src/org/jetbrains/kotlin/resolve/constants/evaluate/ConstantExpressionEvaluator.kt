@@ -38,7 +38,7 @@ import kotlin.platform.platformStatic
 
 public class ConstantExpressionEvaluator private (val trace: BindingTrace) : JetVisitor<CompileTimeConstant<*>, JetType>() {
 
-    class object {
+    default object {
         platformStatic public fun evaluate(expression: JetExpression, trace: BindingTrace, expectedType: JetType? = TypeUtils.NO_EXPECTED_TYPE): CompileTimeConstant<*>? {
             val evaluator = ConstantExpressionEvaluator(trace)
             return evaluator.evaluate(expression, expectedType)

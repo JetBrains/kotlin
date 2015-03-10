@@ -34,7 +34,7 @@ public class KotlinDebuggerSettings : XDebuggerSettings<KotlinDebuggerSettings>(
     public var DEBUG_DISABLE_KOTLIN_INTERNAL_CLASSES: Boolean = true
     public var DEBUG_IS_FILTER_FOR_STDLIB_ALREADY_ADDED: Boolean = false
 
-    class object {
+    default object {
         public fun getInstance(): KotlinDebuggerSettings {
             return XDebuggerUtil.getInstance()?.getDebuggerSettings(javaClass<KotlinDebuggerSettings>())!!
         }
