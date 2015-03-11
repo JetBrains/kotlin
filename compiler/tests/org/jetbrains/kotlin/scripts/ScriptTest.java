@@ -91,7 +91,7 @@ public class ScriptTest {
 
             try {
                 JetScriptDefinitionProvider.getInstance(environment.getProject()).markFileAsScript(environment.getSourceFiles().get(0));
-                return KotlinToJVMBytecodeCompiler.compileScript(paths, environment);
+                return KotlinToJVMBytecodeCompiler.compileScript(configuration, paths, environment);
             }
             catch (CompilationException e) {
                 messageCollector.report(CompilerMessageSeverity.EXCEPTION, OutputMessageUtil.renderException(e),
