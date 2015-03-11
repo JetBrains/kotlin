@@ -9,88 +9,88 @@ import java.io.BufferedReader
  */
 public val defaultBufferSize: Int = 64 * 1024
 
-/** Prints the given message to [System.out] */
+/** Prints the given message to the standard output stream. */
 public fun print(message: Any?) {
     System.out.print(message)
 }
-/** Prints the given message to [System.out] */
+/** Prints the given message to the standard output stream. */
 public fun print(message: Int) {
     System.out.print(message)
 }
-/** Prints the given message to [System.out] */
+/** Prints the given message to the standard output stream. */
 public fun print(message: Long) {
     System.out.print(message)
 }
-/** Prints the given message to [System.out] */
+/** Prints the given message to the standard output stream. */
 public fun print(message: Byte) {
     System.out.print(message)
 }
-/** Prints the given message to [System.out] */
+/** Prints the given message to the standard output stream. */
 public fun print(message: Short) {
     System.out.print(message)
 }
-/** Prints the given message to [System.out] */
+/** Prints the given message to the standard output stream. */
 public fun print(message: Char) {
     System.out.print(message)
 }
-/** Prints the given message to [System.out] */
+/** Prints the given message to the standard output stream. */
 public fun print(message: Boolean) {
     System.out.print(message)
 }
-/** Prints the given message to [System.out] */
+/** Prints the given message to the standard output stream. */
 public fun print(message: Float) {
     System.out.print(message)
 }
-/** Prints the given message to [System.out] */
+/** Prints the given message to the standard output stream. */
 public fun print(message: Double) {
     System.out.print(message)
 }
-/** Prints the given message to [System.out] */
+/** Prints the given message to the standard output stream. */
 public fun print(message: CharArray) {
     System.out.print(message)
 }
 
-/** Prints the given message and newline to [System.out] */
+/** Prints the given message and newline to the standard output stream. */
 public fun println(message: Any?) {
     System.out.println(message)
 }
-/** Prints the given message and newline to [System.out] */
+/** Prints the given message and newline to the standard output stream. */
 public fun println(message: Int) {
     System.out.println(message)
 }
-/** Prints the given message and newline to [System.out] */
+/** Prints the given message and newline to the standard output stream. */
 public fun println(message: Long) {
     System.out.println(message)
 }
-/** Prints the given message and newline to [System.out] */
+/** Prints the given message and newline to the standard output stream. */
 public fun println(message: Byte) {
     System.out.println(message)
 }
-/** Prints the given message and newline to [System.out] */
+/** Prints the given message and newline to the standard output stream. */
 public fun println(message: Short) {
     System.out.println(message)
 }
-/** Prints the given message and newline to [System.out] */
+/** Prints the given message and newline to the standard output stream. */
 public fun println(message: Char) {
     System.out.println(message)
 }
-/** Prints the given message and newline to [System.out] */
+/** Prints the given message and newline to the standard output stream. */
 public fun println(message: Boolean) {
     System.out.println(message)
 }
-/** Prints the given message and newline to [System.out] */
+/** Prints the given message and newline to the standard output stream. */
 public fun println(message: Float) {
     System.out.println(message)
 }
-/** Prints the given message and newline to [System.out] */
+/** Prints the given message and newline to the standard output stream. */
 public fun println(message: Double) {
     System.out.println(message)
 }
-/** Prints the given message and newline to [System.out] */
+/** Prints the given message and newline to the standard output stream. */
 public fun println(message: CharArray) {
     System.out.println(message)
 }
-/** Prints a newline to [System.out] */
+/** Prints a newline to the standard output stream. */
 public fun println() {
     System.out.println()
 }
@@ -137,7 +137,8 @@ private val stdin: BufferedReader = BufferedReader(InputStreamReader(object : In
 }))
 
 /**
- * Reads a line of input from [System.in]
+ * Reads a line of input from the standard input stream.
+ *
  * @return the line read or null if the input stream is redirected to a file and the end of file has been reached.
  */
 public fun readLine(): String? = stdin.readLine()
