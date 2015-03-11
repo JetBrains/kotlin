@@ -56,9 +56,7 @@ import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import java.util.LinkedHashMap
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.ClassKind
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
-import org.jetbrains.kotlin.psi.psiUtil.siblings
 import com.intellij.openapi.editor.ScrollType
-import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import com.intellij.psi.PsiClass
 import com.intellij.codeInsight.daemon.impl.quickfix.CreateFromUsageUtils
@@ -81,6 +79,7 @@ import com.intellij.openapi.ui.*
 import com.intellij.codeInsight.template.impl.*
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.util.application.*
+import org.jetbrains.kotlin.psi.psiUtil.*
 
 private val TYPE_PARAMETER_LIST_VARIABLE_NAME = "typeParameterList"
 private val TEMPLATE_FROM_USAGE_FUNCTION_BODY = "New Kotlin Function Body.kt"
@@ -559,10 +558,10 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                                 parent.addBefore(newLine, containingElement)
                                 parent.addAfter(newLine, containingElement)
                             }
-
-                            containingElement.addBefore(declaration, containingElement.getFirstChild()!!) as JetNamedDeclaration
                         }
-                        else containingElement.addAfter(declaration, containingElement.getLBrace()!!) as JetNamedDeclaration
+
+                        val sibling = config.originalElement.parents().first { it.getParent() == containingElement }
+                        containingElement.addBefore(declaration, sibling) as JetNamedDeclaration
                     }
 
                     else -> throw AssertionError("Invalid containing element: ${containingElement.getText()}")

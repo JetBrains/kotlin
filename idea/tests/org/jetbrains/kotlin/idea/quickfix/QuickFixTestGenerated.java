@@ -2309,6 +2309,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("beforePositionNextToUsage.kt")
+                public void testPositionNextToUsage() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/localVariable/beforePositionNextToUsage.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("beforeQualifiedInFun.kt")
                 public void testQualifiedInFun() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/localVariable/beforeQualifiedInFun.kt");
