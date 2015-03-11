@@ -67,6 +67,7 @@ import javax.swing.JComponent
 import java.awt.GridBagConstraints
 import java.awt.Insets
 import com.intellij.codeInspection.ex.EntryPointsManager
+import com.intellij.codeInspection.ex.EntryPointsManagerImpl
 import com.intellij.openapi.project.ProjectUtil
 import java.awt.GridBagLayout
 import javax.swing.JPanel
@@ -208,9 +209,8 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
 
     override fun createOptionsPanel(): JComponent? {
         val panel = JPanel(GridBagLayout())
-        val project = ProjectUtil.guessCurrentProject(panel)
         panel.add(
-                EntryPointsManager.getInstance(project).createConfigureAnnotationsBtn(),
+                EntryPointsManagerImpl.createConfigureAnnotationsButton(),
                 GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, Insets(0, 0, 0, 0), 0, 0)
         )
         return panel
