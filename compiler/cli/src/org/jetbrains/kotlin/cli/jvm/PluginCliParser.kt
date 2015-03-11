@@ -124,7 +124,8 @@ private class PluginURLClassLoader(urls: Array<URL>, parent: ClassLoader) : Clas
 
             return try {
                 super.findClass(name)
-            } catch (e: ClassNotFoundException) {
+            }
+            catch (e: ClassNotFoundException) {
                 onFail.loadClass(name)
             }
 
