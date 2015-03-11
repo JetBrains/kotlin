@@ -18,14 +18,11 @@ package org.jetbrains.kotlin.load.kotlin
 
 import org.jetbrains.kotlin.resolve.AdditionalCheckerProvider
 import org.jetbrains.kotlin.resolve.AnnotationChecker
-import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.resolve.annotations.hasPlatformStaticAnnotation
-import org.jetbrains.kotlin.psi.JetNamedFunction
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.resolve.annotations.hasInlineAnnotation
@@ -36,14 +33,11 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.psi.JetTypeParameter
 import org.jetbrains.kotlin.resolve.annotations.hasIntrinsicAnnotation
 import org.jetbrains.kotlin.load.kotlin.nativeDeclarations.NativeFunChecker
-import org.jetbrains.kotlin.psi.JetPropertyAccessor
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.resolve.jvm.calls.checkers.NeedSyntheticChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker
-import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.types.TypeUtils
@@ -53,14 +47,14 @@ import org.jetbrains.kotlin.types.isFlexible
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.NullabilityInformationSource
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
+import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.calls.context.CallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability
-import org.jetbrains.kotlin.psi.JetPostfixExpression
-import org.jetbrains.kotlin.psi.JetBinaryExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.expressions.SenselessComparisonChecker
 
@@ -111,8 +105,13 @@ public class PlatformStaticAnnotationChecker : AnnotationChecker {
             diagnosticHolder.report(ErrorsJvm.PLATFORM_STATIC_NOT_IN_OBJECT.on(declaration));
         }
 
-        if (insideObject && descriptor is MemberDescriptor && descriptor.getModality().isOverridable()) {
-            diagnosticHolder.report(ErrorsJvm.OPEN_CANNOT_BE_STATIC.on(declaration));
+        val checkDeclaration = when(declaration) {
+            is JetPropertyAccessor -> declaration.getParent() as JetProperty
+            else -> declaration
+        }
+
+        if (insideObject && checkDeclaration.getModifierList()?.hasModifier(JetTokens.OVERRIDE_KEYWORD) == true) {
+            diagnosticHolder.report(ErrorsJvm.OVERRIDE_CANNOT_BE_STATIC.on(declaration));
         }
     }
 }
