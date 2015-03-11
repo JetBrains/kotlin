@@ -20,13 +20,16 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.Queue;
+import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.calls.CallResolver;
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.scopes.*;
@@ -42,6 +45,7 @@ import java.util.*;
 
 import static org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
+import static org.jetbrains.kotlin.resolve.BindingContext.CONSTRUCTOR_RESOLVED_DELEGATION_CALL;
 import static org.jetbrains.kotlin.resolve.BindingContext.DEFERRED_TYPE;
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 
@@ -108,6 +112,7 @@ public class BodyResolver {
 
         resolveAnonymousInitializers(c);
         resolvePrimaryConstructorParameters(c);
+        resolveSecondaryConstructors(c);
 
         resolveFunctionBodies(c);
 
@@ -117,6 +122,124 @@ public class BodyResolver {
         if (!c.getTopDownAnalysisParameters().isDeclaredLocally()) {
             computeDeferredTypes();
         }
+    }
+
+    private void resolveSecondaryConstructors(@NotNull BodiesResolveContext c) {
+        for (Map.Entry<JetSecondaryConstructor, ConstructorDescriptor> entry : c.getSecondaryConstructors().entrySet()) {
+            JetScope declaringScope = c.getDeclaringScopes().apply(entry.getKey());
+            assert declaringScope != null : "Declaring scope should be registered before body resolve";
+            resolveSecondaryConstructorBody(c, trace, entry.getKey(), entry.getValue(), declaringScope);
+        }
+        if (c.getSecondaryConstructors().isEmpty()) return;
+        Set<ConstructorDescriptor> visitedConstructors = Sets.newHashSet();
+        for (Map.Entry<JetSecondaryConstructor, ConstructorDescriptor> entry : c.getSecondaryConstructors().entrySet()) {
+            checkCyclicConstructorDelegationCall(entry.getValue(), visitedConstructors);
+        }
+    }
+
+    public void resolveSecondaryConstructorBody(
+            @NotNull final BodiesResolveContext c,
+            @NotNull final BindingTrace trace,
+            @NotNull final JetSecondaryConstructor constructor,
+            @NotNull final ConstructorDescriptor descriptor,
+            @NotNull JetScope bodyDeclaringScope
+    ) {
+        AnnotationResolver.resolveAnnotationsArguments(constructor.getModifierList(), trace);
+        assert descriptor.getContainingDeclaration() instanceof ClassDescriptorWithResolutionScopes
+                : "When resolving body it should be class descriptor with resolution scopes";
+
+        ClassDescriptorWithResolutionScopes classDescriptor = (ClassDescriptorWithResolutionScopes) descriptor.getContainingDeclaration();
+
+        resolveFunctionBody(c, trace, constructor, descriptor, bodyDeclaringScope,
+                            classDescriptor.getScopeForSecondaryConstructorHeaderResolution(),
+                            new Function1<JetScope, DataFlowInfo>() {
+                                @Override
+                                public DataFlowInfo invoke(@NotNull JetScope headerInnerScope) {
+                                    return resolveSecondaryConstructorDelegationCall(c, trace, headerInnerScope, constructor, descriptor);
+                                }
+                            });
+    }
+
+    @Nullable
+    private DataFlowInfo resolveSecondaryConstructorDelegationCall(
+            @NotNull BodiesResolveContext c,
+            @NotNull BindingTrace trace,
+            @NotNull JetScope scope,
+            @NotNull JetSecondaryConstructor constructor,
+            @NotNull ConstructorDescriptor descriptor
+    ) {
+        JetConstructorDelegationCall call = constructor.getDelegationCall();
+        if (call == null || call.getCalleeExpression() == null) return null;
+        JetType superClassType = DescriptorUtils.getSuperClassType(descriptor.getContainingDeclaration());
+
+        if (descriptor.getContainingDeclaration().getKind() == ClassKind.ENUM_CLASS && call.getCalleeExpression().isEmpty()) {
+            return null;
+        }
+
+        OverloadResolutionResults<?> results = callResolver.resolveFunctionCall(
+                trace, scope,
+                CallMaker.makeCall(ReceiverValue.NO_RECEIVER, null, call),
+                superClassType != null ? superClassType : NO_EXPECTED_TYPE,
+                c.getOuterDataFlowInfo(), false);
+
+        if (results.isSingleResult()) {
+            ResolvedCall<? extends CallableDescriptor> resolvedCall = results.getResultingCall();
+            recordConstructorDelegationCall(trace, descriptor, resolvedCall);
+            return resolvedCall.getDataFlowInfoForArguments().getResultInfo();
+        }
+        return null;
+    }
+
+    private void checkCyclicConstructorDelegationCall(
+            @NotNull ConstructorDescriptor constructorDescriptor,
+            @NotNull Set<ConstructorDescriptor> visitedConstructors
+    ) {
+        if (visitedConstructors.contains(constructorDescriptor)) return;
+
+        // if visit constructor that is already in current chain
+        // such constructor is on cycle
+        Set<ConstructorDescriptor> visitedInCurrentChain = Sets.newHashSet();
+        ConstructorDescriptor currentConstructorDescriptor = constructorDescriptor;
+        while (true) {
+            visitedInCurrentChain.add(currentConstructorDescriptor);
+            ConstructorDescriptor delegatedConstructorDescriptor = getDelegatedConstructor(currentConstructorDescriptor);
+            if (delegatedConstructorDescriptor == null) break;
+
+            // if next delegation call is super or primary constructor or already visited
+            if (!constructorDescriptor.getContainingDeclaration().equals(delegatedConstructorDescriptor.getContainingDeclaration()) ||
+                    delegatedConstructorDescriptor.isPrimary() ||
+                    visitedConstructors.contains(delegatedConstructorDescriptor)) {
+                 break;
+            }
+
+            if (visitedInCurrentChain.contains(delegatedConstructorDescriptor)) {
+                reportEachConstructorOnCycle(delegatedConstructorDescriptor);
+                break;
+            }
+            currentConstructorDescriptor = delegatedConstructorDescriptor;
+        }
+        visitedConstructors.addAll(visitedInCurrentChain);
+    }
+
+    private void reportEachConstructorOnCycle(@NotNull ConstructorDescriptor startConstructor) {
+        ConstructorDescriptor currentConstructor = startConstructor;
+        do {
+            PsiElement constructorToReport = DescriptorToSourceUtils.descriptorToDeclaration(currentConstructor);
+            if (constructorToReport != null) {
+                JetConstructorDelegationCall call = ((JetSecondaryConstructor) constructorToReport).getDelegationCall();
+                assert call != null : "resolved call can't be null";
+                trace.report(CYCLIC_CONSTRUCTOR_DELEGATION_CALL.on(call));
+            }
+
+            currentConstructor = getDelegatedConstructor(currentConstructor);
+            assert currentConstructor != null : "Delegated constructor should not be null in cycle";
+        } while (startConstructor != currentConstructor);
+    }
+
+    @Nullable
+    private ConstructorDescriptor getDelegatedConstructor(@NotNull ConstructorDescriptor constructor) {
+        ResolvedCall<ConstructorDescriptor> call = trace.get(CONSTRUCTOR_RESOLVED_DELEGATION_CALL, constructor);
+        return call == null ? null : call.getResultingDescriptor();
     }
 
     public void resolveBodies(@NotNull BodiesResolveContext c) {
@@ -152,6 +275,7 @@ public class BodyResolver {
         final ExpressionTypingServices typeInferrer = expressionTypingServices; // TODO : flow
 
         final Map<JetTypeReference, JetType> supertypes = Maps.newLinkedHashMap();
+        final ResolvedCall<?>[] primaryConstructorDelegationCall = new ResolvedCall[1];
         JetVisitorVoid visitor = new JetVisitorVoid() {
             private void recordSupertype(JetTypeReference typeReference, JetType supertype) {
                 if (supertype == null) return;
@@ -180,6 +304,9 @@ public class BodyResolver {
                     JetType expectedType = supertype != null ? supertype : NO_EXPECTED_TYPE;
                     typeInferrer.getType(scope, delegateExpression, expectedType, c.getOuterDataFlowInfo(), trace);
                 }
+                if (primaryConstructor == null) {
+                    trace.report(UNSUPPORTED.on(specifier, "Delegation without primary constructor is not supported"));
+                }
             }
 
             @Override
@@ -192,7 +319,9 @@ public class BodyResolver {
                 JetTypeReference typeReference = call.getTypeReference();
                 if (typeReference == null) return;
                 if (primaryConstructor == null) {
-                    assert descriptor.getKind() == ClassKind.TRAIT;
+                    if (descriptor.getKind() != ClassKind.TRAIT) {
+                        trace.report(SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR.on(call));
+                    }
                     recordSupertype(typeReference, trace.getBindingContext().get(BindingContext.TYPE, typeReference));
                     return;
                 }
@@ -206,6 +335,13 @@ public class BodyResolver {
                     if (classDescriptor != null) {
                         if (classDescriptor.getKind() == ClassKind.TRAIT) {
                             trace.report(CONSTRUCTOR_IN_TRAIT.on(elementToMark));
+                        }
+                        // allow only one delegating constructor
+                        if (primaryConstructorDelegationCall[0] == null) {
+                            primaryConstructorDelegationCall[0] = results.getResultingCall();
+                        }
+                        else {
+                            primaryConstructorDelegationCall[0] = null;
                         }
                     }
                 }
@@ -226,14 +362,13 @@ public class BodyResolver {
                     // A "singleton in supertype" diagnostic will be reported later
                     return;
                 }
-                if (descriptor.getKind() != ClassKind.TRAIT && !superClass.getConstructors().isEmpty() && !ErrorUtils.isError(superClass)) {
+                if (descriptor.getKind() != ClassKind.TRAIT &&
+                    descriptor.getUnsubstitutedPrimaryConstructor() != null &&
+                    !superClass.getConstructors().isEmpty() &&
+                    !ErrorUtils.isError(superClass)
+                ) {
                     trace.report(SUPERTYPE_NOT_INITIALIZED.on(specifier));
                 }
-            }
-
-            @Override
-            public void visitDelegationToThisCall(@NotNull JetDelegatorToThisCall thisCall) {
-                throw new IllegalStateException("This-calls should be prohibited by the parser");
             }
 
             @Override
@@ -255,7 +390,19 @@ public class BodyResolver {
                 ? Collections.singleton(((ClassDescriptor) descriptor.getContainingDeclaration()).getTypeConstructor())
                 : Collections.<TypeConstructor>emptySet();
 
+        if (primaryConstructorDelegationCall[0] != null && primaryConstructor != null) {
+            recordConstructorDelegationCall(trace, primaryConstructor, primaryConstructorDelegationCall[0]);
+        }
         checkSupertypeList(descriptor, supertypes, parentEnum);
+    }
+
+    private static void recordConstructorDelegationCall(
+            @NotNull BindingTrace trace,
+            @NotNull ConstructorDescriptor constructor,
+            @NotNull ResolvedCall<?> call
+    ) {
+        //noinspection unchecked
+        trace.record(CONSTRUCTOR_RESOLVED_DELEGATION_CALL, constructor, (ResolvedCall<ConstructorDescriptor>) call);
     }
 
     // allowedFinalSupertypes typically contains a enum type of which supertypeOwner is an entry
@@ -315,8 +462,12 @@ public class BodyResolver {
             @NotNull JetClassInitializer anonymousInitializer,
             @NotNull ClassDescriptorWithResolutionScopes classDescriptor
     ) {
+        if (!anonymousInitializer.hasInitKeyword()) {
+            trace.report(INIT_KEYWORD_BEFORE_CLASS_INITIALIZER_EXPECTED.on(anonymousInitializer.getOpenBraceNodeOrSelf()));
+        }
+
         JetScope scopeForInitializers = classDescriptor.getScopeForInitializerResolution();
-        if (classDescriptor.getUnsubstitutedPrimaryConstructor() != null) {
+        if (!classDescriptor.getConstructors().isEmpty()) {
             expressionTypingServices.getType(scopeForInitializers, anonymousInitializer.getBody(), NO_EXPECTED_TYPE, c.getOuterDataFlowInfo(), trace);
             processModifiersOnInitializer(anonymousInitializer, scopeForInitializers);
         }
@@ -386,10 +537,7 @@ public class BodyResolver {
                 JetExpression initializer = property.getInitializer();
                 JetScope propertyScope = getScopeForProperty(c, property);
                 if (initializer != null) {
-                    ConstructorDescriptor primaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
-                    if (primaryConstructor != null) {
-                        resolvePropertyInitializer(c, property, propertyDescriptor, initializer, propertyScope);
-                    }
+                    resolvePropertyInitializer(c, property, propertyDescriptor, initializer, propertyScope);
                 }
 
                 JetExpression delegateExpression = property.getDelegateExpression();
@@ -530,7 +678,8 @@ public class BodyResolver {
         JetType expectedTypeForInitializer = property.getTypeReference() != null ? propertyDescriptor.getType() : NO_EXPECTED_TYPE;
         CompileTimeConstant<?> compileTimeInitializer = propertyDescriptor.getCompileTimeInitializer();
         if (compileTimeInitializer == null) {
-            expressionTypingServices.getType(propertyDeclarationInnerScope, initializer, expectedTypeForInitializer, c.getOuterDataFlowInfo(), trace);
+            expressionTypingServices.getType(propertyDeclarationInnerScope, initializer, expectedTypeForInitializer,
+                                             c.getOuterDataFlowInfo(), trace);
         }
     }
 
@@ -564,16 +713,38 @@ public class BodyResolver {
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull JetScope declaringScope
     ) {
-        JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(declaringScope, functionDescriptor, trace);
+        resolveFunctionBody(c, trace, function, functionDescriptor, declaringScope, null, null);
+    }
 
+    public void resolveFunctionBody(
+            @NotNull BodiesResolveContext c,
+            @NotNull BindingTrace trace,
+            @NotNull JetDeclarationWithBody function,
+            @NotNull FunctionDescriptor functionDescriptor,
+            @NotNull JetScope bodyDeclaringScope,
+            @Nullable JetScope headerDeclaringScope,
+            @Nullable Function1<JetScope, DataFlowInfo> beforeBlockBody
+    ) {
+        JetScope headerInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(
+                headerDeclaringScope == null ? bodyDeclaringScope : headerDeclaringScope, functionDescriptor, trace);
         List<JetParameter> valueParameters = function.getValueParameters();
         List<ValueParameterDescriptor> valueParameterDescriptors = functionDescriptor.getValueParameters();
 
-        expressionTypingServices.resolveValueParameters(valueParameters, valueParameterDescriptors, functionInnerScope,
+        expressionTypingServices.resolveValueParameters(valueParameters, valueParameterDescriptors, headerInnerScope,
                                                         c.getOuterDataFlowInfo(), trace);
 
+        DataFlowInfo dataFlowInfo = null;
+
+        if (beforeBlockBody != null) {
+            dataFlowInfo = beforeBlockBody.invoke(headerInnerScope);
+        }
+
+        JetScope bodyInnerScope = headerDeclaringScope == null ? headerInnerScope :
+                                  FunctionDescriptorUtil.getFunctionInnerScope(bodyDeclaringScope, functionDescriptor, trace);
+
         if (function.hasBody()) {
-            expressionTypingServices.checkFunctionReturnType(functionInnerScope, function, functionDescriptor, c.getOuterDataFlowInfo(), null, trace);
+            expressionTypingServices.checkFunctionReturnType(
+                    bodyInnerScope, function, functionDescriptor, dataFlowInfo != null ? dataFlowInfo : c.getOuterDataFlowInfo(), null, trace);
         }
 
         assert functionDescriptor.getReturnType() != null;

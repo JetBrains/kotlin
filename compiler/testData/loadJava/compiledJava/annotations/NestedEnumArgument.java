@@ -5,7 +5,7 @@ public class NestedEnumArgument {
         FIRST
     }
 
-    @interface Anno {
+    public @interface Anno {
         E value();
     }
 

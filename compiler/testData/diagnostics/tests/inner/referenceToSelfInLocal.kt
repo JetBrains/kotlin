@@ -3,7 +3,7 @@
 
 fun f() {
     class MyClass() {
-        {
+        init {
             val x: MyClass = MyClass()
         }
 
@@ -13,7 +13,7 @@ fun f() {
     }
 
     <!LOCAL_OBJECT_NOT_ALLOWED!>object MyObject<!> {
-        {
+        init {
             val obj: MyObject = MyObject
         }
     }
@@ -23,7 +23,7 @@ fun f() {
 
 val closure = {
     class MyClass {
-        {
+        init {
             val x: MyClass = MyClass()
         }
     }

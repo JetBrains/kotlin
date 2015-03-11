@@ -16,15 +16,23 @@
 
 package org.jetbrains.kotlin.load.java.components
 
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.load.java.structure.JavaMethod
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptor
+import org.jetbrains.kotlin.load.java.structure.JavaMethod
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.types.JetType
 
 public trait SamConversionResolver {
+    public default object EMPTY : SamConversionResolver {
+        override fun <D : FunctionDescriptor> resolveSamAdapter(original: D) = null
+        override fun resolveSamConstructor(name: Name, scope: JetScope) = null
+        override fun resolveFunctionTypeIfSamInterface(
+                classDescriptor: JavaClassDescriptor, resolveMethod: (JavaMethod) -> FunctionDescriptor
+        ): JetType? = null
+    }
+
     public fun resolveSamConstructor(name: Name, scope: JetScope): SamConstructorDescriptor?
 
     public fun <D : FunctionDescriptor> resolveSamAdapter(original: D): D?

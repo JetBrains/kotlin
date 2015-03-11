@@ -18,8 +18,6 @@ package org.jetbrains.kotlin.cfg;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import kotlin.Function1;
-import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode;
@@ -31,7 +29,6 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.WriteValueInstructi
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.LocalFunctionDeclarationInstruction;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.VariableDeclarationInstruction;
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.Edges;
-import org.jetbrains.kotlin.cfg.pseudocodeTraverser.PseudocodeTraverserPackage;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.VariableDescriptor;
 import org.jetbrains.kotlin.psi.JetDeclaration;
@@ -52,7 +49,6 @@ public class PseudocodeVariablesData {
     private final PseudocodeVariableDataCollector pseudocodeVariableDataCollector;
 
     private final Map<Pseudocode, Set<VariableDescriptor>> declaredVariablesForDeclaration = Maps.newHashMap();
-    private final Map<Pseudocode, Set<VariableDescriptor>> usedVariablesForDeclaration = Maps.newHashMap();
 
     private Map<Instruction, Edges<Map<VariableDescriptor, VariableInitState>>> variableInitializers;
 
@@ -70,28 +66,6 @@ public class PseudocodeVariablesData {
     @NotNull
     public LexicalScopeVariableInfo getLexicalScopeVariableInfo() {
         return pseudocodeVariableDataCollector.getLexicalScopeVariableInfo();
-    }
-
-    @NotNull
-    public Set<VariableDescriptor> getUsedVariables(@NotNull Pseudocode pseudocode) {
-        Set<VariableDescriptor> usedVariables = usedVariablesForDeclaration.get(pseudocode);
-        if (usedVariables == null) {
-            final Set<VariableDescriptor> result = Sets.newHashSet();
-            PseudocodeTraverserPackage.traverse(pseudocode, FORWARD, new Function1<Instruction, Unit>() {
-                @Override
-                public Unit invoke(@NotNull Instruction instruction) {
-                    VariableDescriptor variableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(
-                            instruction, false, bindingContext);
-                    if (variableDescriptor != null) {
-                        result.add(variableDescriptor);
-                    }
-                    return Unit.INSTANCE$;
-                }
-            });
-            usedVariables = Collections.unmodifiableSet(result);
-            usedVariablesForDeclaration.put(pseudocode, usedVariables);
-        }
-        return usedVariables;
     }
 
     @NotNull
@@ -228,6 +202,11 @@ public class PseudocodeVariablesData {
         }
         Map<VariableDescriptor, VariableInitState> exitInstructionData = Maps.newHashMap(enterInstructionData);
         if (instruction instanceof WriteValueInstruction) {
+            // if writing to already initialized object
+            if (!PseudocodeUtil.isThisOrNoDispatchReceiver((WriteValueInstruction) instruction, bindingContext)) {
+                return enterInstructionData;
+            }
+
             VariableInitState enterInitState = enterInstructionData.get(variable);
             VariableInitState initializationAtThisElement =
                     VariableInitState.create(((WriteValueInstruction) instruction).getElement() instanceof JetProperty, enterInitState);

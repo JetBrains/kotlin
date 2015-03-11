@@ -38,7 +38,7 @@ public abstract class AbstractPsiBasedDeclarationProvider(storageManager: Storag
         val classesAndObjects = ArrayListMultimap.create<Name, JetClassLikeInfo>() // order matters here
 
         public fun putToIndex(declaration: JetDeclaration) {
-            if (declaration is JetClassInitializer) return
+            if (declaration is JetClassInitializer || declaration is JetSecondaryConstructor) return
 
             allDeclarations.add(declaration)
             if (declaration is JetNamedFunction) {

@@ -19,7 +19,7 @@ package toplevelObjectDeclarations
   val x = A.foo()
 
   val y = object : Foo(x) {
-    {
+    init {
       x + 12
     }
 

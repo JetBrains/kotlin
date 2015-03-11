@@ -35,6 +35,8 @@ import java.util.regex.Pattern;
         BlackBoxWithJavaCodegenTestGenerated.NotNullAssertions.class,
         BlackBoxWithJavaCodegenTestGenerated.PlatformStatic.class,
         BlackBoxWithJavaCodegenTestGenerated.Properties.class,
+        BlackBoxWithJavaCodegenTestGenerated.Reflection.class,
+        BlackBoxWithJavaCodegenTestGenerated.SecondaryConstructors.class,
 })
 @RunWith(JUnit3RunnerWithInners.class)
 public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
@@ -157,6 +159,60 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
         @TestMetadata("classObjectProperties")
         public void testClassObjectProperties() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/properties/classObjectProperties/");
+            doTestWithJava(fileName);
+        }
+
+    }
+
+    @TestMetadata("compiler/testData/codegen/boxWithJava/reflection")
+    @TestDataPath("$PROJECT_ROOT")
+    @InnerTestClasses({
+    })
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Reflection extends AbstractBlackBoxCodegenTest {
+        public void testAllFilesPresentInReflection() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithJava/reflection"), Pattern.compile("^([^\\.]+)$"), true);
+        }
+
+        @TestMetadata("kotlinPropertyInheritedInJava")
+        public void testKotlinPropertyInheritedInJava() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/reflection/kotlinPropertyInheritedInJava/");
+            doTestWithJava(fileName);
+        }
+
+    }
+
+    @TestMetadata("compiler/testData/codegen/boxWithJava/secondaryConstructors")
+    @TestDataPath("$PROJECT_ROOT")
+    @InnerTestClasses({
+    })
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class SecondaryConstructors extends AbstractBlackBoxCodegenTest {
+        public void testAllFilesPresentInSecondaryConstructors() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithJava/secondaryConstructors"), Pattern.compile("^([^\\.]+)$"), true);
+        }
+
+        @TestMetadata("withGenerics")
+        public void testWithGenerics() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/secondaryConstructors/withGenerics/");
+            doTestWithJava(fileName);
+        }
+
+        @TestMetadata("withPrimary")
+        public void testWithPrimary() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/secondaryConstructors/withPrimary/");
+            doTestWithJava(fileName);
+        }
+
+        @TestMetadata("withVarargs")
+        public void testWithVarargs() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/secondaryConstructors/withVarargs/");
+            doTestWithJava(fileName);
+        }
+
+        @TestMetadata("withoutPrimary")
+        public void testWithoutPrimary() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/secondaryConstructors/withoutPrimary/");
             doTestWithJava(fileName);
         }
 

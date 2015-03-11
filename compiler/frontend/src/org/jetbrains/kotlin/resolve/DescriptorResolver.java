@@ -1256,7 +1256,7 @@ public class DescriptorResolver {
             @NotNull JetClass classElement,
             BindingTrace trace
     ) {
-        if (classDescriptor.getKind() == ClassKind.ENUM_ENTRY) return null;
+        if (classDescriptor.getKind() == ClassKind.ENUM_ENTRY || !classElement.hasPrimaryConstructor()) return null;
         return createConstructorDescriptor(
                 scope,
                 classDescriptor,
@@ -1264,6 +1264,25 @@ public class DescriptorResolver {
                 classElement.getPrimaryConstructorModifierList(),
                 classElement,
                 classDescriptor.getTypeConstructor().getParameters(), classElement.getPrimaryConstructorParameters(), trace);
+    }
+
+    @NotNull
+    public ConstructorDescriptorImpl resolveSecondaryConstructorDescriptor(
+            @NotNull JetScope scope,
+            @NotNull ClassDescriptor classDescriptor,
+            @NotNull JetSecondaryConstructor constructor,
+            @NotNull BindingTrace trace
+    ) {
+        return createConstructorDescriptor(
+                scope,
+                classDescriptor,
+                false,
+                constructor.getModifierList(),
+                constructor,
+                classDescriptor.getTypeConstructor().getParameters(),
+                constructor.getValueParameters(),
+                trace
+        );
     }
 
     @NotNull

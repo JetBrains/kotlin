@@ -464,6 +464,51 @@ JetFile: DoubleColon.kt
         PsiElement(COLONCOLON)('::')
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('d')
+      PsiWhiteSpace('\n\n    ')
+      CLASS_LITERAL_EXPRESSION
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('A')
+        PsiElement(COLONCOLON)('::')
+        PsiElement(class)('class')
+      PsiWhiteSpace('\n    ')
+      CLASS_LITERAL_EXPRESSION
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
+            TYPE_ARGUMENT_LIST
+              PsiElement(LT)('<')
+              TYPE_PROJECTION
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('b')
+              PsiElement(COMMA)(',')
+              TYPE_PROJECTION
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('c')
+              PsiElement(GT)('>')
+        PsiElement(COLONCOLON)('::')
+        PsiElement(class)('class')
+      PsiWhiteSpace('\n    ')
+      CLASS_LITERAL_EXPRESSION
+        PsiElement(COLONCOLON)('::')
+        PsiElement(class)('class')
+      PsiWhiteSpace('\n    ')
+      BINARY_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('a')
+        PsiWhiteSpace(' ')
+        OPERATION_REFERENCE
+          PsiElement(IDENTIFIER)('b')
+        PsiWhiteSpace(' ')
+        CLASS_LITERAL_EXPRESSION
+          PsiElement(COLONCOLON)('::')
+          PsiElement(class)('class')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')

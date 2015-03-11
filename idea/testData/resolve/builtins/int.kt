@@ -1,2 +1,2 @@
 val x : <ref>Int?
-//kotlin/Numbers.kt:Int
+//kotlin/Primitives.kt:Int

@@ -95,17 +95,6 @@ public class ResolutionCandidate<D extends CallableDescriptor> {
         return explicitReceiverKind;
     }
 
-    @NotNull
-    public static <D extends CallableDescriptor> List<ResolutionCandidate<D>> convertCollection(
-            @NotNull Call call, @NotNull Collection<? extends D> descriptors
-    ) {
-        List<ResolutionCandidate<D>> result = Lists.newArrayList();
-        for (D descriptor : descriptors) {
-            result.add(create(call, descriptor));
-        }
-        return result;
-    }
-
     @Override
     public String toString() {
         return candidateDescriptor.toString();

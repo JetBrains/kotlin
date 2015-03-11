@@ -37,7 +37,10 @@ class AndroidXmlHandler(
         val attributesMap = attributes.toMap()
         val idAttr = attributesMap[AndroidConst.ID_ATTRIBUTE_NO_NAMESPACE]
         val classNameAttr = attributesMap[AndroidConst.CLASS_ATTRIBUTE_NO_NAMESPACE] ?: localName
-        if (isResourceDeclarationOrUsage(idAttr)) elementCallback(idToName(idAttr), classNameAttr)
+        if (isResourceDeclarationOrUsage(idAttr)) {
+            val name = idToName(idAttr)
+            if (name != null) elementCallback(name, classNameAttr)
+        }
     }
 
     override fun endElement(uri: String?, localName: String, qName: String) {

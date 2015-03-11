@@ -1,0 +1,19 @@
+class A {
+    inner class B {
+        constructor(x: String) {}
+        <caret>constructor (arg: Int): this("") {}
+    }
+}
+
+
+Resolved call:
+
+Resulting descriptor: constructor B(x: String) defined in A.B
+
+Explicit receiver kind = NO_EXPLICIT_RECEIVER
+Dispatch receiver = Class{A}
+Extension receiver = NO_RECEIVER
+
+Value arguments mapping:
+
+SUCCESS  x : String = ""

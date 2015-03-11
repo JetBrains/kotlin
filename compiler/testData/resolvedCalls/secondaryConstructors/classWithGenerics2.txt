@@ -1,0 +1,19 @@
+class A<T, R> {
+    constructor(x: T) {}
+}
+
+val y = <caret>A<Int, String>(1)
+
+
+Resolved call:
+
+Candidate descriptor: constructor A<T, R>(x: T) defined in A
+Resulting descriptor: constructor A<T, R>(x: Int) defined in A
+
+Explicit receiver kind = NO_EXPLICIT_RECEIVER
+Dispatch receiver = NO_RECEIVER
+Extension receiver = NO_RECEIVER
+
+Value arguments mapping:
+
+SUCCESS  x : Int = 1

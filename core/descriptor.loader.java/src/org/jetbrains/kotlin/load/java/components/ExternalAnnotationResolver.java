@@ -23,8 +23,23 @@ import org.jetbrains.kotlin.load.java.structure.JavaAnnotationOwner;
 import org.jetbrains.kotlin.name.FqName;
 
 import java.util.Collection;
+import java.util.Collections;
 
 public interface ExternalAnnotationResolver {
+    ExternalAnnotationResolver EMPTY = new ExternalAnnotationResolver() {
+        @Nullable
+        @Override
+        public JavaAnnotation findExternalAnnotation(@NotNull JavaAnnotationOwner owner, @NotNull FqName fqName) {
+            return null;
+        }
+
+        @NotNull
+        @Override
+        public Collection<JavaAnnotation> findExternalAnnotations(@NotNull JavaAnnotationOwner owner) {
+            return Collections.emptyList();
+        }
+    };
+
     @Nullable
     JavaAnnotation findExternalAnnotation(@NotNull JavaAnnotationOwner owner, @NotNull FqName fqName);
 

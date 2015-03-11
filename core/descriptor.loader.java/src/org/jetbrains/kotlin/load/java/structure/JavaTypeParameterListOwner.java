@@ -17,10 +17,12 @@
 package org.jetbrains.kotlin.load.java.structure;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.ReadOnly;
 
 import java.util.List;
 
 public interface JavaTypeParameterListOwner extends JavaElement {
     @NotNull
+    @ReadOnly
     List<JavaTypeParameter> getTypeParameters();
 }

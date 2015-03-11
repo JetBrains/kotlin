@@ -5,23 +5,23 @@ package kt462
 
 abstract class TestInitializationWithoutBackingField() {
     val valWithBackingField : Int
-    {
+    init {
         valWithBackingField = 2
     }
 
     val valWithoutBackingField : Int
     get() = 42
-    {
+    init {
         <!VAL_REASSIGNMENT!>valWithoutBackingField<!> = 45
     }
 
     var finalDefaultVar : Int
-    {
+    init {
         finalDefaultVar = 3
     }
 
     open var openVar : Int
-    {
+    init {
         <!INITIALIZATION_USING_BACKING_FIELD_OPEN_SETTER!>openVar<!> = 4
     }
 
@@ -29,42 +29,42 @@ abstract class TestInitializationWithoutBackingField() {
     set(v: Int) {
         $varWithCustomSetter = v
     }
-    {
+    init {
         <!INITIALIZATION_USING_BACKING_FIELD_CUSTOM_SETTER!>varWithCustomSetter<!> = 3
     }
 
     var varWithoutBackingField : Int
     get() = 3
     set(v: Int) {}
-    {
+    init {
         varWithoutBackingField = 4
     }
 
     abstract var abstractVar : Int
-    {
+    init {
         abstractVar = 34
     }
 }
 
 abstract class TestInitializationThroughBackingField() {
     val valWithBackingField : Int
-    {
+    init {
         $valWithBackingField = 2
     }
 
     val valWithoutBackingField : Int
     get() = 42
-    {
+    init {
         <!NO_BACKING_FIELD_CUSTOM_ACCESSORS!>$valWithoutBackingField<!> = 45
     }
 
     var finalDefaultVar : Int
-    {
+    init {
         $finalDefaultVar = 3
     }
 
     open var openVar : Int
-    {
+    init {
         $openVar = 4
     }
 
@@ -72,26 +72,26 @@ abstract class TestInitializationThroughBackingField() {
     set(v: Int) {
         $varWithCustomSetter = v
     }
-    {
+    init {
         $varWithCustomSetter = 3
     }
 
     var varWithoutBackingField : Int
     get() = 3
     set(v: Int) {}
-    {
+    init {
         <!NO_BACKING_FIELD_CUSTOM_ACCESSORS!>$varWithoutBackingField<!> = 4
     }
 
     abstract var abstractVar : Int
-    {
+    init {
         <!NO_BACKING_FIELD_ABSTRACT_PROPERTY!>$abstractVar<!> = 34
     }
 }
 
 class TestBackingFieldsVisibility() {
     var a : Int = 712
-    {
+    init {
         $a = 37
         this.$a = 357
     }
@@ -122,7 +122,7 @@ val topLevelVar = 11
 class T() {
     val z : Int get() = 42
 
-    {
+    init {
         <!NO_BACKING_FIELD_CUSTOM_ACCESSORS!>this.$z<!> = 34
     }
 
@@ -132,7 +132,7 @@ class T() {
 
     val a =  object {
         val x = <!NO_BACKING_FIELD_CUSTOM_ACCESSORS!>$z<!>
-        {
+        init {
             <!NO_BACKING_FIELD_CUSTOM_ACCESSORS!>$z<!> = 23
         }
     }
@@ -140,7 +140,7 @@ class T() {
     var x: Int = 2
     get() {
         val <!UNUSED_VARIABLE!>o<!> = object {
-            {
+            init {
                 $x = 34
             }
             fun foo() {
@@ -164,7 +164,7 @@ class T() {
         $x = 34
         val <!UNUSED_VARIABLE!>o<!> = object {
             val y = $x
-            {
+            init {
                 $x = 422
             }
         }

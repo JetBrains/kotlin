@@ -25,6 +25,7 @@ import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.idea.configuration.KotlinJsModuleConfigurator;
 import org.jetbrains.kotlin.idea.configuration.RuntimeLibraryFiles;
 
+import java.util.Collections;
 import java.util.Set;
 
 import static org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtils.getConfiguratorByName;
@@ -52,6 +53,6 @@ public class JSLibraryStdDescription extends CustomLibraryDescriptorWithDeferred
         assert configurator != null : "Cannot find configurator with name " + NAME;
 
         RuntimeLibraryFiles files = configurator.getExistingJarFiles();
-        return createConfiguration(files.getRuntimeJar(), files.getRuntimeSourcesJar());
+        return createConfiguration(Collections.singletonList(files.getRuntimeJar()), files.getRuntimeSourcesJar());
     }
 }

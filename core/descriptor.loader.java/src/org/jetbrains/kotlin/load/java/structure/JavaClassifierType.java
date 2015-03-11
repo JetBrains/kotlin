@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.load.java.structure;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.ReadOnly;
 
 import java.util.Collection;
 import java.util.List;
@@ -30,6 +31,7 @@ public interface JavaClassifierType extends JavaType {
     JavaTypeSubstitutor getSubstitutor();
 
     @NotNull
+    @ReadOnly
     Collection<JavaClassifierType> getSupertypes();
 
     @NotNull
@@ -38,5 +40,6 @@ public interface JavaClassifierType extends JavaType {
     boolean isRaw();
 
     @NotNull
+    @ReadOnly
     List<JavaType> getTypeArguments();
 }

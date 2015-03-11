@@ -19,6 +19,7 @@
       <module fileurl="file://$PROJECT_DIR$/compiler/tests/compiler-tests.iml" filepath="$PROJECT_DIR$/compiler/tests/compiler-tests.iml" group="compiler" />
       <module fileurl="file://$PROJECT_DIR$/core/descriptor.loader.java/descriptor.loader.java.iml" filepath="$PROJECT_DIR$/core/descriptor.loader.java/descriptor.loader.java.iml" group="core" />
       <module fileurl="file://$PROJECT_DIR$/core/descriptors/descriptors.iml" filepath="$PROJECT_DIR$/core/descriptors/descriptors.iml" group="core" />
+      <module fileurl="file://$PROJECT_DIR$/core/descriptors.runtime/descriptors.runtime.iml" filepath="$PROJECT_DIR$/core/descriptors.runtime/descriptors.runtime.iml" group="core" />
       <module fileurl="file://$PROJECT_DIR$/eval4j/eval4j.iml" filepath="$PROJECT_DIR$/eval4j/eval4j.iml" group="ide" />
       <module fileurl="file://$PROJECT_DIR$/compiler/frontend/frontend.iml" filepath="$PROJECT_DIR$/compiler/frontend/frontend.iml" group="compiler" />
       <module fileurl="file://$PROJECT_DIR$/compiler/frontend.java/frontend.java.iml" filepath="$PROJECT_DIR$/compiler/frontend.java/frontend.java.iml" group="compiler/java" />

@@ -144,6 +144,12 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         doTest(fileName);
     }
 
+    @TestMetadata("SecondaryConstructors.A.kt")
+    public void testSecondaryConstructors() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/SecondaryConstructors.A.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("Simple.A.kt")
     public void testSimple() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/Simple.A.kt");

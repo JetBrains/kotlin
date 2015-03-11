@@ -153,6 +153,23 @@ public interface Errors {
     DiagnosticFactory0<JetNullableType> NULLABLE_SUPERTYPE = DiagnosticFactory0.create(ERROR, NULLABLE_TYPE);
     DiagnosticFactory0<JetTypeReference> DYNAMIC_SUPERTYPE = DiagnosticFactory0.create(ERROR);
 
+    // Secondary constructors
+
+    DiagnosticFactory0<JetConstructorDelegationCall> CYCLIC_CONSTRUCTOR_DELEGATION_CALL =
+            DiagnosticFactory0.create(ERROR, PositioningStrategies.SECONDARY_CONSTRUCTOR_DELEGATION_CALL);
+
+    DiagnosticFactory0<JetSecondaryConstructor> SECONDARY_CONSTRUCTOR_IN_OBJECT = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetDelegatorToSuperCall> SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> INIT_KEYWORD_BEFORE_CLASS_INITIALIZER_EXPECTED = DiagnosticFactory0.create(WARNING);
+
+    DiagnosticFactory0<JetConstructorDelegationCall> PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED =
+            DiagnosticFactory0.create(ERROR, PositioningStrategies.SECONDARY_CONSTRUCTOR_DELEGATION_CALL);
+
+    DiagnosticFactory0<JetConstructorDelegationCall> DELEGATION_SUPER_CALL_IN_ENUM_CONSTRUCTOR =
+            DiagnosticFactory0.create(ERROR, PositioningStrategies.SECONDARY_CONSTRUCTOR_DELEGATION_CALL);
+
+    DiagnosticFactory0<PsiElement> PRIMARY_CONSTRUCTOR_REQUIRED_FOR_DATA_CLASS = DiagnosticFactory0.create(ERROR);
+
     // Trait-specific
 
     DiagnosticFactory0<JetModifierListOwner> ABSTRACT_MODIFIER_IN_TRAIT = DiagnosticFactory0
@@ -382,7 +399,8 @@ public interface Errors {
     DiagnosticFactory0<JetExpression> NOT_A_CLASS = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory1<PsiElement, Collection<? extends ResolvedCall<?>>> OVERLOAD_RESOLUTION_AMBIGUITY = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory1<PsiElement, Collection<? extends ResolvedCall<?>>> NONE_APPLICABLE = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<PsiElement, Collection<? extends ResolvedCall<?>>> NONE_APPLICABLE =
+            DiagnosticFactory1.create(ERROR, PositioningStrategies.SECONDARY_CONSTRUCTOR_DELEGATION_CALL_OR_DEFAULT);
     DiagnosticFactory1<PsiElement, Collection<? extends ResolvedCall<?>>> CANNOT_COMPLETE_RESOLVE = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, Collection<? extends ResolvedCall<?>>> UNRESOLVED_REFERENCE_WRONG_RECEIVER = DiagnosticFactory1.create(ERROR);
 
@@ -408,6 +426,8 @@ public interface Errors {
 
     DiagnosticFactory1<JetExpression, CallableMemberDescriptor> EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<JetExpression> CALLABLE_REFERENCE_LHS_NOT_A_CLASS = DiagnosticFactory0.create(ERROR);
+
+    DiagnosticFactory0<JetExpression> CLASS_LITERAL_LHS_NOT_A_CLASS = DiagnosticFactory0.create(ERROR);
 
     // Multi-declarations
 

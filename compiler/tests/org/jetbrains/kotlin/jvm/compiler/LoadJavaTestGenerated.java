@@ -409,6 +409,18 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledJava(fileName);
             }
 
+            @TestMetadata("EnumArgumentWithCustomToString.java")
+            public void testEnumArgumentWithCustomToString() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/annotations/EnumArgumentWithCustomToString.java");
+                doTestCompiledJava(fileName);
+            }
+
+            @TestMetadata("EnumConstructorParameter.java")
+            public void testEnumConstructorParameter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/annotations/EnumConstructorParameter.java");
+                doTestCompiledJava(fileName);
+            }
+
             @TestMetadata("EnumInParam.java")
             public void testEnumInParam() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/annotations/EnumInParam.java");
@@ -1907,6 +1919,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledKotlin(fileName);
             }
 
+            @TestMetadata("EnumArgumentWithCustomToString.kt")
+            public void testEnumArgumentWithCustomToString() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/EnumArgumentWithCustomToString.kt");
+                doTestCompiledKotlin(fileName);
+            }
+
             @TestMetadata("SimpleAnnotation.kt")
             public void testSimpleAnnotation() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/SimpleAnnotation.kt");
@@ -1924,6 +1942,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 @TestMetadata("ClassObjectPropertyField.kt")
                 public void testClassObjectPropertyField() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/ClassObjectPropertyField.kt");
+                    doTestCompiledKotlin(fileName);
+                }
+
+                @TestMetadata("Constructor.kt")
+                public void testConstructor() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/Constructor.kt");
                     doTestCompiledKotlin(fileName);
                 }
 
@@ -2161,6 +2185,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 @TestMetadata("FunctionInTrait.kt")
                 public void testFunctionInTrait() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/parameters/FunctionInTrait.kt");
+                    doTestCompiledKotlin(fileName);
+                }
+
+                @TestMetadata("InnerClassConstructor.kt")
+                public void testInnerClassConstructor() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/parameters/InnerClassConstructor.kt");
                     doTestCompiledKotlin(fileName);
                 }
 

@@ -1,0 +1,112 @@
+== B ==
+open class B(x: Int)
+---------------------
+    <v0>: Int   NEW: magic[FAKE_INITIALIZER](x: Int) -> <v0>
+=====================
+== A ==
+class A : B {
+    val x: Int
+    var y: Int
+    val z: Int
+    val v = -1
+
+    constructor(): super(11) {
+        x = 1
+        y = 2
+    }
+    constructor(a: Int, b: Int = 3): super(b) {
+        x = a
+        y = x
+    }
+
+    // anonymous
+    init {
+        z = 8
+    }
+
+    constructor(a: String, b: Int = 4): this() {
+        y = 5
+    }
+    constructor(a: Double, b: Int = 6): this(a.toInt()) {
+        y = 7
+    }
+
+    // anonymous
+    init {
+        y = 9
+    }
+}
+---------------------
+=====================
+== <init> ==
+constructor(): super(11) {
+        x = 1
+        y = 2
+    }
+---------------------
+                  <v10>: A     NEW: magic[IMPLICIT_RECEIVER](x) -> <v10>
+                  <v12>: A     NEW: magic[IMPLICIT_RECEIVER](y) -> <v12>
+                  <v4>: A      NEW: magic[IMPLICIT_RECEIVER](z) -> <v4>
+                  <v7>: A      NEW: magic[IMPLICIT_RECEIVER](y) -> <v7>
+11                <v0>: Int    NEW: r(11) -> <v0>
+super(11)         <v1>: *      NEW: call(super(11), <init>|<v0>) -> <v1>
+1                 <v11>: Int   NEW: r(1) -> <v11>
+2                 <v13>: Int   NEW: r(2) -> <v13>
+y = 2             !<v14>: *
+{ x = 1 y = 2 }   !<v14>: *    COPY
+=====================
+== <init> ==
+constructor(a: Int, b: Int = 3): super(b) {
+        x = a
+        y = x
+    }
+---------------------
+                  <v0>: Int    NEW: magic[FAKE_INITIALIZER](a: Int) -> <v0>
+                  <v11>: A     NEW: magic[IMPLICIT_RECEIVER](y) -> <v11>
+                  <v14>: A     NEW: magic[IMPLICIT_RECEIVER](x) -> <v14>
+                  <v16>: A     NEW: magic[IMPLICIT_RECEIVER](y) -> <v16>
+                  <v17>: A     NEW: magic[IMPLICIT_RECEIVER](x) -> <v17>
+                  <v2>: Int    NEW: magic[FAKE_INITIALIZER](b: Int = 3) -> <v2>
+                  <v8>: A      NEW: magic[IMPLICIT_RECEIVER](z) -> <v8>
+3                 <v1>: Int    NEW: r(3) -> <v1>
+b: Int = 3        <v3>: Int    NEW: merge(b: Int = 3|<v1>, <v2>) -> <v3>
+b                 <v4>: Int    NEW: r(b) -> <v4>
+super(b)          <v5>: *      NEW: call(super(b), <init>|<v4>) -> <v5>
+a                 <v15>: Int   NEW: r(a) -> <v15>
+x                 <v18>: Int   NEW: r(x|<v17>) -> <v18>
+y = x             !<v19>: *
+{ x = a y = x }   !<v19>: *    COPY
+=====================
+== <init> ==
+constructor(a: String, b: Int = 4): this() {
+        y = 5
+    }
+---------------------
+             <v0>: String   NEW: magic[FAKE_INITIALIZER](a: String) -> <v0>
+             <v2>: Int      NEW: magic[FAKE_INITIALIZER](b: Int = 4) -> <v2>
+             <v5>: A        NEW: magic[IMPLICIT_RECEIVER](y) -> <v5>
+4            <v1>: Int      NEW: r(4) -> <v1>
+b: Int = 4   <v3>: Int      NEW: merge(b: Int = 4|<v1>, <v2>) -> <v3>
+this()       <v4>: *        NEW: call(this(), <init>) -> <v4>
+5            <v6>: Int      NEW: r(5) -> <v6>
+y = 5        !<v7>: *
+{ y = 5 }    !<v7>: *       COPY
+=====================
+== <init> ==
+constructor(a: Double, b: Int = 6): this(a.toInt()) {
+        y = 7
+    }
+---------------------
+                  <v0>: Double        NEW: magic[FAKE_INITIALIZER](a: Double) -> <v0>
+                  <v2>: Int           NEW: magic[FAKE_INITIALIZER](b: Int = 6) -> <v2>
+                  <v7>: A             NEW: magic[IMPLICIT_RECEIVER](y) -> <v7>
+6                 <v1>: Int           NEW: r(6) -> <v1>
+b: Int = 6        <v3>: Int           NEW: merge(b: Int = 6|<v1>, <v2>) -> <v3>
+a                 <v4>: {<: Number}   NEW: r(a) -> <v4>
+toInt()           <v5>: Int           NEW: call(toInt(), toInt|<v4>) -> <v5>
+a.toInt()         <v5>: Int           COPY
+this(a.toInt())   <v6>: *             NEW: call(this(a.toInt()), <init>|<v5>) -> <v6>
+7                 <v8>: Int           NEW: r(7) -> <v8>
+y = 7             !<v9>: *
+{ y = 7 }         !<v9>: *            COPY
+=====================

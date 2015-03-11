@@ -21,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.context.EnclosedValueDescriptor;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.org.objectweb.asm.Type;
 
@@ -30,8 +29,6 @@ import java.util.*;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.getDirectMember;
 
 public final class MutableClosure implements CalculatedClosure {
-    private final ResolvedCall<ConstructorDescriptor> superCall;
-
     private final ClassDescriptor enclosingClass;
     private final CallableDescriptor enclosingFunWithReceiverDescriptor;
 
@@ -39,15 +36,11 @@ public final class MutableClosure implements CalculatedClosure {
     private boolean captureReceiver;
 
     private Map<DeclarationDescriptor, EnclosedValueDescriptor> captureVariables;
+    private Map<DeclarationDescriptor, Integer> parameterOffsetInConstructor;
     private List<Pair<String, Type>> recordedFields;
 
-    MutableClosure(
-            @NotNull ClassDescriptor classDescriptor,
-            @Nullable ResolvedCall<ConstructorDescriptor> superCall,
-            @Nullable ClassDescriptor enclosingClass
-    ) {
+    MutableClosure(@NotNull ClassDescriptor classDescriptor, @Nullable ClassDescriptor enclosingClass) {
         this.enclosingClass = enclosingClass;
-        this.superCall = superCall;
         this.enclosingFunWithReceiverDescriptor = enclosingExtensionMemberForClass(classDescriptor);
     }
 
@@ -66,11 +59,6 @@ public final class MutableClosure implements CalculatedClosure {
     @Nullable
     public ClassDescriptor getEnclosingClass() {
         return enclosingClass;
-    }
-
-    @Override
-    public ResolvedCall<ConstructorDescriptor> getSuperCall() {
-        return superCall;
     }
 
     @Override
@@ -124,6 +112,18 @@ public final class MutableClosure implements CalculatedClosure {
             captureVariables = new LinkedHashMap<DeclarationDescriptor, EnclosedValueDescriptor>();
         }
         captureVariables.put(value.getDescriptor(), value);
+    }
+
+    public void setCapturedParameterOffsetInConstructor(DeclarationDescriptor descriptor, int offset) {
+        if (parameterOffsetInConstructor == null) {
+            parameterOffsetInConstructor = new LinkedHashMap<DeclarationDescriptor, Integer>();
+        }
+        parameterOffsetInConstructor.put(descriptor, offset);
+    }
+
+    public int getCapturedParameterOffsetInConstructor(DeclarationDescriptor descriptor) {
+        Integer result = parameterOffsetInConstructor != null ? parameterOffsetInConstructor.get(descriptor) : null;
+        return result != null ? result.intValue() : -1;
     }
 
     @Nullable

@@ -3,7 +3,7 @@
 fun f(a: Any?) {
   if (a is B) {
     class C : X(<!DEBUG_INFO_SMARTCAST!>a<!>) {
-      {
+      init {
         <!DEBUG_INFO_SMARTCAST!>a<!>.foo()
       }
     }

@@ -28,6 +28,11 @@ fun ok() {
     a??::b
     a<b>?::c
     a<b?,c?>?::d
+
+    A::class
+    a<b,c>::class
+    ::class
+    a b ::class
 }
 
 fun err0() {

@@ -42,6 +42,7 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
     private final Map<JetClassOrObject, ClassDescriptorWithResolutionScopes> classes = Maps.newLinkedHashMap();
     private final Map<JetClassInitializer, ClassDescriptorWithResolutionScopes> anonymousInitializers = Maps.newLinkedHashMap();
     private final Set<JetFile> files = new LinkedHashSet<JetFile>();
+    private final Map<JetSecondaryConstructor, ConstructorDescriptor> secondaryConstructors = Maps.newLinkedHashMap();
 
     private final Map<JetDeclaration, JetScope> declaringScopes = Maps.newHashMap();
     private final Map<JetNamedFunction, SimpleFunctionDescriptor> functions = Maps.newLinkedHashMap();
@@ -93,6 +94,11 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
     @Override
     public Map<JetClassInitializer, ClassDescriptorWithResolutionScopes> getAnonymousInitializers() {
         return anonymousInitializers;
+    }
+
+    @Override
+    public Map<JetSecondaryConstructor, ConstructorDescriptor> getSecondaryConstructors() {
+        return secondaryConstructors;
     }
 
     @NotNull

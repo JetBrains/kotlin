@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes
 import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 
 fun checkTraitRequirements(c: Map<JetClassOrObject, ClassDescriptorWithResolutionScopes>, trace: BindingTrace) {
     for ((classOrObject, descriptor) in c.entrySet()) {
@@ -52,21 +53,10 @@ private fun getSuperClassesReachableByClassInheritance(
         descriptor: ClassDescriptor,
         result: MutableSet<ClassDescriptor> = hashSetOf()
 ): Set<ClassDescriptor> {
-    val superClass = getSuperClass(descriptor)
+    val superClass = descriptor.getSuperClassOrAny()
     result.add(superClass)
     if (!KotlinBuiltIns.isAny(superClass)) {
         getSuperClassesReachableByClassInheritance(superClass, result)
     }
     return result
 }
-
-private fun getSuperClass(descriptor: ClassDescriptor): ClassDescriptor {
-    for (supertype in descriptor.getDefaultType().getConstructor().getSupertypes()) {
-        val superClassifier = supertype.getConstructor().getDeclarationDescriptor()
-        if (DescriptorUtils.isClass(superClassifier) || DescriptorUtils.isEnumClass(superClassifier)) {
-            return superClassifier as ClassDescriptor
-        }
-    }
-    return KotlinBuiltIns.getInstance().getAny()
-}
-

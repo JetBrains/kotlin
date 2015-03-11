@@ -33,6 +33,8 @@ public interface JetStubElementTypes {
     JetObjectElementType OBJECT_DECLARATION = new JetObjectElementType("OBJECT_DECLARATION");
     JetPlaceHolderStubElementType<JetClassInitializer> ANONYMOUS_INITIALIZER =
             new JetPlaceHolderStubElementType<JetClassInitializer>("ANONYMOUS_INITIALIZER", JetClassInitializer.class);
+    JetPlaceHolderStubElementType<JetSecondaryConstructor> SECONDARY_CONSTRUCTOR =
+            new JetPlaceHolderStubElementType<JetSecondaryConstructor>("SECONDARY_CONSTRUCTOR", JetSecondaryConstructor.class);
 
     JetParameterElementType VALUE_PARAMETER = new JetParameterElementType("VALUE_PARAMETER");
     JetPlaceHolderStubElementType<JetParameterList> VALUE_PARAMETER_LIST =
@@ -107,15 +109,15 @@ public interface JetStubElementTypes {
             new JetPlaceHolderStubElementType<JetDelegatorToSuperCall>("DELEGATOR_SUPER_CALL", JetDelegatorToSuperCall.class);
     JetPlaceHolderStubElementType<JetDelegatorToSuperClass> DELEGATOR_SUPER_CLASS =
             new JetPlaceHolderStubElementType<JetDelegatorToSuperClass>("DELEGATOR_SUPER_CLASS", JetDelegatorToSuperClass.class);
-    JetPlaceHolderStubElementType<JetDelegatorToThisCall> THIS_CALL =
-            new JetPlaceHolderStubElementType<JetDelegatorToThisCall>("THIS_CALL", JetDelegatorToThisCall.class);
+    JetPlaceHolderStubElementType<JetConstructorDelegationCall> CONSTRUCTOR_DELEGATION_CALL =
+            new JetPlaceHolderStubElementType<JetConstructorDelegationCall>("CONSTRUCTOR_DELEGATION_CALL", JetConstructorDelegationCall.class);
     JetPlaceHolderStubElementType<JetConstructorCalleeExpression> CONSTRUCTOR_CALLEE =
             new JetPlaceHolderStubElementType<JetConstructorCalleeExpression>("CONSTRUCTOR_CALLEE", JetConstructorCalleeExpression.class);
 
     TokenSet DECLARATION_TYPES =
-            TokenSet.create(CLASS, OBJECT_DECLARATION, FUNCTION, PROPERTY, ANONYMOUS_INITIALIZER, ENUM_ENTRY);
+            TokenSet.create(CLASS, OBJECT_DECLARATION, FUNCTION, PROPERTY, ANONYMOUS_INITIALIZER, SECONDARY_CONSTRUCTOR, ENUM_ENTRY);
 
-    TokenSet DELEGATION_SPECIFIER_TYPES = TokenSet.create(DELEGATOR_BY, DELEGATOR_SUPER_CALL, DELEGATOR_SUPER_CLASS, THIS_CALL);
+    TokenSet DELEGATION_SPECIFIER_TYPES = TokenSet.create(DELEGATOR_BY, DELEGATOR_SUPER_CALL, DELEGATOR_SUPER_CLASS);
 
     TokenSet TYPE_ELEMENT_TYPES = TokenSet.create(USER_TYPE, NULLABLE_TYPE, FUNCTION_TYPE, DYNAMIC_TYPE, SELF_TYPE);
 

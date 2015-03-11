@@ -301,6 +301,18 @@ public class DescriptorUtils {
         return superClassDescriptors;
     }
 
+    @Nullable
+    public static JetType getSuperClassType(@NotNull ClassDescriptor classDescriptor) {
+        Collection<JetType> superclassTypes = classDescriptor.getTypeConstructor().getSupertypes();
+        for (JetType type : superclassTypes) {
+            ClassDescriptor superClassDescriptor = getClassDescriptorForType(type);
+            if (!isAny(superClassDescriptor) && superClassDescriptor.getKind() != ClassKind.TRAIT) {
+                return type;
+            }
+        }
+        return null;
+    }
+
     @NotNull
     public static ClassDescriptor getClassDescriptorForType(@NotNull JetType type) {
         return getClassDescriptorForTypeConstructor(type.getConstructor());
@@ -468,4 +480,11 @@ public class DescriptorUtils {
         return false;
     }
 
+    public static boolean isSingletonOrAnonymousObject(@NotNull ClassDescriptor classDescriptor) {
+        return classDescriptor.getKind().isSingleton() || isAnonymousObject(classDescriptor);
+    }
+
+    public static boolean canHaveSecondaryConstructors(@NotNull ClassDescriptor classDescriptor) {
+        return !isSingletonOrAnonymousObject(classDescriptor) && !isTrait(classDescriptor);
+    }
 }

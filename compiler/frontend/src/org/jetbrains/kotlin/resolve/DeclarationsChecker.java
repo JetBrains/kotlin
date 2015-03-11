@@ -456,7 +456,7 @@ public class DeclarationsChecker {
         if (initializer == null && delegate == null) {
             boolean error = false;
             if (backingFieldRequired && !inTrait &&
-                Boolean.FALSE.equals(trace.getBindingContext().get(BindingContext.IS_INITIALIZED, propertyDescriptor))) {
+                Boolean.TRUE.equals(trace.getBindingContext().get(BindingContext.IS_UNINITIALIZED, propertyDescriptor))) {
                 if (!(containingDeclaration instanceof ClassDescriptor) || hasAccessorImplementation) {
                     error = true;
                     trace.report(MUST_BE_INITIALIZED.on(property));
@@ -568,8 +568,7 @@ public class DeclarationsChecker {
 
         List<JetDelegationSpecifier> delegationSpecifiers = enumEntry.getDelegationSpecifiers();
         ConstructorDescriptor constructor = enumClass.getUnsubstitutedPrimaryConstructor();
-        assert constructor != null;
-        if (!constructor.getValueParameters().isEmpty() && delegationSpecifiers.isEmpty()) {
+        if ((constructor == null || !constructor.getValueParameters().isEmpty()) && delegationSpecifiers.isEmpty()) {
             trace.report(ENUM_ENTRY_SHOULD_BE_INITIALIZED.on(enumEntry, enumClass));
         }
 

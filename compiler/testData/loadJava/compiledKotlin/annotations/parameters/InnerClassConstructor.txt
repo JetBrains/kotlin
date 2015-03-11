@@ -1,0 +1,23 @@
+package test
+
+internal final annotation class A : kotlin.Annotation {
+    /*primary*/ public constructor A(/*0*/ s: kotlin.String)
+    internal final val s: kotlin.String
+        internal final fun <get-s>(): kotlin.String
+}
+
+internal final class Outer {
+    /*primary*/ public constructor Outer()
+
+    internal final inner class Inner {
+        /*primary*/ public constructor Inner(/*0*/ test.A(s = "inner": kotlin.String) y: kotlin.String)
+        test.A(s = "inner": kotlin.String) internal final val y: kotlin.String
+            internal final fun <get-y>(): kotlin.String
+    }
+
+    internal final class Nested {
+        /*primary*/ public constructor Nested(/*0*/ test.A(s = "nested": kotlin.String) x: kotlin.String)
+        test.A(s = "nested": kotlin.String) internal final val x: kotlin.String
+            internal final fun <get-x>(): kotlin.String
+    }
+}

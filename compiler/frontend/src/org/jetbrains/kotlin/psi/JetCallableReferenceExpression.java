@@ -19,24 +19,10 @@ package org.jetbrains.kotlin.psi;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.JetNodeTypes;
-import org.jetbrains.kotlin.lexer.JetTokens;
 
-public class JetCallableReferenceExpression extends JetExpressionImpl {
+public class JetCallableReferenceExpression extends JetDoubleColonExpression {
     public JetCallableReferenceExpression(@NotNull ASTNode node) {
         super(node);
-    }
-
-    @Nullable
-    public JetTypeReference getTypeReference() {
-        return (JetTypeReference) findChildByType(JetNodeTypes.TYPE_REFERENCE);
-    }
-
-    @NotNull
-    public PsiElement getDoubleColonTokenReference() {
-        //noinspection ConstantConditions
-        return findChildByType(JetTokens.COLONCOLON);
     }
 
     @NotNull

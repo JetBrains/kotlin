@@ -14,7 +14,7 @@ val closure = {
 }
 
 class A {
-    {
+    init {
         fun foo(): Int {
         <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 

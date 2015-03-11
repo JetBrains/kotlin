@@ -31,7 +31,6 @@ public class MemberDeserializer(private val c: DeserializationContext) {
         return when (callableKind) {
             FUN -> loadFunction(proto)
             VAL, VAR -> loadProperty(proto)
-            CONSTRUCTOR -> loadConstructor(proto)
             else -> throw IllegalArgumentException("Unsupported callable kind: $callableKind")
         }
     }
@@ -143,11 +142,11 @@ public class MemberDeserializer(private val c: DeserializationContext) {
         return (c.containingDeclaration as? ClassDescriptor)?.getThisAsReceiverParameter()
     }
 
-    private fun loadConstructor(proto: Callable): CallableMemberDescriptor {
+    public fun loadConstructor(proto: Callable, isPrimary: Boolean): ConstructorDescriptor {
         val classDescriptor = c.containingDeclaration as ClassDescriptor
         val descriptor = ConstructorDescriptorImpl.create(
-                classDescriptor, getAnnotations(proto, proto.getFlags(), AnnotatedCallableKind.FUNCTION), // TODO: primary
-                true, SourceElement.NO_SOURCE
+                classDescriptor, getAnnotations(proto, proto.getFlags(), AnnotatedCallableKind.FUNCTION),
+                isPrimary, SourceElement.NO_SOURCE
         )
         val local = c.childContext(descriptor, listOf())
         descriptor.initialize(

@@ -18,11 +18,13 @@ package org.jetbrains.kotlin.load.java.structure;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.ReadOnly;
 
 import java.util.List;
 
 public interface JavaMethod extends JavaMember, JavaTypeParameterListOwner {
     @NotNull
+    @ReadOnly
     List<JavaValueParameter> getValueParameters();
 
     boolean hasAnnotationParameterDefaultValue();

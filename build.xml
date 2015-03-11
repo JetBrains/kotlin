@@ -15,7 +15,13 @@
     <property name="bootstrap.home" value="dependencies/bootstrap-compiler"/>
     <property name="bootstrap.compiler.home" value="${bootstrap.home}/Kotlin/kotlinc"/>
     <property name="bootstrap.runtime" value="${bootstrap.compiler.home}/lib/kotlin-runtime.jar"/>
-    <property name="bootstrap.runtime.minimal" value="${bootstrap.compiler.home}/lib/kotlin-runtime-minimal.jar"/>
+
+    <!-- TODO: temporary, remove "else" after bootstrap -->
+    <condition property="bootstrap.reflect"
+               value="${bootstrap.compiler.home}/lib/kotlin-reflect.jar"
+               else="${bootstrap.runtime}">
+        <available file="${bootstrap.compiler.home}/lib/kotlin-reflect.jar"/>
+    </condition>
 
     <property name="output" value="${basedir}/dist"/>
     <property name="kotlin-home" value="${output}/kotlinc"/>
@@ -23,6 +29,7 @@
     <property name="bootstrap.build.no.tests" value="false"/>
     <property name="idea.sdk" value="${basedir}/ideaSDK"/>
     <property name="protobuf.jar" value="${idea.sdk}/lib/protobuf-2.5.0.jar"/>
+    <property name="protobuf-lite.jar" value="${basedir}/dependencies/protobuf-2.5.0-lite.jar"/>
     <property name="javax.inject.jar" value="${basedir}/lib/javax.inject.jar"/>
 
     <property name="java.target" value="1.6"/>
@@ -50,8 +57,8 @@
     little to no differences between the new and the newest runtime.
     -->
     <condition property="compiler.manifest.class.path"
-               value="kotlin-runtime-internal-bootstrap.jar"
-               else="kotlin-runtime.jar">
+               value="kotlin-runtime-internal-bootstrap.jar kotlin-reflect-internal-bootstrap.jar"
+               else="kotlin-runtime.jar kotlin-reflect.jar">
         <istrue value="${bootstrap.or.local.build}"/>
     </condition>
 
@@ -541,7 +548,7 @@
 
                     -libraryjars '${rtjar}'
                     -libraryjars '${jssejar}'
-                    -libraryjars '${bootstrap.runtime.minimal}'
+                    -libraryjars '${bootstrap.runtime}'
 
                     -target 1.6
                     -dontoptimize
@@ -625,6 +632,7 @@
             <istrue value="${bootstrap.or.local.build}"/>
             <then>
                 <copy file="${bootstrap.runtime}" tofile="${kotlin-home}/lib/kotlin-runtime-internal-bootstrap.jar"/>
+                <copy file="${bootstrap.reflect}" tofile="${kotlin-home}/lib/kotlin-reflect-internal-bootstrap.jar"/>
             </then>
         </if>
 
@@ -648,16 +656,16 @@
     <target name="android-compiler-plugin">
         <cleandir dir="${output}/classes/android-compiler-plugin"/>
 
-        <new-kotlinc output="${output}/classes/android-compiler-plugin">
+        <kotlinc output="${output}/classes/android-compiler-plugin">
             <src>
-                <include name="plugins/android-compiler-plugin/src"/>
+                <pathelement path="plugins/android-compiler-plugin/src"/>
             </src>
-            <class-path>
+            <classpath>
                 <pathelement path="${idea.sdk}/core/intellij-core.jar"/>
                 <pathelement path="${kotlin-home}/lib/kotlin-compiler.jar"/>
-                <pathelement path="${kotlin-home}/lib/kotlin-runtime.jar"/>
-            </class-path>
-        </new-kotlinc>
+                <pathelement path="${bootstrap.runtime}"/>
+            </classpath>
+        </kotlinc>
 
         <jar destfile="${kotlin-home}/lib/android-compiler-plugin.jar">
             <fileset dir="${output}/classes/android-compiler-plugin"/>
@@ -783,6 +791,25 @@
         </new-kotlinc>
     </target>
 
+    <target name="core">
+        <new-kotlinc output="${output}/classes/core">
+            <src>
+                <include name="core/descriptor.loader.java/src"/>
+                <include name="core/descriptors/src"/>
+                <include name="core/descriptors.runtime/src"/>
+                <include name="core/serialization/src"/>
+                <include name="core/serialization.jvm/src"/>
+                <include name="core/util.runtime/src"/>
+            </src>
+            <class-path>
+                <pathelement path="${output}/classes/builtins"/>
+                <pathelement path="${output}/classes/stdlib"/>
+                <pathelement path="${protobuf-lite.jar}"/>
+                <pathelement path="${javax.inject.jar}"/>
+            </class-path>
+        </new-kotlinc>
+    </target>
+
     <target name="reflection">
         <new-kotlinc output="${output}/classes/reflection">
             <src>
@@ -791,81 +818,78 @@
             <class-path>
                 <pathelement path="${output}/classes/builtins"/>
                 <pathelement path="${output}/classes/stdlib"/>
+                <pathelement path="${output}/classes/core"/>
+                <pathelement path="${protobuf-lite.jar}"/>
             </class-path>
         </new-kotlinc>
     </target>
 
+    <macrodef name="pack-runtime-jar">
+        <attribute name="jar-name"/>
+        <attribute name="implementation-title"/>
+        <element name="jar-content"/>
+
+        <sequential>
+            <jar destfile="${kotlin-home}/lib/@{jar-name}" duplicate="fail">
+                <jar-content/>
+                <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
+
+                <manifest>
+                    <attribute name="Built-By" value="${manifest.impl.vendor}"/>
+                    <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
+                    <attribute name="Implementation-Title" value="@{implementation-title}"/>
+                    <attribute name="Implementation-Version" value="${build.number}"/>
+                </manifest>
+            </jar>
+        </sequential>
+    </macrodef>
+
     <target name="pack-runtime">
-        <macrodef name="do-pack-runtime">
-            <attribute name="jar-name"/>
-            <attribute name="implementation-title"/>
-            <element name="reflection-classes" optional="true"/>
+        <pack-runtime-jar jar-name="kotlin-runtime.jar" implementation-title="${manifest.impl.title.kotlin.jvm.runtime}">
+            <jar-content>
+                <fileset dir="${output}/classes/builtins"/>
+                <fileset dir="${output}/classes/stdlib"/>
+                <zipfileset dir="${output}/builtins"/>
+            </jar-content>
+        </pack-runtime-jar>
 
-            <sequential>
-                <jar destfile="${kotlin-home}/lib/@{jar-name}" duplicate="fail">
-                    <fileset dir="${output}/classes/builtins"/>
-                    <fileset dir="${output}/classes/stdlib"/>
-                    <reflection-classes/>
-                    <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
-
-                    <manifest>
-                        <attribute name="Built-By" value="${manifest.impl.vendor}"/>
-                        <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
-                        <attribute name="Implementation-Title" value="@{implementation-title}"/>
-                        <attribute name="Implementation-Version" value="${build.number}"/>
-                    </manifest>
-                </jar>
-            </sequential>
-        </macrodef>
-
-        <do-pack-runtime jar-name="kotlin-runtime.jar" implementation-title="${manifest.impl.title.kotlin.jvm.runtime}">
-            <reflection-classes>
+        <pack-runtime-jar jar-name="kotlin-reflect.jar" implementation-title="${manifest.impl.title.kotlin.jvm.reflect}">
+            <jar-content>
                 <fileset dir="${output}/classes/reflection"/>
-            </reflection-classes>
-        </do-pack-runtime>
+                <fileset dir="${output}/classes/core"/>
+                <zipfileset src="${protobuf-lite.jar}"/>
+                <zipfileset src="${javax.inject.jar}"/>
+            </jar-content>
+        </pack-runtime-jar>
 
-        <do-pack-runtime jar-name="kotlin-runtime-minimal.jar" implementation-title="${manifest.impl.title.kotlin.jvm.runtime.minimal}"/>
+        <jar destfile="${kotlin-home}/lib/kotlin-reflect.jar" update="true">
+            <manifest>
+                <attribute name="Class-Path" value="kotlin-runtime.jar"/>
+            </manifest>
+        </jar>
     </target>
 
     <target name="pack-runtime-sources">
-        <macrodef name="do-pack-runtime-sources">
-            <attribute name="jar-name"/>
-            <attribute name="implementation-title"/>
-            <element name="reflection-sources" optional="true"/>
-
-            <sequential>
-                <jar destfile="${kotlin-home}/lib/@{jar-name}" duplicate="fail">
-                    <fileset dir="${basedir}/core/builtins/native" includes="**/*"/>
-                    <fileset dir="${basedir}/core/builtins/src" includes="**/*"/>
-                    <fileset dir="${basedir}/core/runtime.jvm/src" includes="**/*"/>
-                    <fileset dir="${basedir}/core/reflection/src" includes="**/*"/>
-                    <reflection-sources/>
-                    <fileset dir="${basedir}/libraries/stdlib/src" includes="**/*"/>
-                    <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
-
-                    <manifest>
-                        <attribute name="Built-By" value="${manifest.impl.vendor}"/>
-                        <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
-                        <attribute name="Implementation-Title" value="@{implementation-title}"/>
-                        <attribute name="Implementation-Version" value="${build.number}"/>
-                    </manifest>
-                </jar>
-            </sequential>
-        </macrodef>
-
-        <do-pack-runtime-sources jar-name="kotlin-runtime-sources.jar"
-                                 implementation-title="${manifest.impl.title.kotlin.jvm.runtime.sources}">
-            <reflection-sources>
+        <pack-runtime-jar jar-name="kotlin-runtime-sources.jar" implementation-title="${manifest.impl.title.kotlin.jvm.runtime.sources}">
+            <jar-content>
+                <fileset dir="${basedir}/core/builtins/native" includes="**/*"/>
+                <fileset dir="${basedir}/core/builtins/src" includes="**/*"/>
+                <fileset dir="${basedir}/core/descriptor.loader.java/src" includes="**/*"/>
+                <fileset dir="${basedir}/core/descriptors/src" includes="**/*"/>
+                <fileset dir="${basedir}/core/descriptors.runtime/src" includes="**/*"/>
+                <fileset dir="${basedir}/core/reflection/src" includes="**/*"/>
                 <fileset dir="${basedir}/core/reflection.jvm/src" includes="**/*"/>
-            </reflection-sources>
-        </do-pack-runtime-sources>
-
-        <do-pack-runtime-sources jar-name="kotlin-runtime-minimal-sources.jar"
-                                 implementation-title="${manifest.impl.title.kotlin.jvm.runtime.minimal.sources}"/>
+                <fileset dir="${basedir}/core/runtime.jvm/src" includes="**/*"/>
+                <fileset dir="${basedir}/core/serialization/src" includes="**/*"/>
+                <fileset dir="${basedir}/core/serialization.jvm/src" includes="**/*"/>
+                <fileset dir="${basedir}/core/util.runtime/src" includes="**/*"/>
+                <fileset dir="${basedir}/libraries/stdlib/src" includes="**/*"/>
+            </jar-content>
+        </pack-runtime-jar>
     </target>
 
     <target name="runtime"
-            depends="builtins,stdlib,reflection,pack-runtime,pack-runtime-sources"/>
+            depends="builtins,stdlib,core,reflection,pack-runtime,pack-runtime-sources"/>
 
     <target name="dist"
             depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler,compiler-sources,ant-tools,jdk-annotations,android-sdk-annotations,runtime,kotlin-js-stdlib,android-compiler-plugin"

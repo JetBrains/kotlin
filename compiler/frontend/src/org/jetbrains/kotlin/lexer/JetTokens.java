@@ -137,6 +137,9 @@ public interface JetTokens {
     JetKeywordToken BY_KEYWORD        = JetKeywordToken.softKeyword("by");
     JetKeywordToken GET_KEYWORD       = JetKeywordToken.softKeyword("get");
     JetKeywordToken SET_KEYWORD       = JetKeywordToken.softKeyword("set");
+    JetKeywordToken CONSTRUCTOR_KEYWORD = JetKeywordToken.softKeyword("constructor");
+    JetKeywordToken INIT_KEYWORD        = JetKeywordToken.softKeyword("init");
+
     JetModifierKeywordToken ABSTRACT_KEYWORD  = JetModifierKeywordToken.softKeywordModifier("abstract");
     JetModifierKeywordToken ENUM_KEYWORD      = JetModifierKeywordToken.softKeywordModifier("enum");
     JetModifierKeywordToken OPEN_KEYWORD      = JetModifierKeywordToken.softKeywordModifier("open");
@@ -170,7 +173,7 @@ public interface JetTokens {
                                              SET_KEYWORD, ABSTRACT_KEYWORD, ENUM_KEYWORD, OPEN_KEYWORD, INNER_KEYWORD, ANNOTATION_KEYWORD,
                                              OVERRIDE_KEYWORD, PRIVATE_KEYWORD, PUBLIC_KEYWORD, INTERNAL_KEYWORD, PROTECTED_KEYWORD,
                                              CATCH_KEYWORD, FINALLY_KEYWORD, OUT_KEYWORD, FINAL_KEYWORD, VARARG_KEYWORD, REIFIED_KEYWORD,
-                                             DYNAMIC_KEYWORD, DEFAULT_KEYWORD
+                                             DYNAMIC_KEYWORD, DEFAULT_KEYWORD, CONSTRUCTOR_KEYWORD, INIT_KEYWORD
     );
 
     /*

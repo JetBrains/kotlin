@@ -298,5 +298,6 @@ public class QuickFixRegistrar {
 
         QuickFixes.factories.put(DEPRECATED_CLASS_OBJECT_SYNTAX, ClassObjectToDefaultObjectFix.Factory);
         QuickFixes.factories.put(DEPRECATED_CLASS_OBJECT_SYNTAX, ClassObjectToDefaultObjectInWholeProjectFix.Factory);
+        QuickFixes.factories.put(INIT_KEYWORD_BEFORE_CLASS_INITIALIZER_EXPECTED, AddInitKeywordFix.Default);
     }
 }

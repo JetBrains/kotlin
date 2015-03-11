@@ -117,6 +117,8 @@ public class GenerationState {
     @Nullable
     private List<ScriptDescriptor> earlierScriptsForReplInterpreter;
 
+    private final ReflectionTypes reflectionTypes;
+
     private final JvmRuntimeTypes runtimeTypes;
 
     @NotNull
@@ -187,7 +189,7 @@ public class GenerationState {
         this.disableParamAssertions = disableParamAssertions;
         this.generateClassFilter = generateClassFilter;
 
-        ReflectionTypes reflectionTypes = new ReflectionTypes(module);
+        this.reflectionTypes = new ReflectionTypes(module);
         this.runtimeTypes = new JvmRuntimeTypes(reflectionTypes);
     }
 
@@ -257,6 +259,11 @@ public class GenerationState {
     @NotNull
     public GenerateClassFilter getGenerateDeclaredClassFilter() {
         return generateClassFilter;
+    }
+
+    @NotNull
+    public ReflectionTypes getReflectionTypes() {
+        return reflectionTypes;
     }
 
     @NotNull

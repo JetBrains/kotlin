@@ -16,7 +16,9 @@
 
 package kotlin.reflect.jvm
 
-import java.lang.reflect.*
+import java.lang.reflect.Field
+import java.lang.reflect.Method
+import java.lang.reflect.Modifier
 import kotlin.jvm.internal.Reflection
 import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.*
@@ -37,7 +39,8 @@ public val KMutableProperty<*>.javaSetter: Method?
     get() = (this as? KMutablePropertyImpl<*>)?.setter
 
 
-// TODO: val KTopLevelVariable<*>.javaField: Field
+public val KTopLevelVariable<*>.javaField: Field?
+    get() = (this as KPropertyImpl<*>).field
 
 public val KTopLevelVariable<*>.javaGetter: Method
     get() = (this as KTopLevelVariableImpl<*>).getter

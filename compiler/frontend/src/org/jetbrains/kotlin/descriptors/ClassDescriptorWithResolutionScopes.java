@@ -34,6 +34,9 @@ public interface ClassDescriptorWithResolutionScopes extends ClassDescriptor {
     JetScope getScopeForInitializerResolution();
 
     @NotNull
+    JetScope getScopeForSecondaryConstructorHeaderResolution();
+
+    @NotNull
     JetScope getScopeForMemberLookup();
 
     @Nullable

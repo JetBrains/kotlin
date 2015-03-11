@@ -460,7 +460,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
             if (containingFunctionDescriptor != null) {
                 if (!InlineDescriptorUtils.checkNonLocalReturnUsage(containingFunctionDescriptor, expression, context.trace) ||
-                    containingFunctionDescriptor instanceof ConstructorDescriptor) {
+                    isClassInitializer(containingFunInfo)) {
                     // Unqualified, in a function literal
                     context.trace.report(RETURN_NOT_ALLOWED.on(expression));
                     resultType = ErrorUtils.createErrorType(RETURN_NOT_ALLOWED_MESSAGE);
@@ -504,6 +504,11 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         return DataFlowUtils.checkType(resultType, expression, context, context.dataFlowInfo);
     }
 
+    private static boolean isClassInitializer(@NotNull Pair<FunctionDescriptor, PsiElement> containingFunInfo) {
+        return containingFunInfo.getFirst() instanceof ConstructorDescriptor &&
+               !(containingFunInfo.getSecond() instanceof JetSecondaryConstructor);
+    }
+
     @Override
     public JetTypeInfo visitBreakExpression(@NotNull JetBreakExpression expression, ExpressionTypingContext context) {
         LabelResolver.INSTANCE.resolveControlLabel(expression, context);
@@ -523,7 +528,10 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             @NotNull ExpressionTypingContext context
     ) {
         JetType expectedType;
-        if (function instanceof JetFunction) {
+        if (function instanceof JetSecondaryConstructor) {
+            expectedType = KotlinBuiltIns.getInstance().getUnitType();
+        }
+        else if (function instanceof JetFunction) {
             JetFunction jetFunction = (JetFunction) function;
             expectedType = context.trace.get(EXPECTED_RETURN_TYPE, jetFunction);
 

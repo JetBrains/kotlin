@@ -26,10 +26,7 @@ import org.jetbrains.kotlin.context.GlobalContext
 import org.jetbrains.kotlin.di.InjectorForTopDownAnalyzerForJvm
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.FqNameUnsafe
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.load.java.structure.reflect.classId
 import org.jetbrains.kotlin.resolve.TopDownAnalysisParameters
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
@@ -82,15 +79,6 @@ public abstract class AbstractLocalClassProtoTest : TestCaseWithTmpdir() {
                 JetTestUtils.replaceExtension(source, "txt")
         )
     }
-
-    private val Class<*>.classId: ClassId
-        get() {
-            if (getEnclosingMethod() != null || getEnclosingConstructor() != null) {
-                return ClassId(FqName.ROOT, FqNameUnsafe(getName()), /* local = */ true)
-            }
-            return getDeclaringClass()?.classId?.createNestedClassId(Name.identifier(getSimpleName()))
-                   ?: ClassId.topLevel(FqName(getName()))
-        }
 
     private fun assertHasAnnotationData(clazz: Class<*>) {
         [suppress("UNCHECKED_CAST")]

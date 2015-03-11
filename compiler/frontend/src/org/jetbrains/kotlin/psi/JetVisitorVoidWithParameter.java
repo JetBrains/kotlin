@@ -34,6 +34,10 @@ public class JetVisitorVoidWithParameter<P> extends JetVisitor<Void, P> {
         super.visitClass(klass, data);
     }
 
+    public void visitSecondaryConstructorVoid(@NotNull JetSecondaryConstructor constructor, P data) {
+        super.visitSecondaryConstructor(constructor, data);
+    }
+
     public void visitNamedFunctionVoid(@NotNull JetNamedFunction function, P data) {
         super.visitNamedFunction(function, data);
     }
@@ -130,8 +134,8 @@ public class JetVisitorVoidWithParameter<P> extends JetVisitor<Void, P> {
         super.visitDelegationToSuperClassSpecifier(specifier, data);
     }
 
-    public void visitDelegationToThisCallVoid(@NotNull JetDelegatorToThisCall thisCall, P data) {
-        super.visitDelegationToThisCall(thisCall, data);
+    public void visitDelegationCallVoid(@NotNull JetConstructorDelegationCall call, P data) {
+        super.visitConstructorDelegationCall(call, data);
     }
 
     public void visitPropertyDelegateVoid(@NotNull JetPropertyDelegate delegate, P data) {
@@ -254,8 +258,16 @@ public class JetVisitorVoidWithParameter<P> extends JetVisitor<Void, P> {
         super.visitQualifiedExpression(expression, data);
     }
 
+    public void visitDoubleColonExpressionVoid(@NotNull JetDoubleColonExpression expression, P data) {
+        super.visitDoubleColonExpression(expression, data);
+    }
+
     public void visitCallableReferenceExpressionVoid(@NotNull JetCallableReferenceExpression expression, P data) {
         super.visitCallableReferenceExpression(expression, data);
+    }
+
+    public void visitClassLiteralExpressionVoid(@NotNull JetClassLiteralExpression expression, P data) {
+        super.visitClassLiteralExpression(expression, data);
     }
 
     public void visitDotQualifiedExpressionVoid(@NotNull JetDotQualifiedExpression expression, P data) {
@@ -570,9 +582,9 @@ public class JetVisitorVoidWithParameter<P> extends JetVisitor<Void, P> {
     }
 
     @Override
-    public final Void visitDelegationToThisCall(@NotNull JetDelegatorToThisCall thisCall, P data) {
-        visitDelegationToThisCallVoid(thisCall, data);
-    	return null;
+    public final Void visitConstructorDelegationCall(@NotNull JetConstructorDelegationCall call, P data) {
+        visitDelegationCallVoid(call, data);
+        return null;
     }
 
     @Override
@@ -756,8 +768,20 @@ public class JetVisitorVoidWithParameter<P> extends JetVisitor<Void, P> {
     }
 
     @Override
+    public final Void visitDoubleColonExpression(@NotNull JetDoubleColonExpression expression, P data) {
+        visitDoubleColonExpressionVoid(expression, data);
+    	return null;
+    }
+
+    @Override
     public final Void visitCallableReferenceExpression(@NotNull JetCallableReferenceExpression expression, P data) {
         visitCallableReferenceExpressionVoid(expression, data);
+    	return null;
+    }
+
+    @Override
+    public final Void visitClassLiteralExpression(@NotNull JetClassLiteralExpression expression, P data) {
+        visitClassLiteralExpressionVoid(expression, data);
     	return null;
     }
 

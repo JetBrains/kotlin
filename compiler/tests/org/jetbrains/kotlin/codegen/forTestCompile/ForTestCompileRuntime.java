@@ -31,11 +31,20 @@ public class ForTestCompileRuntime {
 
     @NotNull
     public static File runtimeJarForTests() {
-        File runtime = new File("dist/kotlinc/lib/kotlin-runtime.jar");
-        if (!runtime.exists()) {
-            throw new IllegalStateException("kotlin-runtime.jar in dist/kotlinc/lib does not exist. Run 'ant dist'");
+        return assertExists(new File("dist/kotlinc/lib/kotlin-runtime.jar"));
+    }
+
+    @NotNull
+    public static File reflectJarForTests() {
+        return assertExists(new File("dist/kotlinc/lib/kotlin-reflect.jar"));
+    }
+
+    @NotNull
+    private static File assertExists(@NotNull File file) {
+        if (!file.exists()) {
+            throw new IllegalStateException(file + " does not exist. Run 'ant dist'");
         }
-        return runtime;
+        return file;
     }
 
     @NotNull
@@ -43,7 +52,10 @@ public class ForTestCompileRuntime {
         ClassLoader loader = runtimeJarClassLoader.get();
         if (loader == null) {
             try {
-                loader = new URLClassLoader(new URL[] {runtimeJarForTests().toURI().toURL()}, null);
+                loader = new URLClassLoader(new URL[] {
+                        runtimeJarForTests().toURI().toURL(),
+                        reflectJarForTests().toURI().toURL()
+                }, null);
             }
             catch (MalformedURLException e) {
                 throw rethrow(e);

@@ -29,6 +29,30 @@ import org.jetbrains.kotlin.load.java.structure.JavaMethod;
 import org.jetbrains.kotlin.name.FqName;
 
 public interface JavaResolverCache {
+    JavaResolverCache EMPTY = new JavaResolverCache() {
+        @Nullable
+        @Override
+        public ClassDescriptor getClassResolvedFromSource(@NotNull FqName fqName) {
+            return null;
+        }
+
+        @Override
+        public void recordMethod(@NotNull JavaMethod method, @NotNull SimpleFunctionDescriptor descriptor) {
+        }
+
+        @Override
+        public void recordConstructor(@NotNull JavaElement element, @NotNull ConstructorDescriptor descriptor) {
+        }
+
+        @Override
+        public void recordField(@NotNull JavaField field, @NotNull PropertyDescriptor descriptor) {
+        }
+
+        @Override
+        public void recordClass(@NotNull JavaClass javaClass, @NotNull ClassDescriptor descriptor) {
+        }
+    };
+
     @Nullable
     ClassDescriptor getClassResolvedFromSource(@NotNull FqName fqName);
 

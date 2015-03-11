@@ -63,7 +63,7 @@ public abstract class AbstractPseudocodeTest extends KotlinTestWithEnvironment {
             if (declaration instanceof JetDeclarationContainer) {
                 for (JetDeclaration member : ((JetDeclarationContainer) declaration).getDeclarations()) {
                     // Properties and initializers are processed elsewhere
-                    if (member instanceof JetNamedFunction) {
+                    if (member instanceof JetNamedFunction || member instanceof JetSecondaryConstructor) {
                         addDeclaration(data, bindingContext, member);
                     }
                 }

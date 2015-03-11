@@ -65,7 +65,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.expressions.SenselessComparisonChecker
 
 public object KotlinJvmCheckerProvider : AdditionalCheckerProvider(
-        annotationCheckers = listOf(PlatformStaticAnnotationChecker(), LocalFunInlineChecker(), ReifiedTypeParameterAnnotationChecker(), NativeFunChecker()),
+        additionalAnnotationCheckers = listOf(PlatformStaticAnnotationChecker(), LocalFunInlineChecker(), ReifiedTypeParameterAnnotationChecker(), NativeFunChecker()),
         additionalCallCheckers = listOf(NeedSyntheticChecker()),
         additionalTypeCheckers = listOf(JavaNullabilityWarningsChecker())
 )

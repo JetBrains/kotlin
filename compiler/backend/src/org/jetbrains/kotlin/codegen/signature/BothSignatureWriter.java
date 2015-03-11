@@ -59,6 +59,8 @@ public class BothSignatureWriter {
 
     private boolean generic = false;
 
+    private int currentSignatureSize = 0;
+
     public BothSignatureWriter(@NotNull Mode mode) {
         this.signatureVisitor = new CheckSignatureAdapter(mode.asmType, signatureWriter);
     }
@@ -210,6 +212,7 @@ public class BothSignatureWriter {
         pop();
 
         kotlinParameterTypes.add(new JvmMethodParameterSignature(jvmCurrentType, currentParameterKind));
+        currentSignatureSize += jvmCurrentType.getSize();
 
         currentParameterKind = null;
         jvmCurrentType = null;
@@ -260,6 +263,9 @@ public class BothSignatureWriter {
         return new JvmMethodSignature(asmMethod, makeJavaGenericSignature(), kotlinParameterTypes);
     }
 
+    public int getCurrentSignatureSize() {
+        return currentSignatureSize;
+    }
 
     @Override
     public String toString() {

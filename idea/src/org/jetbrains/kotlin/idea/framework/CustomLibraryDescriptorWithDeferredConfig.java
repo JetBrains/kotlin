@@ -173,20 +173,25 @@ public abstract class CustomLibraryDescriptorWithDeferredConfig extends CustomLi
 
         RuntimeLibraryFiles files = configurator.getExistingJarFiles();
 
-        File libraryFile;
-        File librarySrcFile;
+        File runtimeJar;
+        File reflectJar;
+        File runtimeSrcJar;
 
         File stdJarInDefaultPath = files.getRuntimeDestination(defaultPathToJarFile);
         if (!useRelativePaths && stdJarInDefaultPath.exists()) {
-            libraryFile = stdJarInDefaultPath;
+            runtimeJar = stdJarInDefaultPath;
 
-            File sourcesJar = files.getRuntimeSourcesDestination(defaultPathToJarFile);
-            if (sourcesJar.exists()) {
-                librarySrcFile = sourcesJar;
+            reflectJar = files.getReflectDestination(defaultPathToJarFile);
+            if (reflectJar != null && !reflectJar.exists()) {
+                reflectJar = files.getReflectJar();
+                assert reflectJar != null : "getReflectDestination != null, but getReflectJar == null";
+                deferredCopyFileRequests.addCopyWithReplaceRequest(reflectJar, runtimeJar.getParent());
             }
-            else {
-                librarySrcFile = files.getRuntimeSourcesJar();
-                deferredCopyFileRequests.addCopyWithReplaceRequest(librarySrcFile, libraryFile.getParent());
+
+            runtimeSrcJar = files.getRuntimeSourcesDestination(defaultPathToJarFile);
+            if (!runtimeSrcJar.exists()) {
+                runtimeSrcJar = files.getRuntimeSourcesJar();
+                deferredCopyFileRequests.addCopyWithReplaceRequest(runtimeSrcJar, runtimeJar.getParent());
             }
         }
         else {
@@ -202,23 +207,23 @@ public abstract class CustomLibraryDescriptorWithDeferredConfig extends CustomLi
                 }
             }
 
-            libraryFile = files.getRuntimeJar();
-            librarySrcFile = files.getRuntimeSourcesJar();
+            runtimeJar = files.getRuntimeJar();
+            reflectJar = files.getReflectJar();
+            runtimeSrcJar = files.getRuntimeSourcesJar();
         }
 
-        return createConfiguration(libraryFile, librarySrcFile);
+        return createConfiguration(Arrays.asList(runtimeJar, reflectJar), runtimeSrcJar);
     }
 
     @NotNull
-    protected NewLibraryConfiguration createConfiguration(@NotNull File libraryFile, @NotNull File librarySrcFile) {
-        final String libraryFileUrl = VfsUtil.getUrlForLibraryRoot(libraryFile);
-        final String libraryFileSrcUrl = VfsUtil.getUrlForLibraryRoot(librarySrcFile);
-
+    protected NewLibraryConfiguration createConfiguration(@NotNull final List<File> libraryFiles, @NotNull final File librarySrcFile) {
         return new NewLibraryConfiguration(libraryName, null, new LibraryVersionProperties()) {
             @Override
             public void addRoots(@NotNull LibraryEditor editor) {
-                editor.addRoot(libraryFileUrl, OrderRootType.CLASSES);
-                editor.addRoot(libraryFileSrcUrl, OrderRootType.SOURCES);
+                for (File libraryFile : libraryFiles) {
+                    editor.addRoot(VfsUtil.getUrlForLibraryRoot(libraryFile), OrderRootType.CLASSES);
+                }
+                editor.addRoot(VfsUtil.getUrlForLibraryRoot(librarySrcFile), OrderRootType.SOURCES);
             }
         };
     }

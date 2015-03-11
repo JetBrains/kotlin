@@ -20,6 +20,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
 
@@ -48,5 +49,15 @@ public class JetClassInitializer extends JetDeclarationStub<KotlinPlaceHolderStu
     public PsiElement getOpenBraceNode() {
         JetExpression body = getBody();
         return (body instanceof JetBlockExpression) ? ((JetBlockExpression) body).getLBrace() : null;
+    }
+
+    @NotNull
+    public PsiElement getOpenBraceNodeOrSelf() {
+        PsiElement result = getOpenBraceNode();
+        return result != null ? result : this;
+    }
+
+    public boolean hasInitKeyword() {
+        return findChildByType(JetTokens.INIT_KEYWORD) != null;
     }
 }

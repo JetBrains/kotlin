@@ -39,10 +39,7 @@ import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.BindingContextUtils;
-import org.jetbrains.kotlin.resolve.BindingTrace;
-import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils;
+import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.model.*;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
@@ -80,7 +77,7 @@ public class JetControlFlowProcessor {
     private Pseudocode generate(@NotNull JetElement subroutine) {
         builder.enterSubroutine(subroutine);
         CFPVisitor cfpVisitor = new CFPVisitor(builder);
-        if (subroutine instanceof JetDeclarationWithBody) {
+        if (subroutine instanceof JetDeclarationWithBody && !(subroutine instanceof JetSecondaryConstructor)) {
             JetDeclarationWithBody declarationWithBody = (JetDeclarationWithBody) subroutine;
             List<JetParameter> valueParameters = declarationWithBody.getValueParameters();
             for (JetParameter valueParameter : valueParameters) {
@@ -104,7 +101,6 @@ public class JetControlFlowProcessor {
         if (subroutineDescriptor == null) return;
 
         JetType returnType = subroutineDescriptor.getReturnType();
-        KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
         if (returnType != null && KotlinBuiltIns.isUnit(returnType) && subroutineDescriptor instanceof AnonymousFunctionDescriptor) return;
 
         PseudoValue returnValue = builder.getBoundValue(bodyExpression);
@@ -1359,7 +1355,9 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitObjectDeclaration(@NotNull JetObjectDeclaration objectDeclaration) {
-            visitClassOrObject(objectDeclaration);
+            generateHeaderDelegationSpecifiers(objectDeclaration);
+            generateClassOrObjectInitializers(objectDeclaration);
+            generateDeclarationForLocalClassOrObjectIfNeeded(objectDeclaration);
         }
 
         @Override
@@ -1387,19 +1385,14 @@ public class JetControlFlowProcessor {
             generateInstructions(classInitializer.getBody());
         }
 
-        private void visitClassOrObject(JetClassOrObject classOrObject) {
+        private void generateHeaderDelegationSpecifiers(@NotNull JetClassOrObject classOrObject) {
             for (JetDelegationSpecifier specifier : classOrObject.getDelegationSpecifiers()) {
                 generateInstructions(specifier);
             }
-            List<JetDeclaration> declarations = classOrObject.getDeclarations();
-            if (classOrObject.isLocal()) {
-                for (JetDeclaration declaration : declarations) {
-                    generateInstructions(declaration);
-                }
-                return;
-            }
-            //For top-level and inner classes and objects functions are collected and checked separately.
-            for (JetDeclaration declaration : declarations) {
+        }
+
+        private void generateClassOrObjectInitializers(@NotNull JetClassOrObject classOrObject) {
+            for (JetDeclaration declaration : classOrObject.getDeclarations()) {
                 if (declaration instanceof JetProperty || declaration instanceof JetClassInitializer) {
                     generateInstructions(declaration);
                 }
@@ -1408,15 +1401,61 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitClass(@NotNull JetClass klass) {
-            List<JetParameter> parameters = klass.getPrimaryConstructorParameters();
+            if (klass.hasPrimaryConstructor()) {
+                processParameters(klass.getPrimaryConstructorParameters());
+
+                // delegation specifiers of primary constructor, anonymous class and property initializers
+                generateHeaderDelegationSpecifiers(klass);
+                generateClassOrObjectInitializers(klass);
+            }
+
+            generateDeclarationForLocalClassOrObjectIfNeeded(klass);
+        }
+
+        private void generateDeclarationForLocalClassOrObjectIfNeeded(@NotNull JetClassOrObject classOrObject) {
+            if (classOrObject.isLocal()) {
+                for (JetDeclaration declaration : classOrObject.getDeclarations()) {
+                    if (declaration instanceof JetSecondaryConstructor ||
+                        declaration instanceof JetProperty ||
+                        declaration instanceof JetClassInitializer) {
+                        continue;
+                    }
+                    generateInstructions(declaration);
+                }
+            }
+        }
+
+        private void processParameters(@NotNull List<JetParameter> parameters) {
             for (JetParameter parameter : parameters) {
                 generateInstructions(parameter);
             }
-            visitClassOrObject(klass);
+        }
+
+        @Override
+        public void visitSecondaryConstructor(@NotNull JetSecondaryConstructor constructor) {
+            JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(constructor, JetClassOrObject.class);
+            assert classOrObject != null : "Guaranteed by parsing contract";
+
+            processParameters(constructor.getValueParameters());
+            generateCallOrMarkUnresolved(constructor.getDelegationCall());
+
+            if (constructor.getDelegationCall() != null &&
+                constructor.getDelegationCall().getCalleeExpression() != null &&
+                !constructor.getDelegationCall().getCalleeExpression().isThis()
+            ) {
+                generateClassOrObjectInitializers(classOrObject);
+            }
+
+            generateInstructions(constructor.getBodyExpression());
         }
 
         @Override
         public void visitDelegationToSuperCallSpecifier(@NotNull JetDelegatorToSuperCall call) {
+            generateCallOrMarkUnresolved(call);
+        }
+
+        private void generateCallOrMarkUnresolved(@Nullable JetCallElement call) {
+            if (call == null) return;
             if (!generateCall(call)) {
                 List<JetExpression> arguments = KotlinPackage.map(
                         call.getValueArguments(),
@@ -1466,7 +1505,7 @@ public class JetControlFlowProcessor {
         }
 
         @Override
-        public void visitCallableReferenceExpression(@NotNull JetCallableReferenceExpression expression) {
+        public void visitDoubleColonExpression(@NotNull JetDoubleColonExpression expression) {
             mark(expression);
             createNonSyntheticValue(expression, MagicKind.CALLABLE_REFERENCE);
         }

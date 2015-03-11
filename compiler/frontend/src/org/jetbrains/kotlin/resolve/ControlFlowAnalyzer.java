@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.cfg.JetFlowInformationProvider;
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor;
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
@@ -45,6 +46,9 @@ public class ControlFlowAnalyzer {
         for (JetClassOrObject aClass : c.getDeclaredClasses().keySet()) {
             checkDeclarationContainer(c, aClass);
         }
+        for (JetSecondaryConstructor constructor : c.getSecondaryConstructors().keySet()) {
+            checkSecondaryConstructor(constructor);
+        }
         for (Map.Entry<JetNamedFunction, SimpleFunctionDescriptor> entry : c.getFunctions().entrySet()) {
             JetNamedFunction function = entry.getKey();
             SimpleFunctionDescriptor functionDescriptor = entry.getValue();
@@ -58,6 +62,12 @@ public class ControlFlowAnalyzer {
             PropertyDescriptor propertyDescriptor = entry.getValue();
             checkProperty(c, property, propertyDescriptor);
         }
+    }
+
+    private void checkSecondaryConstructor(@NotNull JetSecondaryConstructor constructor) {
+        JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider(constructor, trace);
+        flowInformationProvider.checkDeclaration();
+        flowInformationProvider.checkFunction(KotlinBuiltIns.getInstance().getUnitType());
     }
 
     private void checkDeclarationContainer(@NotNull BodiesResolveContext c, JetDeclarationContainer declarationContainer) {

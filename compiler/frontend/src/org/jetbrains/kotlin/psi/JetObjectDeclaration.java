@@ -123,11 +123,6 @@ public class JetObjectDeclaration extends JetNamedDeclarationStub<KotlinObjectSt
     }
 
     @Override
-    public boolean hasPrimaryConstructor() {
-        return true;
-    }
-
-    @Override
     public JetClassBody getBody() {
         return getStubOrPsiChild(JetStubElementTypes.CLASS_BODY);
     }

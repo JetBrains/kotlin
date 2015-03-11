@@ -2871,6 +2871,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("beforeAddInitKeyword.kt")
+        public void testAddInitKeyword() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/beforeAddInitKeyword.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("beforeAddInitKeywordWithModifiers.kt")
+        public void testAddInitKeywordWithModifiers() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/beforeAddInitKeywordWithModifiers.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("beforeAddInnerModifier.kt")
         public void testAddInnerModifier() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/beforeAddInnerModifier.kt");

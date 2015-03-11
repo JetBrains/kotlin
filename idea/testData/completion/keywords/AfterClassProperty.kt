@@ -29,5 +29,7 @@ class MouseMovedEventArgs
 // EXIST:  val
 // EXIST:  var
 // EXIST:  vararg
+// EXIST:  constructor
+// EXIST:  init
 /*why?*/
-// NUMBER: 24
+// NUMBER: 26

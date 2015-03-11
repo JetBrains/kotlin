@@ -39,6 +39,10 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.resolve.scopes.receivers.ClassReceiver
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.psi.JetFile
+import com.intellij.psi.PsiElement
 
 public abstract class AbstractResolvedCallsTest : JetLiteFixture() {
     override fun createEnvironment(): JetCoreEnvironment = createEnvironmentWithMockJdk(ConfigurationKind.ALL)
@@ -49,10 +53,7 @@ public abstract class AbstractResolvedCallsTest : JetLiteFixture() {
         val jetFile = JetPsiFactory(getProject()).createFile(text.replace("<caret>", ""))
         val bindingContext = JvmResolveUtil.analyzeOneFileWithJavaIntegration(jetFile).bindingContext
 
-        val element = jetFile.findElementAt(text.indexOf("<caret>"))
-        val expression = element.getStrictParentOfType<JetExpression>()
-
-        val cachedCall = expression?.getParentResolvedCall(bindingContext, strict = false)
+        val (element, cachedCall) = buildCachedCall(bindingContext, jetFile, text)
 
         val resolvedCall = if (cachedCall !is VariableAsFunctionResolvedCall) cachedCall
             else if ("(" == element?.getText()) cachedCall.functionCall
@@ -61,6 +62,17 @@ public abstract class AbstractResolvedCallsTest : JetLiteFixture() {
         val resolvedCallInfoFileName = FileUtil.getNameWithoutExtension(filePath) + ".txt"
         JetTestUtils.assertEqualsToFile(File(resolvedCallInfoFileName), "$text\n\n\n${resolvedCall?.renderToText()}")
     }
+
+    open protected fun buildCachedCall(
+            bindingContext: BindingContext, jetFile: JetFile, text: String
+    ): Pair<PsiElement?, ResolvedCall<out CallableDescriptor>?> {
+        val element = jetFile.findElementAt(text.indexOf("<caret>"))
+        val expression = element.getStrictParentOfType<JetExpression>()
+
+        val cachedCall = expression?.getParentResolvedCall(bindingContext, strict = false)
+        return Pair(element, cachedCall)
+    }
+
 }
 
 private fun ReceiverValue.getText() = when (this) {

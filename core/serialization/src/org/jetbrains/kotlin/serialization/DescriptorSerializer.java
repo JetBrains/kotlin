@@ -110,7 +110,10 @@ public class DescriptorSerializer {
             }
         }
 
-        // TODO: other constructors
+        for (ConstructorDescriptor constructorDescriptor : classDescriptor.getConstructors()) {
+            if (constructorDescriptor.isPrimary()) continue;
+            builder.addSecondaryConstructor(callableProto(constructorDescriptor));
+        }
 
         for (DeclarationDescriptor descriptor : sort(classDescriptor.getDefaultType().getMemberScope().getAllDescriptors())) {
             if (descriptor instanceof CallableMemberDescriptor) {

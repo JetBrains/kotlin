@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.serialization.deserialization
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.utils.singletonOrEmptyList
 import java.util.*
 
 public class DeserializedClassDescriptor(
@@ -62,6 +63,7 @@ public class DeserializedClassDescriptor(
 
     private val containingDeclaration = outerContext.containingDeclaration
     private val primaryConstructor = c.storageManager.createNullableLazyValue { computePrimaryConstructor() }
+    private val constructors = c.storageManager.createLazyValue { computeConstructors() }
     private val defaultObjectDescriptor = c.storageManager.createNullableLazyValue { computeDefaultObjectDescriptor() }
 
     private val annotations =
@@ -102,16 +104,20 @@ public class DeserializedClassDescriptor(
             return descriptor
         }
 
-        return c.memberDeserializer.loadCallable(constructorProto.getData()) as ConstructorDescriptor
+        return c.memberDeserializer.loadConstructor(constructorProto.getData(), true)
     }
 
     override fun getUnsubstitutedPrimaryConstructor(): ConstructorDescriptor? = primaryConstructor()
 
-    override fun getConstructors(): Collection<ConstructorDescriptor> {
-        val constructor = getUnsubstitutedPrimaryConstructor() ?: return listOf()
-        // TODO: other constructors
-        return listOf(constructor)
-    }
+    private fun computeConstructors(): Collection<ConstructorDescriptor> =
+            computeSecondaryConstructors() + getUnsubstitutedPrimaryConstructor().singletonOrEmptyList()
+
+    private fun computeSecondaryConstructors(): List<ConstructorDescriptor> =
+            classProto.getSecondaryConstructorList().map {
+                c.memberDeserializer.loadConstructor(it, false)
+            }
+
+    override fun getConstructors() = constructors()
 
     private fun computeDefaultObjectDescriptor(): ClassDescriptor? {
         if (!classProto.hasDefaultObjectName()) return null
