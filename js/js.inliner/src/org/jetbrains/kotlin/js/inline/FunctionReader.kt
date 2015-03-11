@@ -74,8 +74,7 @@ public class FunctionReader(private val context: TranslationContext) {
     {
         val config = context.getConfig() as LibrarySourcesConfig
         val libs = config.getLibraries().map { File(it) }
-        val jsLibs = libs.filter { it.exists() && LibraryUtils.isKotlinJavascriptLibrary(it) }
-        val files = LibraryUtils.readJsFiles(jsLibs.map { it.getPath() }.toList())
+        val files = LibraryUtils.readJsFiles(libs.map { it.getPath() }.toList())
 
         for (file in files) {
             val matcher = DEFINE_MODULE_PATTERN.matcher(file)
