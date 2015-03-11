@@ -20,47 +20,30 @@ import com.intellij.codeInsight.completion.*
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.patterns.PlatformPatterns
-import com.intellij.util.ProcessingContext
-import org.jetbrains.kotlin.psi.JetBlockExpression
-import org.jetbrains.kotlin.psi.JetCallExpression
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.idea.completion.smart.SmartCompletion
-
 import com.intellij.patterns.PsiJavaPatterns.elementType
 import com.intellij.patterns.PsiJavaPatterns.psiElement
+import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiErrorElement
+import com.intellij.psi.TokenType
+import com.intellij.psi.search.PsiElementProcessor
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.psi.TokenType
-import org.jetbrains.kotlin.psi.JetNameReferenceExpression
-import org.jetbrains.kotlin.psi.JetUserType
-import org.jetbrains.kotlin.psi.JetTypeReference
-import org.jetbrains.kotlin.psi.JetNamedFunction
-import org.jetbrains.kotlin.psi.JetProperty
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import com.intellij.psi.PsiErrorElement
-import com.intellij.psi.search.PsiElementProcessor
-import com.intellij.psi.PsiComment
-import org.jetbrains.kotlin.psi.psiUtil.parents
-import org.jetbrains.kotlin.psi.JetParameterList
-import org.jetbrains.kotlin.psi.JetFunctionLiteral
-import org.jetbrains.kotlin.psi.psiUtil.prevLeafSkipWhitespacesAndComments
-import org.jetbrains.kotlin.psi.JetValueArgument
-import org.jetbrains.kotlin.psi.JetValueArgumentList
-import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
-import org.jetbrains.kotlin.psi.JetTypeArgumentList
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import com.intellij.util.ProcessingContext
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.completion.smart.SmartCompletion
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.parents
+import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.psi.JetTypeElement
-import org.jetbrains.kotlin.psi.JetAnnotationEntry
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 public class KotlinCompletionContributor : CompletionContributor() {
 
@@ -92,6 +75,8 @@ public class KotlinCompletionContributor : CompletionContributor() {
             PackageDirectiveCompletion.ACTIVATION_PATTERN.accepts(tokenBefore) -> PackageDirectiveCompletion.DUMMY_IDENTIFIER
 
             isInFunctionLiteralParameterList(tokenBefore) -> CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED
+
+            isInClassHeader(tokenBefore) -> CompletionUtilCore.DUMMY_IDENTIFIER // do not add '$' to not interrupt class declaration parsing
 
             else -> specialExtensionReceiverDummyIdentifier(tokenBefore)
                     ?: specialInTypeArgsDummyIdentifier(tokenBefore)
@@ -144,6 +129,14 @@ public class KotlinCompletionContributor : CompletionContributor() {
         val parameterList = tokenBefore?.parents(false)?.firstOrNull { it is JetParameterList } ?: return false
         val parent = parameterList.getParent()
         return parent is JetFunctionLiteral && parent.getValueParameterList() == parameterList
+    }
+
+    private fun isInClassHeader(tokenBefore: PsiElement?): Boolean {
+        val classOrObject = tokenBefore?.parents(false)?.firstIsInstanceOrNull<JetClassOrObject>() ?: return false
+        val name = classOrObject.getNameIdentifier() ?: return false
+        val body = classOrObject.getBody() ?: return false
+        val offset = tokenBefore!!.getTextRange().getStartOffset()
+        return name.getTextRange().getEndOffset() <= offset && offset <= body.getTextRange().getStartOffset()
     }
 
     private val declarationKeywords = TokenSet.create(JetTokens.FUN_KEYWORD, JetTokens.VAL_KEYWORD, JetTokens.VAR_KEYWORD)

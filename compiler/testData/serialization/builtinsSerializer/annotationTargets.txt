@@ -16,7 +16,7 @@ test.anno(x = "top level class": kotlin.String) internal final class C1 {
         public constructor C2()
     }
 
-    test.anno(x = "class object": kotlin.String) internal class object Default {
+    test.anno(x = "default object": kotlin.String) internal default object Default {
         private constructor Default()
     }
 }

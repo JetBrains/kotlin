@@ -5,7 +5,7 @@ trait Trait {
 }
 
 open class A {
-    class object Default : Trait {
+    default object Default : Trait {
 
     }
 }
@@ -15,5 +15,5 @@ fun test() {
 }
 
 
-// REF: class object of (t).A
+// REF: default object of (t).A
 

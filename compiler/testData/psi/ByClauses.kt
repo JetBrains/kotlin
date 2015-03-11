@@ -1,23 +1,23 @@
 class A : b by a {
-  class object {}
+  default object {}
 }
 class A : b by a + b() * 5 {
-  class object {}
+  default object {}
 }
 class A : b by (a) {
-  class object {}
+  default object {}
 }
 class A : b by (a {}) {
-  class object {}
+  default object {}
 }
 class A : b by a[a {}] {
-  class object {}
+  default object {}
 }
 class A : b by a(a {}) {
-  class object {}
+  default object {}
 }
 class A : b by object {
   fun f() = a {}
 } {
-  class object {}
+  default object {}
 }

@@ -1,4 +1,4 @@
-import kotlin.reflect.IllegalAccessException
+import kotlin.reflect.IllegalPropertyAccessException
 import kotlin.reflect.KMemberProperty
 import kotlin.reflect.jvm.accessible
 
@@ -13,7 +13,7 @@ fun box(): String {
     try {
         p.get(Result())
         return "Fail: private property is accessible by default"
-    } catch(e: IllegalAccessException) { }
+    } catch(e: IllegalPropertyAccessException) { }
 
     p.accessible = true
 
@@ -23,7 +23,7 @@ fun box(): String {
     try {
         p.get(Result())
         return "Fail: setAccessible(false) had no effect"
-    } catch(e: IllegalAccessException) { }
+    } catch(e: IllegalPropertyAccessException) { }
 
     return r
 }

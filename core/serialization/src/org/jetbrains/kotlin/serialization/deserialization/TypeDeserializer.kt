@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedTypeParameterDescriptor
-import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedTypeParameterDescriptor
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.utils.*
+import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.util.LinkedHashMap
 
 public class TypeDeserializer(
@@ -94,7 +94,7 @@ public class TypeDeserializer(
         val id = c.nameResolver.getClassId(fqNameIndex)
         if (id.isLocal()) {
             // Local classes can't be found in scopes
-            return c.components.deserializeClass(id)
+            return c.components.localClassResolver.resolveLocalClass(id)
         }
         return c.components.moduleDescriptor.findClassAcrossModuleDependencies(id)
     }

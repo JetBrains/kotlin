@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.generators.tests
 
-
 import junit.framework.TestCase
 import org.jetbrains.kotlin.addImport.AbstractAddImportTest
 import org.jetbrains.kotlin.android.*
@@ -54,6 +53,7 @@ import org.jetbrains.kotlin.idea.codeInsight.surroundWith.AbstractSurroundWithTe
 import org.jetbrains.kotlin.idea.codeInsight.unwrap.AbstractUnwrapRemoveTest
 import org.jetbrains.kotlin.idea.configuration.AbstractConfigureProjectByChangingFileTest
 import org.jetbrains.kotlin.idea.conversion.copy.AbstractJavaToKotlinCopyPasteConversionTest
+// import org.jetbrains.kotlin.idea.coverage.AbstractKotlinCoverageOutputFilesTest
 import org.jetbrains.kotlin.idea.debugger.AbstractJetPositionManagerTest
 import org.jetbrains.kotlin.idea.debugger.AbstractKotlinSteppingTest
 import org.jetbrains.kotlin.idea.debugger.AbstractSmartStepIntoTest
@@ -762,6 +762,22 @@ fun main(args: Array<String>) {
         testClass(javaClass<AbstractMultiModuleTest>()) {
             model("multiModule/cases", extension = null, recursive=false)
         }
+
+        testClass(javaClass<AbstractInlineJsTest>()) {
+            model("inline/cases")
+        }
+
+        testClass(javaClass<AbstractInlineJsStdlibTest>()) {
+            model("inlineStdlib/cases")
+        }
+
+        testClass(javaClass<AbstractLabelTest>()) {
+            model("labels/cases")
+        }
+
+        testClass(javaClass<AbstractJsCodeTest>()) {
+            model("jsCode/cases")
+        }
     }
 
     testGroup("js/js.tests/test", "compiler/testData") {
@@ -816,15 +832,23 @@ private class TestGroup(val testsRoot: String, val testDataRoot: String) {
                 testMethod: String = "doTest",
                 singleClass: Boolean = false,
                 testClassName: String? = null,
-                targetBackend: TargetBackend = TargetBackend.ANY
+                targetBackend: TargetBackend = TargetBackend.ANY,
+                excludeDirs: List<String> = listOf()
         ) {
             val rootFile = File(testDataRoot + "/" + relativeRootPath)
             val compiledPattern = Pattern.compile(pattern)
             val className = testClassName ?: TestGeneratorUtil.fileNameToJavaIdentifier(rootFile)
-            testModels.add(if (singleClass)
-                               SingleClassTestModel(rootFile, compiledPattern, testMethod, className, targetBackend)
-                           else
-                               SimpleTestClassModel(rootFile, recursive, excludeParentDirs, compiledPattern, testMethod, className, targetBackend))
+            testModels.add(
+                    if (singleClass) {
+                        if (excludeDirs.isNotEmpty()) error("excludeDirs is unsupported for SingleClassTestModel yet")
+                        SingleClassTestModel(rootFile, compiledPattern, testMethod, className, targetBackend)
+                    }
+                    else {
+                        SimpleTestClassModel(
+                                rootFile, recursive, excludeParentDirs, compiledPattern, testMethod, className, targetBackend, excludeDirs
+                        )
+                    }
+            )
         }
     }
 

@@ -18,9 +18,7 @@ package org.jetbrains.kotlin.resolve.lazy;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
-import com.google.common.base.Predicates;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
@@ -456,8 +454,8 @@ public abstract class ElementResolver {
 
     private static TopDownAnalysisParameters createParameters(@NotNull ResolveSession resolveSession) {
         return TopDownAnalysisParameters.createForLocalDeclarations(
-                resolveSession.getStorageManager(), resolveSession.getExceptionTracker(),
-                Predicates.<PsiFile>alwaysTrue());
+                resolveSession.getStorageManager(), resolveSession.getExceptionTracker()
+        );
     }
 
     @NotNull
@@ -620,11 +618,6 @@ public abstract class ElementResolver {
         @Override
         public TopDownAnalysisParameters getTopDownAnalysisParameters() {
             return topDownAnalysisParameters;
-        }
-
-        @Override
-        public boolean completeAnalysisNeeded(@NotNull PsiElement element) {
-            return true;
         }
     }
 }

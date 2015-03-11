@@ -7,7 +7,7 @@ internal final annotation class Anno : kotlin.Annotation {
 internal final class Class {
     /*primary*/ public constructor Class()
 
-    internal class object Default {
+    internal default object Default {
         /*primary*/ private constructor Default()
         test.Anno() internal final val property: kotlin.Int
             internal final fun <get-property>(): kotlin.Int

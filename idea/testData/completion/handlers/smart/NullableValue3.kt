@@ -1,5 +1,5 @@
 class K {
-    class object {
+    default object {
         fun bar(): K? = K()
     }
 }

@@ -10,7 +10,7 @@ enum class Direction {
 }
 
 class A {
-    class object {
+    default object {
 
     }
 }

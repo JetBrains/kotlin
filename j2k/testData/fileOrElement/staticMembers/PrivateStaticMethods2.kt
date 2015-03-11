@@ -4,7 +4,7 @@ class A {
         privateStatic2()
     }
 
-    class object {
+    default object {
 
         public fun publicStatic() {
             privateStatic1()

@@ -13,9 +13,9 @@ fun foo() {
 }
 
 class A() {
-    class object {
+    default object {
         class B() {
-            class object {
+            default object {
                 fun foo() {}
             }
         }
@@ -49,9 +49,9 @@ fun foo() {
 }
 
 class A() {
-    class object {
+    default object {
         class B() {
-            class object {
+            default object {
                 fun foo() {}
             }
         }

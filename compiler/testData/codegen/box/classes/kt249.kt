@@ -1,7 +1,7 @@
 package x
 
 class Outer() {
-    class object {
+    default object {
         class Inner() {
         }
     }

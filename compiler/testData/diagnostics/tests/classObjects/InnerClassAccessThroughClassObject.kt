@@ -5,7 +5,7 @@ class A {
     inner class Inner
 
 
-    class object {
+    default object {
 
         class Nested2
 

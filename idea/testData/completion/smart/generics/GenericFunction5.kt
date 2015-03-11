@@ -1,5 +1,5 @@
 class C<T> {
-    class object {
+    default object {
         fun<T> create(t: T): C<T>{}
     }
 }

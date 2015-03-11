@@ -3,5 +3,5 @@ Function call (7: 11) A.foos()
 New instance creation (2: 20) var next: A? = A()
 New instance creation (32: 18) fun X.bar(a: A = A()) {
 Supertype (1: 39) public class X(bar: String? = A.BAR): A() {
-Supertype (23: 19) class object: A() {
+Supertype (23: 21) default object: A() {
 Supertype (28: 11) object O: A() {

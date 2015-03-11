@@ -1,3 +1,3 @@
 class A {
-    class object
+    default object
 }

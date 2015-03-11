@@ -35,7 +35,6 @@
                                     <fileset dir="${basedir}/../../../core/builtins/src"/>
                                     <fileset dir="${basedir}/../../../core/runtime.jvm/src"/>
                                     <fileset dir="${basedir}/../../../core/reflection/src"/>
-                                    <fileset dir="${basedir}/../../../core/reflection.jvm/src"/>
                                 </copy>
                             </target>
                         </configuration>

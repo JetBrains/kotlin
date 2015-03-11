@@ -285,10 +285,24 @@ public inline fun <K, V> Map<K, V>.filterNot(predicate: (Map.Entry<K, V>) -> Boo
 }
 
 /**
- * Appends given [pair] to the mutable map.
+ * Appends or replaces the given [pair] in this mutable map.
  */
 public fun <K, V> MutableMap<K, V>.plusAssign(pair: Pair<K, V>) {
     put(pair.first, pair.second)
+}
+
+/**
+ * Appends or replaces all pairs from the given collection of [pairs] in this mutable map.
+ */
+public fun <K, V> MutableMap<K, V>.plusAssign(pairs: Iterable<Pair<K, V>>) {
+    putAll(pairs)
+}
+
+/**
+ * Appends or replaces all entries from the given [map] in this mutable map.
+ */
+public fun <K, V> MutableMap<K, V>.plusAssign(map: Map<K, V>) {
+    putAll(map)
 }
 
 /**
@@ -306,3 +320,49 @@ public fun <K, V> Iterable<Pair<K, V>>.toMap(): Map<K, V> {
  * Converts this [Map] to a [LinkedHashMap], maintaining the insertion order of elements added to that map afterwards.
  */
 public fun <K, V> Map<K, V>.toLinkedMap(): MutableMap<K, V> = LinkedHashMap(this)
+
+/**
+ * Creates a new read-only map by replacing or adding an entry to this map from a given key-value [pair]
+ */
+public fun <K, V> Map<K, V>.plus(pair: Pair<K, V>): Map<K, V> {
+    val newMap = this.toLinkedMap()
+    newMap.put(pair.first, pair.second)
+    return newMap
+}
+
+/**
+ * Creates a new read-only map by replacing or adding entries to this map from a given collection of key-value [pairs]
+ */
+public fun <K, V> Map<K, V>.plus(pairs: Iterable<Pair<K, V>>): Map<K, V> {
+    val newMap = this.toLinkedMap()
+    newMap.putAll(pairs)
+    return newMap
+}
+
+/**
+ * Creates a new read-only map by replacing or adding entries to this map from another [map]
+ */
+public fun <K, V> Map<K, V>.plus(map: Map<K, V>): Map<K, V> {
+    val newMap = this.toLinkedMap()
+    newMap.putAll(map)
+    return newMap
+}
+
+/**
+ * Creates a new read-only map by removing a key from this map
+ */
+public fun <K, V> Map<K, V>.minus(key: K): Map<K, V> {
+    return this.filterKeys { key != it }
+}
+
+/**
+ * Creates a new read-only map by removing a collection of keys from this map
+ */
+public fun <K, V> Map<K, V>.minus(keys: Iterable<K>): Map<K, V> {
+    val result = LinkedHashMap<K, V>()
+    result.putAll(this)
+    for (entry in keys) {
+        result.remove(entry)
+    }
+    return result
+}

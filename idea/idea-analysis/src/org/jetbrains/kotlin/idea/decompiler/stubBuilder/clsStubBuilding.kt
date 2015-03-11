@@ -16,27 +16,27 @@
 
 package org.jetbrains.kotlin.idea.decompiler.stubBuilder
 
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.stubs.impl.*
-import org.jetbrains.kotlin.psi.JetPackageDirective
-import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes
-import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub
-import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
-import org.jetbrains.kotlin.serialization.Flags
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.serialization.ProtoBuf
+import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
-import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
-import org.jetbrains.kotlin.psi.JetConstructorCalleeExpression
-import org.jetbrains.kotlin.psi.JetTypeReference
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.serialization.deserialization.AnnotatedCallableKind
+import org.jetbrains.kotlin.psi.JetConstructorCalleeExpression
+import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
+import org.jetbrains.kotlin.psi.JetPackageDirective
+import org.jetbrains.kotlin.psi.JetTypeReference
+import org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub
+import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes
+import org.jetbrains.kotlin.psi.stubs.impl.*
+import org.jetbrains.kotlin.serialization.Flags
+import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.ProtoBuf.Callable.CallableKind
+import org.jetbrains.kotlin.serialization.deserialization.AnnotatedCallableKind
+import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 
 fun createTopLevelClassStub(classId: ClassId, classProto: ProtoBuf.Class, context: ClsStubBuilderContext): KotlinFileStubImpl {
     val fileStub = createFileStub(classId.getPackageFqName())
@@ -90,7 +90,10 @@ fun createStubForPackageName(packageDirectiveStub: KotlinPlaceHolderStubImpl<Jet
 }
 
 fun createStubForTypeName(typeClassId: ClassId, parent: StubElement<out PsiElement>): KotlinUserTypeStub {
-    val segments = typeClassId.asSingleFqName().pathSegments().toArrayList()
+    val fqName =
+            if (typeClassId.isLocal()) KotlinBuiltIns.FQ_NAMES.any
+            else typeClassId.asSingleFqName()
+    val segments = fqName.pathSegments().toArrayList()
     assert(segments.isNotEmpty())
     val iterator = segments.listIterator(segments.size())
 

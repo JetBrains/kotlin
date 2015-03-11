@@ -19,5 +19,5 @@ package kotlin.reflect.jvm.internal
 import java.io.Serializable
 
 public abstract class KMemberFunctionImpl<in T, out R> : Serializable {
-    override fun toString() = "${(this as Object).getClass().getGenericInterfaces()[0]}"
+    override fun toString() = "${javaClass.getGenericInterfaces().first()}"
 }

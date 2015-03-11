@@ -120,7 +120,6 @@ class NoInternalVisibilityInStdLibTest {
                     GlobalContext(),
                     environment.getSourceFiles(),
                     CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(),
-                    { true },
                     module,
                     null,
                     null
@@ -136,7 +135,7 @@ class NoInternalVisibilityInStdLibTest {
             val pathToJsStdlibJar = KOTLIN_ROOT_PATH + PathUtil.getKotlinPathsForDistDirectory().getJsStdLibJarPath().path
             val config = LibrarySourcesConfig(project, "testModule", listOf(pathToJsStdlibJar), EcmaVersion.defaultVersion(), false, false)
 
-            TopDownAnalyzerFacadeForJS.analyzeFiles(listOf(), { true }, config).moduleDescriptor
+            TopDownAnalyzerFacadeForJS.analyzeFiles(listOf(), config).moduleDescriptor
         }
     }
 

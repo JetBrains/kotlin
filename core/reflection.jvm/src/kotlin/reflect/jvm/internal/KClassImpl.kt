@@ -26,10 +26,10 @@ enum class KClassOrigin {
     FOREIGN
 }
 
-private val KOTLIN_CLASS_ANNOTATION_CLASS = javaClassOf<KotlinClass>()
-private val KOTLIN_SYNTHETIC_CLASS_ANNOTATION_CLASS = javaClassOf<KotlinSyntheticClass>()
+private val KOTLIN_CLASS_ANNOTATION_CLASS = javaClass<KotlinClass>()
+private val KOTLIN_SYNTHETIC_CLASS_ANNOTATION_CLASS = javaClass<KotlinSyntheticClass>()
 
-class KClassImpl<T>(val jClass: Class<T>, isKnownToBeKotlin: Boolean) : KClass<T> {
+class KClassImpl<T>(val jClass: Class<T>, isKnownToBeKotlin: Boolean = false) : KClass<T> {
     // TODO: write metadata to local classes
     private val origin: KClassOrigin =
             if (isKnownToBeKotlin ||
@@ -44,7 +44,7 @@ class KClassImpl<T>(val jClass: Class<T>, isKnownToBeKotlin: Boolean) : KClass<T
             }
 
     fun memberProperty(name: String): KMemberProperty<T, *> =
-            if (origin identityEquals KClassOrigin.KOTLIN) {
+            if (origin === KClassOrigin.KOTLIN) {
                 KMemberPropertyImpl<T, Any>(name, this)
             }
             else {
@@ -52,7 +52,7 @@ class KClassImpl<T>(val jClass: Class<T>, isKnownToBeKotlin: Boolean) : KClass<T
             }
 
     fun mutableMemberProperty(name: String): KMutableMemberProperty<T, *> =
-            if (origin identityEquals KClassOrigin.KOTLIN) {
+            if (origin === KClassOrigin.KOTLIN) {
                 KMutableMemberPropertyImpl<T, Any>(name, this)
             }
             else {

@@ -2,7 +2,7 @@
 package test
 
 class ClassObjectDeclaresProperty {
-    class object {
+    default object {
         val i = 1
     }
 }

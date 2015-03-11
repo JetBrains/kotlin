@@ -9,7 +9,7 @@ open class Buildable {
 
 class List<T> {
 
-  class object : Buildable {
+  default object : Buildable {
     override fun newBuilder<E, R>() : Builder<E, R>
 
   }

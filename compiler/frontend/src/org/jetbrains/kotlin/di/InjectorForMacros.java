@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.resolve.calls.CandidateResolver;
 import org.jetbrains.kotlin.resolve.calls.tasks.TaskPrioritizer;
 import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver;
 import org.jetbrains.kotlin.resolve.TypeResolver.FlexibleTypeCapabilitiesProvider;
-import org.jetbrains.kotlin.context.LazinessToken;
+import org.jetbrains.kotlin.context.TypeLazinessToken;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
 
@@ -80,7 +80,7 @@ public class InjectorForMacros {
     private final TaskPrioritizer taskPrioritizer;
     private final QualifiedExpressionResolver qualifiedExpressionResolver;
     private final FlexibleTypeCapabilitiesProvider flexibleTypeCapabilitiesProvider;
-    private final LazinessToken lazinessToken;
+    private final TypeLazinessToken typeLazinessToken;
 
     public InjectorForMacros(
         @NotNull Project project,
@@ -98,9 +98,9 @@ public class InjectorForMacros {
         this.flexibleTypeCapabilitiesProvider = new FlexibleTypeCapabilitiesProvider();
         this.globalContext = org.jetbrains.kotlin.context.ContextPackage.GlobalContext();
         this.storageManager = globalContext.getStorageManager();
-        this.lazinessToken = new LazinessToken();
+        this.typeLazinessToken = new TypeLazinessToken();
         this.dynamicTypesSettings = new DynamicTypesSettings();
-        this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, moduleDescriptor, flexibleTypeCapabilitiesProvider, storageManager, lazinessToken, dynamicTypesSettings);
+        this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, moduleDescriptor, flexibleTypeCapabilitiesProvider, storageManager, typeLazinessToken, dynamicTypesSettings);
         this.defaultProvider = DefaultProvider.INSTANCE$;
         this.callExpressionResolver = new CallExpressionResolver();
         this.descriptorResolver = new DescriptorResolver();

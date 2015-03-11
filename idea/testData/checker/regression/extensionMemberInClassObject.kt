@@ -3,7 +3,7 @@ trait Bar {
 }
 
 class A {
-    class object : Bar
+    default object : Bar
 }
 
 fun test() {

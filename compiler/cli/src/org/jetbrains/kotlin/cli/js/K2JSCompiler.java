@@ -17,12 +17,10 @@
 package org.jetbrains.kotlin.cli.js;
 
 import com.google.common.base.Joiner;
-import com.google.common.base.Predicates;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
 import com.intellij.util.Function;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
@@ -212,7 +210,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         analyzerWithCompilerReport.analyzeAndReport(sources, new Function0<AnalysisResult>() {
             @Override
             public AnalysisResult invoke() {
-                return TopDownAnalyzerFacadeForJS.analyzeFiles(sources, Predicates.<PsiFile>alwaysTrue(), config);
+                return TopDownAnalyzerFacadeForJS.analyzeFiles(sources, config);
             }
         });
         return analyzerWithCompilerReport.hasErrors();

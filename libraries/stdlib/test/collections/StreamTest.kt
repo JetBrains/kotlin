@@ -50,6 +50,12 @@ public class StreamTest {
         assertEquals(listOf(null, "foo", null), filtered.toList())
     }
 
+    test fun filterNot() {
+        val data = streamOf(null, "foo", null, "bar")
+        val filtered = data.filterNot { it == null }
+        assertEquals(listOf("foo", "bar"), filtered.toList())
+    }
+
     test fun filterNotNull() {
         val data = streamOf(null, "foo", null, "bar")
         val filtered = data.filterNotNull()

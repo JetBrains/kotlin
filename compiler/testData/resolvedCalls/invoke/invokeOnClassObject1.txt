@@ -1,5 +1,5 @@
 class A {
-    class object {
+    default object {
         fun invoke(i: Int) = i
     }
 }
@@ -9,7 +9,7 @@ fun test() = <caret>A(1)
 
 Resolved call:
 
-Resulting descriptor: class object defined in A
+Resulting descriptor: default object defined in A
 
 Explicit receiver kind = NO_EXPLICIT_RECEIVER
 Dispatch receiver = NO_RECEIVER

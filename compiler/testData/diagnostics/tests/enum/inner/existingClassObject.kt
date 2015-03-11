@@ -3,14 +3,14 @@ class A {
         ENTRY
     }
     
-    class object {
+    default object {
     }
 }
 
 
 
 class B {
-    class object {
+    default object {
     }
     
     enum class E {

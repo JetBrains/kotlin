@@ -16,13 +16,9 @@
 
 package org.jetbrains.kotlin.js.analyze;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.context.ContextPackage;
@@ -53,18 +49,10 @@ public final class TopDownAnalyzerFacadeForJS {
     private TopDownAnalyzerFacadeForJS() {
     }
 
-    //NOTE: web demo related method
-    @SuppressWarnings("UnusedDeclaration")
-    @NotNull
-    public static BindingContext analyzeFiles(@NotNull Collection<JetFile> files, @NotNull Config config) {
-        return analyzeFiles(files, Predicates.<PsiFile>alwaysTrue(), config).getBindingContext();
-    }
-
     //TODO: refactor
     @NotNull
     public static JsAnalysisResult analyzeFiles(
             @NotNull Collection<JetFile> files,
-            @NotNull Predicate<PsiFile> filesToAnalyzeCompletely,
             @NotNull Config config
     ) {
         BindingContext libraryContext = config.getLibraryContext();
@@ -72,7 +60,7 @@ public final class TopDownAnalyzerFacadeForJS {
                              ? new BindingTraceContext()
                              : new DelegatingBindingTrace(libraryContext, "trace with preanalyzed library");
 
-        ModuleDescriptorImpl module = createJsModule("<module>");
+        ModuleDescriptorImpl module = createJsModule("<" + config.getModuleId() + ">");
         module.addDependencyOnModule(module);
         module.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule());
         ModuleDescriptor libraryModule = config.getLibraryModule();
@@ -81,7 +69,7 @@ public final class TopDownAnalyzerFacadeForJS {
         }
         module.seal();
 
-        return analyzeFilesWithGivenTrace(files, trace, module, filesToAnalyzeCompletely, config);
+        return analyzeFilesWithGivenTrace(files, trace, module, config);
     }
 
     @NotNull
@@ -89,16 +77,13 @@ public final class TopDownAnalyzerFacadeForJS {
             @NotNull Collection<JetFile> files,
             @NotNull BindingTrace trace,
             @NotNull ModuleDescriptorImpl module,
-            @NotNull Predicate<PsiFile> filesToAnalyzeCompletely,
             @NotNull Config config
     ) {
         Project project = config.getProject();
 
-        Predicate<PsiFile> completely = Predicates.and(notLibFiles(config.getLibFiles()), filesToAnalyzeCompletely);
-
         GlobalContextImpl globalContext = ContextPackage.GlobalContext();
         TopDownAnalysisParameters topDownAnalysisParameters = TopDownAnalysisParameters.create(
-                globalContext.getStorageManager(), globalContext.getExceptionTracker(), completely, false, false);
+                globalContext.getStorageManager(), globalContext.getExceptionTracker(), false, false);
 
         Collection<JetFile> allFiles = config.getLibraryModule() != null ?
                                        files :
@@ -108,7 +93,7 @@ public final class TopDownAnalyzerFacadeForJS {
                 project, topDownAnalysisParameters, trace, module,
                 new FileBasedDeclarationProviderFactory(topDownAnalysisParameters.getStorageManager(), allFiles));
         try {
-            injector.getLazyTopDownAnalyzerForTopLevel().analyzeFiles(topDownAnalysisParameters, allFiles,
+            injector.getLazyTopDownAnalyzerForTopLevel().analyzeFiles(topDownAnalysisParameters, files,
                                                            Collections.<PackageFragmentProvider>emptyList());
             return JsAnalysisResult.success(trace, module);
         }
@@ -122,18 +107,6 @@ public final class TopDownAnalyzerFacadeForJS {
         for (JetFile file : allFiles) {
             AnalyzingUtils.checkForSyntacticErrors(file);
         }
-    }
-
-    @NotNull
-    private static Predicate<PsiFile> notLibFiles(@NotNull final List<JetFile> jsLibFiles) {
-        return new Predicate<PsiFile>() {
-            @Override
-            public boolean apply(@Nullable PsiFile file) {
-                assert file instanceof JetFile;
-                @SuppressWarnings("UnnecessaryLocalVariable") boolean notLibFile = !jsLibFiles.contains(file);
-                return notLibFile;
-            }
-        };
     }
 
     @NotNull

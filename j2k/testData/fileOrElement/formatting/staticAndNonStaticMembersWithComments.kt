@@ -17,7 +17,7 @@ class F {
     fun f4() {
     }
 
-    class object {
+    default object {
 
         //c1
 

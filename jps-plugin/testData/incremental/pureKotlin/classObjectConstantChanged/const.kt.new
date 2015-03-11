@@ -1,7 +1,7 @@
 package test
 
 class Klass {
-    class object {
+    default object {
         // Old and new constant values are different, but their hashes are the same
         val CONST = "Ae"
     }

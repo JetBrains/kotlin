@@ -16,9 +16,7 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import com.google.common.base.Predicates;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
@@ -49,7 +47,7 @@ public class GenerationUtils {
     @NotNull
     public static GenerationState compileManyFilesGetGenerationStateForTest(@NotNull Project project, @NotNull List<JetFile> files) {
         AnalysisResult analysisResult = JvmResolveUtil.analyzeFilesWithJavaIntegrationAndCheckForErrors(
-                project, files, Predicates.<PsiFile>alwaysTrue());
+                project, files);
         return compileFilesGetGenerationState(project, analysisResult, files);
     }
 

@@ -3,7 +3,7 @@ package test
 val CONST = "foo"
 
 class Klass {
-    class object {
+    default object {
         val CONST = "bar"
     }
 }

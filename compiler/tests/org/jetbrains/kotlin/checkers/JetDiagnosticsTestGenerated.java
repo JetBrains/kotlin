@@ -1540,6 +1540,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("deprecatedClassObjectSyntax.kt")
+            public void testDeprecatedClassObjectSyntax() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/classObjects/deprecatedClassObjectSyntax.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("importClassInClassObject.kt")
             public void testImportClassInClassObject() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/classObjects/importClassInClassObject.kt");
@@ -2273,6 +2279,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("conflictingOverloads.kt")
             public void testConflictingOverloads() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/conflictingOverloads.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("copyOfPrivateClass.kt")
+            public void testCopyOfPrivateClass() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/copyOfPrivateClass.kt");
                 doTest(fileName);
             }
 

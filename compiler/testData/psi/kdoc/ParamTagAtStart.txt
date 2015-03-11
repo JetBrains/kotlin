@@ -11,5 +11,6 @@ JetFile: ParamTagAtStart.kt
         KDOC_MARKDOWN_LINK
           KDOC_NAME
             PsiElement(IDENTIFIER)('a')
-        PsiElement(KDOC_TEXT)(' this is a ')
+        PsiWhiteSpace(' ')
+        PsiElement(KDOC_TEXT)('this is a ')
     PsiElement(KDOC_END)('*/')

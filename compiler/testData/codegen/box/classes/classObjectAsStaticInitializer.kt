@@ -1,7 +1,7 @@
 var global = 0;
 
 class C {
-  class object {
+  default object {
       {
         global = 1;
       }

@@ -1163,6 +1163,324 @@ public fun <T> Stream<T>.indexOf(element: T): Int {
 }
 
 /**
+ * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element
+ */
+public inline fun <T> Array<out T>.indexOfFirst(predicate: (T) -> Boolean): Int {
+    for (index in indices) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
+ * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element
+ */
+public inline fun BooleanArray.indexOfFirst(predicate: (Boolean) -> Boolean): Int {
+    for (index in indices) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
+ * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element
+ */
+public inline fun ByteArray.indexOfFirst(predicate: (Byte) -> Boolean): Int {
+    for (index in indices) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
+ * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element
+ */
+public inline fun CharArray.indexOfFirst(predicate: (Char) -> Boolean): Int {
+    for (index in indices) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
+ * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element
+ */
+public inline fun DoubleArray.indexOfFirst(predicate: (Double) -> Boolean): Int {
+    for (index in indices) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
+ * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element
+ */
+public inline fun FloatArray.indexOfFirst(predicate: (Float) -> Boolean): Int {
+    for (index in indices) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
+ * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element
+ */
+public inline fun IntArray.indexOfFirst(predicate: (Int) -> Boolean): Int {
+    for (index in indices) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
+ * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element
+ */
+public inline fun LongArray.indexOfFirst(predicate: (Long) -> Boolean): Int {
+    for (index in indices) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
+ * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element
+ */
+public inline fun ShortArray.indexOfFirst(predicate: (Short) -> Boolean): Int {
+    for (index in indices) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
+ * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element
+ */
+public inline fun <T> Iterable<T>.indexOfFirst(predicate: (T) -> Boolean): Int {
+    var index = 0
+    for (item in this) {
+        if (predicate(item))
+            return index
+        index++
+    }
+    return -1
+}
+
+/**
+ * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element
+ */
+public inline fun <T> List<T>.indexOfFirst(predicate: (T) -> Boolean): Int {
+    for (index in indices) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
+ * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element
+ */
+public inline fun <T> Stream<T>.indexOfFirst(predicate: (T) -> Boolean): Int {
+    var index = 0
+    for (item in this) {
+        if (predicate(item))
+            return index
+        index++
+    }
+    return -1
+}
+
+/**
+ * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element
+ */
+public inline fun String.indexOfFirst(predicate: (Char) -> Boolean): Int {
+    for (index in indices) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
+ * Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element
+ */
+public inline fun <T> Array<out T>.indexOfLast(predicate: (T) -> Boolean): Int {
+    for (index in indices.reversed()) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
+ * Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element
+ */
+public inline fun BooleanArray.indexOfLast(predicate: (Boolean) -> Boolean): Int {
+    for (index in indices.reversed()) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
+ * Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element
+ */
+public inline fun ByteArray.indexOfLast(predicate: (Byte) -> Boolean): Int {
+    for (index in indices.reversed()) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
+ * Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element
+ */
+public inline fun CharArray.indexOfLast(predicate: (Char) -> Boolean): Int {
+    for (index in indices.reversed()) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
+ * Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element
+ */
+public inline fun DoubleArray.indexOfLast(predicate: (Double) -> Boolean): Int {
+    for (index in indices.reversed()) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
+ * Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element
+ */
+public inline fun FloatArray.indexOfLast(predicate: (Float) -> Boolean): Int {
+    for (index in indices.reversed()) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
+ * Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element
+ */
+public inline fun IntArray.indexOfLast(predicate: (Int) -> Boolean): Int {
+    for (index in indices.reversed()) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
+ * Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element
+ */
+public inline fun LongArray.indexOfLast(predicate: (Long) -> Boolean): Int {
+    for (index in indices.reversed()) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
+ * Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element
+ */
+public inline fun ShortArray.indexOfLast(predicate: (Short) -> Boolean): Int {
+    for (index in indices.reversed()) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
+ * Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element
+ */
+public inline fun <T> Iterable<T>.indexOfLast(predicate: (T) -> Boolean): Int {
+    var lastIndex = -1
+    var index = 0
+    for (item in this) {
+        if (predicate(item))
+            lastIndex = index
+        index++
+    }
+    return lastIndex
+}
+
+/**
+ * Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element
+ */
+public inline fun <T> List<T>.indexOfLast(predicate: (T) -> Boolean): Int {
+    for (index in indices.reversed()) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
+ * Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element
+ */
+public inline fun <T> Stream<T>.indexOfLast(predicate: (T) -> Boolean): Int {
+    var lastIndex = -1
+    var index = 0
+    for (item in this) {
+        if (predicate(item))
+            lastIndex = index
+        index++
+    }
+    return lastIndex
+}
+
+/**
+ * Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element
+ */
+public inline fun String.indexOfLast(predicate: (Char) -> Boolean): Int {
+    for (index in indices.reversed()) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
  * Returns the last element.
  * @throws NoSuchElementException if the collection is empty.
  */
@@ -1642,26 +1960,6 @@ public fun <T> Iterable<T>.lastIndexOf(element: T): Int {
         index++
     }
     return lastIndex
-}
-
-/**
- * Returns last index of *element*, or -1 if the collection does not contain element
- */
-public fun <T> List<T>.lastIndexOf(element: T): Int {
-    if (element == null) {
-        for (index in indices.reverse()) {
-            if (this[index] == null) {
-                return index
-            }
-        }
-    } else {
-        for (index in indices.reverse()) {
-            if (element == this[index]) {
-                return index
-            }
-        }
-    }
-    return -1
 }
 
 /**

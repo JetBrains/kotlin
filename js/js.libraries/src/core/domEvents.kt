@@ -29,7 +29,7 @@ native public trait Event {
     public fun preventDefault(): Unit = noImpl
     public fun stopPropagation(): Unit = noImpl
 
-    public class object {
+    public default object {
         public val AT_TARGET: Short = 2
         public val BUBBLING_PHASE: Short = 3
         public val CAPTURING_PHASE: Short = 1
@@ -64,7 +64,7 @@ native public trait MutationEvent: Event {
     public val relatedNode: Node
     public fun initMutationEvent(arg1: String?, arg2: Boolean, arg3: Boolean, arg4: Node, arg5: String?, arg6: String?, arg7: String?, arg8: Short): Unit = noImpl
 
-    public class object {
+    public default object {
         public val ADDITION: Short = 2
         public val MODIFICATION: Short = 1
         public val REMOVAL: Short = 3

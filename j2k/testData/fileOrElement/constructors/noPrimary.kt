@@ -17,7 +17,7 @@ fun C(arg: Int): C {
 class C
 
 public class User {
-    class object {
+    default object {
         public fun main() {
             val c1 = C(1, 2, 3)
             val c2 = C(5, 6)

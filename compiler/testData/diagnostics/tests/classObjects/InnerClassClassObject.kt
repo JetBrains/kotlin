@@ -2,16 +2,16 @@
 
 class A {
     inner class B {
-        <!DEFAULT_OBJECT_NOT_ALLOWED!>class object<!> { }
+        <!DEFAULT_OBJECT_NOT_ALLOWED!>default<!> object { }
     }
 }
 
 class B {
-    class object {
+    default object {
         class B {
-            class object {
+            default object {
                 class C {
-                    class object { }
+                    default object { }
                 }
             }
         }
@@ -20,6 +20,6 @@ class B {
 
 class C {
     class D {
-        class object { }
+        default object { }
     }
 }

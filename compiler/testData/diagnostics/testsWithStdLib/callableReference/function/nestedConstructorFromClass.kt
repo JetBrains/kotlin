@@ -12,7 +12,7 @@ class A {
         y : KFunction0<Nested>
     }
     
-    class object {
+    default object {
         fun main() {
             ::Nested
             val y = A::Nested

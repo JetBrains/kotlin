@@ -3,7 +3,7 @@ enum class E {
 
     <!REDECLARATION!>SECOND<!>
 
-    class object {
+    default object {
         class <!REDECLARATION!>FIRST<!>
 
         val <!REDECLARATION!>SECOND<!> = this

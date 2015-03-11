@@ -1,8 +1,9 @@
 package test.collections
 
 import org.junit.Test
+import java.util.ArrayList
+import java.util.LinkedHashSet
 import kotlin.test.*
-import java.util.*
 
 fun <T> iterableOf(vararg items: T): Iterable<T> = IterableWrapper(items.toList())
 
@@ -33,6 +34,18 @@ abstract class OrderedIterableTests<T : Iterable<String>>(data: T, empty: T) : I
         expect(-1) { empty.lastIndexOf("foo") }
         expect(1) { data.lastIndexOf("bar") }
         expect(-1) { data.lastIndexOf("zap") }
+    }
+
+    Test fun indexOfFirst() {
+        expect(-1) { data.indexOfFirst { it.contains("p") } }
+        expect(0) { data.indexOfFirst { it.startsWith('f') } }
+        expect(-1) { empty.indexOfFirst { it.startsWith('f') } }
+    }
+
+    Test fun indexOfLast() {
+        expect(-1) { data.indexOfLast { it.contains("p") } }
+        expect(1) { data.indexOfLast { it.length() == 3 } }
+        expect(-1) { empty.indexOfLast { it.startsWith('f') } }
     }
 
     Test fun elementAt() {
@@ -110,6 +123,22 @@ abstract class IterableTests<T : Iterable<String>>(val data: T, val empty: T) {
         expect(true) { foo.all { it.startsWith("f") } }
         expect(1) { foo.size() }
         assertEquals(listOf("foo"), foo)
+    }
+
+    Test fun drop() {
+        val foo = data.drop(1)
+        expect(true) { foo is List<String> }
+        expect(true) { foo.all { it.startsWith("b") } }
+        expect(1) { foo.size() }
+        assertEquals(listOf("bar"), foo)
+    }
+
+    Test fun dropWhile() {
+        val foo = data.dropWhile { it[0] == 'f' }
+        expect(true) { foo is List<String> }
+        expect(true) { foo.all { it.startsWith("b") } }
+        expect(1) { foo.size() }
+        assertEquals(listOf("bar"), foo)
     }
 
     Test fun filterNot() {

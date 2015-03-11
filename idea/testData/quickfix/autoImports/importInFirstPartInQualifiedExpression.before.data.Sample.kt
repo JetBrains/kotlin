@@ -1,7 +1,7 @@
 package some
 
 public class Some {
-  class object {
+  default object {
     public fun test() {
     }
   }

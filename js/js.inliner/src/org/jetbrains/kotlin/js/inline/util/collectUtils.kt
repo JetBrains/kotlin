@@ -23,7 +23,8 @@ import java.util.IdentityHashMap
 import org.jetbrains.kotlin.js.inline.util.collectors.ReferenceNameCollector
 import org.jetbrains.kotlin.js.inline.util.collectors.NameCollector
 import org.jetbrains.kotlin.js.inline.util.collectors.InstanceCollector
-import org.jetbrains.kotlin.js.inline.util.collectors.FunctionCollector
+import org.jetbrains.kotlin.js.inline.util.collectors.PropertyCollector
+import org.jetbrains.kotlin.js.translate.expression.*
 
 public fun collectFunctionReferencesInside(scope: JsNode): List<JsName> =
     collectReferencesInside(scope) filter { it.staticRef is JsFunction }
@@ -44,11 +45,27 @@ public fun collectLocalNames(function: JsFunction): List<JsName> {
     }
 }
 
+public fun collectJsProperties(scope: JsNode): IdentityHashMap<JsName, JsExpression> {
+    val collector = PropertyCollector()
+    collector.accept(scope)
+    return collector.properties
+}
+
 public fun collectNamedFunctions(scope: JsNode): IdentityHashMap<JsName, JsFunction> {
-    return with(FunctionCollector()) {
-        accept(scope)
-        functions
+    val namedFunctions = IdentityHashMap<JsName, JsFunction>()
+
+    for ((name, value) in collectJsProperties(scope)) {
+        val function: JsFunction? = when (value) {
+            is JsFunction -> value
+            else -> InlineMetadata.decompose(value)?.function
+        }
+
+        if (function != null) {
+            namedFunctions[name] = function
+        }
     }
+
+    return namedFunctions
 }
 
 public fun collectInstances<T : JsNode>(klass: Class<T>, scope: JsNode): List<T> {

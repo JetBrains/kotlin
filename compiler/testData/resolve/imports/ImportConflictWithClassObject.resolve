@@ -5,7 +5,7 @@ package test
 import testing.TestClass
 
 class WithClassObject {
-  class object {
+  default object {
     class ~class-object~TestClass
   }
 

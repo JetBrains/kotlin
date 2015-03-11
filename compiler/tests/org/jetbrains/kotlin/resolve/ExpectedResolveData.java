@@ -16,12 +16,10 @@
 
 package org.jetbrains.kotlin.resolve;
 
-import com.google.common.base.Predicates;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiQualifiedNamedElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
@@ -141,7 +139,7 @@ public abstract class ExpectedResolveData {
 
         Project project = files.iterator().next().getProject();
         AnalysisResult analysisResult = JvmResolveUtil.analyzeFilesWithJavaIntegration(
-                project, files, Predicates.<PsiFile>alwaysTrue());
+                project, files);
         return analysisResult.getBindingContext();
     }
 

@@ -1,7 +1,7 @@
 public class C {
-    class object {
+    default object {
         public fun main(args: Array<String>) {
-            when (args.size) {
+            when (args.size()) {
                 1 -> {
                     run {
                         val a = 1

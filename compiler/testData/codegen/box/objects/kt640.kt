@@ -14,7 +14,7 @@ public open class Identifier<T>(myName : T?, myHasDollar : Boolean) {
         return myName
     }
 
-    class object {
+    default object {
         open public fun init<T>(name : T?) : Identifier<T> {
             val __ = Identifier<T>(name, false)
             return __

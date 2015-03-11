@@ -3,7 +3,7 @@
 class A() {
     val x = 1
 
-    class object {
+    default object {
         val y = <!INACCESSIBLE_OUTER_CLASS_EXPRESSION!>x<!>
     }
 }

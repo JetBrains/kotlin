@@ -17,12 +17,10 @@
 package org.jetbrains.kotlin.checkers;
 
 import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
@@ -230,7 +228,6 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
                 context,
                 jetFiles,
                 moduleTrace,
-                Predicates.<PsiFile>alwaysTrue(),
                 module,
                 null,
                 null

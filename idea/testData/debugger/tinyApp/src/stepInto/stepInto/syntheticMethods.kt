@@ -31,7 +31,7 @@ class A {
         f()
     }
 
-    class object {
+    default object {
         fun test() {
             lambda {
                 val a = 1

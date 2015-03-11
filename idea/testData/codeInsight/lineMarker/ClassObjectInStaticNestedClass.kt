@@ -4,7 +4,7 @@ trait <lineMarker></lineMarker>TestTrait {
 
 class A {
     class B {
-        class object : TestTrait { // TODO: No line marker
+        default object : TestTrait { // TODO: No line marker
             override fun <lineMarker descr="Implements function in 'TestTrait'"></lineMarker>test() {
             }
         }

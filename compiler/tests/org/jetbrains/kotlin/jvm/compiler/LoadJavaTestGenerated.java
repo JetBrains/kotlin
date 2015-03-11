@@ -331,9 +331,27 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledJava(fileName);
             }
 
+            @TestMetadata("AnnotatedConstructor.java")
+            public void testAnnotatedConstructor() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/annotations/AnnotatedConstructor.java");
+                doTestCompiledJava(fileName);
+            }
+
+            @TestMetadata("AnnotatedField.java")
+            public void testAnnotatedField() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/annotations/AnnotatedField.java");
+                doTestCompiledJava(fileName);
+            }
+
             @TestMetadata("AnnotatedMethod.java")
             public void testAnnotatedMethod() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/annotations/AnnotatedMethod.java");
+                doTestCompiledJava(fileName);
+            }
+
+            @TestMetadata("AnnotatedValueParameter.java")
+            public void testAnnotatedValueParameter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/annotations/AnnotatedValueParameter.java");
                 doTestCompiledJava(fileName);
             }
 

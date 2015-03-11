@@ -1,5 +1,5 @@
 class C {
-    <error>class object</error> {
+    default <error>object</error> {
         val <error>Default</error> = this
     }
 

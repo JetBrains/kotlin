@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.descriptors.SourceElement
 class LazyJavaTypeParameterDescriptor(
         private val c: LazyJavaResolverContext,
         public val javaTypeParameter: JavaTypeParameter,
+        index: Int,
         containingDeclaration: DeclarationDescriptor
 ) : AbstractLazyTypeParameterDescriptor(
         c.storageManager,
@@ -37,7 +38,7 @@ class LazyJavaTypeParameterDescriptor(
         javaTypeParameter.getName(),
         Variance.INVARIANT,
         /* isReified = */ false,
-        javaTypeParameter.getIndex(),
+        index,
         SourceElement.NO_SOURCE
 ) {
 

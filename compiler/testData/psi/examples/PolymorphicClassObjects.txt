@@ -132,7 +132,8 @@ JetFile: PolymorphicClassObjects.kt
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n\n  ')
       OBJECT_DECLARATION
-        PsiElement(class)('class')
+        MODIFIER_LIST
+          PsiElement(default)('default')
         PsiWhiteSpace(' ')
         PsiElement(object)('object')
         PsiWhiteSpace(' ')

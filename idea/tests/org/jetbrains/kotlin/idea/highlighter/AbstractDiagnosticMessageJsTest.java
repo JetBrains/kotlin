@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.idea.highlighter;
 
-import com.google.common.base.Predicates;
-import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
@@ -46,7 +44,7 @@ public abstract class AbstractDiagnosticMessageJsTest extends AbstractDiagnostic
     @NotNull
     @Override
     protected AnalysisResult analyze(@NotNull JetFile file) {
-        return TopDownAnalyzerFacadeForJS.analyzeFiles(singletonList(file), Predicates.<PsiFile>alwaysTrue(), getConfig());
+        return TopDownAnalyzerFacadeForJS.analyzeFiles(singletonList(file), getConfig());
     }
 
     @NotNull

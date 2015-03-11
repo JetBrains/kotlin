@@ -3,7 +3,7 @@ package test
 class A
 
 object b {
-    class object {
+    default object {
         val x = <caret>A()
     }
 }

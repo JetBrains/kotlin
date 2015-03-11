@@ -1,5 +1,5 @@
 class Foo {
-  public class object {
+  public default object {
   }
 }
 

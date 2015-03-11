@@ -1,7 +1,7 @@
 package test
 
 class Some {
-  TestAnnotation class object {
+  TestAnnotation default object {
     annotation class TestAnnotation
   }
 }

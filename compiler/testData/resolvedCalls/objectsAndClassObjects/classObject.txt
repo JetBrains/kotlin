@@ -1,5 +1,5 @@
 class Foo {
-    class object {
+    default object {
         val baz = Foo()
     }
 }

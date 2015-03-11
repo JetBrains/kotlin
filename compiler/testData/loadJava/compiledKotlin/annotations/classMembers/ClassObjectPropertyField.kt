@@ -3,7 +3,7 @@ package test
 annotation class Anno
 
 class Class {
-    class object {
+    default object {
         [Anno] var property: Int = 42
     }
 }

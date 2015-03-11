@@ -1,7 +1,7 @@
 package a
 
 class a {
-    class object {
+    default object {
     }
 }
 

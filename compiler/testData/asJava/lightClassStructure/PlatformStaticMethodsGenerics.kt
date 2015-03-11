@@ -3,7 +3,7 @@ package test
 import kotlin.platform.platformStatic
 
 class PlatformStaticClass {
-    class object {
+    default object {
         platformStatic
         fun inClassObject<T>() {}
     }

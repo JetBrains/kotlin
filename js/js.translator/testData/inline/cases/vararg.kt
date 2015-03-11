@@ -3,28 +3,34 @@ package foo
 
 // CHECK_CONTAINS_NO_CALLS: test1
 // CHECK_CONTAINS_NO_CALLS: test2
+// CHECK_CONTAINS_NO_CALLS: test3
 
-inline fun sum(vararg nums: Int): Int {
-    var result = 0
+inline fun concat(vararg strings: String): String {
+    var result = ""
 
-    for (num in nums) {
-        result += num
+    for (string in strings) {
+        result += string
     }
 
     return result
 }
 
-fun test1(): Int {
-    return sum()
+fun test1(): String {
+    return concat()
 }
 
-fun test2(): Int {
-    return sum(1,2,3)
+fun test2(): String {
+    return concat("a", "b", "c")
+}
+
+fun test3(list: Array<String>): String {
+    return concat(*list)
 }
 
 fun box(): String {
-    assertEquals(0, test1())
-    assertEquals(6, test2())
+    assertEquals("", test1())
+    assertEquals("abc", test2())
+    assertEquals("abcd", test3(array("a", "b", "c", "d")))
 
     return "OK"
 }

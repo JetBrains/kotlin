@@ -1,4 +1,4 @@
-package
+package 
 
 package java {
     internal val c: java.lang.Class<*>? = null
@@ -6926,16 +6926,16 @@ package java {
             public constructor String(/*0*/ p0: java.lang.StringBuilder!)
             public constructor String(/*0*/ p0: kotlin.ByteArray!)
             public constructor String(/*0*/ p0: kotlin.ByteArray!, /*1*/ p1: java.nio.charset.Charset!)
-            public constructor String(/*0*/ p0: kotlin.ByteArray!, /*1*/ p1: kotlin.Int)
+            kotlin.deprecated(value = "Deprecated in Java": kotlin.String) public constructor String(/*0*/ p0: kotlin.ByteArray!, /*1*/ p1: kotlin.Int)
             public constructor String(/*0*/ p0: kotlin.ByteArray!, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Int)
             public constructor String(/*0*/ p0: kotlin.ByteArray!, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Int, /*3*/ p3: java.nio.charset.Charset!)
-            public constructor String(/*0*/ p0: kotlin.ByteArray!, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Int, /*3*/ p3: kotlin.Int)
+            kotlin.deprecated(value = "Deprecated in Java": kotlin.String) public constructor String(/*0*/ p0: kotlin.ByteArray!, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Int, /*3*/ p3: kotlin.Int)
             public constructor String(/*0*/ p0: kotlin.ByteArray!, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Int, /*3*/ p3: kotlin.String!)
             public constructor String(/*0*/ p0: kotlin.ByteArray!, /*1*/ p1: kotlin.String!)
             public constructor String(/*0*/ p0: kotlin.CharArray!)
             public/*package*/ constructor String(/*0*/ p0: kotlin.CharArray!, /*1*/ p1: kotlin.Boolean)
             public constructor String(/*0*/ p0: kotlin.CharArray!, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Int)
-            public/*package*/ constructor String(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.CharArray!)
+            kotlin.deprecated(value = "Deprecated in Java": kotlin.String) public/*package*/ constructor String(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.CharArray!)
             public constructor String(/*0*/ p0: kotlin.IntArray!, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Int)
             public constructor String(/*0*/ p0: kotlin.String!)
             private final var hash: kotlin.Int
@@ -8433,10 +8433,10 @@ package java {
             protected/*protected and package*/ constructor Socket(/*0*/ p0: [ERROR : Unresolved java classifier: SocketImpl]!)
             public constructor Socket(/*0*/ p0: java.net.InetAddress!, /*1*/ p1: kotlin.Int)
             public constructor Socket(/*0*/ p0: java.net.InetAddress!, /*1*/ p1: kotlin.Int, /*2*/ p2: java.net.InetAddress!, /*3*/ p3: kotlin.Int)
-            public constructor Socket(/*0*/ p0: java.net.InetAddress!, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Boolean)
+            kotlin.deprecated(value = "Deprecated in Java": kotlin.String) public constructor Socket(/*0*/ p0: java.net.InetAddress!, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Boolean)
             public constructor Socket(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.Int)
             public constructor Socket(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.Int, /*2*/ p2: java.net.InetAddress!, /*3*/ p3: kotlin.Int)
-            public constructor Socket(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Boolean)
+            kotlin.deprecated(value = "Deprecated in Java": kotlin.String) public constructor Socket(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Boolean)
             private final var bound: kotlin.Boolean
             private final var closeLock: kotlin.Any!
             private final var closed: kotlin.Boolean
@@ -10653,7 +10653,7 @@ package java {
         }
 
         public open class Time : java.util.Date {
-            public constructor Time(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Int)
+            kotlin.deprecated(value = "Deprecated in Java": kotlin.String) public constructor Time(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Int)
             public constructor Time(/*0*/ p0: kotlin.Long)
             invisible_fake final override /*1*/ /*fake_override*/ var cdate: sun.util.calendar.BaseCalendar.Date!
             invisible_fake final override /*1*/ /*fake_override*/ var fastTime: kotlin.Long
@@ -10695,7 +10695,7 @@ package java {
         }
 
         public open class Timestamp : java.util.Date {
-            public constructor Timestamp(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Int, /*3*/ p3: kotlin.Int, /*4*/ p4: kotlin.Int, /*5*/ p5: kotlin.Int, /*6*/ p6: kotlin.Int)
+            kotlin.deprecated(value = "Deprecated in Java": kotlin.String) public constructor Timestamp(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Int, /*3*/ p3: kotlin.Int, /*4*/ p4: kotlin.Int, /*5*/ p5: kotlin.Int, /*6*/ p6: kotlin.Int)
             public constructor Timestamp(/*0*/ p0: kotlin.Long)
             invisible_fake final override /*1*/ /*fake_override*/ var cdate: sun.util.calendar.BaseCalendar.Date!
             invisible_fake final override /*1*/ /*fake_override*/ var fastTime: kotlin.Long
@@ -12767,11 +12767,11 @@ package java {
 
         public open class Date : java.io.Serializable, kotlin.Cloneable, kotlin.Comparable<java.util.Date!> {
             public constructor Date()
-            public constructor Date(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Int)
-            public constructor Date(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Int, /*3*/ p3: kotlin.Int, /*4*/ p4: kotlin.Int)
-            public constructor Date(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Int, /*3*/ p3: kotlin.Int, /*4*/ p4: kotlin.Int, /*5*/ p5: kotlin.Int)
+            kotlin.deprecated(value = "Deprecated in Java": kotlin.String) public constructor Date(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Int)
+            kotlin.deprecated(value = "Deprecated in Java": kotlin.String) public constructor Date(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Int, /*3*/ p3: kotlin.Int, /*4*/ p4: kotlin.Int)
+            kotlin.deprecated(value = "Deprecated in Java": kotlin.String) public constructor Date(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Int, /*3*/ p3: kotlin.Int, /*4*/ p4: kotlin.Int, /*5*/ p5: kotlin.Int)
             public constructor Date(/*0*/ p0: kotlin.Long)
-            public constructor Date(/*0*/ p0: kotlin.String!)
+            kotlin.deprecated(value = "Deprecated in Java": kotlin.String) public constructor Date(/*0*/ p0: kotlin.String!)
             private final var cdate: sun.util.calendar.BaseCalendar.Date!
             private final var fastTime: kotlin.Long
             public open fun after(/*0*/ p0: java.util.Date!): kotlin.Boolean

@@ -56,16 +56,16 @@ public class ReferenceVariantsHelper(
     public fun getReferenceVariants(
             expression: JetSimpleNameExpression,
             kindFilter: DescriptorKindFilter,
-            shouldCastToRuntimeType: Boolean,
+            useRuntimeReceiverType: Boolean,
             nameFilter: (Name) -> Boolean
     ): Collection<DeclarationDescriptor> {
-        return getReferenceVariantsNoVisibilityFilter(expression, kindFilter, shouldCastToRuntimeType, nameFilter).filter(visibilityFilter)
+        return getReferenceVariantsNoVisibilityFilter(expression, kindFilter, useRuntimeReceiverType, nameFilter).filter(visibilityFilter)
     }
 
     private fun getReferenceVariantsNoVisibilityFilter(
             expression: JetSimpleNameExpression,
             kindFilter: DescriptorKindFilter,
-            shouldCastToRuntimeType: Boolean,
+            useRuntimeReceiverType: Boolean,
             nameFilter: (Name) -> Boolean
     ): Collection<DeclarationDescriptor> {
         val parent = expression.getParent()
@@ -92,7 +92,7 @@ public class ReferenceVariantsHelper(
                 qualifier.scope.getDescriptorsFiltered(kindFilter exclude DescriptorKindExclude.Extensions, nameFilter).filterTo(descriptors)  { callType.canCall(it) }
             }
 
-            val expressionType = if (shouldCastToRuntimeType)
+            val expressionType = if (useRuntimeReceiverType)
                                         getQualifierRuntimeType(receiverExpression)
                                     else
                                         context[BindingContext.EXPRESSION_TYPE, receiverExpression]

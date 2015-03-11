@@ -54,8 +54,6 @@ public class LazyTopDownAnalyzerForTopLevel {
             @NotNull Collection<JetFile> files,
             @NotNull List<? extends PackageFragmentProvider> additionalProviders
     ) {
-        assert topDownAnalysisParameters.isLazy() : "Lazy analyzer is run in non-lazy mode";
-
         PackageFragmentProvider provider;
         if (additionalProviders.isEmpty()) {
             provider = resolveSession.getPackageFragmentProvider();

@@ -187,7 +187,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         components.expressionTypingServices.checkFunctionReturnType(functionInnerScope, function, functionDescriptor, context.dataFlowInfo, null, context.trace);
 
         components.expressionTypingServices.resolveValueParameters(function.getValueParameters(), functionDescriptor.getValueParameters(),
-                                                                scope, context.dataFlowInfo, context.trace, /* needCompleteAnalysis = */ true);
+                                                                scope, context.dataFlowInfo, context.trace);
 
         ModifiersChecker.create(context.trace, components.additionalCheckerProvider).checkModifiersForLocalDeclaration(function, functionDescriptor);
         if (!function.hasBody()) {

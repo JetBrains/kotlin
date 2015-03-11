@@ -1,7 +1,7 @@
 import kotlin.test.assertEquals
 
 class A {
-    class object {
+    default object {
         enum class Season {
             WINTER
             SPRING

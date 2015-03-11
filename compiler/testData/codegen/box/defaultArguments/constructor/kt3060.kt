@@ -1,5 +1,5 @@
 class Foo private(val param: String = "OK") {
-    class object {
+    default object {
         val s = Foo()
     }
 }

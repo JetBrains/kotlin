@@ -3,7 +3,7 @@ package pack
 class KtClass {
     fun foo(){}
 
-    class object {
+    default object {
         fun staticFoo(){}
     }
 }

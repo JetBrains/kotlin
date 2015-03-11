@@ -2,7 +2,7 @@
 class C {
     private val string = getString()
 
-    class object {
+    default object {
 
         fun getString(): String? {
             return x()

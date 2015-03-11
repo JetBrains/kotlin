@@ -5,7 +5,7 @@ package test
 import test.MyEnum.*
 
 ANNOTATION class MyClass [ANNOTATION]([ANNOTATION] param: Int, [ANNOTATION] val consProp: Int) {
-    ANNOTATION class object {
+    ANNOTATION default object {
     }
 
     ANNOTATION var prop: Int = 1

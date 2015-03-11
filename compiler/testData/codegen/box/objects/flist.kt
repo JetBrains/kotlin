@@ -3,7 +3,7 @@ public abstract class FList<T>() {
     public abstract val tail: FList<T>
     public abstract val empty: Boolean
 
-    class object {
+    default object {
         val emptyFList = object: FList<Any>() {
             public override val head: Any
                 get() = throw UnsupportedOperationException();

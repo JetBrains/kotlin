@@ -1,5 +1,5 @@
 class Foo() {
-    class object {
+    default object {
         val bar = "OK";
         var boo = "FAIL";
     }

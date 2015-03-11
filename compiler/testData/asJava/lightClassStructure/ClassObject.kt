@@ -1,6 +1,6 @@
 package test
 
 class WithClassObject {
-  class object {
+  default object {
   }
 }

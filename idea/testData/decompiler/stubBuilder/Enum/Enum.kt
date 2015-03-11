@@ -7,7 +7,7 @@ enum class Enum {
 
     open fun f() = 3
 
-    class object {
+    default object {
         val c: Int = 1
     }
 }

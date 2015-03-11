@@ -7,7 +7,7 @@ open class B {
 }
 
 class A {
-    class object : B() {
+    default object : B() {
         var p1:Int = 1
             [platformStatic] set(p: Int) {
                 p1 = 1

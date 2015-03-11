@@ -1,9 +1,9 @@
-//KT-2247 Report name clashes between inner classes and members of class object
+//KT-2247 Report name clashes between inner classes and members of default object
 
 package kt2247
 
 class B {
-    class object {
+    default object {
         class <!REDECLARATION!>Y<!> {
         }
     }

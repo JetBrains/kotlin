@@ -29,6 +29,7 @@ public class DeserializationComponents(
         public val classDataFinder: ClassDataFinder,
         public val annotationAndConstantLoader: AnnotationAndConstantLoader<AnnotationDescriptor, CompileTimeConstant<*>>,
         public val packageFragmentProvider: PackageFragmentProvider,
+        public val localClassResolver: LocalClassResolver,
         public val flexibleTypeCapabilitiesDeserializer: FlexibleTypeCapabilitiesDeserializer
 ) {
     public val classDeserializer: ClassDeserializer = ClassDeserializer(this)

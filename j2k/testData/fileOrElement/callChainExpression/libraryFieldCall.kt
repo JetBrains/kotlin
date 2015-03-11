@@ -1,6 +1,6 @@
 // ERROR: Property must be initialized or be abstract
 class Library {
-    class object {
+    default object {
         val ourOut: java.io.PrintStream
     }
 }

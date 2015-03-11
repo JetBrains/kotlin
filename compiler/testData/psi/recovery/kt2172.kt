@@ -1,6 +1,6 @@
 class Foo {
 
-    class object {
+    default object {
         val
     }
 }

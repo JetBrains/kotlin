@@ -108,59 +108,6 @@ public class DescriptorResolver {
         this.builtIns = builtIns;
     }
 
-    public void resolveMutableClassDescriptor(
-            @NotNull TopDownAnalysisParameters topDownAnalysisParameters,
-            @NotNull JetClass classElement,
-            @NotNull MutableClassDescriptor descriptor,
-            BindingTrace trace
-    ) {
-        // TODO : Where-clause
-        List<JetTypeParameter> typeParameters = classElement.getTypeParameters();
-        List<TypeParameterDescriptor> typeParameterDescriptors = new ArrayList<TypeParameterDescriptor>(typeParameters.size());
-        if (descriptor.getKind() == ClassKind.ENUM_CLASS) {
-            JetTypeParameterList typeParameterList = classElement.getTypeParameterList();
-            if (typeParameterList != null) {
-                trace.report(TYPE_PARAMETERS_IN_ENUM.on(typeParameterList));
-            }
-        }
-        int index = 0;
-        for (JetTypeParameter typeParameter : typeParameters) {
-            if (!topDownAnalysisParameters.isLazy()) {
-                // TODO: Support
-                AnnotationResolver.reportUnsupportedAnnotationForTypeParameter(typeParameter, trace);
-            }
-
-            TypeParameterDescriptor typeParameterDescriptor = TypeParameterDescriptorImpl.createForFurtherModification(
-                    descriptor,
-                    Annotations.EMPTY,
-                    typeParameter.hasModifier(JetTokens.REIFIED_KEYWORD),
-                    typeParameter.getVariance(),
-                    JetPsiUtil.safeName(typeParameter.getName()),
-                    index,
-                    toSourceElement(typeParameter)
-            );
-            trace.record(BindingContext.TYPE_PARAMETER, typeParameter, typeParameterDescriptor);
-            typeParameterDescriptors.add(typeParameterDescriptor);
-            index++;
-        }
-        descriptor.setTypeParameterDescriptors(typeParameterDescriptors);
-        Modality defaultModality = descriptor.getKind() == ClassKind.TRAIT ? Modality.ABSTRACT : Modality.FINAL;
-        descriptor.setModality(resolveModalityFromModifiers(classElement, defaultModality));
-        descriptor.setVisibility(resolveVisibilityFromModifiers(classElement, getDefaultClassVisibility(descriptor)));
-
-        trace.record(BindingContext.CLASS, classElement, descriptor);
-    }
-
-    public void resolveSupertypesForMutableClassDescriptor(
-            @NotNull JetClassOrObject jetClass,
-            @NotNull MutableClassDescriptor descriptor,
-            BindingTrace trace
-    ) {
-        for (JetType supertype : resolveSupertypes(descriptor.getScopeForClassHeaderResolution(), descriptor, jetClass, trace)) {
-            descriptor.addSupertype(supertype);
-        }
-    }
-
     public List<JetType> resolveSupertypes(
             @NotNull JetScope scope,
             @NotNull ClassDescriptor classDescriptor,
@@ -462,7 +409,7 @@ public class DescriptorResolver {
                 parameterDescriptors,
                 returnType,
                 Modality.FINAL,
-                Visibilities.PUBLIC // TODO: test
+                Visibilities.PUBLIC
         );
 
         trace.record(BindingContext.DATA_CLASS_COPY_FUNCTION, classDescriptor, functionDescriptor);

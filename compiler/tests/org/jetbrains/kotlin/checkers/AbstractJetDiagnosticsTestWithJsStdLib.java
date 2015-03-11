@@ -16,9 +16,7 @@
 
 package org.jetbrains.kotlin.checkers;
 
-import com.google.common.base.Predicates;
 import com.intellij.openapi.Disposable;
-import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
@@ -70,7 +68,7 @@ public abstract class AbstractJetDiagnosticsTestWithJsStdLib extends AbstractJet
         BindingContext libraryContext = config.getLibraryContext();
         DelegatingBindingTrace trace = new DelegatingBindingTrace(libraryContext, "trace with preanalyzed library");
 
-        TopDownAnalyzerFacadeForJS.analyzeFilesWithGivenTrace(jetFiles, moduleTrace, module, Predicates.<PsiFile>alwaysTrue(), config);
+        TopDownAnalyzerFacadeForJS.analyzeFilesWithGivenTrace(jetFiles, moduleTrace, module, config);
 
         trace.addAllMyDataTo(moduleTrace);
     }

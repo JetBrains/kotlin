@@ -38,8 +38,8 @@ open class KTopLevelExtensionPropertyImpl<T, out R>(
         try {
             return getter(null, receiver) as R
         }
-        catch (e: java.lang.IllegalAccessException) {
-            throw kotlin.reflect.IllegalAccessException(e)
+        catch (e: IllegalAccessException) {
+            throw IllegalPropertyAccessException(e)
         }
     }
 
@@ -60,7 +60,7 @@ class KMutableTopLevelExtensionPropertyImpl<T, R>(
         receiverClass: Class<T>
 ) : KMutableTopLevelExtensionProperty<T, R>, KMutablePropertyImpl<R>, KTopLevelExtensionPropertyImpl<T, R>(name, owner, receiverClass) {
     override val setter: Method = try {
-        owner.jClass.getMethod(setterName(name), receiverClass, getter.getReturnType()!!)
+        owner.jClass.getMethod(setterName(name), receiverClass, getter.getReturnType())
     }
     catch (e: NoSuchMethodException) {
         throw NoSuchPropertyException(e)
@@ -70,8 +70,8 @@ class KMutableTopLevelExtensionPropertyImpl<T, R>(
         try {
             setter.invoke(null, receiver, value)
         }
-        catch (e: java.lang.IllegalAccessException) {
-            throw kotlin.reflect.IllegalAccessException(e)
+        catch (e: IllegalAccessException) {
+            throw IllegalPropertyAccessException(e)
         }
     }
 
@@ -79,9 +79,8 @@ class KMutableTopLevelExtensionPropertyImpl<T, R>(
             "var ${mapJavaClassToKotlin(receiverClass.getName())}.$name"
 }
 
-suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
 private fun mapJavaClassToKotlin(name: String): String {
-    if (Character.isLowerCase(name[0])) {
+    if (name[0].isLowerCase()) {
         return when (name) {
             "boolean" -> "kotlin.Boolean"
             "char" -> "kotlin.Char"
@@ -95,8 +94,8 @@ private fun mapJavaClassToKotlin(name: String): String {
         }
     }
     if (name[0] == '[') {
-        val element = (name as java.lang.String).substring(1) as java.lang.String
-        return when (element.charAt(0)) {
+        val element = name.substring(1)
+        return when (element[0]) {
             'Z' -> "kotlin.BooleanArray"
             'C' -> "kotlin.CharArray"
             'B' -> "kotlin.ByteArray"
@@ -106,7 +105,7 @@ private fun mapJavaClassToKotlin(name: String): String {
             'J' -> "kotlin.LongArray"
             'D' -> "kotlin.DoubleArray"
             'L' -> "kotlin.Array<${mapJavaClassToKotlin(element.substring(1, element.length() - 1))}>"
-            else -> "kotlin.Array<${mapJavaClassToKotlin(element as kotlin.String)}>"
+            else -> "kotlin.Array<${mapJavaClassToKotlin(element)}>"
         }
     }
     return name

@@ -1,11 +1,11 @@
 class Outer {
     class Nested {
-        class object {
+        default object {
             fun foo() = 42
         }
     }
     
-    class object {
+    default object {
         fun bar() = 239
     }
 }

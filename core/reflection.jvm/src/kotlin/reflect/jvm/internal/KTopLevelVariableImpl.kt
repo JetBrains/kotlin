@@ -38,8 +38,8 @@ open class KTopLevelVariableImpl<out R>(
         try {
             return getter(null) as R
         }
-        catch (e: java.lang.IllegalAccessException) {
-            throw kotlin.reflect.IllegalAccessException(e)
+        catch (e: IllegalAccessException) {
+            throw IllegalPropertyAccessException(e)
         }
     }
 
@@ -59,7 +59,7 @@ class KMutableTopLevelVariableImpl<R>(
         owner: KPackageImpl
 ) : KMutableTopLevelVariable<R>, KMutableVariableImpl<R>, KTopLevelVariableImpl<R>(name, owner) {
     override val setter: Method = try {
-        owner.jClass.getMethod(setterName(name), getter.getReturnType()!!)
+        owner.jClass.getMethod(setterName(name), getter.getReturnType())
     }
     catch (e: NoSuchMethodException) {
         throw NoSuchPropertyException(e)
@@ -69,8 +69,8 @@ class KMutableTopLevelVariableImpl<R>(
         try {
             setter.invoke(null, value)
         }
-        catch (e: java.lang.IllegalAccessException) {
-            throw kotlin.reflect.IllegalAccessException(e)
+        catch (e: IllegalAccessException) {
+            throw IllegalPropertyAccessException(e)
         }
     }
 

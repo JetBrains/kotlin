@@ -97,14 +97,12 @@ public class KotlinBuiltIns {
     private final ModuleDescriptorImpl builtInsModule;
     private final BuiltinsPackageFragment builtinsPackageFragment;
 
-    private final Set<ClassDescriptor> nonPhysicalClasses;
-
     private final Map<PrimitiveType, JetType> primitiveTypeToNullableJetType;
     private final Map<PrimitiveType, JetType> primitiveTypeToArrayJetType;
     private final Map<JetType, JetType> primitiveJetTypeToJetArrayType;
     private final Map<JetType, JetType> jetArrayTypeToPrimitiveJetType;
 
-    private static final FqNames FQ_NAMES = new FqNames();
+    public static final FqNames FQ_NAMES = new FqNames();
 
     private KotlinBuiltIns() {
         builtInsModule = new ModuleDescriptorImpl(
@@ -127,8 +125,6 @@ public class KotlinBuiltIns {
         primitiveTypeToArrayJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);
         primitiveJetTypeToJetArrayType = new HashMap<JetType, JetType>();
         jetArrayTypeToPrimitiveJetType = new HashMap<JetType, JetType>();
-
-        nonPhysicalClasses = new HashSet<ClassDescriptor>();
     }
 
     private void doInitialize() {
@@ -147,7 +143,7 @@ public class KotlinBuiltIns {
         jetArrayTypeToPrimitiveJetType.put(arrayType, type);
     }
 
-    private static class FqNames {
+    public static class FqNames {
         public final FqNameUnsafe any = fqNameUnsafe("Any");
         public final FqNameUnsafe nothing = fqNameUnsafe("Nothing");
         public final FqNameUnsafe cloneable = fqNameUnsafe("Cloneable");

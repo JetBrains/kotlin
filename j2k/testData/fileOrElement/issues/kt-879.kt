@@ -1,5 +1,5 @@
 class Test {
-    class object {
+    default object {
         public fun getInt(i: Int): Int {
             when (i) {
                 0 -> return 0

@@ -4,7 +4,7 @@ class ClassWithClassObject {
     fun f() {
     }
 
-    class object {
+    default object {
         fun f() {
         }
 

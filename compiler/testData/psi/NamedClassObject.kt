@@ -1,11 +1,11 @@
 class A {
-    class object Default
+    default object Default
 
-    class object B
+    default object B
 
-    class object C {}
+    default object C {}
 
-    class object
+    default object
 
     object C
 }

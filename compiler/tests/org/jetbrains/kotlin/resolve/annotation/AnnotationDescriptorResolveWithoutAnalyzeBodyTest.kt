@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.resolve.annotation
 
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 
 class AnnotationDescriptorResolveWithoutAnalyzeBodyTest : AnnotationDescriptorResolveTest() {
 
@@ -26,5 +26,5 @@ class AnnotationDescriptorResolveWithoutAnalyzeBodyTest : AnnotationDescriptorRe
         checkAnnotationOnAllExceptLocalDeclarations(content, expectedAnnotation)
     }
 
-    override fun analyzeFile(ktFile: JetFile): AnalysisResult = JetTestUtils.analyzeFileWithoutBody(ktFile)
+    override fun analyzeFile(ktFile: JetFile): AnalysisResult = JvmResolveUtil.analyzeFilesWithJavaIntegration(ktFile.getProject(), setOf(ktFile));
 }

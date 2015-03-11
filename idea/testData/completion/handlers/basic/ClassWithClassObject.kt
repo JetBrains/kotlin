@@ -1,5 +1,5 @@
 class AClass {
-    class object {}
+    default object {}
 }
 
 fun foo() {

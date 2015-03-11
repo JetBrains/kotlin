@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.resolve.lazy.descriptors
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.impl.ScriptDescriptorImpl
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.data.JetScriptInfo
@@ -25,6 +24,11 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProv
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.utils.toReadOnlyList
+import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.types.JetType
+import java.util.Collections
+import org.jetbrains.kotlin.descriptors.impl.ConstructorDescriptorImpl
 
 // SCRIPT: Members of a script class
 public class LazyScriptClassMemberScope protected(
@@ -36,7 +40,7 @@ public class LazyScriptClassMemberScope protected(
 
     private val scriptResultProperty: NotNullLazyValue<PropertyDescriptor> = resolveSession.getStorageManager().createLazyValue {
         val scriptInfo = declarationProvider.getOwnerInfo() as JetScriptInfo
-        ScriptDescriptorImpl.createScriptResultProperty(resolveSession.getScriptDescriptor(scriptInfo.script))
+        createScriptResultProperty(resolveSession.getScriptDescriptor(scriptInfo.script))
     }
 
     override fun computeExtraDescriptors(): Collection<DeclarationDescriptor> {
@@ -66,7 +70,7 @@ public class LazyScriptClassMemberScope protected(
 
         for (valueParameterDescriptor in primaryConstructor.getValueParameters()) {
             if (name == valueParameterDescriptor.getName()) {
-                result.add(ScriptDescriptorImpl.createPropertyFromScriptParameter(resolveSession.getScriptDescriptor(scriptInfo.script), valueParameterDescriptor))
+                result.add(createPropertyFromScriptParameter(resolveSession.getScriptDescriptor(scriptInfo.script), valueParameterDescriptor))
             }
         }
     }
@@ -74,8 +78,68 @@ public class LazyScriptClassMemberScope protected(
     override fun resolvePrimaryConstructor(): ConstructorDescriptor? {
         val scriptInfo = declarationProvider.getOwnerInfo() as JetScriptInfo
         val scriptDescriptor = resolveSession.getScriptDescriptor(scriptInfo.script)
-        val constructor = ScriptDescriptorImpl.createConstructor(scriptDescriptor, scriptDescriptor.getScriptCodeDescriptor().getValueParameters())
+        val constructor = createConstructor(scriptDescriptor, scriptDescriptor.getScriptCodeDescriptor().getValueParameters())
         setDeferredReturnType(constructor)
         return constructor
+    }
+
+    private fun createScriptResultProperty(scriptDescriptor: ScriptDescriptor): PropertyDescriptor {
+        val propertyDescriptor = PropertyDescriptorImpl.create(
+                scriptDescriptor.getClassDescriptor(),
+                Annotations.EMPTY,
+                Modality.FINAL,
+                Visibilities.PUBLIC,
+                false,
+                Name.identifier(ScriptDescriptor.LAST_EXPRESSION_VALUE_FIELD_NAME),
+                CallableMemberDescriptor.Kind.DECLARATION,
+                SourceElement.NO_SOURCE
+        )
+
+        val returnType = scriptDescriptor.getScriptCodeDescriptor().getReturnType()
+        assert(returnType != null) { "Return type not initialized for " + scriptDescriptor }
+
+        propertyDescriptor.setType(
+                returnType,
+                listOf<TypeParameterDescriptor>(),
+                scriptDescriptor.getThisAsReceiverParameter(),
+                ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER
+        )
+        propertyDescriptor.initialize(null, null)
+
+        return propertyDescriptor
+    }
+
+    private fun createConstructor(scriptDescriptor: ScriptDescriptor, valueParameters: List<ValueParameterDescriptor>): ConstructorDescriptorImpl {
+        return ConstructorDescriptorImpl.create(
+                scriptDescriptor.getClassDescriptor(),
+                Annotations.EMPTY,
+                true,
+                SourceElement.NO_SOURCE
+        ).initialize(
+                listOf(),
+                valueParameters,
+                Visibilities.PUBLIC
+        )
+    }
+
+    private fun createPropertyFromScriptParameter(scriptDescriptor: ScriptDescriptor, parameter: ValueParameterDescriptor): PropertyDescriptor {
+        val propertyDescriptor = PropertyDescriptorImpl.create(
+                scriptDescriptor.getClassDescriptor(),
+                Annotations.EMPTY,
+                Modality.FINAL,
+                Visibilities.PUBLIC,
+                false,
+                parameter.getName(),
+                CallableMemberDescriptor.Kind.DECLARATION,
+                SourceElement.NO_SOURCE
+        )
+        propertyDescriptor.setType(
+                parameter.getType(),
+                listOf(),
+                scriptDescriptor.getThisAsReceiverParameter(),
+                ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER
+        )
+        propertyDescriptor.initialize(null, null)
+        return propertyDescriptor
     }
 }

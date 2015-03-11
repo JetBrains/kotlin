@@ -9,7 +9,7 @@ foo bar(1) buzz<T>(1) zoo typealias T = Int
 
 
 class Foo {
-  foo bar(1) buzz<T>(1) zoo class object {}
+  foo bar(1) buzz<T>(1) zoo default object {}
   foo bar(1) buzz<T>(1) zoo class A
   foo bar(1) buzz<T>(1) zoo object B
   foo bar(1) buzz<T>(1) zoo fun a() {}

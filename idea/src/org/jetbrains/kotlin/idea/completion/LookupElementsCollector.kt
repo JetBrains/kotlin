@@ -16,26 +16,30 @@
 
 package org.jetbrains.kotlin.idea.completion
 
+import com.intellij.codeInsight.completion.CompletionParameters
+import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.completion.InsertionContext
+import com.intellij.codeInsight.completion.PrefixMatcher
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.idea.completion.handlers.*
-import com.intellij.codeInsight.completion.PrefixMatcher
-import java.util.ArrayList
-import com.intellij.codeInsight.completion.CompletionResultSet
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import com.intellij.openapi.util.TextRange
-import com.intellij.codeInsight.completion.CompletionParameters
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.completion.handlers.*
+import java.util.ArrayList
 
 class LookupElementsCollector(
         private val prefixMatcher: PrefixMatcher,
         private val completionParameters: CompletionParameters,
         private val resolutionFacade: ResolutionFacade,
-        private val lookupElementFactory: LookupElementFactory
+        private val lookupElementFactory: LookupElementFactory,
+        private val inDescriptor: DeclarationDescriptor?,
+        private val surroundCallsWithBraces: Boolean
 ) {
     private val elements = ArrayList<LookupElement>()
 
@@ -52,19 +56,25 @@ class LookupElementsCollector(
 
     public fun addDescriptorElements(descriptors: Iterable<DeclarationDescriptor>,
                                      suppressAutoInsertion: Boolean, // auto-insertion suppression is used for elements that require adding an import
-                                     shouldCastToRuntimeType: Boolean = false
+                                     withReceiverCast: Boolean = false
     ) {
         for (descriptor in descriptors) {
-            addDescriptorElements(descriptor, suppressAutoInsertion, shouldCastToRuntimeType)
+            addDescriptorElements(descriptor, suppressAutoInsertion, withReceiverCast)
         }
     }
 
-    public fun addDescriptorElements(descriptor: DeclarationDescriptor, suppressAutoInsertion: Boolean, shouldCastToRuntimeType: Boolean) {
+    public fun addDescriptorElements(descriptor: DeclarationDescriptor, suppressAutoInsertion: Boolean, withReceiverCast: Boolean) {
         run {
             var lookupElement = lookupElementFactory.createLookupElement(resolutionFacade, descriptor, true)
-            if (shouldCastToRuntimeType) {
-                lookupElement = lookupElement.shouldCastReceiver()
+
+            if (withReceiverCast) {
+                lookupElement = lookupElement.withReceiverCast()
             }
+
+            if (surroundCallsWithBraces && (descriptor is FunctionDescriptor || descriptor is ClassifierDescriptor)) {
+                lookupElement = lookupElement.withBracesSurrounding()
+            }
+
             if (suppressAutoInsertion) {
                 addElementWithAutoInsertionSuppressed(lookupElement)
             }
@@ -81,8 +91,9 @@ class LookupElementsCollector(
                 if (KotlinBuiltIns.isFunctionOrExtensionFunctionType(parameterType)) {
                     val parameterCount = KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(parameterType).size()
                     if (parameterCount > 1) {
-                        val lookupElement = lookupElementFactory.createLookupElement(resolutionFacade, descriptor, true)
-                        addElement(object : LookupElementDecorator<LookupElement>(lookupElement) {
+                        var lookupElement = lookupElementFactory.createLookupElement(resolutionFacade, descriptor, true)
+
+                        lookupElement = object : LookupElementDecorator<LookupElement>(lookupElement) {
                             override fun renderElement(presentation: LookupElementPresentation) {
                                 super.renderElement(presentation)
 
@@ -95,9 +106,25 @@ class LookupElementsCollector(
                             override fun handleInsert(context: InsertionContext) {
                                 KotlinFunctionInsertHandler(CaretPosition.IN_BRACKETS, GenerateLambdaInfo(parameterType, true)).handleInsert(context, this)
                             }
-                        })
+                        }
+
+                        if (surroundCallsWithBraces) {
+                            lookupElement = lookupElement.withBracesSurrounding()
+                        }
+
+                        addElement(lookupElement)
                     }
                 }
+            }
+        }
+
+        if (descriptor is PropertyDescriptor) {
+            var lookupElement = lookupElementFactory.createBackingFieldLookupElement(descriptor, inDescriptor, resolutionFacade)
+            if (lookupElement != null) {
+                if (surroundCallsWithBraces) {
+                    lookupElement = lookupElement!!.withBracesSurrounding()
+                }
+                addElement(lookupElement!!)
             }
         }
     }
@@ -139,9 +166,5 @@ class LookupElementsCollector(
 
     public fun addElements(elements: Iterable<LookupElement>) {
         elements.forEach { addElement(it) }
-    }
-
-    public fun addElementsWithReceiverCast(elements: Iterable<LookupElement>) {
-        elements.forEach { addElement(it.shouldCastReceiver()) }
     }
 }

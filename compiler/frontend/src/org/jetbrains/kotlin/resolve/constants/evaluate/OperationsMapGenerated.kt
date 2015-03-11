@@ -215,6 +215,7 @@ private val binaryOperations: HashMap<BinaryOperationKey<*, *>, Pair<Function2<A
     binaryOperation(DOUBLE, LONG, "minus", { a, b -> a.minus(b) }, emptyBinaryFun),
     binaryOperation(DOUBLE, SHORT, "minus", { a, b -> a.minus(b) }, emptyBinaryFun),
     binaryOperation(DOUBLE, BYTE, "mod", { a, b -> a.mod(b) }, emptyBinaryFun),
+//    binaryOperation(DOUBLE, CHAR, "mod", { a, b -> a.mod(b) }, emptyBinaryFun),
     binaryOperation(DOUBLE, DOUBLE, "mod", { a, b -> a.mod(b) }, emptyBinaryFun),
     binaryOperation(DOUBLE, FLOAT, "mod", { a, b -> a.mod(b) }, emptyBinaryFun),
     binaryOperation(DOUBLE, INT, "mod", { a, b -> a.mod(b) }, emptyBinaryFun),

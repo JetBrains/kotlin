@@ -3,7 +3,7 @@
 package server
 
 trait Some {
-    class object {
+    default object {
         val <caret>XX = 1
     }
 }

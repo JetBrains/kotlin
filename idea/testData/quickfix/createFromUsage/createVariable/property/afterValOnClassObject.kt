@@ -2,7 +2,7 @@
 // ERROR: Property must be initialized or be abstract
 
 class A<T>(val n: T) {
-    class object {
+    default object {
         val foo: Int
 
     }

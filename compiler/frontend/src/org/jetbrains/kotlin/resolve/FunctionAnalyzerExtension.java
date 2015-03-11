@@ -33,7 +33,6 @@ public class FunctionAnalyzerExtension {
         void process(@NotNull FunctionDescriptor descriptor, @NotNull JetNamedFunction function, @NotNull BindingTrace trace);
     }
 
-    @NotNull
     private BindingTrace trace;
 
     @Inject
@@ -45,8 +44,6 @@ public class FunctionAnalyzerExtension {
         for (Map.Entry<JetNamedFunction, SimpleFunctionDescriptor> entry : bodiesResolveContext.getFunctions().entrySet()) {
             JetNamedFunction function = entry.getKey();
             SimpleFunctionDescriptor functionDescriptor = entry.getValue();
-
-            if (!bodiesResolveContext.completeAnalysisNeeded(function.getContainingFile())) continue;
 
             List<AnalyzerExtension> extensions = getExtensions(functionDescriptor);
             for (AnalyzerExtension extension : extensions) {

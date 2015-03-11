@@ -10,6 +10,133 @@ import java.util.*
 import java.util.Collections // TODO: it's temporary while we have java.util.Collections in js
 
 /**
+ * Returns a list that wraps the original array
+ */
+public fun <T> Array<out T>.asList(): List<T> {
+    return Arrays.asList(*this)
+}
+
+/**
+ * Returns a list that wraps the original array
+ */
+public fun BooleanArray.asList(): List<Boolean> {
+    return object : AbstractList<Boolean>(), RandomAccess {
+        override fun size(): Int = this@asList.size()
+        override fun isEmpty(): Boolean = this@asList.isEmpty()
+        override fun contains(o: Any?): Boolean = this@asList.contains(o as Boolean)
+        override fun iterator(): Iterator<Boolean> = this@asList.iterator()
+        override fun get(index: Int): Boolean = this@asList[index]
+        override fun indexOf(o: Any?): Int = this@asList.indexOf(o as Boolean)
+        override fun lastIndexOf(o: Any?): Int = this@asList.lastIndexOf(o as Boolean)
+    }
+}
+
+/**
+ * Returns a list that wraps the original array
+ */
+public fun ByteArray.asList(): List<Byte> {
+    return object : AbstractList<Byte>(), RandomAccess {
+        override fun size(): Int = this@asList.size()
+        override fun isEmpty(): Boolean = this@asList.isEmpty()
+        override fun contains(o: Any?): Boolean = this@asList.contains(o as Byte)
+        override fun iterator(): Iterator<Byte> = this@asList.iterator()
+        override fun get(index: Int): Byte = this@asList[index]
+        override fun indexOf(o: Any?): Int = this@asList.indexOf(o as Byte)
+        override fun lastIndexOf(o: Any?): Int = this@asList.lastIndexOf(o as Byte)
+    }
+}
+
+/**
+ * Returns a list that wraps the original array
+ */
+public fun CharArray.asList(): List<Char> {
+    return object : AbstractList<Char>(), RandomAccess {
+        override fun size(): Int = this@asList.size()
+        override fun isEmpty(): Boolean = this@asList.isEmpty()
+        override fun contains(o: Any?): Boolean = this@asList.contains(o as Char)
+        override fun iterator(): Iterator<Char> = this@asList.iterator()
+        override fun get(index: Int): Char = this@asList[index]
+        override fun indexOf(o: Any?): Int = this@asList.indexOf(o as Char)
+        override fun lastIndexOf(o: Any?): Int = this@asList.lastIndexOf(o as Char)
+    }
+}
+
+/**
+ * Returns a list that wraps the original array
+ */
+public fun DoubleArray.asList(): List<Double> {
+    return object : AbstractList<Double>(), RandomAccess {
+        override fun size(): Int = this@asList.size()
+        override fun isEmpty(): Boolean = this@asList.isEmpty()
+        override fun contains(o: Any?): Boolean = this@asList.contains(o as Double)
+        override fun iterator(): Iterator<Double> = this@asList.iterator()
+        override fun get(index: Int): Double = this@asList[index]
+        override fun indexOf(o: Any?): Int = this@asList.indexOf(o as Double)
+        override fun lastIndexOf(o: Any?): Int = this@asList.lastIndexOf(o as Double)
+    }
+}
+
+/**
+ * Returns a list that wraps the original array
+ */
+public fun FloatArray.asList(): List<Float> {
+    return object : AbstractList<Float>(), RandomAccess {
+        override fun size(): Int = this@asList.size()
+        override fun isEmpty(): Boolean = this@asList.isEmpty()
+        override fun contains(o: Any?): Boolean = this@asList.contains(o as Float)
+        override fun iterator(): Iterator<Float> = this@asList.iterator()
+        override fun get(index: Int): Float = this@asList[index]
+        override fun indexOf(o: Any?): Int = this@asList.indexOf(o as Float)
+        override fun lastIndexOf(o: Any?): Int = this@asList.lastIndexOf(o as Float)
+    }
+}
+
+/**
+ * Returns a list that wraps the original array
+ */
+public fun IntArray.asList(): List<Int> {
+    return object : AbstractList<Int>(), RandomAccess {
+        override fun size(): Int = this@asList.size()
+        override fun isEmpty(): Boolean = this@asList.isEmpty()
+        override fun contains(o: Any?): Boolean = this@asList.contains(o as Int)
+        override fun iterator(): Iterator<Int> = this@asList.iterator()
+        override fun get(index: Int): Int = this@asList[index]
+        override fun indexOf(o: Any?): Int = this@asList.indexOf(o as Int)
+        override fun lastIndexOf(o: Any?): Int = this@asList.lastIndexOf(o as Int)
+    }
+}
+
+/**
+ * Returns a list that wraps the original array
+ */
+public fun LongArray.asList(): List<Long> {
+    return object : AbstractList<Long>(), RandomAccess {
+        override fun size(): Int = this@asList.size()
+        override fun isEmpty(): Boolean = this@asList.isEmpty()
+        override fun contains(o: Any?): Boolean = this@asList.contains(o as Long)
+        override fun iterator(): Iterator<Long> = this@asList.iterator()
+        override fun get(index: Int): Long = this@asList[index]
+        override fun indexOf(o: Any?): Int = this@asList.indexOf(o as Long)
+        override fun lastIndexOf(o: Any?): Int = this@asList.lastIndexOf(o as Long)
+    }
+}
+
+/**
+ * Returns a list that wraps the original array
+ */
+public fun ShortArray.asList(): List<Short> {
+    return object : AbstractList<Short>(), RandomAccess {
+        override fun size(): Int = this@asList.size()
+        override fun isEmpty(): Boolean = this@asList.isEmpty()
+        override fun contains(o: Any?): Boolean = this@asList.contains(o as Short)
+        override fun iterator(): Iterator<Short> = this@asList.iterator()
+        override fun get(index: Int): Short = this@asList[index]
+        override fun indexOf(o: Any?): Int = this@asList.indexOf(o as Short)
+        override fun lastIndexOf(o: Any?): Int = this@asList.lastIndexOf(o as Short)
+    }
+}
+
+/**
  * Searches array or range of array for provided element index using binary search algorithm. Array is expected to be sorted.
  */
 public fun <T> Array<out T>.binarySearch(element: T, fromIndex: Int = 0, toIndex: Int = size()): Int {

@@ -1,7 +1,7 @@
 package foo
 
 class TheClass() {
-    class object {
+    default object {
         val out = System.out
     }
 }

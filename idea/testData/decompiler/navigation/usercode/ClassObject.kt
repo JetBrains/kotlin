@@ -5,5 +5,5 @@ fun foo() {
 }
 
 // main.kt
-//    class <1>object {
+//    default <1>object {
 //        fun <2>foo() {

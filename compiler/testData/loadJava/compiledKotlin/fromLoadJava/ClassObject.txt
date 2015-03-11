@@ -2,7 +2,7 @@ package test
 
 internal trait TheTrait {
 
-    internal class object Default {
+    internal default object Default {
         /*primary*/ private constructor Default()
     }
 }

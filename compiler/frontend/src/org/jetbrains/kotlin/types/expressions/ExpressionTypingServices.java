@@ -365,16 +365,13 @@ public class ExpressionTypingServices {
             @NotNull List<ValueParameterDescriptor> valueParameterDescriptors,
             @NotNull JetScope declaringScope,
             @NotNull DataFlowInfo dataFlowInfo,
-            @NotNull BindingTrace trace,
-            boolean needCompleteAnalysis
+            @NotNull BindingTrace trace
     ) {
         for (int i = 0; i < valueParameters.size(); i++) {
             ValueParameterDescriptor valueParameterDescriptor = valueParameterDescriptors.get(i);
             JetParameter jetParameter = valueParameters.get(i);
 
             AnnotationResolver.resolveAnnotationsArguments(jetParameter.getModifierList(), trace);
-
-            if (!needCompleteAnalysis) continue;
 
             resolveDefaultValue(declaringScope, valueParameterDescriptor, jetParameter, dataFlowInfo, trace);
         }

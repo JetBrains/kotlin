@@ -70,7 +70,6 @@ public class DeclarationsChecker {
         for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : classes.entrySet()) {
             JetClassOrObject classOrObject = entry.getKey();
             ClassDescriptorWithResolutionScopes classDescriptor = entry.getValue();
-            if (!bodiesResolveContext.completeAnalysisNeeded(classOrObject)) continue;
 
             checkSupertypesForConsistency(classDescriptor);
             checkTypesInClassHeader(classOrObject);
@@ -93,7 +92,6 @@ public class DeclarationsChecker {
             JetNamedFunction function = entry.getKey();
             SimpleFunctionDescriptor functionDescriptor = entry.getValue();
 
-            if (!bodiesResolveContext.completeAnalysisNeeded(function)) continue;
             checkFunction(function, functionDescriptor);
             modifiersChecker.checkModifiersForDeclaration(function, functionDescriptor);
         }
@@ -103,7 +101,6 @@ public class DeclarationsChecker {
             JetProperty property = entry.getKey();
             PropertyDescriptor propertyDescriptor = entry.getValue();
 
-            if (!bodiesResolveContext.completeAnalysisNeeded(property)) continue;
             checkProperty(property, propertyDescriptor);
             modifiersChecker.checkModifiersForDeclaration(property, propertyDescriptor);
         }
@@ -268,9 +265,8 @@ public class DeclarationsChecker {
     private void checkClass(BodiesResolveContext c, JetClass aClass, ClassDescriptorWithResolutionScopes classDescriptor) {
         checkOpenMembers(classDescriptor);
         checkConstructorParameters(aClass);
-        if (c.getTopDownAnalysisParameters().isLazy()) {
-            checkTypeParameters(aClass);
-        }
+        checkTypeParameters(aClass);
+
         if (aClass.isTrait()) {
             checkTraitModifiers(aClass);
             checkConstructorInTrait(aClass);

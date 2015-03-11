@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.descriptors.impl.EnumEntrySyntheticClassDescriptor
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.load.java.lazy.resolveAnnotations
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.descriptors.JavaConstructorDescriptor
 import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils
@@ -106,7 +107,7 @@ public class LazyJavaClassMemberScope(
         val classDescriptor = getContainingDeclaration()
 
         val constructorDescriptor = JavaConstructorDescriptor.createJavaConstructor(
-                classDescriptor, Annotations.EMPTY, /* isPrimary = */ false, c.sourceElementFactory.source(constructor)
+                classDescriptor, c.resolveAnnotations(constructor), /* isPrimary = */ false, c.sourceElementFactory.source(constructor)
         )
 
         val valueParameters = resolveValueParameters(c, constructorDescriptor, constructor.getValueParameters())

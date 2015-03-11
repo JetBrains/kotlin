@@ -20,45 +20,36 @@ import com.google.common.base.Predicate;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.context.GlobalContext;
-import org.jetbrains.kotlin.context.LazinessToken;
+import org.jetbrains.kotlin.context.TypeLazinessToken;
 import org.jetbrains.kotlin.storage.ExceptionTracker;
 import org.jetbrains.kotlin.storage.StorageManager;
 
 /**
  * Various junk that cannot be placed into context (yet).
  */
-public class TopDownAnalysisParameters extends LazinessToken implements GlobalContext {
-    @Deprecated
-    public static final boolean LAZY;
-
-    static {
-        LAZY = !"false".equals(System.getProperty("lazy.tda"));
-    }
+public class TopDownAnalysisParameters extends TypeLazinessToken implements GlobalContext {
 
     @NotNull
     public static TopDownAnalysisParameters create(
             @NotNull StorageManager storageManager,
             @NotNull ExceptionTracker exceptionTracker,
-            @NotNull Predicate<PsiFile> analyzeCompletely,
             boolean analyzingBootstrapLibrary,
             boolean declaredLocally
     ) {
-        return new TopDownAnalysisParameters(storageManager, exceptionTracker, analyzeCompletely, analyzingBootstrapLibrary,
-                                             declaredLocally, LAZY);
+        return new TopDownAnalysisParameters(storageManager, exceptionTracker, analyzingBootstrapLibrary,
+                                             declaredLocally, true);
     }
 
     @NotNull
     public static TopDownAnalysisParameters createForLocalDeclarations(
             @NotNull StorageManager storageManager,
-            @NotNull ExceptionTracker exceptionTracker,
-            @NotNull Predicate<PsiFile> analyzeCompletely
+            @NotNull ExceptionTracker exceptionTracker
     ) {
-        return new TopDownAnalysisParameters(storageManager, exceptionTracker, analyzeCompletely, false, true, false);
+        return new TopDownAnalysisParameters(storageManager, exceptionTracker, false, true, false);
     }
 
     @NotNull private final StorageManager storageManager;
     @NotNull private final ExceptionTracker exceptionTracker;
-    @NotNull private final Predicate<PsiFile> analyzeCompletely;
     private final boolean analyzingBootstrapLibrary;
     private final boolean declaredLocally;
     private final boolean lazyTopDownAnalysis;
@@ -66,14 +57,12 @@ public class TopDownAnalysisParameters extends LazinessToken implements GlobalCo
     private TopDownAnalysisParameters(
             @NotNull StorageManager storageManager,
             @NotNull ExceptionTracker exceptionTracker,
-            @NotNull Predicate<PsiFile> analyzeCompletely,
             boolean analyzingBootstrapLibrary,
             boolean declaredLocally,
             boolean lazyTopDownAnalysis
     ) {
         this.storageManager = storageManager;
         this.exceptionTracker = exceptionTracker;
-        this.analyzeCompletely = analyzeCompletely;
         this.analyzingBootstrapLibrary = analyzingBootstrapLibrary;
         this.declaredLocally = declaredLocally;
         this.lazyTopDownAnalysis = lazyTopDownAnalysis;
@@ -89,11 +78,6 @@ public class TopDownAnalysisParameters extends LazinessToken implements GlobalCo
     @NotNull
     public ExceptionTracker getExceptionTracker() {
         return exceptionTracker;
-    }
-
-    @NotNull
-    public Predicate<PsiFile> getAnalyzeCompletely() {
-        return analyzeCompletely;
     }
 
     public boolean isAnalyzingBootstrapLibrary() {

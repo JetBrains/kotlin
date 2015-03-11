@@ -3,7 +3,7 @@ import kotlin.platform.platformStatic
 platformStatic
 class <error descr="[PLATFORM_STATIC_ILLEGAL_USAGE] This declaration does not support 'platformStatic'">A</error> {
     platformStatic
-    <error descr="[PLATFORM_STATIC_ILLEGAL_USAGE] This declaration does not support 'platformStatic'">class object</error> {
+    default <error descr="[PLATFORM_STATIC_ILLEGAL_USAGE] This declaration does not support 'platformStatic'">object</error> {
         platformStatic fun a1() {
 
         }
@@ -31,7 +31,7 @@ class <error descr="[PLATFORM_STATIC_ILLEGAL_USAGE] This declaration does not su
 
 platformStatic
 trait <error descr="[PLATFORM_STATIC_ILLEGAL_USAGE] This declaration does not support 'platformStatic'">B</error> {
-    class object {
+    default object {
         <error descr="[PLATFORM_STATIC_NOT_IN_OBJECT] Only functions in named objects and default objects of classes can be annotated with 'platformStatic'">platformStatic fun a1()</error> {
 
         }

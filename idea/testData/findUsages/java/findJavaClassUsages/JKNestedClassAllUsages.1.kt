@@ -20,7 +20,7 @@ public class X(bar: String? = Outer.A.BAR): Outer.A() {
         super<Outer.A>.foo()
     }
 
-    class object: Outer.A() {
+    default object: Outer.A() {
 
     }
 }

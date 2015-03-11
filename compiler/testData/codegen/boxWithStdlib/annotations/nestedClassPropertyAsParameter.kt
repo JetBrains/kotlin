@@ -15,7 +15,7 @@ annotation class Ann(val i: Int)
 
 class A {
    class B {
-      class object {
+      default object {
         val i = 1
       }
    }

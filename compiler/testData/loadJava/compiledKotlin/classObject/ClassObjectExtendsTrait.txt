@@ -6,7 +6,7 @@ internal trait Bbb {
 internal final class ClassObjectextendsTrait {
     /*primary*/ public constructor ClassObjectextendsTrait()
 
-    internal class object Default : test.Bbb {
+    internal default object Default : test.Bbb {
         /*primary*/ private constructor Default()
     }
 }

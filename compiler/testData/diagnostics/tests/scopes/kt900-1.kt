@@ -1,4 +1,4 @@
-// import all members from class object
+// import all members from default object
 package c
 
 import c.A.Default.B
@@ -10,9 +10,9 @@ fun foo() {
 }
 
 class A() {
-    class object {
+    default object {
         class B() {
-            class object {
+            default object {
             }
         }
     }

@@ -1,5 +1,5 @@
 class MyClass() {
-    class object {
+    default object {
         deprecated("") fun test() {}
     }
 }

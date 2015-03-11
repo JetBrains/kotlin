@@ -9,7 +9,7 @@ kotlin.js.native() internal final class A {
     kotlin.js.nativeGetter() internal final fun take(/*0*/ a: kotlin.Number): kotlin.String?
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    internal class object Default {
+    internal default object Default {
         private constructor Default()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         kotlin.js.nativeGetter() internal final fun foo(/*0*/ a: kotlin.Double): kotlin.String?
@@ -27,7 +27,7 @@ kotlin.js.native() internal final class B {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    internal class object Default {
+    internal default object Default {
         private constructor Default()
         kotlin.js.nativeGetter() internal final val foo: kotlin.Int = 0
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -64,7 +64,7 @@ kotlin.js.native() internal final class C {
     kotlin.js.nativeGetter() internal final fun kotlin.Int.get2(/*0*/ a: kotlin.Number): kotlin.String?
     kotlin.js.nativeGetter() internal final fun kotlin.Int.get3(/*0*/ a: kotlin.Int): kotlin.String?
 
-    internal class object Default {
+    internal default object Default {
         private constructor Default()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.InlineStrategy;
 import org.jetbrains.kotlin.js.inline.context.*;
 import org.jetbrains.kotlin.js.inline.exception.InlineRecursionException;
+import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 
 import java.util.IdentityHashMap;
 import java.util.Set;
@@ -40,6 +41,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
     private final Stack<JsInliningContext> inliningContexts = new Stack<JsInliningContext>();
     private final Set<JsFunction> processedFunctions = IdentitySet();
     private final Set<JsFunction> inProcessFunctions = IdentitySet();
+    private final FunctionReader functionReader;
 
     /**
      * A statement can contain more, than one inlineable sub-expressions.
@@ -71,16 +73,21 @@ public class JsInliner extends JsVisitorWithContextImpl {
      */
     private boolean lastStatementWasShifted = false;
 
-    public static JsProgram process(JsProgram program) {
+    public static JsProgram process(@NotNull TranslationContext context) {
+        JsProgram program = context.program();
         IdentityHashMap<JsName, JsFunction> functions = collectNamedFunctions(program);
-        JsInliner inliner = new JsInliner(functions);
+        JsInliner inliner = new JsInliner(functions, new FunctionReader(context));
         inliner.accept(program);
         removeUnusedFunctionDefinitions(program, functions);
         return program;
     }
 
-    JsInliner(IdentityHashMap<JsName, JsFunction> functions) {
+    private JsInliner(
+            @NotNull IdentityHashMap<JsName, JsFunction> functions,
+            @NotNull FunctionReader functionReader
+    ) {
         this.functions = functions;
+        this.functionReader = functionReader;
     }
 
     @Override
@@ -191,7 +198,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
         private final FunctionContext functionContext;
 
         JsInliningContext(JsFunction function) {
-            functionContext = new FunctionContext(function, this) {
+            functionContext = new FunctionContext(function, this, functionReader) {
                 @Nullable
                 @Override
                 protected JsFunction lookUpStaticFunction(@Nullable JsName functionName) {

@@ -1,9 +1,9 @@
 // KT-587 Unresolved reference
 
 class Main {
-    class object {
+    default object {
         class States() {
-            class object {
+            default object {
                 public val N: States = States() // : States unresolved
             }
         }

@@ -1,9 +1,9 @@
-// KT-394 Make class object members visible inside the owning class
+// KT-394 Make default object members visible inside the owning class
 
 class X() {
 //    class Y {}
 
-    class object{
+    default object{
         class Y() {}
     }
 

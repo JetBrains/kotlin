@@ -16,22 +16,27 @@
 
 package org.jetbrains.kotlin.idea.decompiler.textBuilder
 
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
-import org.jetbrains.kotlin.descriptors.*
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor
-import org.jetbrains.kotlin.load.kotlin.*
+import org.jetbrains.kotlin.load.kotlin.BinaryClassAnnotationAndConstantLoaderImpl
+import org.jetbrains.kotlin.load.kotlin.JavaFlexibleTypeCapabilitiesDeserializer
+import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
+import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
+import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import java.util.Collections
-import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
-import com.intellij.openapi.diagnostic.Logger
-import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
-import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 
 public fun DeserializerForDecompiler(classFile: VirtualFile): DeserializerForDecompiler {
     val kotlinClass = KotlinBinaryClassCache.getKotlinBinaryClass(classFile)
@@ -51,7 +56,7 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
 
     override fun resolveDeclarationsInPackage(packageFqName: FqName): Collection<DeclarationDescriptor> {
         assert(packageFqName == directoryPackageFqName, "Was called for $packageFqName but only $directoryPackageFqName is expected.")
-        val binaryClassForPackageClass = localClassFinder.findKotlinClass(PackageClassUtils.getPackageClassId(packageFqName))
+        val binaryClassForPackageClass = classFinder.findKotlinClass(PackageClassUtils.getPackageClassId(packageFqName))
         val annotationData = binaryClassForPackageClass?.getClassHeader()?.annotationData
         if (annotationData == null) {
             LOG.error("Could not read annotation data for $packageFqName from ${binaryClassForPackageClass?.getClassId()}")
@@ -67,13 +72,13 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
         return membersScope.getDescriptors()
     }
 
-    private val localClassFinder = LocalClassFinder(packageDirectory, directoryPackageFqName)
-    private val localClassDataFinder = LocalClassDataFinder(localClassFinder, LOG)
+    private val classFinder = DirectoryBasedClassFinder(packageDirectory, directoryPackageFqName)
+    private val classDataFinder = DirectoryBasedDataFinder(classFinder, LOG)
 
     private val storageManager = LockBasedStorageManager.NO_LOCKS
 
     private val annotationAndConstantLoader =
-            BinaryClassAnnotationAndConstantLoaderImpl(moduleDescriptor, storageManager, localClassFinder, LoggingErrorReporter(LOG))
+            BinaryClassAnnotationAndConstantLoaderImpl(moduleDescriptor, storageManager, classFinder, LoggingErrorReporter(LOG))
 
     private val packageFragmentProvider = object : PackageFragmentProvider {
         override fun getPackageFragments(fqName: FqName): List<PackageFragmentDescriptor> {
@@ -100,8 +105,8 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
     }
 
     private val deserializationComponents = DeserializationComponents(
-            storageManager, moduleDescriptor, localClassDataFinder, annotationAndConstantLoader, packageFragmentProvider,
-            JavaFlexibleTypeCapabilitiesDeserializer
+            storageManager, moduleDescriptor, classDataFinder, annotationAndConstantLoader, packageFragmentProvider,
+            ResolveEverythingToKotlinAnyLocalClassResolver, JavaFlexibleTypeCapabilitiesDeserializer
     )
 
     private fun createDummyPackageFragment(fqName: FqName): MutablePackageFragmentDescriptor {

@@ -1,0 +1,18 @@
+package
+
+internal final class Outer {
+    public constructor Outer()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    kotlin.data() private final class Nested {
+        public constructor Nested(/*0*/ c: kotlin.Int)
+        internal final val c: kotlin.Int
+        internal final /*synthesized*/ fun component1(): kotlin.Int
+        public final /*synthesized*/ fun copy(/*0*/ c: kotlin.Int = ...): Outer.Nested
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

@@ -1,6 +1,6 @@
 
 class A {
-    class object {
+    default object {
         private var r: Int = 1;
 
         fun test(): Int {

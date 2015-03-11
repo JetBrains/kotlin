@@ -1,7 +1,7 @@
 enum class B {}
 
 class A {
-   <!ILLEGAL_ENUM_ANNOTATION!>enum<!> class object {}
+   <!ILLEGAL_ENUM_ANNOTATION!>enum<!> default object {}
 }
 
 <!ILLEGAL_ENUM_ANNOTATION!>enum<!> object O {}

@@ -24,7 +24,7 @@ public class X(bar: String? = Inner.A.bar): Inner.A() {
         super<Inner.A>.foo()
     }
 
-    class object: Inner.A() {
+    default object: Inner.A() {
 
     }
 }

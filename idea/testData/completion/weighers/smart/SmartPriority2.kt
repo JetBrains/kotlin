@@ -3,7 +3,7 @@ var nullableX: C? = null
 var nullableFoo: C? = null
 
 abstract class C {
-    class object {
+    default object {
         val INSTANCE_X = C()
         val INSTANCE_FOO = C()
     }

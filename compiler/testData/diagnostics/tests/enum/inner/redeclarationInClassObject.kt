@@ -3,7 +3,7 @@ class A {
         ENTRY
     }
     
-    class object {
+    default object {
         enum class <!REDECLARATION!>E<!> {
             ENTRY2
         }

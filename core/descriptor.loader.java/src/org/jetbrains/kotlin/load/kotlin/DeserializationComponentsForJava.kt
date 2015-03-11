@@ -16,10 +16,11 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
-import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.load.java.lazy.LazyJavaPackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.load.java.lazy.LazyJavaPackageFragmentProvider
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
+import org.jetbrains.kotlin.serialization.deserialization.LocalClassResolverImpl
+import org.jetbrains.kotlin.storage.StorageManager
 
 // This class is needed only for easier injection: exact types of needed components are specified in the constructor here.
 // Otherwise injector generator is not smart enough to deduce, for example, which package fragment provider DeserializationComponents needs
@@ -30,8 +31,14 @@ public class DeserializationComponentsForJava(
         annotationAndConstantLoader: BinaryClassAnnotationAndConstantLoaderImpl,
         packageFragmentProvider: LazyJavaPackageFragmentProvider
 ) {
-    val components = DeserializationComponents(
-            storageManager, moduleDescriptor, classDataFinder, annotationAndConstantLoader, packageFragmentProvider,
-            JavaFlexibleTypeCapabilitiesDeserializer
-    )
+    val components: DeserializationComponents;
+
+    {
+        val localClassResolver = LocalClassResolverImpl()
+        components = DeserializationComponents(
+                storageManager, moduleDescriptor, classDataFinder, annotationAndConstantLoader, packageFragmentProvider,
+                localClassResolver, JavaFlexibleTypeCapabilitiesDeserializer
+        )
+        localClassResolver.setDeserializationComponents(components)
+    }
 }

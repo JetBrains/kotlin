@@ -17,10 +17,11 @@
 package org.jetbrains.kotlin.generators.test.evaluate
 
 import com.intellij.testFramework.UsefulTestCase
-import org.jetbrains.kotlin.test.JetTestUtils
 import org.jetbrains.kotlin.generators.evaluate
+import org.jetbrains.kotlin.test.JetTestUtils
+import org.junit.Ignore
 
-public class GenerateOperationsMapTest : UsefulTestCase() {
+Ignore public class GenerateOperationsMapTest : UsefulTestCase() {
     public fun testGeneratedDataIsUpToDate(): Unit {
         val text = evaluate.generate()
         JetTestUtils.assertEqualsToFile(evaluate.DEST_FILE, text)

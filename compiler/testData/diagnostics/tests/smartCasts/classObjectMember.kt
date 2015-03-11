@@ -3,12 +3,12 @@ open class T {
 }
 
 class A {
-    class object: T() {
+    default object: T() {
     }
 }
 
 class B {
-    class object: T() {
+    default object: T() {
     }
 }
 

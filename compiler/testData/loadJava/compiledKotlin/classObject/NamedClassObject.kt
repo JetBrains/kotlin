@@ -1,7 +1,7 @@
 package test
 
 class NamedClassObject {
-    class object Named {
+    default object Named {
         fun f(): Int = 1
     }
 }

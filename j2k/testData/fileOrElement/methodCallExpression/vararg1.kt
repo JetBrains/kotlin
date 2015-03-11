@@ -1,7 +1,7 @@
 import java.lang.reflect.Constructor
 
 class X {
-    class object {
+    default object {
         throws(javaClass<Exception>())
         fun <T> foo(constructor: Constructor<T>, args1: Array<Any>, args2: Array<Any>) {
             constructor.newInstance(*args1)

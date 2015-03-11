@@ -4,7 +4,7 @@ class MyClass {
         return i()
     }
 
-    class object {
+    default object {
         val coProp = 1
 
         fun coFun() {

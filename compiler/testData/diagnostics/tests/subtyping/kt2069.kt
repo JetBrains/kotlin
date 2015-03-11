@@ -10,5 +10,5 @@ class T : T1 {
         super<T1>.foo()
     }
 
-    class object {}
+    default object {}
 }

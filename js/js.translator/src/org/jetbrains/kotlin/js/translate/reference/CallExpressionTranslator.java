@@ -17,13 +17,11 @@
 package org.jetbrains.kotlin.js.translate.reference;
 
 import com.google.dart.compiler.backend.js.ast.*;
-import com.google.dart.compiler.backend.js.ast.metadata.MetadataPackage;
 import com.google.dart.compiler.common.SourceInfoImpl;
 import com.google.gwt.dev.js.JsParser;
 import com.google.gwt.dev.js.ThrowExceptionOnErrorReporter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.InlineStrategy;
 import org.jetbrains.kotlin.builtins.InlineUtil;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
@@ -47,6 +45,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.jetbrains.kotlin.js.translate.utils.UtilsPackage.setInlineCallMetadata;
 import static org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage.getFunctionResolvedCallWithAssert;
 import static org.jetbrains.kotlin.js.resolve.diagnostics.JsCallChecker.isJsCall;
 
@@ -65,11 +64,10 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
         }
         
         JsExpression callExpression = (new CallExpressionTranslator(expression, receiver, context)).translate();
+        CallableDescriptor descriptor = getFunctionDescriptor(expression, context);
 
-        if (shouldBeInlined(expression, context)
-            && callExpression instanceof JsInvocation) {
-
-            MetadataPackage.setInlineStrategy((JsInvocation) callExpression, InlineStrategy.IN_PLACE);
+        if (!resolvedCall.isSafeCall() && shouldBeInlined(expression, context)) {
+            setInlineCallMetadata(callExpression, descriptor, context);
         }
 
         return callExpression;
@@ -78,17 +76,11 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
     public static boolean shouldBeInlined(@NotNull JetCallExpression expression, @NotNull TranslationContext context) {
         if (!context.getConfig().isInlineEnabled()) return false;
 
-        ResolvedCall<?> resolvedCall = CallUtilPackage.getResolvedCall(expression, context.bindingContext());
-        assert resolvedCall != null;
+        CallableDescriptor descriptor = getFunctionDescriptor(expression, context);
+        return shouldBeInlined(descriptor);
+    }
 
-        CallableDescriptor descriptor;
-
-        if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
-            descriptor = ((VariableAsFunctionResolvedCall) resolvedCall).getVariableCall().getCandidateDescriptor();
-        } else {
-            descriptor = resolvedCall.getCandidateDescriptor();
-        }
-
+    public static boolean shouldBeInlined(@NotNull CallableDescriptor descriptor) {
         if (descriptor instanceof SimpleFunctionDescriptor) {
             return ((SimpleFunctionDescriptor) descriptor).getInlineStrategy().isInline();
         }
@@ -100,6 +92,21 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
         }
 
         return false;
+    }
+
+    @NotNull
+    private static CallableDescriptor getFunctionDescriptor(
+            @NotNull JetCallExpression expression,
+            @NotNull TranslationContext context
+    ) {
+        ResolvedCall<?> resolvedCall = CallUtilPackage.getResolvedCall(expression, context.bindingContext());
+        assert resolvedCall != null;
+
+        if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
+            return  ((VariableAsFunctionResolvedCall) resolvedCall).getVariableCall().getCandidateDescriptor();
+        }
+
+        return resolvedCall.getCandidateDescriptor();
     }
 
     private CallExpressionTranslator(

@@ -1,7 +1,7 @@
 class Test {}
 
 class Other {
-    class object {}
+    default object {}
 }
 
 object TestObject {}
@@ -21,7 +21,7 @@ class Test1 {
 }
 
 class Other1 {
-    class object {
+    default object {
     }
 }
 

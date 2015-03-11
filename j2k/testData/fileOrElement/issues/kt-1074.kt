@@ -1,7 +1,7 @@
 package demo
 
 class Test {
-    class object {
+    default object {
         fun subListRangeCheck(fromIndex: Int, toIndex: Int, size: Int) {
             if (fromIndex < 0)
                 throw IndexOutOfBoundsException("fromIndex = " + fromIndex)

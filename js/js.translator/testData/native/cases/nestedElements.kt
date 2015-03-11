@@ -97,7 +97,7 @@ object Object {
             var b: String = noImpl
             fun test(): Int = noImpl
 
-            class object {
+            default object {
                 val a: String = noImpl
                 var b: String = noImpl
                 fun test(): Int = noImpl
@@ -109,7 +109,7 @@ object Object {
         var b: String = noImpl
         fun test(): Int = noImpl
 
-        class object {
+        default object {
             val a: String = noImpl
             var b: String = noImpl
             fun test(): Int = noImpl
@@ -121,7 +121,7 @@ object Object {
         var b: String
         fun test(): Int = noImpl
 
-        class object {
+        default object {
             val a: String = noImpl
             var b: String = noImpl
             fun test(): Int = noImpl
@@ -145,7 +145,7 @@ class Class {
         var b: String = noImpl
         fun test(): Int = noImpl
 
-        class object {
+        default object {
             val a: String = noImpl
             var b: String = noImpl
             fun test(): Int = noImpl
@@ -162,14 +162,14 @@ class Class {
         var b: String
         fun test(): Int = noImpl
 
-        class object {
+        default object {
             val a: String = noImpl
             var b: String = noImpl
             fun test(): Int = noImpl
         }
     }
 
-    class object {
+    default object {
         native("aaa")
         val a: Trait = noImpl
         var b: String = noImpl
@@ -190,7 +190,7 @@ trait Trait {
         var b: String = noImpl
         fun test(): Int = noImpl
 
-        class object {
+        default object {
             val a: String = noImpl
             var b: String = noImpl
             fun test(): Int = noImpl
@@ -203,14 +203,14 @@ trait Trait {
         var b: String
         fun test(): Int = noImpl
 
-        class object {
+        default object {
             val a: String = noImpl
             var b: String = noImpl
             fun test(): Int = noImpl
         }
     }
 
-    class object {
+    default object {
         val a: Trait = noImpl
         var b: String = noImpl
         fun test(): Int = noImpl

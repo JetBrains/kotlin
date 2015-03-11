@@ -1,13 +1,13 @@
 package d
 
 class A {
-    class object E {
+    default object E {
         val c: Int
     }
 }
 
 class B {
-    class object F {
+    default object F {
         val c: Int
     }
 }

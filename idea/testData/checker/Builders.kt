@@ -30,7 +30,7 @@ import java.util.*
   }
 
   class HTML() : TagWithText("html") {
-    class object : Factory<HTML> {
+    default object : Factory<HTML> {
       override fun create() = HTML()
     }
 
@@ -40,7 +40,7 @@ import java.util.*
   }
 
   class Head() : TagWithText("head") {
-    class object : Factory<Head> {
+    default object : Factory<Head> {
       override fun create() = Head()
     }
 
@@ -53,7 +53,7 @@ import java.util.*
   }
 
   class Body() : BodyTag("body") {
-    class object : Factory<Body> {
+    default object : Factory<Body> {
       override fun create() = Body()
     }
 

@@ -6,7 +6,7 @@ open class B
 
 class A {
 
-    class object {
+    default object {
         [platformStatic]
         fun <T: B> a(s: T) : T {
             return s

@@ -3,7 +3,7 @@
 package server
 
 class A {
-    class object {
+    default object {
         var <caret>foo: String = "foo"
     }
 }

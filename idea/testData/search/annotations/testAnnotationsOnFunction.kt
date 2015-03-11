@@ -17,7 +17,7 @@ class Test5() {
 }
 
 class Test6() {
-    class object {
+    default object {
         Deprecated fun test6() {}
     }
 }

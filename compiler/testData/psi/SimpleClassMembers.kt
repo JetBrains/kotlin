@@ -19,23 +19,23 @@ class foo {
 
     class Bar {
         object foo {
-            class object {
+            default object {
 
             }
 
-            private class object {
+            private default object {
 
             }
 
-            private class object : Fooo {
+            private default object : Fooo {
 
             }
 
-            private class object : Fooo, Bar by foo {
+            private default object : Fooo, Bar by foo {
 
             }
 
-            private class object : Fooo, Bar by foo, Goo()
+            private default object : Fooo, Bar by foo, Goo()
         }
 
         class Bar {}
@@ -58,23 +58,23 @@ class foo {
 
     typealias foo = bar
 
-    class object {
+    default object {
 
     }
 
-    private class object {
+    private default object {
 
     }
 
-    private class object : Fooo {
+    private default object : Fooo {
 
     }
 
-    private class object : Fooo, Bar by foo {
+    private default object : Fooo, Bar by foo {
 
     }
 
-    private class object : Fooo, Bar by foo, Goo()
+    private default object : Fooo, Bar by foo, Goo()
 
 
 }

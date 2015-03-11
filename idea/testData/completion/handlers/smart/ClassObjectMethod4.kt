@@ -1,7 +1,7 @@
 package sample
 
 class K {
-    class object {
+    default object {
         fun bar(p: (Int, String) -> Unit): K = K()
     }
 }

@@ -3,7 +3,7 @@ package test
 internal final class A {
     /*primary*/ public constructor A()
 
-    internal class object Default {
+    internal default object Default {
         /*primary*/ private constructor Default()
 
         internal final annotation class Anno1 : kotlin.Annotation {

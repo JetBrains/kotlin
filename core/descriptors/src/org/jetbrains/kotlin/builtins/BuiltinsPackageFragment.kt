@@ -16,22 +16,25 @@
 
 package org.jetbrains.kotlin.builtins
 
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
+import com.google.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.PackageFragmentProviderImpl
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
-import org.jetbrains.kotlin.name.*
-import org.jetbrains.kotlin.storage.StorageManager
-import java.io.InputStream
-import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
-import com.google.protobuf.ExtensionRegistryLite
-import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
-import org.jetbrains.kotlin.serialization.deserialization.FlexibleTypeCapabilitiesDeserializer
-import org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.serialization.ClassData
 import org.jetbrains.kotlin.serialization.NameSerializationUtil
 import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.ClassData
+import org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf
+import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
+import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
+import org.jetbrains.kotlin.serialization.deserialization.FlexibleTypeCapabilitiesDeserializer
+import org.jetbrains.kotlin.serialization.deserialization.LocalClassResolverImpl
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
+import org.jetbrains.kotlin.storage.StorageManager
+import java.io.InputStream
 
 public class BuiltinsPackageFragment(
         fqName: FqName,
@@ -56,17 +59,15 @@ public class BuiltinsPackageFragment(
 
     private val members: DeserializedPackageMemberScope = run {
         val proto = loadPackage()
-        DeserializedPackageMemberScope(
-                this,
-                proto,
-                nameResolver,
-                DeserializationComponents(
-                        storageManager, module, BuiltInsClassDataFinder(),
-                        BuiltInsAnnotationAndConstantLoader(getContainingDeclaration()),
-                        provider, FlexibleTypeCapabilitiesDeserializer.ThrowException
-                ),
-                { readClassNames(proto) }
+        val localClassResolver = LocalClassResolverImpl()
+        val components = DeserializationComponents(
+                storageManager, module, BuiltInsClassDataFinder(),
+                BuiltInsAnnotationAndConstantLoader(getContainingDeclaration()),
+                provider, localClassResolver,
+                FlexibleTypeCapabilitiesDeserializer.ThrowException
         )
+        localClassResolver.setDeserializationComponents(components)
+        DeserializedPackageMemberScope(this, proto, nameResolver, components, { readClassNames(proto) })
     }
 
     private fun loadPackage(): ProtoBuf.Package {
@@ -85,8 +86,7 @@ public class BuiltinsPackageFragment(
 
     private inner class BuiltInsClassDataFinder : ClassDataFinder {
         override fun findClassData(classId: ClassId): ClassData? {
-            val metadataPath = BuiltInsSerializationUtil.getClassMetadataPath(classId) ?: return null
-            val stream = loadResource(metadataPath) ?: return null
+            val stream = loadResource(BuiltInsSerializationUtil.getClassMetadataPath(classId)) ?: return null
 
             val classProto = ProtoBuf.Class.parseFrom(stream, extensionRegistry)
 

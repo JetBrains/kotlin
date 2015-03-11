@@ -10,28 +10,24 @@ import org.jetbrains.annotations.NotNull;
  * Used in object literals to specify property values by name.
  */
 public class JsPropertyInitializer extends SourceInfoAwareJsNode {
+    @NotNull
     private JsExpression labelExpr;
+    @NotNull
     private JsExpression valueExpr;
 
-    public JsPropertyInitializer(@NotNull JsExpression labelExpr) {
-        this.labelExpr = labelExpr;
-    }
-
     public JsPropertyInitializer(@NotNull JsExpression labelExpr, @NotNull JsExpression valueExpr) {
-        this(labelExpr);
+        this.labelExpr = labelExpr;
         this.valueExpr = valueExpr;
     }
 
+    @NotNull
     public JsExpression getLabelExpr() {
         return labelExpr;
     }
 
+    @NotNull
     public JsExpression getValueExpr() {
         return valueExpr;
-    }
-
-    public void setValueExpr(@NotNull JsExpression valueExpr) {
-        this.valueExpr = valueExpr;
     }
 
     @Override
@@ -48,8 +44,12 @@ public class JsPropertyInitializer extends SourceInfoAwareJsNode {
     @Override
     public void traverse(JsVisitorWithContext v, JsContext ctx) {
         if (v.visit(this, ctx)) {
-            labelExpr = v.accept(labelExpr);
-            valueExpr = v.accept(valueExpr);
+            JsExpression newLabel = v.accept(labelExpr);
+            JsExpression newValue = v.accept(valueExpr);
+            assert newLabel != null: "Label cannot be replaced with null";
+            assert newValue != null: "Value cannot be replaced with null";
+            labelExpr = newLabel;
+            valueExpr = newValue;
         }
         v.endVisit(this, ctx);
     }

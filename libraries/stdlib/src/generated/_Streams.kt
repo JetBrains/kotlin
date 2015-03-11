@@ -122,6 +122,17 @@ public fun <T> Iterable<T>.stream(): Stream<T> {
 /**
  * Returns a stream from the given collection
  */
+public fun <K, V> Map<K, V>.stream(): Stream<Map.Entry<K, V>> {
+    return object : Stream<Map.Entry<K, V>> {
+        override fun iterator(): Iterator<Map.Entry<K, V>> {
+            return this@stream.iterator()
+        }
+    }
+}
+
+/**
+ * Returns a stream from the given collection
+ */
 public fun <T> Stream<T>.stream(): Stream<T> {
     return this
 }

@@ -1,7 +1,7 @@
 package t
 
 class A {
-    class object Default {
+    default object Default {
         fun test()
     }
 }
@@ -11,5 +11,5 @@ fun test() {
 }
 
 
-// REF: class object of (t).A
+// REF: default object of (t).A
 

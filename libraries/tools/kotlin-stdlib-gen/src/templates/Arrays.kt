@@ -23,6 +23,19 @@ fun arrays(): List<GenericFunction> {
         }
     }
 
+    templates add f("asIterable()") {
+        only(ArraysOfObjects, ArraysOfPrimitives)
+        doc { "Returns the Iterable that wraps the original array" }
+        returns("Iterable<T>")
+        body {
+            """
+            return object : Iterable<T> {
+                override fun iterator(): Iterator<T> = this@asIterable.iterator()
+            }
+            """
+        }
+    }
+
     templates add pval("lastIndex") {
         only(ArraysOfObjects, ArraysOfPrimitives)
         doc { "Returns the last valid index for the array" }

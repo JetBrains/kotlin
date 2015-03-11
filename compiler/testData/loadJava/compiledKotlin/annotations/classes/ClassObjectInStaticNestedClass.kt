@@ -3,7 +3,7 @@ package test
 
 class A {
     class B {
-        class object {
+        default object {
             val TEST = 1
         }
     }

@@ -2,7 +2,7 @@ package foo
 
 class A {
     var a = 3
-    class object {
+    default object {
         var a = -2
     }
 }

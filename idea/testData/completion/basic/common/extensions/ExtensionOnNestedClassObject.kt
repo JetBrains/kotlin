@@ -2,7 +2,7 @@ package foo
 
 class A {
     class B {
-        class object
+        default object
     }
 }
 

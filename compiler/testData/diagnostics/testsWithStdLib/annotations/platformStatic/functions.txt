@@ -16,7 +16,7 @@ internal final class A {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal class object Default {
+    internal default object Default {
         private constructor Default()
         kotlin.platform.platformStatic() internal final fun a1(): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -40,7 +40,7 @@ internal trait B {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal class object Default {
+    internal default object Default {
         private constructor Default()
         kotlin.platform.platformStatic() internal final fun a1(): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

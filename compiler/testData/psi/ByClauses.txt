@@ -24,7 +24,8 @@ JetFile: ByClauses.kt
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n  ')
       OBJECT_DECLARATION
-        PsiElement(class)('class')
+        MODIFIER_LIST
+          PsiElement(default)('default')
         PsiWhiteSpace(' ')
         PsiElement(object)('object')
         PsiWhiteSpace(' ')
@@ -75,7 +76,8 @@ JetFile: ByClauses.kt
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n  ')
       OBJECT_DECLARATION
-        PsiElement(class)('class')
+        MODIFIER_LIST
+          PsiElement(default)('default')
         PsiWhiteSpace(' ')
         PsiElement(object)('object')
         PsiWhiteSpace(' ')
@@ -111,7 +113,8 @@ JetFile: ByClauses.kt
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n  ')
       OBJECT_DECLARATION
-        PsiElement(class)('class')
+        MODIFIER_LIST
+          PsiElement(default)('default')
         PsiWhiteSpace(' ')
         PsiElement(object)('object')
         PsiWhiteSpace(' ')
@@ -156,7 +159,8 @@ JetFile: ByClauses.kt
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n  ')
       OBJECT_DECLARATION
-        PsiElement(class)('class')
+        MODIFIER_LIST
+          PsiElement(default)('default')
         PsiWhiteSpace(' ')
         PsiElement(object)('object')
         PsiWhiteSpace(' ')
@@ -204,7 +208,8 @@ JetFile: ByClauses.kt
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n  ')
       OBJECT_DECLARATION
-        PsiElement(class)('class')
+        MODIFIER_LIST
+          PsiElement(default)('default')
         PsiWhiteSpace(' ')
         PsiElement(object)('object')
         PsiWhiteSpace(' ')
@@ -253,7 +258,8 @@ JetFile: ByClauses.kt
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n  ')
       OBJECT_DECLARATION
-        PsiElement(class)('class')
+        MODIFIER_LIST
+          PsiElement(default)('default')
         PsiWhiteSpace(' ')
         PsiElement(object)('object')
         PsiWhiteSpace(' ')
@@ -314,7 +320,8 @@ JetFile: ByClauses.kt
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n  ')
       OBJECT_DECLARATION
-        PsiElement(class)('class')
+        MODIFIER_LIST
+          PsiElement(default)('default')
         PsiWhiteSpace(' ')
         PsiElement(object)('object')
         PsiWhiteSpace(' ')

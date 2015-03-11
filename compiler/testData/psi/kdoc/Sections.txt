@@ -16,7 +16,8 @@ JetFile: Sections.kt
         KDOC_MARKDOWN_LINK
           KDOC_NAME
             PsiElement(IDENTIFIER)('T')
-        PsiElement(KDOC_TEXT)(' a type parameter.')
+        PsiWhiteSpace(' ')
+        PsiElement(KDOC_TEXT)('a type parameter.')
       PsiWhiteSpace('\n ')
       PsiElement(KDOC_LEADING_ASTERISK)('*')
       PsiElement(KDOC_TEXT)(' ')
@@ -34,6 +35,7 @@ JetFile: Sections.kt
         KDOC_MARKDOWN_LINK
           KDOC_NAME
             PsiElement(IDENTIFIER)('a')
-        PsiElement(KDOC_TEXT)(' a constructor parameter.')
+        PsiWhiteSpace(' ')
+        PsiElement(KDOC_TEXT)('a constructor parameter.')
     PsiWhiteSpace('\n ')
     PsiElement(KDOC_END)('*/')

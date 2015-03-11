@@ -1,7 +1,7 @@
 package Test.MyTest
 
 class A {
-    class object {
+    default object {
         public fun testOther() {
 
         }

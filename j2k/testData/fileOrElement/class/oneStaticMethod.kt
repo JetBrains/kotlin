@@ -1,5 +1,5 @@
 class S {
-    class object {
+    default object {
         fun staticF(): Boolean {
             return true
         }

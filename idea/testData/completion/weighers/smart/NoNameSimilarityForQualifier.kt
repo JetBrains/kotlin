@@ -1,5 +1,5 @@
 class Name {
-    class object {
+    default object {
         fun create(): Name = Name()
     }
 }

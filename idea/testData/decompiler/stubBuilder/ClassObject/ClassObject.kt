@@ -6,7 +6,7 @@ class ClassObject {
 
     val c = 1
 
-    public class object {
+    public default object {
         val j = 0
         fun z() = 0
 
@@ -20,11 +20,11 @@ class ClassObject {
 
 
     class B {
-        class object {
+        default object {
             class C {
-                class object {
+                default object {
                     class D {
-                        class object {
+                        default object {
                             val i = 3
                             fun f() {
                             }

@@ -3,7 +3,7 @@ package test
 internal final class ClassObjectDeclaresProperty {
     /*primary*/ public constructor ClassObjectDeclaresProperty()
 
-    internal class object Default {
+    internal default object Default {
         /*primary*/ private constructor Default()
         internal final val i: kotlin.Int = 1
             internal final fun <get-i>(): kotlin.Int

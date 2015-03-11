@@ -8,6 +8,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="protobuf-java" level="project" />
+    <orderEntry type="library" name="javax.inject" level="project" />
     <orderEntry type="module" module-name="descriptors" exported="" />
     <orderEntry type="module" module-name="util.runtime" />
   </component>

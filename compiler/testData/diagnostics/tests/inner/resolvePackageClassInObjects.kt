@@ -1,7 +1,7 @@
 open class PackageTest
 
 class MoreTest() {
-    class object: PackageTest() {
+    default object: PackageTest() {
 
     }
 

@@ -4,7 +4,7 @@ import kotlin.platform.platformStatic
 
 class A {
 
-    class object {
+    default object {
         val b: String = "OK"
 
         platformStatic fun test1() {

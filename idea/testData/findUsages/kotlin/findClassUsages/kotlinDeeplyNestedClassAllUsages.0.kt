@@ -11,7 +11,7 @@ public open class Outer {
 
             }
 
-            class object {
+            default object {
                 public var bar: String = "bar";
 
                 public open fun foo() {
