@@ -18,8 +18,15 @@ package org.jetbrains.kotlin.jps.build
 
 import com.intellij.util.PathUtil
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
+import org.jetbrains.kotlin.test.JetTestUtils
 
 public class SimpleKotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
+
+    override fun setUp() {
+        super.setUp()
+        workDir = JetTestUtils.tmpDirForTest(this)
+    }
+
     public fun testThreeModulesNoReexport() {
         val aFile = createFile("a/a.kt",
                                """
