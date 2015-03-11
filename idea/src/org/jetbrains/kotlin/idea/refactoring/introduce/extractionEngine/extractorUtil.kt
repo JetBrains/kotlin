@@ -90,7 +90,7 @@ fun ExtractionGeneratorConfiguration.getDeclarationText(
             builder.receiver(it.getParameterType(descriptor.extractionData.options.allowSpecialClassNames).typeAsString())
         }
 
-        builder.name(if (descriptor.name != "") descriptor.name else DEFAULT_FUNCTION_NAME)
+        builder.name(if (descriptor.name == "" && generatorOptions.allowDummyName) "myFun" else descriptor.name)
 
         descriptor.parameters.forEach { parameter ->
             builder.param(parameter.name,

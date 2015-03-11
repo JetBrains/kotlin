@@ -1,3 +1,4 @@
+// SUGGESTED_NAMES: i, getY
 fun foo() {
     val x = i()
     val y = i()

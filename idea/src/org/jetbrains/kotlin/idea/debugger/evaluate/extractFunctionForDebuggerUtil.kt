@@ -103,7 +103,7 @@ fun getFunctionForExtractedFragment(
 
         val config = ExtractionGeneratorConfiguration(
                 validationResult.descriptor,
-                ExtractionGeneratorOptions(inTempFile = true, flexibleTypesAllowed = true)
+                ExtractionGeneratorOptions(inTempFile = true, flexibleTypesAllowed = true, allowDummyName = true)
         )
         return config.generateDeclaration()
     }

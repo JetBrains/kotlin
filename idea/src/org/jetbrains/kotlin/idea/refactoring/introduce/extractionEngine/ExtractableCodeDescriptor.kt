@@ -363,7 +363,8 @@ val propertyTargets: List<ExtractionTarget> = listOf(ExtractionTarget.PROPERTY_W
 data class ExtractionGeneratorOptions(
         val inTempFile: Boolean = false,
         val target: ExtractionTarget = ExtractionTarget.FUNCTION,
-        val flexibleTypesAllowed: Boolean = false
+        val flexibleTypesAllowed: Boolean = false,
+        val allowDummyName: Boolean = false
 ) {
     default object {
         val DEFAULT = ExtractionGeneratorOptions()

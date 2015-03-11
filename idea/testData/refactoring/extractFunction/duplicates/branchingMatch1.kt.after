@@ -1,4 +1,5 @@
 // WITH_RUNTIME
+// SUGGESTED_NAMES: i, getT
 // PARAM_TYPES: kotlin.Int
 // PARAM_TYPES: kotlin.Int
 // PARAM_DESCRIPTOR: value-parameter val a: kotlin.Int defined in test

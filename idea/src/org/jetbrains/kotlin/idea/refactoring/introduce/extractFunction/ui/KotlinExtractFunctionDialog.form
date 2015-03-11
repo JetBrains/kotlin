@@ -99,14 +99,16 @@
               <visible value="true"/>
             </properties>
           </component>
-          <component id="bee3c" class="com.intellij.ui.EditorTextField" binding="functionNameField">
+          <grid id="d0f58" binding="functionNamePanel" layout-manager="BorderLayout" hgap="0" vgap="0">
             <constraints>
               <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
               </grid>
             </constraints>
             <properties/>
-          </component>
+            <border type="none"/>
+            <children/>
+          </grid>
           <component id="71ee7" class="javax.swing.JComboBox" binding="visibilityBox">
             <constraints>
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="0" indent="0" use-parent-layout="false">
