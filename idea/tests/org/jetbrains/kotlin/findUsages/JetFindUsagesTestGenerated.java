@@ -257,6 +257,12 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("javaClassSecondaryCtrUsages.0.kt")
+            public void testJavaClassSecondaryCtrUsages() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findClassUsages/javaClassSecondaryCtrUsages.0.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("javaDerivedClassUsages1.0.kt")
             public void testJavaDerivedClassUsages1() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findClassUsages/javaDerivedClassUsages1.0.kt");
@@ -392,6 +398,12 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
             @TestMetadata("kotlinClassPropertyUsages2.0.kt")
             public void testKotlinClassPropertyUsages2() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findClassUsages/kotlinClassPropertyUsages2.0.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kotlinClassSecondaryCtorUsages.0.kt")
+            public void testKotlinClassSecondaryCtorUsages() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findClassUsages/kotlinClassSecondaryCtorUsages.0.kt");
                 doTest(fileName);
             }
 

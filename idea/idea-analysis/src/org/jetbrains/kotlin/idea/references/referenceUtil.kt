@@ -50,7 +50,7 @@ public fun PsiReference.matchesTarget(candidateTarget: PsiElement): Boolean {
 
     if (this is JetReference) {
         return targets.any {
-            it is PsiMethod && it.isConstructor() && it.getContainingClass() == unwrappedCandidate
+            it.isConstructorOf(unwrappedCandidate)
             || it is JetObjectDeclaration && it.isCompanion() && it.getNonStrictParentOfType<JetClass>() == unwrappedCandidate
         }
     }
@@ -67,6 +67,12 @@ public fun PsiReference.matchesTarget(candidateTarget: PsiElement): Boolean {
     }
     return false
 }
+
+private fun PsiElement.isConstructorOf(unwrappedCandidate: PsiElement) =
+    // call to Java constructor
+    (this is PsiMethod && isConstructor() && getContainingClass() == unwrappedCandidate) ||
+    // call to Kotlin constructor
+    (this is JetSecondaryConstructor && getStrictParentOfType<JetClass>() == unwrappedCandidate)
 
 fun AbstractJetReference<out JetExpression>.renameImplicitConventionalCall(newName: String?): JetExpression {
     if (newName == null) return expression
