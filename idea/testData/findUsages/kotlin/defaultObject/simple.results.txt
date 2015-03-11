@@ -1,0 +1,4 @@
+Nested class/object (5: 5) Foo.f()
+Nested class/object (8: 9) Foo.Default.f()
+Unclassified usage (6: 13) val x = Foo
+Unclassified usage (9: 18) val xx = Foo.Default
