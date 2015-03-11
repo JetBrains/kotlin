@@ -100,7 +100,7 @@ public class Byte private () : Number, Comparable<Byte> {
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `char`.
  */
 public class Char private () : Comparable<Char> {
-    class object {}
+    default object {}
 
     public fun compareTo(other: Byte): Int
     public override fun compareTo(other: Char): Int
