@@ -6321,6 +6321,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("delegationWithPrimary.kt")
+        public void testDelegationWithPrimary() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/delegationWithPrimary.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("enums.kt")
         public void testEnums() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/enums.kt");

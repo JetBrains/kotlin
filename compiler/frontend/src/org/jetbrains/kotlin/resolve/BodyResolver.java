@@ -304,6 +304,9 @@ public class BodyResolver {
                     JetType expectedType = supertype != null ? supertype : NO_EXPECTED_TYPE;
                     typeInferrer.getType(scope, delegateExpression, expectedType, c.getOuterDataFlowInfo(), trace);
                 }
+                if (primaryConstructor == null) {
+                    trace.report(UNSUPPORTED.on(specifier, "Delegation without primary constructor is not supported"));
+                }
             }
 
             @Override
