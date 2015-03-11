@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluat
 import org.jetbrains.kotlin.types.JetType
 
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.js.parser.parse
 import java.io.StringReader
 
 import kotlin.platform.platformStatic
@@ -81,18 +82,16 @@ public class JsCallChecker : CallChecker {
         }
 
         val code = evaluationResult.getValue() as String
-        val reader = StringReader(code)
         val errorReporter = JsCodeErrorReporter(argument, code, context.trace)
-        Context.enter().setErrorReporter(errorReporter)
 
         try {
-            val ts = TokenStream(reader, "js", 0)
-            val parser = Parser(IRFactory(ts), /* insideFunction = */ true)
-            parser.parse(ts)
+            val statements = parse(code, errorReporter, insideFunction = true)
+
+            if (statements.size() == 0) {
+                context.trace.report(ErrorsJs.JSCODE_NO_JAVASCRIPT_PRODUCED.on(argument))
+            }
         } catch (e: AbortParsingException) {
             // ignore
-        } finally {
-            Context.exit()
         }
     }
 }
