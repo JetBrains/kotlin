@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="gradle-plugin">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/ideaSDK/plugins/gradle/lib" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/ideaSDK/plugins/gradle/lib" />
+    </SOURCES>
+    <jarDirectory url="file://$PROJECT_DIR$/ideaSDK/plugins/gradle/lib" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/ideaSDK/plugins/gradle/lib" recursive="false" type="SOURCES" />
+  </library>
+</component>

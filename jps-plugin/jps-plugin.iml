@@ -23,5 +23,6 @@
     <orderEntry type="module" module-name="util" />
     <orderEntry type="module" module-name="preloader" />
     <orderEntry type="module" module-name="kotlin-android-plugin" />
+    <orderEntry type="library" scope="TEST" name="gradle-plugin" level="project" />
   </component>
 </module>
