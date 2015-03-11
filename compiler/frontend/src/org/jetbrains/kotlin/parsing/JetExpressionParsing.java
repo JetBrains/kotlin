@@ -1033,7 +1033,6 @@ public class JetExpressionParsing extends AbstractJetParsing {
                 PsiBuilder.Marker rollbackMarker = mark();
                 boolean preferParamsToExpressions = (lookahead(1) == COMMA);
                 parseFunctionLiteralShorthandParameterList();
-                parseOptionalFunctionLiteralType();
 
                 paramsFound = preferParamsToExpressions ?
                               rollbackOrDrop(rollbackMarker, ARROW, "An -> is expected", RBRACE) :
@@ -1112,15 +1111,13 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
             expect(IDENTIFIER, "Expecting parameter name", TokenSet.create(ARROW));
 
+            if (at(COLON)) {
+                advance(); // COLON
+                myJetParsing.parseTypeRef(TokenSet.create(ARROW, COMMA));
+            }
             parameter.done(VALUE_PARAMETER);
 
-            if (at(COLON)) {
-                PsiBuilder.Marker errorMarker = mark();
-                advance(); // COLON
-                myJetParsing.parseTypeRef();
-                errorMarker.error("To specify a type of a parameter or a return type, use the full notation: {(parameter : Type) : ReturnType -> ...}");
-            }
-            else if (at(ARROW)) {
+            if (at(ARROW)) {
                 break;
             }
             else if (at(COMMA)) {
