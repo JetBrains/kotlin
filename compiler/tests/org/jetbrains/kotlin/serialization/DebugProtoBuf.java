@@ -6226,17 +6226,17 @@ public final class DebugProtoBuf {
        */
       org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Argument.Projection getProjection();
 
-      // required .org.jetbrains.kotlin.serialization.Type type = 2;
+      // optional .org.jetbrains.kotlin.serialization.Type type = 2;
       /**
-       * <code>required .org.jetbrains.kotlin.serialization.Type type = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
        */
       boolean hasType();
       /**
-       * <code>required .org.jetbrains.kotlin.serialization.Type type = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
        */
       org.jetbrains.kotlin.serialization.DebugProtoBuf.Type getType();
       /**
-       * <code>required .org.jetbrains.kotlin.serialization.Type type = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
        */
       org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder getTypeOrBuilder();
     }
@@ -6471,23 +6471,23 @@ public final class DebugProtoBuf {
         return projection_;
       }
 
-      // required .org.jetbrains.kotlin.serialization.Type type = 2;
+      // optional .org.jetbrains.kotlin.serialization.Type type = 2;
       public static final int TYPE_FIELD_NUMBER = 2;
       private org.jetbrains.kotlin.serialization.DebugProtoBuf.Type type_;
       /**
-       * <code>required .org.jetbrains.kotlin.serialization.Type type = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
        */
       public boolean hasType() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       /**
-       * <code>required .org.jetbrains.kotlin.serialization.Type type = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
        */
       public org.jetbrains.kotlin.serialization.DebugProtoBuf.Type getType() {
         return type_;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.serialization.Type type = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
        */
       public org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder getTypeOrBuilder() {
         return type_;
@@ -6502,13 +6502,11 @@ public final class DebugProtoBuf {
         byte isInitialized = memoizedIsInitialized;
         if (isInitialized != -1) return isInitialized == 1;
 
-        if (!hasType()) {
-          memoizedIsInitialized = 0;
-          return false;
-        }
-        if (!getType().isInitialized()) {
-          memoizedIsInitialized = 0;
-          return false;
+        if (hasType()) {
+          if (!getType().isInitialized()) {
+            memoizedIsInitialized = 0;
+            return false;
+          }
         }
         memoizedIsInitialized = 1;
         return true;
@@ -6732,13 +6730,11 @@ public final class DebugProtoBuf {
         }
 
         public final boolean isInitialized() {
-          if (!hasType()) {
-            
-            return false;
-          }
-          if (!getType().isInitialized()) {
-            
-            return false;
+          if (hasType()) {
+            if (!getType().isInitialized()) {
+              
+              return false;
+            }
           }
           return true;
         }
@@ -6798,18 +6794,18 @@ public final class DebugProtoBuf {
           return this;
         }
 
-        // required .org.jetbrains.kotlin.serialization.Type type = 2;
+        // optional .org.jetbrains.kotlin.serialization.Type type = 2;
         private org.jetbrains.kotlin.serialization.DebugProtoBuf.Type type_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.getDefaultInstance();
         private com.google.protobuf.SingleFieldBuilder<
             org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder> typeBuilder_;
         /**
-         * <code>required .org.jetbrains.kotlin.serialization.Type type = 2;</code>
+         * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
          */
         public boolean hasType() {
           return ((bitField0_ & 0x00000002) == 0x00000002);
         }
         /**
-         * <code>required .org.jetbrains.kotlin.serialization.Type type = 2;</code>
+         * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
          */
         public org.jetbrains.kotlin.serialization.DebugProtoBuf.Type getType() {
           if (typeBuilder_ == null) {
@@ -6819,7 +6815,7 @@ public final class DebugProtoBuf {
           }
         }
         /**
-         * <code>required .org.jetbrains.kotlin.serialization.Type type = 2;</code>
+         * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
          */
         public Builder setType(org.jetbrains.kotlin.serialization.DebugProtoBuf.Type value) {
           if (typeBuilder_ == null) {
@@ -6835,7 +6831,7 @@ public final class DebugProtoBuf {
           return this;
         }
         /**
-         * <code>required .org.jetbrains.kotlin.serialization.Type type = 2;</code>
+         * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
          */
         public Builder setType(
             org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder builderForValue) {
@@ -6849,7 +6845,7 @@ public final class DebugProtoBuf {
           return this;
         }
         /**
-         * <code>required .org.jetbrains.kotlin.serialization.Type type = 2;</code>
+         * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
          */
         public Builder mergeType(org.jetbrains.kotlin.serialization.DebugProtoBuf.Type value) {
           if (typeBuilder_ == null) {
@@ -6868,7 +6864,7 @@ public final class DebugProtoBuf {
           return this;
         }
         /**
-         * <code>required .org.jetbrains.kotlin.serialization.Type type = 2;</code>
+         * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
          */
         public Builder clearType() {
           if (typeBuilder_ == null) {
@@ -6881,7 +6877,7 @@ public final class DebugProtoBuf {
           return this;
         }
         /**
-         * <code>required .org.jetbrains.kotlin.serialization.Type type = 2;</code>
+         * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
          */
         public org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder getTypeBuilder() {
           bitField0_ |= 0x00000002;
@@ -6889,7 +6885,7 @@ public final class DebugProtoBuf {
           return getTypeFieldBuilder().getBuilder();
         }
         /**
-         * <code>required .org.jetbrains.kotlin.serialization.Type type = 2;</code>
+         * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
          */
         public org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder getTypeOrBuilder() {
           if (typeBuilder_ != null) {
@@ -6899,7 +6895,7 @@ public final class DebugProtoBuf {
           }
         }
         /**
-         * <code>required .org.jetbrains.kotlin.serialization.Type type = 2;</code>
+         * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
          */
         private com.google.protobuf.SingleFieldBuilder<
             org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder> 
@@ -16960,7 +16956,7 @@ public final class DebugProtoBuf {
       "\n\016TYPE_PARAMETER\020\001\032\313\001\n\010Argument\022U\n\nproje" +
       "ction\030\001 \001(\0162<.org.jetbrains.kotlin.seria" +
       "lization.Type.Argument.Projection:\003INV\0226" +
-      "\n\004type\030\002 \002(\0132(.org.jetbrains.kotlin.seri" +
+      "\n\004type\030\002 \001(\0132(.org.jetbrains.kotlin.seri" +
       "alization.Type\"0\n\nProjection\022\006\n\002IN\020\000\022\007\n\003" +
       "OUT\020\001\022\007\n\003INV\020\002\022\010\n\004STAR\020\003\"\371\001\n\rTypeParamet" +
       "er\022\n\n\002id\030\001 \002(\005\022\014\n\004name\030\002 \002(\005\022\026\n\007reified\030" +

@@ -26,6 +26,12 @@ public interface KotlinJvmBinaryClass {
     @NotNull
     ClassId getClassId();
 
+    /**
+     * @return path to the class file (to be reported to the user upon error)
+     */
+    @NotNull
+    String getLocation();
+
     void loadClassAnnotations(@NotNull AnnotationVisitor visitor);
 
     void visitMembers(@NotNull MemberVisitor visitor);

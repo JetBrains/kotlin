@@ -39,6 +39,8 @@ class LocalFileKotlinClass private(
         }
     }
 
+    override fun getLocation() = file.getAbsolutePath()
+
     public override fun getFileContents(): ByteArray = fileContents
 
     override fun hashCode(): Int = file.hashCode()

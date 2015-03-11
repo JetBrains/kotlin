@@ -350,9 +350,9 @@ public class DescriptorSerializer {
             if (projection != ProtoBuf.Type.Argument.Projection.INV) {
                 builder.setProjection(projection);
             }
+            builder.setType(type(typeProjection.getType()));
         }
 
-        builder.setType(type(typeProjection.getType()));
         return builder;
     }
 

@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
 
 public object RuntimeErrorReporter : ErrorReporter {
     // TODO: specialized exceptions
@@ -27,8 +29,8 @@ public object RuntimeErrorReporter : ErrorReporter {
         throw IllegalStateException("Incomplete hierarchy for class ${descriptor.getName()}, unresolved classes $unresolvedSuperClasses")
     }
 
-    override fun reportIncompatibleAbiVersion(kotlinClass: KotlinJvmBinaryClass, actualVersion: Int) {
-        throw IllegalStateException("Incompatible ABI version of ${kotlinClass.getClassId()}: $actualVersion " +
+    override fun reportIncompatibleAbiVersion(classId: ClassId, filePath: String, actualVersion: Int) {
+        throw IllegalStateException("Incompatible ABI version of ${classId}: $actualVersion " +
                                     "(expected version is ${JvmAbi.VERSION})")
     }
 

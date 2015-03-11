@@ -16,9 +16,39 @@
 
 package org.jetbrains.kotlin.types
 
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import kotlin.properties.*
+import org.jetbrains.kotlin.descriptors.*
 
 class StarProjectionImpl(
+        private val typeParameter: TypeParameterDescriptor
+) : TypeProjectionBase() {
+    override fun isStarProjection() = true
+
+    override fun getProjectionKind() = Variance.OUT_VARIANCE
+
+    // No synchronization here: there's no problem in accidentally computing this twice
+    private val _type: JetType by Delegates.lazy {
+        typeParameter.starProjectionType()
+    }
+
+    override fun getType() = _type
+}
+
+public fun TypeParameterDescriptor.starProjectionType(): JetType {
+    val classDescriptor = this.getContainingDeclaration() as ClassDescriptor
+    val typeParameters = classDescriptor.getTypeConstructor().getParameters().map { it.getTypeConstructor() }
+    return TypeSubstitutor.create(
+            object : TypeSubstitution() {
+                override fun get(key: TypeConstructor) =
+                        if (key in typeParameters)
+                            TypeUtils.makeStarProjection(key.getDeclarationDescriptor() as TypeParameterDescriptor)
+                        else null
+
+            }
+    ).substitute(this.getUpperBounds().first(), Variance.OUT_VARIANCE)!!
+}
+
+class TypeBasedStarProjectionImpl(
         private val _type: JetType
 ) : TypeProjectionBase() {
     override fun isStarProjection() = true

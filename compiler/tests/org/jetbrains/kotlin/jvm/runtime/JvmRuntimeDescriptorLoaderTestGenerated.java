@@ -642,6 +642,12 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
                 doTest(fileName);
             }
 
+            @TestMetadata("RecursiveGeneric.kt")
+            public void testRecursiveGeneric() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/RecursiveGeneric.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("SingleAbstractMethod.kt")
             public void testSingleAbstractMethod() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/SingleAbstractMethod.kt");
@@ -4063,6 +4069,24 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
             @TestMetadata("RawSuperType.java")
             public void testRawSuperType() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/signaturePropagation/RawSuperType.java");
+                doTest(fileName);
+            }
+
+            @TestMetadata("RawSuperTypeWithBound.java")
+            public void testRawSuperTypeWithBound() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/signaturePropagation/RawSuperTypeWithBound.java");
+                doTest(fileName);
+            }
+
+            @TestMetadata("RawSuperTypeWithRecursiveBound.java")
+            public void testRawSuperTypeWithRecursiveBound() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/signaturePropagation/RawSuperTypeWithRecursiveBound.java");
+                doTest(fileName);
+            }
+
+            @TestMetadata("RawSuperTypeWithRecursiveBoundMultipleParameters.java")
+            public void testRawSuperTypeWithRecursiveBoundMultipleParameters() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/signaturePropagation/RawSuperTypeWithRecursiveBoundMultipleParameters.java");
                 doTest(fileName);
             }
 

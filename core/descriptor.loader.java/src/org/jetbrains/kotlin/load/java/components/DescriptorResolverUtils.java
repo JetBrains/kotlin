@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.load.java.structure.*;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.OverridingUtil;
+import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter;
 
 import java.util.Collection;
 import java.util.HashSet;

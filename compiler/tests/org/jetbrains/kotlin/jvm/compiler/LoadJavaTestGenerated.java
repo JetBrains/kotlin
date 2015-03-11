@@ -1723,6 +1723,24 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledJava(fileName);
             }
 
+            @TestMetadata("RawSuperTypeWithBound.java")
+            public void testRawSuperTypeWithBound() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/signaturePropagation/RawSuperTypeWithBound.java");
+                doTestCompiledJava(fileName);
+            }
+
+            @TestMetadata("RawSuperTypeWithRecursiveBound.java")
+            public void testRawSuperTypeWithRecursiveBound() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/signaturePropagation/RawSuperTypeWithRecursiveBound.java");
+                doTestCompiledJava(fileName);
+            }
+
+            @TestMetadata("RawSuperTypeWithRecursiveBoundMultipleParameters.java")
+            public void testRawSuperTypeWithRecursiveBoundMultipleParameters() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/signaturePropagation/RawSuperTypeWithRecursiveBoundMultipleParameters.java");
+                doTestCompiledJava(fileName);
+            }
+
             @TestMetadata("ReturnInnerSubclassOfSupersInner.java")
             public void testReturnInnerSubclassOfSupersInner() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/signaturePropagation/ReturnInnerSubclassOfSupersInner.java");
@@ -2471,6 +2489,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             @TestMetadata("NestedGenericClass.kt")
             public void testNestedGenericClass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/NestedGenericClass.kt");
+                doTestCompiledKotlin(fileName);
+            }
+
+            @TestMetadata("RecursiveGeneric.kt")
+            public void testRecursiveGeneric() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/RecursiveGeneric.kt");
                 doTestCompiledKotlin(fileName);
             }
 

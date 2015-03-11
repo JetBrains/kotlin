@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.*
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.load.java.components.ErrorReporter
+import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
 import org.jetbrains.kotlin.name.FqName
 import java.util.HashMap
 import org.jetbrains.kotlin.name.Name

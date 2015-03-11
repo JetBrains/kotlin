@@ -142,7 +142,7 @@ private fun checkTypeParameterDescriptorsAreNotReified(
 
         diagnosticHolder.report(
                 Errors.REIFIED_TYPE_PARAMETER_NO_INLINE.on(
-                        typeParameterDeclaration.getModifierList().getModifier(JetTokens.REIFIED_KEYWORD)!!
+                        typeParameterDeclaration.getModifierList()!!.getModifier(JetTokens.REIFIED_KEYWORD)!!
                 )
         )
     }
@@ -227,7 +227,7 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
                     JetTokens.EXCLEQEQEQ -> {
                         if (expression.getLeft() != null && expression.getRight() != null) {
                             SenselessComparisonChecker.checkSenselessComparisonWithNull(
-                                    expression, expression.getLeft(), expression.getRight(), c.trace,
+                                    expression, expression.getLeft()!!, expression.getRight()!!, c.trace,
                                     { c.trace.get(BindingContext.EXPRESSION_TYPE, it) },
                                     {
                                         value ->

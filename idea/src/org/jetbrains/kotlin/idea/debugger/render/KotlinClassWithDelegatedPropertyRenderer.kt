@@ -76,7 +76,7 @@ public class KotlinClassWithDelegatedPropertyRenderer : ClassRenderer() {
                 val threadReference = context.getSuspendContext().getThread()?.getThreadReference()
                 if (method != null && threadReference != null) {
                     val propValue = try {
-                        context.getDebugProcess().invokeInstanceMethod(context, value, method, listOf(), context.getSuspendContext().getSuspendPolicy())
+                        context.getDebugProcess().invokeInstanceMethod(context, value, method, listOf<Nothing>(), context.getSuspendContext().getSuspendPolicy())
                     }
                     catch(e: EvaluateException) {
                         e.getExceptionFromTargetVM()

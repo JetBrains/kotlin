@@ -292,7 +292,7 @@ public class LazyTopDownAnalyzer {
         resolveAllHeadersInClasses(c);
 
         declarationResolver.checkRedeclarationsInPackages(topLevelDescriptorProvider, topLevelFqNames);
-        declarationResolver.checkRedeclarationsInInnerClassNames(c);
+        declarationResolver.checkRedeclarations(c);
 
         ResolveUtilPackage.checkTraitRequirements(c.getDeclaredClasses(), trace);
 

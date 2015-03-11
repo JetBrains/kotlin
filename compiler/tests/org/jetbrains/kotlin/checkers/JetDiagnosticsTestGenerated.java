@@ -9195,18 +9195,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("EnumEntriesAndClassObjectMembers.kt")
-            public void testEnumEntriesAndClassObjectMembers() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/redeclarations/EnumEntriesAndClassObjectMembers.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("kt2247.kt")
-            public void testKt2247() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/redeclarations/kt2247.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("kt2418.kt")
             public void testKt2418() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/redeclarations/kt2418.kt");
@@ -9231,6 +9219,18 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("NoRedeclarationForClassesInDefaultObject.kt")
+            public void testNoRedeclarationForClassesInDefaultObject() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/redeclarations/NoRedeclarationForClassesInDefaultObject.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NoRedeclarationForEnumEntriesAndDefaultObjectMembers.kt")
+            public void testNoRedeclarationForEnumEntriesAndDefaultObjectMembers() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/redeclarations/NoRedeclarationForEnumEntriesAndDefaultObjectMembers.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("PropertyAndFunInClass.kt")
             public void testPropertyAndFunInClass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/redeclarations/PropertyAndFunInClass.kt");
@@ -9240,6 +9240,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("PropertyAndInnerClass.kt")
             public void testPropertyAndInnerClass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/redeclarations/PropertyAndInnerClass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("RedeclarationInDefaultObject.kt")
+            public void testRedeclarationInDefaultObject() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/redeclarations/RedeclarationInDefaultObject.kt");
                 doTest(fileName);
             }
 
@@ -10898,6 +10904,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("kt4887.kt")
             public void testKt4887() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/substitutions/kt4887.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("starProjections.kt")
+            public void testStarProjections() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/substitutions/starProjections.kt");
                 doTest(fileName);
             }
 

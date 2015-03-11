@@ -58,24 +58,10 @@ public class DeclarationResolver {
         }
     }
 
-    public fun checkRedeclarationsInInnerClassNames(c: TopDownAnalysisContext) {
+    public fun checkRedeclarations(c: TopDownAnalysisContext) {
         for (classDescriptor in c.getDeclaredClasses().values()) {
-            if (DescriptorUtils.isDefaultObject(classDescriptor)) {
-                // Default objects should be considered during analysing redeclarations in classes
-                continue
-            }
-
-            var allDescriptors = classDescriptor.getScopeForMemberLookup().getOwnDeclaredDescriptors()
-            val defaultObject = classDescriptor.getDefaultObjectDescriptor()
-            if (defaultObject != null) {
-                val descriptorsFromDefaultObject = defaultObject.getScopeForMemberLookup().getOwnDeclaredDescriptors()
-                if (descriptorsFromDefaultObject.isNotEmpty()) {
-                    allDescriptors = allDescriptors + descriptorsFromDefaultObject
-                }
-            }
-
             val descriptorMap = HashMultimap.create<Name, DeclarationDescriptor>()
-            for (desc in allDescriptors) {
+            for (desc in classDescriptor.getScopeForMemberLookup().getOwnDeclaredDescriptors()) {
                 if (desc is ClassDescriptor || desc is PropertyDescriptor) {
                     descriptorMap.put(desc.getName(), desc)
                 }

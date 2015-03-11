@@ -9,7 +9,7 @@ public interface Bar {
 
 //FILE: a.kt
 class BarImpl: Bar {
-    override fun f(f: Foo<out CharSequence?>?) {
+    override fun f(f: Foo<*>?) {
         throw UnsupportedOperationException()
     }
 }

@@ -1007,6 +1007,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("defaultObjectSameNamesAsInOuter.kt")
+        public void testDefaultObjectSameNamesAsInOuter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/defaultObjectSameNamesAsInOuter.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("delegation2.kt")
         public void testDelegation2() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/delegation2.kt");

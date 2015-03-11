@@ -12,7 +12,7 @@ public trait Bar {
 internal final class BarImpl : Bar {
     public constructor BarImpl()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open override /*1*/ fun f(/*0*/ f: Foo<out kotlin.CharSequence?>?): kotlin.Unit
+    public open override /*1*/ fun f(/*0*/ f: Foo<*>?): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
