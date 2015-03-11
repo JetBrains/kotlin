@@ -176,7 +176,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
                 List<String> scriptArgs = arguments.freeArgs.subList(1, arguments.freeArgs.size());
                 JetCoreEnvironment environment =
                         JetCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
-                KotlinToJVMBytecodeCompiler.compileAndExecuteScript(paths, environment, scriptArgs);
+                KotlinToJVMBytecodeCompiler.compileAndExecuteScript(configuration, paths, environment, scriptArgs);
             }
             else {
                 JetCoreEnvironment environment =
