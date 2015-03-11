@@ -24,15 +24,14 @@ import org.jetbrains.kotlin.psi.JetCallExpression
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.psi.JetQualifiedExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.ParameterInfo
 import org.jetbrains.kotlin.idea.quickfix.JetSingleIntentionActionFactory
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetAnnotationEntry
 import java.util.Collections
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
 
 public object CreateClassFromConstructorCallActionFactory: JetSingleIntentionActionFactory() {
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {
@@ -76,12 +75,7 @@ public object CreateClassFromConstructorCallActionFactory: JetSingleIntentionAct
         val (expectedTypeInfo, filter) = fullCallExpr.getInheritableTypeInfo(context, moduleDescriptor, targetParent)
         if (!filter(classKind)) return null
 
-        val typeArgumentInfos = if (inAnnotationEntry) {
-            Collections.emptyList()
-        }
-        else {
-            callExpr.getTypeArguments().map { TypeInfo(it.getTypeReference(), Variance.INVARIANT) }
-        }
+        val typeArgumentInfos = if (inAnnotationEntry) Collections.emptyList() else callExpr.getTypeInfoForTypeArguments()
 
         val classInfo = ClassInfo(
                 kind = classKind,

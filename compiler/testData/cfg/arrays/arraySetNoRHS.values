@@ -1,0 +1,12 @@
+== foo ==
+fun foo(a: Array<Int>) {
+    a[1] =
+}
+---------------------
+             <v0>: {<: Array<Int>}   NEW: magic[FAKE_INITIALIZER](a: Array<Int>) -> <v0>
+a            <v1>: *                 NEW: magic[UNRESOLVED_CALL](a) -> <v1>
+1            <v2>: *                 NEW: r(1) -> <v2>
+a[1]         <v3>: *                 NEW: magic[UNRESOLVED_CALL](a[1]|<v1>, <v2>) -> <v3>
+a[1] =       <v4>: *                 NEW: magic[UNRESOLVED_CALL](a[1] =|<v3>) -> <v4>
+{ a[1] = }   <v4>: *                 COPY
+=====================

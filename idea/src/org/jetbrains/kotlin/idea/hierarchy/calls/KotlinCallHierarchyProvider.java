@@ -37,7 +37,10 @@ public class KotlinCallHierarchyProvider implements HierarchyProvider {
         Project project = CommonDataKeys.PROJECT.getData(dataContext);
         if (project == null) return null;
 
-        return HierarchyUtils.getCallHierarchyElement(getCurrentElement(dataContext, project));
+        PsiElement element = getCurrentElement(dataContext, project);
+        if (element == null) return null;
+
+        return HierarchyUtils.getCallHierarchyElement(element);
     }
 
     private static PsiElement getCurrentElement(DataContext dataContext, Project project) {

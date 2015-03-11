@@ -93,6 +93,12 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
             doTest(fileName);
         }
 
+        @TestMetadata("arraySetNoRHS.kt")
+        public void testArraySetNoRHS() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/arrays/arraySetNoRHS.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("arraySetPlusAssign.kt")
         public void testArraySetPlusAssign() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/arrays/arraySetPlusAssign.kt");
@@ -201,6 +207,12 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
         @TestMetadata("If.kt")
         public void testIf() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/controlStructures/If.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("localAndNonlocalReturnsWithFinally.kt")
+        public void testLocalAndNonlocalReturnsWithFinally() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/controlStructures/localAndNonlocalReturnsWithFinally.kt");
             doTest(fileName);
         }
 

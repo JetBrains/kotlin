@@ -16,62 +16,61 @@
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable
 
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.CreateFromUsageFixBase
-import org.jetbrains.kotlin.idea.JetBundle
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.idea.quickfix.JetSingleIntentionActionFactory
-import org.jetbrains.kotlin.diagnostics.Diagnostic
 import com.intellij.codeInsight.intention.IntentionAction
-import org.jetbrains.kotlin.idea.quickfix.QuickFixUtil
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElement
-import org.jetbrains.kotlin.psi.JetBlockExpression
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
-import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.CallableBuilderConfiguration
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.createBuilder
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.CallablePlacement
 import com.intellij.openapi.command.CommandProcessor
-import org.jetbrains.kotlin.psi.psiUtil.parents
-import org.jetbrains.kotlin.psi.JetElement
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.intentions.ConvertToBlockBodyAction
-import org.jetbrains.kotlin.psi.JetDeclarationWithBody
-import org.jetbrains.kotlin.idea.refactoring.getExtractionContainers
-import org.jetbrains.kotlin.psi.JetClassBody
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.PropertyInfo
+import org.jetbrains.kotlin.idea.quickfix.JetSingleIntentionActionFactory
+import org.jetbrains.kotlin.idea.quickfix.QuickFixUtil
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.CreateFromUsageFixBase
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.getExpressionForTypeGuess
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElement
+import org.jetbrains.kotlin.psi.psiUtil.parents
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
+import java.util.Collections
 
 object CreateLocalVariableActionFactory: JetSingleIntentionActionFactory() {
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {
         val refExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetSimpleNameExpression>()) ?: return null
         if (refExpr.getQualifiedElement() != refExpr) return null
 
+        val propertyName = refExpr.getReferencedName()
+
         val container = refExpr.parents(false)
                 .filter { it is JetBlockExpression || it is JetDeclarationWithBody }
                 .firstOrNull() as? JetElement ?: return null
 
-        val assignment = refExpr.getAssignmentByLHS()
-        val varExpected = assignment != null
-        val typeInfo = TypeInfo(
-                refExpr.getExpressionForTypeGuess(),
-                if (varExpected) Variance.INVARIANT else Variance.OUT_VARIANCE
-        )
-        val containers = refExpr.getExtractionContainers().filterNot { it is JetClassBody || it is JetFile }
-        val propertyInfo = PropertyInfo(refExpr.getReferencedName(), TypeInfo.Empty, typeInfo, varExpected, containers)
-
         return object: CreateFromUsageFixBase(refExpr) {
-            override fun getText(): String = JetBundle.message("create.local.variable.from.usage", propertyInfo.name)
+            override fun getText(): String = JetBundle.message("create.local.variable.from.usage", propertyName)
 
-            override fun invoke(project: Project, editor: Editor?, file: JetFile?) {
-                with (CallableBuilderConfiguration(propertyInfo.singletonOrEmptyList(), assignment ?: refExpr, file!!, editor!!).createBuilder()) {
-                    val actualContainer = when (container) {
-                        is JetBlockExpression -> container
-                        else -> ConvertToBlockBodyAction.convert(container as JetDeclarationWithBody).getBodyExpression()!!
-                    }
+            override fun invoke(project: Project, editor: Editor, file: JetFile) {
+                val assignment = refExpr.getAssignmentByLHS()
+                val varExpected = assignment != null
+                var originalElement = assignment ?: refExpr
+
+                val actualContainer = when (container) {
+                    is JetBlockExpression -> container
+                    else -> ConvertToBlockBodyAction.convert(container as JetDeclarationWithBody).getBodyExpression()!!
+                } as JetBlockExpression
+
+                if (actualContainer != container) {
+                    val bodyExpression = actualContainer.getStatements().first() as JetExpression
+                    originalElement = (bodyExpression as? JetReturnExpression)?.getReturnedExpression() ?: bodyExpression
+                }
+
+                val typeInfo = TypeInfo(
+                        originalElement.getExpressionForTypeGuess(),
+                        if (varExpected) Variance.INVARIANT else Variance.OUT_VARIANCE
+                )
+                val propertyInfo = PropertyInfo(propertyName, TypeInfo.Empty, typeInfo, varExpected, Collections.singletonList(actualContainer))
+
+                with (CallableBuilderConfiguration(propertyInfo.singletonOrEmptyList(), originalElement, file, editor).createBuilder()) {
                     placement = CallablePlacement.NoReceiver(actualContainer)
                     CommandProcessor.getInstance().executeCommand(project, { build() }, getText(), null)
                 }

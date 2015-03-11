@@ -21,11 +21,9 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.JetScope
-import java.util.LinkedHashSet
 import org.jetbrains.kotlin.resolve.BindingContext
 import com.intellij.refactoring.psi.SearchUtils
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
-import java.util.HashSet
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
@@ -43,6 +41,8 @@ import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.callUtil.*
+import org.jetbrains.kotlin.resolve.calls.smartcasts.*
+import java.util.*
 
 private fun JetType.contains(inner: JetType): Boolean {
     return JetTypeChecker.DEFAULT.equalTypes(this, inner) || getArguments().any { inner in it.getType() }
@@ -107,7 +107,9 @@ fun JetExpression.guessTypes(
     // if we know the actual type of the expression
     val theType1 = context[BindingContext.EXPRESSION_TYPE, this]
     if (theType1 != null) {
-        return array(theType1)
+        val dataFlowInfo = context[BindingContext.EXPRESSION_DATA_FLOW_INFO, this]
+        val possibleTypes = dataFlowInfo?.getPossibleTypes(DataFlowValueFactory.createDataFlowValue(this, theType1, context))
+        return if (possibleTypes != null && possibleTypes.isNotEmpty()) possibleTypes.copyToArray() else array(theType1)
     }
 
     // expression has an expected type
@@ -231,3 +233,7 @@ private fun JetType.substitute(substitution: JetTypeSubstitution, variance: Vari
 }
 
 fun JetExpression.getExpressionForTypeGuess() = getAssignmentByLHS()?.getRight() ?: this
+
+fun JetCallElement.getTypeInfoForTypeArguments(): List<TypeInfo> {
+    return getTypeArguments().map { it.getTypeReference()?.let { TypeInfo(it, Variance.INVARIANT) } }.filterNotNull()
+}

@@ -3,10 +3,10 @@ package p
 
 fun foo(): X = A
 
-open class X {
+object A : X() {
 
 }
 
-object A : X() {
+open class X {
 
 }

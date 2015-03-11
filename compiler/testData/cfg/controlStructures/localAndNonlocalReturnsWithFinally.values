@@ -1,0 +1,56 @@
+== let ==
+fun <T: Any, U> T.let(f: (T) -> U): U = f(this)
+---------------------
+          <v0>: {<: (T) -> U}   NEW: magic[FAKE_INITIALIZER](f: (T) -> U) -> <v0>
+f         <v1>: {<: (T) -> U}   NEW: r(f) -> <v1>
+this      <v2>: {<: T}          COPY
+this      <v2>: {<: T}          NEW: r(this) -> <v2>
+f(this)   <v3>: {<: U}          NEW: call(f(this), invoke|<v1>, <v2>) -> <v3>
+=====================
+== bar ==
+fun bar(): Int = 1
+---------------------
+1   <v0>: Int   NEW: r(1) -> <v0>
+=====================
+== foo ==
+fun foo(n: Int): Int {
+    try {
+        if (n < 0) return 0
+        n.let { return it }
+    }
+    finally {
+        for (i in 1..2) { }
+        return bar()
+    }
+}
+---------------------
+                                                                                                   <v0>: Int                    NEW: magic[FAKE_INITIALIZER](n: Int) -> <v0>
+                                                                                                   <v8>: Int                    NEW: magic[LOOP_RANGE_ITERATION](1..2|<v7>) -> <v8>
+n                                                                                                  <v1>: {<: Comparable<Int>}   NEW: r(n) -> <v1>
+0                                                                                                  <v2>: Int                    NEW: r(0) -> <v2>
+n < 0                                                                                              <v3>: Boolean                NEW: call(n < 0, compareTo|<v1>, <v2>) -> <v3>
+0                                                                                                  <v4>: Int                    NEW: r(0) -> <v4>
+return 0                                                                                           !<v11>: *
+if (n < 0) return 0                                                                                <v12>: *                     NEW: merge(if (n < 0) return 0|!<v11>) -> <v12>
+n                                                                                                  <v13>: Int                   NEW: r(n) -> <v13>
+{ return it }                                                                                      <v14>: {<: (Int) -> ???}     NEW: r({ return it }) -> <v14>
+let { return it }                                                                                  <v15>: *                     NEW: call(let { return it }, let|<v13>, <v14>) -> <v15>
+n.let { return it }                                                                                <v15>: *                     COPY
+{ if (n < 0) return 0 n.let { return it } }                                                        <v15>: *                     COPY
+1                                                                                                  <v5>: Int                    NEW: r(1) -> <v5>
+2                                                                                                  <v6>: Int                    NEW: r(2) -> <v6>
+1..2                                                                                               <v7>: {<: Iterable<Int>}     NEW: call(1..2, rangeTo|<v5>, <v6>) -> <v7>
+bar()                                                                                              <v9>: Int                    NEW: call(bar(), bar) -> <v9>
+return bar()                                                                                       !<v10>: *
+{ for (i in 1..2) { } return bar() }                                                               !<v10>: *                    COPY
+try { if (n < 0) return 0 n.let { return it } } finally { for (i in 1..2) { } return bar() }       <v16>: *                     NEW: merge(try { if (n < 0) return 0 n.let { return it } } finally { for (i in 1..2) { } return bar() }|<v15>) -> <v16>
+{ try { if (n < 0) return 0 n.let { return it } } finally { for (i in 1..2) { } return bar() } }   <v16>: *                     COPY
+=====================
+== anonymous_0 ==
+{ return it }
+---------------------
+            <v8>: Int   NEW: magic[LOOP_RANGE_ITERATION](1..2|<v7>) -> <v8>
+it          <v0>: Int   NEW: r(it) -> <v0>
+return it   !<v1>: *
+return it   !<v1>: *    COPY
+=====================
