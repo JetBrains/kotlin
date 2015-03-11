@@ -54,19 +54,17 @@ public val PsiReference.unwrappedTargets: Set<PsiElement>
         }
     }
 
-public fun PsiReference.matchesTarget(target: PsiElement): Boolean {
-    val unwrapped = target.unwrapped?.getOriginalElement()
-    return when {
-        unwrapped in unwrappedTargets ->
-            true
+public fun PsiReference.matchesTarget(candidateTarget: PsiElement): Boolean {
+    val unwrappedCandidate = candidateTarget.unwrapped?.getOriginalElement() ?: return false
+    val targets = unwrappedTargets
+    if (unwrappedCandidate in targets) return true
 
-        this is JetReference
-                && unwrappedTargets.any { it is PsiMethod && it.isConstructor() && it.getContainingClass() == unwrapped } ->
-            true
-
-        else ->
-            false
+    if (this is JetReference) {
+        return targets.any {
+            it is PsiMethod && it.isConstructor() && it.getContainingClass() == unwrappedCandidate
+        }
     }
+    return false
 }
 
 fun AbstractJetReference<out JetExpression>.renameImplicitConventionalCall(newName: String?): JetExpression {
