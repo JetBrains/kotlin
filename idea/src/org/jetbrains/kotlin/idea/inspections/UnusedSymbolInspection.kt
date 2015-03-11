@@ -16,60 +16,40 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
-import org.jetbrains.kotlin.psi.psiUtil.isAncestor
-import com.intellij.codeInspection.ProblemsHolder
-import com.intellij.codeInspection.LocalInspectionToolSession
-import com.intellij.psi.PsiElementVisitor
-import org.jetbrains.kotlin.psi.JetVisitorVoid
-import org.jetbrains.kotlin.psi.JetClass
-import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchTarget
-import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearch
-import org.jetbrains.kotlin.idea.JetBundle
-import com.intellij.codeInspection.ProblemHighlightType
-import com.intellij.codeInspection.deadCode.UnusedDeclarationInspection
-import org.jetbrains.kotlin.asJava.LightClassUtil
-import org.jetbrains.kotlin.idea.findUsages.handlers.KotlinFindClassUsagesHandler
-import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
-import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetNamedFunction
-import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchHelper
-import org.jetbrains.kotlin.idea.search.usagesSearch.ClassUsagesSearchHelper
-import org.jetbrains.kotlin.asJava.toLightClass
-import org.jetbrains.kotlin.idea.search.usagesSearch.FunctionUsagesSearchHelper
-import com.intellij.psi.search.PsiSearchHelper
-import com.intellij.psi.search.PsiSearchHelper.SearchCostResult.*
-import org.jetbrains.kotlin.idea.search.usagesSearch.getOperationSymbolsToSearch
-import org.jetbrains.kotlin.idea.search.usagesSearch.INVOKE_OPERATION_NAME
-import org.jetbrains.kotlin.psi.JetEnumEntry
-import org.jetbrains.kotlin.psi.JetProperty
-import org.jetbrains.kotlin.idea.search.usagesSearch.PropertyUsagesSearchHelper
-import org.jetbrains.kotlin.idea.search.usagesSearch.getAccessorNames
-import org.jetbrains.kotlin.psi.JetParameter
-import org.jetbrains.kotlin.idea.search.usagesSearch.dataClassComponentFunctionName
-import org.jetbrains.kotlin.psi.JetTypeParameter
-import org.jetbrains.kotlin.idea.search.usagesSearch.DefaultSearchHelper
-import com.intellij.util.Processor
-import com.intellij.codeInspection.LocalQuickFix
-import com.intellij.openapi.project.Project
-import com.intellij.codeInspection.ProblemDescriptor
-import com.intellij.codeInsight.daemon.QuickFixBundle
 import com.intellij.codeInsight.FileModificationService
-import com.intellij.refactoring.safeDelete.SafeDeleteHandler
-import org.jetbrains.kotlin.psi.JetPsiUtil
-import org.jetbrains.kotlin.psi.JetObjectDeclaration
-import org.jetbrains.kotlin.psi.JetClassOrObject
-import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
-import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
-import javax.swing.JComponent
-import java.awt.GridBagConstraints
-import java.awt.Insets
+import com.intellij.codeInsight.daemon.QuickFixBundle
+import com.intellij.codeInspection.*
+import com.intellij.codeInspection.deadCode.UnusedDeclarationInspection
 import com.intellij.codeInspection.ex.EntryPointsManager
 import com.intellij.codeInspection.ex.EntryPointsManagerImpl
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectUtil
+import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiElementVisitor
+import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.search.PsiSearchHelper
+import com.intellij.psi.search.PsiSearchHelper.SearchCostResult.FEW_OCCURRENCES
+import com.intellij.psi.search.PsiSearchHelper.SearchCostResult.TOO_MANY_OCCURRENCES
+import com.intellij.psi.search.PsiSearchHelper.SearchCostResult.ZERO_OCCURRENCES
+import com.intellij.refactoring.safeDelete.SafeDeleteHandler
+import com.intellij.util.Processor
+import org.jetbrains.kotlin.asJava.LightClassUtil
+import org.jetbrains.kotlin.asJava.toLightClass
+import org.jetbrains.kotlin.idea.JetBundle
+import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
+import org.jetbrains.kotlin.idea.findUsages.handlers.KotlinFindClassUsagesHandler
+import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
+import org.jetbrains.kotlin.idea.search.usagesSearch.*
+import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.isAncestor
+import org.jetbrains.kotlin.utils.singletonOrEmptyList
+import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
+import java.awt.Insets
+import javax.swing.JComponent
 import javax.swing.JPanel
 
 public class UnusedSymbolInspection : AbstractKotlinInspection() {
@@ -121,14 +101,13 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
                 if (!ProjectRootsUtil.isInProjectSource(declaration)) return
 
                 // Simple PSI-based checks
-                if (declaration.getNameIdentifier() == null) return
+                val isDefaultObject = declaration is JetObjectDeclaration && declaration.isDefault()
+                if (declaration.getNameIdentifier() == null && !isDefaultObject) return
                 if (declaration is JetEnumEntry) return
                 if (declaration.hasModifier(JetTokens.OVERRIDE_KEYWORD)) return
                 if (declaration is JetProperty && declaration.isLocal()) return
                 if (declaration is JetParameter && (declaration.getParent()?.getParent() !is JetClass || !declaration.hasValOrVarNode())) return
                 if (declaration is JetNamedFunction && isConventionalName(declaration)) return
-                //TODO: support this inspection for default objects
-                if (declaration is JetObjectDeclaration && declaration.isDefault()) return
 
                 // More expensive, resolve-based checks
                 if (isEntryPoint(declaration)) return
@@ -139,12 +118,23 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
                 if (hasNonTrivialUsages(declaration)) return
                 if (declaration is JetClassOrObject && classOrObjectHasTextUsages(declaration)) return
 
-                holder.registerProblem(
-                        declaration.getNameIdentifier(),
+                val (inspectionTarget, textRange) = if (isDefaultObject && declaration.getNameIdentifier() == null) {
+                    val objectKeyword = (declaration as JetObjectDeclaration).getObjectKeyword()
+                    Pair(declaration, TextRange(0, objectKeyword.getStartOffsetInParent() + objectKeyword.getTextLength()))
+                } else {
+                    Pair(declaration.getNameIdentifier()!!, null)
+                }
+
+                val problemDescriptor = holder.getManager().createProblemDescriptor(
+                        inspectionTarget,
+                        textRange,
                         JetBundle.message(messageKey, declaration.getName()),
                         ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                        true,
                         createQuickFix(declaration)
                 )
+
+                holder.registerProblem(problemDescriptor)
             }
         }
     }
@@ -177,7 +167,7 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
         if (useScope is GlobalSearchScope) {
             var zeroOccurrences = true
 
-            for (name in listOf(declaration.getName()) + declaration.getAccessorNames()) {
+            for (name in listOf(declaration.getName()) + declaration.getAccessorNames() + declaration.getClassNameForDefaultObject().singletonOrEmptyList()) {
                 when (psiSearchHelper.isCheapEnoughToSearch(name, useScope, null, null)) {
                     ZERO_OCCURRENCES -> {} // go on, check other names
                     FEW_OCCURRENCES -> zeroOccurrences = false
