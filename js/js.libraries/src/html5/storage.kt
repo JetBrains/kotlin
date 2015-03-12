@@ -24,7 +24,8 @@ public val sessionStorage: Storage = noImpl
 
 native
 public trait Storage {
-    public val length: Int = noImpl
+    public val length: Int
+            get() = noImpl
 
     public fun key(index: Int): String? = noImpl
 
