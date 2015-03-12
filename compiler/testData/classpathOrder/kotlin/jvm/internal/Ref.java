@@ -1,6 +1,6 @@
 package kotlin.jvm.internal;
 
-public class KObject {
+public class Ref {
     public static String methodWhichDoesNotExistInKotlinRuntime() {
         return ":)";
     }

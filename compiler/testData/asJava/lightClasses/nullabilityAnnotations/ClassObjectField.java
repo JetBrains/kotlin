@@ -1,4 +1,4 @@
-public final class ClassObjectField implements kotlin.jvm.internal.KObject {
+public final class ClassObjectField {
     @org.jetbrains.annotations.Nullable
     public static final java.lang.String x = "";
     private static final java.lang.String y = "";
@@ -11,7 +11,7 @@ public final class ClassObjectField implements kotlin.jvm.internal.KObject {
 
     public ClassObjectField() { /* compiled code */ }
 
-    public static final class Default implements kotlin.jvm.internal.KObject {
+    public static final class Default {
         @org.jetbrains.annotations.Nullable
         public final java.lang.String getX() { /* compiled code */ }
 

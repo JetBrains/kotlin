@@ -16,18 +16,17 @@
 
 package org.jetbrains.kotlin.idea.refactoring
 
-import com.intellij.psi.PsiReferenceList
-import com.intellij.psi.PsiReferenceList.Role
 import com.intellij.psi.PsiElementFactory
 import com.intellij.psi.PsiJavaCodeReferenceElement
-import org.jetbrains.kotlin.load.java.*
+import com.intellij.psi.PsiReferenceList
+import com.intellij.psi.PsiReferenceList.Role
 
 public fun PsiElementFactory.createReferenceListWithRole(
         references: Array<PsiJavaCodeReferenceElement>,
         role: Role
 ): PsiReferenceList? {
-    val filteredRefs = references.map { it.getCanonicalText() }.filter { it != JvmAbi.K_OBJECT.asString() }
-    val refListText = if (filteredRefs.isNotEmpty()) filteredRefs.joinToString() else return null
+    val refsText = references.map { it.getCanonicalText() }
+    val refListText = if (refsText.isNotEmpty()) refsText.joinToString() else return null
     return when (role) {
         Role.THROWS_LIST -> createMethodFromText("void foo() throws $refListText {}", null).getThrowsList()
         Role.EXTENDS_LIST -> createClassFromText("class Foo extends $refListText {}", null).getInnerClasses()[0].getExtendsList()

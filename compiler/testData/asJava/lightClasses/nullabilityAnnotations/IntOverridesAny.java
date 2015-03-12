@@ -1,4 +1,4 @@
-public final class C implements kotlin.jvm.internal.KObject, Tr {
+public final class C implements Tr {
     private final int v = 1;
 
     @org.jetbrains.annotations.NotNull

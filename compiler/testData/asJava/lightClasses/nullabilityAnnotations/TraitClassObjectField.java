@@ -8,7 +8,7 @@ public interface TraitClassObjectField {
     @org.jetbrains.annotations.Nullable
     java.lang.String x = "";
 
-    static final class Default implements kotlin.jvm.internal.KObject {
+    static final class Default {
         @org.jetbrains.annotations.Nullable
         private final java.lang.String x = "";
         private final java.lang.String y = "";

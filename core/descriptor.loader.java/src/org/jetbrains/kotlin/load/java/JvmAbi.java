@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.load.java;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 
 public final class JvmAbi {
@@ -40,7 +39,6 @@ public final class JvmAbi {
 
     public static final String INSTANCE_FIELD = "INSTANCE$";
 
-    public static final FqName K_OBJECT = new FqName("kotlin.jvm.internal.KObject");
     public static final String KOTLIN_CLASS_FIELD_NAME = "$kotlinClass";
     public static final String KOTLIN_PACKAGE_FIELD_NAME = "$kotlinPackage";
 
