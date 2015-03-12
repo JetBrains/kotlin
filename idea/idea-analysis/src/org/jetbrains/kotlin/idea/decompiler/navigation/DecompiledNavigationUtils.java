@@ -48,10 +48,15 @@ public final class DecompiledNavigationUtils {
     ) {
         VirtualFile virtualFile;
 
-        if (JsProjectDetector.isJsProject(project) && NavigationPackage.getKotlinJavascriptLibrary(referencedDescriptor, project) != null) {
-            JsMetaFileVirtualFileHolder system = JsMetaFileVirtualFileHolder.getInstance(project);
-            virtualFile = system.getFile(referencedDescriptor);
-            if (virtualFile == null) return null;
+        if (JsProjectDetector.isJsProject(project)) {
+            if (NavigationPackage.getKotlinJavascriptLibraryWithMetadata(referencedDescriptor, project) != null) {
+                JsMetaFileVirtualFileHolder system = JsMetaFileVirtualFileHolder.getInstance(project);
+                virtualFile = system.getFile(referencedDescriptor);
+                if (virtualFile == null) return null;
+            }
+            else {
+                return null;
+            }
         }
         else {
             virtualFile = findVirtualFileContainingDescriptor(project, referencedDescriptor);

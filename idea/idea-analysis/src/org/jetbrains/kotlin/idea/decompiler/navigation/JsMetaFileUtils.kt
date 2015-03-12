@@ -20,7 +20,9 @@ import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
+import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.util.Key
@@ -33,57 +35,66 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.idea.caches.resolve.LIBRARY_NAME_PREFIX
+import org.jetbrains.kotlin.idea.framework.JsHeaderLibraryDetectionUtil
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import kotlin.platform.platformStatic
 
-fun getKotlinJavascriptLibrary(descriptor: DeclarationDescriptor, project: Project): Library? {
+fun getKotlinJavascriptLibraryWithMetadata(descriptor: DeclarationDescriptor, project: Project): Library? {
     val containingPackageFragment = DescriptorUtils.getParentOfType<PackageFragmentDescriptor>(descriptor, javaClass<PackageFragmentDescriptor>())
     if (containingPackageFragment == null) return null
 
     val module = DescriptorUtils.getContainingModule(descriptor)
     assert(module is ModuleDescriptorImpl)
 
-    var moduleName = getModuleName(module)
-
-    return getKotlinJavascriptLibrary(moduleName, project)
-}
-
-fun getKotlinJavascriptLibrary(libraryName: String, project: Project): Library? {
-    var library: Library? = null
-    val jsModules = ModuleManager.getInstance(project).getModules().filter { (ProjectStructureUtil.isJsKotlinModule(it)) }
-    jsModules.forEach { module ->
-        ModuleRootManager.getInstance(module).orderEntries().librariesOnly().forEachLibrary {
-            if (it.getName() == libraryName) { library = it; false } else true
-        }
-    }
-
-    return library
+    return getKotlinJavascriptLibrary(module, project)
 }
 
 fun getKotlinJavascriptLibrary(file: VirtualFile, project: Project): Library? {
     val module = file.getUserData(JsMetaFileVirtualFileHolder.MODULE_DESCRIPTOR_KEY)
     if (module == null) return null
 
-    var moduleName = getModuleName(module)
-
-    return getKotlinJavascriptLibrary(moduleName, project)
+    return getKotlinJavascriptLibrary(module, project)
 }
 
-private fun getModuleName(module: ModuleDescriptor): String {
-    var moduleName = module.getName().asString()
-    moduleName = moduleName.substring(1, moduleName.length() - 1)
-    if (moduleName.startsWith(LIBRARY_NAME_PREFIX)) {
-        moduleName = moduleName.substring(LIBRARY_NAME_PREFIX.length())
+private fun Library.isWithoutSources(): Boolean =
+        !JsHeaderLibraryDetectionUtil.isJsHeaderLibraryWithSources(this.getFiles(OrderRootType.CLASSES).toList())
+
+// getName() could return null for module level library
+private fun Library.safeGetName(): String = this.getName() ?: "null"
+
+private fun getKotlinJavascriptLibrary(module: ModuleDescriptor, project: Project): Library? {
+    val libraryName = getLibraryName(module)
+    if (libraryName == null) return null
+
+    val jsIdeaModules = ModuleManager.getInstance(project).getModules().filter { (ProjectStructureUtil.isJsKotlinModule(it)) }
+    for(ideaModule in jsIdeaModules) {
+        for(orderEntry in ModuleRootManager.getInstance(ideaModule).getOrderEntries()) {
+            if (orderEntry is LibraryOrderEntry) {
+                val library = orderEntry.getLibrary()
+                if (library != null && library.safeGetName() == libraryName && library.isWithoutSources()) {
+                    return library
+                }
+            }
+        }
     }
 
-    return moduleName
+    return null
+}
+
+private fun getLibraryName(module: ModuleDescriptor): String? {
+    var moduleName = module.getName().asString()
+    moduleName = moduleName.substring(1, moduleName.length() - 1)
+
+    if (!moduleName.startsWith(LIBRARY_NAME_PREFIX)) return null
+
+    return moduleName.substring(LIBRARY_NAME_PREFIX.length())
 }
 
 
 class JsMetaFileVirtualFileHolder private(val myProject: Project) {
-    default object {
+    class object {
         public val MODULE_DESCRIPTOR_KEY: Key<ModuleDescriptorImpl> = Key.create("MODULE_DESCRIPTOR")
         public val PACKAGE_FQNAME_KEY: Key<FqName> = Key.create("PACKAGE_FQNAME_KEY")
         private val JS_META_FILE_HOLDER_KEY: Key<JsMetaFileVirtualFileHolder> = Key.create("JS_META_FILE_HOLDER_KEY")

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.context.GlobalContext
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.di.InjectorForLazyResolve
+import org.jetbrains.kotlin.idea.framework.JsHeaderLibraryDetectionUtil
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.js.resolve.KotlinJsCheckerProvider
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
@@ -61,12 +62,15 @@ public object JsAnalyzerFacade : AnalyzerFacade<JsResolverForModule, PlatformAna
         var packageFragmentProvider = resolveSession.getPackageFragmentProvider()
 
         if (moduleInfo is LibraryInfo) {
-            val providers = moduleInfo.library.getFiles(OrderRootType.CLASSES)
-                    .flatMap { KotlinJavascriptMetadataUtils.loadMetadata(PathUtil.getLocalPath(it)!!) }
-                    .flatMap { KotlinJavascriptSerializationUtil.getPackageFragmentProviders(moduleDescriptor, it.body) }
+            val files = moduleInfo.library.getFiles(OrderRootType.CLASSES)
+            if (!JsHeaderLibraryDetectionUtil.isJsHeaderLibraryWithSources(files.toList())) {
+                val providers = moduleInfo.library.getFiles(OrderRootType.CLASSES)
+                        .flatMap { KotlinJavascriptMetadataUtils.loadMetadata(PathUtil.getLocalPath(it)!!) }
+                        .flatMap { KotlinJavascriptSerializationUtil.getPackageFragmentProviders(moduleDescriptor, it.body) }
 
-            if (providers.isNotEmpty()) {
-                packageFragmentProvider = CompositePackageFragmentProvider(listOf(packageFragmentProvider) + providers)
+                if (providers.isNotEmpty()) {
+                    packageFragmentProvider = CompositePackageFragmentProvider(listOf(packageFragmentProvider) + providers)
+                }
             }
         }
 
