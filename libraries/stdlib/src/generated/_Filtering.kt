@@ -162,6 +162,15 @@ public fun <T> Iterable<T>.drop(n: Int): List<T> {
 }
 
 /**
+ * Returns a sequence containing all elements except first [n] elements
+ */
+public fun <T> Sequence<T>.drop(n: Int): Sequence<T> {
+    return DropSequence(this, n)
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
+/**
  * Returns a stream containing all elements except first [n] elements
  */
 public fun <T> Stream<T>.drop(n: Int): Stream<T> {
@@ -336,6 +345,15 @@ public inline fun <T> Iterable<T>.dropWhile(predicate: (T) -> Boolean): List<T> 
 }
 
 /**
+ * Returns a sequence containing all elements except first elements that satisfy the given [predicate]
+ */
+public fun <T> Sequence<T>.dropWhile(predicate: (T) -> Boolean): Sequence<T> {
+    return DropWhileSequence(this, predicate)
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
+/**
  * Returns a stream containing all elements except first elements that satisfy the given [predicate]
  */
 public fun <T> Stream<T>.dropWhile(predicate: (T) -> Boolean): Stream<T> {
@@ -424,6 +442,15 @@ public inline fun <T> Iterable<T>.filter(predicate: (T) -> Boolean): List<T> {
 }
 
 /**
+ * Returns a sequence containing all elements matching the given [predicate]
+ */
+public fun <T> Sequence<T>.filter(predicate: (T) -> Boolean): Sequence<T> {
+    return FilteringSequence(this, true, predicate)
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
+/**
  * Returns a stream containing all elements matching the given [predicate]
  */
 public fun <T> Stream<T>.filter(predicate: (T) -> Boolean): Stream<T> {
@@ -508,6 +535,15 @@ public inline fun <T> Iterable<T>.filterNot(predicate: (T) -> Boolean): List<T> 
 }
 
 /**
+ * Returns a sequence containing all elements not matching the given [predicate]
+ */
+public fun <T> Sequence<T>.filterNot(predicate: (T) -> Boolean): Sequence<T> {
+    return FilteringSequence(this, false, predicate)
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
+/**
  * Returns a stream containing all elements not matching the given [predicate]
  */
 public fun <T> Stream<T>.filterNot(predicate: (T) -> Boolean): Stream<T> {
@@ -536,6 +572,15 @@ public fun <T : Any> Iterable<T?>.filterNotNull(): List<T> {
 }
 
 /**
+ * Returns a sequence containing all elements that are not null
+ */
+public fun <T : Any> Sequence<T?>.filterNotNull(): Sequence<T> {
+    return FilteringSequence(this, false, { it == null }) as Sequence<T>
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
+/**
  * Returns a stream containing all elements that are not null
  */
 public fun <T : Any> Stream<T?>.filterNotNull(): Stream<T> {
@@ -558,6 +603,16 @@ public fun <C : MutableCollection<in T>, T : Any> Iterable<T?>.filterNotNullTo(d
     return destination
 }
 
+/**
+ * Appends all elements that are not null to the given [destination]
+ */
+public fun <C : MutableCollection<in T>, T : Any> Sequence<T?>.filterNotNullTo(destination: C): C {
+    for (element in this) if (element != null) destination.add(element)
+    return destination
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
 /**
  * Appends all elements that are not null to the given [destination]
  */
@@ -646,6 +701,16 @@ public inline fun <T, C : MutableCollection<in T>> Iterable<T>.filterNotTo(desti
     return destination
 }
 
+/**
+ * Appends all elements not matching the given [predicate] to the given [destination]
+ */
+public inline fun <T, C : MutableCollection<in T>> Sequence<T>.filterNotTo(destination: C, predicate: (T) -> Boolean): C {
+    for (element in this) if (!predicate(element)) destination.add(element)
+    return destination
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
 /**
  * Appends all elements not matching the given [predicate] to the given [destination]
  */
@@ -742,6 +807,16 @@ public inline fun <T, C : MutableCollection<in T>> Iterable<T>.filterTo(destinat
     return destination
 }
 
+/**
+ * Appends all elements matching the given [predicate] into the given [destination]
+ */
+public inline fun <T, C : MutableCollection<in T>> Sequence<T>.filterTo(destination: C, predicate: (T) -> Boolean): C {
+    for (element in this) if (predicate(element)) destination.add(element)
+    return destination
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
 /**
  * Appends all elements matching the given [predicate] into the given [destination]
  */
@@ -1047,6 +1122,15 @@ public fun <T> Iterable<T>.take(n: Int): List<T> {
 }
 
 /**
+ * Returns a sequence containing first *n* elements
+ */
+public fun <T> Sequence<T>.take(n: Int): Sequence<T> {
+    return TakeSequence(this, n)
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
+/**
  * Returns a stream containing first *n* elements
  */
 public fun <T> Stream<T>.take(n: Int): Stream<T> {
@@ -1190,6 +1274,15 @@ public inline fun <T> Iterable<T>.takeWhile(predicate: (T) -> Boolean): List<T> 
     return list
 }
 
+/**
+ * Returns a sequence containing first elements satisfying the given [predicate]
+ */
+public fun <T> Sequence<T>.takeWhile(predicate: (T) -> Boolean): Sequence<T> {
+    return TakeWhileSequence(this, predicate)
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
 /**
  * Returns a stream containing first elements satisfying the given [predicate]
  */

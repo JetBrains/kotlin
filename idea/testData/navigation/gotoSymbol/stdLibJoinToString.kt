@@ -10,5 +10,6 @@
 // REF: (for IntArray in kotlin).joinToString(String,String,String,Int,String)
 // REF: (for Iterable<T> in kotlin).joinToString(String,String,String,Int,String)
 // REF: (for LongArray in kotlin).joinToString(String,String,String,Int,String)
+// REF: (for Sequence<T> in kotlin).joinToString(String,String,String,Int,String)
 // REF: (for ShortArray in kotlin).joinToString(String,String,String,Int,String)
 // REF: (for Stream<T> in kotlin).joinToString(String,String,String,Int,String)

@@ -4,12 +4,12 @@ import org.junit.Test as test
 import kotlin.test.*
 import java.util.*
 
-fun fibonacci(): Stream<Int> {
+fun fibonacci(): Sequence<Int> {
     // fibonacci terms
     var index = 0;
     var a = 0;
     var b = 1
-    return stream {
+    return sequence {
         when (index++) { 0 -> a; 1 -> b; else -> {
             val result = a + b; a = b; b = result; result
         }
@@ -17,26 +17,26 @@ fun fibonacci(): Stream<Int> {
     }
 }
 
-public class StreamTest {
+public class SequenceTest {
 
-    test fun filterEmptyStream() {
-        val stream = streamOf<String>()
+    test fun filterEmptySequence() {
+        val stream = sequenceOf<String>()
         assertEquals(0, stream.filter { false }.count())
         assertEquals(0, stream.filter { true }.count())
     }
 
     test fun mapEmptyStream() {
-        val stream = streamOf<String>()
+        val stream = sequenceOf<String>()
         assertEquals(0, stream.map { false }.count())
         assertEquals(0, stream.map { true }.count())
     }
 
     test fun requireNoNulls() {
-        val stream = streamOf<String?>("foo", "bar")
+        val stream = sequenceOf<String?>("foo", "bar")
         val notNull = stream.requireNoNulls()
         assertEquals(listOf("foo", "bar"), notNull.toList())
 
-        val streamWithNulls = streamOf("foo", null, "bar")
+        val streamWithNulls = sequenceOf("foo", null, "bar")
         val notNull2 = streamWithNulls.requireNoNulls() // shouldn't fail yet
         fails {
             // should throw an exception as we have a null
@@ -45,35 +45,35 @@ public class StreamTest {
     }
 
     test fun filterNullable() {
-        val data = streamOf(null, "foo", null, "bar")
+        val data = sequenceOf(null, "foo", null, "bar")
         val filtered = data.filter { it == null || it == "foo" }
         assertEquals(listOf(null, "foo", null), filtered.toList())
     }
 
     test fun filterNot() {
-        val data = streamOf(null, "foo", null, "bar")
+        val data = sequenceOf(null, "foo", null, "bar")
         val filtered = data.filterNot { it == null }
         assertEquals(listOf("foo", "bar"), filtered.toList())
     }
 
     test fun filterNotNull() {
-        val data = streamOf(null, "foo", null, "bar")
+        val data = sequenceOf(null, "foo", null, "bar")
         val filtered = data.filterNotNull()
         assertEquals(listOf("foo", "bar"), filtered.toList())
     }
 
     test fun mapNotNull() {
-        val data = streamOf(null, "foo", null, "bar")
+        val data = sequenceOf(null, "foo", null, "bar")
         val foo = data.mapNotNull { it.length() }
         assertEquals(listOf(3, 3), foo.toList())
 
         assertTrue {
-            foo is Stream<Int>
+            foo is Sequence<Int>
         }
     }
 
     test fun withIndex() {
-        val data = streamOf("foo", "bar")
+        val data = sequenceOf("foo", "bar")
         val indexed = data.withIndex().map { it.value.substring(0..it.index) }.toList()
         assertEquals(2, indexed.size())
         assertEquals(listOf("f", "ba"), indexed)
@@ -112,12 +112,12 @@ public class StreamTest {
 
     test fun dropWhile() {
         assertEquals("233, 377, 610", fibonacci().dropWhile { it < 200 }.take(3).joinToString(limit = 10))
-        assertEquals("", streamOf(1).dropWhile { it < 200 }.joinToString(limit = 10))
+        assertEquals("", sequenceOf(1).dropWhile { it < 200 }.joinToString(limit = 10))
     }
 
     test fun merge() {
         expect(listOf("ab", "bc", "cd")) {
-            streamOf("a", "b", "c").merge(streamOf("b", "c", "d")) { a, b -> a + b }.toList()
+            sequenceOf("a", "b", "c").merge(sequenceOf("b", "c", "d")) { a, b -> a + b }.toList()
         }
     }
 
@@ -128,24 +128,24 @@ public class StreamTest {
     }
 
     test fun plus() {
-        val stream = streamOf("foo", "bar")
+        val stream = sequenceOf("foo", "bar")
         val streamCheese = stream + "cheese"
         assertEquals(listOf("foo", "bar", "cheese"), streamCheese.toList())
 
         // lets use a mutable variable
-        var mi = streamOf("a", "b")
+        var mi = sequenceOf("a", "b")
         mi += "c"
         assertEquals(listOf("a", "b", "c"), mi.toList())
     }
 
     test fun plusCollection() {
-        val a = streamOf("foo", "bar")
+        val a = sequenceOf("foo", "bar")
         val b = listOf("cheese", "wine")
         val stream = a + b
         assertEquals(listOf("foo", "bar", "cheese", "wine"), stream.toList())
 
         // lets use a mutable variable
-        var ml = streamOf("a")
+        var ml = sequenceOf("a")
         ml += a
         ml += "beer"
         ml += b
@@ -156,7 +156,7 @@ public class StreamTest {
 
     test fun iterationOverStream() {
         var s = ""
-        for (i in streamOf(0, 1, 2, 3, 4, 5)) {
+        for (i in sequenceOf(0, 1, 2, 3, 4, 5)) {
             s = s + i.toString()
         }
         assertEquals("012345", s)
@@ -165,7 +165,7 @@ public class StreamTest {
     test fun streamFromFunction() {
         var count = 3
 
-        val stream = stream {
+        val stream = sequence {
             count--
             if (count >= 0) count else null
         }
@@ -175,18 +175,18 @@ public class StreamTest {
     }
 
     test fun streamFromFunctionWithInitialValue() {
-        val values = stream(3) { n -> if (n > 0) n - 1 else null }
+        val values = sequence(3) { n -> if (n > 0) n - 1 else null }
         assertEquals(listOf(3, 2, 1, 0), values.toList())
     }
 
-    private fun <T, C : MutableCollection<in T>> Stream<T>.takeWhileTo(result: C, predicate: (T) -> Boolean): C {
+    private fun <T, C : MutableCollection<in T>> Sequence<T>.takeWhileTo(result: C, predicate: (T) -> Boolean): C {
         for (element in this) if (predicate(element)) result.add(element) else break
         return result
     }
 
     test fun streamExtensions() {
         val d = ArrayList<Int>()
-        streamOf(0, 1, 2, 3, 4, 5).takeWhileTo(d, { i -> i < 4 })
+        sequenceOf(0, 1, 2, 3, 4, 5).takeWhileTo(d, { i -> i < 4 })
         assertEquals(4, d.size())
     }
 
@@ -201,27 +201,27 @@ public class StreamTest {
                 '5' // fibonacci(10) = 55
                              )
 
-        assertEquals(expected, fibonacci().drop(4).flatMap { it.toString().stream() }.take(10).toList())
+        assertEquals(expected, fibonacci().drop(4).flatMap { it.toString().sequence() }.take(10).toList())
     }
 
     test fun flatMap() {
-        val result = streamOf(1, 2).flatMap { streamOf(0..it) }
+        val result = sequenceOf(1, 2).flatMap { sequenceOf(0..it) }
         assertEquals(listOf(0, 1, 0, 1, 2), result.toList())
     }
 
     test fun flatMapOnEmpty() {
-        val result = streamOf<Int>().flatMap { streamOf(0..it) }
+        val result = sequenceOf<Int>().flatMap { sequenceOf(0..it) }
         assertTrue(result.none())
     }
 
     test fun flatMapWithEmptyItems() {
-        val result = streamOf(1, 2, 4).flatMap { if (it == 2) streamOf<Int>() else streamOf(it - 1..it) }
+        val result = sequenceOf(1, 2, 4).flatMap { if (it == 2) sequenceOf<Int>() else sequenceOf(it - 1..it) }
         assertEquals(listOf(0, 1, 3, 4), result.toList())
     }
 
     test
     fun flatten() {
-        val data = streamOf(1, 2).map { streamOf(0..it) }
+        val data = sequenceOf(1, 2).map { sequenceOf(0..it) }
         assertEquals(listOf(0, 1, 0, 1, 2), data.flatten().toList())
     }
 

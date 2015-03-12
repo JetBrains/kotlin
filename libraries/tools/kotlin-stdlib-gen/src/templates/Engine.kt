@@ -1,14 +1,14 @@
 package templates
 
-import java.util.ArrayList
 import templates.Family.*
-import java.util.HashSet
-import java.util.HashMap
 import java.io.StringReader
+import java.util.ArrayList
+import java.util.HashMap
+import java.util.HashSet
 import java.util.StringTokenizer
 
 enum class Family {
-    Streams
+    Sequences
     Iterables
     Collections
     Lists
@@ -21,19 +21,19 @@ enum class Family {
 }
 
 enum class PrimitiveType(val name: String) {
-    Boolean: PrimitiveType("Boolean")
-    Byte: PrimitiveType("Byte")
-    Char: PrimitiveType("Char")
-    Short: PrimitiveType("Short")
-    Int: PrimitiveType("Int")
-    Long: PrimitiveType("Long")
-    Float: PrimitiveType("Float")
-    Double: PrimitiveType("Double")
+    Boolean : PrimitiveType("Boolean")
+    Byte : PrimitiveType("Byte")
+    Char : PrimitiveType("Char")
+    Short : PrimitiveType("Short")
+    Int : PrimitiveType("Int")
+    Long : PrimitiveType("Long")
+    Float : PrimitiveType("Float")
+    Double : PrimitiveType("Double")
 }
 
 
 class GenericFunction(val signature: String, val keyword: String = "fun") : Comparable<GenericFunction> {
-    val defaultFamilies = array(Iterables, Streams, ArraysOfObjects, ArraysOfPrimitives, Strings)
+    val defaultFamilies = array(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives, Strings)
 
     var toNullableT: Boolean = false
 
@@ -45,7 +45,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
     private val buildPrimitives = HashSet(PrimitiveType.values().toList())
 
     var deprecate: String = ""
-    val deprecates = HashMap<Family, String>()
+    val deprecates = hashMapOf<Family, String>()
 
     var doc: String = ""
     val docs = HashMap<Family, String>()
@@ -159,7 +159,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
     }
 
     fun build(builder: StringBuilder, f: Family) {
-        if (f == ArraysOfPrimitives || f == RangesOfPrimitives || f  == ProgressionsOfPrimitives) {
+        if (f == ArraysOfPrimitives || f == RangesOfPrimitives || f == ProgressionsOfPrimitives) {
             for (primitive in buildPrimitives.sortBy { it.name() })
                 build(builder, f, primitive)
         } else {
@@ -168,6 +168,23 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
     }
 
     fun build(builder: StringBuilder, f: Family, primitive: PrimitiveType?) {
+        if (f == Sequences) {
+            val text = StringBuilder {
+                doBuild(this, f, primitive)
+            }.toString()
+            builder.append(text)
+            builder.appendln()
+            builder.appendln("deprecated(\"Migrate to using Sequence<T> and respective functions\")")
+            val streamText = text
+                    .replace("Sequence", "Stream")
+                    .replace("sequence", "stream")
+                    .replace("MultiStream", "Multistream")
+            builder.append(streamText)
+        } else
+            doBuild(builder, f, primitive)
+    }
+
+    fun doBuild(builder: StringBuilder, f: Family, primitive: PrimitiveType?) {
         val returnType = returnTypes[f] ?: defaultReturnType
         if (returnType.isEmpty())
             throw RuntimeException("No return type specified for $signature")
@@ -178,7 +195,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
             Collections -> "Collection<$isAsteriskOrT>"
             Lists -> "List<$isAsteriskOrT>"
             Maps -> "Map<K, V>"
-            Streams -> "Stream<$isAsteriskOrT>"
+            Sequences -> "Sequence<$isAsteriskOrT>"
             ArraysOfObjects -> "Array<$isAsteriskOrT>"
             Strings -> "String"
             ArraysOfPrimitives -> primitive?.let { it.name() + "Array" } ?: throw IllegalArgumentException("Primitive array should specify primitive type")
@@ -301,7 +318,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
         builder.append('\n')
         StringReader(body).forEachLine {
             var count = indent
-            val line = it.dropWhile { count-- > 0 && it == ' ' } .renderType()
+            val line = it.dropWhile { count-- > 0 && it == ' ' }.renderType()
             if (line.isNotEmpty()) {
                 builder.append("    ").append(line)
                 builder.append("\n")

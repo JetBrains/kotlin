@@ -17,7 +17,7 @@ fun generateCollectionsAPI(outDir: File) {
     guards().writeTo(File(outDir, "_Guards.kt")) { build() }
     generators().writeTo(File(outDir, "_Generators.kt")) { build() }
     strings().writeTo(File(outDir, "_Strings.kt")) { build() }
-    streams().writeTo(File(outDir, "_Streams.kt")) { build() }
+    sequences().writeTo(File(outDir, "_Sequences.kt")) { build() }
     specialJVM().writeTo(File(outDir, "_SpecialJVM.kt")) { build() }
     ranges().writeTo(File(outDir, "_Ranges.kt")) { build() }
 
@@ -26,7 +26,7 @@ fun generateCollectionsAPI(outDir: File) {
         // TODO: decide if sum for byte and short is needed and how to make it work
         for (numeric in listOf(PrimitiveType.Int, PrimitiveType.Long, /*Byte, Short, */ PrimitiveType.Double, PrimitiveType.Float)) {
             build(builder, Iterables, numeric)
-            build(builder, Streams, numeric)
+            build(builder, Sequences, numeric)
         }
 
         for (numeric in listOf(PrimitiveType.Int, PrimitiveType.Long, PrimitiveType.Byte, PrimitiveType.Short, PrimitiveType.Double, PrimitiveType.Float)) {

@@ -68,7 +68,7 @@ class MapTest {
 
     test fun stream() {
         val map = mapOf("beverage" to "beer", "location" to "Mells", "name" to "James")
-        val named = map.stream().filter { it.key == "name" }.single()
+        val named = map.sequence().filter { it.key == "name" }.single()
         assertEquals("James", named.value)
     }
 
