@@ -99,10 +99,10 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
         }
 
         if (isStatement) {
-            return DataFlowUtils.checkStatementType(function, context as ResolutionContext<*>, context.dataFlowInfo)
+            return DataFlowUtils.checkStatementType(function, context, context.dataFlowInfo)
         }
         else {
-            return DataFlowUtils.checkType(createFunctionType(functionDescriptor), function, context as ResolutionContext<*>, context.dataFlowInfo)
+            return DataFlowUtils.checkType(createFunctionType(functionDescriptor), function, context, context.dataFlowInfo)
         }
     }
 
@@ -137,7 +137,7 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
             return JetTypeInfo.create(resultType, context.dataFlowInfo)
         }
 
-        return DataFlowUtils.checkType(resultType, expression, context as ResolutionContext<*>, context.dataFlowInfo)
+        return DataFlowUtils.checkType(resultType, expression, context, context.dataFlowInfo)
     }
 
     private fun createFunctionDescriptor(
