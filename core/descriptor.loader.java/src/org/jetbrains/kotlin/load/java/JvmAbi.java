@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.load.java;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.name.ClassId;
+import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 
 public final class JvmAbi {
@@ -41,6 +43,7 @@ public final class JvmAbi {
 
     public static final String KOTLIN_CLASS_FIELD_NAME = "$kotlinClass";
     public static final String KOTLIN_PACKAGE_FIELD_NAME = "$kotlinPackage";
+    public static final ClassId REFLECTION_FACTORY_IMPL = ClassId.topLevel(new FqName("kotlin.reflect.jvm.internal.ReflectionFactoryImpl"));
 
     //TODO: To be removed after kotlin M11
     @Deprecated

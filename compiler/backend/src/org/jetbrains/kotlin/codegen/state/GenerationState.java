@@ -124,6 +124,8 @@ public class GenerationState {
     @NotNull
     private final ModuleDescriptor module;
 
+    private final DiagnosticSink diagnostics;
+
     @NotNull
     private final Collection<FqName> packagesWithObsoleteParts;
 
@@ -182,6 +184,7 @@ public class GenerationState {
             builderFactory = new OptimizationClassBuilderFactory(builderFactory);
         }
 
+        this.diagnostics = diagnostics;
         this.classFileFactory = new ClassFileFactory(this, new BuilderFactoryForDuplicateSignatureDiagnostics(
                 builderFactory, this.bindingContext, diagnostics));
 
@@ -269,6 +272,11 @@ public class GenerationState {
     @NotNull
     public JvmRuntimeTypes getJvmRuntimeTypes() {
         return runtimeTypes;
+    }
+
+    @NotNull
+    public DiagnosticSink getDiagnostics() {
+        return diagnostics;
     }
 
     public boolean isInlineEnabled() {

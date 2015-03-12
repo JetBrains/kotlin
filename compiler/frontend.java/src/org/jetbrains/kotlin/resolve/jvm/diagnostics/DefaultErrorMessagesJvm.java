@@ -53,6 +53,8 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(ErrorsJvm.NATIVE_DECLARATION_IN_TRAIT, "Members of traits can not be native");
         MAP.put(ErrorsJvm.NATIVE_DECLARATION_CANNOT_BE_INLINED, "Members of traits can not be inlined");
 
+        MAP.put(ErrorsJvm.NO_REFLECTION_IN_CLASS_PATH, "Expression ''{0}'' uses reflection which is not found in compilation classpath. Make sure you have kotlin-reflect.jar in the classpath", Renderers.ELEMENT_TEXT);
+
         MAP.put(ErrorsJvm.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS,
                 "Expected type does not accept nulls in {0}, but the value may be null in {1}", Renderers.TO_STRING, Renderers.TO_STRING);
     }

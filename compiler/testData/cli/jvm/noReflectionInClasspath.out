@@ -1,0 +1,3 @@
+ERROR: compiler/testData/cli/jvm/noReflectionInClasspath.kt: (3, 12) Expression 'Foo::prop' uses reflection which is not found in compilation classpath. Make sure you have kotlin-reflect.jar in the classpath
+ERROR: compiler/testData/cli/jvm/noReflectionInClasspath.kt: (4, 12) Expression 'Foo::class' uses reflection which is not found in compilation classpath. Make sure you have kotlin-reflect.jar in the classpath
+COMPILATION_ERROR
