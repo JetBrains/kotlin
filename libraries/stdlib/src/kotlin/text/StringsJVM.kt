@@ -136,6 +136,7 @@ public fun String.endsWith(ch: Char): Boolean = (this as java.lang.String).endsW
  * Converts the data from a portion of the specified array of bytes to characters using the specified character set
  * and returns the conversion result as a string.
  *
+ * @param bytes the source array for the conversion.
  * @param offset the offset in the array of the data to be converted.
  * @param length the number of bytes to be converted.
  * @param charsetName the name of the character set to use.
@@ -146,6 +147,7 @@ public fun String(bytes: ByteArray, offset: Int, length: Int, charsetName: Strin
  * Converts the data from a portion of the specified array of bytes to characters using the specified character set
  * and returns the conversion result as a string.
  *
+ * @param bytes the source array for the conversion.
  * @param offset the offset in the array of the data to be converted.
  * @param length the number of bytes to be converted.
  * @param charset the character set to use.
@@ -168,6 +170,7 @@ public fun String(bytes: ByteArray, charset: Charset): String = java.lang.String
  * Converts the data from a portion of the specified array of bytes to characters using the UTF-8 character set
  * and returns the conversion result as a string.
  *
+ * @param bytes the source array for the conversion.
  * @param offset the offset in the array of the data to be converted.
  * @param length the number of bytes to be converted.
  */

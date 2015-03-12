@@ -32,7 +32,7 @@ public class Byte private () : Number, Comparable<Byte> {
  */
     public override fun compareTo(other: Byte): Int
 /**
- * Compares this value with the specified value for order.
+ * Compares this value with the character code of the specified character for order.
  * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
  * or a positive number if its greater than other.
  */
@@ -68,19 +68,19 @@ public class Byte private () : Number, Comparable<Byte> {
  */
     public fun compareTo(other: Double): Int
 
-    /** Adds the two values. */
+    /** Adds the other value to this value. */
     public fun plus(other: Byte): Int
-    /** Adds the two values. */
+    /** Adds the other value to this value. */
     public fun plus(other: Char): Int
-    /** Adds the two values. */
+    /** Adds the other value to this value. */
     public fun plus(other: Short): Int
-    /** Adds the two values. */
+    /** Adds the other value to this value. */
     public fun plus(other: Int): Int
-    /** Adds the two values. */
+    /** Adds the other value to this value. */
     public fun plus(other: Long): Long
-    /** Adds the two values. */
+    /** Adds the other value to this value. */
     public fun plus(other: Float): Float
-    /** Adds the two values. */
+    /** Adds the other value to this value. */
     public fun plus(other: Double): Double
 
     /** Subtracts the other value from this value. */
@@ -98,19 +98,19 @@ public class Byte private () : Number, Comparable<Byte> {
     /** Subtracts the other value from this value. */
     public fun minus(other: Double): Double
 
-    /** Multiplies the two values. */
+    /** Multiplies this value by the other value. */
     public fun times(other: Byte): Int
-    /** Multiplies the two values. */
+    /** Multiplies this value by the other value. */
     public fun times(other: Char): Int
-    /** Multiplies the two values. */
+    /** Multiplies this value by the other value. */
     public fun times(other: Short): Int
-    /** Multiplies the two values. */
+    /** Multiplies this value by the other value. */
     public fun times(other: Int): Int
-    /** Multiplies the two values. */
+    /** Multiplies this value by the other value. */
     public fun times(other: Long): Long
-    /** Multiplies the two values. */
+    /** Multiplies this value by the other value. */
     public fun times(other: Float): Float
-    /** Multiplies the two values. */
+    /** Multiplies this value by the other value. */
     public fun times(other: Double): Double
 
     /** Divides this value by the other value. */
@@ -184,7 +184,7 @@ public class Char private () : Comparable<Char> {
     default object {}
 
 /**
- * Compares this value with the specified value for order.
+ * Compares the character code of this character with the specified value for order.
  * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
  * or a positive number if its greater than other.
  */
@@ -196,47 +196,47 @@ public class Char private () : Comparable<Char> {
  */
     public override fun compareTo(other: Char): Int
 /**
- * Compares this value with the specified value for order.
+ * Compares the character code of this character with the specified value for order.
  * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
  * or a positive number if its greater than other.
  */
     public fun compareTo(other: Short): Int
 /**
- * Compares this value with the specified value for order.
+ * Compares the character code of this character with the specified value for order.
  * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
  * or a positive number if its greater than other.
  */
     public fun compareTo(other: Int): Int
 /**
- * Compares this value with the specified value for order.
+ * Compares the character code of this character with the specified value for order.
  * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
  * or a positive number if its greater than other.
  */
     public fun compareTo(other: Long): Int
 /**
- * Compares this value with the specified value for order.
+ * Compares the character code of this character with the specified value for order.
  * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
  * or a positive number if its greater than other.
  */
     public fun compareTo(other: Float): Int
 /**
- * Compares this value with the specified value for order.
+ * Compares the character code of this character with the specified value for order.
  * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
  * or a positive number if its greater than other.
  */
     public fun compareTo(other: Double): Int
 
-    /** Adds the two values. */
+    /** Adds the other value to this value. */
     public fun plus(other: Byte): Int
-    /** Adds the two values. */
+    /** Adds the other value to this value. */
     public fun plus(other: Short): Int
-    /** Adds the two values. */
+    /** Adds the other value to this value. */
     public fun plus(other: Int): Int
-    /** Adds the two values. */
+    /** Adds the other value to this value. */
     public fun plus(other: Long): Long
-    /** Adds the two values. */
+    /** Adds the other value to this value. */
     public fun plus(other: Float): Float
-    /** Adds the two values. */
+    /** Adds the other value to this value. */
     public fun plus(other: Double): Double
 
     /** Subtracts the other value from this value. */
@@ -254,17 +254,17 @@ public class Char private () : Comparable<Char> {
     /** Subtracts the other value from this value. */
     public fun minus(other: Double): Double
 
-    /** Multiplies the two values. */
+    /** Multiplies this value by the other value. */
     public fun times(other: Byte): Int
-    /** Multiplies the two values. */
+    /** Multiplies this value by the other value. */
     public fun times(other: Short): Int
-    /** Multiplies the two values. */
+    /** Multiplies this value by the other value. */
     public fun times(other: Int): Int
-    /** Multiplies the two values. */
+    /** Multiplies this value by the other value. */
     public fun times(other: Long): Long
-    /** Multiplies the two values. */
+    /** Multiplies this value by the other value. */
     public fun times(other: Float): Float
-    /** Multiplies the two values. */
+    /** Multiplies this value by the other value. */
     public fun times(other: Double): Double
 
     /** Divides this value by the other value. */
@@ -305,19 +305,19 @@ public class Char private () : Comparable<Char> {
      /** Creates a range from this value to the specified [other] value. */
     public fun rangeTo(other: Char): CharRange
 
-    /** Returns the value of this character as a `name`. */
+    /** Returns the value of this character as a `Byte`. */
     public override fun toByte(): Byte
-    /** Returns the value of this character as a `name`. */
+    /** Returns the value of this character as a `Char`. */
     public override fun toChar(): Char
-    /** Returns the value of this character as a `name`. */
+    /** Returns the value of this character as a `Short`. */
     public override fun toShort(): Short
-    /** Returns the value of this character as a `name`. */
+    /** Returns the value of this character as a `Int`. */
     public override fun toInt(): Int
-    /** Returns the value of this character as a `name`. */
+    /** Returns the value of this character as a `Long`. */
     public override fun toLong(): Long
-    /** Returns the value of this character as a `name`. */
+    /** Returns the value of this character as a `Float`. */
     public override fun toFloat(): Float
-    /** Returns the value of this character as a `name`. */
+    /** Returns the value of this character as a `Double`. */
     public override fun toDouble(): Double
 }
 
@@ -335,7 +335,7 @@ public class Short private () : Number, Comparable<Short> {
  */
     public fun compareTo(other: Byte): Int
 /**
- * Compares this value with the specified value for order.
+ * Compares this value with the character code of the specified character for order.
  * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
  * or a positive number if its greater than other.
  */
@@ -371,19 +371,19 @@ public class Short private () : Number, Comparable<Short> {
  */
     public fun compareTo(other: Double): Int
 
-    /** Adds the two values. */
+    /** Adds the other value to this value. */
     public fun plus(other: Byte): Int
-    /** Adds the two values. */
+    /** Adds the other value to this value. */
     public fun plus(other: Char): Int
-    /** Adds the two values. */
+    /** Adds the other value to this value. */
     public fun plus(other: Short): Int
-    /** Adds the two values. */
+    /** Adds the other value to this value. */
     public fun plus(other: Int): Int
-    /** Adds the two values. */
+    /** Adds the other value to this value. */
     public fun plus(other: Long): Long
-    /** Adds the two values. */
+    /** Adds the other value to this value. */
     public fun plus(other: Float): Float
-    /** Adds the two values. */
+    /** Adds the other value to this value. */
     public fun plus(other: Double): Double
 
     /** Subtracts the other value from this value. */
@@ -401,19 +401,19 @@ public class Short private () : Number, Comparable<Short> {
     /** Subtracts the other value from this value. */
     public fun minus(other: Double): Double
 
-    /** Multiplies the two values. */
+    /** Multiplies this value by the other value. */
     public fun times(other: Byte): Int
-    /** Multiplies the two values. */
+    /** Multiplies this value by the other value. */
     public fun times(other: Char): Int
-    /** Multiplies the two values. */
+    /** Multiplies this value by the other value. */
     public fun times(other: Short): Int
-    /** Multiplies the two values. */
+    /** Multiplies this value by the other value. */
     public fun times(other: Int): Int
-    /** Multiplies the two values. */
+    /** Multiplies this value by the other value. */
     public fun times(other: Long): Long
-    /** Multiplies the two values. */
+    /** Multiplies this value by the other value. */
     public fun times(other: Float): Float
-    /** Multiplies the two values. */
+    /** Multiplies this value by the other value. */
     public fun times(other: Double): Double
 
     /** Divides this value by the other value. */
@@ -493,7 +493,7 @@ public class Int private () : Number, Comparable<Int> {
  */
     public fun compareTo(other: Byte): Int
 /**
- * Compares this value with the specified value for order.
+ * Compares this value with the character code of the specified character for order.
  * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
  * or a positive number if its greater than other.
  */
@@ -529,19 +529,19 @@ public class Int private () : Number, Comparable<Int> {
  */
     public fun compareTo(other: Double): Int
 
-    /** Adds the two values. */
+    /** Adds the other value to this value. */
     public fun plus(other: Byte): Int
-    /** Adds the two values. */
+    /** Adds the other value to this value. */
     public fun plus(other: Char): Int
-    /** Adds the two values. */
+    /** Adds the other value to this value. */
     public fun plus(other: Short): Int
-    /** Adds the two values. */
+    /** Adds the other value to this value. */
     public fun plus(other: Int): Int
-    /** Adds the two values. */
+    /** Adds the other value to this value. */
     public fun plus(other: Long): Long
-    /** Adds the two values. */
+    /** Adds the other value to this value. */
     public fun plus(other: Float): Float
-    /** Adds the two values. */
+    /** Adds the other value to this value. */
     public fun plus(other: Double): Double
 
     /** Subtracts the other value from this value. */
@@ -559,19 +559,19 @@ public class Int private () : Number, Comparable<Int> {
     /** Subtracts the other value from this value. */
     public fun minus(other: Double): Double
 
-    /** Multiplies the two values. */
+    /** Multiplies this value by the other value. */
     public fun times(other: Byte): Int
-    /** Multiplies the two values. */
+    /** Multiplies this value by the other value. */
     public fun times(other: Char): Int
-    /** Multiplies the two values. */
+    /** Multiplies this value by the other value. */
     public fun times(other: Short): Int
-    /** Multiplies the two values. */
+    /** Multiplies this value by the other value. */
     public fun times(other: Int): Int
-    /** Multiplies the two values. */
+    /** Multiplies this value by the other value. */
     public fun times(other: Long): Long
-    /** Multiplies the two values. */
+    /** Multiplies this value by the other value. */
     public fun times(other: Float): Float
-    /** Multiplies the two values. */
+    /** Multiplies this value by the other value. */
     public fun times(other: Double): Double
 
     /** Divides this value by the other value. */
@@ -666,7 +666,7 @@ public class Long private () : Number, Comparable<Long> {
  */
     public fun compareTo(other: Byte): Int
 /**
- * Compares this value with the specified value for order.
+ * Compares this value with the character code of the specified character for order.
  * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
  * or a positive number if its greater than other.
  */
@@ -702,19 +702,19 @@ public class Long private () : Number, Comparable<Long> {
  */
     public fun compareTo(other: Double): Int
 
-    /** Adds the two values. */
+    /** Adds the other value to this value. */
     public fun plus(other: Byte): Long
-    /** Adds the two values. */
+    /** Adds the other value to this value. */
     public fun plus(other: Char): Long
-    /** Adds the two values. */
+    /** Adds the other value to this value. */
     public fun plus(other: Short): Long
-    /** Adds the two values. */
+    /** Adds the other value to this value. */
     public fun plus(other: Int): Long
-    /** Adds the two values. */
+    /** Adds the other value to this value. */
     public fun plus(other: Long): Long
-    /** Adds the two values. */
+    /** Adds the other value to this value. */
     public fun plus(other: Float): Float
-    /** Adds the two values. */
+    /** Adds the other value to this value. */
     public fun plus(other: Double): Double
 
     /** Subtracts the other value from this value. */
@@ -732,19 +732,19 @@ public class Long private () : Number, Comparable<Long> {
     /** Subtracts the other value from this value. */
     public fun minus(other: Double): Double
 
-    /** Multiplies the two values. */
+    /** Multiplies this value by the other value. */
     public fun times(other: Byte): Long
-    /** Multiplies the two values. */
+    /** Multiplies this value by the other value. */
     public fun times(other: Char): Long
-    /** Multiplies the two values. */
+    /** Multiplies this value by the other value. */
     public fun times(other: Short): Long
-    /** Multiplies the two values. */
+    /** Multiplies this value by the other value. */
     public fun times(other: Int): Long
-    /** Multiplies the two values. */
+    /** Multiplies this value by the other value. */
     public fun times(other: Long): Long
-    /** Multiplies the two values. */
+    /** Multiplies this value by the other value. */
     public fun times(other: Float): Float
-    /** Multiplies the two values. */
+    /** Multiplies this value by the other value. */
     public fun times(other: Double): Double
 
     /** Divides this value by the other value. */
@@ -839,7 +839,7 @@ public class Float private () : Number, Comparable<Float> {
  */
     public fun compareTo(other: Byte): Int
 /**
- * Compares this value with the specified value for order.
+ * Compares this value with the character code of the specified character for order.
  * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
  * or a positive number if its greater than other.
  */
@@ -875,19 +875,19 @@ public class Float private () : Number, Comparable<Float> {
  */
     public fun compareTo(other: Double): Int
 
-    /** Adds the two values. */
+    /** Adds the other value to this value. */
     public fun plus(other: Byte): Float
-    /** Adds the two values. */
+    /** Adds the other value to this value. */
     public fun plus(other: Char): Float
-    /** Adds the two values. */
+    /** Adds the other value to this value. */
     public fun plus(other: Short): Float
-    /** Adds the two values. */
+    /** Adds the other value to this value. */
     public fun plus(other: Int): Float
-    /** Adds the two values. */
+    /** Adds the other value to this value. */
     public fun plus(other: Long): Float
-    /** Adds the two values. */
+    /** Adds the other value to this value. */
     public fun plus(other: Float): Float
-    /** Adds the two values. */
+    /** Adds the other value to this value. */
     public fun plus(other: Double): Double
 
     /** Subtracts the other value from this value. */
@@ -905,19 +905,19 @@ public class Float private () : Number, Comparable<Float> {
     /** Subtracts the other value from this value. */
     public fun minus(other: Double): Double
 
-    /** Multiplies the two values. */
+    /** Multiplies this value by the other value. */
     public fun times(other: Byte): Float
-    /** Multiplies the two values. */
+    /** Multiplies this value by the other value. */
     public fun times(other: Char): Float
-    /** Multiplies the two values. */
+    /** Multiplies this value by the other value. */
     public fun times(other: Short): Float
-    /** Multiplies the two values. */
+    /** Multiplies this value by the other value. */
     public fun times(other: Int): Float
-    /** Multiplies the two values. */
+    /** Multiplies this value by the other value. */
     public fun times(other: Long): Float
-    /** Multiplies the two values. */
+    /** Multiplies this value by the other value. */
     public fun times(other: Float): Float
-    /** Multiplies the two values. */
+    /** Multiplies this value by the other value. */
     public fun times(other: Double): Double
 
     /** Divides this value by the other value. */
@@ -997,7 +997,7 @@ public class Double private () : Number, Comparable<Double> {
  */
     public fun compareTo(other: Byte): Int
 /**
- * Compares this value with the specified value for order.
+ * Compares this value with the character code of the specified character for order.
  * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
  * or a positive number if its greater than other.
  */
@@ -1033,19 +1033,19 @@ public class Double private () : Number, Comparable<Double> {
  */
     public override fun compareTo(other: Double): Int
 
-    /** Adds the two values. */
+    /** Adds the other value to this value. */
     public fun plus(other: Byte): Double
-    /** Adds the two values. */
+    /** Adds the other value to this value. */
     public fun plus(other: Char): Double
-    /** Adds the two values. */
+    /** Adds the other value to this value. */
     public fun plus(other: Short): Double
-    /** Adds the two values. */
+    /** Adds the other value to this value. */
     public fun plus(other: Int): Double
-    /** Adds the two values. */
+    /** Adds the other value to this value. */
     public fun plus(other: Long): Double
-    /** Adds the two values. */
+    /** Adds the other value to this value. */
     public fun plus(other: Float): Double
-    /** Adds the two values. */
+    /** Adds the other value to this value. */
     public fun plus(other: Double): Double
 
     /** Subtracts the other value from this value. */
@@ -1063,19 +1063,19 @@ public class Double private () : Number, Comparable<Double> {
     /** Subtracts the other value from this value. */
     public fun minus(other: Double): Double
 
-    /** Multiplies the two values. */
+    /** Multiplies this value by the other value. */
     public fun times(other: Byte): Double
-    /** Multiplies the two values. */
+    /** Multiplies this value by the other value. */
     public fun times(other: Char): Double
-    /** Multiplies the two values. */
+    /** Multiplies this value by the other value. */
     public fun times(other: Short): Double
-    /** Multiplies the two values. */
+    /** Multiplies this value by the other value. */
     public fun times(other: Int): Double
-    /** Multiplies the two values. */
+    /** Multiplies this value by the other value. */
     public fun times(other: Long): Double
-    /** Multiplies the two values. */
+    /** Multiplies this value by the other value. */
     public fun times(other: Float): Double
-    /** Multiplies the two values. */
+    /** Multiplies this value by the other value. */
     public fun times(other: Double): Double
 
     /** Divides this value by the other value. */
