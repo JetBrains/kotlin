@@ -563,12 +563,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             doTest(fileName);
         }
 
-        @TestMetadata("TraitWithConstructor.kt")
-        public void testTraitWithConstructor() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/TraitWithConstructor.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("TypeInference.kt")
         public void testTypeInference() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/TypeInference.kt");
