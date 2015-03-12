@@ -67,11 +67,11 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
 
     override fun getSourcePosition(location: Location?): SourcePosition? {
         if (location == null) {
-            throw NoDataException()
+            throw NoDataException.INSTANCE
         }
         val psiFile = getPsiFileByLocation(location)
         if (psiFile == null) {
-            throw NoDataException()
+            throw NoDataException.INSTANCE
         }
 
         val lineNumber = try {
@@ -90,7 +90,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
             return SourcePosition.createFromLine(psiFile, lineNumber)
         }
 
-        throw NoDataException()
+        throw NoDataException.INSTANCE
     }
 
     private fun getLambdaIfInside(location: Location, file: JetFile, lineNumber: Int): JetFunctionLiteral? {
@@ -167,7 +167,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
 
     override fun getAllClasses(sourcePosition: SourcePosition): List<ReferenceType> {
         if (sourcePosition.getFile() !is JetFile) {
-            throw NoDataException()
+            throw NoDataException.INSTANCE
         }
         val names = classNameForPositionAndInlinedOnes(sourcePosition)
         val result = ArrayList<ReferenceType>()
@@ -225,7 +225,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
 
     override fun locationsOfLine(type: ReferenceType, position: SourcePosition): List<Location> {
         if (position.getFile() !is JetFile) {
-            throw NoDataException()
+            throw NoDataException.INSTANCE
         }
         try {
             val line = position.getLine() + 1
@@ -233,18 +233,18 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
                 type.locationsOfLine("Kotlin", null, line)
             else
                 type.locationsOfLine(line)
-            if (locations == null || locations.isEmpty()) throw NoDataException()
+            if (locations == null || locations.isEmpty()) throw NoDataException.INSTANCE
             return locations
         }
         catch (e: AbsentInformationException) {
-            throw NoDataException()
+            throw NoDataException.INSTANCE
         }
     }
 
     [deprecated("Since Idea 14.0.3 use createPrepareRequests fun")]
     override fun createPrepareRequest(classPrepareRequestor: ClassPrepareRequestor, sourcePosition: SourcePosition): ClassPrepareRequest? {
         if (sourcePosition.getFile() !is JetFile) {
-            throw NoDataException()
+            throw NoDataException.INSTANCE
         }
         val className = classNameForPosition(sourcePosition)
         if (className == null) {
@@ -255,7 +255,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
 
     override fun createPrepareRequests(classPrepareRequestor: ClassPrepareRequestor, sourcePosition: SourcePosition): MutableList<ClassPrepareRequest> {
         if (sourcePosition.getFile() !is JetFile) {
-            throw NoDataException()
+            throw NoDataException.INSTANCE
         }
         val classNames = classNameForPositionAndInlinedOnes(sourcePosition)
         if (classNames.isEmpty()) {
