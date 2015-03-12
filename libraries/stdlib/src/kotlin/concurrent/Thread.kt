@@ -3,7 +3,7 @@ package kotlin.concurrent
 import java.util.concurrent.*
 
 /**
- * Return the current thread.
+ * Returns the current thread.
  */
 public val currentThread: Thread
     get() = Thread.currentThread()

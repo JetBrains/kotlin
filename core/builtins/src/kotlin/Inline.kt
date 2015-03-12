@@ -59,7 +59,7 @@ public enum class InlineStrategy {
  * a different execution context (for example, from an object contained in the receiving function)
  * are restricted to local control flow statements.
  *
- * @property value the inlining options selected for this lambda.
+ * @property value the inlining options selected for the annotated function parameter.
  */
 public annotation class inlineOptions(vararg val value: InlineOption)
 

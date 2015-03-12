@@ -22,9 +22,9 @@ import java.io.PrintWriter
 
 class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
     private val binaryOperators: Map<String, String> = mapOf(
-            "plus" to "Adds the two values.",
+            "plus" to "Adds the other value to this value.",
             "minus" to "Subtracts the other value from this value.",
-            "times" to "Multiplies the two values.",
+            "times" to "Multiplies this value by the other value.",
             "div" to "Divides this value by the other value.",
             "mod" to "Calculates the remainder of dividing this value by the other value."
     )
@@ -93,7 +93,13 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
     private fun generateCompareTo(thisKind: PrimitiveType) {
         for (otherKind in PrimitiveType.exceptBoolean) {
             out.println("/**")
-            out.println(" * Compares this value with the specified value for order.")
+            if (thisKind == PrimitiveType.CHAR && otherKind != PrimitiveType.CHAR) {
+                out.println(" * Compares the character code of this character with the specified value for order.")
+            } else if (thisKind != PrimitiveType.CHAR && otherKind == PrimitiveType.CHAR) {
+                out.println(" * Compares this value with the character code of the specified character for order.")
+            } else {
+                out.println(" * Compares this value with the specified value for order.")
+            }
             out.println(" * Returns zero if this value is equal to the specified other value, a negative number if its less than other, ")
             out.println(" * or a positive number if its greater than other.")
             out.println(" */")
@@ -165,7 +171,7 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
         for (otherKind in PrimitiveType.exceptBoolean) {
             val name = otherKind.capitalized
             if (kind == PrimitiveType.CHAR) {  // Char is not a Number and does not inherit Number's javadocs
-                out.println("    /** Returns the value of this character as a `name`. */")
+                out.println("    /** Returns the value of this character as a `$name`. */")
             }
             out.println("    public override fun to$name(): $name")
         }

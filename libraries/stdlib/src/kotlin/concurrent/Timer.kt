@@ -118,7 +118,9 @@ public fun fixedRateTimer(name: String? = null, daemon: Boolean = false, startAt
     return timer
 }
 
-deprecated("Use the built-in SAM conversion instead")
+/**
+ * Wraps the specified [action] in a `TimerTask`.
+ */
 public fun timerTask(action: TimerTask.() -> Unit): TimerTask = object : TimerTask() {
     public override fun run() {
         action()

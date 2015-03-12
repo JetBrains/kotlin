@@ -138,6 +138,7 @@ public fun String.endsWith(ch: Char): Boolean = (this as java.lang.String).endsW
  *
  * @param offset the offset in the array of the data to be converted.
  * @param length the number of bytes to be converted.
+ * @param charsetName the name of the character set to use.
  */
 public fun String(bytes: ByteArray, offset: Int, length: Int, charsetName: String): String = java.lang.String(bytes, offset, length, charsetName) as String
 
@@ -147,6 +148,7 @@ public fun String(bytes: ByteArray, offset: Int, length: Int, charsetName: Strin
  *
  * @param offset the offset in the array of the data to be converted.
  * @param length the number of bytes to be converted.
+ * @param charset the character set to use.
  */
 public fun String(bytes: ByteArray, offset: Int, length: Int, charset: Charset): String = java.lang.String(bytes, offset, length, charset) as String
 

@@ -76,10 +76,11 @@ public fun ByteArray.toString(charset: String): String = String(this, charset)
 public fun ByteArray.toString(charset: Charset): String = String(this, charset)
 
 /**
- * Returnsn an array containing the elements of this collection.
+ * Returns an array containing the elements of this collection.
  */
 [Intrinsic("kotlin.collections.copyToArray")] public fun <reified T> Collection<T>.copyToArray(): Array<T> =
         throw UnsupportedOperationException()
 
 /** Returns the array if it's not null, or an empty array otherwise. */
 public inline fun <reified T> Array<out T>?.orEmpty(): Array<out T> = this ?: array<T>()
+
