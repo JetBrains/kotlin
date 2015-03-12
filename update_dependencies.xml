@@ -281,7 +281,11 @@
 
     <macrodef name="build-protobuf-java-lite">
         <sequential>
-            <exec executable="dependencies/bootstrap-compiler/Kotlin/kotlinc/bin/kotlinc" failonerror="true" vmlauncher="false">
+            <condition property="kotlinc.executable.path" value="kotlinc.bat" else="kotlinc">
+                <os family="windows"/>
+            </condition>
+
+            <exec executable="dependencies/bootstrap-compiler/Kotlin/kotlinc/bin/${kotlinc.executable.path}" failonerror="true">
                 <arg value="-script"/>
                 <arg value="generators/infrastructure/build-protobuf-lite.kts"/>
                 <arg value="${basedir}/ideaSDK/lib/protobuf-2.5.0.jar"/>
