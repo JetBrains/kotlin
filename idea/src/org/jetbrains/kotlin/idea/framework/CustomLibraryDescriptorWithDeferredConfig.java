@@ -221,7 +221,9 @@ public abstract class CustomLibraryDescriptorWithDeferredConfig extends CustomLi
             @Override
             public void addRoots(@NotNull LibraryEditor editor) {
                 for (File libraryFile : libraryFiles) {
-                    editor.addRoot(VfsUtil.getUrlForLibraryRoot(libraryFile), OrderRootType.CLASSES);
+                    if (libraryFile != null) {
+                        editor.addRoot(VfsUtil.getUrlForLibraryRoot(libraryFile), OrderRootType.CLASSES);
+                    }
                 }
                 editor.addRoot(VfsUtil.getUrlForLibraryRoot(librarySrcFile), OrderRootType.SOURCES);
             }
