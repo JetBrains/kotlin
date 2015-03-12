@@ -226,7 +226,7 @@ public class CallCompleter(
         if (valueArgument.isExternal()) return
 
         val expression = valueArgument.getArgumentExpression()
-        val deparenthesized = ArgumentTypeResolver.getLastElementDeparenthesized(expression, context as ResolutionContext<*>)
+        val deparenthesized = ArgumentTypeResolver.getLastElementDeparenthesized(expression, context)
         if (deparenthesized == null) return
 
         val recordedType = context.trace[BindingContext.EXPRESSION_TYPE, expression]
@@ -241,20 +241,20 @@ public class CallCompleter(
         // For the cases like 'foo(1)' the type of '1' depends on expected type (it can be Int, Byte, etc.),
         // so while the expected type is not known, it's IntegerValueType(1), and should be updated when the expected type is known.
         if (recordedType != null && !recordedType.getConstructor().isDenotable()) {
-            updatedType = ArgumentTypeResolver.updateResultArgumentTypeIfNotDenotable(context as ResolutionContext<*>, expression)
+            updatedType = ArgumentTypeResolver.updateResultArgumentTypeIfNotDenotable(context, expression)
         }
 
         updatedType = updateRecordedTypeForArgument(updatedType, recordedType, expression, context.trace)
 
         // While the expected type is not known, the function literal arguments are not analyzed (to analyze function literal bodies once),
         // but they should be analyzed when the expected type is known (during the call completion).
-        if (ArgumentTypeResolver.isFunctionLiteralArgument(expression, context as ResolutionContext<*>)) {
+        if (ArgumentTypeResolver.isFunctionLiteralArgument(expression, context)) {
             argumentTypeResolver.getFunctionLiteralTypeInfo(
-                    expression, ArgumentTypeResolver.getFunctionLiteralArgument(expression, context as ResolutionContext<*>),
-                    context as CallResolutionContext<*>, RESOLVE_FUNCTION_ARGUMENTS)
+                    expression, ArgumentTypeResolver.getFunctionLiteralArgument(expression, context),
+                    context, RESOLVE_FUNCTION_ARGUMENTS)
         }
 
-        DataFlowUtils.checkType(updatedType, deparenthesized, context as ResolutionContext<*>)
+        DataFlowUtils.checkType(updatedType, deparenthesized, context)
     }
 
     private fun completeCallForArgument(
