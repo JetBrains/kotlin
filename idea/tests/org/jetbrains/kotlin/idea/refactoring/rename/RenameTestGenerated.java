@@ -36,6 +36,12 @@ public class RenameTestGenerated extends AbstractRenameTest {
         JetTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/refactoring/rename"), Pattern.compile("^(.+)\\.test$"));
     }
 
+    @TestMetadata("defaultObject/defaultObject.test")
+    public void testDefaultObject_DefaultObject() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/defaultObject/defaultObject.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("renameCompareTo/compareTo.test")
     public void testRenameCompareTo_CompareTo() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameCompareTo/compareTo.test");
