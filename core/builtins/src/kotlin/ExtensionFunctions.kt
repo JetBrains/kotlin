@@ -20,12 +20,12 @@ package kotlin
 
 /** An extension function that takes 0 arguments. */
 public trait ExtensionFunction0<in T, out R> {
-    /** Invokes the function with the specified arguments. */
+    /** Invokes the function. */
     public fun T.invoke(): R
 }
-/** An extension function that takes 1 arguments. */
+/** An extension function that takes 1 argument. */
 public trait ExtensionFunction1<in T, in P1, out R> {
-    /** Invokes the function with the specified arguments. */
+    /** Invokes the function with the specified argument. */
     public fun T.invoke(p1: P1): R
 }
 /** An extension function that takes 2 arguments. */

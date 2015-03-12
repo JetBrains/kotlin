@@ -100,7 +100,8 @@ class GenerateFunctions(out: PrintWriter, val kind: FunctionKind) : BuiltInsSour
         if (i == 0) {
             out.println("    /** Invokes the function. */")
         } else {
-            out.println("    /** Invokes the function with the specified arguments. */")
+            val suffix = if (i == 1) "" else "s"
+            out.println("    /** Invokes the function with the specified argument${suffix}. */")
         }
         out.print("    public fun ${if (kind.hasReceiverParameter) "T." else ""}invoke(")
         for (j in 1..i) {

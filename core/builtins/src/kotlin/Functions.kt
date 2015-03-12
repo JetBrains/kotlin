@@ -20,12 +20,12 @@ package kotlin
 
 /** A function that takes 0 arguments. */
 public trait Function0<out R> {
-    /** Invokes the function with the specified arguments. */
+    /** Invokes the function. */
     public fun invoke(): R
 }
-/** A function that takes 1 arguments. */
+/** A function that takes 1 argument. */
 public trait Function1<in P1, out R> {
-    /** Invokes the function with the specified arguments. */
+    /** Invokes the function with the specified argument. */
     public fun invoke(p1: P1): R
 }
 /** A function that takes 2 arguments. */
