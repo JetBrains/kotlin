@@ -10749,6 +10749,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("valOrValAndModifiersInCtr.kt")
+            public void testValOrValAndModifiersInCtr() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/valOrValAndModifiersInCtr.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("varargsInDelegationCallToPrimary.kt")
             public void testVarargsInDelegationCallToPrimary() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/varargsInDelegationCallToPrimary.kt");

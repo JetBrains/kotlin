@@ -159,6 +159,7 @@ public class QuickFixRegistrar {
         QuickFixes.factories.put(VAL_OR_VAR_ON_FUN_PARAMETER, removeValVarFromParameterFixFactory);
         QuickFixes.factories.put(VAL_OR_VAR_ON_LOOP_PARAMETER, removeValVarFromParameterFixFactory);
         QuickFixes.factories.put(VAL_OR_VAR_ON_CATCH_PARAMETER, removeValVarFromParameterFixFactory);
+        QuickFixes.factories.put(VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER, removeValVarFromParameterFixFactory);
 
         QuickFixes.factories.put(VIRTUAL_MEMBER_HIDDEN, AddOverrideToEqualsHashCodeToStringFix.createFactory());
 
