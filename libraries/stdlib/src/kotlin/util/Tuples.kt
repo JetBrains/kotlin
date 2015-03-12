@@ -13,8 +13,8 @@ import java.io.Serializable
  *
  * @param A type of the first value
  * @param B type of the second value
- * @param first First value
- * @param second Second value
+ * @property first First value
+ * @property second Second value
  * @constructor Creates a new instance of Pair.
  */
 public data class Pair<out A, out B>(
@@ -29,7 +29,7 @@ public data class Pair<out A, out B>(
 }
 
 /**
- * Converts a pair into a list.
+ * Converts this pair into a list.
  */
 public fun <T> Pair<T, T>.toList(): List<T> = listOf(first, second)
 
@@ -44,9 +44,9 @@ public fun <T> Pair<T, T>.toList(): List<T> = listOf(first, second)
  * @param A type of the first value
  * @param B type of the second value
  * @param C type of the third value
- * @param first First value
- * @param second Second value
- * @param third Third value
+ * @property first First value
+ * @property second Second value
+ * @property third Third value
  */
 public data class Triple<out A, out B, out C>(
         public val first: A,
@@ -61,6 +61,6 @@ public data class Triple<out A, out B, out C>(
 }
 
 /**
- * Converts triple into a list
+ * Converts this triple into a list.
  */
 public fun <T> Triple<T, T, T>.toList(): List<T> = listOf(first, second, third)

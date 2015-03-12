@@ -19,7 +19,7 @@
 package kotlin
 
 /**
- * A range of values of type Byte.
+ * A range of values of type `Byte`.
  */
 public class ByteRange(override val start: Byte, override val end: Byte) : Range<Byte>, Progression<Byte> {
     override val increment: Int
@@ -45,7 +45,7 @@ public class ByteRange(override val start: Byte, override val end: Byte) : Range
 }
 
 /**
- * A range of values of type Char.
+ * A range of values of type `Char`.
  */
 public class CharRange(override val start: Char, override val end: Char) : Range<Char>, Progression<Char> {
     override val increment: Int
@@ -71,7 +71,7 @@ public class CharRange(override val start: Char, override val end: Char) : Range
 }
 
 /**
- * A range of values of type Short.
+ * A range of values of type `Short`.
  */
 public class ShortRange(override val start: Short, override val end: Short) : Range<Short>, Progression<Short> {
     override val increment: Int
@@ -97,7 +97,7 @@ public class ShortRange(override val start: Short, override val end: Short) : Ra
 }
 
 /**
- * A range of values of type Int.
+ * A range of values of type `Int`.
  */
 public class IntRange(override val start: Int, override val end: Int) : Range<Int>, Progression<Int> {
     override val increment: Int
@@ -123,7 +123,7 @@ public class IntRange(override val start: Int, override val end: Int) : Range<In
 }
 
 /**
- * A range of values of type Long.
+ * A range of values of type `Long`.
  */
 public class LongRange(override val start: Long, override val end: Long) : Range<Long>, Progression<Long> {
     override val increment: Long
@@ -149,7 +149,7 @@ public class LongRange(override val start: Long, override val end: Long) : Range
 }
 
 /**
- * A range of values of type Float.
+ * A range of values of type `Float`.
  */
 public class FloatRange(override val start: Float, override val end: Float) : Range<Float>, Progression<Float> {
     override val increment: Float
@@ -175,7 +175,7 @@ public class FloatRange(override val start: Float, override val end: Float) : Ra
 }
 
 /**
- * A range of values of type Double.
+ * A range of values of type `Double`.
  */
 public class DoubleRange(override val start: Double, override val end: Double) : Range<Double>, Progression<Double> {
     override val increment: Double

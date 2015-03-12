@@ -2,12 +2,27 @@ package kotlin
 
 import java.util.*
 
+/**
+ * A sequence that returns values through its iterator. The values are evaluated lazily, and the sequence
+ * is potentially infinite.
+ *
+ * @param T the type of elements in the sequence.
+ */
 public trait Stream<out T> {
+    /**
+     * Returns an iterator that returns the values from the sequence.
+     */
     public fun iterator(): Iterator<T>
 }
 
+/**
+ * Creates a stream that returns the specified values.
+ */
 public fun <T> streamOf(vararg elements: T): Stream<T> = elements.stream()
 
+/**
+ * Creates a stream that returns all values in the specified [progression].
+ */
 public fun <T> streamOf(progression: Progression<T>): Stream<T> = object : Stream<T> {
     override fun iterator(): Iterator<T> = progression.iterator()
 }
@@ -60,6 +75,10 @@ public class FilteringStream<T>(private val stream: Stream<T>,
     }
 }
 
+/**
+ * A stream which returns the results of applying the given [transformer] function to the values
+ * in the underlying [stream].
+ */
 public class TransformingStream<T, R>(private val stream: Stream<T>, private val transformer: (T) -> R) : Stream<R> {
     override fun iterator(): Iterator<R> = object : Iterator<R> {
         val iterator = stream.iterator()
@@ -72,6 +91,11 @@ public class TransformingStream<T, R>(private val stream: Stream<T>, private val
     }
 }
 
+/**
+ * A stream which returns the results of applying the given [transformer] function to the values
+ * in the underlying [stream], where the transformer function takes the index of the value in the underlying
+ * stream along with the value itself.
+ */
 public class TransformingIndexedStream<T, R>(private val stream: Stream<T>, private val transformer: (Int, T) -> R) : Stream<R> {
     override fun iterator(): Iterator<R> = object : Iterator<R> {
         val iterator = stream.iterator()
@@ -103,6 +127,11 @@ public class IndexingStream<T>(private val stream: Stream<T>) : Stream<IndexedVa
     }
 }
 
+/**
+ * A stream which takes the values from two parallel underlying streams, passes them to the given
+ * [transform] function and returns the values returned by that function. The stream stops returning
+ * values as soon as one of the underlying streams stops returning values.
+ */
 public class MergingStream<T1, T2, V>(private val stream1: Stream<T1>,
                                       private val stream2: Stream<T2>,
                                       private val transform: (T1, T2) -> V
@@ -193,6 +222,10 @@ public class Multistream<T>(private val stream: Stream<Stream<T>>) : Stream<T> {
     }
 }
 
+/**
+ * A stream that returns at most [count] values from the underlying [stream], and stops returning values
+ * as soon as that count is reached.
+ */
 public class TakeStream<T>(private val stream: Stream<T>,
                            private val count: Int
                           ) : Stream<T> {
@@ -218,6 +251,10 @@ public class TakeStream<T>(private val stream: Stream<T>,
     }
 }
 
+/**
+ * A stream that returns values from the underlying [stream] while the [predicate] function returns
+ * `true`, and stops returning values once the function returns `false` for the next element.
+ */
 public class TakeWhileStream<T>(private val stream: Stream<T>,
                                 private val predicate: (T) -> Boolean
                                ) : Stream<T> {
@@ -382,7 +419,7 @@ public class FunctionStream<T : Any>(private val producer: () -> T?) : Stream<T>
 }
 
 /**
- * Returns a stream which invokes the function to calculate the next value on each iteration until the function returns *null*
+ * Returns a stream which invokes the function to calculate the next value on each iteration until the function returns `null`.
  */
 public fun <T : Any> stream(nextFunction: () -> T?): Stream<T> {
     return FunctionStream(nextFunction)
@@ -390,7 +427,7 @@ public fun <T : Any> stream(nextFunction: () -> T?): Stream<T> {
 
 /**
  * Returns a stream which invokes the function to calculate the next value based on the previous one on each iteration
- * until the function returns *null*
+ * until the function returns `null`.
  */
 public /*inline*/ fun <T : Any> stream(initialValue: T, nextFunction: (T) -> T?): Stream<T> =
         stream(nextFunction.toGenerator(initialValue))

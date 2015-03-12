@@ -14,11 +14,26 @@
  * limitations under the License.
  */
 
-package kotlin
+package kotlin.js.dom.html5
 
-/**
- * The type with only one value: the Unit object. This type corresponds to the `void` type in Java.
- */
-public object Unit {
-    override fun toString() = "kotlin.Unit"
+native
+public val localStorage: Storage = noImpl
+
+native
+public val sessionStorage: Storage = noImpl
+
+native
+public trait Storage {
+    public val length: Int = noImpl
+
+    public fun key(index: Int): String? = noImpl
+
+    native("getItem")
+    public fun get(key: String): String? = noImpl
+    native("setItem")
+    public fun set(key: String, value: String) {}
+
+    native("removeItem")
+    public fun remove(key: String) {}
+    public fun clear() {}
 }
