@@ -276,8 +276,7 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
             }
         }
         else {
-            // TODO: Compiler bug
-            doIfNotNull(dataFlowValue, c as ResolutionContext<*>) {
+            doIfNotNull(dataFlowValue, c) {
                 c.trace.report(Errors.UNNECESSARY_SAFE_CALL.on(c.call.getCallOperationNode().getPsi(), receiverArgument.getType()))
             }
         }

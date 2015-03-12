@@ -69,7 +69,7 @@ public fun <C: ResolutionContext<C>> Call.hasUnresolvedArguments(context: Resolu
     return arguments.any {
         argument ->
         val expressionType = context.trace.getBindingContext()[BindingContext.EXPRESSION_TYPE, argument]
-        argument != null && !ArgumentTypeResolver.isFunctionLiteralArgument(argument, context as ResolutionContext<*>)
+        argument != null && !ArgumentTypeResolver.isFunctionLiteralArgument(argument, context)
                 && (expressionType == null || expressionType.isError())
     }
 }
