@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.types.isFlexible
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.header.isCompatiblePackageFacadeKind
 import org.jetbrains.kotlin.load.kotlin.header.isCompatibleClassKind
+import org.jetbrains.kotlin.resolve.descriptorUtil.secondaryConstructors
 import org.jetbrains.kotlin.types.flexibility
 
 private val FILE_ABI_VERSION_MARKER: String = "FILE_ABI"
@@ -85,6 +86,7 @@ private val descriptorRendererForDecompiler = DescriptorRendererBuilder()
             else type
 
         }
+        .setSecondaryConstructorsAsPrimary(false)
         .build()
 
 private val descriptorRendererForKeys = DescriptorRenderer.COMPACT_WITH_MODIFIERS
@@ -153,7 +155,8 @@ private fun buildDecompiledText(packageFqName: FqName, descriptors: List<Declara
                     builder.append(subindent)
                     appendDescriptor(defaultObject, subindent)
                 }
-                for (member in descriptor.getDefaultType().getMemberScope().getDescriptors()) {
+                val allDescriptors = descriptor.secondaryConstructors + descriptor.getDefaultType().getMemberScope().getDescriptors()
+                for (member in allDescriptors) {
                     if (member.getContainingDeclaration() != descriptor) {
                         continue
                     }

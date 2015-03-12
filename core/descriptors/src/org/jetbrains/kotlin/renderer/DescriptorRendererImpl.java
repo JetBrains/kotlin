@@ -76,6 +76,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     @NotNull
     private final TextFormat textFormat;
     private final boolean includePropertyConstant;
+    private final boolean secondaryConstructorsAsPrimary;
     @NotNull
     private final Set<FqName> excludedAnnotationClasses;
 
@@ -105,7 +106,8 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             boolean withoutSuperTypes,
             @NotNull Function1<JetType, JetType> typeNormalizer,
             boolean renderDefaultValues,
-            boolean flexibleTypesForCode
+            boolean flexibleTypesForCode,
+            boolean secondaryConstructorsAsPrimary
     ) {
         this.nameShortness = nameShortness;
         this.withDefinedIn = withDefinedIn;
@@ -121,6 +123,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         this.debugMode = debugMode;
         this.textFormat = textFormat;
         this.includePropertyConstant = includePropertyConstant;
+        this.secondaryConstructorsAsPrimary = secondaryConstructorsAsPrimary;
         this.excludedAnnotationClasses = new HashSet<FqName>(excludedAnnotationClasses);
         this.prettyFunctionTypes = prettyFunctionTypes;
         this.uninferredTypeParameterAsName = uninferredTypeParameterAsName;
@@ -802,14 +805,19 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         renderVisibility(constructor.getVisibility(), builder);
         renderMemberKind(constructor, builder);
 
-        builder.append(renderKeyword("constructor")).append(" ");
+        builder.append(renderKeyword("constructor"));
+        if (secondaryConstructorsAsPrimary) {
+            ClassDescriptor classDescriptor = constructor.getContainingDeclaration();
+            builder.append(" ");
+            renderName(classDescriptor, builder);
+            renderTypeParameters(classDescriptor.getTypeConstructor().getParameters(), builder, false);
+        }
 
-        ClassDescriptor classDescriptor = constructor.getContainingDeclaration();
-        renderName(classDescriptor, builder);
-
-        renderTypeParameters(classDescriptor.getTypeConstructor().getParameters(), builder, false);
         renderValueParameters(constructor, builder);
-        renderWhereSuffix(constructor.getTypeParameters(), builder);
+
+        if (secondaryConstructorsAsPrimary) {
+            renderWhereSuffix(constructor.getTypeParameters(), builder);
+        }
     }
 
     private void renderWhereSuffix(@NotNull List<TypeParameterDescriptor> typeParameters, @NotNull StringBuilder builder) {

@@ -135,7 +135,7 @@ private class ClassClsStubBuilder(
     }
 
     private fun createConstructorStub() {
-        if (!isClass()) return
+        if (!isClass() || !classProto.hasPrimaryConstructor()) return
 
         val primaryConstructorProto = classProto.getPrimaryConstructor()
         if (primaryConstructorProto.hasData()) {
@@ -198,7 +198,8 @@ private class ClassClsStubBuilder(
 
     private fun createCallableMemberStubs(classBody: KotlinPlaceHolderStubImpl<JetClassBody>) {
         val container = ProtoContainer(classProto, null)
-        for (callableProto in classProto.getMemberList()) {
+        val allMembers = classProto.getSecondaryConstructorList() + classProto.getMemberList()
+        for (callableProto in allMembers) {
             createCallableStub(classBody, callableProto, c, container)
         }
     }

@@ -1,0 +1,95 @@
+PsiJetFileStubImpl[package=test]
+  PACKAGE_DIRECTIVE:
+    REFERENCE_EXPRESSION:[referencedName=test]
+  CLASS:[fqName=test.SecondaryConstructors, isEnumEntry=false, isLocal=false, isTopLevel=true, isTrait=false, name=SecondaryConstructors, superNames=[]]
+    MODIFIER_LIST:[internal final]
+    VALUE_PARAMETER_LIST:
+      VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=x]
+        TYPE_REFERENCE:
+          USER_TYPE:[isAbsoluteInRootPackage=false]
+            USER_TYPE:[isAbsoluteInRootPackage=false]
+              REFERENCE_EXPRESSION:[referencedName=kotlin]
+            REFERENCE_EXPRESSION:[referencedName=Boolean]
+    CLASS_BODY:
+      SECONDARY_CONSTRUCTOR:
+        MODIFIER_LIST:[public]
+          ANNOTATION_ENTRY:[hasValueArguments=false, shortName=anno]
+            CONSTRUCTOR_CALLEE:
+              TYPE_REFERENCE:
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                    REFERENCE_EXPRESSION:[referencedName=test]
+                  REFERENCE_EXPRESSION:[referencedName=anno]
+        VALUE_PARAMETER_LIST:
+          VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=x]
+            TYPE_REFERENCE:
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  REFERENCE_EXPRESSION:[referencedName=kotlin]
+                REFERENCE_EXPRESSION:[referencedName=String]
+      SECONDARY_CONSTRUCTOR:
+        MODIFIER_LIST:[private]
+        VALUE_PARAMETER_LIST:
+          VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=x]
+            TYPE_REFERENCE:
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  REFERENCE_EXPRESSION:[referencedName=kotlin]
+                REFERENCE_EXPRESSION:[referencedName=Int]
+      CLASS:[fqName=test.SecondaryConstructors.Inner, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=Inner, superNames=[]]
+        MODIFIER_LIST:[inner internal final]
+        TYPE_PARAMETER_LIST:
+          TYPE_PARAMETER:[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+            TYPE_REFERENCE:
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  REFERENCE_EXPRESSION:[referencedName=kotlin]
+                REFERENCE_EXPRESSION:[referencedName=String]
+          TYPE_PARAMETER:[fqName=null, isInVariance=false, isOutVariance=false, name=G]
+            TYPE_REFERENCE:
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  REFERENCE_EXPRESSION:[referencedName=kotlin]
+                REFERENCE_EXPRESSION:[referencedName=Int]
+        TYPE_CONSTRAINT_LIST:
+          TYPE_CONSTRAINT:[isDefaultObjectConstraint=false]
+            REFERENCE_EXPRESSION:[referencedName=G]
+            TYPE_REFERENCE:
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  REFERENCE_EXPRESSION:[referencedName=kotlin]
+                REFERENCE_EXPRESSION:[referencedName=Number]
+        CLASS_BODY:
+          SECONDARY_CONSTRUCTOR:
+            MODIFIER_LIST:[public]
+            VALUE_PARAMETER_LIST:
+              VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=x]
+                TYPE_REFERENCE:
+                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                    REFERENCE_EXPRESSION:[referencedName=T]
+              VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=g]
+                TYPE_REFERENCE:
+                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                    REFERENCE_EXPRESSION:[referencedName=G]
+      CLASS:[fqName=test.SecondaryConstructors.Nested, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=Nested, superNames=[]]
+        MODIFIER_LIST:[internal final]
+        CLASS_BODY:
+          SECONDARY_CONSTRUCTOR:
+            MODIFIER_LIST:[public]
+              ANNOTATION_ENTRY:[hasValueArguments=false, shortName=anno]
+                CONSTRUCTOR_CALLEE:
+                  TYPE_REFERENCE:
+                    USER_TYPE:[isAbsoluteInRootPackage=false]
+                      USER_TYPE:[isAbsoluteInRootPackage=false]
+                        REFERENCE_EXPRESSION:[referencedName=test]
+                      REFERENCE_EXPRESSION:[referencedName=anno]
+            VALUE_PARAMETER_LIST:
+              VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=z]
+                TYPE_REFERENCE:
+                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                    USER_TYPE:[isAbsoluteInRootPackage=false]
+                      REFERENCE_EXPRESSION:[referencedName=kotlin]
+                    REFERENCE_EXPRESSION:[referencedName=Int]
+          SECONDARY_CONSTRUCTOR:
+            MODIFIER_LIST:[internal]
+            VALUE_PARAMETER_LIST:

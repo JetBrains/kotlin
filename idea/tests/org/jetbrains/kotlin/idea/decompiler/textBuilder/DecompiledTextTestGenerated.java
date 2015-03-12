@@ -86,6 +86,12 @@ public class DecompiledTextTestGenerated extends AbstractDecompiledTextTest {
         doTest(fileName);
     }
 
+    @TestMetadata("SecondaryConstructors")
+    public void testSecondaryConstructors() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/SecondaryConstructors/");
+        doTest(fileName);
+    }
+
     @TestMetadata("SimpleClass")
     public void testSimpleClass() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/SimpleClass/");
