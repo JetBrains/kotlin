@@ -68,7 +68,7 @@ object KeywordCompletion {
         }
     }
 
-    private val FUNCTION_KEYWORDS = listOf(GET_KEYWORD, SET_KEYWORD)
+    private val FUNCTION_KEYWORDS = listOf(GET_KEYWORD, SET_KEYWORD, CONSTRUCTOR_KEYWORD)
 
     private val GENERAL_FILTER = NotFilter(OrFilter(
             CommentFilter(),

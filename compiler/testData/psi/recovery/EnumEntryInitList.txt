@@ -18,7 +18,7 @@ JetFile: EnumEntryInitList.kt
         PsiElement(COLON)(':')
         PsiWhiteSpace('\n')
         INITIALIZER_LIST
-          PsiErrorElement:Expecting constructor call (this(...)) or supertype initializer
+          PsiErrorElement:Expecting constructor call (<class-name>(...))
             <empty list>
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
@@ -39,7 +39,7 @@ JetFile: EnumEntryInitList.kt
         PsiElement(COLON)(':')
         PsiWhiteSpace('\n\n    ')
         INITIALIZER_LIST
-          PsiErrorElement:Expecting constructor call (this(...)) or supertype initializer
+          PsiErrorElement:Expecting constructor call (<class-name>(...))
             <empty list>
       FUN
         PsiElement(fun)('fun')
@@ -72,7 +72,7 @@ JetFile: EnumEntryInitList.kt
         PsiElement(COLON)(':')
         PsiWhiteSpace('\n\n    ')
         INITIALIZER_LIST
-          PsiErrorElement:Expecting constructor call (this(...)) or supertype initializer
+          PsiErrorElement:Expecting constructor call (<class-name>(...))
             <empty list>
       PROPERTY
         PsiElement(val)('val')
@@ -103,7 +103,7 @@ JetFile: EnumEntryInitList.kt
         PsiElement(COLON)(':')
         PsiWhiteSpace('\n\n    ')
         INITIALIZER_LIST
-          PsiErrorElement:Expecting constructor call (this(...)) or supertype initializer
+          PsiErrorElement:Expecting constructor call (<class-name>(...))
             <empty list>
       CLASS
         PsiElement(class)('class')
@@ -139,7 +139,7 @@ JetFile: EnumEntryInitList.kt
               PsiElement(LPAR)('(')
               PsiElement(RPAR)(')')
           PsiElement(COMMA)(',')
-          PsiErrorElement:Expecting constructor call (this(...)) or supertype initializer
+          PsiErrorElement:Expecting constructor call (<class-name>(...))
             <empty list>
       PsiWhiteSpace('\n\n    ')
       CLASS
@@ -176,7 +176,7 @@ JetFile: EnumEntryInitList.kt
               PsiElement(LPAR)('(')
               PsiElement(RPAR)(')')
           PsiElement(COMMA)(',')
-          PsiErrorElement:Expecting constructor call (this(...)) or supertype initializer
+          PsiErrorElement:Expecting constructor call (<class-name>(...))
             <empty list>
         PsiElement(SEMICOLON)(';')
       PsiWhiteSpace('\n\n    ')

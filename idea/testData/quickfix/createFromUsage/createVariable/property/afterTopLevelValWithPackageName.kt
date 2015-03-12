@@ -3,8 +3,8 @@
 
 package foo
 
+val foo: Int
+
 fun test(): Int {
     return foo
 }
-
-val foo: Int

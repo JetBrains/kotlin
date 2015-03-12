@@ -70,6 +70,7 @@ import java.util.regex.Pattern;
         BlackBoxCodegenTestGenerated.Regressions.class,
         BlackBoxCodegenTestGenerated.SafeCall.class,
         BlackBoxCodegenTestGenerated.SamConstructors.class,
+        BlackBoxCodegenTestGenerated.SecondaryConstructors.class,
         BlackBoxCodegenTestGenerated.StaticFields.class,
         BlackBoxCodegenTestGenerated.Strings.class,
         BlackBoxCodegenTestGenerated.Super.class,
@@ -1006,6 +1007,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("defaultObjectSameNamesAsInOuter.kt")
+        public void testDefaultObjectSameNamesAsInOuter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/defaultObjectSameNamesAsInOuter.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("delegation2.kt")
         public void testDelegation2() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/delegation2.kt");
@@ -1712,6 +1719,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("simplestClosureAndBoxing.kt")
         public void testSimplestClosureAndBoxing() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/closures/simplestClosureAndBoxing.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("subclosuresWithinInitializers.kt")
+        public void testSubclosuresWithinInitializers() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/closures/subclosuresWithinInitializers.kt");
             doTest(fileName);
         }
 
@@ -6266,6 +6279,123 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("syntheticVsReal.kt")
         public void testSyntheticVsReal() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/samConstructors/syntheticVsReal.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/box/secondaryConstructors")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class SecondaryConstructors extends AbstractBlackBoxCodegenTest {
+        public void testAllFilesPresentInSecondaryConstructors() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/secondaryConstructors"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("basicNoPrimaryManySinks.kt")
+        public void testBasicNoPrimaryManySinks() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/basicNoPrimaryManySinks.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("basicNoPrimaryOneSink.kt")
+        public void testBasicNoPrimaryOneSink() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/basicNoPrimaryOneSink.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("basicPrimary.kt")
+        public void testBasicPrimary() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/basicPrimary.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("clashingDefaultConstructors.kt")
+        public void testClashingDefaultConstructors() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/clashingDefaultConstructors.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("dataClasses.kt")
+        public void testDataClasses() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/dataClasses.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("defaultArgs.kt")
+        public void testDefaultArgs() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/defaultArgs.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("delegationWithPrimary.kt")
+        public void testDelegationWithPrimary() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/delegationWithPrimary.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("enums.kt")
+        public void testEnums() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/enums.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("generics.kt")
+        public void testGenerics() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/generics.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("innerClasses.kt")
+        public void testInnerClasses() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/innerClasses.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("innerClassesInheritance.kt")
+        public void testInnerClassesInheritance() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/innerClassesInheritance.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("localClasses.kt")
+        public void testLocalClasses() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/localClasses.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("superCallPrimary.kt")
+        public void testSuperCallPrimary() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/superCallPrimary.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("superCallSecondary.kt")
+        public void testSuperCallSecondary() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/superCallSecondary.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("varargs.kt")
+        public void testVarargs() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/varargs.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withNonLocalReturn.kt")
+        public void testWithNonLocalReturn() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/withNonLocalReturn.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withReturn.kt")
+        public void testWithReturn() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/withReturn.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withReturnUnit.kt")
+        public void testWithReturnUnit() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/withReturnUnit.kt");
             doTest(fileName);
         }
     }

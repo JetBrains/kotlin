@@ -11,7 +11,7 @@ class Foo {
 
     private val privateProperty = object : MyClass(), MyTrait {}
 
-    {
+    init {
       privateProperty.f1()
       privateProperty.f2()
     }
@@ -27,7 +27,7 @@ class Foo {
 
     private fun privateFunction() = object : MyClass(), MyTrait {}
 
-    {
+    init {
       privateFunction().f1()
       privateFunction().f2()
     }
@@ -45,7 +45,7 @@ class Foo {
   class FooInner {
     private val privatePropertyInner = object : MyClass(), MyTrait {}
 
-    {
+    init {
         privatePropertyInner.f1()
         privatePropertyInner.f2()
     }
@@ -61,7 +61,7 @@ class Foo {
 
     private fun privateFunctionInner() = object : MyClass(), MyTrait {}
 
-    {
+    init {
       privateFunctionInner().f1()
       privateFunctionInner().f2()
     }

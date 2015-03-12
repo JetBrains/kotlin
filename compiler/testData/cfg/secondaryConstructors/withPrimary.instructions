@@ -1,0 +1,115 @@
+== A ==
+class A(val w: Char) {
+    val x: Int
+    var y: Int
+    val z: Int
+    val v = -1
+
+    constructor(): this('a') {
+        y = 2
+    }
+
+    // anonymous
+    init {
+        x = w
+        z = 8
+    }
+
+    constructor(a: Int, b: Int = 3): this(b.toChar()) {
+        y = x
+    }
+
+    // anonymous
+    init {
+        y = 9
+    }
+}
+---------------------
+L0:
+  1 <START>
+    v(val w: Char)
+    magic[FAKE_INITIALIZER](val w: Char) -> <v0>
+    w(w|<v0>)
+    v(val x: Int)
+    v(var y: Int)
+    v(val z: Int)
+    v(val v = -1)
+    r(1) -> <v1>
+    mark(-1)
+    call(-1, minus|<v1>) -> <v2>
+    w(v|<v2>)
+  2 mark({ x = w z = 8 })
+    magic[IMPLICIT_RECEIVER](x) -> <v3>
+    magic[IMPLICIT_RECEIVER](w) -> <v4>
+    r(w|<v4>) -> <v5>
+    w(x|<v3>, <v5>)
+    magic[IMPLICIT_RECEIVER](z) -> <v6>
+    r(8) -> <v7>
+    w(z|<v6>, <v7>)
+    mark({ y = 9 })
+    magic[IMPLICIT_RECEIVER](y) -> <v9>
+    r(9) -> <v10>
+    w(y|<v9>, <v10>)
+L1:
+  1 <END>                                           NEXT:[<SINK>]
+error:
+    <ERROR>                                         PREV:[]
+sink:
+    <SINK>                                          PREV:[<ERROR>, <END>]
+=====================
+== <init> ==
+constructor(): this('a') {
+        y = 2
+    }
+---------------------
+L0:
+  1 <START>
+    r('a') -> <v0>
+    mark(this('a'))
+    call(this('a'), <init>|<v0>) -> <v1>
+  2 mark({ y = 2 })
+    magic[IMPLICIT_RECEIVER](y) -> <v2>
+    r(2) -> <v3>
+    w(y|<v2>, <v3>)
+L1:
+  1 <END>                                   NEXT:[<SINK>]
+error:
+    <ERROR>                                 PREV:[]
+sink:
+    <SINK>                                  PREV:[<ERROR>, <END>]
+=====================
+== <init> ==
+constructor(a: Int, b: Int = 3): this(b.toChar()) {
+        y = x
+    }
+---------------------
+L0:
+  1 <START>
+    v(a: Int)
+    magic[FAKE_INITIALIZER](a: Int) -> <v0>
+    w(a|<v0>)
+    v(b: Int = 3)
+    jmp?(L2)                                       NEXT:[magic[FAKE_INITIALIZER](b: Int = 3) -> <v2>, r(3) -> <v1>]
+    r(3) -> <v1>
+L2 [after default value for parameter b]:
+    magic[FAKE_INITIALIZER](b: Int = 3) -> <v2>    PREV:[jmp?(L2), r(3) -> <v1>]
+    merge(b: Int = 3|<v1>, <v2>) -> <v3>
+    w(b|<v3>)
+    mark(b.toChar())
+    r(b) -> <v4>
+    mark(toChar())
+    call(toChar(), toChar|<v4>) -> <v5>
+    mark(this(b.toChar()))
+    call(this(b.toChar()), <init>|<v5>) -> <v6>
+  2 mark({ y = x })
+    magic[IMPLICIT_RECEIVER](y) -> <v7>
+    magic[IMPLICIT_RECEIVER](x) -> <v8>
+    r(x|<v8>) -> <v9>
+    w(y|<v7>, <v9>)
+L1:
+  1 <END>                                          NEXT:[<SINK>]
+error:
+    <ERROR>                                        PREV:[]
+sink:
+    <SINK>                                         PREV:[<ERROR>, <END>]
+=====================

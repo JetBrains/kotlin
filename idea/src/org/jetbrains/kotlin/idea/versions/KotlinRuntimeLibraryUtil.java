@@ -157,6 +157,7 @@ public class KotlinRuntimeLibraryUtil {
                 for (Library library : libraries) {
                     if (LibraryPresentationProviderUtil.isDetected(JavaRuntimePresentationProvider.getInstance(), library)) {
                         updateJar(project, JavaRuntimePresentationProvider.getRuntimeJar(library), LibraryJarDescriptor.RUNTIME_JAR);
+                        updateJar(project, JavaRuntimePresentationProvider.getReflectJar(library), LibraryJarDescriptor.REFLECT_JAR);
 
                         if (configurator.changeOldSourcesPathIfNeeded(library)) {
                             configurator.copySourcesToPathFromLibrary(library);
@@ -179,20 +180,22 @@ public class KotlinRuntimeLibraryUtil {
             @Nullable VirtualFile fileToReplace,
             @NotNull LibraryJarDescriptor libraryJarDescriptor
     ) {
-        if (fileToReplace == null && !libraryJarDescriptor.shouldExists) {
+        if (fileToReplace == null && !libraryJarDescriptor.shouldExist) {
             return;
         }
 
         KotlinPaths paths = PathUtil.getKotlinPathsForIdeaPlugin();
-        File runtimePath = null;
+        File jarPath;
         switch (libraryJarDescriptor) {
-            case RUNTIME_JAR: runtimePath = paths.getRuntimePath(); break;
-            case RUNTIME_SRC_JAR: runtimePath = paths.getRuntimeSourcesPath(); break;
-            case JS_STDLIB_JAR: runtimePath = paths.getJsStdLibJarPath(); break;
-            case JS_STDLIB_SRC_JAR: runtimePath = paths.getJsStdLibSrcJarPath(); break;
+            case RUNTIME_JAR: jarPath = paths.getRuntimePath(); break;
+            case REFLECT_JAR: jarPath = paths.getReflectPath(); break;
+            case RUNTIME_SRC_JAR: jarPath = paths.getRuntimeSourcesPath(); break;
+            case JS_STDLIB_JAR: jarPath = paths.getJsStdLibJarPath(); break;
+            case JS_STDLIB_SRC_JAR: jarPath = paths.getJsStdLibSrcJarPath(); break;
+            default: jarPath = null; break;
         }
 
-        if (!runtimePath.exists()) {
+        if (!jarPath.exists()) {
             showRuntimeJarNotFoundDialog(project, libraryJarDescriptor.jarName).run();
             return;
         }
@@ -200,7 +203,7 @@ public class KotlinRuntimeLibraryUtil {
         VirtualFile localJar = getLocalJar(fileToReplace);
         assert localJar != null;
 
-        replaceFile(runtimePath, localJar);
+        replaceFile(jarPath, localJar);
     }
 
     @NotNull
@@ -231,16 +234,17 @@ public class KotlinRuntimeLibraryUtil {
 
     private enum LibraryJarDescriptor {
         RUNTIME_JAR(PathUtil.KOTLIN_JAVA_RUNTIME_JAR, true),
+        REFLECT_JAR(PathUtil.KOTLIN_JAVA_REFLECT_JAR, false),
         RUNTIME_SRC_JAR(PathUtil.KOTLIN_JAVA_RUNTIME_SRC_JAR, false),
         JS_STDLIB_JAR(PathUtil.JS_LIB_JAR_NAME, true),
         JS_STDLIB_SRC_JAR(PathUtil.JS_LIB_SRC_JAR_NAME, false);
 
-        @NotNull public final String jarName;
-        private final boolean shouldExists;
+        public final String jarName;
+        private final boolean shouldExist;
 
-        LibraryJarDescriptor(@NotNull String jarName, boolean shouldExists) {
+        LibraryJarDescriptor(@NotNull String jarName, boolean shouldExist) {
             this.jarName = jarName;
-            this.shouldExists = shouldExists;
+            this.shouldExist = shouldExist;
         }
     }
 

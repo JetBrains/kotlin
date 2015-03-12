@@ -162,7 +162,7 @@ public class CodegenBinding {
         JetElement element = (JetElement) descriptorToDeclaration(classDescriptor);
         assert element != null : "No source element for " + classDescriptor;
 
-        MutableClosure closure = new MutableClosure(classDescriptor, findSuperCall(trace.getBindingContext(), element), enclosing);
+        MutableClosure closure = new MutableClosure(classDescriptor, enclosing);
 
         if (classDescriptor.isInner()) {
             closure.setCaptureThis();
@@ -269,31 +269,6 @@ public class CodegenBinding {
         Type type = bindingContext.get(ASM_TYPE, klass);
         assert type != null : "Type is not yet recorded for " + klass;
         return type;
-    }
-
-    @Nullable
-    private static ResolvedCall<ConstructorDescriptor> findSuperCall(
-            @NotNull BindingContext bindingContext,
-            @NotNull JetElement classOrObject
-    ) {
-        if (!(classOrObject instanceof JetClassOrObject)) return null;
-
-        if (classOrObject instanceof JetClass && ((JetClass) classOrObject).isTrait()) return null;
-
-        for (JetDelegationSpecifier specifier : ((JetClassOrObject) classOrObject).getDelegationSpecifiers()) {
-            if (!(specifier instanceof JetDelegatorToSuperCall)) continue;
-
-            ResolvedCall<?> resolvedCall = getResolvedCall(specifier, bindingContext);
-            if (resolvedCall == null) continue;
-
-            CallableDescriptor constructor = resolvedCall.getResultingDescriptor();
-            if (constructor instanceof ConstructorDescriptor && !isInterface(constructor.getContainingDeclaration())) {
-                //noinspection unchecked
-                return (ResolvedCall<ConstructorDescriptor>) resolvedCall;
-            }
-        }
-
-        return null;
     }
 
     @NotNull

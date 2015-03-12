@@ -106,6 +106,10 @@ public class TypeCheckingProcedure {
             TypeProjection typeProjection1 = type1Arguments.get(i);
             TypeParameterDescriptor typeParameter2 = constructor2.getParameters().get(i);
             TypeProjection typeProjection2 = type2Arguments.get(i);
+            if (typeProjection1.isStarProjection() && typeProjection2.isStarProjection()) {
+                continue;
+            }
+
             if (capture(typeProjection1, typeProjection2, typeParameter1)) {
                 continue;
             }
@@ -227,13 +231,15 @@ public class TypeCheckingProcedure {
         for (int i = 0; i < parameters.size(); i++) {
             TypeParameterDescriptor parameter = parameters.get(i);
 
+            TypeProjection superArgument = superArguments.get(i);
+            if (superArgument.isStarProjection()) continue;
+
+            JetType superIn = getInType(parameter, superArgument);
+            JetType superOut = getOutType(parameter, superArgument);
+
             TypeProjection subArgument = subArguments.get(i);
             JetType subIn = getInType(parameter, subArgument);
             JetType subOut = getOutType(parameter, subArgument);
-
-            TypeProjection superArgument = superArguments.get(i);
-            JetType superIn = getInType(parameter, superArgument);
-            JetType superOut = getOutType(parameter, superArgument);
 
             if (capture(subArgument, superArgument, parameter)) continue;
 

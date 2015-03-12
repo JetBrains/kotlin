@@ -262,9 +262,13 @@ public open class LazyClassMemberScope(
 
     override fun getPackage(name: Name): PackageViewDescriptor? = null
 
-    public fun getConstructors(): Set<ConstructorDescriptor> {
-        val constructor = getPrimaryConstructor()
-        return if (constructor != null) setOf(constructor) else setOf()
+    private val secondaryConstructors: NotNullLazyValue<Collection<ConstructorDescriptor>>
+            = c.storageManager.createLazyValue { resolveSecondaryConstructors() }
+
+    public fun getConstructors(): Collection<ConstructorDescriptor> {
+        val result = secondaryConstructors()
+        val primaryConstructor = getPrimaryConstructor()
+        return if (primaryConstructor == null) result else result + primaryConstructor
     }
 
     public fun getPrimaryConstructor(): ConstructorDescriptor? = primaryConstructor()
@@ -278,7 +282,7 @@ public open class LazyClassMemberScope(
                 classOrObject as JetClass
                 val constructor = c.descriptorResolver.resolvePrimaryConstructorDescriptor(
                         thisDescriptor.getScopeForClassHeaderResolution(), thisDescriptor, classOrObject, trace)
-                assert(constructor != null) { "No constructor created for $thisDescriptor" }
+                constructor ?: return null
                 setDeferredReturnType(constructor)
                 return constructor
             }
@@ -291,6 +295,21 @@ public open class LazyClassMemberScope(
         return null
     }
 
+    private fun resolveSecondaryConstructors(): Collection<ConstructorDescriptor> {
+        val classOrObject = declarationProvider.getOwnerInfo().getCorrespondingClassOrObject()
+        if (!DescriptorUtils.canHaveSecondaryConstructors(thisDescriptor)) return emptyList()
+        // Script classes have usual class descriptors but do not have conventional class body
+        if (classOrObject !is JetClass) return emptyList()
+
+        return classOrObject.getSecondaryConstructors().map { constructor ->
+            val descriptor = c.descriptorResolver.resolveSecondaryConstructorDescriptor(
+                    thisDescriptor.getScopeForSecondaryConstructorHeaderResolution(), thisDescriptor, constructor, trace
+            )
+            setDeferredReturnType(descriptor)
+            descriptor
+        }
+    }
+
     protected fun setDeferredReturnType(descriptor: ConstructorDescriptorImpl) {
         descriptor.setReturnType(DeferredType.create(c.storageManager, trace, { thisDescriptor.getDefaultType() }))
     }
@@ -298,7 +317,7 @@ public open class LazyClassMemberScope(
     // Do not add details here, they may compromise the laziness during debugging
     override fun toString() = "lazy scope for class ${thisDescriptor.getName()}"
 
-    class object {
+    default object {
         private val GENERATE_CONSTRUCTORS_FOR = setOf(ClassKind.CLASS,
                                                       ClassKind.ANNOTATION_CLASS,
                                                       ClassKind.OBJECT,

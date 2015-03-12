@@ -35,6 +35,7 @@ import java.util.regex.Pattern;
         QuickFixMultiFileTestGenerated.AutoImports.class,
         QuickFixMultiFileTestGenerated.ChangeSignature.class,
         QuickFixMultiFileTestGenerated.CreateFromUsage.class,
+        QuickFixMultiFileTestGenerated.Migration.class,
         QuickFixMultiFileTestGenerated.Modifiers.class,
         QuickFixMultiFileTestGenerated.Nullables.class,
         QuickFixMultiFileTestGenerated.Override.class,
@@ -850,6 +851,21 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
                     doTestWithExtraFile(fileName);
                 }
             }
+        }
+    }
+
+    @TestMetadata("idea/testData/quickfix/migration")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Migration extends AbstractQuickFixMultiFileTest {
+        public void testAllFilesPresentInMigration() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+        }
+
+        @TestMetadata("classObjectToDefaultMultiple.before.Main.kt")
+        public void testClassObjectToDefaultMultiple() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/classObjectToDefaultMultiple.before.Main.kt");
+            doTestWithExtraFile(fileName);
         }
     }
 

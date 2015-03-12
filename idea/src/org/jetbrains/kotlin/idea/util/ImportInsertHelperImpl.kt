@@ -179,7 +179,10 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
                 return ImportDescriptorResult.FAIL
             }
 
-            val imports = file.getImportDirectives()
+            val imports = if (file is JetCodeFragment)
+                file.importsAsImportList()?.getImports() ?: listOf()
+            else
+                file.getImportDirectives()
 
             //TODO: is that correct? What if function is imported and we need to import class?
             if (imports.any { it.getImportedName() == name.asString() }) return ImportDescriptorResult.FAIL

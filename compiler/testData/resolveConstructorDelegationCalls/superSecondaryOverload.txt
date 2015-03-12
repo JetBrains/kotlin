@@ -1,0 +1,21 @@
+open class B(x: Double) {
+    constructor(x: Int) {}
+    constructor(x: String) {}
+}
+trait C
+class A : B, C {
+    <caret>constructor(): super("abc") { }
+}
+
+
+Resolved call:
+
+Resulting descriptor: constructor B(x: String) defined in B
+
+Explicit receiver kind = NO_EXPLICIT_RECEIVER
+Dispatch receiver = NO_RECEIVER
+Extension receiver = NO_RECEIVER
+
+Value arguments mapping:
+
+SUCCESS  x : String = "abc"

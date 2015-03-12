@@ -1,0 +1,14 @@
+package
+
+kotlin.data() public final class ProductGroup {
+    public constructor ProductGroup(/*0*/ short_name: kotlin.String, /*1*/ parent: ProductGroup?)
+    internal final val name: kotlin.String
+    internal final val parent: ProductGroup?
+    internal final val short_name: kotlin.String
+    internal final /*synthesized*/ fun component1(): kotlin.String
+    internal final /*synthesized*/ fun component2(): ProductGroup?
+    public final /*synthesized*/ fun copy(/*0*/ short_name: kotlin.String = ..., /*1*/ parent: ProductGroup? = ...): ProductGroup
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

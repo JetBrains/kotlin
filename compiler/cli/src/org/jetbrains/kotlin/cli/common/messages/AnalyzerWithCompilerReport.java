@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.kotlin.load.java.JavaBindingContext;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.components.TraceBasedErrorReporter;
-import org.jetbrains.kotlin.load.kotlin.VirtualFileKotlinClass;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.AnalyzingUtils;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -148,14 +147,15 @@ public final class AnalyzerWithCompilerReport {
         assert analysisResult != null;
         BindingContext bindingContext = analysisResult.getBindingContext();
 
-        Collection<VirtualFileKotlinClass> errorClasses = bindingContext.getKeys(TraceBasedErrorReporter.ABI_VERSION_ERRORS);
-        for (VirtualFileKotlinClass kotlinClass : errorClasses) {
-            Integer abiVersion = bindingContext.get(TraceBasedErrorReporter.ABI_VERSION_ERRORS, kotlinClass);
-            String path = toSystemDependentName(kotlinClass.getFile().getPath());
+        Collection<String> errorClasses = bindingContext.getKeys(TraceBasedErrorReporter.ABI_VERSION_ERRORS);
+        for (String kotlinClass : errorClasses) {
+            TraceBasedErrorReporter.AbiVersionErrorData data = bindingContext.get(TraceBasedErrorReporter.ABI_VERSION_ERRORS, kotlinClass);
+            assert data != null;
+            String path = toSystemDependentName(kotlinClass);
             messageCollectorWrapper.report(CompilerMessageSeverity.ERROR,
-                                           "Class '" + JvmClassName.byClassId(kotlinClass.getClassId()) +
+                                           "Class '" + JvmClassName.byClassId(data.getClassId()) +
                                            "' was compiled with an incompatible version of Kotlin. " +
-                                           "Its ABI version is " + abiVersion + ", expected ABI version is " + JvmAbi.VERSION,
+                                           "Its ABI version is " + data.getActualVersion() + ", expected ABI version is " + JvmAbi.VERSION,
                                            CompilerMessageLocation.create(path, 0, 0));
         }
     }

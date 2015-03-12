@@ -165,7 +165,7 @@ public class MultiModuleJavaAnalysisCustomTest : UsefulTestCase() {
         )
     }
 
-    class object {
+    default object {
         val PATH_TO_TEST_ROOT_DIR = "compiler/testData/multiModule/java/custom"
     }
 }

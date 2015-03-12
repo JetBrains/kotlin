@@ -33,7 +33,7 @@ public trait FlexibleTypeCapabilities {
 }
 
 public trait Flexibility : TypeCapability, SubtypingRepresentatives {
-    class object {
+    default object {
         // This is a "magic" classifier: when type resolver sees it in the code, e.g. ft<Foo, Foo?>, instead of creating a normal type,
         // it creates a flexible type, e.g. (Foo..Foo?).
         // This is used in tests and Evaluate Expression to have flexible types in the code,
@@ -145,7 +145,7 @@ public open class DelegatingFlexibleType protected (
         override val upperBound: JetType,
         override val extraCapabilities: FlexibleTypeCapabilities
 ) : DelegatingType(), NullAwareness, Flexibility, FlexibleTypeDelegation, Approximation {
-    class object {
+    default object {
         platformStatic fun create(lowerBound: JetType, upperBound: JetType, extraCapabilities: FlexibleTypeCapabilities): JetType {
             if (lowerBound == upperBound) return lowerBound
             return DelegatingFlexibleType(lowerBound, upperBound, extraCapabilities)

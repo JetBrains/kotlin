@@ -38,7 +38,7 @@ fun getFunctionForExtractedFragment(
         codeFragment: JetCodeFragment,
         breakpointFile: PsiFile,
         breakpointLine: Int
-): JetNamedFunction? {
+): ExtractionResult? {
 
     fun getErrorMessageForExtractFunctionResult(analysisResult: AnalysisResult): String {
         if (KotlinInternalMode.enabled) {
@@ -66,7 +66,7 @@ fun getFunctionForExtractedFragment(
         }.joinToString(", ")
     }
 
-    fun generateFunction(): JetNamedFunction? {
+    fun generateFunction(): ExtractionResult? {
         val originalFile = breakpointFile as JetFile
 
         val tmpFile = originalFile.createTempCopy { it }
@@ -105,7 +105,7 @@ fun getFunctionForExtractedFragment(
                 validationResult.descriptor,
                 ExtractionGeneratorOptions(inTempFile = true, flexibleTypesAllowed = true)
         )
-        return config.generateDeclaration().declaration as JetNamedFunction
+        return config.generateDeclaration()
     }
 
     return runReadAction { generateFunction() }

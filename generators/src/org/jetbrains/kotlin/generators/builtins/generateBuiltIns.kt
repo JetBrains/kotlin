@@ -63,7 +63,7 @@ fun generateBuiltIns(generate: (File, (PrintWriter) -> BuiltInsSourceGenerator) 
     }
 
     generate(File(BUILT_INS_NATIVE_DIR, "Arrays.kt")) { GenerateArrays(it) }
-    generate(File(BUILT_INS_NATIVE_DIR, "Numbers.kt")) { GenerateNumbers(it) }
+    generate(File(BUILT_INS_NATIVE_DIR, "Primitives.kt")) { GeneratePrimitives(it) }
     generate(File(BUILT_INS_SRC_DIR, "Iterators.kt")) { GenerateIterators(it) }
     generate(File(RUNTIME_JVM_DIR, "jvm/internal/ArrayIterators.kt")) { GenerateArrayIterators(it) }
     generate(File(BUILT_INS_SRC_DIR, "ProgressionIterators.kt")) { GenerateProgressionIterators(it) }

@@ -16,48 +16,66 @@
 
 package kotlin.reflect.jvm.internal
 
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
 import kotlin.reflect.*
-import kotlin.jvm.internal.KotlinClass
-import kotlin.jvm.internal.KotlinSyntheticClass
 
-enum class KClassOrigin {
-    BUILT_IN
-    KOTLIN
-    FOREIGN
-}
+class KClassImpl<T>(override val jClass: Class<T>) : KCallableContainerImpl(), KClass<T> {
+    // Don't use kotlin.properties.Delegates here because it's a Kotlin class which will invoke KClassImpl() in <clinit>,
+    // resulting in infinite recursion
 
-private val KOTLIN_CLASS_ANNOTATION_CLASS = javaClass<KotlinClass>()
-private val KOTLIN_SYNTHETIC_CLASS_ANNOTATION_CLASS = javaClass<KotlinSyntheticClass>()
+    val descriptor by ReflectProperties.lazySoft {
+        val moduleData = jClass.getOrCreateModule()
+        val classId = RuntimeTypeMapper.mapJvmClassToKotlinClassId(jClass)
 
-class KClassImpl<T>(val jClass: Class<T>, isKnownToBeKotlin: Boolean = false) : KClass<T> {
-    // TODO: write metadata to local classes
-    private val origin: KClassOrigin =
-            if (isKnownToBeKotlin ||
-                jClass.isAnnotationPresent(KOTLIN_CLASS_ANNOTATION_CLASS) ||
-                jClass.isAnnotationPresent(KOTLIN_SYNTHETIC_CLASS_ANNOTATION_CLASS)
-            ) {
-                KClassOrigin.KOTLIN
-            }
-            else {
-                KClassOrigin.FOREIGN
-                // TODO: built-in classes
-            }
+        val descriptor =
+                if (classId.isLocal()) moduleData.localClassResolver.resolveLocalClass(classId)
+                else moduleData.module.findClassAcrossModuleDependencies(classId)
 
-    fun memberProperty(name: String): KMemberProperty<T, *> =
-            if (origin === KClassOrigin.KOTLIN) {
-                KMemberPropertyImpl<T, Any>(name, this)
-            }
-            else {
-                KForeignMemberProperty<T, Any>(name, this)
-            }
+        descriptor ?: throw KotlinReflectionInternalError("Class not resolved: $jClass")
+    }
 
-    fun mutableMemberProperty(name: String): KMutableMemberProperty<T, *> =
-            if (origin === KClassOrigin.KOTLIN) {
-                KMutableMemberPropertyImpl<T, Any>(name, this)
-            }
-            else {
-                KMutableForeignMemberProperty<T, Any>(name, this)
-            }
+    override val scope: JetScope get() = descriptor.getDefaultType().getMemberScope()
+
+    override val simpleName: String? get() {
+        val name = descriptor.getName()
+        return if (name.isSpecial()) null else name.asString()
+    }
+
+    override fun getProperties(): Collection<KMemberProperty<T, *>> {
+        return scope.getAllDescriptors().stream()
+                .filterIsInstance<PropertyDescriptor>()
+                .filter { descriptor ->
+                    descriptor.getExtensionReceiverParameter() == null
+                }
+                .map { descriptor ->
+                    if (descriptor.isVar()) KMutableMemberPropertyImpl<T, Any?>(this) { descriptor }
+                    else KMemberPropertyImpl<T, Any?>(this) { descriptor }
+                }
+                .toList()
+    }
+
+    override fun getExtensionProperties(): Collection<KMemberExtensionProperty<T, *, *>> {
+        return scope.getAllDescriptors().stream()
+                .filterIsInstance<PropertyDescriptor>()
+                .filter { descriptor ->
+                    descriptor.getExtensionReceiverParameter() != null
+                }
+                .map { descriptor ->
+                    if (descriptor.isVar()) KMutableMemberExtensionPropertyImpl<T, Any?, Any?>(this) { descriptor }
+                    else KMemberExtensionPropertyImpl<T, Any?, Any?>(this) { descriptor }
+                }
+                .toList()
+    }
+
+    fun memberProperty(name: String): KMemberProperty<T, *> {
+        return KMemberPropertyImpl<T, Any>(this, findPropertyDescriptor(name))
+    }
+
+    fun mutableMemberProperty(name: String): KMutableMemberProperty<T, *> {
+        return KMutableMemberPropertyImpl<T, Any>(this, findPropertyDescriptor(name))
+    }
 
     override fun equals(other: Any?): Boolean =
             other is KClassImpl<*> && jClass == other.jClass

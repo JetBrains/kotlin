@@ -1,0 +1,25 @@
+package
+
+internal final class A {
+    Ann1() public constructor A()
+    Ann2() public constructor A(/*0*/ x1: kotlin.Int)
+    Ann2(x = IntegerValueType(2): IntegerValueType(2)) public constructor A(/*0*/ x1: kotlin.Int, /*1*/ x2: kotlin.Int)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final annotation class Ann1 : kotlin.Annotation {
+    public constructor Ann1()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final annotation class Ann2 : kotlin.Annotation {
+    public constructor Ann2(/*0*/ x: kotlin.Int)
+    internal final val x: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

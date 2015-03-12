@@ -61,27 +61,23 @@ private class PackageFragmentProviderForMissingDependencies(val moduleDescriptor
     }
 }
 
-private class MissingDependencyErrorClassDescriptor(containing: DeclarationDescriptor, override val fullFqName: FqName)
-: MissingDependencyErrorClass, ClassDescriptorImpl(containing, fullFqName.shortName(), Modality.OPEN, listOf(), SourceElement.NO_SOURCE) {
+private class MissingDependencyErrorClassDescriptor(
+        containing: DeclarationDescriptor,
+        override val fullFqName: FqName
+) : MissingDependencyErrorClass, ClassDescriptorImpl(containing, fullFqName.shortName(), Modality.OPEN, listOf(), SourceElement.NO_SOURCE) {
 
     private val scope = ScopeWithMissingDependencies(fullFqName, this)
 
-    override fun substitute(substitutor: TypeSubstitutor): ClassDescriptor {
-        return this
-    }
-
-    override fun getScopeForMemberLookup(): JetScope {
-        return scope
-    }
-
-    override fun getMemberScope(typeArguments: List<TypeProjection?>): JetScope {
-        return scope
-    }
-
-    {
+    ;{
         val emptyConstructor = ConstructorDescriptorImpl.create(this, Annotations.EMPTY, true, SourceElement.NO_SOURCE)
         emptyConstructor.initialize(listOf(), listOf(), Visibilities.INTERNAL)
         emptyConstructor.setReturnType(createErrorType("<ERROR RETURN TYPE>"))
         initialize(JetScope.Empty, setOf(emptyConstructor), emptyConstructor)
     }
+
+    override fun substitute(substitutor: TypeSubstitutor) = this
+
+    override fun getScopeForMemberLookup() = scope
+
+    override fun getMemberScope(typeArguments: List<TypeProjection?>) = scope
 }

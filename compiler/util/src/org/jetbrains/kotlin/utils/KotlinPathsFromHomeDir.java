@@ -48,6 +48,12 @@ public class KotlinPathsFromHomeDir implements KotlinPaths {
 
     @NotNull
     @Override
+    public File getReflectPath() {
+        return getLibraryFile(PathUtil.KOTLIN_JAVA_REFLECT_JAR);
+    }
+
+    @NotNull
+    @Override
     public File getRuntimeSourcesPath() {
         return getLibraryFile(PathUtil.KOTLIN_JAVA_RUNTIME_SRC_JAR);
     }

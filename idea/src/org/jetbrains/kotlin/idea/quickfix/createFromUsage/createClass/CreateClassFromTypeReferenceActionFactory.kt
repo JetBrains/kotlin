@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.psi.JetDelegatorToSuperClass
 import org.jetbrains.kotlin.psi.JetConstructorCalleeExpression
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.builtins.*
 
 public object CreateClassFromTypeReferenceActionFactory: JetIntentionActionsFactory() {
     override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction> {
@@ -68,6 +69,8 @@ public object CreateClassFromTypeReferenceActionFactory: JetIntentionActionsFact
             }
         }
 
+        val anyType = KotlinBuiltIns.getInstance().getAnyType()
+
         val createPackageAction = refExpr.getCreatePackageFixIfApplicable(targetParent)
         val createClassActions = possibleKinds.map {
             val classInfo = ClassInfo(
@@ -75,7 +78,9 @@ public object CreateClassFromTypeReferenceActionFactory: JetIntentionActionsFact
                     name = name,
                     targetParent = targetParent,
                     expectedTypeInfo = TypeInfo.Empty,
-                    typeArguments = typeArguments.map { TypeInfo(it, Variance.INVARIANT) }
+                    typeArguments = typeArguments.map {
+                        if (it != null) TypeInfo(it, Variance.INVARIANT) else TypeInfo(anyType, Variance.INVARIANT)
+                    }
             )
             CreateClassFromUsageFix(userType, classInfo)
         }

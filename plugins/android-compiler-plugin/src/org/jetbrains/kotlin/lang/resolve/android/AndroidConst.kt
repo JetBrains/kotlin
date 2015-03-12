@@ -32,14 +32,12 @@ public object AndroidConst {
     val ID_USAGE_PREFIX = "@id/"
 }
 
-class WrongIdFormat(id: String) : Exception("Id \"$id\" has wrong format")
-
 public fun nameToIdDeclaration(name: String): String = AndroidConst.ID_DECLARATION_PREFIX + name
 
-public fun idToName(id: String): String {
+public fun idToName(id: String): String? {
     return if (isResourceIdDeclaration(id)) id.replace(AndroidConst.ID_DECLARATION_PREFIX, "")
     else if (isResourceIdUsage(id)) id.replace(AndroidConst.ID_USAGE_PREFIX, "")
-    else throw WrongIdFormat(id)
+    else null
 }
 
 public fun isResourceIdDeclaration(str: String?): Boolean = str?.startsWith(AndroidConst.ID_DECLARATION_PREFIX) ?: false

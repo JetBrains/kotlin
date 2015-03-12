@@ -16,7 +16,7 @@ class Test() {
     var a : Int = 111
     var b : Int get() = $a; set(x) {a = x; $a = x}
 
-   {
+    init {
     <!NO_BACKING_FIELD_CUSTOM_ACCESSORS!>$b<!> = $a
     $a = <!NO_BACKING_FIELD_CUSTOM_ACCESSORS!>$b<!>
     a = <!NO_BACKING_FIELD_CUSTOM_ACCESSORS!>$b<!>

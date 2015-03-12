@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.serialization.ProtoBuf
@@ -99,13 +100,14 @@ public class TypeDeserializer(
         return c.components.moduleDescriptor.findClassAcrossModuleDependencies(id)
     }
 
-    fun typeArguments(protos: List<ProtoBuf.Type.Argument>): List<TypeProjection> =
-            protos.map { proto ->
-                val type = type(proto.getType())
-                if (proto.getProjection() == ProtoBuf.Type.Argument.Projection.STAR)
-                    StarProjectionImpl(type)
-                else TypeProjectionImpl(variance(proto.getProjection()), type)
-            }.toReadOnlyList()
+    fun typeArgument(parameter: TypeParameterDescriptor?, typeArgumentProto: ProtoBuf.Type.Argument): TypeProjection {
+        return if (typeArgumentProto.getProjection() == ProtoBuf.Type.Argument.Projection.STAR)
+            if (parameter == null)
+                TypeBasedStarProjectionImpl(KotlinBuiltIns.getInstance().getNullableAnyType())
+            else
+                StarProjectionImpl(parameter)
+        else TypeProjectionImpl(variance(typeArgumentProto.getProjection()), type(typeArgumentProto.getType()))
+    }
 
     override fun toString() = debugName + (if (parent == null) "" else ". Child of ${parent.debugName}")
 }

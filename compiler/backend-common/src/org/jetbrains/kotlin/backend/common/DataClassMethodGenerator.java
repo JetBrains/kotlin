@@ -79,9 +79,10 @@ public abstract class DataClassMethodGenerator {
     }
 
     private void generateComponentFunctionsForDataClasses() {
-        if (!declaration.hasPrimaryConstructor()) return;
-
-        ConstructorDescriptor constructor = classDescriptor.getConstructors().iterator().next();
+        ConstructorDescriptor constructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
+        // primary constructor should exist for data classes
+        // but when generating light-classes still need to check we have one
+        if (constructor == null) return;
 
         for (ValueParameterDescriptor parameter : constructor.getValueParameters()) {
             FunctionDescriptor function = bindingContext.get(BindingContext.DATA_CLASS_COMPONENT_FUNCTION, parameter);

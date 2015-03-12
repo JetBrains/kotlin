@@ -22,9 +22,8 @@ import org.jetbrains.kotlin.idea.framework.JSLibraryStdDescription;
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil;
 import org.jetbrains.kotlin.idea.project.TargetPlatform;
 import org.jetbrains.kotlin.js.JavaScript;
+import org.jetbrains.kotlin.utils.KotlinPaths;
 import org.jetbrains.kotlin.utils.PathUtil;
-
-import java.io.File;
 
 public class KotlinJsModuleConfigurator extends KotlinWithLibraryConfigurator {
     public static final String NAME = JavaScript.LOWER_NAME;
@@ -72,31 +71,19 @@ public class KotlinJsModuleConfigurator extends KotlinWithLibraryConfigurator {
 
     @NotNull
     @Override
-    public String getJarName() {
-        return PathUtil.JS_LIB_JAR_NAME;
-    }
-
-    @NotNull
-    @Override
-    public String getSourcesJarName() {
-        return PathUtil.JS_LIB_SRC_JAR_NAME;
-    }
-
-    @NotNull
-    @Override
     protected String getMessageForOverrideDialog() {
         return JSLibraryStdDescription.JAVA_SCRIPT_LIBRARY_CREATION;
     }
 
     @NotNull
     @Override
-    public File getExistedJarFile() {
-        return assertFileExists(PathUtil.getKotlinPathsForIdeaPlugin().getJsStdLibJarPath());
-    }
-
-    @Override
-    public File getExistedSourcesJarFile() {
-        return assertFileExists(PathUtil.getKotlinPathsForIdeaPlugin().getJsStdLibSrcJarPath());
+    public RuntimeLibraryFiles getExistingJarFiles() {
+        KotlinPaths paths = PathUtil.getKotlinPathsForIdeaPlugin();
+        return new RuntimeLibraryFiles(
+                assertFileExists(paths.getJsStdLibJarPath()),
+                null,
+                assertFileExists(paths.getJsStdLibSrcJarPath())
+        );
     }
 
     KotlinJsModuleConfigurator() {

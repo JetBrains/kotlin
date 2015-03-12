@@ -59,7 +59,7 @@ class Modifiers(modifiers: Collection<Modifier>) : Element() {
 
     fun accessModifier(): Modifier? = modifiers.firstOrNull { it in ACCESS_MODIFIERS }
 
-    class object {
+    default object {
         val Empty = Modifiers(listOf())
     }
 }

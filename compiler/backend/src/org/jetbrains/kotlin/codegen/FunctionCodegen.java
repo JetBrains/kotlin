@@ -39,8 +39,10 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.load.kotlin.nativeDeclarations.NativeDeclarationsPackage;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.psi.JetClass;
 import org.jetbrains.kotlin.psi.JetClassOrObject;
 import org.jetbrains.kotlin.psi.JetNamedFunction;
+import org.jetbrains.kotlin.psi.JetSecondaryConstructor;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -585,6 +587,10 @@ public class FunctionCodegen {
         for (int m : masks) {
             v.iconst(m);
         }
+
+        // constructors with default arguments has last synthetic argument of specific type
+        v.aconst(null);
+
         String desc = JetTypeMapper.getDefaultDescriptor(method.getAsmMethod(), false);
         v.invokespecial(methodOwner.getInternalName(), "<init>", desc, false);
         v.areturn(Type.VOID_TYPE);
@@ -785,6 +791,7 @@ public class FunctionCodegen {
             Visibilities.isPrivate(constructorDescriptor.getVisibility())) return false;
 
         if (constructorDescriptor.getValueParameters().isEmpty()) return false;
+        if (classOrObject instanceof JetClass && hasSecondaryConstructorsWithNoParameters((JetClass) classOrObject)) return false;
 
         for (ValueParameterDescriptor parameterDescriptor : constructorDescriptor.getValueParameters()) {
             if (!parameterDescriptor.declaresDefaultValue()) {
@@ -792,6 +799,13 @@ public class FunctionCodegen {
             }
         }
         return true;
+    }
+
+    private static boolean hasSecondaryConstructorsWithNoParameters(@NotNull JetClass klass) {
+        for (JetSecondaryConstructor constructor : klass.getSecondaryConstructors()) {
+            if (constructor.getValueParameters().isEmpty()) return true;
+        }
+        return false;
     }
 
     private void generateBridge(

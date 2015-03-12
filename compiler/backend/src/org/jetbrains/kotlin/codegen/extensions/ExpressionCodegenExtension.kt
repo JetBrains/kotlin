@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.*
 
 public trait ExpressionCodegenExtension {
-    class object : ProjectExtensionDescriptor<ExpressionCodegenExtension>("org.jetbrains.kotlin.expressionCodegenExtension", javaClass<ExpressionCodegenExtension>())
+    default object : ProjectExtensionDescriptor<ExpressionCodegenExtension>("org.jetbrains.kotlin.expressionCodegenExtension", javaClass<ExpressionCodegenExtension>())
 
     public class Context(
             public val typeMapper: JetTypeMapper,

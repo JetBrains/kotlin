@@ -1,0 +1,20 @@
+package test
+
+public open class RawSuperTypeWithBound {
+    public constructor RawSuperTypeWithBound()
+
+    public trait Bound {
+    }
+
+    public open inner class Derived : test.RawSuperTypeWithBound.Super<test.RawSuperTypeWithBound.Bound!> {
+        public constructor Derived()
+        public open override /*1*/ fun dummy(): kotlin.Unit
+        public open fun foo(/*0*/ p0: kotlin.Any!): kotlin.Unit
+        public open override /*1*/ fun foo(/*0*/ p0: test.RawSuperTypeWithBound.Bound!): kotlin.Unit
+    }
+
+    public trait Super</*0*/ T : test.RawSuperTypeWithBound.Bound!> {
+        public abstract fun dummy(): kotlin.Unit
+        public abstract fun foo(/*0*/ p0: T!): kotlin.Unit
+    }
+}

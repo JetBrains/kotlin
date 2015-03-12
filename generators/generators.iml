@@ -17,6 +17,7 @@
     <orderEntry type="module" module-name="injector-generator" scope="TEST" />
     <orderEntry type="module" module-name="cli" scope="TEST" />
     <orderEntry type="module" module-name="serialization" scope="TEST" />
+    <orderEntry type="module" module-name="descriptors.runtime" scope="TEST" />
     <orderEntry type="module" module-name="js.tests" scope="TEST" />
     <orderEntry type="module" module-name="jps-plugin" scope="TEST" />
     <orderEntry type="module" module-name="j2k" scope="TEST" />
@@ -27,5 +28,6 @@
     <orderEntry type="module" module-name="android-compiler-plugin" scope="TEST" />
     <orderEntry type="module" module-name="android-idea-plugin" scope="TEST" />
     <orderEntry type="module" module-name="android-jps-plugin" scope="TEST" />
+    <orderEntry type="module" module-name="descriptor.loader.java" />
   </component>
 </module>

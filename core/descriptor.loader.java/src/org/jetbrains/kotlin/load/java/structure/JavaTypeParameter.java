@@ -18,11 +18,13 @@ package org.jetbrains.kotlin.load.java.structure;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.ReadOnly;
 
 import java.util.Collection;
 
 public interface JavaTypeParameter extends JavaClassifier {
     @NotNull
+    @ReadOnly
     Collection<JavaClassifierType> getUpperBounds();
 
     @Nullable

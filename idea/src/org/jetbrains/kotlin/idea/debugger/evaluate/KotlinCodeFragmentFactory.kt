@@ -40,12 +40,11 @@ import com.intellij.openapi.progress.ProgressManager
 class KotlinCodeFragmentFactory: CodeFragmentFactory() {
     override fun createCodeFragment(item: TextWithImports, context: PsiElement?, project: Project): JavaCodeFragment {
         val codeFragment = if (item.getKind() == CodeFragmentKind.EXPRESSION) {
-            JetExpressionCodeFragment(project, "fragment.kt", item.getText(), getContextElement(context))
+            JetExpressionCodeFragment(project, "fragment.kt", item.getText(), item.getImports(), getContextElement(context))
         }
         else {
-            JetBlockCodeFragment(project, "fragment.kt", item.getText(), getContextElement(context))
+            JetBlockCodeFragment(project, "fragment.kt", item.getText(), item.getImports(), getContextElement(context))
         }
-        codeFragment.addImportsFromString(item.getImports())
 
         codeFragment.putCopyableUserData(JetCodeFragment.RUNTIME_TYPE_EVALUATOR, {
             (expression: JetExpression): JetType? ->
@@ -96,7 +95,7 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
 
     override fun getEvaluatorBuilder() = KotlinEvaluationBuilder
 
-    class object {
+    default object {
         fun getContextElement(elementAt: PsiElement?): PsiElement? {
             if (elementAt == null) return null
 
@@ -106,6 +105,11 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
 
             if (elementAt is KotlinLightClass) {
                 return getContextElement(elementAt.getOrigin())
+            }
+
+            // If label for some variable is set
+            if (elementAt.getParent() is JetCodeFragment) {
+                return elementAt.getParent().getContext()
             }
 
             val expressionAtOffset = PsiTreeUtil.findElementOfClassAtOffset(elementAt.getContainingFile()!!, elementAt.getTextOffset(), javaClass<JetExpression>(), false)

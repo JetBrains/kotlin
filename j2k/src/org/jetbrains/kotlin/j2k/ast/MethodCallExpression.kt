@@ -36,7 +36,7 @@ class MethodCallExpression(
         }
     }
 
-    class object {
+    default object {
         public fun buildNotNull(receiver: Expression?,
                                 methodName: String,
                                 arguments: List<Expression> = listOf(),

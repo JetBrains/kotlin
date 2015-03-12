@@ -83,7 +83,7 @@ public class ExpressionTypingUtils {
             if (expression instanceof JetThisExpression) {
                 referenceExpression = ((JetThisExpression) expression).getInstanceReference();
             }
-            else if (expression instanceof JetThisReferenceExpression) {
+            else if (expression instanceof JetConstructorDelegationReferenceExpression) {
                 referenceExpression = (JetReferenceExpression) expression;
             }
 

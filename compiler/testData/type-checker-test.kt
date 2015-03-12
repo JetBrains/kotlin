@@ -45,3 +45,7 @@ trait B: Parent
 trait Rec<T>
 class ARec : Rec<ARec>
 class BRec : Rec<BRec>
+trait SubRec<T>: Rec<T>
+
+trait Star<T : Star<T>>
+trait SubStar<T : SubStar<T>> : Star<T>

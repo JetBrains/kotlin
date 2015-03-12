@@ -1,0 +1,73 @@
+== A ==
+class A(val w: Char) {
+    val x: Int
+    var y: Int
+    val z: Int
+    val v = -1
+
+    constructor(): this('a') {
+        y = 2
+    }
+
+    // anonymous
+    init {
+        x = w
+        z = 8
+    }
+
+    constructor(a: Int, b: Int = 3): this(b.toChar()) {
+        y = x
+    }
+
+    // anonymous
+    init {
+        y = 9
+    }
+}
+---------------------
+                  <v0>: Char   NEW: magic[FAKE_INITIALIZER](val w: Char) -> <v0>
+                  <v3>: A      NEW: magic[IMPLICIT_RECEIVER](x) -> <v3>
+                  <v4>: A      NEW: magic[IMPLICIT_RECEIVER](w) -> <v4>
+                  <v6>: A      NEW: magic[IMPLICIT_RECEIVER](z) -> <v6>
+                  <v9>: A      NEW: magic[IMPLICIT_RECEIVER](y) -> <v9>
+1                 <v1>: Int    NEW: r(1) -> <v1>
+-1                <v2>: Int    NEW: call(-1, minus|<v1>) -> <v2>
+w                 <v5>: Int    NEW: r(w|<v4>) -> <v5>
+8                 <v7>: Int    NEW: r(8) -> <v7>
+z = 8             !<v8>: *
+{ x = w z = 8 }   !<v8>: *     COPY
+9                 <v10>: Int   NEW: r(9) -> <v10>
+y = 9             !<v11>: *
+{ y = 9 }         !<v11>: *    COPY
+=====================
+== <init> ==
+constructor(): this('a') {
+        y = 2
+    }
+---------------------
+            <v2>: A      NEW: magic[IMPLICIT_RECEIVER](y) -> <v2>
+'a'         <v0>: Char   NEW: r('a') -> <v0>
+this('a')   <v1>: *      NEW: call(this('a'), <init>|<v0>) -> <v1>
+2           <v3>: Int    NEW: r(2) -> <v3>
+y = 2       !<v4>: *
+{ y = 2 }   !<v4>: *     COPY
+=====================
+== <init> ==
+constructor(a: Int, b: Int = 3): this(b.toChar()) {
+        y = x
+    }
+---------------------
+                   <v0>: Int           NEW: magic[FAKE_INITIALIZER](a: Int) -> <v0>
+                   <v2>: Int           NEW: magic[FAKE_INITIALIZER](b: Int = 3) -> <v2>
+                   <v7>: A             NEW: magic[IMPLICIT_RECEIVER](y) -> <v7>
+                   <v8>: A             NEW: magic[IMPLICIT_RECEIVER](x) -> <v8>
+3                  <v1>: Int           NEW: r(3) -> <v1>
+b: Int = 3         <v3>: Int           NEW: merge(b: Int = 3|<v1>, <v2>) -> <v3>
+b                  <v4>: {<: Number}   NEW: r(b) -> <v4>
+toChar()           <v5>: Char          NEW: call(toChar(), toChar|<v4>) -> <v5>
+b.toChar()         <v5>: Char          COPY
+this(b.toChar())   <v6>: *             NEW: call(this(b.toChar()), <init>|<v5>) -> <v6>
+x                  <v9>: Int           NEW: r(x|<v8>) -> <v9>
+y = x              !<v10>: *
+{ y = x }          !<v10>: *           COPY
+=====================

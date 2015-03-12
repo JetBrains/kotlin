@@ -489,7 +489,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
         return ""
     }
 
-    class object {
+    default object {
         private val needQualifierNameSet = setOf("java.lang.Byte", "java.lang.Double", "java.lang.Float", "java.lang.Long", "java.lang.Short")
     }
 }

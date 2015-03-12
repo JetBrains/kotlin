@@ -50,7 +50,7 @@ abstract class JetSimpleNameExpressionImpl(node: ASTNode) : JetExpressionImpl(no
     override fun getReferencedName() = getReferencedNameImpl()
 
     //NOTE: an unfortunate way to share an implementation between stubbed and not stubbed tree
-    class object Helper {
+    default object Helper {
 
         fun JetSimpleNameExpression.getReferencedNameElementTypeImpl(): IElementType {
             return this.getReferencedNameElement().getNode()!!.getElementType()!!

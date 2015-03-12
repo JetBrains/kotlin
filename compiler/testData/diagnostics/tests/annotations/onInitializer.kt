@@ -1,15 +1,15 @@
 class A {
-    ann {}
-    [ann] {}
-    <!UNRESOLVED_REFERENCE!>aaa<!> {}
-    [<!UNRESOLVED_REFERENCE!>aaa<!>] {}
+    ann init {}
+    [ann] init {}
+    <!UNRESOLVED_REFERENCE!>aaa<!> init {}
+    [<!UNRESOLVED_REFERENCE!>aaa<!>] init {}
 }
 
 trait T {
-    <!ANONYMOUS_INITIALIZER_IN_TRAIT!>ann {}<!>
-    <!ANONYMOUS_INITIALIZER_IN_TRAIT!>[ann] {}<!>
-    <!ANONYMOUS_INITIALIZER_IN_TRAIT!><!UNRESOLVED_REFERENCE!>aaa<!> {}<!>
-    <!ANONYMOUS_INITIALIZER_IN_TRAIT!>[<!UNRESOLVED_REFERENCE!>aaa<!>] {}<!>
+    <!ANONYMOUS_INITIALIZER_IN_TRAIT!>ann init {}<!>
+    <!ANONYMOUS_INITIALIZER_IN_TRAIT!>[ann] init {}<!>
+    <!ANONYMOUS_INITIALIZER_IN_TRAIT!><!UNRESOLVED_REFERENCE!>aaa<!> init {}<!>
+    <!ANONYMOUS_INITIALIZER_IN_TRAIT!>[<!UNRESOLVED_REFERENCE!>aaa<!>] init {}<!>
 }
 
 annotation class ann

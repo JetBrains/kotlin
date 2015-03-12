@@ -1,0 +1,83 @@
+JetFile: recoveryWithoutParameterList.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('A')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      SECONDARY_CONSTRUCTOR
+        PsiElement(constructor)('constructor')
+        PsiErrorElement:Expecting '('
+          <empty list>
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        CONSTRUCTOR_DELEGATION_CALL
+          CONSTRUCTOR_DELEGATION_REFERENCE
+            PsiElement(this)('this')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('x')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Int')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n')
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('B')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      SECONDARY_CONSTRUCTOR
+        PsiElement(constructor)('constructor')
+        PsiErrorElement:Expecting '('
+          <empty list>
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        CONSTRUCTOR_DELEGATION_CALL
+          CONSTRUCTOR_DELEGATION_REFERENCE
+            PsiElement(this)('this')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('Int')

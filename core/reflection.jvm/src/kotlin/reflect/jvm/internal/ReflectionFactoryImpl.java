@@ -23,7 +23,7 @@ import kotlin.reflect.*;
 public class ReflectionFactoryImpl extends ReflectionFactory {
     @Override
     public KClass createKotlinClass(Class javaClass) {
-        return new KClassImpl(javaClass, true);
+        return new KClassImpl(javaClass);
     }
 
     @Override
@@ -48,21 +48,21 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
 
     @Override
     public KTopLevelVariable topLevelVariable(String name, KPackage owner) {
-        return new KTopLevelVariableImpl(name, ((KPackageImpl) owner));
+        return ((KPackageImpl) owner).topLevelVariable(name);
     }
 
     @Override
     public KMutableTopLevelVariable mutableTopLevelVariable(String name, KPackage owner) {
-        return new KMutableTopLevelVariableImpl(name, (KPackageImpl) owner);
+        return ((KPackageImpl) owner).mutableTopLevelVariable(name);
     }
 
     @Override
     public KTopLevelExtensionProperty topLevelExtensionProperty(String name, KPackage owner, Class receiver) {
-        return new KTopLevelExtensionPropertyImpl(name, (KPackageImpl) owner, receiver);
+        return ((KPackageImpl) owner).topLevelExtensionProperty(name, receiver);
     }
 
     @Override
     public KMutableTopLevelExtensionProperty mutableTopLevelExtensionProperty(String name, KPackage owner, Class receiver) {
-        return new KMutableTopLevelExtensionPropertyImpl(name, (KPackageImpl) owner, receiver);
+        return ((KPackageImpl) owner).mutableTopLevelExtensionProperty(name, receiver);
     }
 }

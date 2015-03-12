@@ -1,0 +1,34 @@
+package test
+
+public open class EnumArgumentWithCustomToString {
+    public constructor EnumArgumentWithCustomToString()
+    test.EnumArgumentWithCustomToString.EnumAnno(value = E.CAKE: test.EnumArgumentWithCustomToString.E) test.EnumArgumentWithCustomToString.EnumArrayAnno(value = {E.CAKE, E.CAKE}: kotlin.Array<out test.EnumArgumentWithCustomToString.E>) public/*package*/ open fun annotated(): kotlin.Unit
+
+    public open enum class E : kotlin.Enum<test.EnumArgumentWithCustomToString.E!> {
+        public enum entry CAKE : test.EnumArgumentWithCustomToString.E {
+            private constructor CAKE()
+            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.EnumArgumentWithCustomToString.E!): kotlin.Int
+            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+        }
+
+        private constructor E()
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.EnumArgumentWithCustomToString.E!): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+
+        // Static members
+        public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.EnumArgumentWithCustomToString.E
+        public final /*synthesized*/ fun values(): kotlin.Array<test.EnumArgumentWithCustomToString.E>
+    }
+
+    public final annotation class EnumAnno : kotlin.Annotation {
+        public constructor EnumAnno(/*0*/ value: test.EnumArgumentWithCustomToString.E)
+        public abstract fun value(): test.EnumArgumentWithCustomToString.E
+    }
+
+    public final annotation class EnumArrayAnno : kotlin.Annotation {
+        public constructor EnumArrayAnno(/*0*/ vararg value: test.EnumArgumentWithCustomToString.E /*kotlin.Array<out test.EnumArgumentWithCustomToString.E>*/)
+        public abstract fun value(): kotlin.Array<test.EnumArgumentWithCustomToString.E>
+    }
+}

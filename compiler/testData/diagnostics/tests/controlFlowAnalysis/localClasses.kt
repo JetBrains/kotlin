@@ -2,7 +2,7 @@ package f
 
 fun f() {
     class LocalClass() {
-        {
+        init {
             val <!UNUSED_VARIABLE!>x1<!> = "" // ok: unused
 
             fun loc1(): Int {

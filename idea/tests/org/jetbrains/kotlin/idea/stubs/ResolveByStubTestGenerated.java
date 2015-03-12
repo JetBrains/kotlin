@@ -81,6 +81,12 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
             doTest(fileName);
         }
 
+        @TestMetadata("EnumArgumentWithCustomToString.kt")
+        public void testEnumArgumentWithCustomToString() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/EnumArgumentWithCustomToString.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("SimpleAnnotation.kt")
         public void testSimpleAnnotation() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/SimpleAnnotation.kt");
@@ -98,6 +104,12 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
             @TestMetadata("ClassObjectPropertyField.kt")
             public void testClassObjectPropertyField() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/ClassObjectPropertyField.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("Constructor.kt")
+            public void testConstructor() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/Constructor.kt");
                 doTest(fileName);
             }
 
@@ -335,6 +347,12 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
             @TestMetadata("FunctionInTrait.kt")
             public void testFunctionInTrait() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/parameters/FunctionInTrait.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("InnerClassConstructor.kt")
+            public void testInnerClassConstructor() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/parameters/InnerClassConstructor.kt");
                 doTest(fileName);
             }
 
@@ -615,6 +633,12 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
         @TestMetadata("NestedGenericClass.kt")
         public void testNestedGenericClass() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/NestedGenericClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("RecursiveGeneric.kt")
+        public void testRecursiveGeneric() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/RecursiveGeneric.kt");
             doTest(fileName);
         }
 

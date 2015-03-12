@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.utils.toReadOnlyList
 
 class DeserializedType(
         c: DeserializationContext,
@@ -33,7 +34,12 @@ class DeserializedType(
         typeDeserializer.typeConstructor(typeProto)
     }
 
-    private val arguments = typeDeserializer.typeArguments(typeProto.getArgumentList())
+    private val arguments = c.storageManager.createLazyValue {
+        typeProto.getArgumentList().mapIndexed {
+            index, proto ->
+            typeDeserializer.typeArgument(getConstructor().getParameters().getOrNull(index), proto)
+        }.toReadOnlyList()
+    }
 
     private val memberScope = c.storageManager.createLazyValue {
         computeMemberScope()
@@ -41,7 +47,7 @@ class DeserializedType(
 
     override fun getConstructor(): TypeConstructor = constructor()
 
-    override fun getArguments(): List<TypeProjection> = arguments
+    override fun getArguments(): List<TypeProjection> = arguments()
 
     override fun isMarkedNullable(): Boolean = typeProto.getNullable()
 
@@ -70,4 +76,8 @@ class DeserializedType(
     }
 
     override fun getAnnotations(): Annotations = Annotations.EMPTY
+
+    private fun <E: Any> List<E>.getOrNull(index: Int): E? {
+        return if (index in indices) this[index] else null
+    }
 }

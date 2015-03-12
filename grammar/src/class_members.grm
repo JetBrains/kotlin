@@ -34,9 +34,11 @@ memberDeclaration
   : class
   : typeAlias
   : anonymousInitializer
+  : secondaryConstructor
   ;
 
 anonymousInitializer
+  : "init" block
   : block
   ;
 
@@ -53,7 +55,6 @@ functionParameter
   ;
 
 initializer
-  : annotations "this" valueArguments
   : annotations constructorInvocation // type parameters may (must?) be omitted
   ;
 
@@ -111,6 +112,15 @@ parameter
 
 object
   : "object" SimpleName (":" delegationSpecifier{","})? classBody? // Class body can be optional: this is a declaration
+
+secondaryConstructor
+  : modifiers "constructor" valueParameters (":" constructorDelegationCall)? block
+  ;
+
+constructorDelegationCall
+  : "this" valueArguments
+  : "super" valueArguments
+  ;
 /**
 See [Object expressions and Declarations](object-declarations.html)
 */

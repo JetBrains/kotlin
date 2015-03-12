@@ -16,19 +16,19 @@
 
 package org.jetbrains.kotlin.idea.versions
 
-import com.intellij.openapi.components.ApplicationComponent
-import org.jetbrains.kotlin.utils.PathUtil
-import com.intellij.openapi.vfs.JarFileSystem
 import com.intellij.ide.util.PropertiesComponent
-import org.jetbrains.kotlin.idea.JetPluginUtil
-import com.intellij.util.indexing.FileBasedIndex
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.components.ApplicationComponent
+import com.intellij.openapi.vfs.JarFileSystem
 import com.intellij.openapi.vfs.LocalFileSystem
-import java.io.File
+import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.intellij.openapi.vfs.newvfs.NewVirtualFile
-import com.intellij.openapi.vfs.VfsUtilCore
+import com.intellij.util.indexing.FileBasedIndex
+import org.jetbrains.kotlin.idea.JetPluginUtil
 import org.jetbrains.kotlin.idea.vfilefinder.KotlinClassFileIndex
-import com.intellij.openapi.application.ApplicationManager
+import org.jetbrains.kotlin.utils.PathUtil
+import java.io.File
 
 private val INSTALLED_KOTLIN_VERSION = "installed.kotlin.plugin.version"
 
@@ -49,6 +49,7 @@ class KotlinUpdatePluginComponent : ApplicationComponent {
 
             // Force refresh jar handlers
             requestFullJarUpdate(ideaPluginPaths.getRuntimePath())
+            requestFullJarUpdate(ideaPluginPaths.getReflectPath())
             requestFullJarUpdate(ideaPluginPaths.getRuntimeSourcesPath())
 
             requestFullJarUpdate(ideaPluginPaths.getJsStdLibJarPath())

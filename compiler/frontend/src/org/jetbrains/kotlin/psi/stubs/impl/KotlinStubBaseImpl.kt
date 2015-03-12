@@ -73,7 +73,7 @@ public open class KotlinStubBaseImpl<T : JetElementImplStub<*>>(parent: StubElem
         return methodName
     }
 
-    class object {
+    default object {
         private val LOGGER: Logger = Logger.getInstance(javaClass<KotlinStubBaseImpl<JetElementImplStub<*>>>())
 
         private val BASE_STUB_INTERFACES = listOf(javaClass<KotlinStubWithFqName<*>>(), javaClass<KotlinClassOrObjectStub<*>>(), javaClass<NamedStub<*>>())

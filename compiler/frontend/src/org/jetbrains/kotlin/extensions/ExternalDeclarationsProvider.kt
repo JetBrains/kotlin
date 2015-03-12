@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.psi.JetFile
 
 public trait ExternalDeclarationsProvider {
-    class object : ProjectExtensionDescriptor<ExternalDeclarationsProvider>(
+    default object : ProjectExtensionDescriptor<ExternalDeclarationsProvider>(
             "org.jetbrains.kotlin.externalDeclarationsProvider",
             javaClass<ExternalDeclarationsProvider>()
     )

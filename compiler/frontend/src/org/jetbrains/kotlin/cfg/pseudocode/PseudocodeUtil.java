@@ -20,16 +20,20 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cfg.JetControlFlowProcessor;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction;
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.ReadValueInstruction;
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.WriteValueInstruction;
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.VariableDeclarationInstruction;
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.VariableDescriptor;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.psi.JetDeclaration;
-import org.jetbrains.kotlin.psi.JetElement;
+import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.BindingTrace;
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver;
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice;
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
 
@@ -85,4 +89,53 @@ public class PseudocodeUtil {
         }
         return BindingContextUtils.extractVariableDescriptorIfAny(bindingContext, element, onlyReference);
     }
+
+    // When deal with constructed object (not this) treat it like it's fully initialized
+    // Otherwise (this or access with empty receiver) access instruction should be handled as usual
+    public static boolean isThisOrNoDispatchReceiver(
+            @NotNull AccessValueInstruction instruction,
+            @NotNull BindingContext bindingContext
+    ) {
+        if (instruction.getReceiverValues().isEmpty()) {
+            return true;
+        }
+        AccessTarget accessTarget = instruction.getTarget();
+        if (accessTarget instanceof AccessTarget.BlackBox) return false;
+        assert accessTarget instanceof AccessTarget.Call :
+                "AccessTarget.Declaration has no receivers and it's not BlackBox, so it should be Call";
+
+        ResolvedCall<?> accessResolvedCall = ((AccessTarget.Call) accessTarget).getResolvedCall();
+        return isThisOrNoDispatchReceiver(accessResolvedCall, bindingContext);
+    }
+
+    public static boolean isThisOrNoDispatchReceiver(
+            @NotNull ResolvedCall<?> resolvedCall,
+            @NotNull BindingContext bindingContext
+    ) {
+        // it returns true if call has no dispatch receiver (e.g. resulting descriptor is top-level function or local variable)
+        // or call receiver is effectively `this` instance (explicitly or implicitly) of resulting descriptor
+        // class A(other: A) {
+        //   val x
+        //   val y = other.x // return false for `other.x` as it's receiver is not `this`
+        // }
+        ReceiverParameterDescriptor dispatchReceiverParameter = resolvedCall.getResultingDescriptor().getDispatchReceiverParameter();
+        ReceiverValue dispatchReceiverValue = resolvedCall.getDispatchReceiver();
+        if (dispatchReceiverParameter == null || !dispatchReceiverValue.exists()) return true;
+
+        DeclarationDescriptor classDescriptor = null;
+        if (dispatchReceiverValue instanceof ThisReceiver) {
+            // foo() -- implicit receiver
+            classDescriptor = ((ThisReceiver) dispatchReceiverValue).getDeclarationDescriptor();
+        }
+        else if (dispatchReceiverValue instanceof ExpressionReceiver) {
+            JetExpression expression = JetPsiUtil.deparenthesize(((ExpressionReceiver) dispatchReceiverValue).getExpression());
+            if (expression instanceof JetThisExpression) {
+                // this.foo() -- explicit receiver
+                JetThisExpression thisExpression = (JetThisExpression) expression;
+                classDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, thisExpression.getInstanceReference());
+            }
+        }
+        return dispatchReceiverParameter.getContainingDeclaration() == classDescriptor;
+    }
+
 }

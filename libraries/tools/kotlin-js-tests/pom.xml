@@ -102,6 +102,7 @@
                 <executions>
                     <execution>
                         <id>js</id>
+                        <phase>compile</phase>
                         <goals>
                             <goal>js</goal>
                         </goals>

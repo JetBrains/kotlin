@@ -272,6 +272,9 @@ public class DefaultErrorMessages {
 
         MAP.put(MANY_DEFAULT_OBJECTS, "Only one default object is allowed per class");
         MAP.put(DEFAULT_OBJECT_NOT_ALLOWED, "A default object is not allowed here");
+
+        MAP.put(DEPRECATED_CLASS_OBJECT_SYNTAX, "'class object' syntax for default objects was deprecated. Use 'default' modifier instead");
+
         MAP.put(LOCAL_OBJECT_NOT_ALLOWED, "Named object ''{0}'' is a singleton and cannot be local. Try to use anonymous object instead", NAME);
         MAP.put(LOCAL_ENUM_NOT_ALLOWED, "Enum class ''{0}'' cannot be local", NAME);
         MAP.put(DELEGATION_IN_TRAIT, "Traits cannot use delegation");
@@ -409,6 +412,15 @@ public class DefaultErrorMessages {
         MAP.put(SUPERTYPE_APPEARS_TWICE, "A supertype appears twice");
         MAP.put(FINAL_SUPERTYPE, "This type is final, so it cannot be inherited from");
         MAP.put(SINGLETON_IN_SUPERTYPE, "Cannot inherit from a singleton");
+
+        MAP.put(CYCLIC_CONSTRUCTOR_DELEGATION_CALL, "There's a cycle in the delegation calls chain");
+        MAP.put(SECONDARY_CONSTRUCTOR_IN_OBJECT, "Constructors are not allowed for objects");
+        MAP.put(SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR, "Supertype initialization is impossible without primary constructor");
+        MAP.put(PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED, "Primary constructor call expected");
+        MAP.put(DELEGATION_SUPER_CALL_IN_ENUM_CONSTRUCTOR, "Call to super is not allowed in enum constructor");
+        MAP.put(PRIMARY_CONSTRUCTOR_REQUIRED_FOR_DATA_CLASS, "Primary constructor required for data class");
+
+        MAP.put(INIT_KEYWORD_BEFORE_CLASS_INITIALIZER_EXPECTED, "Expecting 'init' keyword before class initializer");
 
         MAP.put(ILLEGAL_SELECTOR, "Expression ''{0}'' cannot be a selector (occur after a dot)", STRING);
 
@@ -591,7 +603,9 @@ public class DefaultErrorMessages {
 
         MAP.put(EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED,
                 "''{0}'' is a member and an extension at the same time. References to such elements are not allowed", NAME);
-        MAP.put(CALLABLE_REFERENCE_LHS_NOT_A_CLASS, "Callable reference left-hand side cannot be a type parameter");
+        MAP.put(CALLABLE_REFERENCE_LHS_NOT_A_CLASS, "Left hand side of a callable reference cannot be a type parameter");
+
+        MAP.put(CLASS_LITERAL_LHS_NOT_A_CLASS, "Only classes are allowed on the left hand side of a class literal");
 
         //Inline
         MAP.put(INVISIBLE_MEMBER_FROM_INLINE, "Cannot access effectively non-public-api ''{0}'' member from effectively public-api ''{1}''", SHORT_NAMES_IN_TYPES, SHORT_NAMES_IN_TYPES);

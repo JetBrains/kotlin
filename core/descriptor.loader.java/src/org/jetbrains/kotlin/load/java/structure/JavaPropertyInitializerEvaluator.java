@@ -22,6 +22,19 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 
 public interface JavaPropertyInitializerEvaluator {
+    JavaPropertyInitializerEvaluator DO_NOTHING = new JavaPropertyInitializerEvaluator() {
+        @Nullable
+        @Override
+        public CompileTimeConstant<?> getInitializerConstant(@NotNull JavaField field, @NotNull PropertyDescriptor descriptor) {
+            return null;
+        }
+
+        @Override
+        public boolean isNotNullCompileTimeConstant(@NotNull JavaField field) {
+            return false;
+        }
+    };
+
     @Nullable
     CompileTimeConstant<?> getInitializerConstant(@NotNull JavaField field, @NotNull PropertyDescriptor descriptor);
 

@@ -38,7 +38,7 @@ class MyTest() {
             $a = v
         }
 
-    {
+    init {
         a = "rr"
     }
 
@@ -133,7 +133,7 @@ fun testObject() : Trait {
 fun testBackingFieldsNotMarked() {
     val <!UNUSED_VARIABLE!>a<!> = object {
         val x : Int
-        {
+        init {
             $x = 1
         }
     }

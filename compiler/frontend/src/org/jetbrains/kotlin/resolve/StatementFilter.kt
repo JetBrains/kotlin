@@ -25,7 +25,7 @@ public open class StatementFilter {
     public open val filter: ((JetElement) -> Boolean)?
         get() = null
 
-    class object {
+    default object {
         public val NONE: StatementFilter = StatementFilter()
     }
 }

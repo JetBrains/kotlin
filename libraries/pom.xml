@@ -45,6 +45,7 @@
         <asm.version>3.3.1</asm.version>
         <dart.name>dart-r3300</dart.name>
         <guava.version>11.0.2</guava.version>
+        <protobuf.version>2.5.0</protobuf.version>
         <junit-version>4.11</junit-version>
         <kotlin-maven-plugin.version>0.2.3.8</kotlin-maven-plugin.version>
         <kotlin-dist>${project-root}/dist</kotlin-dist>

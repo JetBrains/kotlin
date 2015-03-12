@@ -29,7 +29,7 @@ class LocalFileKotlinClass private(
         innerClasses: FileBasedKotlinClass.InnerClassesInfo
 ) : FileBasedKotlinClass(className, classHeader, innerClasses) {
 
-    class object {
+    default object {
         fun create(file: File): LocalFileKotlinClass? {
             val fileContents = file.readBytes()
             return FileBasedKotlinClass.create(fileContents) {
@@ -38,6 +38,8 @@ class LocalFileKotlinClass private(
             }
         }
     }
+
+    override fun getLocation() = file.getAbsolutePath()
 
     public override fun getFileContents(): ByteArray = fileContents
 

@@ -33,6 +33,8 @@ public class VirtualFileKotlinClass private(
         innerClasses: FileBasedKotlinClass.InnerClassesInfo
 ) : FileBasedKotlinClass(className, classHeader, innerClasses) {
 
+    override fun getLocation() = file.getPath()
+
     override fun getFileContents(): ByteArray {
         try {
             return file.contentsToByteArray()
@@ -47,7 +49,7 @@ public class VirtualFileKotlinClass private(
     override fun hashCode() = file.hashCode()
     override fun toString() = "${javaClass.getSimpleName()}: $file"
 
-    class object Factory {
+    default object Factory {
         private val LOG = Logger.getInstance(javaClass<VirtualFileKotlinClass>())
 
         deprecated("Use KotlinBinaryClassCache")

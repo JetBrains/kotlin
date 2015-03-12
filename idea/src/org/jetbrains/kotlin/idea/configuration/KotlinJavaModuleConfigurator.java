@@ -29,9 +29,8 @@ import org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider;
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil;
 import org.jetbrains.kotlin.idea.project.TargetPlatform;
 import org.jetbrains.kotlin.idea.versions.KotlinRuntimeLibraryCoreUtil;
+import org.jetbrains.kotlin.utils.KotlinPaths;
 import org.jetbrains.kotlin.utils.PathUtil;
-
-import java.io.File;
 
 import static org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtils.showInfoNotification;
 
@@ -63,18 +62,6 @@ public class KotlinJavaModuleConfigurator extends KotlinWithLibraryConfigurator 
 
     @NotNull
     @Override
-    public String getJarName() {
-        return PathUtil.KOTLIN_JAVA_RUNTIME_JAR;
-    }
-
-    @NotNull
-    @Override
-    public String getSourcesJarName() {
-        return PathUtil.KOTLIN_JAVA_RUNTIME_SRC_JAR;
-    }
-
-    @NotNull
-    @Override
     protected String getMessageForOverrideDialog() {
         return JavaRuntimeLibraryDescription.JAVA_RUNTIME_LIBRARY_CREATION;
     }
@@ -97,22 +84,22 @@ public class KotlinJavaModuleConfigurator extends KotlinWithLibraryConfigurator 
         return TargetPlatform.JVM;
     }
 
-    @Override
     @NotNull
-    public File getExistedJarFile() {
-        return assertFileExists(PathUtil.getKotlinPathsForIdeaPlugin().getRuntimePath());
-    }
-
     @Override
-    public File getExistedSourcesJarFile() {
-        return assertFileExists(PathUtil.getKotlinPathsForIdeaPlugin().getRuntimeSourcesPath());
+    public RuntimeLibraryFiles getExistingJarFiles() {
+        KotlinPaths paths = PathUtil.getKotlinPathsForIdeaPlugin();
+        return new RuntimeLibraryFiles(
+                assertFileExists(paths.getRuntimePath()),
+                assertFileExists(paths.getReflectPath()),
+                assertFileExists(paths.getRuntimeSourcesPath())
+        );
     }
 
     public void copySourcesToPathFromLibrary(@NotNull Library library) {
         String dirToJarFromLibrary = getPathFromLibrary(library, OrderRootType.SOURCES);
         assert dirToJarFromLibrary != null : "Directory to file from library should be non null";
 
-        copyFileToDir(getExistedSourcesJarFile(), dirToJarFromLibrary);
+        copyFileToDir(getExistingJarFiles().getRuntimeSourcesJar(), dirToJarFromLibrary);
     }
 
     public boolean changeOldSourcesPathIfNeeded(@NotNull Library library) {
@@ -123,7 +110,7 @@ public class KotlinJavaModuleConfigurator extends KotlinWithLibraryConfigurator 
         String parentDir = getPathFromLibrary(library, OrderRootType.CLASSES);
         assert parentDir != null : "Parent dir for classes jar should exists for Kotlin library";
 
-        return addSourcesToLibraryIfNeeded(library, getFileInDir(getSourcesJarName(), parentDir));
+        return addSourcesToLibraryIfNeeded(library, getExistingJarFiles().getRuntimeSourcesDestination(parentDir));
     }
 
     private static boolean removeOldSourcesRootIfNeeded(@NotNull Library library) {

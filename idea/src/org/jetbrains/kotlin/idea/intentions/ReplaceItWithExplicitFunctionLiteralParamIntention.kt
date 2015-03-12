@@ -68,7 +68,7 @@ public class ReplaceItWithExplicitFunctionLiteralParamIntention() : PsiElementBa
         return JetBundle.message("replace.it.with.explicit.function.literal.param.family")
     }
 
-    class object {
+    default object {
         fun isAutoCreatedIt(simpleNameExpression: JetSimpleNameExpression): Boolean {
             if (simpleNameExpression.getReferencedName() != "it") {
                 return false

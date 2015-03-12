@@ -7,7 +7,7 @@ fun f(x: Int): Int = x * 2
 fun Int.f(): Int = this * 3
 
 class A(var value: Int) {
-    class object {
+    default object {
         fun f(): Int = 5
     }
 

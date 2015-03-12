@@ -1,0 +1,16 @@
+open class B {
+    constructor() {}
+}
+trait C
+class A : B, C {
+    <caret>constructor() { }
+}
+
+
+Resolved call:
+
+Resulting descriptor: constructor B() defined in B
+
+Explicit receiver kind = NO_EXPLICIT_RECEIVER
+Dispatch receiver = NO_RECEIVER
+Extension receiver = NO_RECEIVER

@@ -30,6 +30,7 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.refactoring.util.CommonRefactoringUtil.RefactoringErrorHintException;
 import com.intellij.testFramework.MapDataContext;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Processor;
@@ -162,7 +163,7 @@ public abstract class AbstractHierarchyTest extends KotlinHierarchyViewTestBase 
 
     private PsiElement getElementAtCaret(HierarchyProvider provider) {
         PsiElement target = provider.getTarget(getDataContext());
-        assert target != null : "Cannot apply action for element at caret";
+        if (target == null) throw new RefactoringErrorHintException("Cannot apply action for element at caret");
         return target;
     }
 
@@ -193,6 +194,17 @@ public abstract class AbstractHierarchyTest extends KotlinHierarchyViewTestBase 
         });
         Collections.sort(files);
         return ArrayUtil.toStringArray(files);
+    }
+
+    @Override
+    protected void doHierarchyTest(Computable<HierarchyTreeStructure> treeStructureComputable, String... fileNames) throws Exception {
+        try {
+            super.doHierarchyTest(treeStructureComputable, fileNames);
+        }
+        catch (RefactoringErrorHintException e) {
+            String expectedMessage = FileUtil.loadFile(new File(folderName, "messages.txt"), true);
+            assertEquals(expectedMessage, e.getLocalizedMessage());
+        }
     }
 
     @Override

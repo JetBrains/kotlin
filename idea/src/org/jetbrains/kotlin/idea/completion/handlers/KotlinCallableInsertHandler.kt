@@ -217,7 +217,7 @@ public class KotlinFunctionInsertHandler(val caretPosition : CaretPosition, val 
         return caretPosition == CaretPosition.IN_BRACKETS
     }
 
-    class object {
+    default object {
         public val NO_PARAMETERS_HANDLER: KotlinFunctionInsertHandler = KotlinFunctionInsertHandler(CaretPosition.AFTER_BRACKETS, null)
         public val WITH_PARAMETERS_HANDLER: KotlinFunctionInsertHandler = KotlinFunctionInsertHandler(CaretPosition.IN_BRACKETS, null)
 

@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.load.java.lazy
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.load.java.lazy.types.LazyJavaTypeResolver
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.components.*
 import org.jetbrains.kotlin.load.kotlin.DeserializedDescriptorResolver
@@ -27,6 +26,7 @@ import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaPropertyInitializerEvaluator
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElementFactory
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameterListOwner
+import org.jetbrains.kotlin.serialization.deserialization.*
 
 open class GlobalJavaResolverContext(
         val storageManager: StorageManager,

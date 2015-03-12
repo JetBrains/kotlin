@@ -409,6 +409,18 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledJava(fileName);
             }
 
+            @TestMetadata("EnumArgumentWithCustomToString.java")
+            public void testEnumArgumentWithCustomToString() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/annotations/EnumArgumentWithCustomToString.java");
+                doTestCompiledJava(fileName);
+            }
+
+            @TestMetadata("EnumConstructorParameter.java")
+            public void testEnumConstructorParameter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/annotations/EnumConstructorParameter.java");
+                doTestCompiledJava(fileName);
+            }
+
             @TestMetadata("EnumInParam.java")
             public void testEnumInParam() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/annotations/EnumInParam.java");
@@ -1711,6 +1723,24 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledJava(fileName);
             }
 
+            @TestMetadata("RawSuperTypeWithBound.java")
+            public void testRawSuperTypeWithBound() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/signaturePropagation/RawSuperTypeWithBound.java");
+                doTestCompiledJava(fileName);
+            }
+
+            @TestMetadata("RawSuperTypeWithRecursiveBound.java")
+            public void testRawSuperTypeWithRecursiveBound() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/signaturePropagation/RawSuperTypeWithRecursiveBound.java");
+                doTestCompiledJava(fileName);
+            }
+
+            @TestMetadata("RawSuperTypeWithRecursiveBoundMultipleParameters.java")
+            public void testRawSuperTypeWithRecursiveBoundMultipleParameters() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/signaturePropagation/RawSuperTypeWithRecursiveBoundMultipleParameters.java");
+                doTestCompiledJava(fileName);
+            }
+
             @TestMetadata("ReturnInnerSubclassOfSupersInner.java")
             public void testReturnInnerSubclassOfSupersInner() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/signaturePropagation/ReturnInnerSubclassOfSupersInner.java");
@@ -1907,6 +1937,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledKotlin(fileName);
             }
 
+            @TestMetadata("EnumArgumentWithCustomToString.kt")
+            public void testEnumArgumentWithCustomToString() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/EnumArgumentWithCustomToString.kt");
+                doTestCompiledKotlin(fileName);
+            }
+
             @TestMetadata("SimpleAnnotation.kt")
             public void testSimpleAnnotation() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/SimpleAnnotation.kt");
@@ -1924,6 +1960,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 @TestMetadata("ClassObjectPropertyField.kt")
                 public void testClassObjectPropertyField() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/ClassObjectPropertyField.kt");
+                    doTestCompiledKotlin(fileName);
+                }
+
+                @TestMetadata("Constructor.kt")
+                public void testConstructor() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/Constructor.kt");
                     doTestCompiledKotlin(fileName);
                 }
 
@@ -2161,6 +2203,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 @TestMetadata("FunctionInTrait.kt")
                 public void testFunctionInTrait() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/parameters/FunctionInTrait.kt");
+                    doTestCompiledKotlin(fileName);
+                }
+
+                @TestMetadata("InnerClassConstructor.kt")
+                public void testInnerClassConstructor() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/parameters/InnerClassConstructor.kt");
                     doTestCompiledKotlin(fileName);
                 }
 
@@ -2441,6 +2489,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             @TestMetadata("NestedGenericClass.kt")
             public void testNestedGenericClass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/NestedGenericClass.kt");
+                doTestCompiledKotlin(fileName);
+            }
+
+            @TestMetadata("RecursiveGeneric.kt")
+            public void testRecursiveGeneric() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/RecursiveGeneric.kt");
                 doTestCompiledKotlin(fileName);
             }
 

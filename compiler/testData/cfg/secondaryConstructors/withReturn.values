@@ -1,0 +1,35 @@
+== A ==
+class A {
+    val x: Int
+    constructor() {
+        if (1 == 1) {
+            return
+        }
+        else null!!
+        x = 1
+    }
+}
+---------------------
+=====================
+== <init> ==
+constructor() {
+        if (1 == 1) {
+            return
+        }
+        else null!!
+        x = 1
+    }
+---------------------
+                                               <v0>: *          NEW: call(, <init>) -> <v0>
+1                                              <v1>: OR{*, *}   NEW: r(1) -> <v1>
+1                                              <v2>: *          NEW: r(1) -> <v2>
+1 == 1                                         <v3>: Boolean    NEW: call(1 == 1, equals|<v1>, <v2>) -> <v3>
+return                                         !<v4>: *
+{ return }                                     !<v4>: *         COPY
+null                                           <v5>: *          NEW: r(null) -> <v5>
+null!!                                         <v6>: *          NEW: magic[NOT_NULL_ASSERTION](null!!|<v5>) -> <v6>
+if (1 == 1) { return } else null!!             <v7>: *          NEW: merge(if (1 == 1) { return } else null!!|!<v4>, <v6>) -> <v7>
+1                                              <v9>: Int        NEW: r(1) -> <v9>
+x = 1                                          !<v10>: *
+{ if (1 == 1) { return } else null!! x = 1 }   !<v10>: *        COPY
+=====================

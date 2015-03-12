@@ -30,11 +30,11 @@ import kotlin.KotlinPackage;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
 import org.jetbrains.kotlin.codegen.context.*;
+import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension;
 import org.jetbrains.kotlin.codegen.inline.*;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethod;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
@@ -64,6 +64,7 @@ import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant;
 import org.jetbrains.kotlin.resolve.constants.evaluate.EvaluatePackage;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.resolve.scopes.receivers.*;
 import org.jetbrains.kotlin.types.Approximation;
@@ -1428,7 +1429,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
                 pushClosureOnStack(classDescriptor, true, defaultCallGenerator);
 
-                ResolvedCall<ConstructorDescriptor> superCall = bindingContext.get(CLOSURE, classDescriptor).getSuperCall();
+                ConstructorDescriptor primaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
+                assert primaryConstructor != null : "There should be primary constructor for object literal";
+                ResolvedCall<ConstructorDescriptor> superCall = getDelegationConstructorCall(bindingContext, primaryConstructor);
                 if (superCall != null) {
                     // For an anonymous object, we should also generate all non-default arguments that it captures for its super call
                     ConstructorDescriptor superConstructor = superCall.getResultingDescriptor();
@@ -1496,10 +1499,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             callGenerator.putCapturedValueOnStack(capturedVar, sharedVarType, paramIndex++);
         }
 
-        ResolvedCall<ConstructorDescriptor> superCall = closure.getSuperCall();
-        if (superCall != null) {
+
+        ClassDescriptor superClass = DescriptorUtilPackage.getSuperClassNotAny(classDescriptor);
+        if (superClass != null) {
             pushClosureOnStack(
-                    superCall.getResultingDescriptor().getContainingDeclaration(),
+                    superClass,
                     putThis && closure.getCaptureThis() == null,
                     callGenerator
             );
@@ -1956,9 +1960,32 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             return stackValueForLocal(descriptor, index);
         }
 
+        if (context instanceof ConstructorContext) {
+            return lookupCapturedValueInConstructorParameters(descriptor);
+        }
+
         return context.lookupInContext(descriptor, StackValue.LOCAL_0, state, false);
     }
 
+    @Nullable
+    private StackValue lookupCapturedValueInConstructorParameters(@NotNull DeclarationDescriptor descriptor) {
+        StackValue parentResult = context.lookupInContext(descriptor, StackValue.LOCAL_0, state, false);
+        if (context.closure == null || parentResult == null) return parentResult;
+
+        int parameterOffsetInConstructor = context.closure.getCapturedParameterOffsetInConstructor(descriptor);
+        // when captured parameter is singleton
+        // see compiler/testData/codegen/box/objects/objectInLocalAnonymousObject.kt (fun local() captured in A)
+        if (parameterOffsetInConstructor == -1) return parentResult;
+
+        assert parentResult instanceof StackValue.Field || parentResult instanceof StackValue.FieldForSharedVar
+                : "Part of closure should be either Field or FieldForSharedVar";
+
+        if (parentResult instanceof StackValue.FieldForSharedVar) {
+            return StackValue.shared(parameterOffsetInConstructor, parentResult.type);
+        }
+
+        return StackValue.local(parameterOffsetInConstructor, parentResult.type);
+    }
 
     private StackValue stackValueForLocal(DeclarationDescriptor descriptor, int index) {
         if (descriptor instanceof VariableDescriptor) {
@@ -2203,8 +2230,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             }
         }
 
-        final Callable callable = resolveToCallable(accessibleFunctionDescriptor(fd), superCall);
-        final Type returnType = typeMapper.mapReturnType(resolvedCall.getResultingDescriptor());
+        FunctionDescriptor accessibleFunctionDescriptor = accessibleFunctionDescriptor(fd);
+        final Callable callable = resolveToCallable(accessibleFunctionDescriptor, superCall);
+        final Type returnType = typeMapper.mapReturnType(accessibleFunctionDescriptor);
 
         if (callable instanceof CallableMethod) {
             return StackValue.functionCall(returnType, new Function1<InstructionAdapter, Unit>() {
@@ -2611,6 +2639,20 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @Override
+    public StackValue visitClassLiteralExpression(@NotNull JetClassLiteralExpression expression, StackValue data) {
+        JetType type = bindingContext.get(EXPRESSION_TYPE, expression);
+        assert type != null;
+
+        assert state.getReflectionTypes().getkClass().getTypeConstructor().equals(type.getConstructor())
+                : "::class expression should be type checked to a KClass: " + type;
+
+        ClassifierDescriptor typeArgument = KotlinPackage.single(type.getArguments()).getType().getConstructor().getDeclarationDescriptor();
+        assert typeArgument instanceof ClassDescriptor : "KClass argument should be a class: " + typeArgument;
+
+        return generateClassLiteralReference((ClassDescriptor) typeArgument);
+    }
+
+    @Override
     public StackValue visitCallableReferenceExpression(@NotNull JetCallableReferenceExpression expression, StackValue data) {
         ResolvedCall<?> resolvedCall = getResolvedCallWithAssert(expression.getCallableReference(), bindingContext);
         FunctionDescriptor functionDescriptor = bindingContext.get(FUNCTION, expression);
@@ -2690,18 +2732,29 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             @Override
             public Unit invoke(InstructionAdapter v) {
                 v.visitLdcInsn(descriptor.getName().asString());
+                StackValue receiverClass = generateClassLiteralReference(containingClass);
+                receiverClass.put(receiverClass.type, v);
+                v.invokestatic(REFLECTION, factoryMethod.getName(), factoryMethod.getDescriptor(), false);
 
-                Type classAsmType = typeMapper.mapClass(containingClass);
+                return Unit.INSTANCE$;
+            }
+        });
+    }
 
-                if (containingClass instanceof JavaClassDescriptor) {
-                    v.aconst(classAsmType);
+    @NotNull
+    private StackValue generateClassLiteralReference(@NotNull final ClassDescriptor descriptor) {
+        return StackValue.operation(K_CLASS_TYPE, new Function1<InstructionAdapter, Unit>() {
+            @Override
+            public Unit invoke(InstructionAdapter v) {
+                Type classAsmType = typeMapper.mapClass(descriptor);
+                ModuleDescriptor module = DescriptorUtils.getContainingModule(descriptor);
+                if (descriptor instanceof JavaClassDescriptor || module == module.getBuiltIns().getBuiltInsModule()) {
+                    putJavaLangClassInstance(v, classAsmType);
                     v.invokestatic(REFLECTION, "foreignKotlinClass", Type.getMethodDescriptor(K_CLASS_TYPE, getType(Class.class)), false);
                 }
                 else {
                     v.getstatic(classAsmType.getInternalName(), JvmAbi.KOTLIN_CLASS_FIELD_NAME, K_CLASS_TYPE.getDescriptor());
                 }
-
-                v.invokestatic(REFLECTION, factoryMethod.getName(), factoryMethod.getDescriptor(), false);
 
                 return Unit.INSTANCE$;
             }

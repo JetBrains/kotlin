@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.psi.JetArrayAccessExpression
 class KotlinEditorTextProvider : EditorTextProvider {
     override fun getEditorText(elementAtCaret: PsiElement): TextWithImports? {
         val expression = findExpressionInner(elementAtCaret, true)
-        return TextWithImportsImpl(CodeFragmentKind.EXPRESSION, expression?.getText() ?: "", JetCodeFragment.getImportsForElement(elementAtCaret), JetFileType.INSTANCE)
+        return TextWithImportsImpl(CodeFragmentKind.EXPRESSION, expression?.getText() ?: "", "", JetFileType.INSTANCE)
     }
 
     override fun findExpression(elementAtCaret: PsiElement, allowMethodCalls: Boolean): Pair<PsiElement, TextRange>? {
@@ -52,7 +52,7 @@ class KotlinEditorTextProvider : EditorTextProvider {
         return Pair(expression, expression.getTextRange())
     }
 
-    class object {
+    default object {
         fun findExpressionInner(element: PsiElement, allowMethodCalls: Boolean): JetExpression? {
             if (PsiTreeUtil.getParentOfType(element, javaClass<JetUserType>(), javaClass<JetImportDirective>(), javaClass<JetPackageDirective>()) != null) {
                 return null

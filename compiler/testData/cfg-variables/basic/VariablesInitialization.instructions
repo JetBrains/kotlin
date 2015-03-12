@@ -37,18 +37,18 @@ L0:
     w(foo|<v0>)                                  INIT: in: {foo=D} out: {foo=ID}
   2 mark({ foo.c foo.c = 2 42 })                 INIT: in: {foo=ID} out: {foo=ID}
     mark(foo.c)
-    r(foo) -> <v1>                                                                             USE: in: {c=READ, foo=READ} out: {c=READ, foo=READ}
-    r(c|<v1>) -> <v2>                                                                          USE: in: {c=ONLY_WRITTEN_NEVER_READ, foo=READ} out: {c=READ, foo=READ}
-    r(foo) -> <v3>                                                                             USE: in: {c=ONLY_WRITTEN_NEVER_READ} out: {c=ONLY_WRITTEN_NEVER_READ, foo=READ}
-    r(2) -> <v4>                                                                               USE: in: {c=ONLY_WRITTEN_NEVER_READ} out: {c=ONLY_WRITTEN_NEVER_READ}
-    w(foo.c|<v3>, <v4>)                          INIT: in: {foo=ID} out: {c=I, foo=ID}         USE: in: {} out: {c=ONLY_WRITTEN_NEVER_READ}
-    r(42) -> <v5>                                INIT: in: {c=I, foo=ID} out: {c=I, foo=ID}
+    r(foo) -> <v1>                                                                   USE: in: {c=READ, foo=READ} out: {c=READ, foo=READ}
+    r(c|<v1>) -> <v2>                                                                USE: in: {c=ONLY_WRITTEN_NEVER_READ, foo=READ} out: {c=READ, foo=READ}
+    r(foo) -> <v3>                                                                   USE: in: {c=ONLY_WRITTEN_NEVER_READ} out: {c=ONLY_WRITTEN_NEVER_READ, foo=READ}
+    r(2) -> <v4>                                                                     USE: in: {c=ONLY_WRITTEN_NEVER_READ} out: {c=ONLY_WRITTEN_NEVER_READ}
+    w(foo.c|<v3>, <v4>)                                                              USE: in: {} out: {c=ONLY_WRITTEN_NEVER_READ}
+    r(42) -> <v5>
 L1:
   1 <END>
 error:
     <ERROR>                                      INIT: in: {} out: {}
 sink:
-    <SINK>                                       INIT: in: {c=I, foo=ID} out: {c=I, foo=ID}    USE: in: {} out: {}
+    <SINK>                                       INIT: in: {foo=ID} out: {foo=ID}    USE: in: {} out: {}
 =====================
 == Foo ==
 trait Foo {

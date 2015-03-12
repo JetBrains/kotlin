@@ -60,6 +60,7 @@
                 <executions>
                     <execution>
                         <id>js</id>
+                        <phase>compile</phase>
                         <goals>
                             <goal>js</goal>
                         </goals>
@@ -99,10 +100,10 @@
             </plugin>
 
             <plugin>
-                  <artifactId>maven-deploy-plugin</artifactId>
-                  <configuration>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
                     <skip>true</skip>
-                  </configuration>
+                </configuration>
             </plugin>
 
         </plugins>

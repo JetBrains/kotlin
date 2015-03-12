@@ -453,23 +453,72 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetTypeInfo visitCallableReferenceExpression(@NotNull JetCallableReferenceExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitClassLiteralExpression(@NotNull JetClassLiteralExpression expression, ExpressionTypingContext c) {
+        ClassDescriptor descriptor = resolveClassLiteral(expression, c);
+        JetType type = descriptor == null
+                       ? ErrorUtils.createErrorType("Unresolved class")
+                       : components.reflectionTypes.getKClassType(Annotations.EMPTY, descriptor);
+
+        return JetTypeInfo.create(type, c.dataFlowInfo);
+    }
+
+    @Nullable
+    private ClassDescriptor resolveClassLiteral(@NotNull JetClassLiteralExpression expression, ExpressionTypingContext c) {
+        JetTypeReference typeReference = expression.getTypeReference();
+
+        if (typeReference == null) {
+            // "::class" will mean "this::class", a class of "this" instance
+            c.trace.report(UNSUPPORTED.on(expression, "Class literals with empty left hand side are not yet supported"));
+            return null;
+        }
+
+        TypeResolutionContext context =
+                new TypeResolutionContext(c.scope, c.trace, /* checkBounds = */ false, /* allowBareTypes = */ true);
+        PossiblyBareType possiblyBareType =
+                components.expressionTypingServices.getTypeResolver().resolvePossiblyBareType(context, typeReference);
+
+        TypeConstructor typeConstructor = null;
+        if (possiblyBareType.isBare()) {
+            if (!possiblyBareType.isNullable()) {
+                typeConstructor = possiblyBareType.getBareTypeConstructor();
+            }
+        }
+        else {
+            JetType type = possiblyBareType.getActualType();
+            if (!type.isMarkedNullable() && type.getArguments().isEmpty()) {
+                typeConstructor = type.getConstructor();
+            }
+        }
+
+        if (typeConstructor != null) {
+            ClassifierDescriptor classifier = typeConstructor.getDeclarationDescriptor();
+            if (classifier instanceof ClassDescriptor) {
+                return (ClassDescriptor) classifier;
+            }
+        }
+
+        context.trace.report(CLASS_LITERAL_LHS_NOT_A_CLASS.on(expression));
+        return null;
+    }
+
+    @Override
+    public JetTypeInfo visitCallableReferenceExpression(@NotNull JetCallableReferenceExpression expression, ExpressionTypingContext c) {
         JetTypeReference typeReference = expression.getTypeReference();
 
         JetType receiverType =
                 typeReference == null
                 ? null
-                : components.expressionTypingServices.getTypeResolver().resolveType(context.scope, typeReference, context.trace, false);
+                : components.expressionTypingServices.getTypeResolver().resolveType(c.scope, typeReference, c.trace, false);
 
         JetSimpleNameExpression callableReference = expression.getCallableReference();
         if (callableReference.getReferencedName().isEmpty()) {
-            context.trace.report(UNRESOLVED_REFERENCE.on(callableReference, callableReference));
+            c.trace.report(UNRESOLVED_REFERENCE.on(callableReference, callableReference));
             JetType errorType = ErrorUtils.createErrorType("Empty callable reference");
-            return DataFlowUtils.checkType(errorType, expression, context, context.dataFlowInfo);
+            return DataFlowUtils.checkType(errorType, expression, c, c.dataFlowInfo);
         }
 
-        JetType result = getCallableReferenceType(expression, receiverType, context);
-        return DataFlowUtils.checkType(result, expression, context, context.dataFlowInfo);
+        JetType result = getCallableReferenceType(expression, receiverType, c);
+        return DataFlowUtils.checkType(result, expression, c, c.dataFlowInfo);
     }
 
     @Nullable

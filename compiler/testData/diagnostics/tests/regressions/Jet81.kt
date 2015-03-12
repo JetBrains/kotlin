@@ -15,7 +15,7 @@ object A {
 
 class Test2 {
   private val a = object {
-    {
+    init {
       <!UNINITIALIZED_VARIABLE, DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>b<!> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>+<!> 1
     }
     val x = <!UNINITIALIZED_VARIABLE, DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>b<!>

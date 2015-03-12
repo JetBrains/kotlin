@@ -86,6 +86,10 @@ public class PseudocodeImpl implements Pseudocode {
         public PseudocodeLabel copy(int newLabelIndex) {
             return new PseudocodeLabel("L" + newLabelIndex, "copy of " + name + ", " + comment);
         }
+
+        public PseudocodeImpl getPseudocode() {
+            return PseudocodeImpl.this;
+        }
     }
 
     private final List<Instruction> mutableInstructionList = new ArrayList<Instruction>();
@@ -455,6 +459,8 @@ public class PseudocodeImpl implements Pseudocode {
     }
 
     public int repeatPart(@NotNull Label startLabel, @NotNull Label finishLabel, int labelCount) {
+        PseudocodeImpl originalPseudocode = ((PseudocodeLabel) startLabel).getPseudocode();
+
         Integer startIndex = ((PseudocodeLabel) startLabel).getTargetInstructionIndex();
         assert startIndex != null;
         Integer finishIndex = ((PseudocodeLabel) finishLabel).getTargetInstructionIndex();
@@ -462,7 +468,7 @@ public class PseudocodeImpl implements Pseudocode {
 
         Map<Label, Label> originalToCopy = Maps.newLinkedHashMap();
         Multimap<Instruction, Label> originalLabelsForInstruction = HashMultimap.create();
-        for (PseudocodeLabel label : labels) {
+        for (PseudocodeLabel label : originalPseudocode.labels) {
             Integer index = label.getTargetInstructionIndex();
             if (index == null) continue; //label is not bounded yet
             if (label == startLabel || label == finishLabel) continue;
@@ -476,11 +482,13 @@ public class PseudocodeImpl implements Pseudocode {
             labels.add((PseudocodeLabel) label);
         }
         for (int index = startIndex; index < finishIndex; index++) {
-            Instruction originalInstruction = mutableInstructionList.get(index);
+            Instruction originalInstruction = originalPseudocode.mutableInstructionList.get(index);
             repeatLabelsBindingForInstruction(originalInstruction, originalToCopy, originalLabelsForInstruction);
             addInstruction(copyInstruction(originalInstruction, originalToCopy));
         }
-        repeatLabelsBindingForInstruction(mutableInstructionList.get(finishIndex), originalToCopy, originalLabelsForInstruction);
+        repeatLabelsBindingForInstruction(originalPseudocode.mutableInstructionList.get(finishIndex),
+                                          originalToCopy,
+                                          originalLabelsForInstruction);
         return labelCount;
     }
 

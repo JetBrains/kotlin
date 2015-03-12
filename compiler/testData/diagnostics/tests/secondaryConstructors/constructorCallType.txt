@@ -1,0 +1,32 @@
+package
+
+internal val x1: A
+internal val x2: A
+internal val x3: A
+internal val y1: B<kotlin.Int>
+internal val y10: [ERROR : Type for B("")]
+internal val y2: B<kotlin.Int>
+internal val y3: B<kotlin.Int>
+internal val y4: B<kotlin.Int>
+internal val y5: B<kotlin.String>
+internal val y6: B<kotlin.String>
+internal val y7: B<kotlin.String>
+internal val y8: B<kotlin.String>
+internal val y9: B<kotlin.Int>
+
+internal final class A {
+    public constructor A(/*0*/ x: kotlin.Double)
+    public constructor A(/*0*/ x: kotlin.Int)
+    public constructor A(/*0*/ x: kotlin.String)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class B</*0*/ R> {
+    public constructor B</*0*/ R>(/*0*/ x: R)
+    public constructor B</*0*/ R>(/*0*/ x: kotlin.String)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

@@ -1,7 +1,6 @@
 // "Create local variable 'foo'" "true"
-// ERROR: Variable 'foo' must be initialized
 
 fun test(): Int? {
-    val foo: Int?
+    val foo = null
     return foo
 }

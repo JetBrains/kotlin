@@ -323,11 +323,11 @@ public class JetPsiFactory(private val project: Project) {
     }
 
     public fun createExpressionCodeFragment(text: String, context: PsiElement?): JetExpressionCodeFragment {
-        return JetExpressionCodeFragment(project, "fragment.kt", text, context)
+        return JetExpressionCodeFragment(project, "fragment.kt", text, null, context)
     }
 
     public fun createBlockCodeFragment(text: String, context: PsiElement?): JetBlockCodeFragment {
-        return JetBlockCodeFragment(project, "fragment.kt", text, context)
+        return JetBlockCodeFragment(project, "fragment.kt", text, null, context)
     }
 
     public fun createReturn(text: String): JetReturnExpression {

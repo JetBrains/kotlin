@@ -33,6 +33,7 @@ import java.util.regex.Pattern;
 @InnerTestClasses({
         JetDiagnosticsTestWithStdLibGenerated.Annotations.class,
         JetDiagnosticsTestWithStdLibGenerated.CallableReference.class,
+        JetDiagnosticsTestWithStdLibGenerated.ClassLiteral.class,
         JetDiagnosticsTestWithStdLibGenerated.DuplicateJvmSignature.class,
         JetDiagnosticsTestWithStdLibGenerated.FunctionLiterals.class,
         JetDiagnosticsTestWithStdLibGenerated.Inference.class,
@@ -595,6 +596,33 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/property/topLevelFromTopLevel.kt");
                 doTest(fileName);
             }
+        }
+    }
+
+    @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/classLiteral")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ClassLiteral extends AbstractJetDiagnosticsTestWithStdLib {
+        public void testAllFilesPresentInClassLiteral() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/classLiteral"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("genericClasses.kt")
+        public void testGenericClasses() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/classLiteral/genericClasses.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nonClassesOnLHS.kt")
+        public void testNonClassesOnLHS() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/classLiteral/nonClassesOnLHS.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simpleClassLiteral.kt")
+        public void testSimpleClassLiteral() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/classLiteral/simpleClassLiteral.kt");
+            doTest(fileName);
         }
     }
 

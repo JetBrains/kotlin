@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import kotlin.platform.platformStatic
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
+import kotlin.properties.*
 
 class LazyJavaTypeResolver(
         private val c: LazyJavaResolverContext,
@@ -89,18 +90,14 @@ class LazyJavaTypeResolver(
         }.replaceAnnotations(attr.annotations)
     }
 
-    private class LazyStarProjection(
-            c: LazyJavaResolverContext,
-            val typeParameter: TypeParameterDescriptor,
-            val attr: JavaTypeAttributes
-    ) : TypeProjectionBase() {
-        override fun isStarProjection() = true
-
-        override fun getProjectionKind() =
-                // projections are not allowed in immediate arguments of supertypes
-                if (typeParameter.getVariance() == OUT_VARIANCE || attr.howThisTypeIsUsed == SUPERTYPE) INVARIANT else OUT_VARIANCE
-
-        override fun getType() = typeParameter.getUpperBoundsAsType()
+    fun makeStarProjection(
+                typeParameter: TypeParameterDescriptor,
+                attr: JavaTypeAttributes
+    ): TypeProjection {
+        return if (attr.howThisTypeIsUsed == SUPERTYPE)
+                   TypeProjectionImpl(typeParameter.starProjectionType())
+               else
+                   StarProjectionImpl(typeParameter)
     }
 
     private inner class LazyJavaClassifierType(
@@ -198,7 +195,7 @@ class LazyJavaTypeResolver(
                         TypeProjectionImpl(projectionKind, KotlinBuiltIns.getInstance().getNullableAnyType())
                     }
                     else
-                        LazyStarProjection(c, parameter, attr)
+                        makeStarProjection(parameter, attr)
                 }
             }
             if (isConstructorTypeParameter()) {
@@ -229,7 +226,7 @@ class LazyJavaTypeResolver(
                 is JavaWildcardType -> {
                     val bound = javaType.getBound()
                     if (bound == null)
-                        LazyStarProjection(c, typeParameter, attr)
+                        makeStarProjection(typeParameter, attr)
                     else {
                         var projectionKind = if (javaType.isExtends()) OUT_VARIANCE else IN_VARIANCE
                         if (projectionKind == typeParameter.getVariance()) {
@@ -336,8 +333,6 @@ trait JavaTypeAttributes {
         get() = true
     val annotations: Annotations
 }
-
-fun JavaTypeAttributes.isFlexible() = flexibility != INFLEXIBLE
 
 enum class JavaTypeFlexibility {
     INFLEXIBLE

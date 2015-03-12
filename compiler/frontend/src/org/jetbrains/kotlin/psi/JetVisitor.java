@@ -33,6 +33,10 @@ public class JetVisitor<R, D> extends PsiElementVisitor {
         return visitNamedDeclaration(klass, data);
     }
 
+    public R visitSecondaryConstructor(@NotNull JetSecondaryConstructor constructor, D data) {
+        return visitJetElement(constructor, data);
+    }
+
     public R visitNamedFunction(@NotNull JetNamedFunction function, D data) {
         return visitNamedDeclaration(function, data);
     }
@@ -134,8 +138,8 @@ public class JetVisitor<R, D> extends PsiElementVisitor {
         return visitDelegationSpecifier(specifier, data);
     }
 
-    public R visitDelegationToThisCall(@NotNull JetDelegatorToThisCall thisCall, D data) {
-        return visitDelegationSpecifier(thisCall, data);
+    public R visitConstructorDelegationCall(@NotNull JetConstructorDelegationCall call, D data) {
+        return visitJetElement(call, data);
     }
 
     public R visitPropertyDelegate(@NotNull JetPropertyDelegate delegate, D data) {
@@ -258,8 +262,16 @@ public class JetVisitor<R, D> extends PsiElementVisitor {
         return visitExpression(expression, data);
     }
 
-    public R visitCallableReferenceExpression(@NotNull JetCallableReferenceExpression expression, D data) {
+    public R visitDoubleColonExpression(@NotNull JetDoubleColonExpression expression, D data) {
         return visitExpression(expression, data);
+    }
+
+    public R visitCallableReferenceExpression(@NotNull JetCallableReferenceExpression expression, D data) {
+        return visitDoubleColonExpression(expression, data);
+    }
+
+    public R visitClassLiteralExpression(@NotNull JetClassLiteralExpression expression, D data) {
+        return visitDoubleColonExpression(expression, data);
     }
 
     public R visitDotQualifiedExpression(@NotNull JetDotQualifiedExpression expression, D data) {

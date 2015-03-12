@@ -47,4 +47,8 @@ public final class ClassObjectTest extends SingleFileTranslationTest {
     public void testNamedClassObject() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testDefaultObjectSameNamesAsInOuter() throws Exception {
+        checkFooBoxIsOk();
+    }
 }

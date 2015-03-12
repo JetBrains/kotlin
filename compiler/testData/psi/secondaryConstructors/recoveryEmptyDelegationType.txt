@@ -1,0 +1,124 @@
+JetFile: recoveryEmptyDelegationType.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('A')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      SECONDARY_CONSTRUCTOR
+        PsiElement(constructor)('constructor')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('x')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Int')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        CONSTRUCTOR_DELEGATION_CALL
+          PsiErrorElement:Expecting a 'this' or 'super' constructor call
+            <empty list>
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiWhiteSpace('\n        ')
+          BINARY_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('x')
+            PsiWhiteSpace(' ')
+            OPERATION_REFERENCE
+              PsiElement(EQ)('=')
+            PsiWhiteSpace(' ')
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('1')
+          PsiWhiteSpace('\n    ')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      FUN
+        PsiElement(fun)('fun')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('foo')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('2')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('B')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      SECONDARY_CONSTRUCTOR
+        PsiElement(constructor)('constructor')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('x')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Int')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        CONSTRUCTOR_DELEGATION_CALL
+          PsiErrorElement:Expecting a 'this' or 'super' constructor call
+            <empty list>
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiWhiteSpace('\n        ')
+          BINARY_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('x')
+            PsiWhiteSpace(' ')
+            OPERATION_REFERENCE
+              PsiElement(EQ)('=')
+            PsiWhiteSpace(' ')
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('3')
+          PsiWhiteSpace('\n    ')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    INTEGER_CONSTANT
+      PsiElement(INTEGER_LITERAL)('4')

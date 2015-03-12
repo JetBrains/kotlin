@@ -51,7 +51,7 @@ import org.jetbrains.jps.api.CanceledStatus
 import org.jetbrains.jps.builders.java.dependencyView.Callbacks
 
 public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
-    class object {
+    default object {
         val COMPILATION_FAILED = "COMPILATION FAILED"
 
         // change to "/tmp" or anything when default is too long (for easier debugging)

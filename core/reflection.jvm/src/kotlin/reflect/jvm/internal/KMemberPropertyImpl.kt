@@ -16,39 +16,22 @@
 
 package kotlin.reflect.jvm.internal
 
-import java.lang.reflect.*
-import kotlin.reflect.*
-
-// TODO: properties of built-in classes
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import kotlin.reflect.IllegalPropertyAccessException
+import kotlin.reflect.KMemberProperty
+import kotlin.reflect.KMutableMemberProperty
 
 open class KMemberPropertyImpl<T : Any, out R>(
-        override val name: String,
-        protected val owner: KClassImpl<T>
-) : KMemberProperty<T, R>, KPropertyImpl<R> {
-    // TODO: extract, make lazy (weak?), use our descriptors knowledge
-    override val field: Field?
-    override val getter: Method?
-
-    {
-        try {
-            field = owner.jClass.getDeclaredField(name)
-        }
-        catch (e: NoSuchFieldException) {
-            field = null
-        }
-
-        try {
-            getter = owner.jClass.getMaybeDeclaredMethod(getterName(name))
-        }
-        catch (e: NoSuchMethodException) {
-            if (field == null) throw NoSuchPropertyException(e)
-            getter = null
-        }
-    }
+        override val container: KClassImpl<T>,
+        computeDescriptor: () -> PropertyDescriptor
+) : DescriptorBasedProperty(computeDescriptor), KMemberProperty<T, R>, KPropertyImpl<R> {
+    override val name: String get() = descriptor.getName().asString()
 
     override fun get(receiver: T): R {
         try {
-            return (if (getter != null) getter!!(receiver) else field!!.get(receiver)) as R
+            val getter = getter
+            [suppress("UNCHECKED_CAST")]
+            return if (getter != null) getter(receiver) as R else field!!.get(receiver) as R
         }
         catch (e: IllegalAccessException) {
             throw IllegalPropertyAccessException(e)
@@ -56,42 +39,27 @@ open class KMemberPropertyImpl<T : Any, out R>(
     }
 
     override fun equals(other: Any?): Boolean =
-            other is KMemberPropertyImpl<*, *> && name == other.name && owner == other.owner
+            other is KMemberPropertyImpl<*, *> && descriptor == other.descriptor
 
     override fun hashCode(): Int =
-            name.hashCode() * 31 + owner.hashCode()
+            descriptor.hashCode()
 
-    // TODO: include visibility, return type
     override fun toString(): String =
-            "val ${owner.jClass.getName()}.$name"
+            ReflectionObjectRenderer.renderProperty(descriptor)
 }
 
+
 class KMutableMemberPropertyImpl<T : Any, R>(
-        name: String,
-        owner: KClassImpl<T>
-) : KMutableMemberProperty<T, R>, KMutablePropertyImpl<R>, KMemberPropertyImpl<T, R>(name, owner) {
-    override val setter: Method?
-
-    {
-        try {
-            val returnType = if (getter != null) getter.getReturnType() else field!!.getType()
-            setter = owner.jClass.getMaybeDeclaredMethod(setterName(name), returnType)
-        }
-        catch (e: NoSuchMethodException) {
-            if (field == null) throw NoSuchPropertyException(e)
-            setter = null
-        }
-    }
-
+        container: KClassImpl<T>,
+        computeDescriptor: () -> PropertyDescriptor
+) : KMemberPropertyImpl<T, R>(container, computeDescriptor), KMutableMemberProperty<T, R>, KMutablePropertyImpl<R> {
     override fun set(receiver: T, value: R) {
         try {
-            if (setter != null) setter!!(receiver, value) else field!!.set(receiver, value)
+            val setter = setter
+            if (setter != null) setter(receiver, value) else field!!.set(receiver, value)
         }
         catch (e: IllegalAccessException) {
             throw IllegalPropertyAccessException(e)
         }
     }
-
-    override fun toString(): String =
-            "var ${owner.jClass.getName()}.$name"
 }

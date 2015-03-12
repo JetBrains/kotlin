@@ -21,7 +21,7 @@ public class CompilerSettings {
     public var copyJsLibraryFiles: Boolean = true
     public var outputDirectoryForJsLibraryFiles: String = DEFAULT_OUTPUT_DIRECTORY
 
-    class object {
+    default object {
         private val DEFAULT_ADDITIONAL_ARGUMENTS = "-version"
         private val DEFAULT_OUTPUT_DIRECTORY = "lib"
     }

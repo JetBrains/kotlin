@@ -136,6 +136,12 @@ public class JetPsiCheckerTestGenerated extends AbstractJetPsiCheckerTest {
             doTest(fileName);
         }
 
+        @TestMetadata("DeprecatedClassObjectSyntax.kt")
+        public void testDeprecatedClassObjectSyntax() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/DeprecatedClassObjectSyntax.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ExtensionFunctions.kt")
         public void testExtensionFunctions() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/ExtensionFunctions.kt");

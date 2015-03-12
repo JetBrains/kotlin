@@ -96,7 +96,7 @@ public class MoveKotlinTopLevelDeclarationsProcessor(
         val project: Project,
         val options: MoveKotlinTopLevelDeclarationsOptions,
         val mover: Mover = Mover.Default) : BaseRefactoringProcessor(project) {
-    class object {
+    default object {
         private val LOG: Logger = Logger.getInstance(javaClass<MoveKotlinTopLevelDeclarationsProcessor>())
 
         private val REFACTORING_NAME: String = JetRefactoringBundle.message("refactoring.move.top.level.declarations")

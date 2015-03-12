@@ -39,8 +39,10 @@ import org.jetbrains.kotlin.resolve.calls.tasks.*;
 import org.jetbrains.kotlin.resolve.calls.tasks.collectors.CallableDescriptorCollectors;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
@@ -50,8 +52,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.kotlin.diagnostics.Errors.NOT_A_CLASS;
-import static org.jetbrains.kotlin.diagnostics.Errors.NO_CONSTRUCTOR;
+import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilPackage.recordScopeAndDataFlowInfo;
 import static org.jetbrains.kotlin.resolve.calls.CallResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.kotlin.resolve.calls.CallResolverUtil.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS;
@@ -237,8 +238,8 @@ public class CallResolver {
         if (calleeExpression instanceof JetConstructorCalleeExpression) {
             return resolveCallForConstructor(context, (JetConstructorCalleeExpression) calleeExpression);
         }
-        else if (calleeExpression instanceof JetThisReferenceExpression) {
-            return resolveCallForThisExpression(context, (JetThisReferenceExpression) calleeExpression);
+        else if (calleeExpression instanceof JetConstructorDelegationReferenceExpression) {
+            return resolveConstructorDelegationCall(context, (JetConstructorDelegationReferenceExpression) calleeExpression);
         }
         else if (calleeExpression == null) {
             return checkArgumentTypesAndFail(context);
@@ -288,25 +289,55 @@ public class CallResolver {
         return computeTasksFromCandidatesAndResolvedCall(context, functionReference, candidates, CallTransformer.FUNCTION_CALL_TRANSFORMER);
     }
 
-    private OverloadResolutionResults<FunctionDescriptor> resolveCallForThisExpression(
+    @NotNull
+    private OverloadResolutionResults<FunctionDescriptor> resolveConstructorDelegationCall(
             @NotNull BasicCallResolutionContext context,
-            @NotNull JetThisReferenceExpression calleeExpression
+            @NotNull JetConstructorDelegationReferenceExpression calleeExpression
     ) {
-        DeclarationDescriptor containingDeclaration = context.scope.getContainingDeclaration();
-        if (containingDeclaration instanceof ConstructorDescriptor) {
-            containingDeclaration = containingDeclaration.getContainingDeclaration();
+        ClassDescriptor currentClassDescriptor = getClassDescriptorByConstructorContext(context);
+        if (currentClassDescriptor.getKind() == ClassKind.ENUM_CLASS && !calleeExpression.isThis()) {
+            context.trace.report(DELEGATION_SUPER_CALL_IN_ENUM_CONSTRUCTOR.on((JetConstructorDelegationCall) calleeExpression.getParent()));
+            return checkArgumentTypesAndFail(context);
         }
-        assert containingDeclaration instanceof ClassDescriptor;
 
-        Collection<ConstructorDescriptor> constructors = ((ClassDescriptor) containingDeclaration).getConstructors();
+        ClassDescriptor delegateClassDescriptor = calleeExpression.isThis() ? currentClassDescriptor :
+                                                   DescriptorUtilPackage.getSuperClassOrAny(currentClassDescriptor);
+        Collection<ConstructorDescriptor> constructors = delegateClassDescriptor.getConstructors();
+
+        if (!calleeExpression.isThis() && currentClassDescriptor.getUnsubstitutedPrimaryConstructor() != null) {
+            context.trace.report(PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED.on(
+                    (JetConstructorDelegationCall) calleeExpression.getParent()
+            ));
+        }
+
         if (constructors.isEmpty()) {
             context.trace.report(NO_CONSTRUCTOR.on(CallUtilPackage.getValueArgumentListOrElement(context.call)));
             return checkArgumentTypesAndFail(context);
         }
-        List<ResolutionCandidate<CallableDescriptor>> candidates =
-                ResolutionCandidate.<CallableDescriptor>convertCollection(context.call, constructors);
+
+        List<ResolutionCandidate<CallableDescriptor>> candidates = Lists.newArrayList();
+        ReceiverValue constructorDispatchReceiver = !delegateClassDescriptor.isInner() ? ReceiverValue.NO_RECEIVER :
+                                                    ((ClassDescriptor) delegateClassDescriptor.getContainingDeclaration()).
+                                                            getThisAsReceiverParameter().getValue();
+
+        for (CallableDescriptor descriptor : constructors) {
+            candidates.add(ResolutionCandidate.create(
+                    context.call, descriptor, constructorDispatchReceiver, ReceiverValue.NO_RECEIVER,
+                    ExplicitReceiverKind.NO_EXPLICIT_RECEIVER
+            ));
+        }
 
         return computeTasksFromCandidatesAndResolvedCall(context, calleeExpression, candidates, CallTransformer.FUNCTION_CALL_TRANSFORMER);
+    }
+
+    @NotNull
+    private static ClassDescriptor getClassDescriptorByConstructorContext(@NotNull BasicCallResolutionContext context) {
+        DeclarationDescriptor containingDeclaration = context.scope.getContainingDeclaration();
+        if (containingDeclaration instanceof ConstructorDescriptor) {
+            containingDeclaration = containingDeclaration.getContainingDeclaration();
+        }
+        assert containingDeclaration != null : "Grandparent of delegation call should be a class descriptor";
+        return (ClassDescriptor) containingDeclaration;
     }
 
     public OverloadResolutionResults<FunctionDescriptor> resolveCallWithKnownCandidate(

@@ -1,8 +1,8 @@
 
 class Foo() {
-    private val builder = StringBuilder("sdfsd");
+    private val builder = StringBuilder("sdfsd")
 
-        {
+    init {
         }
 }
 

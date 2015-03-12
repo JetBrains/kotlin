@@ -210,7 +210,10 @@ public class TypeSubstitutor {
             }
             JetType substitutedType;
             CustomTypeVariable typeVariable = TypesPackage.getCustomTypeVariable(type);
-            if (typeVariable != null) {
+            if (replacement.isStarProjection()) {
+                return replacement;
+            }
+            else if (typeVariable != null) {
                 substitutedType = typeVariable.substitutionResult(replacement.getType());
             }
             else {

@@ -1,11 +1,11 @@
 class C(a: Int, b: Int, c: Int, d: Int, <!UNUSED_PARAMETER!>e<!>: Int = d, val f: String) {
-    {
+    init {
         a + a
     }
 
     val g = b
 
-    {
+    init {
         c + c
     }
 }

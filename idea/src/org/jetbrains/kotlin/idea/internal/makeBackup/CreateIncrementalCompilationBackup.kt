@@ -40,7 +40,7 @@ import com.intellij.util.WaitForProgressToShow
 import com.intellij.openapi.application.ApplicationManager
 
 public class CreateIncrementalCompilationBackup: AnAction("Create backup for debugging Kotlin incremental compilation") {
-    class object {
+    default object {
         val BACKUP_DIR_NAME = ".backup"
         val PATCHES_TO_CREATE = 5
 

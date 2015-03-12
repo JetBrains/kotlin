@@ -4,7 +4,7 @@ package kt37
 class C() {
     private var f: Int
 
-    {
+    init {
         f = 610
     }
 }

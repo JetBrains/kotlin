@@ -122,6 +122,7 @@ public class CodegenTestUtil {
             File javaClassesTempDirectory = JetTestUtils.tmpDir("java-classes");
             List<String> classpath = new ArrayList<String>();
             classpath.add(ForTestCompileRuntime.runtimeJarForTests().getPath());
+            classpath.add(ForTestCompileRuntime.reflectJarForTests().getPath());
             classpath.add(JetTestUtils.getAnnotationsJar().getPath());
             classpath.addAll(Arrays.asList(additionalClasspath));
             List<String> options = Arrays.asList(

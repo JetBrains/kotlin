@@ -376,7 +376,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
      *   : (userType "?"*)? "::" SimpleName
      *   ;
      */
-    private boolean parseCallableReferenceExpression() {
+    private boolean parseDoubleColonExpression() {
         PsiBuilder.Marker expression = mark();
 
         if (!at(COLONCOLON)) {
@@ -393,8 +393,14 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         advance(); // COLONCOLON
 
-        parseSimpleNameExpression();
-        expression.done(CALLABLE_REFERENCE_EXPRESSION);
+        if (at(CLASS_KEYWORD)) {
+            advance(); // CLASS_KEYWORD
+            expression.done(CLASS_LITERAL_EXPRESSION);
+        }
+        else {
+            parseSimpleNameExpression();
+            expression.done(CALLABLE_REFERENCE_EXPRESSION);
+        }
 
         return true;
     }
@@ -416,8 +422,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
     private void parsePostfixExpression() {
         PsiBuilder.Marker expression = mark();
 
-        boolean callableReference = parseCallableReferenceExpression();
-        if (!callableReference) {
+        boolean doubleColonExpression = parseDoubleColonExpression();
+        if (!doubleColonExpression) {
             parseAtomicExpression();
         }
 
@@ -429,7 +435,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
                 parseArrayAccess();
                 expression.done(ARRAY_ACCESS_EXPRESSION);
             }
-            else if (!callableReference && parseCallSuffix()) {
+            else if (!doubleColonExpression && parseCallSuffix()) {
                 expression.done(CALL_EXPRESSION);
             }
             else if (at(DOT)) {

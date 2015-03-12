@@ -28,7 +28,7 @@ class CopiedCode(val fileName: String, val fileText: String, val startOffsets: I
     public override fun getOffsets(offsets: IntArray?, index: Int) = index
     public override fun setOffsets(offsets: IntArray?, index: Int) = index
 
-    class object {
+    default object {
         val DATA_FLAVOR: DataFlavor = DataFlavor(javaClass<ConvertJavaCopyPastePostProcessor>(), "class: ConvertJavaCopyPastePostProcessor")
     }
 }

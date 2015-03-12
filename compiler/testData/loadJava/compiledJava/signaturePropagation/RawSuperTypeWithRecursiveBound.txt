@@ -1,0 +1,17 @@
+package test
+
+public open class RawSuperTypeWithRecursiveBound {
+    public constructor RawSuperTypeWithRecursiveBound()
+
+    public open inner class Derived : test.RawSuperTypeWithRecursiveBound.Super<test.RawSuperTypeWithRecursiveBound.Super<*>!> {
+        public constructor Derived()
+        public open override /*1*/ fun dummy(): kotlin.Unit
+        public open fun foo(/*0*/ p0: kotlin.Any!): kotlin.Unit
+        public open override /*1*/ fun foo(/*0*/ p0: test.RawSuperTypeWithRecursiveBound.Super<*>!): kotlin.Unit
+    }
+
+    public trait Super</*0*/ T : test.RawSuperTypeWithRecursiveBound.Super<T!>!> {
+        public abstract fun dummy(): kotlin.Unit
+        public abstract fun foo(/*0*/ p0: T!): kotlin.Unit
+    }
+}

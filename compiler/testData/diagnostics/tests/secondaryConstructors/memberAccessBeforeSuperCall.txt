@@ -1,0 +1,25 @@
+package
+
+internal fun foo(/*0*/ x: A): kotlin.String
+
+internal final class A : B {
+    public constructor A(/*0*/ arg: kotlin.String = ...)
+    public constructor A(/*0*/ x1: kotlin.String, /*1*/ arg: kotlin.String = ...)
+    public constructor A(/*0*/ x1: kotlin.String, /*1*/ x2: kotlin.String, /*2*/ arg: kotlin.String = ...)
+    public constructor A(/*0*/ x1: kotlin.String, /*1*/ x2: kotlin.String, /*2*/ x3: kotlin.String, /*3*/ arg: kotlin.String = ...)
+    public constructor A(/*0*/ x1: kotlin.String, /*1*/ x2: kotlin.String, /*2*/ x3: kotlin.String, /*3*/ x4: kotlin.String, /*4*/ arg: kotlin.String = ...)
+    public constructor A(/*0*/ x1: kotlin.String, /*1*/ x2: kotlin.String, /*2*/ x3: kotlin.String, /*3*/ x4: kotlin.String, /*4*/ x5: kotlin.String, /*5*/ arg: kotlin.String = ...)
+    internal final val myProp: kotlin.String = ""
+    internal open override /*1*/ val parentProperty: kotlin.String = ""
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal open class B {
+    public constructor B(/*0*/ parentProperty: kotlin.String)
+    internal open val parentProperty: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

@@ -64,7 +64,7 @@ import java.util.HashSet
 import java.util.ServiceLoader
 
 public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
-    class object {
+    default object {
         public val KOTLIN_BUILDER_NAME: String = "Kotlin Builder"
 
         private val LOG = Logger.getInstance("#org.jetbrains.jps.cmdline.BuildSession")

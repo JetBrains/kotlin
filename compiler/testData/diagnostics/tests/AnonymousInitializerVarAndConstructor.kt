@@ -3,7 +3,7 @@
 class A(w: Int) {
     var c = w
 
-    {
+    init {
         c = 81
     }
 }

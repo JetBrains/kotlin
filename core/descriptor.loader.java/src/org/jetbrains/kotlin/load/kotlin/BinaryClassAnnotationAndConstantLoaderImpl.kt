@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.load.kotlin
 
 import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils
-import org.jetbrains.kotlin.load.java.components.ErrorReporter
+import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.storage.StorageManager

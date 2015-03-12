@@ -16,7 +16,7 @@ class Test() {
     var a : Int = 111
     var b : Int get() = $a; set(x) {a = x; $a = x}
 
-   {
+   init {
     <error>$b</error> = $a
     $a = <error>$b</error>
     a = <error>$b</error>

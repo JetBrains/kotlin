@@ -121,7 +121,7 @@ message Type {
     }
 
     optional Projection projection = 1 [default = INV];
-    required Type type = 2;
+    optional Type type = 2; // when projection is STAR, no type is written, otherwise type must be specified
   }
 
   repeated Argument argument = 2;
@@ -201,7 +201,7 @@ message Class {
 
   // This field is present if and only if the class has a primary constructor
   optional PrimaryConstructor primary_constructor = 13;
-  // todo: other constructors?
+  repeated Callable secondary_constructor = 14;
 
   extensions 100 to 199;
 }

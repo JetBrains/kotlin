@@ -25,7 +25,7 @@ public trait CodeAnalyzerInitializer {
     public fun initialize(trace: BindingTrace, module: ModuleDescriptor, codeAnalyzer: KotlinCodeAnalyzer?)
     public fun createTrace(): BindingTrace
     
-    class object {
+    default object {
         public fun getInstance(project: Project): CodeAnalyzerInitializer =
                 ServiceManager.getService<CodeAnalyzerInitializer>(project, javaClass<CodeAnalyzerInitializer>())!!
     }

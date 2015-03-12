@@ -306,7 +306,7 @@ public class TypeResolver(
         return classifierDescriptor
     }
 
-    class object {
+    default object {
         [platformStatic]
         public fun resolveProjectionKind(projectionKind: JetProjectionKind): Variance {
             return when (projectionKind) {

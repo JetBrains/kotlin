@@ -1,0 +1,12 @@
+class A {
+    <caret>constructor() { }
+}
+
+
+Resolved call:
+
+Resulting descriptor: constructor Any() defined in kotlin.Any
+
+Explicit receiver kind = NO_EXPLICIT_RECEIVER
+Dispatch receiver = NO_RECEIVER
+Extension receiver = NO_RECEIVER

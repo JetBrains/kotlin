@@ -385,14 +385,21 @@ public class JetTestUtils {
     }
 
     @NotNull
-    public static CompilerConfiguration compilerConfigurationForTests(@NotNull ConfigurationKind configurationKind,
-            @NotNull TestJdkKind jdkKind, File... extraClasspath) {
+    public static CompilerConfiguration compilerConfigurationForTests(
+            @NotNull ConfigurationKind configurationKind,
+            @NotNull TestJdkKind jdkKind,
+            @NotNull File... extraClasspath
+    ) {
         return compilerConfigurationForTests(configurationKind, jdkKind, Arrays.asList(extraClasspath), Collections.<File>emptyList());
     }
 
     @NotNull
-    public static CompilerConfiguration compilerConfigurationForTests(@NotNull ConfigurationKind configurationKind,
-            @NotNull TestJdkKind jdkKind, @NotNull Collection<File> extraClasspath, @NotNull Collection<File> priorityClasspath) {
+    public static CompilerConfiguration compilerConfigurationForTests(
+            @NotNull ConfigurationKind configurationKind,
+            @NotNull TestJdkKind jdkKind,
+            @NotNull Collection<File> extraClasspath,
+            @NotNull Collection<File> priorityClasspath
+    ) {
         CompilerConfiguration configuration = new CompilerConfiguration();
         configuration.addAll(CLASSPATH_KEY, priorityClasspath);
         if (jdkKind == TestJdkKind.MOCK_JDK) {
@@ -406,13 +413,15 @@ public class JetTestUtils {
         }
         if (configurationKind == ALL) {
             configuration.add(CLASSPATH_KEY, ForTestCompileRuntime.runtimeJarForTests());
+            configuration.add(CLASSPATH_KEY, ForTestCompileRuntime.reflectJarForTests());
         }
         configuration.addAll(CLASSPATH_KEY, extraClasspath);
 
         if (configurationKind == ALL || configurationKind == JDK_AND_ANNOTATIONS) {
             if (jdkKind == TestJdkKind.ANDROID_API) {
                 configuration.add(ANNOTATIONS_PATH_KEY, getAndroidSdkAnnotationsJar());
-            } else {
+            }
+            else {
                 configuration.add(ANNOTATIONS_PATH_KEY, getJdkAnnotationsJar());
             }
         }
