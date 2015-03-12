@@ -101,11 +101,11 @@ fun getFunctionForExtractedFragment(
             throw EvaluateExceptionUtil.createEvaluateException("Following declarations are unavailable in debug scope: ${validationResult.conflicts.keySet().map { it.getText() }.joinToString(",")}")
         }
 
-        val config = ExtractionGeneratorConfiguration(
-                validationResult.descriptor,
-                ExtractionGeneratorOptions(inTempFile = true, flexibleTypesAllowed = true, allowDummyName = true)
-        )
-        return config.generateDeclaration()
+        val generatorOptions = ExtractionGeneratorOptions(inTempFile = true,
+                                                          flexibleTypesAllowed = true,
+                                                          allowDummyName = true,
+                                                          allowExpressionBody = false)
+        return ExtractionGeneratorConfiguration(validationResult.descriptor, generatorOptions).generateDeclaration()
     }
 
     return runReadAction { generateFunction() }

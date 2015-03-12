@@ -9,6 +9,4 @@ class A<T> {
     }
 }
 
-private fun <T> i(d: Data<T>): Int {
-    return d.t + 1
-}
+private fun <T> i(d: Data<T>) = d.t + 1

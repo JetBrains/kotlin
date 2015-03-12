@@ -7,6 +7,4 @@ fun Z.foo(): Int {
     return i() + 1
 }
 
-private fun Z.i(): Int {
-    return this.a
-}
+private fun Z.i() = this.a

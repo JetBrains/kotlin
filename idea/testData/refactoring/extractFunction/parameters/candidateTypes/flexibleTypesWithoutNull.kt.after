@@ -7,6 +7,4 @@ fun test() {
     val n = i(property)
 }
 
-private fun i(property: String): Int {
-    return property.length()
-}
+private fun i(property: String) = property.length()

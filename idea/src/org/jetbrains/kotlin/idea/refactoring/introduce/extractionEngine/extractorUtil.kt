@@ -17,32 +17,17 @@
 package org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.psi.JetDeclaration
-import org.jetbrains.kotlin.psi.JetProperty
-import org.jetbrains.kotlin.psi.JetPsiFactory.CallableBuilder
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import java.util.LinkedHashMap
-import java.util.Collections
-import org.jetbrains.kotlin.psi.psiUtil.isFunctionLiteralOutsideParentheses
-import org.jetbrains.kotlin.psi.JetFunctionLiteralArgument
-import org.jetbrains.kotlin.idea.util.psiModificationUtil.moveInsideParenthesesAndReplaceWith
-import org.jetbrains.kotlin.psi.psiUtil.appendElement
-import org.jetbrains.kotlin.psi.psiUtil.replaced
-import org.jetbrains.kotlin.psi.JetBlockExpression
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.ParameterUpdate
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.Jump
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.Initializer
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.ExpressionValue
-import org.jetbrains.kotlin.psi.JetReturnExpression
-import org.jetbrains.kotlin.idea.refactoring.JetNameValidatorImpl
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.idea.intentions.ConvertToExpressionBodyAction
 import org.jetbrains.kotlin.idea.refactoring.JetNameSuggester
 import org.jetbrains.kotlin.idea.refactoring.JetNameValidatorImpl
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.*
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.idea.refactoring.isMultiLine
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.ExpressionValue
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.Initializer
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.Jump
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.ParameterUpdate
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValueBoxer.AsTuple
+import org.jetbrains.kotlin.idea.refactoring.isMultiLine
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiRange
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiRange.Match
@@ -53,7 +38,6 @@ import org.jetbrains.kotlin.idea.util.psi.patternMatching.UnifierParameter
 import org.jetbrains.kotlin.idea.util.psiModificationUtil.moveInsideParenthesesAndReplaceWith
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.JetPsiFactory.CallableBuilder
-import org.jetbrains.kotlin.psi.JetPsiFactory.CallableBuilder.Target
 import org.jetbrains.kotlin.psi.codeFragmentUtil.DEBUG_TYPE_REFERENCE_STRING
 import org.jetbrains.kotlin.psi.codeFragmentUtil.debugTypeInfo
 import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
@@ -525,6 +509,14 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
 
             !defaultValue.callSiteReturn ->
                 replaceWithReturn(lastExpression!!, returnExpression, expressionToUnifyWith)
+        }
+
+        if (generatorOptions.allowExpressionBody) {
+            val convertToExpressionBody = ConvertToExpressionBodyAction()
+            val bodyExpression = body.getStatements().singleOrNull()
+            if (bodyExpression != null && !bodyExpression.isMultiLine() && convertToExpressionBody.isAvailable(body)) {
+                convertToExpressionBody.invoke(body)
+            }
         }
     }
 

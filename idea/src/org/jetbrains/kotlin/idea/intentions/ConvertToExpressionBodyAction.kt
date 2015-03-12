@@ -32,13 +32,17 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 public class ConvertToExpressionBodyAction : PsiElementBaseIntentionAction() {
     override fun getFamilyName(): String = JetBundle.message("convert.to.expression.body.action.family.name")
 
-    override fun isAvailable(project: Project, editor: Editor, element: PsiElement): Boolean {
-        setText(JetBundle.message("convert.to.expression.body.action.name"))
+    public fun isAvailable(element: PsiElement): Boolean {
         val data = calcData(element)
         return data != null && !containsReturn(data.value)
     }
 
-    override fun invoke(project: Project, editor: Editor, element: PsiElement) {
+    override fun isAvailable(project: Project, editor: Editor, element: PsiElement): Boolean {
+        setText(JetBundle.message("convert.to.expression.body.action.name"))
+        return isAvailable(element)
+    }
+
+    public fun invoke(element: PsiElement, editor: Editor? = null) {
         val (declaration, value) = calcData(element)!!
 
         if (!declaration.hasDeclaredReturnType() && declaration is JetNamedFunction) {
@@ -55,10 +59,19 @@ public class ConvertToExpressionBodyAction : PsiElementBaseIntentionAction() {
         if (declaration.hasDeclaredReturnType() && declaration is JetCallableDeclaration && canOmitType(declaration)) {
             val typeRef = declaration.getTypeReference()!!
             val colon = declaration.getColon()!!
-            val range = TextRange(colon.getTextRange().getStartOffset(), typeRef.getTextRange().getEndOffset())
-            editor.getSelectionModel().setSelection(range.getStartOffset(), range.getEndOffset())
-            editor.getCaretModel().moveToOffset(range.getEndOffset())
+            if (editor != null) {
+                val range = TextRange(colon.getTextRange().getStartOffset(), typeRef.getTextRange().getEndOffset())
+                editor.getSelectionModel().setSelection(range.getStartOffset(), range.getEndOffset())
+                editor.getCaretModel().moveToOffset(range.getEndOffset())
+            }
+            else {
+                (declaration : PsiElement).deleteChildRange(colon, typeRef)
+            }
         }
+    }
+
+    override fun invoke(project: Project, editor: Editor, element: PsiElement) {
+        invoke(element, editor)
     }
 
     private fun canOmitType(declaration: JetCallableDeclaration): Boolean {

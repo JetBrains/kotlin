@@ -24,6 +24,4 @@ fun bar() {
     i(f(), f())
 }
 
-private fun i(a: Int, b: Int): Int {
-    return a + b * a
-}
+private fun i(a: Int, b: Int) = a + b * a

@@ -72,6 +72,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.*
 import org.jetbrains.kotlin.diagnostics.*
 import java.util.logging.*
 import com.intellij.openapi.diagnostic.Logger
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 
 private val DEFAULT_RETURN_TYPE = KotlinBuiltIns.getInstance().getUnitType()
@@ -881,11 +882,14 @@ fun ExtractableCodeDescriptor.validate(): ExtractableCodeDescriptorWithConflicts
 
     val conflicts = MultiMap<PsiElement, String>()
 
-    val result = ExtractionGeneratorConfiguration(this, ExtractionGeneratorOptions(inTempFile = true)).generateDeclaration()
+    val result = ExtractionGeneratorConfiguration(
+            this,
+            ExtractionGeneratorOptions(inTempFile = true, allowExpressionBody = false)
+    ).generateDeclaration()
 
     val valueParameterList = (result.declaration as? JetNamedFunction)?.getValueParameterList()
     val body = result.declaration.getGeneratedBody()
-    val bindingContext = body.analyze()
+    val bindingContext = body.analyzeFully()
 
     fun validateBody() {
         for ((originalOffset, resolveResult) in extractionData.refOffsetToDeclaration) {

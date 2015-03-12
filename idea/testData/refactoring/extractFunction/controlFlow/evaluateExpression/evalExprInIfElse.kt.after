@@ -8,6 +8,4 @@ fun foo(a: Int): Int {
     return if (a + b > 0) 1 else i(a, b)
 }
 
-private fun i(a: Int, b: Int): Int {
-    return if (a - b < 0) 2 else b
-}
+private fun i(a: Int, b: Int) = if (a - b < 0) 2 else b
