@@ -17,39 +17,24 @@
 
 package org.jetbrains.kotlin.idea.framework
 
-import com.intellij.openapi.vfs.VfsUtilCore;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.CommonProcessors;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.JetFileType;
+import com.intellij.openapi.vfs.VfsUtilCore
+import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.idea.JetFileType
+import kotlin.platform.platformStatic
 
-import java.util.List;
+public object JsHeaderLibraryDetectionUtil {
 
-public class JsHeaderLibraryDetectionUtil {
-    class object {
-        public fun isJsHeaderLibraryDetected(classesRoots: List<VirtualFile>): Boolean {
-            if (JavaRuntimeDetectionUtil.getJavaRuntimeVersion(classesRoots) != null) {
-                // Prevent clashing with java runtime
-                return false
-            }
+    platformStatic
+    public fun isJsHeaderLibraryDetected(classesRoots: List<VirtualFile>): Boolean =
+            isJsLibraryWithAcceptedFile(classesRoots) { JetFileType.EXTENSION == it.getExtension() }
 
-        for (VirtualFile file : classesRoots) {
-            CommonProcessors.FindFirstProcessor<VirtualFile> findKTProcessor = new CommonProcessors.FindFirstProcessor<VirtualFile>() {
-                @Override
-                protected boolean accept(VirtualFile file) {
-                    String extension = file.getExtension();
-                    return extension != null && extension.equals(JetFileType.EXTENSION);
-                }
-
-                VfsUtilCore.processFilesRecursively(file, findKTProcessor)
-
-                if (findKTProcessor.isFound()) {
-                    return true
-                }
-            }
-
-            return false
-
+    private fun isJsLibraryWithAcceptedFile(classesRoots: List<VirtualFile>, accept: (VirtualFile) -> Boolean): Boolean {
+        return if (JavaRuntimeDetectionUtil.getJavaRuntimeVersion(classesRoots) != null) {
+            // Prevent clashing with java runtime
+            false
+        }
+        else {
+            classesRoots.firstOrNull<VirtualFile> { !VfsUtilCore.processFilesRecursively(it, { !accept(it) }) } != null
         }
     }
 }
