@@ -543,6 +543,12 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
             doParsingTest(fileName);
         }
 
+        @TestMetadata("TraitConstructor.kt")
+        public void testTraitConstructor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/TraitConstructor.kt");
+            doParsingTest(fileName);
+        }
+
         @TestMetadata("TryRecovery.kt")
         public void testTryRecovery() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/TryRecovery.kt");

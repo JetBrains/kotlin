@@ -158,6 +158,12 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/platformStatic"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("finalAndAbstract.kt")
+            public void testFinalAndAbstract() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/platformStatic/finalAndAbstract.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("functions.kt")
             public void testFunctions() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/platformStatic/functions.kt");
