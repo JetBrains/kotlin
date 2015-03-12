@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder;
 import org.jetbrains.kotlin.name.ClassId;
-import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetFile;
@@ -45,7 +44,6 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
-import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.serialization.ProtoBuf;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor;
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf;
@@ -61,7 +59,8 @@ import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.ListIterator;
 
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isTrait;
 
 public class InlineCodegenUtil {
     public static final int API = Opcodes.ASM5;
@@ -365,21 +364,9 @@ public class InlineCodegenUtil {
         return new MethodNode(API, 0, "fake", "()V", null, null);
     }
 
-    private static boolean isLastGoto(@NotNull AbstractInsnNode insnNode, @NotNull AbstractInsnNode stopAt) {
-        if (insnNode.getOpcode() == Opcodes.GOTO) {
-            insnNode = insnNode.getNext();
-            while (insnNode != stopAt && isLineNumberOrLabel(insnNode)) {
-                insnNode = insnNode.getNext();
-            }
-            return stopAt == insnNode;
-        }
-        return false;
-    }
-
     static boolean isLineNumberOrLabel(@Nullable AbstractInsnNode node) {
         return node instanceof LineNumberNode || node instanceof LabelNode;
     }
-
 
     @NotNull
     public static LabelNode firstLabelInChain(@NotNull LabelNode node) {
