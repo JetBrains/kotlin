@@ -870,7 +870,7 @@ public class JetParsing extends AbstractJetParsing {
 
         TokenSet valueArgsRecoverySet = TokenSet.create(COLON, LBRACE, SEMICOLON, RPAR);
         if (at(LPAR)) {
-            parseValueParameterList(false, valueArgsRecoverySet);
+            parseValueParameterList(false, /*typeRequired = */ true, valueArgsRecoverySet);
         }
         else {
             errorWithRecovery("Expecting '('", valueArgsRecoverySet);
