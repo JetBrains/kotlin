@@ -64,6 +64,7 @@ public class ExpressionTypingServices {
     private CallResolver callResolver;
     private CallExpressionResolver callExpressionResolver;
     private DescriptorResolver descriptorResolver;
+    private FunctionDescriptorResolver functionDescriptorResolver;
     private TypeResolver typeResolver;
     private AnnotationResolver annotationResolver;
     private StatementFilter statementFilter;
@@ -107,6 +108,16 @@ public class ExpressionTypingServices {
     @Inject
     public void setDescriptorResolver(@NotNull DescriptorResolver descriptorResolver) {
         this.descriptorResolver = descriptorResolver;
+    }
+
+    @NotNull
+    public FunctionDescriptorResolver getFunctionDescriptorResolver() {
+        return functionDescriptorResolver;
+    }
+
+    @Inject
+    public void setFunctionDescriptorResolver(FunctionDescriptorResolver functionDescriptorResolver) {
+        this.functionDescriptorResolver = functionDescriptorResolver;
     }
 
     @NotNull

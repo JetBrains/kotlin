@@ -69,7 +69,7 @@ public abstract class AbstractLazyMemberScope<D : DeclarationDescriptor, DP : De
         val declarations = declarationProvider.getFunctionDeclarations(name)
         for (functionDeclaration in declarations) {
             val resolutionScope = getScopeForMemberDeclarationResolution(functionDeclaration)
-            result.add(c.descriptorResolver.resolveFunctionDescriptor(
+            result.add(c.functionDescriptorResolver.resolveFunctionDescriptor(
                     thisDescriptor,
                     resolutionScope,
                     functionDeclaration,

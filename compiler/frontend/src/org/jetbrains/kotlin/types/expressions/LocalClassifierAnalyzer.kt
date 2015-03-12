@@ -16,18 +16,12 @@
 
 package org.jetbrains.kotlin.types.expressions
 
-import org.jetbrains.kotlin.resolve.DescriptorResolver
-import org.jetbrains.kotlin.resolve.TypeResolver
-import org.jetbrains.kotlin.resolve.AnnotationResolver
 import org.jetbrains.kotlin.context.GlobalContext
 import org.jetbrains.kotlin.resolve.scopes.WritableScope
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.psi.JetClassOrObject
-import org.jetbrains.kotlin.resolve.AdditionalCheckerProvider
 import org.jetbrains.kotlin.types.DynamicTypesSettings
 import com.google.common.base.Predicates
-import org.jetbrains.kotlin.resolve.TopDownAnalysisParameters
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.di.InjectorForLazyLocalClassifierAnalyzer
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -46,15 +40,16 @@ import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.lazy.data.JetClassInfoUtil
 import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.lazy.LazyDeclarationResolver
 import org.jetbrains.kotlin.resolve.lazy.DeclarationScopeProviderImpl
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
 
 public class LocalClassifierAnalyzer(
         val descriptorResolver: DescriptorResolver,
+        val funcionDescriptorResolver: FunctionDescriptorResolver,
         val typeResolver: TypeResolver,
         val annotationResolver: AnnotationResolver
 ) {
@@ -85,6 +80,7 @@ public class LocalClassifierAnalyzer(
                         context,
                         moduleDescriptor,
                         descriptorResolver,
+                        funcionDescriptorResolver,
                         typeResolver,
                         annotationResolver
                 )
@@ -106,6 +102,7 @@ class LocalClassDescriptorHolder(
         val expressionTypingContext: ExpressionTypingContext,
         val moduleDescriptor: ModuleDescriptor,
         val descriptorResolver: DescriptorResolver,
+        val functionDescriptorResolver: FunctionDescriptorResolver,
         val typeResolver: TypeResolver,
         val annotationResolver: AnnotationResolver
 ) {
@@ -125,6 +122,7 @@ class LocalClassDescriptorHolder(
                         override val trace = expressionTypingContext.trace
                         override val moduleDescriptor = this@LocalClassDescriptorHolder.moduleDescriptor
                         override val descriptorResolver = this@LocalClassDescriptorHolder.descriptorResolver
+                        override val functionDescriptorResolver = this@LocalClassDescriptorHolder.functionDescriptorResolver
                         override val typeResolver = this@LocalClassDescriptorHolder.typeResolver
                         override val declarationProviderFactory = object : DeclarationProviderFactory {
                             override fun getClassMemberDeclarationProvider(classLikeInfo: JetClassLikeInfo): ClassMemberDeclarationProvider {

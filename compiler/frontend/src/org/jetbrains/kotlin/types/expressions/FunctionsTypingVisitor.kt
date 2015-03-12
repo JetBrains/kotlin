@@ -74,7 +74,7 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
 
         val functionDescriptor: SimpleFunctionDescriptor
         if (isStatement) {
-            functionDescriptor = services.getDescriptorResolver().resolveFunctionDescriptor(
+            functionDescriptor = services.getFunctionDescriptorResolver().resolveFunctionDescriptor(
                     context.scope.getContainingDeclaration(), context.scope, function, context.trace, context.dataFlowInfo)
             assert(statementScope != null) {
                 "statementScope must be not null for function: " + function.getName() + " at location " + DiagnosticUtils.atLocation(function)
@@ -82,7 +82,7 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
             statementScope!!.addFunctionDescriptor(functionDescriptor)
         }
         else {
-            functionDescriptor = services.getDescriptorResolver().resolveFunctionExpressionDescriptor(
+            functionDescriptor = services.getFunctionDescriptorResolver().resolveFunctionExpressionDescriptor(
                     context.scope.getContainingDeclaration(), context.scope, function, context.trace, context.dataFlowInfo)
         }
 

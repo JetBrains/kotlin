@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
 import org.jetbrains.kotlin.resolve.DescriptorResolver;
+import org.jetbrains.kotlin.resolve.FunctionDescriptorResolver;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.kotlin.resolve.TypeResolver;
@@ -57,6 +58,7 @@ public class InjectorForTests {
     private final KotlinBuiltIns kotlinBuiltIns;
     private final PlatformToKotlinClassMap platformToKotlinClassMap;
     private final DescriptorResolver descriptorResolver;
+    private final FunctionDescriptorResolver functionDescriptorResolver;
     private final ExpressionTypingServices expressionTypingServices;
     private final ExpressionTypingUtils expressionTypingUtils;
     private final TypeResolver typeResolver;
@@ -91,10 +93,6 @@ public class InjectorForTests {
         this.kotlinBuiltIns = moduleDescriptor.getBuiltIns();
         this.platformToKotlinClassMap = moduleDescriptor.getPlatformToKotlinClassMap();
         this.descriptorResolver = new DescriptorResolver();
-        this.expressionTypingComponents = new ExpressionTypingComponents();
-        this.expressionTypingServices = new ExpressionTypingServices(expressionTypingComponents);
-        this.callResolver = new CallResolver();
-        this.expressionTypingUtils = new ExpressionTypingUtils(getExpressionTypingServices(), callResolver, kotlinBuiltIns);
         this.annotationResolver = new AnnotationResolver();
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
         this.flexibleTypeCapabilitiesProvider = new FlexibleTypeCapabilitiesProvider();
@@ -103,6 +101,11 @@ public class InjectorForTests {
         this.typeLazinessToken = new TypeLazinessToken();
         this.dynamicTypesSettings = new DynamicTypesSettings();
         this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, moduleDescriptor, flexibleTypeCapabilitiesProvider, storageManager, typeLazinessToken, dynamicTypesSettings);
+        this.expressionTypingComponents = new ExpressionTypingComponents();
+        this.expressionTypingServices = new ExpressionTypingServices(expressionTypingComponents);
+        this.functionDescriptorResolver = new FunctionDescriptorResolver(getTypeResolver(), getDescriptorResolver(), annotationResolver, storageManager, getExpressionTypingServices(), kotlinBuiltIns);
+        this.callResolver = new CallResolver();
+        this.expressionTypingUtils = new ExpressionTypingUtils(getExpressionTypingServices(), callResolver, kotlinBuiltIns);
         this.kotlinJvmCheckerProvider = KotlinJvmCheckerProvider.INSTANCE$;
         this.argumentTypeResolver = new ArgumentTypeResolver();
         this.candidateResolver = new CandidateResolver();
@@ -111,7 +114,7 @@ public class InjectorForTests {
         this.delegatedPropertyResolver = new DelegatedPropertyResolver();
         this.controlStructureTypingUtils = new ControlStructureTypingUtils(getExpressionTypingServices());
         this.forLoopConventionsChecker = new ForLoopConventionsChecker();
-        this.localClassifierAnalyzer = new LocalClassifierAnalyzer(getDescriptorResolver(), getTypeResolver(), annotationResolver);
+        this.localClassifierAnalyzer = new LocalClassifierAnalyzer(getDescriptorResolver(), getFunctionDescriptorResolver(), getTypeResolver(), annotationResolver);
         this.reflectionTypes = new ReflectionTypes(moduleDescriptor);
         this.callExpressionResolver = new CallExpressionResolver();
         this.statementFilter = new StatementFilter();
@@ -128,6 +131,7 @@ public class InjectorForTests {
         this.expressionTypingServices.setCallExpressionResolver(callExpressionResolver);
         this.expressionTypingServices.setCallResolver(callResolver);
         this.expressionTypingServices.setDescriptorResolver(descriptorResolver);
+        this.expressionTypingServices.setFunctionDescriptorResolver(functionDescriptorResolver);
         this.expressionTypingServices.setProject(project);
         this.expressionTypingServices.setStatementFilter(statementFilter);
         this.expressionTypingServices.setTypeResolver(typeResolver);
@@ -181,6 +185,10 @@ public class InjectorForTests {
 
     public DescriptorResolver getDescriptorResolver() {
         return this.descriptorResolver;
+    }
+
+    public FunctionDescriptorResolver getFunctionDescriptorResolver() {
+        return this.functionDescriptorResolver;
     }
 
     public ExpressionTypingServices getExpressionTypingServices() {
