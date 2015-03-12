@@ -1,11 +1,14 @@
-package
+package 
 
-internal val bar: [ERROR : Type for ::foo]
-internal val quux: [ERROR : Type for A::baz]
+internal val classLiteral: [ERROR : Unresolved class]
+internal val memberFun: [ERROR : Type for A::baz]
+internal val property: [ERROR : Type for A::prop]
+internal val topLevelFun: [ERROR : Type for ::foo]
 internal fun foo(): kotlin.Unit
 
 internal final class A {
-    public constructor A()
+    public constructor A(/*0*/ prop: kotlin.Any)
+    internal final val prop: kotlin.Any
     internal final fun baz(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

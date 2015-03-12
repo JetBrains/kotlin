@@ -452,11 +452,15 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     @Override
     public JetTypeInfo visitClassLiteralExpression(@NotNull JetClassLiteralExpression expression, ExpressionTypingContext c) {
         ClassDescriptor descriptor = resolveClassLiteral(expression, c);
-        JetType type = descriptor == null
-                       ? ErrorUtils.createErrorType("Unresolved class")
-                       : components.reflectionTypes.getKClassType(Annotations.EMPTY, descriptor);
+        if (descriptor != null && !ErrorUtils.isError(descriptor)) {
+            JetType type = components.reflectionTypes.getKClassType(Annotations.EMPTY, descriptor);
+            if (!type.isError()) {
+                return JetTypeInfo.create(type, c.dataFlowInfo);
+            }
+            c.trace.report(REFLECTION_TYPES_NOT_LOADED.on(expression.getDoubleColonTokenReference()));
+        }
 
-        return JetTypeInfo.create(type, c.dataFlowInfo);
+        return JetTypeInfo.create(ErrorUtils.createErrorType("Unresolved class"), c.dataFlowInfo);
     }
 
     @Nullable
