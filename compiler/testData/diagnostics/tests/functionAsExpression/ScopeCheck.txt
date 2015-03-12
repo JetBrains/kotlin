@@ -1,0 +1,10 @@
+package
+
+internal fun test(/*0*/ param: kotlin.String): kotlin.Unit
+
+internal trait B {
+    internal open fun b_fun(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

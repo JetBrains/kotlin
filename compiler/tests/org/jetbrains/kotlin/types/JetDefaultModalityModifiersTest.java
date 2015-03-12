@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.resolve.AdditionalCheckerProvider;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTraceContext;
 import org.jetbrains.kotlin.resolve.DescriptorResolver;
+import org.jetbrains.kotlin.resolve.FunctionDescriptorResolver;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
@@ -70,11 +71,13 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
     public class JetDefaultModalityModifiersTestCase  {
         private final ModuleDescriptorImpl root = JetTestUtils.createEmptyModule("<test_root>");
         private DescriptorResolver descriptorResolver;
+        private FunctionDescriptorResolver functionDescriptorResolver;
         private JetScope scope;
 
         public void setUp() throws Exception {
             InjectorForTests injector = new InjectorForTests(getProject(), root);
             descriptorResolver = injector.getDescriptorResolver();
+            functionDescriptorResolver = injector.getFunctionDescriptorResolver();
             scope = createScope(KotlinBuiltIns.getInstance().getBuiltInsPackageScope());
         }
 
@@ -128,7 +131,7 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
 
             List<JetDeclaration> declarations = aClass.getDeclarations();
             JetNamedFunction function = (JetNamedFunction) declarations.get(0);
-            SimpleFunctionDescriptor functionDescriptor = descriptorResolver.resolveFunctionDescriptor(classDescriptor, scope, function,
+            SimpleFunctionDescriptor functionDescriptor = functionDescriptorResolver.resolveFunctionDescriptor(classDescriptor, scope, function,
                                                                                                        JetTestUtils.DUMMY_TRACE,
                                                                                                        DataFlowInfo.EMPTY);
 

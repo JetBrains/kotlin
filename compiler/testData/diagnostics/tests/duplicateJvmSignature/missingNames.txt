@@ -2,6 +2,8 @@ package
 
 internal val <no name provided>: kotlin.Int = 1
 internal fun <no name provided>(): kotlin.Unit
+internal fun outerFun(): kotlin.Unit
+internal fun Outer.<no name provided>(): kotlin.Unit
 
 internal final class <no name provided> {
     internal constructor <no name provided>()

@@ -233,6 +233,9 @@ public interface Errors {
 
     DiagnosticFactory0<PsiElement> REIFIED_TYPE_PARAMETER_NO_INLINE = DiagnosticFactory0.create(ERROR);
 
+    DiagnosticFactory0<JetDeclaration> TYPE_PARAMETERS_NOT_ALLOWED
+            = DiagnosticFactory0.create(ERROR, TYPE_PARAMETERS_OR_DECLARATION_SIGNATURE);
+
     // Members
 
     DiagnosticFactory0<JetModifierListOwner> PACKAGE_MEMBER_CANNOT_BE_PROTECTED =
@@ -333,9 +336,15 @@ public interface Errors {
     DiagnosticFactory1<JetFunction, SimpleFunctionDescriptor> NON_MEMBER_FUNCTION_NO_BODY =
             DiagnosticFactory1.create(ERROR, DECLARATION_SIGNATURE);
 
+    DiagnosticFactory0<JetFunction> FUNCTION_DECLARATION_WITH_NO_NAME = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
+
     DiagnosticFactory0<JetParameter> VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<JetNamedFunction> NO_TAIL_CALLS_FOUND = DiagnosticFactory0.create(WARNING, DECLARATION_SIGNATURE);
+
+    DiagnosticFactory0<JetParameter> FUNCTION_EXPRESSION_PARAMETER_WITH_DEFAULT_VALUE = DiagnosticFactory0.create(ERROR, PARAMETER_DEFAULT_VALUE);
+
+    DiagnosticFactory0<JetParameter> USELESS_VARARG_ON_PARAMETER = DiagnosticFactory0.create(WARNING);
 
     // Named parameters
 
@@ -605,8 +614,8 @@ public interface Errors {
 
     DiagnosticFactory1<JetParameter, JetType> EXPECTED_PARAMETER_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<JetTypeReference, JetType> EXPECTED_RETURN_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory2<JetFunctionLiteral, Integer, List<JetType>> EXPECTED_PARAMETERS_NUMBER_MISMATCH =
-            DiagnosticFactory2.create(ERROR, FUNCTION_LITERAL_PARAMETERS);
+    DiagnosticFactory2<JetFunction, Integer, List<JetType>> EXPECTED_PARAMETERS_NUMBER_MISMATCH =
+            DiagnosticFactory2.create(ERROR, FUNCTION_PARAMETERS);
 
     DiagnosticFactory2<JetElement, JetType, JetType> INCOMPATIBLE_TYPES = DiagnosticFactory2.create(ERROR);
 

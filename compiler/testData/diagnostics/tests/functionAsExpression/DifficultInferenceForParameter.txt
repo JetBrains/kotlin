@@ -1,0 +1,4 @@
+package
+
+internal fun </*0*/ T> foo(/*0*/ f: (T) -> T): T
+internal fun test(): kotlin.Unit

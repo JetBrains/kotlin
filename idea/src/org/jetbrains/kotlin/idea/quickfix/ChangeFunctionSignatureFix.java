@@ -165,15 +165,15 @@ public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiE
         return new JetSingleIntentionActionFactory() {
             @Override
             public ChangeFunctionSignatureFix createAction(Diagnostic diagnostic) {
-                DiagnosticWithParameters2<JetFunctionLiteral, Integer, List<JetType>> diagnosticWithParameters =
+                DiagnosticWithParameters2<JetFunction, Integer, List<JetType>> diagnosticWithParameters =
                         EXPECTED_PARAMETERS_NUMBER_MISMATCH.cast(diagnostic);
-                JetFunctionLiteral functionLiteral = diagnosticWithParameters.getPsiElement();
+                JetFunction functionLiteral = diagnosticWithParameters.getPsiElement();
                 BindingContext bindingContext =
                         ResolvePackage.analyzeFully(functionLiteral.getContainingJetFile());
                 DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, functionLiteral);
 
-                if (descriptor instanceof FunctionDescriptor) {
-                    return new ChangeFunctionLiteralSignatureFix(functionLiteral, (FunctionDescriptor) descriptor,
+                if (descriptor instanceof FunctionDescriptor && functionLiteral instanceof JetFunctionLiteral) {
+                    return new ChangeFunctionLiteralSignatureFix((JetFunctionLiteral) functionLiteral, (FunctionDescriptor) descriptor,
                                                                  diagnosticWithParameters.getB());
                 }
                 else {

@@ -2,7 +2,7 @@
 
 package<!SYNTAX!><!>
 
-fun<!SYNTAX!><!> () {
+<!FUNCTION_DECLARATION_WITH_NO_NAME!>fun ()<!> {
 
 }
 

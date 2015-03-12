@@ -1,5 +1,5 @@
 class C {
-    fun<error> </error>() {
+    <error>fun ()</error> {
 
     }
 

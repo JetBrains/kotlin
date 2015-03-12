@@ -336,7 +336,7 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
                                   : typeMapper.mapType((VariableDescriptor) descriptor);
                 args.add(FieldInfo.createForHiddenField(ownerType, type, "$" + descriptor.getName().asString()));
             }
-            else if (isLocalNamedFun(descriptor)) {
+            else if (DescriptorUtils.isLocalFunction(descriptor)) {
                 Type classType = asmTypeForAnonymousClass(bindingContext, (FunctionDescriptor) descriptor);
                 args.add(FieldInfo.createForHiddenField(ownerType, classType, "$" + descriptor.getName().asString()));
             }

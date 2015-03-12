@@ -32,7 +32,9 @@ public object PositioningStrategies {
     private open class DeclarationHeader<T : JetDeclaration> : PositioningStrategy<T>() {
         override fun isValid(element: T): Boolean {
             if (element is JetNamedDeclaration &&
-                (element !is JetObjectDeclaration && element !is JetSecondaryConstructor)
+                element !is JetObjectDeclaration &&
+                element !is JetSecondaryConstructor &&
+                element !is JetNamedFunction
             ) {
                 if (element.getNameIdentifier() == null) {
                     return false
@@ -103,6 +105,9 @@ public object PositioningStrategies {
                 }
                 return markElement(nameIdentifier)
             }
+            if (element is JetNamedFunction) {
+                return DECLARATION_SIGNATURE.mark(element)
+            }
             return DEFAULT.mark(element)
         }
     }
@@ -160,6 +165,18 @@ public object PositioningStrategies {
                 DECLARATION_SIGNATURE.isValid(element)
             else
                 DEFAULT.isValid(element)
+        }
+    }
+
+    public val TYPE_PARAMETERS_OR_DECLARATION_SIGNATURE: PositioningStrategy<JetDeclaration> = object : PositioningStrategy<JetDeclaration>() {
+        override fun mark(element: JetDeclaration): List<TextRange> {
+            if (element is JetTypeParameterListOwner) {
+                val jetTypeParameterList = element.getTypeParameterList()
+                if (jetTypeParameterList != null) {
+                    return markElement(jetTypeParameterList)
+                }
+            }
+            return DECLARATION_SIGNATURE.mark(element)
         }
     }
 
@@ -325,13 +342,16 @@ public object PositioningStrategies {
         }
     }
 
-    public val FUNCTION_LITERAL_PARAMETERS: PositioningStrategy<JetFunctionLiteral> = object : PositioningStrategy<JetFunctionLiteral>() {
-        override fun mark(element: JetFunctionLiteral): List<TextRange> {
+    public val FUNCTION_PARAMETERS: PositioningStrategy<JetFunction> = object : PositioningStrategy<JetFunction>() {
+        override fun mark(element: JetFunction): List<TextRange> {
             val valueParameterList = element.getValueParameterList()
             if (valueParameterList != null) {
                 return markElement(valueParameterList)
             }
-            return markNode(element.getLBrace().getNode())
+            if (element is JetFunctionLiteral) {
+                return markNode(element.getLBrace().getNode())
+            }
+            return DECLARATION_SIGNATURE_OR_DEFAULT.mark(element)
         }
     }
 

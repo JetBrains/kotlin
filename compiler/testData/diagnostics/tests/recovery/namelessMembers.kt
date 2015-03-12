@@ -1,7 +1,7 @@
 // !DIAGNOSTICS: -REDECLARATION
 
 class C {
-    fun<!SYNTAX!><!> () {
+    <!FUNCTION_DECLARATION_WITH_NO_NAME!>fun ()<!> {
 
     }
 

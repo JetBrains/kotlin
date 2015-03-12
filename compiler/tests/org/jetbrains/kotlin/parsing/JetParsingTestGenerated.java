@@ -267,6 +267,18 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
             doParsingTest(fileName);
         }
 
+        @TestMetadata("FunctionExpressions.kt")
+        public void testFunctionExpressions() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/FunctionExpressions.kt");
+            doParsingTest(fileName);
+        }
+
+        @TestMetadata("FunctionExpressions_ERR.kt")
+        public void testFunctionExpressions_ERR() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/FunctionExpressions_ERR.kt");
+            doParsingTest(fileName);
+        }
+
         @TestMetadata("FunctionLiterals.kt")
         public void testFunctionLiterals() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/FunctionLiterals.kt");
@@ -300,6 +312,18 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
         @TestMetadata("Functions.kt")
         public void testFunctions() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/Functions.kt");
+            doParsingTest(fileName);
+        }
+
+        @TestMetadata("FunctionsWithoutName.kt")
+        public void testFunctionsWithoutName() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/FunctionsWithoutName.kt");
+            doParsingTest(fileName);
+        }
+
+        @TestMetadata("FunctionsWithoutName_ERR.kt")
+        public void testFunctionsWithoutName_ERR() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/FunctionsWithoutName_ERR.kt");
             doParsingTest(fileName);
         }
 
@@ -438,6 +462,18 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
         @TestMetadata("ParameterNameMising.kt")
         public void testParameterNameMising() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/ParameterNameMising.kt");
+            doParsingTest(fileName);
+        }
+
+        @TestMetadata("ParameterType.kt")
+        public void testParameterType() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/ParameterType.kt");
+            doParsingTest(fileName);
+        }
+
+        @TestMetadata("ParameterType_ERR.kt")
+        public void testParameterType_ERR() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/ParameterType_ERR.kt");
             doParsingTest(fileName);
         }
 

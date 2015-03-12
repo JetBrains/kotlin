@@ -289,7 +289,7 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
     }
 
     @NotNull
-    private static List<String> librariesWithJsStdlib(List<String> libraries) {
+    private static List<String> librariesWithJsStdlib(@NotNull List<String> libraries) {
         List<String> result = new ArrayList<String>(libraries);
         result.addAll(0, LibrarySourcesConfigWithCaching.JS_STDLIB);
         return result;

@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.di.InjectorForTests;
 import org.jetbrains.kotlin.psi.JetNamedFunction;
-import org.jetbrains.kotlin.resolve.DescriptorResolver;
+import org.jetbrains.kotlin.resolve.FunctionDescriptorResolver;
 import org.jetbrains.kotlin.resolve.OverridingUtil;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.test.ConfigurationKind;
@@ -34,7 +34,7 @@ import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 public class JetOverridingTest extends JetLiteFixture {
 
     private final ModuleDescriptor root = JetTestUtils.createEmptyModule("<test_root>");
-    private DescriptorResolver descriptorResolver;
+    private FunctionDescriptorResolver functionDescriptorResolver;
 
     @Override
     protected JetCoreEnvironment createEnvironment() {
@@ -45,12 +45,12 @@ public class JetOverridingTest extends JetLiteFixture {
     public void setUp() throws Exception {
         super.setUp();
         InjectorForTests injector = new InjectorForTests(getProject(), root);
-        descriptorResolver = injector.getDescriptorResolver();
+        functionDescriptorResolver = injector.getFunctionDescriptorResolver();
     }
 
     @Override
     protected void tearDown() throws Exception {
-        descriptorResolver = null;
+        functionDescriptorResolver = null;
         super.tearDown();
     }
 
@@ -164,7 +164,7 @@ public class JetOverridingTest extends JetLiteFixture {
 
     private FunctionDescriptor makeFunction(String funDecl) {
         JetNamedFunction function = JetPsiFactory(getProject()).createFunction(funDecl);
-        return descriptorResolver.resolveFunctionDescriptor(root, KotlinBuiltIns.getInstance().getBuiltInsPackageScope(), function,
+        return functionDescriptorResolver.resolveFunctionDescriptor(root, KotlinBuiltIns.getInstance().getBuiltInsPackageScope(), function,
                                                             JetTestUtils.DUMMY_TRACE, DataFlowInfo.EMPTY);
     }
 }

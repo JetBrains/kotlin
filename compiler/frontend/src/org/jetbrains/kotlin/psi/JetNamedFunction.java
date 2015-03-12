@@ -63,7 +63,7 @@ public class JetNamedFunction extends JetTypeParameterListOwnerStub<KotlinFuncti
         }
         PsiElement nameIdentifier = getNameIdentifier();
         if (nameIdentifier == null) {
-            return false;
+            return true;
         }
         return nameIdentifier.getTextOffset() > typeParameterList.getTextOffset();
     }

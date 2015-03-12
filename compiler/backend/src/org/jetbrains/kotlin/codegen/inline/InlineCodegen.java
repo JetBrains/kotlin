@@ -23,7 +23,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.InlineStrategy;
 import org.jetbrains.kotlin.builtins.InlineUtil;
 import org.jetbrains.kotlin.codegen.*;
-import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.context.MethodContext;
 import org.jetbrains.kotlin.codegen.context.PackageContext;
@@ -59,6 +58,8 @@ import java.util.Map;
 import static org.jetbrains.kotlin.codegen.AsmUtil.getMethodAsmFlags;
 import static org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive;
 import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil.addInlineMarker;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isFunctionExpression;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isFunctionLiteral;
 
 public class InlineCodegen extends CallGenerator {
     private final GenerationState state;
@@ -234,7 +235,7 @@ public class InlineCodegen extends CallGenerator {
 
             final CallableMemberDescriptor descriptor = codegen.getContext().getContextDescriptor();
 
-            final boolean isLambda = CodegenBinding.isLocalFunOrLambda(descriptor) && descriptor.getName().isSpecial();
+            final boolean isLambda = isFunctionExpression(descriptor) || isFunctionLiteral(descriptor);
 
             @Override
             public boolean isMyLabel(@NotNull String name) {

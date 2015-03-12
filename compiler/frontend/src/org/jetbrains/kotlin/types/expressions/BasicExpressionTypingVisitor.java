@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
+import kotlin.Function0;
 import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -107,15 +108,11 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
     @Override
     public JetTypeInfo visitParenthesizedExpression(@NotNull JetParenthesizedExpression expression, ExpressionTypingContext context) {
-        return visitParenthesizedExpression(expression, context, false);
-    }
-
-    public JetTypeInfo visitParenthesizedExpression(JetParenthesizedExpression expression, ExpressionTypingContext context, boolean isStatement) {
         JetExpression innerExpression = expression.getExpression();
         if (innerExpression == null) {
             return JetTypeInfo.create(null, context.dataFlowInfo);
         }
-        return facade.getTypeInfo(innerExpression, context.replaceScope(context.scope), isStatement);
+        return facade.getTypeInfo(innerExpression, context.replaceScope(context.scope));
     }
 
     @Override
@@ -521,6 +518,55 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         return DataFlowUtils.checkType(result, expression, c, c.dataFlowInfo);
     }
 
+    @Override
+    public JetTypeInfo visitObjectLiteralExpression(@NotNull final JetObjectLiteralExpression expression, final ExpressionTypingContext context) {
+        DelegatingBindingTrace delegatingBindingTrace = context.trace.get(TRACE_DELTAS_CACHE, expression.getObjectDeclaration());
+        if (delegatingBindingTrace != null) {
+            delegatingBindingTrace.addAllMyDataTo(context.trace);
+            JetType type = context.trace.get(EXPRESSION_TYPE, expression);
+            return DataFlowUtils.checkType(type, expression, context, context.dataFlowInfo);
+        }
+        final JetType[] result = new JetType[1];
+        final TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(context.trace, "trace to resolve object literal expression", expression);
+        ObservableBindingTrace.RecordHandler<PsiElement, ClassDescriptor> handler = new ObservableBindingTrace.RecordHandler<PsiElement, ClassDescriptor>() {
+
+            @Override
+            public void handleRecord(WritableSlice<PsiElement, ClassDescriptor> slice, PsiElement declaration, final ClassDescriptor descriptor) {
+                if (slice == CLASS && declaration == expression.getObjectDeclaration()) {
+                    JetType defaultType = DeferredType.createRecursionIntolerant(components.globalContext.getStorageManager(),
+                                                                                 context.trace,
+                                                                                 new Function0<JetType>() {
+                                                                                     @Override
+                                                                                     public JetType invoke() {
+                                                                                         return descriptor.getDefaultType();
+                                                                                     }
+                                                                                 });
+                    result[0] = defaultType;
+                    if (!context.trace.get(PROCESSED, expression)) {
+                        temporaryTrace.record(EXPRESSION_TYPE, expression, defaultType);
+                        temporaryTrace.record(PROCESSED, expression);
+                    }
+                }
+            }
+        };
+        ObservableBindingTrace traceAdapter = new ObservableBindingTrace(temporaryTrace);
+        traceAdapter.addHandler(CLASS, handler);
+        components.localClassifierAnalyzer.processClassOrObject(components.globalContext,
+                                                                null, // don't need to add classifier of object literal to any scope
+                                                                context.replaceBindingTrace(traceAdapter).replaceContextDependency(INDEPENDENT),
+                                                                context.scope.getContainingDeclaration(),
+                                                                expression.getObjectDeclaration(),
+                                                                components.additionalCheckerProvider,
+                                                                components.dynamicTypesSettings);
+
+        DelegatingBindingTrace cloneDelta = new DelegatingBindingTrace(
+                new BindingTraceContext().getBindingContext(), "cached delta trace for object literal expression resolve", expression);
+        temporaryTrace.addAllMyDataTo(cloneDelta);
+        context.trace.record(TRACE_DELTAS_CACHE, expression.getObjectDeclaration(), cloneDelta);
+        temporaryTrace.commit();
+        return DataFlowUtils.checkType(result[0], expression, context, context.dataFlowInfo);
+    }
+
     @Nullable
     private JetType getCallableReferenceType(
             @NotNull JetCallableReferenceExpression expression,
@@ -689,7 +735,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     ) {
         Call call = CallMaker.makeCall(reference, receiver, null, reference, ThrowingList.<ValueArgument>instance());
         TemporaryTraceAndCache temporaryTrace = TemporaryTraceAndCache.create(context, "trace to resolve callable reference as function",
-                                                                        reference);
+                                                                              reference);
 
         BasicCallResolutionContext callResolutionContext = BasicCallResolutionContext.create(
                 context.replaceTraceAndCache(temporaryTrace).replaceExpectedType(NO_EXPECTED_TYPE), call, CheckValueArgumentsMode.DISABLED);
@@ -1283,7 +1329,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             dataFlowInfo = resolutionResults.getResultingCall().getDataFlowInfoForArguments().getResultInfo();
         }
 
-        return JetTypeInfo.create(OverloadResolutionResultsUtil.getResultingType(resolutionResults, context.contextDependency), dataFlowInfo);
+        return JetTypeInfo.create(OverloadResolutionResultsUtil.getResultingType(resolutionResults, context.contextDependency),
+                                  dataFlowInfo);
     }
 
     @Override

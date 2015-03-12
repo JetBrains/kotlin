@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.utils.UtilsPackage;
 import java.util.*;
 
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isDefaultObject;
-import static org.jetbrains.kotlin.types.TypeUtils.CANT_INFER_LAMBDA_PARAM_TYPE;
+import static org.jetbrains.kotlin.types.TypeUtils.CANT_INFER_FUNCTION_PARAM_TYPE;
 
 public class DescriptorRendererImpl implements DescriptorRenderer {
 
@@ -350,7 +350,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     private String renderInflexibleType(@NotNull JetType type) {
         assert !TypesPackage.isFlexible(type) : "Flexible types not allowed here: " + renderNormalizedType(type);
 
-        if (type == CANT_INFER_LAMBDA_PARAM_TYPE || TypeUtils.isDontCarePlaceholder(type)) {
+        if (type == CANT_INFER_FUNCTION_PARAM_TYPE || TypeUtils.isDontCarePlaceholder(type)) {
             return "???";
         }
         if (ErrorUtils.isUninferredParameter(type)) {

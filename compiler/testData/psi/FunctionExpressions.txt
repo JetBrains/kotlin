@@ -1,0 +1,978 @@
+JetFile: FunctionExpressions.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('a')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    FUN
+      PsiElement(fun)('fun')
+      PsiWhiteSpace(' ')
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('a')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    FUN
+      PsiElement(fun)('fun')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('name')
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('a')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    FUN
+      PsiElement(fun)('fun')
+      PsiWhiteSpace(' ')
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('T')
+      PsiElement(DOT)('.')
+      PsiElement(IDENTIFIER)('name')
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('a')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    FUN
+      PsiElement(fun)('fun')
+      PsiWhiteSpace(' ')
+      TYPE_REFERENCE
+        ANNOTATION
+          PsiElement(LBRACKET)('[')
+          ANNOTATION_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
+          PsiElement(RBRACKET)(']')
+        PsiWhiteSpace(' ')
+        USER_TYPE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('T')
+      PsiElement(DOT)('.')
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          PsiElement(IDENTIFIER)('a')
+          PsiWhiteSpace(' ')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('foo')
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiElement(COLON)(':')
+      PsiWhiteSpace(' ')
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('bar')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('a')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    FUN
+      PsiElement(fun)('fun')
+      PsiWhiteSpace(' ')
+      TYPE_REFERENCE
+        ANNOTATION
+          PsiElement(LBRACKET)('[')
+          ANNOTATION_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
+          PsiElement(RBRACKET)(']')
+        PsiWhiteSpace(' ')
+        USER_TYPE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('T')
+      PsiElement(DOT)('.')
+      PsiElement(IDENTIFIER)('name')
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          PsiElement(IDENTIFIER)('a')
+          PsiWhiteSpace(' ')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('foo')
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiElement(COLON)(':')
+      PsiWhiteSpace(' ')
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('bar')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('a')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    FUN
+      PsiElement(fun)('fun')
+      PsiWhiteSpace(' ')
+      TYPE_REFERENCE
+        ANNOTATION
+          PsiElement(LBRACKET)('[')
+          ANNOTATION_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
+            VALUE_ARGUMENT_LIST
+              PsiElement(LPAR)('(')
+              PsiElement(RPAR)(')')
+          PsiElement(RBRACKET)(']')
+        PsiWhiteSpace(' ')
+        USER_TYPE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('T')
+      PsiElement(DOT)('.')
+      TYPE_PARAMETER_LIST
+        PsiElement(LT)('<')
+        TYPE_PARAMETER
+          PsiElement(IDENTIFIER)('T')
+          PsiWhiteSpace(' ')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            FUNCTION_TYPE
+              VALUE_PARAMETER_LIST
+                PsiElement(LPAR)('(')
+                VALUE_PARAMETER
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('a')
+                PsiElement(RPAR)(')')
+              PsiWhiteSpace(' ')
+              PsiElement(ARROW)('->')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('b')
+        PsiElement(GT)('>')
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          PsiElement(IDENTIFIER)('a')
+          PsiWhiteSpace(' ')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('foo')
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiElement(COLON)(':')
+      PsiWhiteSpace(' ')
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('bar')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('c')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    FUN
+      PsiElement(fun)('fun')
+      PsiWhiteSpace(' ')
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
+      PsiElement(SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('c')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    FUN
+      PsiElement(fun)('fun')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('name')
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
+      PsiElement(SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('c')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    FUN
+      PsiElement(fun)('fun')
+      PsiWhiteSpace(' ')
+      TYPE_REFERENCE
+        ANNOTATION
+          PsiElement(LBRACKET)('[')
+          ANNOTATION_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
+          PsiElement(RBRACKET)(']')
+        PsiWhiteSpace(' ')
+        USER_TYPE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('T')
+      PsiElement(DOT)('.')
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
+      PsiElement(SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('c')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    FUN
+      PsiElement(fun)('fun')
+      PsiWhiteSpace(' ')
+      TYPE_REFERENCE
+        ANNOTATION
+          PsiElement(LBRACKET)('[')
+          ANNOTATION_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
+          PsiElement(RBRACKET)(']')
+        PsiWhiteSpace(' ')
+        USER_TYPE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('T')
+      PsiElement(DOT)('.')
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          PsiElement(IDENTIFIER)('a')
+          PsiWhiteSpace(' ')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('foo')
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiElement(COLON)(':')
+      PsiWhiteSpace(' ')
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('bar')
+      PsiElement(SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('c')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    FUN
+      PsiElement(fun)('fun')
+      PsiWhiteSpace(' ')
+      TYPE_REFERENCE
+        ANNOTATION
+          PsiElement(LBRACKET)('[')
+          ANNOTATION_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
+            VALUE_ARGUMENT_LIST
+              PsiElement(LPAR)('(')
+              PsiElement(RPAR)(')')
+          PsiElement(RBRACKET)(']')
+        PsiWhiteSpace(' ')
+        USER_TYPE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('T')
+      PsiElement(DOT)('.')
+      TYPE_PARAMETER_LIST
+        PsiElement(LT)('<')
+        TYPE_PARAMETER
+          PsiElement(IDENTIFIER)('T')
+          PsiWhiteSpace(' ')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            FUNCTION_TYPE
+              VALUE_PARAMETER_LIST
+                PsiElement(LPAR)('(')
+                VALUE_PARAMETER
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('a')
+                PsiElement(RPAR)(')')
+              PsiWhiteSpace(' ')
+              PsiElement(ARROW)('->')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('b')
+        PsiElement(GT)('>')
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          PsiElement(IDENTIFIER)('a')
+          PsiWhiteSpace(' ')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('foo')
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiElement(COLON)(':')
+      PsiWhiteSpace(' ')
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('bar')
+      PsiElement(SEMICOLON)(';')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('d')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    FUN
+      PsiElement(fun)('fun')
+      PsiWhiteSpace(' ')
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiElement(EQ)('=')
+      PsiWhiteSpace(' ')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('a')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('d')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    FUN
+      PsiElement(fun)('fun')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('name')
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiElement(EQ)('=')
+      PsiWhiteSpace(' ')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('a')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('a')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    FUN
+      MODIFIER_LIST
+        ANNOTATION
+          PsiElement(LBRACKET)('[')
+          ANNOTATION_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
+          PsiElement(RBRACKET)(']')
+      PsiWhiteSpace(' ')
+      PsiElement(fun)('fun')
+      PsiWhiteSpace(' ')
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('b')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    FUN
+      PsiElement(fun)('fun')
+      PsiWhiteSpace(' ')
+      TYPE_PARAMETER_LIST
+        PsiElement(LT)('<')
+        TYPE_PARAMETER
+          PsiElement(IDENTIFIER)('T')
+        PsiElement(GT)('>')
+      PsiWhiteSpace(' ')
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiElement(where)('where')
+      PsiWhiteSpace(' ')
+      TYPE_CONSTRAINT_LIST
+        TYPE_CONSTRAINT
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('T')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('A')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('outer')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            FUN
+              PsiElement(fun)('fun')
+              PsiWhiteSpace(' ')
+              VALUE_PARAMETER_LIST
+                PsiElement(LPAR)('(')
+                PsiElement(RPAR)(')')
+              PsiWhiteSpace(' ')
+              BLOCK
+                PsiElement(LBRACE)('{')
+                PsiElement(RBRACE)('}')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n    ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            FUN
+              PsiElement(fun)('fun')
+              PsiWhiteSpace(' ')
+              PsiElement(IDENTIFIER)('name')
+              VALUE_PARAMETER_LIST
+                PsiElement(LPAR)('(')
+                PsiElement(RPAR)(')')
+              PsiWhiteSpace(' ')
+              BLOCK
+                PsiElement(LBRACE)('{')
+                PsiElement(RBRACE)('}')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n    ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            FUN
+              PsiElement(fun)('fun')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                ANNOTATION
+                  PsiElement(LBRACKET)('[')
+                  ANNOTATION_ENTRY
+                    CONSTRUCTOR_CALLEE
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('a')
+                  PsiElement(RBRACKET)(']')
+                PsiWhiteSpace(' ')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('T')
+              PsiElement(DOT)('.')
+              VALUE_PARAMETER_LIST
+                PsiElement(LPAR)('(')
+                PsiElement(RPAR)(')')
+              PsiWhiteSpace(' ')
+              BLOCK
+                PsiElement(LBRACE)('{')
+                PsiElement(RBRACE)('}')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n    ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            FUN
+              PsiElement(fun)('fun')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                ANNOTATION
+                  PsiElement(LBRACKET)('[')
+                  ANNOTATION_ENTRY
+                    CONSTRUCTOR_CALLEE
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('a')
+                  PsiElement(RBRACKET)(']')
+                PsiWhiteSpace(' ')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('T')
+              PsiElement(DOT)('.')
+              PsiElement(IDENTIFIER)('name')
+              VALUE_PARAMETER_LIST
+                PsiElement(LPAR)('(')
+                PsiElement(RPAR)(')')
+              PsiWhiteSpace(' ')
+              BLOCK
+                PsiElement(LBRACE)('{')
+                PsiElement(RBRACE)('}')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n\n    ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            FUN
+              PsiElement(fun)('fun')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                ANNOTATION
+                  PsiElement(LBRACKET)('[')
+                  ANNOTATION_ENTRY
+                    CONSTRUCTOR_CALLEE
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('a')
+                  PsiElement(RBRACKET)(']')
+                PsiWhiteSpace(' ')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('T')
+              PsiElement(DOT)('.')
+              VALUE_PARAMETER_LIST
+                PsiElement(LPAR)('(')
+                VALUE_PARAMETER
+                  PsiElement(IDENTIFIER)('a')
+                  PsiWhiteSpace(' ')
+                  PsiElement(COLON)(':')
+                  PsiWhiteSpace(' ')
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('foo')
+                PsiElement(RPAR)(')')
+              PsiWhiteSpace(' ')
+              PsiElement(COLON)(':')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('bar')
+              PsiWhiteSpace(' ')
+              BLOCK
+                PsiElement(LBRACE)('{')
+                PsiElement(RBRACE)('}')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n    ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            FUN
+              PsiElement(fun)('fun')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                ANNOTATION
+                  PsiElement(LBRACKET)('[')
+                  ANNOTATION_ENTRY
+                    CONSTRUCTOR_CALLEE
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('a')
+                    VALUE_ARGUMENT_LIST
+                      PsiElement(LPAR)('(')
+                      PsiElement(RPAR)(')')
+                  PsiElement(RBRACKET)(']')
+                PsiWhiteSpace(' ')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('T')
+              PsiElement(DOT)('.')
+              TYPE_PARAMETER_LIST
+                PsiElement(LT)('<')
+                TYPE_PARAMETER
+                  PsiElement(IDENTIFIER)('T')
+                  PsiWhiteSpace(' ')
+                  PsiElement(COLON)(':')
+                  PsiWhiteSpace('  ')
+                  TYPE_REFERENCE
+                    FUNCTION_TYPE
+                      VALUE_PARAMETER_LIST
+                        PsiElement(LPAR)('(')
+                        VALUE_PARAMETER
+                          TYPE_REFERENCE
+                            USER_TYPE
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('a')
+                        PsiElement(RPAR)(')')
+                      PsiWhiteSpace(' ')
+                      PsiElement(ARROW)('->')
+                      PsiWhiteSpace(' ')
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('b')
+                PsiElement(GT)('>')
+              VALUE_PARAMETER_LIST
+                PsiElement(LPAR)('(')
+                VALUE_PARAMETER
+                  PsiElement(IDENTIFIER)('a')
+                  PsiWhiteSpace(' ')
+                  PsiElement(COLON)(':')
+                  PsiWhiteSpace(' ')
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('foo')
+                PsiElement(RPAR)(')')
+              PsiWhiteSpace(' ')
+              PsiElement(COLON)(':')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('bar')
+              PsiWhiteSpace(' ')
+              BLOCK
+                PsiElement(LBRACE)('{')
+                PsiElement(RBRACE)('}')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n\n    ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar')
+        PsiWhiteSpace(' ')
+        FUNCTION_LITERAL_ARGUMENT
+          FUNCTION_LITERAL_EXPRESSION
+            FUNCTION_LITERAL
+              PsiElement(LBRACE)('{')
+              BLOCK
+                FUN
+                  PsiElement(fun)('fun')
+                  PsiWhiteSpace(' ')
+                  TYPE_REFERENCE
+                    ANNOTATION
+                      PsiElement(LBRACKET)('[')
+                      ANNOTATION_ENTRY
+                        CONSTRUCTOR_CALLEE
+                          TYPE_REFERENCE
+                            USER_TYPE
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('a')
+                        VALUE_ARGUMENT_LIST
+                          PsiElement(LPAR)('(')
+                          PsiElement(RPAR)(')')
+                      PsiElement(RBRACKET)(']')
+                    PsiWhiteSpace(' ')
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('T')
+                  PsiElement(DOT)('.')
+                  TYPE_PARAMETER_LIST
+                    PsiElement(LT)('<')
+                    TYPE_PARAMETER
+                      PsiElement(IDENTIFIER)('T')
+                      PsiWhiteSpace(' ')
+                      PsiElement(COLON)(':')
+                      PsiWhiteSpace(' ')
+                      TYPE_REFERENCE
+                        ANNOTATION
+                          PsiElement(LBRACKET)('[')
+                          ANNOTATION_ENTRY
+                            CONSTRUCTOR_CALLEE
+                              TYPE_REFERENCE
+                                USER_TYPE
+                                  REFERENCE_EXPRESSION
+                                    PsiElement(IDENTIFIER)('a')
+                          PsiElement(RBRACKET)(']')
+                        PsiWhiteSpace('  ')
+                        FUNCTION_TYPE
+                          VALUE_PARAMETER_LIST
+                            PsiElement(LPAR)('(')
+                            VALUE_PARAMETER
+                              TYPE_REFERENCE
+                                USER_TYPE
+                                  REFERENCE_EXPRESSION
+                                    PsiElement(IDENTIFIER)('a')
+                            PsiElement(RPAR)(')')
+                          PsiWhiteSpace(' ')
+                          PsiElement(ARROW)('->')
+                          PsiWhiteSpace(' ')
+                          TYPE_REFERENCE
+                            USER_TYPE
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('b')
+                    PsiElement(GT)('>')
+                  VALUE_PARAMETER_LIST
+                    PsiElement(LPAR)('(')
+                    VALUE_PARAMETER
+                      PsiElement(IDENTIFIER)('a')
+                      PsiWhiteSpace(' ')
+                      PsiElement(COLON)(':')
+                      PsiWhiteSpace(' ')
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('foo')
+                    PsiElement(RPAR)(')')
+                  PsiWhiteSpace(' ')
+                  PsiElement(COLON)(':')
+                  PsiWhiteSpace(' ')
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('bar')
+                  PsiWhiteSpace(' ')
+                  BLOCK
+                    PsiElement(LBRACE)('{')
+                    PsiElement(RBRACE)('}')
+              PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n    ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar')
+        PsiWhiteSpace(' ')
+        FUNCTION_LITERAL_ARGUMENT
+          FUNCTION_LITERAL_EXPRESSION
+            FUNCTION_LITERAL
+              PsiElement(LBRACE)('{')
+              BLOCK
+                FUN
+                  PsiElement(fun)('fun')
+                  PsiWhiteSpace(' ')
+                  TYPE_REFERENCE
+                    NULLABLE_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('A')
+                      PsiElement(QUEST)('?')
+                  PsiElement(DOT)('.')
+                  VALUE_PARAMETER_LIST
+                    PsiElement(LPAR)('(')
+                    PsiElement(RPAR)(')')
+                  PsiWhiteSpace(' ')
+                  PsiElement(COLON)(':')
+                  PsiWhiteSpace(' ')
+                  TYPE_REFERENCE
+                    NULLABLE_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('bar')
+                      PsiElement(QUEST)('?')
+              PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar')
+        PsiWhiteSpace(' ')
+        FUNCTION_LITERAL_ARGUMENT
+          FUNCTION_LITERAL_EXPRESSION
+            FUNCTION_LITERAL
+              PsiElement(LBRACE)('{')
+              BLOCK
+                FUN
+                  PsiElement(fun)('fun')
+                  PsiWhiteSpace(' ')
+                  TYPE_REFERENCE
+                    NULLABLE_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('A')
+                      PsiElement(QUEST)('?')
+                  PsiWhiteSpace(' ')
+                  PsiElement(DOT)('.')
+                  VALUE_PARAMETER_LIST
+                    PsiElement(LPAR)('(')
+                    PsiElement(RPAR)(')')
+                  PsiWhiteSpace(' ')
+                  PsiElement(COLON)(':')
+                  PsiWhiteSpace(' ')
+                  TYPE_REFERENCE
+                    NULLABLE_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('bar')
+                      PsiElement(QUEST)('?')
+              PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n    ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            FUN
+              PsiElement(fun)('fun')
+              PsiWhiteSpace(' ')
+              VALUE_PARAMETER_LIST
+                PsiElement(LPAR)('(')
+                PsiElement(RPAR)(')')
+              PsiWhiteSpace(' ')
+              PsiElement(EQ)('=')
+              PsiWhiteSpace(' ')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('a')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n    ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            FUN
+              PsiElement(fun)('fun')
+              PsiWhiteSpace(' ')
+              PsiElement(IDENTIFIER)('name')
+              VALUE_PARAMETER_LIST
+                PsiElement(LPAR)('(')
+                PsiElement(RPAR)(')')
+              PsiWhiteSpace(' ')
+              PsiElement(EQ)('=')
+              PsiWhiteSpace(' ')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('a')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n    ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            FUN
+              MODIFIER_LIST
+                ANNOTATION
+                  PsiElement(LBRACKET)('[')
+                  ANNOTATION_ENTRY
+                    CONSTRUCTOR_CALLEE
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('a')
+                  PsiElement(RBRACKET)(']')
+              PsiWhiteSpace(' ')
+              PsiElement(fun)('fun')
+              PsiWhiteSpace(' ')
+              PsiElement(IDENTIFIER)('name')
+              VALUE_PARAMETER_LIST
+                PsiElement(LPAR)('(')
+                PsiElement(RPAR)(')')
+              PsiWhiteSpace(' ')
+              PsiElement(EQ)('=')
+              PsiWhiteSpace(' ')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('a')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

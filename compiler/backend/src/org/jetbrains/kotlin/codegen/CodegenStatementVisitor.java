@@ -42,6 +42,11 @@ public class CodegenStatementVisitor extends JetVisitor<StackValue, StackValue> 
     }
 
     @Override
+    public StackValue visitNamedFunction(@NotNull JetNamedFunction function, StackValue data) {
+        return codegen.visitNamedFunction(function, data, true);
+    }
+
+    @Override
     public StackValue visitWhenExpression(@NotNull JetWhenExpression expression, StackValue data) {
         return codegen.generateWhenExpression(expression, true);
     }

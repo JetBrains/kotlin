@@ -17,12 +17,9 @@
 package org.jetbrains.kotlin.resolve.lazy
 
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.resolve.DescriptorResolver
-import org.jetbrains.kotlin.resolve.TypeResolver
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
-import org.jetbrains.kotlin.resolve.AnnotationResolver
 
 public trait LazyClassContext {
     val scopeProvider: DeclarationScopeProvider
@@ -31,6 +28,7 @@ public trait LazyClassContext {
     val trace: BindingTrace
     val moduleDescriptor: ModuleDescriptor
     val descriptorResolver: DescriptorResolver
+    val functionDescriptorResolver: FunctionDescriptorResolver
     val typeResolver: TypeResolver
     val declarationProviderFactory: DeclarationProviderFactory
     val annotationResolver: AnnotationResolver

@@ -22,6 +22,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
+import org.jetbrains.kotlin.descriptors.impl.FunctionExpressionDescriptor;
+import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
@@ -236,8 +238,19 @@ public class DescriptorUtils {
         return false;
     }
 
-    public static boolean isFunctionLiteral(@NotNull FunctionDescriptor descriptor) {
+    public static boolean isFunctionLiteral(@Nullable DeclarationDescriptor descriptor) {
         return descriptor instanceof AnonymousFunctionDescriptor;
+    }
+
+    public static boolean isLocalFunction(@Nullable DeclarationDescriptor descriptor) {
+        if (descriptor != null && descriptor.getClass() == SimpleFunctionDescriptorImpl.class) {
+            return ((SimpleFunctionDescriptorImpl) descriptor).getVisibility() == Visibilities.LOCAL;
+        }
+        return false;
+    }
+
+    public static boolean isFunctionExpression(@Nullable DeclarationDescriptor descriptor) {
+        return descriptor instanceof FunctionExpressionDescriptor;
     }
 
     public static boolean isDefaultObject(@Nullable DeclarationDescriptor descriptor) {

@@ -1,4 +1,8 @@
-fun<!SYNTAX!><!> () {
+<!FUNCTION_DECLARATION_WITH_NO_NAME!>fun ()<!> {
+
+}
+
+<!FUNCTION_DECLARATION_WITH_NO_NAME!>fun Outer.()<!> {
 
 }
 
@@ -25,7 +29,7 @@ annotation class<!SYNTAX!><!> <!ANNOTATION_CLASS_WITH_BODY!>{
 }<!>
 
 class Outer {
-    fun<!SYNTAX!><!> () {
+    <!FUNCTION_DECLARATION_WITH_NO_NAME!>fun ()<!> {
 
     }
 
@@ -51,3 +55,13 @@ class Outer {
 
     }<!><!>
 }
+
+fun outerFun() {
+    <!FUNCTION_DECLARATION_WITH_NO_NAME!>fun ()<!> {
+
+    }
+    <!FUNCTION_DECLARATION_WITH_NO_NAME!>fun ()<!> {
+
+    }
+}
+

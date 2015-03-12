@@ -1,0 +1,3 @@
+package
+
+internal val foo: (kotlin.Int) -> kotlin.String

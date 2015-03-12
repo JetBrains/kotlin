@@ -59,12 +59,12 @@ JetFile: WrongWordInParentheses.kt
       PsiWhiteSpace(' ')
       VALUE_PARAMETER
         PsiElement(IDENTIFIER)('Bar')
-        PsiErrorElement:Parameters must have type annotation
-          PsiElement(GT)('>')
       PsiErrorElement:Expecting comma or ')'
         <empty list>
       PsiErrorElement:Expecting ')'
-        PsiElement(EXCL)('!')
+        PsiElement(GT)('>')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(EXCL)('!')
   PsiWhiteSpace('\n')
   PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')

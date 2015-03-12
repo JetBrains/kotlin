@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.resolve.TypeResolver;
 import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver;
 import org.jetbrains.kotlin.resolve.TypeResolver.FlexibleTypeCapabilitiesProvider;
 import org.jetbrains.kotlin.context.TypeLazinessToken;
+import org.jetbrains.kotlin.resolve.FunctionDescriptorResolver;
 import org.jetbrains.kotlin.types.reflect.ReflectionTypes;
 import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver;
 import org.jetbrains.kotlin.resolve.StatementFilter;
@@ -100,6 +101,7 @@ public class InjectorForLazyLocalClassifierAnalyzer {
     private final QualifiedExpressionResolver qualifiedExpressionResolver;
     private final FlexibleTypeCapabilitiesProvider flexibleTypeCapabilitiesProvider;
     private final TypeLazinessToken typeLazinessToken;
+    private final FunctionDescriptorResolver functionDescriptorResolver;
     private final ReflectionTypes reflectionTypes;
     private final CallExpressionResolver callExpressionResolver;
     private final StatementFilter statementFilter;
@@ -154,7 +156,8 @@ public class InjectorForLazyLocalClassifierAnalyzer {
         this.flexibleTypeCapabilitiesProvider = new FlexibleTypeCapabilitiesProvider();
         this.typeLazinessToken = new TypeLazinessToken();
         this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, module, flexibleTypeCapabilitiesProvider, storageManager, typeLazinessToken, dynamicTypesSettings);
-        this.localClassifierAnalyzer = new LocalClassifierAnalyzer(descriptorResolver, typeResolver, annotationResolver);
+        this.functionDescriptorResolver = new FunctionDescriptorResolver(typeResolver, descriptorResolver, annotationResolver, storageManager, expressionTypingServices, kotlinBuiltIns);
+        this.localClassifierAnalyzer = new LocalClassifierAnalyzer(descriptorResolver, functionDescriptorResolver, typeResolver, annotationResolver);
         this.delegatedPropertyResolver = new DelegatedPropertyResolver();
         this.reflectionTypes = new ReflectionTypes(module);
         this.callExpressionResolver = new CallExpressionResolver();
@@ -219,6 +222,7 @@ public class InjectorForLazyLocalClassifierAnalyzer {
         expressionTypingServices.setCallExpressionResolver(callExpressionResolver);
         expressionTypingServices.setCallResolver(callResolver);
         expressionTypingServices.setDescriptorResolver(descriptorResolver);
+        expressionTypingServices.setFunctionDescriptorResolver(functionDescriptorResolver);
         expressionTypingServices.setProject(project);
         expressionTypingServices.setStatementFilter(statementFilter);
         expressionTypingServices.setTypeResolver(typeResolver);
