@@ -4014,6 +4014,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("secondaryConstructor.kt")
+            public void testSecondaryConstructor() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/declarations/convertMemberToExtension/secondaryConstructor.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("simple.kt")
             public void testSimple() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/declarations/convertMemberToExtension/simple.kt");
