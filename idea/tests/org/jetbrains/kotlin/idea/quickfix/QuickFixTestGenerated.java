@@ -2824,6 +2824,24 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("beforeRemoveUselessCast.kt")
+        public void testRemoveUselessCast() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/expressions/beforeRemoveUselessCast.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("beforeRemoveUselessCastUnderSmartCast.kt")
+        public void testRemoveUselessCastUnderSmartCast() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/expressions/beforeRemoveUselessCastUnderSmartCast.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("beforeReplaceUselessCastWithStaticAssert.kt")
+        public void testReplaceUselessCastWithStaticAssert() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/expressions/beforeReplaceUselessCastWithStaticAssert.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("beforeUnnecessaryNonNullAssertion1.kt")
         public void testUnnecessaryNonNullAssertion1() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/expressions/beforeUnnecessaryNonNullAssertion1.kt");
@@ -2863,12 +2881,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("beforeUnsafeCall3.kt")
         public void testUnsafeCall3() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/expressions/beforeUnsafeCall3.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("beforeUselessCast.kt")
-        public void testUselessCast() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/expressions/beforeUselessCast.kt");
             doTest(fileName);
         }
 
@@ -4932,15 +4944,15 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("beforeNonLocalReturn.kt")
-            public void testNonLocalReturn() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/beforeNonLocalReturn.kt");
+            @TestMetadata("beforeNonLocalReturnRuntime.kt")
+            public void testNonLocalReturnRuntime() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/beforeNonLocalReturnRuntime.kt");
                 doTest(fileName);
             }
 
-            @TestMetadata("beforeNonLocalReturnWithLabel.kt")
-            public void testNonLocalReturnWithLabel() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/beforeNonLocalReturnWithLabel.kt");
+            @TestMetadata("beforeNonLocalReturnWithLabelRuntime.kt")
+            public void testNonLocalReturnWithLabelRuntime() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/beforeNonLocalReturnWithLabelRuntime.kt");
                 doTest(fileName);
             }
 
