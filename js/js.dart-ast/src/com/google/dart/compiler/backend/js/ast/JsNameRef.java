@@ -50,11 +50,13 @@ public final class JsNameRef extends JsExpressionImpl implements HasName {
         return name;
     }
 
+    @Nullable
     @Override
     public Symbol getSymbol() {
         return name;
     }
 
+    @Nullable
     public JsExpression getQualifier() {
         return qualifier;
     }
