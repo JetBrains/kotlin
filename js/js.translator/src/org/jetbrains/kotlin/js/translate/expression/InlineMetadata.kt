@@ -38,7 +38,6 @@ public class InlineMetadata(val tag: JsStringLiteral, val function: JsFunction) 
         platformStatic
         fun decompose(expression: JsExpression?): InlineMetadata? =
                 when (expression) {
-                    is JsBinaryOperation -> decomposeCommaExpression(expression)
                     is JsInvocation -> decomposeCreateFunctionCall(expression)
                     else -> null
                 }
@@ -46,33 +45,11 @@ public class InlineMetadata(val tag: JsStringLiteral, val function: JsFunction) 
         private fun decomposeCreateFunctionCall(call: JsInvocation): InlineMetadata? {
             if (Namer.CREATE_INLINE_FUNCTION != call.getQualifier()) return null
 
-            return decomposePropertiesList(call.getArguments())
-        }
+            val arguments = call.getArguments()
+            if (arguments.size() != METADATA_PROPERTIES_COUNT) return null
 
-        private fun decomposeCommaExpression(expression: JsExpression): InlineMetadata? {
-            val properties = arrayListOf<JsExpression>()
-            var decomposable: JsExpression? = expression
-
-            while (decomposable is JsExpression) {
-                val binOp = decomposable as? JsBinaryOperation
-
-                if (JsBinaryOperator.COMMA == binOp?.getOperator()) {
-                    properties.add(binOp?.getArg2())
-                    decomposable = binOp?.getArg1()
-                } else {
-                    properties.add(decomposable)
-                    break
-                }
-            }
-
-            return decomposePropertiesList(properties.reverse())
-        }
-
-        private fun decomposePropertiesList(properties: List<JsExpression>): InlineMetadata? {
-            if (properties.size() != METADATA_PROPERTIES_COUNT) return null
-
-            val tag = properties[0] as? JsStringLiteral
-            val function = properties[1] as? JsFunction
+            val tag = arguments[0] as? JsStringLiteral
+            val function = arguments[1] as? JsFunction
             if (tag == null || function == null) return null
 
             return InlineMetadata(tag, function)
