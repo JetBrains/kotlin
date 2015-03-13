@@ -26,35 +26,11 @@ public class SpecialFiles {
 
     static {
         fillExcludedFiles();
-        fillFilesCompiledWithoutStdLib();
     }
 
 
     public static Set<String> getExcludedFiles() {
         return excludedFiles;
-    }
-
-    public static Set<String> getFilesCompiledWithoutStdLib() {
-        return filesCompiledWithoutStdLib;
-    }
-
-    private static void fillFilesCompiledWithoutStdLib() {
-        filesCompiledWithoutStdLib.add("kt1980.kt");
-        filesCompiledWithoutStdLib.add("kt1953_class.kt"); // Exception in code
-        filesCompiledWithoutStdLib.add("basicmethodSuperClass.kt"); // Exception in code
-        filesCompiledWithoutStdLib.add("kt503.kt"); // OVERLOAD_RESOLUTION_AMBIGUITY
-        filesCompiledWithoutStdLib.add("kt504.kt"); // OVERLOAD_RESOLUTION_AMBIGUITY
-        filesCompiledWithoutStdLib.add("kt772.kt"); // OVERLOAD_RESOLUTION_AMBIGUITY
-        filesCompiledWithoutStdLib.add("kt773.kt"); // OVERLOAD_RESOLUTION_AMBIGUITY
-        filesCompiledWithoutStdLib.add("kt796_797.kt"); // OVERLOAD_RESOLUTION_AMBIGUITY
-        filesCompiledWithoutStdLib.add("kt950.kt"); // OVERLOAD_RESOLUTION_AMBIGUITY
-        filesCompiledWithoutStdLib.add("kt3190.kt"); // OVERLOAD_RESOLUTION_AMBIGUITY
-        filesCompiledWithoutStdLib.add("kt4265.kt"); // OVERLOAD_RESOLUTION_AMBIGUITY
-        filesCompiledWithoutStdLib.add("realStringRepeat.kt"); // OVERLOAD_RESOLUTION_AMBIGUITY
-        filesCompiledWithoutStdLib.add("kt2395.kt"); // With MOCK_JDK
-        filesCompiledWithoutStdLib.add("useAnonymousObjectAsIterator.kt"); // OVERLOAD_RESOLUTION_AMBIGUITY
-        filesCompiledWithoutStdLib.add("kt581.kt"); // OVERLOAD_RESOLUTION_AMBIGUITY
-        filesCompiledWithoutStdLib.add("kt4172.kt"); // CANNOT_COMPLETE_RESOLVE
     }
 
     private static void fillExcludedFiles() {
