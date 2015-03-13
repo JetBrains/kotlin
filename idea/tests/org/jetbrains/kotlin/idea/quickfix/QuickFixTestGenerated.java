@@ -2830,6 +2830,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("beforeRemoveUselessCastInParens.kt")
+        public void testRemoveUselessCastInParens() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/expressions/beforeRemoveUselessCastInParens.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("beforeRemoveUselessCastUnderSmartCast.kt")
         public void testRemoveUselessCastUnderSmartCast() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/expressions/beforeRemoveUselessCastUnderSmartCast.kt");
