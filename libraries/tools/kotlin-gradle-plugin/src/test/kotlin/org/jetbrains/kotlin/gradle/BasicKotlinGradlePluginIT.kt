@@ -85,7 +85,6 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
 
         project.build("compileKotlin", "build") {
             assertSuccessful()
-            assertContains("/src/main/kotlin/helloWorld.kt")
             assertContains("ExampleSubplugin loaded")
             assertContains("Project component registration: exampleValue")
             assertContains(":compileKotlin")
