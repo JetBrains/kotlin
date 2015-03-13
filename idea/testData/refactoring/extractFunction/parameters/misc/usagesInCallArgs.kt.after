@@ -13,9 +13,7 @@ public class A() {
     }
 }
 
-private fun i(a: A, t: Int, u: Int, x: Int): Int {
-    return a.bar(t - x, u + x)
-}
+private fun i(a: A, t: Int, u: Int, x: Int) = a.bar(t - x, u + x)
 
 fun foo(a: A, x: Int): Int {
     val t = 10

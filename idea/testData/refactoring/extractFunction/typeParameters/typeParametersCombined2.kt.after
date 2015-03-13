@@ -12,7 +12,5 @@ class A<T: Data>(val t: T) {
         }
     }
 
-    private fun <U : Data, V : Data> B<U>.i(v: V): Int {
-        return t.x + u.x + v.x
-    }
+    private fun <U : Data, V : Data> B<U>.i(v: V) = t.x + u.x + v.x
 }

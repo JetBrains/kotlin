@@ -9,6 +9,4 @@ fun foo(t: Array<Array<Int>>) {
     }
 }
 
-private fun i(it: Int): Int {
-    return it + 1
-}
+private fun i(it: Int) = it + 1

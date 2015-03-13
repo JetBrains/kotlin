@@ -1,8 +1,7 @@
+// SUGGESTED_NAMES: i, getY
 fun foo() {
     val x = i()
     val y = i()
 }
 
-private fun i(): Int {
-    return 1 + 1
-}
+private fun i() = 1 + 1

@@ -5,7 +5,5 @@ class A(val a: Int, b: Int) {
         println({ i(b) - 1 }.invoke())
     }
 
-    private fun i(b: Int): Int {
-        return a + b
-    }
+    private fun i(b: Int) = a + b
 }

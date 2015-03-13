@@ -11,6 +11,4 @@ fun foo(): Int {
     }
 }
 
-private fun i(s: String?): Int {
-    return s!!.length
-}
+private fun i(s: String?) = s!!.length

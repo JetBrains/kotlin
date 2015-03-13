@@ -3,7 +3,5 @@ trait T{
         return i()
     }
 
-    fun i(): Int {
-        return 1
-    }
+    fun i() = 1
 }

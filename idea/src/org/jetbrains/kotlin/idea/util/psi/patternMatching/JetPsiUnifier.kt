@@ -160,6 +160,7 @@ public class JetPsiUnifier(
             val decl1 = DescriptorToSourceUtils.descriptorToDeclaration(d1) as? JetDeclaration
             val decl2 = DescriptorToSourceUtils.descriptorToDeclaration(d2) as? JetDeclaration
             if (decl1 == null || decl2 == null) return false
+            if (decl1 == decl2) return true
 
             if ((decl1 in originalTarget && decl2 in originalPattern) || (decl2 in originalTarget && decl1 in originalPattern)) {
                 return matchDeclarations(decl1, decl2, d1, d2) == MATCHED

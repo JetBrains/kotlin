@@ -10,6 +10,4 @@ fun foo(a: Int): Int {
     }
 }
 
-private fun i(b: Int): Int {
-    return b
-}
+private fun i(b: Int) = b

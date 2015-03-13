@@ -110,6 +110,7 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
             )
 
             val fileText = file.getText() ?: ""
+            val expectedNames = InTextDirectivesUtils.findListWithPrefixes(fileText, "// SUGGESTED_NAMES: ")
             val expectedDescriptors =
                     InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, "// PARAM_DESCRIPTOR: ").joinToString()
             val expectedTypes =
@@ -136,12 +137,16 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
                                 descriptor: ExtractableCodeDescriptor,
                                 generatorOptions: ExtractionGeneratorOptions
                         ): ExtractionGeneratorConfiguration {
+                            val actualNames = descriptor.suggestedNames
                             val allParameters = emptyOrSingletonList(descriptor.receiverParameter) + descriptor.parameters
                             val actualDescriptors = allParameters.map { renderer.render(it.originalDescriptor) }.joinToString()
                             val actualTypes = allParameters.map {
                                 it.getParameterTypeCandidates(false).map { renderer.renderType(it) }.joinToString(", ", "[", "]")
                             }.joinToString()
 
+                            if (actualNames.size() != 1 || expectedNames.isNotEmpty()) {
+                                assertEquals(expectedNames, actualNames, "Expected names mismatch.")
+                            }
                             assertEquals(expectedDescriptors, actualDescriptors, "Expected descriptors mismatch.")
                             assertEquals(expectedTypes, actualTypes, "Expected types mismatch.")
 

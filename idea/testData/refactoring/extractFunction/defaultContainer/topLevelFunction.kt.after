@@ -6,6 +6,4 @@ fun foo(a: Int, b: Int): Int {
     return i(a, b)
 }
 
-private fun i(a: Int, b: Int): Int {
-    return a + b - 1
-}
+private fun i(a: Int, b: Int) = a + b - 1

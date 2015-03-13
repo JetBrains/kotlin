@@ -9,9 +9,7 @@ class A {
     fun B.foo() = i(this@A, this)
 }
 
-private fun i(a1: A, b: B): Int {
-    return a1.a + b.b
-}
+private fun i(a1: A, b: B) = a1.a + b.b
 
 class B {
     val b = 1

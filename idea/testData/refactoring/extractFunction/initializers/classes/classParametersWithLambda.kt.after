@@ -3,6 +3,4 @@
 val n = 1
 class A(val a: Int, val b: Int = { i(a) }.invoke())
 
-private fun i(a: Int): Int {
-    return a + n
-}
+private fun i(a: Int) = a + n

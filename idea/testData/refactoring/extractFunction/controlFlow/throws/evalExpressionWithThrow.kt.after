@@ -1,3 +1,4 @@
+// SUGGESTED_NAMES: i, getT
 // PARAM_TYPES: kotlin.Int
 // PARAM_TYPES: kotlin.Int
 // PARAM_DESCRIPTOR: value-parameter val a: kotlin.Int defined in foo
@@ -10,6 +11,4 @@ fun foo(a: Int): Int {
     return t
 }
 
-private fun i(a: Int, b: Int): Int {
-    return if (a > 0) throw Exception("") else a + b
-}
+private fun i(a: Int, b: Int) = if (a > 0) throw Exception("") else a + b

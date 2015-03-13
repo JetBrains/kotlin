@@ -5,6 +5,4 @@
 // SIBLING:
 fun foo(a: Int, b: Int): Int = i(a, b)
 
-private fun i(a: Int, b: Int): Int {
-    return a + b
-}
+private fun i(a: Int, b: Int) = a + b

@@ -49,6 +49,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             doIntroduceVariableTest(fileName);
         }
 
+        @TestMetadata("callUnderSmartCast.kt")
+        public void testCallUnderSmartCast() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/callUnderSmartCast.kt");
+            doIntroduceVariableTest(fileName);
+        }
+
         @TestMetadata("ClassBody.kt")
         public void testClassBody() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/ClassBody.kt");

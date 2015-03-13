@@ -6,6 +6,4 @@ fun bar(a: Int, b: Int) {
     val foo = { i(a, b) - 1 }.invoke()
 }
 
-private fun i(a: Int, b: Int): Int {
-    return a + b
-}
+private fun i(a: Int, b: Int) = a + b

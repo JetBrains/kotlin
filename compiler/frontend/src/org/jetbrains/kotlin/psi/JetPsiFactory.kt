@@ -630,6 +630,15 @@ public class JetPsiFactory(private val project: Project) {
             return this
         }
 
+        public fun expressionBody(body: String): CallableBuilder {
+            assert(state == State.BODY || state == State.TYPE_CONSTRAINTS)
+
+            sb.append(bodyPrefix()).append(" = ").append(body)
+            state = State.DONE
+
+            return this
+        }
+
         public fun initializer(body: String): CallableBuilder {
             assert(target == Target.READ_ONLY_PROPERTY && (state == State.BODY || state == State.TYPE_CONSTRAINTS))
 
