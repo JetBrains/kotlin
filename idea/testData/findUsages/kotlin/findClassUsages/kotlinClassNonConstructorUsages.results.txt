@@ -1,10 +1,10 @@
 Class/object property type (6: 21) var nextServer: Server? = new Server()
+Default object (28: 28) fun Client.bar(s: Server = Server.NAME) {
+Default object (5: 29) class Client(name: String = Server.NAME): Server() {
+Default object (7: 16) val name = Server.NAME
 Function return types (14: 26) fun getNextServer(): Server? {
 Function return types (36: 21) fun Any.asServer(): Server? {
 Local variable declaration (10: 21) val server: Server = s
-Nested class/object (28: 28) fun Client.bar(s: Server = Server.NAME) {
-Nested class/object (5: 29) class Client(name: String = Server.NAME): Server() {
-Nested class/object (7: 16) val name = Server.NAME
 Parameter type (28: 19) fun Client.bar(s: Server = Server.NAME) {
 Parameter type (9: 16) fun foo(s: Server) {
 Super type qualifier (19: 15) super<Server>.work()

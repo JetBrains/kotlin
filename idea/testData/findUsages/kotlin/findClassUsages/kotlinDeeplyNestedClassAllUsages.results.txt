@@ -1,12 +1,12 @@
 Class/object property type (6: 21) var next: Inner.A? = Inner.A()
+Default object (10: 15) Inner.A.bar = ""
+Default object (11: 15) Inner.A.foo()
+Default object (5: 37) public class X(bar: String? = Inner.A.bar): Inner.A() {
+Default object (7: 32) val myBar: String? = Inner.A.bar
 Field declaration (6: 11) Inner.A next = new Inner.A();
 Function return types (19: 26) fun getNext(): Inner.A? {
 Function return types (40: 22) fun Any.toA(): Inner.A? {
 Local variable declaration (15: 23) val aa: Inner.A = a
-Nested class/object (10: 15) Inner.A.bar = ""
-Nested class/object (11: 15) Inner.A.foo()
-Nested class/object (5: 37) public class X(bar: String? = Inner.A.bar): Inner.A() {
-Nested class/object (7: 32) val myBar: String? = Inner.A.bar
 New instance creation (36: 30) fun X.bar(a: Inner.A = Inner.A()) {
 New instance creation (6: 30) Inner.A next = new Inner.A();
 New instance creation (6: 32) var next: Inner.A? = Inner.A()
