@@ -132,6 +132,12 @@ public class LineMarkersTestGenerated extends AbstractLineMarkersTest {
         doTest(fileName);
     }
 
+    @TestMetadata("OverrideMemberOfAbstractClass.kt")
+    public void testOverrideMemberOfAbstractClass() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/OverrideMemberOfAbstractClass.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("OverridenTraitDeclarations.kt")
     public void testOverridenTraitDeclarations() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/OverridenTraitDeclarations.kt");
