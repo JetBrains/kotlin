@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.debugger.evaluate
 
+import com.intellij.debugger.DebuggerBundle
 import com.intellij.debugger.SourcePosition
 import com.intellij.debugger.engine.SuspendContext
 import com.intellij.debugger.engine.evaluation.EvaluateException
@@ -24,6 +25,7 @@ import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
 import com.intellij.debugger.engine.evaluation.expression.*
 import com.intellij.openapi.diagnostic.Attachment
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.CharsetToolkit
 import com.intellij.psi.JavaPsiFacade
@@ -133,6 +135,12 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
         }
         catch(e: EvaluateException) {
             throw e
+        }
+        catch(e: ProcessCanceledException) {
+            exception(e)
+        }
+        catch(e: VMDisconnectedException) {
+            exception(DebuggerBundle.message("error.vm.disconnected"))
         }
         catch (e: Exception) {
             val attachments = array(attachmentByPsiFile(sourcePosition.getFile()),
