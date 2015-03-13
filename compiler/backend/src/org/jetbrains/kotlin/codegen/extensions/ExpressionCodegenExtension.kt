@@ -22,6 +22,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.codegen.ClassBuilder
+import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.*
@@ -34,12 +35,13 @@ public trait ExpressionCodegenExtension {
             public val v: InstructionAdapter
     )
 
-    // return null if not applicable
-    public fun apply(receiver: StackValue, resolvedCall: ResolvedCall<*>, c: Context): StackValue?
+    // Function is responsible to put the value on stack by itself.
+    // Returns false if not applicable, and if stack was not modified.
+    public fun apply(receiver: StackValue, resolvedCall: ResolvedCall<*>, c: Context): Boolean
 
     public fun generateClassSyntheticParts(
             classBuilder: ClassBuilder,
-            bindingContext: BindingContext,
+            state: GenerationState,
             classOrObject: JetClassOrObject,
             descriptor: ClassDescriptor
     ) {}

@@ -42,9 +42,21 @@ public class AndroidRenameTestGenerated extends AbstractAndroidRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("fqNameInAttrFragment")
+    public void testFqNameInAttrFragment() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/rename/fqNameInAttrFragment/");
+        doTest(fileName);
+    }
+
     @TestMetadata("fqNameInTag")
     public void testFqNameInTag() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/rename/fqNameInTag/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("fqNameInTagFragment")
+    public void testFqNameInTagFragment() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/rename/fqNameInTagFragment/");
         doTest(fileName);
     }
 
@@ -54,9 +66,27 @@ public class AndroidRenameTestGenerated extends AbstractAndroidRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("multiFileFragment")
+    public void testMultiFileFragment() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/rename/multiFileFragment/");
+        doTest(fileName);
+    }
+
     @TestMetadata("simple")
     public void testSimple() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/rename/simple/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("simpleFragment")
+    public void testSimpleFragment() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/rename/simpleFragment/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("simpleView")
+    public void testSimpleView() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/rename/simpleView/");
         doTest(fileName);
     }
 }

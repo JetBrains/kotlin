@@ -41,22 +41,22 @@ public class MemoryBasedClassLoader extends ClassLoader {
     }
 
     @Override
-    public Class<?> loadClass(String name) throws ClassNotFoundException {
+    protected synchronized Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
         if (classesToLoadByParent != null && classesToLoadByParent.accept(name)) {
             if (parent == null) {
-                return super.loadClass(name);
+                return super.loadClass(name, resolve);
             }
 
             try {
                 return parent.loadClass(name);
             }
             catch (ClassNotFoundException e) {
-                return super.loadClass(name);
+                return super.loadClass(name, resolve);
             }
         }
 
         // Look in this class loader and then in the parent one
-        Class<?> aClass = super.loadClass(name);
+        Class<?> aClass = super.loadClass(name, resolve);
         if (aClass == null) {
             if (parent == null) {
                 throw new ClassNotFoundException("Class not available in preloader: " + name);
@@ -64,6 +64,11 @@ public class MemoryBasedClassLoader extends ClassLoader {
             return parent.loadClass(name);
         }
         return aClass;
+    }
+
+    @Override
+    public Class<?> loadClass(String name) throws ClassNotFoundException {
+        return loadClass(name, false);
     }
 
     @Override

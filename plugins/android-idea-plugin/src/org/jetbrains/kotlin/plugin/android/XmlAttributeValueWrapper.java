@@ -203,6 +203,7 @@ public class XmlAttributeValueWrapper implements XmlAttributeValue, PsiNamedElem
         myWrappee.acceptChildren(visitor);
     }
 
+    @NotNull
     @Override
     public PsiElement copy() {
         return myWrappee.copy();
@@ -225,6 +226,7 @@ public class XmlAttributeValueWrapper implements XmlAttributeValue, PsiNamedElem
 
     @Override
     public void checkAdd(@NotNull PsiElement element) throws IncorrectOperationException {
+        //noinspection deprecation
         myWrappee.checkAdd(element);
     }
 
@@ -251,6 +253,7 @@ public class XmlAttributeValueWrapper implements XmlAttributeValue, PsiNamedElem
 
     @Override
     public void checkDelete() throws IncorrectOperationException {
+        //noinspection deprecation
         myWrappee.checkDelete();
     }
 
@@ -259,6 +262,7 @@ public class XmlAttributeValueWrapper implements XmlAttributeValue, PsiNamedElem
         myWrappee.deleteChildRange(first, last);
     }
 
+    @NotNull
     @Override
     public PsiElement replace(@NotNull PsiElement newElement) throws IncorrectOperationException {
         return myWrappee.replace(newElement);

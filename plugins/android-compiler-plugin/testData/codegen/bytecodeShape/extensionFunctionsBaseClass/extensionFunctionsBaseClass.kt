@@ -15,7 +15,7 @@ fun Activity.b() {
 }
 
 // 2 GETSTATIC
-// 5 INVOKEVIRTUAL
+// 6 INVOKEVIRTUAL
 // 3 CHECKCAST
 // 1  _\$_findCachedViewById
 // 3 findViewById

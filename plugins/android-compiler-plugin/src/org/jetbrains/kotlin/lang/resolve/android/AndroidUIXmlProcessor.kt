@@ -37,7 +37,6 @@ import org.xml.sax.helpers.DefaultHandler
 import org.xml.sax.Attributes
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.util.PsiModificationTracker
-import com.intellij.psi.impl.PsiModificationTrackerImpl
 import java.util.Queue
 import com.intellij.psi.PsiFile
 import com.intellij.openapi.diagnostic.Logger
@@ -52,25 +51,21 @@ import com.intellij.openapi.util.*
 import com.intellij.openapi.vfs.impl.*
 import com.intellij.openapi.vfs.*
 import kotlin.properties.*
+import com.intellij.psi.impl.*
 
 public abstract class AndroidUIXmlProcessor(protected val project: Project) {
 
     public class NoAndroidManifestFound : Exception("No android manifest file found in project root")
 
-    private val androidImports = listOf(
-            "android.app.Activity",
-            "android.view.View",
-            "android.widget.*")
+    protected val LOG: Logger = Logger.getInstance(javaClass)
 
     public abstract val resourceManager: AndroidResourceManager
 
-    private val vfsTracker: VfsModificationTracker by Delegates.lazy {
-        VfsModificationTracker(project, resourceManager.getMainLayoutDirectory())
-    }
+    public abstract val psiTreeChangePreprocessor: PsiTreeChangePreprocessor
 
     private val cachedSources: CachedValue<List<String>> by Delegates.lazy {
         cachedValue {
-            Result.create(parse(), vfsTracker)
+            Result.create(parse(), psiTreeChangePreprocessor)
         }
     }
 
@@ -92,28 +87,48 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
         }
     }
 
-    protected val LOG: Logger = Logger.getInstance(javaClass)
+    public fun parse(generateCommonFiles: Boolean = true): List<String> {
+        val commonFiles = if (generateCommonFiles) {
+            val clearCacheFile = renderLayoutFile("kotlinx.android.synthetic") {} +
+                             renderClearCacheFunction("Activity") + renderClearCacheFunction("Fragment")
+            listOf(clearCacheFile)
+        } else listOf()
 
-    public fun parse(): List<String> {
-        return resourceManager.getLayoutXmlFiles().map { file ->
+        return resourceManager.getLayoutXmlFiles().flatMap { file ->
             val widgets = parseSingleFile(file)
             if (widgets.isNotEmpty()) {
                 val layoutPackage = file.genSyntheticPackageName()
-                val stringWriter = KotlinStringWriter()
 
-                stringWriter.writePackage(layoutPackage)
-                stringWriter.writeAndroidImports()
-                widgets.forEach { stringWriter.writeSyntheticActivityProperty(it) }
+                val mainLayoutFile = renderLayoutFile(layoutPackage, widgets) {
+                    writeSyntheticProperty("Activity", it, "findViewById(0)")
+                    writeSyntheticProperty("Fragment", it, "getView().findViewById(0)")
+                }
 
-                val contents = stringWriter.toStringBuffer().toString()
-                contents
-            } else null
-        }.filterNotNull()
+                val viewLayoutFile = renderLayoutFile("$layoutPackage.view", widgets) {
+                    writeSyntheticProperty("View", it, "findViewById(0)")
+                }
+
+                listOf(mainLayoutFile, viewLayoutFile)
+            } else listOf()
+        }.filterNotNull() + commonFiles
     }
 
     public fun parseToPsi(): List<JetFile>? = cachedJetFiles.getValue()
 
-    protected abstract fun parseSingleFile(file: PsiFile): Collection<AndroidWidget>
+    protected abstract fun parseSingleFile(file: PsiFile): List<AndroidWidget>
+
+    private fun renderLayoutFile(
+            packageName: String,
+            widgets: List<AndroidWidget> = listOf(),
+            widgetWriter: KotlinStringWriter.(AndroidWidget) -> Unit
+    ): String {
+        val stringWriter = KotlinStringWriter()
+        stringWriter.writePackage(packageName)
+        stringWriter.writeAndroidImports()
+        widgets.forEach { stringWriter.widgetWriter(it) }
+
+        return stringWriter.toStringBuffer().toString()
+    }
 
     private fun KotlinStringWriter.writeAndroidImports() {
         androidImports.forEach { writeImport(it) }
@@ -124,70 +139,26 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
         return AndroidConst.SYNTHETIC_PACKAGE + getName().substringBefore('.')
     }
 
-    private fun KotlinStringWriter.writeSyntheticActivityProperty(widget: AndroidWidget) {
-        val body = arrayListOf("return findViewById(0) as ${widget.className}")
-        writeImmutableExtensionProperty(receiver = "Activity",
+    private fun KotlinStringWriter.writeSyntheticProperty(receiver: String, widget: AndroidWidget, stubCall: String) {
+        val body = arrayListOf("return $stubCall as ${widget.className}")
+        writeImmutableExtensionProperty(receiver,
                                         name = widget.id,
                                         retType = widget.className,
                                         getterBody = body)
     }
 
+    private fun renderClearCacheFunction(receiver: String) = "public fun $receiver.${AndroidConst.CLEAR_FUNCTION_NAME}() {}\n"
+
     private fun <T> cachedValue(result: () -> CachedValueProvider.Result<T>): CachedValue<T> {
         return CachedValuesManager.getManager(project).createCachedValue(result, false)
     }
 
-}
-
-private class VfsModificationTracker(project: Project, resDirectory: VirtualFile?): SimpleModificationTracker() {
-    {
-        val connection = project.getMessageBus().connect();
-        connection.subscribe(VirtualFileManager.VFS_CHANGES, BulkVirtualFileListenerAdapter(
-                object : VirtualFileListener {
-                    fun incModificationCountIfLayout(file: VirtualFile) {
-                        if (resDirectory == null) {
-                            incModificationCount()
-                        } else {
-                            val probablyLayoutDir = file.getParent()
-                            val probablyResDir = file.getParent()?.getParent()
-                            if (resDirectory == probablyResDir && probablyLayoutDir?.getName()?.startsWith("layout") ?: false) {
-                                incModificationCount()
-                            }
-                        }
-                    }
-
-                    override fun contentsChanged(event: VirtualFileEvent) {
-                        incModificationCountIfLayout(event.getFile())
-                    }
-
-                    override fun propertyChanged(event: VirtualFilePropertyEvent) {
-                        incModificationCountIfLayout(event.getFile())
-                    }
-
-                    override fun fileCreated(event: VirtualFileEvent) {
-                        incModificationCountIfLayout(event.getFile())
-                    }
-
-                    override fun fileDeleted(event: VirtualFileEvent) {
-                        incModificationCountIfLayout(event.getFile())
-                    }
-
-                    override fun fileMoved(event: VirtualFileMoveEvent) {
-                        incModificationCountIfLayout(event.getFile())
-                    }
-
-                    override fun fileCopied(event: VirtualFileCopyEvent) {
-                        incModificationCountIfLayout(event.getFile())
-                    }
-
-                    override fun beforePropertyChange(event: VirtualFilePropertyEvent) {}
-
-                    override fun beforeContentsChange(event: VirtualFileEvent) {}
-
-                    override fun beforeFileDeletion(event: VirtualFileEvent) {}
-
-                    override fun beforeFileMovement(event: VirtualFileMoveEvent) {}
-                }
-        ))
+    default object {
+        private val androidImports = listOf(
+                "android.app.Activity",
+                "android.app.Fragment",
+                "android.view.View",
+                "android.widget.*")
     }
-}
 
+}

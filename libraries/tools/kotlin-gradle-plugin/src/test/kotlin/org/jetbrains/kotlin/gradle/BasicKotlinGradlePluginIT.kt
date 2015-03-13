@@ -79,4 +79,23 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
             assertSuccessful()
         }
     }
+
+    Test fun testGradleSubplugin() {
+        val project = Project("kotlinGradleSubplugin", "1.6")
+
+        project.build("compileKotlin", "build") {
+            assertSuccessful()
+            assertContains("/src/main/kotlin/helloWorld.kt")
+            assertContains("ExampleSubplugin loaded")
+            assertContains("Project component registration: exampleValue")
+            assertContains(":compileKotlin")
+        }
+
+        project.build("compileKotlin", "build") {
+            assertSuccessful()
+            assertContains("ExampleSubplugin loaded")
+            assertNotContains("Project component registration: exampleValue")
+            assertContains(":compileKotlin UP-TO-DATE")
+        }
+    }
 }

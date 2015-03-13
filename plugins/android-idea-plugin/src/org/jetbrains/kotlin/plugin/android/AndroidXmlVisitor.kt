@@ -26,10 +26,7 @@ import org.jetbrains.kotlin.lang.resolve.android.AndroidConst
 import org.jetbrains.kotlin.lang.resolve.android
 import org.jetbrains.kotlin.lang.resolve.android.idToName
 
-class AndroidXmlVisitor(
-        val resourceManager: AndroidResourceManager,
-        val elementCallback: (String, String, XmlAttribute) -> Unit
-) : XmlElementVisitor() {
+class AndroidXmlVisitor(val elementCallback: (String, String, XmlAttribute) -> Unit) : XmlElementVisitor() {
 
     override fun visitElement(element: PsiElement) {
         element.acceptChildren(this)
@@ -45,8 +42,10 @@ class AndroidXmlVisitor(
             val attributeValue = attribute.getValue()
             if (attributeValue != null) {
                 val classNameAttr = tag?.getAttribute(AndroidConst.CLASS_ATTRIBUTE_NO_NAMESPACE)?.getValue() ?: tag?.getLocalName()
-                val name = idToName(attributeValue)
-                if (name != null) elementCallback(name, classNameAttr!!, attribute)
+                if (classNameAttr != null) {
+                    val name = idToName(attributeValue)
+                    if (name != null) elementCallback(name, classNameAttr!!, attribute)
+                }
             }
         }
         tag?.acceptChildren(this)

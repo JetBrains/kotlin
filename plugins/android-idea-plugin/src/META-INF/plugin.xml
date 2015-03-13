@@ -14,8 +14,11 @@
   <extensions defaultExtensionNs="com.intellij">
       <moduleService serviceInterface="org.jetbrains.kotlin.lang.resolve.android.AndroidUIXmlProcessor"
                       serviceImplementation="org.jetbrains.kotlin.plugin.android.IDEAndroidUIXmlProcessor"/>
+      <moduleService serviceInterface="org.jetbrains.kotlin.lang.resolve.android.AndroidResourceManager"
+                     serviceImplementation="org.jetbrains.kotlin.plugin.android.IDEAndroidResourceManager"/>
       <compileServer.plugin classpath="jps/kotlin-android-extensions-jps.jar;android-compiler-plugin.jar"/>
       <gotoDeclarationHandler implementation="org.jetbrains.kotlin.plugin.android.AndroidGotoDeclarationHandler"/>
+      <psi.treeChangePreprocessor implementation="org.jetbrains.kotlin.lang.resolve.android.AndroidPsiTreeChangePreprocessor"/>
       <renamePsiElementProcessor id="KotlinAndroidSyntheticProperty"
                                  implementation="org.jetbrains.kotlin.plugin.android.AndroidRenameProcessor"
                                  order="first"/>
@@ -23,7 +26,7 @@
 
   <extensions defaultExtensionNs="org.jetbrains.kotlin">
       <externalDeclarationsProvider implementation="org.jetbrains.kotlin.plugin.android.IDEAndroidExternalDeclarationsProvider"/>
-      <expressionCodegenExtension implementation="org.jetbrains.kotlin.android.AndroidExpressionCodegen"/>
+      <expressionCodegenExtension implementation="org.jetbrains.kotlin.android.AndroidExpressionCodegenExtension"/>
       <findUsagesHandlerDecorator implementation="org.jetbrains.kotlin.plugin.android.AndroidFindUsageHandlerDecorator"/>
       <simpleNameReferenceExtension implementation="org.jetbrains.kotlin.plugin.android.AndroidSimpleNameReferenceExtension"/>
   </extensions>

@@ -16,17 +16,20 @@
 
 package org.jetbrains.kotlin.lang.resolve.android.test
 
+import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
+import com.intellij.psi.impl.PsiTreeChangePreprocessor
 import org.jetbrains.kotlin.extensions.ExternalDeclarationsProvider
 import org.jetbrains.kotlin.android.AndroidConfigurationKeys
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
-import org.jetbrains.kotlin.android.AndroidExpressionCodegen
+import org.jetbrains.kotlin.android.AndroidExpressionCodegenExtension
 import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.lang.resolve.android.AndroidPsiTreeChangePreprocessor
 import org.jetbrains.kotlin.lang.resolve.android.CliAndroidUIXmlProcessor
 
 private class AndroidTestExternalDeclarationsProvider(
@@ -50,6 +53,7 @@ fun UsefulTestCase.createAndroidTestEnvironment(
     val myEnvironment = JetCoreEnvironment.createForTests(getTestRootDisposable()!!, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
     val project = myEnvironment.getProject()
     ExternalDeclarationsProvider.registerExtension(project, AndroidTestExternalDeclarationsProvider(project, resPath, manifestPath))
-    ExpressionCodegenExtension.registerExtension(project, AndroidExpressionCodegen())
+    ExpressionCodegenExtension.registerExtension(project, AndroidExpressionCodegenExtension())
+    Extensions.getArea(project).getExtensionPoint(PsiTreeChangePreprocessor.EP_NAME).registerExtension(AndroidPsiTreeChangePreprocessor())
     return myEnvironment
 }

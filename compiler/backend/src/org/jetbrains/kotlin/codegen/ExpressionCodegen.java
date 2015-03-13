@@ -1447,8 +1447,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                     List<ValueParameterDescriptor> superValueParameters = superConstructor.getValueParameters();
                     int params = superValueParameters.size();
                     List<Type> superMappedTypes = typeMapper.mapToCallableMethod(superConstructor).getValueParameterTypes();
-                    assert superMappedTypes.size() >= params : String.format("Incorrect number of mapped parameters vs arguments: %d < %d for %s",
-                                                                             superMappedTypes.size(), params, classDescriptor);
+                    assert superMappedTypes.size() >= params : String
+                            .format("Incorrect number of mapped parameters vs arguments: %d < %d for %s",
+                                    superMappedTypes.size(), params, classDescriptor);
 
                     List<ResolvedValueArgument> valueArguments = new ArrayList<ResolvedValueArgument>(params);
                     List<ValueParameterDescriptor> valueParameters = new ArrayList<ValueParameterDescriptor>(params);
@@ -1461,7 +1462,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                             mappedTypes.add(superMappedTypes.get(parameter.getIndex()));
                         }
                     }
-                    ArgumentGenerator argumentGenerator = new CallBasedArgumentGenerator(ExpressionCodegen.this, defaultCallGenerator, valueParameters, mappedTypes);
+                    ArgumentGenerator argumentGenerator =
+                            new CallBasedArgumentGenerator(ExpressionCodegen.this, defaultCallGenerator, valueParameters, mappedTypes);
 
                     argumentGenerator.generate(valueArguments);
                 }
@@ -1904,10 +1906,15 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         if (descriptor instanceof PropertyDescriptor) {
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
 
-            for (ExpressionCodegenExtension extension : ExpressionCodegenExtension.OBJECT$.getInstances(state.getProject())) {
-                StackValue result = extension.apply(receiver, resolvedCall, new ExpressionCodegenExtension.Context(typeMapper, v));
-
-                if (result != null) return result;
+            Collection<ExpressionCodegenExtension> codegenExtensions = ExpressionCodegenExtension.Default.getInstances(state.getProject());
+            if (!codegenExtensions.isEmpty() && resolvedCall != null) {
+                ExpressionCodegenExtension.Context context = new ExpressionCodegenExtension.Context(typeMapper, v);
+                JetType returnType = propertyDescriptor.getReturnType();
+                for (ExpressionCodegenExtension extension : codegenExtensions) {
+                    if (returnType != null && extension.apply(receiver, resolvedCall, context)) {
+                        return StackValue.onStack(typeMapper.mapType(returnType));
+                    }
+                }
             }
 
             boolean directToField =
@@ -2338,6 +2345,15 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     ) {
         if (!(resolvedCall.getResultingDescriptor() instanceof ConstructorDescriptor)) { // otherwise already
             receiver = StackValue.receiver(resolvedCall, receiver, this, callableMethod);
+
+            Collection<ExpressionCodegenExtension> codegenExtensions = ExpressionCodegenExtension.Default.getInstances(state.getProject());
+            if (!codegenExtensions.isEmpty()) {
+                ExpressionCodegenExtension.Context context = new ExpressionCodegenExtension.Context(typeMapper, v);
+                for (ExpressionCodegenExtension extension : codegenExtensions) {
+                    if (extension.apply(receiver, resolvedCall, context)) return;
+                }
+            }
+
             receiver.put(receiver.type, v);
         }
 

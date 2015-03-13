@@ -22,22 +22,23 @@ import org.jetbrains.jps.incremental.CompileContext
 import org.jetbrains.jps.model.module.JpsModule
 import java.io.File
 import org.jetbrains.jps.android.AndroidJpsUtil
-import org.jetbrains.kotlin.compiler.plugin.CliOption
-import org.jetbrains.kotlin.android.AndroidCommandLineProcessor
-import org.jetbrains.kotlin.compiler.plugin.getPluginOptionString
 import com.intellij.util.PathUtil
 
 public class KotlinAndroidJpsPlugin : KotlinJpsCompilerArgumentsProvider {
     private val jarFileName = "android-compiler-plugin.jar"
 
+    private fun getPluginOptionString(pluginId: String, key: String, value: String): String {
+        return "plugin:$pluginId:$key=$value"
+    }
+
     override fun getExtraArguments(moduleBuildTarget: ModuleBuildTarget, context: CompileContext): List<String> {
         val module = moduleBuildTarget.getModule()
-        val pluginId = AndroidCommandLineProcessor.ANDROID_COMPILER_PLUGIN_ID
+        val pluginId = "org.jetbrains.kotlin.android"
         val resPath = getAndroidResPath(module)
         val manifestFile = getAndroidManifest(module)
         return if (resPath != null && manifestFile != null) listOf(
-                getPluginOptionString(pluginId, AndroidCommandLineProcessor.RESOURCE_PATH_OPTION.name, resPath),
-                getPluginOptionString(pluginId, AndroidCommandLineProcessor.MANIFEST_FILE_OPTION.name, manifestFile))
+                getPluginOptionString(pluginId, "androidRes", resPath),
+                getPluginOptionString(pluginId, "androidManifest", manifestFile))
         else listOf()
     }
 

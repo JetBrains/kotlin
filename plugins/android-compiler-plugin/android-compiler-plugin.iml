@@ -15,9 +15,10 @@
     <orderEntry type="module" module-name="cli" />
     <orderEntry type="module" module-name="util" />
     <orderEntry type="module" module-name="backend" scope="PROVIDED" />
-    <orderEntry type="module" module-name="jet.as.java.psi" exported="" scope="PROVIDED" />
     <orderEntry type="library" scope="TEST" name="idea-full" level="project" />
     <orderEntry type="library" scope="TEST" name="jps-test" level="project" />
     <orderEntry type="module" module-name="compiler-tests" scope="TEST" />
+    <orderEntry type="library" name="intellij-core" level="project" />
+    <orderEntry type="library" name="intellij-core-analysis" level="project" />
   </component>
 </module>

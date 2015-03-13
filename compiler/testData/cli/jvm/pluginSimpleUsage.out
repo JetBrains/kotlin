@@ -1,0 +1,7 @@
+ERROR: Required plugin option not present: org.jetbrains.kotlin.android:androidRes
+
+Plugin "org.jetbrains.kotlin.android" usage:
+  androidRes <path>          Android resources path (required)
+  androidManifest <path>     Android manifest file (required)
+
+COMPILATION_ERROR

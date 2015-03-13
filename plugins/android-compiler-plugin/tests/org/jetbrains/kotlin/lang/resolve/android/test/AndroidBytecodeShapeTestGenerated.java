@@ -42,6 +42,24 @@ public class AndroidBytecodeShapeTestGenerated extends AbstractAndroidBytecodeSh
         doTest(fileName);
     }
 
+    @TestMetadata("baseClassFragment")
+    public void testBaseClassFragment() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/codegen/bytecodeShape/baseClassFragment/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("clearCache")
+    public void testClearCache() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/codegen/bytecodeShape/clearCache/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("clearCacheBaseClass")
+    public void testClearCacheBaseClass() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/codegen/bytecodeShape/clearCacheBaseClass/");
+        doTest(fileName);
+    }
+
     @TestMetadata("extensionFunctions")
     public void testExtensionFunctions() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/codegen/bytecodeShape/extensionFunctions/");
@@ -54,9 +72,33 @@ public class AndroidBytecodeShapeTestGenerated extends AbstractAndroidBytecodeSh
         doTest(fileName);
     }
 
+    @TestMetadata("extensionFunctionsBaseClassFragment")
+    public void testExtensionFunctionsBaseClassFragment() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/codegen/bytecodeShape/extensionFunctionsBaseClassFragment/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("extensionFunctionsFragment")
+    public void testExtensionFunctionsFragment() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/codegen/bytecodeShape/extensionFunctionsFragment/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("extensionFunctionsView")
+    public void testExtensionFunctionsView() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/codegen/bytecodeShape/extensionFunctionsView/");
+        doTest(fileName);
+    }
+
     @TestMetadata("fqNameInAttr")
     public void testFqNameInAttr() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/codegen/bytecodeShape/fqNameInAttr/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("fqNameInAttrFragment")
+    public void testFqNameInAttrFragment() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/codegen/bytecodeShape/fqNameInAttrFragment/");
         doTest(fileName);
     }
 
@@ -66,15 +108,39 @@ public class AndroidBytecodeShapeTestGenerated extends AbstractAndroidBytecodeSh
         doTest(fileName);
     }
 
+    @TestMetadata("fqNameInTagFragment")
+    public void testFqNameInTagFragment() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/codegen/bytecodeShape/fqNameInTagFragment/");
+        doTest(fileName);
+    }
+
     @TestMetadata("multiFile")
     public void testMultiFile() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/codegen/bytecodeShape/multiFile/");
         doTest(fileName);
     }
 
+    @TestMetadata("multiFileFragment")
+    public void testMultiFileFragment() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/codegen/bytecodeShape/multiFileFragment/");
+        doTest(fileName);
+    }
+
     @TestMetadata("simple")
     public void testSimple() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/codegen/bytecodeShape/simple/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("simpleFragment")
+    public void testSimpleFragment() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/codegen/bytecodeShape/simpleFragment/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("simpleView")
+    public void testSimpleView() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/codegen/bytecodeShape/simpleView/");
         doTest(fileName);
     }
 }

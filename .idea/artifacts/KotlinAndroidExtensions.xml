@@ -9,7 +9,6 @@
         <element id="directory" name="jps">
           <element id="archive" name="kotlin-android-extensions-jps.jar">
             <element id="module-output" name="android-jps-plugin" />
-            <element id="module-output" name="plugin-api" />
           </element>
         </element>
         <element id="archive" name="android-compiler-plugin.jar">

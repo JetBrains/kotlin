@@ -54,6 +54,12 @@ public class AndroidBoxTestGenerated extends AbstractAndroidBoxTest {
             doCompileAgainstAndroidSdkTest(fileName);
         }
 
+        @TestMetadata("fragment")
+        public void testFragment() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/codegen/android/fragment/");
+            doCompileAgainstAndroidSdkTest(fileName);
+        }
+
         @TestMetadata("manyWidgets")
         public void testManyWidgets() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/codegen/android/manyWidgets/");
@@ -69,6 +75,12 @@ public class AndroidBoxTestGenerated extends AbstractAndroidBoxTest {
         @TestMetadata("singleFile")
         public void testSingleFile() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/codegen/android/singleFile/");
+            doCompileAgainstAndroidSdkTest(fileName);
+        }
+
+        @TestMetadata("view")
+        public void testView() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/codegen/android/view/");
             doCompileAgainstAndroidSdkTest(fileName);
         }
     }
@@ -93,6 +105,12 @@ public class AndroidBoxTestGenerated extends AbstractAndroidBoxTest {
             doFakeInvocationTest(fileName);
         }
 
+        @TestMetadata("fragment")
+        public void testFragment() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/codegen/android/fragment/");
+            doFakeInvocationTest(fileName);
+        }
+
         @TestMetadata("manyWidgets")
         public void testManyWidgets() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/codegen/android/manyWidgets/");
@@ -108,6 +126,12 @@ public class AndroidBoxTestGenerated extends AbstractAndroidBoxTest {
         @TestMetadata("singleFile")
         public void testSingleFile() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/codegen/android/singleFile/");
+            doFakeInvocationTest(fileName);
+        }
+
+        @TestMetadata("view")
+        public void testView() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/codegen/android/view/");
             doFakeInvocationTest(fileName);
         }
     }
