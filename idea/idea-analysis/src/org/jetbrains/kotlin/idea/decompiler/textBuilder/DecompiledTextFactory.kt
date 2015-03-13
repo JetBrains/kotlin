@@ -74,7 +74,7 @@ private val DECOMPILED_CODE_COMMENT = "/* compiled code */"
 private val DECOMPILED_COMMENT_FOR_PARAMETER = "/* = compiled code */"
 private val FLEXIBLE_TYPE_COMMENT = "/* platform type */"
 
-public val descriptorRendererForDecompiler: DescriptorRenderer = DescriptorRendererBuilder()
+private val descriptorRendererForDecompiler = DescriptorRendererBuilder()
         .setWithDefinedIn(false)
         .setClassWithPrimaryConstructor(true)
         .setTypeNormalizer {
@@ -87,9 +87,10 @@ public val descriptorRendererForDecompiler: DescriptorRenderer = DescriptorRende
         }
         .build()
 
-//TODO: should use more accurate way to identify descriptors
+private val descriptorRendererForKeys = DescriptorRenderer.COMPACT_WITH_MODIFIERS
+
 public fun descriptorToKey(descriptor: DeclarationDescriptor): String {
-    return descriptorRendererForDecompiler.render(descriptor)
+    return descriptorRendererForKeys.render(descriptor)
 }
 
 public data class DecompiledText(public val text: String, public val renderedDescriptorsToRange: Map<String, TextRange>)
