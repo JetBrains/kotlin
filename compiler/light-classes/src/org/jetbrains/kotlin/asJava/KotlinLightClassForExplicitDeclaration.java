@@ -548,7 +548,8 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
 
     @Override
     public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
-        throw new IncorrectOperationException("Cannot modify compiled kotlin element");
+        getOrigin().setName(name);
+        return this;
     }
 
     @Override
