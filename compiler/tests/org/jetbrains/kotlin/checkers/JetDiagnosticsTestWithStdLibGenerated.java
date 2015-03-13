@@ -630,6 +630,12 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/classLiteral/simpleClassLiteral.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("unresolvedClass.kt")
+        public void testUnresolvedClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/classLiteral/unresolvedClass.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/duplicateJvmSignature")

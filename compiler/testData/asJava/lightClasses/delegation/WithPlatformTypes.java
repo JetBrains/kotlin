@@ -1,4 +1,4 @@
-public final class WithPlatformTypes implements kotlin.jvm.internal.KObject, p.J {
+public final class WithPlatformTypes implements p.J {
     public WithPlatformTypes(@org.jetbrains.annotations.NotNull p.J j) { /* compiled code */ }
 
     @org.jetbrains.annotations.NotNull

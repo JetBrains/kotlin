@@ -60,13 +60,19 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
     public val kMutableTopLevelExtensionProperty: ClassDescriptor by ClassLookup
 
     public fun getKClassType(annotations: Annotations, classDescriptor: ClassDescriptor): JetType {
+        val kClassDescriptor = kClass
+        if (ErrorUtils.isError(kClassDescriptor)) {
+            return kClassDescriptor.getDefaultType()
+        }
+
         val typeConstructor = classDescriptor.getTypeConstructor()
         val arguments = typeConstructor.getParameters().map(TypeUtils::makeStarProjection)
         val kClassArguments = listOf(TypeProjectionImpl(
                 Variance.INVARIANT,
                 JetTypeImpl(Annotations.EMPTY, typeConstructor, false, arguments, classDescriptor.getMemberScope(arguments))
         ))
-        return JetTypeImpl(annotations, kClass.getTypeConstructor(), false, kClassArguments, kClass.getMemberScope(kClassArguments))
+        return JetTypeImpl(annotations, kClassDescriptor.getTypeConstructor(), false, kClassArguments,
+                           kClassDescriptor.getMemberScope(kClassArguments))
     }
 
     public fun getKFunctionType(

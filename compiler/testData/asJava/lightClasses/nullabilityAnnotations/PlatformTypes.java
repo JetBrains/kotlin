@@ -1,4 +1,4 @@
-public final class PlatformTypes implements kotlin.jvm.internal.KObject {
+public final class PlatformTypes {
     public final java.lang.String simplyPlatform() { /* compiled code */ }
 
     @org.jetbrains.annotations.Nullable

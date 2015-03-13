@@ -8,4 +8,4 @@ class Sub: Super<C<*>>()
 
 // class: Sub
 // jvm signature:     Sub
-// generic signature: LSuper<LC<*>;>;Lkotlin/jvm/internal/KObject;
+// generic signature: LSuper<LC<*>;>;

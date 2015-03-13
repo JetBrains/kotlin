@@ -1,4 +1,4 @@
-public final class ClassWithConstructorAndProperties implements kotlin.jvm.internal.KObject {
+public final class ClassWithConstructorAndProperties {
     @org.jetbrains.annotations.Nullable
     private final java.lang.String nullable;
     @org.jetbrains.annotations.NotNull

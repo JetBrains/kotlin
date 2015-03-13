@@ -1,4 +1,4 @@
-public final class PrivateInClass implements kotlin.jvm.internal.KObject {
+public final class PrivateInClass {
     private final java.lang.String getNn() { /* compiled code */ }
 
     private final void setNn(java.lang.String value) { /* compiled code */ }

@@ -33,12 +33,11 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.CommonClassNames
 import com.sun.jdi.ClassType
 import com.sun.jdi.Value
-import org.jetbrains.eval4j.jdi.*
+import org.jetbrains.eval4j.jdi.asValue
+import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.org.objectweb.asm.Type as AsmType
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.load.java.JvmAbi
 
 public abstract class KotlinRuntimeTypeEvaluator(
         editor: Editor?,
@@ -99,8 +98,6 @@ public abstract class KotlinRuntimeTypeEvaluator(
                 }
 
                 for (interfaceType in type.interfaces()) {
-                    if (JvmAbi.K_OBJECT.asString() == interfaceType.name()) continue
-
                     psiClass = AsmType.getType(interfaceType.signature()).getClassDescriptor(project)
                     if (psiClass != null) {
                         return psiClass!!.getDefaultType()
