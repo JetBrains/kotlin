@@ -4954,6 +4954,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("beforeNonLocalReturn.kt")
+            public void testNonLocalReturn() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/beforeNonLocalReturn.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("beforeNonLocalReturnWithLabel.kt")
+            public void testNonLocalReturnWithLabel() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/beforeNonLocalReturnWithLabel.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("beforePropertyGetterInitializerTypeMismatch.kt")
             public void testPropertyGetterInitializerTypeMismatch() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/beforePropertyGetterInitializerTypeMismatch.kt");
