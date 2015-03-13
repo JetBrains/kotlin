@@ -22,7 +22,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
@@ -113,7 +113,11 @@ public class ManglingUtils {
     }
 
     @NotNull
-    public static String getMangledMemberNameForExplicitDelegation(@NotNull String suggestedName, FqName classFqName, FqName typeFqName) {
+    public static String getMangledMemberNameForExplicitDelegation(
+            @NotNull String suggestedName,
+            @NotNull FqNameUnsafe classFqName,
+            @NotNull FqNameUnsafe typeFqName
+    ) {
         String forCalculateId = classFqName.asString() + ":" + typeFqName.asString();
         return getStableMangledName(suggestedName, forCalculateId);
     }
