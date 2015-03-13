@@ -96,3 +96,6 @@ public fun ClassDescriptor.getSuperClassNotAny(): ClassDescriptor? {
 }
 
 public fun ClassDescriptor.getSuperClassOrAny(): ClassDescriptor = getSuperClassNotAny() ?: KotlinBuiltIns.getInstance().getAny()
+
+public val ClassDescriptor.secondaryConstructors: List<ConstructorDescriptor>
+    get() = getConstructors().filterNot { it.isPrimary() }

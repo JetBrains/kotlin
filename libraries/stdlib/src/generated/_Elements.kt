@@ -851,7 +851,7 @@ public inline fun <T> Sequence<T>.first(predicate: (T) -> Boolean): T {
 
 deprecated("Migrate to using Sequence<T> and respective functions")
 /**
- * "Returns the first element matching the given [predicate].
+ * Returns the first element matching the given [predicate].
  * @throws NoSuchElementException if no such element is found.
  */
 public inline fun <T> Stream<T>.first(predicate: (T) -> Boolean): T {
@@ -1098,7 +1098,7 @@ public inline fun <T> Sequence<T>.firstOrNull(predicate: (T) -> Boolean): T? {
 
 deprecated("Migrate to using Sequence<T> and respective functions")
 /**
- * Returns first element matching the given [predicate], or `null` if element was not found
+ * Returns the first element matching the given [predicate], or `null` if element was not found
  */
 public inline fun <T> Stream<T>.firstOrNull(predicate: (T) -> Boolean): T? {
     for (element in this) if (predicate(element)) return element

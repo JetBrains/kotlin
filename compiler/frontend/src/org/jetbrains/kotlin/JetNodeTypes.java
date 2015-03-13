@@ -80,7 +80,7 @@ public interface JetNodeTypes {
     IElementType TYPE_CONSTRAINT_LIST    = JetStubElementTypes.TYPE_CONSTRAINT_LIST;
     IElementType TYPE_CONSTRAINT         = JetStubElementTypes.TYPE_CONSTRAINT;
 
-    IElementType CONSTRUCTOR_DELEGATION_CALL = JetStubElementTypes.CONSTRUCTOR_DELEGATION_CALL;
+    IElementType CONSTRUCTOR_DELEGATION_CALL = new JetNodeType("CONSTRUCTOR_DELEGATION_CALL", JetConstructorDelegationCall.class);
     JetNodeType CONSTRUCTOR_DELEGATION_REFERENCE =
             new JetNodeType("CONSTRUCTOR_DELEGATION_REFERENCE", JetConstructorDelegationReferenceExpression.class);
 

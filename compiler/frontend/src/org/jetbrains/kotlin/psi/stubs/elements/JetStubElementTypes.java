@@ -109,8 +109,6 @@ public interface JetStubElementTypes {
             new JetPlaceHolderStubElementType<JetDelegatorToSuperCall>("DELEGATOR_SUPER_CALL", JetDelegatorToSuperCall.class);
     JetPlaceHolderStubElementType<JetDelegatorToSuperClass> DELEGATOR_SUPER_CLASS =
             new JetPlaceHolderStubElementType<JetDelegatorToSuperClass>("DELEGATOR_SUPER_CLASS", JetDelegatorToSuperClass.class);
-    JetPlaceHolderStubElementType<JetConstructorDelegationCall> CONSTRUCTOR_DELEGATION_CALL =
-            new JetPlaceHolderStubElementType<JetConstructorDelegationCall>("CONSTRUCTOR_DELEGATION_CALL", JetConstructorDelegationCall.class);
     JetPlaceHolderStubElementType<JetConstructorCalleeExpression> CONSTRUCTOR_CALLEE =
             new JetPlaceHolderStubElementType<JetConstructorCalleeExpression>("CONSTRUCTOR_CALLEE", JetConstructorCalleeExpression.class);
 

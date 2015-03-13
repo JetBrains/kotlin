@@ -1,0 +1,78 @@
+PsiJetFileStubImpl[package=test]
+  PACKAGE_DIRECTIVE:
+    REFERENCE_EXPRESSION:[referencedName=test]
+  CLASS:[fqName=test.SecondaryConstructors, isEnumEntry=false, isLocal=false, isTopLevel=true, isTrait=false, name=SecondaryConstructors, superNames=[]]
+    VALUE_PARAMETER_LIST:
+      VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=x]
+        TYPE_REFERENCE:
+          USER_TYPE:[isAbsoluteInRootPackage=false]
+            REFERENCE_EXPRESSION:[referencedName=Boolean]
+    CLASS_BODY:
+      ANONYMOUS_INITIALIZER:
+      SECONDARY_CONSTRUCTOR:
+        MODIFIER_LIST:[]
+          ANNOTATION_ENTRY:[hasValueArguments=false, shortName=anno]
+            CONSTRUCTOR_CALLEE:
+              TYPE_REFERENCE:
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  REFERENCE_EXPRESSION:[referencedName=anno]
+        VALUE_PARAMETER_LIST:
+          VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=x]
+            TYPE_REFERENCE:
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                REFERENCE_EXPRESSION:[referencedName=String]
+      ANONYMOUS_INITIALIZER:
+      SECONDARY_CONSTRUCTOR:
+        MODIFIER_LIST:[private]
+        VALUE_PARAMETER_LIST:
+          VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=x]
+            TYPE_REFERENCE:
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                REFERENCE_EXPRESSION:[referencedName=Int]
+      CLASS:[fqName=test.SecondaryConstructors.Inner, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=Inner, superNames=[]]
+        MODIFIER_LIST:[inner]
+        TYPE_PARAMETER_LIST:
+          TYPE_PARAMETER:[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+            TYPE_REFERENCE:
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                REFERENCE_EXPRESSION:[referencedName=String]
+          TYPE_PARAMETER:[fqName=null, isInVariance=false, isOutVariance=false, name=G]
+            TYPE_REFERENCE:
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                REFERENCE_EXPRESSION:[referencedName=Int]
+        TYPE_CONSTRAINT_LIST:
+          TYPE_CONSTRAINT:[isDefaultObjectConstraint=false]
+            REFERENCE_EXPRESSION:[referencedName=G]
+            TYPE_REFERENCE:
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                REFERENCE_EXPRESSION:[referencedName=Number]
+        CLASS_BODY:
+          SECONDARY_CONSTRUCTOR:
+            VALUE_PARAMETER_LIST:
+              VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=x]
+                TYPE_REFERENCE:
+                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                    REFERENCE_EXPRESSION:[referencedName=T]
+              VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=g]
+                TYPE_REFERENCE:
+                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                    REFERENCE_EXPRESSION:[referencedName=G]
+      CLASS:[fqName=test.SecondaryConstructors.Nested, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=Nested, superNames=[]]
+        CLASS_BODY:
+          SECONDARY_CONSTRUCTOR:
+            MODIFIER_LIST:[]
+              ANNOTATION_ENTRY:[hasValueArguments=false, shortName=anno]
+                CONSTRUCTOR_CALLEE:
+                  TYPE_REFERENCE:
+                    USER_TYPE:[isAbsoluteInRootPackage=false]
+                      REFERENCE_EXPRESSION:[referencedName=anno]
+            VALUE_PARAMETER_LIST:
+              VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=z]
+                TYPE_REFERENCE:
+                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                    REFERENCE_EXPRESSION:[referencedName=Int]
+          SECONDARY_CONSTRUCTOR:
+            MODIFIER_LIST:[internal]
+            VALUE_PARAMETER_LIST:
+  CLASS:[fqName=test.anno, isEnumEntry=false, isLocal=false, isTopLevel=true, isTrait=false, name=anno, superNames=[]]
+    MODIFIER_LIST:[annotation]

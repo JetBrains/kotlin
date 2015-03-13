@@ -16,19 +16,23 @@
 
 package org.jetbrains.kotlin.idea.decompiler.stubBuilder
 
-import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.Flags
-import org.jetbrains.kotlin.serialization.ProtoBuf.Modality
+import com.intellij.psi.stubs.StubElement
+import org.jetbrains.kotlin.idea.decompiler.stubBuilder.FlagsToModifiers.MODALITY
+import org.jetbrains.kotlin.idea.decompiler.stubBuilder.FlagsToModifiers.VISIBILITY
+import org.jetbrains.kotlin.psi.JetSecondaryConstructor
+import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFunctionStubImpl
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyStubImpl
-import org.jetbrains.kotlin.serialization.ProtoBuf.Callable.CallableKind
-import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
-import org.jetbrains.kotlin.serialization.ProtoBuf.Callable.MemberKind
 import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
+import org.jetbrains.kotlin.serialization.Flags
+import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.serialization.ProtoBuf.Callable.CallableKind
+import org.jetbrains.kotlin.serialization.ProtoBuf.Callable.MemberKind
+import org.jetbrains.kotlin.serialization.ProtoBuf.Modality
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
-import org.jetbrains.kotlin.idea.decompiler.stubBuilder.FlagsToModifiers.*
+import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 
 fun createCallableStub(
         parentStub: StubElement<out PsiElement>,
@@ -60,11 +64,14 @@ private class CallableClsStubBuilder(
     private val c = outerContext.child(callableProto.getTypeParameterList())
     private val typeStubBuilder = TypeClsStubBuilder(c)
     private val isTopLevel: Boolean get() = protoContainer.packageFqName != null
+    private val callableKind = Flags.CALLABLE_KIND[callableProto.getFlags()]
+    private val isConstructor = callableKind == ProtoBuf.Callable.CallableKind.CONSTRUCTOR
     private val callableStub = doCreateCallableStub()
 
     fun build() {
         createModifierListStub()
-        val typeConstraintListData = typeStubBuilder.createTypeParameterListStub(callableStub, callableProto.getTypeParameterList())
+        val typeParameterList = if (isConstructor) emptyList() else callableProto.getTypeParameterList()
+        val typeConstraintListData = typeStubBuilder.createTypeParameterListStub(callableStub, typeParameterList)
         createReceiverTypeReferenceStub()
         createValueParameterList()
         createReturnTypeStub()
@@ -82,11 +89,13 @@ private class CallableClsStubBuilder(
     }
 
     private fun createReturnTypeStub() {
-        typeStubBuilder.createTypeReferenceStub(callableStub, callableProto.getReturnType())
+        if (!isConstructor)
+            typeStubBuilder.createTypeReferenceStub(callableStub, callableProto.getReturnType())
     }
 
     private fun createModifierListStub() {
-        val relevantModifiers = if (isTopLevel) listOf(VISIBILITY) else listOf(VISIBILITY, MODALITY)
+        val isModalityIrrelevant = isTopLevel || isConstructor
+        val relevantModifiers = if (isModalityIrrelevant) listOf(VISIBILITY) else listOf(VISIBILITY, MODALITY)
 
         val modifierListStubImpl = createModifierListStubForDeclaration(callableStub, callableProto.getFlags(), relevantModifiers)
         val annotationIds = c.components.annotationLoader.loadCallableAnnotations(
@@ -96,9 +105,7 @@ private class CallableClsStubBuilder(
     }
 
     private fun doCreateCallableStub(): StubElement<out PsiElement> {
-        val callableKind = Flags.CALLABLE_KIND[callableProto.getFlags()]
         val callableName = c.nameResolver.getName(callableProto.getName())
-        val callableFqName = c.containerFqName.child(callableName)
 
         return when (callableKind) {
             ProtoBuf.Callable.CallableKind.FUN -> {
@@ -106,7 +113,7 @@ private class CallableClsStubBuilder(
                         parent,
                         callableName.ref(),
                         isTopLevel,
-                        callableFqName,
+                        c.containerFqName.child(callableName),
                         isExtension = callableProto.hasReceiverType(),
                         hasBlockBody = true,
                         hasBody = Flags.MODALITY[callableProto.getFlags()] != Modality.ABSTRACT,
@@ -125,11 +132,13 @@ private class CallableClsStubBuilder(
                         hasInitializer = false,
                         hasReceiverTypeRef = callableProto.hasReceiverType(),
                         hasReturnTypeRef = true,
-                        fqName = callableFqName,
+                        fqName = c.containerFqName.child(callableName),
                         isProbablyNothingType = isProbablyNothing(callableProto)
                 )
             }
-            ProtoBuf.Callable.CallableKind.CONSTRUCTOR -> throw IllegalStateException("Should not be called for constructor!")
+            ProtoBuf.Callable.CallableKind.CONSTRUCTOR -> {
+                KotlinPlaceHolderStubImpl<JetSecondaryConstructor>(parent, JetStubElementTypes.SECONDARY_CONSTRUCTOR)
+            }
             else -> throw IllegalStateException("Unknown callable kind $callableKind")
         }
     }
