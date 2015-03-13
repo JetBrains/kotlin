@@ -742,6 +742,7 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
     @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({
             Smap.Anonymous.class,
+            Smap.Resolve.class,
     })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Smap extends AbstractBlackBoxInlineCodegenTest {
@@ -820,6 +821,27 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
             @TestMetadata("objectOnInlineCallSiteWithCapture.1.kt")
             public void testObjectOnInlineCallSiteWithCapture() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/anonymous/objectOnInlineCallSiteWithCapture.1.kt");
+                doTestMultiFileWithInlineCheck(fileName);
+            }
+        }
+
+        @TestMetadata("compiler/testData/codegen/boxInline/smap/resolve")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Resolve extends AbstractBlackBoxInlineCodegenTest {
+            public void testAllFilesPresentInResolve() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/smap/resolve"), Pattern.compile("^(.+)\\.1.kt$"), true);
+            }
+
+            @TestMetadata("inlineComponent.1.kt")
+            public void testInlineComponent() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/resolve/inlineComponent.1.kt");
+                doTestMultiFileWithInlineCheck(fileName);
+            }
+
+            @TestMetadata("inlineIterator.1.kt")
+            public void testInlineIterator() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/resolve/inlineIterator.1.kt");
                 doTestMultiFileWithInlineCheck(fileName);
             }
         }
