@@ -1284,7 +1284,6 @@ public fun <T> Sequence<T>.withIndices(): Sequence<Pair<Int, T>> {
 }
 
 
-deprecated("Migrate to using Sequence<T> and respective functions")
 /**
  * Returns a stream containing pairs of each element of the original collection and their index
  */

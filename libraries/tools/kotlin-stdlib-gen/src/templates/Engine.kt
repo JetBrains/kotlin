@@ -174,7 +174,8 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
             }.toString()
             builder.append(text)
             builder.appendln()
-            builder.appendln("deprecated(\"Migrate to using Sequence<T> and respective functions\")")
+            if (deprecates[f] == null && deprecate.isEmpty())
+                builder.appendln("deprecated(\"Migrate to using Sequence<T> and respective functions\")")
             val streamText = text
                     .replace("Sequence", "Stream")
                     .replace("sequence", "stream")
