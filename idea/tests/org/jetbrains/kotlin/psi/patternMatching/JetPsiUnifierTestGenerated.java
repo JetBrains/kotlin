@@ -425,6 +425,12 @@ public class JetPsiUnifierTestGenerated extends AbstractJetPsiUnifierTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("callUnderSmartCast.kt")
+                public void testCallUnderSmartCast() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/calls/callUnderSmartCast.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("externalArgumentsRuntime.kt")
                 public void testExternalArgumentsRuntime() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/calls/externalArgumentsRuntime.kt");
