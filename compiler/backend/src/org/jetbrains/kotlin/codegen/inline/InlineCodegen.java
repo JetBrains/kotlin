@@ -114,9 +114,6 @@ public class InlineCodegen extends CallGenerator {
 
         isSameModule = JvmCodegenUtil.isCallInsideSameModuleAsDeclared(functionDescriptor, codegen.getContext(), state.getOutDirectory());
 
-        Integer lastLineNumber = CodegenUtil.getLineNumberForElement(callElement.getContainingFile(), true);
-        assert lastLineNumber != null : "Couldn't extract line count in " + callElement.getContainingFile();
-
         sourceMapper = codegen.getParentCodegen().getOrCreateSourceMapper();
     }
 
