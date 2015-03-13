@@ -248,9 +248,10 @@ public final class TranslationUtils {
 
         JsExpression thenExpression = ensureNotNull.getThenExpression();
         if (thenExpression instanceof JsNameRef) {
-            // associate (cache) ensureNotNull expression to new TemporaryConstVariable with same name.
-            context.associateExpressionToLazyValue(ensureNotNull,
-                                                   new TemporaryConstVariable(((JsNameRef) thenExpression).getName(), ensureNotNull));
+            JsName name = ((JsNameRef) thenExpression).getName();
+            assert name != null : "Unexpected state: getName() returned null for `" +thenExpression + "`, ensureNotNull: "+ ensureNotNull;
+            // associate(cache) ensureNotNull expression to new TemporaryConstVariable with same name.
+            context.associateExpressionToLazyValue(ensureNotNull, new TemporaryConstVariable(name, ensureNotNull));
         }
 
         return ensureNotNull;
