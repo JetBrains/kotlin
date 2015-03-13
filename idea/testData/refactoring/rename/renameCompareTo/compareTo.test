@@ -1,6 +1,6 @@
 {
   "type": "KOTLIN_FUNCTION",
-  "classFQN": "A",
+  "classId": "/A",
   "oldName": "compareTo",
   "newName": "foo",
   "mainFile": "compareTo.kt"

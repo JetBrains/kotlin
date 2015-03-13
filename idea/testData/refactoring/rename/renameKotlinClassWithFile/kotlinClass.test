@@ -1,6 +1,6 @@
 {
   "type": "KOTLIN_CLASS",
-  "classFQN": "testing.ClassBefore",
+  "classId": "testing/ClassBefore",
   "newName": "ClassAfter",
   "mainFile": "ClassBefore.kt"
 }

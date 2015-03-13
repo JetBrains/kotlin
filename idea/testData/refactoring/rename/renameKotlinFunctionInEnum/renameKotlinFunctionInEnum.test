@@ -1,6 +1,6 @@
 {
   "type": "KOTLIN_FUNCTION",
-  "classFQN": "test.E",
+  "classId": "test/E",
   "oldName": "foo",
   "newName": "bar"
 }

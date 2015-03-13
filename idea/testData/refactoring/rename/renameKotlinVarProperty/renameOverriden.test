@@ -1,6 +1,6 @@
 {
   "type": "KOTLIN_PROPERTY",
-  "classFQN": "testing.rename.BP",
+  "classId": "testing/rename/BP",
   "oldName": "first",
   "newName": "second"
 }

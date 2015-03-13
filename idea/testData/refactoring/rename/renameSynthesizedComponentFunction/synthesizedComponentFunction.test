@@ -1,6 +1,6 @@
 {
   "type": "KOTLIN_PROPERTY",
-  "classFQN": "A",
+  "classId": "/A",
   "oldName": "n",
   "newName": "foo",
   "mainFile": "synthesizedComponentFunction.kt"

@@ -1,6 +1,6 @@
 {
   "type": "KOTLIN_FUNCTION",
-  "classFQN": "testing.rename.A",
+  "classId": "testing/rename/A",
   "oldName": "first",
   "newName": "second",
   "comment": "KT-2836 Rename method with all its implementations"

@@ -1,6 +1,6 @@
 {
   "type": "JAVA_METHOD",
-  "classFQN": "testing.JavaClass",
+  "classId": "testing/JavaClass",
   "methodSignature": "String foo()",
   "newName": "bar"
 }
