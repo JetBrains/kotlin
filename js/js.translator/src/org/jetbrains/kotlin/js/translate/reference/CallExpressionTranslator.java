@@ -135,6 +135,14 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
         assert constant != null: "jsCode must be compile time string " + jsCodeExpression;
         String jsCode = (String) constant.getValue();
         assert jsCode != null: jsCodeExpression.toString();
-        return ParserPackage.parse(jsCode, ThrowExceptionOnErrorReporter.INSTANCE$, /* insideFunction= */ true);
+
+        // Parser can change local or global scope.
+        // In case of js we want to keep new local names,
+        // but no new global ones.
+        JsScope currentScope = context().scope();
+        assert currentScope instanceof JsFunctionScope: "Usage of js outside of function is unexpected";
+        JsScope temporaryRootScope = new JsRootScope(new JsProgram("<js code>"));
+        JsScope scope = new DelegatingJsFunctionScopeWithTemporaryParent((JsFunctionScope) currentScope, temporaryRootScope);
+        return ParserPackage.parse(jsCode, ThrowExceptionOnErrorReporter.INSTANCE$, scope);
     }
 }

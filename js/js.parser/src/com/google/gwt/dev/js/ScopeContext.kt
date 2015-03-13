@@ -20,11 +20,12 @@ import com.google.dart.compiler.backend.js.ast.*
 
 import java.util.Stack
 
-class ScopeContext(private val rootScope: JsScope) {
+class ScopeContext(scope: JsScope) {
+    private val rootScope = sequence(scope) { it.getParent() }.first { it is JsRootScope }
     private val scopes = Stack<JsScope>();
 
-    {
-        scopes.push(rootScope)
+    init {
+        scopes.push(scope)
     }
 
     fun enterFunction(): JsFunction {

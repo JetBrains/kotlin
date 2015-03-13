@@ -16,6 +16,9 @@
 
 package org.jetbrains.kotlin.js.resolve.diagnostics
 
+import com.google.dart.compiler.backend.js.ast.JsFunctionScope
+import com.google.dart.compiler.backend.js.ast.JsProgram
+import com.google.dart.compiler.backend.js.ast.JsRootScope
 import com.google.gwt.dev.js.parserExceptions.AbortParsingException
 import com.google.gwt.dev.js.rhino.*
 import com.google.gwt.dev.js.rhino.Utils.*
@@ -85,7 +88,8 @@ public class JsCallChecker : CallChecker {
         val errorReporter = JsCodeErrorReporter(argument, code, context.trace)
 
         try {
-            val statements = parse(code, errorReporter, insideFunction = true)
+            val parserScope = JsFunctionScope(JsRootScope(JsProgram("<js checker>")), "<js fun>")
+            val statements = parse(code, errorReporter, parserScope)
 
             if (statements.size() == 0) {
                 context.trace.report(ErrorsJs.JSCODE_NO_JAVASCRIPT_PRODUCED.on(argument))
