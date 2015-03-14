@@ -16,22 +16,23 @@
 
 package org.jetbrains.kotlin.generators.builtins.generateBuiltIns
 
-import org.jetbrains.kotlin.generators.builtins.arrays.*
-import org.jetbrains.kotlin.generators.builtins.arrayIterators.*
-import org.jetbrains.kotlin.generators.builtins.functions.*
-import org.jetbrains.kotlin.generators.builtins.iterators.*
-import org.jetbrains.kotlin.generators.builtins.progressionIterators.*
-import org.jetbrains.kotlin.generators.builtins.progressions.*
-import org.jetbrains.kotlin.generators.builtins.ranges.*
-import java.io.PrintWriter
+import org.jetbrains.kotlin.generators.builtins.arrayIterators.GenerateArrayIterators
+import org.jetbrains.kotlin.generators.builtins.arrays.GenerateArrays
+import org.jetbrains.kotlin.generators.builtins.functions.FunctionKind
+import org.jetbrains.kotlin.generators.builtins.functions.GenerateFunctions
+import org.jetbrains.kotlin.generators.builtins.iterators.GenerateIterators
+import org.jetbrains.kotlin.generators.builtins.progressionIterators.GenerateProgressionIterators
+import org.jetbrains.kotlin.generators.builtins.progressions.GenerateProgressions
+import org.jetbrains.kotlin.generators.builtins.ranges.GeneratePrimitives
+import org.jetbrains.kotlin.generators.builtins.ranges.GenerateRanges
 import java.io.File
+import java.io.PrintWriter
 
 fun assertExists(file: File): Unit =
         if (!file.exists()) error("Output dir does not exist: ${file.getAbsolutePath()}")
 
 val BUILT_INS_NATIVE_DIR = File("core/builtins/native/kotlin/")
 val BUILT_INS_SRC_DIR = File("core/builtins/src/kotlin/")
-val REFLECTION_DIR = File("core/reflection/src/kotlin/")
 val RUNTIME_JVM_DIR = File("core/runtime.jvm/src/kotlin/")
 
 abstract class BuiltInsSourceGenerator(val out: PrintWriter) {
@@ -55,11 +56,10 @@ abstract class BuiltInsSourceGenerator(val out: PrintWriter) {
 fun generateBuiltIns(generate: (File, (PrintWriter) -> BuiltInsSourceGenerator) -> Unit) {
     assertExists(BUILT_INS_NATIVE_DIR)
     assertExists(BUILT_INS_SRC_DIR)
-    assertExists(REFLECTION_DIR)
     assertExists(RUNTIME_JVM_DIR)
 
     for (kind in FunctionKind.values()) {
-        generate(File(if (kind.isReflection()) REFLECTION_DIR else BUILT_INS_SRC_DIR, kind.getFileName())) { GenerateFunctions(it, kind) }
+        generate(File(BUILT_INS_SRC_DIR, kind.getFileName())) { GenerateFunctions(it, kind) }
     }
 
     generate(File(BUILT_INS_NATIVE_DIR, "Arrays.kt")) { GenerateArrays(it) }

@@ -34,7 +34,6 @@
                                 <copy todir="${basedir}/target/copied-sources">
                                     <fileset dir="${basedir}/../../../core/builtins/src"/>
                                     <fileset dir="${basedir}/../../../core/runtime.jvm/src"/>
-                                    <fileset dir="${basedir}/../../../core/reflection/src"/>
                                 </copy>
                             </target>
                         </configuration>

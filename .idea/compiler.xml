@@ -3,7 +3,6 @@
   <component name="CompilerConfiguration">
     <option name="DEFAULT_COMPILER" value="Javac" />
     <excludeFromCompile>
-      <directory url="file://$PROJECT_DIR$/core/reflection" includeSubdirectories="true" />
       <directory url="file://$PROJECT_DIR$/core/reflection.jvm" includeSubdirectories="true" />
     </excludeFromCompile>
     <resourceExtensions />

@@ -431,6 +431,7 @@
                 <fileset dir="${output}/builtins">
                     <include name="kotlin/**"/>
                     <exclude name="kotlin/internal/**"/>
+                    <exclude name="kotlin/reflect/**"/>
                 </fileset>
                 <fileset dir="${basedir}/compiler/frontend.java/src" includes="META-INF/services/**"/>
                 <fileset dir="${basedir}/compiler/backend/src" includes="META-INF/services/**"/>
@@ -772,7 +773,6 @@
             <src>
                 <include name="core/builtins/src"/>
                 <include name="core/runtime.jvm/src"/>
-                <include name="core/reflection/src"/>
             </src>
             <class-path>
                 <!-- Need something to pass to compiler's "-classpath" here -->
@@ -850,7 +850,11 @@
             <jar-content>
                 <fileset dir="${output}/classes/builtins"/>
                 <fileset dir="${output}/classes/stdlib"/>
-                <zipfileset dir="${output}/builtins"/>
+                <zipfileset dir="${output}/builtins">
+                    <include name="kotlin/**"/>
+                    <exclude name="kotlin/internal/**"/>
+                    <exclude name="kotlin/reflect/**"/>
+                </zipfileset>
             </jar-content>
         </pack-runtime-jar>
 
@@ -878,7 +882,6 @@
                 <fileset dir="${basedir}/core/descriptor.loader.java/src" includes="**/*"/>
                 <fileset dir="${basedir}/core/descriptors/src" includes="**/*"/>
                 <fileset dir="${basedir}/core/descriptors.runtime/src" includes="**/*"/>
-                <fileset dir="${basedir}/core/reflection/src" includes="**/*"/>
                 <fileset dir="${basedir}/core/reflection.jvm/src" includes="**/*"/>
                 <fileset dir="${basedir}/core/runtime.jvm/src" includes="**/*"/>
                 <fileset dir="${basedir}/core/serialization/src" includes="**/*"/>
@@ -940,6 +943,7 @@
             <fileset dir="${output}/builtins">
                 <include name="kotlin/**"/>
                 <exclude name="kotlin/internal/**"/>
+                <exclude name="kotlin/reflect/**"/>
             </fileset>
             <fileset dir="${basedir}/compiler/frontend.java/src" includes="META-INF/services/**"/>
             <fileset dir="${basedir}/compiler/backend/src" includes="META-INF/services/**"/>
