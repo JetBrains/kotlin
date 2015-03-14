@@ -5,7 +5,6 @@
     <excludeFromCompile>
       <directory url="file://$PROJECT_DIR$/core/reflection" includeSubdirectories="true" />
       <directory url="file://$PROJECT_DIR$/core/reflection.jvm" includeSubdirectories="true" />
-      <directory url="file://$PROJECT_DIR$/core/reflection.stub.jvm" includeSubdirectories="true" />
     </excludeFromCompile>
     <resourceExtensions />
     <wildcardResourcePatterns>
