@@ -1,0 +1,13 @@
+package
+
+internal fun </*0*/ R> Q(/*0*/ x: kotlin.String): kotlin.Unit
+internal fun </*0*/ R> foo(/*0*/ x: R, /*1*/ y: R): kotlin.Unit
+internal fun </*0*/ R> foo(/*0*/ x: R, /*1*/ y: kotlin.String): kotlin.Unit
+
+internal final class Q</*0*/ R> {
+    public constructor Q</*0*/ R>(/*0*/ x: R)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal final fun foo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

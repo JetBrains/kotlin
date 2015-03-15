@@ -516,9 +516,6 @@ public class CandidateResolver {
                 if (expression == null) continue;
 
                 JetType expectedType = getEffectiveExpectedType(parameterDescriptor, argument);
-                if (TypeUtils.dependsOnTypeParameters(expectedType, candidateCall.getCandidateDescriptor().getTypeParameters())) {
-                    expectedType = NO_EXPECTED_TYPE;
-                }
 
                 CallResolutionContext<?> newContext = context.replaceDataFlowInfo(infoForArguments.getInfo(argument))
                         .replaceBindingTrace(trace).replaceExpectedType(expectedType);
