@@ -314,16 +314,16 @@ public class DescriptorUtils {
         return superClassDescriptors;
     }
 
-    @Nullable
+    @NotNull
     public static JetType getSuperClassType(@NotNull ClassDescriptor classDescriptor) {
         Collection<JetType> superclassTypes = classDescriptor.getTypeConstructor().getSupertypes();
         for (JetType type : superclassTypes) {
             ClassDescriptor superClassDescriptor = getClassDescriptorForType(type);
-            if (!isAny(superClassDescriptor) && superClassDescriptor.getKind() != ClassKind.TRAIT) {
+            if (superClassDescriptor.getKind() != ClassKind.TRAIT) {
                 return type;
             }
         }
-        return null;
+        return KotlinBuiltIns.getInstance().getAnyType();
     }
 
     @NotNull
