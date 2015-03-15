@@ -114,8 +114,8 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
                     candidate.getDescriptor(),
                     candidate.getDispatchReceiver(),
                     candidate.getExtensionReceiver(),
-                    candidate.getExplicitReceiverKind()
-            );
+                    candidate.getExplicitReceiverKind(),
+                    null);
             if (!hasReceiver) {
                 CallCandidateResolutionContext<CallableDescriptor> context = CallCandidateResolutionContext.create(
                         ResolvedCallImpl.create(variableCandidate, candidateTrace, task.tracing, task.dataFlowInfoForArguments),
@@ -131,7 +131,7 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
                     candidate.getDescriptor(),
                     candidate.getDispatchReceiver(),
                     ReceiverValue.NO_RECEIVER,
-                    ExplicitReceiverKind.NO_EXPLICIT_RECEIVER);
+                    ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, null);
 
             CallCandidateResolutionContext<CallableDescriptor> contextWithoutReceiver = createContextWithChainedTrace(
                     candidateWithoutReceiver, variableCallWithoutReceiver, candidateTrace, task, variableCall.getExplicitReceiver());

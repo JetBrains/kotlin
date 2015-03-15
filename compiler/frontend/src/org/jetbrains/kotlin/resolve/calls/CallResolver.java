@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.TypeSubstitutor;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
 
@@ -296,12 +297,10 @@ public class CallResolver {
         // when super call should be conventional enum constructor and super call should be empty
         if (call == null) return null;
 
-        JetType superClassType = DescriptorUtils.getSuperClassType(constructorDescriptor.getContainingDeclaration());
-
         BasicCallResolutionContext context = BasicCallResolutionContext.create(
                 trace, scope,
                 CallMaker.makeCall(ReceiverValue.NO_RECEIVER, null, call),
-                superClassType != null ? superClassType : NO_EXPECTED_TYPE,
+                NO_EXPECTED_TYPE,
                 dataFlowInfo, ContextDependency.INDEPENDENT, CheckValueArgumentsMode.ENABLED,
                 expressionTypingServices.getCallChecker(), expressionTypingServices.getAdditionalTypeChecker(), false);
 
@@ -353,11 +352,16 @@ public class CallResolver {
                                                     ((ClassDescriptor) delegateClassDescriptor.getContainingDeclaration()).
                                                             getThisAsReceiverParameter().getValue();
 
+        JetType expectedType = isThisCall ?
+                               calleeConstructor.getContainingDeclaration().getDefaultType() :
+                               DescriptorUtils.getSuperClassType(currentClassDescriptor);
+
+        TypeSubstitutor knownTypeParametersSubstitutor = TypeSubstitutor.create(expectedType);
         for (CallableDescriptor descriptor : constructors) {
             candidates.add(ResolutionCandidate.create(
                     context.call, descriptor, constructorDispatchReceiver, ReceiverValue.NO_RECEIVER,
-                    ExplicitReceiverKind.NO_EXPLICIT_RECEIVER
-            ));
+                    ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
+                    knownTypeParametersSubstitutor));
         }
 
         return computeTasksFromCandidatesAndResolvedCall(context, calleeExpression, candidates, CallTransformer.FUNCTION_CALL_TRANSFORMER);

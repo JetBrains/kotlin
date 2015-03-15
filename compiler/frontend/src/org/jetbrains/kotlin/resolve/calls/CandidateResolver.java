@@ -153,8 +153,13 @@ public class CandidateResolver {
 
             candidateCall.setResultingSubstitutor(substitutor);
         }
+        else if (candidateCall.getKnownTypeParametersSubstitutor() != null) {
+            candidateCall.setResultingSubstitutor(candidateCall.getKnownTypeParametersSubstitutor());
+        }
 
-        if (jetTypeArguments.isEmpty() && !candidate.getTypeParameters().isEmpty()) {
+        if (jetTypeArguments.isEmpty() &&
+            !candidate.getTypeParameters().isEmpty() &&
+            candidateCall.getKnownTypeParametersSubstitutor() == null) {
             candidateCall.addStatus(inferTypeArguments(context));
         }
         else {
