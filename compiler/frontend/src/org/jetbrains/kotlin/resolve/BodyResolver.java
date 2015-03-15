@@ -239,7 +239,7 @@ public class BodyResolver {
     @Nullable
     private ConstructorDescriptor getDelegatedConstructor(@NotNull ConstructorDescriptor constructor) {
         ResolvedCall<ConstructorDescriptor> call = trace.get(CONSTRUCTOR_RESOLVED_DELEGATION_CALL, constructor);
-        return call == null ? null : call.getResultingDescriptor();
+        return call == null ? null : call.getResultingDescriptor().getOriginal();
     }
 
     public void resolveBodies(@NotNull BodiesResolveContext c) {
