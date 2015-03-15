@@ -238,9 +238,6 @@ public class CallResolver {
         if (calleeExpression instanceof JetConstructorCalleeExpression) {
             return resolveCallForConstructor(context, (JetConstructorCalleeExpression) calleeExpression);
         }
-        else if (calleeExpression instanceof JetConstructorDelegationReferenceExpression) {
-            return resolveConstructorDelegationCall(context, (JetConstructorDelegationReferenceExpression) calleeExpression);
-        }
         else if (calleeExpression == null) {
             return checkArgumentTypesAndFail(context);
         }
@@ -289,22 +286,58 @@ public class CallResolver {
         return computeTasksFromCandidatesAndResolvedCall(context, functionReference, candidates, CallTransformer.FUNCTION_CALL_TRANSFORMER);
     }
 
+    @Nullable
+    public OverloadResolutionResults<FunctionDescriptor> resolveConstructorDelegationCall(
+            @NotNull BindingTrace trace, @NotNull JetScope scope, @NotNull DataFlowInfo dataFlowInfo,
+            @NotNull ConstructorDescriptor constructorDescriptor,
+            @Nullable JetConstructorDelegationCall call
+    ) {
+        // Returns `null` when there is nothing to resolve in trivial cases like `null` call expression or
+        // when super call should be conventional enum constructor and super call should be empty
+        if (call == null) return null;
+
+        JetType superClassType = DescriptorUtils.getSuperClassType(constructorDescriptor.getContainingDeclaration());
+
+        BasicCallResolutionContext context = BasicCallResolutionContext.create(
+                trace, scope,
+                CallMaker.makeCall(ReceiverValue.NO_RECEIVER, null, call),
+                superClassType != null ? superClassType : NO_EXPECTED_TYPE,
+                dataFlowInfo, ContextDependency.INDEPENDENT, CheckValueArgumentsMode.ENABLED,
+                expressionTypingServices.getCallChecker(), expressionTypingServices.getAdditionalTypeChecker(), false);
+
+        if (call.getCalleeExpression() == null) return checkArgumentTypesAndFail(context);
+
+        if (constructorDescriptor.getContainingDeclaration().getKind() == ClassKind.ENUM_CLASS &&
+            call.getCalleeExpression().isEmpty()) {
+            return null;
+        }
+
+        return resolveConstructorDelegationCall(
+                context,
+                call.getCalleeExpression(),
+                constructorDescriptor
+        );
+    }
+
     @NotNull
     private OverloadResolutionResults<FunctionDescriptor> resolveConstructorDelegationCall(
             @NotNull BasicCallResolutionContext context,
-            @NotNull JetConstructorDelegationReferenceExpression calleeExpression
+            @NotNull JetConstructorDelegationReferenceExpression calleeExpression,
+            @NotNull ConstructorDescriptor calleeConstructor
     ) {
-        ClassDescriptor currentClassDescriptor = getClassDescriptorByConstructorContext(context);
-        if (currentClassDescriptor.getKind() == ClassKind.ENUM_CLASS && !calleeExpression.isThis()) {
+        ClassDescriptor currentClassDescriptor = calleeConstructor.getContainingDeclaration();
+
+        boolean isThisCall = calleeExpression.isThis();
+        if (currentClassDescriptor.getKind() == ClassKind.ENUM_CLASS && !isThisCall) {
             context.trace.report(DELEGATION_SUPER_CALL_IN_ENUM_CONSTRUCTOR.on((JetConstructorDelegationCall) calleeExpression.getParent()));
             return checkArgumentTypesAndFail(context);
         }
 
-        ClassDescriptor delegateClassDescriptor = calleeExpression.isThis() ? currentClassDescriptor :
+        ClassDescriptor delegateClassDescriptor = isThisCall ? currentClassDescriptor :
                                                    DescriptorUtilPackage.getSuperClassOrAny(currentClassDescriptor);
         Collection<ConstructorDescriptor> constructors = delegateClassDescriptor.getConstructors();
 
-        if (!calleeExpression.isThis() && currentClassDescriptor.getUnsubstitutedPrimaryConstructor() != null) {
+        if (!isThisCall && currentClassDescriptor.getUnsubstitutedPrimaryConstructor() != null) {
             context.trace.report(PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED.on(
                     (JetConstructorDelegationCall) calleeExpression.getParent()
             ));
@@ -328,16 +361,6 @@ public class CallResolver {
         }
 
         return computeTasksFromCandidatesAndResolvedCall(context, calleeExpression, candidates, CallTransformer.FUNCTION_CALL_TRANSFORMER);
-    }
-
-    @NotNull
-    private static ClassDescriptor getClassDescriptorByConstructorContext(@NotNull BasicCallResolutionContext context) {
-        DeclarationDescriptor containingDeclaration = context.scope.getContainingDeclaration();
-        if (containingDeclaration instanceof ConstructorDescriptor) {
-            containingDeclaration = containingDeclaration.getContainingDeclaration();
-        }
-        assert containingDeclaration != null : "Grandparent of delegation call should be a class descriptor";
-        return (ClassDescriptor) containingDeclaration;
     }
 
     public OverloadResolutionResults<FunctionDescriptor> resolveCallWithKnownCandidate(

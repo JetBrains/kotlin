@@ -168,21 +168,11 @@ public class BodyResolver {
             @NotNull JetSecondaryConstructor constructor,
             @NotNull ConstructorDescriptor descriptor
     ) {
-        JetConstructorDelegationCall call = constructor.getDelegationCall();
-        if (call == null || call.getCalleeExpression() == null) return null;
-        JetType superClassType = DescriptorUtils.getSuperClassType(descriptor.getContainingDeclaration());
+        OverloadResolutionResults<?> results = callResolver.resolveConstructorDelegationCall(
+                trace, scope, c.getOuterDataFlowInfo(),
+                descriptor, constructor.getDelegationCall());
 
-        if (descriptor.getContainingDeclaration().getKind() == ClassKind.ENUM_CLASS && call.getCalleeExpression().isEmpty()) {
-            return null;
-        }
-
-        OverloadResolutionResults<?> results = callResolver.resolveFunctionCall(
-                trace, scope,
-                CallMaker.makeCall(ReceiverValue.NO_RECEIVER, null, call),
-                superClassType != null ? superClassType : NO_EXPECTED_TYPE,
-                c.getOuterDataFlowInfo(), false);
-
-        if (results.isSingleResult()) {
+        if (results != null && results.isSingleResult()) {
             ResolvedCall<? extends CallableDescriptor> resolvedCall = results.getResultingCall();
             recordConstructorDelegationCall(trace, descriptor, resolvedCall);
             return resolvedCall.getDataFlowInfoForArguments().getResultInfo();
