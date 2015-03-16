@@ -474,8 +474,9 @@ private class SubpluginEnvironment(
             }
         }
 
-        compileTask.setProperty("compilerPluginClasspaths", realPluginClasspaths.copyToArray())
-        compileTask.setProperty("compilerPluginArguments", pluginArguments.copyToArray())
+        val extraProperties = compileTask.getExtensions().getExtraProperties()
+        extraProperties.set("compilerPluginClasspaths", realPluginClasspaths.copyToArray())
+        extraProperties.set("compilerPluginArguments", pluginArguments.copyToArray())
     }
 }
 

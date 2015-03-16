@@ -101,8 +101,9 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
     val srcDirsSources = HashSet<SourceDirectorySet>()
 
     override fun populateTargetSpecificArgs(args: K2JVMCompilerArguments) {
-        args.pluginClasspaths = property("compilerPluginClasspaths") as? Array<String>
-        args.pluginOptions = property("compilerPluginArguments") as? Array<String>
+        val extraProperties = getExtensions().getExtraProperties()
+        args.pluginClasspaths = extraProperties.get("compilerPluginClasspaths") as? Array<String>
+        args.pluginOptions = extraProperties.get("compilerPluginArguments") as? Array<String>
 
         if (StringUtils.isEmpty(kotlinOptions.classpath)) {
             val existingClasspathEntries = getClasspath().filter({ it != null && it.exists() })
