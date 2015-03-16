@@ -16,11 +16,12 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
-class SMAPParser(val mappingInfo: String?, val source: String, val path: String, val methodStartLine: Int, val methodEndLine: Int) {
+import kotlin.platform.platformStatic
 
-    val fileMappings = linkedMapOf<Int, FileMapping>()
+object SMAPParser {
 
-    fun parse() : SMAP {
+    [platformStatic]
+    public fun parseOrCreateDefault(mappingInfo: String?, source: String, path: String, methodStartLine: Int, methodEndLine: Int): SMAP {
         if (mappingInfo == null || mappingInfo.isEmpty()) {
             val fm = FileMapping(source, path)
             if (methodStartLine <= methodEndLine) {
@@ -29,6 +30,12 @@ class SMAPParser(val mappingInfo: String?, val source: String, val path: String,
             }
             return SMAP(listOf(fm))
         }
+        return parse(mappingInfo)
+    }
+
+    [platformStatic]
+    public fun parse(mappingInfo: String): SMAP {
+        val fileMappings = linkedMapOf<Int, FileMapping>()
 
         val fileSectionStart = mappingInfo.indexOf(SMAP.FILE_SECTION) + SMAP.FILE_SECTION.length()
         val lineSectionAnchor = mappingInfo.indexOf(SMAP.LINE_SECTION)
@@ -54,7 +61,7 @@ class SMAPParser(val mappingInfo: String?, val source: String, val path: String,
             /*only simple mapping now*/
             val targetSplit = lineMapping.indexOf(':')
             val originalPart = lineMapping.substring(0, targetSplit)
-            var rangeSeparator = originalPart.indexOf(',').let { if (it < 0) targetSplit else it}
+            var rangeSeparator = originalPart.indexOf(',').let { if (it < 0) targetSplit else it }
 
             val fileSeparator = lineMapping.indexOf('#')
             val originalIndex = Integer.valueOf(originalPart.substring(0, fileSeparator))

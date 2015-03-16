@@ -382,6 +382,7 @@ public class InlineCodegen extends CallGenerator {
 
         @NotNull
         @Override
+        //TODO: obtain name from context
         public String getClassName() {
             return className;
         }
