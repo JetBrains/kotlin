@@ -193,7 +193,7 @@ public class DescriptorUtils {
     public static ClassDescriptor getContainingClass(@NotNull DeclarationDescriptor descriptor) {
         DeclarationDescriptor containing = descriptor.getContainingDeclaration();
         while (containing != null) {
-            if (containing instanceof ClassDescriptor && !isDefaultObject(containing)) {
+            if (containing instanceof ClassDescriptor && !isCompanionObject(containing)) {
                 return (ClassDescriptor) containing;
             }
             containing = containing.getContainingDeclaration();
@@ -253,16 +253,16 @@ public class DescriptorUtils {
         return descriptor instanceof FunctionExpressionDescriptor;
     }
 
-    public static boolean isDefaultObject(@Nullable DeclarationDescriptor descriptor) {
-        return isKindOf(descriptor, ClassKind.OBJECT) && ((ClassDescriptor) descriptor).isDefaultObject();
+    public static boolean isCompanionObject(@Nullable DeclarationDescriptor descriptor) {
+        return isKindOf(descriptor, ClassKind.OBJECT) && ((ClassDescriptor) descriptor).isCompanionObject();
     }
 
     public static boolean isAnonymousObject(@NotNull DeclarationDescriptor descriptor) {
         return isClass(descriptor) && descriptor.getName().equals(SpecialNames.NO_NAME_PROVIDED);
     }
 
-    public static boolean isNonDefaultObject(@NotNull DeclarationDescriptor descriptor) {
-        return isKindOf(descriptor, ClassKind.OBJECT) && !((ClassDescriptor) descriptor).isDefaultObject();
+    public static boolean isNonCompanionObject(@NotNull DeclarationDescriptor descriptor) {
+        return isKindOf(descriptor, ClassKind.OBJECT) && !((ClassDescriptor) descriptor).isCompanionObject();
     }
 
     public static boolean isObject(@NotNull DeclarationDescriptor descriptor) {

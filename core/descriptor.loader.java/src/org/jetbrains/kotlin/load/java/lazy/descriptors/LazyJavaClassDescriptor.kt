@@ -85,7 +85,7 @@ class LazyJavaClassDescriptor(
 
     override fun getUnsubstitutedPrimaryConstructor(): ConstructorDescriptor? = null
 
-    override fun getDefaultObjectDescriptor(): ClassDescriptor? = null
+    override fun getCompanionObjectDescriptor(): ClassDescriptor? = null
 
     override fun getConstructors() = scopeForMemberLookup.constructors()
 
@@ -100,7 +100,7 @@ class LazyJavaClassDescriptor(
 
     override fun getFunctionTypeForSamInterface(): JetType? = functionTypeForSamInterface()
 
-    override fun isDefaultObject() = false
+    override fun isCompanionObject() = false
 
     override fun toString() = "lazy java class $fqName"
 

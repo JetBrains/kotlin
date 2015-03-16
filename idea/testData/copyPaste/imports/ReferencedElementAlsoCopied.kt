@@ -19,7 +19,7 @@ object O2 {
 }
 
 class ClassObject {
-    default object {
+    companion object {
     }
 }
 

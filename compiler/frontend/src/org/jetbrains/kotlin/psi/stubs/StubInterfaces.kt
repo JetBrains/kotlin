@@ -104,7 +104,7 @@ public trait KotlinPropertyStub : KotlinStubWithFqName<JetProperty> {
 }
 
 public trait KotlinTypeConstraintStub : StubElement<JetTypeConstraint> {
-    public fun isDefaultObjectConstraint(): Boolean
+    public fun isCompanionObjectConstraint(): Boolean
 }
 
 public trait KotlinTypeParameterStub : KotlinStubWithFqName<JetTypeParameter> {

@@ -4,6 +4,6 @@
 package testData.libraries
 
 [[public final class WithTraitClassObject() {
-    [[public default object : testData.libraries.SimpleTrait {
+    [[public companion object : testData.libraries.SimpleTrait {
     }]]
 }]]

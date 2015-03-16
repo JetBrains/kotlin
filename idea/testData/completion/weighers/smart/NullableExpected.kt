@@ -1,7 +1,7 @@
 var global: C = C()
 
 abstract class C {
-    default object {
+    companion object {
         val INSTANCE = C()
     }
 }

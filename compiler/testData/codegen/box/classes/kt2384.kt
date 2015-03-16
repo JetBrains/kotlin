@@ -1,5 +1,5 @@
 class A {
-    default object {
+    companion object {
         val b = 0
         val c = b
         

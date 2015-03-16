@@ -20,9 +20,9 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
-public abstract class DefaultObjectMapping {
+public abstract class CompanionObjectMapping {
     public fun hasMappingToObject(classDescriptor: ClassDescriptor): Boolean {
-        if (!DescriptorUtils.isDefaultObject(classDescriptor)) return false
+        if (!DescriptorUtils.isCompanionObject(classDescriptor)) return false
 
         val containingDeclaration = classDescriptor.getContainingDeclaration()
         if (containingDeclaration !is ClassDescriptor) return false

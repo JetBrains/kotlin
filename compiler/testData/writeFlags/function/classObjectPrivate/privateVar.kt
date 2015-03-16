@@ -2,11 +2,11 @@ class Foo {
 
   {Foo.test}
 
-  default object {
+  companion object {
     private var test = "String"
   }
 }
 
 // TESTED_OBJECT_KIND: function
-// TESTED_OBJECTS: Foo$Default, setTest
+// TESTED_OBJECTS: Foo$Companion, setTest
 // FLAGS: ACC_PRIVATE, ACC_FINAL

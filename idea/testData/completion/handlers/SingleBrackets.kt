@@ -1,7 +1,7 @@
 package Test.MyTest
 
 class A {
-    default object {
+    companion object {
         public fun testOther(a: Boolean) {
 
         }

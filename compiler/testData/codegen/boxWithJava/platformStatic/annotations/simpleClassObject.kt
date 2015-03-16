@@ -7,7 +7,7 @@ annotation class testAnnotation
 
 class A {
 
-    default object {
+    companion object {
         val b: String = "OK"
 
         platformStatic testAnnotation fun test1() = b

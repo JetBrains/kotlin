@@ -6,8 +6,8 @@ internal final annotation class Anno : kotlin.Annotation {
 
 internal trait Trait {
 
-    internal default object Default {
-        /*primary*/ private constructor Default()
+    internal companion object Companion {
+        /*primary*/ private constructor Companion()
         test.Anno() internal final val property: kotlin.Int
             internal final fun <get-property>(): kotlin.Int
     }

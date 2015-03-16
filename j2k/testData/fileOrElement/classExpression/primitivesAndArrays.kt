@@ -1,5 +1,5 @@
 public class A {
-    default object {
+    companion object {
         public fun main(args: Array<String>) {
             System.out.println(Void.TYPE)
             System.out.println(Integer.TYPE)

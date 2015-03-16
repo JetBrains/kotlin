@@ -35,20 +35,20 @@ import java.util.List;
 import static org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator.translateAsFQReference;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.isNonDefaultObject;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isNonCompanionObject;
 
-public class DefaultObjectAccessTranslator extends AbstractTranslator implements CachedAccessTranslator {
+public class CompanionObjectAccessTranslator extends AbstractTranslator implements CachedAccessTranslator {
     @NotNull
-    /*package*/ static DefaultObjectAccessTranslator newInstance(
+    /*package*/ static CompanionObjectAccessTranslator newInstance(
             @NotNull JetSimpleNameExpression expression,
             @NotNull TranslationContext context
     ) {
         DeclarationDescriptor referenceDescriptor = getDescriptorForReferenceExpression(context.bindingContext(), expression);
         assert referenceDescriptor != null : "JetSimpleName expression must reference a descriptor " + expression.getText();
-        return new DefaultObjectAccessTranslator(referenceDescriptor, context);
+        return new CompanionObjectAccessTranslator(referenceDescriptor, context);
     }
 
-    /*package*/ static boolean isDefaultObjectReference(
+    /*package*/ static boolean isCompanionObjectReference(
             @NotNull JetReferenceExpression expression,
             @NotNull TranslationContext context
     ) {
@@ -57,15 +57,15 @@ public class DefaultObjectAccessTranslator extends AbstractTranslator implements
     }
 
     @NotNull
-    private final JsExpression referenceToDefaultObject;
+    private final JsExpression referenceToCompanionObject;
 
-    private DefaultObjectAccessTranslator(@NotNull DeclarationDescriptor descriptor, @NotNull TranslationContext context) {
+    private CompanionObjectAccessTranslator(@NotNull DeclarationDescriptor descriptor, @NotNull TranslationContext context) {
         super(context);
-        this.referenceToDefaultObject = generateReferenceToDefaultObject(descriptor, context);
+        this.referenceToCompanionObject = generateReferenceToCompanionObject(descriptor, context);
     }
 
     @NotNull
-    private static JsExpression generateReferenceToDefaultObject(@NotNull DeclarationDescriptor descriptor, @NotNull TranslationContext context) {
+    private static JsExpression generateReferenceToCompanionObject(@NotNull DeclarationDescriptor descriptor, @NotNull TranslationContext context) {
         if (descriptor instanceof ClassDescriptor) {
             ObjectIntrinsic objectIntrinsic = context.intrinsics().getObjectIntrinsic((ClassDescriptor) descriptor);
             if (objectIntrinsic.exists()) {
@@ -74,23 +74,23 @@ public class DefaultObjectAccessTranslator extends AbstractTranslator implements
         }
 
         JsExpression fqReference = translateAsFQReference(descriptor, context);
-        if (isNonDefaultObject(descriptor) || isEnumEntry(descriptor)) {
+        if (isNonCompanionObject(descriptor) || isEnumEntry(descriptor)) {
             return fqReference;
         }
 
-        return Namer.getDefaultObjectAccessor(fqReference);
+        return Namer.getCompanionObjectAccessor(fqReference);
     }
 
     @Override
     @NotNull
     public JsExpression translateAsGet() {
-        return referenceToDefaultObject;
+        return referenceToCompanionObject;
     }
 
     @Override
     @NotNull
     public JsExpression translateAsSet(@NotNull JsExpression toSetTo) {
-        throw new IllegalStateException("default object can't be set");
+        throw new IllegalStateException("companion object can't be set");
     }
 
     @NotNull

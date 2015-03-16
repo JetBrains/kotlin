@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.utils.UtilsPackage;
 
 import java.util.*;
 
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.isDefaultObject;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject;
 import static org.jetbrains.kotlin.types.TypeUtils.CANT_INFER_FUNCTION_PARAM_TYPE;
 
 public class DescriptorRendererImpl implements DescriptorRenderer {
@@ -63,7 +63,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     private final boolean includeSynthesizedParameterNames;
     private final boolean withoutFunctionParameterNames;
     private final boolean withoutTypeParameters;
-    private final boolean renderDefaultObjectName;
+    private final boolean renderCompanionObjectName;
     private final boolean withoutSuperTypes;
     private final boolean receiverAfterName;
     private final boolean renderDefaultValues;
@@ -102,7 +102,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             boolean withoutFunctionParameterNames,
             boolean withoutTypeParameters,
             boolean receiverAfterName,
-            boolean renderDefaultObjectName,
+            boolean renderCompanionObjectName,
             boolean withoutSuperTypes,
             @NotNull Function1<JetType, JetType> typeNormalizer,
             boolean renderDefaultValues,
@@ -131,7 +131,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         this.withoutFunctionParameterNames = withoutFunctionParameterNames;
         this.withoutTypeParameters = withoutTypeParameters;
         this.receiverAfterName = receiverAfterName;
-        this.renderDefaultObjectName = renderDefaultObjectName;
+        this.renderCompanionObjectName = renderCompanionObjectName;
         this.withoutSuperTypes = withoutSuperTypes;
         this.typeNormalizer = typeNormalizer;
         this.renderDefaultValues = renderDefaultValues;
@@ -238,10 +238,10 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         builder.append(renderName(descriptor.getName()));
     }
 
-    private void renderDefaultObjectName(@NotNull DeclarationDescriptor descriptor, @NotNull StringBuilder builder) {
-        if (renderDefaultObjectName) {
+    private void renderCompanionObjectName(@NotNull DeclarationDescriptor descriptor, @NotNull StringBuilder builder) {
+        if (renderCompanionObjectName) {
             if (startFromName) {
-                builder.append("default object");
+                builder.append("companion object");
             }
             renderSpaceIfNeeded(builder);
             DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
@@ -958,12 +958,12 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             renderClassKindPrefix(klass, builder);
         }
 
-        if (!isDefaultObject(klass)) {
+        if (!isCompanionObject(klass)) {
             if (!startFromName) renderSpaceIfNeeded(builder);
             renderName(klass, builder);
         }
         else {
-            renderDefaultObjectName(klass, builder);
+            renderCompanionObjectName(klass, builder);
         }
 
         List<TypeParameterDescriptor> typeParameters = klass.getTypeConstructor().getParameters();
@@ -1009,8 +1009,8 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
 
     @NotNull
     public static String getClassKindPrefix(@NotNull ClassDescriptor klass) {
-        if (klass.isDefaultObject()) {
-            return "default object";
+        if (klass.isCompanionObject()) {
+            return "companion object";
         }
         switch (klass.getKind()) {
             case CLASS:

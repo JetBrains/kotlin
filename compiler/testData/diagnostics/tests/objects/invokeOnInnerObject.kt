@@ -1,10 +1,10 @@
 //no nested class access via instance reference error
 fun test() {
-    A.Default.f(<!TYPE_MISMATCH!>""<!>)
+    A.Companion.f(<!TYPE_MISMATCH!>""<!>)
 }
 
 class A() {
-    default object {
+    companion object {
         object f {
             fun invoke(i: Int) = i
         }

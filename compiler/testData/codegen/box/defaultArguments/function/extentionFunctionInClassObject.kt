@@ -1,5 +1,5 @@
 class A {
-  default object {
+  companion object {
     fun Int.foo(a: Int = 1): Int {
         return a
     }

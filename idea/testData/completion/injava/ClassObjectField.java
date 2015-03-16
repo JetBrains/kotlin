@@ -4,5 +4,5 @@ public class Testing {
     }
 }
 
-// EXIST: Default
+// EXIST: Companion
 // EXIST: OBJECT$

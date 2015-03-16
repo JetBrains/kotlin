@@ -2,7 +2,7 @@ package foo
 
 class Foo {
 
-  default object {
+  companion object {
       fun objectFoo() { }
   }
 

@@ -207,6 +207,6 @@ public class KotlinLightClassCoherenceTest extends KotlinAsJavaTestBase {
     }
 
     public void testClassObject() throws Exception {
-        doTest("test.WithClassObject." + SpecialNames.DEFAULT_NAME_FOR_DEFAULT_OBJECT.asString());
+        doTest("test.WithClassObject." + SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT.asString());
     }
 }

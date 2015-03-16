@@ -1,10 +1,10 @@
 class A {
-    default object {
+    companion object {
     }
 }
 
 class B {
-    default object Named {
+    companion object Named {
     }
 }
 

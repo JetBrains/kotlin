@@ -77,10 +77,10 @@ class ClassBodyConverter(private val psiClass: PsiClass,
             convertedMembers.remove(member)
         }
 
-        val useDefaultObject = shouldGenerateDefaultObject(convertedMembers)
+        val useCompanionObject = shouldGenerateCompanionObject(convertedMembers)
 
         val members = ArrayList<Member>()
-        val defaultObjectMembers = ArrayList<Member>()
+        val companionObjectMembers = ArrayList<Member>()
         var primaryConstructorSignature: PrimaryConstructorSignature? = null
         for ((psiMember, member) in convertedMembers) {
             if (member is PrimaryConstructor) {
@@ -88,8 +88,8 @@ class ClassBodyConverter(private val psiClass: PsiClass,
                 primaryConstructorSignature = member.createSignature(converter)
                 members.add(member.initializer())
             }
-            else if (useDefaultObject && member !is Class && psiMember.hasModifierProperty(PsiModifier.STATIC)) {
-                defaultObjectMembers.add(member)
+            else if (useCompanionObject && member !is Class && psiMember.hasModifierProperty(PsiModifier.STATIC)) {
+                companionObjectMembers.add(member)
             }
             else {
                 members.add(member)
@@ -108,7 +108,7 @@ class ClassBodyConverter(private val psiClass: PsiClass,
         val lBrace = LBrace().assignPrototype(psiClass.getLBrace())
         val rBrace = RBrace().assignPrototype(psiClass.getRBrace())
 
-        return ClassBody(primaryConstructorSignature, constructorConverter?.baseClassParams ?: listOf(), members, defaultObjectMembers, lBrace, rBrace)
+        return ClassBody(primaryConstructorSignature, constructorConverter?.baseClassParams ?: listOf(), members, companionObjectMembers, lBrace, rBrace)
     }
 
     private fun Converter.convertMember(member: PsiMember,
@@ -123,15 +123,15 @@ class ClassBodyConverter(private val psiClass: PsiClass,
         }
     }
 
-    // do not convert private static methods into default object if possible
-    private fun shouldGenerateDefaultObject(convertedMembers: Map<PsiMember, Member>): Boolean {
+    // do not convert private static methods into companion object if possible
+    private fun shouldGenerateCompanionObject(convertedMembers: Map<PsiMember, Member>): Boolean {
         if (psiClass.isEnum()) return false
 
         val members = convertedMembers.keySet().filter { !it.isConstructor() }
-        val defaultObjectMembers = members.filter { it !is PsiClass && it.hasModifierProperty(PsiModifier.STATIC) }
+        val companionObjectMembers = members.filter { it !is PsiClass && it.hasModifierProperty(PsiModifier.STATIC) }
         val nestedClasses = members.filterIsInstance<PsiClass>().filter { it.hasModifierProperty(PsiModifier.STATIC) }
-        if (defaultObjectMembers.all { it is PsiMethod && it.hasModifierProperty(PsiModifier.PRIVATE) }) {
-            return nestedClasses.any { nestedClass -> defaultObjectMembers.any { converter.referenceSearcher.findMethodCalls(it as PsiMethod, nestedClass).isNotEmpty() } }
+        if (companionObjectMembers.all { it is PsiMethod && it.hasModifierProperty(PsiModifier.PRIVATE) }) {
+            return nestedClasses.any { nestedClass -> companionObjectMembers.any { converter.referenceSearcher.findMethodCalls(it as PsiMethod, nestedClass).isNotEmpty() } }
         }
         else {
             return true

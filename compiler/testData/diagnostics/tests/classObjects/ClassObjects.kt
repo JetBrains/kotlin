@@ -1,22 +1,22 @@
 package Jet86
 
 class A {
-  default <!REDECLARATION!>object<!> {
+  companion <!REDECLARATION!>object<!> {
     val x = 1
   }
-  <!MANY_DEFAULT_OBJECTS!>default<!> <!REDECLARATION!>object<!> {
+  <!MANY_COMPANION_OBJECTS!>companion<!> <!REDECLARATION!>object<!> {
     val x = 1
   }
 }
 
 class AA {
-  default object {
+  companion object {
     val x = 1
   }
-  <!MANY_DEFAULT_OBJECTS!>default<!> object A {
+  <!MANY_COMPANION_OBJECTS!>companion<!> object A {
     val x = 1
   }
-    <!MANY_DEFAULT_OBJECTS!>default<!> object AA {
+    <!MANY_COMPANION_OBJECTS!>companion<!> object AA {
     val x = 1
   }
 }
@@ -26,7 +26,7 @@ class B() {
 }
 
 object b {
-  <!DEFAULT_OBJECT_NOT_ALLOWED!>default<!> object {
+  <!COMPANION_OBJECT_NOT_ALLOWED!>companion<!> object {
     val x = 1
   } // error
 }
@@ -35,7 +35,7 @@ val a = A.x
 val c = B.<!UNRESOLVED_REFERENCE!>x<!>
 val d = b.<!UNRESOLVED_REFERENCE!>x<!>
 
-val s = <!NO_DEFAULT_OBJECT!>System<!>  // error
+val s = <!NO_COMPANION_OBJECT!>System<!>  // error
 fun test() {
   System.out.println()
   java.lang.System.out.println()

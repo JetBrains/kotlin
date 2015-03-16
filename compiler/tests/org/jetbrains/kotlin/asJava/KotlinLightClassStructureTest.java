@@ -140,7 +140,7 @@ public abstract class KotlinLightClassStructureTest extends KotlinAsJavaTestBase
         }
 
         public void testInClassObjectActual() throws Exception {
-            checkMethodGenericParameter("test.PlatformStaticClass." + SpecialNames.DEFAULT_NAME_FOR_DEFAULT_OBJECT.asString(), "inClassObject", 0, "T");
+            checkMethodGenericParameter("test.PlatformStaticClass." + SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT.asString(), "inClassObject", 0, "T");
         }
 
         public void testInClass() throws Exception {

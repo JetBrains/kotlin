@@ -8,7 +8,7 @@ fun main(args: Array<String>) {
 class TestClass {
     fun testFun() = 1
 
-    default object {
+    companion object {
         val p = 1
     }
 }

@@ -5,7 +5,7 @@ import kotlin.jvm.*
 class C {
     <!NATIVE_DECLARATION_CANNOT_HAVE_BODY!>native fun foo()<!> {}
 
-    default object {
+    companion object {
         <!NATIVE_DECLARATION_CANNOT_HAVE_BODY!>native fun foo()<!> {}
     }
 }

@@ -1,7 +1,7 @@
 public class ClassObjectField {
     public static void foo() {
-        k.ClassWithClassObject.De<caret>fault.f();
+        k.ClassWithClassObject.Co<caret>mpanion.f();
     }
 }
 
-// REF: default object of (k).ClassWithClassObject
+// REF: companion object of (k).ClassWithClassObject

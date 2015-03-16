@@ -20,7 +20,7 @@ public class X(bar: String? = A.BAR): A() {
         super<A>.foo()
     }
 
-    default object: A() {
+    companion object: A() {
 
     }
 }

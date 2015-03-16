@@ -66,7 +66,7 @@ private class ClassClsStubBuilder(
             supertypeIds
         }
     }
-    private val defaultObjectName = if (classProto.hasDefaultObjectName()) c.nameResolver.getName(classProto.getDefaultObjectName()) else null
+    private val companionObjectName = if (classProto.hasCompanionObjectName()) c.nameResolver.getName(classProto.getCompanionObjectName()) else null
 
     private val classOrObjectStub = createClassOrObjectStubAndModifierListStub()
 
@@ -94,14 +94,14 @@ private class ClassClsStubBuilder(
         val additionalModifiers = when (classKind) {
             ProtoBuf.Class.Kind.ENUM_CLASS -> listOf(JetTokens.ENUM_KEYWORD)
             ProtoBuf.Class.Kind.ANNOTATION_CLASS -> listOf(JetTokens.ANNOTATION_KEYWORD)
-            ProtoBuf.Class.Kind.CLASS_OBJECT -> listOf(JetTokens.DEFAULT_KEYWORD)
+            ProtoBuf.Class.Kind.CLASS_OBJECT -> listOf(JetTokens.COMPANION_KEYWORD)
             else -> listOf<JetModifierKeywordToken>()
         }
         return createModifierListStubForDeclaration(parent, classProto.getFlags(), relevantFlags, additionalModifiers)
     }
 
     private fun doCreateClassOrObjectStub(): StubElement<out PsiElement> {
-        val isDefaultObject = classKind == ProtoBuf.Class.Kind.CLASS_OBJECT
+        val isCompanionObject = classKind == ProtoBuf.Class.Kind.CLASS_OBJECT
         val fqName = outerContext.containerFqName.child(classId.getRelativeClassName().shortName())
         val shortName = fqName.shortName()?.ref()
         val superTypeRefs = supertypeIds.filter {
@@ -113,7 +113,7 @@ private class ClassClsStubBuilder(
                 KotlinObjectStubImpl(
                         parentStub, shortName, fqName, superTypeRefs,
                         isTopLevel = !classId.isNestedClass(),
-                        isDefault = isDefaultObject,
+                        isDefault = isCompanionObject,
                         isLocal = false,
                         isObjectLiteral = false
                 )
@@ -164,19 +164,19 @@ private class ClassClsStubBuilder(
 
     private fun createClassBodyAndMemberStubs() {
         val classBody = KotlinPlaceHolderStubImpl<JetClassBody>(classOrObjectStub, JetStubElementTypes.CLASS_BODY)
-        createDefaultObjectStub(classBody)
+        createCompanionObjectStub(classBody)
         createEnumEntryStubs(classBody)
         createCallableMemberStubs(classBody)
         createInnerAndNestedClasses(classBody)
     }
 
-    private fun createDefaultObjectStub(classBody: KotlinPlaceHolderStubImpl<JetClassBody>) {
-        if (defaultObjectName == null) {
+    private fun createCompanionObjectStub(classBody: KotlinPlaceHolderStubImpl<JetClassBody>) {
+        if (companionObjectName == null) {
             return
         }
 
-        val defaultObjectId = classId.createNestedClassId(defaultObjectName)
-        createNestedClassStub(classBody, defaultObjectId)
+        val companionObjectId = classId.createNestedClassId(companionObjectName)
+        createNestedClassStub(classBody, companionObjectId)
     }
 
     private fun createEnumEntryStubs(classBody: KotlinPlaceHolderStubImpl<JetClassBody>) {
@@ -213,7 +213,7 @@ private class ClassClsStubBuilder(
     private fun createInnerAndNestedClasses(classBody: KotlinPlaceHolderStubImpl<JetClassBody>) {
         classProto.getNestedClassNameList().forEach { id ->
             val nestedClassName = c.nameResolver.getName(id)
-            if (nestedClassName != defaultObjectName) {
+            if (nestedClassName != companionObjectName) {
                 val nestedClassId = classId.createNestedClassId(nestedClassName)
                 createNestedClassStub(classBody, nestedClassId)
             }

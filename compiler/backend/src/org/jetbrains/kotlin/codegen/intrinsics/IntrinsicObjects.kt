@@ -16,17 +16,17 @@
 
 package org.jetbrains.kotlin.codegen.intrinsics
 
-import org.jetbrains.kotlin.backend.common.builtins.DefaultObjectMapping
+import org.jetbrains.kotlin.backend.common.builtins.CompanionObjectMapping
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-public object IntrinsicObjects : DefaultObjectMapping() {
+public object IntrinsicObjects : CompanionObjectMapping() {
     public fun mapType(classDescriptor: ClassDescriptor): FqName? {
         if (!hasMappingToObject(classDescriptor)) return null
 
         val containingDeclaration = classDescriptor.getContainingDeclaration()
-        val name = Name.identifier(containingDeclaration.getName().asString() + "DefaultObject")
+        val name = Name.identifier(containingDeclaration.getName().asString() + "CompanionObject")
         return FqName("kotlin.jvm.internal").child(name)
     }
 }

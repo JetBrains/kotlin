@@ -1,7 +1,7 @@
 var global = 0;
 
 class C {
-  default object {
+  companion object {
       {
         global = 1;
       }

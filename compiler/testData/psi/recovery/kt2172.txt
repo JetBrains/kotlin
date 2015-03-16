@@ -11,7 +11,7 @@ JetFile: kt2172.kt
       PsiWhiteSpace('\n\n    ')
       OBJECT_DECLARATION
         MODIFIER_LIST
-          PsiElement(default)('default')
+          PsiElement(companion)('companion')
         PsiWhiteSpace(' ')
         PsiElement(object)('object')
         PsiWhiteSpace(' ')

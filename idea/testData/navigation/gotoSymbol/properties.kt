@@ -11,7 +11,7 @@ trait SomeTrait {
 class Some() {
   val testInClass = 12
 
-  default object {
+  companion object {
     val testInClassObject = 12
   }
 }
@@ -19,5 +19,5 @@ class Some() {
 // SEARCH_TEXT: test
 // REF: (<root>).testGlobal
 // REF: (Some).testInClass
-// REF: (Some.Default).testInClassObject
+// REF: (Some.Companion).testInClassObject
 // REF: (SomeTrait).testInTrait

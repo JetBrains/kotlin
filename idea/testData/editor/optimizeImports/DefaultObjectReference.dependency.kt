@@ -1,13 +1,13 @@
 package d
 
 class A {
-    default object E {
+    companion object E {
         val c: Int
     }
 }
 
 class B {
-    default object F {
+    companion object F {
         val c: Int
     }
 }

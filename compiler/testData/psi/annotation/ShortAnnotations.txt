@@ -475,7 +475,7 @@ JetFile: ShortAnnotations.kt
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('zoo')
           PsiWhiteSpace(' ')
-          PsiElement(default)('default')
+          PsiElement(companion)('companion')
         PsiWhiteSpace(' ')
         PsiElement(object)('object')
         PsiWhiteSpace(' ')

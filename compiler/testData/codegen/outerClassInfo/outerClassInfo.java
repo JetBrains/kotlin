@@ -4,7 +4,7 @@ import java.lang.Object;
 
 class Foo {
 
-    class Default { }
+    class Companion { }
 
     class InnerClass { }
 

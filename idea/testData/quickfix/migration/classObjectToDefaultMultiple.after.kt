@@ -1,19 +1,19 @@
 // "Replace 'class' keyword with 'default' modifier in whole project" "true"
 
 class A {
-    public default object {
+    public companion object {
 
     }
 }
 
 class B {
-    default object {
+    companion object {
 
     }
 }
 
 class C {
-    default object Named {
+    companion object Named {
 
     }
 }

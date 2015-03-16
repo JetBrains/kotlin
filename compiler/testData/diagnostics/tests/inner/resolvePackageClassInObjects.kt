@@ -1,7 +1,7 @@
 open class PackageTest
 
 class MoreTest() {
-    default object: PackageTest() {
+    companion object: PackageTest() {
 
     }
 

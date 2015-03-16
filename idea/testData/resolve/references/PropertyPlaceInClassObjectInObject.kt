@@ -1,7 +1,7 @@
 package testing
 
 object Testing {
-    default object {
+    companion object {
         <caret>va
     }
 }

@@ -4,7 +4,7 @@
 package testData.libraries
 
 [[public final class WithInnerAndObject() {
-    [[public default object {
+    [[public companion object {
         [internal final fun foo(): kotlin.Unit { /* compiled code */ }]
     }]]
 

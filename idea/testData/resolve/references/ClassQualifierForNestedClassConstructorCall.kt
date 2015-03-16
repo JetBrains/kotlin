@@ -1,7 +1,7 @@
 package t
 
 class A {
-    default object Default {
+    companion object Companion {
 
     }
 

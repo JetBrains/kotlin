@@ -64,7 +64,7 @@ public interface ClassDescriptor extends ClassifierDescriptor, MemberDescriptor,
      * @return nested object declared as 'default' if one is present.
      */
     @Nullable
-    ClassDescriptor getDefaultObjectDescriptor();
+    ClassDescriptor getCompanionObjectDescriptor();
 
     @NotNull
     ClassKind getKind();
@@ -82,7 +82,7 @@ public interface ClassDescriptor extends ClassifierDescriptor, MemberDescriptor,
      */
     boolean isInner();
 
-    boolean isDefaultObject();
+    boolean isCompanionObject();
 
     @NotNull
     ReceiverParameterDescriptor getThisAsReceiverParameter();

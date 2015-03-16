@@ -1,7 +1,7 @@
 package test
 
 class A {
-    default object {
+    companion object {
         annotation class Anno1
 
         class B {
@@ -10,4 +10,4 @@ class A {
     }
 }
 
-A.Default.Anno1 A.Default.B.Anno2 class C
+A.Companion.Anno1 A.Companion.B.Anno2 class C

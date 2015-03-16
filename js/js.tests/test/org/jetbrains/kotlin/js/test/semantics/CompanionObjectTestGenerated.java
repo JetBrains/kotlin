@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/codegen/box/objectIntrinsics")
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
-public class DefaultObjectTestGenerated extends AbstractDefaultObjectTest {
+public class CompanionObjectTestGenerated extends AbstractCompanionObjectTest {
     public void testAllFilesPresentInObjectIntrinsics() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/objectIntrinsics"), Pattern.compile("^(.+)\\.kt$"), true);
     }

@@ -1,7 +1,7 @@
 package kt2247
 
 class B {
-    default object {
+    companion object {
         class Y {
         }
     }

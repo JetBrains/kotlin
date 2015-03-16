@@ -101,7 +101,7 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
 
     @Nullable
     @Override
-    public ClassDescriptor getDefaultObjectDescriptor() {
+    public ClassDescriptor getCompanionObjectDescriptor() {
         return null;
     }
 
@@ -112,7 +112,7 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
     }
 
     @Override
-    public boolean isDefaultObject() {
+    public boolean isCompanionObject() {
         return false;
     }
 

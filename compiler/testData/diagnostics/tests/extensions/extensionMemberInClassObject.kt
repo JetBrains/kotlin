@@ -5,7 +5,7 @@ trait JPAEntityClass<D> {
 }
 
 class Foo {
-    default object : JPAEntityClass<Foo>
+    companion object : JPAEntityClass<Foo>
 }
 
 fun main(args: Array<String>) {

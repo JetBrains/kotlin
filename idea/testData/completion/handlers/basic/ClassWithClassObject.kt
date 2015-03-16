@@ -1,5 +1,5 @@
 class AClass {
-    default object {}
+    companion object {}
 }
 
 fun foo() {

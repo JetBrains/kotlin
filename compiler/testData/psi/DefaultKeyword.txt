@@ -11,7 +11,7 @@ JetFile: DefaultKeyword.kt
       PsiWhiteSpace('\n    ')
       OBJECT_DECLARATION
         MODIFIER_LIST
-          PsiElement(default)('default')
+          PsiElement(companion)('companion')
         PsiWhiteSpace(' ')
         PsiElement(object)('object')
         PsiWhiteSpace(' ')
@@ -32,7 +32,7 @@ JetFile: DefaultKeyword.kt
       PsiWhiteSpace('\n    ')
       OBJECT_DECLARATION
         MODIFIER_LIST
-          PsiElement(default)('default')
+          PsiElement(companion)('companion')
         PsiWhiteSpace(' ')
         PsiElement(object)('object')
       PsiWhiteSpace('\n\n    ')
@@ -66,7 +66,7 @@ JetFile: DefaultKeyword.kt
         MODIFIER_LIST
           PsiElement(public)('public')
           PsiWhiteSpace(' ')
-          PsiElement(default)('default')
+          PsiElement(companion)('companion')
         PsiWhiteSpace(' ')
         PsiElement(object)('object')
         PsiWhiteSpace(' ')
@@ -90,7 +90,7 @@ JetFile: DefaultKeyword.kt
       PsiWhiteSpace('\n    ')
       OBJECT_DECLARATION
         MODIFIER_LIST
-          PsiElement(default)('default')
+          PsiElement(companion)('companion')
         PsiWhiteSpace(' ')
         PsiElement(object)('object')
         PsiWhiteSpace(' ')
@@ -102,7 +102,7 @@ JetFile: DefaultKeyword.kt
           PsiWhiteSpace('\n        ')
           OBJECT_DECLARATION
             MODIFIER_LIST
-              PsiElement(default)('default')
+              PsiElement(companion)('companion')
             PsiWhiteSpace(' ')
             PsiElement(object)('object')
             PsiWhiteSpace(' ')
@@ -117,7 +117,7 @@ JetFile: DefaultKeyword.kt
   PsiWhiteSpace('\n\n')
   OBJECT_DECLARATION
     MODIFIER_LIST
-      PsiElement(default)('default')
+      PsiElement(companion)('companion')
     PsiWhiteSpace(' ')
     PsiElement(object)('object')
     PsiWhiteSpace(' ')
@@ -128,7 +128,7 @@ JetFile: DefaultKeyword.kt
     PsiComment(EOL_COMMENT)('//should be error')
     PsiWhiteSpace('\n')
     MODIFIER_LIST
-      PsiElement(default)('default')
+      PsiElement(companion)('companion')
     PsiWhiteSpace(' ')
     PsiElement(object)('object')
     PsiWhiteSpace(' ')
@@ -151,7 +151,7 @@ JetFile: DefaultKeyword.kt
       PsiWhiteSpace('\n    ')
       OBJECT_DECLARATION
         MODIFIER_LIST
-          PsiElement(default)('default')
+          PsiElement(companion)('companion')
         PsiWhiteSpace(' ')
         PsiElement(object)('object')
       PsiWhiteSpace('\n')
@@ -167,7 +167,7 @@ JetFile: DefaultKeyword.kt
       PsiWhiteSpace('\n    ')
       OBJECT_DECLARATION
         MODIFIER_LIST
-          PsiElement(default)('default')
+          PsiElement(companion)('companion')
         PsiWhiteSpace(' ')
         PsiElement(object)('object')
       PsiWhiteSpace('\n\n    ')
@@ -181,7 +181,7 @@ JetFile: DefaultKeyword.kt
           PsiWhiteSpace('\n        ')
           OBJECT_DECLARATION
             MODIFIER_LIST
-              PsiElement(default)('default')
+              PsiElement(companion)('companion')
             PsiWhiteSpace(' ')
             PsiElement(object)('object')
             PsiWhiteSpace(' ')
@@ -193,7 +193,7 @@ JetFile: DefaultKeyword.kt
               PsiWhiteSpace('\n            ')
               OBJECT_DECLARATION
                 MODIFIER_LIST
-                  PsiElement(default)('default')
+                  PsiElement(companion)('companion')
                 PsiWhiteSpace(' ')
                 PsiElement(object)('object')
               PsiWhiteSpace('\n        ')
@@ -224,7 +224,7 @@ JetFile: DefaultKeyword.kt
       PsiWhiteSpace('\n\n    ')
       OBJECT_DECLARATION
         MODIFIER_LIST
-          PsiElement(default)('default')
+          PsiElement(companion)('companion')
         PsiWhiteSpace(' ')
         PsiElement(object)('object')
       PsiWhiteSpace('\n')
@@ -240,7 +240,7 @@ JetFile: DefaultKeyword.kt
       PsiWhiteSpace('\n    ')
       OBJECT_DECLARATION
         MODIFIER_LIST
-          PsiElement(default)('default')
+          PsiElement(companion)('companion')
         PsiWhiteSpace(' ')
         PsiElement(class)('class')
         PsiWhiteSpace(' ')
@@ -261,7 +261,7 @@ JetFile: DefaultKeyword.kt
       CLASS
         PsiElement(class)('class')
         PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('default')
+        PsiElement(IDENTIFIER)('companion')
       PsiWhiteSpace(' ')
       OBJECT_DECLARATION
         PsiElement(object)('object')
@@ -280,7 +280,7 @@ JetFile: DefaultKeyword.kt
           PsiWhiteSpace('\n    ')
           OBJECT_DECLARATION
             MODIFIER_LIST
-              PsiElement(default)('default')
+              PsiElement(companion)('companion')
               PsiWhiteSpace(' ')
               PsiElement(public)('public')
               PsiWhiteSpace(' ')
@@ -294,7 +294,7 @@ JetFile: DefaultKeyword.kt
         PsiComment(EOL_COMMENT)('//should be error')
         PsiWhiteSpace('\n')
         MODIFIER_LIST
-          PsiElement(default)('default')
+          PsiElement(companion)('companion')
         PsiWhiteSpace(' ')
         PsiElement(class)('class')
         PsiErrorElement:Name expected
@@ -314,7 +314,7 @@ JetFile: DefaultKeyword.kt
         PsiElement(EQ)('=')
         PsiWhiteSpace(' ')
         REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('default')
+          PsiElement(IDENTIFIER)('companion')
         PsiWhiteSpace(' ')
         PsiErrorElement:Property getter or setter expected
           PsiElement(object)('object')
@@ -344,7 +344,7 @@ JetFile: DefaultKeyword.kt
       PsiWhiteSpace('\n\n    ')
       OBJECT_DECLARATION
         MODIFIER_LIST
-          PsiElement(default)('default')
+          PsiElement(companion)('companion')
         PsiWhiteSpace(' ')
         PsiElement(object)('object')
       PsiWhiteSpace('\n')
@@ -371,7 +371,7 @@ JetFile: DefaultKeyword.kt
       PsiWhiteSpace('\n\n    ')
       OBJECT_DECLARATION
         MODIFIER_LIST
-          PsiElement(default)('default')
+          PsiElement(companion)('companion')
         PsiWhiteSpace(' ')
         PsiElement(object)('object')
         PsiWhiteSpace(' ')

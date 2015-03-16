@@ -1,9 +1,9 @@
 class Test {
-    default object {
+    companion object {
         class Some
     }
 }
 
 fun test() {
-    Test.Default.Some
+    Test.Companion.Some
 }

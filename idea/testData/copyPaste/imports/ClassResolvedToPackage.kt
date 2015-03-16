@@ -1,7 +1,7 @@
 package a
 
 class a {
-    default object {
+    companion object {
     }
 }
 

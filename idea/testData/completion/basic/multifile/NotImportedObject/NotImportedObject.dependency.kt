@@ -8,7 +8,7 @@ fun some() {
 }
 
 class Some {
-  default object {
+  companion object {
     object NamedObjectInClassObject
   }
 }

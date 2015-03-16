@@ -45,7 +45,7 @@ public class JetObjectElementType extends JetStubElementType<KotlinObjectStub, J
         FqName fqName = ResolveSessionUtils.safeFqNameForLazyResolve(psi);
         List<String> superNames = PsiUtilPackage.getSuperNames(psi);
         return new KotlinObjectStubImpl(parentStub, StringRef.fromString(name), fqName, Utils.INSTANCE$.wrapStrings(superNames),
-                                        psi.isTopLevel(), psi.isDefault(), psi.isLocal(), psi.isObjectLiteral());
+                                        psi.isTopLevel(), psi.isCompanion(), psi.isLocal(), psi.isObjectLiteral());
     }
 
     @Override

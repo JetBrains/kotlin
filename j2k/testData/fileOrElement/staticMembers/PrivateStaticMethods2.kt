@@ -4,7 +4,7 @@ class A {
         privateStatic2()
     }
 
-    default object {
+    companion object {
 
         public fun publicStatic() {
             privateStatic1()

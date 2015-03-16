@@ -3,7 +3,7 @@ package
 internal fun bar(): E
 internal fun baz(): E
 internal fun foo(): kotlin.Array<E>
-internal fun quux(): E.Default
+internal fun quux(): E.Companion
 
 internal final enum class E : kotlin.Enum<E> {
     public enum entry ENTRY : E {
@@ -24,8 +24,8 @@ internal final enum class E : kotlin.Enum<E> {
     public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    private default object Default {
-        private constructor Default()
+    private companion object Companion {
+        private constructor Companion()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

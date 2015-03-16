@@ -83,7 +83,7 @@ public class DescriptorSerializer {
         ProtoBuf.Class.Builder builder = ProtoBuf.Class.newBuilder();
 
         int flags = Flags.getClassFlags(hasAnnotations(classDescriptor), classDescriptor.getVisibility(), classDescriptor.getModality(),
-                                        classDescriptor.getKind(), classDescriptor.isInner(), classDescriptor.isDefaultObject());
+                                        classDescriptor.getKind(), classDescriptor.isInner(), classDescriptor.isCompanionObject());
         builder.setFlags(flags);
 
         builder.setFqName(getClassId(classDescriptor));
@@ -133,9 +133,9 @@ public class DescriptorSerializer {
             }
         }
 
-        ClassDescriptor defaultObjectDescriptor = classDescriptor.getDefaultObjectDescriptor();
-        if (defaultObjectDescriptor != null) {
-            builder.setDefaultObjectName(stringTable.getSimpleNameIndex(defaultObjectDescriptor.getName()));
+        ClassDescriptor companionObjectDescriptor = classDescriptor.getCompanionObjectDescriptor();
+        if (companionObjectDescriptor != null) {
+            builder.setCompanionObjectName(stringTable.getSimpleNameIndex(companionObjectDescriptor.getName()));
         }
 
         extension.serializeClass(classDescriptor, builder, stringTable);

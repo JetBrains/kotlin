@@ -169,8 +169,8 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
     }
 
     @Override
-    public ClassDescriptor getDefaultObjectDescriptor() {
-        return original.getDefaultObjectDescriptor();
+    public ClassDescriptor getCompanionObjectDescriptor() {
+        return original.getCompanionObjectDescriptor();
     }
 
     @NotNull
@@ -197,8 +197,8 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
     }
 
     @Override
-    public boolean isDefaultObject() {
-        return original.isDefaultObject();
+    public boolean isCompanionObject() {
+        return original.isCompanionObject();
     }
 
     @Override

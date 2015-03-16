@@ -1,8 +1,8 @@
 class Foo {
-  default object {
+  companion object {
   }
 }
 
 // TESTED_OBJECT_KIND: function
-// TESTED_OBJECTS: Foo$Default, <init>
+// TESTED_OBJECTS: Foo$Companion, <init>
 // FLAGS: ACC_PRIVATE

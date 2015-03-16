@@ -16,22 +16,22 @@
 
 package kotlin.js.internal
 
-private object DoubleDefaultObject : FloatingPointConstants<Double> {
+private object DoubleCompanionObject : FloatingPointConstants<Double> {
     override val POSITIVE_INFINITY: Double = js("Number.POSITIVE_INFINITY")
     override val NEGATIVE_INFINITY: Double = js("Number.NEGATIVE_INFINITY")
     override val NaN: Double = js("Number.NaN")
 }
 
-private object FloatDefaultObject : FloatingPointConstants<Float> {
+private object FloatCompanionObject : FloatingPointConstants<Float> {
     override val POSITIVE_INFINITY : Float = js("Number.POSITIVE_INFINITY")
     override val NEGATIVE_INFINITY : Float = js("Number.NEGATIVE_INFINITY")
     override val NaN : Float = js("Number.NaN")
 }
 
-private object IntDefaultObject {}
-private object LongDefaultObject {}
-private object ShortDefaultObject {}
-private object ByteDefaultObject {}
+private object IntCompanionObject {}
+private object LongCompanionObject {}
+private object ShortCompanionObject {}
+private object ByteCompanionObject {}
 
-private object StringDefaultObject {}
-private object EnumDefaultObject {}
+private object StringCompanionObject {}
+private object EnumCompanionObject {}

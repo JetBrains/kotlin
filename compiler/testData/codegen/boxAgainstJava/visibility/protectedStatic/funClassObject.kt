@@ -1,5 +1,5 @@
 class A {
-  default object: funClassObject() {
+  companion object: funClassObject() {
     fun test(): String {
       return funClassObject.protectedFun()!!
     }

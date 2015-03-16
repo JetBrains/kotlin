@@ -1,17 +1,17 @@
 package t
 
 class A {
-    default object Default {
+    companion object Companion {
 
     }
 }
 
-fun A.Default.foo() {}
+fun A.Companion.foo() {}
 
 fun test() {
     <caret>A.foo()
 }
 
 
-// REF: default object of (t).A
+// REF: companion object of (t).A
 

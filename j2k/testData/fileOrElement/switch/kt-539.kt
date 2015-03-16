@@ -1,7 +1,7 @@
 package switch_demo
 
 public class SwitchDemo {
-    default object {
+    companion object {
         public fun main(args: Array<String>) {
 
             val month = 8

@@ -2,7 +2,7 @@
 package test
 
 class TestFirst {
-  default object {
+  companion object {
     fun testing(a: InnerClass) = 45
     fun testing(a: NotInnerClass) = 45
   }

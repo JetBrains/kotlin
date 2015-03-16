@@ -121,9 +121,9 @@ public class OverloadResolver {
             return name;
         }
         if (jetClass instanceof JetObjectDeclaration) {
-            // must be default object
+            // must be companion object
             name = classDescriptor.getContainingDeclaration().getName().asString();
-            return "default object " + name;
+            return "companion object " + name;
         }
         // safe
         return "<unknown>";

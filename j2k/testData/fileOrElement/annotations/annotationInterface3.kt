@@ -6,7 +6,7 @@ annotation class Anon(public val value: String) {
         B
     }
 
-    default object {
+    companion object {
 
         public val field: E = E.A
     }
@@ -14,7 +14,7 @@ annotation class Anon(public val value: String) {
 
 Anon("a")
 trait I {
-    default object {
+    companion object {
         public val e: Anon.E = Anon.field
     }
 }

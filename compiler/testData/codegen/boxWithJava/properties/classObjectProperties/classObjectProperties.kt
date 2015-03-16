@@ -1,17 +1,17 @@
 class Klass {
-    default object {
+    companion object {
         val NAME = "Klass"
     }
 }
 
 trait Trait {
-    default object {
+    companion object {
         val NAME = "Trait"
     }
 }
 
 enum class Enoom {
-    default object {
+    companion object {
         val NAME = "Enoom"
     }
 }

@@ -19,12 +19,12 @@ package org.jetbrains.kotlin.resolve.scopes
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 
 /**
- * Members of the default object are accessible from the class.
- * Scope lazily delegates requests to default object scope.
+ * Members of the companion object are accessible from the class.
+ * Scope lazily delegates requests to companion object scope.
  */
-public class DefaultObjectMixinScope(private val defaultObjectDescriptor: ClassDescriptor) : AbstractScopeAdapter() {
+public class CompanionObjectMixinScope(private val companionObjectDescriptor: ClassDescriptor) : AbstractScopeAdapter() {
     override val workerScope: JetScope
-        get() = defaultObjectDescriptor.getDefaultType().getMemberScope()
+        get() = companionObjectDescriptor.getDefaultType().getMemberScope()
 
-    override fun getImplicitReceiversHierarchy() = listOf(defaultObjectDescriptor.getThisAsReceiverParameter())
+    override fun getImplicitReceiversHierarchy() = listOf(companionObjectDescriptor.getThisAsReceiverParameter())
 }

@@ -3,7 +3,7 @@ import java.util.IdentityHashMap
 class A {
     var foo: Int by IntHandler
 
-    default object {
+    companion object {
         var bar: Any? by AnyHandler
     }
 }

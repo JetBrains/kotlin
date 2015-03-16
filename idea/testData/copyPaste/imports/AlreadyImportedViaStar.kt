@@ -40,7 +40,7 @@ class Outer {
 }
 
 class ClassObject {
-    default object {
+    companion object {
     }
 }
 

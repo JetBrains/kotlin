@@ -3,7 +3,7 @@ package test
 import kotlin.platform.platformStatic
 
 class A {
-    default object {
+    companion object {
         [platformStatic] val b: String = "OK"
 
         var A.c: String

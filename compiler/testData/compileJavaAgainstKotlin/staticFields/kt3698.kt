@@ -1,7 +1,7 @@
 package test
 
 class KotlinClass {
-    default object {
+    companion object {
         val FOO: Int = 10
     }
 }

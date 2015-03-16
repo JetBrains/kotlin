@@ -1,5 +1,5 @@
 class Foo private(val param: String = "OK") {
-    default object {
+    companion object {
         val s = Foo()
     }
 }

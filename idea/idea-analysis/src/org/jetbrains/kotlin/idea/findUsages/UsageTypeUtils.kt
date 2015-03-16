@@ -209,8 +209,8 @@ public object UsageTypeUtils {
         return when (descriptor) {
             is ClassifierDescriptor -> when {
             // Treat object accesses as variables to simulate the old behaviour (when variables were created for objects)
-                DescriptorUtils.isNonDefaultObject(descriptor), DescriptorUtils.isEnumEntry(descriptor) -> getVariableUsageType()
-                DescriptorUtils.isDefaultObject(descriptor) -> DEFAULT_OBJECT_ACCESS
+                DescriptorUtils.isNonCompanionObject(descriptor), DescriptorUtils.isEnumEntry(descriptor) -> getVariableUsageType()
+                DescriptorUtils.isCompanionObject(descriptor) -> COMPANION_OBJECT_ACCESS
                 else -> getClassUsageType()
             }
             is PackageViewDescriptor -> {
@@ -232,7 +232,7 @@ enum class UsageTypeEnum {
     TYPE_DEFINITION
     IS
     CLASS_OBJECT_ACCESS
-    DEFAULT_OBJECT_ACCESS
+    COMPANION_OBJECT_ACCESS
     EXTENSION_RECEIVER_TYPE
     SUPER_TYPE_QUALIFIER
 

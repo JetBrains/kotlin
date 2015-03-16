@@ -391,10 +391,10 @@ public object PositioningStrategies {
         }
     }
 
-    public val DEFAULT_OBJECT: PositioningStrategy<JetObjectDeclaration> = object : PositioningStrategy<JetObjectDeclaration>() {
+    public val COMPANION_OBJECT: PositioningStrategy<JetObjectDeclaration> = object : PositioningStrategy<JetObjectDeclaration>() {
         override fun mark(element: JetObjectDeclaration): List<TextRange> {
-            if (element.hasModifier(JetTokens.DEFAULT_KEYWORD)) {
-                return modifierSetPosition(JetTokens.DEFAULT_KEYWORD).mark(element)
+            if (element.hasModifier(JetTokens.COMPANION_KEYWORD)) {
+                return modifierSetPosition(JetTokens.COMPANION_KEYWORD).mark(element)
             }
             return DEFAULT.mark(element)
         }

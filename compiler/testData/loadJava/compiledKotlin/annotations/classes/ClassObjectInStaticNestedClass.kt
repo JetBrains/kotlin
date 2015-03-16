@@ -3,7 +3,7 @@ package test
 
 class A {
     class B {
-        default object {
+        companion object {
             val TEST = 1
         }
     }

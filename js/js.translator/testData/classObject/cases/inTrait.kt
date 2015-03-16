@@ -1,7 +1,7 @@
 package foo
 
 trait A {
-    default object {
+    companion object {
         val OK: String = "OK"
     }
 }

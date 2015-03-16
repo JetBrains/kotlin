@@ -7,7 +7,7 @@ class KClient {
         packageFun("")
     }
 
-    default object {
+    companion object {
         val a = packageFun("")
     }
 

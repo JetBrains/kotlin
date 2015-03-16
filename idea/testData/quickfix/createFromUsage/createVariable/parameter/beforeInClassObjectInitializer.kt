@@ -5,7 +5,7 @@
 // ERROR: Unresolved reference: foo
 
 class A {
-    default object {
+    companion object {
         init {
             val t: Int = <caret>foo
         }

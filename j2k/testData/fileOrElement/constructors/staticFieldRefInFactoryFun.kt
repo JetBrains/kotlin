@@ -4,7 +4,7 @@ class C() {
         System.out.println(staticField1 + C.staticField2)
     }
 
-    default object {
+    companion object {
         private val staticField1 = 0
         private val staticField2 = 0
     }

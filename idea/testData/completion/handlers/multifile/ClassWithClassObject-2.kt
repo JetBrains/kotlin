@@ -3,7 +3,7 @@ package pack
 class KtClass {
     fun foo(){}
 
-    default object {
+    companion object {
         fun staticFoo(){}
     }
 }

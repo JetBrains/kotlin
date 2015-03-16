@@ -1,7 +1,7 @@
 class C() {
     fun getInstance(): Runnable = C
 
-    default object: Runnable {
+    companion object: Runnable {
         override fun run(): Unit {
         }
     }

@@ -109,8 +109,8 @@ public final class Byte : kotlin.Number, kotlin.Comparable<kotlin.Byte> {
     public open override /*1*/ fun toLong(): kotlin.Long
     public open override /*1*/ fun toShort(): kotlin.Short
 
-    public default object Default {
-        /*primary*/ private constructor Default()
+    public companion object Companion {
+        /*primary*/ private constructor Companion()
     }
 }
 
@@ -171,8 +171,8 @@ public final class ByteRange : kotlin.Range<kotlin.Byte>, kotlin.Progression<kot
     public open override /*1*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ fun iterator(): kotlin.ByteIterator
 
-    public default object Default {
-        /*primary*/ private constructor Default()
+    public companion object Companion {
+        /*primary*/ private constructor Companion()
         public final val EMPTY: kotlin.ByteRange
             public final fun <get-EMPTY>(): kotlin.ByteRange
     }
@@ -231,8 +231,8 @@ public final class Char : kotlin.Comparable<kotlin.Char> {
     public open fun toLong(): kotlin.Long
     public open fun toShort(): kotlin.Short
 
-    public default object Default {
-        /*primary*/ private constructor Default()
+    public companion object Companion {
+        /*primary*/ private constructor Companion()
     }
 }
 
@@ -293,8 +293,8 @@ public final class CharRange : kotlin.Range<kotlin.Char>, kotlin.Progression<kot
     public open override /*1*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ fun iterator(): kotlin.CharIterator
 
-    public default object Default {
-        /*primary*/ private constructor Default()
+    public companion object Companion {
+        /*primary*/ private constructor Companion()
         public final val EMPTY: kotlin.CharRange
             public final fun <get-EMPTY>(): kotlin.CharRange
     }
@@ -385,8 +385,8 @@ public final class Double : kotlin.Number, kotlin.Comparable<kotlin.Double> {
     public open override /*1*/ fun toLong(): kotlin.Long
     public open override /*1*/ fun toShort(): kotlin.Short
 
-    public default object Default : kotlin.FloatingPointConstants<kotlin.Double> {
-        /*primary*/ private constructor Default()
+    public companion object Companion : kotlin.FloatingPointConstants<kotlin.Double> {
+        /*primary*/ private constructor Companion()
         public abstract override /*1*/ /*fake_override*/ val NEGATIVE_INFINITY: kotlin.Double
             public abstract override /*1*/ /*fake_override*/ fun <get-NEGATIVE_INFINITY>(): kotlin.Double
         public abstract override /*1*/ /*fake_override*/ val NaN: kotlin.Double
@@ -450,8 +450,8 @@ public final class DoubleRange : kotlin.Range<kotlin.Double>, kotlin.Progression
     public open override /*1*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ fun iterator(): kotlin.DoubleIterator
 
-    public default object Default {
-        /*primary*/ private constructor Default()
+    public companion object Companion {
+        /*primary*/ private constructor Companion()
         public final val EMPTY: kotlin.DoubleRange
             public final fun <get-EMPTY>(): kotlin.DoubleRange
     }
@@ -463,8 +463,8 @@ public abstract class Enum</*0*/ E : kotlin.Enum<E>> : kotlin.Comparable<E> {
     public final fun name(): kotlin.String
     public final fun ordinal(): kotlin.Int
 
-    public default object Default {
-        /*primary*/ private constructor Default()
+    public companion object Companion {
+        /*primary*/ private constructor Companion()
     }
 }
 
@@ -623,8 +623,8 @@ public final class Float : kotlin.Number, kotlin.Comparable<kotlin.Float> {
     public open override /*1*/ fun toLong(): kotlin.Long
     public open override /*1*/ fun toShort(): kotlin.Short
 
-    public default object Default : kotlin.FloatingPointConstants<kotlin.Float> {
-        /*primary*/ private constructor Default()
+    public companion object Companion : kotlin.FloatingPointConstants<kotlin.Float> {
+        /*primary*/ private constructor Companion()
         public abstract override /*1*/ /*fake_override*/ val NEGATIVE_INFINITY: kotlin.Float
             public abstract override /*1*/ /*fake_override*/ fun <get-NEGATIVE_INFINITY>(): kotlin.Float
         public abstract override /*1*/ /*fake_override*/ val NaN: kotlin.Float
@@ -688,8 +688,8 @@ public final class FloatRange : kotlin.Range<kotlin.Float>, kotlin.Progression<k
     public open override /*1*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ fun iterator(): kotlin.FloatIterator
 
-    public default object Default {
-        /*primary*/ private constructor Default()
+    public companion object Companion {
+        /*primary*/ private constructor Companion()
         public final val EMPTY: kotlin.FloatRange
             public final fun <get-EMPTY>(): kotlin.FloatRange
     }
@@ -916,8 +916,8 @@ public final class Int : kotlin.Number, kotlin.Comparable<kotlin.Int> {
     public final fun ushr(/*0*/ bits: kotlin.Int): kotlin.Int
     public final fun xor(/*0*/ other: kotlin.Int): kotlin.Int
 
-    public default object Default {
-        /*primary*/ private constructor Default()
+    public companion object Companion {
+        /*primary*/ private constructor Companion()
     }
 }
 
@@ -978,8 +978,8 @@ public final class IntRange : kotlin.Range<kotlin.Int>, kotlin.Progression<kotli
     public open override /*1*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ fun iterator(): kotlin.IntIterator
 
-    public default object Default {
-        /*primary*/ private constructor Default()
+    public companion object Companion {
+        /*primary*/ private constructor Companion()
         public final val EMPTY: kotlin.IntRange
             public final fun <get-EMPTY>(): kotlin.IntRange
     }
@@ -1087,8 +1087,8 @@ public final class Long : kotlin.Number, kotlin.Comparable<kotlin.Long> {
     public final fun ushr(/*0*/ bits: kotlin.Int): kotlin.Long
     public final fun xor(/*0*/ other: kotlin.Long): kotlin.Long
 
-    public default object Default {
-        /*primary*/ private constructor Default()
+    public companion object Companion {
+        /*primary*/ private constructor Companion()
     }
 }
 
@@ -1149,8 +1149,8 @@ public final class LongRange : kotlin.Range<kotlin.Long>, kotlin.Progression<kot
     public open override /*1*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ fun iterator(): kotlin.LongIterator
 
-    public default object Default {
-        /*primary*/ private constructor Default()
+    public companion object Companion {
+        /*primary*/ private constructor Companion()
         public final val EMPTY: kotlin.LongRange
             public final fun <get-EMPTY>(): kotlin.LongRange
     }
@@ -1383,8 +1383,8 @@ public final class Short : kotlin.Number, kotlin.Comparable<kotlin.Short> {
     public open override /*1*/ fun toLong(): kotlin.Long
     public open override /*1*/ fun toShort(): kotlin.Short
 
-    public default object Default {
-        /*primary*/ private constructor Default()
+    public companion object Companion {
+        /*primary*/ private constructor Companion()
     }
 }
 
@@ -1445,8 +1445,8 @@ public final class ShortRange : kotlin.Range<kotlin.Short>, kotlin.Progression<k
     public open override /*1*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ fun iterator(): kotlin.ShortIterator
 
-    public default object Default {
-        /*primary*/ private constructor Default()
+    public companion object Companion {
+        /*primary*/ private constructor Companion()
         public final val EMPTY: kotlin.ShortRange
             public final fun <get-EMPTY>(): kotlin.ShortRange
     }
@@ -1461,8 +1461,8 @@ public final class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequenc
     public final fun plus(/*0*/ other: kotlin.Any?): kotlin.String
     public open override /*1*/ fun subSequence(/*0*/ start: kotlin.Int, /*1*/ end: kotlin.Int): kotlin.CharSequence
 
-    public default object Default {
-        /*primary*/ private constructor Default()
+    public companion object Companion {
+        /*primary*/ private constructor Companion()
     }
 }
 

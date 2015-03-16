@@ -1,5 +1,5 @@
 class Test {
-  default object {
+  companion object {
     public var prop: Int = 0
       set(i : Int) {
         $prop = i
@@ -12,5 +12,5 @@ class Test {
 // FLAGS: ACC_STATIC, ACC_PRIVATE
 
 // TESTED_OBJECT_KIND: property
-// TESTED_OBJECTS: Test$Default, prop
+// TESTED_OBJECTS: Test$Companion, prop
 // ABSENT: TRUE

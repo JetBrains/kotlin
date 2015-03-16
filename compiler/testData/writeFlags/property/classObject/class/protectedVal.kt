@@ -1,5 +1,5 @@
 class Test {
-  default object {
+  companion object {
     protected val prop: Int = 0;
   }
 }
@@ -9,5 +9,5 @@ class Test {
 // FLAGS: ACC_STATIC, ACC_PROTECTED, ACC_FINAL
 
 // TESTED_OBJECT_KIND: property
-// TESTED_OBJECTS: Test$Default, prop
+// TESTED_OBJECTS: Test$Companion, prop
 // ABSENT: TRUE

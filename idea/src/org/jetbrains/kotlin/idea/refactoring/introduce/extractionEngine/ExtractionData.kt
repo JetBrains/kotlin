@@ -152,7 +152,7 @@ data class ExtractionData(
             if (parent is JetQualifiedExpression && parent.getSelectorExpression() == ref) {
                 val receiverDescriptor =
                         (originalResolveResult.resolvedCall?.getDispatchReceiver() as? ThisReceiver)?.getDeclarationDescriptor()
-                if (!DescriptorUtils.isDefaultObject(receiverDescriptor) && parent.getReceiverExpression() !is JetSuperExpression) continue
+                if (!DescriptorUtils.isCompanionObject(receiverDescriptor) && parent.getReceiverExpression() !is JetSuperExpression) continue
             }
             // Skip P in type references like 'P.Q'
             if (parent is JetUserType && (parent.getParent() as? JetUserType)?.getQualifier() == parent) continue

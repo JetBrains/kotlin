@@ -17,7 +17,7 @@ class F {
     fun f4() {
     }
 
-    default object {
+    companion object {
 
         //c1
 

@@ -5,7 +5,7 @@ class A {
         i = 10
     }
 
-    default object {
+    companion object {
 
         fun getByte(): Byte {
             return 0

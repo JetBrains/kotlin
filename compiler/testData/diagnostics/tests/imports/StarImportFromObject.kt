@@ -30,7 +30,7 @@ class A {
         object J
     }
 
-    default object CO {
+    companion object CO {
         object H
     }
 }

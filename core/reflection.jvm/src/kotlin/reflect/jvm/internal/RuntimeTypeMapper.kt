@@ -59,10 +59,10 @@ object RuntimeTypeMapper : JavaToKotlinClassMapBuilder() {
         kotlinFqNameToJvmDesc[DescriptorUtils.getFqNameSafe(kotlinDescriptor)] = jvmDesc
         jvmDescToKotlinClassId[jvmDesc] = kotlinDescriptor.classId
 
-        val defaultObject = kotlinDescriptor.getDefaultObjectDescriptor()
-        if (defaultObject != null) {
+        val companionObject = kotlinDescriptor.getCompanionObjectDescriptor()
+        if (companionObject != null) {
             // TODO: see org.jetbrains.kotlin.codegen.intrinsics.IntrinsicObjects, extract that logic to core/
-            recordMapping(defaultObject, "Lkotlin/jvm/internal/${kotlinDescriptor.getName().asString()}DefaultObject;")
+            recordMapping(companionObject, "Lkotlin/jvm/internal/${kotlinDescriptor.getName().asString()}CompanionObject;")
         }
     }
 

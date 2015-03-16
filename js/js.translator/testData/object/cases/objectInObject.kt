@@ -14,7 +14,7 @@ object B {
 }
 
 class C {
-    default object {
+    companion object {
         fun ov() = "d"
     }
     object query {

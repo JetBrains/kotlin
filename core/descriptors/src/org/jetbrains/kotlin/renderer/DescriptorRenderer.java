@@ -53,7 +53,7 @@ public interface DescriptorRenderer extends Renderer<DeclarationDescriptor> {
             .setWithoutTypeParameters(true)
             .setWithoutFunctionParameterNames(true)
             .setReceiverAfterName(true)
-            .setRenderDefaultObjectName(true)
+            .setRenderCompanionObjectName(true)
             .setWithoutSuperTypes(true)
             .setStartFromName(true).build();
 
@@ -78,7 +78,7 @@ public interface DescriptorRenderer extends Renderer<DeclarationDescriptor> {
     DescriptorRenderer HTML_NAMES_WITH_SHORT_TYPES = new DescriptorRendererBuilder()
             .setWithDefinedIn(false)
             .setNameShortness(NameShortness.SHORT)
-            .setRenderDefaultObjectName(true)
+            .setRenderCompanionObjectName(true)
             .setTextFormat(TextFormat.HTML).build();
 
     DescriptorRenderer HTML = new DescriptorRendererBuilder().setTextFormat(TextFormat.HTML).build();

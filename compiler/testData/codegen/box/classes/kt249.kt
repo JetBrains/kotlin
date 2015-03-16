@@ -1,13 +1,13 @@
 package x
 
 class Outer() {
-    default object {
+    companion object {
         class Inner() {
         }
     }
 }
 
 fun box (): String {
-    val inner = Outer.Default.Inner()
+    val inner = Outer.Companion.Inner()
     return "OK"
 }

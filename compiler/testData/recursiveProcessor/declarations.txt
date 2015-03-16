@@ -5,16 +5,16 @@ Class.classFunc:SimpleFunctionDescriptor
 Class.classProp:PropertyDescriptor
 Class.this:ReceiverParameterDescriptor
 Class:ClassDescriptorWithResolutionScopes
-Default.<get-classObjProp>:PropertyGetterDescriptor
-Default.<init>():ConstructorDescriptor
-Default.<init>():ConstructorDescriptor
-Default.classObjFunc:SimpleFunctionDescriptor
-Default.classObjProp:PropertyDescriptor
-Default.nestedClassObjFunc:SimpleFunctionDescriptor
-Default.this:ReceiverParameterDescriptor
-Default.this:ReceiverParameterDescriptor
-Default:ClassDescriptorWithResolutionScopes
-Default:ClassDescriptorWithResolutionScopes
+Companion.<get-classObjProp>:PropertyGetterDescriptor
+Companion.<init>():ConstructorDescriptor
+Companion.<init>():ConstructorDescriptor
+Companion.classObjFunc:SimpleFunctionDescriptor
+Companion.classObjProp:PropertyDescriptor
+Companion.nestedClassObjFunc:SimpleFunctionDescriptor
+Companion.this:ReceiverParameterDescriptor
+Companion.this:ReceiverParameterDescriptor
+Companion:ClassDescriptorWithResolutionScopes
+Companion:ClassDescriptorWithResolutionScopes
 NestedClass.<init>():ConstructorDescriptor
 NestedClass.this:ReceiverParameterDescriptor
 NestedClass:ClassDescriptorWithResolutionScopes
@@ -50,12 +50,12 @@ fake Class.hashCode:DeserializedCallableMemberDescriptor
 fake Class.toString:DeserializedCallableMemberDescriptor
 fake Class.traitFunc:SimpleFunctionDescriptor
 fake Class.traitProp:PropertyDescriptor
-fake Default.equals:DeserializedCallableMemberDescriptor
-fake Default.equals:DeserializedCallableMemberDescriptor
-fake Default.hashCode:DeserializedCallableMemberDescriptor
-fake Default.hashCode:DeserializedCallableMemberDescriptor
-fake Default.toString:DeserializedCallableMemberDescriptor
-fake Default.toString:DeserializedCallableMemberDescriptor
+fake Companion.equals:DeserializedCallableMemberDescriptor
+fake Companion.equals:DeserializedCallableMemberDescriptor
+fake Companion.hashCode:DeserializedCallableMemberDescriptor
+fake Companion.hashCode:DeserializedCallableMemberDescriptor
+fake Companion.toString:DeserializedCallableMemberDescriptor
+fake Companion.toString:DeserializedCallableMemberDescriptor
 fake NestedClass.equals:DeserializedCallableMemberDescriptor
 fake NestedClass.hashCode:DeserializedCallableMemberDescriptor
 fake NestedClass.toString:DeserializedCallableMemberDescriptor

@@ -5,7 +5,7 @@ native fun foo()
 class C {
     native fun foo()
 
-    default object {
+    companion object {
         native fun foo()
     }
 }

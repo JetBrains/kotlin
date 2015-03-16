@@ -1,13 +1,13 @@
 package test
 
 class A {
-    object <!REDECLARATION!>Default<!>
+    object <!REDECLARATION!>Companion<!>
 
-    default <!REDECLARATION!>object<!>
+    companion <!REDECLARATION!>object<!>
 }
 
 class B {
-    default object <!REDECLARATION!>Named<!>
+    companion object <!REDECLARATION!>Named<!>
 
     object <!REDECLARATION!>Named<!>
 }
@@ -15,5 +15,5 @@ class B {
 class C {
     class <!REDECLARATION!>Named<!>
 
-    default object <!REDECLARATION!>Named<!>
+    companion object <!REDECLARATION!>Named<!>
 }

@@ -15,21 +15,21 @@ fun A.B.test() {
 }
 
 class C {
-    default object {
+    companion object {
         class D {
             class Nested
         }
     }
 }
 
-fun C.Default.D.text() {
+fun C.Companion.D.text() {
     Nested()
     ::Nested
 }
 
 class E {
     class F {
-        default object
+        companion object
     }
 }
 

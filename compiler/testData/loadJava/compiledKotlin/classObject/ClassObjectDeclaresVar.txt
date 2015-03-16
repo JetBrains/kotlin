@@ -3,8 +3,8 @@ package test
 internal final class ClassObjectDeclaresProperty {
     /*primary*/ public constructor ClassObjectDeclaresProperty()
 
-    internal default object Default {
-        /*primary*/ private constructor Default()
+    internal companion object Companion {
+        /*primary*/ private constructor Companion()
         internal final var s: kotlin.String
             internal final fun <get-s>(): kotlin.String
             internal final fun <set-s>(/*0*/ <set-?>: kotlin.String): kotlin.Unit

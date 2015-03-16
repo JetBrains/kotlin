@@ -220,12 +220,12 @@ public class JetClass extends JetTypeParameterListOwnerStub<KotlinClassStub> imp
     }
 
     @NotNull
-    public List<JetObjectDeclaration> getDefaultObjects() {
+    public List<JetObjectDeclaration> getCompanionObjects() {
         JetClassBody body = getBody();
         if (body == null) {
             return Collections.emptyList();
         }
-        return body.getAllDefaultObjects();
+        return body.getAllCompanionObjects();
     }
 
     public boolean hasPrimaryConstructor() {

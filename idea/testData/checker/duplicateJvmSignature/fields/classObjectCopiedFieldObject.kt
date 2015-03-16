@@ -1,19 +1,19 @@
 class B {
-    default object <error>A</error> {
+    companion object <error>A</error> {
     }
 
     val <error>A</error> = this
 }
 
 class C {
-    default <error>object A</error> {
+    companion <error>object A</error> {
         <error>val A</error> = this
     }
 
 }
 
 class D {
-    default <error>object A</error> {
+    companion <error>object A</error> {
         <error>val `OBJECT$`</error> = this
     }
 

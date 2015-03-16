@@ -7,7 +7,7 @@ class A {
         f()
     }</selection>
 
-    default object {
+    companion object {
         fun f()
     }
 }

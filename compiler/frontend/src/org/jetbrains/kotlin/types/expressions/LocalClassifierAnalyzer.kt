@@ -180,7 +180,7 @@ class DeclarationScopeProviderForLocalClassifierAnalyzer(
     }
 
     override fun getOuterDataFlowInfoForDeclaration(elementOfDeclaration: PsiElement): DataFlowInfo {
-        // nested (non-inner) classes and default objects are forbidden in local classes, so it's enough to be simply inside the class
+        // nested (non-inner) classes and companion objects are forbidden in local classes, so it's enough to be simply inside the class
         if (localClassDescriptorManager.insideMyClass(elementOfDeclaration)) {
             return localClassDescriptorManager.expressionTypingContext.dataFlowInfo
         }

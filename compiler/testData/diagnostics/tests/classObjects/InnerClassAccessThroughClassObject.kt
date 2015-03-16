@@ -5,7 +5,7 @@ class A {
     inner class Inner
 
 
-    default object {
+    companion object {
 
         class Nested2
 
@@ -28,20 +28,20 @@ object O {
 fun f() {
     A.c
     A.hashCode()
-    A().<!NO_DEFAULT_OBJECT, NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>Nested<!>
+    A().<!NO_COMPANION_OBJECT, NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>Nested<!>
     A.Nested()
     A().Inner()
-    A.Default.<!UNRESOLVED_REFERENCE!>Nested<!>
-    A.Default.<!UNRESOLVED_REFERENCE!>Inner<!>
+    A.Companion.<!UNRESOLVED_REFERENCE!>Nested<!>
+    A.Companion.<!UNRESOLVED_REFERENCE!>Inner<!>
     A.<!UNRESOLVED_REFERENCE!>Inner<!>
-    A.Default.c
-    A.Default.Obj2
-    A.Default.Obj2.c
+    A.Companion.c
+    A.Companion.Obj2
+    A.Companion.Obj2.c
 
-    A.Default.Nested2()
-    A.Default.c
+    A.Companion.Nested2()
+    A.Companion.c
     A.Obj
-    A.Default.Obj2
+    A.Companion.Obj2
     A.<!UNRESOLVED_REFERENCE!>Obj2<!>
     A.<!UNRESOLVED_REFERENCE!>Obj2<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>c<!>
     A.<!UNRESOLVED_REFERENCE!>Nested2<!>
