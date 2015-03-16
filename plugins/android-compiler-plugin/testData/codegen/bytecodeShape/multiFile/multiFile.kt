@@ -9,8 +9,9 @@ class MyActivity: Activity() {
     val button1 = this.loginButton
 }
 
-// 2 GETSTATIC
-// 6 INVOKEVIRTUAL
-// 3 CHECKCAST
-// 3  _\$_findCachedViewById
-// 1 findViewById
+// 1 public _\$_findCachedViewById
+// 1 public _\$_clearFindViewByIdCache
+// 1 GETSTATIC com/myapp/R\$id\.login : I
+// 1 GETSTATIC com/myapp/R\$id\.loginButton : I
+// 2 INVOKEVIRTUAL com/myapp/MyActivity\._\$_findCachedViewById
+// 2 CHECKCAST android/widget/Button

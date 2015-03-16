@@ -8,9 +8,8 @@ fun Fragment.a() {
     val y = this.login
 }
 
-// 2 GETSTATIC
-// 4 INVOKEVIRTUAL
-// 2 CHECKCAST
+// 2 GETSTATIC com/myapp/R\$id\.login
+// 2 CHECKCAST android/widget/Button
+// 2 INVOKEVIRTUAL android/app/Fragment\.getView
+// 2 INVOKEVIRTUAL android/view/View\.findViewById
 // 0  _\$_findCachedViewById
-// 2 findViewById
-// 2 getView
