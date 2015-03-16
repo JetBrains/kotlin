@@ -346,6 +346,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/extractFunction/basic"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("callWithPlatformTypeReceiver.kt")
+            public void testCallWithPlatformTypeReceiver() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/callWithPlatformTypeReceiver.kt");
+                doExtractFunctionTest(fileName);
+            }
+
             @TestMetadata("delegatingFunction.kt")
             public void testDelegatingFunction() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/delegatingFunction.kt");
