@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.debugger.evaluate
 
+import com.intellij.debugger.DebuggerBundle
 import com.intellij.debugger.SourcePosition
 import com.intellij.debugger.engine.SuspendContext
 import com.intellij.debugger.engine.evaluation.EvaluateException
@@ -24,6 +25,7 @@ import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
 import com.intellij.debugger.engine.evaluation.expression.*
 import com.intellij.openapi.diagnostic.Attachment
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.CharsetToolkit
 import com.intellij.psi.JavaPsiFacade
@@ -32,6 +34,7 @@ import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.impl.PsiFileFactoryImpl
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.testFramework.LightVirtualFile
+import com.intellij.util.ExceptionUtil
 import com.sun.jdi.*
 import com.sun.jdi.request.EventRequest
 import org.jetbrains.eval4j.*
@@ -133,12 +136,17 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
         catch(e: EvaluateException) {
             throw e
         }
+        catch(e: ProcessCanceledException) {
+            exception(e)
+        }
+        catch(e: VMDisconnectedException) {
+            exception(DebuggerBundle.message("error.vm.disconnected"))
+        }
         catch (e: Exception) {
-            logger.error("Couldn't evaluate expression:\n" +
-                         "FILE NAME: ${sourcePosition.getFile().getName()}\n" +
-                         "BREAKPOINT LINE: ${sourcePosition.getLine()}\n" +
-                         "CODE FRAGMENT:\n${codeFragment.getText()}\n" +
-                         "FILE TEXT: \n${sourcePosition.getFile().getText()}\n", e)
+            val attachments = array(attachmentByPsiFile(sourcePosition.getFile()),
+                                    attachmentByPsiFile(codeFragment),
+                                    Attachment("breakpoint.info", "line: ${sourcePosition.getLine()}"))
+            logger.error("Couldn't evaluate expression:\n" + ExceptionUtil.getThrowableText(e), mergeAttachments(*attachments))
 
             val cause = if (e.getMessage() != null) ": ${e.getMessage()}" else ""
             exception("An exception occurs during Evaluate Expression Action $cause")

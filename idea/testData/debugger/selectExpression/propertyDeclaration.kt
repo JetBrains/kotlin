@@ -1,3 +1,3 @@
 val <caret>a = 1
 
-// EXPECTED: null
+// EXPECTED: a

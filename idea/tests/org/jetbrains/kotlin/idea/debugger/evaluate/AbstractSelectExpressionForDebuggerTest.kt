@@ -39,7 +39,12 @@ public abstract class AbstractSelectExpressionForDebuggerTest : LightCodeInsight
         val selectedExpression = KotlinEditorTextProvider.findExpressionInner(elementAt, allowMethodCalls)
 
         val expected = InTextDirectivesUtils.findStringWithPrefixes(myFixture.getFile()?.getText()!!, "// EXPECTED: ")
-        Assert.assertEquals("Another expression should be selected", expected, selectedExpression?.getText() ?: "null")
+        val actualResult = if (selectedExpression != null)
+            KotlinEditorTextProvider.getElementInfo(selectedExpression) { it.getText() }
+        else
+            "null"
+
+        Assert.assertEquals("Another expression should be selected", expected, actualResult)
     }
 
     override fun getTestDataPath() = PluginTestCaseBase.getTestDataPathBase() + "/debugger/selectExpression";
