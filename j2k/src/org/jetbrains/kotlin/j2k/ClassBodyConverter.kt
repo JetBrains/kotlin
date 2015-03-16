@@ -81,7 +81,6 @@ class ClassBodyConverter(private val psiClass: PsiClass,
 
         val members = ArrayList<Member>()
         val defaultObjectMembers = ArrayList<Member>()
-        val factoryFunctions = ArrayList<FactoryFunction>()
         var primaryConstructorSignature: PrimaryConstructorSignature? = null
         for ((psiMember, member) in convertedMembers) {
             if (member is PrimaryConstructor) {
@@ -89,11 +88,7 @@ class ClassBodyConverter(private val psiClass: PsiClass,
                 primaryConstructorSignature = member.createSignature(converter)
                 members.add(member.initializer())
             }
-            else if (member is FactoryFunction) {
-                factoryFunctions.add(member)
-            }
-            else if (useDefaultObject
-                     && (if (member is Class) shouldGenerateIntoDefaultObject(member) else psiMember.hasModifierProperty(PsiModifier.STATIC))) {
+            else if (useDefaultObject && member !is Class && psiMember.hasModifierProperty(PsiModifier.STATIC)) {
                 defaultObjectMembers.add(member)
             }
             else {
@@ -101,11 +96,19 @@ class ClassBodyConverter(private val psiClass: PsiClass,
             }
         }
 
+        if (primaryConstructorSignature != null
+            && primaryConstructorSignature!!.annotations.isEmpty
+            && primaryConstructorSignature!!.accessModifier == null
+            && primaryConstructorSignature!!.parameterList.parameters.isEmpty()
+            && members.none { it is SecondaryConstructor }
+        ) {
+            primaryConstructorSignature = null // no "()" after class name is needed in this case
+        }
+
         val lBrace = LBrace().assignPrototype(psiClass.getLBrace())
         val rBrace = RBrace().assignPrototype(psiClass.getRBrace())
-        val classBody = ClassBody(primaryConstructorSignature, constructorConverter?.baseClassParams ?: listOf(), members, defaultObjectMembers, factoryFunctions, lBrace, rBrace)
 
-        return if (constructorConverter != null) constructorConverter.postProcessConstructors(classBody) else classBody
+        return ClassBody(primaryConstructorSignature, constructorConverter?.baseClassParams ?: listOf(), members, defaultObjectMembers, lBrace, rBrace)
     }
 
     private fun Converter.convertMember(member: PsiMember,
@@ -124,8 +127,6 @@ class ClassBodyConverter(private val psiClass: PsiClass,
     private fun shouldGenerateDefaultObject(convertedMembers: Map<PsiMember, Member>): Boolean {
         if (psiClass.isEnum()) return false
 
-        if (convertedMembers.values().any { it is Class && shouldGenerateIntoDefaultObject(it) }) return true
-
         val members = convertedMembers.keySet().filter { !it.isConstructor() }
         val defaultObjectMembers = members.filter { it !is PsiClass && it.hasModifierProperty(PsiModifier.STATIC) }
         val nestedClasses = members.filterIsInstance<PsiClass>().filter { it.hasModifierProperty(PsiModifier.STATIC) }
@@ -136,10 +137,6 @@ class ClassBodyConverter(private val psiClass: PsiClass,
             return true
         }
     }
-
-    // we generate nested classes with factory functions into default object as a workaround until secondary constructors supported by Kotlin
-    private fun shouldGenerateIntoDefaultObject(nestedClass: Class)
-            = !nestedClass.modifiers.contains(Modifier.INNER) && nestedClass.body.factoryFunctions.isNotEmpty()
 
     private fun processAccessorsToDrop() {
         val fieldToGetterInfo = HashMap<PsiField, AccessorInfo>()

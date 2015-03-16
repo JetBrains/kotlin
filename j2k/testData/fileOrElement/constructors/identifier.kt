@@ -1,27 +1,23 @@
-// ERROR: 'public fun Identifier(name: kotlin.String, isNullable: kotlin.Boolean): Identifier' is already defined in root package
-// ERROR: 'public constructor Identifier(name: kotlin.String, myHasDollar: kotlin.Boolean)' is already defined in root package
-// ERROR: Overload resolution ambiguity:  public fun Identifier(name: kotlin.String, isNullable: kotlin.Boolean): Identifier defined in root package public constructor Identifier(name: kotlin.String, myHasDollar: kotlin.Boolean) defined in Identifier
-// ERROR: Overload resolution ambiguity:  public fun Identifier(name: kotlin.String, isNullable: kotlin.Boolean): Identifier defined in root package public constructor Identifier(name: kotlin.String, myHasDollar: kotlin.Boolean) defined in Identifier
-// ERROR: Overload resolution ambiguity:  public fun Identifier(name: kotlin.String, isNullable: kotlin.Boolean): Identifier defined in root package public constructor Identifier(name: kotlin.String, myHasDollar: kotlin.Boolean) defined in Identifier
-// ERROR: Overload resolution ambiguity:  public fun Identifier(name: kotlin.String, isNullable: kotlin.Boolean): Identifier defined in root package public constructor Identifier(name: kotlin.String, myHasDollar: kotlin.Boolean) defined in Identifier
-public fun Identifier(name: String): Identifier {
-    return Identifier(name, false)
-}
-
-public fun Identifier(name: String, isNullable: Boolean): Identifier {
-    val __ = Identifier(name, false)
-    __.myNullable = isNullable
-    return __
-}
-
-public fun Identifier(name: String, hasDollar: Boolean, isNullable: Boolean): Identifier {
-    val __ = Identifier(name, hasDollar)
-    __.myNullable = isNullable
-    return __
-}
-
-public class Identifier(public val name: String, private val myHasDollar: Boolean) {
+// ERROR: Property must be initialized or be abstract
+public class Identifier {
+    public val name: String
+    private val myHasDollar: Boolean
     private var myNullable = true
+
+    public constructor(name: String) {
+        this.name = name
+    }
+
+    public constructor(name: String, isNullable: Boolean) {
+        this.name = name
+        myNullable = isNullable
+    }
+
+    public constructor(name: String, hasDollar: Boolean, isNullable: Boolean) {
+        this.name = name
+        myHasDollar = hasDollar
+        myNullable = isNullable
+    }
 }
 
 public class User {

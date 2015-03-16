@@ -209,11 +209,14 @@ class Converter private(
                               annotationConverter.convertAnnotationMethodDefault(method)).assignPrototype(method, noBlankLinesInheritance)
                 }
         val parameterList = ParameterList(parameters).assignNoPrototype()
-        val constructorSignature = PrimaryConstructorSignature(Annotations.Empty, Modifiers.Empty, parameterList).assignNoPrototype()
+        val constructorSignature = if (parameterList.parameters.isNotEmpty())
+            PrimaryConstructorSignature(Annotations.Empty, Modifiers.Empty, parameterList).assignNoPrototype()
+        else
+            null
 
         // to convert fields and nested types - they are not allowed in Kotlin but we convert them and let user refactor code
         var classBody = ClassBodyConverter(psiClass, this, false).convertBody()
-        classBody = ClassBody(constructorSignature, classBody.baseClassParams, classBody.members, classBody.defaultObjectMembers, listOf(), classBody.lBrace, classBody.rBrace)
+        classBody = ClassBody(constructorSignature, classBody.baseClassParams, classBody.members, classBody.defaultObjectMembers, classBody.lBrace, classBody.rBrace)
 
         val annotationAnnotation = Annotation(Identifier("annotation").assignNoPrototype(), listOf(), false, false).assignNoPrototype()
         return Class(psiClass.declarationIdentifier(),

@@ -1,63 +1,52 @@
 class Outer {
+    private inner class Inner1() {
 
-    private fun Inner1(a: Int): Inner1 {
-        return Inner1()
+        public constructor(a: Int) : this() {
+        }
+
+        protected constructor(c: Char) : this() {
+        }
+
+        private constructor(b: Boolean) : this() {
+        }
     }
 
-    private fun Inner1(c: Char): Inner1 {
-        return Inner1()
+    protected inner class Inner2() {
+
+        public constructor(a: Int) : this() {
+        }
+
+        protected constructor(c: Char) : this() {
+        }
+
+        private constructor(b: Boolean) : this() {
+        }
+
     }
 
-    private fun Inner1(b: Boolean): Inner1 {
-        return Inner1()
+    inner class Inner3() {
+
+        public constructor(a: Int) : this() {
+        }
+
+        protected constructor(c: Char) : this() {
+        }
+
+        private constructor(b: Boolean) : this() {
+        }
     }
 
-    private inner class Inner1
+    public inner class Inner4() {
 
+        public constructor(a: Int) : this() {
+        }
 
-    protected fun Inner2(a: Int): Inner2 {
-        return Inner2()
+        protected constructor(c: Char) : this() {
+        }
+
+        private constructor(b: Boolean) : this() {
+        }
     }
-
-    protected fun Inner2(c: Char): Inner2 {
-        return Inner2()
-    }
-
-    private fun Inner2(b: Boolean): Inner2 {
-        return Inner2()
-    }
-
-    protected inner class Inner2
-
-
-    fun Inner3(a: Int): Inner3 {
-        return Inner3()
-    }
-
-    fun Inner3(c: Char): Inner3 {
-        return Inner3()
-    }
-
-    private fun Inner3(b: Boolean): Inner3 {
-        return Inner3()
-    }
-
-    inner class Inner3
-
-
-    public fun Inner4(a: Int): Inner4 {
-        return Inner4()
-    }
-
-    public fun Inner4(c: Char): Inner4 {
-        return Inner4()
-    }
-
-    private fun Inner4(b: Boolean): Inner4 {
-        return Inner4()
-    }
-
-    public inner class Inner4
 
     fun foo() {
         val inner1 = Inner1(1)

@@ -1,20 +1,15 @@
-fun C(arg1: Int, arg2: Int, arg3: Int): C {
-    return C()
-}
+class C {
+    constructor(arg1: Int, arg2: Int, arg3: Int) {
+    }
 
-fun C(arg1: Int, arg2: Int): C {
-    val __ = C(arg1, arg2, 0)
-    System.out.println()
-    return __
-}
+    constructor(arg1: Int, arg2: Int) : this(arg1, arg2, 0) {
+        System.out.println()
+    }
 
-fun C(arg: Int): C {
-    val __ = C()
-    System.out.println(arg)
-    return __
+    constructor(arg: Int) {
+        System.out.println(arg)
+    }
 }
-
-class C
 
 public class User {
     default object {
