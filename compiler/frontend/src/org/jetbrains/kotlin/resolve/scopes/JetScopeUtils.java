@@ -19,12 +19,17 @@ package org.jetbrains.kotlin.resolve.scopes;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
-import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor;
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
+import org.jetbrains.kotlin.analyzer.AnalysisResult;
+import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.psi.JetClassBody;
+import org.jetbrains.kotlin.psi.JetClassOrObject;
+import org.jetbrains.kotlin.psi.JetExpression;
+import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.TraceBasedRedeclarationHandler;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
@@ -150,5 +155,26 @@ public final class JetScopeUtils {
             scope.printScopeStructure(p);
         }
         return out.toString();
+    }
+
+    @Nullable
+    public static JetScope getResolutionScope(@NotNull JetExpression expression, @NotNull AnalysisResult analysisResult) {
+        PsiElement parent = expression.getParent();
+
+        if (parent instanceof JetClassBody) {
+            JetClassOrObject classOrObject = (JetClassOrObject) parent.getParent();
+            ClassDescriptor classDescriptor = analysisResult.getBindingContext().get(BindingContext.CLASS, classOrObject);
+            if (classDescriptor instanceof ClassDescriptorWithResolutionScopes) {
+                return ((ClassDescriptorWithResolutionScopes) classDescriptor).getScopeForMemberDeclarationResolution();
+            }
+            return null;
+        }
+
+        if (parent instanceof JetFile) {
+            PackageViewDescriptor packageView = analysisResult.getModuleDescriptor().getPackage(((JetFile) parent).getPackageFqName());
+            return packageView != null ? packageView.getMemberScope() : null;
+        }
+
+        return analysisResult.getBindingContext().get(BindingContext.RESOLUTION_SCOPE, expression);
     }
 }
