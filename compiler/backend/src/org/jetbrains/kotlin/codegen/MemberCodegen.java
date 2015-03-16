@@ -138,7 +138,7 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
         writeInnerClasses();
 
         if (sourceMapper != null) {
-            SourceMapper.Default.flushToClassBuilder(sourceMapper, v);
+            SourceMapper.OBJECT$.flushToClassBuilder(sourceMapper, v);
         }
 
         v.done();
@@ -517,7 +517,7 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
     @NotNull
     public SourceMapper getOrCreateSourceMapper() {
         if (sourceMapper == null) {
-            sourceMapper = new DefaultSourceMapper(SourceInfo.Default.createInfo(element, getClassName()), null);
+            sourceMapper = new DefaultSourceMapper(SourceInfo.OBJECT$.createInfo(element, getClassName()), null);
         }
         return sourceMapper;
     }

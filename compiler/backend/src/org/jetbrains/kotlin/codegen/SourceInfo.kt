@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.psi.JetNamedFunction
 
 data public class SourceInfo(val source: String, val pathOrCleanFQN: String, val linesInFile: Int) {
 
-    default  object {
+    class object {
         fun createInfo(element: JetElement?, internalClassName: String): SourceInfo {
             assert(element != null) { "Couldn't create source mapper for null element " + internalClassName }
             val lineNumbers = CodegenUtil.getLineNumberForElement(element!!.getContainingFile(), true)

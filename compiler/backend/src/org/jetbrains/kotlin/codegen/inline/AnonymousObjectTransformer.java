@@ -190,7 +190,7 @@ public class AnonymousObjectTransformer {
 
         result.addAllClassesToRemove(constructorResult);
 
-        SourceMapper.Default.flushToClassBuilder(sourceMapper, classBuilder);
+        SourceMapper.OBJECT$.flushToClassBuilder(sourceMapper, classBuilder);
 
         classBuilder.done();
 
