@@ -33,9 +33,8 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.actions.JetAddImportAction
-import org.jetbrains.kotlin.idea.caches.JetShortNamesCache
-import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
 import org.jetbrains.kotlin.idea.core.isVisible
 import org.jetbrains.kotlin.idea.core.psiClassToDescriptor
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
@@ -141,7 +140,12 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
         val indicesHelper = KotlinIndicesHelper(file.getProject(), resolutionFacade, bindingContext, searchScope, moduleDescriptor, ::isVisible)
 
         if (!element.isImportDirectiveExpression() && !JetPsiUtil.isSelectorInQualified(element)) {
-            getClasses(referenceName, file, searchScope).filterTo(result, ::isVisible)
+            if (ProjectStructureUtil.isJsKotlinModule(file)) {
+                result.addAll(indicesHelper.getClassDescriptors({ it == referenceName }, { true }))
+            }
+            else {
+                getClasses(referenceName, file, searchScope).filterTo(result, ::isVisible)
+            }
             result.addAll(indicesHelper.getTopLevelCallablesByName(referenceName))
         }
 
@@ -156,13 +160,7 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
             .filterNotNull()
             .toSet()
 
-    private fun getShortNamesCache(jetFile: JetFile): PsiShortNamesCache {
-        // if we are in JS module, do not include non-kotlin classes
-        return if (ProjectStructureUtil.isJsKotlinModule(jetFile))
-            JetShortNamesCache.getKotlinInstance(jetFile.getProject())
-        else
-            PsiShortNamesCache.getInstance(jetFile.getProject())
-    }
+    private fun getShortNamesCache(jetFile: JetFile): PsiShortNamesCache = PsiShortNamesCache.getInstance(jetFile.getProject())
 
     companion object {
         private val ERRORS = setOf(Errors.UNRESOLVED_REFERENCE, Errors.UNRESOLVED_REFERENCE_WRONG_RECEIVER)
