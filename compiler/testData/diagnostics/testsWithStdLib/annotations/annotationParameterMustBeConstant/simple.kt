@@ -21,7 +21,7 @@ class MyClass {
     val i = 1
 }
 
-val ia: IntArray = intArray(1, 2)
-val sa: Array<String> = array("a", "b")
+val ia: IntArray = intArrayOf(1, 2)
+val sa: Array<String> = arrayOf("a", "b")
 
 annotation class Ann2

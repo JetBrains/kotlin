@@ -14,7 +14,7 @@ ann3(a.b.c.A.IAnn())
 
 annJavaClass(kotlin.javaClass<A>())
 
-annArray(kotlin.array("a"))
+annArray(kotlin.arrayOf("a"))
 fun test() = 1
 
 annotation class ann1(val p: deprecated = kotlin.deprecated("aaa"))
@@ -23,7 +23,7 @@ annotation class ann3(val p: A.IAnn = A.IAnn(), val p2: A.IAnn = a.b.c.A.IAnn())
 
 annotation class annJavaClass(val p: Class<*> = kotlin.javaClass<A>())
 
-annotation class annArray(val p: Array<String> = kotlin.array("a"))
+annotation class annArray(val p: Array<String> = kotlin.arrayOf("a"))
 
 class A {
     annotation class IAnn

@@ -6,7 +6,7 @@ public @interface A {
 
 // FILE: b.kt
 
-A(arg = array(javaClass<String>(), javaClass<Int>())) class MyClass1
+A(arg = arrayOf(javaClass<String>(), javaClass<Int>())) class MyClass1
 
-A(arg = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>array<!>(javaClass<String>(), Int::class)) class MyClass2
-A(arg = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>array<!>(String::class, javaClass<Int>())) class MyClass3
+A(arg = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>arrayOf<!>(javaClass<String>(), Int::class)) class MyClass2
+A(arg = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>arrayOf<!>(String::class, javaClass<Int>())) class MyClass3

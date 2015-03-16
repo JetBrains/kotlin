@@ -9,7 +9,7 @@ class A2
 
 Ann1(A1::class)
 Ann2(A1::class, A2::class)
-Ann3(array(A1::class, A2::class))
+Ann3(arrayOf(A1::class, A2::class))
 class MyClass1
 
 Ann1(<!ANNOTATION_PARAMETER_MUST_BE_CONST!><!UNRESOLVED_REFERENCE!>A3<!>::class<!>)

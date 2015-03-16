@@ -5,5 +5,5 @@ public class A {
 
 // FILE: 1.kt
 fun main(args: Array<String>) {
-    A.main(array())
+    A.main(arrayOf())
 }

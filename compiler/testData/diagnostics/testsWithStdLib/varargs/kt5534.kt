@@ -1,5 +1,5 @@
 fun test() {
-    val p: Array<String> = array("a")
+    val p: Array<String> = arrayOf("a")
     foo(*p)
 }
 

@@ -91,6 +91,19 @@ public interface DescriptorRenderer extends Renderer<DeclarationDescriptor> {
             .setNameShortness(NameShortness.SHORT)
             .setTextFormat(TextFormat.HTML).build();
 
+    DescriptorRenderer DEPRECATION = new DescriptorRendererBuilder()
+            .setWithDefinedIn(false)
+            .setModifiers()
+            .setNameShortness(NameShortness.SHORT)
+            .setWithoutTypeParameters(false)
+            .setParameterNameRenderingPolicy(ParameterNameRenderingPolicy.NONE)
+            .setReceiverAfterName(false)
+            .setRenderCompanionObjectName(true)
+            .setRenderAccessors(true)
+            .setWithoutSuperTypes(true)
+            .setRenderDefaultValues(false)
+            .setStartFromName(true).build();
+
     @NotNull
     String renderType(@NotNull JetType type);
 

@@ -1,0 +1,29 @@
+package
+
+internal fun fn(): kotlin.Unit
+internal fun literals(): kotlin.Unit
+internal fun PropertyHolder.extFunction(): kotlin.Unit
+
+internal final class Delegate {
+    public constructor Delegate()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    kotlin.deprecated(value = "text": kotlin.String) internal final fun get(/*0*/ instance: kotlin.Any, /*1*/ property: kotlin.PropertyMetadata): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    kotlin.deprecated(value = "text": kotlin.String) internal final fun set(/*0*/ instance: kotlin.Any, /*1*/ property: kotlin.PropertyMetadata, /*2*/ value: kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class PropertyHolder {
+    public constructor PropertyHolder()
+    kotlin.deprecated(value = "text": kotlin.String) internal final var name: kotlin.String
+    public final val test1: kotlin.String = ""
+    public final var test2: kotlin.String
+    public final var test3: kotlin.String
+    public final var test4: kotlin.String
+    internal final val valDelegate: kotlin.Int
+    internal final var varDelegate: kotlin.Int
+    kotlin.deprecated(value = "text": kotlin.String) internal final val x: kotlin.Int = 1
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

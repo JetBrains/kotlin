@@ -1,0 +1,28 @@
+package
+
+internal fun first(): kotlin.Unit
+internal fun useCompanion(): kotlin.Unit
+internal fun useObject(): kotlin.Unit
+
+internal final class Another {
+    public constructor Another()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    kotlin.deprecated(value = "Object": kotlin.String) internal companion object Companion {
+        private constructor Companion()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        internal final fun use(): kotlin.Unit
+    }
+}
+
+kotlin.deprecated(value = "Object": kotlin.String) internal object Obsolete {
+    private constructor Obsolete()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    internal final fun use(): kotlin.Unit
+}

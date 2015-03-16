@@ -8,7 +8,7 @@ public @interface A {
 
 [A("4")] fun test2() {}
 
-[A(*array("5", "6"), "7")] fun test3() {}
+[A(*arrayOf("5", "6"), "7")] fun test3() {}
 
 [A()] fun test4() {}
 

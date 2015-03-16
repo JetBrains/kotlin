@@ -1,0 +1,53 @@
+package
+
+kotlin.deprecated(value = "message": kotlin.String) internal fun Obsolete(/*0*/ param: kotlin.Int = ...): UsefulClass
+internal fun block(): kotlin.Unit
+internal fun expression(): UsefulClass
+internal fun invoker(): kotlin.Unit
+internal fun reflection(): [ERROR : Error function type]
+internal fun reflection2(): [ERROR : Error function type]
+kotlin.deprecated(value = "does nothing good": kotlin.String) internal fun kotlin.Any.doNothing(): kotlin.String
+
+internal final class Delegation {
+    public constructor Delegation()
+    internal final val x: kotlin.Int
+    internal final var y: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class Initializer {
+    public constructor Initializer()
+    internal final val x: UsefulClass
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class Invocable {
+    public constructor Invocable()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    kotlin.deprecated(value = "message": kotlin.String) internal final fun invoke(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal object InvocableHolder {
+    private constructor InvocableHolder()
+    internal final val invocable: Invocable
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class UsefulClass {
+    public constructor UsefulClass(/*0*/ param: kotlin.Int = ...)
+    internal final val param: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal final fun get(/*0*/ instance: kotlin.Any, /*1*/ property: kotlin.PropertyMetadata): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    kotlin.deprecated(value = "message": kotlin.String) internal final fun member(): kotlin.Unit
+    internal final fun set(/*0*/ instance: kotlin.Any, /*1*/ property: kotlin.PropertyMetadata, /*2*/ value: kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

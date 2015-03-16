@@ -35,18 +35,18 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
+import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
+import org.jetbrains.kotlin.idea.kdoc.KDocHighlightingVisitor
+import org.jetbrains.kotlin.idea.quickfix.QuickFixes
+import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.psi.JetCodeFragment
 import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.JetParameter
 import org.jetbrains.kotlin.psi.JetReferenceExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
-import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
-import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
-import org.jetbrains.kotlin.idea.caches.resolve.*
-import org.jetbrains.kotlin.idea.quickfix.QuickFixes
 import kotlin.platform.platformStatic
-import org.jetbrains.kotlin.idea.kdoc.KDocHighlightingVisitor
-import org.jetbrains.kotlin.psi.JetParameter
 
 public open class JetPsiChecker : Annotator, HighlightRangeExtension {
 
@@ -149,7 +149,12 @@ public open class JetPsiChecker : Annotator, HighlightRangeExtension {
                     for (textRange in textRanges) {
                         val annotation = holder.createWarningAnnotation(textRange, getDefaultMessage(diagnostic))
 
-                        if (factory == Errors.DEPRECATED_CLASS_OBJECT_SYNTAX) annotation.setTextAttributes(CodeInsightColors.DEPRECATED_ATTRIBUTES)
+                        when (factory) {
+                            Errors.DEPRECATED_CLASS_OBJECT_SYNTAX,
+                            Errors.DEPRECATED_SYMBOL,
+                            Errors.DEPRECATED_SYMBOL_WITH_MESSAGE
+                            -> annotation.setTextAttributes(CodeInsightColors.DEPRECATED_ATTRIBUTES)
+                        }
 
                         setUpAnnotation(diagnostic, annotation, if (factory in Errors.UNUSED_ELEMENT_DIAGNOSTICS)
                             ProblemHighlightType.LIKE_UNUSED_SYMBOL
@@ -242,8 +247,8 @@ public open class JetPsiChecker : Annotator, HighlightRangeExtension {
                 PropertiesHighlightingVisitor(holder, bindingContext),
                 FunctionsHighlightingVisitor(holder, bindingContext),
                 VariablesHighlightingVisitor(holder, bindingContext),
-                TypeKindHighlightingVisitor(holder, bindingContext),
-                DeprecatedAnnotationVisitor(holder, bindingContext)
+                TypeKindHighlightingVisitor(holder, bindingContext)//,
+                //DeprecatedAnnotationVisitor(holder, bindingContext)
         )
 
     }

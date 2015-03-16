@@ -3490,6 +3490,75 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             }
         }
 
+        @TestMetadata("compiler/testData/diagnostics/tests/deprecated")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Deprecated extends AbstractJetDiagnosticsTest {
+            public void testAllFilesPresentInDeprecated() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/deprecated"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("annotationUsage.kt")
+            public void testAnnotationUsage() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/deprecated/annotationUsage.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("componentUsage.kt")
+            public void testComponentUsage() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/deprecated/componentUsage.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("functionUsage.kt")
+            public void testFunctionUsage() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/deprecated/functionUsage.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("imports.kt")
+            public void testImports() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/deprecated/imports.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("iteratorUsage.kt")
+            public void testIteratorUsage() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/deprecated/iteratorUsage.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("javaDeprecated.kt")
+            public void testJavaDeprecated() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/deprecated/javaDeprecated.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nestedTypesUsage.kt")
+            public void testNestedTypesUsage() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/deprecated/nestedTypesUsage.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("objectUsage.kt")
+            public void testObjectUsage() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/deprecated/objectUsage.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("propertyUsage.kt")
+            public void testPropertyUsage() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/deprecated/propertyUsage.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("typeUsage.kt")
+            public void testTypeUsage() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/deprecated/typeUsage.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/diagnostics/tests/duplicateJvmSignature")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

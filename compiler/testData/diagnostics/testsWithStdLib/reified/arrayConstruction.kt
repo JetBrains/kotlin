@@ -8,10 +8,10 @@ fun <T> fail2(): Array<T> = ok1 { <!TYPE_PARAMETER_AS_REIFIED!>Array<!><T>(1) { 
 fun <T> ok3(block: () -> Array<T>): Array<T> = ok1 { block() }
 inline fun <reified T> ok4(): Array<T> = ok1 { Array<T>(1) { null!! } }
 
-fun <T> fail3(block: () -> T): Pair<Array<T>, Array<T>> = Pair(<!TYPE_PARAMETER_AS_REIFIED!>array<!>(
-        block()), <!TYPE_PARAMETER_AS_REIFIED!>array<!>()
+fun <T> fail3(block: () -> T): Pair<Array<T>, Array<T>> = Pair(<!TYPE_PARAMETER_AS_REIFIED!>arrayOf<!>(
+        block()), <!TYPE_PARAMETER_AS_REIFIED!>arrayOf<!>()
 )
 inline fun <reified T> ok5(block: () -> T): Pair<Array<T>, Array<T>> = Pair(
-        array(block()), array()
+        arrayOf(block()), arrayOf()
 )
 

@@ -217,6 +217,9 @@ public interface Errors {
 
     DiagnosticFactory0<JetObjectDeclaration> DEPRECATED_CLASS_OBJECT_SYNTAX = DiagnosticFactory0.create(WARNING);
 
+    DiagnosticFactory1<PsiElement, DeclarationDescriptor> DEPRECATED_SYMBOL = DiagnosticFactory1.create(WARNING);
+    DiagnosticFactory2<PsiElement, DeclarationDescriptor, String> DEPRECATED_SYMBOL_WITH_MESSAGE = DiagnosticFactory2.create(WARNING);
+
     // Objects
 
     DiagnosticFactory1<JetObjectDeclaration, ClassDescriptor> LOCAL_OBJECT_NOT_ALLOWED = DiagnosticFactory1.create(ERROR, DECLARATION_NAME);

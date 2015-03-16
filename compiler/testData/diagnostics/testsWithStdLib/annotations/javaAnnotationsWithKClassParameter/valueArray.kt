@@ -5,5 +5,5 @@ public @interface A {
 
 // FILE: b.kt
 A(String::class, Int::class) class MyClass1
-A(*array(String::class, Int::class)) class MyClass2
-A(value = *array(String::class, Int::class)) class MyClass3
+A(*arrayOf(String::class, Int::class)) class MyClass2
+A(value = *arrayOf(String::class, Int::class)) class MyClass3

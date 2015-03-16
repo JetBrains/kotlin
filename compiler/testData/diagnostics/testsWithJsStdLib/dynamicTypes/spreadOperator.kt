@@ -1,5 +1,5 @@
 fun test(d: dynamic) {
-    val a = array(1, 2, 3)
+    val a = arrayOf(1, 2, 3)
 
     d.foo(*d)
     d.foo(*a)

@@ -4,4 +4,4 @@ public @interface A {
 }
 
 // FILE: b.kt
-A(arg = array(String::class, Int::class)) class MyClass
+A(arg = arrayOf(String::class, Int::class)) class MyClass

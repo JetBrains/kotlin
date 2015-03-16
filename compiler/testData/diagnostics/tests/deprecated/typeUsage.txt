@@ -1,0 +1,73 @@
+package
+
+internal fun </*0*/ T : Obsolete> constraint(): kotlin.Unit
+internal fun funcParamParam(/*0*/ param: (Obsolete) -> kotlin.Unit): kotlin.Unit
+internal fun funcParamReceiver(/*0*/ param: Obsolete.() -> kotlin.Unit): kotlin.Unit
+internal fun funcParamRetVal(/*0*/ param: () -> Obsolete): kotlin.Unit
+internal fun nullableRetVal(): Obsolete?
+internal fun param(/*0*/ param: Obsolete): kotlin.Unit
+internal fun retVal(): Obsolete
+internal fun Obsolete.receiver(): kotlin.Unit
+
+internal open class Derived : Obsolete {
+    public constructor Derived()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    internal final override /*1*/ /*fake_override*/ fun use(): kotlin.Unit
+}
+
+internal final class Derived2 : Derived {
+    public constructor Derived2()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    internal final override /*1*/ /*fake_override*/ fun use(): kotlin.Unit
+}
+
+internal trait Generic</*0*/ T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal object Object : Obsolete {
+    private constructor Object()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    internal final override /*1*/ /*fake_override*/ fun use(): kotlin.Unit
+}
+
+kotlin.deprecated(value = "Class": kotlin.String) internal open class Obsolete {
+    public constructor Obsolete()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    internal final fun use(): kotlin.Unit
+}
+
+kotlin.deprecated(value = "Class": kotlin.String) internal open class Obsolete2 {
+    kotlin.deprecated(value = "Constructor": kotlin.String) public constructor Obsolete2()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    internal final fun use(): kotlin.Unit
+}
+
+internal final class Properties {
+    public constructor Properties()
+    internal final var n: Obsolete
+    internal final val x: Obsolete
+    internal final var y: Obsolete
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class TypeParam : Generic<Obsolete> {
+    public constructor TypeParam()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
