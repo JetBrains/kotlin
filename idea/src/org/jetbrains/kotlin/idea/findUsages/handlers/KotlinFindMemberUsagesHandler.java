@@ -39,19 +39,16 @@ import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchReques
 import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearch;
 import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchHelper;
 import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchRequest;
-import org.jetbrains.kotlin.psi.JetNamedDeclaration;
-import org.jetbrains.kotlin.psi.JetNamedFunction;
-import org.jetbrains.kotlin.psi.JetParameter;
-import org.jetbrains.kotlin.psi.JetProperty;
+import org.jetbrains.kotlin.psi.*;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 
 public abstract class KotlinFindMemberUsagesHandler<T extends JetNamedDeclaration> extends KotlinFindUsagesHandler<T> {
-    private static class Function extends KotlinFindMemberUsagesHandler<JetNamedFunction> {
+    private static class Function extends KotlinFindMemberUsagesHandler<JetFunction> {
         public Function(
-                @NotNull JetNamedFunction declaration,
+                @NotNull JetFunction declaration,
                 @NotNull Collection<? extends PsiElement> elementsToSearch,
                 @NotNull KotlinFindUsagesHandlerFactory factory
         ) {
@@ -59,7 +56,7 @@ public abstract class KotlinFindMemberUsagesHandler<T extends JetNamedDeclaratio
         }
 
         @Override
-        protected UsagesSearchHelper<JetNamedFunction> getSearchHelper(KotlinCallableFindUsagesOptions options) {
+        protected UsagesSearchHelper<JetFunction> getSearchHelper(KotlinCallableFindUsagesOptions options) {
             return FindUsagesPackage.toHelper((KotlinFunctionFindUsagesOptions) options);
         }
 
@@ -124,8 +121,8 @@ public abstract class KotlinFindMemberUsagesHandler<T extends JetNamedDeclaratio
     protected abstract UsagesSearchHelper<T> getSearchHelper(KotlinCallableFindUsagesOptions options);
 
     private static Iterable<PsiMethod> getLightMethods(JetNamedDeclaration element) {
-        if (element instanceof JetNamedFunction) {
-            PsiMethod method = LightClassUtil.getLightClassMethod((JetNamedFunction) element);
+        if (element instanceof JetNamedFunction || element instanceof JetSecondaryConstructor) {
+            PsiMethod method = LightClassUtil.getLightClassMethod((JetFunction) element);
             return method != null ? Collections.singletonList(method) : Collections.<PsiMethod>emptyList();
         }
 
@@ -152,7 +149,7 @@ public abstract class KotlinFindMemberUsagesHandler<T extends JetNamedDeclaratio
 
                         @SuppressWarnings("unchecked")
                         UsagesSearchRequest request =
-                                getSearchHelper(kotlinOptions).newRequest(FindUsagesPackage.toSearchTarget(options, (T) element, true));
+                                getSearchHelper(kotlinOptions).newRequest(FindUsagesPackage.<T>toSearchTarget(options, (T) element, true));
 
                         for (PsiReference ref : UsagesSearch.INSTANCE$.search(request)) {
                             processUsage(processor, ref);
@@ -189,8 +186,8 @@ public abstract class KotlinFindMemberUsagesHandler<T extends JetNamedDeclaratio
             @NotNull JetNamedDeclaration declaration,
             @NotNull Collection<? extends PsiElement> elementsToSearch,
             @NotNull KotlinFindUsagesHandlerFactory factory) {
-        return declaration instanceof JetNamedFunction
-               ? new Function((JetNamedFunction) declaration, elementsToSearch, factory)
+        return declaration instanceof JetFunction
+               ? new Function((JetFunction) declaration, elementsToSearch, factory)
                : new Property(declaration, elementsToSearch, factory);
     }
 

@@ -29,7 +29,8 @@ public fun JetClassOrObject.toLightClass(): KotlinLightClass? = LightClassUtil.g
 public fun JetDeclaration.toLightElements(): List<PsiNamedElement> =
         when (this) {
             is JetClassOrObject -> Collections.singletonList(LightClassUtil.getPsiClass(this))
-            is JetNamedFunction -> Collections.singletonList(LightClassUtil.getLightClassMethod(this))
+            is JetNamedFunction,
+            is JetSecondaryConstructor -> Collections.singletonList(LightClassUtil.getLightClassMethod(this as JetFunction))
             is JetProperty -> LightClassUtil.getLightClassPropertyMethods(this).toList()
             is JetPropertyAccessor -> Collections.singletonList(LightClassUtil.getLightClassAccessorMethod(this))
             is JetParameter -> ArrayList<PsiNamedElement>().let { elements ->
@@ -44,7 +45,7 @@ public fun JetDeclaration.toLightElements(): List<PsiNamedElement> =
 
 public fun PsiElement.toLightMethods(): List<PsiMethod> =
         when (this) {
-            is JetNamedFunction -> LightClassUtil.getLightClassMethod(this).singletonOrEmptyList()
+            is JetFunction -> LightClassUtil.getLightClassMethod(this).singletonOrEmptyList()
             is JetProperty -> LightClassUtil.getLightClassPropertyMethods(this).toList()
             is JetParameter -> LightClassUtil.getLightClassPropertyMethods(this).toList()
             is JetPropertyAccessor -> LightClassUtil.getLightClassAccessorMethod(this).singletonOrEmptyList()
@@ -55,7 +56,7 @@ public fun PsiElement.toLightMethods(): List<PsiMethod> =
 
 public fun PsiElement.getRepresentativeLightMethod(): PsiMethod? =
         when (this) {
-            is JetNamedFunction -> LightClassUtil.getLightClassMethod(this)
+            is JetFunction -> LightClassUtil.getLightClassMethod(this)
             is JetProperty -> LightClassUtil.getLightClassPropertyMethods(this).getGetter()
             is JetParameter -> LightClassUtil.getLightClassPropertyMethods(this).getGetter()
             is JetPropertyAccessor -> LightClassUtil.getLightClassAccessorMethod(this)
@@ -72,7 +73,7 @@ public fun JetParameter.toPsiParameter(): PsiParameter? {
     val lightParamIndex = if (owner != null && owner.isExtensionDeclaration()) paramIndex + 1 else paramIndex
 
     val method: PsiMethod? = when (owner) {
-        is JetNamedFunction -> LightClassUtil.getLightClassMethod(owner)
+        is JetFunction -> LightClassUtil.getLightClassMethod(owner)
         is JetPropertyAccessor -> LightClassUtil.getLightClassAccessorMethod(owner)
         is JetClass -> LightClassUtil.getPsiClass(owner)?.getConstructors()?.let { constructors ->
             if (constructors.isNotEmpty()) constructors[0] else null

@@ -91,8 +91,8 @@ public abstract class KotlinCallTreeStructure extends HierarchyTreeStructure {
             return (PsiMethod) element;
         }
 
-        if (element instanceof JetNamedFunction) {
-            return LightClassUtil.getLightClassMethod((JetNamedFunction) element);
+        if (element instanceof JetNamedFunction || element instanceof JetSecondaryConstructor) {
+            return LightClassUtil.getLightClassMethod((JetFunction) element);
         }
 
         if (element instanceof JetProperty) {

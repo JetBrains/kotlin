@@ -144,8 +144,8 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
                                 val delegatedPropertyGetterDescriptor = delegatedResolvedCall.getResultingDescriptor()
                                 if (delegatedPropertyGetterDescriptor is CallableMemberDescriptor) {
                                     val function = DescriptorToSourceUtilsIde.getAnyDeclaration(file.getProject(), delegatedPropertyGetterDescriptor)
-                                    if (function is JetNamedFunction) {
-                                        val psiMethod = LightClassUtil.getLightClassMethod(function)
+                                    if (function is JetNamedFunction || function is JetSecondaryConstructor) {
+                                        val psiMethod = LightClassUtil.getLightClassMethod(function as JetFunction)
                                         if (psiMethod != null) {
                                             result.add(KotlinMethodSmartStepTarget(function, psiMethod, "${propertyDescriptor.getName()}.", expression, false, lines))
                                         }
@@ -166,8 +166,8 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
                 if (descriptor is CallableMemberDescriptor) {
                     // TODO doesn't work for libraries
                     val function = DescriptorToSourceUtilsIde.getAnyDeclaration(file.getProject(), descriptor)
-                    if (function is JetNamedFunction) {
-                        val psiMethod = LightClassUtil.getLightClassMethod(function)
+                    if (function is JetNamedFunction || function is JetSecondaryConstructor) {
+                        val psiMethod = LightClassUtil.getLightClassMethod(function as JetFunction)
                         if (psiMethod != null) {
                             result.add(KotlinMethodSmartStepTarget(function, psiMethod, null, expression, false, lines))
                         }

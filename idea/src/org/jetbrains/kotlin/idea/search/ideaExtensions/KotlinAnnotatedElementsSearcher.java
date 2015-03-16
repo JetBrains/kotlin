@@ -38,10 +38,7 @@ import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.stubindex.JetAnnotationsIndex;
-import org.jetbrains.kotlin.psi.JetAnnotationEntry;
-import org.jetbrains.kotlin.psi.JetClass;
-import org.jetbrains.kotlin.psi.JetDeclaration;
-import org.jetbrains.kotlin.psi.JetNamedFunction;
+import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 
@@ -84,8 +81,8 @@ public class KotlinAnnotatedElementsSearcher extends AnnotatedElementsSearcher {
                         PsiClass lightClass = LightClassUtil.getPsiClass((JetClass) parentOfType);
                         consumer.process(lightClass);
                     }
-                    else if (parentOfType instanceof JetNamedFunction) {
-                        PsiMethod wrappedMethod = LightClassUtil.getLightClassMethod((JetNamedFunction) parentOfType);
+                    else if (parentOfType instanceof JetNamedFunction || parentOfType instanceof JetSecondaryConstructor) {
+                        PsiMethod wrappedMethod = LightClassUtil.getLightClassMethod((JetFunction) parentOfType);
                         consumer.process(wrappedMethod);
                     }
                 }

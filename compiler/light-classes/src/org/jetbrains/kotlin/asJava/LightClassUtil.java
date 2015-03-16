@@ -180,7 +180,7 @@ public class LightClassUtil {
     }
 
     @Nullable
-    public static PsiMethod getLightClassMethod(@NotNull JetNamedFunction function) {
+    public static PsiMethod getLightClassMethod(@NotNull JetFunction function) {
         return getPsiMethodWrapper(function);
     }
 

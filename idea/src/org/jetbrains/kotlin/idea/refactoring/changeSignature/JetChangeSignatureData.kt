@@ -97,7 +97,7 @@ public class JetChangeSignatureData(
 
     override val affectedFunctions: Collection<UsageInfo> by Delegates.lazy {
         primaryFunctions + primaryFunctions.flatMapTo(HashSet<UsageInfo>()) { primaryFunction ->
-            val primaryDeclaration = primaryFunction.getDeclaration() as? JetNamedFunction
+            val primaryDeclaration = primaryFunction.getDeclaration() as? JetFunction
             val lightMethod = primaryDeclaration?.let { LightClassUtil.getLightClassMethod(it) }
             val overrides = lightMethod?.let { OverridingMethodsSearch.search(it).findAll() } ?: Collections.emptyList()
             overrides.map { method ->
