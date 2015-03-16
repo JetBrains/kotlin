@@ -16,4 +16,7 @@
 
 package kotlin.reflect
 
+/**
+ * Represents a package and provides introspection capabilities.
+ */
 public trait KPackage
