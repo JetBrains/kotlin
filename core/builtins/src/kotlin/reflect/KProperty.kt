@@ -16,6 +16,17 @@
 
 package kotlin.reflect
 
+/**
+ * Represents a property, such as a named `val` or `var` declaration.
+ * Instances of this class are obtainable by the `::` operator.
+ * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/reflection.html)
+ * for more information.
+ *
+ * @param R the type of the property.
+ */
 public trait KProperty<out R> : KCallable<R>
 
+/**
+ * Represents a property declared as a `var`.
+ */
 public trait KMutableProperty<R> : KProperty<R>

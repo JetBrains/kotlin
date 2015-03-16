@@ -16,10 +16,31 @@
 
 package kotlin.reflect
 
+/**
+ * Represents a property declared in a class.
+ *
+ * @param T the type of the instance which should be used to obtain the value of the property.
+ *          Must be derived either from a class declaring this property, or any subclass of that class.
+ * @param R the type of the property.
+ */
 public trait KMemberProperty<T : Any, out R> : KProperty<R> {
+    /**
+     * Returns the current value of the property.
+     *
+     * @param instance the instance to obtain the value of the property from.
+     */
     public fun get(instance: T): R
 }
 
+/**
+ * Represents a `var` property declared in a class.
+ */
 public trait KMutableMemberProperty<T : Any, R> : KMemberProperty<T, R>, KMutableProperty<R> {
+    /**
+     * Modifies the value of the property.
+     *
+     * @param instance the instance to obtain the value of the property from.
+     * @param value the new value to be assigned to this property.
+     */
     public fun set(instance: T, value: R)
 }

@@ -16,10 +16,32 @@
 
 package kotlin.reflect
 
+/**
+ * Represents an extension property.
+ * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/extensions.html#extension-properties)
+ * for more information.
+ *
+ * @param E the type of the extension receiver.
+ * @param R the type of the property.
+ */
 public trait KExtensionProperty<E, out R> : KProperty<R> {
+    /**
+     * Returns the current value of the property.
+     *
+     * @param receiver the instance of the extension receiver.
+     */
     public fun get(receiver: E): R
 }
 
+/**
+ * Represents an extension property declared as a `var`.
+ */
 public trait KMutableExtensionProperty<E, R> : KExtensionProperty<E, R>, KMutableProperty<R> {
+    /**
+     * Modifies the value of the property.
+     *
+     * @param receiver the instance of the extension receiver.
+     * @param value the new value to be assigned to this property.
+     */
     public fun set(receiver: E, value: R)
 }

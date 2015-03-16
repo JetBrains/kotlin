@@ -16,6 +16,12 @@
 
 package kotlin.reflect
 
+/**
+ * Represents a variable declared in a package.
+ */
 public trait KTopLevelVariable<out R> : KVariable<R>, KTopLevelProperty<R>
 
+/**
+ * Represents a package variable declared as a `var`.
+ */
 public trait KMutableTopLevelVariable<R> : KTopLevelVariable<R>, KMutableVariable<R>, KMutableTopLevelProperty<R>

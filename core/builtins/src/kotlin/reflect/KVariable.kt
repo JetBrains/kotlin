@@ -16,10 +16,26 @@
 
 package kotlin.reflect
 
+/**
+ * Represents a property without any kind of receiver.
+ * Such property is either originally declared in a receiverless context such as a package,
+ * or has the receiver bound to it.
+ */
 public trait KVariable<out R> : KProperty<R> {
+    /**
+     * Returns the current value of the variable.
+     */
     public fun get(): R
 }
 
+/**
+ * Represents a variable declared as a `var`.
+ */
 public trait KMutableVariable<R> : KVariable<R>, KMutableProperty<R> {
+    /**
+     * Modifies the value of the variable.
+     *
+     * @param value the new value to be assigned to this variable.
+     */
     public fun set(value: R)
 }
