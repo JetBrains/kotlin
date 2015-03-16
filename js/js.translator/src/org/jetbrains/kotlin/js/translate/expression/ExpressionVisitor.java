@@ -184,11 +184,6 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     }
 
     @Override
-    public JsNode visitClassLiteralExpression(@NotNull JetClassLiteralExpression expression, @NotNull TranslationContext context) {
-        throw new UnsupportedOperationException("Class literals are not yet supported: " + expression.getText());
-    }
-
-    @Override
     @NotNull
     public JsNode visitCallableReferenceExpression(@NotNull JetCallableReferenceExpression expression, @NotNull TranslationContext context) {
         return CallableReferenceTranslator.INSTANCE$.translate(expression, context);
