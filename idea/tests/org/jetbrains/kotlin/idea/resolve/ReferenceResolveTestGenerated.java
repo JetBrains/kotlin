@@ -209,6 +209,12 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
         doTest(fileName);
     }
 
+    @TestMetadata("InEnumEntry.kt")
+    public void testInEnumEntry() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/InEnumEntry.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("InFunctionParameterType.kt")
     public void testInFunctionParameterType() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/InFunctionParameterType.kt");
