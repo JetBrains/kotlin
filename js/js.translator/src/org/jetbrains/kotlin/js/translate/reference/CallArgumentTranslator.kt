@@ -33,38 +33,37 @@ import org.jetbrains.kotlin.resolve.calls.model.*
 
 import java.util.ArrayList
 import java.util.Collections
+import kotlin.platform.platformStatic
 
-public class CallArgumentTranslator private(private val resolvedCall: ResolvedCall<*>, private val receiver: JsExpression?, context: TranslationContext) : AbstractTranslator(context) {
+public class CallArgumentTranslator private (
+        private val resolvedCall: ResolvedCall<*>,
+        private val receiver: JsExpression?,
+        context: TranslationContext
+) : AbstractTranslator(context) {
 
-    public class ArgumentsInfo(public val translateArguments: List<JsExpression>, private val hasSpreadOperator: Boolean, public val cachedReceiver: TemporaryConstVariable) {
-
-        public fun isHasSpreadOperator(): Boolean {
-            return hasSpreadOperator
-        }
-    }
+    public class ArgumentsInfo(
+            public val translateArguments: List<JsExpression>,
+            public val hasSpreadOperator: Boolean,
+            public val cachedReceiver: TemporaryConstVariable?
+    )
 
     private enum class ArgumentsKind {
         HAS_EMPTY_EXPRESSION_ARGUMENT
         HAS_NOT_EMPTY_EXPRESSION_ARGUMENT
     }
 
-    private val isNativeFunctionCall: Boolean
+    private val isNativeFunctionCall = AnnotationsUtils.isNativeObject(resolvedCall.getCandidateDescriptor())
 
-    {
-        this.isNativeFunctionCall = AnnotationsUtils.isNativeObject(resolvedCall.getCandidateDescriptor())
-    }
+    private fun removeLastUndefinedArguments(result: MutableList<JsExpression>) {
+        var i = result.size() - 1
 
-    private fun removeLastUndefinedArguments(result: List<JsExpression>) {
-        var i: Int
-        run {
-            i = result.size() - 1
-            while (i >= 0) {
-                if (result.get(i) != context().namer().getUndefinedExpression()) {
-                    break
-                }
-                i--
+        while (i >= 0) {
+            if (result.get(i) != context().namer().getUndefinedExpression()) {
+                break
             }
+            i--
         }
+
         result.subList(i + 1, result.size()).clear()
     }
 
@@ -97,15 +96,13 @@ public class CallArgumentTranslator private(private val resolvedCall: ResolvedCa
                 val arguments = actualArgument.getArguments()
 
                 val size = arguments.size()
-                run {
-                    var i = 0
-                    while (i != size) {
-                        if (arguments.get(i).getSpreadElement() != null) {
-                            hasSpreadOperator = true
-                            break
-                        }
-                        ++i
+                var i = 0
+                while (i != size) {
+                    if (arguments.get(i).getSpreadElement() != null) {
+                        hasSpreadOperator = true
+                        break
                     }
+                    ++i
                 }
 
                 if (hasSpreadOperator) {
@@ -149,7 +146,7 @@ public class CallArgumentTranslator private(private val resolvedCall: ResolvedCa
                 concatArguments!!.add(0, JsArrayLiteral(argsBeforeVararg))
             }
 
-            result = SmartList(concatArgumentsIfNeeded(concatArguments))
+            result = SmartList(concatArgumentsIfNeeded(concatArguments!!))
 
             if (receiver != null) {
                 cachedReceiver = context().getOrDeclareTemporaryConstVariable(receiver)
@@ -166,10 +163,12 @@ public class CallArgumentTranslator private(private val resolvedCall: ResolvedCa
 
     companion object {
 
+        platformStatic
         public fun translate(resolvedCall: ResolvedCall<*>, receiver: JsExpression?, context: TranslationContext): ArgumentsInfo {
             return translate(resolvedCall, receiver, context, context.dynamicContext().jsBlock())
         }
 
+        platformStatic
         public fun translate(resolvedCall: ResolvedCall<*>, receiver: JsExpression?, context: TranslationContext, block: JsBlock): ArgumentsInfo {
             val innerContext = context.innerBlock(block)
             val argumentTranslator = CallArgumentTranslator(resolvedCall, receiver, innerContext)

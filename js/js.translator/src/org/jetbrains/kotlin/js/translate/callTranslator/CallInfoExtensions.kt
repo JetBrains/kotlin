@@ -74,7 +74,7 @@ fun VariableAccessInfo.constructAccessExpression(ref: JsExpression): JsExpressio
 val FunctionCallInfo.functionName: JsName
     get() = context.getNameForDescriptor(callableDescriptor)
 
-fun FunctionCallInfo.hasSpreadOperator(): Boolean = argumentsInfo.isHasSpreadOperator()
+fun FunctionCallInfo.hasSpreadOperator(): Boolean = argumentsInfo.hasSpreadOperator
 
 fun TranslationContext.aliasOrValue(callableDescriptor: CallableDescriptor, value: (CallableDescriptor) -> JsExpression): JsExpression {
     val alias = getAliasForDescriptor(callableDescriptor)
