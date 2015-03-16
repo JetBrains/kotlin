@@ -195,6 +195,12 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
             doJsTest(fileName);
         }
 
+        @TestMetadata("diagnosticWhenReferenceToBuiltinsMember.args")
+        public void testDiagnosticWhenReferenceToBuiltinsMember() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/js/diagnosticWhenReferenceToBuiltinsMember.args");
+            doJsTest(fileName);
+        }
+
         @TestMetadata("jsExtraHelp.args")
         public void testJsExtraHelp() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/js/jsExtraHelp.args");

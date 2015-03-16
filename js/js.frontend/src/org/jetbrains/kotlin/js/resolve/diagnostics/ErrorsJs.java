@@ -40,6 +40,7 @@ public interface ErrorsJs {
     DiagnosticFactory1<JetExpression, JsCallData> JSCODE_WARNING = DiagnosticFactory1.create(WARNING, JsCodePositioningStrategy.INSTANCE$);
     DiagnosticFactory0<JetExpression> JSCODE_ARGUMENT_SHOULD_BE_CONSTANT = DiagnosticFactory0.create(ERROR, DEFAULT);
     DiagnosticFactory1<JetElement, JetElement> NOT_SUPPORTED = DiagnosticFactory1.create(ERROR, DEFAULT);
+    DiagnosticFactory1<JetElement, JetElement> REFERENCE_TO_BUILTIN_MEMBERS_NOT_SUPPORTED = DiagnosticFactory1.create(ERROR, DEFAULT);
 
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {

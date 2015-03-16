@@ -17,22 +17,17 @@
 package org.jetbrains.kotlin.js.translate.reference
 
 import com.google.dart.compiler.backend.js.ast.JsExpression
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.js.translate.context.TranslationContext
-import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import com.google.dart.compiler.backend.js.ast.JsInvocation
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
-import org.jetbrains.kotlin.psi.JetCallableReferenceExpression
-import org.jetbrains.kotlin.js.translate.utils.BindingUtils
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import com.google.dart.compiler.backend.js.ast.JsLiteral
-import java.util.ArrayList
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.js.resolve.diagnostics.ErrorsJs
+import org.jetbrains.kotlin.js.translate.context.TranslationContext
+import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
+import org.jetbrains.kotlin.js.translate.utils.BindingUtils
+import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils
+import org.jetbrains.kotlin.psi.JetCallableReferenceExpression
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import java.util.ArrayList
 
 object CallableReferenceTranslator {
 
@@ -40,19 +35,24 @@ object CallableReferenceTranslator {
         val descriptor = BindingUtils.getDescriptorForReferenceExpression(context.bindingContext(), expression.getCallableReference())
         return when (descriptor) {
             is PropertyDescriptor ->
-                translateForProperty(descriptor, context)
+                translateForProperty(descriptor, context, expression)
             is FunctionDescriptor ->
-                translateForFunction(descriptor, context)
+                translateForFunction(descriptor, context, expression)
             else ->
                 throw IllegalArgumentException("Expected property or function: ${descriptor}, expression=${expression.getText()}")
         }
     }
 
-    private fun translateForFunction(descriptor: FunctionDescriptor, context: TranslationContext): JsExpression {
+    private fun reportNotSupported(context: TranslationContext, expression: JetCallableReferenceExpression): JsExpression {
+        context.bindingTrace().report(ErrorsJs.REFERENCE_TO_BUILTIN_MEMBERS_NOT_SUPPORTED.on(expression, expression))
+        return context.getEmptyExpression()
+    }
+
+    private fun translateForFunction(descriptor: FunctionDescriptor, context: TranslationContext, expression: JetCallableReferenceExpression): JsExpression {
         return when {
         // TODO Support for callable reference to builtin functions and members
             JsDescriptorUtils.isBuiltin(descriptor) ->
-                throw UnsupportedOperationException("callable references for builtin functions are not supported yet")
+                reportNotSupported(context, expression)
             isConstructor(descriptor) ->
                 translateForConstructor(descriptor, context)
             isExtension(descriptor) ->
@@ -64,11 +64,11 @@ object CallableReferenceTranslator {
         }
     }
 
-    private fun translateForProperty(descriptor: PropertyDescriptor, context: TranslationContext): JsExpression {
+    private fun translateForProperty(descriptor: PropertyDescriptor, context: TranslationContext, expression: JetCallableReferenceExpression): JsExpression {
         return when {
         // TODO Support for callable reference to builtin properties
             JsDescriptorUtils.isBuiltin(descriptor) ->
-                throw UnsupportedOperationException("callable references for builtin properties are not supported yet")
+                reportNotSupported(context, expression)
             isExtension(descriptor) ->
                 translateForExtensionProperty(descriptor, context)
             isMember(descriptor) ->
