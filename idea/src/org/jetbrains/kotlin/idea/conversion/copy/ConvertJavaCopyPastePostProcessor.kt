@@ -180,7 +180,7 @@ public class ConvertJavaCopyPastePostProcessor() : CopyPastePostProcessor<TextBl
         return dialog.isOK()
     }
 
-    default object {
+    class object {
         private val LOG = Logger.getInstance("#org.jetbrains.kotlin.idea.conversion.copy.ConvertJavaCopyPastePostProcessor")
     }
 }

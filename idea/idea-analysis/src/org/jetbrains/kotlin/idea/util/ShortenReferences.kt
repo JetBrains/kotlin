@@ -46,12 +46,12 @@ public class ShortenReferences(val options: (JetElement) -> Options = { Options.
             val removeThisLabels: Boolean = false,
             val removeThis: Boolean = false
     ) {
-        default object {
+        class object {
             val DEFAULT = Options()
         }
     }
 
-    default object {
+    class object {
         val DEFAULT = ShortenReferences()
 
         private fun DeclarationDescriptor.asString()

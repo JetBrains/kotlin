@@ -87,7 +87,7 @@ public class KotlinCodeBlockModificationListener(modificationTracker: PsiModific
         }
     }
 
-    default object {
+    class object {
         private val LOG = Logger.getInstance("#org.jetbrains.kotlin.asJava.JetCodeBlockModificationListener")
 
         private fun containsClassesInside(element: PsiElement?): Boolean {

@@ -28,12 +28,12 @@ abstract class Tag(val name : String) : Element() {
   val attributes = HashMap<String, String>()
 
   protected fun initTag<T : Element>(init : T.()-> Unit) : T
-  where default object T : Factory<T> {
+  where class object T : Factory<T> {
     val tag = try {
       T.create()
     } catch (e: NullPointerException) {
       val typeName = javaClass.getName()
-      throw UnsupportedOperationException("No default object create() method for $typeName")
+      throw UnsupportedOperationException("No class object create() method for $typeName")
     }
     tag.init()
     children.add(tag)
@@ -76,7 +76,7 @@ abstract class TagWithText(name : String) : Tag(name) {
 }
 
 class HTML() : TagWithText("html") {
-  default object : Factory<HTML> {
+  class object : Factory<HTML> {
     override fun create() = HTML()
   }
 
@@ -86,7 +86,7 @@ class HTML() : TagWithText("html") {
 }
 
 class Head() : TagWithText("head") {
-  default object : Factory<Head> {
+  class object : Factory<Head> {
     override fun create() = Head()
   }
 
@@ -94,7 +94,7 @@ class Head() : TagWithText("head") {
 }
 
 class Title() : TagWithText("title") {
-  default object : Factory<Title> {
+  class object : Factory<Title> {
     override fun create() = Title()
   }
 }
@@ -103,7 +103,7 @@ abstract class BodyTag(name : String) : TagWithText(name) {
 }
 
 class Body() : BodyTag("body") {
-  default object : Factory<Body> {
+  class object : Factory<Body> {
     override fun create() = Body()
   }
 
@@ -122,24 +122,24 @@ class Body() : BodyTag("body") {
 }
 
 class B() : BodyTag("b") {
-  default object : Factory<B> {
+  class object : Factory<B> {
     override fun create() = B()
   }
 }
 
 class P() : BodyTag("p") {
-  default object : Factory<P> {
+  class object : Factory<P> {
     override fun create() = P()
   }
 }
 class H1() : BodyTag("h1")   {
-  default object : Factory<H1> {
+  class object : Factory<H1> {
     override fun create() = H1()
   }
 }
 
 class A() : BodyTag("a") {
-  default object : Factory<A> {
+  class object : Factory<A> {
     override fun create() = A()
   }
 

@@ -49,7 +49,7 @@ data class ExtractionOptions(
         val extractAsProperty: Boolean = false,
         val allowSpecialClassNames: Boolean = false
 ) {
-    default object {
+    class object {
         val DEFAULT = ExtractionOptions()
     }
 }

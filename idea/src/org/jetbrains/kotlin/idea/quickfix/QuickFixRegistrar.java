@@ -128,7 +128,7 @@ public class QuickFixRegistrar {
         QuickFixes.factories.put(NO_BACKING_FIELD_CUSTOM_ACCESSORS, changeToPropertyNameFactory);
         QuickFixes.factories.put(INACCESSIBLE_BACKING_FIELD, changeToPropertyNameFactory);
 
-        JetSingleIntentionActionFactory unresolvedReferenceFactory = AutoImportFix.Default.createFactory();
+        JetSingleIntentionActionFactory unresolvedReferenceFactory = AutoImportFix.OBJECT$.createFactory();
         QuickFixes.factories.put(UNRESOLVED_REFERENCE, unresolvedReferenceFactory);
         QuickFixes.factories.put(UNRESOLVED_REFERENCE_WRONG_RECEIVER, unresolvedReferenceFactory);
 
@@ -298,6 +298,6 @@ public class QuickFixRegistrar {
 
         QuickFixes.factories.put(DEPRECATED_CLASS_OBJECT_SYNTAX, ClassObjectToDefaultObjectFix.Factory);
         QuickFixes.factories.put(DEPRECATED_CLASS_OBJECT_SYNTAX, ClassObjectToDefaultObjectInWholeProjectFix.Factory);
-        QuickFixes.factories.put(INIT_KEYWORD_BEFORE_CLASS_INITIALIZER_EXPECTED, AddInitKeywordFix.Default);
+        QuickFixes.factories.put(INIT_KEYWORD_BEFORE_CLASS_INITIALIZER_EXPECTED, AddInitKeywordFix.OBJECT$);
     }
 }

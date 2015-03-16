@@ -183,7 +183,7 @@ abstract class OutputValueBoxer(val outputValues: List<OutputValue>) {
             assert(outputValues.size() <= 3, "At most 3 output values are supported")
         }
 
-        default object {
+        class object {
             private val selectors = array("first", "second", "third")
         }
 
@@ -330,7 +330,7 @@ enum class ExtractionTarget(val name: String) {
 
     abstract fun isAvailable(descriptor: ExtractableCodeDescriptor): Boolean
 
-    default object {
+    class object {
         fun checkNotTrait(descriptor: ExtractableCodeDescriptor): Boolean {
             val parent = descriptor.extractionData.targetSibling.getStrictParentOfType<JetDeclaration>()
             return !(parent is JetClass && parent.isTrait())
@@ -367,7 +367,7 @@ data class ExtractionGeneratorOptions(
         val allowDummyName: Boolean = false,
         val allowExpressionBody: Boolean = true
 ) {
-    default object {
+    class object {
         val DEFAULT = ExtractionGeneratorOptions()
     }
 }

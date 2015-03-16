@@ -37,7 +37,7 @@ public class ConvertToBlockBodyAction : PsiElementBaseIntentionAction() {
         convert(findDeclaration(element)!!)
     }
 
-    default object {
+    class object {
         fun convert(declaration: JetDeclarationWithBody): JetDeclarationWithBody {
             val body = declaration.getBodyExpression()!!
 

@@ -44,7 +44,7 @@ public abstract class ImportInsertHelper {
 
     public abstract fun importDescriptor(file: JetFile, descriptor: DeclarationDescriptor): ImportDescriptorResult
 
-    default object {
+    class object {
         [platformStatic]
         public fun getInstance(project: Project): ImportInsertHelper
             = ServiceManager.getService<ImportInsertHelper>(project, javaClass<ImportInsertHelper>())

@@ -95,7 +95,7 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
 
     override fun getEvaluatorBuilder() = KotlinEvaluationBuilder
 
-    default object {
+    class object {
         fun getContextElement(elementAt: PsiElement?): PsiElement? {
             if (elementAt == null) return null
 

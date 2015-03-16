@@ -153,7 +153,7 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
         return CachedValuesManager.getManager(project).createCachedValue(result, false)
     }
 
-    default object {
+    class object {
         private val androidImports = listOf(
                 "android.app.Activity",
                 "android.app.Fragment",

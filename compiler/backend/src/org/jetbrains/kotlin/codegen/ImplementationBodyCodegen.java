@@ -388,7 +388,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         genClosureFields(context.closure, v, typeMapper);
 
-        for (ExpressionCodegenExtension extension : ExpressionCodegenExtension.Default.getInstances(state.getProject())) {
+        for (ExpressionCodegenExtension extension : ExpressionCodegenExtension.OBJECT$.getInstances(state.getProject())) {
             extension.generateClassSyntheticParts(v, state, myClass, descriptor);
         }
     }

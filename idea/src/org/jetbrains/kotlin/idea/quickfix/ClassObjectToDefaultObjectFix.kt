@@ -33,7 +33,7 @@ public class ClassObjectToDefaultObjectFix(private val elem: JetObjectDeclaratio
         classKeywordToDefaultModifier(elem)
     }
 
-    default object Factory : JetSingleIntentionActionFactory() {
+    class object Factory : JetSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic) =
                 (diagnostic.getPsiElement() as? JetObjectDeclaration)?.let { ClassObjectToDefaultObjectFix(it) }
 
@@ -66,7 +66,7 @@ public class ClassObjectToDefaultObjectInWholeProjectFix(private val elem: JetOb
         }
     }
 
-    default object Factory : JetSingleIntentionActionFactory() {
+    class object Factory : JetSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic) =
                 (diagnostic.getPsiElement() as? JetObjectDeclaration)?.let { ClassObjectToDefaultObjectInWholeProjectFix(it) }
     }

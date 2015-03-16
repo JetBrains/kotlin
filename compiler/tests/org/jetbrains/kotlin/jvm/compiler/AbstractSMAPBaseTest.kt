@@ -93,7 +93,7 @@ public trait AbstractSMAPBaseTest {
     }
 
     class SMAPAndFile(val smap: String?, val sourceFile: String) {
-        default object {
+        class object {
             fun SMAPAndFile(smap: String?, sourceFile: File) = SMAPAndFile(smap, getPath(sourceFile))
 
             public fun getPath(file: File): String {
