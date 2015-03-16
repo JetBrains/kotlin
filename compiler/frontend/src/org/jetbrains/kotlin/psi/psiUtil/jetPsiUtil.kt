@@ -200,7 +200,7 @@ public fun <T: JetClassOrObject> StubBasedPsiElementBase<out KotlinClassOrObject
 public fun SearchScope.contains(element: PsiElement): Boolean = PsiSearchScopeUtil.isInScope(this, element)
 
 public fun JetClass.isInheritable(): Boolean {
-    return isTrait() || hasModifier(JetTokens.OPEN_KEYWORD)
+    return isTrait() || hasModifier(JetTokens.OPEN_KEYWORD) || hasModifier(JetTokens.ABSTRACT_KEYWORD)
 }
 
 public fun JetDeclaration.isOverridable(): Boolean {

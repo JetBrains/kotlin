@@ -1,6 +1,6 @@
 {
   "type": "JAVA_METHOD",
-  "classFQN": "testing.rename.A",
+  "classId": "testing/rename/A",
   "methodSignature": "void first()",
   "newName": "second"
 }

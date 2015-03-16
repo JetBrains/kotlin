@@ -174,4 +174,12 @@ public abstract class KotlinLightField<T extends JetDeclaration, D extends PsiFi
     public Language getLanguage() {
         return JetLanguage.INSTANCE;
     }
+
+    @Override
+    public boolean isEquivalentTo(PsiElement another) {
+        if (another instanceof KotlinLightField && origin.isEquivalentTo(((KotlinLightField) another).getOrigin())) {
+            return true;
+        }
+        return super.isEquivalentTo(another);
+    }
 }

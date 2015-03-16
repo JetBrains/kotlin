@@ -1,6 +1,6 @@
 {
   "type": "JAVA_METHOD",
-  "classFQN": "testing.rename.RenamePackage",
+  "classId": "testing/rename/RenamePackage",
   "methodSignature": "int foo()",
   "newName": "bar"
 }

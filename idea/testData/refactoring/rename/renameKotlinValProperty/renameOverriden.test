@@ -1,6 +1,6 @@
 {
   "type": "KOTLIN_PROPERTY",
-  "classFQN": "testing.rename.CP",
+  "classId": "testing/rename/CP",
   "oldName": "first",
   "newName": "second"
 }

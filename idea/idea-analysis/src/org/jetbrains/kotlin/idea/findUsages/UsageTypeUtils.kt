@@ -29,12 +29,14 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import com.intellij.psi.PsiPackage
+import com.intellij.psi.PsiReferenceExpression
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.findUsages.UsageTypeEnum.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.idea.references.JetArrayAccessReference
 import org.jetbrains.kotlin.idea.references.JetInvokeFunctionReference
+import org.jetbrains.kotlin.idea.references.unwrappedTargets
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
@@ -208,6 +210,7 @@ public object UsageTypeUtils {
             is ClassifierDescriptor -> when {
             // Treat object accesses as variables to simulate the old behaviour (when variables were created for objects)
                 DescriptorUtils.isNonDefaultObject(descriptor), DescriptorUtils.isEnumEntry(descriptor) -> getVariableUsageType()
+                DescriptorUtils.isDefaultObject(descriptor) -> DEFAULT_OBJECT_ACCESS
                 else -> getClassUsageType()
             }
             is PackageViewDescriptor -> {
@@ -229,6 +232,7 @@ enum class UsageTypeEnum {
     TYPE_DEFINITION
     IS
     CLASS_OBJECT_ACCESS
+    DEFAULT_OBJECT_ACCESS
     EXTENSION_RECEIVER_TYPE
     SUPER_TYPE_QUALIFIER
 

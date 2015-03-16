@@ -38,6 +38,7 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
     @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({
             Kotlin.Conventions.class,
+            Kotlin.DefaultObject.class,
             Kotlin.FindClassUsages.class,
             Kotlin.FindFunctionUsages.class,
             Kotlin.FindObjectUsages.class,
@@ -163,6 +164,33 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
             @TestMetadata("unaryMinus.0.kt")
             public void testUnaryMinus() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/conventions/unaryMinus.0.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("idea/testData/findUsages/kotlin/defaultObject")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class DefaultObject extends AbstractJetFindUsagesTest {
+            public void testAllFilesPresentInDefaultObject() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/findUsages/kotlin/defaultObject"), Pattern.compile("^(.+)\\.0\\.kt$"), true);
+            }
+
+            @TestMetadata("javaUsage.0.kt")
+            public void testJavaUsage() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/defaultObject/javaUsage.0.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("named.0.kt")
+            public void testNamed() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/defaultObject/named.0.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simple.0.kt")
+            public void testSimple() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/defaultObject/simple.0.kt");
                 doTest(fileName);
             }
         }

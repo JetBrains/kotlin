@@ -1,0 +1,4 @@
+Default object (5: 5) Foo.f()
+Default object (6: 13) val x = Foo
+Default object (8: 9) Foo.Bar.f()
+Default object (9: 18) val xx = Foo.Bar

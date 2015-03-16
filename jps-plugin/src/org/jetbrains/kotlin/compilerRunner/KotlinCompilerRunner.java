@@ -20,7 +20,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.xmlb.Accessor;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,7 +33,9 @@ import org.jetbrains.kotlin.config.CompilerSettings;
 import org.jetbrains.kotlin.utils.UtilsPackage;
 
 import java.io.*;
-import java.lang.reflect.Method;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -142,33 +143,42 @@ public class KotlinCompilerRunner {
         }
     }
 
-    private static <F, T extends F> T mergeBeans(F from, T to) {
-        T copy = XmlSerializerUtil.createCopy(to);
+    private static <T extends CommonCompilerArguments> T mergeBeans(CommonCompilerArguments from, T to) {
+        // TODO: rewrite when updated version of com.intellij.util.xmlb is available on TeamCity
+        try {
+            T copy = XmlSerializerUtil.createCopy(to);
 
-        // TODO: Rewrite with XmlSerializerUtil.copyBean() after method is in Teamcity JPS (9.1 expected)
-        for (Accessor accessor : XmlSerializerUtil.getAccessors(from.getClass())) {
-            if (!setValue("set", false, accessor, copy, accessor.read(from))) {
-                setValue("write", true, accessor, copy, accessor.read(from));
+            List<Field> fromFields = collectFieldsToCopy(from.getClass());
+            for (Field fromField : fromFields) {
+                Field toField = copy.getClass().getField(fromField.getName());
+                toField.set(copy, fromField.get(from));
             }
-        }
 
-        return copy;
+            return copy;
+        }
+        catch (NoSuchFieldException e) {
+            throw UtilsPackage.rethrow(e);
+        }
+        catch (IllegalAccessException e) {
+            throw UtilsPackage.rethrow(e);
+        }
     }
 
-    private static boolean setValue(String methodName, boolean failOnReflection, Accessor accessor, Object from, Object copy) {
-        try {
-            Method method = Accessor.class.getMethod(methodName, Object.class, Object.class);
-            method.invoke(accessor, from, copy);
+    private static List<Field> collectFieldsToCopy(Class<?> clazz) {
+        List<Field> fromFields = new ArrayList<Field>();
 
-            return true;
-        }
-        catch (Throwable e) {
-            if (failOnReflection) {
-                throw UtilsPackage.rethrow(e);
+        Class currentClass = clazz;
+        do {
+            for (Field field : currentClass.getDeclaredFields()) {
+                int modifiers = field.getModifiers();
+                if (!Modifier.isStatic(modifiers) && Modifier.isPublic(modifiers)) {
+                    fromFields.add(field);
+                }
             }
         }
+        while ((currentClass = currentClass.getSuperclass()) != null);
 
-        return false;
+        return fromFields;
     }
 
     private static void setupK2JvmArguments(File moduleFile, K2JVMCompilerArguments settings) {

@@ -1,6 +1,6 @@
 {
   "type": "KOTLIN_FUNCTION",
-  "classFQN": "A",
+  "classId": "/A",
   "oldName": "equals",
   "newName": "foo",
   "mainFile": "equals.kt"

@@ -1,6 +1,6 @@
 {
   "type": "KOTLIN_FUNCTION",
-  "classFQN": "testing.kotlin.KotlinClass",
+  "classId": "testing/kotlin/KotlinClass",
   "oldName": "foo",
   "newName": "bar",
   "mainFile": "MethodUsages.kt"

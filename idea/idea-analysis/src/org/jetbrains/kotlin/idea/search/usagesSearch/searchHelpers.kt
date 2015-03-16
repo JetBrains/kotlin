@@ -17,18 +17,12 @@
 package org.jetbrains.kotlin.idea.search.usagesSearch
 
 import com.intellij.psi.PsiReference
-import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.idea.search.usagesSearch.*
 import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchFilter.*
-import org.jetbrains.kotlin.psi.JetProperty
-import org.jetbrains.kotlin.psi.JetNamedFunction
 import java.util.Collections
 import java.util.ArrayList
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import com.intellij.psi.PsiNamedElement
 import org.jetbrains.kotlin.asJava.LightClassUtil
-import org.jetbrains.kotlin.psi.JetParameter
-import org.jetbrains.kotlin.psi.JetPsiUtil
 import org.jetbrains.kotlin.asJava.LightClassUtil.PropertyAccessorsPsiMethods
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.name.Name
@@ -37,9 +31,10 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.idea.references.*
-import org.jetbrains.kotlin.psi.JetDeclaration
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 
 val isTargetUsage = (PsiReference::matchesTarget).searchFilter
 
@@ -66,6 +61,14 @@ fun PsiNamedElement.getAccessorNames(readable: Boolean = true, writable: Boolean
     }
 
     return Collections.emptyList()
+}
+
+public fun PsiNamedElement.getClassNameForDefaultObject(): String? {
+    return if (this is JetObjectDeclaration) {
+        getNonStrictParentOfType<JetClass>()?.getName()
+    } else {
+        null
+    }
 }
 
 public fun PsiNamedElement.getSpecialNamesToSearch(): List<String> {
@@ -102,7 +105,7 @@ public abstract class UsagesSearchHelper<T : PsiNamedElement> {
 
     protected open fun makeWordList(target: UsagesSearchTarget<T>): List<String> {
         return with(target.element) {
-            ContainerUtil.createMaybeSingletonList(getName()) + getAccessorNames() + getSpecialNamesToSearch()
+            getName().singletonOrEmptyList() + getAccessorNames() + getClassNameForDefaultObject().singletonOrEmptyList() + getSpecialNamesToSearch()
         }
     }
 

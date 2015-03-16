@@ -149,6 +149,20 @@ public class LightClassUtil {
         return getPsiMethodWrapper(accessor);
     }
 
+    @Nullable
+    public static PsiField getLightFieldForDefaultObject(@NotNull JetClassOrObject defaultObject) {
+        PsiClass outerPsiClass = getWrappingClass(defaultObject);
+        if (outerPsiClass != null) {
+            for (PsiField fieldOfParent : outerPsiClass.getFields()) {
+                if (((KotlinLightElement<?, ?>) fieldOfParent).getOrigin() == defaultObject &&
+                    fieldOfParent.getName().equals(defaultObject.getName())) { // TODO this check is relevant while light class has deprecated OBJECT$ field
+                    return fieldOfParent;
+                }
+            }
+        }
+        return null;
+    }
+
     @NotNull
     public static PropertyAccessorsPsiMethods getLightClassPropertyMethods(@NotNull JetProperty property) {
         JetPropertyAccessor getter = property.getGetter();

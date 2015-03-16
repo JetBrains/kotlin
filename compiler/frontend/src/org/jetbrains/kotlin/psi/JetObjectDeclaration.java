@@ -76,8 +76,16 @@ public class JetObjectDeclaration extends JetNamedDeclarationStub<KotlinObjectSt
 
     @Override
     public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
-        JetObjectDeclarationName nameAsDeclaration = getNameAsDeclaration();
-        return nameAsDeclaration == null ? null : nameAsDeclaration.setName(name);
+        JetObjectDeclarationName declarationName = getNameAsDeclaration();
+        if (declarationName == null) {
+            JetPsiFactory psiFactory = new JetPsiFactory(getProject());
+            PsiElement result = addAfter(psiFactory.createObjectDeclarationName(name), getObjectKeyword());
+            addAfter(psiFactory.createWhiteSpace(), getObjectKeyword());
+
+            return result;
+        } else {
+            return declarationName.setName(name);
+        }
     }
 
     @Override

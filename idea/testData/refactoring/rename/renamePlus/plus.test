@@ -1,6 +1,6 @@
 {
   "type": "KOTLIN_FUNCTION",
-  "classFQN": "A",
+  "classId": "/A",
   "oldName": "plus",
   "newName": "foo",
   "mainFile": "plus.kt"

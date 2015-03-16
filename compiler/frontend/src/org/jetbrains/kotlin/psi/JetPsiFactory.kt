@@ -195,6 +195,10 @@ public class JetPsiFactory(private val project: Project) {
         return createProperty(name, null, false, name).getInitializer() as JetSimpleNameExpression
     }
 
+    public fun createObjectDeclarationName(name: String): JetObjectDeclarationName {
+        return createDeclaration<JetObjectDeclaration>("object $name").getNameAsDeclaration()!!
+    }
+
     public fun createIdentifier(name: String): PsiElement {
         return createSimpleName(name).getIdentifier()!!
     }
