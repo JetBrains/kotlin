@@ -61,6 +61,11 @@ import static org.jetbrains.kotlin.resolve.BindingContextUtils.isVarCapturedInCl
 
 public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @Override
+    protected JsNode emptyResult(@NotNull TranslationContext context) {
+        return context.getEmptyExpression();
+    }
+
+    @Override
     @NotNull
     public JsNode visitConstantExpression(@NotNull JetConstantExpression expression, @NotNull TranslationContext context) {
         return translateConstantExpression(expression, context).source(expression);

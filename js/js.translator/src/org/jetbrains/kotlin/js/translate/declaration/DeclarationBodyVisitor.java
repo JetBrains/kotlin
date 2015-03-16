@@ -64,6 +64,11 @@ public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
     }
 
     @Override
+    protected Void emptyResult(@NotNull TranslationContext context) {
+        return null;
+    }
+
+    @Override
     public Void visitClass(@NotNull JetClass expression, TranslationContext context) {
         return null;
     }

@@ -38,6 +38,11 @@ public final class InitializerVisitor extends TranslatorVisitor<Void> {
     }
 
     @Override
+    protected Void emptyResult(@NotNull TranslationContext context) {
+        return null;
+    }
+
+    @Override
     public final Void visitProperty(@NotNull JetProperty property, @NotNull TranslationContext context) {
         JetExpression initializer = property.getInitializer();
         if (initializer != null) {
