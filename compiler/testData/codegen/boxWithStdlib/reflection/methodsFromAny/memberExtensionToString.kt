@@ -7,6 +7,6 @@ class A {
 }
 
 fun box(): String {
-    val p = javaClass<A>().kotlin.getExtensionProperties().single()
+    val p = javaClass<A>().kotlin.extensionProperties.single()
     return if ("$p" == "var A.(kotlin.String.)id") "OK" else "Fail $p"
 }

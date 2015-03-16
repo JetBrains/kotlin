@@ -16,10 +16,10 @@
 
 package kotlin.reflect
 
-public trait KClass<T> {
-    public val simpleName: String?
+import kotlin.reflect.jvm.internal.KClassImpl
 
-    public val properties: Collection<KMemberProperty<T, *>>
+public val <T> KClass<T>.declaredProperties: Collection<KMemberProperty<T, *>>
+    get() = (this as KClassImpl<T>).getProperties(declared = true)
 
-    public val extensionProperties: Collection<KMemberExtensionProperty<T, *, *>>
-}
+public val <T> KClass<T>.declaredExtensionProperties: Collection<KMemberExtensionProperty<T, *, *>>
+    get() = (this as KClassImpl<T>).getExtensionProperties(declared = true)

@@ -6,7 +6,7 @@ class A(val readonly: String) {
 }
 
 fun box(): String {
-    val props = javaClass<A>().kotlin.getProperties()
+    val props = javaClass<A>().kotlin.properties
     val readonly = props.single { it.name == "readonly" }
     assert(readonly !is KMutableMemberProperty<A, *>) { "Fail 1: $readonly" }
     val mutable = props.single { it.name == "mutable" }

@@ -5,7 +5,7 @@ class A<T> {
 }
 
 fun box(): String {
-    val k = A::class.getProperties().single()
+    val k = A::class.properties.single()
     k : KMemberProperty<A<*>, *>
     return k.get(A<String>()) as String
 }

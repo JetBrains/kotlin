@@ -13,7 +13,7 @@ class A(param: String) {
 fun box(): String {
     val klass = javaClass<A>().kotlin
 
-    val props = klass.getProperties()
+    val props = klass.properties
 
     val names = props.map { it.name }.toSortedList()
     assert(names == listOf("anyVar", "int", "string")) { "Fail names: $props" }
