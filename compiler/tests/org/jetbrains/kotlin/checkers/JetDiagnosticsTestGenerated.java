@@ -4634,6 +4634,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/functionAsExpression"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("AutoLabels.kt")
+            public void testAutoLabels() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionAsExpression/AutoLabels.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("Common.kt")
             public void testCommon() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionAsExpression/Common.kt");

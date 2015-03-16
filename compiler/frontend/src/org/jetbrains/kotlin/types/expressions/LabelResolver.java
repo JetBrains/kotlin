@@ -65,6 +65,11 @@ public class LabelResolver {
         if (element instanceof JetFunctionLiteralExpression) {
             return getCallerName((JetFunctionLiteralExpression) element);
         }
+        if (element instanceof JetNamedFunction) {
+            Name name = ((JetNamedFunction) element).getNameAsName();
+            if (name != null) return name;
+            return getCallerName((JetNamedFunction) element);
+        }
         return null;
     }
 
@@ -78,7 +83,7 @@ public class LabelResolver {
     }
 
     @Nullable
-    private Name getCallerName(@NotNull JetFunctionLiteralExpression expression) {
+    private Name getCallerName(@NotNull JetExpression expression) {
         JetCallExpression callExpression = getContainingCallExpression(expression);
         if (callExpression == null) return null;
 
@@ -92,7 +97,7 @@ public class LabelResolver {
     }
 
     @Nullable
-    private JetCallExpression getContainingCallExpression(@NotNull JetFunctionLiteralExpression expression) {
+    private JetCallExpression getContainingCallExpression(@NotNull JetExpression expression) {
         PsiElement parent = expression.getParent();
         if (parent instanceof JetFunctionLiteralArgument) {
             // f {}
@@ -103,7 +108,7 @@ public class LabelResolver {
         }
 
         if (parent instanceof JetValueArgument) {
-            // f ({}) or f(p = {})
+            // f ({}) or f(p = {}) or f (fun () {})
             JetValueArgument argument = (JetValueArgument) parent;
             PsiElement argList = argument.getParent();
             if (argList == null) return null;
