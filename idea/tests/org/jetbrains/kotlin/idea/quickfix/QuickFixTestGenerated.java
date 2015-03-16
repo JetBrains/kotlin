@@ -62,6 +62,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix"), Pattern.compile("^before(\\w+)\\.kt$"), true);
     }
 
+    @TestMetadata("beforeAnonymousObject.kt")
+    public void testAnonymousObject() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/beforeAnonymousObject.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("idea/testData/quickfix/abstract")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
