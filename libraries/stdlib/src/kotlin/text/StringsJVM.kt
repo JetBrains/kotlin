@@ -188,6 +188,16 @@ public fun String(bytes: ByteArray): String = java.lang.String(bytes, Charsets.U
 public fun String(chars: CharArray): String = java.lang.String(chars) as String
 
 /**
+ * Converts the characters from a portion of the specified array to a string.
+ */
+public fun String(chars: CharArray, offset: Int, length: Int): String = java.lang.String(chars, offset, length) as String
+
+/**
+ * Converts the code points from a portion of the specified Unicode code point array to a string.
+ */
+public fun String(codePoints: IntArray, offset: Int, length: Int): String = java.lang.String(codePoints, offset, length) as String
+
+/**
  * Converts the contents of the specified StringBuffer to a string.
  */
 public fun String(stringBuffer: java.lang.StringBuffer): String = java.lang.String(stringBuffer) as String
