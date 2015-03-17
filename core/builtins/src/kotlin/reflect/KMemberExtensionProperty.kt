@@ -16,10 +16,36 @@
 
 package kotlin.reflect
 
+/**
+ * Represents an extension property declared in a class.
+ * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/extensions.html#extension-properties)
+ * for more information.
+ *
+ * @param D the type of the dispatch receiver. Must be derived either from a class declaring this property,
+ *        or any subclass of that class.
+ * @param E the type of the extension receiver.
+ * @param R the type of the property.
+ */
 public trait KMemberExtensionProperty<D : Any, E, out R> : KProperty<R> {
+    /**
+     * Returns the current value of the property.
+     *
+     * @param dispatchReceiver the instance owning the property.
+     * @param extensionReceiver the instance of the extension receiver.
+     */
     public fun get(dispatchReceiver: D, extensionReceiver: E): R
 }
 
+/**
+ * Represents a `var` extension property declared in a class.
+ */
 public trait KMutableMemberExtensionProperty<D : Any, E, R> : KMemberExtensionProperty<D, E, R>, KMutableProperty<R> {
+    /**
+     * Modifies the value of the property.
+     *
+     * @param dispatchReceiver the instance owning the property.
+     * @param extensionReceiver the instance of the extension receiver.
+     * @param value the new value to be assigned to this property.
+     */
     public fun set(dispatchReceiver: D, extensionReceiver: E, value: R)
 }

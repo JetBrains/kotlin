@@ -16,10 +16,24 @@
 
 package kotlin.reflect
 
+/**
+ * Represents a class and provides introspection capabilities.
+ * Instances of this class are obtainable by the `::class` syntax.
+ */
 public trait KClass<T> {
+    /**
+     * The simple name of the class as it was declared in the source code,
+     * or `null` if the class has no name (e.g. anonymous object literals).
+     */
     public val simpleName: String?
 
+    /**
+     * Returns non-extension properties declared in this class.
+     */
     public fun getProperties(): Collection<KMemberProperty<T, *>>
 
+    /**
+     * Returns extension properties declared in this class.
+     */
     public fun getExtensionProperties(): Collection<KMemberExtensionProperty<T, *, *>>
 }
