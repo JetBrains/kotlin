@@ -59,21 +59,21 @@ import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
 import java.util.ArrayList
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
-import com.intellij.debugger.MultiRequestPositionManager
+import com.intellij.debugger.PositionManager
 import java.util.Collections
 
 class PositionedElement(val className: String?, val element: PsiElement?)
 
-public class JetPositionManager(private val myDebugProcess: DebugProcess) : MultiRequestPositionManager {
+public class JetPositionManager(private val myDebugProcess: DebugProcess) : PositionManager {
     private val myTypeMappers = WeakHashMap<Pair<FqName, IdeaModuleInfo>, CachedValue<JetTypeMapper>>()
 
     override fun getSourcePosition(location: Location?): SourcePosition? {
         if (location == null) {
-            throw NoDataException.INSTANCE
+            throw NoDataException()
         }
         val psiFile = getPsiFileByLocation(location)
         if (psiFile == null) {
-            throw NoDataException.INSTANCE
+            throw NoDataException()
         }
 
         val lineNumber = try {
@@ -92,7 +92,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
             return SourcePosition.createFromLine(psiFile, lineNumber)
         }
 
-        throw NoDataException.INSTANCE
+        throw NoDataException()
     }
 
     private fun getLambdaIfInside(location: Location, file: JetFile, lineNumber: Int): JetFunctionLiteral? {
@@ -169,7 +169,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
 
     override fun getAllClasses(sourcePosition: SourcePosition): List<ReferenceType> {
         if (sourcePosition.getFile() !is JetFile) {
-            throw NoDataException.INSTANCE
+            throw NoDataException()
         }
         val names = classNameForPositionAndInlinedOnes(sourcePosition)
         val result = ArrayList<ReferenceType>()
@@ -227,7 +227,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
 
     override fun locationsOfLine(type: ReferenceType, position: SourcePosition): List<Location> {
         if (position.getFile() !is JetFile) {
-            throw NoDataException.INSTANCE
+            throw NoDataException()
         }
         try {
             val line = position.getLine() + 1
@@ -235,18 +235,18 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
                 type.locationsOfLine("Kotlin", null, line)
             else
                 type.locationsOfLine(line)
-            if (locations == null || locations.isEmpty()) throw NoDataException.INSTANCE
+            if (locations == null || locations.isEmpty()) throw NoDataException()
             return locations
         }
         catch (e: AbsentInformationException) {
-            throw NoDataException.INSTANCE
+            throw NoDataException()
         }
     }
 
     [deprecated("Since Idea 14.0.3 use createPrepareRequests fun")]
     override fun createPrepareRequest(classPrepareRequestor: ClassPrepareRequestor, sourcePosition: SourcePosition): ClassPrepareRequest? {
         if (sourcePosition.getFile() !is JetFile) {
-            throw NoDataException.INSTANCE
+            throw NoDataException()
         }
         val className = classNameForPosition(sourcePosition)
         if (className == null) {
@@ -254,6 +254,8 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
         }
         return myDebugProcess.getRequestsManager().createClassPrepareRequest(classPrepareRequestor, className.replace('/', '.'))
     }
+
+    /*
 
     override fun createPrepareRequests(requestor: ClassPrepareRequestor, position: SourcePosition): List<ClassPrepareRequest> {
         if (position.getFile() !is JetFile) {
@@ -264,6 +266,8 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
             className -> myDebugProcess.getRequestsManager().createClassPrepareRequest(requestor, className.replace('/', '.'))
         }
     }
+
+     */
 
     TestOnly
     public fun addTypeMapper(file: JetFile, typeMapper: JetTypeMapper) {

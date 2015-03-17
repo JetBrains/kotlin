@@ -199,8 +199,9 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
 
     override fun createOptionsPanel(): JComponent? {
         val panel = JPanel(GridBagLayout())
+        val project = ProjectUtil.guessCurrentProject(panel)
         panel.add(
-                EntryPointsManagerImpl.createConfigureAnnotationsButton(),
+                EntryPointsManager.getInstance(project).createConfigureAnnotationsBtn(),
                 GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, Insets(0, 0, 0, 0), 0, 0)
         )
         return panel

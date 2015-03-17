@@ -25,7 +25,7 @@ import com.intellij.openapi.module.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 
-public class AndroidPsiTreeChangePreprocessor : PsiTreeChangePreprocessor, SimpleModificationTracker() {
+public class AndroidPsiTreeChangePreprocessor : PsiTreeChangePreprocessor, DefaultModificationTracker() {
 
     default object {
         private val HANDLED_EVENTS = setOf(

@@ -16,6 +16,9 @@
 
 package org.jetbrains.kotlin.idea
 
+/*
+No stepping filter in Idea 13
+
 import com.intellij.debugger.engine
 import com.intellij.debugger.engine.SuspendContext
 import org.jetbrains.kotlin.idea.debugger.JetPositionManager
@@ -81,4 +84,6 @@ public class ExtraSteppingFilter : engine.ExtraSteppingFilter {
         return StepRequest.STEP_INTO
     }
 }
+
+*/
 
