@@ -846,6 +846,10 @@ fun main(args: Array<String>) {
         testClass(javaClass<AbstractInlineSizeReductionTest>()) {
             model("inlineSizeReduction/cases")
         }
+
+        testClass(javaClass<AbstractReifiedTest>()) {
+            model("reified/cases")
+        }
     }
 
     testGroup("js/js.tests/test", "compiler/testData") {
