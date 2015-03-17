@@ -66,12 +66,6 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             doSingleBreakpointTest(fileName);
         }
 
-        @TestMetadata("callableBug.kt")
-        public void testCallableBug() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/callableBug.kt");
-            doSingleBreakpointTest(fileName);
-        }
-
         @TestMetadata("classFromAnotherPackage.kt")
         public void testClassFromAnotherPackage() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/classFromAnotherPackage.kt");
