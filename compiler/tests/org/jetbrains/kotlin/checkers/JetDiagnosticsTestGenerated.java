@@ -4754,6 +4754,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("DeprecatedSyntax.kt")
+            public void testDeprecatedSyntax() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/DeprecatedSyntax.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ExpectedParameterTypeMismatchVariance.kt")
             public void testExpectedParameterTypeMismatchVariance() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/ExpectedParameterTypeMismatchVariance.kt");

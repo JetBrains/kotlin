@@ -124,6 +124,10 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
     override fun visitFunctionLiteralExpression(expression: JetFunctionLiteralExpression, context: ExpressionTypingContext): JetTypeInfo? {
         if (!expression.getFunctionLiteral().hasBody()) return null
 
+        if (JetPsiUtil.isDeprecatedLambdaSyntax(expression)) {
+            context.trace.report(DEPRECATED_LAMBDA_SYNTAX.on(expression))
+        }
+
         val expectedType = context.expectedType
         val functionTypeExpected = !noExpectedType(expectedType) && KotlinBuiltIns.isFunctionOrExtensionFunctionType(expectedType)
 

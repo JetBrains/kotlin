@@ -1,0 +1,18 @@
+package
+
+internal val newSyntax: (kotlin.Int) -> kotlin.Unit
+internal val newSyntax1: (???, ???) -> kotlin.Unit
+internal val newSyntax2: (kotlin.Int, kotlin.Int) -> kotlin.Unit
+internal val newSyntax3: (???, kotlin.Int) -> kotlin.Unit
+internal val newSyntax4: (kotlin.Int, ???) -> kotlin.Unit
+internal val none: () -> kotlin.Unit
+internal val parameterWithFunctionType: () -> ((kotlin.Int) -> kotlin.Int) -> [ERROR : No type element]
+internal val parenthesizedParameters: (kotlin.Int) -> kotlin.Unit
+internal val parenthesizedParameters2: (???) -> kotlin.Unit
+internal val receiver: kotlin.Int.() -> kotlin.Unit
+internal val receiverAndReturnType: kotlin.Int.() -> kotlin.Int
+internal val receiverAndReturnTypeWithParameter: kotlin.Int.(kotlin.Int) -> kotlin.Int
+internal val receiverWithFunctionType: (kotlin.Int) -> kotlin.Int.() -> kotlin.Unit
+internal val receiverWithParameter: kotlin.Int.(???) -> kotlin.Unit
+internal val returnType: () -> kotlin.Int
+internal val returnTypeWithParameter: (kotlin.Int) -> kotlin.Int

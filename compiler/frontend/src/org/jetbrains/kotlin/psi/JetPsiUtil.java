@@ -911,4 +911,14 @@ public class JetPsiUtil {
         }
         return null;
     }
+
+    public static boolean isDeprecatedLambdaSyntax(@NotNull JetFunctionLiteralExpression functionLiteralExpression) {
+        JetFunctionLiteral functionLiteral = functionLiteralExpression.getFunctionLiteral();
+        if (functionLiteral.hasDeclaredReturnType() || functionLiteral.getReceiverTypeReference() != null) return true;
+
+        JetParameterList valueParameterList = functionLiteral.getValueParameterList();
+        if (valueParameterList != null && valueParameterList.isParenthesized()) return true;
+
+        return false;
+    }
 }
