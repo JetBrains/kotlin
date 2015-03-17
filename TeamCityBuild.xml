@@ -18,6 +18,7 @@
 
     <property name="plugin.zip" value="${artifact.output.path}/kotlin-plugin-${build.number}.zip" />
     <property name="bare.plugin.zip" value="${artifact.output.path}/kotlin-bare-plugin-${build.number}.zip" />
+    <property name="android-extensions.zip" value="${artifact.output.path}/kotlin-android-extensions-plugin-${build.number}.zip" />
 
     <macrodef name="echoprop">
         <attribute name="prop"/>
@@ -114,6 +115,11 @@
 
         <zipPlugin filename="${plugin.zip}" dir="Kotlin"/>
         <zipPlugin filename="${bare.plugin.zip}" dir="BareKotlin"/>
+
+        <zip destfile="${android-extensions.zip}">
+            <zipfileset prefix="KotlinAndroidExtensions" dir="${artifact.output.path}/KotlinAndroidExtensions" />
+        </zip>
+        <delete dir="${artifact.output.path}/KotlinAndroidExtensions" quiet="true"/>
     </target>
 
     <target name="post_build" depends="zipArtifacts, revertTemplateFiles"/>
