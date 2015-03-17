@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.codegen.SamType;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.when.WhenByEnumsMapping;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
@@ -249,19 +250,6 @@ public class CodegenBinding {
         });
 
         return sortedAnswer;
-    }
-
-    public static boolean isLocalNamedFun(@Nullable DeclarationDescriptor fd) {
-        return isLocalFunOrLambda(fd) && !fd.getName().isSpecial();
-    }
-
-    /*named or not*/
-    public static boolean isLocalFunOrLambda(@Nullable DeclarationDescriptor fd) {
-        if (fd instanceof FunctionDescriptor) {
-            FunctionDescriptor descriptor = (FunctionDescriptor) fd;
-            return descriptor.getVisibility() == Visibilities.LOCAL;
-        }
-        return false;
     }
 
     @NotNull

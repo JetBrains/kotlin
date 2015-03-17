@@ -33,7 +33,7 @@ public abstract class AbstractAndroidXml2KConversionTest : UsefulTestCase() {
         val jetCoreEnvironment = getEnvironment(path)
         val parser = CliAndroidUIXmlProcessor(jetCoreEnvironment.getProject(), path + "AndroidManifest.xml", path + "/res")
 
-        val actual = parser.parse()
+        val actual = parser.parse(false)
 
         val layoutFiles = File(path).listFiles {
             it.isFile() && it.name.startsWith("layout") && it.name.endsWith(".kt")

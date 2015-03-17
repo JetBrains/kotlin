@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.android
 
 import com.intellij.codeInsight.TargetElementUtilBase
+import kotlin.test.*
 
 public abstract class AbstractAndroidFindUsagesTest : KotlinAndroidTestCase() {
 
@@ -28,12 +29,11 @@ public abstract class AbstractAndroidFindUsagesTest : KotlinAndroidTestCase() {
         val virtualFile = f.copyFileToProject(path + getTestName(true) + ".kt", "src/" + getTestName(true) + ".kt");
         f.configureFromExistingVirtualFile(virtualFile)
 
-        val targetElement = TargetElementUtilBase.findTargetElement(f.getEditor(), TargetElementUtilBase.ELEMENT_NAME_ACCEPTED or TargetElementUtilBase.REFERENCED_ELEMENT_ACCEPTED)
+        val targetElement = TargetElementUtilBase.findTargetElement(
+                f.getEditor(), TargetElementUtilBase.ELEMENT_NAME_ACCEPTED or TargetElementUtilBase.REFERENCED_ELEMENT_ACCEPTED)
+        assertNotNull(targetElement)
 
-        kotlin.test.assertNotNull(targetElement)
-
-        val propUsages = f.findUsages(targetElement)
-
-        kotlin.test.assertTrue(propUsages.notEmpty)
+        val propUsages = f.findUsages(targetElement!!)
+        assertTrue(propUsages.isNotEmpty())
     }
 }

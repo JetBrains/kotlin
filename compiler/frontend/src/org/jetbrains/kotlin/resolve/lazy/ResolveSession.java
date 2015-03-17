@@ -70,6 +70,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     private JetImportsFactory jetImportFactory;
     private AnnotationResolver annotationResolve;
     private DescriptorResolver descriptorResolver;
+    private FunctionDescriptorResolver functionDescriptorResolver;
     private TypeResolver typeResolver;
     private QualifiedExpressionResolver qualifiedExpressionResolver;
     private ScriptBodyResolver scriptBodyResolver;
@@ -88,6 +89,11 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     @Inject
     public void setDescriptorResolver(DescriptorResolver descriptorResolver) {
         this.descriptorResolver = descriptorResolver;
+    }
+
+    @Inject
+    public void setFunctionDescriptorResolver(FunctionDescriptorResolver functionDescriptorResolver) {
+        this.functionDescriptorResolver = functionDescriptorResolver;
     }
 
     @Inject
@@ -380,5 +386,11 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     @NotNull
     public QualifiedExpressionResolver getQualifiedExpressionResolver() {
         return qualifiedExpressionResolver;
+    }
+
+    @NotNull
+    @Override
+    public FunctionDescriptorResolver getFunctionDescriptorResolver() {
+        return functionDescriptorResolver;
     }
 }

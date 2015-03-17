@@ -4,4 +4,4 @@ class Derived<A, B, C>: Base<A, B, C>()
 
 // class: Derived
 // jvm signature:     Derived
-// generic signature: <A:Ljava/lang/Object;B:Ljava/lang/Object;C:Ljava/lang/Object;>LBase<TA;TB;TC;>;Lkotlin/jvm/internal/KObject;
+// generic signature: <A:Ljava/lang/Object;B:Ljava/lang/Object;C:Ljava/lang/Object;>LBase<TA;TB;TC;>;

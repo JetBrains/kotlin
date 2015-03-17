@@ -1,4 +1,4 @@
-public final class Class implements kotlin.jvm.internal.KObject {
+public final class Class {
     @org.jetbrains.annotations.Nullable
     private final java.lang.String nullableVal = "";
     @org.jetbrains.annotations.Nullable

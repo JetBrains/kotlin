@@ -1,4 +1,4 @@
-fun foo(p: Any?, p1, Any?) {
+fun foo(p: Any?, p1: Any?) {
     if (x()) {
         y(p!!)
     }

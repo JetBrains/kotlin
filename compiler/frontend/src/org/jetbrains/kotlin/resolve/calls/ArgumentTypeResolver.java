@@ -136,7 +136,7 @@ public class ArgumentTypeResolver {
     }
 
     @NotNull
-    public static JetFunctionLiteralExpression getFunctionLiteralArgument(
+    public static JetFunction getFunctionLiteralArgument(
             @NotNull JetExpression expression, @NotNull ResolutionContext context
     ) {
         assert isFunctionLiteralArgument(expression, context);
@@ -145,12 +145,15 @@ public class ArgumentTypeResolver {
     }
 
     @Nullable
-    private static JetFunctionLiteralExpression getFunctionLiteralArgumentIfAny(
+    private static JetFunction getFunctionLiteralArgumentIfAny(
             @NotNull JetExpression expression, @NotNull ResolutionContext context
     ) {
         JetExpression deparenthesizedExpression = getLastElementDeparenthesized(expression, context);
         if (deparenthesizedExpression instanceof JetFunctionLiteralExpression) {
-            return (JetFunctionLiteralExpression) deparenthesizedExpression;
+            return ((JetFunctionLiteralExpression) deparenthesizedExpression).getFunctionLiteral();
+        }
+        if (deparenthesizedExpression instanceof JetFunction) {
+            return (JetFunction) deparenthesizedExpression;
         }
         return null;
     }
@@ -199,12 +202,12 @@ public class ArgumentTypeResolver {
     @NotNull
     public JetTypeInfo getFunctionLiteralTypeInfo(
             @NotNull JetExpression expression,
-            @NotNull JetFunctionLiteralExpression functionLiteralExpression,
+            @NotNull JetFunction functionLiteral,
             @NotNull CallResolutionContext<?> context,
             @NotNull ResolveArgumentsMode resolveArgumentsMode
     ) {
         if (resolveArgumentsMode == SHAPE_FUNCTION_ARGUMENTS) {
-            JetType type = getShapeTypeOfFunctionLiteral(functionLiteralExpression, context.scope, context.trace, true);
+            JetType type = getShapeTypeOfFunctionLiteral(functionLiteral, context.scope, context.trace, true);
             return JetTypeInfo.create(type, context.dataFlowInfo);
         }
         return expressionTypingServices.getTypeInfo(expression, context.replaceContextDependency(INDEPENDENT));
@@ -212,28 +215,27 @@ public class ArgumentTypeResolver {
 
     @Nullable
     public JetType getShapeTypeOfFunctionLiteral(
-            @NotNull JetFunctionLiteralExpression expression,
+            @NotNull JetFunction functionLiteral,
             @NotNull JetScope scope,
             @NotNull BindingTrace trace,
             boolean expectedTypeIsUnknown
     ) {
-        if (expression.getFunctionLiteral().getValueParameterList() == null) {
+        if (functionLiteral.getValueParameterList() == null) {
             return expectedTypeIsUnknown ? PLACEHOLDER_FUNCTION_TYPE : builtIns.getFunctionType(
                     Annotations.EMPTY, null, Collections.<JetType>emptyList(), DONT_CARE);
         }
-        List<JetParameter> valueParameters = expression.getValueParameters();
+        List<JetParameter> valueParameters = functionLiteral.getValueParameters();
         TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(
                 trace, "trace to resolve function literal parameter types");
         List<JetType> parameterTypes = Lists.newArrayList();
         for (JetParameter parameter : valueParameters) {
             parameterTypes.add(resolveTypeRefWithDefault(parameter.getTypeReference(), scope, temporaryTrace, DONT_CARE));
         }
-        JetFunctionLiteral functionLiteral = expression.getFunctionLiteral();
         JetType returnType = resolveTypeRefWithDefault(functionLiteral.getTypeReference(), scope, temporaryTrace, DONT_CARE);
         assert returnType != null;
         JetType receiverType = resolveTypeRefWithDefault(functionLiteral.getReceiverTypeReference(), scope, temporaryTrace, null);
         return builtIns.getFunctionType(Annotations.EMPTY, receiverType, parameterTypes,
-                                                            returnType);
+                                        returnType);
     }
 
     @Nullable

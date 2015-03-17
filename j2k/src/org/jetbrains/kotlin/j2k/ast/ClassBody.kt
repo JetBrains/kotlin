@@ -25,7 +25,6 @@ class ClassBody (
         val baseClassParams: List<DeferredElement<Expression>>,
         val members: List<Member>,
         val defaultObjectMembers: List<Member>,
-        val factoryFunctions: List<FactoryFunction>,
         val lBrace: LBrace,
         val rBrace: RBrace) {
 

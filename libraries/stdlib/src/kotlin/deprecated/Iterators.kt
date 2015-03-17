@@ -7,7 +7,7 @@ import kotlin.test.assertTrue
 /**
  * Returns an iterator which invokes the function to calculate the next value on each iteration until the function returns *null*
  */
-deprecated("Use stream(...) function to make lazy stream of values.")
+deprecated("Use sequence(...) function to make lazy sequence of values.")
 public fun <T:Any> iterate(nextFunction: () -> T?) : Iterator<T> {
     return FunctionIterator(nextFunction)
 }
@@ -16,20 +16,20 @@ public fun <T:Any> iterate(nextFunction: () -> T?) : Iterator<T> {
  * Returns an iterator which invokes the function to calculate the next value based on the previous one on each iteration
  * until the function returns *null*
  */
-deprecated("Use stream(...) function to make lazy stream of values.")
+deprecated("Use sequence(...) function to make lazy sequence of values.")
 public /*inline*/ fun <T: Any> iterate(initialValue: T, nextFunction: (T) -> T?): Iterator<T> =
         iterate(nextFunction.toGenerator(initialValue))
 
 /**
  * Returns an iterator whose values are pairs composed of values produced by given pair of iterators
  */
-deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
+deprecated("Replace Iterator<T> with Sequence<T> by using sequence() function instead of iterator()")
 public fun <T, S> Iterator<T>.zip(iterator: Iterator<S>): Iterator<Pair<T, S>> = PairIterator(this, iterator)
 
 /**
  * Returns an iterator shifted to right by the given number of elements
  */
-deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
+deprecated("Replace Iterator<T> with Sequence<T> by using sequence() function instead of iterator()")
 public fun <T> Iterator<T>.skip(n: Int): Iterator<T> = SkippingIterator(this, n)
 
 deprecated("Use FilteringStream<T> instead")

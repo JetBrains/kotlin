@@ -91,17 +91,17 @@ public final class JetScopeUtils {
     }
 
     public static JetScope getPropertyDeclarationInnerScopeForInitializer(
+            @NotNull PropertyDescriptor propertyDescriptor,
             @NotNull JetScope outerScope,
             @NotNull List<? extends TypeParameterDescriptor> typeParameters,
             @Nullable ReceiverParameterDescriptor receiver,
             BindingTrace trace
     ) {
-        return getPropertyDeclarationInnerScope(null, outerScope, typeParameters, receiver, trace, false);
+        return getPropertyDeclarationInnerScope(propertyDescriptor, outerScope, typeParameters, receiver, trace, false);
     }
 
     private static JetScope getPropertyDeclarationInnerScope(
-            @Nullable PropertyDescriptor propertyDescriptor,
-            // PropertyDescriptor can be null for property scope which hasn't label to property (in this case addLabelForProperty parameter must be false
+            @NotNull PropertyDescriptor propertyDescriptor,
             @NotNull JetScope outerScope,
             @NotNull List<? extends TypeParameterDescriptor> typeParameters,
             @Nullable ReceiverParameterDescriptor receiver,
@@ -115,7 +115,7 @@ public final class JetScopeUtils {
 
     @NotNull
     private static JetScope getPropertyDeclarationInnerScope(
-            @Nullable PropertyDescriptor propertyDescriptor,
+            @NotNull PropertyDescriptor propertyDescriptor,
             @NotNull JetScope outerScope,
             @NotNull List<? extends TypeParameterDescriptor> typeParameters,
             @Nullable ReceiverParameterDescriptor receiver,
@@ -123,10 +123,9 @@ public final class JetScopeUtils {
             boolean addLabelForProperty
     ) {
         WritableScopeImpl result = new WritableScopeImpl(
-                outerScope, outerScope.getContainingDeclaration(), redeclarationHandler,
+                outerScope, propertyDescriptor, redeclarationHandler,
                 "Property declaration inner scope");
         if (addLabelForProperty) {
-            assert propertyDescriptor != null : "PropertyDescriptor can be null for property scope which hasn't label to property";
             result.addLabeledDeclaration(propertyDescriptor);
         }
         for (TypeParameterDescriptor typeParameterDescriptor : typeParameters) {

@@ -9,7 +9,7 @@ class MyActivity: Activity() {
 }
 
 // 2 GETSTATIC
-// 5 INVOKEVIRTUAL
+// 6 INVOKEVIRTUAL
 // 3 CHECKCAST
 // 3  _\$_findCachedViewById
 // 1 findViewById

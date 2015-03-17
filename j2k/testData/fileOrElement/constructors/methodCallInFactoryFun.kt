@@ -1,15 +1,11 @@
-// ERROR: Cannot access 'staticFoo': it is 'private' in 'Default'
-// ERROR: Cannot access 'staticFoo': it is 'private' in 'Default'
-fun C(arg1: Int, arg2: Int, other: C): C {
-    val __ = C(arg1, arg2, 0)
-    System.out.println(__.foo(1) + __.foo(2) + other.foo(3) + C.staticFoo(4) + C.staticFoo(5))
-    return __
-}
-
 class C(private val arg1: Int, private val arg2: Int, private val arg3: Int) {
 
     fun foo(p: Int): Int {
         return p
+    }
+
+    constructor(arg1: Int, arg2: Int, other: C) : this(arg1, arg2, 0) {
+        System.out.println(foo(1) + this.foo(2) + other.foo(3) + staticFoo(4) + C.staticFoo(5))
     }
 
     default object {

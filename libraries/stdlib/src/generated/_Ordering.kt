@@ -275,6 +275,17 @@ public fun <T : Comparable<T>> Iterable<T>.toSortedList(): List<T> {
 /**
  * Returns a sorted list of all elements
  */
+public fun <T : Comparable<T>> Sequence<T>.toSortedList(): List<T> {
+    val sortedList = toArrayList()
+    java.util.Collections.sort(sortedList)
+    return sortedList
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
+/**
+ * Returns a sorted list of all elements
+ */
 public fun <T : Comparable<T>> Stream<T>.toSortedList(): List<T> {
     val sortedList = toArrayList()
     java.util.Collections.sort(sortedList)
@@ -381,6 +392,18 @@ public fun <T, V : Comparable<V>> Iterable<T>.toSortedListBy(order: (T) -> V): L
     return sortedList
 }
 
+/**
+ * Returns a sorted list of all elements, ordered by results of specified *order* function.
+ */
+public fun <T, V : Comparable<V>> Sequence<T>.toSortedListBy(order: (T) -> V): List<T> {
+    val sortedList = toArrayList()
+    val sortBy: Comparator<T> = compareBy(order)
+    java.util.Collections.sort(sortedList, sortBy)
+    return sortedList
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
 /**
  * Returns a sorted list of all elements, ordered by results of specified *order* function.
  */

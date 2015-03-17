@@ -12,6 +12,4 @@ class A<T: Data>(val t: T) where T: DataEx {
     }
 }
 
-private fun <T : Data, V : Data> A<T>.i(v: V): Int where T : DataEx {
-    return t.x + v.x
-}
+private fun <T : Data, V : Data> A<T>.i(v: V) where T : DataEx = t.x + v.x

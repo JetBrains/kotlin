@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.j2k.ast
 
 import org.jetbrains.kotlin.j2k.*
 
-open class Function(
+class Function(
         val name: Identifier,
         annotations: Annotations,
         modifiers: Modifiers,

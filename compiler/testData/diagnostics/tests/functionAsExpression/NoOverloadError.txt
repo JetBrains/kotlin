@@ -1,0 +1,7 @@
+package
+
+internal val bar: () -> kotlin.Unit
+internal val bas: () -> kotlin.Unit
+internal fun gar(/*0*/ p: kotlin.Any?): () -> kotlin.Unit
+internal fun gas(/*0*/ p: kotlin.Any?): () -> kotlin.Unit
+internal fun outer(): kotlin.Unit

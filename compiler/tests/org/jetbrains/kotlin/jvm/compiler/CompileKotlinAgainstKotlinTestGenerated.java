@@ -144,15 +144,15 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         doTest(fileName);
     }
 
-    @TestMetadata("SecondaryConstructors.A.kt")
-    public void testSecondaryConstructors() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/SecondaryConstructors.A.kt");
-        doTest(fileName);
-    }
-
     @TestMetadata("RecursiveGeneric.A.kt")
     public void testRecursiveGeneric() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/RecursiveGeneric.A.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("SecondaryConstructors.A.kt")
+    public void testSecondaryConstructors() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/SecondaryConstructors.A.kt");
         doTest(fileName);
     }
 

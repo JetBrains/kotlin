@@ -5,6 +5,4 @@ fun foo(t: Array<Int>) {
     t.check(1, 2, function())
 }
 
-private fun function(): (Int) -> Boolean {
-    return { it + 1 > 1 }
-}
+private fun function(): (Int) -> Boolean = { it + 1 > 1 }

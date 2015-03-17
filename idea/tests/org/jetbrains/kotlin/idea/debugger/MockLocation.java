@@ -63,12 +63,12 @@ public class MockLocation implements Location {
 
     @Override
     public String sourcePath() throws AbsentInformationException {
-        throw new UnsupportedOperationException();
+        throw new AbsentInformationException();
     }
 
     @Override
     public String sourcePath(String s) throws AbsentInformationException {
-        throw new UnsupportedOperationException();
+        throw new AbsentInformationException();
     }
 
     @Override

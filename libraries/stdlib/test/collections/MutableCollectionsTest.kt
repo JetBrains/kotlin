@@ -21,7 +21,7 @@ class MutableCollectionTest {
         val list = listOf("foo", "bar")
         val collection = ArrayList<String>()
 
-        collection.addAll(list.stream())
+        collection.addAll(list.sequence())
 
         assertEquals(list, collection)
     }

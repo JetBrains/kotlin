@@ -242,6 +242,24 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             doStepIntoTest(fileName);
         }
 
+        @TestMetadata("stepIntoFromInlineFun.kt")
+        public void testStepIntoFromInlineFun() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepInto/stepInto/stepIntoFromInlineFun.kt");
+            doStepIntoTest(fileName);
+        }
+
+        @TestMetadata("stepIntoInlineFun.kt")
+        public void testStepIntoInlineFun() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepInto/stepInto/stepIntoInlineFun.kt");
+            doStepIntoTest(fileName);
+        }
+
+        @TestMetadata("stepIntoStdLibInlineFun.kt")
+        public void testStepIntoStdLibInlineFun() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepInto/stepInto/stepIntoStdLibInlineFun.kt");
+            doStepIntoTest(fileName);
+        }
+
         @TestMetadata("syntheticMethods.kt")
         public void testSyntheticMethods() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepInto/stepInto/syntheticMethods.kt");

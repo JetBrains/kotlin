@@ -1,0 +1,18 @@
+package
+
+internal val </*0*/ T> T.fromVal: () -> T
+internal fun devNull(/*0*/ a: kotlin.Any?): kotlin.Unit
+internal fun </*0*/ O> outer(): kotlin.Unit
+internal fun </*0*/ T> parameter(): (T) -> T
+internal fun </*0*/ T> receiver(): T.() -> T
+internal fun </*0*/ T> returnType(): () -> T
+
+internal final class Outer</*0*/ O> {
+    public constructor Outer</*0*/ O>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    internal final fun </*0*/ T> parameter(): (T) -> T
+    internal final fun </*0*/ T> receiver(): T.() -> T
+    internal final fun </*0*/ T> returnType(): () -> T
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

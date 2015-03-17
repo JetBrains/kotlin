@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.cli.common.modules.ModuleScriptData;
 import org.jetbrains.kotlin.cli.jvm.compiler.*;
 import org.jetbrains.kotlin.cli.jvm.repl.ReplFromTerminal;
 import org.jetbrains.kotlin.codegen.CompilationException;
-import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException;
+import org.jetbrains.kotlin.compiler.plugin.*;
 import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.Services;
@@ -93,6 +93,11 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
 
         try {
             PluginCliParser.loadPlugins(arguments, configuration);
+        }
+        catch (PluginCliOptionProcessingException e) {
+            String message = e.getMessage() + "\n\n" + PluginPackage.cliPluginUsageString(e.getPluginId(), e.getOptions());
+            messageCollector.report(CompilerMessageSeverity.ERROR, message, CompilerMessageLocation.NO_LOCATION);
+            return INTERNAL_ERROR;
         }
         catch (CliOptionProcessingException e) {
             messageCollector.report(CompilerMessageSeverity.ERROR, e.getMessage(), CompilerMessageLocation.NO_LOCATION);

@@ -44,6 +44,7 @@ public object JetUsageTypeProvider : UsageTypeProviderEx {
             TYPE_DEFINITION -> JetUsageTypes.TYPE_DEFINITION
             IS -> JetUsageTypes.IS
             CLASS_OBJECT_ACCESS -> JetUsageTypes.CLASS_OBJECT_ACCESS
+            DEFAULT_OBJECT_ACCESS -> JetUsageTypes.DEFAULT_OBJECT_ACCESS
             EXTENSION_RECEIVER_TYPE -> JetUsageTypes.EXTENSION_RECEIVER_TYPE
             SUPER_TYPE_QUALIFIER -> JetUsageTypes.SUPER_TYPE_QUALIFIER
 
@@ -84,6 +85,7 @@ object JetUsageTypes {
     val TYPE_DEFINITION = UsageType(JetBundle.message("usageType.type.definition"))
     val IS = UsageType(JetBundle.message("usageType.is"))
     val CLASS_OBJECT_ACCESS = UsageType(JetBundle.message("usageType.class.object"))
+    val DEFAULT_OBJECT_ACCESS = UsageType(JetBundle.message("usageType.default.object"))
     val EXTENSION_RECEIVER_TYPE = UsageType(JetBundle.message("usageType.extension.receiver.type"))
     val SUPER_TYPE_QUALIFIER = UsageType(JetBundle.message("usageType.super.type.qualifier"))
 

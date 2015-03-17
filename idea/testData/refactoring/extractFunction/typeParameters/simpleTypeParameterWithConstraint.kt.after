@@ -10,6 +10,4 @@ fun foo<V: Data>(v: V): Pair<Int, V> where V: DataEx {
     return pair(v)
 }
 
-private fun <V : Data> pair(v: V): Pair<Int, V> where V : DataEx {
-    return Pair(v.x + 10, v)
-}
+private fun <V : Data> pair(v: V) where V : DataEx = Pair(v.x + 10, v)

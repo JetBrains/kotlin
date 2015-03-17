@@ -23,13 +23,14 @@ import com.intellij.util.ArrayUtil;
 import kotlin.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.backend.common.CodegenUtilKt;
 import org.jetbrains.kotlin.backend.common.DataClassMethodGenerator;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.codegen.binding.MutableClosure;
 import org.jetbrains.kotlin.codegen.context.*;
+import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension;
+import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
@@ -74,9 +75,9 @@ import static kotlin.KotlinPackage.firstOrNull;
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.enumEntryNeedSubclass;
-import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.isLocalNamedFun;
 import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
+import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getSecondaryConstructors;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.*;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
@@ -209,6 +210,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         );
         v.visitSource(myClass.getContainingFile().getName(), null);
 
+        InlineCodegenUtil.initDefaultSourceMappingIfNeeded(context, this, state);
+
         writeEnclosingMethod();
 
         AnnotationCodegen.forClass(v.getVisitor(), typeMapper).genAnnotations(descriptor, null);
@@ -283,34 +286,16 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         sw.writeSuperclassEnd();
 
         List<JetType> interfaceSupertypes = Lists.newArrayList();
-        boolean explicitKObject = false;
 
         for (JetDelegationSpecifier specifier : myClass.getDelegationSpecifiers()) {
             JetType superType = bindingContext.get(BindingContext.TYPE, specifier.getTypeReference());
             assert superType != null : "No supertype for class: " + myClass.getText();
-            ClassifierDescriptor classifierDescriptor = superType.getConstructor().getDeclarationDescriptor();
-            if (classifierDescriptor instanceof ClassDescriptor) {
-                ClassDescriptor superClassDescriptor = (ClassDescriptor) classifierDescriptor;
-                if (isInterface(superClassDescriptor)) {
-                    interfaceSupertypes.add(superType);
-
-                    if (JvmAbi.K_OBJECT.equalsTo(DescriptorUtils.getFqName(superClassDescriptor))) {
-                        explicitKObject = true;
-                    }
-                }
+            if (isInterface(superType.getConstructor().getDeclarationDescriptor())) {
+                interfaceSupertypes.add(superType);
             }
         }
 
         LinkedHashSet<String> superInterfaces = new LinkedHashSet<String>();
-        if (!explicitKObject && !isInterface(descriptor)) {
-            Type kObject = asmTypeByFqNameWithoutInnerClasses(JvmAbi.K_OBJECT);
-            sw.writeInterface();
-            sw.writeClassBegin(kObject);
-            sw.writeClassEnd();
-            sw.writeInterfaceEnd();
-            superInterfaces.add(kObject.getInternalName());
-        }
-
         for (JetType supertype : interfaceSupertypes) {
             sw.writeInterface();
             Type jvmName = typeMapper.mapSupertype(supertype, sw);
@@ -319,8 +304,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         return new JvmClassSignature(classAsmType.getInternalName(), superClassAsmType.getInternalName(),
-                                     new ArrayList<String>(superInterfaces),
-                                     sw.makeJavaGenericSignature());
+                                     new ArrayList<String>(superInterfaces), sw.makeJavaGenericSignature());
     }
 
     protected void getSuperClass() {
@@ -374,8 +358,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         try {
             lookupConstructorExpressionsInClosureIfPresent();
             generatePrimaryConstructor(delegationFieldsInfo);
-            for (ConstructorDescriptor secondaryConstructor : descriptor.getConstructors()) {
-                if (secondaryConstructor.isPrimary()) continue;
+            for (ConstructorDescriptor secondaryConstructor : getSecondaryConstructors(descriptor)) {
                 generateSecondaryConstructor(secondaryConstructor);
             }
         }
@@ -406,7 +389,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         genClosureFields(context.closure, v, typeMapper);
 
         for (ExpressionCodegenExtension extension : ExpressionCodegenExtension.Default.getInstances(state.getProject())) {
-            extension.generateClassSyntheticParts(v, bindingContext, myClass, descriptor);
+            extension.generateClassSyntheticParts(v, state, myClass, descriptor);
         }
     }
 
@@ -1322,7 +1305,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 DeclarationDescriptor descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, expr);
 
                 DeclarationDescriptor toLookup;
-                if (isLocalNamedFun(descriptor)) {
+                if (isLocalFunction(descriptor)) {
                     toLookup = descriptor;
                 }
                 else if (descriptor instanceof CallableMemberDescriptor) {

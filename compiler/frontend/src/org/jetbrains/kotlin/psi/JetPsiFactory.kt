@@ -195,6 +195,10 @@ public class JetPsiFactory(private val project: Project) {
         return createProperty(name, null, false, name).getInitializer() as JetSimpleNameExpression
     }
 
+    public fun createObjectDeclarationName(name: String): JetObjectDeclarationName {
+        return createDeclaration<JetObjectDeclaration>("object $name").getNameAsDeclaration()!!
+    }
+
     public fun createIdentifier(name: String): PsiElement {
         return createSimpleName(name).getIdentifier()!!
     }
@@ -625,6 +629,15 @@ public class JetPsiFactory(private val project: Project) {
             assert(state == State.BODY || state == State.TYPE_CONSTRAINTS)
 
             sb.append(bodyPrefix()).append(" {\n").append(body).append("\n}")
+            state = State.DONE
+
+            return this
+        }
+
+        public fun expressionBody(body: String): CallableBuilder {
+            assert(state == State.BODY || state == State.TYPE_CONSTRAINTS)
+
+            sb.append(bodyPrefix()).append(" = ").append(body)
             state = State.DONE
 
             return this

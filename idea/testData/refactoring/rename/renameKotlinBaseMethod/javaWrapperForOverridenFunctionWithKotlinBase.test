@@ -1,6 +1,6 @@
 {
   "type": "JAVA_METHOD",
-  "classFQN": "testing.JavaClient.D",
+  "classId": "testing/JavaClient.D",
   "methodSignature": "void first()",
   "newName": "second"
 }

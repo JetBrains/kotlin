@@ -25,9 +25,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.asJava.AsJavaPackage;
-import org.jetbrains.kotlin.asJava.KotlinLightMethod;
-import org.jetbrains.kotlin.asJava.LightClassUtil;
+import org.jetbrains.kotlin.asJava.*;
 import org.jetbrains.kotlin.idea.search.usagesSearch.*;
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil;
 import org.jetbrains.kotlin.psi.*;
@@ -46,6 +44,18 @@ public class KotlinReferencesSearcher extends QueryExecutorBase<PsiReference, Re
             });
             if (lightClass != null) {
                 searchNamedElement(queryParameters, lightClass, className);
+
+                if (element instanceof JetObjectDeclaration && ((JetObjectDeclaration) element).isDefault()) {
+                    PsiField fieldForDefaultObject = ApplicationManager.getApplication().runReadAction(new Computable<PsiField>() {
+                        @Override
+                        public PsiField compute() {
+                            return LightClassUtil.getLightFieldForDefaultObject(element);
+                        }
+                    });
+                    if (fieldForDefaultObject != null) {
+                        searchNamedElement(queryParameters, fieldForDefaultObject);
+                    }
+                }
             }
         }
     }

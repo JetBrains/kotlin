@@ -100,6 +100,16 @@ public inline fun <K, V> Map<K, V>.all(predicate: (Map.Entry<K, V>) -> Boolean):
 /**
  * Returns *true* if all elements match the given *predicate*
  */
+public inline fun <T> Sequence<T>.all(predicate: (T) -> Boolean): Boolean {
+    for (element in this) if (!predicate(element)) return false
+    return true
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
+/**
+ * Returns *true* if all elements match the given *predicate*
+ */
 public inline fun <T> Stream<T>.all(predicate: (T) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
     return true
@@ -201,6 +211,16 @@ public fun <K, V> Map<K, V>.any(): Boolean {
     return false
 }
 
+/**
+ * Returns *true* if collection has at least one element
+ */
+public fun <T> Sequence<T>.any(): Boolean {
+    for (element in this) return true
+    return false
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
 /**
  * Returns *true* if collection has at least one element
  */
@@ -308,6 +328,16 @@ public inline fun <K, V> Map<K, V>.any(predicate: (Map.Entry<K, V>) -> Boolean):
 /**
  * Returns *true* if any element matches the given [predicate]
  */
+public inline fun <T> Sequence<T>.any(predicate: (T) -> Boolean): Boolean {
+    for (element in this) if (predicate(element)) return true
+    return false
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
+/**
+ * Returns *true* if any element matches the given [predicate]
+ */
 public inline fun <T> Stream<T>.any(predicate: (T) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
     return false
@@ -407,6 +437,17 @@ public fun <K, V> Map<K, V>.count(): Int {
     return size()
 }
 
+/**
+ * Returns the number of elements
+ */
+public fun <T> Sequence<T>.count(): Int {
+    var count = 0
+    for (element in this) count++
+    return count
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
 /**
  * Returns the number of elements
  */
@@ -525,6 +566,17 @@ public inline fun <K, V> Map<K, V>.count(predicate: (Map.Entry<K, V>) -> Boolean
 /**
  * Returns the number of elements matching the given [predicate]
  */
+public inline fun <T> Sequence<T>.count(predicate: (T) -> Boolean): Int {
+    var count = 0
+    for (element in this) if (predicate(element)) count++
+    return count
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
+/**
+ * Returns the number of elements matching the given [predicate]
+ */
 public inline fun <T> Stream<T>.count(predicate: (T) -> Boolean): Int {
     var count = 0
     for (element in this) if (predicate(element)) count++
@@ -630,6 +682,17 @@ public inline fun <T, R> Iterable<T>.fold(initial: R, operation: (R, T) -> R): R
     return accumulator
 }
 
+/**
+ * Accumulates value starting with *initial* value and applying *operation* from left to right to current accumulator value and each element
+ */
+public inline fun <T, R> Sequence<T>.fold(initial: R, operation: (R, T) -> R): R {
+    var accumulator = initial
+    for (element in this) accumulator = operation(accumulator, element)
+    return accumulator
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
 /**
  * Accumulates value starting with *initial* value and applying *operation* from left to right to current accumulator value and each element
  */
@@ -860,6 +923,15 @@ public inline fun <K, V> Map<K, V>.forEach(operation: (Map.Entry<K, V>) -> Unit)
 /**
  * Performs the given *operation* on each element
  */
+public inline fun <T> Sequence<T>.forEach(operation: (T) -> Unit): Unit {
+    for (element in this) operation(element)
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
+/**
+ * Performs the given *operation* on each element
+ */
 public inline fun <T> Stream<T>.forEach(operation: (T) -> Unit): Unit {
     for (element in this) operation(element)
 }
@@ -951,6 +1023,16 @@ public inline fun <T> Iterable<T>.forEachIndexed(operation: (Int, T) -> Unit): U
     for (item in this) operation(index++, item)
 }
 
+/**
+ * Performs the given *operation* on each element, providing sequential index with the element
+ */
+public inline fun <T> Sequence<T>.forEachIndexed(operation: (Int, T) -> Unit): Unit {
+    var index = 0
+    for (item in this) operation(index++, item)
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
 /**
  * Performs the given *operation* on each element, providing sequential index with the element
  */
@@ -1085,6 +1167,22 @@ public fun <T : Comparable<T>> Iterable<T>.max(): T? {
     return max
 }
 
+/**
+ * Returns the largest element or null if there are no elements
+ */
+public fun <T : Comparable<T>> Sequence<T>.max(): T? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    var max = iterator.next()
+    while (iterator.hasNext()) {
+        val e = iterator.next()
+        if (max < e) max = e
+    }
+    return max
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
 /**
  * Returns the largest element or null if there are no elements
  */
@@ -1297,6 +1395,27 @@ public inline fun <R : Comparable<R>, T : Any> Iterable<T>.maxBy(f: (T) -> R): T
 /**
  * Returns the first element yielding the largest value of the given function or null if there are no elements
  */
+public inline fun <R : Comparable<R>, T : Any> Sequence<T>.maxBy(f: (T) -> R): T? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    var maxElem = iterator.next()
+    var maxValue = f(maxElem)
+    while (iterator.hasNext()) {
+        val e = iterator.next()
+        val v = f(e)
+        if (maxValue < v) {
+            maxElem = e
+            maxValue = v
+        }
+    }
+    return maxElem
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
+/**
+ * Returns the first element yielding the largest value of the given function or null if there are no elements
+ */
 public inline fun <R : Comparable<R>, T : Any> Stream<T>.maxBy(f: (T) -> R): T? {
     val iterator = iterator()
     if (!iterator.hasNext()) return null
@@ -1469,6 +1588,22 @@ public fun <T : Comparable<T>> Iterable<T>.min(): T? {
     return min
 }
 
+/**
+ * Returns the smallest element or null if there are no elements
+ */
+public fun <T : Comparable<T>> Sequence<T>.min(): T? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    var min = iterator.next()
+    while (iterator.hasNext()) {
+        val e = iterator.next()
+        if (min > e) min = e
+    }
+    return min
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
 /**
  * Returns the smallest element or null if there are no elements
  */
@@ -1681,6 +1816,27 @@ public inline fun <R : Comparable<R>, T : Any> Iterable<T>.minBy(f: (T) -> R): T
 /**
  * Returns the first element yielding the smallest value of the given function or null if there are no elements
  */
+public inline fun <R : Comparable<R>, T : Any> Sequence<T>.minBy(f: (T) -> R): T? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    var minElem = iterator.next()
+    var minValue = f(minElem)
+    while (iterator.hasNext()) {
+        val e = iterator.next()
+        val v = f(e)
+        if (minValue > v) {
+            minElem = e
+            minValue = v
+        }
+    }
+    return minElem
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
+/**
+ * Returns the first element yielding the smallest value of the given function or null if there are no elements
+ */
 public inline fun <R : Comparable<R>, T : Any> Stream<T>.minBy(f: (T) -> R): T? {
     val iterator = iterator()
     if (!iterator.hasNext()) return null
@@ -1826,6 +1982,16 @@ public fun <K, V> Map<K, V>.none(): Boolean {
 /**
  * Returns *true* if collection has no elements
  */
+public fun <T> Sequence<T>.none(): Boolean {
+    for (element in this) return false
+    return true
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
+/**
+ * Returns *true* if collection has no elements
+ */
 public fun <T> Stream<T>.none(): Boolean {
     for (element in this) return false
     return true
@@ -1927,6 +2093,16 @@ public inline fun <K, V> Map<K, V>.none(predicate: (Map.Entry<K, V>) -> Boolean)
     return true
 }
 
+/**
+ * Returns *true* if no elements match the given *predicate*
+ */
+public inline fun <T> Sequence<T>.none(predicate: (T) -> Boolean): Boolean {
+    for (element in this) if (predicate(element)) return false
+    return true
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
 /**
  * Returns *true* if no elements match the given *predicate*
  */
@@ -2073,6 +2249,21 @@ public inline fun <T> Iterable<T>.reduce(operation: (T, T) -> T): T {
     return accumulator
 }
 
+/**
+ * Accumulates value starting with the first element and applying *operation* from left to right to current accumulator value and each element
+ */
+public inline fun <T> Sequence<T>.reduce(operation: (T, T) -> T): T {
+    val iterator = this.iterator()
+    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced")
+    var accumulator = iterator.next()
+    while (iterator.hasNext()) {
+        accumulator = operation(accumulator, iterator.next())
+    }
+    return accumulator
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
 /**
  * Accumulates value starting with the first element and applying *operation* from left to right to current accumulator value and each element
  */
@@ -2355,6 +2546,19 @@ public inline fun <T> Iterable<T>.sumBy(transform: (T) -> Int): Int {
 /**
  * Returns the sum of all values produced by [transform] function from elements in the collection
  */
+public inline fun <T> Sequence<T>.sumBy(transform: (T) -> Int): Int {
+    var sum: Int = 0
+    for (element in this) {
+        sum += transform(element)
+    }
+    return sum
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
+/**
+ * Returns the sum of all values produced by [transform] function from elements in the collection
+ */
 public inline fun <T> Stream<T>.sumBy(transform: (T) -> Int): Int {
     var sum: Int = 0
     for (element in this) {
@@ -2484,6 +2688,19 @@ public inline fun <T> Iterable<T>.sumByDouble(transform: (T) -> Double): Double 
     return sum
 }
 
+/**
+ * Returns the sum of all values produced by [transform] function from elements in the collection
+ */
+public inline fun <T> Sequence<T>.sumByDouble(transform: (T) -> Double): Double {
+    var sum: Double = 0.0
+    for (element in this) {
+        sum += transform(element)
+    }
+    return sum
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
 /**
  * Returns the sum of all values produced by [transform] function from elements in the collection
  */

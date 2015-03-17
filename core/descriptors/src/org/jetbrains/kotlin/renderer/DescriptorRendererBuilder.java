@@ -53,6 +53,7 @@ public class DescriptorRendererBuilder {
     };
     private boolean renderDefaultValues = true;
     private boolean flexibleTypesForCode = false;
+    private boolean secondaryConstructorsAsPrimary = true;
 
     @NotNull
     private DescriptorRenderer.OverrideRenderingPolicy overrideRenderingPolicy = DescriptorRenderer.OverrideRenderingPolicy.RENDER_OPEN;
@@ -211,6 +212,7 @@ public class DescriptorRendererBuilder {
         return this;
     }
 
+    @NotNull
     public DescriptorRendererBuilder setRenderDefaultValues(boolean renderDefaultValues) {
         this.renderDefaultValues = renderDefaultValues;
         return this;
@@ -222,8 +224,15 @@ public class DescriptorRendererBuilder {
         return this;
     }
 
+    @NotNull
     public DescriptorRendererBuilder setFlexibleTypesForCode(boolean flexibleTypesForCode) {
         this.flexibleTypesForCode = flexibleTypesForCode;
+        return this;
+    }
+
+    @NotNull
+    public DescriptorRendererBuilder setSecondaryConstructorsAsPrimary(boolean secondaryConstructorsAsPrimary) {
+        this.secondaryConstructorsAsPrimary = secondaryConstructorsAsPrimary;
         return this;
     }
 
@@ -234,7 +243,8 @@ public class DescriptorRendererBuilder {
                 normalizedVisibilities, showInternalKeyword, prettyFunctionTypes, uninferredTypeParameterAsName,
                 overrideRenderingPolicy, valueParametersHandler, textFormat, excludedAnnotationClasses, includePropertyConstant,
                 includeSynthesizedParameterNames, withoutFunctionParameterNames, withoutTypeParameters, receiverAfterName,
-                renderDefaultObjectName, withoutSuperTypes, typeNormalizer, renderDefaultValues, flexibleTypesForCode);
+                renderDefaultObjectName, withoutSuperTypes, typeNormalizer, renderDefaultValues, flexibleTypesForCode,
+                secondaryConstructorsAsPrimary);
     }
 
 }

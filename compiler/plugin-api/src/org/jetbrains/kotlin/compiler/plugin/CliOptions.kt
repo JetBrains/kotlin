@@ -26,7 +26,32 @@ public class CliOption(
         public val allowMultipleOccurrences: Boolean = false
 )
 
-public class CliOptionProcessingException(message: String, cause: Throwable? = null): RuntimeException(message, cause)
+public open class CliOptionProcessingException(message: String, cause: Throwable? = null): RuntimeException(message, cause)
+
+public class PluginCliOptionProcessingException(
+        val pluginId: String,
+        val options: Collection<CliOption>,
+        message: String,
+        cause: Throwable? = null
+): CliOptionProcessingException(message, cause)
+
+public fun cliPluginUsageString(pluginId: String, options: Collection<CliOption>): String {
+    val LEFT_INDENT = 2
+    val MAX_OPTION_WIDTH = 26
+
+    val renderedOptions = options.map {
+        val name = "${it.name} ${it.valueDescription}"
+        val margin = if (name.length() > MAX_OPTION_WIDTH) {
+            "\n" + " ".repeat(MAX_OPTION_WIDTH + LEFT_INDENT + 1)
+        } else " ".repeat(1 + MAX_OPTION_WIDTH - name.length())
+
+        val modifiers = (if (it.required) "required" else "") + (if (it.allowMultipleOccurrences) "multiple" else "")
+        val modifiersEnclosed = if (modifiers.isNotEmpty()) " ($modifiers)" else ""
+
+        " ".repeat(LEFT_INDENT) + name + margin + it.description + modifiersEnclosed
+    }
+    return "Plugin \"$pluginId\" usage:\n" + renderedOptions.joinToString("\n", postfix = "\n")
+}
 
 public data class CliOptionValue(
         val pluginId: String,

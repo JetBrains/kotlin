@@ -1,6 +1,6 @@
 package<EOLError></EOLError>
 
-fun<error> </error>() {
+<error>fun ()</error> {
 
 }
 

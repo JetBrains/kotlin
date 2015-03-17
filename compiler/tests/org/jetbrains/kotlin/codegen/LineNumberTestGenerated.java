@@ -114,6 +114,12 @@ public class LineNumberTestGenerated extends AbstractLineNumberTest {
             doTest(fileName);
         }
 
+        @TestMetadata("simpleSmap.kt")
+        public void testSimpleSmap() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/lineNumber/simpleSmap.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("topLevel.kt")
         public void testTopLevel() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/lineNumber/topLevel.kt");

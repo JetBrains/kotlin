@@ -21,6 +21,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import java.io.ByteArrayInputStream
 import kotlin.properties.Delegates
+import com.intellij.psi.impl.*
+import com.intellij.openapi.components.*
 
 public class CliAndroidUIXmlProcessor(
         project: Project,
@@ -32,9 +34,13 @@ public class CliAndroidUIXmlProcessor(
         CliAndroidResourceManager(project, manifestPath, mainResDirectory)
     }
 
-    override fun parseSingleFile(file: PsiFile): Collection<AndroidWidget> {
-        val widgets: MutableCollection<AndroidWidget> = ArrayList()
-        val handler = AndroidXmlHandler(resourceManager, { id, clazz -> widgets.add(AndroidWidget(id, clazz)) })
+    override val psiTreeChangePreprocessor: PsiTreeChangePreprocessor by Delegates.lazy {
+        project.getExtensions(PsiTreeChangePreprocessor.EP_NAME).first { it is AndroidPsiTreeChangePreprocessor }
+    }
+
+    override fun parseSingleFile(file: PsiFile): List<AndroidWidget> {
+        val widgets = arrayListOf<AndroidWidget>()
+        val handler = AndroidXmlHandler { id, clazz -> widgets.add(AndroidWidget(id, clazz)) }
 
         try {
             val inputStream = ByteArrayInputStream(file.getVirtualFile().contentsToByteArray())

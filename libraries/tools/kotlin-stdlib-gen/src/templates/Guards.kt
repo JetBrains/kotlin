@@ -25,14 +25,14 @@ fun guards(): List<GenericFunction> {
             return this as SELF
             """
         }
-        body(Streams) {
+        body(Sequences) {
             """
-            return FilteringStream(this) {
+            return FilteringSequence(this) {
                 if (it == null) {
                     throw IllegalArgumentException("null element found in $THIS")
                 }
                 true
-            } as Stream<T>
+            } as Sequence<T>
             """
         }
     }

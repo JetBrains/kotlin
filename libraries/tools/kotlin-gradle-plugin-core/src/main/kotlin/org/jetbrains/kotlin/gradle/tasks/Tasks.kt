@@ -47,9 +47,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
     private val logger = Logging.getLogger(this.javaClass)
     override fun getLogger() = logger
 
-    var compilerPluginClasspaths: Array<String> = array()
-    var compilerPluginArguments: Array<String> = array()
-
     [TaskAction]
     override fun compile() {
         getLogger().debug("Starting ${javaClass} task")
@@ -104,8 +101,9 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
     val srcDirsSources = HashSet<SourceDirectorySet>()
 
     override fun populateTargetSpecificArgs(args: K2JVMCompilerArguments) {
-        args.pluginClasspaths = compilerPluginClasspaths
-        args.pluginOptions = compilerPluginArguments
+        val extraProperties = getExtensions().getExtraProperties()
+        args.pluginClasspaths = extraProperties.get("compilerPluginClasspaths") as? Array<String>
+        args.pluginOptions = extraProperties.get("compilerPluginArguments") as? Array<String>
 
         if (StringUtils.isEmpty(kotlinOptions.classpath)) {
             val existingClasspathEntries = getClasspath().filter({ it != null && it.exists() })

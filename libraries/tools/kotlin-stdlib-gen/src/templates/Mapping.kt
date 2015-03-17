@@ -16,12 +16,12 @@ fun mapping(): List<GenericFunction> {
             """
         }
 
-        returns(Streams) { "Stream<Pair<Int, T>>" }
-        doc(Streams) { "Returns a stream containing pairs of each element of the original collection and their index" }
-        body(Streams) {
+        returns(Sequences) { "Sequence<Pair<Int, T>>" }
+        doc(Sequences) { "Returns a sequence containing pairs of each element of the original collection and their index" }
+        body(Sequences) {
             """
             var index = 0
-            return TransformingStream(this, { index++ to it })
+            return TransformingSequence(this, { index++ to it })
             """
         }
     }
@@ -35,11 +35,11 @@ fun mapping(): List<GenericFunction> {
             """
         }
 
-        returns(Streams) { "Stream<IndexedValue<T>>" }
-        doc(Streams) { "Returns a stream of [IndexedValue] for each element of the original stream" }
-        body(Streams) {
+        returns(Sequences) { "Sequence<IndexedValue<T>>" }
+        doc(Sequences) { "Returns a sequence of [IndexedValue] for each element of the original sequence" }
+        body(Sequences) {
             """
-            return IndexingStream(this)
+            return IndexingSequence(this)
             """
         }
     }
@@ -59,11 +59,11 @@ fun mapping(): List<GenericFunction> {
         body(Strings) {
             "return mapIndexedTo(ArrayList<R>(length()), transform)"
         }
-        inline(false, Streams)
-        returns(Streams) { "Stream<R>" }
-        doc(Streams) { "Returns a stream containing the results of applying the given *transform* function to each element and its index of the original stream" }
-        body(Streams) {
-            "return TransformingIndexedStream(this, transform)"
+        inline(false, Sequences)
+        returns(Sequences) { "Sequence<R>" }
+        doc(Sequences) { "Returns a sequence containing the results of applying the given *transform* function to each element and its index of the original sequence" }
+        body(Sequences) {
+            "return TransformingIndexedSequence(this, transform)"
         }
     }
 
@@ -77,11 +77,11 @@ fun mapping(): List<GenericFunction> {
             "return mapTo(ArrayList<R>(), transform)"
         }
 
-        inline(false, Streams)
-        returns(Streams) { "Stream<R>" }
-        doc(Streams) { "Returns a stream containing the results of applying the given *transform* function to each element of the original stream" }
-        body(Streams) {
-            "return TransformingStream(this, transform)"
+        inline(false, Sequences)
+        returns(Sequences) { "Sequence<R>" }
+        doc(Sequences) { "Returns a sequence containing the results of applying the given *transform* function to each element of the original sequence" }
+        body(Sequences) {
+            "return TransformingSequence(this, transform)"
         }
         include(Maps)
     }
@@ -100,12 +100,12 @@ fun mapping(): List<GenericFunction> {
             """
         }
 
-        doc(Streams) { "Returns a stream containing the results of applying the given *transform* function to each non-null element of the original stream" }
-        returns(Streams) { "Stream<R>" }
-        inline(false, Streams)
-        body(Streams) {
+        doc(Sequences) { "Returns a sequence containing the results of applying the given *transform* function to each non-null element of the original sequence" }
+        returns(Sequences) { "Sequence<R>" }
+        inline(false, Sequences)
+        body(Sequences) {
             """
-            return TransformingStream(FilteringStream(this, false, { it == null }) as Stream<T>, transform)
+            return TransformingSequence(FilteringSequence(this, false, { it == null }) as Sequence<T>, transform)
             """
         }
     }
@@ -186,7 +186,7 @@ fun mapping(): List<GenericFunction> {
     templates add f("flatMap(transform: (T) -> Iterable<R>)") {
         inline(true)
 
-        exclude(Streams)
+        exclude(Sequences)
         doc { "Returns a single list of all elements yielded from results of *transform* function being invoked on each element of original collection" }
         typeParam("R")
         returns("List<R>")
@@ -196,19 +196,19 @@ fun mapping(): List<GenericFunction> {
         include(Maps)
     }
 
-    templates add f("flatMap(transform: (T) -> Stream<R>)") {
-        only(Streams)
-        doc { "Returns a single stream of all elements streamed from results of *transform* function being invoked on each element of original stream" }
+    templates add f("flatMap(transform: (T) -> Sequence<R>)") {
+        only(Sequences)
+        doc { "Returns a single sequence of all elements from results of *transform* function being invoked on each element of original sequence" }
         typeParam("R")
-        returns("Stream<R>")
+        returns("Sequence<R>")
         body {
-            "return FlatteningStream(this, transform)"
+            "return FlatteningSequence(this, transform)"
         }
     }
 
     templates add f("flatMapTo(destination: C, transform: (T) -> Iterable<R>)") {
         inline(true)
-        exclude(Streams)
+        exclude(Sequences)
         doc { "Appends all elements yielded from results of *transform* function being invoked on each element of original collection, to the given *destination*" }
         typeParam("R")
         typeParam("C : MutableCollection<in R>")
@@ -225,11 +225,11 @@ fun mapping(): List<GenericFunction> {
         include(Maps)
     }
 
-    templates add f("flatMapTo(destination: C, transform: (T) -> Stream<R>)") {
+    templates add f("flatMapTo(destination: C, transform: (T) -> Sequence<R>)") {
         inline(true)
 
-        only(Streams)
-        doc { "Appends all elements yielded from results of *transform* function being invoked on each element of original stream, to the given *destination*" }
+        only(Sequences)
+        doc { "Appends all elements yielded from results of *transform* function being invoked on each element of original sequence, to the given *destination*" }
         typeParam("R")
         typeParam("C : MutableCollection<in R>")
         returns("C")

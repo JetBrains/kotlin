@@ -30,8 +30,6 @@ open class Class(
 ) : Member(annotations, modifiers) {
 
     override fun generateCode(builder: CodeBuilder) {
-        builder.append(body.factoryFunctions, "\n", "", "\n\n")
-
         builder.append(annotations)
                 .appendWithSpaceAfter(presentationModifiers())
                 .append(keyword)

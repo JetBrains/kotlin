@@ -1,8 +1,6 @@
 fun foo(a: Int): Int {
     // SIBLING:
-    fun i(): Int {
-        return a + 10
-    }
+    fun i() = a + 10
 
     return i()
 }

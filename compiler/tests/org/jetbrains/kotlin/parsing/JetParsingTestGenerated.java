@@ -267,6 +267,18 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
             doParsingTest(fileName);
         }
 
+        @TestMetadata("FunctionExpressions.kt")
+        public void testFunctionExpressions() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/FunctionExpressions.kt");
+            doParsingTest(fileName);
+        }
+
+        @TestMetadata("FunctionExpressions_ERR.kt")
+        public void testFunctionExpressions_ERR() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/FunctionExpressions_ERR.kt");
+            doParsingTest(fileName);
+        }
+
         @TestMetadata("FunctionLiterals.kt")
         public void testFunctionLiterals() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/FunctionLiterals.kt");
@@ -300,6 +312,18 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
         @TestMetadata("Functions.kt")
         public void testFunctions() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/Functions.kt");
+            doParsingTest(fileName);
+        }
+
+        @TestMetadata("FunctionsWithoutName.kt")
+        public void testFunctionsWithoutName() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/FunctionsWithoutName.kt");
+            doParsingTest(fileName);
+        }
+
+        @TestMetadata("FunctionsWithoutName_ERR.kt")
+        public void testFunctionsWithoutName_ERR() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/FunctionsWithoutName_ERR.kt");
             doParsingTest(fileName);
         }
 
@@ -441,6 +465,18 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
             doParsingTest(fileName);
         }
 
+        @TestMetadata("ParameterType.kt")
+        public void testParameterType() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/ParameterType.kt");
+            doParsingTest(fileName);
+        }
+
+        @TestMetadata("ParameterType_ERR.kt")
+        public void testParameterType_ERR() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/ParameterType_ERR.kt");
+            doParsingTest(fileName);
+        }
+
         @TestMetadata("Precedence.kt")
         public void testPrecedence() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/Precedence.kt");
@@ -540,6 +576,12 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
         @TestMetadata("ThisType.kt")
         public void testThisType() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/ThisType.kt");
+            doParsingTest(fileName);
+        }
+
+        @TestMetadata("TraitConstructor.kt")
+        public void testTraitConstructor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/TraitConstructor.kt");
             doParsingTest(fileName);
         }
 

@@ -41,7 +41,7 @@ fun snapshots(): List<GenericFunction> {
         doc { "Returns an ArrayList of all elements" }
         returns("ArrayList<T>")
         body { "return toCollection(ArrayList<T>(collectionSizeOrDefault(10)))" }
-        body(Streams) { "return toCollection(ArrayList<T>())" }
+        body(Sequences) { "return toCollection(ArrayList<T>())" }
         body(Strings) { "return toCollection(ArrayList<T>(length()))" }
         body(ArraysOfObjects, ArraysOfPrimitives) {
             """
@@ -70,7 +70,7 @@ fun snapshots(): List<GenericFunction> {
         doc { "Returns a List containing all elements" }
         returns("List<T>")
         body { "return toCollection(ArrayList<T>(collectionSizeOrDefault(10)))" }
-        body(Streams) { "return toCollection(ArrayList<T>())" }
+        body(Sequences) { "return toCollection(ArrayList<T>())" }
         body(Strings) { "return toCollection(ArrayList<T>(length()))" }
         body(ArraysOfObjects, ArraysOfPrimitives) {
             """

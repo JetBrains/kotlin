@@ -31,7 +31,7 @@ public class IDEAndroidResourceManager(val module: Module) : AndroidResourceMana
     override fun idToXmlAttribute(id: String): PsiElement? {
         var ret: PsiElement? = null
         for (file in getLayoutXmlFiles()) {
-            file.accept(AndroidXmlVisitor(this, { retId, wClass, valueElement ->
+            file.accept(AndroidXmlVisitor({ retId, wClass, valueElement ->
                 if (retId == id) ret = valueElement
             }))
         }

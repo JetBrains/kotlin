@@ -24,8 +24,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
+import org.jetbrains.kotlin.codegen.MemberCodegen;
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.context.CodegenContext;
+import org.jetbrains.kotlin.codegen.context.MethodContext;
 import org.jetbrains.kotlin.codegen.context.PackageContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
@@ -34,11 +36,13 @@ import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder;
-import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.name.ClassId;
+import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.serialization.ProtoBuf;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor;
@@ -55,7 +59,8 @@ import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.ListIterator;
 
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isTrait;
 
 public class InlineCodegenUtil {
     public static final int API = Opcodes.ASM5;
@@ -76,57 +81,98 @@ public class InlineCodegenUtil {
     public static final String INLINE_MARKER_GOTO_TRY_CATCH_BLOCK_END = "goToTryCatchBlockEnd";
 
     @Nullable
-    public static MethodNode getMethodNode(
+    public static SMAPAndMethodNode getMethodNode(
             byte[] classData,
             final String methodName,
-            final String methodDescriptor
+            final String methodDescriptor,
+            ClassId classId
     ) throws ClassNotFoundException, IOException {
         ClassReader cr = new ClassReader(classData);
-        final MethodNode[] methodNode = new MethodNode[1];
+        final MethodNode[] node = new MethodNode[1];
+        final String[] debugInfo = new String[2];
+        final int[] lines = new int[2];
+        lines[0] = Integer.MAX_VALUE;
+        lines[1] = Integer.MIN_VALUE;
         cr.accept(new ClassVisitor(API) {
 
             @Override
-            public MethodVisitor visitMethod(int access, @NotNull String name, @NotNull String desc, String signature, String[] exceptions) {
+            public void visitSource(String source, String debug) {
+                super.visitSource(source, debug);
+                debugInfo[0] = source;
+                debugInfo[1] = debug;
+            }
+
+            @Override
+            public MethodVisitor visitMethod(
+                    int access,
+                    @NotNull String name,
+                    @NotNull String desc,
+                    String signature,
+                    String[] exceptions
+            ) {
                 if (methodName.equals(name) && methodDescriptor.equals(desc)) {
-                    return methodNode[0] = new MethodNode(access, name, desc, signature, exceptions);
+                    node[0] = new MethodNode(API, access, name, desc, signature, exceptions) {
+
+                        @Override
+                        public void visitLineNumber(int line, Label start) {
+                            super.visitLineNumber(line, start);
+                            lines[0] = Math.min(lines[0], line);
+                            lines[1] = Math.max(lines[1], line);
+                        }
+                    };
+                    return node[0];
                 }
                 return null;
             }
-        }, ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
+        }, ClassReader.SKIP_FRAMES);
 
-        return methodNode[0];
+        SMAP smap = SMAPParser.parseOrCreateDefault(debugInfo[1], debugInfo[0], classId.toString(), lines[0], lines[1]);
+        return new SMAPAndMethodNode(node[0], smap);
     }
 
+    public static void initDefaultSourceMappingIfNeeded(@NotNull CodegenContext context, @NotNull MemberCodegen codegen, @NotNull GenerationState state) {
+        if (state.isInlineEnabled()) {
+            CodegenContext<?> parentContext = context.getParentContext();
+            while (parentContext != null) {
+                if (parentContext instanceof MethodContext) {
+                    if (((MethodContext) parentContext).isInlineFunction()) {
+                        //just init default one to one mapping
+                        codegen.getOrCreateSourceMapper();
+                        break;
+                    }
+                }
+                parentContext = parentContext.getParentContext();
+            }
+        }
+    }
 
     @NotNull
-    public static VirtualFile getVirtualFileForCallable(@NotNull DeserializedSimpleFunctionDescriptor deserializedDescriptor, @NotNull GenerationState state) {
-        VirtualFile file;
+    public static VirtualFile getVirtualFileForCallable(@NotNull ClassId containerClassId, @NotNull GenerationState state) {
+        VirtualFileFinder fileFinder = VirtualFileFinder.SERVICE.getInstance(state.getProject());
+        VirtualFile file = fileFinder.findVirtualFileWithHeader(containerClassId.asSingleFqName().toSafe());
+        if (file == null) {
+            throw new IllegalStateException("Couldn't find declaration file for " + containerClassId);
+        }
+        return file;
+    }
+
+    public static ClassId getContainerClassIdForInlineCallable(DeserializedSimpleFunctionDescriptor deserializedDescriptor) {
         DeclarationDescriptor parentDeclaration = deserializedDescriptor.getContainingDeclaration();
+        ClassId containerClassId;
         if (parentDeclaration instanceof PackageFragmentDescriptor) {
             ProtoBuf.Callable proto = deserializedDescriptor.getProto();
             if (!proto.hasExtension(JvmProtoBuf.implClassName)) {
                 throw new IllegalStateException("Function in namespace should have implClassName property in proto: " + deserializedDescriptor);
             }
             Name name = deserializedDescriptor.getNameResolver().getName(proto.getExtension(JvmProtoBuf.implClassName));
-            FqName packagePartFqName =
-                    PackageClassUtils.getPackageClassFqName(((PackageFragmentDescriptor) parentDeclaration).getFqName()).parent().child(
-                            name);
-            file = findVirtualFileWithHeader(state.getProject(), packagePartFqName);
+            containerClassId = new ClassId(((PackageFragmentDescriptor) parentDeclaration).getFqName(), name);
         } else {
-            file = findVirtualFileContainingDescriptor(state.getProject(), deserializedDescriptor);
+            containerClassId = getContainerClassId(deserializedDescriptor);
         }
-
-        if (file == null) {
-            throw new IllegalStateException("Couldn't find declaration file for " + deserializedDescriptor.getName());
+        if (containerClassId == null) {
+            throw new IllegalStateException("Couldn't find container FQName for " + deserializedDescriptor.getName());
         }
-
-        return file;
-    }
-
-    @Nullable
-    public static VirtualFile findVirtualFileWithHeader(@NotNull Project project, @NotNull FqName containerFqName) {
-        VirtualFileFinder fileFinder = VirtualFileFinder.SERVICE.getInstance(project);
-        return fileFinder.findVirtualFileWithHeader(containerFqName);
+        return containerClassId;
     }
 
     @Nullable
@@ -137,18 +183,20 @@ public class InlineCodegenUtil {
 
     //TODO: navigate to inner classes
     @Nullable
-    public static FqName getContainerFqName(@NotNull DeclarationDescriptor referencedDescriptor) {
+    public static ClassId getContainerClassId(@NotNull DeclarationDescriptor referencedDescriptor) {
         ClassOrPackageFragmentDescriptor
                 containerDescriptor = DescriptorUtils.getParentOfType(referencedDescriptor, ClassOrPackageFragmentDescriptor.class, false);
         if (containerDescriptor instanceof PackageFragmentDescriptor) {
-            return PackageClassUtils.getPackageClassFqName(getFqName(containerDescriptor).toSafe());
+            return PackageClassUtils.getPackageClassId(getFqName(containerDescriptor).toSafe());
         }
         if (containerDescriptor instanceof ClassDescriptor) {
-            FqName fqName = getFqNameSafe(containerDescriptor);
+            ClassId classId = DescriptorUtilPackage.getClassId((ClassDescriptor) containerDescriptor);
             if (isTrait(containerDescriptor)) {
-                return fqName.parent().child(Name.identifier(fqName.shortName() + JvmAbi.TRAIT_IMPL_SUFFIX));
+                FqNameUnsafe relativeClassName = classId.getRelativeClassName();
+                //TODO test nested trait fun inlining
+                classId = new ClassId(classId.getPackageFqName(), Name.identifier(relativeClassName.shortName().asString() + JvmAbi.TRAIT_IMPL_SUFFIX));
             }
-            return fqName;
+            return classId;
         }
         return null;
     }
@@ -195,18 +243,6 @@ public class InlineCodegenUtil {
 
         //noinspection ConstantConditions
         return getInlineName(codegenContext, currentDescriptor.getContainingDeclaration(), typeMapper) + "$" + suffix;
-    }
-
-    @Nullable
-    private static VirtualFile findVirtualFileContainingDescriptor(
-            @NotNull Project project,
-            @NotNull DeclarationDescriptor referencedDescriptor
-    ) {
-        FqName containerFqName = getContainerFqName(referencedDescriptor);
-        if (containerFqName == null) {
-            return null;
-        }
-        return findVirtualFileWithHeader(project, containerFqName);
     }
 
 
@@ -328,21 +364,9 @@ public class InlineCodegenUtil {
         return new MethodNode(API, 0, "fake", "()V", null, null);
     }
 
-    private static boolean isLastGoto(@NotNull AbstractInsnNode insnNode, @NotNull AbstractInsnNode stopAt) {
-        if (insnNode.getOpcode() == Opcodes.GOTO) {
-            insnNode = insnNode.getNext();
-            while (insnNode != stopAt && isLineNumberOrLabel(insnNode)) {
-                insnNode = insnNode.getNext();
-            }
-            return stopAt == insnNode;
-        }
-        return false;
-    }
-
     static boolean isLineNumberOrLabel(@Nullable AbstractInsnNode node) {
         return node instanceof LineNumberNode || node instanceof LabelNode;
     }
-
 
     @NotNull
     public static LabelNode firstLabelInChain(@NotNull LabelNode node) {

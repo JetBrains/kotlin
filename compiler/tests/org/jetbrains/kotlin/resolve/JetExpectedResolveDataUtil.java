@@ -135,7 +135,7 @@ public class JetExpectedResolveDataUtil {
                 DataFlowInfo.EMPTY, TypeUtils.NO_EXPECTED_TYPE);
 
         OverloadResolutionResults<FunctionDescriptor> functions = injector.getExpressionTypingUtils().resolveFakeCall(
-                context, ReceiverValue.NO_RECEIVER, Name.identifier(name), parameterTypes);
+                context, ReceiverValue.NO_RECEIVER, Name.identifier(name), null, parameterTypes);
 
         for (ResolvedCall<? extends FunctionDescriptor> resolvedCall : functions.getResultingCalls()) {
             List<ValueParameterDescriptor> unsubstitutedValueParameters = resolvedCall.getResultingDescriptor().getValueParameters();

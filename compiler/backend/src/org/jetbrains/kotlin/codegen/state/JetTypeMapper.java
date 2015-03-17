@@ -20,18 +20,17 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicObjects;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.codegen.*;
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.binding.MutableClosure;
 import org.jetbrains.kotlin.codegen.binding.PsiCodegenPredictor;
 import org.jetbrains.kotlin.codegen.context.CodegenContext;
+import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicObjects;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotated;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
@@ -113,7 +112,7 @@ public class JetTypeMapper {
 
     @NotNull
     public Type mapOwner(@NotNull DeclarationDescriptor descriptor, boolean isInsideModule) {
-        if (isLocalNamedFun(descriptor)) {
+        if (isLocalFunction(descriptor)) {
             return asmTypeForAnonymousClass(bindingContext, (FunctionDescriptor) descriptor);
         }
 
@@ -561,7 +560,7 @@ public class JetTypeMapper {
             }
         }
 
-        Type calleeType = isLocalNamedFun(functionDescriptor) ? owner : null;
+        Type calleeType = isLocalFunction(functionDescriptor) ? owner : null;
 
         Type receiverParameterType;
         ReceiverParameterDescriptor receiverParameter = functionDescriptor.getOriginal().getExtensionReceiverParameter();
@@ -621,10 +620,7 @@ public class JetTypeMapper {
 
             return isAccessor ? "access$" + accessorName : accessorName;
         }
-        else if (isLocalNamedFun(descriptor)) {
-            return "invoke";
-        }
-        else if (descriptor instanceof AnonymousFunctionDescriptor) {
+        else if (isFunctionLiteral(descriptor)) {
             PsiElement element = DescriptorToSourceUtils.getSourceFromDescriptor(descriptor);
             if (element instanceof JetFunctionLiteral) {
                 PsiElement expression = element.getParent();
@@ -636,6 +632,9 @@ public class JetTypeMapper {
                 }
             }
 
+            return "invoke";
+        }
+        else if (isLocalFunction(descriptor) || isFunctionExpression(descriptor)) {
             return "invoke";
         }
         else {
@@ -896,7 +895,7 @@ public class JetTypeMapper {
                 }
                 type = sharedVarType;
             }
-            else if (isLocalNamedFun(variableDescriptor)) {
+            else if (isLocalFunction(variableDescriptor)) {
                 //noinspection CastConflictsWithInstanceof
                 type = asmTypeForAnonymousClass(bindingContext, (FunctionDescriptor) variableDescriptor);
             }

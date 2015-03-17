@@ -1,6 +1,6 @@
 {
   "type": "KOTLIN_FUNCTION",
-  "classFQN": "A",
+  "classId": "/A",
   "oldName": "component1",
   "newName": "foo",
   "mainFile": "explicitComponentFunction.kt",

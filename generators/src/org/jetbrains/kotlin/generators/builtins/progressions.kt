@@ -66,7 +66,7 @@ class GenerateProgressions(out: PrintWriter) : BuiltInsSourceGenerator(out) {
 
             out.println(
 """/**
- * A progression of values of type $t.
+ * A progression of values of type `$t`.
  */
 public class $progression(
         override val start: $t,

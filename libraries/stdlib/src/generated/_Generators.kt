@@ -270,7 +270,16 @@ public inline fun <T, R, V> Iterable<T>.merge(other: Iterable<R>, transform: (T,
 }
 
 /**
- * Returns a stream of values built from elements of both collections with same indexes using provided *transform*. Stream has length of shortest stream.
+ * Returns a sequence of values built from elements of both collections with same indexes using provided *transform*. Resulting sequence has length of shortest input sequences.
+ */
+public fun <T, R, V> Sequence<T>.merge(sequence: Sequence<R>, transform: (T, R) -> V): Sequence<V> {
+    return MergingSequence(this, sequence, transform)
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
+/**
+ * Returns a stream of values built from elements of both collections with same indexes using provided *transform*. Resulting stream has length of shortest input streams.
  */
 public fun <T, R, V> Stream<T>.merge(stream: Stream<R>, transform: (T, R) -> V): Stream<V> {
     return MergingStream(this, stream, transform)
@@ -456,6 +465,26 @@ public inline fun <T> Iterable<T>.partition(predicate: (T) -> Boolean): Pair<Lis
     return Pair(first, second)
 }
 
+/**
+ * Splits original collection into pair of collections,
+ * where *first* collection contains elements for which predicate yielded *true*,
+ * while *second* collection contains elements for which predicate yielded *false*
+ */
+public inline fun <T> Sequence<T>.partition(predicate: (T) -> Boolean): Pair<List<T>, List<T>> {
+    val first = ArrayList<T>()
+    val second = ArrayList<T>()
+    for (element in this) {
+        if (predicate(element)) {
+            first.add(element)
+        } else {
+            second.add(element)
+        }
+    }
+    return Pair(first, second)
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
 /**
  * Splits original collection into pair of collections,
  * where *first* collection contains elements for which predicate yielded *true*,
@@ -673,7 +702,16 @@ public fun <T> Iterable<T>.plus(collection: Iterable<T>): List<T> {
 }
 
 /**
- * Returns a stream containing all elements of original stream and then all elements of the given *collection*
+ * Returns a sequence containing all elements of original sequence and then all elements of the given [collection]
+ */
+public fun <T> Sequence<T>.plus(collection: Iterable<T>): Sequence<T> {
+    return MultiSequence(sequenceOf(this, collection.sequence()))
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
+/**
+ * Returns a stream containing all elements of original stream and then all elements of the given [collection]
  */
 public fun <T> Stream<T>.plus(collection: Iterable<T>): Stream<T> {
     return Multistream(streamOf(this, collection.stream()))
@@ -770,6 +808,15 @@ public fun <T> Iterable<T>.plus(element: T): List<T> {
 }
 
 /**
+ * Returns a sequence containing all elements of original sequence and then the given element
+ */
+public fun <T> Sequence<T>.plus(element: T): Sequence<T> {
+    return MultiSequence(sequenceOf(this, sequenceOf(element)))
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
+/**
  * Returns a stream containing all elements of original stream and then the given element
  */
 public fun <T> Stream<T>.plus(element: T): Stream<T> {
@@ -777,7 +824,16 @@ public fun <T> Stream<T>.plus(element: T): Stream<T> {
 }
 
 /**
- * Returns a stream containing all elements of original stream and then all elements of the given *stream*
+ * Returns a sequence containing all elements of original sequence and then all elements of the given [sequence]
+ */
+public fun <T> Sequence<T>.plus(sequence: Sequence<T>): Sequence<T> {
+    return MultiSequence(sequenceOf(this, sequence))
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
+/**
+ * Returns a stream containing all elements of original stream and then all elements of the given [stream]
  */
 public fun <T> Stream<T>.plus(stream: Stream<T>): Stream<T> {
     return Multistream(streamOf(this, stream))
@@ -937,7 +993,18 @@ public fun String.zip(other: String): List<Pair<Char, Char>> {
 }
 
 /**
- * Returns a stream of pairs built from elements of both collections with same indexes. Stream has length of shortest stream.
+ * Returns a sequence of pairs built from elements of both collections with same indexes.
+ * Resulting sequence has length of shortest input sequences.
+ */
+public fun <T, R> Sequence<T>.zip(sequence: Sequence<R>): Sequence<Pair<T, R>> {
+    return MergingSequence(this, sequence) { (t1, t2) -> t1 to t2 }
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
+/**
+ * Returns a stream of pairs built from elements of both collections with same indexes.
+ * Resulting stream has length of shortest input streams.
  */
 public fun <T, R> Stream<T>.zip(stream: Stream<R>): Stream<Pair<T, R>> {
     return MergingStream(this, stream) { (t1, t2) -> t1 to t2 }

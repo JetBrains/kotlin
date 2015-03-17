@@ -411,6 +411,14 @@ public class JetPsiUtil {
     }
 
     @Nullable
+    public static JetElement getExpressionOrLastStatementInBlock(@Nullable JetExpression expression) {
+        if (expression instanceof JetBlockExpression) {
+            return getLastStatementInABlock((JetBlockExpression) expression);
+        }
+        return expression;
+    }
+
+    @Nullable
     public static JetElement getLastStatementInABlock(@Nullable JetBlockExpression blockExpression) {
         if (blockExpression == null) return null;
         List<JetElement> statements = blockExpression.getStatements();

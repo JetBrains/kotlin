@@ -1,20 +1,16 @@
-fun C(arg1: Int, arg2: Int, arg3: Int): C {
-    val __ = C(arg1)
-    __.myArg2 = arg2
-    __.myArg3 = arg3
-    return __
-}
-
-fun C(arg1: Int, arg2: Int): C {
-    val __ = C(arg1)
-    __.myArg2 = arg2
-    __.myArg3 = 0
-    return __
-}
-
 class C(val myArg1: Int) {
     var myArg2: Int = 0
     var myArg3: Int = 0
+
+    constructor(arg1: Int, arg2: Int, arg3: Int) : this(arg1) {
+        myArg2 = arg2
+        myArg3 = arg3
+    }
+
+    constructor(arg1: Int, arg2: Int) : this(arg1) {
+        myArg2 = arg2
+        myArg3 = 0
+    }
 
     {
         myArg2 = 0

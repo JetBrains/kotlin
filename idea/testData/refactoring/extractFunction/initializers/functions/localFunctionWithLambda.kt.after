@@ -3,9 +3,7 @@
 // PARAM_DESCRIPTOR: value-parameter val a: kotlin.Int defined in bar.foo
 // PARAM_DESCRIPTOR: value-parameter val b: kotlin.Int defined in bar.foo
 fun bar(n: Int) {
-    fun i(a: Int, b: Int): Int {
-        return a + b - n
-    }
+    fun i(a: Int, b: Int) = a + b - n
 
     fun foo(a: Int, b: Int) = { i(a, b) - 1 }.invoke()
 }

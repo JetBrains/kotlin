@@ -16,5 +16,7 @@
 
 package kotlin.jvm.internal;
 
+// TODO: drop when ABI version reaches 22
+@Deprecated
 public interface KObject {
 }

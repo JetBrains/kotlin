@@ -171,8 +171,7 @@ public class DefaultErrorMessages {
         MAP.put(CONFLICTING_IMPORT, "Conflicting import, imported name ''{0}'' is ambiguous", STRING);
         MAP.put(PLATFORM_CLASS_MAPPED_TO_KOTLIN, "This class shouldn''t be used in Kotlin. Use {0} instead.", CLASSES_OR_SEPARATED);
 
-        MAP.put(CANNOT_INFER_PARAMETER_TYPE,
-                "Cannot infer a type for this parameter. To specify it explicitly use the {(p : Type) -> ...} notation");
+        MAP.put(CANNOT_INFER_PARAMETER_TYPE, "Cannot infer a type for this parameter. Please specify it explicitly.");
 
         MAP.put(NO_BACKING_FIELD_ABSTRACT_PROPERTY, "This property doesn't have a backing field, because it's abstract");
         MAP.put(NO_BACKING_FIELD_CUSTOM_ACCESSORS,
@@ -224,9 +223,13 @@ public class DefaultErrorMessages {
         MAP.put(FINAL_FUNCTION_WITH_NO_BODY, "Function ''{0}'' without body cannot be final", NAME);
 
         MAP.put(NON_MEMBER_FUNCTION_NO_BODY, "Function ''{0}'' must have a body", NAME);
+        MAP.put(FUNCTION_DECLARATION_WITH_NO_NAME, "Function declaration must have a name");
         MAP.put(NON_FINAL_MEMBER_IN_FINAL_CLASS, "\"open\" has no effect in a final class");
 
         MAP.put(PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE, "Public or protected member should have specified type");
+
+        MAP.put(FUNCTION_EXPRESSION_PARAMETER_WITH_DEFAULT_VALUE, "A function expression is not allowed to specify default values for its parameters");
+        MAP.put(USELESS_VARARG_ON_PARAMETER, "Vararg on this parameter is useless");
 
         MAP.put(PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT, "Projections are not allowed on type arguments of functions and properties");
         MAP.put(SUPERTYPE_NOT_INITIALIZED, "This type has a constructor, and thus must be initialized here");
@@ -569,6 +572,7 @@ public class DefaultErrorMessages {
         MAP.put(TYPE_PARAMETER_AS_REIFIED, "Cannot use ''{0}'' as reified type parameter. Use a class instead.", NAME);
         MAP.put(REIFIED_TYPE_PARAMETER_NO_INLINE, "Only type parameters of inline functions can be reified");
         MAP.put(REIFIED_TYPE_FORBIDDEN_SUBSTITUTION, "Cannot use ''{0}'' as reified type parameter", RENDER_TYPE);
+        MAP.put(TYPE_PARAMETERS_NOT_ALLOWED, "Type parameters are not allowed here");
 
         MAP.put(SUPERTYPES_FOR_ANNOTATION_CLASS, "Annotation class cannot have supertypes");
         MAP.put(MISSING_VAL_ON_ANNOTATION_PARAMETER, "'val' keyword is missing on annotation parameter");

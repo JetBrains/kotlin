@@ -17,23 +17,14 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.stubs.IStubElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.JetNodeTypes;
-import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
-import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
 
 import java.util.Collections;
 import java.util.List;
 
-public class JetConstructorDelegationCall extends JetElementImplStub<KotlinPlaceHolderStub<? extends JetConstructorDelegationCall>> implements JetCallElement {
-    public JetConstructorDelegationCall(
-            @NotNull KotlinPlaceHolderStub<? extends JetConstructorDelegationCall> stub
-    ) {
-        super(stub, JetStubElementTypes.CONSTRUCTOR_DELEGATION_CALL);
-    }
-
+public class JetConstructorDelegationCall extends JetElementImpl implements JetCallElement {
     public JetConstructorDelegationCall(@NotNull ASTNode node) {
         super(node);
     }

@@ -23,14 +23,12 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.VariableDescriptor;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.AnnotationResolver;
-import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil;
 import org.jetbrains.kotlin.resolve.ModifiersChecker;
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace;
 import org.jetbrains.kotlin.resolve.calls.context.TemporaryTraceAndCache;
@@ -41,7 +39,6 @@ import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsUtil;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.resolve.scopes.WritableScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.types.JetType;
@@ -64,18 +61,22 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
     private final BasicExpressionTypingVisitor basic;
     private final ControlStructureTypingVisitor controlStructures;
     private final PatternMatchingTypingVisitor patterns;
+    private final FunctionsTypingVisitor functions;
 
     public ExpressionTypingVisitorForStatements(
             @NotNull ExpressionTypingInternals facade,
             @NotNull WritableScope scope,
-            BasicExpressionTypingVisitor basic,
+            @NotNull BasicExpressionTypingVisitor basic,
             @NotNull ControlStructureTypingVisitor controlStructures,
-            @NotNull PatternMatchingTypingVisitor patterns) {
+            @NotNull PatternMatchingTypingVisitor patterns,
+            @NotNull FunctionsTypingVisitor functions
+    ) {
         super(facade);
         this.scope = scope;
         this.basic = basic;
         this.controlStructures = controlStructures;
         this.patterns = patterns;
+        this.functions = functions;
     }
 
     @Nullable
@@ -178,22 +179,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
 
     @Override
     public JetTypeInfo visitNamedFunction(@NotNull JetNamedFunction function, ExpressionTypingContext context) {
-        SimpleFunctionDescriptor functionDescriptor = components.expressionTypingServices.getDescriptorResolver().
-                resolveFunctionDescriptorWithAnnotationArguments(
-                        scope.getContainingDeclaration(), scope, function, context.trace, context.dataFlowInfo);
-
-        scope.addFunctionDescriptor(functionDescriptor);
-        JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(context.scope, functionDescriptor, context.trace);
-        components.expressionTypingServices.checkFunctionReturnType(functionInnerScope, function, functionDescriptor, context.dataFlowInfo, null, context.trace);
-
-        components.expressionTypingServices.resolveValueParameters(function.getValueParameters(), functionDescriptor.getValueParameters(),
-                                                                scope, context.dataFlowInfo, context.trace);
-
-        ModifiersChecker.create(context.trace, components.additionalCheckerProvider).checkModifiersForLocalDeclaration(function, functionDescriptor);
-        if (!function.hasBody()) {
-            context.trace.report(NON_MEMBER_FUNCTION_NO_BODY.on(function, functionDescriptor));
-        }
-        return DataFlowUtils.checkStatementType(function, context, context.dataFlowInfo);
+        return functions.visitNamedFunction(function, context, true, scope);
     }
 
     @Override
@@ -413,11 +399,6 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
     @Override
     public JetTypeInfo visitBlockExpression(@NotNull JetBlockExpression expression, ExpressionTypingContext context) {
         return components.expressionTypingServices.getBlockReturnedType(expression, context, true);
-    }
-
-    @Override
-    public JetTypeInfo visitParenthesizedExpression(@NotNull JetParenthesizedExpression expression, ExpressionTypingContext context) {
-        return basic.visitParenthesizedExpression(expression, context, true);
     }
 
     @Override

@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.idea.refactoring.CollectingValidator
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.idea.refactoring.JetNameSuggester
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 public class JetChangeSignatureData(
         override val baseDescriptor: FunctionDescriptor,
@@ -139,6 +140,7 @@ public class JetChangeSignatureData(
     }
 
     override fun canChangeVisibility(): Boolean {
+        if (DescriptorUtils.isLocal(baseDescriptor)) return false;
         val parent = baseDescriptor.getContainingDeclaration()
         return !(baseDescriptor is AnonymousFunctionDescriptor || parent is ClassDescriptor && parent.getKind() == ClassKind.TRAIT)
     }

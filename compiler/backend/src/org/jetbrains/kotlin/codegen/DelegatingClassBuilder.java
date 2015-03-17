@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.codegen;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.codegen.inline.FileMapping;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
 import org.jetbrains.org.objectweb.asm.ClassVisitor;
@@ -110,5 +111,10 @@ public abstract class DelegatingClassBuilder implements ClassBuilder {
     @Override
     public String getThisName() {
         return getDelegate().getThisName();
+    }
+
+    @Override
+    public void addSMAP(FileMapping mapping) {
+        getDelegate().addSMAP(mapping);
     }
 }

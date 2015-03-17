@@ -54,7 +54,8 @@ public inline fun <T> ReentrantReadWriteLock.write(action: () -> T): T {
 }
 
 /**
- * Executes the given [action] and await for CountDownLatch
+ * Executes the given [operation] and awaits for CountDownLatch.
+ *
  * @return the return value of the action.
  */
 public fun <T> Int.latch(operation: CountDownLatch.() -> T): T {

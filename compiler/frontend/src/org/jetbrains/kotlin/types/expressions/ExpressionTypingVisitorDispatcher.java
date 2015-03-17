@@ -51,22 +51,22 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, E
     private final ExpressionTypingComponents components;
     private final BasicExpressionTypingVisitor basic;
     private final ExpressionTypingVisitorForStatements statements;
-    private final ClosureExpressionsTypingVisitor closures;
+    private final FunctionsTypingVisitor functions;
     private final ControlStructureTypingVisitor controlStructures;
     private final PatternMatchingTypingVisitor patterns;
 
     private ExpressionTypingVisitorDispatcher(@NotNull ExpressionTypingComponents components, WritableScope writableScope) {
         this.components = components;
-        this.basic = new BasicExpressionTypingVisitor(this);
+        basic = new BasicExpressionTypingVisitor(this);
         controlStructures = new ControlStructureTypingVisitor(this);
         patterns = new PatternMatchingTypingVisitor(this);
+        functions = new FunctionsTypingVisitor(this);
         if (writableScope != null) {
-            this.statements = new ExpressionTypingVisitorForStatements(this, writableScope, basic, controlStructures, patterns);
+            this.statements = new ExpressionTypingVisitorForStatements(this, writableScope, basic, controlStructures, patterns, functions);
         }
         else {
             this.statements = null;
         }
-        this.closures = new ClosureExpressionsTypingVisitor(this);
     }
 
     @Override
@@ -116,7 +116,7 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, E
     private ExpressionTypingVisitorForStatements createStatementVisitor(ExpressionTypingContext context) {
         return new ExpressionTypingVisitorForStatements(this,
                                                         ExpressionTypingUtils.newWritableScopeImpl(context, "statement scope"),
-                                                        basic, controlStructures, patterns);
+                                                        basic, controlStructures, patterns, functions);
     }
 
     @Override
@@ -171,16 +171,16 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, E
         }
     }  
 
-    //////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
     public JetTypeInfo visitFunctionLiteralExpression(@NotNull JetFunctionLiteralExpression expression, ExpressionTypingContext data) {
-        return expression.accept(closures, data);
+        return expression.accept(functions, data);
     }
 
     @Override
-    public JetTypeInfo visitObjectLiteralExpression(@NotNull JetObjectLiteralExpression expression, ExpressionTypingContext data) {
-        return expression.accept(closures, data);
+    public JetTypeInfo visitNamedFunction(@NotNull JetNamedFunction function, ExpressionTypingContext data) {
+        return function.accept(functions, data);
     }
 
 //////////////////////////////////////////////////////////////////////////////////////////////

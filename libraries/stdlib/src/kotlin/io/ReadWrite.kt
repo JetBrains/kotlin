@@ -154,11 +154,11 @@ public fun Writer.buffered(bufferSize: Int = defaultBufferSize): BufferedWriter
 public fun Reader.forEachLine(block: (String) -> Unit): Unit = useLines { lines -> lines.forEach(block) }
 
 /**
- * Calls the [block] callback giving it a stream of all the lines in this file and closes the reader once
+ * Calls the [block] callback giving it a sequence of all the lines in this file and closes the reader once
  * the processing is complete.
  * @return the value returned by [block].
  */
-public inline fun <T> Reader.useLines(block: (Stream<String>) -> T): T =
+public inline fun <T> Reader.useLines(block: (Sequence<String>) -> T): T =
         this.buffered().use { block(it.lines()) }
 
 /**
@@ -169,12 +169,12 @@ public inline fun <T> Reader.useLines(block: (Stream<String>) -> T): T =
  *
  * We suggest you try the method [useLines] instead which closes the stream when the processing is complete.
  */
-public fun BufferedReader.lines(): Stream<String> = LinesStream(this)
+public fun BufferedReader.lines(): Sequence<String> = LinesStream(this)
 
 deprecated("Use lines() function which returns Stream<String>")
 public fun BufferedReader.lineIterator(): Iterator<String> = lines().iterator()
 
-private class LinesStream(private val reader: BufferedReader) : Stream<String> {
+private class LinesStream(private val reader: BufferedReader) : Sequence<String> {
     override fun iterator(): Iterator<String> {
         return object : Iterator<String> {
             private var nextValue: String? = null

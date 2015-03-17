@@ -44,28 +44,45 @@ class PrimaryConstructor(
     }
 }
 
-class PrimaryConstructorSignature(val annotations: Annotations, val modifiers: Modifiers, val parameterList: ParameterList) : Element() {
-    override fun generateCode(builder: CodeBuilder) {
-        val accessModifier = modifiers.filter { it in ACCESS_MODIFIERS && it != Modifier.PUBLIC }
-        if (accessModifier.isEmpty && annotations.isEmpty && parameterList.parameters.isEmpty()) return
+class PrimaryConstructorSignature(val annotations: Annotations, private val modifiers: Modifiers, val parameterList: ParameterList) : Element() {
+    public val accessModifier: Modifier? = run {
+        val modifier = modifiers.accessModifier()
+        if (modifier != Modifier.PUBLIC) modifier else null
+    }
 
+    override fun generateCode(builder: CodeBuilder) {
         if (!annotations.isEmpty) {
             builder append " " append annotations.withBrackets()
         }
 
-        if (!accessModifier.isEmpty) {
-            builder append " " append accessModifier
+        if (accessModifier != null) {
+            builder append " " append Modifiers(listOf(accessModifier)).assignPrototypesFrom(modifiers)
         }
 
         builder append "(" append parameterList append ")"
     }
 }
 
-class FactoryFunction(name: Identifier,
-                      annotations: Annotations,
-                      modifiers: Modifiers,
-                      returnType: Type,
-                      parameterList: ParameterList,
-                      typeParameterList: TypeParameterList,
-                      body: DeferredElement<Block>)
-: Function(name, annotations, modifiers, returnType, typeParameterList, parameterList, body, false)
+class SecondaryConstructor(
+        annotations: Annotations,
+        modifiers: Modifiers,
+        private val parameterList: ParameterList,
+        private val body: DeferredElement<Block>,
+        private val thisOrSuperCall: DeferredElement<Expression>?
+) : Member(annotations, modifiers) {
+
+    override fun generateCode(builder: CodeBuilder) {
+        builder.append(annotations)
+                .appendWithSpaceAfter(modifiers)
+                .append("constructor(")
+                .append(parameterList)
+                .append(")")
+
+        if (thisOrSuperCall != null) {
+            builder append " : " append thisOrSuperCall
+        }
+
+        builder append " " append body
+    }
+}
+

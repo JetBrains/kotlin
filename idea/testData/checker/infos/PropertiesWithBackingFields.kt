@@ -42,12 +42,12 @@
 
 <info>open</info> class Super(<warning>i</warning> : Int)
 
-class TestPCParameters(w : Int, <warning>x</warning> : Int, val <info>y</info> : Int, var <info>z</info> : Int) : Super(w) {
+class TestPCParameters(<info>w</info> : Int, <warning>x</warning> : Int, val <info>y</info> : Int, var <info>z</info> : Int) : Super(<info>w</info>) {
 
-  val <info>xx</info> = w
+  val <info>xx</info> = <info descr="Value captured in a closure">w</info>
 
   <info>init</info> {
-    w + 1
+    <info>w</info> + 1
   }
 
   fun foo() = <error>x</error>

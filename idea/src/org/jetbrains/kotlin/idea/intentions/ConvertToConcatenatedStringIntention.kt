@@ -40,12 +40,10 @@ public class ConvertToConcatenatedStringIntention : JetSelfTargetingIntention<Je
         val entries = element.getEntries()
 
         val result = entries.stream()
-                .withIndices()
-                .map { indexToEntry ->
-                    val (index, entry) = indexToEntry
-                    entry.toSeparateString(quote, convertExplicitly = index == 0, isFinalEntry = index == entries.size - 1)
+                .mapIndexed { index, entry ->
+                    entry.toSeparateString(quote, convertExplicitly = index == 0, isFinalEntry = index == entries.size() - 1)
                 }
-                .makeString(separator = "+")
+                .join(separator = "+")
                 .replaceAll("""$quote\+$quote""", "")
 
         val replacement = JetPsiFactory(element).createExpression(result)

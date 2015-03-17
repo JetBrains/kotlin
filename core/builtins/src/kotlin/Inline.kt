@@ -27,6 +27,9 @@ public annotation class noinline
  * calling functions. Inline functions can use reified type parameters, and lambdas passed to inline
  * functions can contain non-local returns.
  * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/inline-functions.html) for more information.
+ *
+ * @property strategy the [InlineStrategy] to use for inlining this function.
+ *
  * @see noinline
  * @see inlineOptions
  */
@@ -55,6 +58,8 @@ public enum class InlineStrategy {
  * receiving function are allowed to use non-local control flow statements. Lambdas which are called from
  * a different execution context (for example, from an object contained in the receiving function)
  * are restricted to local control flow statements.
+ *
+ * @property value the inlining options selected for the annotated function parameter.
  */
 public annotation class inlineOptions(vararg val value: InlineOption)
 

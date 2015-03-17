@@ -19,8 +19,13 @@ package org.jetbrains.kotlin.codegen;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.codegen.inline.FileMapping;
+import org.jetbrains.kotlin.codegen.inline.SMAPBuilder;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.org.objectweb.asm.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class AbstractClassBuilder implements ClassBuilder {
     protected static final MethodVisitor EMPTY_METHOD_VISITOR = new MethodVisitor(Opcodes.ASM5) {};
@@ -29,6 +34,12 @@ public abstract class AbstractClassBuilder implements ClassBuilder {
     private String thisName;
 
     private final JvmSerializationBindings serializationBindings = new JvmSerializationBindings();
+
+    private final List<FileMapping> fileMappings = new ArrayList<FileMapping>();
+
+    private String sourceName;
+
+    private String debugInfo;
 
     public static class Concrete extends AbstractClassBuilder {
         private final ClassVisitor v;
@@ -92,6 +103,15 @@ public abstract class AbstractClassBuilder implements ClassBuilder {
 
     @Override
     public void done() {
+        if (!fileMappings.isEmpty()) {
+            FileMapping origin = fileMappings.get(0);
+            assert sourceName == null || origin.getName().equals(sourceName) : "Error " + origin.getName() +  " != "  + sourceName;
+            getVisitor().visitSource(origin.getName(), new SMAPBuilder(origin.getName(), origin.getPath(), fileMappings).build());
+        }
+        else {
+            getVisitor().visitSource(sourceName, debugInfo);
+        }
+
         getVisitor().visitEnd();
     }
 
@@ -111,7 +131,8 @@ public abstract class AbstractClassBuilder implements ClassBuilder {
 
     @Override
     public void visitSource(@NotNull String name, @Nullable String debug) {
-        getVisitor().visitSource(name, debug);
+        sourceName = name;
+        debugInfo = debug;
     }
 
     @Override
@@ -129,5 +150,10 @@ public abstract class AbstractClassBuilder implements ClassBuilder {
     public String getThisName() {
         assert thisName != null : "This name isn't set";
         return thisName;
+    }
+
+    @Override
+    public void addSMAP(FileMapping mapping) {
+        fileMappings.add(mapping);
     }
 }

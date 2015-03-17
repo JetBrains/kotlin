@@ -64,6 +64,7 @@ public class ExpressionTypingServices {
     private CallResolver callResolver;
     private CallExpressionResolver callExpressionResolver;
     private DescriptorResolver descriptorResolver;
+    private FunctionDescriptorResolver functionDescriptorResolver;
     private TypeResolver typeResolver;
     private AnnotationResolver annotationResolver;
     private StatementFilter statementFilter;
@@ -110,6 +111,16 @@ public class ExpressionTypingServices {
     }
 
     @NotNull
+    public FunctionDescriptorResolver getFunctionDescriptorResolver() {
+        return functionDescriptorResolver;
+    }
+
+    @Inject
+    public void setFunctionDescriptorResolver(FunctionDescriptorResolver functionDescriptorResolver) {
+        this.functionDescriptorResolver = functionDescriptorResolver;
+    }
+
+    @NotNull
     public TypeResolver getTypeResolver() {
         return typeResolver;
     }
@@ -150,13 +161,25 @@ public class ExpressionTypingServices {
     }
 
     @NotNull
-    public JetType safeGetType(@NotNull JetScope scope, @NotNull JetExpression expression, @NotNull JetType expectedType, @NotNull DataFlowInfo dataFlowInfo, @NotNull BindingTrace trace) {
+    public JetType safeGetType(
+            @NotNull JetScope scope,
+            @NotNull JetExpression expression,
+            @NotNull JetType expectedType,
+            @NotNull DataFlowInfo dataFlowInfo,
+            @NotNull BindingTrace trace
+    ) {
         JetType type = getType(scope, expression, expectedType, dataFlowInfo, trace);
         return AnalyzerPackage.safeType(type, expression);
     }
 
     @NotNull
-    public JetTypeInfo getTypeInfo(@NotNull JetScope scope, @NotNull JetExpression expression, @NotNull JetType expectedType, @NotNull DataFlowInfo dataFlowInfo, @NotNull BindingTrace trace) {
+    public JetTypeInfo getTypeInfo(
+            @NotNull JetScope scope,
+            @NotNull JetExpression expression,
+            @NotNull JetType expectedType,
+            @NotNull DataFlowInfo dataFlowInfo,
+            @NotNull BindingTrace trace
+    ) {
         ExpressionTypingContext context = ExpressionTypingContext.newContext(this, trace, scope, dataFlowInfo, expectedType);
         return expressionTypingFacade.getTypeInfo(expression, context);
     }
@@ -167,13 +190,26 @@ public class ExpressionTypingServices {
     }
 
     @Nullable
-    public JetType getType(@NotNull JetScope scope, @NotNull JetExpression expression, @NotNull JetType expectedType, @NotNull DataFlowInfo dataFlowInfo, @NotNull BindingTrace trace) {
+    public JetType getType(
+            @NotNull JetScope scope,
+            @NotNull JetExpression expression,
+            @NotNull JetType expectedType,
+            @NotNull DataFlowInfo dataFlowInfo,
+            @NotNull BindingTrace trace
+    ) {
         return getTypeInfo(scope, expression, expectedType, dataFlowInfo, trace).getType();
     }
 
     /////////////////////////////////////////////////////////
 
-    public void checkFunctionReturnType(@NotNull JetScope functionInnerScope, @NotNull JetDeclarationWithBody function, @NotNull FunctionDescriptor functionDescriptor, @NotNull DataFlowInfo dataFlowInfo, @Nullable JetType expectedReturnType, BindingTrace trace) {
+    public void checkFunctionReturnType(
+            @NotNull JetScope functionInnerScope,
+            @NotNull JetDeclarationWithBody function,
+            @NotNull FunctionDescriptor functionDescriptor,
+            @NotNull DataFlowInfo dataFlowInfo,
+            @Nullable JetType expectedReturnType,
+            BindingTrace trace
+    ) {
         if (expectedReturnType == null) {
             expectedReturnType = functionDescriptor.getReturnType();
             if (!function.hasBlockBody() && !function.hasDeclaredReturnType()) {
@@ -293,7 +329,8 @@ public class ExpressionTypingServices {
                         blockLevelVisitor);
             }
             else {
-                result = blockLevelVisitor.getTypeInfo(statementExpression, newContext.replaceContextDependency(ContextDependency.INDEPENDENT), true);
+                result = blockLevelVisitor
+                        .getTypeInfo(statementExpression, newContext.replaceContextDependency(ContextDependency.INDEPENDENT), true);
             }
 
             DataFlowInfo newDataFlowInfo = result.getDataFlowInfo();

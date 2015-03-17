@@ -42,9 +42,21 @@ public class AndroidCompletionTestGenerated extends AbstractAndroidCompletionTes
         doTest(fileName);
     }
 
+    @TestMetadata("fqNameInAttrFragment")
+    public void testFqNameInAttrFragment() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/completion/fqNameInAttrFragment/");
+        doTest(fileName);
+    }
+
     @TestMetadata("fqNameInTag")
     public void testFqNameInTag() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/completion/fqNameInTag/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("fqNameInTagFragment")
+    public void testFqNameInTagFragment() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/completion/fqNameInTagFragment/");
         doTest(fileName);
     }
 
@@ -54,9 +66,27 @@ public class AndroidCompletionTestGenerated extends AbstractAndroidCompletionTes
         doTest(fileName);
     }
 
+    @TestMetadata("multiFileFragment")
+    public void testMultiFileFragment() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/completion/multiFileFragment/");
+        doTest(fileName);
+    }
+
     @TestMetadata("propertiesSimple")
     public void testPropertiesSimple() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/completion/propertiesSimple/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("propertiesSimpleFragment")
+    public void testPropertiesSimpleFragment() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/completion/propertiesSimpleFragment/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("propertiesSimpleView")
+    public void testPropertiesSimpleView() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/completion/propertiesSimpleView/");
         doTest(fileName);
     }
 }

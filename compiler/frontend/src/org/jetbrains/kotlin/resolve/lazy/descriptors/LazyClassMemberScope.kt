@@ -274,25 +274,27 @@ public open class LazyClassMemberScope(
     public fun getPrimaryConstructor(): ConstructorDescriptor? = primaryConstructor()
 
     protected open fun resolvePrimaryConstructor(): ConstructorDescriptor? {
-        if (GENERATE_CONSTRUCTORS_FOR.contains(thisDescriptor.getKind())) {
-            val ownerInfo = declarationProvider.getOwnerInfo()
-            val classOrObject = ownerInfo.getCorrespondingClassOrObject()
-            if (!thisDescriptor.getKind().isSingleton() && !classOrObject.isObjectLiteral()) {
-                assert(classOrObject is JetClass) { "No JetClass for $thisDescriptor" }
-                classOrObject as JetClass
-                val constructor = c.descriptorResolver.resolvePrimaryConstructorDescriptor(
-                        thisDescriptor.getScopeForClassHeaderResolution(), thisDescriptor, classOrObject, trace)
-                constructor ?: return null
-                setDeferredReturnType(constructor)
-                return constructor
+        val ownerInfo = declarationProvider.getOwnerInfo()
+        val classOrObject = ownerInfo.getCorrespondingClassOrObject()
+        if (!thisDescriptor.getKind().isSingleton() && !classOrObject.isObjectLiteral()) {
+            assert(classOrObject is JetClass) { "No JetClass for $thisDescriptor" }
+            classOrObject as JetClass
+
+            if (DescriptorUtils.isTrait(thisDescriptor) && declarationProvider.getOwnerInfo().getPrimaryConstructorParameters().isEmpty()) {
+                return null
             }
-            else {
-                val constructor = DescriptorResolver.createAndRecordPrimaryConstructorForObject(classOrObject, thisDescriptor, trace)
-                setDeferredReturnType(constructor)
-                return constructor
-            }
+
+            val constructor = c.functionDescriptorResolver.resolvePrimaryConstructorDescriptor(
+                    thisDescriptor.getScopeForClassHeaderResolution(), thisDescriptor, classOrObject, trace)
+            constructor ?: return null
+            setDeferredReturnType(constructor)
+            return constructor
         }
-        return null
+        else {
+            val constructor = DescriptorResolver.createAndRecordPrimaryConstructorForObject(classOrObject, thisDescriptor, trace)
+            setDeferredReturnType(constructor)
+            return constructor
+        }
     }
 
     private fun resolveSecondaryConstructors(): Collection<ConstructorDescriptor> {
@@ -302,7 +304,7 @@ public open class LazyClassMemberScope(
         if (classOrObject !is JetClass) return emptyList()
 
         return classOrObject.getSecondaryConstructors().map { constructor ->
-            val descriptor = c.descriptorResolver.resolveSecondaryConstructorDescriptor(
+            val descriptor = c.functionDescriptorResolver.resolveSecondaryConstructorDescriptor(
                     thisDescriptor.getScopeForSecondaryConstructorHeaderResolution(), thisDescriptor, constructor, trace
             )
             setDeferredReturnType(descriptor)
@@ -318,12 +320,6 @@ public open class LazyClassMemberScope(
     override fun toString() = "lazy scope for class ${thisDescriptor.getName()}"
 
     default object {
-        private val GENERATE_CONSTRUCTORS_FOR = setOf(ClassKind.CLASS,
-                                                      ClassKind.ANNOTATION_CLASS,
-                                                      ClassKind.OBJECT,
-                                                      ClassKind.ENUM_CLASS,
-                                                      ClassKind.ENUM_ENTRY)
-
         private val EXTRACT_FUNCTIONS: MemberExtractor<FunctionDescriptor> = object : MemberExtractor<FunctionDescriptor> {
             override fun extract(extractFrom: JetType, name: Name): Collection<FunctionDescriptor> {
                 return extractFrom.getMemberScope().getFunctions(name)

@@ -60,6 +60,7 @@ import org.jetbrains.kotlin.resolve.DelegatedPropertyResolver;
 import org.jetbrains.kotlin.resolve.TypeResolver;
 import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver;
 import org.jetbrains.kotlin.context.TypeLazinessToken;
+import org.jetbrains.kotlin.resolve.FunctionDescriptorResolver;
 import org.jetbrains.kotlin.types.reflect.ReflectionTypes;
 import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver;
 import org.jetbrains.kotlin.resolve.StatementFilter;
@@ -136,6 +137,7 @@ public class InjectorForTopDownAnalyzerForJvm {
     private final TypeResolver typeResolver;
     private final QualifiedExpressionResolver qualifiedExpressionResolver;
     private final TypeLazinessToken typeLazinessToken;
+    private final FunctionDescriptorResolver functionDescriptorResolver;
     private final ReflectionTypes reflectionTypes;
     private final CallExpressionResolver callExpressionResolver;
     private final StatementFilter statementFilter;
@@ -217,7 +219,8 @@ public class InjectorForTopDownAnalyzerForJvm {
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
         this.typeLazinessToken = new TypeLazinessToken();
         this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, getModule(), javaFlexibleTypeCapabilitiesProvider, storageManager, typeLazinessToken, dynamicTypesSettings);
-        this.localClassifierAnalyzer = new LocalClassifierAnalyzer(descriptorResolver, typeResolver, annotationResolver);
+        this.functionDescriptorResolver = new FunctionDescriptorResolver(typeResolver, descriptorResolver, annotationResolver, storageManager, expressionTypingServices, kotlinBuiltIns);
+        this.localClassifierAnalyzer = new LocalClassifierAnalyzer(descriptorResolver, functionDescriptorResolver, typeResolver, annotationResolver);
         this.delegatedPropertyResolver = new DelegatedPropertyResolver();
         this.reflectionTypes = new ReflectionTypes(getModule());
         this.callExpressionResolver = new CallExpressionResolver();
@@ -242,6 +245,7 @@ public class InjectorForTopDownAnalyzerForJvm {
 
         this.resolveSession.setAnnotationResolve(annotationResolver);
         this.resolveSession.setDescriptorResolver(descriptorResolver);
+        this.resolveSession.setFunctionDescriptorResolver(functionDescriptorResolver);
         this.resolveSession.setJetImportFactory(jetImportsFactory);
         this.resolveSession.setLazyDeclarationResolver(lazyDeclarationResolver);
         this.resolveSession.setQualifiedExpressionResolver(qualifiedExpressionResolver);
@@ -308,6 +312,7 @@ public class InjectorForTopDownAnalyzerForJvm {
         expressionTypingServices.setCallExpressionResolver(callExpressionResolver);
         expressionTypingServices.setCallResolver(callResolver);
         expressionTypingServices.setDescriptorResolver(descriptorResolver);
+        expressionTypingServices.setFunctionDescriptorResolver(functionDescriptorResolver);
         expressionTypingServices.setProject(project);
         expressionTypingServices.setStatementFilter(statementFilter);
         expressionTypingServices.setTypeResolver(typeResolver);

@@ -32,6 +32,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry;
+import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getSecondaryConstructors;
 
 public class DescriptorSerializer {
 
@@ -110,8 +111,7 @@ public class DescriptorSerializer {
             }
         }
 
-        for (ConstructorDescriptor constructorDescriptor : classDescriptor.getConstructors()) {
-            if (constructorDescriptor.isPrimary()) continue;
+        for (ConstructorDescriptor constructorDescriptor : getSecondaryConstructors(classDescriptor)) {
             builder.addSecondaryConstructor(callableProto(constructorDescriptor));
         }
 

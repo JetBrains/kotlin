@@ -3,7 +3,5 @@
 class A(val n: Int) {
     fun foo(a: Int, b: Int = i(a)) = a + b - n - 1
 
-    private fun i(a: Int): Int {
-        return a + n
-    }
+    private fun i(a: Int) = a + n
 }

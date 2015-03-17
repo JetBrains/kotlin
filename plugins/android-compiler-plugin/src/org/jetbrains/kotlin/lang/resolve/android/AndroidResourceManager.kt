@@ -23,6 +23,9 @@ import com.intellij.psi.PsiManager
 import com.intellij.openapi.util.*
 import com.intellij.openapi.vfs.impl.*
 import com.intellij.openapi.vfs.*
+import com.intellij.openapi.components.*
+import com.intellij.openapi.extensions.*
+import com.intellij.openapi.module.*
 
 public abstract class AndroidResourceManager(val project: Project) {
 
@@ -61,10 +64,17 @@ public abstract class AndroidResourceManager(val project: Project) {
                 .sortBy { it.getName() }
     }
 
-    fun getMainLayoutDirectory(): VirtualFile? {
+    fun getMainResDirectory(): VirtualFile? {
         val info = androidModuleInfo
         if (info == null) return null
         return VirtualFileManager.getInstance().findFileByUrl("file://" + info.mainResDirectory)
+    }
+
+    default object {
+        public fun getInstance(module: Module): AndroidResourceManager {
+            val service = ModuleServiceManager.getService<AndroidResourceManager>(module, javaClass<AndroidResourceManager>())
+            return service ?: module.getComponent<AndroidResourceManager>(javaClass<AndroidResourceManager>())
+        }
     }
 
 }

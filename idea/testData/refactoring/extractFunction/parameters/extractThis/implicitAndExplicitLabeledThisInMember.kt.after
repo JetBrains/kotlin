@@ -19,6 +19,4 @@ public class A(): Z() {
     }
 }
 
-private fun i(a1: A, b1: A.B): Int {
-    return a1.a + b1.b + a1.z + b1.z
-}
+private fun i(a1: A, b1: A.B) = a1.a + b1.b + a1.z + b1.z

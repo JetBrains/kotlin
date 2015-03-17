@@ -16,19 +16,19 @@
 
 package org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ui;
 
-import com.intellij.openapi.editor.event.DocumentAdapter;
-import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.psi.PsiElement;
-import com.intellij.ui.EditorTextField;
+import com.intellij.refactoring.ui.NameSuggestionsField;
 import com.intellij.ui.TitledSeparator;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import kotlin.Function0;
 import kotlin.Function1;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.idea.JetFileType;
 import org.jetbrains.kotlin.idea.refactoring.JetNameSuggester;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle;
 import org.jetbrains.kotlin.idea.refactoring.RefactoringPackage;
@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
@@ -48,7 +49,8 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
     private TitledSeparator inputParametersPanel;
     private JComboBox visibilityBox;
     private KotlinFunctionSignatureComponent signaturePreviewField;
-    private EditorTextField functionNameField;
+    private JPanel functionNamePanel;
+    private NameSuggestionsField functionNameField;
     private JLabel functionNameLabel;
     private KotlinParameterTablePanel parameterTablePanel;
 
@@ -85,7 +87,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
     }
 
     private String getFunctionName() {
-        return functionNameField.getText();
+        return functionNameField.getEnteredName();
     }
 
     private String getVisibility() {
@@ -118,17 +120,21 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
     protected void init() {
         super.init();
 
-        functionNameLabel.setLabelFor(functionNameField);
-
-        functionNameField.setText(originalDescriptor.getDescriptor().getName());
-        functionNameField.addDocumentListener(
-                new DocumentAdapter() {
+        functionNameField = new NameSuggestionsField(
+                ArrayUtil.toStringArray(originalDescriptor.getDescriptor().getSuggestedNames()),
+                project,
+                JetFileType.INSTANCE
+        );
+        functionNameField.addDataChangedListener(
+                new NameSuggestionsField.DataChanged() {
                     @Override
-                    public void documentChanged(DocumentEvent event) {
+                    public void dataChanged() {
                         update();
                     }
                 }
         );
+        functionNamePanel.add(functionNameField, BorderLayout.CENTER);
+        functionNameLabel.setLabelFor(functionNameField);
 
         boolean enableVisibility = isVisibilitySectionAvailable();
         visibilityBox.setEnabled(enableVisibility);

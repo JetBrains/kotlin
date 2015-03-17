@@ -19,11 +19,11 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
-        doc(Streams) { "Returns a stream containing all elements except first [n] elements" }
-        returns(Streams) { "Stream<T>" }
-        body(Streams) {
+        doc(Sequences) { "Returns a sequence containing all elements except first [n] elements" }
+        returns(Sequences) { "Sequence<T>" }
+        body(Sequences) {
             """
-            return DropStream(this, n)
+            return DropSequence(this, n)
             """
         }
 
@@ -66,11 +66,11 @@ fun filtering(): List<GenericFunction> {
         body(Strings) { "return substring(0, Math.min(n, length()))" }
         returns(Strings) { "String" }
 
-        doc(Streams) { "Returns a stream containing first *n* elements" }
-        returns(Streams) { "Stream<T>" }
-        body(Streams) {
+        doc(Sequences) { "Returns a sequence containing first *n* elements" }
+        returns(Sequences) { "Sequence<T>" }
+        body(Sequences) {
             """
-            return TakeStream(this, n)
+            return TakeSequence(this, n)
             """
         }
 
@@ -122,12 +122,12 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
-        inline(false, Streams)
-        doc(Streams) { "Returns a stream containing all elements except first elements that satisfy the given [predicate]" }
-        returns(Streams) { "Stream<T>" }
-        body(Streams) {
+        inline(false, Sequences)
+        doc(Sequences) { "Returns a sequence containing all elements except first elements that satisfy the given [predicate]" }
+        returns(Sequences) { "Sequence<T>" }
+        body(Sequences) {
             """
-            return DropWhileStream(this, predicate)
+            return DropWhileSequence(this, predicate)
             """
         }
 
@@ -162,12 +162,12 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
-        inline(false, Streams)
-        doc(Streams) { "Returns a stream containing first elements satisfying the given [predicate]" }
-        returns(Streams) { "Stream<T>" }
-        body(Streams) {
+        inline(false, Sequences)
+        doc(Sequences) { "Returns a sequence containing first elements satisfying the given [predicate]" }
+        returns(Sequences) { "Sequence<T>" }
+        body(Sequences) {
             """
-            return TakeWhileStream(this, predicate)
+            return TakeWhileSequence(this, predicate)
             """
         }
     }
@@ -191,12 +191,12 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
-        inline(false, Streams)
-        doc(Streams) { "Returns a stream containing all elements matching the given [predicate]" }
-        returns(Streams) { "Stream<T>" }
-        body(Streams) {
+        inline(false, Sequences)
+        doc(Sequences) { "Returns a sequence containing all elements matching the given [predicate]" }
+        returns(Sequences) { "Sequence<T>" }
+        body(Sequences) {
             """
-            return FilteringStream(this, true, predicate)
+            return FilteringSequence(this, true, predicate)
             """
         }
     }
@@ -246,12 +246,12 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
-        inline(false, Streams)
-        doc(Streams) { "Returns a stream containing all elements not matching the given [predicate]" }
-        returns(Streams) { "Stream<T>" }
-        body(Streams) {
+        inline(false, Sequences)
+        doc(Sequences) { "Returns a sequence containing all elements not matching the given [predicate]" }
+        returns(Sequences) { "Sequence<T>" }
+        body(Sequences) {
             """
-            return FilteringStream(this, false, predicate)
+            return FilteringSequence(this, false, predicate)
             """
         }
     }
@@ -291,11 +291,11 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
-        doc(Streams) { "Returns a stream containing all elements that are not null" }
-        returns(Streams) { "Stream<T>" }
-        body(Streams) {
+        doc(Sequences) { "Returns a sequence containing all elements that are not null" }
+        returns(Sequences) { "Sequence<T>" }
+        body(Sequences) {
             """
-            return FilteringStream(this, false, { it == null }) as Stream<T>
+            return FilteringSequence(this, false, { it == null }) as Sequence<T>
             """
         }
     }

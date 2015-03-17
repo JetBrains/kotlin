@@ -64,8 +64,8 @@ public class OverloadResolver {
             @NotNull MultiMap<FqNameUnsafe, ConstructorDescriptor> inPackages
     ) {
         for (ClassDescriptorWithResolutionScopes klass : c.getDeclaredClasses().values()) {
-            if (klass.getKind().isSingleton()) {
-                // Constructors of singletons aren't callable from the code, so they shouldn't participate in overload name checking
+            if (klass.getKind().isSingleton() || klass.getName().isSpecial()) {
+                // Constructors of singletons or anonymous object aren't callable from the code, so they shouldn't participate in overload name checking
                 continue;
             }
             DeclarationDescriptor containingDeclaration = klass.getContainingDeclaration();

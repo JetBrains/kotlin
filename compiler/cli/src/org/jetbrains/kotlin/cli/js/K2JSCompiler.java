@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.Services;
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
+import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult;
 import org.jetbrains.kotlin.js.config.Config;
 import org.jetbrains.kotlin.js.config.EcmaVersion;
 import org.jetbrains.kotlin.js.config.LibrarySourcesConfig;
@@ -128,9 +129,14 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             return COMPILATION_ERROR;
         }
 
-        if (analyzeAndReportErrors(messageCollector, sourcesFiles, config)) {
+        AnalyzerWithCompilerReport analyzerWithCompilerReport = analyzeAndReportErrors(messageCollector, sourcesFiles, config);
+        if (analyzerWithCompilerReport.hasErrors()) {
             return COMPILATION_ERROR;
         }
+
+        AnalysisResult analysisResult = analyzerWithCompilerReport.getAnalysisResult();
+        assert analysisResult instanceof JsAnalysisResult : "analysisResult should be instance of JsAnalysisResult, but " + analysisResult;
+        JsAnalysisResult jsAnalysisResult = (JsAnalysisResult) analysisResult;
 
         File outputPrefixFile = null;
         if (arguments.outputPrefix != null) {
@@ -160,7 +166,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         K2JSTranslator translator = new K2JSTranslator(config);
         try {
             //noinspection unchecked
-            translationResult = translator.translate(sourcesFiles, mainCallParameters);
+            translationResult = translator.translate(sourcesFiles, mainCallParameters, jsAnalysisResult);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -204,7 +210,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
                                 CompilerMessageLocation.NO_LOCATION);
     }
 
-    private static boolean analyzeAndReportErrors(@NotNull MessageCollector messageCollector,
+    private static AnalyzerWithCompilerReport analyzeAndReportErrors(@NotNull MessageCollector messageCollector,
             @NotNull final List<JetFile> sources, @NotNull final Config config) {
         AnalyzerWithCompilerReport analyzerWithCompilerReport = new AnalyzerWithCompilerReport(messageCollector);
         analyzerWithCompilerReport.analyzeAndReport(sources, new Function0<AnalysisResult>() {
@@ -213,7 +219,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
                 return TopDownAnalyzerFacadeForJS.analyzeFiles(sources, config);
             }
         });
-        return analyzerWithCompilerReport.hasErrors();
+        return analyzerWithCompilerReport;
     }
 
     @NotNull

@@ -5,9 +5,9 @@ package foo
 native
 val ROOT = "Kotlin.modules.JS_TESTS"
 native
-val PATH_TO_F_CREATOR = "foo.B.B\$f"
+val PATH_TO_F_CREATOR = "foo.B.far\$f"
 native
-val PATH_TO_G_CREATOR = "foo.B.B\$f_0"
+val PATH_TO_G_CREATOR = "foo.B.gar\$f"
 
 native("$ROOT.$PATH_TO_F_CREATOR")
 val F_CREATOR: Any = noImpl
@@ -24,15 +24,15 @@ open class A {
 class B : A() {
     fun boo() = "B::boo"
 
-    val f = { foo() }
-    val g = { boo() }
+    val far = { foo() }
+    val gar = { boo() }
 }
 
 
 fun box(): String {
     val b = B()
-    val f = b.f
-    val g = b.g
+    val f = b.far
+    val g = b.gar
 
     assertEquals("A::foo", f())
     assertEquals("B::boo", g())

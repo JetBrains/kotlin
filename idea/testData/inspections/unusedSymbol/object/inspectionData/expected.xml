@@ -31,4 +31,22 @@
     <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused Symbol</problem_class>
     <description>Object 'A' is never used</description>
   </problem>
+
+  <problem>
+    <file>defaultObjectUnused.kt</file>
+    <line>2</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/defaultObjectUnused.kt" />
+    <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused Symbol</problem_class>
+    <description>Object 'Default' is never used</description>
+  </problem>
+
+  <problem>
+    <file>defaultObjectUnused.kt</file>
+    <line>7</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/defaultObjectUnused.kt" />
+    <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused Symbol</problem_class>
+    <description>Object 'Named' is never used</description>
+  </problem>
 </problems>

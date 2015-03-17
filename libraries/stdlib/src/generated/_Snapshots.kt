@@ -100,6 +100,15 @@ public fun <T> Iterable<T>.toArrayList(): ArrayList<T> {
 /**
  * Returns an ArrayList of all elements
  */
+public fun <T> Sequence<T>.toArrayList(): ArrayList<T> {
+    return toCollection(ArrayList<T>())
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
+/**
+ * Returns an ArrayList of all elements
+ */
 public fun <T> Stream<T>.toArrayList(): ArrayList<T> {
     return toCollection(ArrayList<T>())
 }
@@ -214,6 +223,18 @@ public fun <T, C : MutableCollection<in T>> Iterable<T>.toCollection(collection:
 /**
  * Appends all elements to the given *collection*
  */
+public fun <T, C : MutableCollection<in T>> Sequence<T>.toCollection(collection: C): C {
+    for (item in this) {
+        collection.add(item)
+    }
+    return collection
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
+/**
+ * Appends all elements to the given *collection*
+ */
 public fun <T, C : MutableCollection<in T>> Stream<T>.toCollection(collection: C): C {
     for (item in this) {
         collection.add(item)
@@ -304,6 +325,15 @@ public fun <T> Iterable<T>.toHashSet(): HashSet<T> {
 /**
  * Returns a HashSet of all elements
  */
+public fun <T> Sequence<T>.toHashSet(): HashSet<T> {
+    return toCollection(HashSet<T>())
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
+/**
+ * Returns a HashSet of all elements
+ */
 public fun <T> Stream<T>.toHashSet(): HashSet<T> {
     return toCollection(HashSet<T>())
 }
@@ -385,6 +415,15 @@ public fun <T> Iterable<T>.toLinkedList(): LinkedList<T> {
     return toCollection(LinkedList<T>())
 }
 
+/**
+ * Returns a LinkedList containing all elements
+ */
+public fun <T> Sequence<T>.toLinkedList(): LinkedList<T> {
+    return toCollection(LinkedList<T>())
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
 /**
  * Returns a LinkedList containing all elements
  */
@@ -497,6 +536,15 @@ public fun <T> Iterable<T>.toList(): List<T> {
     return toCollection(ArrayList<T>(collectionSizeOrDefault(10)))
 }
 
+/**
+ * Returns a List containing all elements
+ */
+public fun <T> Sequence<T>.toList(): List<T> {
+    return toCollection(ArrayList<T>())
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
 /**
  * Returns a List containing all elements
  */
@@ -624,6 +672,19 @@ public inline fun <T, K> Iterable<T>.toMap(selector: (T) -> K): Map<K, T> {
 /**
  * Returns Map containing all the values from the given collection indexed by *selector*
  */
+public inline fun <T, K> Sequence<T>.toMap(selector: (T) -> K): Map<K, T> {
+    val result = LinkedHashMap<K, T>()
+    for (element in this) {
+        result.put(selector(element), element)
+    }
+    return result
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
+/**
+ * Returns Map containing all the values from the given collection indexed by *selector*
+ */
 public inline fun <T, K> Stream<T>.toMap(selector: (T) -> K): Map<K, T> {
     val result = LinkedHashMap<K, T>()
     for (element in this) {
@@ -716,6 +777,15 @@ public fun <T> Iterable<T>.toSet(): Set<T> {
 /**
  * Returns a Set of all elements
  */
+public fun <T> Sequence<T>.toSet(): Set<T> {
+    return toCollection(LinkedHashSet<T>())
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
+/**
+ * Returns a Set of all elements
+ */
 public fun <T> Stream<T>.toSet(): Set<T> {
     return toCollection(LinkedHashSet<T>())
 }
@@ -797,6 +867,15 @@ public fun <T> Iterable<T>.toSortedSet(): SortedSet<T> {
     return toCollection(TreeSet<T>())
 }
 
+/**
+ * Returns a SortedSet of all elements
+ */
+public fun <T> Sequence<T>.toSortedSet(): SortedSet<T> {
+    return toCollection(TreeSet<T>())
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
 /**
  * Returns a SortedSet of all elements
  */

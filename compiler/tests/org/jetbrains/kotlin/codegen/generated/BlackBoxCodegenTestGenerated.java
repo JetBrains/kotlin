@@ -1674,6 +1674,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("localClassFunClosure.kt")
+        public void testLocalClassFunClosure() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/closures/localClassFunClosure.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("localClassLambdaClosure.kt")
+        public void testLocalClassLambdaClosure() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/closures/localClassLambdaClosure.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("localFunctionInFunction.kt")
         public void testLocalFunctionInFunction() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/closures/localFunctionInFunction.kt");
@@ -3686,6 +3698,24 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("functionExpressionWithName.kt")
+        public void testFunctionExpressionWithName() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/functions/functionExpressionWithName.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("functionExpressionWithThisReference.kt")
+        public void testFunctionExpressionWithThisReference() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/functions/functionExpressionWithThisReference.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("functionLiteralExpression.kt")
+        public void testFunctionLiteralExpression() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/functions/functionLiteralExpression.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("functionNtoString.kt")
         public void testFunctionNtoString() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/functions/functionNtoString.kt");
@@ -3821,6 +3851,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("localFunction.kt")
         public void testLocalFunction() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/functions/localFunction.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("localReturnInsideFunctionExpression.kt")
+        public void testLocalReturnInsideFunctionExpression() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/functions/localReturnInsideFunctionExpression.kt");
             doTest(fileName);
         }
 
@@ -4302,12 +4338,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("labeledDeclarations.kt")
         public void testLabeledDeclarations() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/labels/labeledDeclarations.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("labeledDeclarations2.kt")
-        public void testLabeledDeclarations2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/labels/labeledDeclarations2.kt");
             doTest(fileName);
         }
 

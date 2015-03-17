@@ -1,5 +1,5 @@
 {
   "type": "KOTLIN_CLASS",
-  "classFQN": "test.E",
+  "classId": "test/E",
   "newName": "D"
 }

@@ -5,10 +5,10 @@ import org.junit.Test as test
 import kotlin.test.fails
 import java.util.ArrayList
 
-fun fibonacci(): Stream<Int> {
+fun fibonacci(): Sequence<Int> {
     // fibonacci terms
     var index = 0; var a = 0; var b = 1
-    return stream<Int> { when (index++) { 0 -> a; 1 -> b; else -> { val result = a + b; a = b; b = result; result } } }
+    return sequence<Int> { when (index++) { 0 -> a; 1 -> b; else -> { val result = a + b; a = b; b = result; result } } }
 }
 
 class IteratorsTest {
@@ -39,12 +39,12 @@ class IteratorsTest {
     }
 
     test fun plus() {
-        val iter = arrayListOf("foo", "bar").stream()
+        val iter = arrayListOf("foo", "bar").sequence()
         val iter2 = iter + "cheese"
         assertEquals(arrayListOf("foo", "bar", "cheese"), iter2.toList())
 
         // lets use a mutable variable
-        var mi  = streamOf("a", "b")
+        var mi  = sequenceOf("a", "b")
         mi += "c"
         assertEquals(arrayListOf("a", "b", "c"), mi.toList())
     }
@@ -52,12 +52,12 @@ class IteratorsTest {
     test fun plusCollection() {
         val a = arrayListOf("foo", "bar")
         val b = arrayListOf("cheese", "wine")
-        val iter = a.stream() + b.stream()
+        val iter = a.sequence() + b.sequence()
         assertEquals(arrayListOf("foo", "bar", "cheese", "wine"), iter.toList())
 
         // lets use a mutable variable
-        var ml = arrayListOf("a").stream()
-        ml += a.stream()
+        var ml = arrayListOf("a").sequence()
+        ml += a.sequence()
         ml += "beer"
         ml += b
         ml += "z"
@@ -65,11 +65,11 @@ class IteratorsTest {
     }
 
     test fun requireNoNulls() {
-        val iter = arrayListOf<String?>("foo", "bar").stream()
+        val iter = arrayListOf<String?>("foo", "bar").sequence()
         val notNull = iter.requireNoNulls()
         assertEquals(arrayListOf("foo", "bar"), notNull.toList())
 
-        val iterWithNulls = arrayListOf("foo", null, "bar").stream()
+        val iterWithNulls = arrayListOf("foo", null, "bar").sequence()
         val notNull2 = iterWithNulls.requireNoNulls()
         fails {
             // should throw an exception as we have a null

@@ -192,7 +192,7 @@ fun elements(): List<GenericFunction> {
             throw IndexOutOfBoundsException("Collection doesn't contain element at index")
             """
         }
-        body(Streams) {
+        body(Sequences) {
             """
             val iterator = iterator()
             var count = 0
@@ -277,7 +277,7 @@ fun elements(): List<GenericFunction> {
     templates add f("first(predicate: (T) -> Boolean)") {
         inline(true)
 
-        doc { """"Returns the first element matching the given [predicate].
+        doc { """Returns the first element matching the given [predicate].
         @throws NoSuchElementException if no such element is found.""" }
         doc(Strings) { """Returns the first character matching the given [predicate].
         @throws NoSuchElementException if no such character is found.""" }
@@ -293,8 +293,8 @@ fun elements(): List<GenericFunction> {
     templates add f("firstOrNull(predicate: (T) -> Boolean)") {
         inline(true)
 
-        doc { "Returns first element matching the given [predicate], or `null` if element was not found" }
-        doc(Strings) { "Returns first character matching the given [predicate], or `null` if character was not found" }
+        doc { "Returns the first element matching the given [predicate], or `null` if element was not found" }
+        doc(Strings) { "Returns the first character matching the given [predicate], or `null` if character was not found" }
         returns("T?")
         body {
             """
@@ -331,7 +331,7 @@ fun elements(): List<GenericFunction> {
             }
             """
         }
-        body(Streams) {
+        body(Sequences) {
             """
             val iterator = iterator()
             if (!iterator.hasNext())
@@ -371,7 +371,7 @@ fun elements(): List<GenericFunction> {
             }
             """
         }
-        body(Streams) {
+        body(Sequences) {
             """
             val iterator = iterator()
             if (!iterator.hasNext())

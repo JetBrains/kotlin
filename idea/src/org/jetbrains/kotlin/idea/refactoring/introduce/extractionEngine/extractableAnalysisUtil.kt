@@ -72,8 +72,9 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.*
 import org.jetbrains.kotlin.diagnostics.*
 import java.util.logging.*
 import com.intellij.openapi.diagnostic.Logger
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 
-private val DEFAULT_FUNCTION_NAME = "myFun"
 private val DEFAULT_RETURN_TYPE = KotlinBuiltIns.getInstance().getUnitType()
 private val DEFAULT_PARAMETER_TYPE = KotlinBuiltIns.getInstance().getNullableAnyType()
 
@@ -804,19 +805,6 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
     val enclosingDeclaration = commonParent.getStrictParentOfType<JetDeclaration>()!!
     checkDeclarationsMovingOutOfScope(enclosingDeclaration, controlFlow, bindingContext)?.let { messages.add(it) }
 
-    val functionNameValidator =
-            JetNameValidatorImpl(
-                    targetSibling.getParent(),
-                    if (targetSibling is JetClassInitializer) targetSibling.getParent() else targetSibling,
-                    if (options.extractAsProperty) JetNameValidatorImpl.Target.PROPERTIES else JetNameValidatorImpl.Target.FUNCTIONS_AND_CLASSES
-            )
-    val functionNames = if (returnType.isDefault()) {
-        Collections.emptyList<String>()
-    }
-    else {
-        JetNameSuggester.suggestNames(returnType, functionNameValidator, DEFAULT_FUNCTION_NAME).toList()
-    }
-
     controlFlow.jumpOutputValue?.elementToInsertAfterCall?.accept(
             object : JetTreeVisitorVoid() {
                 override fun visitSimpleNameExpression(expression: JetSimpleNameExpression) {
@@ -834,7 +822,7 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
             ExtractableCodeDescriptor(
                     this,
                     bindingContext,
-                    functionNames,
+                    suggestFunctionNames(returnType),
                     getDefaultVisibility(),
                     adjustedParameters.sortBy { it.name },
                     receiverParameter,
@@ -845,6 +833,29 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
             if (messages.isEmpty()) Status.SUCCESS else Status.NON_CRITICAL_ERROR,
             messages
     )
+}
+
+private fun ExtractionData.suggestFunctionNames(returnType: JetType): List<String> {
+    val functionNames = LinkedHashSet<String>()
+
+    val validator =
+            JetNameValidatorImpl(
+                    targetSibling.getParent(),
+                    if (targetSibling is JetClassInitializer) targetSibling.getParent() else targetSibling,
+                    if (options.extractAsProperty) JetNameValidatorImpl.Target.PROPERTIES else JetNameValidatorImpl.Target.FUNCTIONS_AND_CLASSES
+            )
+    if (!returnType.isDefault()) {
+        functionNames.addAll(JetNameSuggester.suggestNamesForType(returnType, validator))
+    }
+
+    getExpressions().singleOrNull()?.let { expr ->
+        val property = expr.getStrictParentOfType<JetProperty>()
+        if (property?.getInitializer() == expr) {
+            property?.getName()?.let { functionNames.add(validator.validateName("get" + it.capitalize())) }
+        }
+    }
+
+    return functionNames.toList()
 }
 
 private fun JetNamedDeclaration.getGeneratedBody() =
@@ -871,11 +882,14 @@ fun ExtractableCodeDescriptor.validate(): ExtractableCodeDescriptorWithConflicts
 
     val conflicts = MultiMap<PsiElement, String>()
 
-    val result = ExtractionGeneratorConfiguration(this, ExtractionGeneratorOptions(inTempFile = true)).generateDeclaration()
+    val result = ExtractionGeneratorConfiguration(
+            this,
+            ExtractionGeneratorOptions(inTempFile = true, allowExpressionBody = false)
+    ).generateDeclaration()
 
     val valueParameterList = (result.declaration as? JetNamedFunction)?.getValueParameterList()
     val body = result.declaration.getGeneratedBody()
-    val bindingContext = body.analyze()
+    val bindingContext = body.analyzeFully()
 
     fun validateBody() {
         for ((originalOffset, resolveResult) in extractionData.refOffsetToDeclaration) {

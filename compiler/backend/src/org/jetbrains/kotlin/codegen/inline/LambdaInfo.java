@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode;
-import org.jetbrains.org.objectweb.asm.tree.MethodNode;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,7 +50,7 @@ public class LambdaInfo implements CapturedParamOwner, LabelOwner {
 
     private final CalculatedClosure closure;
 
-    private MethodNode node;
+    private SMAPAndMethodNode node;
 
     private List<CapturedParamDesc> capturedVars;
 
@@ -76,11 +75,11 @@ public class LambdaInfo implements CapturedParamOwner, LabelOwner {
         assert closure != null : "Closure for lambda should be not null " + expression.getText();
     }
 
-    public MethodNode getNode() {
+    public SMAPAndMethodNode getNode() {
         return node;
     }
 
-    public void setNode(MethodNode node) {
+    public void setNode(SMAPAndMethodNode node) {
         this.node = node;
     }
 

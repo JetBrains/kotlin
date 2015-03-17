@@ -42,6 +42,28 @@ JetFile: Properties_ERR.kt
         <empty list>
   PROPERTY
     PsiElement(val)('val')
+    PsiErrorElement:Expecting property name or receiver type
+      <empty list>
+    PsiWhiteSpace(' ')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace('\n')
+    TYPE_REFERENCE
+      PsiErrorElement:Type expected
+        <empty list>
+  PROPERTY
+    PsiElement(val)('val')
+    PsiErrorElement:Expecting property name or receiver type
+      <empty list>
+    PsiWhiteSpace(' ')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('Int')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
     PsiWhiteSpace(' ')
     PsiErrorElement:Annotations are not allowed in this position
       ANNOTATION
@@ -78,6 +100,17 @@ JetFile: Properties_ERR.kt
         PsiElement(DOT)('.')
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('bar')
+    PsiElement(DOT)('.')
+    PsiErrorElement:Expecting property name
+      <empty list>
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('foo')
     PsiElement(DOT)('.')
     PsiErrorElement:Expecting property name
       <empty list>

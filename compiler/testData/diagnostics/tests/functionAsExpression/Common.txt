@@ -1,0 +1,29 @@
+package
+
+internal val extensionWithName: A.() -> kotlin.Unit
+internal val extensionWithoutName: A.() -> kotlin.Unit
+internal val funfun: () -> () -> kotlin.Int
+internal val ok: kotlin.String = "OK"
+internal val parentesized: () -> kotlin.Unit
+internal val parentesizedWithType: () -> kotlin.Unit
+internal val withExpression: () -> kotlin.Int
+internal val withName: () -> kotlin.Unit
+internal val withReturn: () -> kotlin.Int
+internal val withType: () -> kotlin.Unit
+internal val withoutName: () -> kotlin.Unit
+internal fun withAnnotation(): () -> kotlin.Unit
+
+internal final class A {
+    public constructor A()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final annotation class ann : kotlin.Annotation {
+    public constructor ann(/*0*/ name: kotlin.String)
+    internal final val name: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

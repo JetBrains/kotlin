@@ -6,6 +6,4 @@ open class A(a: Int, b: Int)
 
 class B(a: Int, b: Int): A(i(a, b), a - b)
 
-private fun i(a: Int, b: Int): Int {
-    return a + b
-}
+private fun i(a: Int, b: Int) = a + b

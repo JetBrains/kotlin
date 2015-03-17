@@ -131,6 +131,11 @@ public fun Array<String>.join(separator: String = ", ", prefix: String = "", pos
  * If the stream could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  */
+public fun Sequence<String>.join(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): String {
+    return joinToString(separator, prefix, postfix, limit, truncated)
+}
+
+deprecated("Migrate to using Sequence<T> and respective functions")
 public fun Stream<String>.join(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): String {
     return joinToString(separator, prefix, postfix, limit, truncated)
 }

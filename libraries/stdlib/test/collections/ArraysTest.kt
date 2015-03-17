@@ -172,10 +172,10 @@ class ArraysTest {
         expect(1) { array("cat", "dog", "bird").indexOfFirst { it.startsWith('d') } }
         expect(2) { array("cat", "dog", "bird").indexOfFirst { it.endsWith('d') } }
 
-        expect(-1) { streamOf("cat", "dog", "bird").indexOfFirst { it.contains("p") } }
-        expect(0) { streamOf("cat", "dog", "bird").indexOfFirst { it.startsWith('c') } }
-        expect(1) { streamOf("cat", "dog", "bird").indexOfFirst { it.startsWith('d') } }
-        expect(2) { streamOf("cat", "dog", "bird").indexOfFirst { it.endsWith('d') } }
+        expect(-1) { sequenceOf("cat", "dog", "bird").indexOfFirst { it.contains("p") } }
+        expect(0) { sequenceOf("cat", "dog", "bird").indexOfFirst { it.startsWith('c') } }
+        expect(1) { sequenceOf("cat", "dog", "bird").indexOfFirst { it.startsWith('d') } }
+        expect(2) { sequenceOf("cat", "dog", "bird").indexOfFirst { it.endsWith('d') } }
     }
 
     test fun lastIndexOf() {
@@ -191,11 +191,11 @@ class ArraysTest {
         expect(2) { array("cat", "dog", "bird").indexOfLast { it.endsWith('d') } }
         expect(3) { array("cat", "dog", "bird", "red").indexOfLast { it.endsWith('d') } }
 
-        expect(-1) { streamOf("cat", "dog", "bird").indexOfLast { it.contains("p") } }
-        expect(0) { streamOf("cat", "dog", "bird").indexOfLast { it.startsWith('c') } }
-        expect(2) { streamOf("cat", "dog", "cap", "bird").indexOfLast { it.startsWith('c') } }
-        expect(2) { streamOf("cat", "dog", "bird").indexOfLast { it.endsWith('d') } }
-        expect(3) { streamOf("cat", "dog", "bird", "red").indexOfLast { it.endsWith('d') } }
+        expect(-1) { sequenceOf("cat", "dog", "bird").indexOfLast { it.contains("p") } }
+        expect(0) { sequenceOf("cat", "dog", "bird").indexOfLast { it.startsWith('c') } }
+        expect(2) { sequenceOf("cat", "dog", "cap", "bird").indexOfLast { it.startsWith('c') } }
+        expect(2) { sequenceOf("cat", "dog", "bird").indexOfLast { it.endsWith('d') } }
+        expect(3) { sequenceOf("cat", "dog", "bird", "red").indexOfLast { it.endsWith('d') } }
     }
 
     test fun plus() {

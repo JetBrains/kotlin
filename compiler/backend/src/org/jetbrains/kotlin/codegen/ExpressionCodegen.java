@@ -1346,6 +1346,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     @Override
     public StackValue visitNamedFunction(@NotNull JetNamedFunction function, StackValue data) {
+        return visitNamedFunction(function, data, false);
+    }
+
+    public StackValue visitNamedFunction(@NotNull JetNamedFunction function, StackValue data, boolean isStatement) {
         assert data == StackValue.none();
 
         if (JetPsiUtil.isScriptDeclaration(function)) {
@@ -1353,11 +1357,16 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         StackValue closure = genClosure(function, null, KotlinSyntheticClass.Kind.LOCAL_FUNCTION);
-        DeclarationDescriptor descriptor = bindingContext.get(DECLARATION_TO_DESCRIPTOR, function);
-        int index = lookupLocalIndex(descriptor);
-        closure.put(OBJECT_TYPE, v);
-        v.store(index, OBJECT_TYPE);
-        return StackValue.none();
+        if (isStatement) {
+            DeclarationDescriptor descriptor = bindingContext.get(DECLARATION_TO_DESCRIPTOR, function);
+            int index = lookupLocalIndex(descriptor);
+            closure.put(OBJECT_TYPE, v);
+            v.store(index, OBJECT_TYPE);
+            return StackValue.none();
+        }
+        else {
+            return closure;
+        }
     }
 
     @Override
@@ -1438,8 +1447,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                     List<ValueParameterDescriptor> superValueParameters = superConstructor.getValueParameters();
                     int params = superValueParameters.size();
                     List<Type> superMappedTypes = typeMapper.mapToCallableMethod(superConstructor).getValueParameterTypes();
-                    assert superMappedTypes.size() >= params : String.format("Incorrect number of mapped parameters vs arguments: %d < %d for %s",
-                                                                             superMappedTypes.size(), params, classDescriptor);
+                    assert superMappedTypes.size() >= params : String
+                            .format("Incorrect number of mapped parameters vs arguments: %d < %d for %s",
+                                    superMappedTypes.size(), params, classDescriptor);
 
                     List<ResolvedValueArgument> valueArguments = new ArrayList<ResolvedValueArgument>(params);
                     List<ValueParameterDescriptor> valueParameters = new ArrayList<ValueParameterDescriptor>(params);
@@ -1452,7 +1462,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                             mappedTypes.add(superMappedTypes.get(parameter.getIndex()));
                         }
                     }
-                    ArgumentGenerator argumentGenerator = new CallBasedArgumentGenerator(ExpressionCodegen.this, defaultCallGenerator, valueParameters, mappedTypes);
+                    ArgumentGenerator argumentGenerator =
+                            new CallBasedArgumentGenerator(ExpressionCodegen.this, defaultCallGenerator, valueParameters, mappedTypes);
 
                     argumentGenerator.generate(valueArguments);
                 }
@@ -1609,7 +1620,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     private void putLocalVariableIntoFrameMap(@NotNull JetVariableDeclaration statement) {
         VariableDescriptor variableDescriptor = bindingContext.get(VARIABLE, statement);
-        assert variableDescriptor != null;
+        assert variableDescriptor != null : "Couldn't find variable declaration in binding context " + statement.getText();
 
         Type type = getVariableType(variableDescriptor);
         int index = myFrameMap.enter(variableDescriptor, type);
@@ -1811,7 +1822,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     @Nullable
     private NonLocalReturnInfo getNonLocalReturnInfo(@NotNull CallableMemberDescriptor descriptor, @NotNull JetReturnExpression expression) {
         //call inside lambda
-        if (isLocalFunOrLambda(descriptor) && descriptor.getName().isSpecial()) {
+        if (DescriptorUtils.isFunctionLiteral(descriptor)) {
             if (expression.getLabelName() == null) {
                 //non labeled return couldn't be local in lambda
                 FunctionDescriptor containingFunction =
@@ -1895,10 +1906,15 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         if (descriptor instanceof PropertyDescriptor) {
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
 
-            for (ExpressionCodegenExtension extension : ExpressionCodegenExtension.OBJECT$.getInstances(state.getProject())) {
-                StackValue result = extension.apply(receiver, resolvedCall, new ExpressionCodegenExtension.Context(typeMapper, v));
-
-                if (result != null) return result;
+            Collection<ExpressionCodegenExtension> codegenExtensions = ExpressionCodegenExtension.Default.getInstances(state.getProject());
+            if (!codegenExtensions.isEmpty() && resolvedCall != null) {
+                ExpressionCodegenExtension.Context context = new ExpressionCodegenExtension.Context(typeMapper, v);
+                JetType returnType = propertyDescriptor.getReturnType();
+                for (ExpressionCodegenExtension extension : codegenExtensions) {
+                    if (returnType != null && extension.apply(receiver, resolvedCall, context)) {
+                        return StackValue.onStack(typeMapper.mapType(returnType));
+                    }
+                }
             }
 
             boolean directToField =
@@ -2329,6 +2345,15 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     ) {
         if (!(resolvedCall.getResultingDescriptor() instanceof ConstructorDescriptor)) { // otherwise already
             receiver = StackValue.receiver(resolvedCall, receiver, this, callableMethod);
+
+            Collection<ExpressionCodegenExtension> codegenExtensions = ExpressionCodegenExtension.Default.getInstances(state.getProject());
+            if (!codegenExtensions.isEmpty()) {
+                ExpressionCodegenExtension.Context context = new ExpressionCodegenExtension.Context(typeMapper, v);
+                for (ExpressionCodegenExtension extension : codegenExtensions) {
+                    if (extension.apply(receiver, resolvedCall, context)) return;
+                }
+            }
+
             receiver.put(receiver.type, v);
         }
 

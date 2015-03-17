@@ -34,7 +34,7 @@ public class StdLibTestToJSTest extends StdLibQUnitTestSupport {
                           // TODO review: somethings FAILED if run:
                           "js/JsDomTest.kt",
                           "dom/DomTest.kt",
-                          "collections/StreamTest.kt",
+                          "collections/SequenceTest.kt",
                           "collections/IterableTests.kt",
                           "language/RangeTest.kt",
                           "language/RangeIterationTest.kt"

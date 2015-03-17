@@ -176,7 +176,7 @@ public class TaskPrioritizer(private val storageManager: StorageManager) {
     ) {
         for (callableDescriptorCollector in c.callableDescriptorCollectors) {
             c.result.addCandidates {
-                val variantsForExplicitReceiver = SmartCastUtils.getSmartCastVariants(explicitReceiver, c.context as ResolutionContext<*>) //workaround KT-1969
+                val variantsForExplicitReceiver = SmartCastUtils.getSmartCastVariants(explicitReceiver, c.context)
                 val members = Lists.newArrayList<ResolutionCandidate<D>>()
                 for (type in variantsForExplicitReceiver) {
                     val membersForThisVariant = if (staticMembers) {

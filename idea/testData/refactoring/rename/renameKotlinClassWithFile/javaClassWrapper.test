@@ -1,5 +1,5 @@
 {
   "type": "JAVA_CLASS",
-  "classFQN": "testing.ClassBefore",
+  "classId": "testing/ClassBefore",
   "newName": "ClassAfter"
 }

@@ -29,7 +29,7 @@ class GenerateArrays(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             val s = kind.capitalized
             val defaultValue = when(kind) { PrimitiveType.BOOLEAN -> "false"; else -> "zero" }
             out.println("/**")
-            out.println(" * An array of ${typeLower}s. When targeting the JVM, instances of this class are represented as ${typeLower}[].")
+            out.println(" * An array of ${typeLower}s. When targeting the JVM, instances of this class are represented as `${typeLower}[]`.")
             out.println(" * @constructor Creates a new array of the specified [size], with all elements initialized to ${defaultValue}.")
             out.println(" */")
             out.println("public class ${s}Array(size: Int) : Cloneable {")

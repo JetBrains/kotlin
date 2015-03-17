@@ -346,6 +346,16 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
     }
 
     override fun visitReferenceExpression(expression: PsiReferenceExpression) {
+        // to avoid quoting of 'this' and 'super' in calls to this/super class constructors
+        if (expression.getText() == "this") {
+            result = ThisExpression(Identifier.Empty)
+            return
+        }
+        if (expression.getText() == "super") {
+            result = SuperExpression(Identifier.Empty)
+            return
+        }
+
         val referenceName = expression.getReferenceName()!!
         val target = expression.getReference()?.resolve()
         val isNullable = target is PsiVariable && typeConverter.variableNullability(target).isNullable(codeConverter.settings)

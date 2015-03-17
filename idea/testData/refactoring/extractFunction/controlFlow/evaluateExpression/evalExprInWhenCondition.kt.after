@@ -8,6 +8,4 @@ fun foo(a: Int): Int {
     }
 }
 
-private fun i(): Int {
-    return 0
-}
+private fun i() = 0

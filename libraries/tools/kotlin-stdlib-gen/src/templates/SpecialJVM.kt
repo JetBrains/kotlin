@@ -102,11 +102,11 @@ fun specialJVM(): List<GenericFunction> {
         }
         exclude(ArraysOfPrimitives, Strings)
 
-        doc(Streams) { "Returns a stream containing all elements that are instances of specified class" }
-        returns(Streams) { "Stream<R>" }
-        body(Streams) {
+        doc(Sequences) { "Returns a sequence containing all elements that are instances of specified class" }
+        returns(Sequences) { "Sequence<R>" }
+        body(Sequences) {
             """
-            return FilteringStream(this, true, { klass.isInstance(it) }) as Stream<R>
+            return FilteringSequence(this, true, { klass.isInstance(it) }) as Sequence<R>
             """
         }
     }
@@ -140,13 +140,13 @@ fun specialJVM(): List<GenericFunction> {
         }
         exclude(ArraysOfPrimitives, Strings)
 
-        doc(Streams) { "Returns a stream containing all elements that are instances of specified type parameter R" }
-        returns(Streams) { "Stream<R>" }
+        doc(Sequences) { "Returns a sequence containing all elements that are instances of specified type parameter R" }
+        returns(Sequences) { "Sequence<R>" }
         inline(true)
         receiverAsterisk(true)
-        body(Streams) {
+        body(Sequences) {
             """
-            return FilteringStream(this, true, { it is R }) as Stream<R>
+            return FilteringSequence(this, true, { it is R }) as Sequence<R>
             """
         }
     }

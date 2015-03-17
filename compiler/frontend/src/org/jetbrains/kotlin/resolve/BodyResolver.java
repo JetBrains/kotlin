@@ -646,7 +646,7 @@ public class BodyResolver {
         }
 
         JetScope propertyDeclarationInnerScope = JetScopeUtils.getPropertyDeclarationInnerScopeForInitializer(
-                propertyScope, propertyDescriptor.getTypeParameters(), NO_RECEIVER_PARAMETER, trace);
+                propertyDescriptor, propertyScope, propertyDescriptor.getTypeParameters(), NO_RECEIVER_PARAMETER, trace);
         JetScope accessorScope = JetScopeUtils.makeScopeForPropertyAccessor(
                 propertyDescriptor, parentScopeForAccessor, trace);
 
@@ -674,7 +674,7 @@ public class BodyResolver {
             @NotNull JetScope scope
     ) {
         JetScope propertyDeclarationInnerScope = JetScopeUtils.getPropertyDeclarationInnerScopeForInitializer(
-                scope, propertyDescriptor.getTypeParameters(), NO_RECEIVER_PARAMETER, trace);
+                propertyDescriptor, scope, propertyDescriptor.getTypeParameters(), NO_RECEIVER_PARAMETER, trace);
         JetType expectedTypeForInitializer = property.getTypeReference() != null ? propertyDescriptor.getType() : NO_EXPECTED_TYPE;
         CompileTimeConstant<?> compileTimeInitializer = propertyDescriptor.getCompileTimeInitializer();
         if (compileTimeInitializer == null) {

@@ -211,7 +211,7 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
                     String packageName = file.getPath().replaceAll("\\\\|-|\\.|/", "_");
                     text = changePackage(packageName, text);
 
-                    if (SpecialFiles.getFilesCompiledWithoutStdLib().contains(file.getName())) {
+                    if (!file.getCanonicalPath().contains("boxWithStdlib")) {
                         CodegenTestFiles codegenFile = CodegenTestFiles.create(file.getName(), text, holderMock.environment.getProject());
                         holderMock.files.add(codegenFile.getPsiFile());
                     }

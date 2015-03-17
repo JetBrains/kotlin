@@ -86,6 +86,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             NULL_KEYWORD,
 
             LBRACE, // functionLiteral
+            FUN_KEYWORD, // expression function
 
             LPAR, // tuple
 
@@ -1493,7 +1494,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
                 PsiBuilder.Marker parameters = mark();
                 expect(LPAR, "Expecting '('", recoverySet);
                 if (!atSet(recoverySet)) {
-                    myJetParsing.parseValueParameter();
+                    myJetParsing.parseValueParameter(/*typeRequired = */ true);
                     expect(RPAR, "Expecting ')'", recoverySet);
                 }
                 else {

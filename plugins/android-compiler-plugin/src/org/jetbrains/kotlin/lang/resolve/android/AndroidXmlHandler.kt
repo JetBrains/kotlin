@@ -20,10 +20,7 @@ import org.xml.sax.helpers.DefaultHandler
 import org.xml.sax.Attributes
 import java.util.HashMap
 
-class AndroidXmlHandler(
-        private val resourceManager: AndroidResourceManager,
-        private val elementCallback: (String, String) -> Unit
-) : DefaultHandler() {
+class AndroidXmlHandler(private val elementCallback: (String, String) -> Unit) : DefaultHandler() {
 
     override fun startDocument() {
         super<DefaultHandler>.startDocument()

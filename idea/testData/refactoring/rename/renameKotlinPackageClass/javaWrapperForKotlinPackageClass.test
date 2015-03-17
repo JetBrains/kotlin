@@ -1,6 +1,6 @@
 {
   "type": "JAVA_CLASS",
   "hint": "Can\u0027t rename kotlin package class",
-  "classFQN": "testing.rename.RenamePackage",
+  "classId": "testing/rename/RenamePackage",
   "newName": "NewPackageName"
 }

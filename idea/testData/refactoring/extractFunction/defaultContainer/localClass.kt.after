@@ -5,9 +5,7 @@ class A {
                 return i()
             }
 
-            private fun i(): Int {
-                return a + b - 1
-            }
+            private fun i() = a + b - 1
         }
 
         return L().invoke()

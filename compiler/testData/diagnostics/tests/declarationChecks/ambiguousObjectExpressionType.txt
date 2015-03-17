@@ -1,10 +1,10 @@
 package
 
-internal val packageInternal2Property: <no name provided>
-internal val packageInternalProperty: <no name provided>
-private val packagePrivateProperty: <no name provided>
-protected val packageProtectedProperty: <no name provided>
-public val packagePublicProperty: <no name provided>
+internal val packageInternal2Property: packageInternal2Property.<no name provided>
+internal val packageInternalProperty: packageInternalProperty.<no name provided>
+private val packagePrivateProperty: packagePrivateProperty.<no name provided>
+protected val packageProtectedProperty: packageProtectedProperty.<no name provided>
+public val packagePublicProperty: packagePublicProperty.<no name provided>
 internal fun fooPackage(): kotlin.Unit
 internal fun packageInternal2Function(): packageInternal2Function.<no name provided>
 internal fun packageInternalFunction(): packageInternalFunction.<no name provided>
@@ -13,11 +13,11 @@ public fun packagePublicFunction(): packagePublicFunction.<no name provided>
 
 internal final class Foo {
     public constructor Foo()
-    internal final val internal2Property: Foo.<init>.<no name provided>
-    internal final val internalProperty: Foo.<init>.<no name provided>
-    private final val privateProperty: Foo.<init>.<no name provided>
-    protected final val protectedProperty: Foo.<init>.<no name provided>
-    public final val publicProperty: Foo.<init>.<no name provided>
+    internal final val internal2Property: Foo.internal2Property.<no name provided>
+    internal final val internalProperty: Foo.internalProperty.<no name provided>
+    private final val privateProperty: Foo.privateProperty.<no name provided>
+    protected final val protectedProperty: Foo.protectedProperty.<no name provided>
+    public final val publicProperty: Foo.publicProperty.<no name provided>
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     internal final fun foo(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -30,11 +30,11 @@ internal final class Foo {
 
     internal final class FooInner {
         public constructor FooInner()
-        internal final val internal2Property: Foo.FooInner.<init>.<no name provided>
-        internal final val internalProperty: Foo.FooInner.<init>.<no name provided>
-        private final val privatePropertyInner: Foo.FooInner.<init>.<no name provided>
-        protected final val protectedProperty: Foo.FooInner.<init>.<no name provided>
-        public final val publicProperty: Foo.FooInner.<init>.<no name provided>
+        internal final val internal2Property: Foo.FooInner.internal2Property.<no name provided>
+        internal final val internalProperty: Foo.FooInner.internalProperty.<no name provided>
+        private final val privatePropertyInner: Foo.FooInner.privatePropertyInner.<no name provided>
+        protected final val protectedProperty: Foo.FooInner.protectedProperty.<no name provided>
+        public final val publicProperty: Foo.FooInner.publicProperty.<no name provided>
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         internal final fun internal2Function(): Foo.FooInner.internal2Function.<no name provided>

@@ -9,6 +9,4 @@ fun foo(t: Array<Array<Int>>) {
     }
 }
 
-private fun b(it: Array<Int>): Boolean {
-    return it.check { it + 1 > 1 }
-}
+private fun b(it: Array<Int>) = it.check { it + 1 > 1 }

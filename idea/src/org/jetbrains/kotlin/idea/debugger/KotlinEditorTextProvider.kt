@@ -25,34 +25,36 @@ import com.intellij.debugger.engine.evaluation.TextWithImportsImpl
 import com.intellij.debugger.engine.evaluation.CodeFragmentKind
 import org.jetbrains.kotlin.idea.JetFileType
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.psi.JetQualifiedExpression
-import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.kotlin.psi.JetReferenceExpression
-import org.jetbrains.kotlin.psi.JetThisExpression
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
-import org.jetbrains.kotlin.psi.JetOperationExpression
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.psi.JetSuperExpression
-import org.jetbrains.kotlin.psi.JetCodeFragment
-import org.jetbrains.kotlin.psi.JetUserType
-import org.jetbrains.kotlin.psi.JetImportDirective
-import org.jetbrains.kotlin.psi.JetPackageDirective
-import org.jetbrains.kotlin.psi.JetCallExpression
-import org.jetbrains.kotlin.psi.JetArrayAccessExpression
+import org.jetbrains.kotlin.psi.*
 
 class KotlinEditorTextProvider : EditorTextProvider {
     override fun getEditorText(elementAtCaret: PsiElement): TextWithImports? {
-        val expression = findExpressionInner(elementAtCaret, true)
-        return TextWithImportsImpl(CodeFragmentKind.EXPRESSION, expression?.getText() ?: "", "", JetFileType.INSTANCE)
+        val expression = findExpressionInner(elementAtCaret, true) ?: return null
+
+        val expressionText = getElementInfo(expression) { it.getText() }
+        return TextWithImportsImpl(CodeFragmentKind.EXPRESSION, expressionText, "", JetFileType.INSTANCE)
     }
 
     override fun findExpression(elementAtCaret: PsiElement, allowMethodCalls: Boolean): Pair<PsiElement, TextRange>? {
-        val expression = findExpressionInner(elementAtCaret, allowMethodCalls)
-        if (expression == null) return null
-        return Pair(expression, expression.getTextRange())
+        val expression = findExpressionInner(elementAtCaret, allowMethodCalls) ?: return null
+
+        val expressionRange = getElementInfo(expression) { it.getTextRange() }
+        return Pair(expression, expressionRange)
     }
 
     default object {
+
+        fun <T> getElementInfo(expr: JetExpression, f: (PsiElement) -> T): T {
+            var expressionText = f(expr)
+            if (expr is JetProperty) {
+                val nameIdentifier = expr.getNameIdentifier()
+                if (nameIdentifier != null) {
+                    expressionText = f(nameIdentifier)
+                }
+            }
+            return expressionText
+        }
+
         fun findExpressionInner(element: PsiElement, allowMethodCalls: Boolean): JetExpression? {
             if (PsiTreeUtil.getParentOfType(element, javaClass<JetUserType>(), javaClass<JetImportDirective>(), javaClass<JetPackageDirective>()) != null) {
                 return null
@@ -60,6 +62,13 @@ class KotlinEditorTextProvider : EditorTextProvider {
 
             val jetElement = PsiTreeUtil.getParentOfType(element, javaClass<JetElement>())
             if (jetElement == null) return null
+
+            if (jetElement is JetProperty) {
+                val nameIdentifier = jetElement.getNameIdentifier()
+                if (nameIdentifier == element) {
+                    return jetElement
+                }
+            }
 
             val parent = jetElement.getParent()
             if (parent == null) return null

@@ -25,7 +25,7 @@ fun ordering(): List<GenericFunction> {
             """
         }
 
-        exclude(Streams)
+        exclude(Sequences)
     }
 
     templates add f("sort()") {
@@ -44,7 +44,7 @@ fun ordering(): List<GenericFunction> {
             """
         }
 
-        exclude(Streams)
+        exclude(Sequences)
         exclude(ArraysOfPrimitives)
         exclude(ArraysOfObjects)
         exclude(Strings)
@@ -66,7 +66,7 @@ fun ordering(): List<GenericFunction> {
             """
         }
 
-        only(Streams, ArraysOfObjects, ArraysOfPrimitives, Iterables)
+        only(Sequences, ArraysOfObjects, ArraysOfPrimitives, Iterables)
     }
 
     templates add f("sortDescending()") {
@@ -85,7 +85,7 @@ fun ordering(): List<GenericFunction> {
             """
         }
 
-        exclude(Streams)
+        exclude(Sequences)
         exclude(ArraysOfPrimitives)
         exclude(ArraysOfObjects)
         exclude(Strings)
@@ -110,7 +110,7 @@ fun ordering(): List<GenericFunction> {
             """
         }
 
-        exclude(Streams)
+        exclude(Sequences)
         exclude(ArraysOfPrimitives)
         exclude(Strings)
     }
@@ -133,7 +133,7 @@ fun ordering(): List<GenericFunction> {
             """
         }
 
-        only(Streams, ArraysOfObjects, ArraysOfPrimitives, Iterables)
+        only(Sequences, ArraysOfObjects, ArraysOfPrimitives, Iterables)
     }
 
     templates add f("sortDescendingBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) order: (T) -> R)") {
@@ -155,7 +155,7 @@ fun ordering(): List<GenericFunction> {
             """
         }
 
-        exclude(Streams)
+        exclude(Sequences)
         exclude(ArraysOfPrimitives)
         exclude(Strings)
     }
@@ -175,7 +175,7 @@ fun ordering(): List<GenericFunction> {
             """
         }
 
-        exclude(Streams)
+        exclude(Sequences)
         exclude(ArraysOfPrimitives)
         exclude(Strings)
     }

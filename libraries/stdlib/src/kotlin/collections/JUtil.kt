@@ -64,11 +64,14 @@ public fun hashSetOf<T>(vararg values: T): HashSet<T> = values.toCollection(Hash
 public fun linkedSetOf<T>(vararg values: T): LinkedHashSet<T> = values.toCollection(LinkedHashSet(values.size()))
 
 /**
- * Returns an IntRange of the valid indices for this collection.
+ * Returns an [IntRange] of the valid indices for this collection.
  */
 public val Collection<*>.indices: IntRange
     get() = 0..size() - 1
 
+/**
+ * Returns an [IntRange] that starts with zero and ends at the value of this number but does not include it.
+ */
 public val Int.indices: IntRange
     get() = 0..this - 1
 
@@ -92,5 +95,12 @@ public fun <T> List<T>?.orEmpty(): List<T> = this ?: emptyList()
 /** Returns this Set if it's not null and the empty set otherwise. */
 public fun <T> Set<T>?.orEmpty(): Set<T> = this ?: emptySet()
 
+/**
+ * Returns the size of this iterable if it is known, or `null` otherwise.
+ */
 public fun <T> Iterable<T>.collectionSizeOrNull(): Int? = if (this is Collection<*>) size() else null
+
+/**
+ * Returns the size of this iterable if it is known, or the specified [default] value otherwise.
+ */
 public fun <T> Iterable<T>.collectionSizeOrDefault(default: Int): Int = if (this is Collection<*>) size() else default
