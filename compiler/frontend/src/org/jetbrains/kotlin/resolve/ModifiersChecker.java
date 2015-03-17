@@ -295,7 +295,8 @@ public class ModifiersChecker {
         JetAnnotationEntry annotationEntry = trace.get(BindingContext.ANNOTATION_DESCRIPTOR_TO_PSI_ELEMENT, annotation);
         if (annotationEntry == null) return;
 
-        if (!DescriptorUtils.isTopLevelDeclaration(descriptor) || !(descriptor instanceof FunctionDescriptor)) {
+        if (!DescriptorUtils.isTopLevelDeclaration(descriptor) || !(descriptor instanceof FunctionDescriptor) ||
+            descriptor instanceof ConstructorDescriptor) {
             trace.report(INAPPLICABLE_ANNOTATION.on(annotationEntry));
         }
 
