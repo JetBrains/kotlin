@@ -16,17 +16,25 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
+import com.intellij.util.SmartFMap
 import kotlin.platform.platformStatic
 
 object SMAPParser {
 
     [platformStatic]
-    public fun parseOrCreateDefault(mappingInfo: String?, source: String, path: String, methodStartLine: Int, methodEndLine: Int): SMAP {
+    /*null smap means that there is no any debug info in file (e.g. sourceName)*/
+    public fun parseOrCreateDefault(mappingInfo: String?, source: String?, path: String, methodStartLine: Int, methodEndLine: Int): SMAP {
         if (mappingInfo == null || mappingInfo.isEmpty()) {
-            val fm = FileMapping(source, path)
-            if (methodStartLine <= methodEndLine) {
-                //one to one
-                fm.addRangeMapping(RangeMapping(methodStartLine, methodStartLine, methodEndLine - methodStartLine + 1))
+            val fm: FileMapping
+            if (source == null || source.isEmpty()) {
+                fm = FileMapping.SKIP
+            }
+            else {
+                fm = FileMapping(source, path)
+                if (methodStartLine <= methodEndLine) {
+                    //one to one
+                    fm.addRangeMapping(RangeMapping(methodStartLine, methodStartLine, methodEndLine - methodStartLine + 1))
+                }
             }
             return SMAP(listOf(fm))
         }
