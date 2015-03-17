@@ -10,7 +10,8 @@ internal fun foo1(): kotlin.Unit
 kotlin.platform.platformName(name = "b": kotlin.String) internal fun kotlin.Any.foo(): kotlin.Unit
 
 kotlin.platform.platformName(name = "C": kotlin.String) internal final class C {
-    public constructor C()
+    kotlin.platform.platformName(name = "primary": kotlin.String) public constructor C()
+    kotlin.platform.platformName(name = "ctr": kotlin.String) public constructor C(/*0*/ x: kotlin.Int)
     kotlin.platform.platformName(name = "c": kotlin.String) internal final val px: kotlin.Int = 1
     internal final val valx: kotlin.Int
     internal final var varx: kotlin.Int
