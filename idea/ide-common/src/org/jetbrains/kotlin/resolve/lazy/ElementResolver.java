@@ -184,7 +184,9 @@ public abstract class ElementResolver {
             packageRefAdditionalResolve(resolveSession, trace, resolveElement);
         }
         else {
-            assert false : "Invalid type of the topmost parent";
+            assert false : String.format("Invalid type of the topmost parent: %s\n%s",
+                                         resolveElement.toString(),
+                                         JetPsiUtil.getElementTextWithContext(resolveElement));
         }
 
         new JetFlowInformationProvider(resolveElement, trace).checkDeclaration();

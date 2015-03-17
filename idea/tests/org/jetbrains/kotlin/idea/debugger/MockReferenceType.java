@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.debugger;
 
 import com.sun.jdi.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -191,7 +192,7 @@ public class MockReferenceType implements ReferenceType {
 
     @Override
     public List<String> availableStrata() {
-        throw new UnsupportedOperationException();
+        return Collections.emptyList();
     }
 
     @Override

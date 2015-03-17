@@ -3,9 +3,9 @@ $TEMP_DIR$
 -Xplugin
 dist/kotlinc/lib/android-compiler-plugin.jar
 -P
-plugin:org.jetbrains.kotlin.android:androidManifest=$TESTDATA_DIR$/androidPlugin/AndroidManifest.xml
+plugin\:org.jetbrains.kotlin.android\:androidManifest=$TESTDATA_DIR$/androidPlugin/AndroidManifest.xml
 -P
-plugin:org.jetbrains.kotlin.android:androidRes=$TESTDATA_DIR$/androidPlugin/res
+plugin\:org.jetbrains.kotlin.android\:androidRes=$TESTDATA_DIR$/androidPlugin/res
 $TESTDATA_DIR$/pluginSimple.kt
 $TESTDATA_DIR$/androidPlugin/androidApp.kt
 $TESTDATA_DIR$/androidPlugin/androidView.kt

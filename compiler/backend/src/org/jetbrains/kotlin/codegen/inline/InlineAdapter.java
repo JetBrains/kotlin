@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.codegen.inline;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Opcodes;
@@ -27,16 +28,18 @@ import java.util.List;
 public class InlineAdapter extends InstructionAdapter {
 
     private int nextLocalIndex = 0;
+    private final SourceMapper sourceMapper;
 
-    private boolean isInlining = false;
+    private boolean isLambdaInlining = false;
 
     private final List<CatchBlock> blocks = new ArrayList<CatchBlock>();
 
     private int nextLocalIndexBeforeInline = -1;
 
-    public InlineAdapter(MethodVisitor mv, int localsSize) {
+    public InlineAdapter(MethodVisitor mv, int localsSize, @NotNull SourceMapper sourceMapper) {
         super(InlineCodegenUtil.API, mv);
         nextLocalIndex = localsSize;
+        this.sourceMapper = sourceMapper;
     }
 
     @Override
@@ -63,7 +66,7 @@ public class InlineAdapter extends InstructionAdapter {
     }
 
     public void setLambdaInlining(boolean isInlining) {
-        this.isInlining = isInlining;
+        this.isLambdaInlining = isInlining;
         if (isInlining) {
             nextLocalIndexBeforeInline = nextLocalIndex;
         } else {
@@ -74,12 +77,17 @@ public class InlineAdapter extends InstructionAdapter {
     @Override
     public void visitTryCatchBlock(Label start,
             Label end, Label handler, String type) {
-        if(!isInlining) {
+        if(!isLambdaInlining) {
             blocks.add(new CatchBlock(start, end, handler, type));
         }
         else {
             super.visitTryCatchBlock(start, end, handler, type);
         }
+    }
+
+    @Override
+    public void visitLineNumber(int line, Label start) {
+        sourceMapper.visitLineNumber(mv, line, start);
     }
 
     @Override

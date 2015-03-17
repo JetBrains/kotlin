@@ -21,9 +21,7 @@ import kotlin.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.context.*;
-import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil;
-import org.jetbrains.kotlin.codegen.inline.NameGenerator;
-import org.jetbrains.kotlin.codegen.inline.ReifiedTypeParametersUsages;
+import org.jetbrains.kotlin.codegen.inline.*;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
@@ -81,6 +79,8 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
     protected ExpressionCodegen clInit;
     private NameGenerator inlineNameGenerator;
 
+    private SourceMapper sourceMapper;
+
     public MemberCodegen(
             @NotNull GenerationState state,
             @Nullable MemberCodegen<?> parentCodegen,
@@ -99,8 +99,8 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
         this.parentCodegen = parentCodegen;
     }
 
-    protected MemberCodegen(@NotNull MemberCodegen<T> wrapped) {
-        this(wrapped.state, wrapped.getParentCodegen(), wrapped.getContext(), wrapped.element, wrapped.v);
+    protected MemberCodegen(@NotNull MemberCodegen<T> wrapped, T declaration, FieldOwnerContext codegenContext) {
+        this(wrapped.state, wrapped.getParentCodegen(), codegenContext, declaration, wrapped.v);
     }
 
     public void generate() {
@@ -136,6 +136,10 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
         }
 
         writeInnerClasses();
+
+        if (sourceMapper != null) {
+            SourceMapper.OBJECT$.flushToClassBuilder(sourceMapper, v);
+        }
 
         v.done();
     }
@@ -508,5 +512,13 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
     @Override
     public String toString() {
         return context.toString();
+    }
+
+    @NotNull
+    public SourceMapper getOrCreateSourceMapper() {
+        if (sourceMapper == null) {
+            sourceMapper = new DefaultSourceMapper(SourceInfo.OBJECT$.createInfo(element, getClassName()), null);
+        }
+        return sourceMapper;
     }
 }

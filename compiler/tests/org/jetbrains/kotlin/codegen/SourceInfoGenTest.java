@@ -23,6 +23,8 @@ import org.jetbrains.org.objectweb.asm.ClassVisitor;
 import org.jetbrains.org.objectweb.asm.Opcodes;
 
 public class SourceInfoGenTest extends CodegenTestCase {
+
+    private static final String TEST_FOLDER = "sourceInfo/";
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -30,19 +32,19 @@ public class SourceInfoGenTest extends CodegenTestCase {
     }
 
     public void testSingleFilePackage() {
-        String producer = "sourceInfo/foo1.kt";
-        loadFiles(producer);
+        String producer = "foo1.kt";
+        loadFiles(TEST_FOLDER + producer);
         assertEquals(producer, getProducerInfo("foo/FooPackage.class"));
     }
 
     public void testMultiFilePackage() {
-        loadFiles("sourceInfo/foo1.kt", "sourceInfo/foo2.kt");
+        loadFiles(TEST_FOLDER + "foo1.kt", TEST_FOLDER + "foo2.kt");
         assertEquals(null, getProducerInfo("foo/FooPackage.class"));
     }
 
     public void testSingleClass() {
-        String producer = "sourceInfo/singleClass.kt";
-        loadFiles(producer);
+        String producer = "singleClass.kt";
+        loadFiles(TEST_FOLDER + producer);
         assertEquals(producer, getProducerInfo("SingleClass.class"));
     }
 

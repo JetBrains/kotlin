@@ -100,8 +100,13 @@ public class CliBaseTest {
                 if (arg.isEmpty()) {
                     return null;
                 }
-                return arg
+                // Do not replace : after \ (used in compiler plugin tests)
+                String argsWithColonsReplaced = arg
+                        .replace("\\:", "$COLON$")
                         .replace(":", File.pathSeparator)
+                        .replace("$COLON$", ":");
+
+                return argsWithColonsReplaced
                         .replace("$TEMP_DIR$", tempDir)
                         .replace("$TESTDATA_DIR$", testDataDir);
             }

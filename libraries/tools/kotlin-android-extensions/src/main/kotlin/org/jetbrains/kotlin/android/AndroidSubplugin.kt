@@ -56,6 +56,6 @@ public class AndroidSubplugin : KotlinGradleSubplugin {
     }
 
     override fun getArtifactName(): String {
-        return "kotlin-android-compiler-plugin"
+        return "kotlin-android-extensions"
     }
 }
