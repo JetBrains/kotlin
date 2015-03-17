@@ -5,17 +5,17 @@ fun test(d: dynamic) {
 
     d.foo { x -> }
 
-    d.foo { (x: Int) -> "" }
+    d.foo { <!DEPRECATED_LAMBDA_SYNTAX!>(x: Int)<!> -> "" }
 
     d.foo { x, y -> "" }
 
-    d.foo { (x: String, y: Int) -> "" }
+    d.foo { <!DEPRECATED_LAMBDA_SYNTAX!>(x: String, y: Int)<!> -> "" }
 
-    d.foo { (x, y: Int) -> "" }
+    d.foo { <!DEPRECATED_LAMBDA_SYNTAX!>(x, y: Int)<!> -> "" }
 
-    d.foo { (x: String, y: Int): Int -> <!TYPE_MISMATCH!>""<!> }
+    d.foo { <!DEPRECATED_LAMBDA_SYNTAX!>(x: String, y: Int): Int<!> -> <!TYPE_MISMATCH!>""<!> }
 
-    d.foo { String.(x: String, y: Int): Int -> length() }
+    d.foo { <!DEPRECATED_LAMBDA_SYNTAX!>String.(x: String, y: Int): Int<!> -> length() }
 
     d.foo({})
 
@@ -27,7 +27,7 @@ fun test(d: dynamic) {
 
     d.foo(@label ({ x, y -> }))
 
-    d.foo((@label ({ (x, y: Int) -> })))
+    d.foo((@label ({ <!DEPRECATED_LAMBDA_SYNTAX!>(x, y: Int)<!> -> })))
 
     d.foo(({ x -> }))
 
