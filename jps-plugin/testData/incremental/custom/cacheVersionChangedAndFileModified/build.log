@@ -3,9 +3,12 @@ out/production/module/test/TestPackage$b$*.class
 out/production/module/test/TestPackage.class
 End of files
 Cleaning output files:
+out/production/module/other/OtherPackage$other$*.class
+out/production/module/other/OtherPackage.class
 out/production/module/test/TestPackage$a$*.class
 End of files
 Compiling files:
 src/a.kt
 src/b.kt
+src/other.kt
 End of files

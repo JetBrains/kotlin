@@ -32,15 +32,25 @@ public class IncrementalCacheVersionChangedTest : AbstractIncrementalJpsTest() {
         doTest("jps-plugin/testData/incremental/custom/cacheVersionChangedAndFileModified/")
     }
 
+    fun testCacheVersionChangedMultiModule() {
+        doTest("jps-plugin/testData/incremental/custom/cacheVersionChangedMultiModule/")
+    }
+
     override val allowNoFilesWithSuffixInTestData: Boolean
         get() = true
 
     override fun performAdditionalModifications() {
         val storageForTargetType = BuildDataPathsImpl(myDataStorageRoot).getTargetTypeDataRoot(JavaModuleBuildTargetType.PRODUCTION)
-        val relativePath = "module/${CacheFormatVersion.FORMAT_VERSION_FILE_PATH}"
-        val cacheVersionFile = File(storageForTargetType, relativePath)
 
-        assertTrue(cacheVersionFile.exists())
-        cacheVersionFile.writeText("777")
+
+        val moduleNames = if (getTestName(false) == "CacheVersionChangedMultiModule") listOf("module1", "module2") else listOf("module")
+
+        for (moduleName in moduleNames) {
+            val relativePath = "$moduleName/${CacheFormatVersion.FORMAT_VERSION_FILE_PATH}"
+            val cacheVersionFile = File(storageForTargetType, relativePath)
+
+            assertTrue(cacheVersionFile.exists())
+            cacheVersionFile.writeText("777")
+        }
     }
 }
