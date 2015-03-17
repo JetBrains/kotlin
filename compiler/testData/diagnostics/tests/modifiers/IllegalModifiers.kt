@@ -88,7 +88,7 @@ abstract class IllegalModifiers6() {
     <!ILLEGAL_MODIFIER!>private<!> <!NOT_AN_ANNOTATION_CLASS!>IllegalModifiers6()<!> init {}
 }
 
-// strange Check inappropriate modifiers
+// strange inappropriate modifiers usages
 <!ILLEGAL_MODIFIER!>override<!>
 <!ILLEGAL_MODIFIER!>out<!>
 <!ILLEGAL_MODIFIER!>in<!>
@@ -111,4 +111,27 @@ class IllegalModifiers7() {
     <!ILLEGAL_MODIFIER!>vararg<!>
     <!ILLEGAL_MODIFIER!>reified<!>
     fun foo() {}
+}
+
+// Secondary constructors
+class IllegalModifiers8 {
+    <!ILLEGAL_MODIFIER, INCOMPATIBLE_MODIFIERS!>abstract<!>
+    <!ILLEGAL_ENUM_ANNOTATION!>enum<!>
+    <!ILLEGAL_MODIFIER, REDUNDANT_MODIFIER, REDUNDANT_MODIFIER, INCOMPATIBLE_MODIFIERS!>open<!>
+    <!ILLEGAL_MODIFIER!>inner<!>
+    <!ILLEGAL_ANNOTATION_KEYWORD!>annotation<!>
+    <!ILLEGAL_MODIFIER!>override<!>
+    <!ILLEGAL_MODIFIER!>out<!>
+    <!ILLEGAL_MODIFIER!>in<!>
+    <!ILLEGAL_MODIFIER, INCOMPATIBLE_MODIFIERS!>final<!>
+    <!ILLEGAL_MODIFIER!>vararg<!>
+    <!ILLEGAL_MODIFIER!>reified<!>
+    constructor() {}
+
+    constructor(<!ILLEGAL_MODIFIER!>private<!> <!ILLEGAL_MODIFIER!>enum<!> <!ILLEGAL_MODIFIER!>abstract<!> <!UNUSED_PARAMETER!>x<!>: Int) {}
+}
+
+class IllegalModifiers9 {
+    <!INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>protected<!> constructor() {}
+    <!INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>internal<!> constructor(<!UNUSED_PARAMETER!>x<!>: Int) {}
 }
