@@ -2890,6 +2890,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 doTestWithStdlib(fileName);
             }
 
+            @TestMetadata("privateFakeOverrideFromSuperclass.kt")
+            public void testPrivateFakeOverrideFromSuperclass() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/properties/privateFakeOverrideFromSuperclass.kt");
+                doTestWithStdlib(fileName);
+            }
+
             @TestMetadata("simpleGetProperties.kt")
             public void testSimpleGetProperties() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/properties/simpleGetProperties.kt");

@@ -17,6 +17,7 @@
 package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
 import kotlin.reflect.*
@@ -66,7 +67,8 @@ class KClassImpl<T>(override val jClass: Class<T>) : KCallableContainerImpl(), K
                     .filterIsInstance<PropertyDescriptor>()
                     .filter { descriptor ->
                         (descriptor.getExtensionReceiverParameter() != null) == extension &&
-                        (descriptor.getKind().isReal() || !declared)
+                        (descriptor.getKind().isReal() || !declared) &&
+                        descriptor.getVisibility() != Visibilities.INVISIBLE_FAKE
                     }
                     .map(create)
                     .toList()
