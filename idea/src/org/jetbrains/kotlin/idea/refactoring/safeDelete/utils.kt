@@ -16,19 +16,12 @@
 
 package org.jetbrains.kotlin.idea.refactoring.safeDelete
 
-import org.jetbrains.kotlin.psi.JetNamedFunction
 import com.intellij.psi.PsiMethod
-import org.jetbrains.kotlin.psi.JetModifierListOwner
-import org.jetbrains.kotlin.psi.JetProperty
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.lexer.JetTokens
 import com.intellij.psi.search.searches.OverridingMethodsSearch
 import org.jetbrains.kotlin.asJava.unwrapped
-import org.jetbrains.kotlin.psi.JetParameter
-import org.jetbrains.kotlin.psi.JetDeclaration
-import org.jetbrains.kotlin.psi.JetPropertyAccessor
-import org.jetbrains.kotlin.psi.JetClassOrObject
-import org.jetbrains.kotlin.psi.JetTypeParameter
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 
 public fun PsiElement.canDeleteElement(): Boolean {

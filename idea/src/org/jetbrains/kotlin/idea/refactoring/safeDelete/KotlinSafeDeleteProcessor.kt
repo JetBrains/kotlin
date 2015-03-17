@@ -27,10 +27,7 @@ import com.intellij.psi.PsiParameter
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.safeDelete.JavaSafeDeleteProcessor
 import com.intellij.refactoring.safeDelete.NonCodeUsageSearchInfo
-import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteOverrideAnnotation
-import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteOverridingMethodUsageInfo
-import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteReferenceJavaDeleteUsageInfo
-import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteReferenceSimpleDeleteUsageInfo
+import com.intellij.refactoring.safeDelete.usageInfo.*
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.asJava.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
@@ -45,6 +42,7 @@ import java.util.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.deleteElementAndCleanParent
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.search.usagesSearch.processDelegationCallConstructorUsages
 
 public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
     override fun handlesElement(element: PsiElement): Boolean = element.canDeleteElement()
@@ -161,9 +159,19 @@ public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
             }
         }
 
-        val searchInfo = when (element) {
-            is JetClassOrObject ->
-                element.toLightClass()?.let { klass -> findUsagesByJavaProcessor(klass, false) }
+        fun findDelegationCallUsages(element: PsiElement) {
+            element.processDelegationCallConstructorUsages(element.getUseScope()) {
+                usages.add(SafeDeleteReferenceSimpleDeleteUsageInfo(it, element, false))
+            }
+        }
+
+        return when (element) {
+            is JetClassOrObject -> {
+                element.toLightClass()?.let { klass ->
+                    findDelegationCallUsages(klass)
+                    findUsagesByJavaProcessor(klass, false)
+                }
+            }
 
             is JetNamedFunction -> {
                 if (element.isLocal()) {
@@ -195,9 +203,7 @@ public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
                 findUsagesByJavaProcessor(element)
 
             else -> null
-        }
-
-        return if (searchInfo != null) searchInfo else getSearchInfo(element)
+        } ?: getSearchInfo(element)
     }
 
     override fun findConflicts(element: PsiElement, allElementsToDelete: Array<out PsiElement>): MutableCollection<String>? {

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import com.intellij.psi.PsiReference
 import com.intellij.psi.search.SearchScope
+import org.jetbrains.kotlin.asJava.KotlinLightElement
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.codegen.PropertyCodegen
 import org.jetbrains.kotlin.asJava.KotlinLightMethod
@@ -108,20 +109,22 @@ public fun PsiElement.processDelegationCallConstructorUsages(scope: SearchScope,
 }
 
 private fun PsiElement.processDelegationCallKotlinConstructorUsages(scope: SearchScope, process: (JetConstructorDelegationCall) -> Unit) {
-    val klass = when (this) {
-        is JetSecondaryConstructor -> getClassOrObject()
-        is JetClass -> this
+    val element = unwrapped
+    val klass = when (element) {
+        is JetSecondaryConstructor -> element.getClassOrObject()
+        is JetClass -> element
         else -> return
     }
 
-    if (klass !is JetClass || this !is JetDeclaration) return
-    val descriptor = constructor ?: return
+    if (klass !is JetClass || element !is JetDeclaration) return
+    val descriptor = element.constructor ?: return
 
     processClassDelegationCallsToSpecifiedConstructor(klass, descriptor, process)
     processInheritorsDelegatingCallToSpecifiedConstructor(klass, scope, descriptor, process)
 }
 
 private fun PsiElement.processDelegationCallJavaConstructorUsages(scope: SearchScope, process: (JetConstructorDelegationCall) -> Unit) {
+    if (this is KotlinLightElement<*, *>) return
     if (!(this is PsiMethod && isConstructor())) return
     val klass = getContainingClass() ?: return
     val descriptor = getJavaMethodDescriptor() as? ConstructorDescriptor ?: return
