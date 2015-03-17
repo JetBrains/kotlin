@@ -17,9 +17,9 @@
 package kotlin.reflect
 
 public trait KMemberProperty<T : Any, out R> : KProperty<R> {
-    public fun get(receiver: T): R
+    public fun get(instance: T): R
 }
 
 public trait KMutableMemberProperty<T : Any, R> : KMemberProperty<T, R>, KMutableProperty<R> {
-    public fun set(receiver: T, value: R)
+    public fun set(instance: T, value: R)
 }
