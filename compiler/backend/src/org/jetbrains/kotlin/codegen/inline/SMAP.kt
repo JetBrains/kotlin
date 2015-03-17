@@ -25,6 +25,7 @@ import java.util.Collections
 import java.util.ArrayList
 import org.jetbrains.kotlin.codegen.SourceInfo
 import org.jetbrains.kotlin.codegen.ClassBuilder
+import kotlin.properties.Delegates
 
 //TODO join parameter
 public class SMAPBuilder(val source: String,
@@ -188,10 +189,9 @@ public open class DefaultSourceMapper(val sourceInfo: SourceInfo, override val p
 
     var fileMappings: LinkedHashMap<String, RawFileMapping> = linkedMapOf();
 
-    protected val origin: RawFileMapping
+    protected var origin: RawFileMapping by Delegates.notNull();
     {
         visitSource(sourceInfo.source, sourceInfo.pathOrCleanFQN)
-        origin = lastVisited!!
         //map interval
         (1..maxUsedValue).forEach {origin.mapLine(it, it - 1, true) }
     }
@@ -201,6 +201,10 @@ public open class DefaultSourceMapper(val sourceInfo: SourceInfo, override val p
 
     override fun visitSource(name: String, path: String) {
         lastVisited = fileMappings.getOrPut("$name#$path", { RawFileMapping(name, path) })
+        //TEMPORARY HACK
+        if (fileMappings.size() == 1) {
+            origin = lastVisited!!
+        }
     }
 
     override fun visitOrigin() {
