@@ -83,7 +83,7 @@ public class JetSecondaryConstructor extends JetDeclarationStub<KotlinPlaceHolde
     @Nullable
     @Override
     public PsiElement getColon() {
-        return null;
+        return findChildByType(JetTokens.COLON);
     }
 
     @Nullable

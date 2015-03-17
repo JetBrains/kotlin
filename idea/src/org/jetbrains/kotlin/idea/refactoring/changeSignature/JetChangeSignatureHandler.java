@@ -71,6 +71,10 @@ public class JetChangeSignatureHandler implements ChangeSignatureHandler {
         if (elementParent instanceof JetClass && ((JetClass) elementParent).getNameIdentifier() == element) {
             return elementParent;
         }
+        if (elementParent instanceof JetSecondaryConstructor &&
+            ((JetSecondaryConstructor) elementParent).getConstructorKeyword() == element) {
+            return elementParent;
+        }
 
         JetCallElement call = PsiTreeUtil.getParentOfType(element, JetCallExpression.class, JetDelegatorToSuperCall.class);
         if (call == null) {

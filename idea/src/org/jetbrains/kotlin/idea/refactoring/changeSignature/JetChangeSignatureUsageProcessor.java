@@ -36,6 +36,7 @@ import com.intellij.util.containers.HashSet;
 import com.intellij.util.containers.MultiMap;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
+import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
@@ -45,6 +46,7 @@ import org.jetbrains.kotlin.idea.codeInsight.JetFileReferencesResolver;
 import org.jetbrains.kotlin.idea.refactoring.RefactoringPackage;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.*;
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference;
+import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchPackage;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
@@ -74,6 +76,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         }
         else {
             findSAMUsages(info, result);
+            findConstructorDelegationUsages(info, result);
         }
 
         return result.toArray(new UsageInfo[result.size()]);
@@ -93,7 +96,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
     private static void findOneMethodUsages(
             @NotNull JetFunctionDefinitionUsage<?> functionUsageInfo,
             JetChangeInfo changeInfo,
-            Set<UsageInfo> result
+            final Set<UsageInfo> result
     ) {
         boolean isInherited = functionUsageInfo.isInherited();
 
@@ -164,6 +167,16 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
                 }
             }
         }
+
+        UsagesSearchPackage.processDelegationCallConstructorUsages(functionPsi, functionPsi.getUseScope(),
+                                                                   new Function1<JetConstructorDelegationCall, Unit>() {
+                                                                       @Override
+                                                                       public Unit invoke(JetConstructorDelegationCall element) {
+                                                                           result.add(new JetConstructorDelegationCallUsage(element));
+                                                                           return null;
+                                                                       }
+                                                                   });
+
     }
 
     private static void processInternalReferences(
@@ -286,8 +299,28 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
             JetType samCallType = context.get(BindingContext.EXPRESSION_TYPE, callExpression);
             if (samCallType == null) continue;
 
-            result.add(new KotlinSAMUsage(functionLiteral, functionDescriptor, samCallType));
+            result.add(new DeferredSAMUsage(functionLiteral, functionDescriptor, samCallType));
         }
+    }
+
+    private static void findConstructorDelegationUsages(@NotNull ChangeInfo changeInfo, @NotNull final Set<UsageInfo> result) {
+        PsiElement method = changeInfo.getMethod();
+        if (!(RefactoringPackage.isTrueJavaMethod(method))) return;
+
+        PsiMethod psiMethod = (PsiMethod) method;
+        if (!psiMethod.isConstructor()) return;
+
+        UsagesSearchPackage.processDelegationCallConstructorUsages(
+                psiMethod,
+                psiMethod.getUseScope(),
+                new Function1<JetConstructorDelegationCall, Unit>() {
+                    @Override
+                    public Unit invoke(JetConstructorDelegationCall element) {
+                        result.add(new JavaConstructorDeferredUsageInDelegationCall(element));
+                        return null;
+                    }
+                }
+        );
     }
 
     @Override
@@ -467,7 +500,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
     private JetMethodDescriptor originalJavaMethodDescriptor;
 
     private static boolean isJavaMethodUsage(UsageInfo usageInfo) {
-        if (usageInfo instanceof KotlinSAMUsage) return true;
+        if (usageInfo instanceof JavaMethodDeferredKotlinUsage) return true;
 
         // MoveRenameUsageInfo corresponds to non-Java usage of Java method
         return usageInfo instanceof MoveRenameUsageInfo
@@ -475,26 +508,9 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
     }
 
     @Nullable
-    private static UsageInfo createReplacementUsage(
-            UsageInfo originalUsageInfo,
-            final JetChangeInfo javaMethodChangeInfo
-    ) {
-        if (originalUsageInfo instanceof KotlinSAMUsage) {
-            final KotlinSAMUsage samUsage = (KotlinSAMUsage) originalUsageInfo;
-            return new JavaMethodKotlinUsageWithDelegate<JetFunction>(samUsage.getFunctionLiteral(), javaMethodChangeInfo) {
-                private final JetFunctionDefinitionUsage<JetFunction> delegateUsage = new JetFunctionDefinitionUsage<JetFunction>(
-                        samUsage.getFunctionLiteral(),
-                        samUsage.getFunctionDescriptor(),
-                        javaMethodChangeInfo.getMethodDescriptor().getOriginalPrimaryFunction(),
-                        samUsage.getSamCallType()
-                );
-
-                @NotNull
-                @Override
-                protected JetUsageInfo<JetFunction> getDelegateUsage() {
-                    return delegateUsage;
-                }
-            };
+    private static UsageInfo createReplacementUsage(UsageInfo originalUsageInfo, JetChangeInfo javaMethodChangeInfo) {
+        if (originalUsageInfo instanceof JavaMethodDeferredKotlinUsage) {
+            return ((JavaMethodDeferredKotlinUsage<?>) originalUsageInfo).resolve(javaMethodChangeInfo);
         }
 
         JetCallElement callElement = PsiTreeUtil.getParentOfType(originalUsageInfo.getElement(), JetCallElement.class);

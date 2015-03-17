@@ -359,6 +359,11 @@ public class JetPsiFactory(private val project: Project) {
         return createClass("class A: $text").getDelegationSpecifiers().first() as JetDelegatorToSuperCall
     }
 
+    public fun createConstructorDelegationCall(text: String): JetConstructorDelegationCall {
+        val colonOrEmpty = if (text.isEmpty()) "" else ": "
+        return createClass("class A { constructor()$colonOrEmpty$text {}").getSecondaryConstructors().first().getDelegationCall()!!
+    }
+
     public inner class IfChainBuilder() {
         private val sb = StringBuilder()
         private var first = true

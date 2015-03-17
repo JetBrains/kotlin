@@ -20,21 +20,16 @@ import com.intellij.find.findUsages.FindUsagesHandler
 import com.intellij.find.findUsages.FindUsagesHandlerFactory
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.psi.JetNamedFunction
 import org.jetbrains.kotlin.idea.findUsages.handlers.KotlinFindClassUsagesHandler
 import org.jetbrains.kotlin.idea.findUsages.handlers.KotlinFindMemberUsagesHandler
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil
-import org.jetbrains.kotlin.psi.JetProperty
 import com.intellij.find.findUsages.FindUsagesOptions
-import org.jetbrains.kotlin.psi.JetTypeParameter
 import org.jetbrains.kotlin.idea.findUsages.handlers.KotlinTypeParameterFindUsagesHandler
-import org.jetbrains.kotlin.psi.JetParameter
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
-import org.jetbrains.kotlin.psi.JetClassOrObject
 import com.intellij.find.findUsages.JavaFindUsagesHandlerFactory
 import org.jetbrains.kotlin.idea.findUsages.handlers.DelegatingFindMemberUsagesHandler
 import org.jetbrains.kotlin.plugin.findUsages.handlers.KotlinFindUsagesHandlerDecorator
 import com.intellij.openapi.extensions.Extensions
+import org.jetbrains.kotlin.psi.*
 
 public class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandlerFactory() {
     val javaHandlerFactory = JavaFindUsagesHandlerFactory(project)
@@ -49,14 +44,15 @@ public class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandle
             element is JetNamedFunction ||
             element is JetProperty ||
             element is JetParameter ||
-            element is JetTypeParameter
+            element is JetTypeParameter ||
+            element is JetSecondaryConstructor
 
     public override fun createFindUsagesHandler(element: PsiElement, forHighlightUsages: Boolean): FindUsagesHandler? {
         val handler = when (element) {
             is JetClassOrObject ->
                 KotlinFindClassUsagesHandler(element, this)
 
-            is JetNamedFunction, is JetProperty, is JetParameter -> {
+            is JetNamedFunction, is JetProperty, is JetParameter, is JetSecondaryConstructor -> {
                 val declaration = element as JetNamedDeclaration
 
                 if (forHighlightUsages) return KotlinFindMemberUsagesHandler.getInstance(declaration, this)

@@ -179,9 +179,10 @@ public class JetFunctionDefinitionUsage<T extends PsiElement> extends JetUsageIn
                 }
             }
 
-            boolean returnTypeIsNeeded = changeInfo.isRefactoringTarget(originalFunctionDescriptor)
+            boolean returnTypeIsNeeded = (changeInfo.isRefactoringTarget(originalFunctionDescriptor)
                                          || !(function instanceof JetFunctionLiteral)
-                                         || function.getTypeReference() != null;
+                                         || function.getTypeReference() != null) &&
+                                         !(function instanceof JetSecondaryConstructor);
             if (changeInfo.isReturnTypeChanged() && returnTypeIsNeeded) {
                 function.setTypeReference(null);
                 String returnTypeText = changeInfo.renderReturnType((JetFunctionDefinitionUsage<PsiElement>) this);

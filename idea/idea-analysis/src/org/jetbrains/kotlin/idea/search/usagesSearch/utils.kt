@@ -17,23 +17,33 @@
 package org.jetbrains.kotlin.idea.search.usagesSearch
 
 import com.intellij.psi.PsiConstructorCall
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import com.intellij.psi.PsiReference
+import com.intellij.psi.search.SearchScope
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.codegen.PropertyCodegen
 import org.jetbrains.kotlin.asJava.KotlinLightMethod
+import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.resolve.OverrideResolver
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.idea.references.*
 import org.jetbrains.kotlin.idea.findUsages.UsageTypeUtils
 import org.jetbrains.kotlin.idea.findUsages.UsageTypeEnum
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.getJavaMethodDescriptor
+import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
+import org.jetbrains.kotlin.idea.search.declarationsSearch.searchInheritors
 
 val JetDeclaration.descriptor: DeclarationDescriptor?
     get() = this.analyze().get(BindingContext.DECLARATION_TO_DESCRIPTOR, this)
+
+val JetDeclaration.constructor: ConstructorDescriptor?
+    get() = this.analyze().get(BindingContext.CONSTRUCTOR, this)
 
 val JetParameter.propertyDescriptor: PropertyDescriptor?
     get() = this.analyze().get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, this)
@@ -57,23 +67,6 @@ fun PsiReference.isImportUsage(): Boolean =
         getElement()!!.getNonStrictParentOfType<JetImportDirective>() != null
 
 fun PsiReference.isConstructorUsage(jetClassOrObject: JetClassOrObject): Boolean = with (getElement()!!) {
-    fun getCallDescriptor(bindingContext: BindingContext): DeclarationDescriptor? {
-        val constructorCalleeExpression = getNonStrictParentOfType<JetConstructorCalleeExpression>()
-        if (constructorCalleeExpression != null) {
-            return bindingContext.get(BindingContext.REFERENCE_TARGET, constructorCalleeExpression.getConstructorReferenceExpression())
-        }
-
-        val callExpression = getNonStrictParentOfType<JetCallExpression>()
-        if (callExpression != null) {
-            val callee = callExpression.getCalleeExpression()
-            if (callee is JetReferenceExpression) {
-                return bindingContext.get(BindingContext.REFERENCE_TARGET, callee)
-            }
-        }
-
-        return null
-    }
-
     fun checkJavaUsage(): Boolean {
         val call = getNonStrictParentOfType<PsiConstructorCall>()
         return call == getParent() && call?.resolveConstructor()?.getContainingClass()?.getNavigationElement() == jetClassOrObject
@@ -82,15 +75,83 @@ fun PsiReference.isConstructorUsage(jetClassOrObject: JetClassOrObject): Boolean
     fun checkKotlinUsage(): Boolean {
         if (this !is JetElement) return false
 
-        val bindingContext = this.analyze()
-
-        val descriptor = getCallDescriptor(bindingContext)
+        val descriptor = getConstructorCallDescriptor()
         if (descriptor !is ConstructorDescriptor) return false
 
         return DescriptorToSourceUtils.descriptorToDeclaration(descriptor.getContainingDeclaration()) == jetClassOrObject
     }
 
     checkJavaUsage() || checkKotlinUsage()
+}
+
+private fun JetElement.getConstructorCallDescriptor(): DeclarationDescriptor? {
+    val bindingContext = this.analyze()
+    val constructorCalleeExpression = getNonStrictParentOfType<JetConstructorCalleeExpression>()
+    if (constructorCalleeExpression != null) {
+        return bindingContext.get(BindingContext.REFERENCE_TARGET, constructorCalleeExpression.getConstructorReferenceExpression())
+    }
+
+    val callExpression = getNonStrictParentOfType<JetCallElement>()
+    if (callExpression != null) {
+        val callee = callExpression.getCalleeExpression()
+        if (callee is JetReferenceExpression) {
+            return bindingContext.get(BindingContext.REFERENCE_TARGET, callee)
+        }
+    }
+
+    return null
+}
+
+public fun PsiElement.processDelegationCallConstructorUsages(scope: SearchScope, process: (JetConstructorDelegationCall) -> Unit) {
+    processDelegationCallKotlinConstructorUsages(scope, process)
+    processDelegationCallJavaConstructorUsages(scope, process)
+}
+
+private fun PsiElement.processDelegationCallKotlinConstructorUsages(scope: SearchScope, process: (JetConstructorDelegationCall) -> Unit) {
+    val klass = when (this) {
+        is JetSecondaryConstructor -> getClassOrObject()
+        is JetClass -> this
+        else -> return
+    }
+
+    if (klass !is JetClass || this !is JetDeclaration) return
+    val descriptor = constructor ?: return
+
+    processClassDelegationCallsToSpecifiedConstructor(klass, descriptor, process)
+    processInheritorsDelegatingCallToSpecifiedConstructor(klass, scope, descriptor, process)
+}
+
+private fun PsiElement.processDelegationCallJavaConstructorUsages(scope: SearchScope, process: (JetConstructorDelegationCall) -> Unit) {
+    if (!(this is PsiMethod && isConstructor())) return
+    val klass = getContainingClass() ?: return
+    val descriptor = getJavaMethodDescriptor() as? ConstructorDescriptor ?: return
+    processInheritorsDelegatingCallToSpecifiedConstructor(klass, scope, descriptor, process)
+}
+
+
+private fun processInheritorsDelegatingCallToSpecifiedConstructor(
+        klass: PsiElement,
+        scope: SearchScope,
+        descriptor: ConstructorDescriptor,
+        process: (JetConstructorDelegationCall) -> Unit
+) {
+    HierarchySearchRequest(klass, scope, false).searchInheritors().forEach() {
+        val unwrapped = it.unwrapped
+        if (unwrapped is JetClass) {
+            processClassDelegationCallsToSpecifiedConstructor(unwrapped, descriptor, process)
+        }
+    }
+}
+
+private fun processClassDelegationCallsToSpecifiedConstructor(
+        klass: JetClass, constructor: DeclarationDescriptor, process: (JetConstructorDelegationCall) -> Unit
+) {
+    for (secondaryConstructor in klass.getSecondaryConstructors()) {
+        val delegationCallDescriptor = secondaryConstructor.getDelegationCall()?.getConstructorCallDescriptor()
+        if (constructor == delegationCallDescriptor) {
+            process(secondaryConstructor.getDelegationCall()!!)
+        }
+    }
 }
 
 // Check if reference resolves to extension function whose receiver is the same as declaration's parent (or its superclass)
