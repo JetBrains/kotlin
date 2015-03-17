@@ -276,7 +276,7 @@ public class DefaultErrorMessages {
         MAP.put(MANY_COMPANION_OBJECTS, "Only one companion object is allowed per class");
         MAP.put(COMPANION_OBJECT_NOT_ALLOWED, "A companion object is not allowed here");
 
-        MAP.put(DEPRECATED_CLASS_OBJECT_SYNTAX, "'class object' syntax for companion objects was deprecated. Use 'default' modifier instead");
+        MAP.put(DEPRECATED_CLASS_OBJECT_SYNTAX, "'class object' syntax for companion objects was deprecated. Use 'companion' modifier instead");
 
         MAP.put(LOCAL_OBJECT_NOT_ALLOWED, "Named object ''{0}'' is a singleton and cannot be local. Try to use anonymous object instead", NAME);
         MAP.put(LOCAL_ENUM_NOT_ALLOWED, "Enum class ''{0}'' cannot be local", NAME);
