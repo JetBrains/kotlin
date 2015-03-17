@@ -47,7 +47,7 @@ public trait KotlinClassStub : KotlinClassOrObjectStub<JetClass> {
 }
 
 public trait KotlinObjectStub : KotlinClassOrObjectStub<JetObjectDeclaration> {
-    public fun isDefault(): Boolean
+    public fun isCompanion(): Boolean
     public fun isObjectLiteral(): Boolean
 }
 

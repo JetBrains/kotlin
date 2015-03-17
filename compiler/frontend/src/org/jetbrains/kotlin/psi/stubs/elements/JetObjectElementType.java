@@ -56,7 +56,7 @@ public class JetObjectElementType extends JetStubElementType<KotlinObjectStub, J
         dataStream.writeName(fqName != null ? fqName.toString() : null);
 
         dataStream.writeBoolean(stub.isTopLevel());
-        dataStream.writeBoolean(stub.isDefault());
+        dataStream.writeBoolean(stub.isCompanion());
         dataStream.writeBoolean(stub.isLocal());
         dataStream.writeBoolean(stub.isObjectLiteral());
 
@@ -75,7 +75,7 @@ public class JetObjectElementType extends JetStubElementType<KotlinObjectStub, J
         FqName fqName = fqNameStr != null ? new FqName(fqNameStr.toString()) : null;
 
         boolean isTopLevel = dataStream.readBoolean();
-        boolean isDefault = dataStream.readBoolean();
+        boolean isCompanion = dataStream.readBoolean();
         boolean isLocal = dataStream.readBoolean();
         boolean isObjectLiteral = dataStream.readBoolean();
 
@@ -85,7 +85,7 @@ public class JetObjectElementType extends JetStubElementType<KotlinObjectStub, J
             superNames[i] = dataStream.readName();
         }
 
-        return new KotlinObjectStubImpl(parentStub, name, fqName, superNames, isTopLevel, isDefault, isLocal, isObjectLiteral);
+        return new KotlinObjectStubImpl(parentStub, name, fqName, superNames, isTopLevel, isCompanion, isLocal, isObjectLiteral);
     }
 
     @Override

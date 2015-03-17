@@ -97,7 +97,7 @@ public class JetObjectDeclaration extends JetNamedDeclarationStub<KotlinObjectSt
     public boolean isCompanion() {
         KotlinObjectStub stub = getStub();
         if (stub != null) {
-            return stub.isDefault();
+            return stub.isCompanion();
         }
         return getClassKeyword() != null || hasModifier(JetTokens.COMPANION_KEYWORD);
     }

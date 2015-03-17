@@ -48,7 +48,7 @@ public class DeserializedClassDescriptor(
     private val visibility = deserialization.visibility(Flags.VISIBILITY.get(classProto.getFlags()))
     private val kindFromProto = Flags.CLASS_KIND.get(classProto.getFlags())
     private val kind = deserialization.classKind(kindFromProto)
-    private val isDefault = kindFromProto == ProtoBuf.Class.Kind.CLASS_OBJECT
+    private val isCompanion = kindFromProto == ProtoBuf.Class.Kind.CLASS_OBJECT
     private val isInner = Flags.INNER.get(classProto.getFlags())
 
     val c = outerContext.childContext(this, classProto.getTypeParameterList(), nameResolver)
@@ -92,7 +92,7 @@ public class DeserializedClassDescriptor(
 
     override fun getStaticScope() = staticScope
 
-    override fun isCompanionObject(): Boolean = isDefault
+    override fun isCompanionObject(): Boolean = isCompanion
 
     private fun computePrimaryConstructor(): ConstructorDescriptor? {
         if (!classProto.hasPrimaryConstructor()) return null

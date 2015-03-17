@@ -35,7 +35,7 @@ PsiJetFileStubImpl[package=a.b.c.test.enum]
                       REFERENCE_EXPRESSION:[referencedName=enum]
                     REFERENCE_EXPRESSION:[referencedName=Enum]
     CLASS_BODY:
-      OBJECT_DECLARATION:[fqName=a.b.c.test.enum.Enum.Companion, isDefault=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+      OBJECT_DECLARATION:[fqName=a.b.c.test.enum.Enum.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST:[internal companion]
         CLASS_BODY:
           PROPERTY:[fqName=a.b.c.test.enum.Enum.Companion.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=c]
