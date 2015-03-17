@@ -17,7 +17,7 @@ fun <T> Iterable<T>.foreach(operation: (element: T) -> Unit) : Unit = iterator()
 fun <T> Iterable<T>.foreach(operation: (index: Int, element: T) -> Unit) : Unit = iterator() foreach operation
 
 fun box() : String {
-    return generic_invoker( { () : String -> "OK"} )
+    return generic_invoker( { "OK"} )
 }
 
 fun <T> generic_invoker(gen :  () -> T) : T {

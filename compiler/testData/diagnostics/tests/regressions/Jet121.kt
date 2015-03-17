@@ -1,7 +1,7 @@
 package jet121
 
 fun box() : String {
-val answer = apply("OK") { String.() : Int ->
+val answer = apply("OK") {
   get(0)
   length()
 }

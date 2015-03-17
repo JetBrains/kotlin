@@ -1,18 +1,17 @@
 fun f() {
-    foo {(): Int ->
+    foo {
         return@foo 1
     }
-    foo({(): Int ->
+    foo({
         return@foo 1
     }
     )
-    foo(a = {(): Int ->
+    foo(a = {
         return@foo 1
     })
 
-    foo {(): Int ->
+    foo {
         foo {
-            (): Int ->
             return<!LABEL_NAME_CLASH!>@foo<!> 1
         }
         return@foo 1

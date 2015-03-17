@@ -24,7 +24,7 @@ fun foo(a: A) {
         }
     }
 
-    val <!UNUSED_VARIABLE!>f<!> : () -> Int = { () : Int ->
+    val <!UNUSED_VARIABLE!>f<!> : () -> Int = {
         a.gen()  //type mismatch, but Int can be derived
     }
 

@@ -2,7 +2,6 @@
 
 fun test1(): String {
     doCall @local {
-        () : String ->
         throw NullPointerException()
         <!UNREACHABLE_CODE!>"b3"<!> //unmarked
     }
@@ -12,7 +11,6 @@ fun test1(): String {
 
 fun test2(nonLocal: String, b: Boolean): String {
     doCall @local {
-        () : String ->
         if (b) {
             return@local "b1"
         } else {
