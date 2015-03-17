@@ -14,27 +14,16 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.cli.jvm.compiler;
+package org.jetbrains.kotlin.cli.jvm.compiler
 
-import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.core.JavaCoreApplicationEnvironment
+import com.intellij.core.JavaCoreProjectEnvironment
+import com.intellij.openapi.Disposable
+import com.intellij.psi.PsiManager
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-public final class ClassPath implements Iterable<VirtualFile> {
-
-    @NotNull
-    private final List<VirtualFile> roots = new ArrayList<VirtualFile>();
-
-    @NotNull
-    @Override
-    public Iterator<VirtualFile> iterator() {
-        return roots.iterator();
-    }
-
-    public void add(@NotNull VirtualFile root) {
-        roots.add(root);
-    }
+open class KotlinCoreProjectEnvironment(
+        disposable: Disposable,
+        applicationEnvironment: JavaCoreApplicationEnvironment
+) : JavaCoreProjectEnvironment(disposable, applicationEnvironment) {
+    override fun createCoreFileManager() = KotlinCliJavaFileManagerImpl(PsiManager.getInstance(getProject()))
 }

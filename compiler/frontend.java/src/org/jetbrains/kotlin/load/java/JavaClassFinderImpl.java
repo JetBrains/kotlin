@@ -86,13 +86,11 @@ public class JavaClassFinderImpl implements JavaClassFinder {
     @Nullable
     @Override
     public JavaClass findClass(@NotNull ClassId classId) {
-        FqName fqName = classId.asSingleFqName();
-
-        PsiClass psiClass = javaFacade.findClass(fqName.asString(), javaSearchScope);
+        PsiClass psiClass = javaFacade.findClass(classId, javaSearchScope);
         if (psiClass == null) return null;
 
         JavaClassImpl javaClass = new JavaClassImpl(psiClass);
-
+        FqName fqName = classId.asSingleFqName();
         if (!fqName.equals(javaClass.getFqName())) {
             throw new IllegalStateException("Requested " + fqName + ", got " + javaClass.getFqName());
         }

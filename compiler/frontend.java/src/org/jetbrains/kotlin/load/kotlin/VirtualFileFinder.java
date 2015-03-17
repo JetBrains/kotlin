@@ -22,7 +22,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.name.ClassId;
 
 public interface VirtualFileFinder extends KotlinClassFinder {
     class SERVICE {
@@ -33,5 +33,5 @@ public interface VirtualFileFinder extends KotlinClassFinder {
     }
 
     @Nullable
-    VirtualFile findVirtualFileWithHeader(@NotNull FqName className);
+    VirtualFile findVirtualFileWithHeader(@NotNull ClassId className);
 }

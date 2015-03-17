@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.utils.sure
 
 public abstract class VirtualFileKotlinClassFinder : VirtualFileFinder {
     override fun findKotlinClass(classId: ClassId): KotlinJvmBinaryClass? {
-        val file = findVirtualFileWithHeader(classId.asSingleFqName()) ?: return null
+        val file = findVirtualFileWithHeader(classId) ?: return null
         return KotlinBinaryClassCache.getKotlinBinaryClass(file)
     }
 

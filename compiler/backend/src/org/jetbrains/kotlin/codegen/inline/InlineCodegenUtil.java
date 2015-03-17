@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.serialization.ProtoBuf;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor;
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf;
@@ -59,6 +60,7 @@ import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.ListIterator;
 
+import static kotlin.KotlinPackage.substringAfterLast;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isTrait;
 
@@ -150,7 +152,7 @@ public class InlineCodegenUtil {
     @NotNull
     public static VirtualFile getVirtualFileForCallable(@NotNull ClassId containerClassId, @NotNull GenerationState state) {
         VirtualFileFinder fileFinder = VirtualFileFinder.SERVICE.getInstance(state.getProject());
-        VirtualFile file = fileFinder.findVirtualFileWithHeader(containerClassId.asSingleFqName());
+        VirtualFile file = fileFinder.findVirtualFileWithHeader(containerClassId);
         if (file == null) {
             throw new IllegalStateException("Couldn't find declaration file for " + containerClassId);
         }
@@ -177,9 +179,13 @@ public class InlineCodegenUtil {
     }
 
     @Nullable
-    public static VirtualFile findVirtualFile(@NotNull Project project, @NotNull String internalName) {
+    public static VirtualFile findVirtualFile(@NotNull Project project, @NotNull String internalClassName) {
+        FqName packageFqName = JvmClassName.byInternalName(internalClassName).getPackageFqName();
+        String classNameWithDollars = substringAfterLast(internalClassName, "/", internalClassName);
         VirtualFileFinder fileFinder = VirtualFileFinder.SERVICE.getInstance(project);
-        return fileFinder.findVirtualFileWithHeader(new FqName(internalName.replace('/', '.')));
+        //TODO: we cannot construct proper classId at this point, we need to read InnerClasses info from class file
+        // we construct valid.package.name/RelativeClassNameAsSingleName that should work in compiler, but fails for inner classes in IDE
+        return fileFinder.findVirtualFileWithHeader(new ClassId(packageFqName, Name.identifier(classNameWithDollars)));
     }
 
     //TODO: navigate to inner classes

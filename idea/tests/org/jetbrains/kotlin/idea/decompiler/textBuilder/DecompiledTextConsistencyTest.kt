@@ -44,9 +44,8 @@ public class DecompiledTextConsistencyTest : JetLightCodeInsightFixtureTestCase(
 
     public fun testConsistencyWithJavaDescriptorResolver() {
         val project = getProject()
-        val packageClassFqName = PackageClassUtils.getPackageClassFqName(STANDARD_LIBRARY_FQNAME)
         val virtualFileFinder = VirtualFileFinderFactory.SERVICE.getInstance(project).create(GlobalSearchScope.allScope(project))
-        val kotlinPackageFile = virtualFileFinder.findVirtualFileWithHeader(packageClassFqName)!!
+        val kotlinPackageFile = virtualFileFinder.findVirtualFileWithHeader(PackageClassUtils.getPackageClassId(STANDARD_LIBRARY_FQNAME))!!
         val projectBasedText = buildDecompiledText(kotlinPackageFile, ProjectBasedResolverForDecompiler(project)).text
         val deserializedText = buildDecompiledText(kotlinPackageFile).text
         Assert.assertEquals(projectBasedText, deserializedText)

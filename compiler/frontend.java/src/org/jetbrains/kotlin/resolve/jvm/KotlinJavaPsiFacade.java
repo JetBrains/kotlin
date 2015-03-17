@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.resolve.jvm;
 
-import com.intellij.core.CoreJavaFileManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import com.intellij.openapi.project.DumbAware;
@@ -44,6 +43,7 @@ import com.intellij.util.messages.MessageBus;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.name.ClassId;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -87,8 +87,10 @@ public class KotlinJavaPsiFacade {
         });
     }
 
-    public PsiClass findClass(@NotNull String qualifiedName, @NotNull GlobalSearchScope scope) {
+    public PsiClass findClass(@NotNull ClassId classId, @NotNull GlobalSearchScope scope) {
         ProgressIndicatorProvider.checkCanceled(); // We hope this method is being called often enough to cancel daemon processes smoothly
+
+        String qualifiedName = classId.asSingleFqName().asString();
 
         if (shouldUseSlowResolve()) {
             PsiClass[] classes = findClassesInDumbMode(qualifiedName, scope);
@@ -99,8 +101,14 @@ public class KotlinJavaPsiFacade {
         }
 
         for (KotlinPsiElementFinderWrapper finder : finders()) {
-            PsiClass aClass = finder.findClass(qualifiedName, scope);
-            if (aClass != null) return aClass;
+            if (finder instanceof KotlinPsiElementFinderImpl) {
+                PsiClass aClass = ((KotlinPsiElementFinderImpl) finder).findClass(classId, scope);
+                if (aClass != null) return aClass;
+            }
+            else {
+                PsiClass aClass = finder.findClass(qualifiedName, scope);
+                if (aClass != null) return aClass;
+            }
         }
 
         return null;
@@ -286,14 +294,14 @@ public class KotlinJavaPsiFacade {
 
     static class KotlinPsiElementFinderImpl implements KotlinPsiElementFinderWrapper, DumbAware {
         private final JavaFileManager javaFileManager;
-        private final boolean isCoreJavaFileManager;
+        private final boolean isCliFileManager;
 
         private final PsiManager psiManager;
         private final PackageIndex packageIndex;
 
         public KotlinPsiElementFinderImpl(Project project) {
             this.javaFileManager = findJavaFileManager(project);
-            this.isCoreJavaFileManager = javaFileManager instanceof CoreJavaFileManager;
+            this.isCliFileManager = javaFileManager instanceof KotlinCliJavaFileManager;
 
             this.packageIndex = PackageIndex.getInstance(project);
             this.psiManager = PsiManager.getInstance(project);
@@ -312,20 +320,19 @@ public class KotlinJavaPsiFacade {
 
         @Override
         public PsiClass findClass(@NotNull String qualifiedName, @NotNull GlobalSearchScope scope) {
-            PsiClass aClass = javaFileManager.findClass(qualifiedName, scope);
-            if (aClass != null) {
-                //TODO: (module refactoring) CoreJavaFileManager should check scope
-                if (!isCoreJavaFileManager || scope.contains(aClass.getContainingFile().getOriginalFile().getVirtualFile())) {
-                    return aClass;
-                }
-            }
+            return javaFileManager.findClass(qualifiedName, scope);
+        }
 
-            return null;
+        public PsiClass findClass(@NotNull ClassId classId, @NotNull GlobalSearchScope scope) {
+            if (isCliFileManager) {
+                return ((KotlinCliJavaFileManager) javaFileManager).findClass(classId, scope);
+            }
+            return findClass(classId.asSingleFqName().asString(), scope);
         }
 
         @Override
         public PsiPackage findPackage(@NotNull String qualifiedName, @NotNull GlobalSearchScope scope) {
-            if (isCoreJavaFileManager) {
+            if (isCliFileManager) {
                 return javaFileManager.findPackage(qualifiedName);
             }
 

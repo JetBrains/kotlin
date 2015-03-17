@@ -59,12 +59,14 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.WARNING
-import org.jetbrains.kotlin.cli.jvm.config.*
+import org.jetbrains.kotlin.cli.jvm.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
+import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
+import org.jetbrains.kotlin.cli.jvm.config.JvmContentRoot
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.ContentRoot
 import org.jetbrains.kotlin.config.KotlinSourceRoot
 import org.jetbrains.kotlin.extensions.ExternalDeclarationsProvider
 import org.jetbrains.kotlin.idea.JetFileType
@@ -89,13 +91,13 @@ public class KotlinCoreEnvironment private(
         configuration: CompilerConfiguration
 ) {
 
-    private val projectEnvironment: JavaCoreProjectEnvironment = object : JavaCoreProjectEnvironment(parentDisposable, applicationEnvironment) {
+    private val projectEnvironment: JavaCoreProjectEnvironment = object : KotlinCoreProjectEnvironment(parentDisposable, applicationEnvironment) {
         override fun preregisterServices() {
             registerProjectExtensionPoints(Extensions.getArea(getProject()))
         }
     }
     private val sourceFiles = ArrayList<JetFile>()
-    private val classPath = ClassPath()
+    private val javaRoots = ArrayList<JavaRoot>()
 
     private val annotationsManager: CoreExternalAnnotationsManager
 
@@ -114,6 +116,9 @@ public class KotlinCoreEnvironment private(
         registerProjectServices(projectEnvironment)
 
         fillClasspath(configuration)
+        val fileManager = ServiceManager.getService(project, javaClass<CoreJavaFileManager>())
+        val index = JvmDependenciesIndex(javaRoots)
+        (fileManager as KotlinCliJavaFileManagerImpl).initIndex(index)
 
         for (path in configuration.getList(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY)) {
             addExternalAnnotationsRoot(path)
@@ -130,7 +135,7 @@ public class KotlinCoreEnvironment private(
 
         JetScriptDefinitionProvider.getInstance(project).addScriptDefinitions(configuration.getList(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY))
 
-        project.registerService(javaClass<VirtualFileFinderFactory>(), CliVirtualFileFinderFactory(classPath))
+        project.registerService(javaClass<VirtualFileFinderFactory>(), CliVirtualFileFinderFactory(index))
 
         ExternalDeclarationsProvider.registerExtensionPoint(project)
         ExpressionCodegenExtension.registerExtensionPoint(project)
@@ -163,7 +168,12 @@ public class KotlinCoreEnvironment private(
             val virtualFile = contentRootToVirtualFile(javaRoot) ?: continue
 
             projectEnvironment.addSourcesToClasspath(virtualFile)
-            classPath.add(virtualFile)
+            val rootType = when (javaRoot) {
+                is JavaSourceRoot -> JavaRoot.RootType.SOURCE
+                is JvmClasspathRoot -> JavaRoot.RootType.BINARY
+                else -> throw IllegalStateException()
+            }
+            javaRoots.add(JavaRoot(virtualFile, rootType))
         }
     }
 
@@ -339,7 +349,6 @@ public class KotlinCoreEnvironment private(
         platformStatic public fun registerApplicationServices(applicationEnvironment: JavaCoreApplicationEnvironment) {
             with(applicationEnvironment) {
                 registerFileType(JetFileType.INSTANCE, "kt")
-                registerFileType(JetFileType.INSTANCE, "ktm")
                 registerFileType(JetFileType.INSTANCE, JetParserDefinition.STD_SCRIPT_SUFFIX)
                 registerParserDefinition(JetParserDefinition())
                 getApplication().registerService(javaClass<KotlinBinaryClassCache>(), KotlinBinaryClassCache())

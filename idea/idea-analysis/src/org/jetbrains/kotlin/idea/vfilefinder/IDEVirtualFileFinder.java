@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.vfilefinder;
 
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.indexing.FileBasedIndex;
@@ -25,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder;
 import org.jetbrains.kotlin.load.kotlin.VirtualFileKotlinClassFinder;
-import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.name.ClassId;
 
 import java.util.Collection;
 
@@ -33,11 +32,9 @@ public final class IDEVirtualFileFinder extends VirtualFileKotlinClassFinder imp
 
     private static final Logger LOG = Logger.getInstance(IDEVirtualFileFinder.class);
 
-    @NotNull private final Project project;
     @NotNull private final GlobalSearchScope scope;
 
-    public IDEVirtualFileFinder(@NotNull Project project, @NotNull GlobalSearchScope scope) {
-        this.project = project;
+    public IDEVirtualFileFinder(@NotNull GlobalSearchScope scope) {
         this.scope = scope;
 
         if (scope != GlobalSearchScope.EMPTY_SCOPE && scope.getProject() == null) {
@@ -47,13 +44,13 @@ public final class IDEVirtualFileFinder extends VirtualFileKotlinClassFinder imp
 
     @Nullable
     @Override
-    public VirtualFile findVirtualFileWithHeader(@NotNull FqName className) {
-        Collection<VirtualFile> files = FileBasedIndex.getInstance().getContainingFiles(KotlinClassFileIndex.KEY, className, scope);
+    public VirtualFile findVirtualFileWithHeader(@NotNull ClassId classId) {
+        Collection<VirtualFile> files = FileBasedIndex.getInstance().getContainingFiles(KotlinClassFileIndex.KEY, classId.asSingleFqName(), scope);
         if (files.isEmpty()) {
             return null;
         }
         if (files.size() > 1) {
-            LOG.warn("There are " + files.size() + " classes with same fqName: " + className + " found.");
+            LOG.warn("There are " + files.size() + " classes with same fqName: " + classId + " found.");
         }
         return files.iterator().next();
     }

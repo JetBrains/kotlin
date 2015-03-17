@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.vfilefinder;
+package org.jetbrains.kotlin.cli.jvm.compiler
 
-import com.intellij.psi.search.GlobalSearchScope;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder;
-import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory;
+import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
+import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 
-public class IDEVirtualFileFinderFactory implements VirtualFileFinderFactory {
-
-    @NotNull
-    @Override
-    public VirtualFileFinder create(@NotNull GlobalSearchScope scope) {
-        return new IDEVirtualFileFinder(scope);
+public class CliVirtualFileFinderFactory(private val index: JvmDependenciesIndex) : VirtualFileFinderFactory {
+    override fun create(scope: GlobalSearchScope): VirtualFileFinder {
+        return CliVirtualFileFinder(index)
     }
 }
