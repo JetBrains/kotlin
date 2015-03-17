@@ -10587,6 +10587,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("companionObjectScope.kt")
+            public void testCompanionObjectScope() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/companionObjectScope.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("constructorCallType.kt")
             public void testConstructorCallType() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/constructorCallType.kt");

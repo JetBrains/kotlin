@@ -277,18 +277,20 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         thisScope.setImplicitReceiver(this.getThisAsReceiverParameter());
         thisScope.changeLockLevel(WritableScope.LockLevel.READING);
 
-        ClassDescriptor companionObjectDescriptor = getCompanionObjectDescriptor();
-        JetScope companionObjectAdapterScope = (companionObjectDescriptor != null) ? new CompanionObjectMixinScope(companionObjectDescriptor) : JetScope.Empty.INSTANCE$;
-
         return new ChainedScope(
                 this,
                 "ScopeForMemberDeclarationResolution: " + getName(),
                 thisScope,
                 getScopeForMemberLookup(),
                 getScopeForClassHeaderResolution(),
-                companionObjectAdapterScope,
+                getCompanionObjectScope(),
                 getStaticScope()
         );
+    }
+
+    private JetScope getCompanionObjectScope() {
+        ClassDescriptor companionObjectDescriptor = getCompanionObjectDescriptor();
+        return (companionObjectDescriptor != null) ? new CompanionObjectMixinScope(companionObjectDescriptor) : JetScope.Empty.INSTANCE$;
     }
 
     @Override
@@ -346,6 +348,8 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                 this,
                 "ScopeForSecondaryConstructorHeaderResolution: " + getName(),
                 getScopeForClassHeaderResolution(),
+                getCompanionObjectScope(),
+                DescriptorUtils.getStaticNestedClassesScope(this),
                 getStaticScope()
         );
     }
