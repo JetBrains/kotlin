@@ -18,8 +18,14 @@ package kotlin.reflect
 
 import kotlin.reflect.jvm.internal.KClassImpl
 
+/**
+ * Returns non-extension properties declared in this class.
+ */
 public val <T> KClass<T>.declaredProperties: Collection<KMemberProperty<T, *>>
     get() = (this as KClassImpl<T>).getProperties(declared = true)
 
+/**
+ * Returns extension properties declared in this class.
+ */
 public val <T> KClass<T>.declaredExtensionProperties: Collection<KMemberExtensionProperty<T, *, *>>
     get() = (this as KClassImpl<T>).getExtensionProperties(declared = true)
