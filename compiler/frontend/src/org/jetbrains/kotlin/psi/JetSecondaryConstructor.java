@@ -116,7 +116,7 @@ public class JetSecondaryConstructor extends JetDeclarationStub<KotlinPlaceHolde
     @Override
     @NotNull
     public String getName() {
-        return "<init>";
+        return getClassOrObject().getName();
     }
 
     @Nullable
@@ -146,7 +146,7 @@ public class JetSecondaryConstructor extends JetDeclarationStub<KotlinPlaceHolde
     @NotNull
     @Override
     public Name getNameAsSafeName() {
-        return Name.special(getName());
+        return Name.identifier(getName());
     }
 
     @Nullable

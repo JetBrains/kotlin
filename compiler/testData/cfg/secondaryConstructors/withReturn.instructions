@@ -19,7 +19,7 @@ error:
 sink:
     <SINK>     PREV:[<ERROR>, <END>]
 =====================
-== <init> ==
+== A ==
 constructor() {
         if (1 == 1) {
             return

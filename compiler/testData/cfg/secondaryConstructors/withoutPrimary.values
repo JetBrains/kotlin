@@ -33,7 +33,7 @@ class A {
 }
 ---------------------
 =====================
-== <init> ==
+== A ==
 constructor() {
         x = 1
         y = 2
@@ -49,7 +49,7 @@ constructor() {
 y = 2             !<v13>: *
 { x = 1 y = 2 }   !<v13>: *    COPY
 =====================
-== <init> ==
+== A ==
 constructor(a: Int, b: Int = 3) {
         x = a
         y = x
@@ -70,7 +70,7 @@ x                 <v17>: Int   NEW: r(x|<v16>) -> <v17>
 y = x             !<v18>: *
 { x = a y = x }   !<v18>: *    COPY
 =====================
-== <init> ==
+== A ==
 constructor(a: String, b: Int = 4): this() {
         y = 5
     }
@@ -85,7 +85,7 @@ this()       <v4>: *        NEW: call(this(), <init>) -> <v4>
 y = 5        !<v7>: *
 { y = 5 }    !<v7>: *       COPY
 =====================
-== <init> ==
+== A ==
 constructor(a: Double, b: Int = 6): this(a.toInt()) {
         y = 7
     }

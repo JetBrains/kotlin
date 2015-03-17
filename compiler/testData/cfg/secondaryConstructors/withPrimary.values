@@ -40,7 +40,7 @@ z = 8             !<v8>: *
 y = 9             !<v11>: *
 { y = 9 }         !<v11>: *    COPY
 =====================
-== <init> ==
+== A ==
 constructor(): this('a') {
         y = 2
     }
@@ -52,7 +52,7 @@ this('a')   <v1>: *      NEW: call(this('a'), <init>|<v0>) -> <v1>
 y = 2       !<v4>: *
 { y = 2 }   !<v4>: *     COPY
 =====================
-== <init> ==
+== A ==
 constructor(a: Int, b: Int = 3): this(b.toChar()) {
         y = x
     }

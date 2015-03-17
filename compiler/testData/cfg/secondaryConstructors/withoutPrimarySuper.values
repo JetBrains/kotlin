@@ -38,7 +38,7 @@ class A : B {
 }
 ---------------------
 =====================
-== <init> ==
+== A ==
 constructor(): super(11) {
         x = 1
         y = 2
@@ -55,7 +55,7 @@ super(11)         <v1>: *      NEW: call(super(11), <init>|<v0>) -> <v1>
 y = 2             !<v14>: *
 { x = 1 y = 2 }   !<v14>: *    COPY
 =====================
-== <init> ==
+== A ==
 constructor(a: Int, b: Int = 3): super(b) {
         x = a
         y = x
@@ -77,7 +77,7 @@ x                 <v18>: Int   NEW: r(x|<v17>) -> <v18>
 y = x             !<v19>: *
 { x = a y = x }   !<v19>: *    COPY
 =====================
-== <init> ==
+== A ==
 constructor(a: String, b: Int = 4): this() {
         y = 5
     }
@@ -92,7 +92,7 @@ this()       <v4>: *        NEW: call(this(), <init>) -> <v4>
 y = 5        !<v7>: *
 { y = 5 }    !<v7>: *       COPY
 =====================
-== <init> ==
+== A ==
 constructor(a: Double, b: Int = 6): this(a.toInt()) {
         y = 7
     }
