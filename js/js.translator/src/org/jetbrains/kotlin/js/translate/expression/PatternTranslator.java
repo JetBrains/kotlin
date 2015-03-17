@@ -16,23 +16,25 @@
 
 package org.jetbrains.kotlin.js.translate.expression;
 
-import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsInvocation;
-import com.google.dart.compiler.backend.js.ast.JsNameRef;
+import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
+import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.general.Translation;
 import org.jetbrains.kotlin.js.patterns.NamePredicate;
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
-import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetIsExpression;
 import org.jetbrains.kotlin.psi.JetTypeReference;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.types.JetType;
+
+import java.util.List;
 
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getTypeByReference;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*;
@@ -63,55 +65,97 @@ public final class PatternTranslator extends AbstractTranslator {
 
     @NotNull
     public JsExpression translateIsCheck(@NotNull JsExpression subject, @NotNull JetTypeReference typeReference) {
-        JsExpression result = translateAsIntrinsicTypeCheck(subject, typeReference);
-        if (result != null) {
-            return result;
-        }
-        return translateAsIsCheck(subject, typeReference);
-    }
+        JetType type = BindingUtils.getTypeByReference(bindingContext(), typeReference);
+        JsExpression checkFunReference = getIsTypeCheckCallable(type);
+        JsInvocation isCheck = new JsInvocation(checkFunReference, subject);
 
-    @NotNull
-    private JsExpression translateAsIsCheck(@NotNull JsExpression expressionToMatch,
-                                            @NotNull JetTypeReference typeReference) {
-        JsInvocation isCheck = new JsInvocation(context().namer().isOperationReference(),
-                                                     expressionToMatch, getClassNameReference(typeReference));
         if (isNullable(typeReference)) {
-            return addNullCheck(expressionToMatch, isCheck);
+            return addNullCheck(subject, isCheck);
         }
+
         return isCheck;
     }
 
-    @Nullable
-    private JsExpression translateAsIntrinsicTypeCheck(@NotNull JsExpression expressionToMatch,
-                                                       @NotNull JetTypeReference typeReference) {
-        Name typeName = getNameIfStandardType(getTypeByReference(bindingContext(), typeReference));
-        if (typeName == null) {
-            return null;
+    @NotNull
+    public JsExpression getIsTypeCheckCallable(@NotNull JetType type) {
+        JsExpression builtinCheck = getIsTypeCheckCallableForBuiltin(type);
+        if (builtinCheck != null) return builtinCheck;
+
+        ClassifierDescriptor typeDescriptor = type.getConstructor().getDeclarationDescriptor();
+
+        if (typeDescriptor instanceof TypeParameterDescriptor) {
+            TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) typeDescriptor;
+
+            if (typeParameterDescriptor.isReified()) {
+                return getIsTypeCheckCallableForReifiedType(typeParameterDescriptor);
+            }
         }
 
-        String jsSTypeName;
+        JsNameRef typeName = getClassNameReference(type);
+        return namer().isInstanceOf(typeName);
+    }
+
+    @Nullable
+    private JsExpression getIsTypeCheckCallableForBuiltin(@NotNull JetType type) {
+        Name typeName = getNameIfStandardType(type);
+
         if (NamePredicate.STRING.apply(typeName)) {
-            jsSTypeName = "string";
+            return namer().isTypeOf(program().getStringLiteral("string"));
         }
-        else if (NamePredicate.BOOLEAN.apply(typeName)) {
-            jsSTypeName = "boolean";
+
+        if (NamePredicate.BOOLEAN.apply(typeName)) {
+            return namer().isTypeOf(program().getStringLiteral("boolean"));
         }
-        else if (NamePredicate.LONG.apply(typeName)) {
-            return JsAstUtils.isLong(expressionToMatch);
+
+        if (NamePredicate.LONG.apply(typeName)) {
+            return namer().isInstanceOf(Namer.KOTLIN_LONG_NAME_REF);
         }
-        else if (NamePredicate.NUMBER.apply(typeName)) {
-            return JsAstUtils.isNumber(expressionToMatch);
+
+        if (NamePredicate.NUMBER.apply(typeName)) {
+            return namer().kotlin(Namer.IS_NUMBER);
         }
-        else if (NamePredicate.CHAR.apply(typeName)) {
-            return JsAstUtils.isChar(expressionToMatch);
+
+        if (NamePredicate.CHAR.apply(typeName)) {
+            return namer().kotlin(Namer.IS_CHAR);
         }
-        else if (NamePredicate.PRIMITIVE_NUMBERS_MAPPED_TO_PRIMITIVE_JS.apply(typeName)) {
-            jsSTypeName = "number";
+
+        if (NamePredicate.PRIMITIVE_NUMBERS_MAPPED_TO_PRIMITIVE_JS.apply(typeName)) {
+            return namer().isTypeOf(program().getStringLiteral("number"));
         }
-        else {
-            return null;
+
+        return null;
+    }
+
+    @NotNull
+    private JsExpression getIsTypeCheckCallableForReifiedType(@NotNull TypeParameterDescriptor typeParameter) {
+        assert typeParameter.isReified(): "Expected reified type, actual: " + typeParameter;
+        DeclarationDescriptor containingDeclaration = typeParameter.getContainingDeclaration();
+        assert containingDeclaration instanceof CallableDescriptor:
+                "Expected type parameter " + typeParameter +
+                " to be contained in CallableDescriptor, actual: " + containingDeclaration.getClass();
+
+        CallableDescriptor containingDescriptor = (CallableDescriptor) containingDeclaration;
+        int index = countReifiedTypesBefore(containingDescriptor.getTypeParameters(), typeParameter.getIndex());
+        JsFunction containingFunction = context().getFunctionObject(containingDescriptor);
+        JsParameter isTypeFunParameter = containingFunction.getParameters().get(index);
+        return isTypeFunParameter.getName().makeRef();
+    }
+
+    private static int countReifiedTypesBefore(
+            @NotNull List<TypeParameterDescriptor> typeParameters,
+            int typeParamIndex
+    ) {
+        int count = 0;
+
+        for (TypeParameterDescriptor typeParameter : typeParameters) {
+            if (typeParameter.getIndex() >= typeParamIndex) break;
+
+            if (typeParameter.isReified()) {
+                count++;
+            }
         }
-        return typeof(expressionToMatch, program().getStringLiteral(jsSTypeName));
+
+        return count;
     }
 
     @NotNull
@@ -124,9 +168,8 @@ public final class PatternTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private JsNameRef getClassNameReference(@NotNull JetTypeReference typeReference) {
-        ClassDescriptor referencedClass = BindingUtils.getClassDescriptorForTypeReference
-            (bindingContext(), typeReference);
+    private JsNameRef getClassNameReference(@NotNull JetType type) {
+        ClassDescriptor referencedClass = DescriptorUtils.getClassDescriptorForType(type);
         return context().getQualifiedReference(referencedClass);
     }
 

@@ -368,8 +368,13 @@ public final class Namer {
     }
 
     @NotNull
-    public JsExpression isOperationReference() {
-        return kotlin(isTypeName);
+    public JsExpression isTypeOf(@NotNull JsExpression type) {
+        return new JsInvocation(kotlin("isTypeOf"), type);
+    }
+
+    @NotNull
+    public JsExpression isInstanceOf(@NotNull JsExpression type) {
+        return new JsInvocation(kotlin("isInstanceOf"), type);
     }
 
     @NotNull

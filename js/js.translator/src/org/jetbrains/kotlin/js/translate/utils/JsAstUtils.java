@@ -169,16 +169,6 @@ public final class JsAstUtils {
     }
 
     @NotNull
-    public static JsExpression isNumber(@NotNull JsExpression expression) {
-        return invokeKotlinFunction(Namer.IS_NUMBER, expression);
-    }
-
-    @NotNull
-    public static JsExpression isChar(@NotNull JsExpression expression) {
-        return invokeKotlinFunction(Namer.IS_CHAR, expression);
-    }
-
-    @NotNull
     private static JsExpression rangeTo(@NotNull String rangeClassName, @NotNull JsExpression rangeStart, @NotNull JsExpression rangeEnd) {
         JsNameRef expr = new JsNameRef(rangeClassName, Namer.KOTLIN_NAME);
         JsNew numberRangeConstructorInvocation = new JsNew(expr);
@@ -194,11 +184,6 @@ public final class JsAstUtils {
     @NotNull
     public static JsExpression charRangeTo(@NotNull JsExpression rangeStart, @NotNull JsExpression rangeEnd) {
         return rangeTo(Namer.CHAR_RANGE, rangeStart, rangeEnd);
-    }
-
-    @NotNull
-    public static JsExpression isLong(@NotNull JsExpression expression) {
-        return instanceOf(expression, Namer.KOTLIN_LONG_NAME_REF);
     }
 
     public static JsExpression newLong(long value, @NotNull TranslationContext context) {
@@ -257,11 +242,6 @@ public final class JsAstUtils {
     @NotNull
     public static JsBinaryOperation or(@NotNull JsExpression op1, @NotNull JsExpression op2) {
         return new JsBinaryOperation(JsBinaryOperator.OR, op1, op2);
-    }
-
-    @NotNull
-    public static JsBinaryOperation instanceOf(@NotNull JsExpression op1, @NotNull JsExpression op2) {
-        return new JsBinaryOperation(JsBinaryOperator.INSTANCEOF, op1, op2);
     }
 
     public static void setQualifier(@NotNull JsExpression selector, @Nullable JsExpression receiver) {

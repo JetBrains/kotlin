@@ -18,18 +18,21 @@ package org.jetbrains.kotlin.js.translate.reference
 
 import com.google.dart.compiler.backend.js.ast.*
 import com.intellij.util.SmartList
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.js.descriptorUtils.nameIfStandardType
 import org.jetbrains.kotlin.js.translate.context.TemporaryConstVariable
 import org.jetbrains.kotlin.js.translate.context.TemporaryVariable
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
+import org.jetbrains.kotlin.js.translate.expression.PatternTranslator
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator
 import org.jetbrains.kotlin.js.translate.general.Translation
-import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
-import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
-import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
+import org.jetbrains.kotlin.js.translate.utils.*
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.*
+import org.jetbrains.kotlin.types.JetType
 
 import java.util.ArrayList
 import java.util.Collections
@@ -41,7 +44,7 @@ public class CallArgumentTranslator private (
         context: TranslationContext
 ) : AbstractTranslator(context) {
 
-    public class ArgumentsInfo(
+    public data class ArgumentsInfo(
             public val translateArguments: List<JsExpression>,
             public val hasSpreadOperator: Boolean,
             public val cachedReceiver: TemporaryConstVariable?
@@ -174,7 +177,14 @@ public class CallArgumentTranslator private (
             val argumentTranslator = CallArgumentTranslator(resolvedCall, receiver, innerContext)
             val result = argumentTranslator.translate()
             context.moveVarsFrom(innerContext)
-            return result
+            val callDescriptor = resolvedCall.getCandidateDescriptor()
+
+            if (CallExpressionTranslator.shouldBeInlined(callDescriptor)) {
+                val typeArgs = resolvedCall.getTypeArguments()
+                return typeArgs.addReifiedTypeArgsTo(result, context)
+            }
+
+            return result;
         }
 
         private fun translateSingleArgument(actualArgument: ResolvedValueArgument, result: MutableList<JsExpression>, context: TranslationContext): ArgumentsKind {
@@ -319,4 +329,25 @@ public class CallArgumentTranslator private (
         }
     }
 
+}
+
+private fun Map<TypeParameterDescriptor, JetType>.addReifiedTypeArgsTo(
+        info: CallArgumentTranslator.ArgumentsInfo,
+        context: TranslationContext
+): CallArgumentTranslator.ArgumentsInfo {
+
+    val reifiedTypeArguments = SmartList<JsExpression>()
+    val patternTranslator = PatternTranslator.newInstance(context)
+
+    for (param in keySet().sortBy { it.getIndex() }) {
+        if (!param.isReified()) continue
+
+        val argumentType = get(param)
+        if (argumentType == null) continue
+
+        val isCheckCallable = patternTranslator.getIsTypeCheckCallable(argumentType)
+        reifiedTypeArguments.add(isCheckCallable)
+    }
+
+    return info.copy(translateArguments = reifiedTypeArguments + info.translateArguments)
 }
