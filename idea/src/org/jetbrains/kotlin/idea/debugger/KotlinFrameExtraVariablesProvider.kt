@@ -62,16 +62,16 @@ private fun findAdditionalExpressions(position: SourcePosition): Set<TextWithImp
     val vFile = file.getVirtualFile()
     val doc = if (vFile != null) FileDocumentManager.getInstance().getDocument(vFile) else null
     if (doc == null || doc.getLineCount() == 0 || line > (doc.getLineCount() - 1)) {
-        return setOf()
+        return emptySet()
     }
 
     val offset = doc.getLineStartOffset(line)
-    if (offset < 0) return setOf()
+    if (offset < 0) return emptySet()
 
     val elem = file.findElementAt(offset)
     val containingElement = getContainingElement(elem) ?: elem
 
-    if (containingElement == null) return setOf()
+    if (containingElement == null) return emptySet()
 
     val limit = getLineRangeForElement(containingElement, doc)
 
@@ -85,8 +85,13 @@ private fun findAdditionalExpressions(position: SourcePosition): Set<TextWithImp
         endLine++
     }
 
-    val lineRange = TextRange(doc.getLineStartOffset(startLine), doc.getLineEndOffset(endLine))
-    if (lineRange.isEmpty()) return setOf()
+    val startOffset = doc.getLineStartOffset(startLine)
+    val endOffset = doc.getLineEndOffset(endLine)
+
+    if (startOffset >= endOffset) return emptySet()
+
+    val lineRange = TextRange(startOffset, endOffset)
+    if (lineRange.isEmpty()) return emptySet()
 
     val expressions = LinkedHashSet<TextWithImports>()
 
