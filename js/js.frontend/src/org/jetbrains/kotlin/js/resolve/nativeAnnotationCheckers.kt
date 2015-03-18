@@ -92,7 +92,8 @@ public class NativeGetterChecker : AbstractNativeIndexerChecker(PredefinedAnnota
     override fun additionalCheck(declaration: JetNamedFunction, descriptor: FunctionDescriptor, diagnosticHolder: DiagnosticSink) {
         super.additionalCheck(declaration, descriptor, diagnosticHolder)
 
-        if (!TypeUtils.isNullableType(descriptor.getReturnType())) {
+        val returnType = descriptor.getReturnType()
+        if (returnType != null && !TypeUtils.isNullableType(returnType)) {
             diagnosticHolder.report(ErrorsJs.NATIVE_GETTER_RETURN_TYPE_SHOULD_BE_NULLABLE.on(declaration))
         }
     }
@@ -103,7 +104,7 @@ public class NativeSetterChecker : AbstractNativeIndexerChecker(PredefinedAnnota
         super.additionalCheck(declaration, descriptor, diagnosticHolder)
 
         val returnType = descriptor.getReturnType()
-        if (KotlinBuiltIns.isUnit(returnType)) return
+        if (returnType == null || KotlinBuiltIns.isUnit(returnType)) return
 
         val parameters = descriptor.getValueParameters()
         if (parameters.size() < 2) return
