@@ -32,7 +32,6 @@
     <description>Object 'A' is never used</description>
   </problem>
 
-<!--
   <problem>
     <file>defaultObjectUnused.kt</file>
     <line>2</line>
@@ -50,5 +49,4 @@
     <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused Symbol</problem_class>
     <description>Object 'Named' is never used</description>
   </problem>
--->
 </problems>

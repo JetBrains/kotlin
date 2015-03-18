@@ -107,9 +107,6 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
                 if (declaration is JetParameter && (declaration.getParent()?.getParent() !is JetClass || !declaration.hasValOrVarNode())) return
                 if (declaration is JetNamedFunction && isConventionalName(declaration)) return
 
-                // TODO companion objects are temporarily disabled
-                if (isCompanionObject) return
-
                 // More expensive, resolve-based checks
                 if (isEntryPoint(declaration)) return
                 // properties can be referred by component1/component2, which is too expensive to search, don't mark them as unused
@@ -165,24 +162,26 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
         val psiSearchHelper = PsiSearchHelper.SERVICE.getInstance(declaration.getProject())
 
         val useScope = declaration.getUseScope()
-        if (useScope is GlobalSearchScope) {
-            var zeroOccurrences = true
+        if (!(declaration is JetObjectDeclaration && declaration.isCompanion())) {
+            if (useScope is GlobalSearchScope) {
+                var zeroOccurrences = true
 
-            for (name in listOf(declaration.getName()) + declaration.getAccessorNames() + declaration.getClassNameForCompanionObject().singletonOrEmptyList()) {
-                when (psiSearchHelper.isCheapEnoughToSearch(name, useScope, null, null)) {
-                    ZERO_OCCURRENCES -> {} // go on, check other names
-                    FEW_OCCURRENCES -> zeroOccurrences = false
-                    TOO_MANY_OCCURRENCES -> return true // searching usages is too expensive; behave like it is used
+                for (name in listOf(declaration.getName()) + declaration.getAccessorNames() + declaration.getClassNameForCompanionObject().singletonOrEmptyList()) {
+                    when (psiSearchHelper.isCheapEnoughToSearch(name, useScope, null, null)) {
+                        ZERO_OCCURRENCES -> {} // go on, check other names
+                        FEW_OCCURRENCES -> zeroOccurrences = false
+                        TOO_MANY_OCCURRENCES -> return true // searching usages is too expensive; behave like it is used
+                    }
                 }
-            }
 
-            if (zeroOccurrences) {
-                return false
+                if (zeroOccurrences) {
+                    return false
+                }
             }
         }
 
         val searchHelper: UsagesSearchHelper<out JetNamedDeclaration> = when (declaration) {
-            is JetClass -> ClassUsagesSearchHelper(constructorUsages = true, nonConstructorUsages = true, skipImports = true)
+            is JetClassOrObject -> ClassUsagesSearchHelper(constructorUsages = true, nonConstructorUsages = true, skipImports = true)
             is JetNamedFunction -> FunctionUsagesSearchHelper(skipImports = true)
             is JetProperty, is JetParameter -> PropertyUsagesSearchHelper(skipImports = true)
             else -> DefaultSearchHelper<JetNamedDeclaration>()
