@@ -481,6 +481,7 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractJetSafeDeleteTest>()) {
             model("safeDelete/deleteClass/kotlinClass", testMethod = "doClassTest")
+            model("safeDelete/deleteClass/kotlinClassWithJava", testMethod = "doClassTestWithJava")
             model("safeDelete/deleteObject/kotlinObject", testMethod = "doObjectTest")
             model("safeDelete/deleteFunction/kotlinFunction", testMethod = "doFunctionTest")
             model("safeDelete/deleteFunction/kotlinFunctionWithJava", testMethod = "doFunctionTestWithJava")
