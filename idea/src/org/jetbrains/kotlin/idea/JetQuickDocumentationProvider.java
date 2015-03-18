@@ -16,38 +16,41 @@
 
 package org.jetbrains.kotlin.idea;
 
-import com.google.common.base.Predicate;
 import com.intellij.lang.documentation.AbstractDocumentationProvider;
 import com.intellij.lang.java.JavaDocumentationProvider;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.PsiManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.asJava.KotlinLightMethod;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource;
+import org.jetbrains.kotlin.descriptors.SourceElement;
+import org.jetbrains.kotlin.idea.caches.resolve.KotlinCacheService;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.kdoc.KDocFinder;
 import org.jetbrains.kotlin.idea.kdoc.KDocRenderer;
+import org.jetbrains.kotlin.idea.kdoc.KdocPackage;
+import org.jetbrains.kotlin.idea.project.ResolveSessionForBodies;
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag;
 import org.jetbrains.kotlin.psi.JetDeclaration;
-import org.jetbrains.kotlin.psi.JetPackageDirective;
+import org.jetbrains.kotlin.psi.JetElement;
 import org.jetbrains.kotlin.psi.JetPsiUtil;
 import org.jetbrains.kotlin.psi.JetReferenceExpression;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
+import org.jetbrains.kotlin.resolve.source.PsiSourceElement;
+
+import java.util.Collection;
+import java.util.Collections;
 
 public class JetQuickDocumentationProvider extends AbstractDocumentationProvider {
     private static final Logger LOG = Logger.getInstance(JetQuickDocumentationProvider.class);
-
-    private static final Predicate<PsiElement> SKIP_WHITESPACE_AND_EMPTY_PACKAGE = new Predicate<PsiElement>() {
-        @Override
-        public boolean apply(PsiElement input) {
-            // Skip empty package because there can be comments before it
-            // Skip whitespaces
-            return (input instanceof JetPackageDirective && input.getChildren().length == 0) || input instanceof PsiWhiteSpace;
-        }
-    };
 
     @Override
     public String getQuickNavigateInfo(PsiElement element, PsiElement originalElement) {
@@ -116,6 +119,35 @@ public class JetQuickDocumentationProvider extends AbstractDocumentationProvider
             return renderedDecl + "<br/>Java declaration:<br/>" + originalInfo;
         }
 
+        return null;
+    }
+
+    @Override
+    public PsiElement getDocumentationElementForLink(PsiManager psiManager, String link, PsiElement context) {
+        if (!(context instanceof JetElement)) {
+            return null;
+        }
+        JetElement jetElement = (JetElement) context;
+        Project project = psiManager.getProject();
+        KotlinCacheService cacheService = KotlinCacheService.getInstance(project);
+        ResolveSessionForBodies session = cacheService.getLazyResolveSession(jetElement);
+        ResolutionFacade facade = cacheService.getResolutionFacade(Collections.singletonList(jetElement));
+        BindingContext bindingContext = facade.analyze(jetElement, BodyResolveMode.FULL);
+        DeclarationDescriptor contextDescriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, context);
+        if (contextDescriptor == null) {
+            return null;
+        }
+        Collection<DeclarationDescriptor> descriptors =
+                KdocPackage.resolveKDocLink(session, contextDescriptor, null, StringUtil.split(link, ","));
+        if (!descriptors.isEmpty()) {
+            DeclarationDescriptor target = descriptors.iterator().next();
+            if (target instanceof DeclarationDescriptorWithSource) {
+                SourceElement source = ((DeclarationDescriptorWithSource) target).getSource();
+                if (source instanceof PsiSourceElement) {
+                    return ((PsiSourceElement) source).getPsi();
+                }
+            }
+        }
         return null;
     }
 }
