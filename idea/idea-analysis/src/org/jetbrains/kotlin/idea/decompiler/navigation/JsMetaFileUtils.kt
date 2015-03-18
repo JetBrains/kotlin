@@ -29,12 +29,12 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
-import com.intellij.testFramework.BinaryLightVirtualFile
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.idea.caches.resolve.LIBRARY_NAME_PREFIX
+import org.jetbrains.kotlin.idea.decompiler.navigation.files
 import org.jetbrains.kotlin.idea.framework.JsHeaderLibraryDetectionUtil
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.name.FqName
@@ -147,7 +147,7 @@ class JsMetaFileVirtualFileHolder private(val myProject: Project) {
         return result
     }
 
-    private inner class JsMetaFileBinaryLightVirtualFile(name: String) : BinaryLightVirtualFile(name) {
+    private inner class JsMetaFileBinaryLightVirtualFile(name: String) : files.BinaryLightVirtualFile(name) {
         override fun getFileType(): FileType = JavaClassFileType.INSTANCE
     }
 }
