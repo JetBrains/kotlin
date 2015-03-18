@@ -856,6 +856,8 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
 
     @TestMetadata("idea/testData/quickfix/migration")
     @TestDataPath("$PROJECT_ROOT")
+    @InnerTestClasses({
+    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Migration extends AbstractQuickFixMultiFileTest {
         public void testAllFilesPresentInMigration() throws Exception {
@@ -867,6 +869,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/classObjectToDefaultMultiple.before.Main.kt");
             doTestWithExtraFile(fileName);
         }
+
     }
 
     @TestMetadata("idea/testData/quickfix/modifiers")

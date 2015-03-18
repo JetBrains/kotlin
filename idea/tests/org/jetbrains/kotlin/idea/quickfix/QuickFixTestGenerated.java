@@ -2887,6 +2887,9 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
 
     @TestMetadata("idea/testData/quickfix/migration")
     @TestDataPath("$PROJECT_ROOT")
+    @InnerTestClasses({
+            Migration.LambdaSyntax.class,
+    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Migration extends AbstractQuickFixTest {
         @TestMetadata("beforeAddOverrideToEqualsHashCodeToString.kt")
@@ -2903,6 +2906,63 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         public void testClassObjectToDefaultSingle() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/beforeClassObjectToDefaultSingle.kt");
             doTest(fileName);
+        }
+
+        @TestMetadata("idea/testData/quickfix/migration/lambdaSyntax")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class LambdaSyntax extends AbstractQuickFixTest {
+            public void testAllFilesPresentInLambdaSyntax() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/lambdaSyntax"), Pattern.compile("^before(\\w+)\\.kt$"), true);
+            }
+
+            @TestMetadata("beforeLabelInLiteralArgument.kt")
+            public void testLabelInLiteralArgument() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/lambdaSyntax/beforeLabelInLiteralArgument.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("beforeLabelInLiteralArgumentImplicitReceiverType.kt")
+            public void testLabelInLiteralArgumentImplicitReceiverType() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/lambdaSyntax/beforeLabelInLiteralArgumentImplicitReceiverType.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("beforeLabelInLiteralArgumentImplicitReturnType.kt")
+            public void testLabelInLiteralArgumentImplicitReturnType() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/lambdaSyntax/beforeLabelInLiteralArgumentImplicitReturnType.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("beforeLabelInLiteralArgumentOneStatement.kt")
+            public void testLabelInLiteralArgumentOneStatement() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/lambdaSyntax/beforeLabelInLiteralArgumentOneStatement.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("beforeLambdaInFunctionArgument.kt")
+            public void testLambdaInFunctionArgument() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/lambdaSyntax/beforeLambdaInFunctionArgument.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("beforeLambdaInsideLambda.kt")
+            public void testLambdaInsideLambda() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/lambdaSyntax/beforeLambdaInsideLambda.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("beforeParanthesizedParameters.kt")
+            public void testParanthesizedParameters() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/lambdaSyntax/beforeParanthesizedParameters.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("beforeReceiverAndReturnInExpression.kt")
+            public void testReceiverAndReturnInExpression() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/lambdaSyntax/beforeReceiverAndReturnInExpression.kt");
+                doTest(fileName);
+            }
         }
     }
 
