@@ -61,7 +61,7 @@ private class ClassClsStubBuilder(
     }.let {
         supertypeIds ->
         //empty supertype list if single supertype is Any
-        if (supertypeIds.singleOrNull()?.let { KotlinBuiltIns.isAny(it.asSingleFqName()) } ?: false) {
+        if (supertypeIds.singleOrNull()?.let { KotlinBuiltIns.isAny(it.asSingleFqName().toUnsafe()) } ?: false) {
             listOf()
         }
         else {
@@ -108,7 +108,8 @@ private class ClassClsStubBuilder(
         val shortName = fqName.shortName().ref()
         val superTypeRefs = supertypeIds.filter {
             //TODO: filtering function types should go away
-            !KotlinBuiltIns.isExactFunctionType(it.asSingleFqName()) && !KotlinBuiltIns.isExactExtensionFunctionType(it.asSingleFqName())
+            !KotlinBuiltIns.isExactFunctionType(it.asSingleFqName().toUnsafe()) &&
+            !KotlinBuiltIns.isExactExtensionFunctionType(it.asSingleFqName().toUnsafe())
         }.map { it.getShortClassName().ref() }.copyToArray()
         return when (classKind) {
             ProtoBuf.Class.Kind.OBJECT, ProtoBuf.Class.Kind.CLASS_OBJECT -> {

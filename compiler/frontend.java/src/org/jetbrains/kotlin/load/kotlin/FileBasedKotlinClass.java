@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader;
 import org.jetbrains.kotlin.load.kotlin.header.ReadKotlinClassHeaderAnnotationVisitor;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.org.objectweb.asm.ClassReader;
 import org.jetbrains.org.objectweb.asm.ClassVisitor;
@@ -288,7 +287,7 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
         Collections.reverse(classes);
 
         FqName packageFqName = outermostClassFqName.parent();
-        FqNameUnsafe relativeClassName = FqNameUnsafe.fromSegments(classes);
+        FqName relativeClassName = FqName.fromSegments(classes);
         return new ClassId(packageFqName, relativeClassName, local);
     }
 
