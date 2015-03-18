@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.load.kotlin.nativeDeclarations
 
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.AnnotationChecker
+import org.jetbrains.kotlin.resolve.DeclarationChecker
 import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
@@ -38,7 +38,7 @@ public fun DeclarationDescriptor.hasNativeAnnotation(): Boolean {
 
 public class SuppressNoBodyErrorsForNativeDeclarations : SuppressDiagnosticsByAnnotations(FUNCTION_NO_BODY_ERRORS, NATIVE_ANNOTATION_CLASS_NAME)
 
-public class NativeFunChecker : AnnotationChecker {
+public class NativeFunChecker : DeclarationChecker {
     override fun check(declaration: JetDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink) {
         if (!descriptor.hasNativeAnnotation()) return
 
