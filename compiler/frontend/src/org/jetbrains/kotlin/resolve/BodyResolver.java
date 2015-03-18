@@ -458,7 +458,10 @@ public class BodyResolver {
 
         JetScope scopeForInitializers = classDescriptor.getScopeForInitializerResolution();
         if (!classDescriptor.getConstructors().isEmpty()) {
-            expressionTypingServices.getType(scopeForInitializers, anonymousInitializer.getBody(), NO_EXPECTED_TYPE, c.getOuterDataFlowInfo(), trace);
+            JetExpression body = anonymousInitializer.getBody();
+            if (body != null) {
+                expressionTypingServices.getType(scopeForInitializers, body, NO_EXPECTED_TYPE, c.getOuterDataFlowInfo(), trace);
+            }
             processModifiersOnInitializer(anonymousInitializer, scopeForInitializers);
         }
         else {

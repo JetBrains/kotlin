@@ -38,11 +38,9 @@ public class JetClassInitializer extends JetDeclarationStub<KotlinPlaceHolderStu
         return visitor.visitAnonymousInitializer(this, data);
     }
 
-    @NotNull
+    @Nullable
     public JetExpression getBody() {
-        JetExpression body = findChildByClass(JetExpression.class);
-        assert body != null;
-        return body;
+        return findChildByClass(JetExpression.class);
     }
 
     @Nullable

@@ -44,7 +44,7 @@ public class AddInitKeywordFix(element: JetClassInitializer) : JetIntentionActio
 
             val psiFactory = JetPsiFactory(file)
             val initKeyword = psiFactory.createInitKeyword()
-            val anchor = element.getBody()
+            val anchor = element.getBody() ?: return
             element.addBefore(initKeyword, anchor)
             element.addBefore(psiFactory.createWhiteSpace(), anchor)
 
