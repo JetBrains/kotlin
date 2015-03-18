@@ -107,6 +107,9 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
                 if (declaration is JetParameter && (declaration.getParent()?.getParent() !is JetClass || !declaration.hasValOrVarNode())) return
                 if (declaration is JetNamedFunction && isConventionalName(declaration)) return
 
+                // TODO companion objects are temporarily disabled
+                if (isCompanionObject) return
+
                 // More expensive, resolve-based checks
                 if (isEntryPoint(declaration)) return
                 // properties can be referred by component1/component2, which is too expensive to search, don't mark them as unused
