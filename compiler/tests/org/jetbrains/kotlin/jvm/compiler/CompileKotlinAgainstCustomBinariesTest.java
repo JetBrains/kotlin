@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollectorPlainTextToStrea
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
@@ -222,15 +223,21 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
                 "-d", tmpdir.getPath()
         ));
 
+        ClassWriter cw;
         File inlineFunClass = new File(tmpdir.getAbsolutePath(), "test/A.class");
-        ClassReader reader = new ClassReader(new FileInputStream(inlineFunClass));
-        ClassWriter cw = new ClassWriter(Opcodes.ASM5);
-        reader.accept(new ClassVisitor(Opcodes.ASM5, cw) {
-            @Override
-            public void visitSource(String source, String debug) {
-                //skip debug info
-            }
-        }, 0);
+        FileInputStream is = new FileInputStream(inlineFunClass);
+        try {
+            ClassReader reader = new ClassReader(is);
+            cw = new ClassWriter(Opcodes.ASM5);
+            reader.accept(new ClassVisitor(Opcodes.ASM5, cw) {
+                @Override
+                public void visitSource(String source, String debug) {
+                    //skip debug info
+                }
+            }, 0);
+        } finally {
+            is.close();
+        }
 
         assert inlineFunClass.delete();
         assert !inlineFunClass.exists();
@@ -250,16 +257,21 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
                 "-d", tmpdir.getPath()
         ));
 
-        File resultFile = new File(tmpdir.getAbsolutePath(), "test/B.class");
-        reader = new ClassReader(new FileInputStream(resultFile));
         final Ref<String> debugInfo = new Ref<String>();
-        reader.accept(new ClassVisitor(Opcodes.ASM5) {
-            @Override
-            public void visitSource(String source, String debug) {
-                //skip debug info
-                debugInfo.set(debug);
-            }
-        }, 0);
+        File resultFile = new File(tmpdir.getAbsolutePath(), "test/B.class");
+        FileInputStream resultStream = new FileInputStream(resultFile);
+        try {
+            ClassReader reader = new ClassReader(resultStream);
+            reader.accept(new ClassVisitor(Opcodes.ASM5) {
+                @Override
+                public void visitSource(String source, String debug) {
+                    //skip debug info
+                    debugInfo.set(debug);
+                }
+            }, 0);
+        } finally {
+            resultStream.close();
+        }
 
         String expected = "SMAP\n" +
                           "source.kt\n" +
@@ -272,6 +284,10 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
                           "1#1,13:1\n" +
                           "*E\n";
 
-        assertEquals(expected, debugInfo.get());
+        if (InlineCodegenUtil.GENERATE_SMAP) {
+            assertEquals(expected, debugInfo.get());
+        } else {
+            assertEquals(null, debugInfo.get());
+        }
     }
 }

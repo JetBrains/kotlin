@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.jvm.compiler
 
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.backend.common.output.OutputFile
+import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetFile
@@ -65,6 +66,10 @@ public trait AbstractSMAPBaseTest {
     }
 
     fun checkSMAP(inputFiles: List<JetFile>, outputFiles: List<OutputFile>) {
+        if (!InlineCodegenUtil.GENERATE_SMAP) {
+            return
+        }
+
         val sourceData = inputFiles.map { extractSmapFromSource(it) }.filterNotNull()
         val compiledData = extractSMAPFromClasses(outputFiles).groupBy {
             it.sourceFile

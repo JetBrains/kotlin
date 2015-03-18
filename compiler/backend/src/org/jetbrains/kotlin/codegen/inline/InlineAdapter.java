@@ -87,7 +87,12 @@ public class InlineAdapter extends InstructionAdapter {
 
     @Override
     public void visitLineNumber(int line, Label start) {
-        sourceMapper.visitLineNumber(mv, line, start);
+        if (InlineCodegenUtil.GENERATE_SMAP) {
+            sourceMapper.visitLineNumber(mv, line, start);
+        }
+        else {
+            super.visitLineNumber(line, start);
+        }
     }
 
     @Override
