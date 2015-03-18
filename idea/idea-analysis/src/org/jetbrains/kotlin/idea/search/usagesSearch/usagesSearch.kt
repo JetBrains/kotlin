@@ -103,7 +103,8 @@ public trait UsagesSearchFilter {
 public data class UsagesSearchRequestItem(
         val target: UsagesSearchTarget<PsiElement>,
         val words: List<String>,
-        val filter: UsagesSearchFilter
+        val filter: UsagesSearchFilter,
+        val additionalSearchDelegate: ((Processor<PsiReference>) -> Boolean)?
 )
 
 public data class UsagesSearchRequest(val project: Project, val items: List<UsagesSearchRequestItem>) {
@@ -164,7 +165,8 @@ public object UsagesSearch: QueryFactory<PsiReference, UsagesSearchRequest>() {
         val executorImpl = object : QueryExecutorBase<PsiReference, UsagesSearchRequest>() {
             override fun processQuery(request: UsagesSearchRequest, consumer: Processor<PsiReference>) {
                 val searchHelper = KotlinPsiSearchHelper(request.project)
-                request.items.filter { it.filter != False }.all { searchHelper.processFilesWithText(it, consumer) }
+                request.items.filter { it.filter != False }.all {
+                    searchHelper.processFilesWithText(it, consumer) && (it.additionalSearchDelegate?.invoke(consumer) ?: true) }
             }
         }
 

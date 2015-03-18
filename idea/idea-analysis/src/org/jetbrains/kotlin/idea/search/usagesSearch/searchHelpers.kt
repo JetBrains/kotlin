@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchFilter.*
 import java.util.Collections
 import java.util.ArrayList
 import com.intellij.psi.PsiNamedElement
+import com.intellij.util.Processor
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.LightClassUtil.PropertyAccessorsPsiMethods
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -33,7 +34,10 @@ import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.idea.references.*
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.scopes.receivers.ClassReceiver
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 
 val isTargetUsage = (PsiReference::matchesTarget).searchFilter
@@ -113,8 +117,10 @@ public abstract class UsagesSearchHelper<T : PsiNamedElement> {
     protected open fun makeItemList(target: UsagesSearchTarget<T>): List<UsagesSearchRequestItem> =
             Collections.singletonList(newItem(target))
 
+    protected open fun makeAdditionalSearchDelegate(target: T): ((Processor<PsiReference>) -> Boolean)? = null
+
     fun newItem(target: UsagesSearchTarget<T>): UsagesSearchRequestItem {
-        return UsagesSearchRequestItem(target, makeWordList(target), makeFilter(target))
+        return UsagesSearchRequestItem(target, makeWordList(target), makeFilter(target), makeAdditionalSearchDelegate(target.element))
     }
 
     fun newRequest(target: UsagesSearchTarget<T>): UsagesSearchRequest {
@@ -151,6 +157,32 @@ class ClassUsagesSearchHelper(
                 !constructorUsages && !nonConstructorUsages -> False
                 else -> True
             }
+
+    override fun makeAdditionalSearchDelegate(target: JetClassOrObject): ((Processor<PsiReference>) -> Boolean)? {
+        if (target is JetObjectDeclaration && target.isCompanion()) {
+            val companionObjectDescriptor = target.descriptor
+            val klass = target.getStrictParentOfType<JetClass>() ?: return null
+            return { processor ->
+                klass.acceptChildren(object : JetVisitorVoid() {
+                    override fun visitJetElement(element: JetElement) {
+                        if (element == target) return // skip companion object itself
+                        element.acceptChildren(this)
+
+                        val bindingContext = element.analyze()
+                        val call = bindingContext[BindingContext.CALL, element] ?: return
+                        val resolvedCall = bindingContext[BindingContext.RESOLVED_CALL, call] ?: return
+                        if ((resolvedCall.getDispatchReceiver() as? ClassReceiver)?.getDeclarationDescriptor() == companionObjectDescriptor
+                            || (resolvedCall.getExtensionReceiver() as? ClassReceiver)?.getDeclarationDescriptor() == companionObjectDescriptor) {
+                            element.getReference()?.let { processor.process(it) }
+                        }
+                    }
+                })
+
+                true
+            }
+        }
+        return null
+    }
 }
 
 class ClassDeclarationsUsagesSearchHelper(
