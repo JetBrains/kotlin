@@ -20,8 +20,10 @@ import com.intellij.codeInsight.FileModificationService
 import com.intellij.codeInsight.daemon.QuickFixBundle
 import com.intellij.codeInspection.*
 import com.intellij.codeInspection.deadCode.UnusedDeclarationInspection
+import com.intellij.codeInspection.ex.EntryPointsManager
 import com.intellij.codeInspection.ex.EntryPointsManagerImpl
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.ProjectUtil
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
