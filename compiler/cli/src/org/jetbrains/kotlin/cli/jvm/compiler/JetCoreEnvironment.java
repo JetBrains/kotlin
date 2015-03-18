@@ -22,18 +22,17 @@ import com.intellij.core.CoreApplicationEnvironment;
 import com.intellij.core.CoreJavaFileManager;
 import com.intellij.core.JavaCoreApplicationEnvironment;
 import com.intellij.core.JavaCoreProjectEnvironment;
+import com.intellij.ide.plugins.IdeaPluginDescriptorImpl;
+import com.intellij.ide.plugins.PluginManagerCoreProxy;
 import com.intellij.lang.java.JavaParserDefinition;
 import com.intellij.mock.MockApplication;
 import com.intellij.mock.MockProject;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.application.Application;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.fileTypes.PlainTextFileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElementFinder;
 import com.intellij.psi.PsiManager;
@@ -45,6 +44,8 @@ import kotlin.Function1;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
+import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension;
+import org.jetbrains.kotlin.extensions.ExternalDeclarationsProvider;
 import org.jetbrains.kotlin.asJava.JavaElementFinder;
 import org.jetbrains.kotlin.asJava.KotlinLightClassForPackage;
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport;
@@ -53,11 +54,9 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.cli.jvm.JVMConfigurationKeys;
-import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension;
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar;
 import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
-import org.jetbrains.kotlin.extensions.ExternalDeclarationsProvider;
 import org.jetbrains.kotlin.idea.JetFileType;
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache;
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory;
@@ -171,22 +170,22 @@ public class JetCoreEnvironment {
     }
 
     private static void registerApplicationExtensionPointsAndExtensionsFrom(@NotNull CompilerConfiguration configuration, @NotNull String configFilePath) {
+        IdeaPluginDescriptorImpl descriptor;
         CompilerJarLocator locator = configuration.get(JVMConfigurationKeys.COMPILER_JAR_LOCATOR);
-        File pluginRoot = locator == null ? PathUtil.getPathUtilJar() : locator.getCompilerJar();
-
-        Application app = ApplicationManager.getApplication();
-        File parentFile = pluginRoot.getParentFile();
-
-        if (pluginRoot.isDirectory() &&
-            app != null && app.isUnitTestMode() &&
-            FileUtil.toCanonicalPath(parentFile.getPath()).endsWith("out/production")
-        ) {
+        File jar = locator == null ? PathUtil.getPathUtilJar() : locator.getCompilerJar();
+        if (jar.isFile()) {
+            descriptor = PluginManagerCoreProxy.loadDescriptorFromJar(jar, configFilePath);
+        }
+        else {
             // hack for load extensions when compiler run directly from out directory(e.g. in tests)
-            File srcDir = parentFile.getParentFile().getParentFile();
-            pluginRoot = new File(srcDir, "idea/src");
+            File srcDir = jar.getParentFile().getParentFile().getParentFile();
+            File pluginDir = new File(srcDir, "idea/src");
+            descriptor = PluginManagerCoreProxy.loadDescriptorFromDir(pluginDir, configFilePath);
         }
 
-        CoreApplicationEnvironment.registerExtensionPointAndExtensions(pluginRoot, configFilePath, Extensions.getRootArea());
+        assert descriptor != null : "Can not load descriptor from " + configFilePath + " relative to " + jar;
+
+        PluginManagerCoreProxy.registerExtensionPointsAndExtensions(Extensions.getRootArea(), Collections.singletonList(descriptor));
     }
 
     private static void registerApplicationServicesForCLI(@NotNull JavaCoreApplicationEnvironment applicationEnvironment) {
