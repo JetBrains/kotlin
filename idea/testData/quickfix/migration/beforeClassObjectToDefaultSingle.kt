@@ -1,4 +1,4 @@
-// "Replace 'class' keyword with 'default' modifier" "true"
+// "Replace 'class' keyword with 'companion' modifier" "true"
 
 class A {
     public class<caret> object {
