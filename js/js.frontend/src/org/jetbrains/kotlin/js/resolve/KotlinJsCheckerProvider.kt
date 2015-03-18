@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.js.resolve
 
 import org.jetbrains.kotlin.resolve.AdditionalCheckerProvider
-import org.jetbrains.kotlin.resolve.AnnotationChecker
+import org.jetbrains.kotlin.resolve.DeclarationChecker
 import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
@@ -34,12 +34,12 @@ import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.js.resolve.diagnostics.JsCallChecker
 
 public object KotlinJsCheckerProvider : AdditionalCheckerProvider(
-        additionalAnnotationCheckers = listOf(NativeInvokeChecker(), NativeGetterChecker(), NativeSetterChecker()),
+        additionalDeclarationCheckers = listOf(NativeInvokeChecker(), NativeGetterChecker(), NativeSetterChecker()),
         additionalCallCheckers = listOf(JsCallChecker()),
         additionalTypeCheckers = listOf()
 )
 
-private abstract class AbstractNativeAnnotationsChecker(private val requiredAnnotation: PredefinedAnnotation) : AnnotationChecker {
+private abstract class AbstractNativeAnnotationsChecker(private val requiredAnnotation: PredefinedAnnotation) : DeclarationChecker {
 
     open fun additionalCheck(declaration: JetNamedFunction, descriptor: FunctionDescriptor, diagnosticHolder: DiagnosticSink) {}
 
