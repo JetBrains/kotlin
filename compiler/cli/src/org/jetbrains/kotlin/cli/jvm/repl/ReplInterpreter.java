@@ -163,7 +163,7 @@ public class ReplInterpreter {
             }
         }
 
-        this.classLoader = new ReplClassLoader(new URLClassLoader(classpath.toArray(new URL[classpath.size()])));
+        this.classLoader = new ReplClassLoader(new URLClassLoader(classpath.toArray(new URL[classpath.size()]), null));
     }
 
     private static void prepareForTheNextReplLine(@NotNull TopDownAnalysisContext c) {
