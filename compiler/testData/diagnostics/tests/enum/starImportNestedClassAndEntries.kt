@@ -6,7 +6,7 @@ enum class E {
     ANOTHER
 
     class Nested {
-        default object {
+        companion object {
             fun foo() = 42
         }
     }

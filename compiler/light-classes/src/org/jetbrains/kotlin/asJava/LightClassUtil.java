@@ -150,12 +150,12 @@ public class LightClassUtil {
     }
 
     @Nullable
-    public static PsiField getLightFieldForDefaultObject(@NotNull JetClassOrObject defaultObject) {
-        PsiClass outerPsiClass = getWrappingClass(defaultObject);
+    public static PsiField getLightFieldForCompanionObject(@NotNull JetClassOrObject companionObject) {
+        PsiClass outerPsiClass = getWrappingClass(companionObject);
         if (outerPsiClass != null) {
             for (PsiField fieldOfParent : outerPsiClass.getFields()) {
-                if (((KotlinLightElement<?, ?>) fieldOfParent).getOrigin() == defaultObject &&
-                    fieldOfParent.getName().equals(defaultObject.getName())) { // TODO this check is relevant while light class has deprecated OBJECT$ field
+                if (((KotlinLightElement<?, ?>) fieldOfParent).getOrigin() == companionObject &&
+                    fieldOfParent.getName().equals(companionObject.getName())) { // TODO this check is relevant while light class has deprecated OBJECT$ field
                     return fieldOfParent;
                 }
             }

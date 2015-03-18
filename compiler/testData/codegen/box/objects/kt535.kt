@@ -3,7 +3,7 @@ class Identifier<T>(t : T?, myHasDollar : Boolean) {
 
     public fun getName() : T? { return myT }
 
-    default object {
+    companion object {
         open public fun init<T>(name : T?) : Identifier<T> {
             val __ = Identifier<T>(name, false)
             return __

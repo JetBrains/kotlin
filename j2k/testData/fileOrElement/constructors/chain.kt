@@ -10,7 +10,7 @@ class C(arg1: Int, arg2: Int, arg3: Int) {
 }
 
 public class User {
-    default object {
+    companion object {
         public fun main() {
             val c1 = C(1, 2, 3)
             val c2 = C(5, 6)

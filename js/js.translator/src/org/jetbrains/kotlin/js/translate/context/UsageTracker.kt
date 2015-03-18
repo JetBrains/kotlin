@@ -98,7 +98,7 @@ private fun ReceiverParameterDescriptor.getNameForCapturedReceiver(): String {
         "receiverDescriptor = $this, " +"containingDeclaration = $containingDeclaration"
     }
 
-    if (DescriptorUtils.isDefaultObject(containingDeclaration)) {
+    if (DescriptorUtils.isCompanionObject(containingDeclaration)) {
         return containingDeclaration.getContainingDeclaration()!!.getNameForCapturedDescriptor(namePostfix = "$")
     }
 

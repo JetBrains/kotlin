@@ -25,7 +25,7 @@ JetFile: ByClauses.kt
       PsiWhiteSpace('\n  ')
       OBJECT_DECLARATION
         MODIFIER_LIST
-          PsiElement(default)('default')
+          PsiElement(companion)('companion')
         PsiWhiteSpace(' ')
         PsiElement(object)('object')
         PsiWhiteSpace(' ')
@@ -77,7 +77,7 @@ JetFile: ByClauses.kt
       PsiWhiteSpace('\n  ')
       OBJECT_DECLARATION
         MODIFIER_LIST
-          PsiElement(default)('default')
+          PsiElement(companion)('companion')
         PsiWhiteSpace(' ')
         PsiElement(object)('object')
         PsiWhiteSpace(' ')
@@ -114,7 +114,7 @@ JetFile: ByClauses.kt
       PsiWhiteSpace('\n  ')
       OBJECT_DECLARATION
         MODIFIER_LIST
-          PsiElement(default)('default')
+          PsiElement(companion)('companion')
         PsiWhiteSpace(' ')
         PsiElement(object)('object')
         PsiWhiteSpace(' ')
@@ -160,7 +160,7 @@ JetFile: ByClauses.kt
       PsiWhiteSpace('\n  ')
       OBJECT_DECLARATION
         MODIFIER_LIST
-          PsiElement(default)('default')
+          PsiElement(companion)('companion')
         PsiWhiteSpace(' ')
         PsiElement(object)('object')
         PsiWhiteSpace(' ')
@@ -209,7 +209,7 @@ JetFile: ByClauses.kt
       PsiWhiteSpace('\n  ')
       OBJECT_DECLARATION
         MODIFIER_LIST
-          PsiElement(default)('default')
+          PsiElement(companion)('companion')
         PsiWhiteSpace(' ')
         PsiElement(object)('object')
         PsiWhiteSpace(' ')
@@ -259,7 +259,7 @@ JetFile: ByClauses.kt
       PsiWhiteSpace('\n  ')
       OBJECT_DECLARATION
         MODIFIER_LIST
-          PsiElement(default)('default')
+          PsiElement(companion)('companion')
         PsiWhiteSpace(' ')
         PsiElement(object)('object')
         PsiWhiteSpace(' ')
@@ -321,7 +321,7 @@ JetFile: ByClauses.kt
       PsiWhiteSpace('\n  ')
       OBJECT_DECLARATION
         MODIFIER_LIST
-          PsiElement(default)('default')
+          PsiElement(companion)('companion')
         PsiWhiteSpace(' ')
         PsiElement(object)('object')
         PsiWhiteSpace(' ')

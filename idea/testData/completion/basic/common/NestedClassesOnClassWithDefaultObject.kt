@@ -2,7 +2,7 @@ class A {
     class Nested
     inner class Inner
 
-    default object {
+    companion object {
         class Nested2
         val c: Int = 1
         object Obj2
@@ -19,7 +19,7 @@ fun some() {
 }
 
 // EXIST: Nested
-// EXIST: Default
+// EXIST: Companion
 // EXIST: c
 // EXIST: foo
 // EXIST: Obj

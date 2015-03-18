@@ -2,7 +2,7 @@ class A {
     private val p: Int
         get() = 4
 
-    default object B {
+    companion object B {
         val p: Int
             get() = 6
     }

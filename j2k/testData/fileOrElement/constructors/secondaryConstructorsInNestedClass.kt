@@ -48,7 +48,7 @@ class Outer {
         }
     }
 
-    default object {
+    companion object {
 
         fun foo() {
             val nested1 = Nested1(1)

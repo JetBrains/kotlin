@@ -1,7 +1,7 @@
 package classObjectFunFromTopLevel
 
 class A {
-    default object {
+    companion object {
         fun bar() {
             val a = 1
         }

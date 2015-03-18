@@ -1,7 +1,7 @@
 package `package`
 
 class `class` {
-    default object {
+    companion object {
         val `val` = `class`()
     }
 }

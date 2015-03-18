@@ -1,8 +1,8 @@
 class A {
-    private default object {
+    private companion object {
         class B {
             class C {
-                default object {
+                companion object {
                     fun foo() {}
                 }
             }
@@ -10,6 +10,6 @@ class A {
     }
 }
 
-fun f1() = A.Default.B.<!INVISIBLE_MEMBER!>C<!>
+fun f1() = A.Companion.B.<!INVISIBLE_MEMBER!>C<!>
 
-fun f2() = A.Default.B.C.<!INVISIBLE_MEMBER!>foo<!>()
+fun f2() = A.Companion.B.C.<!INVISIBLE_MEMBER!>foo<!>()

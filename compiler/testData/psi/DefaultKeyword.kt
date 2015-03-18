@@ -1,44 +1,44 @@
 class A {
-    default object {
+    companion object {
 
     }
 }
 
 class A {
-    default object
+    companion object
 
     val c: Int = 1
 }
 
 class B {
-    public default object A {
+    public companion object A {
 
     }
 }
 
 class B {
-    default object A {
-        default object {
+    companion object A {
+        companion object {
         }
     }
 }
 
-default object B
+companion object B
 //should be error
-default object {
+companion object {
 
 }
 
 object A {
-    default object
+    companion object
 }
 
 trait A {
-    default object
+    companion object
 
     class C {
-        default object C {
-            default object
+        companion object C {
+            companion object
         }
     }
 }
@@ -46,27 +46,27 @@ trait A {
 enum class D {
     A B
 
-    default object
+    companion object
 }
 
 class A {
-    default class object
+    companion class object
 }
 
 //should be error
 class A {
-    class default object
+    class companion object
 }
 
 class A {
-    default public final object
+    companion public final object
 }
 
 //should be error
-default class {}
+companion class {}
 
 //should be error
-val t = default object {
+val t = companion object {
 
 }
 
@@ -74,12 +74,12 @@ enum class I {
     A
     B
 
-    default object
+    companion object
 }
 
 enum class I {
     A
     B
 
-    default object {}
+    companion object {}
 }

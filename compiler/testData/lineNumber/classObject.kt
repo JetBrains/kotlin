@@ -1,5 +1,5 @@
 class A {
-    default object {
+    companion object {
         val prop = test.lineNumber()
         
         fun foo(): Int {

@@ -5,7 +5,7 @@ class Container {
 }
 
 class One {
-    default object {
+    companion object {
         var myContainer = Container()
     }
 }

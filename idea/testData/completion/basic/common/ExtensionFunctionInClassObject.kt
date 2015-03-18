@@ -3,11 +3,11 @@ package p
 class B
 
 class R {
-    default object {
+    companion object {
         fun B.f() {
             this.<caret>
         }
     }
 }
 
-// EXIST: { itemText: "f", tailText: "() for B in R.Default" }
+// EXIST: { itemText: "f", tailText: "() for B in R.Companion" }

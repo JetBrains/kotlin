@@ -11,7 +11,7 @@ trait InlineTrait {
         return s()
     }
 
-    default object {
+    companion object {
         inline final fun finalInline(s: () -> String): String {
             return s()
         }

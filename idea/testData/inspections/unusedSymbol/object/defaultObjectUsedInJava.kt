@@ -1,28 +1,28 @@
-package defaultObjectUsedInJava
+package companionObjectUsedInJava
 
 import kotlin.platform.platformStatic
 
 class A {
-    default object {
+    companion object {
         val CONST = 42
     }
 }
 
 class B {
-    default object {
+    companion object {
         platformStatic fun foo() {
         }
     }
 }
 
 class C {
-    default object Named {
+    companion object Named {
         val CONST = 42
     }
 }
 
 class D {
-    default object Named {
+    companion object Named {
         platformStatic fun foo() {
         }
     }

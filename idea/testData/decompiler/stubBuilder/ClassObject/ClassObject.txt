@@ -7,17 +7,17 @@ PsiJetFileStubImpl[package=test.class_object]
     MODIFIER_LIST:[internal final]
     VALUE_PARAMETER_LIST:
     CLASS_BODY:
-      OBJECT_DECLARATION:[fqName=test.class_object.ClassObject.Default, isDefault=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Default, superNames=[]]
-        MODIFIER_LIST:[public default]
+      OBJECT_DECLARATION:[fqName=test.class_object.ClassObject.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+        MODIFIER_LIST:[public companion]
         CLASS_BODY:
-          PROPERTY:[fqName=test.class_object.ClassObject.Default.j, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=j]
+          PROPERTY:[fqName=test.class_object.ClassObject.Companion.j, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=j]
             MODIFIER_LIST:[internal final]
             TYPE_REFERENCE:
               USER_TYPE:[isAbsoluteInRootPackage=false]
                 USER_TYPE:[isAbsoluteInRootPackage=false]
                   REFERENCE_EXPRESSION:[referencedName=kotlin]
                 REFERENCE_EXPRESSION:[referencedName=Int]
-          FUN:[fqName=test.class_object.ClassObject.Default.z, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isProbablyNothingType=false, isTopLevel=false, name=z]
+          FUN:[fqName=test.class_object.ClassObject.Companion.z, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isProbablyNothingType=false, isTopLevel=false, name=z]
             MODIFIER_LIST:[internal final]
             VALUE_PARAMETER_LIST:
             TYPE_REFERENCE:
@@ -25,22 +25,22 @@ PsiJetFileStubImpl[package=test.class_object]
                 USER_TYPE:[isAbsoluteInRootPackage=false]
                   REFERENCE_EXPRESSION:[referencedName=kotlin]
                 REFERENCE_EXPRESSION:[referencedName=Int]
-          CLASS:[fqName=test.class_object.ClassObject.Default.A, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=A, superNames=[]]
+          CLASS:[fqName=test.class_object.ClassObject.Companion.A, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=A, superNames=[]]
             MODIFIER_LIST:[internal final]
             VALUE_PARAMETER_LIST:
             CLASS_BODY:
-              CLASS:[fqName=test.class_object.ClassObject.Default.A.B, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=B, superNames=[]]
+              CLASS:[fqName=test.class_object.ClassObject.Companion.A.B, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=B, superNames=[]]
                 MODIFIER_LIST:[internal final]
                 VALUE_PARAMETER_LIST:
                 CLASS_BODY:
-                  PROPERTY:[fqName=test.class_object.ClassObject.Default.A.B.i, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=i]
+                  PROPERTY:[fqName=test.class_object.ClassObject.Companion.A.B.i, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=i]
                     MODIFIER_LIST:[internal final]
                     TYPE_REFERENCE:
                       USER_TYPE:[isAbsoluteInRootPackage=false]
                         USER_TYPE:[isAbsoluteInRootPackage=false]
                           REFERENCE_EXPRESSION:[referencedName=kotlin]
                         REFERENCE_EXPRESSION:[referencedName=Int]
-                  FUN:[fqName=test.class_object.ClassObject.Default.A.B.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isProbablyNothingType=false, isTopLevel=false, name=f]
+                  FUN:[fqName=test.class_object.ClassObject.Companion.A.B.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isProbablyNothingType=false, isTopLevel=false, name=f]
                     MODIFIER_LIST:[internal final]
                     VALUE_PARAMETER_LIST:
                     TYPE_REFERENCE:
@@ -67,31 +67,31 @@ PsiJetFileStubImpl[package=test.class_object]
         MODIFIER_LIST:[internal final]
         VALUE_PARAMETER_LIST:
         CLASS_BODY:
-          OBJECT_DECLARATION:[fqName=test.class_object.ClassObject.B.Default, isDefault=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Default, superNames=[]]
-            MODIFIER_LIST:[internal default]
+          OBJECT_DECLARATION:[fqName=test.class_object.ClassObject.B.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+            MODIFIER_LIST:[internal companion]
             CLASS_BODY:
-              CLASS:[fqName=test.class_object.ClassObject.B.Default.C, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=C, superNames=[]]
+              CLASS:[fqName=test.class_object.ClassObject.B.Companion.C, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=C, superNames=[]]
                 MODIFIER_LIST:[internal final]
                 VALUE_PARAMETER_LIST:
                 CLASS_BODY:
-                  OBJECT_DECLARATION:[fqName=test.class_object.ClassObject.B.Default.C.Default, isDefault=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Default, superNames=[]]
-                    MODIFIER_LIST:[internal default]
+                  OBJECT_DECLARATION:[fqName=test.class_object.ClassObject.B.Companion.C.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+                    MODIFIER_LIST:[internal companion]
                     CLASS_BODY:
-                      CLASS:[fqName=test.class_object.ClassObject.B.Default.C.Default.D, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=D, superNames=[]]
+                      CLASS:[fqName=test.class_object.ClassObject.B.Companion.C.Companion.D, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=D, superNames=[]]
                         MODIFIER_LIST:[internal final]
                         VALUE_PARAMETER_LIST:
                         CLASS_BODY:
-                          OBJECT_DECLARATION:[fqName=test.class_object.ClassObject.B.Default.C.Default.D.Default, isDefault=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Default, superNames=[]]
-                            MODIFIER_LIST:[internal default]
+                          OBJECT_DECLARATION:[fqName=test.class_object.ClassObject.B.Companion.C.Companion.D.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+                            MODIFIER_LIST:[internal companion]
                             CLASS_BODY:
-                              PROPERTY:[fqName=test.class_object.ClassObject.B.Default.C.Default.D.Default.i, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=i]
+                              PROPERTY:[fqName=test.class_object.ClassObject.B.Companion.C.Companion.D.Companion.i, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=i]
                                 MODIFIER_LIST:[internal final]
                                 TYPE_REFERENCE:
                                   USER_TYPE:[isAbsoluteInRootPackage=false]
                                     USER_TYPE:[isAbsoluteInRootPackage=false]
                                       REFERENCE_EXPRESSION:[referencedName=kotlin]
                                     REFERENCE_EXPRESSION:[referencedName=Int]
-                              FUN:[fqName=test.class_object.ClassObject.B.Default.C.Default.D.Default.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isProbablyNothingType=false, isTopLevel=false, name=f]
+                              FUN:[fqName=test.class_object.ClassObject.B.Companion.C.Companion.D.Companion.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isProbablyNothingType=false, isTopLevel=false, name=f]
                                 MODIFIER_LIST:[internal final]
                                 VALUE_PARAMETER_LIST:
                                 TYPE_REFERENCE:
@@ -99,7 +99,7 @@ PsiJetFileStubImpl[package=test.class_object]
                                     USER_TYPE:[isAbsoluteInRootPackage=false]
                                       REFERENCE_EXPRESSION:[referencedName=kotlin]
                                     REFERENCE_EXPRESSION:[referencedName=Unit]
-                              CLASS:[fqName=test.class_object.ClassObject.B.Default.C.Default.D.Default.Anno, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=Anno, superNames=[Annotation]]
+                              CLASS:[fqName=test.class_object.ClassObject.B.Companion.C.Companion.D.Companion.Anno, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=Anno, superNames=[Annotation]]
                                 MODIFIER_LIST:[annotation internal final]
                                 VALUE_PARAMETER_LIST:
                                 DELEGATION_SPECIFIER_LIST:
@@ -110,7 +110,7 @@ PsiJetFileStubImpl[package=test.class_object]
                                           REFERENCE_EXPRESSION:[referencedName=kotlin]
                                         REFERENCE_EXPRESSION:[referencedName=Annotation]
                                 CLASS_BODY:
-                              CLASS:[fqName=test.class_object.ClassObject.B.Default.C.Default.D.Default.En, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=En, superNames=[Enum]]
+                              CLASS:[fqName=test.class_object.ClassObject.B.Companion.C.Companion.D.Companion.En, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=En, superNames=[Enum]]
                                 MODIFIER_LIST:[enum internal final]
                                 VALUE_PARAMETER_LIST:
                                 DELEGATION_SPECIFIER_LIST:
@@ -137,10 +137,10 @@ PsiJetFileStubImpl[package=test.class_object]
                                                                 REFERENCE_EXPRESSION:[referencedName=class_object]
                                                               REFERENCE_EXPRESSION:[referencedName=ClassObject]
                                                             REFERENCE_EXPRESSION:[referencedName=B]
-                                                          REFERENCE_EXPRESSION:[referencedName=Default]
+                                                          REFERENCE_EXPRESSION:[referencedName=Companion]
                                                         REFERENCE_EXPRESSION:[referencedName=C]
-                                                      REFERENCE_EXPRESSION:[referencedName=Default]
+                                                      REFERENCE_EXPRESSION:[referencedName=Companion]
                                                     REFERENCE_EXPRESSION:[referencedName=D]
-                                                  REFERENCE_EXPRESSION:[referencedName=Default]
+                                                  REFERENCE_EXPRESSION:[referencedName=Companion]
                                                 REFERENCE_EXPRESSION:[referencedName=En]
                                 CLASS_BODY:

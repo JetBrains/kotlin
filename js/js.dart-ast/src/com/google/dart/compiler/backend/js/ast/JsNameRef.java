@@ -7,6 +7,7 @@ package com.google.dart.compiler.backend.js.ast;
 import com.google.dart.compiler.common.Symbol;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents a JavaScript expression that references a name.
@@ -43,16 +44,19 @@ public final class JsNameRef extends JsExpressionImpl implements HasName {
         return (name == null) ? ident : name.getIdent();
     }
 
+    @Nullable
     @Override
     public JsName getName() {
         return name;
     }
 
+    @Nullable
     @Override
     public Symbol getSymbol() {
         return name;
     }
 
+    @Nullable
     public JsExpression getQualifier() {
         return qualifier;
     }

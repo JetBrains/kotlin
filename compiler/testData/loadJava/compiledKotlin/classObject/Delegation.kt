@@ -7,5 +7,5 @@ trait T {
 class A : T {
     override fun foo(): Int = 42
 
-    default object : T by A()
+    companion object : T by A()
 }

@@ -13,7 +13,7 @@ class C {
         get() = this
         set(value) {}
 
-    default object {
+    companion object {
         private val classObjectVal: Long
             get() = 1L
     }

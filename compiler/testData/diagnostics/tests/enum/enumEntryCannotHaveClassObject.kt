@@ -2,7 +2,7 @@ enum class E {
     FIRST
 
     SECOND {
-        <!DEFAULT_OBJECT_NOT_ALLOWED!>default<!> object {
+        <!COMPANION_OBJECT_NOT_ALLOWED!>companion<!> object {
             fun foo() = 42
         }
     }

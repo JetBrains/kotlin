@@ -16,45 +16,12 @@
 
 package org.jetbrains.kotlin.idea.decompiler
 
-import com.intellij.openapi.util.TextRange
-import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.buildDecompiledText
-import org.jetbrains.kotlin.idea.decompiler.textBuilder.descriptorToKey
+import org.jetbrains.kotlin.idea.decompiler.textBuilder.DecompiledText
 import org.jetbrains.kotlin.utils.concurrent.block.LockedClearableLazyValue
-import org.jetbrains.kotlin.psi.JetFile
 
-public class JetClsFile(val provider: JetClassFileViewProvider) : JetFile(provider, true) {
-    private val decompiledText = LockedClearableLazyValue(Any()) {
+public class JetClsFile(val provider: JetClassFileViewProvider) : KotlinClsFileBase(provider) {
+    protected override val decompiledText: LockedClearableLazyValue<DecompiledText> = LockedClearableLazyValue(Any()) {
         buildDecompiledText(getVirtualFile())
-    }
-
-    public fun getDeclarationForDescriptor(descriptor: DeclarationDescriptor): JetDeclaration? {
-        val key = descriptorToKey(descriptor.getOriginal())
-
-        val range = decompiledText.get().renderedDescriptorsToRange[key]
-        return if (range != null) {
-            PsiTreeUtil.findElementOfClassAtRange(this, range.getStartOffset(), range.getEndOffset(), javaClass<JetDeclaration>())
-        }
-        else {
-            null
-        }
-    }
-
-    override fun getText(): String? {
-        return decompiledText.get().text
-    }
-
-    override fun onContentReload() {
-        super.onContentReload()
-
-        decompiledText.drop()
-    }
-
-    TestOnly
-    fun getRenderedDescriptorsToRange(): Map<String, TextRange> {
-        return decompiledText.get().renderedDescriptorsToRange
     }
 }

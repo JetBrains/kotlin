@@ -47,7 +47,7 @@ public trait KotlinClassStub : KotlinClassOrObjectStub<JetClass> {
 }
 
 public trait KotlinObjectStub : KotlinClassOrObjectStub<JetObjectDeclaration> {
-    public fun isDefault(): Boolean
+    public fun isCompanion(): Boolean
     public fun isObjectLiteral(): Boolean
 }
 
@@ -104,7 +104,7 @@ public trait KotlinPropertyStub : KotlinStubWithFqName<JetProperty> {
 }
 
 public trait KotlinTypeConstraintStub : StubElement<JetTypeConstraint> {
-    public fun isDefaultObjectConstraint(): Boolean
+    public fun isCompanionObjectConstraint(): Boolean
 }
 
 public trait KotlinTypeParameterStub : KotlinStubWithFqName<JetTypeParameter> {

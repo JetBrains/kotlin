@@ -1,5 +1,5 @@
 class List<out T>(val size : Int) {
-    default object {
+    companion object {
         val Nil = List<Nothing>(0)
     }
 }

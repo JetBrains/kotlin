@@ -65,7 +65,7 @@ public class KotlinLightClassForPackage private(
             }
         }
 
-        default object {
+        class object {
             public fun getInstance(project: Project): FileStubCache {
                 return ServiceManager.getService<FileStubCache>(project, javaClass<FileStubCache>())
             }
@@ -214,7 +214,7 @@ public class KotlinLightClassForPackage private(
         }
     }
 
-    default object Factory {
+    class object Factory {
         public fun create(
                 manager: PsiManager,
                 qualifiedName: FqName,

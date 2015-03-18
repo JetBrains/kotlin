@@ -144,8 +144,8 @@ public class ClassGenTest extends CodegenTestCase {
         loadFile("classes/classObjectIsInnerClass.kt");
         GeneratedClassLoader loader = generateAndCreateClassLoader();
         Class<?> a = loader.loadClass("A");
-        Class<?> defaultObject = loader.loadClass("A$" + SpecialNames.DEFAULT_NAME_FOR_DEFAULT_OBJECT.asString());
-        assertSameElements(a.getDeclaredClasses(), defaultObject);
-        assertEquals(a, defaultObject.getDeclaringClass());
+        Class<?> companionObject = loader.loadClass("A$" + SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT.asString());
+        assertSameElements(a.getDeclaredClasses(), companionObject);
+        assertEquals(a, companionObject.getDeclaringClass());
     }
 }

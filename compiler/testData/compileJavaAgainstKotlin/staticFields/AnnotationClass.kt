@@ -10,7 +10,7 @@ annotation class AFloat(val value: Float)
 
 class Test {
 
-    default object {
+    companion object {
         val vstring: String = "Test"
         val vchar: Char = 'c'
         val vint: Int = 10

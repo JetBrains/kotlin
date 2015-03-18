@@ -265,6 +265,7 @@ public class DefaultErrorMessages {
         MAP.put(VAL_OR_VAR_ON_LOOP_PARAMETER, "''{0}'' on loop parameter is not allowed", TO_STRING);
         MAP.put(VAL_OR_VAR_ON_FUN_PARAMETER, "''{0}'' on function parameter is not allowed", TO_STRING);
         MAP.put(VAL_OR_VAR_ON_CATCH_PARAMETER, "''{0}'' on catch parameter is not allowed", TO_STRING);
+        MAP.put(VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER, "''{0}'' on secondary constructor parameter is not allowed", TO_STRING);
 
         MAP.put(INITIALIZATION_USING_BACKING_FIELD_CUSTOM_SETTER,
                 "This property has a custom setter, so initialization using backing field required", NAME);
@@ -273,10 +274,10 @@ public class DefaultErrorMessages {
 
         MAP.put(UNREACHABLE_CODE, "Unreachable code", TO_STRING);
 
-        MAP.put(MANY_DEFAULT_OBJECTS, "Only one default object is allowed per class");
-        MAP.put(DEFAULT_OBJECT_NOT_ALLOWED, "A default object is not allowed here");
+        MAP.put(MANY_COMPANION_OBJECTS, "Only one companion object is allowed per class");
+        MAP.put(COMPANION_OBJECT_NOT_ALLOWED, "A companion object is not allowed here");
 
-        MAP.put(DEPRECATED_CLASS_OBJECT_SYNTAX, "'class object' syntax for default objects was deprecated. Use 'default' modifier instead");
+        MAP.put(DEPRECATED_CLASS_OBJECT_SYNTAX, "'class object' syntax for companion objects was deprecated. Use 'companion' modifier instead");
 
         MAP.put(LOCAL_OBJECT_NOT_ALLOWED, "Named object ''{0}'' is a singleton and cannot be local. Try to use anonymous object instead", NAME);
         MAP.put(LOCAL_ENUM_NOT_ALLOWED, "Enum class ''{0}'' cannot be local", NAME);
@@ -321,9 +322,9 @@ public class DefaultErrorMessages {
         MAP.put(USELESS_NULLABLE_CHECK, "Non-null type is checked for instance of nullable type");
         MAP.put(WRONG_SETTER_PARAMETER_TYPE, "Setter parameter type must be equal to the type of the property, i.e. ''{0}''", RENDER_TYPE, RENDER_TYPE);
         MAP.put(WRONG_GETTER_RETURN_TYPE, "Getter return type must be equal to the type of the property, i.e. ''{0}''", RENDER_TYPE, RENDER_TYPE);
-        MAP.put(NO_DEFAULT_OBJECT, "Please specify constructor invocation; classifier ''{0}'' does not have a default object", NAME);
+        MAP.put(NO_COMPANION_OBJECT, "Please specify constructor invocation; classifier ''{0}'' does not have a companion object", NAME);
         MAP.put(TYPE_PARAMETER_IS_NOT_AN_EXPRESSION, "Type parameter ''{0}'' is not an expression", NAME);
-        MAP.put(TYPE_PARAMETER_ON_LHS_OF_DOT, "Type parameter ''{0}'' cannot have or inherit a default object, so it cannot be on the left hand side of dot", NAME);
+        MAP.put(TYPE_PARAMETER_ON_LHS_OF_DOT, "Type parameter ''{0}'' cannot have or inherit a companion object, so it cannot be on the left hand side of dot", NAME);
         MAP.put(NO_GENERICS_IN_SUPERTYPE_SPECIFIER, "Generic arguments of the base type must be specified");
         MAP.put(NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE, "Nested {0} accessed via instance reference", RENDER_CLASS_OR_OBJECT_NAME);
         MAP.put(NESTED_CLASS_SHOULD_BE_QUALIFIED, "Nested {0} should be qualified as ''{1}''", RENDER_CLASS_OR_OBJECT_NAME, TO_STRING);
@@ -381,12 +382,12 @@ public class DefaultErrorMessages {
         });
 
         MAP.put(UPPER_BOUND_VIOLATED, "Type argument is not within its bounds: should be subtype of ''{0}''", RENDER_TYPE, RENDER_TYPE);
-        MAP.put(FINAL_DEFAULT_OBJECT_UPPER_BOUND, "''{0}'' is a final type, and thus a default object cannot extend it", RENDER_TYPE);
+        MAP.put(FINAL_COMPANION_OBJECT_UPPER_BOUND, "''{0}'' is a final type, and thus a companion object cannot extend it", RENDER_TYPE);
         MAP.put(FINAL_UPPER_BOUND, "''{0}'' is a final type, and thus a value of the type parameter is predetermined", RENDER_TYPE);
         MAP.put(DYNAMIC_UPPER_BOUND, "Dynamic type can not be used as an upper bound");
         MAP.put(USELESS_ELVIS, "Elvis operator (?:) always returns the left operand of non-nullable type {0}", RENDER_TYPE);
         MAP.put(CONFLICTING_UPPER_BOUNDS, "Upper bounds of {0} have empty intersection", NAME);
-        MAP.put(CONFLICTING_DEFAULT_OBJECT_UPPER_BOUNDS, "Default object upper bounds of {0} have empty intersection", NAME);
+        MAP.put(CONFLICTING_COMPANION_OBJECT_UPPER_BOUNDS, "Companion object upper bounds of {0} have empty intersection", NAME);
 
         MAP.put(TOO_MANY_ARGUMENTS, "Too many arguments for {0}", FQ_NAMES_IN_TYPES);
 

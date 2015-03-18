@@ -18,13 +18,13 @@ val a = object :A {}
 val b = object :A {}
 
 class B {
-    default object :A {
+    companion object :A {
 
     }
 }
 
 class C {
-    default object :
+    companion object :
             A {
 
     }

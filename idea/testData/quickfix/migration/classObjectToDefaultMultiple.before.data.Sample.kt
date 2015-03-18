@@ -1,11 +1,11 @@
 class D {
-    default public class object Named {
+    companion public class object Named {
 
     }
 }
 
 trait H {
-    default class object {
+    companion class object {
 
     }
 }
@@ -23,7 +23,7 @@ class E {
 }
 
 class K {
-    default object Default
+    companion object Companion
 
     class Object
 }

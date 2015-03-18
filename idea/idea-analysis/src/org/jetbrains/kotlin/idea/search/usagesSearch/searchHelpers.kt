@@ -63,7 +63,7 @@ fun PsiNamedElement.getAccessorNames(readable: Boolean = true, writable: Boolean
     return Collections.emptyList()
 }
 
-public fun PsiNamedElement.getClassNameForDefaultObject(): String? {
+public fun PsiNamedElement.getClassNameForCompanionObject(): String? {
     return if (this is JetObjectDeclaration) {
         getNonStrictParentOfType<JetClass>()?.getName()
     } else {
@@ -105,7 +105,7 @@ public abstract class UsagesSearchHelper<T : PsiNamedElement> {
 
     protected open fun makeWordList(target: UsagesSearchTarget<T>): List<String> {
         return with(target.element) {
-            getName().singletonOrEmptyList() + getAccessorNames() + getClassNameForDefaultObject().singletonOrEmptyList() + getSpecialNamesToSearch()
+            getName().singletonOrEmptyList() + getAccessorNames() + getClassNameForCompanionObject().singletonOrEmptyList() + getSpecialNamesToSearch()
         }
     }
 

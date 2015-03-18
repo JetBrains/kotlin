@@ -20,6 +20,17 @@ import kotlin.reflect.KProperty
 import kotlin.reflect.jvm.internal.KMemberPropertyImpl
 import kotlin.reflect.jvm.internal.KMutableMemberPropertyImpl
 
+/**
+ * Provides a way to suppress JVM access checks for a property.
+ *
+ * @getter returns `true` if JVM access checks are suppressed for this property object.
+ *         In case of a `var` property, that means that both getter and setter are accessible.
+ *
+ * @setter if set to `true`, suppresses JVM access checks for this property object.
+ *         In case of a `var` property, both getter and setter are made accessible.
+ *
+ * @see [java.lang.reflect.AccessibleObject]
+ */
 public var <R> KProperty<R>.accessible: Boolean
         get() {
             return when (this) {

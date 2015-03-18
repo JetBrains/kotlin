@@ -6,7 +6,7 @@ class A {
             return coProp + 10</selection>
         }
 
-        default object {
+        companion object {
             val coProp = 1
 
             fun coFun() {

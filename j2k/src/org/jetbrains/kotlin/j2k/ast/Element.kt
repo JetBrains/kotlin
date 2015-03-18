@@ -88,7 +88,7 @@ abstract class Element {
         override val isEmpty: Boolean get() = true
     }
 
-    default object {
+    class object {
         var saveCreationStacktraces = false
     }
 }

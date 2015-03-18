@@ -1,5 +1,5 @@
 class C {
-    default object {
+    companion object {
         val defaultGetter: Int = 1
             [native] get
 
@@ -39,8 +39,8 @@ fun box(): String {
     return check({defaultGetter}, "_DefaultPackage.getDefaultGetter()I")
            ?: check({defaultSetter = 1}, "_DefaultPackage.setDefaultSetter(I)V")
 
-           ?: check({C.defaultGetter}, "C\$Default.getDefaultGetter()I")
-           ?: check({C.defaultSetter = 1}, "C\$Default.setDefaultSetter(I)V")
+           ?: check({C.defaultGetter}, "C\$Companion.getDefaultGetter()I")
+           ?: check({C.defaultSetter = 1}, "C\$Companion.setDefaultSetter(I)V")
 
            ?: check({C().defaultGetter}, "C.getDefaultGetter()I")
            ?: check({C().defaultSetter = 1}, "C.setDefaultSetter(I)V")

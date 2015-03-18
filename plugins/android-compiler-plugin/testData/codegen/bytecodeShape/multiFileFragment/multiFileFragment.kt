@@ -13,9 +13,11 @@ class MyFragment: Fragment() {
     val button1 = this.loginButton
 }
 
-// 2 GETSTATIC
-// 11 INVOKEVIRTUAL
-// 4 CHECKCAST
-// 4  _\$_findCachedViewById
-// 2 findViewById
-// 1 getView
+// 2 public _\$_findCachedViewById
+// 2 public _\$_clearFindViewByIdCache
+// 1 INVOKEVIRTUAL com/myapp/MyFragment\.getView
+// 1 GETSTATIC com/myapp/R\$id\.login : I
+// 1 GETSTATIC com/myapp/R\$id\.loginButton : I
+// 1 INVOKEVIRTUAL com/myapp/MyActivity\._\$_findCachedViewById
+// 1 INVOKEVIRTUAL com/myapp/MyFragment\._\$_findCachedViewById
+// 2 CHECKCAST android/widget/Button

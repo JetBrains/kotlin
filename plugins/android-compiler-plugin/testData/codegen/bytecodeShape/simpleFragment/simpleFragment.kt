@@ -8,9 +8,9 @@ public class MyFragment : Fragment() {
     {login}
 }
 
-// 1 GETSTATIC
-// 6 INVOKEVIRTUAL
-// 2 CHECKCAST
-// 2  _\$_findCachedViewById
-// 1 findViewById
-// 1 getView
+// 1 public _\$_findCachedViewById
+// 1 public _\$_clearFindViewByIdCache
+// 1 INVOKEVIRTUAL com/myapp/MyFragment\.getView
+// 1 GETSTATIC com/myapp/R\$id\.login
+// 1 INVOKEVIRTUAL com/myapp/MyFragment\._\$_findCachedViewById
+// 1 CHECKCAST android/widget/Button

@@ -1,7 +1,7 @@
 package test
 
 class InClassObject {
-    default object {
+    companion object {
         class ClassObjectClass {}
 
         trait ClassObjectTrait {}
@@ -15,7 +15,7 @@ class InClassObject {
 }
 
 // SEARCH_TEXT: ClassObject
-// REF: (test.InClassObject.Default).ClassObjectClass
-// REF: (test.InClassObject.Default).ClassObjectObject
-// REF: (test.InClassObject.Default).ClassObjectTrait
-// REF: (test.InClassObject.Default).ClassObjectTraitWithImpl
+// REF: (test.InClassObject.Companion).ClassObjectClass
+// REF: (test.InClassObject.Companion).ClassObjectObject
+// REF: (test.InClassObject.Companion).ClassObjectTrait
+// REF: (test.InClassObject.Companion).ClassObjectTraitWithImpl

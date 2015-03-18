@@ -92,8 +92,8 @@ public class TaskPrioritizer(private val storageManager: StorageManager) {
         val classifierDescriptor = qualifierReceiver.classifier
         doComputeTasks(classObjectReceiver, taskPrioritizerContext.filterCollectors {
             when {
-                classifierDescriptor is ClassDescriptor && classifierDescriptor.getDefaultObjectDescriptor() != null -> {
-                    // nested classes and objects should not be accessible via short reference to default object
+                classifierDescriptor is ClassDescriptor && classifierDescriptor.getCompanionObjectDescriptor() != null -> {
+                    // nested classes and objects should not be accessible via short reference to companion object
                     it !is ConstructorDescriptor && it !is FakeCallableDescriptorForObject
                 }
                 classifierDescriptor != null && DescriptorUtils.isEnumEntry(classifierDescriptor) -> {

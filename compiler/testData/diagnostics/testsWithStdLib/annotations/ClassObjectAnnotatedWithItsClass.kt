@@ -4,7 +4,7 @@ annotation class AnnClass(val a: Class<*>)
 
 class MyClass {
 
-    AnnClass(javaClass<MyClass>()) default object {
+    AnnClass(javaClass<MyClass>()) companion object {
     }
 
 }

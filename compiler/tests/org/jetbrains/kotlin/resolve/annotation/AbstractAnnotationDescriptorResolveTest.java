@@ -45,7 +45,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.isNonDefaultObject;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isNonCompanionObject;
 
 public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFixture {
     private static final DescriptorRenderer WITH_ANNOTATION_ARGUMENT_TYPES = new DescriptorRendererBuilder()
@@ -77,9 +77,9 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
 
         ClassDescriptor myClass = getClassDescriptor(testPackage, "MyClass");
         checkDescriptor(expectedAnnotation, myClass);
-        ClassDescriptor defaultObjectDescriptor = myClass.getDefaultObjectDescriptor();
-        assert defaultObjectDescriptor != null : "Cannot find default object for class " + myClass.getName();
-        checkDescriptor(expectedAnnotation, defaultObjectDescriptor);
+        ClassDescriptor companionObjectDescriptor = myClass.getCompanionObjectDescriptor();
+        assert companionObjectDescriptor != null : "Cannot find companion object for class " + myClass.getName();
+        checkDescriptor(expectedAnnotation, companionObjectDescriptor);
         checkDescriptor(expectedAnnotation, getInnerClassDescriptor(myClass, "InnerClass"));
 
         FunctionDescriptor foo = getFunctionDescriptor(myClass, "foo");
@@ -230,7 +230,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
     @NotNull
     private ClassDescriptor getLocalObjectDescriptor(@NotNull String name) {
         ClassDescriptor localClassDescriptor = getLocalClassDescriptor(name);
-        if (isNonDefaultObject(localClassDescriptor)) {
+        if (isNonCompanionObject(localClassDescriptor)) {
             return localClassDescriptor;
         }
 

@@ -3,7 +3,7 @@ class S {
         return true
     }
 
-    default object {
+    companion object {
         fun sI(): Int {
             return 1
         }

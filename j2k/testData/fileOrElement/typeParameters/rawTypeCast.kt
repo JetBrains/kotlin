@@ -2,7 +2,7 @@
 import java.util.*
 
 class A {
-    default object {
+    companion object {
         public fun foo(): Map<String, String> {
             val props = Properties()
             return HashMap(props as Map<Any, Any>)

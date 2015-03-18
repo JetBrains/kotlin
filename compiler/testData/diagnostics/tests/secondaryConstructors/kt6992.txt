@@ -1,0 +1,10 @@
+package
+
+internal final class X</*0*/ T> {
+    public constructor X</*0*/ T>(/*0*/ t: T)
+    public constructor X</*0*/ T>(/*0*/ t: kotlin.String)
+    internal final val t: T
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

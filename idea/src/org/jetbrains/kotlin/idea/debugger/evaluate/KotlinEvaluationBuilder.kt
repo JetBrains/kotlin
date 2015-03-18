@@ -157,7 +157,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
         return null
     }
 
-    default object {
+    class object {
         private fun extractAndCompile(codeFragment: JetCodeFragment, sourcePosition: SourcePosition, context: EvaluationContextImpl): CompiledDataDescriptor {
             codeFragment.checkForErrors()
 

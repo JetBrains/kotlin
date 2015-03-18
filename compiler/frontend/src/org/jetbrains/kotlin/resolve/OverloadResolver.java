@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetClassOrObject;
 import org.jetbrains.kotlin.psi.JetDeclaration;
 import org.jetbrains.kotlin.psi.JetObjectDeclaration;
+import org.jetbrains.kotlin.psi.JetSecondaryConstructor;
 
 import javax.inject.Inject;
 import java.util.Collection;
@@ -121,9 +122,9 @@ public class OverloadResolver {
             return name;
         }
         if (jetClass instanceof JetObjectDeclaration) {
-            // must be default object
+            // must be companion object
             name = classDescriptor.getContainingDeclaration().getName().asString();
-            return "default object " + name;
+            return "companion object " + name;
         }
         // safe
         return "<unknown>";
@@ -201,7 +202,12 @@ public class OverloadResolver {
                 trace.report(Errors.REDECLARATION.on(jetDeclaration, memberDescriptor.getName().asString()));
             }
             else {
-                trace.report(Errors.CONFLICTING_OVERLOADS.on(jetDeclaration, memberDescriptor, functionContainer));
+                String containingClassName = jetDeclaration instanceof JetSecondaryConstructor ?
+                                               ((JetSecondaryConstructor) jetDeclaration).getClassOrObject().getName() : null;
+
+                trace.report(Errors.CONFLICTING_OVERLOADS.on(
+                        jetDeclaration, memberDescriptor,
+                        containingClassName != null ? containingClassName : functionContainer));
             }
         }
     }

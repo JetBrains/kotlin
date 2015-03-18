@@ -1,9 +1,9 @@
 class A {
-    default object {
+    companion object {
         class Inner {}
     }
 }
 
-val v: A.Default.Inner = <caret>
+val v: A.Companion.Inner = <caret>
 
 // ELEMENT: Inner

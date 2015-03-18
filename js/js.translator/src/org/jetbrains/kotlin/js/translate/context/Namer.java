@@ -85,8 +85,8 @@ public final class Namer {
     private static final String RECEIVER_PARAMETER_NAME = "$receiver";
 
     private static final String THROW_NPE_FUN_NAME = "throwNPE";
-    private static final String DEFAULT_OBJECT_GETTER = "object";
-    private static final String DEFAULT_OBJECT_INITIALIZER = "object_initializer$";
+    private static final String COMPANION_OBJECT_GETTER = "object";
+    private static final String COMPANION_OBJECT_INITIALIZER = "object_initializer$";
     private static final String PROTOTYPE_NAME = "prototype";
     public static final String CAPTURED_VAR_FIELD = "v";
 
@@ -173,13 +173,13 @@ public final class Namer {
     }
 
     @NotNull
-    public static JsExpression getDefaultObjectAccessor(@NotNull JsExpression referenceToClass) {
-        return new JsNameRef(DEFAULT_OBJECT_GETTER, referenceToClass);
+    public static JsExpression getCompanionObjectAccessor(@NotNull JsExpression referenceToClass) {
+        return new JsNameRef(COMPANION_OBJECT_GETTER, referenceToClass);
     }
 
     @NotNull
-    public static String getNameForDefaultObjectInitializer() {
-        return DEFAULT_OBJECT_INITIALIZER;
+    public static String getNameForCompanionObjectInitializer() {
+        return COMPANION_OBJECT_INITIALIZER;
     }
 
     @NotNull

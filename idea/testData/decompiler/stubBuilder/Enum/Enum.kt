@@ -7,7 +7,7 @@ enum class Enum {
 
     open fun f() = 3
 
-    default object {
+    companion object {
         val c: Int = 1
     }
 }

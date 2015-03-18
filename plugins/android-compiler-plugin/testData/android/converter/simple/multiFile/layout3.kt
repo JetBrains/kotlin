@@ -4,16 +4,17 @@ import android.app.Activity
 import android.app.Fragment
 import android.view.View
 import android.widget.*
+import kotlin.internal.flexible.ft
 
-val View.frameLayout: FrameLayout
+val View.frameLayout: ft<FrameLayout, FrameLayout?>
     get() = findViewById(0) as FrameLayout
 
-val View.passwordField: TextView
+val View.passwordField: ft<TextView, TextView?>
     get() = findViewById(0) as TextView
 
-val View.passwordCaption: EditText
+val View.passwordCaption: ft<EditText, EditText?>
     get() = findViewById(0) as EditText
 
-val View.loginButton: Button
+val View.loginButton: ft<Button, Button?>
     get() = findViewById(0) as Button
 

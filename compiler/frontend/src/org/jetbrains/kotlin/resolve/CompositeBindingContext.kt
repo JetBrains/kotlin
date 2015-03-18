@@ -28,7 +28,7 @@ public class CompositeBindingContext private (
         private val delegates: List<BindingContext>
 ) : BindingContext {
 
-    default object {
+    class object {
         public fun create(delegates: List<BindingContext>): BindingContext {
             if (delegates.isEmpty()) return BindingContext.EMPTY
             if (delegates.size() == 1) return delegates.first()

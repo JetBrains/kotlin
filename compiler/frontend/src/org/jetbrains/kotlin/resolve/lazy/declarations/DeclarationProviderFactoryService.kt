@@ -35,7 +35,7 @@ public abstract class DeclarationProviderFactoryService {
             filesScope: GlobalSearchScope
     ): DeclarationProviderFactory
 
-    default object {
+    class object {
         public platformStatic fun createDeclarationProviderFactory(
                 project: Project,
                 storageManager: StorageManager,

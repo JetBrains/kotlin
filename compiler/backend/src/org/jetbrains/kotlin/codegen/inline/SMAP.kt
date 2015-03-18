@@ -187,7 +187,7 @@ public open class DefaultSourceMapper(val sourceInfo: SourceInfo, override val p
 
     private var lastMappedWithChanges: RawFileMapping? = null
 
-    var fileMappings: LinkedHashMap<String, RawFileMapping> = linkedMapOf();
+    var fileMappings: LinkedHashMap<String, RawFileMapping> = linkedMapOf()
 
     protected var origin: RawFileMapping by Delegates.notNull();
     {

@@ -1,5 +1,5 @@
 class A {
-    default object B {
+    companion object B {
         class <!REDECLARATION!>G<!>
         val <!REDECLARATION!>G<!> = 1
     }

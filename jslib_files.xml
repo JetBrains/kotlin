@@ -14,8 +14,8 @@
             <include name="**/*.kt" />
         </fileset>
 
-        <fileset dir="${basedir}/core/reflection/src">
-            <include name="kotlin/**/*.kt"/>
+        <fileset dir="${basedir}/core/builtins/src">
+            <include name="kotlin/reflect/**/*.kt"/>
         </fileset>
 
         <fileset dir="${basedir}/libraries/stdlib/src">

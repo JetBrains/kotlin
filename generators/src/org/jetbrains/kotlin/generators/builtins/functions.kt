@@ -16,23 +16,24 @@
 
 package org.jetbrains.kotlin.generators.builtins.functions
 
-import java.io.PrintWriter
 import org.jetbrains.kotlin.generators.builtins.functions.FunctionKind.*
-import org.jetbrains.kotlin.generators.builtins.generateBuiltIns.*
+import org.jetbrains.kotlin.generators.builtins.generateBuiltIns.BuiltInsSourceGenerator
+import java.io.PrintWriter
 
 val MAX_PARAM_COUNT = 22
 
 enum class FunctionKind(
         private val classNamePrefix: String,
-        val docPrefix: String?,
+        val docPrefix: String,
         val hasReceiverParameter: Boolean,
         private val superClassNamePrefix: String?
 ) {
     FUNCTION : FunctionKind("Function", "A function", false, null)
     EXTENSION_FUNCTION : FunctionKind("ExtensionFunction", "An extension function", true, null)
-    K_FUNCTION : FunctionKind("KFunction", null, false, "Function")
-    K_MEMBER_FUNCTION : FunctionKind("KMemberFunction", null, true, "ExtensionFunction")
-    K_EXTENSION_FUNCTION : FunctionKind("KExtensionFunction", null, true, "ExtensionFunction")
+
+    K_FUNCTION : FunctionKind("KFunction", "A function with introspection capabilities", false, "Function")
+    K_MEMBER_FUNCTION : FunctionKind("KMemberFunction", "A member function with introspection capabilities", true, "ExtensionFunction")
+    K_EXTENSION_FUNCTION : FunctionKind("KExtensionFunction", "An extension function with introspection capabilities", true, "ExtensionFunction")
 
     fun getFileName() = (if (isReflection()) "reflect/" else "") + classNamePrefix + "s.kt"
     fun getClassName(i: Int) = classNamePrefix + i
@@ -63,7 +64,7 @@ class GenerateFunctions(out: PrintWriter, val kind: FunctionKind) : BuiltInsSour
 
     override fun generateBody() {
         for (i in 0..MAX_PARAM_COUNT) {
-            generateDocumentation(kind.docPrefix, i)
+            generateDocumentation(i)
             out.print("public trait " + kind.getClassName(i))
             generateTypeParameters(i, true)
             generateSuperClass(i)
@@ -71,10 +72,9 @@ class GenerateFunctions(out: PrintWriter, val kind: FunctionKind) : BuiltInsSour
         }
     }
 
-    fun generateDocumentation(docPrefix: String?, i: Int) {
-        if (docPrefix == null) return
+    fun generateDocumentation(i: Int) {
         val suffix = if (i == 1) "" else "s"
-        out.println("/** $docPrefix that takes $i argument${suffix}. */")
+        out.println("/** ${kind.docPrefix} that takes $i argument${suffix}. */")
     }
 
     fun generateSuperClass(i: Int) {

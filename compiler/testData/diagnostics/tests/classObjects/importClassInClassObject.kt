@@ -1,9 +1,9 @@
 package f
 
-import f.A.Default.B
+import f.A.Companion.B
 
 class A {
-    default object {
+    companion object {
         class B
     }
 }

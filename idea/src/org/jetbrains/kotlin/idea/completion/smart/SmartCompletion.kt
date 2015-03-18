@@ -231,7 +231,7 @@ class SmartCompletion(
         val typeParameter = type.type.getConstructor().getDeclarationDescriptor() as? TypeParameterDescriptor ?: return false
         if (!type.freeParameters.contains(typeParameter)) return false
         return KotlinBuiltIns.isAnyOrNullableAny(typeParameter.getUpperBoundsAsType())
-        //TODO: check for default object constraint when they are supported
+        //TODO: check for companion object constraint when they are supported
     }
 
     private fun calcExpectedInfos(expression: JetExpression): Collection<ExpectedInfo>? {
@@ -473,7 +473,7 @@ class SmartCompletion(
         }
     }
 
-    default object {
+    class object {
         public val OLD_ARGUMENTS_REPLACEMENT_OFFSET: OffsetKey = OffsetKey.create("nonFunctionReplacementOffset")
         public val MULTIPLE_ARGUMENTS_REPLACEMENT_OFFSET: OffsetKey = OffsetKey.create("multipleArgumentsReplacementOffset")
 

@@ -1,5 +1,5 @@
 class Pair(x : Int, y : Int) {
-  default object {
+  companion object {
     fun copy(from : Pair, x : Int = from.x, y : Int = from.y) = Pair(x, y)
   }
 }

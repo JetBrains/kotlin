@@ -60,8 +60,8 @@ public class TracingStrategyImpl extends AbstractTracingStrategy {
         if (descriptor instanceof FakeCallableDescriptorForObject) {
             FakeCallableDescriptorForObject fakeCallableDescriptorForObject = (FakeCallableDescriptorForObject) descriptor;
             descriptor = fakeCallableDescriptorForObject.getReferencedDescriptor();
-            if (fakeCallableDescriptorForObject.getClassDescriptor().getDefaultObjectDescriptor() != null) {
-                trace.record(SHORT_REFERENCE_TO_DEFAULT_OBJECT, reference, fakeCallableDescriptorForObject.getClassDescriptor());
+            if (fakeCallableDescriptorForObject.getClassDescriptor().getCompanionObjectDescriptor() != null) {
+                trace.record(SHORT_REFERENCE_TO_COMPANION_OBJECT, reference, fakeCallableDescriptorForObject.getClassDescriptor());
             }
         }
         DeclarationDescriptor storedReference = trace.get(REFERENCE_TARGET, reference);

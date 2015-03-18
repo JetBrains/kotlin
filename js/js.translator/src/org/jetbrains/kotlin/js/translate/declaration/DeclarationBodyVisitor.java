@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.types.JetType;
 
 import java.util.List;
 
-import static org.jetbrains.kotlin.js.translate.initializer.InitializerUtils.createDefaultObjectInitializer;
+import static org.jetbrains.kotlin.js.translate.initializer.InitializerUtils.createCompanionObjectInitializer;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getClassDescriptor;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getFunctionDescriptor;
 import static org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getSupertypesWithoutFakes;
@@ -64,6 +64,11 @@ public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
     }
 
     @Override
+    protected Void emptyResult(@NotNull TranslationContext context) {
+        return null;
+    }
+
+    @Override
     public Void visitClass(@NotNull JetClass expression, TranslationContext context) {
         return null;
     }
@@ -85,7 +90,7 @@ public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
 
     @Override
     public Void visitObjectDeclaration(@NotNull JetObjectDeclaration declaration, TranslationContext context) {
-        if (!declaration.isDefault()) {
+        if (!declaration.isCompanion()) {
             // parsed it in initializer visitor => no additional actions are needed
             return null;
         }
@@ -93,7 +98,7 @@ public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
 
         ClassDescriptor descriptor = getClassDescriptor(context.bindingContext(), declaration);
         JsFunction fun = TranslationUtils.simpleReturnFunction(context.getScopeForDescriptor(descriptor), value);
-        staticResult.add(createDefaultObjectInitializer(fun, context));
+        staticResult.add(createCompanionObjectInitializer(fun, context));
         return null;
     }
 

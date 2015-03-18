@@ -23,7 +23,7 @@ internal class InternalClass {
 trait TheTrait {
   fun abstractFun()
 
-  default object : TheClass<Int, Int> {
+  companion object : TheClass<Int, Int> {
     fun classObjectFunction(): Int {}
   }
 }
@@ -55,9 +55,9 @@ public trait TwoUpperBounds<T> where T : Number, T : Any
 //public constructor InternalClass() defined in rendererTest.InternalClass
 //internal trait TheTrait defined in rendererTest
 //internal abstract fun abstractFun(): kotlin.Unit defined in rendererTest.TheTrait
-//internal default object : rendererTest.TheClass<kotlin.Int, kotlin.Int> defined in rendererTest.TheTrait
-//private constructor Default() defined in rendererTest.TheTrait.Default
-//internal final fun classObjectFunction(): kotlin.Int defined in rendererTest.TheTrait.Default
+//internal companion object : rendererTest.TheClass<kotlin.Int, kotlin.Int> defined in rendererTest.TheTrait
+//private constructor Companion() defined in rendererTest.TheTrait.Companion
+//internal final fun classObjectFunction(): kotlin.Int defined in rendererTest.TheTrait.Companion
 //public final class WithReified<reified A, reified out B> defined in rendererTest
 //public constructor WithReified<reified A, reified out B>() defined in rendererTest.WithReified
 //<reified A> defined in rendererTest.WithReified

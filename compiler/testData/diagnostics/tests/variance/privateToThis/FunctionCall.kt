@@ -27,7 +27,7 @@ class Test<in I> {
         t.apply(t.<!INVISIBLE_MEMBER(foo; private/*private to this*/; Test)!>foo<!>())
     }
 
-    default object {
+    companion object {
         fun <I> test(t: Test<I>) {
             t.apply(t.<!INVISIBLE_MEMBER(foo; private/*private to this*/; Test)!>foo<!>())
         }

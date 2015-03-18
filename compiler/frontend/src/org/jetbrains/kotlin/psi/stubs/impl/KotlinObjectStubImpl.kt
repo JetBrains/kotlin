@@ -39,7 +39,7 @@ public class KotlinObjectStubImpl(
     override fun getName() = StringRef.toString(name)
     override fun getSuperNames() = superNames map { it.toString() }
     override fun isTopLevel() = isTopLevel
-    override fun isDefault() = isDefault
+    override fun isCompanion() = isDefault
     override fun isObjectLiteral() = isObjectLiteral
     override fun isLocal() = isLocal
 }

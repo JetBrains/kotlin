@@ -1,5 +1,5 @@
 class X {
-    default object {
+    companion object {
         fun String.f(): X = X()
         fun g(): X = X()
     }

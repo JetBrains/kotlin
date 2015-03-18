@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.js.translate.general;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.js.resolve.diagnostics.ErrorsJs;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.psi.JetDeclaration;
 import org.jetbrains.kotlin.psi.JetDeclarationContainer;
@@ -26,12 +27,14 @@ import org.jetbrains.kotlin.psi.JetVisitor;
 /**
  * This class is a base class for all visitors.
  */
-public class TranslatorVisitor<T> extends JetVisitor<T, TranslationContext> {
+public abstract class TranslatorVisitor<T> extends JetVisitor<T, TranslationContext> {
+
+    protected abstract T emptyResult(@NotNull TranslationContext context);
 
     @Override
-    @NotNull
     public T visitJetElement(@NotNull JetElement expression, TranslationContext context) {
-        throw new UnsupportedOperationException("Unsupported expression encountered:" + expression.toString());
+        context.bindingTrace().report(ErrorsJs.NOT_SUPPORTED.on(expression, expression));
+        return emptyResult(context);
     }
 
     public final void traverseContainer(@NotNull JetDeclarationContainer jetClass,

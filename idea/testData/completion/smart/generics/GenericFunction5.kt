@@ -1,5 +1,5 @@
 class C<T> {
-    default object {
+    companion object {
         fun<T> create(t: T): C<T>{}
     }
 }

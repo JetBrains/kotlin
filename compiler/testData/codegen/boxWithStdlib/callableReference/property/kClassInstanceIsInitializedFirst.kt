@@ -1,7 +1,7 @@
 import kotlin.reflect.KMemberProperty
 
 class A {
-    default object {
+    companion object {
         val ref: KMemberProperty<A, String> = A::foo
     }
 

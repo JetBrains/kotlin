@@ -38,11 +38,11 @@ public abstract class AbstractJetPsiCheckerTest extends JetLightCodeInsightFixtu
             //noinspection unchecked
             myFixture.enableInspections(SpellCheckingInspection.class);
 
-            JetPsiChecker.Default.setNamesHighlightingEnabled(false);
+            JetPsiChecker.OBJECT$.setNamesHighlightingEnabled(false);
             checkHighlighting(true, true, false);
         }
         finally {
-            JetPsiChecker.Default.setNamesHighlightingEnabled(true);
+            JetPsiChecker.OBJECT$.setNamesHighlightingEnabled(true);
         }
     }
 

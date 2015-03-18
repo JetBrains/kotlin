@@ -6,8 +6,8 @@ fun test() {
 
 Resolved call:
 
-Resulting descriptor: val EMPTY: IntRange defined in kotlin.IntRange.Default
+Resulting descriptor: val EMPTY: IntRange defined in kotlin.IntRange.Companion
 
 Explicit receiver kind = DISPATCH_RECEIVER
-Dispatch receiver = IntRange {Default}
+Dispatch receiver = IntRange {Companion}
 Extension receiver = NO_RECEIVER

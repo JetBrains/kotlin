@@ -1,5 +1,5 @@
 class A {
-    default object B {
+    companion object B {
         var state: String = "12345"
     }
 }

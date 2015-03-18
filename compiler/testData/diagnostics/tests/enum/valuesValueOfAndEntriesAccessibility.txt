@@ -29,8 +29,8 @@ internal final enum class E : kotlin.Enum<E> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     internal final fun zab(): E
 
-    internal default object Default {
-        private constructor Default()
+    internal companion object Companion {
+        private constructor Companion()
         internal final val valuez: kotlin.Array<E>
         internal final fun bar(): kotlin.Array<E>
         internal final fun baz(): E

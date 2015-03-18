@@ -1,10 +1,10 @@
 fun main(args: Array<String>) {
     val p: Foo = Foo() // simple class usage
 
-    // default object usages
+    // companion object usages
     Foo.f()
     val x = Foo
 
-    Foo.Default.f()
-    val xx = Foo.Default
+    Foo.Companion.f()
+    val xx = Foo.Companion
 }

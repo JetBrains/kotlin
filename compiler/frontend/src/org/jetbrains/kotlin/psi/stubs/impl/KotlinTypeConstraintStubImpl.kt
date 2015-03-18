@@ -24,8 +24,8 @@ import com.intellij.psi.PsiElement
 
 public class KotlinTypeConstraintStubImpl(
         parent: StubElement<out PsiElement>?,
-        private val isDefaultObjectConstraint: Boolean
+        private val isCompanionObjectConstraint: Boolean
 ) : KotlinStubBaseImpl<JetTypeConstraint>(parent, JetStubElementTypes.TYPE_CONSTRAINT), KotlinTypeConstraintStub {
 
-    override fun isDefaultObjectConstraint() = isDefaultObjectConstraint
+    override fun isCompanionObjectConstraint() = isCompanionObjectConstraint
 }

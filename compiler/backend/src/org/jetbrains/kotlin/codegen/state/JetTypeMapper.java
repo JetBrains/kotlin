@@ -300,9 +300,9 @@ public class JetTypeMapper {
         }
 
         if (descriptor instanceof ClassDescriptor) {
-            FqName defaultObjectMappedFqName = IntrinsicObjects.INSTANCE$.mapType((ClassDescriptor) descriptor);
-            if (defaultObjectMappedFqName != null) {
-                Type asmType = AsmUtil.asmTypeByFqNameWithoutInnerClasses(defaultObjectMappedFqName);
+            FqName companionObjectMappedFqName = IntrinsicObjects.INSTANCE$.mapType((ClassDescriptor) descriptor);
+            if (companionObjectMappedFqName != null) {
+                Type asmType = AsmUtil.asmTypeByFqNameWithoutInnerClasses(companionObjectMappedFqName);
                 if (signatureVisitor != null) {
                     signatureVisitor.writeAsmType(asmType);
                 }

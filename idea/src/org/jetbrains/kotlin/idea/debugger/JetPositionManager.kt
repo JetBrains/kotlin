@@ -277,7 +277,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Posi
         myTypeMappers.put(key, value)
     }
 
-    default object {
+    class object {
         public fun createTypeMapper(file: JetFile, moduleInfo: IdeaModuleInfo): JetTypeMapper {
             val project = file.getProject()
             val packageFacadeScope = moduleInfo.contentScope()
@@ -308,7 +308,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Posi
                 element is JetClassInitializer -> {
                     val parent = getElementToCalculateClassName(element.getParent())
                     // Class-object initializer
-                    if (parent is JetObjectDeclaration && parent.isDefault()) {
+                    if (parent is JetObjectDeclaration && parent.isCompanion()) {
                         return PositionedElement(getInternalClassNameForElement(parent.getParent(), typeMapper, file, isInLibrary).className, parent)
                     }
                     return getInternalClassNameForElement(element, typeMapper, file, isInLibrary)

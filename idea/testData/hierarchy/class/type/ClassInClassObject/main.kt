@@ -1,5 +1,5 @@
 class A {
-  default object {
+  companion object {
     class MyClass<caret>
   }
 }

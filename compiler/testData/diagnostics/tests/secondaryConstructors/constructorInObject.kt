@@ -10,7 +10,7 @@ enum class B {
 }
 
 class C {
-    default object {
+    companion object {
         <!SECONDARY_CONSTRUCTOR_IN_OBJECT!>constructor() {}<!>
     }
 }

@@ -23,22 +23,19 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.context.GlobalContext;
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
 import org.jetbrains.kotlin.js.config.EcmaVersion;
+import org.jetbrains.kotlin.js.config.LibrarySourcesConfig;
 import org.jetbrains.kotlin.js.config.LibrarySourcesConfigWithCaching;
 import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
-import org.jetbrains.kotlin.resolve.DelegatingBindingTrace;
 
 import java.util.List;
 import java.util.Map;
 
 public abstract class AbstractJetDiagnosticsTestWithJsStdLib extends AbstractJetDiagnosticsTest {
-
-    private LibrarySourcesConfigWithCaching config;
+    private LibrarySourcesConfig config;
 
     @Override
     protected void setUp() throws Exception {
@@ -65,12 +62,7 @@ public abstract class AbstractJetDiagnosticsTestWithJsStdLib extends AbstractJet
             ModuleDescriptorImpl module,
             BindingTrace moduleTrace
     ) {
-        BindingContext libraryContext = config.getLibraryContext();
-        DelegatingBindingTrace trace = new DelegatingBindingTrace(libraryContext, "trace with preanalyzed library");
-
         TopDownAnalyzerFacadeForJS.analyzeFilesWithGivenTrace(jetFiles, moduleTrace, module, config);
-
-        trace.addAllMyDataTo(moduleTrace);
     }
 
     @Override
@@ -93,9 +85,9 @@ public abstract class AbstractJetDiagnosticsTestWithJsStdLib extends AbstractJet
         module.addDependencyOnModule(module);
         module.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule());
 
-        ModuleDescriptor libraryModule = config.getLibraryModule();
-        assert libraryModule instanceof ModuleDescriptorImpl;
-        module.addDependencyOnModule((ModuleDescriptorImpl) libraryModule);
+        for(ModuleDescriptorImpl moduleDescriptor : config.getModuleDescriptors()) {
+            module.addDependencyOnModule(moduleDescriptor);
+        }
 
         module.seal();
 

@@ -148,7 +148,7 @@ fun computeExplicitReceiversForInvoke(
 
 trait CallCase<I : CallInfo> {
 
-    protected fun I.unsupported(message: String = "") : Nothing = throw UnsupportedOperationException("this case unsupported. $this")
+    protected fun I.unsupported(message: String = "") : Nothing = throw IllegalStateException("this case unsupported. $this")
 
     protected fun I.noReceivers(): JsExpression = unsupported()
 

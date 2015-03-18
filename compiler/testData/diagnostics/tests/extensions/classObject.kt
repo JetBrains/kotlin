@@ -1,7 +1,7 @@
 trait Tr
 
-class A { default object }
-class B { default object : Tr }
+class A { companion object }
+class B { companion object : Tr }
 
 fun Any.f1() {}
 fun Any?.f2() {}

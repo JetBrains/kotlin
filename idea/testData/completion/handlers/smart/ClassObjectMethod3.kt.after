@@ -1,7 +1,7 @@
 package sample
 
 class K {
-    default object {
+    companion object {
         fun bar(p: () -> Unit): K = K()
     }
 }

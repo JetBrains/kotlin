@@ -4,8 +4,8 @@ internal final class A : test.T {
     /*primary*/ public constructor A()
     internal open override /*1*/ fun foo(): kotlin.Int
 
-    internal default object Default : test.T {
-        /*primary*/ private constructor Default()
+    internal companion object Companion : test.T {
+        /*primary*/ private constructor Companion()
         internal open override /*1*/ /*delegation*/ fun foo(): kotlin.Int
     }
 }

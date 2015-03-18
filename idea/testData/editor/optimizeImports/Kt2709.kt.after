@@ -1,11 +1,11 @@
-import MyClass.Default.TEST
+import MyClass.Companion.TEST
 
 fun main() {
     TEST
 }
 
 class MyClass {
-    default object {
+    companion object {
         object TEST {}
     }
 }

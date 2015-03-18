@@ -3,7 +3,7 @@ trait B
 fun B.invoke(i: Int) = i
 
 class A {
-    default object: B {
+    companion object: B {
     }
 }
 

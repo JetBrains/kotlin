@@ -20,7 +20,7 @@ class Client(name: String = Server.NAME): Server() {
         println("Client")
     }
 
-    default object: Server() {
+    companion object: Server() {
 
     }
 }

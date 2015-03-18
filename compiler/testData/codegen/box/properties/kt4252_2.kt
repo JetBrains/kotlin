@@ -1,5 +1,5 @@
 class Foo() {
-    default object {
+    companion object {
         val bar = "OK";
         var boo = "FAIL";
     }

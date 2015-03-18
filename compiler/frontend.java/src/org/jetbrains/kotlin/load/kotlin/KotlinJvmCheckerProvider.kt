@@ -96,12 +96,12 @@ public class PlatformStaticAnnotationChecker : AnnotationChecker {
             diagnosticHolder: DiagnosticSink
     ) {
         val container = descriptor.getContainingDeclaration()
-        val insideObject = container != null && DescriptorUtils.isNonDefaultObject(container)
-        val insideDefaultObjectInClass =
-                container != null && DescriptorUtils.isDefaultObject(container) && DescriptorUtils.isClass(container.getContainingDeclaration())
-                container != null && DescriptorUtils.isDefaultObject(container) && DescriptorUtils.isClass(container.getContainingDeclaration())
+        val insideObject = container != null && DescriptorUtils.isNonCompanionObject(container)
+        val insideCompanionObjectInClass =
+                container != null && DescriptorUtils.isCompanionObject(container) && DescriptorUtils.isClass(container.getContainingDeclaration())
+                container != null && DescriptorUtils.isCompanionObject(container) && DescriptorUtils.isClass(container.getContainingDeclaration())
 
-        if (!insideObject && !insideDefaultObjectInClass) {
+        if (!insideObject && !insideCompanionObjectInClass) {
             diagnosticHolder.report(ErrorsJvm.PLATFORM_STATIC_NOT_IN_OBJECT.on(declaration));
         }
 

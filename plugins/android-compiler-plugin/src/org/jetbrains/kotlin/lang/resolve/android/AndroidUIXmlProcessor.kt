@@ -53,6 +53,7 @@ import com.intellij.openapi.vfs.*
 import org.jetbrains.kotlin.resolve.SimpleModificationTracker
 import kotlin.properties.*
 import com.intellij.psi.impl.*
+import org.jetbrains.kotlin.types.Flexibility
 
 public abstract class AndroidUIXmlProcessor(protected val project: Project) {
 
@@ -92,7 +93,7 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
         val commonFiles = if (generateCommonFiles) {
             val clearCacheFile = renderLayoutFile("kotlinx.android.synthetic") {} +
                              renderClearCacheFunction("Activity") + renderClearCacheFunction("Fragment")
-            listOf(clearCacheFile)
+            listOf(clearCacheFile, FLEXIBLE_TYPE_FILE)
         } else listOf()
 
         return resourceManager.getLayoutXmlFiles().flatMap { file ->
@@ -132,7 +133,7 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
     }
 
     private fun KotlinStringWriter.writeAndroidImports() {
-        androidImports.forEach { writeImport(it) }
+        ANDROID_IMPORTS.forEach { writeImport(it) }
         writeEmptyLine()
     }
 
@@ -142,9 +143,10 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
 
     private fun KotlinStringWriter.writeSyntheticProperty(receiver: String, widget: AndroidWidget, stubCall: String) {
         val body = arrayListOf("return $stubCall as ${widget.className}")
+        val type = widget.className
         writeImmutableExtensionProperty(receiver,
                                         name = widget.id,
-                                        retType = widget.className,
+                                        retType = "$EXPLICIT_FLEXIBLE_CLASS_NAME<$type, $type?>",
                                         getterBody = body)
     }
 
@@ -154,12 +156,18 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
         return CachedValuesManager.getManager(project).createCachedValue(result, false)
     }
 
-    default object {
-        private val androidImports = listOf(
+    class object {
+        private val EXPLICIT_FLEXIBLE_PACKAGE = Flexibility.FLEXIBLE_TYPE_CLASSIFIER.getPackageFqName().asString()
+        private val EXPLICIT_FLEXIBLE_CLASS_NAME = Flexibility.FLEXIBLE_TYPE_CLASSIFIER.getRelativeClassName().asString()
+
+        private val ANDROID_IMPORTS = listOf(
                 "android.app.Activity",
                 "android.app.Fragment",
                 "android.view.View",
-                "android.widget.*")
+                "android.widget.*",
+                Flexibility.FLEXIBLE_TYPE_CLASSIFIER.asSingleFqName().asString())
+
+        private val FLEXIBLE_TYPE_FILE = "package $EXPLICIT_FLEXIBLE_PACKAGE\n\nclass $EXPLICIT_FLEXIBLE_CLASS_NAME<L, U>"
     }
 
 }

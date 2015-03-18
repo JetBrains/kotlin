@@ -6,7 +6,7 @@ import java.io.File
  * User: ignatov
  */
 public class Test {
-    default object {
+    companion object {
         public fun isDir(parent: File?): Boolean {
             if (parent == null || !parent.exists()) {
                 return false

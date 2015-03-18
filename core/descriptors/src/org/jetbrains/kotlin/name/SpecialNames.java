@@ -23,7 +23,7 @@ public class SpecialNames {
     public static final Name NO_NAME_PROVIDED = Name.special("<no name provided>");
     public static final Name ROOT_PACKAGE = Name.special("<root package>");
 
-    public static final Name DEFAULT_NAME_FOR_DEFAULT_OBJECT = Name.identifier("Default");
+    public static final Name DEFAULT_NAME_FOR_COMPANION_OBJECT = Name.identifier("Companion");
 
     // This name is used as a key for the case when something has no name _due to a syntactic error_
     // Example: fun (x: Int) = 5

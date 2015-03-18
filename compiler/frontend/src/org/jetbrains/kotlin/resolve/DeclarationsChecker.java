@@ -151,7 +151,7 @@ public class DeclarationsChecker {
 
         for (JetTypeConstraint constraint : jetClass.getTypeConstraints()) {
             checkBoundsForTypeInClassHeader(constraint.getBoundTypeReference());
-            checkFinalUpperBounds(constraint.getBoundTypeReference(), constraint.isDefaultObjectConstraint());
+            checkFinalUpperBounds(constraint.getBoundTypeReference(), constraint.isCompanionObjectConstraint());
         }
     }
 
@@ -164,11 +164,11 @@ public class DeclarationsChecker {
         }
     }
 
-    private void checkFinalUpperBounds(@Nullable JetTypeReference typeReference, boolean isDefaultObjectConstraint) {
+    private void checkFinalUpperBounds(@Nullable JetTypeReference typeReference, boolean isCompanionObjectConstraint) {
         if (typeReference != null) {
             JetType type = trace.getBindingContext().get(TYPE, typeReference);
             if (type != null) {
-                DescriptorResolver.checkUpperBoundType(typeReference, type, isDefaultObjectConstraint, trace);
+                DescriptorResolver.checkUpperBoundType(typeReference, type, isCompanionObjectConstraint, trace);
             }
         }
     }
@@ -258,7 +258,7 @@ public class DeclarationsChecker {
     private void checkObject(JetObjectDeclaration declaration, ClassDescriptor classDescriptor) {
         checkDeprecatedClassObjectSyntax(declaration);
         reportErrorIfHasIllegalModifier(declaration);
-        if  (declaration.isLocal() && !declaration.isDefault() && !declaration.isObjectLiteral()) {
+        if  (declaration.isLocal() && !declaration.isCompanion() && !declaration.isObjectLiteral()) {
             trace.report(LOCAL_OBJECT_NOT_ALLOWED.on(declaration, classDescriptor));
         }
     }

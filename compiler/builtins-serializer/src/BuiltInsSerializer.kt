@@ -45,53 +45,6 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 
-private object BuiltInsSerializerExtension : SerializerExtension() {
-    override fun serializeClass(descriptor: ClassDescriptor, proto: ProtoBuf.Class.Builder, stringTable: StringTable) {
-        for (annotation in descriptor.getAnnotations()) {
-            proto.addExtension(BuiltInsProtoBuf.classAnnotation, AnnotationSerializer.serializeAnnotation(annotation, stringTable))
-        }
-    }
-
-    override fun serializePackage(
-            packageFragments: Collection<PackageFragmentDescriptor>,
-            proto: ProtoBuf.Package.Builder,
-            stringTable: StringTable
-    ) {
-        val classes = packageFragments.flatMap {
-            it.getMemberScope().getDescriptors(DescriptorKindFilter.CLASSIFIERS).filterIsInstance<ClassDescriptor>()
-        }
-
-        for (descriptor in DescriptorSerializer.sort(classes)) {
-            proto.addExtension(BuiltInsProtoBuf.className, stringTable.getSimpleNameIndex(descriptor.getName()))
-        }
-    }
-
-    override fun serializeCallable(
-            callable: CallableMemberDescriptor,
-            proto: ProtoBuf.Callable.Builder,
-            stringTable: StringTable
-    ) {
-        for (annotation in callable.getAnnotations()) {
-            proto.addExtension(BuiltInsProtoBuf.callableAnnotation, AnnotationSerializer.serializeAnnotation(annotation, stringTable))
-        }
-        val compileTimeConstant = (callable as? PropertyDescriptor)?.getCompileTimeInitializer()
-        if (compileTimeConstant != null && compileTimeConstant !is NullValue) {
-            val type = compileTimeConstant.getType(KotlinBuiltIns.getInstance())
-            proto.setExtension(BuiltInsProtoBuf.compileTimeValue, AnnotationSerializer.valueProto(compileTimeConstant, type, stringTable).build())
-        }
-    }
-
-    override fun serializeValueParameter(
-            descriptor: ValueParameterDescriptor,
-            proto: ProtoBuf.Callable.ValueParameter.Builder,
-            stringTable: StringTable
-    ) {
-        for (annotation in descriptor.getAnnotations()) {
-            proto.addExtension(BuiltInsProtoBuf.parameterAnnotation, AnnotationSerializer.serializeAnnotation(annotation, stringTable))
-        }
-    }
-}
-
 public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
     private var totalSize = 0
     private var totalFiles = 0

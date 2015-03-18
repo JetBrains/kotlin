@@ -21,7 +21,7 @@ class A {
     protected /*it's protected*/ fun foo(c: Char) {
     }
 
-    default object {
+    companion object {
 
         public /*it's public*//*and static*//*and final*/ val C: Int = 1
     }

@@ -25,7 +25,7 @@ PsiJetFileStubImpl[package=test]
                     USER_TYPE:[isAbsoluteInRootPackage=false]
                       REFERENCE_EXPRESSION:[referencedName=dependency]
                     REFERENCE_EXPRESSION:[referencedName=D]
-                  REFERENCE_EXPRESSION:[referencedName=Default]
+                  REFERENCE_EXPRESSION:[referencedName=Companion]
                 REFERENCE_EXPRESSION:[referencedName=NestedInClassObject]
           VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=i]
             TYPE_REFERENCE:

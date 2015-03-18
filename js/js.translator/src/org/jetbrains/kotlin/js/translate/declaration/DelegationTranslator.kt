@@ -18,22 +18,25 @@ package org.jetbrains.kotlin.js.translate.declaration
 
 
 import com.google.dart.compiler.backend.js.ast.*
+import org.jetbrains.kotlin.backend.common.CodegenUtil
+import org.jetbrains.kotlin.backend.common.CodegenUtilKt
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
+import org.jetbrains.kotlin.js.translate.declaration.propertyTranslator.addGetterAndSetter
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator
 import org.jetbrains.kotlin.js.translate.general.Translation
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
-import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.*
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.backend.common.CodegenUtil
-import java.util.HashMap
-import org.jetbrains.kotlin.js.translate.declaration.propertyTranslator.addGetterAndSetter
 import org.jetbrains.kotlin.js.translate.utils.ManglingUtils.getMangledMemberNameForExplicitDelegation
+import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.simpleReturnFunction
+import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.translateFunctionAsEcma5PropertyDescriptor
 import org.jetbrains.kotlin.js.translate.utils.generateDelegateCall
-import org.jetbrains.kotlin.backend.common.CodegenUtilKt
+import org.jetbrains.kotlin.psi.JetClassOrObject
+import org.jetbrains.kotlin.psi.JetDelegationSpecifier
+import org.jetbrains.kotlin.psi.JetDelegatorByExpressionSpecifier
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import java.util.HashMap
 
 public class DelegationTranslator(
         private val classDeclaration: JetClassOrObject,
@@ -60,8 +63,9 @@ public class DelegationTranslator(
                 fields.put(specifier, Field(propertyDescriptor!!.getName().asString(), false))
             }
             else {
-                val typeFqName = DescriptorUtils.getFqNameSafe(descriptor)
-                val delegateName = getMangledMemberNameForExplicitDelegation(Namer.getDelegatePrefix(), classDeclaration.getFqName(), typeFqName)
+                val classFqName = DescriptorUtils.getFqName(classDescriptor)
+                val typeFqName = DescriptorUtils.getFqName(descriptor)
+                val delegateName = getMangledMemberNameForExplicitDelegation(Namer.getDelegatePrefix(), classFqName, typeFqName)
                 fields.put(specifier, Field(delegateName, true))
             }
         }

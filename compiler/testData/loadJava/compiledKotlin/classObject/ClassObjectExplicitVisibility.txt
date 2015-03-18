@@ -3,71 +3,71 @@ package test
 internal final class IntInt {
     /*primary*/ public constructor IntInt()
 
-    internal default object Default {
-        /*primary*/ private constructor Default()
+    internal companion object Companion {
+        /*primary*/ private constructor Companion()
     }
 }
 
 internal final class IntPri {
     /*primary*/ public constructor IntPri()
 
-    private default object Default {
-        /*primary*/ private constructor Default()
+    private companion object Companion {
+        /*primary*/ private constructor Companion()
     }
 }
 
 internal final class IntPub {
     /*primary*/ public constructor IntPub()
 
-    public default object Default {
-        /*primary*/ private constructor Default()
+    public companion object Companion {
+        /*primary*/ private constructor Companion()
     }
 }
 
 private final class PriInt {
     /*primary*/ public constructor PriInt()
 
-    internal default object Default {
-        /*primary*/ private constructor Default()
+    internal companion object Companion {
+        /*primary*/ private constructor Companion()
     }
 }
 
 private final class PriPri {
     /*primary*/ public constructor PriPri()
 
-    private default object Default {
-        /*primary*/ private constructor Default()
+    private companion object Companion {
+        /*primary*/ private constructor Companion()
     }
 }
 
 private final class PriPub {
     /*primary*/ public constructor PriPub()
 
-    public default object Default {
-        /*primary*/ private constructor Default()
+    public companion object Companion {
+        /*primary*/ private constructor Companion()
     }
 }
 
 public final class PubInt {
     /*primary*/ public constructor PubInt()
 
-    internal default object Default {
-        /*primary*/ private constructor Default()
+    internal companion object Companion {
+        /*primary*/ private constructor Companion()
     }
 }
 
 public final class PubPri {
     /*primary*/ public constructor PubPri()
 
-    private default object Default {
-        /*primary*/ private constructor Default()
+    private companion object Companion {
+        /*primary*/ private constructor Companion()
     }
 }
 
 public final class PubPub {
     /*primary*/ public constructor PubPub()
 
-    public default object Default {
-        /*primary*/ private constructor Default()
+    public companion object Companion {
+        /*primary*/ private constructor Companion()
     }
 }

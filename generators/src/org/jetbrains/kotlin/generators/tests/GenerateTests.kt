@@ -794,7 +794,7 @@ fun main(args: Array<String>) {
             model("codegen/box/bridges", targetBackend = TargetBackend.JS)
         }
 
-        testClass(javaClass<AbstractDefaultObjectTest>()) {
+        testClass(javaClass<AbstractCompanionObjectTest>()) {
             model("codegen/box/objectIntrinsics", targetBackend = TargetBackend.JS)
         }
     }

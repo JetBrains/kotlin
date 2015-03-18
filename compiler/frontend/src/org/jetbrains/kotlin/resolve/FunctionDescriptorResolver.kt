@@ -326,8 +326,12 @@ class FunctionDescriptorResolver(
                 }
             }
 
-            if (functionDescriptor !is ConstructorDescriptor) {
-                DescriptorResolver.checkParameterHasNoValOrVar(trace, valueParameter, VAL_OR_VAR_ON_FUN_PARAMETER)
+            if (functionDescriptor !is ConstructorDescriptor || !functionDescriptor.isPrimary()) {
+                val isConstructor = functionDescriptor is ConstructorDescriptor
+                DescriptorResolver.checkParameterHasNoValOrVar(
+                        trace, valueParameter,
+                        if (isConstructor) VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER else VAL_OR_VAR_ON_FUN_PARAMETER
+                )
                 DescriptorResolver.checkParameterHasNoModifier(trace, valueParameter)
             }
             else {

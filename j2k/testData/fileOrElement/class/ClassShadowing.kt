@@ -1,7 +1,7 @@
 package test
 
 public class Short {
-    default object {
+    companion object {
         public fun valueOf(value: String): Short {
             return Short()
         }
@@ -9,7 +9,7 @@ public class Short {
 }
 
 class Test {
-    default object {
+    companion object {
         public fun test() {
             test.Short.valueOf("1")
             test.Short.valueOf("1")

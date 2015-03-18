@@ -20,7 +20,6 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Processor
-
 import java.io.*
 import java.util.Properties
 import java.util.jar.Attributes
@@ -28,7 +27,6 @@ import java.util.jar.JarFile
 import java.util.jar.Manifest
 import java.util.zip.ZipFile
 import kotlin.platform.platformStatic
-import org.jetbrains.kotlin.utils.fileUtils.*
 
 public object LibraryUtils {
     private val LOG = Logger.getInstance(javaClass<LibraryUtils>())
@@ -36,7 +34,6 @@ public object LibraryUtils {
     public val KOTLIN_JS_MODULE_NAME: String = "Kotlin-JS-Module-Name"
     private var TITLE_KOTLIN_JAVASCRIPT_STDLIB: String
     private var TITLE_KOTLIN_JAVASCRIPT_LIB: String
-    private val JS_EXT = ".js"
     private val METAINF = "META-INF/"
     private val MANIFEST_PATH = "${METAINF}MANIFEST.MF"
     private val METAINF_RESOURCES = "${METAINF}resources/"
@@ -84,9 +81,15 @@ public object LibraryUtils {
     }
 
     platformStatic
-    public fun isKotlinJavascriptLibrary(library: File): Boolean {
-        return checkAttributeValue(library, TITLE_KOTLIN_JAVASCRIPT_LIB, Attributes.Name.SPECIFICATION_TITLE)
-    }
+    public fun isOldKotlinJavascriptLibrary(library: File): Boolean =
+            checkAttributeValue(library, TITLE_KOTLIN_JAVASCRIPT_LIB, Attributes.Name.SPECIFICATION_TITLE) && getKotlinJsModuleName(library) != null
+
+    platformStatic
+    public fun isKotlinJavascriptLibraryWithMetadata(library: File): Boolean = KotlinJavascriptMetadataUtils.loadMetadata(library).isNotEmpty()
+
+    platformStatic
+    public fun isKotlinJavascriptLibrary(library: File): Boolean =
+            isOldKotlinJavascriptLibrary(library) || isKotlinJavascriptLibraryWithMetadata(library)
 
     platformStatic
     public fun isKotlinJavascriptStdLibrary(library: File): Boolean {
@@ -116,11 +119,11 @@ public object LibraryUtils {
         for (lib in libs) {
             when {
                 lib.isDirectory() ->
-                    traverseDirectoryWithReportingIOException(lib) { (file, path) ->
+                    traverseDirectory(lib) { (file, path) ->
                         files.add(FileUtil.loadFile(file))
                     }
                 FileUtil.isJarOrZip(lib) ->
-                    traverseArchiveWithReportingIOException(lib) { (content, path) ->
+                    traverseArchive(lib) { (content, path) ->
                         files.add(content)
                     }
                 else ->
@@ -131,11 +134,17 @@ public object LibraryUtils {
         return files
     }
 
-    private fun processDirectory(dir: File, action: (File, String) -> Unit) {
+    private fun copyJsFilesFromDirectory(dir: File, outputLibraryJsPath: String) {
+        traverseDirectory(dir) {
+            file, relativePath -> FileUtil.copy(file, File(outputLibraryJsPath, relativePath))
+        }
+    }
+
+    private fun processDirectory(dir: File, action: (File, relativePath: String) -> Unit) {
         FileUtil.processFilesRecursively(dir, object : Processor<File> {
             override fun process(file: File): Boolean {
                 val relativePath = FileUtil.getRelativePath(dir, file) ?: throw IllegalArgumentException("relativePath should not be null " + dir + " " + file)
-                if (file.isFile() && relativePath.endsWith(JS_EXT)) {
+                if (file.isFile() && relativePath.endsWith(KotlinJavascriptMetadataUtils.JS_EXT)) {
                     val suggestedRelativePath = getSuggestedPath(relativePath)
                     if (suggestedRelativePath == null) return true
 
@@ -146,13 +155,7 @@ public object LibraryUtils {
         })
     }
 
-    private fun copyJsFilesFromDirectory(dir: File, outputLibraryJsPath: String) {
-        traverseDirectoryWithReportingIOException(dir) {
-            file, relativePath -> FileUtil.copy(file, File(outputLibraryJsPath, relativePath))
-        }
-    }
-
-    private fun traverseDirectoryWithReportingIOException(dir: File, action: (File, String) -> Unit) {
+    fun traverseDirectory(dir: File, action: (File, relativePath: String) -> Unit) {
         try {
             processDirectory(dir, action)
         }
@@ -162,28 +165,19 @@ public object LibraryUtils {
     }
 
     private fun copyJsFilesFromZip(file: File, outputLibraryJsPath: String) {
-        traverseArchiveWithReportingIOException(file) { content, relativePath ->
+        traverseArchive(file) { content, relativePath ->
             FileUtil.writeToFile(File(outputLibraryJsPath, relativePath), content)
         }
     }
 
-    private fun traverseArchiveWithReportingIOException(file: File, action: (String, String) -> Unit) {
-        try {
-            traverseArchive(file, action)
-        }
-        catch (ex: IOException) {
-            LOG.error("Could not extract files from archive ${file.getName()}: ${ex.getMessage()}")
-        }
-    }
-
-    private fun traverseArchive(file: File, action: (String, String) -> Unit) {
+    fun traverseArchive(file: File, action: (content: String, relativePath: String) -> Unit) {
         val zipFile = ZipFile(file.getPath())
         try {
             val zipEntries = zipFile.entries()
             while (zipEntries.hasMoreElements()) {
                 val entry = zipEntries.nextElement()
                 val entryName = entry.getName()
-                if (!entry.isDirectory() && entryName.endsWith(JS_EXT)) {
+                if (!entry.isDirectory() && entryName.endsWith(KotlinJavascriptMetadataUtils.JS_EXT)) {
                     val relativePath = getSuggestedPath(entryName)
                     if (relativePath == null) continue
 
@@ -192,6 +186,9 @@ public object LibraryUtils {
                     action(content, relativePath)
                 }
             }
+        }
+        catch (ex: IOException) {
+            LOG.error("Could not extract files from archive ${file.getName()}: ${ex.getMessage()}")
         }
         finally {
             zipFile.close()

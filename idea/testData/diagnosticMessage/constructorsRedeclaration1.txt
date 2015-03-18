@@ -1,0 +1,2 @@
+<!-- constructorsRedeclaration1 -->
+'public constructor Element(x: kotlin.String)' is already defined in Element

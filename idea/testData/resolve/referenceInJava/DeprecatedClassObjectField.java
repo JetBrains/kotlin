@@ -4,4 +4,4 @@ public class ClassObjectField {
     }
 }
 
-// REF: default object of (k).ClassWithClassObject
+// REF: companion object of (k).ClassWithClassObject

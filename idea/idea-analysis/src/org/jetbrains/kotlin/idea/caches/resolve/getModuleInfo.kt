@@ -48,6 +48,9 @@ fun PsiElement.getModuleInfo(): IdeaModuleInfo {
         )
     }
 
+    val explicitModuleInfo = containingJetFile?.moduleInfo
+    if (explicitModuleInfo is IdeaModuleInfo) return explicitModuleInfo
+
     if (containingJetFile is JetCodeFragment) {
         return containingJetFile.getContext()?.getModuleInfo()
                ?: logAndReturnDefault("Analyzing code fragment of type ${containingJetFile.javaClass} with no context element\nText:\n${containingJetFile.getText()}")

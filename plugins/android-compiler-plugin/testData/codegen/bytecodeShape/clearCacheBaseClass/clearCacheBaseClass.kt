@@ -9,4 +9,4 @@ public fun Activity.a() {
     clearFindViewByIdCache()
 }
 
-// 0  clearFindViewByIdCache
+// 0 clearFindViewByIdCache

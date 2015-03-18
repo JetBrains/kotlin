@@ -1,5 +1,5 @@
 trait Test {
-  default object {
+  companion object {
     public var prop: Int = 0
       set(i : Int) {
         $prop = i
@@ -12,5 +12,5 @@ trait Test {
 // ABSENT: TRUE
 
 // TESTED_OBJECT_KIND: property
-// TESTED_OBJECTS: Test$Default, prop
+// TESTED_OBJECTS: Test$Companion, prop
 // FLAGS: ACC_PRIVATE

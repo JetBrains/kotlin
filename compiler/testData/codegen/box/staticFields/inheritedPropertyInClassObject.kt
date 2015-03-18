@@ -1,6 +1,6 @@
 open class Bar<T>(val prop: String)
 class Foo {
-    default object : Bar<Foo>("OK") {
+    companion object : Bar<Foo>("OK") {
         val p = Foo.prop
         val p2 = prop
         val p3 = this.prop

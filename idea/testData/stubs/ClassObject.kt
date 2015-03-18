@@ -1,4 +1,4 @@
-class C { default object {
+class C { companion object {
     fun foo() {
     }
 }

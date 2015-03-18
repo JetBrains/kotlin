@@ -1,7 +1,7 @@
 Class/object property type (6: 21) var nextServer: Server? = new Server()
-Default object (28: 28) fun Client.bar(s: Server = Server.NAME) {
-Default object (5: 29) class Client(name: String = Server.NAME): Server() {
-Default object (7: 16) val name = Server.NAME
+Companion object (28: 28) fun Client.bar(s: Server = Server.NAME) {
+Companion object (5: 29) class Client(name: String = Server.NAME): Server() {
+Companion object (7: 16) val name = Server.NAME
 Function return types (14: 26) fun getNextServer(): Server? {
 Function return types (36: 21) fun Any.asServer(): Server? {
 Local variable declaration (10: 21) val server: Server = s

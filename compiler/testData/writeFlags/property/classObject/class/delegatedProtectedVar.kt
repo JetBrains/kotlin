@@ -10,7 +10,7 @@ class TestDelegate() {
 
 
 class Test {
-  default object {
+  companion object {
     protected var prop: Int by TestDelegate()
   }
 }
@@ -20,11 +20,11 @@ class Test {
 // ABSENT: TRUE
 
 // TESTED_OBJECT_KIND: property
-// TESTED_OBJECTS: Test$Default, prop
+// TESTED_OBJECTS: Test$Companion, prop
 // ABSENT: TRUE
 
 // TESTED_OBJECT_KIND: property
-// TESTED_OBJECTS: Test$Default, prop$delegate
+// TESTED_OBJECTS: Test$Companion, prop$delegate
 // ABSENT: TRUE
 
 // TESTED_OBJECT_KIND: property

@@ -38,6 +38,7 @@
       <module fileurl="file://$PROJECT_DIR$/js/js.frontend/js.frontend.iml" filepath="$PROJECT_DIR$/js/js.frontend/js.frontend.iml" group="compiler/js" />
       <module fileurl="file://$PROJECT_DIR$/js/js.inliner/js.inliner.iml" filepath="$PROJECT_DIR$/js/js.inliner/js.inliner.iml" group="compiler/js" />
       <module fileurl="file://$PROJECT_DIR$/js/js.parser/js.parser.iml" filepath="$PROJECT_DIR$/js/js.parser/js.parser.iml" group="compiler/js" />
+      <module fileurl="file://$PROJECT_DIR$/js/js.serializer/js.serializer.iml" filepath="$PROJECT_DIR$/js/js.serializer/js.serializer.iml" group="compiler/js" />
       <module fileurl="file://$PROJECT_DIR$/js/js.tests/js.tests.iml" filepath="$PROJECT_DIR$/js/js.tests/js.tests.iml" group="compiler/js" />
       <module fileurl="file://$PROJECT_DIR$/js/js.translator/js.translator.iml" filepath="$PROJECT_DIR$/js/js.translator/js.translator.iml" group="compiler/js" />
       <module fileurl="file://$PROJECT_DIR$/jps-plugin/kannotator-jps-plugin-test/kannotator-jps-plugin-test.iml" filepath="$PROJECT_DIR$/jps-plugin/kannotator-jps-plugin-test/kannotator-jps-plugin-test.iml" group="ide/jps" />
@@ -45,10 +46,10 @@
       <module fileurl="file://$PROJECT_DIR$/compiler/light-classes/light-classes.iml" filepath="$PROJECT_DIR$/compiler/light-classes/light-classes.iml" group="compiler/java" />
       <module fileurl="file://$PROJECT_DIR$/compiler/plugin-api/plugin-api.iml" filepath="$PROJECT_DIR$/compiler/plugin-api/plugin-api.iml" group="compiler" />
       <module fileurl="file://$PROJECT_DIR$/compiler/preloader/preloader.iml" filepath="$PROJECT_DIR$/compiler/preloader/preloader.iml" group="compiler/cli" />
-      <module fileurl="file://$PROJECT_DIR$/core/reflection/reflection.iml" filepath="$PROJECT_DIR$/core/reflection/reflection.iml" group="core" />
       <module fileurl="file://$PROJECT_DIR$/core/reflection.jvm/reflection.jvm.iml" filepath="$PROJECT_DIR$/core/reflection.jvm/reflection.jvm.iml" group="core" />
       <module fileurl="file://$PROJECT_DIR$/core/runtime.jvm/runtime.jvm.iml" filepath="$PROJECT_DIR$/core/runtime.jvm/runtime.jvm.iml" group="core" />
       <module fileurl="file://$PROJECT_DIR$/core/serialization/serialization.iml" filepath="$PROJECT_DIR$/core/serialization/serialization.iml" group="core" />
+      <module fileurl="file://$PROJECT_DIR$/core/serialization.js/serialization.js.iml" filepath="$PROJECT_DIR$/core/serialization.js/serialization.js.iml" group="core" />
       <module fileurl="file://$PROJECT_DIR$/core/serialization.jvm/serialization.jvm.iml" filepath="$PROJECT_DIR$/core/serialization.jvm/serialization.jvm.iml" group="core" />
       <module fileurl="file://$PROJECT_DIR$/compiler/util/util.iml" filepath="$PROJECT_DIR$/compiler/util/util.iml" />
       <module fileurl="file://$PROJECT_DIR$/core/util.runtime/util.runtime.iml" filepath="$PROJECT_DIR$/core/util.runtime/util.runtime.iml" group="core" />

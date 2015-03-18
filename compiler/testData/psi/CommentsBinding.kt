@@ -41,9 +41,9 @@ class D {
         foo() // statement
     } // end of foo
 
-    // default object
-    default object {
-    } // end of default object
+    // companion object
+    companion object {
+    } // end of companion object
 }
 
 // This is v

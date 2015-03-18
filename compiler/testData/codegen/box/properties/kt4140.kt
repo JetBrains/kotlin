@@ -1,6 +1,6 @@
 class TestObject()
 {
-    default object {
+    companion object {
         var prop: Int = 1
             get() = $prop++
     }

@@ -6,7 +6,7 @@ open class B
 
 class A {
 
-    default object {
+    companion object {
         [platformStatic]
         fun <T: B> a(s: T) : T {
             return s

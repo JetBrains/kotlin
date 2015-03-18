@@ -35,7 +35,7 @@ public class QualifiedNamesTest: LightCodeInsightTestCase() {
                     class Klass {
                         class Nested
 
-                        default object {
+                        companion object {
                         }
                     }
 
@@ -46,7 +46,7 @@ public class QualifiedNamesTest: LightCodeInsightTestCase() {
                     }
                 """
         )
-        assertEquals(listOf("foo.bar.Klass", "foo.bar.Klass.Nested", "foo.bar.Klass.Default", "foo.bar.Object", "foo.bar.anonymous", null),
+        assertEquals(listOf("foo.bar.Klass", "foo.bar.Klass.Nested", "foo.bar.Klass.Companion", "foo.bar.Object", "foo.bar.anonymous", null),
                      getQualifiedNamesForDeclarations())
     }
 

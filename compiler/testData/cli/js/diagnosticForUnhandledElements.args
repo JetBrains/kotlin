@@ -1,0 +1,4 @@
+$TESTDATA_DIR$/diagnosticForUnhandledElements.kt
+-no-stdlib
+-output
+$TEMP_DIR$/out.js

@@ -3,7 +3,7 @@ package test
 
 class Test {
 
-    default object {
+    companion object {
 
         public val prop1 : Int = 10
 

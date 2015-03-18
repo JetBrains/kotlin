@@ -1,5 +1,5 @@
 class Test {
-    default object {
+    companion object {
         var str: String
         {
             str = "Ola"

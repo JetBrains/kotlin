@@ -1,7 +1,7 @@
 // KT-588 Unresolved static method
 
 class Test() : Thread("Test") {
-    default object {
+    companion object {
         fun init2() {
 
         }

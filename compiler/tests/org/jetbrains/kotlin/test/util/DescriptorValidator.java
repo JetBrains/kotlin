@@ -263,9 +263,9 @@ public class DescriptorValidator {
                 }
             }
 
-            ClassDescriptor defaultObjectDescriptor = descriptor.getDefaultObjectDescriptor();
-            if (defaultObjectDescriptor != null && !defaultObjectDescriptor.isDefaultObject()) {
-                report(collector, defaultObjectDescriptor, "Default object should be marked as such");
+            ClassDescriptor companionObjectDescriptor = descriptor.getCompanionObjectDescriptor();
+            if (companionObjectDescriptor != null && !companionObjectDescriptor.isCompanionObject()) {
+                report(collector, companionObjectDescriptor, "Companion object should be marked as such");
             }
 
             return true;

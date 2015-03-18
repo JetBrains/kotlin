@@ -18,7 +18,12 @@ package org.jetbrains.kotlin.idea.decompiler.textBuilder
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.idea.decompiler.navigation.JsMetaFileVirtualFileHolder
+import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
@@ -69,6 +74,21 @@ public fun buildDecompiledText(
         else ->
             throw UnsupportedOperationException("Unknown header kind: ${classHeader.kind} ${classHeader.isCompatibleAbiVersion}")
     }
+}
+
+public fun buildDecompiledTextFromJsMetadata(
+        classFile: VirtualFile
+): DecompiledText {
+    val module = classFile.getUserData(JsMetaFileVirtualFileHolder.MODULE_DESCRIPTOR_KEY)
+    assert(module != null)
+
+    val packageFqName = classFile.getUserData(JsMetaFileVirtualFileHolder.PACKAGE_FQNAME_KEY)
+    assert (packageFqName != null)
+
+    val fragments = module.getPackageFragmentProvider().getPackageFragments(packageFqName)
+    val descriptors = fragments.flatMap { it.getMemberScope().getAllDescriptors() }
+
+    return buildDecompiledText(packageFqName, descriptors)
 }
 
 private val DECOMPILED_CODE_COMMENT = "/* compiled code */"
@@ -149,18 +169,18 @@ private fun buildDecompiledText(packageFqName: FqName, descriptors: List<Declara
                 builder.append(" {\n")
                 var firstPassed = false
                 val subindent = indent + "    "
-                val defaultObject = descriptor.getDefaultObjectDescriptor()
-                if (defaultObject != null) {
+                val companionObject = descriptor.getCompanionObjectDescriptor()
+                if (companionObject != null) {
                     firstPassed = true
                     builder.append(subindent)
-                    appendDescriptor(defaultObject, subindent)
+                    appendDescriptor(companionObject, subindent)
                 }
                 val allDescriptors = descriptor.secondaryConstructors + descriptor.getDefaultType().getMemberScope().getDescriptors()
                 for (member in allDescriptors) {
                     if (member.getContainingDeclaration() != descriptor) {
                         continue
                     }
-                    if (member == defaultObject) {
+                    if (member == companionObject) {
                         continue
                     }
                     if (member is CallableMemberDescriptor

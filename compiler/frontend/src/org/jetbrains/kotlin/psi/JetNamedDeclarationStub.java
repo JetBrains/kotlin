@@ -95,10 +95,10 @@ abstract class JetNamedDeclarationStub<T extends KotlinStubWithFqName> extends J
 
         if (hasModifier(JetTokens.PRIVATE_KEYWORD)) {
             JetElement containingClass = PsiTreeUtil.getParentOfType(this, JetClassOrObject.class);
-            if (containingClass instanceof JetObjectDeclaration && ((JetObjectDeclaration) containingClass).isDefault()) {
-                JetElement defaultObjectClass = PsiTreeUtil.getParentOfType(containingClass, JetClassOrObject.class);
-                if (defaultObjectClass != null) {
-                    containingClass = defaultObjectClass;
+            if (containingClass instanceof JetObjectDeclaration && ((JetObjectDeclaration) containingClass).isCompanion()) {
+                JetElement companionObjectClass = PsiTreeUtil.getParentOfType(containingClass, JetClassOrObject.class);
+                if (companionObjectClass != null) {
+                    containingClass = companionObjectClass;
                 }
             }
             if (containingClass != null) {

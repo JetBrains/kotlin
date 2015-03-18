@@ -2,11 +2,11 @@ package foo
 
 class A {
     class B {
-        default object
+        companion object
     }
 }
 
-fun A.B.Default.foo() {}
+fun A.B.Companion.foo() {}
 
 fun some() {
     A.B.<caret>

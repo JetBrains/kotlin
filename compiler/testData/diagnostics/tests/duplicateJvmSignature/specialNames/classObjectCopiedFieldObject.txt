@@ -7,7 +7,7 @@ internal final class B {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    internal default object A {
+    internal companion object A {
         private constructor A()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -21,7 +21,7 @@ internal final class C {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    internal default object A {
+    internal companion object A {
         private constructor A()
         internal final val A: C.A
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -32,14 +32,14 @@ internal final class C {
 
 internal final class D {
     public constructor D()
-    internal final val `OBJECT$`: D.Default
+    internal final val `OBJECT$`: D.Companion
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    internal default object Default {
-        private constructor Default()
-        internal final val `OBJECT$`: D.Default
+    internal companion object Companion {
+        private constructor Companion()
+        internal final val `OBJECT$`: D.Companion
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

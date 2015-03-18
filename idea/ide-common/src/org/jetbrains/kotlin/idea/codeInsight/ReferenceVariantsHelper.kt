@@ -48,7 +48,7 @@ public class ReferenceVariantsHelper(
             public val receivers: Collection<ReceiverValue>,
             public val callType: CallType
     ) {
-        default object {
+        class object {
             val Empty = ReceiversData(listOf(), CallType.NORMAL)
         }
     }
@@ -88,7 +88,7 @@ public class ReferenceVariantsHelper(
 
             val qualifier = context[BindingContext.QUALIFIER, receiverExpression]
             if (qualifier != null) {
-                // It's impossible to add extension function for package or class (if it's default object, expression type is not null)
+                // It's impossible to add extension function for package or class (if it's companion object, expression type is not null)
                 qualifier.scope.getDescriptorsFiltered(kindFilter exclude DescriptorKindExclude.Extensions, nameFilter).filterTo(descriptors)  { callType.canCall(it) }
             }
 
@@ -216,7 +216,7 @@ public class ReferenceVariantsHelper(
         return resolutionScope.getDescriptorsFiltered(DescriptorKindFilter.PACKAGES, nameFilter).filter(visibilityFilter)
     }
 
-    default object {
+    class object {
         public fun getExplicitReceiverData(expression: JetSimpleNameExpression): Pair<JetExpression, CallType>? {
             val receiverExpression = expression.getReceiverExpression() ?: return null
             val parent = expression.getParent()

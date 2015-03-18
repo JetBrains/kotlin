@@ -13,9 +13,9 @@ fun foo() {
 }
 
 class A() {
-    default object {
+    companion object {
         class B() {
-            default object {
+            companion object {
                 fun foo() {}
             }
         }
@@ -36,8 +36,8 @@ object N {
 package b
 
 import b.N.M
-import b.A.Default.P
-import b.A.Default.B
+import b.A.Companion.P
+import b.A.Companion.B
 
 fun foo() {
     val <!UNUSED_VARIABLE!>b<!> : B = B()
@@ -49,9 +49,9 @@ fun foo() {
 }
 
 class A() {
-    default object {
+    companion object {
         class B() {
-            default object {
+            companion object {
                 fun foo() {}
             }
         }

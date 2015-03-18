@@ -2,19 +2,19 @@ package library
 
 class KtClass {
     class Inner {
-        default object {
+        companion object {
             fun foo(): Int = 1
         }
     }
 
-    default object {
+    companion object {
         fun foo(): Int = 1
     }
 }
 
 object KtObject {
     class Inner {
-        default object {
+        companion object {
             fun foo(): Int = 1
         }
     }

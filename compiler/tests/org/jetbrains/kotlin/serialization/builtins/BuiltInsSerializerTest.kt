@@ -16,16 +16,17 @@
 
 package org.jetbrains.kotlin.serialization.builtins
 
-import org.jetbrains.kotlin.test.TestCaseWithTmpdir
-import java.io.File
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.test.JetTestUtils
-import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import java.io.FileInputStream
 import org.jetbrains.kotlin.builtins.BuiltinsPackageFragment
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil.TEST_PACKAGE_FQNAME
+import org.jetbrains.kotlin.serialization.deserialization.FlexibleTypeCapabilitiesDeserializer
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.TestCaseWithTmpdir
+import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator
+import java.io.File
+import java.io.FileInputStream
 
 public class BuiltInsSerializerTest : TestCaseWithTmpdir() {
     private fun doTest(fileName: String) {
@@ -39,11 +40,11 @@ public class BuiltInsSerializerTest : TestCaseWithTmpdir() {
 
         val module = JetTestUtils.createEmptyModule("<module>")
 
-        val packageFragment = BuiltinsPackageFragment(TEST_PACKAGE_FQNAME, LockBasedStorageManager(), module) {
-            path ->
-            val file = File(tmpdir, path)
-            if (file.exists()) FileInputStream(file) else null
-        }
+        val packageFragment =
+            BuiltinsPackageFragment(TEST_PACKAGE_FQNAME, LockBasedStorageManager(), module, FlexibleTypeCapabilitiesDeserializer.ThrowException) {
+                val file = File(tmpdir, it)
+                if (file.exists()) FileInputStream(file) else null
+            }
 
         module.initialize(packageFragment.provider)
         module.addDependencyOnModule(module)

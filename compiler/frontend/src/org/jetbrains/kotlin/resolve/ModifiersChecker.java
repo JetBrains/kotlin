@@ -40,7 +40,7 @@ import java.util.*;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.lexer.JetTokens.*;
 import static org.jetbrains.kotlin.psi.JetStubbedPsiUtil.getContainingDeclaration;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.isDefaultObject;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry;
 
 public class ModifiersChecker {
@@ -235,13 +235,13 @@ public class ModifiersChecker {
     }
 
     private void checkDefaultModifier(@NotNull JetDeclaration declaration) {
-        if (declaration.hasModifier(DEFAULT_KEYWORD) && !isDefaultModifierAllowed(declaration)) {
-            reportIllegalModifiers(declaration, Collections.singletonList(DEFAULT_KEYWORD));
+        if (declaration.hasModifier(COMPANION_KEYWORD) && !isDefaultModifierAllowed(declaration)) {
+            reportIllegalModifiers(declaration, Collections.singletonList(COMPANION_KEYWORD));
         }
     }
 
-    // NOTE: just checks if this is legal context for default modifier (Default object descriptor can be created)
-    // DEFAULT_OBJECT_NOT_ALLOWED can be reported later
+    // NOTE: just checks if this is legal context for companion modifier (Companion object descriptor can be created)
+    // COMPANION_OBJECT_NOT_ALLOWED can be reported later
     public static boolean isDefaultModifierAllowed(@NotNull JetDeclaration declaration) {
         if (declaration instanceof JetObjectDeclaration) {
             JetDeclaration containingDeclaration = getContainingDeclaration(declaration);
@@ -388,7 +388,7 @@ public class ModifiersChecker {
         if (isEnumEntry(descriptor)) {
             return Visibilities.PUBLIC;
         }
-        if (isDefaultObject(descriptor)) {
+        if (isCompanionObject(descriptor)) {
             return ((ClassDescriptor) descriptor.getContainingDeclaration()).getVisibility();
         }
         return Visibilities.INTERNAL;

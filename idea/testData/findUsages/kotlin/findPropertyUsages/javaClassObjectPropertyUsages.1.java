@@ -4,9 +4,9 @@ import server.*;
 
 class Client {
     void fooBar() {
-        A.Default.setFoo("a");
+        A.Companion.setFoo("a");
         A.foo = "a";
-        System.out.println("a.foo = " + A.Default.getFoo());
+        System.out.println("a.foo = " + A.Companion.getFoo());
         System.out.println("a.foo = " + A.foo);
     }
 }

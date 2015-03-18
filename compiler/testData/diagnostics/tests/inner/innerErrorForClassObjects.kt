@@ -1,11 +1,11 @@
 open class SomeClass<T>
 class TestSome<P> {
-    default object : SomeClass<<!INACCESSIBLE_OUTER_CLASS_EXPRESSION!>P<!>>() {
+    companion object : SomeClass<<!INACCESSIBLE_OUTER_CLASS_EXPRESSION!>P<!>>() {
     }
 }
 
 class Test {
-    default object : <!INACCESSIBLE_OUTER_CLASS_EXPRESSION!>InnerClass()<!> {
+    companion object : <!INACCESSIBLE_OUTER_CLASS_EXPRESSION!>InnerClass()<!> {
         val a = object: <!INACCESSIBLE_OUTER_CLASS_EXPRESSION!>InnerClass()<!> {
         }
 

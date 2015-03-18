@@ -1,6 +1,6 @@
 class A {
     class Nested {
-        default object {
+        companion object {
             fun invoke(i: Int) = i
         }
     }

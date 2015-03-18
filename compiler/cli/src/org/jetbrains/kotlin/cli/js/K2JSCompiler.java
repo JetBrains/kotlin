@@ -29,6 +29,7 @@ import kotlin.Function1;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.utils.serializer.KotlinJavaScriptSerializer;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
 import org.jetbrains.kotlin.cli.common.CLICompiler;
@@ -190,6 +191,10 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             outputDir = outputFile.getAbsoluteFile().getParentFile();
         }
         OutputUtilsPackage.writeAll(outputFiles, outputDir, messageCollector);
+
+        if (arguments.metaInfo != null) {
+            new KotlinJavaScriptSerializer().serialize(config.getModuleId(), analysisResult.getModuleDescriptor(), new File(arguments.metaInfo));
+        }
 
         return OK;
     }
