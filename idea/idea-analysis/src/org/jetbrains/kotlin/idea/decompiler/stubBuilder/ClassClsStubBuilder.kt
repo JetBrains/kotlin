@@ -16,27 +16,29 @@
 
 package org.jetbrains.kotlin.idea.decompiler.stubBuilder
 
-import com.intellij.psi.stubs.StubElement
-import org.jetbrains.kotlin.serialization.Flags
-import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.psi.stubs.elements.JetClassElementType
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinClassStubImpl
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinObjectStubImpl
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.psi.JetClassBody
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderStubImpl
-import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes
-import org.jetbrains.kotlin.psi.JetParameterList
+import com.intellij.psi.stubs.StubElement
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.idea.decompiler.stubBuilder.FlagsToModifiers.INNER
+import org.jetbrains.kotlin.idea.decompiler.stubBuilder.FlagsToModifiers.MODALITY
+import org.jetbrains.kotlin.idea.decompiler.stubBuilder.FlagsToModifiers.VISIBILITY
+import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.psi.JetClassBody
 import org.jetbrains.kotlin.psi.JetDelegationSpecifierList
 import org.jetbrains.kotlin.psi.JetDelegatorToSuperClass
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
+import org.jetbrains.kotlin.psi.JetParameterList
+import org.jetbrains.kotlin.psi.stubs.elements.JetClassElementType
+import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinClassStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinModifierListStubImpl
-import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinObjectStubImpl
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderStubImpl
+import org.jetbrains.kotlin.serialization.Flags
+import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.ProtoBuf.Type
-import org.jetbrains.kotlin.idea.decompiler.stubBuilder.FlagsToModifiers.*
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 
 
 fun createClassStub(parent: StubElement<out PsiElement>, classProto: ProtoBuf.Class, classId: ClassId, context: ClsStubBuilderContext) {
@@ -49,7 +51,7 @@ private class ClassClsStubBuilder(
         private val classId: ClassId,
         private val outerContext: ClsStubBuilderContext
 ) {
-    private val c = outerContext.child(classProto.getTypeParameterList(), classId.getRelativeClassName().shortName())
+    private val c = outerContext.child(classProto.getTypeParameterList(), classId.getShortClassName())
     private val typeStubBuilder = TypeClsStubBuilder(c)
     private val classKind = Flags.CLASS_KIND[classProto.getFlags()]
     private val supertypeIds = classProto.getSupertypeList().map {
@@ -102,12 +104,12 @@ private class ClassClsStubBuilder(
 
     private fun doCreateClassOrObjectStub(): StubElement<out PsiElement> {
         val isCompanionObject = classKind == ProtoBuf.Class.Kind.CLASS_OBJECT
-        val fqName = outerContext.containerFqName.child(classId.getRelativeClassName().shortName())
-        val shortName = fqName.shortName()?.ref()
+        val fqName = outerContext.containerFqName.child(classId.getShortClassName())
+        val shortName = fqName.shortName().ref()
         val superTypeRefs = supertypeIds.filter {
             //TODO: filtering function types should go away
             !KotlinBuiltIns.isExactFunctionType(it.asSingleFqName()) && !KotlinBuiltIns.isExactExtensionFunctionType(it.asSingleFqName())
-        }.map { it.getRelativeClassName().shortName().ref() }.copyToArray()
+        }.map { it.getShortClassName().ref() }.copyToArray()
         return when (classKind) {
             ProtoBuf.Class.Kind.OBJECT, ProtoBuf.Class.Kind.CLASS_OBJECT -> {
                 KotlinObjectStubImpl(

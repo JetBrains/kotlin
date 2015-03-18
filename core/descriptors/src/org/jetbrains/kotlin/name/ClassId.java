@@ -59,6 +59,11 @@ public final class ClassId {
         return relativeClassName;
     }
 
+    @NotNull
+    public Name getShortClassName() {
+        return relativeClassName.shortName();
+    }
+
     public boolean isLocal() {
         return local;
     }

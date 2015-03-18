@@ -16,25 +16,28 @@
 
 package org.jetbrains.kotlin.serialization.deserialization.descriptors
 
-import org.jetbrains.kotlin.serialization.Flags
-import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.AbstractClassDescriptor
 import org.jetbrains.kotlin.descriptors.impl.EnumEntrySyntheticClassDescriptor
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.OverridingUtil
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.StaticScopeForKotlinClass
+import org.jetbrains.kotlin.serialization.Flags
+import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.serialization.deserialization
+import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
+import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.types.AbstractClassTypeConstructor
 import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.serialization.deserialization
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
-import java.util.*
+import java.util.ArrayList
+import java.util.HashSet
+import java.util.LinkedHashSet
 
 public class DeserializedClassDescriptor(
         outerContext: DeserializationContext,
@@ -42,7 +45,7 @@ public class DeserializedClassDescriptor(
         nameResolver: NameResolver
 ) : ClassDescriptor, AbstractClassDescriptor(
         outerContext.storageManager,
-        nameResolver.getClassId(classProto.getFqName()).getRelativeClassName().shortName()
+        nameResolver.getClassId(classProto.getFqName()).getShortClassName()
 ) {
     private val modality = deserialization.modality(Flags.MODALITY.get(classProto.getFlags()))
     private val visibility = deserialization.visibility(Flags.VISIBILITY.get(classProto.getFlags()))

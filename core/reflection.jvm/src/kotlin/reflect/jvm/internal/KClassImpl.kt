@@ -47,7 +47,7 @@ class KClassImpl<T>(override val jClass: Class<T>) : KCallableContainerImpl(), K
         return when {
             jClass.isAnonymousClass() -> null
             classId.isLocal() -> calculateLocalClassName(jClass)
-            else -> classId.getRelativeClassName().shortName().asString()
+            else -> classId.getShortClassName().asString()
         }
     }
 
