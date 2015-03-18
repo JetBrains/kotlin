@@ -376,6 +376,12 @@ public class JetSafeDeleteTestGenerated extends AbstractJetSafeDeleteTest {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/safeDelete/deleteFunction/kotlinFunctionWithJava/overrideAndImplement2.kt");
             doFunctionTestWithJava(fileName);
         }
+
+        @TestMetadata("secondaryConstructor.kt")
+        public void testSecondaryConstructor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/safeDelete/deleteFunction/kotlinFunctionWithJava/secondaryConstructor.kt");
+            doFunctionTestWithJava(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/safeDelete/deleteFunction/javaFunctionWithKotlin")

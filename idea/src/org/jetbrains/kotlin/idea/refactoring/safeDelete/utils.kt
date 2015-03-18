@@ -33,6 +33,7 @@ public fun PsiElement.canDeleteElement(): Boolean {
     }
 
     return this is JetClassOrObject
+        || this is JetSecondaryConstructor
         || this is JetNamedFunction
         || this is PsiMethod
         || this is JetProperty
