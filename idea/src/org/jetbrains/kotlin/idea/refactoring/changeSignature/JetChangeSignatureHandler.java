@@ -76,24 +76,24 @@ public class JetChangeSignatureHandler implements ChangeSignatureHandler {
             return elementParent;
         }
 
-        JetCallElement call = PsiTreeUtil.getParentOfType(element, JetCallExpression.class, JetDelegatorToSuperCall.class);
-        if (call == null) {
-            return null;
-        }
-        JetExpression receiverExpr = call instanceof JetCallExpression ? call.getCalleeExpression() :
-                                     ((JetDelegatorToSuperCall) call).getCalleeExpression().getConstructorReferenceExpression();
+        JetCallElement call = PsiTreeUtil.getParentOfType(element,
+                                                          JetCallExpression.class,
+                                                          JetDelegatorToSuperCall.class,
+                                                          JetConstructorDelegationCall.class);
+        if (call == null) return null;
 
-        if (receiverExpr instanceof JetSimpleNameExpression) {
+        JetExpression receiverExpr = call.getCalleeExpression();
+        if (receiverExpr instanceof JetConstructorCalleeExpression) {
+            receiverExpr = ((JetConstructorCalleeExpression) receiverExpr).getConstructorReferenceExpression();
+        }
+        if (receiverExpr instanceof JetSimpleNameExpression || receiverExpr instanceof JetConstructorDelegationReferenceExpression) {
             JetElement jetElement = PsiTreeUtil.getParentOfType(element, JetElement.class);
             if (jetElement == null) return null;
 
             BindingContext bindingContext = ResolvePackage.analyze(jetElement);
-            DeclarationDescriptor descriptor =
-                    bindingContext.get(BindingContext.REFERENCE_TARGET, (JetSimpleNameExpression) receiverExpr);
+            DeclarationDescriptor descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, (JetReferenceExpression) receiverExpr);
 
-            if (descriptor instanceof ClassDescriptor || descriptor instanceof FunctionDescriptor) {
-                return receiverExpr;
-            }
+            if (descriptor instanceof ClassDescriptor || descriptor instanceof FunctionDescriptor) return receiverExpr;
         }
 
         return null;
@@ -211,7 +211,7 @@ public class JetChangeSignatureHandler implements ChangeSignatureHandler {
         if (!CommonRefactoringUtil.checkReadOnlyStatus(project, element)) return null;
 
         DeclarationDescriptor descriptor;
-        if (element instanceof JetSimpleNameExpression) {
+        if (element instanceof JetReferenceExpression) {
             descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, (JetReferenceExpression) element);
         } else {
             descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
