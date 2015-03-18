@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.idea.*
 import com.intellij.openapi.project.*
 import com.intellij.openapi.editor.*
 import com.intellij.psi.*
+import org.jetbrains.kotlin.idea.project.PluginJetFilesProvider
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.psiUtil.*
 
@@ -55,5 +56,33 @@ public class AddInitKeywordFix(element: JetClassInitializer) : JetIntentionActio
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             return AddInitKeywordFix(diagnostic.getPsiElement().getNonStrictParentOfType<JetClassInitializer>() ?: return null)
         }
+    }
+}
+
+public class AddInitKeywordFixInWholeProjectFix(elem: JetClassInitializer) : JetIntentionAction<JetClassInitializer>(elem) {
+    override fun getText(): String = JetBundle.message("add.init.keyword.in.whole.project")
+
+    override fun getFamilyName(): String = JetBundle.message("add.init.keyword.in.whole.project.family")
+
+    override fun invoke(project: Project, editor: Editor, file: JetFile) {
+        val files = PluginJetFilesProvider.allFilesInProject(file.getProject())
+
+        files.forEach { it.accept(AddInitKeywordVisitor(file)) }
+    }
+
+    private class AddInitKeywordVisitor(private val file: JetFile) : JetTreeVisitorVoid() {
+        override fun visitAnonymousInitializer(initializer: JetClassInitializer) {
+            initializer.acceptChildren(this)
+            if (!initializer.hasInitKeyword()) {
+                AddInitKeywordFix.addInitKeyword(file, initializer)
+            }
+        }
+    }
+
+    class object Factory : JetSingleIntentionActionFactory() {
+        override fun createAction(diagnostic: Diagnostic) =
+                diagnostic.getPsiElement().getNonStrictParentOfType<JetClassInitializer>()?.let {
+                    AddInitKeywordFixInWholeProjectFix(it)
+                }
     }
 }

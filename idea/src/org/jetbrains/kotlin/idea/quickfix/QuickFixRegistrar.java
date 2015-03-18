@@ -301,5 +301,6 @@ public class QuickFixRegistrar {
         QuickFixes.factories.put(DEPRECATED_CLASS_OBJECT_SYNTAX, ClassObjectToCompanionObjectFix.Factory);
         QuickFixes.factories.put(DEPRECATED_CLASS_OBJECT_SYNTAX, ClassObjectToCompanionObjectInWholeProjectFix.Factory);
         QuickFixes.factories.put(INIT_KEYWORD_BEFORE_CLASS_INITIALIZER_EXPECTED, AddInitKeywordFix.Factory);
+        QuickFixes.factories.put(INIT_KEYWORD_BEFORE_CLASS_INITIALIZER_EXPECTED, AddInitKeywordFixInWholeProjectFix.Factory);
     }
 }
