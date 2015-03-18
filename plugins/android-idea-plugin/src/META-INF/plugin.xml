@@ -18,7 +18,7 @@
                      serviceImplementation="org.jetbrains.kotlin.plugin.android.IDEAndroidResourceManager"/>
       <compileServer.plugin classpath="jps/kotlin-android-extensions-jps.jar;android-compiler-plugin.jar"/>
       <gotoDeclarationHandler implementation="org.jetbrains.kotlin.plugin.android.AndroidGotoDeclarationHandler"/>
-      <psi.treeChangePreprocessor implementation="org.jetbrains.kotlin.lang.resolve.android.AndroidPsiTreeChangePreprocessor"/>
+      <psi.treeChangePreprocessor implementation="org.jetbrains.kotlin.plugin.android.AndroidPsiTreeChangePreprocessor"/>
       <renamePsiElementProcessor id="KotlinAndroidSyntheticProperty"
                                  implementation="org.jetbrains.kotlin.plugin.android.AndroidRenameProcessor"
                                  order="first"/>

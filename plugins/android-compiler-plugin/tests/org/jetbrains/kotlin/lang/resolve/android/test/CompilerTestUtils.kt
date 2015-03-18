@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.lang.resolve.android.AndroidPsiTreeChangePreprocessor
 import org.jetbrains.kotlin.lang.resolve.android.CliAndroidUIXmlProcessor
 
 private class AndroidTestExternalDeclarationsProvider(
@@ -54,6 +53,5 @@ fun UsefulTestCase.createAndroidTestEnvironment(
     val project = myEnvironment.getProject()
     ExternalDeclarationsProvider.registerExtension(project, AndroidTestExternalDeclarationsProvider(project, resPath, manifestPath))
     ExpressionCodegenExtension.registerExtension(project, AndroidExpressionCodegenExtension())
-    Extensions.getArea(project).getExtensionPoint(PsiTreeChangePreprocessor.EP_NAME).registerExtension(AndroidPsiTreeChangePreprocessor())
     return myEnvironment
 }

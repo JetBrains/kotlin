@@ -80,8 +80,6 @@ public class AndroidComponentRegistrar : ComponentRegistrar {
 
             ExternalDeclarationsProvider.registerExtension(project, CliAndroidDeclarationsProvider(project))
             ExpressionCodegenExtension.registerExtension(project, AndroidExpressionCodegenExtension())
-            Extensions.getArea(project).getExtensionPoint(
-                    PsiTreeChangePreprocessor.EP_NAME).registerExtension(AndroidPsiTreeChangePreprocessor())
         }
     }
 }

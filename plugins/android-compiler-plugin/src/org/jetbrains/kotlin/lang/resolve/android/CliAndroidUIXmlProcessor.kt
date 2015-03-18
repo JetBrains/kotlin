@@ -23,6 +23,9 @@ import java.io.ByteArrayInputStream
 import kotlin.properties.Delegates
 import com.intellij.psi.impl.*
 import com.intellij.openapi.components.*
+import com.intellij.openapi.util.ModificationTracker
+import com.intellij.psi.util.CachedValue
+import com.intellij.psi.util.CachedValueProvider.Result
 
 public class CliAndroidUIXmlProcessor(
         project: Project,
@@ -34,8 +37,10 @@ public class CliAndroidUIXmlProcessor(
         CliAndroidResourceManager(project, manifestPath, mainResDirectory)
     }
 
-    override val psiTreeChangePreprocessor: PsiTreeChangePreprocessor by Delegates.lazy {
-        project.getExtensions(PsiTreeChangePreprocessor.EP_NAME).first { it is AndroidPsiTreeChangePreprocessor }
+    override val cachedSources: CachedValue<List<String>> by Delegates.lazy {
+        cachedValue {
+            Result.create(parse(), ModificationTracker.NEVER_CHANGED)
+        }
     }
 
     override fun parseSingleFile(file: PsiFile): List<AndroidWidget> {
