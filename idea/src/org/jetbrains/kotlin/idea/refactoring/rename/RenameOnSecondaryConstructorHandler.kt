@@ -35,8 +35,8 @@ public class RenameOnSecondaryConstructorHandler : RenameHandler {
     override fun isAvailableOnDataContext(dataContext: DataContext?): Boolean {
         if (dataContext == null) return false
 
-        val editor = CommonDataKeys.EDITOR.getData(dataContext)
-        val file = CommonDataKeys.PSI_FILE.getData(dataContext)
+        val editor = CommonDataKeys.EDITOR.getData(dataContext) ?: return false
+        val file = CommonDataKeys.PSI_FILE.getData(dataContext) ?: return false
 
         val element = PsiTreeUtil.findElementOfClassAtOffsetWithStopSet(
                 file, editor.getCaretModel().getOffset(), javaClass<JetSecondaryConstructor>(), false,
