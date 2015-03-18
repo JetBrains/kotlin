@@ -95,4 +95,8 @@ public class DelegationTest extends SingleFileTranslationTest {
     public void testDelegationExtensionPropertyDelegated() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testOnObject() throws Exception {
+        checkFooBoxIsOk();
+    }
 }

@@ -61,6 +61,11 @@ import static org.jetbrains.kotlin.resolve.BindingContextUtils.isVarCapturedInCl
 
 public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @Override
+    protected JsNode emptyResult(@NotNull TranslationContext context) {
+        return context.getEmptyExpression();
+    }
+
+    @Override
     @NotNull
     public JsNode visitConstantExpression(@NotNull JetConstantExpression expression, @NotNull TranslationContext context) {
         return translateConstantExpression(expression, context).source(expression);
@@ -176,11 +181,6 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         }
 
         return newVar(name, initializer).source(expression);
-    }
-
-    @Override
-    public JsNode visitClassLiteralExpression(@NotNull JetClassLiteralExpression expression, @NotNull TranslationContext context) {
-        throw new UnsupportedOperationException("Class literals are not yet supported: " + expression.getText());
     }
 
     @Override

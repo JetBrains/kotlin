@@ -73,7 +73,7 @@ public class KotlinReferenceData(
         }
     }
 
-    default object {
+    class object {
         public val dataFlavor: DataFlavor? by Delegates.lazy {
             try {
                 DataFlavor(DataFlavor.javaJVMLocalObjectMimeType + ";class=" + javaClass<KotlinReferenceData>().getName(), "KotlinReferenceData")

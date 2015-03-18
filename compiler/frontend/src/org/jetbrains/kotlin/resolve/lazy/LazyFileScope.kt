@@ -55,7 +55,7 @@ class LazyFileScope private(
         }
     }
 
-    default object Factory {
+    class object Factory {
         public fun create(
                 resolveSession: ResolveSession,
                 file: JetFile,

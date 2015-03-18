@@ -10,7 +10,7 @@ public class SimpleTraitImpl : SimpleTrait {
 }
 
 public class WithInnerAndObject {
-    default object {
+    companion object {
         fun foo() {
         }
     }
@@ -23,7 +23,7 @@ public class WithInnerAndObject {
 }
 
 public class WithTraitClassObject {
-    default object : SimpleTrait
+    companion object : SimpleTrait
 }
 
 public abstract class AbstractClass {

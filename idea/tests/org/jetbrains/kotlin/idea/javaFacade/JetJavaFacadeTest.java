@@ -187,22 +187,22 @@ public class JetJavaFacadeTest extends JetLightCodeInsightFixtureTestCase {
         PsiField classobjField = theClass.findFieldByName("$classobj", false);
         assertNull(classobjField);
 
-        String defaultClassObjectName = SpecialNames.DEFAULT_NAME_FOR_DEFAULT_OBJECT.asString();
-        PsiClass classObjectClass = theClass.findInnerClassByName(defaultClassObjectName, false);
+        String defaultCompanionObjectName = SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT.asString();
+        PsiClass classObjectClass = theClass.findInnerClassByName(defaultCompanionObjectName, false);
         assertNotNull(classObjectClass);
-        assertEquals("foo.TheClass." + defaultClassObjectName, classObjectClass.getQualifiedName());
+        assertEquals("foo.TheClass." + defaultCompanionObjectName, classObjectClass.getQualifiedName());
         assertTrue(classObjectClass.hasModifierProperty(PsiModifier.STATIC));
 
-        PsiField instance = theClass.findFieldByName(defaultClassObjectName, false);
+        PsiField instance = theClass.findFieldByName(defaultCompanionObjectName, false);
         assertNotNull(instance);
-        assertEquals("foo.TheClass." + defaultClassObjectName, instance.getType().getCanonicalText());
+        assertEquals("foo.TheClass." + defaultCompanionObjectName, instance.getType().getCanonicalText());
         assertTrue(instance.hasModifierProperty(PsiModifier.PUBLIC));
         assertTrue(instance.hasModifierProperty(PsiModifier.STATIC));
         assertTrue(instance.hasModifierProperty(PsiModifier.FINAL));
 
-        PsiField deprecatedAccessor = theClass.findFieldByName(JvmAbi.DEPRECATED_DEFAULT_OBJECT_FIELD, false);
+        PsiField deprecatedAccessor = theClass.findFieldByName(JvmAbi.DEPRECATED_COMPANION_OBJECT_FIELD, false);
         assertNotNull(deprecatedAccessor);
-        assertEquals("foo.TheClass." + defaultClassObjectName, deprecatedAccessor.getType().getCanonicalText());
+        assertEquals("foo.TheClass." + defaultCompanionObjectName, deprecatedAccessor.getType().getCanonicalText());
         assertTrue(deprecatedAccessor.hasModifierProperty(PsiModifier.PUBLIC));
         assertTrue(deprecatedAccessor.hasModifierProperty(PsiModifier.STATIC));
         assertTrue(deprecatedAccessor.hasModifierProperty(PsiModifier.FINAL));

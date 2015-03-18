@@ -152,7 +152,7 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
 
     @Override
     public JetType getClassObjectType() {
-        // TODO: default object bounds
+        // TODO: companion object bounds
         return null;
     }
 

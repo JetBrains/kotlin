@@ -27,7 +27,7 @@ class Example(a : Foo, i : Int) : Bar(i), Some {
 */
 
 memberDeclaration
-  : defaultObject
+  : companionObject
   : object
   : function
   : property
@@ -42,7 +42,7 @@ anonymousInitializer
   : block
   ;
 
-defaultObject
+companionObject
   : modifiers "class" object
   ;
 

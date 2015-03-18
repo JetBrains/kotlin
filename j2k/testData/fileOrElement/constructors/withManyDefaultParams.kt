@@ -16,7 +16,7 @@ public class Test {
         myName = foo(name)
     }
 
-    default object {
+    companion object {
 
         fun foo(n: String): String {
             return ""
@@ -25,7 +25,7 @@ public class Test {
 }
 
 public class User {
-    default object {
+    companion object {
         public fun main() {
             val t = Test("name")
         }

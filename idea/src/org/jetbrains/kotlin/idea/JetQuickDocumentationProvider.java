@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea;
 import com.google.common.base.Predicate;
 import com.intellij.lang.documentation.AbstractDocumentationProvider;
 import com.intellij.lang.java.JavaDocumentationProvider;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -31,11 +32,14 @@ import org.jetbrains.kotlin.idea.kdoc.KDocRenderer;
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag;
 import org.jetbrains.kotlin.psi.JetDeclaration;
 import org.jetbrains.kotlin.psi.JetPackageDirective;
+import org.jetbrains.kotlin.psi.JetPsiUtil;
 import org.jetbrains.kotlin.psi.JetReferenceExpression;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.BindingContext;
 
 public class JetQuickDocumentationProvider extends AbstractDocumentationProvider {
+    private static final Logger LOG = Logger.getInstance(JetQuickDocumentationProvider.class);
+
     private static final Predicate<PsiElement> SKIP_WHITESPACE_AND_EMPTY_PACKAGE = new Predicate<PsiElement>() {
         @Override
         public boolean apply(PsiElement input) {
@@ -84,7 +88,10 @@ public class JetQuickDocumentationProvider extends AbstractDocumentationProvider
         BindingContext context = ResolvePackage.analyze(declaration);
         DeclarationDescriptor declarationDescriptor = context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
 
-        assert declarationDescriptor != null;
+        if (declarationDescriptor == null) {
+            LOG.info("Failed to find descriptor for declaration " + JetPsiUtil.getElementTextWithContext(declaration));
+            return "No documentation available";
+        }
 
         String renderedDecl = DescriptorRenderer.HTML_NAMES_WITH_SHORT_TYPES.render(declarationDescriptor);
         if (!quickNavigation) {

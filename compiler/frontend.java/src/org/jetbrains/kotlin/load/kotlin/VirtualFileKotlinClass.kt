@@ -49,7 +49,7 @@ public class VirtualFileKotlinClass private(
     override fun hashCode() = file.hashCode()
     override fun toString() = "${javaClass.getSimpleName()}: $file"
 
-    default object Factory {
+    class object Factory {
         private val LOG = Logger.getInstance(javaClass<VirtualFileKotlinClass>())
 
         deprecated("Use KotlinBinaryClassCache")

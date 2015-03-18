@@ -17,7 +17,7 @@ class Test5() {
 }
 
 class Test6() {
-    default object {
+    companion object {
         Deprecated fun test6() {}
     }
 }

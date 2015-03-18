@@ -8,8 +8,7 @@ fun View.a() {
     val y = this.login
 }
 
-// 2 GETSTATIC
-// 2 INVOKEVIRTUAL
-// 2 CHECKCAST
+// 2 GETSTATIC com/myapp/R\$id\.login
+// 2 INVOKEVIRTUAL android/view/View\.findViewById
+// 2 CHECKCAST android/widget/Button
 // 0 _\$_findCachedViewById
-// 2 findViewById

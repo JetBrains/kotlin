@@ -424,7 +424,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         Call call = CallMaker.makeCall(expression, NO_RECEIVER, null, expression, Collections.<ValueArgument>emptyList());
         ResolutionCandidate<ReceiverParameterDescriptor> resolutionCandidate =
                 ResolutionCandidate.create(
-                        call, descriptor, NO_RECEIVER, NO_RECEIVER, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER);
+                        call, descriptor, NO_RECEIVER, NO_RECEIVER, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, null);
 
         ResolvedCallImpl<ReceiverParameterDescriptor> resolvedCall =
                 ResolvedCallImpl.create(resolutionCandidate,

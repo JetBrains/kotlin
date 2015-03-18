@@ -17,7 +17,7 @@ class KClient {
         KBase().foo("")
     }
 
-    default object {
+    companion object {
         val a = KBase().foo("") + KA().foo("")
     }
 

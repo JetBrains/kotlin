@@ -1,7 +1,7 @@
 // TraitClassObjectField
 
 trait TraitClassObjectField {
-    default object {
+    companion object {
         val x: String? = ""
         private val y: String? = ""
     }

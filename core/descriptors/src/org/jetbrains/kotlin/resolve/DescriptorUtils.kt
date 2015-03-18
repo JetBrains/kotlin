@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 
-public fun ClassDescriptor.getClassObjectReferenceTarget(): ClassDescriptor = getDefaultObjectDescriptor() ?: this
+public fun ClassDescriptor.getClassObjectReferenceTarget(): ClassDescriptor = getCompanionObjectDescriptor() ?: this
 
 public fun DeclarationDescriptor.getImportableDescriptor(): DeclarationDescriptor {
     return when {
@@ -67,7 +67,7 @@ public val ClassDescriptor.classObjectDescriptor: ClassDescriptor?
                 assert(container is ClassDescriptor && container.getKind() == ENUM_CLASS)
                 container as ClassDescriptor
             }
-            else -> getDefaultObjectDescriptor()
+            else -> getCompanionObjectDescriptor()
         }
     }
 

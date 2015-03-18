@@ -88,7 +88,7 @@ JetFile: SimpleClassMembers.kt
               PsiWhiteSpace('\n            ')
               OBJECT_DECLARATION
                 MODIFIER_LIST
-                  PsiElement(default)('default')
+                  PsiElement(companion)('companion')
                 PsiWhiteSpace(' ')
                 PsiElement(object)('object')
                 PsiWhiteSpace(' ')
@@ -101,7 +101,7 @@ JetFile: SimpleClassMembers.kt
                 MODIFIER_LIST
                   PsiElement(private)('private')
                   PsiWhiteSpace(' ')
-                  PsiElement(default)('default')
+                  PsiElement(companion)('companion')
                 PsiWhiteSpace(' ')
                 PsiElement(object)('object')
                 PsiWhiteSpace(' ')
@@ -114,7 +114,7 @@ JetFile: SimpleClassMembers.kt
                 MODIFIER_LIST
                   PsiElement(private)('private')
                   PsiWhiteSpace(' ')
-                  PsiElement(default)('default')
+                  PsiElement(companion)('companion')
                 PsiWhiteSpace(' ')
                 PsiElement(object)('object')
                 PsiWhiteSpace(' ')
@@ -136,7 +136,7 @@ JetFile: SimpleClassMembers.kt
                 MODIFIER_LIST
                   PsiElement(private)('private')
                   PsiWhiteSpace(' ')
-                  PsiElement(default)('default')
+                  PsiElement(companion)('companion')
                 PsiWhiteSpace(' ')
                 PsiElement(object)('object')
                 PsiWhiteSpace(' ')
@@ -170,7 +170,7 @@ JetFile: SimpleClassMembers.kt
                 MODIFIER_LIST
                   PsiElement(private)('private')
                   PsiWhiteSpace(' ')
-                  PsiElement(default)('default')
+                  PsiElement(companion)('companion')
                 PsiWhiteSpace(' ')
                 PsiElement(object)('object')
                 PsiWhiteSpace(' ')
@@ -281,7 +281,7 @@ JetFile: SimpleClassMembers.kt
       PsiWhiteSpace('\n\n    ')
       OBJECT_DECLARATION
         MODIFIER_LIST
-          PsiElement(default)('default')
+          PsiElement(companion)('companion')
         PsiWhiteSpace(' ')
         PsiElement(object)('object')
         PsiWhiteSpace(' ')
@@ -294,7 +294,7 @@ JetFile: SimpleClassMembers.kt
         MODIFIER_LIST
           PsiElement(private)('private')
           PsiWhiteSpace(' ')
-          PsiElement(default)('default')
+          PsiElement(companion)('companion')
         PsiWhiteSpace(' ')
         PsiElement(object)('object')
         PsiWhiteSpace(' ')
@@ -307,7 +307,7 @@ JetFile: SimpleClassMembers.kt
         MODIFIER_LIST
           PsiElement(private)('private')
           PsiWhiteSpace(' ')
-          PsiElement(default)('default')
+          PsiElement(companion)('companion')
         PsiWhiteSpace(' ')
         PsiElement(object)('object')
         PsiWhiteSpace(' ')
@@ -329,7 +329,7 @@ JetFile: SimpleClassMembers.kt
         MODIFIER_LIST
           PsiElement(private)('private')
           PsiWhiteSpace(' ')
-          PsiElement(default)('default')
+          PsiElement(companion)('companion')
         PsiWhiteSpace(' ')
         PsiElement(object)('object')
         PsiWhiteSpace(' ')
@@ -363,7 +363,7 @@ JetFile: SimpleClassMembers.kt
         MODIFIER_LIST
           PsiElement(private)('private')
           PsiWhiteSpace(' ')
-          PsiElement(default)('default')
+          PsiElement(companion)('companion')
         PsiWhiteSpace(' ')
         PsiElement(object)('object')
         PsiWhiteSpace(' ')

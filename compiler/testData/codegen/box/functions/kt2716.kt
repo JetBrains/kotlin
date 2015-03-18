@@ -1,7 +1,7 @@
 package someTest
 
 public class Some private(val v: String) {
-    default object {
+    companion object {
         public fun init(v: String): Some {
             return Some(v)
         }

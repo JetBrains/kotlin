@@ -3,11 +3,11 @@ package test
 class A
 
 class Many {
-    default object {
+    companion object {
         val x = A()
     }
 
-    default object {
+    companion object {
         val y = <caret>A()
     }
 }

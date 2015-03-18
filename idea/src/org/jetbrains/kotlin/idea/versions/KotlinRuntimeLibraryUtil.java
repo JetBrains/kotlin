@@ -38,6 +38,7 @@ import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.indexing.ID;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.idea.JetPluginUtil;
 import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtils;
 import org.jetbrains.kotlin.idea.configuration.KotlinJavaModuleConfigurator;
 import org.jetbrains.kotlin.idea.framework.JSLibraryStdPresentationProvider;
@@ -246,6 +247,26 @@ public class KotlinRuntimeLibraryUtil {
             this.jarName = jarName;
             this.shouldExist = shouldExist;
         }
+    }
+
+    @NotNull
+    public static String bundledRuntimeVersion() {
+        return bundledRuntimeVersion(JetPluginUtil.getPluginVersion());
+    }
+
+    @NotNull
+    public static String bundledRuntimeVersion(@NotNull String pluginVersion) {
+        int placeToSplit = -1;
+
+        for (int i = 0; i < pluginVersion.toCharArray().length; i++) {
+            char ch = pluginVersion.charAt(i);
+            if (Character.isLetter(ch) && i > 0 && pluginVersion.charAt(i - 1) == '.') {
+                placeToSplit = i - 1;
+                break;
+            }
+        }
+
+        return placeToSplit != - 1 ? pluginVersion.substring(0, placeToSplit) : pluginVersion;
     }
 
     @Nullable

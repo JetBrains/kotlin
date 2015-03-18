@@ -1,5 +1,5 @@
 class S {
-    default object {
+    companion object {
         fun staticF(): Boolean {
             return true
         }

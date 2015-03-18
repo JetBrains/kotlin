@@ -12,5 +12,7 @@
     <orderEntry type="module" module-name="js.dart-ast" exported="" />
     <orderEntry type="module" module-name="js.parser" exported="" />
     <orderEntry type="module" module-name="util" />
+    <orderEntry type="module" module-name="serialization" />
+    <orderEntry type="module" module-name="serialization.js" />
   </component>
 </module>

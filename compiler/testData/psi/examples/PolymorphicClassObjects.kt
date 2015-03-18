@@ -9,7 +9,7 @@ open class Buildable {
 
 class List<T> {
 
-  default object : Buildable {
+  companion object : Buildable {
     override fun newBuilder<E, R>() : Builder<E, R>
 
   }

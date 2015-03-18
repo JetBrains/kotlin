@@ -8,8 +8,8 @@ fun box(): String {
     assertEquals("Int", Int::class.simpleName)
     assertEquals("Long", Long::class.simpleName)
 
-    assertEquals("Default", Int.Default::class.simpleName)
-    assertEquals("Default", Double.Default::class.simpleName)
+    assertEquals("Companion", Int.Companion::class.simpleName)
+    assertEquals("Companion", Double.Companion::class.simpleName)
 
     assertEquals("IntRange", IntRange::class.simpleName)
 

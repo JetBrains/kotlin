@@ -247,7 +247,7 @@ class ForwardAccessToBackingField() { //kt-147
 }
 
 class ClassObject() {
-    default object {
+    companion object {
         val x : Int
 
         init {

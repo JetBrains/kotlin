@@ -2,7 +2,7 @@ class Foo {
 
   {Foo.test()}
 
-  default object {
+  companion object {
     private fun test() {
 
     }
@@ -10,5 +10,5 @@ class Foo {
 }
 
 // TESTED_OBJECT_KIND: function
-// TESTED_OBJECTS: Foo$Default, test
+// TESTED_OBJECTS: Foo$Companion, test
 // FLAGS: ACC_PRIVATE, ACC_FINAL

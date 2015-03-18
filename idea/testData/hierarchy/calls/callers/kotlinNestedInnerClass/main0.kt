@@ -14,7 +14,7 @@ class KClient {
         T().KA()
     }
 
-    default object {
+    companion object {
         val a = T().KA()
     }
 

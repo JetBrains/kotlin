@@ -23,7 +23,7 @@ object B: A() {
 
 class C {
 
-    default object: A() {
+    companion object: A() {
         [platformStatic] override fun a() {}
 
         [platformStatic] override fun b() {}

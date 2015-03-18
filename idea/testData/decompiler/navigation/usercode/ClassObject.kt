@@ -5,5 +5,5 @@ fun foo() {
 }
 
 // main.kt
-//    default <1>object {
+//    companion <1>object {
 //        fun <2>foo() {

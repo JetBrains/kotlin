@@ -1,0 +1,2 @@
+<!-- constructorsRedeclarationTopLevel1 -->
+'internal fun Element(x: kotlin.String): kotlin.Unit' is already defined in root package

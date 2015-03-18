@@ -18,4 +18,4 @@ package org.jetbrains.kotlin.js.test.semantics
 
 import org.jetbrains.kotlin.js.test.SingleFileTranslationTest
 
-public abstract class AbstractDefaultObjectTest : SingleFileTranslationTest("objectIntrinsics/")
+public abstract class AbstractCompanionObjectTest : SingleFileTranslationTest("objectIntrinsics/")

@@ -3,23 +3,23 @@ package test
 internal final class Int {
     /*primary*/ public constructor Int()
 
-    internal default object Default {
-        /*primary*/ private constructor Default()
+    internal companion object Companion {
+        /*primary*/ private constructor Companion()
     }
 }
 
 private final class Pri {
     /*primary*/ public constructor Pri()
 
-    private default object Default {
-        /*primary*/ private constructor Default()
+    private companion object Companion {
+        /*primary*/ private constructor Companion()
     }
 }
 
 public final class Pub {
     /*primary*/ public constructor Pub()
 
-    public default object Default {
-        /*primary*/ private constructor Default()
+    public companion object Companion {
+        /*primary*/ private constructor Companion()
     }
 }

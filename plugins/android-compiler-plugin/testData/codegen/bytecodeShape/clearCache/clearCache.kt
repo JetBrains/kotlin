@@ -6,9 +6,9 @@ import java.io.File
 import kotlinx.android.synthetic.*
 
 public class MyActivity : Activity() {
-    {clearFindViewByIdCache()}
+    init { clearFindViewByIdCache() }
 }
 
-// 5 INVOKEVIRTUAL
-// 1 CHECKCAST
-// 2  _\$_clearFindViewByIdCache
+// 1 public _\$_findCachedViewById
+// 1 public _\$_clearFindViewByIdCache
+// 1 INVOKEVIRTUAL com/myapp/MyActivity\._\$_clearFindViewByIdCache

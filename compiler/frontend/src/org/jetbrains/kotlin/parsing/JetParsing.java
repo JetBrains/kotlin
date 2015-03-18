@@ -785,7 +785,7 @@ public class JetParsing extends AbstractJetParsing {
      *   ;
      *
      * memberDeclaration'
-     *   : defaultObject
+     *   : companionObject
      *   : secondaryConstructor
      *   : function
      *   : property
@@ -957,7 +957,7 @@ public class JetParsing extends AbstractJetParsing {
     }
 
     /*
-     * defaultObject
+     * companionObject
      *   : modifiers "class" object
      *   ;
      */
@@ -2083,7 +2083,7 @@ public class JetParsing extends AbstractJetParsing {
             if (item == JetTokens.ENUM_KEYWORD) {
                 enumDetected = true;
             }
-            else if (item == JetTokens.DEFAULT_KEYWORD) {
+            else if (item == JetTokens.COMPANION_KEYWORD) {
                 defaultDetected = true;
             }
         }

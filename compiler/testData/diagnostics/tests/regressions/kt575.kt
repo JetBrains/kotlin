@@ -1,9 +1,9 @@
-// KT-575 Cannot ++ a default object member
+// KT-575 Cannot ++ a companion object member
 
 package kt575
 
 class Creature() {
-    default object {
+    companion object {
         var numCreated : Int = 0
           private set
     }

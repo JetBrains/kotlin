@@ -45,15 +45,15 @@ public class KotlinReferencesSearcher extends QueryExecutorBase<PsiReference, Re
             if (lightClass != null) {
                 searchNamedElement(queryParameters, lightClass, className);
 
-                if (element instanceof JetObjectDeclaration && ((JetObjectDeclaration) element).isDefault()) {
-                    PsiField fieldForDefaultObject = ApplicationManager.getApplication().runReadAction(new Computable<PsiField>() {
+                if (element instanceof JetObjectDeclaration && ((JetObjectDeclaration) element).isCompanion()) {
+                    PsiField fieldForCompanionObject = ApplicationManager.getApplication().runReadAction(new Computable<PsiField>() {
                         @Override
                         public PsiField compute() {
-                            return LightClassUtil.getLightFieldForDefaultObject(element);
+                            return LightClassUtil.getLightFieldForCompanionObject(element);
                         }
                     });
-                    if (fieldForDefaultObject != null) {
-                        searchNamedElement(queryParameters, fieldForDefaultObject);
+                    if (fieldForCompanionObject != null) {
+                        searchNamedElement(queryParameters, fieldForCompanionObject);
                     }
                 }
             }

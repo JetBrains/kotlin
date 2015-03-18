@@ -2,7 +2,7 @@
 // ERROR: Property must be initialized or be abstract
 
 class A<T>(val n: T) {
-    default object {
+    companion object {
 
     }
 }

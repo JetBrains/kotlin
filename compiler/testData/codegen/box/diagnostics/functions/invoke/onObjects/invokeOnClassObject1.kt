@@ -1,5 +1,5 @@
 class A {
-    default object {
+    companion object {
         fun invoke(i: Int) = i
     }
 }

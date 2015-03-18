@@ -36,10 +36,10 @@ public fun DeclarationDescriptor.hasIntrinsicAnnotation(): Boolean {
 }
 
 public fun CallableDescriptor.isPlatformStaticInObjectOrClass(): Boolean =
-        isPlatformStaticIn { DescriptorUtils.isNonDefaultObject(it) || DescriptorUtils.isClass(it) }
+        isPlatformStaticIn { DescriptorUtils.isNonCompanionObject(it) || DescriptorUtils.isClass(it) }
 
-public fun CallableDescriptor.isPlatformStaticInDefaultObject(): Boolean =
-        isPlatformStaticIn { DescriptorUtils.isDefaultObject(it) }
+public fun CallableDescriptor.isPlatformStaticInCompanionObject(): Boolean =
+        isPlatformStaticIn { DescriptorUtils.isCompanionObject(it) }
 
 private fun CallableDescriptor.isPlatformStaticIn(predicate: (DeclarationDescriptor) -> Boolean): Boolean =
         when (this) {

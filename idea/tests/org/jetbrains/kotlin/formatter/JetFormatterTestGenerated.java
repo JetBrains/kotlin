@@ -400,6 +400,18 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("SecondaryConstructors.after.kt")
+        public void testSecondaryConstructors() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/SecondaryConstructors.after.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("secondaryCtorLineBreak.after.kt")
+        public void testSecondaryCtorLineBreak() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/secondaryCtorLineBreak.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("SingleLineFunctionLiteral.after.kt")
         public void testSingleLineFunctionLiteral() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/SingleLineFunctionLiteral.after.kt");
@@ -421,6 +433,12 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
         @TestMetadata("SpaceAroundExtendColonInObjects.after.kt")
         public void testSpaceAroundExtendColonInObjects() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/SpaceAroundExtendColonInObjects.after.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("SpaceAroundExtendColonInSecondaryCtr.after.kt")
+        public void testSpaceAroundExtendColonInSecondaryCtr() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/SpaceAroundExtendColonInSecondaryCtr.after.kt");
             doTest(fileName);
         }
 
@@ -801,6 +819,12 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
             doTestInverted(fileName);
         }
 
+        @TestMetadata("secondaryCtorLineBreak.after.inv.kt")
+        public void testSecondaryCtorLineBreak() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/secondaryCtorLineBreak.after.inv.kt");
+            doTestInverted(fileName);
+        }
+
         @TestMetadata("SingleLineFunctionLiteral.after.inv.kt")
         public void testSingleLineFunctionLiteral() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/SingleLineFunctionLiteral.after.inv.kt");
@@ -822,6 +846,12 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
         @TestMetadata("SpaceAroundExtendColonInObjects.after.inv.kt")
         public void testSpaceAroundExtendColonInObjects() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/SpaceAroundExtendColonInObjects.after.inv.kt");
+            doTestInverted(fileName);
+        }
+
+        @TestMetadata("SpaceAroundExtendColonInSecondaryCtr.after.inv.kt")
+        public void testSpaceAroundExtendColonInSecondaryCtr() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/SpaceAroundExtendColonInSecondaryCtr.after.inv.kt");
             doTestInverted(fileName);
         }
 

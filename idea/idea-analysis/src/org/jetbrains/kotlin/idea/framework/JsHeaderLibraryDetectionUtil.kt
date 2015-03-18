@@ -20,12 +20,22 @@ package org.jetbrains.kotlin.idea.framework
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.JetFileType
+import org.jetbrains.kotlin.js.JavaScript
+import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import kotlin.platform.platformStatic
 
 public object JsHeaderLibraryDetectionUtil {
 
     platformStatic
     public fun isJsHeaderLibraryDetected(classesRoots: List<VirtualFile>): Boolean =
+        isJsLibraryWithAcceptedFile(classesRoots) {
+            val extension = it.getExtension()
+            JetFileType.EXTENSION == extension ||
+            JavaScript.EXTENSION == extension && KotlinJavascriptMetadataUtils.hasMetadata(String(it.contentsToByteArray(false)))
+        }
+
+    platformStatic
+    public fun isJsHeaderLibraryWithSources(classesRoots: List<VirtualFile>): Boolean =
             isJsLibraryWithAcceptedFile(classesRoots) { JetFileType.EXTENSION == it.getExtension() }
 
     private fun isJsLibraryWithAcceptedFile(classesRoots: List<VirtualFile>, accept: (VirtualFile) -> Boolean): Boolean {

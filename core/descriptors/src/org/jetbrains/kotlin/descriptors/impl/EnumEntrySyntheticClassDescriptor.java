@@ -50,7 +50,7 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
     private final NotNullLazyValue<Collection<Name>> enumMemberNames;
 
     /**
-     * Creates and initializes descriptors for enum entry with the given name and its default object
+     * Creates and initializes descriptors for enum entry with the given name and its companion object
      * @param enumMemberNames needed for fake overrides resolution
      */
     @NotNull
@@ -115,7 +115,7 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
 
     @Nullable
     @Override
-    public ClassDescriptor getDefaultObjectDescriptor() {
+    public ClassDescriptor getCompanionObjectDescriptor() {
         return null;
     }
 
@@ -143,7 +143,7 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
     }
 
     @Override
-    public boolean isDefaultObject() {
+    public boolean isCompanionObject() {
         return false;
     }
 
@@ -219,7 +219,7 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
         @NotNull
         private JetScope getSupertypeScope() {
             Collection<JetType> supertype = getTypeConstructor().getSupertypes();
-            assert supertype.size() == 1 : "Enum entry and its default object both should have exactly one supertype: " + supertype;
+            assert supertype.size() == 1 : "Enum entry and its companion object both should have exactly one supertype: " + supertype;
             return supertype.iterator().next().getMemberScope();
         }
 

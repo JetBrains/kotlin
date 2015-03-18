@@ -31,7 +31,7 @@ class A {
         f()
     }
 
-    default object {
+    companion object {
         fun test() {
             lambda {
                 val a = 1

@@ -1,7 +1,7 @@
 abstract class ClassValAbstract {
     abstract var a: Int
 
-    default object {
+    companion object {
         val methods = (this as java.lang.Object).getClass()?.getClassLoader()?.loadClass("ClassValAbstract")?.getMethods()!!
     }
 }

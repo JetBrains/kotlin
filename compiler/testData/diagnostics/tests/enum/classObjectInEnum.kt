@@ -1,7 +1,7 @@
 enum class E {
     ENTRY
 
-    default object {
+    companion object {
         fun entry() = ENTRY
     }
 }

@@ -7,7 +7,7 @@ package p
 public class A {
     public class B
     public object C
-    default object {
+    companion object {
         public class D {
             public object E
         }
@@ -21,10 +21,10 @@ public class M1 {
     public val a: A = A()
     public val b: A.B = A.B()
     public val c: A.C = A.C
-    public val d: A.Default.D = A.Default.D()
-    public val e: A.Default.D.E = A.Default.D.E
+    public val d: A.Companion.D = A.Companion.D()
+    public val e: A.Companion.D.E = A.Companion.D.E
     public val f: A.F = A().F()
-    public val g: A.Default.G = A.Default.G()
+    public val g: A.Companion.G = A.Companion.G()
 }
 
 // MODULE: m2
@@ -35,7 +35,7 @@ package p
 public class A {
     public class B
     public class C
-    default object {
+    companion object {
         public class D {
             public class E
         }
@@ -47,8 +47,8 @@ public class A {
 public fun a(p: A) {}
 public fun b(p: A.B) {}
 public fun c(p: A.C) {}
-public fun d(p: A.Default.D) {}
-public fun e(p: A.Default.D.E) {}
+public fun d(p: A.Companion.D) {}
+public fun e(p: A.Companion.D.E) {}
 public fun f(p: A.F) {}
 public fun g(p: A.G) {}
 

@@ -21,7 +21,7 @@ public class Identifier<T> {
 }
 
 public class User {
-    default object {
+    companion object {
         public fun main(args: Array<String>) {
             val i1 = Identifier("name", false, true)
             val i2 = Identifier("name", false)

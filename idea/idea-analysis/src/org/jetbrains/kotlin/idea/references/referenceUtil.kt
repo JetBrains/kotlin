@@ -51,12 +51,12 @@ public fun PsiReference.matchesTarget(candidateTarget: PsiElement): Boolean {
     if (this is JetReference) {
         return targets.any {
             it is PsiMethod && it.isConstructor() && it.getContainingClass() == unwrappedCandidate
-            || it is JetObjectDeclaration && it.isDefault() && it.getNonStrictParentOfType<JetClass>() == unwrappedCandidate
+            || it is JetObjectDeclaration && it.isCompanion() && it.getNonStrictParentOfType<JetClass>() == unwrappedCandidate
         }
     }
     if (this is PsiReferenceExpression && candidateTarget is JetObjectDeclaration && unwrappedTargets.size() == 1) {
         val referredClass = unwrappedTargets.first()
-        if (referredClass is JetClass && candidateTarget in referredClass.getDefaultObjects()) {
+        if (referredClass is JetClass && candidateTarget in referredClass.getCompanionObjects()) {
             val parentReference = getParent().getReference()
             if (parentReference != null) {
                 return parentReference.unwrappedTargets.any {

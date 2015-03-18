@@ -19,8 +19,8 @@ kotlin.js.native() internal final class C {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    internal default object Default {
-        private constructor Default()
+    internal companion object Companion {
+        private constructor Companion()
         internal final val baz: kotlin.Int
         internal final val boo: kotlin.Int
         internal final fun bar(): kotlin.String
@@ -50,8 +50,8 @@ kotlin.js.native() internal trait T {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    internal default object Default {
-        private constructor Default()
+    internal companion object Companion {
+        private constructor Companion()
         internal final val baz: kotlin.Int
         internal final val boo: kotlin.Int
         internal final fun bar(): kotlin.String

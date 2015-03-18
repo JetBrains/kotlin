@@ -22,24 +22,24 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.*;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.intellij.util.PathUtil;
 import com.intellij.util.io.URLUtil;
 import kotlin.Function1;
 import kotlin.Function2;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.js.JavaScript;
 import org.jetbrains.kotlin.idea.JetFileType;
+import org.jetbrains.kotlin.js.JavaScript;
 import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.utils.KotlinJavascriptMetadata;
+import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils;
 import org.jetbrains.kotlin.utils.LibraryUtils;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.kotlin.utils.LibraryUtils.isKotlinJavascriptLibrary;
-import static org.jetbrains.kotlin.utils.LibraryUtils.isKotlinJavascriptStdLibrary;
+import static org.jetbrains.kotlin.utils.LibraryUtils.*;
 
 public class LibrarySourcesConfig extends Config {
     @NotNull
@@ -72,14 +72,10 @@ public class LibrarySourcesConfig extends Config {
         return files;
     }
 
-    @NotNull
     @Override
-    protected List<JetFile> generateLibFiles() {
-        if (files.isEmpty()) {
-            return Collections.emptyList();
-        }
+    protected void init(@NotNull final List<JetFile> sourceFilesInLibraries, @NotNull final List<KotlinJavascriptMetadata> metadata) {
+        if (files.isEmpty()) return;
 
-        final List<JetFile> jetFiles = new ArrayList<JetFile>();
         final PsiManager psiManager = PsiManager.getInstance(getProject());
 
         Function1<String, Unit> report = new Function1<String, Unit>() {
@@ -92,16 +88,22 @@ public class LibrarySourcesConfig extends Config {
         Function2<String, VirtualFile, Unit> action = new Function2<String, VirtualFile, Unit>() {
             @Override
             public Unit invoke(String moduleName, VirtualFile file) {
-                JetFileCollector jetFileCollector = new JetFileCollector(jetFiles, moduleName, psiManager);
-                VfsUtilCore.visitChildrenRecursively(file, jetFileCollector);
+                if (moduleName != null) {
+                    JetFileCollector jetFileCollector = new JetFileCollector(sourceFilesInLibraries, moduleName, psiManager);
+                    VfsUtilCore.visitChildrenRecursively(file, jetFileCollector);
+                }
+                else {
+                    String libraryPath = PathUtil.getLocalPath(file);
+                    assert libraryPath != null : "libraryPath for " + file + " should not be null";
+                    metadata.addAll(KotlinJavascriptMetadataUtils.loadMetadata(libraryPath));
+                }
+
                 return Unit.INSTANCE$;
             }
         };
 
         boolean hasErrors = checkLibFilesAndReportErrors(report, action);
         assert !hasErrors : "hasErrors should be false";
-
-        return jetFiles;
     }
 
     @Override
@@ -121,7 +123,6 @@ public class LibrarySourcesConfig extends Config {
 
         for (String path : files) {
             VirtualFile file;
-            String actualModuleName = moduleName;
             if (path.charAt(0) == '@') {
                 moduleName = path.substring(1);
                 continue;
@@ -145,20 +146,22 @@ public class LibrarySourcesConfig extends Config {
                 return true;
             }
             else {
-                if (isKotlinJavascriptStdLibrary(filePath)) {
-                    actualModuleName = STDLIB_JS_MODULE_NAME;
+                String actualModuleName;
+
+                if (moduleName != null) {
+                    actualModuleName = moduleName;
                 }
-                else if (isKotlinJavascriptLibrary(filePath)) {
+                else if (isOldKotlinJavascriptLibrary(filePath)) {
                     actualModuleName = LibraryUtils.getKotlinJsModuleName(filePath);
                 }
-                else if (actualModuleName == null) {
+                else if (isKotlinJavascriptLibraryWithMetadata(filePath)) {
+                    actualModuleName = null;
+                }
+                else {
                     report.invoke("'" + path + "' is not a valid Kotlin Javascript library");
                     return true;
                 }
-                if (actualModuleName == null) {
-                    report.invoke("Could not find " + LibraryUtils.KOTLIN_JS_MODULE_NAME + " for '" + path + "'");
-                    return true;
-                }
+
                 if (action != null) {
                     action.invoke(actualModuleName, file);
                 }
@@ -169,7 +172,7 @@ public class LibrarySourcesConfig extends Config {
         return false;
     }
 
-    protected JetFile getJetFileByVirtualFile(VirtualFile file, String moduleName, PsiManager psiManager) {
+    protected static JetFile getJetFileByVirtualFile(VirtualFile file, String moduleName, PsiManager psiManager) {
         PsiFile psiFile = psiManager.findFile(file);
         assert psiFile != null;
 
@@ -181,7 +184,7 @@ public class LibrarySourcesConfig extends Config {
         psiFile.putUserData(EXTERNAL_MODULE_NAME, moduleName);
     }
 
-    private class JetFileCollector extends VirtualFileVisitor {
+    private static class JetFileCollector extends VirtualFileVisitor {
         private final List<JetFile> jetFiles;
         private final String moduleName;
         private final PsiManager psiManager;

@@ -2,7 +2,7 @@ package foo
 
 fun box(): String {
     try {
-        testDefaultObjectAccess()
+        testCompanionObjectAccess()
         testInCall()
         testDoubleConstants()
         testFloatConstants()
@@ -18,7 +18,7 @@ fun box(): String {
     return "OK"
 }
 
-fun testDefaultObjectAccess() {
+fun testCompanionObjectAccess() {
     val i = Int
     val d = Double
     val f = Float
@@ -73,7 +73,7 @@ fun testCallInterface() {
 }
 
 fun testLocalFun() {
-    fun Int.Default.LocalFun() : String = "LocalFun"
+    fun Int.Companion.LocalFun() : String = "LocalFun"
     myAssertEquals("LocalFun", Int.LocalFun())
 }
 
@@ -94,11 +94,11 @@ fun testVarTopField() {
 fun test(a: Any) {}
 
 var _field: Int = 0
-var Int.Default.TopField : Int
+var Int.Companion.TopField : Int
     get() = _field
     set(value) { _field = value };
 
-fun Int.Default.TopFun() : String = "TopFun"
+fun Int.Companion.TopFun() : String = "TopFun"
 
 fun myAssertEquals<T>(a: T, b: T) {
     if (a != b) throw Exception("$a != $b")

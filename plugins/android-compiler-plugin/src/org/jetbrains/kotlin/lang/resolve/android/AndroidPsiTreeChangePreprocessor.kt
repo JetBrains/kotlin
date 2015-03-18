@@ -27,7 +27,7 @@ import com.intellij.psi.PsiFile
 
 public class AndroidPsiTreeChangePreprocessor : PsiTreeChangePreprocessor, SimpleModificationTracker() {
 
-    default object {
+    class object {
         private val HANDLED_EVENTS = setOf(
                 PsiTreeChangeEventImpl.PsiEventType.CHILD_ADDED,
                 PsiTreeChangeEventImpl.PsiEventType.CHILD_MOVED,

@@ -192,13 +192,13 @@ public class LazyTopDownAnalyzer {
                         }
 
                         private void checkClassOrObjectDeclarations(JetClassOrObject classOrObject, ClassDescriptor classDescriptor) {
-                            boolean defaultObjectAlreadyFound = false;
+                            boolean companionObjectAlreadyFound = false;
                             for (JetDeclaration jetDeclaration : classOrObject.getDeclarations()) {
-                                if (jetDeclaration instanceof JetObjectDeclaration && ((JetObjectDeclaration) jetDeclaration).isDefault()) {
-                                    if (defaultObjectAlreadyFound) {
-                                        trace.report(MANY_DEFAULT_OBJECTS.on((JetObjectDeclaration) jetDeclaration));
+                                if (jetDeclaration instanceof JetObjectDeclaration && ((JetObjectDeclaration) jetDeclaration).isCompanion()) {
+                                    if (companionObjectAlreadyFound) {
+                                        trace.report(MANY_COMPANION_OBJECTS.on((JetObjectDeclaration) jetDeclaration));
                                     }
-                                    defaultObjectAlreadyFound = true;
+                                    companionObjectAlreadyFound = true;
                                 }
                                 else if (jetDeclaration instanceof JetSecondaryConstructor) {
                                     if (DescriptorUtils.isSingletonOrAnonymousObject(classDescriptor)) {

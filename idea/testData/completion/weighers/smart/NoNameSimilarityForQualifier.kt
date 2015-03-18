@@ -1,5 +1,5 @@
 class Name {
-    default object {
+    companion object {
         fun create(): Name = Name()
     }
 }

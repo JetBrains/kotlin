@@ -46,7 +46,7 @@ public class JetPsiCheckerAndHighlightingUpdater extends JetPsiChecker {
         PsiElement grandParent = parameter.getParent().getParent();
         if (grandParent instanceof JetNamedFunction) {
             JetNamedFunction function = (JetNamedFunction) grandParent;
-            return UnusedSymbolInspection.Default.isEntryPoint(function);
+            return UnusedSymbolInspection.OBJECT$.isEntryPoint(function);
         }
         return false;
     }

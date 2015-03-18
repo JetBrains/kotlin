@@ -2,7 +2,7 @@ class Test {
 
   public var prop: Int = 0;
 
-  default object {
+  companion object {
     public val prop: Int = 0;
   }
 }

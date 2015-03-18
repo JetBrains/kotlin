@@ -99,6 +99,7 @@
         <include name="core/descriptors/src"/>
         <include name="core/serialization/src"/>
         <include name="core/descriptor.loader.java/src"/>
+        <include name="core/serialization.js/src"/>
         <include name="core/serialization.jvm/src"/>
         <include name="core/util.runtime/src"/>
         <include name="compiler/frontend/src"/>
@@ -116,6 +117,7 @@
         <include name="js/js.frontend/src"/>
         <include name="js/js.inliner/src"/>
         <include name="js/js.parser/src"/>
+        <include name="js/js.serializer/src"/>
     </dirset>
 
     <property name="idea.out" value="${basedir}/out/production"/>
@@ -125,6 +127,7 @@
         <include name="serialization/**"/>
         <include name="descriptor.loader.java/**"/>
         <include name="frontend.java/**"/>
+        <include name="serialization.js/**"/>
         <include name="serialization.jvm/**"/>
         <include name="backend/**"/>
         <include name="backend-common/**"/>
@@ -140,6 +143,7 @@
         <include name="js.frontend/**"/>
         <include name="js.inliner/**"/>
         <include name="js.parser/**"/>
+        <include name="js.serializer/**"/>
     </patternset>
 
     <path id="compilerSources.path">
@@ -190,6 +194,7 @@
             <fileset dir="core/descriptors/src"/>
             <fileset dir="core/descriptor.loader.java/src"/>
             <fileset dir="core/serialization/src"/>
+            <fileset dir="core/serialization.js/src"/>
             <fileset dir="core/serialization.jvm/src"/>
             <fileset dir="core/util.runtime/src"/>
             <fileset dir="compiler/frontend/src"/>
@@ -207,6 +212,7 @@
             <fileset dir="js/js.frontend/src"/>
             <fileset dir="js/js.inliner/src"/>
             <fileset dir="js/js.parser/src"/>
+            <fileset dir="js/js.serializer/src"/>
             <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
 
             <manifest>
@@ -258,6 +264,7 @@
 
     <macrodef name="new-kotlin2js">
         <attribute name="output"/>
+        <attribute name="meta-info"/>
         <element name="src"/>
 
         <sequential>
@@ -281,6 +288,8 @@
                 <arg value="-output"/>
                 <arg value="@{output}"/>
                 <arg value="-no-stdlib"/>
+                <arg value="-meta-info"/>
+                <arg value="@{meta-info}"/>
                 <arg line="-main noCall"/>
             </java>
         </sequential>
@@ -288,16 +297,18 @@
 
     <target name="js-stdlib">
         <property name="compiled.builtins.js" value="builtins.js"/>
+        <property name="compiled.builtins.meta.js" value="builtins.meta.js"/>
         <property name="compiled.stdlib.js" value="stdlib.js"/>
+        <property name="compiled.stdlib.meta.js" value="stdlib.meta.js"/>
         <property name="stdlib.js.dir" value="${basedir}/js/js.translator/testData"/>
 
-        <new-kotlin2js output="${output}/${compiled.builtins.js}">
+        <new-kotlin2js output="${output}/${compiled.builtins.js}" meta-info="${output}/${compiled.builtins.meta.js}">
             <src>
                 <fileset refid="kotlin.builtin.files"/>
             </src>
         </new-kotlin2js>
 
-        <new-kotlin2js output="${output}/${compiled.stdlib.js}">
+        <new-kotlin2js output="${output}/${compiled.stdlib.js}" meta-info="${output}/${compiled.stdlib.meta.js}">
             <src>
                 <resources refid="js.lib.files"/>
             </src>
@@ -347,6 +358,7 @@
             <resources refid="js.lib.files" />
             <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
             <zipfileset file="${output}/kotlin.js" prefix=""/>
+            <zipfileset file="${output}/${compiled.stdlib.meta.js}" prefix=""/>
 
             <manifest>
                 <attribute name="Built-By" value="${manifest.impl.vendor}"/>
@@ -355,7 +367,6 @@
                 <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.javascript.stdlib}"/>
                 <attribute name="Implementation-Version" value="${build.number}"/>
                 <attribute name="Specification-Title" value="${manifest.spec.title.kotlin.javascript.lib}"/>
-                <attribute name="Kotlin-JS-Module-Name" value="stdlib"/>
             </manifest>
         </jar>
     </target>
@@ -371,8 +382,6 @@
                 <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
                 <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.jvm.runtime.sources}"/>
                 <attribute name="Implementation-Version" value="${build.number}"/>
-                <attribute name="Specification-Title" value="${manifest.spec.title.kotlin.javascript.lib}"/>
-                <attribute name="Kotlin-JS-Module-Name" value="stdlib"/>
             </manifest>
         </jar>
     </target>
@@ -431,6 +440,7 @@
                 <fileset dir="${output}/builtins">
                     <include name="kotlin/**"/>
                     <exclude name="kotlin/internal/**"/>
+                    <exclude name="kotlin/reflect/**"/>
                 </fileset>
                 <fileset dir="${basedir}/compiler/frontend.java/src" includes="META-INF/services/**"/>
                 <fileset dir="${basedir}/compiler/backend/src" includes="META-INF/services/**"/>
@@ -633,7 +643,16 @@
             <then>
                 <copy file="${bootstrap.runtime}" tofile="${kotlin-home}/lib/kotlin-runtime-internal-bootstrap.jar"/>
                 <copy file="${bootstrap.reflect}" tofile="${kotlin-home}/lib/kotlin-reflect-internal-bootstrap.jar"/>
+                <jar destfile="${kotlin-home}/lib/kotlin-reflect-internal-bootstrap.jar" update="true">
+                    <manifest>
+                        <attribute name="Class-Path" value="kotlin-runtime-internal-bootstrap.jar"/>
+                    </manifest>
+                </jar>
             </then>
+            <else>
+                <copy file="${bootstrap.runtime}" todir="${kotlin-home}/lib"/>
+                <copy file="${bootstrap.reflect}" todir="${kotlin-home}/lib"/>
+            </else>
         </if>
 
         <jar jarfile="${output}/kotlin-compiler-for-maven.jar">
@@ -739,14 +758,16 @@
             <local name="src.line"/>
             <pathconvert property="src.line" refid="src.dirset" pathsep=" "/>
 
-            <java classname="org.jetbrains.kotlin.cli.jvm.K2JVMCompiler" failonerror="true" fork="true" maxmemory="${max.heap.size.for.forked.jvm}">
+            <java classname="org.jetbrains.kotlin.preloading.Preloader" failonerror="true" fork="true" maxmemory="${max.heap.size.for.forked.jvm}">
                 <classpath>
-                    <file file="${bootstrap.runtime}"/>
-                    <pathelement location="${kotlin-home}/lib/kotlin-compiler.jar"/>
+                    <pathelement location="${kotlin-home}/lib/kotlin-preloader.jar"/>
                 </classpath>
                 <assertions>
                     <enable/>
                 </assertions>
+                <arg value="${kotlin-home}/lib/kotlin-compiler.jar"/>
+                <arg value="org.jetbrains.kotlin.cli.jvm.K2JVMCompiler"/>
+                <arg line="4096 notime"/>
                 <arg line="${src.line}"/>
                 <arg value="-d"/>
                 <arg value="@{output}"/>
@@ -772,7 +793,6 @@
             <src>
                 <include name="core/builtins/src"/>
                 <include name="core/runtime.jvm/src"/>
-                <include name="core/reflection/src"/>
             </src>
             <class-path>
                 <!-- Need something to pass to compiler's "-classpath" here -->
@@ -831,6 +851,8 @@
         <element name="jar-content"/>
 
         <sequential>
+            <delete file="${kotlin-home}/lib/@{jar-name}" failonerror="false"/>
+
             <jar destfile="${kotlin-home}/lib/@{jar-name}" duplicate="fail">
                 <jar-content/>
                 <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
@@ -850,7 +872,11 @@
             <jar-content>
                 <fileset dir="${output}/classes/builtins"/>
                 <fileset dir="${output}/classes/stdlib"/>
-                <zipfileset dir="${output}/builtins"/>
+                <zipfileset dir="${output}/builtins">
+                    <include name="kotlin/**"/>
+                    <exclude name="kotlin/internal/**"/>
+                    <exclude name="kotlin/reflect/**"/>
+                </zipfileset>
             </jar-content>
         </pack-runtime-jar>
 
@@ -878,7 +904,6 @@
                 <fileset dir="${basedir}/core/descriptor.loader.java/src" includes="**/*"/>
                 <fileset dir="${basedir}/core/descriptors/src" includes="**/*"/>
                 <fileset dir="${basedir}/core/descriptors.runtime/src" includes="**/*"/>
-                <fileset dir="${basedir}/core/reflection/src" includes="**/*"/>
                 <fileset dir="${basedir}/core/reflection.jvm/src" includes="**/*"/>
                 <fileset dir="${basedir}/core/runtime.jvm/src" includes="**/*"/>
                 <fileset dir="${basedir}/core/serialization/src" includes="**/*"/>
@@ -940,6 +965,7 @@
             <fileset dir="${output}/builtins">
                 <include name="kotlin/**"/>
                 <exclude name="kotlin/internal/**"/>
+                <exclude name="kotlin/reflect/**"/>
             </fileset>
             <fileset dir="${basedir}/compiler/frontend.java/src" includes="META-INF/services/**"/>
             <fileset dir="${basedir}/compiler/backend/src" includes="META-INF/services/**"/>

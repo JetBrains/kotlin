@@ -1,6 +1,6 @@
 
 class A {
-    default object {
+    companion object {
         private var r: Int = 1;
 
         fun test(): Int {

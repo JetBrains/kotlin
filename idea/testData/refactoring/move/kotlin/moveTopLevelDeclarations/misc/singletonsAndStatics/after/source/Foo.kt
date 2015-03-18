@@ -3,7 +3,7 @@ package source
 import library.*
 
 class Bar {
-    default object {
+    companion object {
         val c : Int
     }
 }

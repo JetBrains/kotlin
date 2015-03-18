@@ -16,15 +16,27 @@
 
 package kotlin.reflect
 
+/**
+ * An exception that is thrown when `get` or `set` is called on a property
+ * and that property is not accessible (in JVM terms) from the calling method.
+ *
+ * @param cause the original exception thrown by the JVM.
+ *
+ * @see [kotlin.reflect.jvm.accessible]
+ */
 public class IllegalPropertyAccessException(cause: IllegalAccessException) : Exception(cause.getMessage()) {
-    {
+    init {
         [suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")]
         (this as java.lang.Throwable).initCause(cause)
     }
 }
 
+/**
+ * An exception that is thrown when the code tries to introspect a property of a class or a package
+ * and that class or the package no longer has that property.
+ */
 public class NoSuchPropertyException(cause: Exception? = null) : Exception() {
-    {
+    init {
         [suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")]
         if (cause != null) {
             (this as java.lang.Throwable).initCause(cause)
@@ -32,4 +44,7 @@ public class NoSuchPropertyException(cause: Exception? = null) : Exception() {
     }
 }
 
+/**
+ * Signals that Kotlin reflection had reached an inconsistent state from which it cannot recover.
+ */
 public class KotlinReflectionInternalError(message: String) : Error(message)

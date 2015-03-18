@@ -7,6 +7,7 @@ import java.util.HashMap
 class Test {
     constructor() {
     }
+
     constructor(s: String) {
     }
 }

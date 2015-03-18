@@ -16,10 +16,17 @@
 
 package org.jetbrains.kotlin.js.resolve.diagnostics
 
-import org.jetbrains.kotlin.renderer.Renderer
-import org.jetbrains.kotlin.js.resolve.diagnostics.JsCallData
-import org.jetbrains.kotlin.js.resolve.diagnostics.JsCallDataWithCode
 import com.google.gwt.dev.js.rhino.Utils.isEndOfLine
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.renderer.Renderer
+
+object RenderFirstLineOfElementText : Renderer<PsiElement> {
+    override fun render(element: PsiElement): String {
+        val text = element.getText()
+        val index = text.indexOf('\n')
+        return if (index == -1) text else text.substring(0, index) + "..."
+    }
+}
 
 abstract class JsCallDataRenderer : Renderer<JsCallData> {
     protected abstract fun format(data: JsCallDataWithCode): String

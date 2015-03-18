@@ -128,7 +128,7 @@ public class QuickFixRegistrar {
         QuickFixes.factories.put(NO_BACKING_FIELD_CUSTOM_ACCESSORS, changeToPropertyNameFactory);
         QuickFixes.factories.put(INACCESSIBLE_BACKING_FIELD, changeToPropertyNameFactory);
 
-        JetSingleIntentionActionFactory unresolvedReferenceFactory = AutoImportFix.Default.createFactory();
+        JetSingleIntentionActionFactory unresolvedReferenceFactory = AutoImportFix.OBJECT$.createFactory();
         QuickFixes.factories.put(UNRESOLVED_REFERENCE, unresolvedReferenceFactory);
         QuickFixes.factories.put(UNRESOLVED_REFERENCE_WRONG_RECEIVER, unresolvedReferenceFactory);
 
@@ -159,6 +159,7 @@ public class QuickFixRegistrar {
         QuickFixes.factories.put(VAL_OR_VAR_ON_FUN_PARAMETER, removeValVarFromParameterFixFactory);
         QuickFixes.factories.put(VAL_OR_VAR_ON_LOOP_PARAMETER, removeValVarFromParameterFixFactory);
         QuickFixes.factories.put(VAL_OR_VAR_ON_CATCH_PARAMETER, removeValVarFromParameterFixFactory);
+        QuickFixes.factories.put(VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER, removeValVarFromParameterFixFactory);
 
         QuickFixes.factories.put(VIRTUAL_MEMBER_HIDDEN, AddOverrideToEqualsHashCodeToStringFix.createFactory());
 
@@ -296,8 +297,8 @@ public class QuickFixRegistrar {
         QuickFixes.factories.put(UNRESOLVED_REFERENCE, CreateClassFromReferenceExpressionActionFactory.INSTANCE$);
         QuickFixes.factories.put(UNRESOLVED_REFERENCE, CreateClassFromCallWithConstructorCalleeActionFactory.INSTANCE$);
 
-        QuickFixes.factories.put(DEPRECATED_CLASS_OBJECT_SYNTAX, ClassObjectToDefaultObjectFix.Factory);
-        QuickFixes.factories.put(DEPRECATED_CLASS_OBJECT_SYNTAX, ClassObjectToDefaultObjectInWholeProjectFix.Factory);
-        QuickFixes.factories.put(INIT_KEYWORD_BEFORE_CLASS_INITIALIZER_EXPECTED, AddInitKeywordFix.Default);
+        QuickFixes.factories.put(DEPRECATED_CLASS_OBJECT_SYNTAX, ClassObjectToCompanionObjectFix.Factory);
+        QuickFixes.factories.put(DEPRECATED_CLASS_OBJECT_SYNTAX, ClassObjectToCompanionObjectInWholeProjectFix.Factory);
+        QuickFixes.factories.put(INIT_KEYWORD_BEFORE_CLASS_INITIALIZER_EXPECTED, AddInitKeywordFix.OBJECT$);
     }
 }

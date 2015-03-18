@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 
-public class KotlinClsStubBuilder : ClsStubBuilder() {
+public open class KotlinClsStubBuilder : ClsStubBuilder() {
     override fun getStubVersion() = ClassFileStubBuilder.STUB_VERSION + 1
 
     override fun buildFileStub(content: FileContent): PsiFileStub<*>? {
@@ -87,7 +87,7 @@ public class KotlinClsStubBuilder : ClsStubBuilder() {
         return ClsStubBuilderComponents(classDataFinder, annotationLoader)
     }
 
-    default object {
+    class object {
         val LOG = Logger.getInstance(javaClass<KotlinClsStubBuilder>())
     }
 }

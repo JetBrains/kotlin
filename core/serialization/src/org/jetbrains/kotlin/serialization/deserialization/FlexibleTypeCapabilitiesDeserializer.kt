@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
+import org.jetbrains.kotlin.types.DynamicTypeCapabilities
 import org.jetbrains.kotlin.types.FlexibleTypeCapabilities
 
 trait FlexibleTypeCapabilitiesDeserializer {
@@ -24,6 +25,13 @@ trait FlexibleTypeCapabilitiesDeserializer {
             throw IllegalArgumentException("Capabilities not found by ThrowException manager: $id")
         }
     }
+
+    object Dynamic : FlexibleTypeCapabilitiesDeserializer {
+        override fun capabilitiesById(id: String): FlexibleTypeCapabilities? {
+            return if (id == DynamicTypeCapabilities.id) DynamicTypeCapabilities else null
+        }
+    }
+
 
     fun capabilitiesById(id: String): FlexibleTypeCapabilities?
 }

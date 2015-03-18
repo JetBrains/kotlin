@@ -144,8 +144,8 @@ public class MemberComparator implements Comparator<DeclarationDescriptor> {
                 return class1.getKind().ordinal() - class2.getKind().ordinal();
             }
 
-            if (class1.isDefaultObject() != class2.isDefaultObject()) {
-                return class1.isDefaultObject() ? 1 : -1;
+            if (class1.isCompanionObject() != class2.isCompanionObject()) {
+                return class1.isCompanionObject() ? 1 : -1;
             }
         }
         else {

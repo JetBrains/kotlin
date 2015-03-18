@@ -20,8 +20,8 @@ internal final class A {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal default object Default : B {
-        private constructor Default()
+    internal companion object Companion : B {
+        private constructor Companion()
         kotlin.platform.platformStatic() public open override /*1*/ val base1: kotlin.Int = 0
         public open override /*1*/ val base2: kotlin.Int = 0
         internal final var p1: kotlin.Int

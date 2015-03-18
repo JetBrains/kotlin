@@ -51,7 +51,7 @@ private enum class AndroidClassType(val internalClassName: String, val supportsC
 }
 
 public class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
-    default object {
+    class object {
         private val PROPERTY_NAME = "_\$_findViewCache"
         private val CACHED_FIND_VIEW_BY_ID_METHOD_NAME = "_\$_findCachedViewById"
         private val CLEAR_CACHE_METHOD_NAME = "_\$_clearFindViewByIdCache"
@@ -194,12 +194,12 @@ public class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
         context.generateCachedFindViewByIdFunction()
         context.generateClearCacheFunction()
 
-        classBuilder.newField(JvmDeclarationOrigin.Default.NO_ORIGIN, ACC_PRIVATE, PROPERTY_NAME, "Ljava/util/HashMap;", null, null)
+        classBuilder.newField(JvmDeclarationOrigin.NO_ORIGIN, ACC_PRIVATE, PROPERTY_NAME, "Ljava/util/HashMap;", null, null)
     }
 
     private fun SyntheticPartsGenerateContext.generateClearCacheFunction() {
         val methodVisitor = classBuilder.newMethod(
-                JvmDeclarationOrigin.Default.NO_ORIGIN, ACC_PUBLIC, CLEAR_CACHE_METHOD_NAME, "()V", null, null)
+                JvmDeclarationOrigin.NO_ORIGIN, ACC_PUBLIC, CLEAR_CACHE_METHOD_NAME, "()V", null, null)
         methodVisitor.visitCode()
         val iv = InstructionAdapter(methodVisitor)
 
@@ -230,7 +230,7 @@ public class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
         val viewType = Type.getObjectType("android/view/View")
 
         val methodVisitor = classBuilder.newMethod(
-                JvmDeclarationOrigin.Default.NO_ORIGIN, ACC_PUBLIC, CACHED_FIND_VIEW_BY_ID_METHOD_NAME, "(I)Landroid/view/View;", null, null)
+                JvmDeclarationOrigin.NO_ORIGIN, ACC_PUBLIC, CACHED_FIND_VIEW_BY_ID_METHOD_NAME, "(I)Landroid/view/View;", null, null)
         methodVisitor.visitCode()
         val iv = InstructionAdapter(methodVisitor)
 

@@ -2,25 +2,25 @@
 package a
 
 class A {
-    default object {
+    companion object {
         fun foo() {}
     }
 }
 
 private class B {
-    default object {
+    companion object {
         fun bar() {}
     }
 }
 
 class C {
-    private default object {
+    private companion object {
         fun baz() {}
     }
 }
 
 private class D {
-    private default object {
+    private companion object {
         fun quux() {}
     }
 }

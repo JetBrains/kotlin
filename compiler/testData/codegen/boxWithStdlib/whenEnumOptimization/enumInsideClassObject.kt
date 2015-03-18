@@ -1,7 +1,7 @@
 import kotlin.test.assertEquals
 
 class A {
-    default object {
+    companion object {
         enum class Season {
             WINTER
             SPRING
@@ -11,19 +11,19 @@ class A {
     }
 }
 
-fun foo(x : A.Default.Season) : String {
+fun foo(x : A.Companion.Season) : String {
     return when (x) {
-        A.Default.Season.WINTER -> "winter"
-        A.Default.Season.SPRING -> "spring"
-        A.Default.Season.SUMMER -> "summer"
+        A.Companion.Season.WINTER -> "winter"
+        A.Companion.Season.SPRING -> "spring"
+        A.Companion.Season.SUMMER -> "summer"
         else -> "other"
     }
 }
 
 fun box() : String {
-    assertEquals("winter", foo(A.Default.Season.WINTER))
-    assertEquals("spring", foo(A.Default.Season.SPRING))
-    assertEquals("summer", foo(A.Default.Season.SUMMER))
-    assertEquals("other", foo(A.Default.Season.AUTUMN))
+    assertEquals("winter", foo(A.Companion.Season.WINTER))
+    assertEquals("spring", foo(A.Companion.Season.SPRING))
+    assertEquals("summer", foo(A.Companion.Season.SUMMER))
+    assertEquals("other", foo(A.Companion.Season.AUTUMN))
     return "OK"
 }

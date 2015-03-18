@@ -58,12 +58,12 @@ public abstract class JetClassOrObjectInfo<E extends JetClassOrObject> implement
 
     @NotNull
     @Override
-    public List<JetObjectDeclaration> getDefaultObjects() {
+    public List<JetObjectDeclaration> getCompanionObjects() {
         JetClassBody body = element.getBody();
         if (body == null) {
             return Collections.emptyList();
         }
-        return body.getAllDefaultObjects();
+        return body.getAllCompanionObjects();
     }
 
     @NotNull

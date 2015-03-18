@@ -1,14 +1,14 @@
 package test
 
 public class Pub {
-    default object {}
+    companion object {}
 }
 
 private class Pri {
-    default object {}
+    companion object {}
 }
 
 class Int {
-    default object {}
+    companion object {}
 }
 

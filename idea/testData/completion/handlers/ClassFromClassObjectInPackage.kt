@@ -1,11 +1,11 @@
 package a
 
 class Test {
-    default object {
+    companion object {
         class Some
     }
 }
 
 fun test() {
-    a.Test.Default.S<caret>
+    a.Test.Companion.S<caret>
 }

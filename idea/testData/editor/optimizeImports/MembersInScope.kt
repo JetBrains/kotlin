@@ -13,7 +13,7 @@ class Outer {
         inner class Inner2
     }
 
-    default object {
+    companion object {
         class ClassObjectNested
     }
 

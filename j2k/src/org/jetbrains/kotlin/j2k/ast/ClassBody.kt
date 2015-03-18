@@ -24,26 +24,26 @@ class ClassBody (
         val primaryConstructorSignature: PrimaryConstructorSignature?,
         val baseClassParams: List<DeferredElement<Expression>>,
         val members: List<Member>,
-        val defaultObjectMembers: List<Member>,
+        val companionObjectMembers: List<Member>,
         val lBrace: LBrace,
         val rBrace: RBrace) {
 
     fun append(builder: CodeBuilder) {
         val membersFiltered = members.filter { !it.isEmpty }
-        if (membersFiltered.isEmpty() && defaultObjectMembers.isEmpty()) return
+        if (membersFiltered.isEmpty() && companionObjectMembers.isEmpty()) return
 
         builder append " " append lBrace append "\n"
 
         builder.append(membersFiltered, "\n")
 
-        appendDefaultObject(builder, membersFiltered.isNotEmpty())
+        appendCompanionObject(builder, membersFiltered.isNotEmpty())
 
         builder append "\n" append rBrace
     }
 
-    private fun appendDefaultObject(builder: CodeBuilder, blankLineBefore: Boolean) {
-        if (defaultObjectMembers.isEmpty()) return
+    private fun appendCompanionObject(builder: CodeBuilder, blankLineBefore: Boolean) {
+        if (companionObjectMembers.isEmpty()) return
         if (blankLineBefore) builder.append("\n\n")
-        builder.append(defaultObjectMembers, "\n", "default object {\n", "\n}")
+        builder.append(companionObjectMembers, "\n", "companion object {\n", "\n}")
     }
 }

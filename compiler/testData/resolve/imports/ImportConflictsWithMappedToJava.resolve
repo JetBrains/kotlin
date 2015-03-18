@@ -4,7 +4,7 @@ package test
 
 import testing.custom.*
 
-// Default import has priority over on-demand ones. No conflicts are expected.
+// Companion import has priority over on-demand ones. No conflicts are expected.
 val a1: `kotlin::List`List<Int>? = null
 
 //FILE:javaUtilImport.kt
@@ -13,7 +13,7 @@ package test
 
 import java.util.*
 
-// Default imports take over import-on-demand
+// Companion imports take over import-on-demand
 // TODO: Fix for lazy resolve test
 // val a2: 'kotlin::List'List<Int>? = null
 
@@ -24,7 +24,7 @@ package test
 import testing.custom.*
 import java.util.*
 
-// Default import has priority over on-demand ones. No conflicts are expected.
+// Companion import has priority over on-demand ones. No conflicts are expected.
 val a3: `kotlin::List`List<Int>? = null
 
 //FILE:singleClassImportFromJavaUtil.kt

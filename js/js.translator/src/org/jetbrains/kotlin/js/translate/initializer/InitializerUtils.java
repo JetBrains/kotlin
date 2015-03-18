@@ -70,8 +70,8 @@ public final class InitializerUtils {
         initializers.add(expression.makeStmt());
     }
 
-    public static JsPropertyInitializer createDefaultObjectInitializer(JsExpression value, TranslationContext context) {
-        JsStringLiteral defaultObjectInitStr = context.program().getStringLiteral(Namer.getNameForDefaultObjectInitializer());
-        return new JsPropertyInitializer(defaultObjectInitStr, value);
+    public static JsPropertyInitializer createCompanionObjectInitializer(JsExpression value, TranslationContext context) {
+        JsStringLiteral companionObjectInitStr = context.program().getStringLiteral(Namer.getNameForCompanionObjectInitializer());
+        return new JsPropertyInitializer(companionObjectInitStr, value);
     }
 }

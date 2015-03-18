@@ -35,7 +35,7 @@ public interface JetClassLikeInfo extends JetDeclarationContainer {
 
     @NotNull
     @ReadOnly
-    List<JetObjectDeclaration> getDefaultObjects();
+    List<JetObjectDeclaration> getCompanionObjects();
 
     // This element is used to identify resolution scope for the class
     @NotNull

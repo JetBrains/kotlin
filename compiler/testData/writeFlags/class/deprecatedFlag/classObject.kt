@@ -1,9 +1,9 @@
 class MyClass {
-    deprecated("") default object {
+    deprecated("") companion object {
 
     }
 }
 
 // TESTED_OBJECT_KIND: class
-// TESTED_OBJECTS: MyClass$Default
+// TESTED_OBJECTS: MyClass$Companion
 // FLAGS: ACC_PUBLIC, ACC_FINAL, ACC_DEPRECATED, ACC_SUPER

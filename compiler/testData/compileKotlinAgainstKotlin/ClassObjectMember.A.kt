@@ -1,5 +1,5 @@
 class A {
-    default object {
+    companion object {
         fun foo() = 42
         val bar = "OK"
     }

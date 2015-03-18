@@ -4,7 +4,7 @@ import kotlin.jvm.*
 import kotlin.platform.*
 
 class WithNative {
-    default object {
+    companion object {
         platformStatic native fun bar(l: Long, s: String): Double
     }
 }

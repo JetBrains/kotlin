@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.load.java;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.name.ClassId;
+import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 
 public final class JvmAbi {
@@ -24,7 +26,7 @@ public final class JvmAbi {
      * This constant is used to identify binary format (class file) versions
      * If you change class file metadata format and/or naming conventions, please increase this number
      */
-    public static final int VERSION = 21;
+    public static final int VERSION = 22;
 
     public static final String TRAIT_IMPL_CLASS_NAME = "$TImpl";
     public static final String TRAIT_IMPL_SUFFIX = "$" + TRAIT_IMPL_CLASS_NAME;
@@ -41,10 +43,11 @@ public final class JvmAbi {
 
     public static final String KOTLIN_CLASS_FIELD_NAME = "$kotlinClass";
     public static final String KOTLIN_PACKAGE_FIELD_NAME = "$kotlinPackage";
+    public static final ClassId REFLECTION_FACTORY_IMPL = ClassId.topLevel(new FqName("kotlin.reflect.jvm.internal.ReflectionFactoryImpl"));
 
     //TODO: To be removed after kotlin M11
     @Deprecated
-    public static final String DEPRECATED_DEFAULT_OBJECT_FIELD = "OBJECT$";
+    public static final String DEPRECATED_COMPANION_OBJECT_FIELD = "OBJECT$";
 
     @NotNull
     public static String getSyntheticMethodNameForAnnotatedProperty(@NotNull Name propertyName) {

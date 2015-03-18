@@ -1,13 +1,13 @@
 package a
 
-import a.Outer.Default.Nested
-import a.Outer.Default.NestedEnum
-import a.Outer.Default.NestedObj
-import a.Outer.Default.NestedTrait
-import a.Outer.Default.NestedAnnotation
+import a.Outer.Companion.Nested
+import a.Outer.Companion.NestedEnum
+import a.Outer.Companion.NestedObj
+import a.Outer.Companion.NestedTrait
+import a.Outer.Companion.NestedAnnotation
 
 class Outer {
-    default object {
+    companion object {
         class Nested {
         }
         enum class NestedEnum {

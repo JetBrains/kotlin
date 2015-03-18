@@ -3,7 +3,7 @@
 package foo
 
 class Foo() {
-    default object {
+    companion object {
         val bar = "Foo.bar ";
         var boo = "FAIL";
         fun baz() = "Foo.baz() "

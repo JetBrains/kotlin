@@ -1,3 +1,3 @@
 class A {
-    default object
+    companion object
 }

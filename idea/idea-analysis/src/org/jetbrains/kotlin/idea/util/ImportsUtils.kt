@@ -61,9 +61,9 @@ public fun JetType.canBeReferencedViaImport(): Boolean {
     return descriptor != null && descriptor.canBeReferencedViaImport()
 }
 
-// for cases when class qualifier refers default object treats it like reference to class itself
+// for cases when class qualifier refers companion object treats it like reference to class itself
 public fun JetReferenceExpression.getImportableTargets(bindingContext: BindingContext): Collection<DeclarationDescriptor> {
-    val targets = bindingContext[BindingContext.SHORT_REFERENCE_TO_DEFAULT_OBJECT, this]?.let { listOf(it) }
+    val targets = bindingContext[BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, this]?.let { listOf(it) }
                      ?: bindingContext[BindingContext.REFERENCE_TARGET, this]?.let { listOf(it) }
                      ?: bindingContext[BindingContext.AMBIGUOUS_REFERENCE_TARGET, this]
                      ?: listOf()

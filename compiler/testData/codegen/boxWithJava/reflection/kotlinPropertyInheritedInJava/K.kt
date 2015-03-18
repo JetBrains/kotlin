@@ -22,16 +22,17 @@ fun box(): String {
 
 
     val klass = javaClass<J>().kotlin
-    val prop2 = klass.getProperties().firstOrNull { it.name == "prop" }
-                ?: "Fail: no 'prop' property in getProperties()"
-    if (prop != prop2) return "Fail: property references from :: and from getProperties() differ"
+    if (klass.declaredProperties.isNotEmpty()) return "Fail: declaredProperties should be empty"
+    if (klass.declaredExtensionProperties.isNotEmpty()) return "Fail: declaredExtensionProperties should be empty"
+
+    val prop2 = klass.properties.firstOrNull { it.name == "prop" } ?: "Fail: no 'prop' property in properties"
+    if (prop != prop2) return "Fail: property references from :: and from properties differ: $prop != $prop2"
     if (prop2 !is KMutableMemberProperty<*, *>) return "Fail instanceof 2"
     (prop2 as KMutableMemberProperty<J, String>).set(j, "::)")
     if (prop.get(j) != "::)") return "Fail get after 2: ${prop[j]}"
 
 
-    val ext = klass.getExtensionProperties().firstOrNull { it.name == "ext" }
-              ?: "Fail: no 'ext' property in getProperties()"
+    val ext = klass.extensionProperties.firstOrNull { it.name == "ext" } ?: "Fail: no 'ext' property in extensionProperties"
     ext as KMemberExtensionProperty<J, Int, Int>
     val fortyTwo = ext.get(j, 42)
     if (fortyTwo != 42) return "Fail ext get: $fortyTwo"

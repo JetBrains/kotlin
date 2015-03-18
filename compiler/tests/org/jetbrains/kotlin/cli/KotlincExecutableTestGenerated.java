@@ -90,6 +90,12 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
             doJvmTest(fileName);
         }
 
+        @TestMetadata("noReflectionInClasspath.args")
+        public void testNoReflectionInClasspath() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/jvm/noReflectionInClasspath.args");
+            doJvmTest(fileName);
+        }
+
         @TestMetadata("nonExistingClassPathAndAnnotationsPath.args")
         public void testNonExistingClassPathAndAnnotationsPath() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/jvm/nonExistingClassPathAndAnnotationsPath.args");
@@ -175,6 +181,30 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
     public static class Js extends AbstractKotlincExecutableTest {
         public void testAllFilesPresentInJs() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cli/js"), Pattern.compile("^(.+)\\.args$"), false);
+        }
+
+        @TestMetadata("createMetadata.args")
+        public void testCreateMetadata() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/js/createMetadata.args");
+            doJsTest(fileName);
+        }
+
+        @TestMetadata("diagnosticForClassLiteral.args")
+        public void testDiagnosticForClassLiteral() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/js/diagnosticForClassLiteral.args");
+            doJsTest(fileName);
+        }
+
+        @TestMetadata("diagnosticForUnhandledElements.args")
+        public void testDiagnosticForUnhandledElements() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/js/diagnosticForUnhandledElements.args");
+            doJsTest(fileName);
+        }
+
+        @TestMetadata("diagnosticWhenReferenceToBuiltinsMember.args")
+        public void testDiagnosticWhenReferenceToBuiltinsMember() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/js/diagnosticWhenReferenceToBuiltinsMember.args");
+            doJsTest(fileName);
         }
 
         @TestMetadata("jsExtraHelp.args")

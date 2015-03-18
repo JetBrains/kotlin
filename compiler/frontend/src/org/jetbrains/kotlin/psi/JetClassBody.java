@@ -72,10 +72,10 @@ public class JetClassBody extends JetElementImplStub<KotlinPlaceHolderStub<JetCl
     }
 
     @NotNull
-    public List<JetObjectDeclaration> getAllDefaultObjects() {
+    public List<JetObjectDeclaration> getAllCompanionObjects() {
         List<JetObjectDeclaration> result = Lists.newArrayList();
         for (JetObjectDeclaration declaration : getStubOrPsiChildrenAsList(JetStubElementTypes.OBJECT_DECLARATION)) {
-            if (declaration.isDefault()) {
+            if (declaration.isCompanion()) {
                 result.add(declaration);
             }
         }

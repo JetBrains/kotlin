@@ -13,7 +13,7 @@ object Obj {
 }
 
 class AClass() {
-    default object {
+    companion object {
         val y : Any? = 2
     }
 }

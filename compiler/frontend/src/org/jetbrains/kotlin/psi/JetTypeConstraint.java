@@ -37,10 +37,10 @@ public class JetTypeConstraint extends JetElementImplStub<KotlinTypeConstraintSt
         return visitor.visitTypeConstraint(this, data);
     }
 
-    public boolean isDefaultObjectConstraint() {
+    public boolean isCompanionObjectConstraint() {
         KotlinTypeConstraintStub stub = getStub();
         if (stub != null) {
-            return stub.isDefaultObjectConstraint();
+            return stub.isCompanionObjectConstraint();
         }
         return findChildByType(JetTokens.CLASS_KEYWORD) != null &&
                 findChildByType(JetTokens.OBJECT_KEYWORD) != null;

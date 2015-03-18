@@ -1,5 +1,5 @@
 class Test {
-  default object {
+  companion object {
     var prop: Int
       get() {
         return 10
@@ -15,5 +15,5 @@ class Test {
 // ABSENT: TRUE
 
 // TESTED_OBJECT_KIND: property
-// TESTED_OBJECTS: Test$Default, prop
+// TESTED_OBJECTS: Test$Companion, prop
 // ABSENT: TRUE

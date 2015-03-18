@@ -2,7 +2,7 @@ package foo
 
 class A {
     fun foo() = "O"
-    default object {
+    companion object {
         fun bar() = "K"
     }
 

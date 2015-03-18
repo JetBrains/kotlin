@@ -17,6 +17,7 @@
 package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
 import kotlin.reflect.*
@@ -43,39 +44,40 @@ class KClassImpl<T>(override val jClass: Class<T>) : KCallableContainerImpl(), K
         return if (name.isSpecial()) null else name.asString()
     }
 
-    override fun getProperties(): Collection<KMemberProperty<T, *>> {
-        return scope.getAllDescriptors().stream()
-                .filterIsInstance<PropertyDescriptor>()
-                .filter { descriptor ->
-                    descriptor.getExtensionReceiverParameter() == null
-                }
-                .map { descriptor ->
-                    if (descriptor.isVar()) KMutableMemberPropertyImpl<T, Any?>(this) { descriptor }
-                    else KMemberPropertyImpl<T, Any?>(this) { descriptor }
-                }
-                .toList()
-    }
+    override val properties: Collection<KMemberProperty<T, *>>
+            get() = getProperties(declared = false)
 
-    override fun getExtensionProperties(): Collection<KMemberExtensionProperty<T, *, *>> {
-        return scope.getAllDescriptors().stream()
-                .filterIsInstance<PropertyDescriptor>()
-                .filter { descriptor ->
-                    descriptor.getExtensionReceiverParameter() != null
-                }
-                .map { descriptor ->
-                    if (descriptor.isVar()) KMutableMemberExtensionPropertyImpl<T, Any?, Any?>(this) { descriptor }
-                    else KMemberExtensionPropertyImpl<T, Any?, Any?>(this) { descriptor }
-                }
-                .toList()
-    }
+    override val extensionProperties: Collection<KMemberExtensionProperty<T, *, *>>
+            get() = getExtensionProperties(declared = false)
 
-    fun memberProperty(name: String): KMemberProperty<T, *> {
-        return KMemberPropertyImpl<T, Any>(this, findPropertyDescriptor(name))
-    }
+    fun getProperties(declared: Boolean): Collection<KMemberProperty<T, *>> =
+            getProperties(extension = false, declared = declared) { descriptor ->
+                if (descriptor.isVar()) KMutableMemberPropertyImpl<T, Any?>(this) { descriptor }
+                else KMemberPropertyImpl<T, Any?>(this) { descriptor }
+            }
 
-    fun mutableMemberProperty(name: String): KMutableMemberProperty<T, *> {
-        return KMutableMemberPropertyImpl<T, Any>(this, findPropertyDescriptor(name))
-    }
+    fun getExtensionProperties(declared: Boolean): Collection<KMemberExtensionProperty<T, *, *>> =
+            getProperties(extension = true, declared = declared) { descriptor ->
+                if (descriptor.isVar()) KMutableMemberExtensionPropertyImpl<T, Any?, Any?>(this) { descriptor }
+                else KMemberExtensionPropertyImpl<T, Any?, Any?>(this) { descriptor }
+            }
+
+    private fun <P : KProperty<*>> getProperties(extension: Boolean, declared: Boolean, create: (PropertyDescriptor) -> P): Collection<P> =
+            scope.getAllDescriptors().sequence()
+                    .filterIsInstance<PropertyDescriptor>()
+                    .filter { descriptor ->
+                        (descriptor.getExtensionReceiverParameter() != null) == extension &&
+                        (descriptor.getKind().isReal() || !declared) &&
+                        descriptor.getVisibility() != Visibilities.INVISIBLE_FAKE
+                    }
+                    .map(create)
+                    .toList()
+
+    fun memberProperty(name: String): KMemberProperty<T, *> =
+            KMemberPropertyImpl<T, Any>(this, findPropertyDescriptor(name))
+
+    fun mutableMemberProperty(name: String): KMutableMemberProperty<T, *> =
+            KMutableMemberPropertyImpl<T, Any>(this, findPropertyDescriptor(name))
 
     override fun equals(other: Any?): Boolean =
             other is KClassImpl<*> && jClass == other.jClass

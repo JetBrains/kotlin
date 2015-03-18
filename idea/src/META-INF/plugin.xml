@@ -432,6 +432,7 @@
     <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.JetProbablyNothingPropertyShortNameIndex"/>
 
     <psi.classFileDecompiler implementation="org.jetbrains.kotlin.idea.decompiler.JetClassFileDecompiler"/>
+    <psi.classFileDecompiler implementation="org.jetbrains.kotlin.idea.decompiler.KotlinJavascriptMetaFileDecompiler"/>
     
     <fileBasedIndex implementation="org.jetbrains.kotlin.idea.versions.KotlinAbiVersionIndex"/>
     <fileBasedIndex implementation="org.jetbrains.kotlin.idea.vfilefinder.KotlinClassFileIndex"/>
@@ -864,6 +865,13 @@
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.kdoc.KDocUnresolvedReferenceInspection"
         displayName="Unresolved reference in KDoc"
+        groupName="Kotlin"
+        enabledByDefault="true"
+        level="WARNING"
+        />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReflectionNotFoundInspection"
+        displayName="Reflection not found"
         groupName="Kotlin"
         enabledByDefault="true"
         level="WARNING"

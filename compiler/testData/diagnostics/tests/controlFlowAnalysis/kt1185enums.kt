@@ -10,7 +10,7 @@ enum class Direction {
 }
 
 class A {
-    default object {
+    companion object {
 
     }
 }

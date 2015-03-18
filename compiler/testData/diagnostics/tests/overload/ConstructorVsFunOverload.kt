@@ -13,7 +13,7 @@ class Tram {
 }
 
 class Yvayva {
-    default object {
+    companion object {
         <!CONFLICTING_OVERLOADS!>fun fghj()<!> { }
 
         class <!CONFLICTING_OVERLOADS!>fghj()<!> { }
@@ -23,7 +23,7 @@ class Yvayva {
 class Rtyu {
     fun ololo() { }
 
-    default object {
+    companion object {
         class ololo() { }
     }
 }

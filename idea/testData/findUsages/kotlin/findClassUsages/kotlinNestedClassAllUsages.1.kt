@@ -24,7 +24,7 @@ public class X(bar: String? = Outer.A.bar): Outer.A() {
         super<Outer.A>.foo()
     }
 
-    default object: Outer.A() {
+    companion object: Outer.A() {
 
     }
 }

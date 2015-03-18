@@ -1,5 +1,5 @@
 class Foo {
-    default object Bar {
+    companion object Bar {
         fun f() {
         }
 

@@ -3,7 +3,7 @@ package library
 public enum class EnumClass {
     ENTRY
 
-    public default object {
+    public companion object {
         public fun entry(): EnumClass = ENTRY
     }
 }

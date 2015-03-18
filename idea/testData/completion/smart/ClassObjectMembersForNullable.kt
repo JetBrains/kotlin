@@ -1,7 +1,7 @@
 package sample
 
 class K {
-    default object {
+    companion object {
         val foo: K = K()
         fun bar(): K = K()
         val x: String = ""

@@ -12,7 +12,7 @@ class A {
         prop = 2
     }
 
-    default object {
+    companion object {
         private fun foo() {
             val a = 1
         }

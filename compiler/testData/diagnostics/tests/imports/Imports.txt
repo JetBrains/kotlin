@@ -24,8 +24,8 @@ package b {
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-        internal default object Default {
-            private constructor Default()
+        internal companion object Companion {
+            private constructor Companion()
             internal final val cValue: kotlin.Int = 1
             internal final fun bar(): kotlin.Unit
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -49,8 +49,8 @@ package b {
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-        internal default object Default {
-            private constructor Default()
+        internal companion object Companion {
+            private constructor Companion()
             internal final val f: b.F
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -81,8 +81,8 @@ package c {
 }
 
 package d {
-    internal val b: d.A.Default.B
-    internal val c: d.A.Default.B
+    internal val b: d.A.Companion.B
+    internal val c: d.A.Companion.B
 
     internal final class A {
         public constructor A()
@@ -90,8 +90,8 @@ package d {
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-        internal default object Default {
-            private constructor Default()
+        internal companion object Companion {
+            private constructor Companion()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -103,7 +103,7 @@ package d {
                 public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
             }
 
-            internal object C : d.A.Default.B {
+            internal object C : d.A.Companion.B {
                 private constructor C()
                 public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
                 public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

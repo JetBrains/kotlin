@@ -183,8 +183,8 @@ public class KotlinImportOptimizer() : ImportOptimizer {
                 }
 
 
-                private fun JetElement.classForDefaultObjectReference(): ClassDescriptor? {
-                    return analyze()[BindingContext.SHORT_REFERENCE_TO_DEFAULT_OBJECT, this as? JetReferenceExpression]
+                private fun JetElement.classForCompanionObjectReference(): ClassDescriptor? {
+                    return analyze()[BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, this as? JetReferenceExpression]
                 }
 
                 override fun visitJetElement(element: JetElement) {
@@ -192,8 +192,8 @@ public class KotlinImportOptimizer() : ImportOptimizer {
                     if (reference is JetReference) {
                         val referencedName = (element as? JetNameReferenceExpression)?.getReferencedNameAsName() //TODO: other types of references
 
-                        //class qualifiers that refer to default objects should be considered (containing) class references
-                        val targets = element.classForDefaultObjectReference()?.let { listOf(it) }
+                        //class qualifiers that refer to companion objects should be considered (containing) class references
+                        val targets = element.classForCompanionObjectReference()?.let { listOf(it) }
                                       ?: reference.resolveToDescriptors()
                         for (target in targets) {
                             if (!target.canBeReferencedViaImport()) continue
@@ -223,7 +223,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
         private fun isAccessibleAsMember(target: DeclarationDescriptor, place: JetElement): Boolean {
             val container = target.getContainingDeclaration()
             if (container !is ClassDescriptor) return false
-            val scope = if (DescriptorUtils.isDefaultObject(container))
+            val scope = if (DescriptorUtils.isCompanionObject(container))
                 container.getContainingDeclaration() as? ClassDescriptor ?: return false
             else
                 container

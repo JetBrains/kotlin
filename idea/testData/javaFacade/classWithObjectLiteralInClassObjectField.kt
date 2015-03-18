@@ -3,7 +3,7 @@ package test
 trait A
 
 class <caret>B {
-    default object {
+    companion object {
         fun bar() = object : A { }
     }
 }

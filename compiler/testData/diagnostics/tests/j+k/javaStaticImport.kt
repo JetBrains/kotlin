@@ -16,7 +16,7 @@ public class AsmUtil {
 // FILE: First.kt
 package frontend
 public class JvmDeclarationOrigin {
-    default object {
+    companion object {
         public val NO_ORIGIN: JvmDeclarationOrigin = JvmDeclarationOrigin()
     }
 }

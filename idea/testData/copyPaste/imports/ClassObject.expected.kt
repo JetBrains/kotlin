@@ -9,6 +9,6 @@ fun g(t: T): Int {
     B.f()
     A
     B
-    A.Default
-    B.Default
+    A.Companion
+    B.Companion
 }

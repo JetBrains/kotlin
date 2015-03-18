@@ -3,7 +3,7 @@ package test
 annotation class Anno
 
 class Class {
-    default object {
+    companion object {
         [Anno] var property: Int = 42
     }
 }

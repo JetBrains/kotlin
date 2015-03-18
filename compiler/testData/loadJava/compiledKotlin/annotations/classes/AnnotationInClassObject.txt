@@ -3,8 +3,8 @@ package test
 internal final class A {
     /*primary*/ public constructor A()
 
-    internal default object Default {
-        /*primary*/ private constructor Default()
+    internal companion object Companion {
+        /*primary*/ private constructor Companion()
 
         internal final annotation class Anno1 : kotlin.Annotation {
             /*primary*/ public constructor Anno1()
@@ -20,6 +20,6 @@ internal final class A {
     }
 }
 
-test.A.Default.Anno1() test.A.Default.B.Anno2() internal final class C {
+test.A.Companion.Anno1() test.A.Companion.B.Anno2() internal final class C {
     /*primary*/ public constructor C()
 }

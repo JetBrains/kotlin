@@ -54,7 +54,7 @@ class TypeParameterList(val parameters: List<TypeParameter>) : Element() {
 
     private fun hasWhere(): Boolean = parameters.any { it.hasWhere() }
 
-    default object {
+    class object {
         val Empty = TypeParameterList(listOf())
     }
 }

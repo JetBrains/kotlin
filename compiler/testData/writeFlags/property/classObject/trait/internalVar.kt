@@ -1,5 +1,5 @@
 trait Test {
-  default object {
+  companion object {
     var prop: Int = 0;
   }
 }
@@ -9,5 +9,5 @@ trait Test {
 // ABSENT: TRUE
 
 // TESTED_OBJECT_KIND: property
-// TESTED_OBJECTS: Test$Default, prop
+// TESTED_OBJECTS: Test$Companion, prop
 // FLAGS: ACC_PRIVATE

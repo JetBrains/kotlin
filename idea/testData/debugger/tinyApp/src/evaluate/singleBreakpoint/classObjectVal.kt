@@ -10,7 +10,7 @@ class MyClass {
         val a = 1
     }
 
-    default object {
+    companion object {
         val coProp = 1
     }
 }

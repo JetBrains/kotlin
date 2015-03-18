@@ -1,4 +1,4 @@
-import defaultObjectUsedInJava.*
+import companionObjectUsedInJava.*
 
 class JavaUsage {
     public static void main(String[] args) {

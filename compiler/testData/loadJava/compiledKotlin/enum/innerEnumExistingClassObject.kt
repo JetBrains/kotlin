@@ -1,7 +1,7 @@
 package test
 
 class A {
-    default object { }
+    companion object { }
     enum class E {
         ENTRY
     }

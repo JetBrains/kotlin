@@ -5121,6 +5121,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/variables/removeValVarFromParameter/beforeParameterWithComment.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("beforeSecondaryConstructorParameter.kt")
+            public void testSecondaryConstructorParameter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/variables/removeValVarFromParameter/beforeSecondaryConstructorParameter.kt");
+                doTest(fileName);
+            }
         }
     }
 

@@ -2,7 +2,7 @@ package mult_constructors_3_bug
 
 public open class Identifier() {
     private var myNullable : Boolean = true
-    default object {
+    companion object {
         open public fun init(isNullable : Boolean) : Identifier {
             val __ = Identifier()
             __.myNullable = isNullable

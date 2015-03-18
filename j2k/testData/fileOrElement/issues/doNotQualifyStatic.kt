@@ -6,7 +6,7 @@ class Outer {
         }
     }
 
-    default object {
+    companion object {
         public var o: Any? = Object()
     }
 }

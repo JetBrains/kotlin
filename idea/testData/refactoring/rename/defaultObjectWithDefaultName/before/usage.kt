@@ -3,6 +3,6 @@ fun main(args: Array<String>) {
     Foo.f()
     val x = Foo
 
-    Foo.Default.f()
-    val xx = Foo.Default
+    Foo.Companion.f()
+    val xx = Foo.Companion
 }

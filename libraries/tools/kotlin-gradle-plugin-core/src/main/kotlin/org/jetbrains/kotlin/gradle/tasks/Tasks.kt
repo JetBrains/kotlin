@@ -218,6 +218,7 @@ public open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArgumen
         args.outputFile = outputFile
         args.outputPrefix = kotlinOptions.outputPrefix
         args.outputPostfix = kotlinOptions.outputPostfix
+        args.metaInfo = kotlinOptions.metaInfo
 
         val kotlinJsLibsFromDependencies =
                 getProject().getConfigurations().getByName("compile")

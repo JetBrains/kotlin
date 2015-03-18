@@ -44,7 +44,7 @@ public class ReflectKotlinClass private(
         private val classHeader: KotlinClassHeader
 ) : KotlinJvmBinaryClass {
 
-    default object Factory {
+    class object Factory {
 
         public fun create(klass: Class<*>): ReflectKotlinClass? {
             val headerReader = ReadKotlinClassHeaderAnnotationVisitor()

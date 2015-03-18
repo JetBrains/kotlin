@@ -44,7 +44,7 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
     private List<TypeParameterDescriptor> typeParameters;
     private Collection<JetType> supertypes = new ArrayList<JetType>();
 
-    private MutableClassDescriptor defaultObjectDescriptor;
+    private MutableClassDescriptor companionObjectDescriptor;
 
     private final Set<ConstructorDescriptor> constructors = Sets.newLinkedHashSet();
     private ConstructorDescriptor primaryConstructor;
@@ -71,7 +71,7 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
             @NotNull SourceElement source
     ) {
         super(LockBasedStorageManager.NO_LOCKS, containingDeclaration, name, source);
-        assert kind != ClassKind.OBJECT : "Fix isDefaultObject()";
+        assert kind != ClassKind.OBJECT : "Fix isCompanionObject()";
 
         this.kind = kind;
         this.isInner = isInner;
@@ -98,13 +98,13 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
 
     @Nullable
     @Override
-    public MutableClassDescriptor getDefaultObjectDescriptor() {
-        return defaultObjectDescriptor;
+    public MutableClassDescriptor getCompanionObjectDescriptor() {
+        return companionObjectDescriptor;
     }
 
-    public void setDefaultObjectDescriptor(@NotNull MutableClassDescriptor classObjectDescriptor) {
-        assert this.defaultObjectDescriptor == null : "classObjectDescriptor already assigned in " + this;
-        this.defaultObjectDescriptor = classObjectDescriptor;
+    public void setCompanionObjectDescriptor(@NotNull MutableClassDescriptor classObjectDescriptor) {
+        assert this.companionObjectDescriptor == null : "classObjectDescriptor already assigned in " + this;
+        this.companionObjectDescriptor = classObjectDescriptor;
     }
 
     @NotNull
@@ -155,7 +155,7 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
     }
 
     @Override
-    public boolean isDefaultObject() {
+    public boolean isCompanionObject() {
         //TODO:
         return false;
     }
@@ -329,8 +329,8 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
 
     public void lockScopes() {
         getScopeForMemberLookupAsWritableScope().changeLockLevel(WritableScope.LockLevel.READING);
-        if (defaultObjectDescriptor != null) {
-            defaultObjectDescriptor.lockScopes();
+        if (companionObjectDescriptor != null) {
+            companionObjectDescriptor.lockScopes();
         }
         scopeForSupertypeResolution.changeLockLevel(WritableScope.LockLevel.READING);
         scopeForMemberResolution.changeLockLevel(WritableScope.LockLevel.READING);

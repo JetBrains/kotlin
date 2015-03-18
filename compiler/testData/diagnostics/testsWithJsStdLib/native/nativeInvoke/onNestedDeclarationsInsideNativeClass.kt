@@ -31,7 +31,7 @@ class A {
             fun Int.invoke(a: String, b: Int)<!> = "OK"
         }
 
-        default object {
+        companion object {
             nativeInvoke
             fun foo() {}
 

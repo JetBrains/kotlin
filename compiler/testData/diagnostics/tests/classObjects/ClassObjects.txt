@@ -13,16 +13,16 @@ package Jet86 {
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-        internal default object Default {
-            private constructor Default()
+        internal companion object Companion {
+            private constructor Companion()
             internal final val x: kotlin.Int = 1
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         }
 
-        internal default object Default {
-            private constructor Default()
+        internal companion object Companion {
+            private constructor Companion()
             internal final val x: kotlin.Int = 1
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -36,7 +36,7 @@ package Jet86 {
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-        internal default object A {
+        internal companion object A {
             private constructor A()
             internal final val x: kotlin.Int = 1
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -44,7 +44,7 @@ package Jet86 {
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         }
 
-        internal default object AA {
+        internal companion object AA {
             private constructor AA()
             internal final val x: kotlin.Int = 1
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -52,8 +52,8 @@ package Jet86 {
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         }
 
-        internal default object Default {
-            private constructor Default()
+        internal companion object Companion {
+            private constructor Companion()
             internal final val x: kotlin.Int = 1
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -75,8 +75,8 @@ package Jet86 {
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-        internal default object Default {
-            private constructor Default()
+        internal companion object Companion {
+            private constructor Companion()
             internal final val x: kotlin.Int = 1
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

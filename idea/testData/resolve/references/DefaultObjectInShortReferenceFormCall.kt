@@ -1,7 +1,7 @@
 package t
 
 class A {
-    default object Default {
+    companion object Companion {
         fun test()
     }
 }
@@ -11,5 +11,5 @@ fun test() {
 }
 
 
-// REF: default object of (t).A
+// REF: companion object of (t).A
 

@@ -1,5 +1,5 @@
 class F {
-    default object {
+    companion object {
 
         //c1
 

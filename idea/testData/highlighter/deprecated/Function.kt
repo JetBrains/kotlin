@@ -12,7 +12,7 @@ deprecated("Use A instead") fun test4(x: Int, y: Int) { x + y }
 class MyClass() {
     deprecated("Use A instead") fun test2() {}
 
-    default object {
+    companion object {
         deprecated("Use A instead") fun test3() {}
     }
 }

@@ -5,7 +5,7 @@ class TestDelegate() {
 }
 
 trait Test {
-  default object {
+  companion object {
     public val prop: Int by TestDelegate()
   }
 }
@@ -15,11 +15,11 @@ trait Test {
 // ABSENT: TRUE
 
 // TESTED_OBJECT_KIND: property
-// TESTED_OBJECTS: Test$Default, prop
+// TESTED_OBJECTS: Test$Companion, prop
 // ABSENT: TRUE
 
 // TESTED_OBJECT_KIND: property
-// TESTED_OBJECTS: Test$Default, prop$delegate
+// TESTED_OBJECTS: Test$Companion, prop$delegate
 // FLAGS: ACC_FINAL, ACC_PRIVATE
 
 // TESTED_OBJECT_KIND: property

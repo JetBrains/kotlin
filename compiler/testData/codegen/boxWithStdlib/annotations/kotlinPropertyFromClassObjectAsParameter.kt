@@ -32,7 +32,7 @@ annotation class Ann(
 )
 
 class Foo {
-    default object {
+    companion object {
         val i: Int = 2
         val s: Short = 2
         val f: Float = 2.0.toFloat()

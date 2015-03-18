@@ -5,8 +5,8 @@ internal final class A {
     internal final val other: kotlin.Int = 1
         internal final fun <get-other>(): kotlin.Int
 
-    internal default object Default {
-        /*primary*/ private constructor Default()
+    internal companion object Companion {
+        /*primary*/ private constructor Companion()
         internal final val some: kotlin.Int = 1
             internal final fun <get-some>(): kotlin.Int
     }

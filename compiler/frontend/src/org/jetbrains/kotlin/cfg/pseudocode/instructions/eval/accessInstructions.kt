@@ -75,7 +75,7 @@ public class ReadValueInstruction private (
     override fun createCopy(): InstructionImpl =
             ReadValueInstruction(element, lexicalScope, target, receiverValues, outputValue)
 
-    default object Factory {
+    class object Factory {
         public fun create (
                 element: JetElement,
                 lexicalScope: LexicalScope,

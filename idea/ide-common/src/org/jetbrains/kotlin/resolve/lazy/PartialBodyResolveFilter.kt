@@ -469,7 +469,7 @@ class PartialBodyResolveFilter(
         NEED_COMPLETION
     }
 
-    default object {
+    class object {
         private fun JetElement.blocks(): Collection<JetBlockExpression> {
             val result = ArrayList<JetBlockExpression>(1)
             this.accept(object : JetVisitorVoid() {

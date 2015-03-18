@@ -4,7 +4,7 @@ class MyClass {
         return i()
     }
 
-    default object {
+    companion object {
         val coProp = 1
 
         fun coFun() {

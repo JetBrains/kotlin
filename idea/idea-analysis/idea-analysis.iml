@@ -15,6 +15,7 @@
     <orderEntry type="library" scope="PROVIDED" name="java-i18n" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="gradle-and-groovy-plugin" level="project" />
     <orderEntry type="module" module-name="serialization" />
+    <orderEntry type="module" module-name="serialization.js" />
     <orderEntry type="module" module-name="serialization.jvm" />
     <orderEntry type="module" module-name="eval4j" />
     <orderEntry type="library" name="intellij-core-analysis" level="project" />

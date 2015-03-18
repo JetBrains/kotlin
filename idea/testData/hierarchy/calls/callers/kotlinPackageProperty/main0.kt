@@ -7,7 +7,7 @@ class KClient {
         packageVal = ""
     }
 
-    default object {
+    companion object {
         val a = packageVal
     }
 

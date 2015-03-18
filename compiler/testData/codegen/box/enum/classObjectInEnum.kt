@@ -3,7 +3,7 @@ enum class Game {
     PAPER
     SCISSORS
 
-    default object {
+    companion object {
         fun foo() = ROCK
         val bar = PAPER
     }

@@ -3,8 +3,8 @@ package test
 internal final class Test {
     /*primary*/ public constructor Test()
 
-    internal default object Default {
-        /*primary*/ private constructor Default()
+    internal companion object Companion {
+        /*primary*/ private constructor Companion()
         public final val prop1: kotlin.Int = 10
             public final fun <get-prop1>(): kotlin.Int
         public final var prop2: kotlin.Int

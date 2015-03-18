@@ -3,12 +3,12 @@ package a
 trait T
 
 class A {
-    default object: T {
+    companion object: T {
     }
 }
 
 class B {
-    default object {
+    companion object {
         fun f(): Int
     }
 }
@@ -18,8 +18,8 @@ class B {
     B.f()
     A
     B
-    A.Default
-    B.Default
+    A.Companion
+    B.Companion
 }</selection>
 
 

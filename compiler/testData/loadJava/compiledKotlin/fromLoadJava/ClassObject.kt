@@ -1,6 +1,6 @@
 package test
 
 trait TheTrait {
-  default object {
+  companion object {
   }
 }

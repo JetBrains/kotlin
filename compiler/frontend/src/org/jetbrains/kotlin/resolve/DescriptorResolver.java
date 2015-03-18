@@ -455,12 +455,12 @@ public class DescriptorResolver {
     static final class UpperBoundCheckerTask {
         JetTypeReference upperBound;
         JetType upperBoundType;
-        boolean isDefaultObjectConstraint;
+        boolean isCompanionObjectConstraint;
 
-        private UpperBoundCheckerTask(JetTypeReference upperBound, JetType upperBoundType, boolean defaultObjectConstraint) {
+        private UpperBoundCheckerTask(JetTypeReference upperBound, JetType upperBoundType, boolean companionObjectConstraint) {
             this.upperBound = upperBound;
             this.upperBoundType = upperBoundType;
-            isDefaultObjectConstraint = defaultObjectConstraint;
+            isCompanionObjectConstraint = companionObjectConstraint;
         }
     }
 
@@ -489,7 +489,7 @@ public class DescriptorResolver {
             }
         }
         for (JetTypeConstraint constraint : declaration.getTypeConstraints()) {
-            reportUnsupportedDefaultObjectConstraint(trace, constraint);
+            reportUnsupportedCompanionObjectConstraint(trace, constraint);
 
             JetSimpleNameExpression subjectTypeParameterName = constraint.getSubjectTypeParameterName();
             if (subjectTypeParameterName == null) {
@@ -502,14 +502,14 @@ public class DescriptorResolver {
             if (boundTypeReference != null) {
                 bound = typeResolver.resolveType(scope, boundTypeReference, trace, false);
                 deferredUpperBoundCheckerTasks
-                        .add(new UpperBoundCheckerTask(boundTypeReference, bound, constraint.isDefaultObjectConstraint()));
+                        .add(new UpperBoundCheckerTask(boundTypeReference, bound, constraint.isCompanionObjectConstraint()));
             }
 
             if (typeParameterDescriptor != null) {
                 trace.record(BindingContext.REFERENCE_TARGET, subjectTypeParameterName, typeParameterDescriptor);
                 if (bound != null) {
-                    if (constraint.isDefaultObjectConstraint()) {
-                        // Default object bounds are not supported
+                    if (constraint.isCompanionObjectConstraint()) {
+                        // Companion object bounds are not supported
                     }
                     else {
                         typeParameterDescriptor.addUpperBound(bound);
@@ -528,7 +528,7 @@ public class DescriptorResolver {
 
         if (!(declaration instanceof JetClass)) {
             for (UpperBoundCheckerTask checkerTask : deferredUpperBoundCheckerTasks) {
-                checkUpperBoundType(checkerTask.upperBound, checkerTask.upperBoundType, checkerTask.isDefaultObjectConstraint, trace);
+                checkUpperBoundType(checkerTask.upperBound, checkerTask.upperBoundType, checkerTask.isCompanionObjectConstraint, trace);
             }
 
             checkNamesInConstraints(declaration, descriptor, scope, trace);
@@ -546,7 +546,7 @@ public class DescriptorResolver {
 
         JetType classObjectType = parameter.getClassObjectType();
         if (classObjectType != null && KotlinBuiltIns.isNothing(classObjectType)) {
-            trace.report(CONFLICTING_DEFAULT_OBJECT_UPPER_BOUNDS.on(typeParameter, parameter));
+            trace.report(CONFLICTING_COMPANION_OBJECT_UPPER_BOUNDS.on(typeParameter, parameter));
         }
     }
 
@@ -581,21 +581,21 @@ public class DescriptorResolver {
         }
     }
 
-    public static void reportUnsupportedDefaultObjectConstraint(BindingTrace trace, JetTypeConstraint constraint) {
-        if (constraint.isDefaultObjectConstraint()) {
-            trace.report(UNSUPPORTED.on(constraint, "Default objects constraints are not supported yet"));
+    public static void reportUnsupportedCompanionObjectConstraint(BindingTrace trace, JetTypeConstraint constraint) {
+        if (constraint.isCompanionObjectConstraint()) {
+            trace.report(UNSUPPORTED.on(constraint, "Companion objects constraints are not supported yet"));
         }
     }
 
     public static void checkUpperBoundType(
             JetTypeReference upperBound,
             @NotNull JetType upperBoundType,
-            boolean isDefaultObjectConstraint,
+            boolean isCompanionObjectConstraint,
             BindingTrace trace
     ) {
         if (!TypeUtils.canHaveSubtypes(JetTypeChecker.DEFAULT, upperBoundType)) {
-            if (isDefaultObjectConstraint) {
-                trace.report(FINAL_DEFAULT_OBJECT_UPPER_BOUND.on(upperBound, upperBoundType));
+            if (isCompanionObjectConstraint) {
+                trace.report(FINAL_COMPANION_OBJECT_UPPER_BOUND.on(upperBound, upperBoundType));
             }
             else {
                 trace.report(FINAL_UPPER_BOUND.on(upperBound, upperBoundType));

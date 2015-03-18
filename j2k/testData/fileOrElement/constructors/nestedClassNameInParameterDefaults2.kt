@@ -4,7 +4,7 @@ import A.Nested
 class A(nested: Nested = Nested(Nested.FIELD)) {
 
     class Nested(p: Int) {
-        default object {
+        companion object {
 
             public val FIELD: Int = 0
         }

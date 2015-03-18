@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.name.SpecialNames;
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.kotlin.resolve.scopes.FilteringScope;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.types.ErrorUtils;
@@ -193,7 +194,7 @@ public class DescriptorUtils {
     public static ClassDescriptor getContainingClass(@NotNull DeclarationDescriptor descriptor) {
         DeclarationDescriptor containing = descriptor.getContainingDeclaration();
         while (containing != null) {
-            if (containing instanceof ClassDescriptor && !isDefaultObject(containing)) {
+            if (containing instanceof ClassDescriptor && !isCompanionObject(containing)) {
                 return (ClassDescriptor) containing;
             }
             containing = containing.getContainingDeclaration();
@@ -253,16 +254,16 @@ public class DescriptorUtils {
         return descriptor instanceof FunctionExpressionDescriptor;
     }
 
-    public static boolean isDefaultObject(@Nullable DeclarationDescriptor descriptor) {
-        return isKindOf(descriptor, ClassKind.OBJECT) && ((ClassDescriptor) descriptor).isDefaultObject();
+    public static boolean isCompanionObject(@Nullable DeclarationDescriptor descriptor) {
+        return isKindOf(descriptor, ClassKind.OBJECT) && ((ClassDescriptor) descriptor).isCompanionObject();
     }
 
     public static boolean isAnonymousObject(@NotNull DeclarationDescriptor descriptor) {
         return isClass(descriptor) && descriptor.getName().equals(SpecialNames.NO_NAME_PROVIDED);
     }
 
-    public static boolean isNonDefaultObject(@NotNull DeclarationDescriptor descriptor) {
-        return isKindOf(descriptor, ClassKind.OBJECT) && !((ClassDescriptor) descriptor).isDefaultObject();
+    public static boolean isNonCompanionObject(@NotNull DeclarationDescriptor descriptor) {
+        return isKindOf(descriptor, ClassKind.OBJECT) && !((ClassDescriptor) descriptor).isCompanionObject();
     }
 
     public static boolean isObject(@NotNull DeclarationDescriptor descriptor) {
@@ -314,16 +315,16 @@ public class DescriptorUtils {
         return superClassDescriptors;
     }
 
-    @Nullable
+    @NotNull
     public static JetType getSuperClassType(@NotNull ClassDescriptor classDescriptor) {
         Collection<JetType> superclassTypes = classDescriptor.getTypeConstructor().getSupertypes();
         for (JetType type : superclassTypes) {
             ClassDescriptor superClassDescriptor = getClassDescriptorForType(type);
-            if (!isAny(superClassDescriptor) && superClassDescriptor.getKind() != ClassKind.TRAIT) {
+            if (superClassDescriptor.getKind() != ClassKind.TRAIT) {
                 return type;
             }
         }
-        return null;
+        return KotlinBuiltIns.getInstance().getAnyType();
     }
 
     @NotNull
@@ -499,5 +500,29 @@ public class DescriptorUtils {
 
     public static boolean canHaveSecondaryConstructors(@NotNull ClassDescriptor classDescriptor) {
         return !isSingletonOrAnonymousObject(classDescriptor) && !isTrait(classDescriptor);
+    }
+
+    public static Set<FqName> getPackagesFqNames(ModuleDescriptor module) {
+        return getSubPackagesFqNames(module.getPackage(FqName.ROOT));
+    }
+
+    public static Set<FqName> getSubPackagesFqNames(PackageViewDescriptor packageView) {
+        Set<FqName> result = new HashSet<FqName>();
+        getSubPackagesFqNames(packageView, result);
+
+        return result;
+    }
+
+    private static void getSubPackagesFqNames(PackageViewDescriptor packageView, Set<FqName> result) {
+        FqName fqName = packageView.getFqName();
+        if (!fqName.isRoot()) {
+            result.add(fqName);
+        }
+
+        for (DeclarationDescriptor descriptor : packageView.getMemberScope().getDescriptors(DescriptorKindFilter.PACKAGES, JetScope.ALL_NAME_FILTER)) {
+            if (descriptor instanceof PackageViewDescriptor) {
+                getSubPackagesFqNames((PackageViewDescriptor) descriptor, result);
+            }
+        }
     }
 }

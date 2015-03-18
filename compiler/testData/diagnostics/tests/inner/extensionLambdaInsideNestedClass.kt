@@ -7,7 +7,7 @@ object A {
 }
 
 class B {
-    default object {
+    companion object {
         class LoginFormPage() : Request({
             val <!UNUSED_VARIABLE!>failed<!> = session.get("LOGIN_FAILED")
         })

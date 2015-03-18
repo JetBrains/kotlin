@@ -1,5 +1,5 @@
 class C() {
-    default object Foo
+    companion object Foo
 }
 
 fun C.Foo.create() = 3

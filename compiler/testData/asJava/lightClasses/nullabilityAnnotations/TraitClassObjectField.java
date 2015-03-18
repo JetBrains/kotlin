@@ -1,14 +1,14 @@
 public interface TraitClassObjectField {
-    TraitClassObjectField.Default Default;
+    TraitClassObjectField.Companion Companion;
     /**
      * @deprecated
      */
     @java.lang.Deprecated
-    TraitClassObjectField.Default OBJECT$;
+    TraitClassObjectField.Companion OBJECT$;
     @org.jetbrains.annotations.Nullable
     java.lang.String x = "";
 
-    static final class Default {
+    static final class Companion {
         @org.jetbrains.annotations.Nullable
         private final java.lang.String x = "";
         private final java.lang.String y = "";
@@ -18,6 +18,6 @@ public interface TraitClassObjectField {
 
         private final java.lang.String getY() { /* compiled code */ }
 
-        private Default() { /* compiled code */ }
+        private Companion() { /* compiled code */ }
     }
 }

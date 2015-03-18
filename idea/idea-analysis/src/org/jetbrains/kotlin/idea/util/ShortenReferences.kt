@@ -46,12 +46,12 @@ public class ShortenReferences(val options: (JetElement) -> Options = { Options.
             val removeThisLabels: Boolean = false,
             val removeThis: Boolean = false
     ) {
-        default object {
+        class object {
             val DEFAULT = Options()
         }
     }
 
-    default object {
+    class object {
         val DEFAULT = ShortenReferences()
 
         private fun DeclarationDescriptor.asString()
@@ -150,7 +150,7 @@ public class ShortenReferences(val options: (JetElement) -> Options = { Options.
                     ShortenTypesVisitor(file, elementFilter, failedToImportDescriptors),
                     ShortenThisExpressionsVisitor(file, elementFilter, failedToImportDescriptors),
                     ShortenQualifiedExpressionsVisitor(file, elementFilter, failedToImportDescriptors),
-                    RemoveExplicitDefaultObjectReferenceVisitor(file, elementFilter, failedToImportDescriptors)
+                    RemoveExplicitCompanionObjectReferenceVisitor(file, elementFilter, failedToImportDescriptors)
             )
             val descriptorsToImport = visitors.flatMap { analyzeReferences(elementsToUse, it) }.toSet()
             visitors.forEach { it.shortenElements(elementsToUse) }
@@ -409,7 +409,7 @@ public class ShortenReferences(val options: (JetElement) -> Options = { Options.
         }
     }
 
-    private class RemoveExplicitDefaultObjectReferenceVisitor(
+    private class RemoveExplicitCompanionObjectReferenceVisitor(
             file: JetFile,
             elementFilter: (PsiElement) -> FilterResult,
             failedToImportDescriptors: Set<DeclarationDescriptor>
@@ -434,7 +434,7 @@ public class ShortenReferences(val options: (JetElement) -> Options = { Options.
             val selectorExpression = qualifiedExpression.getSelectorExpression() ?: return false
             val selectorTarget = selectorExpression.singleTarget(bindingContext) ?: return false
 
-            if (receiverTarget.getDefaultObjectDescriptor() != selectorTarget) return false
+            if (receiverTarget.getCompanionObjectDescriptor() != selectorTarget) return false
 
             val selectorsSelector = (qualifiedExpression.getParent() as? JetDotQualifiedExpression)?.getSelectorExpression()
             if (selectorsSelector == null) {

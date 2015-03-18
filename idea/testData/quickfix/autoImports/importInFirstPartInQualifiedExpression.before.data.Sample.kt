@@ -1,7 +1,7 @@
 package some
 
 public class Some {
-  default object {
+  companion object {
     public fun test() {
     }
   }

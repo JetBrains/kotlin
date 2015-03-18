@@ -1,7 +1,7 @@
-// import all members from default object
+// import all members from companion object
 package c
 
-import c.A.Default.B
+import c.A.Companion.B
 import c.<!CANNOT_IMPORT_ON_DEMAND_FROM_SINGLETON!>M<!>.*
 
 fun foo() {
@@ -10,9 +10,9 @@ fun foo() {
 }
 
 class A() {
-    default object {
+    companion object {
         class B() {
-            default object {
+            companion object {
             }
         }
     }

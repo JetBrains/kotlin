@@ -6,7 +6,7 @@ class A {
         foo()
     }
 
-    default object {
+    companion object {
         fun foo() {
             val a = 1
         }

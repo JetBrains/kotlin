@@ -9,7 +9,7 @@ class C {
         }
     }
 
-    default object {
+    companion object {
         fun fromClassObject(){}
     }
 }

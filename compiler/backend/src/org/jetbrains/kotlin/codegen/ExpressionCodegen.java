@@ -65,6 +65,7 @@ import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant;
 import org.jetbrains.kotlin.resolve.constants.evaluate.EvaluatePackage;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.resolve.scopes.receivers.*;
 import org.jetbrains.kotlin.types.Approximation;
@@ -97,6 +98,7 @@ import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.OtherOrigin;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.TraitImpl;
 import static org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
+import static org.jetbrains.kotlin.serialization.deserialization.DeserializationPackage.findClassAcrossModuleDependencies;
 import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_PRIVATE;
 
 public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implements LocalLookup {
@@ -1906,7 +1908,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         if (descriptor instanceof PropertyDescriptor) {
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
 
-            Collection<ExpressionCodegenExtension> codegenExtensions = ExpressionCodegenExtension.Default.getInstances(state.getProject());
+            Collection<ExpressionCodegenExtension> codegenExtensions = ExpressionCodegenExtension.OBJECT$.getInstances(state.getProject());
             if (!codegenExtensions.isEmpty() && resolvedCall != null) {
                 ExpressionCodegenExtension.Context context = new ExpressionCodegenExtension.Context(typeMapper, v);
                 JetType returnType = propertyDescriptor.getReturnType();
@@ -1944,9 +1946,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 Type type = typeMapper.mapType((ClassDescriptor) enumClass);
                 return StackValue.field(type, type, descriptor.getName().asString(), true, StackValue.none());
             }
-            ClassDescriptor defaultObjectDescriptor = classDescriptor.getDefaultObjectDescriptor();
-            if (defaultObjectDescriptor != null) {
-                return StackValue.singleton(defaultObjectDescriptor, typeMapper);
+            ClassDescriptor companionObjectDescriptor = classDescriptor.getCompanionObjectDescriptor();
+            if (companionObjectDescriptor != null) {
+                return StackValue.singleton(companionObjectDescriptor, typeMapper);
             }
             return StackValue.none();
         }
@@ -2346,7 +2348,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         if (!(resolvedCall.getResultingDescriptor() instanceof ConstructorDescriptor)) { // otherwise already
             receiver = StackValue.receiver(resolvedCall, receiver, this, callableMethod);
 
-            Collection<ExpressionCodegenExtension> codegenExtensions = ExpressionCodegenExtension.Default.getInstances(state.getProject());
+            Collection<ExpressionCodegenExtension> codegenExtensions = ExpressionCodegenExtension.OBJECT$.getInstances(state.getProject());
             if (!codegenExtensions.isEmpty()) {
                 ExpressionCodegenExtension.Context context = new ExpressionCodegenExtension.Context(typeMapper, v);
                 for (ExpressionCodegenExtension extension : codegenExtensions) {
@@ -2437,7 +2439,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     public StackValue generateReceiverValue(@NotNull ReceiverValue receiverValue) {
         if (receiverValue instanceof ClassReceiver) {
             ClassDescriptor receiverDescriptor = ((ClassReceiver) receiverValue).getDeclarationDescriptor();
-            if (DescriptorUtils.isDefaultObject(receiverDescriptor)) {
+            if (DescriptorUtils.isCompanionObject(receiverDescriptor)) {
                 CallableMemberDescriptor contextDescriptor = context.getContextDescriptor();
                 if (contextDescriptor instanceof FunctionDescriptor && receiverDescriptor == contextDescriptor.getContainingDeclaration()) {
                     return StackValue.LOCAL_0;
@@ -2665,6 +2667,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     @Override
     public StackValue visitClassLiteralExpression(@NotNull JetClassLiteralExpression expression, StackValue data) {
+        checkReflectionIsAvailable(expression);
+
         JetType type = bindingContext.get(EXPRESSION_TYPE, expression);
         assert type != null;
 
@@ -2687,25 +2691,34 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         VariableDescriptor variableDescriptor = bindingContext.get(VARIABLE, expression);
-        if (variableDescriptor != null) {
-            VariableDescriptor descriptor = (VariableDescriptor) resolvedCall.getResultingDescriptor();
-
-            DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-            if (containingDeclaration instanceof PackageFragmentDescriptor) {
-                return generateTopLevelPropertyReference(descriptor);
-            }
-            else if (containingDeclaration instanceof ClassDescriptor) {
-                return generateMemberPropertyReference(descriptor, (ClassDescriptor) containingDeclaration);
-            }
-            else if (containingDeclaration instanceof ScriptDescriptor) {
-                return generateMemberPropertyReference(descriptor, ((ScriptDescriptor) containingDeclaration).getClassDescriptor());
-            }
-            else {
-                throw new UnsupportedOperationException("Unsupported callable reference container: " + containingDeclaration);
-            }
+        if (variableDescriptor == null) {
+            throw new UnsupportedOperationException("Unsupported callable reference expression: " + expression.getText());
         }
 
-        throw new UnsupportedOperationException("Unsupported callable reference expression: " + expression.getText());
+        // TODO: this diagnostic should also be reported on function references once they obtain reflection
+        checkReflectionIsAvailable(expression);
+
+        VariableDescriptor descriptor = (VariableDescriptor) resolvedCall.getResultingDescriptor();
+
+        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
+        if (containingDeclaration instanceof PackageFragmentDescriptor) {
+            return generateTopLevelPropertyReference(descriptor);
+        }
+        else if (containingDeclaration instanceof ClassDescriptor) {
+            return generateMemberPropertyReference(descriptor, (ClassDescriptor) containingDeclaration);
+        }
+        else if (containingDeclaration instanceof ScriptDescriptor) {
+            return generateMemberPropertyReference(descriptor, ((ScriptDescriptor) containingDeclaration).getClassDescriptor());
+        }
+        else {
+            throw new UnsupportedOperationException("Unsupported callable reference container: " + containingDeclaration);
+        }
+    }
+
+    private void checkReflectionIsAvailable(@NotNull JetExpression expression) {
+        if (findClassAcrossModuleDependencies(state.getModule(), JvmAbi.REFLECTION_FACTORY_IMPL) == null) {
+            state.getDiagnostics().report(ErrorsJvm.NO_REFLECTION_IN_CLASS_PATH.on(expression, expression));
+        }
     }
 
     @NotNull

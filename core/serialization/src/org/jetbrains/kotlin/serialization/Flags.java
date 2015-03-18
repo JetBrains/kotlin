@@ -74,18 +74,18 @@ public class Flags {
             Modality modality,
             ClassKind kind,
             boolean inner,
-            boolean isDefaultObject
+            boolean isCompanionObject
     ) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
                | MODALITY.toFlags(modality(modality))
                | VISIBILITY.toFlags(visibility(visibility))
-               | CLASS_KIND.toFlags(classKind(kind, isDefaultObject))
+               | CLASS_KIND.toFlags(classKind(kind, isCompanionObject))
                | INNER.toFlags(inner)
                ;
     }
 
-    private static ProtoBuf.Class.Kind classKind(ClassKind kind, boolean isDefaultObject) {
-        if (isDefaultObject) return ProtoBuf.Class.Kind.CLASS_OBJECT;
+    private static ProtoBuf.Class.Kind classKind(ClassKind kind, boolean isCompanionObject) {
+        if (isCompanionObject) return ProtoBuf.Class.Kind.CLASS_OBJECT;
 
         switch (kind) {
             case CLASS:

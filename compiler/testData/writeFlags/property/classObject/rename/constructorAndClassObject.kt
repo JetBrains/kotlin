@@ -1,6 +1,6 @@
 class Test(val prop: String) {
 
-  default object {
+  companion object {
     public val prop : String = "CO";
   }
 

@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.org.objectweb.asm.Type;
 
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.isNonDefaultObject;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isNonCompanionObject;
 
 public class FieldInfo {
     @NotNull
@@ -34,7 +34,7 @@ public class FieldInfo {
             throw new UnsupportedOperationException("Can't create singleton field for class: " + classDescriptor);
         }
 
-        if (isNonDefaultObject(classDescriptor) || IntrinsicObjects.INSTANCE$.hasMappingToObject(classDescriptor)) {
+        if (isNonCompanionObject(classDescriptor) || IntrinsicObjects.INSTANCE$.hasMappingToObject(classDescriptor)) {
             Type type = typeMapper.mapType(classDescriptor);
             return new FieldInfo(type, type, JvmAbi.INSTANCE_FIELD, true);
         }
@@ -48,12 +48,12 @@ public class FieldInfo {
 
     @SuppressWarnings("deprecation")
     @NotNull
-    public static FieldInfo deprecatedFieldForDefaultObject(@NotNull ClassDescriptor defaultObject, @NotNull JetTypeMapper typeMapper) {
-        assert DescriptorUtils.isDefaultObject(defaultObject) : "Not a default object: " + defaultObject;
+    public static FieldInfo deprecatedFieldForCompanionObject(@NotNull ClassDescriptor companionObject, @NotNull JetTypeMapper typeMapper) {
+        assert DescriptorUtils.isCompanionObject(companionObject) : "Not a companion object: " + companionObject;
         return new FieldInfo(
-                typeMapper.mapType((ClassifierDescriptor) defaultObject.getContainingDeclaration()),
-                typeMapper.mapType(defaultObject),
-                JvmAbi.DEPRECATED_DEFAULT_OBJECT_FIELD,
+                typeMapper.mapType((ClassifierDescriptor) companionObject.getContainingDeclaration()),
+                typeMapper.mapType(companionObject),
+                JvmAbi.DEPRECATED_COMPANION_OBJECT_FIELD,
                 true
         );
     }

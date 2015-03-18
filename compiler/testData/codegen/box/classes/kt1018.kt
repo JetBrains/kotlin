@@ -4,7 +4,7 @@ public class StockMarketTableModel() {
         return COLUMN_TITLES?.size()!!
     }
 
-    default object {
+    companion object {
         private val COLUMN_TITLES : Array<Int?> = arrayOfNulls<Int>(10)
     }
 }

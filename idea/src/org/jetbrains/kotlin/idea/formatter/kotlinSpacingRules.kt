@@ -46,7 +46,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
     val jetCommonSettings = settings.getCommonSettings(JetLanguage.INSTANCE)!!
 
     return rules(settings) {
-        val DECLARATIONS = TokenSet.create(PROPERTY, FUN, CLASS, OBJECT_DECLARATION, ENUM_ENTRY)
+        val DECLARATIONS = TokenSet.create(PROPERTY, FUN, CLASS, OBJECT_DECLARATION, ENUM_ENTRY, SECONDARY_CONSTRUCTOR)
 
         custom {
             inPosition(left = CLASS, right = CLASS).emptyLinesIfLineBreakInLeft(1)
@@ -91,6 +91,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
             between(PROPERTY, DECLARATIONS).blankLines(1)
 
             between(OBJECT_DECLARATION, DECLARATIONS).blankLines(1)
+            between(SECONDARY_CONSTRUCTOR, DECLARATIONS).blankLines(1)
 
             // ENUM_ENTRY - ENUM_ENTRY is exception
             between(ENUM_ENTRY, DECLARATIONS).blankLines(1)
@@ -139,6 +140,9 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
             betweenInside(DOT, IDENTIFIER, FUN).spacing(0, 0, 0, false, 0)
             afterInside(IDENTIFIER, FUN).spacing(0, 0, 0, false, 0)
 
+            // before LPAR in constructor(): this() {}
+            after(CONSTRUCTOR_DELEGATION_REFERENCE).spacing(0, 0, 0, false, 0)
+
             aroundInside(DOT, DOT_QUALIFIED_EXPRESSION).spaces(0)
             aroundInside(SAFE_ACCESS, SAFE_ACCESS_EXPRESSION).spaces(0)
 
@@ -166,7 +170,8 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
             beforeInside(COLON, TYPE_COLON_ELEMENTS) { spaceIf(jetSettings.SPACE_BEFORE_TYPE_COLON) }
             afterInside(COLON, TYPE_COLON_ELEMENTS) { spaceIf(jetSettings.SPACE_AFTER_TYPE_COLON) }
 
-            val EXTEND_COLON_ELEMENTS = TokenSet.create(TYPE_CONSTRAINT, CLASS, OBJECT_DECLARATION, TYPE_PARAMETER, ENUM_ENTRY)
+            val EXTEND_COLON_ELEMENTS =
+                    TokenSet.create(TYPE_CONSTRAINT, CLASS, OBJECT_DECLARATION, TYPE_PARAMETER, ENUM_ENTRY, SECONDARY_CONSTRUCTOR)
             beforeInside(COLON, EXTEND_COLON_ELEMENTS) { spaceIf(jetSettings.SPACE_BEFORE_EXTEND_COLON) }
             afterInside(COLON, EXTEND_COLON_ELEMENTS) { spaceIf(jetSettings.SPACE_AFTER_EXTEND_COLON) }
 
@@ -254,6 +259,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
             inPosition(parent = FINALLY, right = BLOCK).customRule(leftBraceRule())
 
             inPosition(parent = FUN, right = BLOCK).customRule(leftBraceRule())
+            inPosition(parent = SECONDARY_CONSTRUCTOR, right = BLOCK).customRule(leftBraceRule())
             inPosition(parent = PROPERTY_ACCESSOR, right = BLOCK).customRule(leftBraceRule())
 
             inPosition(right = CLASS_BODY).customRule(leftBraceRule(blockType = CLASS_BODY))

@@ -2,7 +2,7 @@ package foo
 
 class A {
     var a = 3
-    default object {
+    companion object {
         var a = -2
     }
 }

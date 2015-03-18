@@ -264,10 +264,10 @@ JetFile: CommentsBinding.kt
         PsiComment(EOL_COMMENT)('// end of foo')
       PsiWhiteSpace('\n\n    ')
       OBJECT_DECLARATION
-        PsiComment(EOL_COMMENT)('// default object')
+        PsiComment(EOL_COMMENT)('// companion object')
         PsiWhiteSpace('\n    ')
         MODIFIER_LIST
-          PsiElement(default)('default')
+          PsiElement(companion)('companion')
         PsiWhiteSpace(' ')
         PsiElement(object)('object')
         PsiWhiteSpace(' ')
@@ -276,7 +276,7 @@ JetFile: CommentsBinding.kt
           PsiWhiteSpace('\n    ')
           PsiElement(RBRACE)('}')
         PsiWhiteSpace(' ')
-        PsiComment(EOL_COMMENT)('// end of default object')
+        PsiComment(EOL_COMMENT)('// end of companion object')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')

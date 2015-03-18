@@ -5,7 +5,7 @@ class A {
         privateStatic2()
     }
 
-    default object {
+    companion object {
         private val s = "abc"
 
         private fun privateStatic1() {

@@ -11,7 +11,7 @@ public open class Outer {
 
             }
 
-            default object {
+            companion object {
                 public var bar: String = "bar";
 
                 public open fun foo() {

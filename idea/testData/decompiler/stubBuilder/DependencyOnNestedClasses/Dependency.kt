@@ -8,7 +8,7 @@ class D {
         class Nested
     }
 
-    default object {
+    companion object {
         class NestedInClassObject
     }
 }

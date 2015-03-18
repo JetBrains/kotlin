@@ -17,35 +17,20 @@
 package org.jetbrains.kotlin.js.config;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiManager;
-import kotlin.Function1;
-import kotlin.Unit;
+import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.analyzer.AnalysisResult;
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
-import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
 import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.psi.JetPsiFactory;
-import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.utils.KotlinJavascriptMetadata;
 import org.jetbrains.kotlin.utils.PathUtil;
 
-import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 public class LibrarySourcesConfigWithCaching extends LibrarySourcesConfig {
     public static final List<String> JS_STDLIB =
-            Arrays.asList(PathUtil.getKotlinPathsForDistDirectory().getJsStdLibJarPath().getAbsolutePath());
+            Collections.singletonList(PathUtil.getKotlinPathsForDistDirectory().getJsStdLibJarPath().getAbsolutePath());
 
-    private static List<JetFile> jsLibFiles;
-    private static AnalysisResult result;
-
-    private BindingContext libraryContext;
-    private ModuleDescriptor libraryModule;
+    private static List<KotlinJavascriptMetadata> stdlibMetadata = null;
 
     private final boolean isUnitTestConfig;
 
@@ -61,85 +46,19 @@ public class LibrarySourcesConfigWithCaching extends LibrarySourcesConfig {
         this.isUnitTestConfig = isUnitTestConfig;
     }
 
-    @NotNull
     @Override
-    public List<JetFile> generateLibFiles() {
-        if (jsLibFiles == null) {
+    protected  void init(@NotNull List<JetFile> sourceFilesInLibraries, @NotNull List<KotlinJavascriptMetadata> metadata) {
+        if (stdlibMetadata == null) {
             //noinspection AssignmentToStaticFieldFromInstanceMethod
-            jsLibFiles = super.generateLibFiles();
-        }
-        return jsLibFiles;
-    }
-
-
-
-    @Nullable
-    @Override
-    public ModuleDescriptor getLibraryModule() {
-        if (libraryModule == null) {
-            libraryModule = getResult().getModuleDescriptor();
+            stdlibMetadata = new SmartList<KotlinJavascriptMetadata>();
+            super.init(sourceFilesInLibraries, stdlibMetadata);
         }
 
-        return libraryModule;
-    }
-
-    @Nullable
-    @Override
-    public BindingContext getLibraryContext() {
-        if (libraryContext == null) {
-            //TODO check errors?
-            // TopDownAnalyzerFacadeForJS.checkForErrors(allLibFiles, result.getBindingContext());
-            libraryContext = getResult().getBindingContext();
-        }
-
-        return libraryContext;
+        metadata.addAll(stdlibMetadata);
     }
 
     @Override
     public boolean isTestConfig() {
         return isUnitTestConfig;
-    }
-
-    @Override
-    protected JetFile getJetFileByVirtualFile(VirtualFile file, String moduleName, PsiManager psiManager) {
-        JetFile jetFile;
-        try {
-            String text = StringUtil.convertLineSeparators(new String(file.contentsToByteArray(false), file.getCharset()));
-            jetFile = new JetPsiFactory(getProject()).createPhysicalFile(file.getName(), text);
-        }
-        catch (IOException e) {
-            JetFile jetFileByVirtualFile = super.getJetFileByVirtualFile(file, moduleName, psiManager);
-            jetFile = new JetPsiFactory(getProject()).createPhysicalFile(file.getPath(), jetFileByVirtualFile.getText());
-        }
-
-        setupPsiFile(jetFile, moduleName);
-        return jetFile;
-    }
-
-    private AnalysisResult getResult() {
-        if (result == null) {
-            //noinspection AssignmentToStaticFieldFromInstanceMethod
-            result = TopDownAnalyzerFacadeForJS.analyzeFiles(
-                    generateLibFiles(),
-                    createConfigWithoutLibFiles(getProject(), getModuleId(), getTarget())
-            );
-        }
-
-        return result;
-    }
-
-    @NotNull
-    private static Config createConfigWithoutLibFiles(@NotNull Project project, @NotNull String moduleId, @NotNull EcmaVersion ecmaVersion) {
-        return new Config(project, moduleId, ecmaVersion, /* generate sourcemaps = */ false, /* inlineEnabled = */ false) {
-            @NotNull
-            @Override
-            protected List<JetFile> generateLibFiles() {
-                return Collections.emptyList();
-            }
-            @Override
-            public boolean checkLibFilesAndReportErrors(@NotNull Function1<String, Unit> report) {
-                return false;
-            }
-        };
     }
 }

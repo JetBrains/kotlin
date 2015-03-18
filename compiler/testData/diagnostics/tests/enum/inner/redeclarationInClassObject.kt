@@ -3,7 +3,7 @@ class A {
         ENTRY
     }
     
-    default object {
+    companion object {
         enum class E {
             ENTRY2
         }

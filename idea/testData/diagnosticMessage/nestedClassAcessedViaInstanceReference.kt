@@ -3,7 +3,7 @@
 
 class A {
     class Nested()
-    class NestedWithClassObject { default object }
+    class NestedWithClassObject { companion object }
     enum class NestedEnum { A }
     object NestedObj { fun invoke() = 1 }
 }

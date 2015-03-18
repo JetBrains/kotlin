@@ -3,7 +3,7 @@ class A {
     
     fun foo(): String = ""
     
-    default object {
+    companion object {
         val y: Any? = 239
         
         fun bar(): String = ""

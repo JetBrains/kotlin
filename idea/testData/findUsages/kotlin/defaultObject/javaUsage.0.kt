@@ -4,7 +4,7 @@
 import kotlin.platform.platformStatic
 
 class Foo {
-    default <caret>object {
+    companion <caret>object {
         fun f() {
         }
 

@@ -195,8 +195,8 @@ public class AsmUtil {
             }
         }
 
-        if (AnnotationsPackage.isPlatformStaticInDefaultObject(functionDescriptor)) {
-            // Native method will be a member of the class, the default object method will be delegated to it
+        if (AnnotationsPackage.isPlatformStaticInCompanionObject(functionDescriptor)) {
+            // Native method will be a member of the class, the companion object method will be delegated to it
             flags &= ~Opcodes.ACC_NATIVE;
         }
 
@@ -344,7 +344,7 @@ public class AsmUtil {
         }
         // the following code is only for PRIVATE visibility of member
         if (memberDescriptor instanceof ConstructorDescriptor) {
-            if (isNonDefaultObject(containingDeclaration) || isEnumEntry(containingDeclaration)) {
+            if (isNonCompanionObject(containingDeclaration) || isEnumEntry(containingDeclaration)) {
                 return NO_FLAG_PACKAGE_PRIVATE;
             }
             if (isEnumClass(containingDeclaration)) {
@@ -727,12 +727,12 @@ public class AsmUtil {
             return false;
         }
 
-        return isNonDefaultObject(propertyDescriptor.getContainingDeclaration()) || isPropertyWithBackingFieldInOuterClass(propertyDescriptor);
+        return isNonCompanionObject(propertyDescriptor.getContainingDeclaration()) || isPropertyWithBackingFieldInOuterClass(propertyDescriptor);
     }
 
     public static boolean isPropertyWithBackingFieldInOuterClass(@NotNull PropertyDescriptor propertyDescriptor) {
         return propertyDescriptor.getKind() != CallableMemberDescriptor.Kind.FAKE_OVERRIDE &&
-               isDefaultObjectWithBackingFieldsInOuter(propertyDescriptor.getContainingDeclaration());
+               isCompanionObjectWithBackingFieldsInOuter(propertyDescriptor.getContainingDeclaration());
     }
 
     public static int getVisibilityForSpecialPropertyBackingField(@NotNull PropertyDescriptor propertyDescriptor, boolean isDelegate) {
@@ -761,14 +761,14 @@ public class AsmUtil {
         DeclarationDescriptor propertyContainer = propertyDescriptor.getContainingDeclaration();
         return !propertyDescriptor.isVar()
                && !isExtensionProperty
-               && isDefaultObject(propertyContainer) && isTrait(propertyContainer.getContainingDeclaration())
+               && isCompanionObject(propertyContainer) && isTrait(propertyContainer.getContainingDeclaration())
                && areBothAccessorDefault(propertyDescriptor)
                && getVisibilityForSpecialPropertyBackingField(propertyDescriptor, false) == ACC_PUBLIC;
     }
 
-    public static boolean isDefaultObjectWithBackingFieldsInOuter(@NotNull DeclarationDescriptor defaultObject) {
-        DeclarationDescriptor containingClass = defaultObject.getContainingDeclaration();
-        return isDefaultObject(defaultObject) && (isClass(containingClass) || isEnumClass(containingClass));
+    public static boolean isCompanionObjectWithBackingFieldsInOuter(@NotNull DeclarationDescriptor companionObject) {
+        DeclarationDescriptor containingClass = companionObject.getContainingDeclaration();
+        return isCompanionObject(companionObject) && (isClass(containingClass) || isEnumClass(containingClass));
     }
 
     private static boolean areBothAccessorDefault(@NotNull PropertyDescriptor propertyDescriptor) {

@@ -3,6 +3,6 @@ class JavaUsage {
         System.out.println(Foo.CONST);
         Foo.s();
         Foo.Baz.f();
-        Foo foo = new Foo(); // not usage of default object
+        Foo foo = new Foo(); // not usage of companion object
     }
 }

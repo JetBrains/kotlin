@@ -24,7 +24,7 @@ fun Bar.test2(order: Int, dummy: Int, vararg args: Int): Boolean = noImpl
 native
 class Bar(val size: Int, order: Int = 0) {
     fun test(order: Int, dummy: Int, vararg args: Int): Boolean = noImpl
-    default object {
+    companion object {
         fun startNewTest(): Boolean = noImpl
         var hasOrderProblem: Boolean = false
     }

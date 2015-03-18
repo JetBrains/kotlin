@@ -1,7 +1,7 @@
 open class Base(nested: Base.Nested) {
 
     class Nested(p: Int) {
-        default object {
+        companion object {
 
             public val FIELD: Int = 0
         }

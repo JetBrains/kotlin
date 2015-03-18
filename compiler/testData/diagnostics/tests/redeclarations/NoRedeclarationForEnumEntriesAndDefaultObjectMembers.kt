@@ -3,7 +3,7 @@ enum class E {
 
     SECOND
 
-    default object {
+    companion object {
         class FIRST
 
         val SECOND = this

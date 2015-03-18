@@ -27,7 +27,7 @@ public abstract class ReflectJavaType : JavaType {
 
     override fun createArrayType(): JavaArrayType = throw UnsupportedOperationException()
 
-    default object Factory {
+    class object Factory {
         fun create(type: Type): ReflectJavaType {
             return when {
                 type is Class<*> && type.isPrimitive() -> ReflectJavaPrimitiveType(type)

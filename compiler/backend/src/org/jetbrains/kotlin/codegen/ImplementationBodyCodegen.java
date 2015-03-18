@@ -92,7 +92,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private JetType superClassType;
     private final Type classAsmType;
 
-    private List<PropertyAndDefaultValue> defaultObjectPropertiesToCopy;
+    private List<PropertyAndDefaultValue> companionObjectPropertiesToCopy;
 
     private final List<Function2<ImplementationBodyCodegen, ClassBuilder, Unit>> additionalTasks =
             new ArrayList<Function2<ImplementationBodyCodegen, ClassBuilder, Unit>>();
@@ -152,7 +152,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             isStatic = !jetClass.isInner();
         }
         else {
-            isStatic = myClass instanceof JetObjectDeclaration && ((JetObjectDeclaration) myClass).isDefault() ;
+            isStatic = myClass instanceof JetObjectDeclaration && ((JetObjectDeclaration) myClass).isCompanion() ;
             isFinal = true;
         }
 
@@ -352,7 +352,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         generateFieldForSingleton();
 
-        generateDefaultObjectBackingFieldCopies();
+        generateCompanionObjectBackingFieldCopies();
 
         DelegationFieldsInfo delegationFieldsInfo = getDelegationFieldsInfo(myClass.getDelegationSpecifiers());
         try {
@@ -388,7 +388,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         genClosureFields(context.closure, v, typeMapper);
 
-        for (ExpressionCodegenExtension extension : ExpressionCodegenExtension.Default.getInstances(state.getProject())) {
+        for (ExpressionCodegenExtension extension : ExpressionCodegenExtension.OBJECT$.getInstances(state.getProject())) {
             extension.generateClassSyntheticParts(v, state, myClass, descriptor);
         }
     }
@@ -872,7 +872,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 @Override
                 public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
                     boolean forceField = AsmUtil.isPropertyWithBackingFieldInOuterClass(original) &&
-                                         !isDefaultObject(bridge.getContainingDeclaration());
+                                         !isCompanionObject(bridge.getContainingDeclaration());
                     StackValue property =
                             codegen.intermediateValueForProperty(original, forceField, null, MethodKind.SYNTHETIC_ACCESSOR,
                                                                  StackValue.none());
@@ -962,9 +962,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void generateFieldForSingleton() {
-        if (isEnumEntry(descriptor) || isDefaultObject(descriptor)) return;
+        if (isEnumEntry(descriptor) || isCompanionObject(descriptor)) return;
 
-        if (isNonDefaultObject(descriptor)) {
+        if (isNonCompanionObject(descriptor)) {
             StackValue.Field field = StackValue.singleton(descriptor, typeMapper);
             v.newField(OtherOrigin(myClass), ACC_PUBLIC | ACC_STATIC | ACC_FINAL, field.name, field.type.getDescriptor(), null, null);
 
@@ -977,34 +977,34 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             return;
         }
 
-        ClassDescriptor defaultObjectDescriptor = descriptor.getDefaultObjectDescriptor();
-        if (defaultObjectDescriptor == null) {
+        ClassDescriptor companionObjectDescriptor = descriptor.getCompanionObjectDescriptor();
+        if (companionObjectDescriptor == null) {
             return;
         }
 
-        JetObjectDeclaration defaultObject = firstOrNull(((JetClass) myClass).getDefaultObjects());
-        assert defaultObject != null : "Default object not found: " + myClass.getText();
+        JetObjectDeclaration companionObject = firstOrNull(((JetClass) myClass).getCompanionObjects());
+        assert companionObject != null : "Companion object not found: " + myClass.getText();
 
-        StackValue.Field field = StackValue.singleton(defaultObjectDescriptor, typeMapper);
-        v.newField(OtherOrigin(defaultObject), ACC_PUBLIC | ACC_STATIC | ACC_FINAL, field.name, field.type.getDescriptor(), null, null);
+        StackValue.Field field = StackValue.singleton(companionObjectDescriptor, typeMapper);
+        v.newField(OtherOrigin(companionObject), ACC_PUBLIC | ACC_STATIC | ACC_FINAL, field.name, field.type.getDescriptor(), null, null);
 
-        StackValue.Field deprecatedField = StackValue.deprecatedDefaultObjectAccessor(defaultObjectDescriptor, typeMapper);
-        FieldVisitor fv = v.newField(OtherOrigin(defaultObject), ACC_PUBLIC | ACC_STATIC | ACC_FINAL | ACC_DEPRECATED,
+        StackValue.Field deprecatedField = StackValue.deprecatedCompanionObjectAccessor(companionObjectDescriptor, typeMapper);
+        FieldVisitor fv = v.newField(OtherOrigin(companionObject), ACC_PUBLIC | ACC_STATIC | ACC_FINAL | ACC_DEPRECATED,
                                      deprecatedField.name, deprecatedField.type.getDescriptor(), null, null);
 
         fv.visitAnnotation(asmDescByFqNameWithoutInnerClasses(new FqName("java.lang.Deprecated")), true).visitEnd();
 
         if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
 
-        if (!isDefaultObjectWithBackingFieldsInOuter(defaultObjectDescriptor)) {
-            generateDefaultObjectInitializer(defaultObjectDescriptor);
+        if (!isCompanionObjectWithBackingFieldsInOuter(companionObjectDescriptor)) {
+            generateCompanionObjectInitializer(companionObjectDescriptor);
         }
     }
 
-    private void generateDefaultObjectBackingFieldCopies() {
-        if (defaultObjectPropertiesToCopy == null) return;
+    private void generateCompanionObjectBackingFieldCopies() {
+        if (companionObjectPropertiesToCopy == null) return;
 
-        for (PropertyAndDefaultValue info : defaultObjectPropertiesToCopy) {
+        for (PropertyAndDefaultValue info : companionObjectPropertiesToCopy) {
             PropertyDescriptor property = info.descriptor;
 
             Type type = typeMapper.mapType(property);
@@ -1020,40 +1020,40 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             // TODO: test this code
             if (state.getClassBuilderMode() == ClassBuilderMode.FULL && info.defaultValue == null) {
                 ExpressionCodegen codegen = createOrGetClInitCodegen();
-                int defaultObjectIndex = putDefaultObjectInLocalVar(codegen);
-                StackValue.local(defaultObjectIndex, OBJECT_TYPE).put(OBJECT_TYPE, codegen.v);
-                copyFieldFromDefaultObject(property);
+                int companionObjectIndex = putCompanionObjectInLocalVar(codegen);
+                StackValue.local(companionObjectIndex, OBJECT_TYPE).put(OBJECT_TYPE, codegen.v);
+                copyFieldFromCompanionObject(property);
             }
         }
     }
 
-    private int putDefaultObjectInLocalVar(ExpressionCodegen codegen) {
+    private int putCompanionObjectInLocalVar(ExpressionCodegen codegen) {
         FrameMap frameMap = codegen.myFrameMap;
-        ClassDescriptor defaultObjectDescriptor = descriptor.getDefaultObjectDescriptor();
-        int defaultObjectIndex = frameMap.getIndex(defaultObjectDescriptor);
-        if (defaultObjectIndex == -1) {
-            defaultObjectIndex = frameMap.enter(defaultObjectDescriptor, OBJECT_TYPE);
-            StackValue defaultObject = StackValue.singleton(defaultObjectDescriptor, typeMapper);
-            StackValue.local(defaultObjectIndex, defaultObject.type).store(defaultObject, codegen.v);
+        ClassDescriptor companionObjectDescriptor = descriptor.getCompanionObjectDescriptor();
+        int companionObjectIndex = frameMap.getIndex(companionObjectDescriptor);
+        if (companionObjectIndex == -1) {
+            companionObjectIndex = frameMap.enter(companionObjectDescriptor, OBJECT_TYPE);
+            StackValue companionObject = StackValue.singleton(companionObjectDescriptor, typeMapper);
+            StackValue.local(companionObjectIndex, companionObject.type).store(companionObject, codegen.v);
         }
-        return defaultObjectIndex;
+        return companionObjectIndex;
     }
 
-    private void copyFieldFromDefaultObject(PropertyDescriptor propertyDescriptor) {
+    private void copyFieldFromCompanionObject(PropertyDescriptor propertyDescriptor) {
         ExpressionCodegen codegen = createOrGetClInitCodegen();
         StackValue property = codegen.intermediateValueForProperty(propertyDescriptor, false, null, StackValue.none());
         StackValue.Field field = StackValue.field(property.type, classAsmType, propertyDescriptor.getName().asString(), true, StackValue.none());
         field.store(property, codegen.v);
     }
 
-    private void generateDefaultObjectInitializer(@NotNull ClassDescriptor defaultObject) {
+    private void generateCompanionObjectInitializer(@NotNull ClassDescriptor companionObject) {
         ExpressionCodegen codegen = createOrGetClInitCodegen();
-        FunctionDescriptor constructor = codegen.accessibleFunctionDescriptor(KotlinPackage.single(defaultObject.getConstructors()));
+        FunctionDescriptor constructor = codegen.accessibleFunctionDescriptor(KotlinPackage.single(companionObject.getConstructors()));
         generateMethodCallTo(constructor, codegen.v);
         codegen.v.dup();
-        StackValue instance = StackValue.onStack(typeMapper.mapClass(defaultObject));
-        StackValue.singleton(defaultObject, typeMapper).store(instance, codegen.v, true);
-        StackValue.deprecatedDefaultObjectAccessor(defaultObject, typeMapper).store(instance, codegen.v, true);
+        StackValue instance = StackValue.onStack(typeMapper.mapClass(companionObject));
+        StackValue.singleton(companionObject, typeMapper).store(instance, codegen.v, true);
+        StackValue.deprecatedCompanionObjectAccessor(companionObject, typeMapper).store(instance, codegen.v, true);
     }
 
     private void generatePrimaryConstructor(final DelegationFieldsInfo delegationFieldsInfo) {
@@ -1079,7 +1079,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         CallableMethod callableMethod = typeMapper.mapToCallableMethod(constructorDescriptor);
         FunctionCodegen.generateConstructorWithoutParametersIfNeeded(state, callableMethod, constructorDescriptor, v, myClass);
 
-        if (isDefaultObject(descriptor)) {
+        if (isCompanionObject(descriptor)) {
             context.recordSyntheticAccessorIfNeeded(constructorDescriptor, bindingContext);
         }
     }
@@ -1112,7 +1112,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         generateDelegatorToConstructorCall(iv, codegen, constructorDescriptor,
                                            getDelegationConstructorCall(bindingContext, constructorDescriptor));
 
-        if (isNonDefaultObject(descriptor)) {
+        if (isNonCompanionObject(descriptor)) {
             StackValue.singleton(descriptor, typeMapper).store(StackValue.LOCAL_0, iv);
         }
 
@@ -1137,9 +1137,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             curParam++;
         }
 
-        if (isDefaultObjectWithBackingFieldsInOuter(descriptor)) {
+        if (isCompanionObjectWithBackingFieldsInOuter(descriptor)) {
             final ImplementationBodyCodegen parentCodegen = (ImplementationBodyCodegen) getParentCodegen();
-            parentCodegen.generateDefaultObjectInitializer(descriptor);
+            parentCodegen.generateCompanionObjectInitializer(descriptor);
             generateInitializers(new Function0<ExpressionCodegen>() {
                 @Override
                 public ExpressionCodegen invoke() {
@@ -1740,11 +1740,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
     }
 
-    public void addDefaultObjectPropertyToCopy(@NotNull PropertyDescriptor descriptor, Object defaultValue) {
-        if (defaultObjectPropertiesToCopy == null) {
-            defaultObjectPropertiesToCopy = new ArrayList<PropertyAndDefaultValue>();
+    public void addCompanionObjectPropertyToCopy(@NotNull PropertyDescriptor descriptor, Object defaultValue) {
+        if (companionObjectPropertiesToCopy == null) {
+            companionObjectPropertiesToCopy = new ArrayList<PropertyAndDefaultValue>();
         }
-        defaultObjectPropertiesToCopy.add(new PropertyAndDefaultValue(descriptor, defaultValue));
+        companionObjectPropertiesToCopy.add(new PropertyAndDefaultValue(descriptor, defaultValue));
     }
 
     @Override

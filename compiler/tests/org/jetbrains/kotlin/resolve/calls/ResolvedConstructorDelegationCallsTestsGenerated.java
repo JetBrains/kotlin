@@ -42,6 +42,30 @@ public class ResolvedConstructorDelegationCallsTestsGenerated extends AbstractRe
         doTest(fileName);
     }
 
+    @TestMetadata("generics2.kt")
+    public void testGenerics2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveConstructorDelegationCalls/generics2.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("generics3.kt")
+    public void testGenerics3() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveConstructorDelegationCalls/generics3.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("generics4.kt")
+    public void testGenerics4() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveConstructorDelegationCalls/generics4.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("generics5.kt")
+    public void testGenerics5() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveConstructorDelegationCalls/generics5.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("inheritanceWithGeneric.kt")
     public void testInheritanceWithGeneric() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveConstructorDelegationCalls/inheritanceWithGeneric.kt");

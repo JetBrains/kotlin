@@ -1,5 +1,5 @@
 class A {
-    default object {
+    companion object {
         fun invoke(i: Int) = i
     }
 }
@@ -9,10 +9,10 @@ fun test() = A<caret>(1)
 
 Resolved call:
 
-Resulting descriptor: fun invoke(i: Int): Int defined in A.Default
+Resulting descriptor: fun invoke(i: Int): Int defined in A.Companion
 
 Explicit receiver kind = DISPATCH_RECEIVER
-Dispatch receiver = A {Default}
+Dispatch receiver = A {Companion}
 Extension receiver = NO_RECEIVER
 
 Value arguments mapping:

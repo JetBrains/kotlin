@@ -26,7 +26,7 @@ import java.util.HashSet
 import java.util.LinkedHashSet
 
 public fun JetScope.getImplicitReceiversWithInstance(): List<ReceiverParameterDescriptor> {
-    // we use a set to workaround a bug with receiver for default object present twice in the result of getImplicitReceiversHierarchy()
+    // we use a set to workaround a bug with receiver for companion object present twice in the result of getImplicitReceiversHierarchy()
     val receivers = LinkedHashSet(getImplicitReceiversHierarchy())
 
     val withInstance = HashSet<DeclarationDescriptor>()

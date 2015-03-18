@@ -2,7 +2,7 @@ class CallbackBlock {}
 
 public class Foo
 {
-    default object {
+    companion object {
         private var bar = 0
     }
 

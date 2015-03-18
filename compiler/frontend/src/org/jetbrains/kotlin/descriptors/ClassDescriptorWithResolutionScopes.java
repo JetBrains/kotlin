@@ -41,7 +41,7 @@ public interface ClassDescriptorWithResolutionScopes extends ClassDescriptor {
 
     @Nullable
     @Override
-    ClassDescriptorWithResolutionScopes getDefaultObjectDescriptor();
+    ClassDescriptorWithResolutionScopes getCompanionObjectDescriptor();
 
     @NotNull
     @ReadOnly

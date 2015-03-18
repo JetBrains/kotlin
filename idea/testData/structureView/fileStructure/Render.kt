@@ -25,7 +25,7 @@ class A5 {
     inner class Inner2
 }
 class A6 {
-    default object {
+    companion object {
         fun test() {}
     }
 }

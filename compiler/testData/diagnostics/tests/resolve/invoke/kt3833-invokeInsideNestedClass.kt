@@ -1,4 +1,4 @@
-//KT-3833 Invoke method not working inside default object?
+//KT-3833 Invoke method not working inside companion object?
 package m
 
 class Either1 {
@@ -26,7 +26,7 @@ object Foo{
 }
 
 class C{
-    default object {
+    companion object {
         fun f(){
             Foo.v()
         }

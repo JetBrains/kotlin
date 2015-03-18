@@ -1,7 +1,7 @@
 package dependency
 
 class Date {
-    default object {
+    companion object {
         val VALUE = 0
     }
 }

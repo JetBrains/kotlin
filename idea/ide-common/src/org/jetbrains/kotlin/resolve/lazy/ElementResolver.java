@@ -81,12 +81,14 @@ public abstract class ElementResolver {
                 JetProperty.class,
                 JetParameter.class,
                 JetDelegationSpecifierList.class,
+                JetInitializerList.class,
                 JetImportDirective.class,
                 JetAnnotationEntry.class,
                 JetTypeParameter.class,
                 JetTypeConstraint.class,
                 JetPackageDirective.class,
-                JetCodeFragment.class);
+                JetCodeFragment.class
+        );
 
         if (elementOfAdditionalResolve != null && !(elementOfAdditionalResolve instanceof JetParameter)) {
             if (elementOfAdditionalResolve instanceof JetPackageDirective) {
@@ -158,7 +160,10 @@ public abstract class ElementResolver {
             propertyAdditionalResolve(resolveSession, (JetProperty) resolveElement, trace, file, statementFilter);
         }
         else if (resolveElement instanceof JetDelegationSpecifierList) {
-            delegationSpecifierAdditionalResolve(resolveSession, (JetDelegationSpecifierList) resolveElement, trace, file);
+            delegationSpecifierAdditionalResolve(resolveSession, (JetClassOrObject) resolveElement.getParent(), trace, file);
+        }
+        else if (resolveElement instanceof JetInitializerList) {
+            delegationSpecifierAdditionalResolve(resolveSession, (JetEnumEntry) resolveElement.getParent(), trace, file);
         }
         else if (resolveElement instanceof JetImportDirective) {
             JetImportDirective importDirective = (JetImportDirective) resolveElement;
@@ -341,9 +346,10 @@ public abstract class ElementResolver {
 
     private void delegationSpecifierAdditionalResolve(
             ResolveSession resolveSession,
-            JetDelegationSpecifierList specifier, BindingTrace trace, JetFile file) {
-
-        JetClassOrObject classOrObject = (JetClassOrObject) specifier.getParent();
+            JetClassOrObject classOrObject,
+            BindingTrace trace,
+            JetFile file
+    ) {
         LazyClassDescriptor descriptor = (LazyClassDescriptor) resolveSession.resolveToDescriptor(classOrObject);
 
         // Activate resolving of supertypes

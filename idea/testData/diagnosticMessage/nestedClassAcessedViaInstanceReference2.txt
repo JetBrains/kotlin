@@ -1,2 +1,2 @@
 <!-- nestedClassAcessedViaInstanceReference2 -->
-Nested default object 'Default' accessed via instance reference
+Nested companion object 'Companion' accessed via instance reference

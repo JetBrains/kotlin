@@ -1,9 +1,9 @@
-// KT-394 Make default object members visible inside the owning class
+// KT-394 Make companion object members visible inside the owning class
 
 class X() {
 //    class Y {}
 
-    default object{
+    companion object{
         class Y() {}
     }
 

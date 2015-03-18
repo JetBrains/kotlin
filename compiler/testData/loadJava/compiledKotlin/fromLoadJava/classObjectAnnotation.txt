@@ -3,8 +3,8 @@ package test
 internal final class Some {
     /*primary*/ public constructor Some()
 
-    test.Some.Default.TestAnnotation() internal default object Default {
-        /*primary*/ private constructor Default()
+    test.Some.Companion.TestAnnotation() internal companion object Companion {
+        /*primary*/ private constructor Companion()
 
         internal final annotation class TestAnnotation : kotlin.Annotation {
             /*primary*/ public constructor TestAnnotation()

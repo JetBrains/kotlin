@@ -6,8 +6,8 @@ internal final class A {
     internal final class B {
         /*primary*/ public constructor B()
 
-        internal default object Default {
-            /*primary*/ private constructor Default()
+        internal companion object Companion {
+            /*primary*/ private constructor Companion()
             internal final val TEST: kotlin.Int = 1
                 internal final fun <get-TEST>(): kotlin.Int
         }

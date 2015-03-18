@@ -18,7 +18,7 @@ class A {
             println(2)
         }
 
-        default object {
+        companion object {
             fun f() = 1
             val g = f() - 1
         }
@@ -37,7 +37,7 @@ class B {
 
         val p = 1
 
-        default object {
+        companion object {
             fun f() = 1
             val g = f() - 1
         }

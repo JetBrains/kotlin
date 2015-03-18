@@ -1,13 +1,13 @@
 class A
 {
-    default object
+    companion object
     {
     }
 }
 
 class A
 {
-    default object
+    companion object
     {
     }
 }

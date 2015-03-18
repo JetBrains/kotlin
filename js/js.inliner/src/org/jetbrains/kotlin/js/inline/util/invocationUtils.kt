@@ -42,7 +42,7 @@ public fun getSimpleName(call: JsInvocation): JsName? {
  * @returns first name ident (iterating through qualifier chain)
  */
 public fun getSimpleIdent(call: JsInvocation): String? {
-    var qualifier = call.getQualifier()
+    var qualifier: JsExpression? = call.getQualifier()
     
     while (qualifier != null) {
         when (qualifier) {

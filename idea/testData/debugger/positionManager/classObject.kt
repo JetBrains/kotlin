@@ -1,11 +1,11 @@
 class A {
-    default object {
+    companion object {
 
         {
             1 + 1 // A
             val a = 1 // A
             fun foo() {
-                1 // A\$Default\$1
+                1 // A\$Companion\$1
             }
         }
 
@@ -13,23 +13,23 @@ class A {
 
         val prop2: Int
             get() {
-                val a = 1 + 1  // A\$Default
-                return 1 // A\$Default
+                val a = 1 + 1  // A\$Companion
+                return 1 // A\$Companion
             }
 
         val prop3: Int
-            get() = 1 // A\$Default
+            get() = 1 // A\$Companion
 
-        fun foo() = 1 // A\$Default
+        fun foo() = 1 // A\$Companion
 
         fun foo2() {
-            ""   // A\$Default
+            ""   // A\$Companion
 
             val o = object {
-                val p = 1 // A\$Default\$foo2\$o\$1
+                val p = 1 // A\$Companion\$foo2\$o\$1
                 val p2: Int
                     get() {
-                        return 1 // A\$Default\$foo2\$o\$1
+                        return 1 // A\$Companion\$foo2\$o\$1
                     }
             }
         }
@@ -37,7 +37,7 @@ class A {
 }
 
 trait T {
-    default object {
-        val prop = 1 // T\$Default
+    companion object {
+        val prop = 1 // T\$Companion
     }
 }

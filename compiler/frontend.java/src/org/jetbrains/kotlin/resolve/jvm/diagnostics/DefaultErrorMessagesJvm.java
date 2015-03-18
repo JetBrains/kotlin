@@ -45,13 +45,15 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
     static {
         MAP.put(ErrorsJvm.CONFLICTING_JVM_DECLARATIONS, "Platform declaration clash: {0}", CONFLICTING_JVM_DECLARATIONS_DATA);
         MAP.put(ErrorsJvm.ACCIDENTAL_OVERRIDE, "Accidental override: {0}", CONFLICTING_JVM_DECLARATIONS_DATA);
-        MAP.put(ErrorsJvm.PLATFORM_STATIC_NOT_IN_OBJECT, "Only functions in named objects and default objects of classes can be annotated with 'platformStatic'");
+        MAP.put(ErrorsJvm.PLATFORM_STATIC_NOT_IN_OBJECT, "Only functions in named objects and companion objects of classes can be annotated with 'platformStatic'");
         MAP.put(ErrorsJvm.OVERRIDE_CANNOT_BE_STATIC, "Override member cannot be 'platformStatic' in object");
         MAP.put(ErrorsJvm.PLATFORM_STATIC_ILLEGAL_USAGE, "This declaration does not support ''platformStatic''", DescriptorRenderer.SHORT_NAMES_IN_TYPES);
         MAP.put(ErrorsJvm.NATIVE_DECLARATION_CANNOT_BE_ABSTRACT, "Native declaration can not be abstract");
         MAP.put(ErrorsJvm.NATIVE_DECLARATION_CANNOT_HAVE_BODY, "Native declaration can not have a body");
         MAP.put(ErrorsJvm.NATIVE_DECLARATION_IN_TRAIT, "Members of traits can not be native");
         MAP.put(ErrorsJvm.NATIVE_DECLARATION_CANNOT_BE_INLINED, "Members of traits can not be inlined");
+
+        MAP.put(ErrorsJvm.NO_REFLECTION_IN_CLASS_PATH, "Expression ''{0}'' uses reflection which is not found in compilation classpath. Make sure you have kotlin-reflect.jar in the classpath", Renderers.ELEMENT_TEXT);
 
         MAP.put(ErrorsJvm.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS,
                 "Expected type does not accept nulls in {0}, but the value may be null in {1}", Renderers.TO_STRING, Renderers.TO_STRING);

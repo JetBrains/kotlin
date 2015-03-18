@@ -1,2 +1,2 @@
 <!-- nestedClassShouldBeQualified5 -->
-Nested default object 'Default' should be qualified as 'E.F.Default'
+Nested companion object 'Companion' should be qualified as 'E.F.Companion'

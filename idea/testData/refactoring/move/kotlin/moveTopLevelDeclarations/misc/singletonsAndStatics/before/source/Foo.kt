@@ -11,17 +11,17 @@ class <caret>Foo {
     val kt2 = KtObject.foo()
     val kt3 = KtClass.Inner.foo()
     val kt4 = KtObject.Inner.foo()
-    val kt5 = KtClass.Default.foo()
-    val kt6 = KtClass.Default
+    val kt5 = KtClass.Companion.foo()
+    val kt6 = KtClass.Companion
     val kt7 = KtClass
 
     val kt8 = Bar
-    val kt9 = Bar.Default
-    val kt10 = Bar.Default.c
+    val kt9 = Bar.Companion
+    val kt10 = Bar.Companion.c
 }
 
 class Bar {
-    default object {
+    companion object {
         val c : Int
     }
 }

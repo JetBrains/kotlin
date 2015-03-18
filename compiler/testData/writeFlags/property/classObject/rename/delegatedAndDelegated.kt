@@ -17,7 +17,7 @@ class Test {
 
   public val prop: Int by TestDelegate({10})
 
-  default object {
+  companion object {
     public var prop: Int by TestDelegate({10})
   }
 }

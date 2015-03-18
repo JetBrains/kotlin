@@ -53,17 +53,17 @@ public final class ReferenceTranslator {
     ) {
         JsExpression simpleName = translateSimpleName(expression, context);
 
-        // Ignore qualifier if expression is EnumEntry or default object reference and always use FQ name.
+        // Ignore qualifier if expression is EnumEntry or companion object reference and always use FQ name.
         DeclarationDescriptor descriptor = BindingUtils.getDescriptorForReferenceExpression(context.bindingContext(), expression);
         //TODO: should go away when objects inside classes are supported
-        if (DescriptorUtils.isDefaultObject(descriptor) && !AnnotationsUtils.isNativeObject(descriptor)) {
+        if (DescriptorUtils.isCompanionObject(descriptor) && !AnnotationsUtils.isNativeObject(descriptor)) {
             return simpleName;
         }
         if (descriptor instanceof ClassDescriptor) {
             ClassDescriptor entryClass = (ClassDescriptor) descriptor;
             if (entryClass.getKind() == ClassKind.ENUM_ENTRY && !AnnotationsUtils.isNativeObject(entryClass)) {
                 DeclarationDescriptor enumClass = entryClass.getContainingDeclaration();
-                qualifier = Namer.getDefaultObjectAccessor(translateAsFQReference(enumClass, context));
+                qualifier = Namer.getCompanionObjectAccessor(translateAsFQReference(enumClass, context));
             }
         }
 
@@ -109,8 +109,8 @@ public final class ReferenceTranslator {
         if (canBePropertyAccess(referenceExpression, context)) {
             return VariableAccessTranslator.newInstance(context, referenceExpression, receiver);
         }
-        if (DefaultObjectAccessTranslator.isDefaultObjectReference(referenceExpression, context)) {
-            return DefaultObjectAccessTranslator.newInstance(referenceExpression, context);
+        if (CompanionObjectAccessTranslator.isCompanionObjectReference(referenceExpression, context)) {
+            return CompanionObjectAccessTranslator.newInstance(referenceExpression, context);
         }
         return ReferenceAccessTranslator.newInstance(referenceExpression, context);
     }

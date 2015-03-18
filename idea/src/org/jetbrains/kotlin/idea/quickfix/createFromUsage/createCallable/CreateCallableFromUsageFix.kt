@@ -79,7 +79,7 @@ public class CreateCallableFromUsageFix(
         val receiverInfo = callableInfo.receiverTypeInfo
 
         if (receiverInfo is TypeInfo.Empty) return !isExtension
-        // TODO: Remove after default object extensions are supported
+        // TODO: Remove after companion object extensions are supported
         if (isExtension && receiverInfo.staticContextRequired) return false
 
         val file = element.getContainingFile() as JetFile

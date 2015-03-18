@@ -8,7 +8,7 @@ object A {
 }
 
 class B {
-    default object {
+    companion object {
         val a = 21
         fun foo() = 3
 

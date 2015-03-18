@@ -35,6 +35,8 @@ import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.utils.emptyOrSingletonList
 
+public val LIBRARY_NAME_PREFIX: String = "library "
+
 public abstract class IdeaModuleInfo : ModuleInfo {
     abstract fun contentScope(): GlobalSearchScope
 }
@@ -128,7 +130,7 @@ private class ModuleTestSourceScope(module: Module) : ModuleSourceScope(module) 
 }
 
 public data class LibraryInfo(val project: Project, val library: Library) : IdeaModuleInfo() {
-    override val name: Name = Name.special("<library ${library.getName()}>")
+    override val name: Name = Name.special("<$LIBRARY_NAME_PREFIX${library.getName()}>")
 
     override fun contentScope() = LibraryWithoutSourceScope(project, library)
 
@@ -167,7 +169,7 @@ private data class LibrarySourceInfo(val project: Project, val library: Library)
 
 //TODO: (module refactoring) there should be separate SdkSourceInfo but there are no kotlin source in existing sdks for now :)
 public data class SdkInfo(val project: Project, val sdk: Sdk) : IdeaModuleInfo() {
-    override val name: Name = Name.special("<library ${sdk.getName()}>")
+    override val name: Name = Name.special("<$LIBRARY_NAME_PREFIX${sdk.getName()}>")
 
     override fun contentScope() = SdkScope(project, sdk)
 

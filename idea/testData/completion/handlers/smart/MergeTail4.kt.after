@@ -1,5 +1,5 @@
 class C {
-    default object {
+    companion object {
         fun f1(): C = C()
         fun f2(): C = C()
         fun f3(): C? = C()

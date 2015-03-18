@@ -3,8 +3,8 @@ package test
 public final class Outer {
     /*primary*/ public constructor Outer()
 
-    public default object Default {
-        /*primary*/ private constructor Default()
+    public companion object Companion {
+        /*primary*/ private constructor Companion()
 
         public object Obj {
             /*primary*/ private constructor Obj()

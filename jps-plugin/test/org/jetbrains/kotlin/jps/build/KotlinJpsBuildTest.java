@@ -56,12 +56,13 @@ public class KotlinJpsBuildTest extends AbstractKotlinJpsBuildTestCase {
     private static final String KOTLIN_JS_LIBRARY = "jslib-example";
     private static final String PATH_TO_KOTLIN_JS_LIBRARY = TEST_DATA_PATH + "general/KotlinJavaScriptProjectWithDirectoryAsLibrary/" + KOTLIN_JS_LIBRARY;
     private static final String KOTLIN_JS_LIBRARY_JAR = KOTLIN_JS_LIBRARY + ".jar";
-    private static final Set<String> EXPECTED_JS_FILES_IN_OUTPUT_FOR_STDLIB_ONLY = KotlinPackage.hashSetOf(PROJECT_NAME + ".js", "lib/kotlin.js");
+    private static final Set<String> EXPECTED_JS_FILES_IN_OUTPUT_FOR_STDLIB_ONLY = KotlinPackage.hashSetOf(PROJECT_NAME + ".js", "lib/kotlin.js", "lib/stdlib.meta.js");
     private static final Set<String> EXPECTED_JS_FILES_IN_OUTPUT_NO_COPY = KotlinPackage.hashSetOf(PROJECT_NAME + ".js");
     private static final Set<String> EXPECTED_JS_FILES_IN_OUTPUT_WITH_ADDITIONAL_LIB_AND_DEFAULT_DIR =
         KotlinPackage.hashSetOf(
             PROJECT_NAME + ".js",
             "lib/kotlin.js",
+            "lib/stdlib.meta.js",
             "lib/jslib-example.js",
             "lib/file0.js",
             "lib/dir/file1.js",
@@ -72,6 +73,7 @@ public class KotlinJpsBuildTest extends AbstractKotlinJpsBuildTestCase {
         KotlinPackage.hashSetOf(
             PROJECT_NAME + ".js",
             "custom/kotlin.js",
+            "custom/stdlib.meta.js",
             "custom/jslib-example.js",
             "custom/file0.js",
             "custom/dir/file1.js",

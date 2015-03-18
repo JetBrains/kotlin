@@ -1,7 +1,7 @@
 // ClassObjectField
 
 class ClassObjectField {
-    default object {
+    companion object {
         val x: String? = ""
         private val y: String? = ""
     }

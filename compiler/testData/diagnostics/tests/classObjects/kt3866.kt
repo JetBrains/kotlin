@@ -4,11 +4,11 @@ open class C {
 fun C.foo() {}
 
 open class X {
-    default object : C() {}
+    companion object : C() {}
 }
 
 open class Y {
-    default object : C() {}
+    companion object : C() {}
 }
 
 fun bar() {

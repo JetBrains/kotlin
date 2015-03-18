@@ -7306,23 +7306,23 @@ public final class ProtoBuf {
      */
     int getFqName();
 
-    // optional int32 default_object_name = 4;
+    // optional int32 companion_object_name = 4;
     /**
-     * <code>optional int32 default_object_name = 4;</code>
+     * <code>optional int32 companion_object_name = 4;</code>
      *
      * <pre>
-     * If this field is present, it contains the name of default object.
+     * If this field is present, it contains the name of companion object.
      * </pre>
      */
-    boolean hasDefaultObjectName();
+    boolean hasCompanionObjectName();
     /**
-     * <code>optional int32 default_object_name = 4;</code>
+     * <code>optional int32 companion_object_name = 4;</code>
      *
      * <pre>
-     * If this field is present, it contains the name of default object.
+     * If this field is present, it contains the name of companion object.
      * </pre>
      */
-    int getDefaultObjectName();
+    int getCompanionObjectName();
 
     // repeated .org.jetbrains.kotlin.serialization.TypeParameter type_parameter = 5;
     /**
@@ -7500,7 +7500,7 @@ public final class ProtoBuf {
             }
             case 32: {
               bitField0_ |= 0x00000004;
-              defaultObjectName_ = input.readInt32();
+              companionObjectName_ = input.readInt32();
               break;
             }
             case 42: {
@@ -8225,28 +8225,28 @@ public final class ProtoBuf {
       return fqName_;
     }
 
-    // optional int32 default_object_name = 4;
-    public static final int DEFAULT_OBJECT_NAME_FIELD_NUMBER = 4;
-    private int defaultObjectName_;
+    // optional int32 companion_object_name = 4;
+    public static final int COMPANION_OBJECT_NAME_FIELD_NUMBER = 4;
+    private int companionObjectName_;
     /**
-     * <code>optional int32 default_object_name = 4;</code>
+     * <code>optional int32 companion_object_name = 4;</code>
      *
      * <pre>
-     * If this field is present, it contains the name of default object.
+     * If this field is present, it contains the name of companion object.
      * </pre>
      */
-    public boolean hasDefaultObjectName() {
+    public boolean hasCompanionObjectName() {
       return ((bitField0_ & 0x00000004) == 0x00000004);
     }
     /**
-     * <code>optional int32 default_object_name = 4;</code>
+     * <code>optional int32 companion_object_name = 4;</code>
      *
      * <pre>
-     * If this field is present, it contains the name of default object.
+     * If this field is present, it contains the name of companion object.
      * </pre>
      */
-    public int getDefaultObjectName() {
-      return defaultObjectName_;
+    public int getCompanionObjectName() {
+      return companionObjectName_;
     }
 
     // repeated .org.jetbrains.kotlin.serialization.TypeParameter type_parameter = 5;
@@ -8481,7 +8481,7 @@ public final class ProtoBuf {
     private void initFields() {
       flags_ = 0;
       fqName_ = 0;
-      defaultObjectName_ = 0;
+      companionObjectName_ = 0;
       typeParameter_ = java.util.Collections.emptyList();
       supertype_ = java.util.Collections.emptyList();
       nestedClassName_ = java.util.Collections.emptyList();
@@ -8550,7 +8550,7 @@ public final class ProtoBuf {
         output.writeInt32(3, fqName_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        output.writeInt32(4, defaultObjectName_);
+        output.writeInt32(4, companionObjectName_);
       }
       for (int i = 0; i < typeParameter_.size(); i++) {
         output.writeMessage(5, typeParameter_.get(i));
@@ -8592,7 +8592,7 @@ public final class ProtoBuf {
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(4, defaultObjectName_);
+          .computeInt32Size(4, companionObjectName_);
       }
       for (int i = 0; i < typeParameter_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
@@ -8727,7 +8727,7 @@ public final class ProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000001);
         fqName_ = 0;
         bitField0_ = (bitField0_ & ~0x00000002);
-        defaultObjectName_ = 0;
+        companionObjectName_ = 0;
         bitField0_ = (bitField0_ & ~0x00000004);
         typeParameter_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000008);
@@ -8777,7 +8777,7 @@ public final class ProtoBuf {
         if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
           to_bitField0_ |= 0x00000004;
         }
-        result.defaultObjectName_ = defaultObjectName_;
+        result.companionObjectName_ = companionObjectName_;
         if (((bitField0_ & 0x00000008) == 0x00000008)) {
           typeParameter_ = java.util.Collections.unmodifiableList(typeParameter_);
           bitField0_ = (bitField0_ & ~0x00000008);
@@ -8824,8 +8824,8 @@ public final class ProtoBuf {
         if (other.hasFqName()) {
           setFqName(other.getFqName());
         }
-        if (other.hasDefaultObjectName()) {
-          setDefaultObjectName(other.getDefaultObjectName());
+        if (other.hasCompanionObjectName()) {
+          setCompanionObjectName(other.getCompanionObjectName());
         }
         if (!other.typeParameter_.isEmpty()) {
           if (typeParameter_.isEmpty()) {
@@ -9057,51 +9057,51 @@ public final class ProtoBuf {
         return this;
       }
 
-      // optional int32 default_object_name = 4;
-      private int defaultObjectName_ ;
+      // optional int32 companion_object_name = 4;
+      private int companionObjectName_ ;
       /**
-       * <code>optional int32 default_object_name = 4;</code>
+       * <code>optional int32 companion_object_name = 4;</code>
        *
        * <pre>
-       * If this field is present, it contains the name of default object.
+       * If this field is present, it contains the name of companion object.
        * </pre>
        */
-      public boolean hasDefaultObjectName() {
+      public boolean hasCompanionObjectName() {
         return ((bitField0_ & 0x00000004) == 0x00000004);
       }
       /**
-       * <code>optional int32 default_object_name = 4;</code>
+       * <code>optional int32 companion_object_name = 4;</code>
        *
        * <pre>
-       * If this field is present, it contains the name of default object.
+       * If this field is present, it contains the name of companion object.
        * </pre>
        */
-      public int getDefaultObjectName() {
-        return defaultObjectName_;
+      public int getCompanionObjectName() {
+        return companionObjectName_;
       }
       /**
-       * <code>optional int32 default_object_name = 4;</code>
+       * <code>optional int32 companion_object_name = 4;</code>
        *
        * <pre>
-       * If this field is present, it contains the name of default object.
+       * If this field is present, it contains the name of companion object.
        * </pre>
        */
-      public Builder setDefaultObjectName(int value) {
+      public Builder setCompanionObjectName(int value) {
         bitField0_ |= 0x00000004;
-        defaultObjectName_ = value;
+        companionObjectName_ = value;
         
         return this;
       }
       /**
-       * <code>optional int32 default_object_name = 4;</code>
+       * <code>optional int32 companion_object_name = 4;</code>
        *
        * <pre>
-       * If this field is present, it contains the name of default object.
+       * If this field is present, it contains the name of companion object.
        * </pre>
        */
-      public Builder clearDefaultObjectName() {
+      public Builder clearCompanionObjectName() {
         bitField0_ = (bitField0_ & ~0x00000004);
-        defaultObjectName_ = 0;
+        companionObjectName_ = 0;
         
         return this;
       }

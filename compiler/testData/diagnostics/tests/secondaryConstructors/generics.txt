@@ -18,6 +18,13 @@ internal final class A1</*0*/ R> : B<R> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
+internal final class A2</*0*/ R> {
+    public constructor A2</*0*/ R>(/*0*/ t: R, /*1*/ i: kotlin.Int)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
 internal open class B</*0*/ T> {
     public constructor B</*0*/ T>()
     public constructor B</*0*/ T>(/*0*/ x: T)

@@ -1,10 +1,10 @@
 package Jet86
 
 class A {
-  default object {
+  companion object {
     val x = 1
   }
-  <error descr="[MANY_DEFAULT_OBJECTS] Only one default object is allowed per class">default</error> object Another { // error
+  <error descr="[MANY_COMPANION_OBJECTS] Only one companion object is allowed per class">companion</error> object Another { // error
     val x = 1
   }
 }
@@ -14,7 +14,7 @@ class B() {
 }
 
 object b {
-  <error descr="[DEFAULT_OBJECT_NOT_ALLOWED] A default object is not allowed here">default</error> object {
+  <error descr="[COMPANION_OBJECT_NOT_ALLOWED] A companion object is not allowed here">companion</error> object {
     val x = 1
   }
   // error

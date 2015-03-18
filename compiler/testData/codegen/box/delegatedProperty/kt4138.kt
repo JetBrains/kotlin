@@ -5,14 +5,14 @@ class Delegate<T>(var inner: T) {
 
 
 class Foo (val f: Int) {
-    default object {
+    companion object {
         val A: Foo by Delegate(Foo(11))
         var B: Foo by Delegate(Foo(11))
     }
 }
 
 trait FooTrait {
-    default object {
+    companion object {
         val A: Foo by Delegate(Foo(11))
         var B: Foo by Delegate(Foo(11))
     }

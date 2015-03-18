@@ -43,7 +43,7 @@ private class ExceptionTrackerWithProcessCanceledReport() : ExceptionTracker() {
     }
 
 
-    default object {
+    class object {
         val LOG = Logger.getInstance(javaClass<ExceptionTrackerWithProcessCanceledReport>())
     }
 }

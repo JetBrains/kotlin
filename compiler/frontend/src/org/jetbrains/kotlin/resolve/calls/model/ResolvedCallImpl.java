@@ -77,6 +77,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
     private final ReceiverValue dispatchReceiver; // receiver object of a method
     private final ReceiverValue extensionReceiver; // receiver of an extension function
     private final ExplicitReceiverKind explicitReceiverKind;
+    private final TypeSubstitutor knownTypeParametersSubstitutor;
 
     private final Map<TypeParameterDescriptor, JetType> typeArguments = Maps.newLinkedHashMap();
     private final Map<ValueParameterDescriptor, ResolvedValueArgument> valueArguments = Maps.newLinkedHashMap();
@@ -101,6 +102,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
         this.dispatchReceiver = candidate.getDispatchReceiver();
         this.extensionReceiver = candidate.getExtensionReceiver();
         this.explicitReceiverKind = candidate.getExplicitReceiverKind();
+        this.knownTypeParametersSubstitutor = candidate.getKnownTypeParametersResultingSubstitutor();
         this.trace = trace;
         this.tracing = tracing;
         this.dataFlowInfoForArguments = dataFlowInfoForArguments;
@@ -322,5 +324,11 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
 
     private void assertNotCompleted(String elementName) {
         assert !completed: elementName + " is erased after resolution completion.";
+    }
+
+    @Override
+    @Nullable
+    public TypeSubstitutor getKnownTypeParametersSubstitutor() {
+        return knownTypeParametersSubstitutor;
     }
 }

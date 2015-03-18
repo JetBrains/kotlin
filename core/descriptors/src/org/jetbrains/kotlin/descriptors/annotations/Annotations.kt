@@ -26,7 +26,7 @@ public trait Annotations : Iterable<AnnotationDescriptor> {
 
     public fun findAnnotation(fqName: FqName): AnnotationDescriptor?
 
-    default object {
+    class object {
         public val EMPTY: Annotations = object : Annotations {
             override fun isEmpty() = true
 

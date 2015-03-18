@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.ImportPath;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.serialization.deserialization.FlexibleTypeCapabilitiesDeserializer;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
@@ -110,6 +111,7 @@ public class KotlinBuiltIns {
         );
         builtinsPackageFragment = new BuiltinsPackageFragment(
                 BUILT_INS_PACKAGE_FQ_NAME, new LockBasedStorageManager(), builtInsModule,
+                FlexibleTypeCapabilitiesDeserializer.ThrowException.INSTANCE$,
                 new Function1<String, InputStream>() {
                     @Override
                     public InputStream invoke(String path) {

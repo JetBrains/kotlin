@@ -33,8 +33,8 @@ PsiJetFileStubImpl[package=]
               REFERENCE_EXPRESSION:[referencedName=kotlin]
             REFERENCE_EXPRESSION:[referencedName=Int]
     CLASS_BODY:
-      OBJECT_DECLARATION:[fqName=Annotations.Default, isDefault=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Default, superNames=[]]
-        MODIFIER_LIST:[private default]
+      OBJECT_DECLARATION:[fqName=Annotations.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+        MODIFIER_LIST:[private companion]
           ANNOTATION_ENTRY:[hasValueArguments=false, shortName=b]
             CONSTRUCTOR_CALLEE:
               TYPE_REFERENCE:

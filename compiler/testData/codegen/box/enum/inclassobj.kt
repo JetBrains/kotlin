@@ -1,8 +1,8 @@
-fun box() = if(Context.operatingSystemType == Context.Default.OsType.OTHER) "OK" else "fail"
+fun box() = if(Context.operatingSystemType == Context.Companion.OsType.OTHER) "OK" else "fail"
 
 public class Context
 {
-        default object
+        companion object
         {
                 public enum class OsType {
                         LINUX;

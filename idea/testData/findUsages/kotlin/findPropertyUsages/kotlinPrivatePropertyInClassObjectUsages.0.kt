@@ -3,7 +3,7 @@
 class Outer {
     val x = Outer.t
 
-    default object {
+    companion object {
         private val <caret>t = 1
     }
 }

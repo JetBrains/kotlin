@@ -4,7 +4,7 @@ class C {
     inner class InnerClass
     object AnObject
 
-    default object {
+    companion object {
         val classObjectField = 0
         class ClassObjectClass
 

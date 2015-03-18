@@ -2,7 +2,7 @@
 package test
 
 class ClassObjectDeclaresProperty {
-    default object {
+    companion object {
         var s = ""
     }
 }

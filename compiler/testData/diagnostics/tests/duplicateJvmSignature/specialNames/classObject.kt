@@ -1,11 +1,11 @@
 class C {
-    default <!REDECLARATION!>object<!> {}
+    companion <!REDECLARATION!>object<!> {}
 
-    val <!REDECLARATION!>Default<!> = C
+    val <!REDECLARATION!>Companion<!> = C
 }
 
 class D {
-    default <!CONFLICTING_JVM_DECLARATIONS!>object<!> {}
+    companion <!CONFLICTING_JVM_DECLARATIONS!>object<!> {}
 
     <!CONFLICTING_JVM_DECLARATIONS!>val `OBJECT$`<!> = D
 }

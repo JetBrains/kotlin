@@ -1,5 +1,5 @@
 class Class {
-    default object {
+    companion object {
     }
 }
 

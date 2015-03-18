@@ -1,6 +1,6 @@
 // SIBLING:
 public class A {
-    default object {
+    companion object {
         private val t: Int = 1
     }
     fun f() {

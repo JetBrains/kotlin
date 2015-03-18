@@ -5,12 +5,12 @@ import b.B        //class
 import b.foo      //function
 import b.ext      //extension function
 import b.value    //property
-import b.C.Default.<!CANNOT_BE_IMPORTED!>bar<!>    //function from default object
-import b.C.Default.<!CANNOT_BE_IMPORTED!>cValue<!> //property from default object
+import b.C.Companion.<!CANNOT_BE_IMPORTED!>bar<!>    //function from companion object
+import b.C.Companion.<!CANNOT_BE_IMPORTED!>cValue<!> //property from companion object
 import b.<!CANNOT_IMPORT_FROM_ELEMENT!>constant<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>fff<!>     //function from val
 import b.<!CANNOT_IMPORT_FROM_ELEMENT!>constant<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>dValue<!>  //property from val
 import b.constant
-import b.E.Default.<!CANNOT_BE_IMPORTED!>f<!>      //val from default object
+import b.E.Companion.<!CANNOT_BE_IMPORTED!>f<!>      //val from companion object
 import <!UNRESOLVED_REFERENCE!>smth<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>illegal<!>
 import b.C.<!UNRESOLVED_REFERENCE!>smth<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>illegal<!>
 import b.<!CANNOT_IMPORT_FROM_ELEMENT!>bar<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>smth<!>
@@ -42,7 +42,7 @@ fun B.ext() {}
 val value = 0
 
 class C() {
-    default object {
+    companion object {
         fun bar() {}
         val cValue = 1
     }
@@ -56,7 +56,7 @@ class D() {
 val constant = D()
 
 class E() {
-    default object {
+    companion object {
         val f = F()
     }
 }
@@ -85,14 +85,14 @@ fun foo() {
 //FILE:d.kt
 package d
 
-import d.A.Default.B
-import d.A.Default.C
+import d.A.Companion.B
+import d.A.Companion.C
 
 val b : B = B()
 val c : B = C
 
 class A() {
-    default object {
+    companion object {
         open class B() {}
         object C : B() {}
     }

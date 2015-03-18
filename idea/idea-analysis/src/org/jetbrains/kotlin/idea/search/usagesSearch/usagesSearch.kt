@@ -57,7 +57,7 @@ public data class UsagesSearchLocation(
         val inStrings: Boolean = false,
         val inPlainText: Boolean = true
 ) {
-    default object {
+    class object {
         public val DEFAULT: UsagesSearchLocation = UsagesSearchLocation()
         public val EVERYWHERE: UsagesSearchLocation = UsagesSearchLocation(true, true, true, true)
     }

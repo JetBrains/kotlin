@@ -154,7 +154,7 @@ public class JetAddImportAction(
         JBPopupFactory.getInstance().createListPopup(getImportSelectionPopup()).showInBestPositionFor(editor)
     }
 
-    default object {
+    class object {
 
         protected fun addImport(element: PsiElement, project: Project, selectedVariant: Variant) {
             PsiDocumentManager.getInstance(project).commitAllDocuments()

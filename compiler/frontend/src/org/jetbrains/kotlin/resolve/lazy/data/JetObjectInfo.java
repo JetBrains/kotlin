@@ -54,7 +54,7 @@ public class JetObjectInfo extends JetClassOrObjectInfo<JetObjectDeclaration> {
         return kind;
     }
 
-    public boolean isDefaultObject() {
-        return element.isDefault() && ModifiersChecker.isDefaultModifierAllowed(element);
+    public boolean isCompanionObject() {
+        return element.isCompanion() && ModifiersChecker.isDefaultModifierAllowed(element);
     }
 }

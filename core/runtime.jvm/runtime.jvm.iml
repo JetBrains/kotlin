@@ -6,7 +6,5 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="builtins" />
-    <orderEntry type="module" module-name="reflection" />
   </component>
 </module>
-

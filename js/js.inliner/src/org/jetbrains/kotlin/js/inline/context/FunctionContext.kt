@@ -70,7 +70,7 @@ abstract class FunctionContext(
             val staticRef = callName.staticRef
             if (staticRef !is JsFunction) continue
 
-            val functionCalled = staticRef as JsFunction
+            val functionCalled = staticRef
             if (isFunctionCreator(functionCalled)) {
                 declareFunctionConstructorCall(call)
             }
@@ -120,7 +120,7 @@ abstract class FunctionContext(
 
         /** remove ending `.call()` */
         if (isCallInvocation(call)) {
-            callQualifier = (callQualifier as JsNameRef).getQualifier()
+            callQualifier = (callQualifier as JsNameRef).getQualifier()!!
         }
 
         /** in case 4, 5 get ref (reduce 4, 5 to 2, 3 accordingly) */

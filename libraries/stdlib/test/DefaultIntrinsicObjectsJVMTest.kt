@@ -22,7 +22,7 @@ import java.util.*
 import kotlin.test.*
 import org.junit.Test as test
 
-class DefaultObjectsExtensionsTest {
+class CompanionObjectsExtensionsTest {
     test fun intTest() {
         val i = Int
 

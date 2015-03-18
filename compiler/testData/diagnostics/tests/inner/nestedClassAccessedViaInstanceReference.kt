@@ -1,24 +1,24 @@
 trait N { fun foo() = 1 }
 
 class WithClassObject {
-    default object {}
+    companion object {}
 
     class Nested()
-    class NestedWithClassObject { default object : N }
+    class NestedWithClassObject { companion object : N }
     enum class NestedEnum { A }
     object NestedObj : N { fun invoke() = 1 }
 }
 
 class WithoutClassObject {
     class Nested()
-    class NestedWithClassObject { default object : N }
+    class NestedWithClassObject { companion object : N }
     enum class NestedEnum { A }
     object NestedObj : N { fun invoke() = 1 }
 }
 
 object Obj {
     class Nested()
-    class NestedWithClassObject { default object : N }
+    class NestedWithClassObject { companion object : N }
     enum class NestedEnum { A }
     object NestedObj : N { fun invoke() = 1 }
 }

@@ -61,7 +61,7 @@ public class JetDeclarationMover extends AbstractJetUpDownMover {
 
                     @Override
                     public void visitObjectDeclaration(@NotNull JetObjectDeclaration declaration) {
-                        if (declaration.isDefault()) {
+                        if (declaration.isCompanion()) {
                             memberSuspects.add(declaration.getClassKeyword());
                         }
                     }

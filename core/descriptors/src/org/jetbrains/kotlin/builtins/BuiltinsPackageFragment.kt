@@ -40,6 +40,7 @@ public class BuiltinsPackageFragment(
         fqName: FqName,
         storageManager: StorageManager,
         module: ModuleDescriptor,
+        flexibleTypeCapabilitiesDeserializer: FlexibleTypeCapabilitiesDeserializer,
         private val loadResource: (path: String) -> InputStream?
 ) : PackageFragmentDescriptorImpl(module, fqName) {
 
@@ -64,7 +65,7 @@ public class BuiltinsPackageFragment(
                 storageManager, module, BuiltInsClassDataFinder(),
                 BuiltInsAnnotationAndConstantLoader(getContainingDeclaration()),
                 provider, localClassResolver,
-                FlexibleTypeCapabilitiesDeserializer.ThrowException
+                flexibleTypeCapabilitiesDeserializer
         )
         localClassResolver.setDeserializationComponents(components)
         DeserializedPackageMemberScope(this, proto, nameResolver, components, { readClassNames(proto) })

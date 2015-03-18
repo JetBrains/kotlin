@@ -124,7 +124,7 @@ public final class ClassTranslator extends AbstractTranslator {
             declarationContext = declarationContext.newDeclaration(descriptor, definitionPlace);
         }
 
-        declarationContext = fixContextForDefaultObjectAccessing(declarationContext);
+        declarationContext = fixContextForCompanionObjectAccessing(declarationContext);
 
         invocationArguments.add(getSuperclassReferences(declarationContext));
         DelegationTranslator delegationTranslator = new DelegationTranslator(classDeclaration, context());
@@ -171,20 +171,20 @@ public final class ClassTranslator extends AbstractTranslator {
         return invocationArguments;
     }
 
-    private TranslationContext fixContextForDefaultObjectAccessing(TranslationContext declarationContext) {
-        // In Kotlin we can access to default object members without qualifier just by name, but we should translate it to access with FQ name.
-        // So create alias for default object receiver parameter.
-        ClassDescriptor defaultObjectDescriptor = descriptor.getDefaultObjectDescriptor();
-        if (defaultObjectDescriptor != null) {
-            JsExpression referenceToClass = translateAsFQReference(defaultObjectDescriptor.getContainingDeclaration(), declarationContext);
-            JsExpression defaultObjectAccessor = Namer.getDefaultObjectAccessor(referenceToClass);
-            ReceiverParameterDescriptor defaultObjectReceiver = getReceiverParameterForDeclaration(defaultObjectDescriptor);
-            declarationContext.aliasingContext().registerAlias(defaultObjectReceiver, defaultObjectAccessor);
+    private TranslationContext fixContextForCompanionObjectAccessing(TranslationContext declarationContext) {
+        // In Kotlin we can access to companion object members without qualifier just by name, but we should translate it to access with FQ name.
+        // So create alias for companion object receiver parameter.
+        ClassDescriptor companionObjectDescriptor = descriptor.getCompanionObjectDescriptor();
+        if (companionObjectDescriptor != null) {
+            JsExpression referenceToClass = translateAsFQReference(companionObjectDescriptor.getContainingDeclaration(), declarationContext);
+            JsExpression companionObjectAccessor = Namer.getCompanionObjectAccessor(referenceToClass);
+            ReceiverParameterDescriptor companionObjectReceiver = getReceiverParameterForDeclaration(companionObjectDescriptor);
+            declarationContext.aliasingContext().registerAlias(companionObjectReceiver, companionObjectAccessor);
         }
 
-        // Overlap alias of default object receiver for accessing from containing class(see previous if block),
-        // because inside default object we should use simple name for access.
-        if (isDefaultObject(descriptor)) {
+        // Overlap alias of companion object receiver for accessing from containing class(see previous if block),
+        // because inside companion object we should use simple name for access.
+        if (isCompanionObject(descriptor)) {
             declarationContext = declarationContext.innerContextWithAliased(descriptor.getThisAsReceiverParameter(), JsLiteral.THIS);
         }
 

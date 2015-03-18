@@ -2,16 +2,16 @@
 
 class A {
     inner class B {
-        <!DEFAULT_OBJECT_NOT_ALLOWED!>default<!> object { }
+        <!COMPANION_OBJECT_NOT_ALLOWED!>companion<!> object { }
     }
 }
 
 class B {
-    default object {
+    companion object {
         class B {
-            default object {
+            companion object {
                 class C {
-                    default object { }
+                    companion object { }
                 }
             }
         }
@@ -20,6 +20,6 @@ class B {
 
 class C {
     class D {
-        default object { }
+        companion object { }
     }
 }

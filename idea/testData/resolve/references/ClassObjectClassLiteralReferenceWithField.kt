@@ -1,7 +1,7 @@
 package t
 
 class A {
-    default object Named {
+    companion object Named {
         val i: Int
     }
 }

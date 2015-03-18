@@ -11,6 +11,6 @@ class C {
 }
 
 fun f() {
-    <!NO_DEFAULT_OBJECT, FUNCTION_EXPECTED!>TestInterface<!>()
+    <!NO_COMPANION_OBJECT, FUNCTION_EXPECTED!>TestInterface<!>()
     C.<!UNRESOLVED_REFERENCE!>I<!>()
 }

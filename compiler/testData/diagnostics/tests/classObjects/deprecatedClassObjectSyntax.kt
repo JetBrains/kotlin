@@ -13,13 +13,13 @@ trait B {
 }
 
 class C {
-    default <!DEPRECATED_CLASS_OBJECT_SYNTAX!>class object<!>
+    companion <!DEPRECATED_CLASS_OBJECT_SYNTAX!>class object<!>
 }
 
 fun main() {
     A
     A.A
-    g(B.Default)
+    g(B.Companion)
     g(B)
 
     A.ext()

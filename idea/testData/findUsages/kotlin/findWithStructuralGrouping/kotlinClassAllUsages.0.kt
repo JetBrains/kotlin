@@ -4,7 +4,7 @@
 package server
 
 open class <caret>Server {
-    default object {
+    companion object {
         val NAME = "Server"
     }
 

@@ -44,7 +44,7 @@ public class OuterClassGenTest extends CodegenTestCase {
     }
 
     public void testClassObject() throws Exception {
-        doTest("foo.Foo$" + SpecialNames.DEFAULT_NAME_FOR_DEFAULT_OBJECT.asString(), "outerClassInfo");
+        doTest("foo.Foo$" + SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT.asString(), "outerClassInfo");
     }
 
     public void testInnerClass() throws Exception {

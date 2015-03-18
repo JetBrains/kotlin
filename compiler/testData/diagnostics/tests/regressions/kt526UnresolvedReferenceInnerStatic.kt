@@ -4,12 +4,12 @@
 package demo
 
 class Foo {
-    default object {
+    companion object {
         class Bar() { }
     }
 }
 class User {
     fun main() : Unit {
-        var <!UNUSED_VARIABLE!>boo<!> : Foo.Default.Bar? /* <-- this reference is red */ = Foo.Default.Bar()
+        var <!UNUSED_VARIABLE!>boo<!> : Foo.Companion.Bar? /* <-- this reference is red */ = Foo.Companion.Bar()
     }
 }

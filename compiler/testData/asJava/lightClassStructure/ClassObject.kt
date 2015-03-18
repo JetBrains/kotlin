@@ -1,6 +1,6 @@
 package test
 
 class WithClassObject {
-  default object {
+  companion object {
   }
 }

@@ -25,7 +25,7 @@ import org.junit.Assert
 import junit.framework.AssertionFailedError
 
 public abstract class AbstractReferenceResolveInLibrarySourcesTest : JetLightCodeInsightFixtureTestCase() {
-    default object {
+    class object {
         private val REF_CARET_MARKER = "<ref-caret>"
     }
 

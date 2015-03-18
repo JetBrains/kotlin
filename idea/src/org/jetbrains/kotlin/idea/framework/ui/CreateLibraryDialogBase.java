@@ -21,7 +21,7 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.ui.SeparatorWithText;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.JetPluginUtil;
+import org.jetbrains.kotlin.idea.versions.KotlinRuntimeLibraryUtil;
 
 import javax.swing.*;
 import java.awt.*;
@@ -49,7 +49,7 @@ public abstract class CreateLibraryDialogBase extends DialogWrapper {
 
         init();
 
-        compilerTextLabel.setText(compilerTextLabel.getText() + " - " + JetPluginUtil.getPluginVersion());
+        compilerTextLabel.setText(compilerTextLabel.getText() + " - " + KotlinRuntimeLibraryUtil.bundledRuntimeVersion());
 
         pathPanel = new ChooseLibraryPathPanel(defaultPath);
         pathPanel.addValidityListener(new ValidityListener() {

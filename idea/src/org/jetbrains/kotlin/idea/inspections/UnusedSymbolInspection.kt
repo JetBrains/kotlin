@@ -53,7 +53,7 @@ import javax.swing.JComponent
 import javax.swing.JPanel
 
 public class UnusedSymbolInspection : AbstractKotlinInspection() {
-    default object {
+    class object {
         private val javaInspection = UnusedDeclarationInspection()
 
         public fun isEntryPoint(declaration: JetNamedDeclaration): Boolean {
@@ -101,8 +101,8 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
                 if (!ProjectRootsUtil.isInProjectSource(declaration)) return
 
                 // Simple PSI-based checks
-                val isDefaultObject = declaration is JetObjectDeclaration && declaration.isDefault()
-                if (declaration.getNameIdentifier() == null && !isDefaultObject) return
+                val isCompanionObject = declaration is JetObjectDeclaration && declaration.isCompanion()
+                if (declaration.getNameIdentifier() == null && !isCompanionObject) return
                 if (declaration is JetEnumEntry) return
                 if (declaration.hasModifier(JetTokens.OVERRIDE_KEYWORD)) return
                 if (declaration is JetProperty && declaration.isLocal()) return
@@ -118,7 +118,7 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
                 if (hasNonTrivialUsages(declaration)) return
                 if (declaration is JetClassOrObject && classOrObjectHasTextUsages(declaration)) return
 
-                val (inspectionTarget, textRange) = if (isDefaultObject && declaration.getNameIdentifier() == null) {
+                val (inspectionTarget, textRange) = if (isCompanionObject && declaration.getNameIdentifier() == null) {
                     val objectKeyword = (declaration as JetObjectDeclaration).getObjectKeyword()
                     Pair(declaration, TextRange(0, objectKeyword.getStartOffsetInParent() + objectKeyword.getTextLength()))
                 } else {
@@ -167,7 +167,7 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
         if (useScope is GlobalSearchScope) {
             var zeroOccurrences = true
 
-            for (name in listOf(declaration.getName()) + declaration.getAccessorNames() + declaration.getClassNameForDefaultObject().singletonOrEmptyList()) {
+            for (name in listOf(declaration.getName()) + declaration.getAccessorNames() + declaration.getClassNameForCompanionObject().singletonOrEmptyList()) {
                 when (psiSearchHelper.isCheapEnoughToSearch(name, useScope, null, null)) {
                     ZERO_OCCURRENCES -> {} // go on, check other names
                     FEW_OCCURRENCES -> zeroOccurrences = false

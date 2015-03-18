@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.idea.completion.isVisible
 import org.jetbrains.kotlin.idea.completion.ExpectedInfo
 
-// adds java static members, enum members and members from default object
+// adds java static members, enum members and members from companion object
 class StaticMembers(
         val bindingContext: BindingContext,
         val resolutionFacade: ResolutionFacade,
@@ -85,16 +85,16 @@ class StaticMembers(
 
         classDescriptor.getStaticScope().getAllDescriptors().forEach(::processMember)
 
-        val defaultObject = classDescriptor.getDefaultObjectDescriptor()
-        if (defaultObject != null) {
-            defaultObject.getDefaultType().getMemberScope().getAllDescriptors()
+        val companionObject = classDescriptor.getCompanionObjectDescriptor()
+        if (companionObject != null) {
+            companionObject.getDefaultType().getMemberScope().getAllDescriptors()
                     .filter { !it.isExtension }
                     .forEach(::processMember)
         }
 
         var members = classDescriptor.getDefaultType().getMemberScope().getAllDescriptors()
         if (classDescriptor.getKind() != ClassKind.ENUM_CLASS) {
-            members = members.filter { DescriptorUtils.isNonDefaultObject(it) }
+            members = members.filter { DescriptorUtils.isNonCompanionObject(it) }
         }
         members.forEach(::processMember)
     }

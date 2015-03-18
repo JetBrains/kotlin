@@ -5095,6 +5095,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("sameTypeParameterUse.kt")
+            public void testSameTypeParameterUse() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/sameTypeParameterUse.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("compiler/testData/diagnostics/tests/generics/starProjections")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
@@ -10641,6 +10647,18 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("generics2.kt")
+            public void testGenerics2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/generics2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("generics3.kt")
+            public void testGenerics3() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/generics3.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("headerSupertypeInitialization.kt")
             public void testHeaderSupertypeInitialization() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/headerSupertypeInitialization.kt");
@@ -10650,6 +10668,30 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("initializationFromOtherInstance.kt")
             public void testInitializationFromOtherInstance() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/initializationFromOtherInstance.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt6992.kt")
+            public void testKt6992() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/kt6992.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt6993.kt")
+            public void testKt6993() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/kt6993.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt6994.kt")
+            public void testKt6994() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/kt6994.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("lambdaInDelegation.kt")
+            public void testLambdaInDelegation() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/lambdaInDelegation.kt");
                 doTest(fileName);
             }
 
@@ -10746,6 +10788,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("useOfPropertiesWithoutPrimary.kt")
             public void testUseOfPropertiesWithoutPrimary() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/useOfPropertiesWithoutPrimary.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("valOrValAndModifiersInCtr.kt")
+            public void testValOrValAndModifiersInCtr() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/valOrValAndModifiersInCtr.kt");
                 doTest(fileName);
             }
 

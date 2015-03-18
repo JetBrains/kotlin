@@ -1,7 +1,7 @@
 class C() {
     val a: Int = 1
 
-    default object {
+    companion object {
         val x : Int
 
         {
