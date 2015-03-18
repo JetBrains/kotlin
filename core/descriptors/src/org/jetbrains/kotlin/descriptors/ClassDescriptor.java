@@ -61,7 +61,7 @@ public interface ClassDescriptor extends ClassifierDescriptor, MemberDescriptor,
     JetType getClassObjectType();
 
     /**
-     * @return nested object declared as 'default' if one is present.
+     * @return nested object declared as 'companion' if one is present.
      */
     @Nullable
     ClassDescriptor getCompanionObjectDescriptor();
