@@ -42,15 +42,6 @@ open class KMemberExtensionPropertyImpl<D : Any, E, out R>(
             throw IllegalPropertyAccessException(e)
         }
     }
-
-    override fun equals(other: Any?): Boolean =
-            other is KMemberExtensionPropertyImpl<*, *, *> && descriptor == other.descriptor
-
-    override fun hashCode(): Int =
-            descriptor.hashCode()
-
-    override fun toString(): String =
-            ReflectionObjectRenderer.renderProperty(descriptor)
 }
 
 
