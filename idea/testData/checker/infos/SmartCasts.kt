@@ -173,8 +173,8 @@ fun returnFunctionLiteralBlock(<info>a</info>: Any?): Function0<Int> {
     else return { 1 }
 }
 fun returnFunctionLiteral(<info>a</info>: Any?): Function0<Int> =
-    if (<info>a</info> is Int) { (): Int -> <info descr="Smart cast to kotlin.Int"><info>a</info></info> }
-    else { () -> 1 }
+    if (<info>a</info> is Int) (fun (): Int = <info descr="Smart cast to kotlin.Int"><info>a</info></info>)
+    else { -> 1 }
 
 fun mergeSmartCasts(a: Any?) {
   if (a is String || a is Int) {

@@ -408,6 +408,14 @@ public fun PsiElement.prevLeafSkipWhitespacesAndComments(): PsiElement? {
     return leaf
 }
 
+public fun PsiElement.prevLeafSkipWhitespaces(): PsiElement? {
+    var leaf = prevLeaf()
+    while (leaf is PsiWhiteSpace) {
+        leaf = leaf!!.prevLeaf()
+    }
+    return leaf
+}
+
 public fun PsiElement.nextLeafSkipWhitespacesAndComments(): PsiElement? {
     var leaf = nextLeaf()
     while (leaf is PsiWhiteSpace || leaf is PsiComment) {

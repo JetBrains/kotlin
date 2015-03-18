@@ -4634,6 +4634,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/functionAsExpression"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("AutoLabels.kt")
+            public void testAutoLabels() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionAsExpression/AutoLabels.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("Common.kt")
             public void testCommon() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionAsExpression/Common.kt");
@@ -4745,6 +4751,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("DanglingFunctionLiteral.kt")
             public void testDanglingFunctionLiteral() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/DanglingFunctionLiteral.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("DeprecatedSyntax.kt")
+            public void testDeprecatedSyntax() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/DeprecatedSyntax.kt");
                 doTest(fileName);
             }
 
@@ -10572,6 +10584,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("classInitializersWithoutPrimary.kt")
             public void testClassInitializersWithoutPrimary() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/classInitializersWithoutPrimary.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("companionObjectScope.kt")
+            public void testCompanionObjectScope() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/companionObjectScope.kt");
                 doTest(fileName);
             }
 

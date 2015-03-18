@@ -45,5 +45,6 @@
     <orderEntry type="module" module-name="util" />
     <orderEntry type="module" module-name="android-compiler-plugin" scope="TEST" />
     <orderEntry type="module" module-name="android-idea-plugin" scope="TEST" />
+    <orderEntry type="library" name="markdown" level="project" />
   </component>
 </module>

@@ -162,6 +162,12 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("renameKotlinClassSecondaryConstructor/renameKotlinSecondaryConstructor.test")
+    public void testRenameKotlinClassSecondaryConstructor_RenameKotlinSecondaryConstructor() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameKotlinClassSecondaryConstructor/renameKotlinSecondaryConstructor.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("renameKotlinClassWithFile/javaClassWrapper.test")
     public void testRenameKotlinClassWithFile_JavaClassWrapper() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameKotlinClassWithFile/javaClassWrapper.test");

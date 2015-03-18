@@ -17,7 +17,9 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
 
@@ -40,5 +42,15 @@ public class JetParameterList extends JetElementImplStub<KotlinPlaceHolderStub<J
     @NotNull
     public List<JetParameter> getParameters() {
         return getStubOrPsiChildrenAsList(JetStubElementTypes.VALUE_PARAMETER);
+    }
+
+    // this method needed only for migrate lambda syntax
+    @Deprecated
+    public boolean isParenthesized() {
+        PsiElement firstChild = getFirstChild();
+        if (firstChild != null && firstChild.getNode() != null) {
+            return firstChild.getNode().getElementType() == JetTokens.LPAR;
+        }
+        return false;
     }
 }

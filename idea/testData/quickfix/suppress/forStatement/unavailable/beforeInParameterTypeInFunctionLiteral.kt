@@ -4,7 +4,7 @@
 
 fun foo() {
     any {
-        (x: String?<caret>?) ->
+        x: String?<caret>? ->
     }
 }
 

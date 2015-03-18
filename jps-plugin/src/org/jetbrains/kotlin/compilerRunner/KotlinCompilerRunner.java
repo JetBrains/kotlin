@@ -64,18 +64,19 @@ public class KotlinCompilerRunner {
     }
 
     public static void runK2JsCompiler(
-            CommonCompilerArguments commonArguments,
-            K2JSCompilerArguments k2jsArguments,
-            CompilerSettings compilerSettings,
-            MessageCollector messageCollector,
-            CompilerEnvironment environment,
-            OutputItemsCollector collector,
-            Collection<File> sourceFiles,
-            List<String> libraryFiles,
-            File outputFile
+            @NotNull CommonCompilerArguments commonArguments,
+            @NotNull K2JSCompilerArguments k2jsArguments,
+            @NotNull CompilerSettings compilerSettings,
+            @NotNull MessageCollector messageCollector,
+            @NotNull CompilerEnvironment environment,
+            @NotNull OutputItemsCollector collector,
+            @NotNull Collection<File> sourceFiles,
+            @NotNull List<String> libraryFiles,
+            @NotNull File outputFile,
+            @Nullable File metaInfoFile
     ) {
         K2JSCompilerArguments arguments = mergeBeans(commonArguments, k2jsArguments);
-        setupK2JsArguments(outputFile, sourceFiles, libraryFiles, arguments);
+        setupK2JsArguments(outputFile, metaInfoFile, sourceFiles, libraryFiles, arguments);
 
         runCompiler(K2JS_COMPILER, arguments, compilerSettings.getAdditionalArguments(), messageCollector, collector, environment);
     }
@@ -189,10 +190,11 @@ public class KotlinCompilerRunner {
     }
 
     private static void setupK2JsArguments(
-            File outputFile,
-            Collection<File> sourceFiles,
-            List<String> libraryFiles,
-            K2JSCompilerArguments settings
+            @NotNull File outputFile,
+            @Nullable File metaInfoFile,
+            @NotNull Collection<File> sourceFiles,
+            @NotNull List<String> libraryFiles,
+            @NotNull K2JSCompilerArguments settings
     ) {
         settings.noStdlib = true;
         settings.freeArgs = ContainerUtil.map(sourceFiles, new Function<File, String>() {
@@ -202,6 +204,11 @@ public class KotlinCompilerRunner {
             }
         });
         settings.outputFile = outputFile.getPath();
+
+        if (metaInfoFile != null) {
+            settings.metaInfo = metaInfoFile.getPath();
+        }
+
         settings.libraryFiles = ArrayUtil.toStringArray(libraryFiles);
     }
 }

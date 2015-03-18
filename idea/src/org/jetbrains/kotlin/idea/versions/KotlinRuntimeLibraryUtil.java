@@ -258,9 +258,9 @@ public class KotlinRuntimeLibraryUtil {
     public static String bundledRuntimeVersion(@NotNull String pluginVersion) {
         int placeToSplit = -1;
 
-        for (int i = 0; i < pluginVersion.toCharArray().length; i++) {
+        for (int i = 1; i < pluginVersion.length(); i++) {
             char ch = pluginVersion.charAt(i);
-            if (Character.isLetter(ch) && i > 0 && pluginVersion.charAt(i - 1) == '.') {
+            if (Character.isLetter(ch) && pluginVersion.charAt(i - 1) == '.') {
                 placeToSplit = i - 1;
                 break;
             }

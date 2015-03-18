@@ -38,11 +38,9 @@ public class JetClassInitializer extends JetDeclarationStub<KotlinPlaceHolderStu
         return visitor.visitAnonymousInitializer(this, data);
     }
 
-    @NotNull
+    @Nullable
     public JetExpression getBody() {
-        JetExpression body = findChildByClass(JetExpression.class);
-        assert body != null;
-        return body;
+        return findChildByClass(JetExpression.class);
     }
 
     @Nullable
@@ -58,6 +56,11 @@ public class JetClassInitializer extends JetDeclarationStub<KotlinPlaceHolderStu
     }
 
     public boolean hasInitKeyword() {
-        return findChildByType(JetTokens.INIT_KEYWORD) != null;
+        return getInitKeyword() != null;
+    }
+
+    @Nullable
+    public PsiElement getInitKeyword() {
+        return findChildByType(JetTokens.INIT_KEYWORD);
     }
 }

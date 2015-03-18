@@ -11,7 +11,6 @@ fun inlineCallExplicitError(): String {
 
 fun inlineCall(): String {
     inlineFun @lamba {
-        (): Int ->
         if (true) {
             return@lamba 2
         }
@@ -28,7 +27,6 @@ inline fun inlineFun(s: () -> Int) {
 
 fun noInlineCall(): String {
     noInline @lambda {
-        (): Int ->
         if (true) {
             return@lambda 2
         }

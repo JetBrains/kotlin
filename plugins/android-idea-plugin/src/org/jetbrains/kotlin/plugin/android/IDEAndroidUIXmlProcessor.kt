@@ -24,13 +24,21 @@ import org.jetbrains.kotlin.plugin.android.AndroidXmlVisitor
 import com.intellij.psi.impl.*
 import kotlin.properties.*
 import org.jetbrains.kotlin.lang.resolve.android.*
+import com.intellij.psi.util.CachedValue
+import com.intellij.psi.util.CachedValueProvider.Result
 
 class IDEAndroidUIXmlProcessor(val module: Module) : AndroidUIXmlProcessor(module.getProject()) {
 
     override val resourceManager: IDEAndroidResourceManager = IDEAndroidResourceManager(module)
 
-    override val psiTreeChangePreprocessor by Delegates.lazy {
+    private val psiTreeChangePreprocessor by Delegates.lazy {
         module.getProject().getExtensions(PsiTreeChangePreprocessor.EP_NAME).first { it is AndroidPsiTreeChangePreprocessor }
+    }
+
+    override val cachedSources: CachedValue<List<String>> by Delegates.lazy {
+        cachedValue {
+            Result.create(parse(), psiTreeChangePreprocessor)
+        }
     }
 
     override fun parseSingleFile(file: PsiFile): List<AndroidWidget> {

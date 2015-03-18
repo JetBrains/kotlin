@@ -16,15 +16,17 @@
 
 package org.jetbrains.kotlin.idea.highlighter.markers
 
-import java.util.HashSet
-import com.intellij.psi.PsiMethod
-import com.intellij.psi.PsiClass
-import com.intellij.psi.CommonClassNames
 import com.intellij.openapi.progress.ProgressManager
+import com.intellij.psi.CommonClassNames
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.psi.JetClass
+import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.asJava.LightClassUtil
+import org.jetbrains.kotlin.psi.JetClass
+import org.jetbrains.kotlin.psi.JetFunction
 import org.jetbrains.kotlin.psi.JetNamedFunction
+import org.jetbrains.kotlin.psi.JetSecondaryConstructor
+import java.util.HashSet
 
 fun collectContainingClasses(methods: Collection<PsiMethod>): Set<PsiClass> {
     val classes = HashSet<PsiClass>()
@@ -50,11 +52,11 @@ private fun getPsiClass(element: PsiElement?): PsiClass? {
 }
 
 private fun getPsiMethod(element: PsiElement?): PsiMethod? {
+    val parent = element?.getParent()
     return when {
         element == null -> null
         element is PsiMethod -> element
-        element.getParent() is JetNamedFunction ->
-            LightClassUtil.getLightClassMethod(element.getParent() as JetNamedFunction)
+        parent is JetNamedFunction, parent is JetSecondaryConstructor -> LightClassUtil.getLightClassMethod(parent as JetFunction)
         else -> null
     }
 }

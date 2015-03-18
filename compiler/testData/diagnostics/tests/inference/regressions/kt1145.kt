@@ -3,7 +3,7 @@
 package d
 
 fun test(numbers: Iterable<Int>) {
-    val s = numbers.map{it.toString()}.fold(""){(it, it2) -> it + it2}
+    val s = numbers.map{it.toString()}.fold(""){it, it2 -> it + it2}
     <!TYPE_MISMATCH!>s<!>: Int
 }
 

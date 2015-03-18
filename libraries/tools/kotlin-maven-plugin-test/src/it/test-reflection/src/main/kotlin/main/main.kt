@@ -14,15 +14,30 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.refactoring.changeSignature.usages
+package main
 
-import com.intellij.usageView.UsageInfo
-import org.jetbrains.kotlin.psi.JetFunctionLiteral
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.types.JetType
+fun topLevelFun() {}
 
-public class KotlinSAMUsage(
-        val functionLiteral: JetFunctionLiteral,
-        val functionDescriptor: FunctionDescriptor,
-        val samCallType: JetType
-): UsageInfo(functionLiteral)
+class A(val prop: String)
+
+val Int.extProp: Int get() = this
+
+fun box(): String {
+    val u = ::topLevelFun
+    u()
+
+    fun localFun() {}
+    val l = ::localFun
+    l()
+
+    val ext = Int::extProp
+    if (ext.get(42) != 42) return "Fail ext: ${ext[42]}"
+
+    val a = A::class
+    if (a.properties.size() != 1) return "Fail: ${a.properties}"
+
+    val p = A::prop
+    if (p.name != "prop") return "Fail name: ${p.name}"
+
+    return p.get(A("OK"))
+}

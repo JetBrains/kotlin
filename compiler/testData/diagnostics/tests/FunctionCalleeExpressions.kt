@@ -52,16 +52,15 @@ fun main(args : Array<String>) {
 fun f() :  Int.() -> Unit = {}
 
 fun main1() {
-    1.{Int.() -> 1}();
+    1.(fun Int.() = 1)();
     {1}();
-    {(x : Int) -> x}(1)
-    1.{Int.(x : Int) -> x}(1);
+    (fun (x : Int) = x)(1)
+    1.(fun Int.(x : Int) = x)(1);
     @l{1}()
-    1.({Int.() -> 1})()
+    1.((fun Int.() = 1))()
     1.(f())()
     1.if(true){f()}else{f()}()
-    1.if(true){Int.() -> <!UNUSED_EXPRESSION!>1<!>}else{f()}()
-    1.if(true){Int.() -> 1}else{Int.() -> 1}()
+    1.if(true)(fun Int.() {})else{f()}()
 
     1.<!FUNCTION_EXPECTED!>"sdf"<!>()
 
@@ -71,12 +70,12 @@ fun main1() {
 }
 
 fun test() {
-    {(x : Int) -> 1}(<!NO_VALUE_FOR_PARAMETER!>)<!>;
-    <!MISSING_RECEIVER!>{Int.() -> 1}<!>()
-    <!TYPE_MISMATCH!>"sd"<!>.{Int.() -> 1}()
+    {x : Int -> 1}(<!NO_VALUE_FOR_PARAMETER!>)<!>;
+    <!MISSING_RECEIVER!>(fun Int.() = 1)<!>()
+    <!TYPE_MISMATCH!>"sd"<!>.(fun Int.() = 1)()
     val i : Int? = null
-    i<!UNSAFE_CALL!>.<!>{Int.() -> 1}();
+    i<!UNSAFE_CALL!>.<!>(fun Int.() = 1)();
     {}<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int><!>()
-    1<!UNNECESSARY_SAFE_CALL!>?.<!>{Int.() -> 1}()
+    1<!UNNECESSARY_SAFE_CALL!>?.<!>(fun Int.() = 1)()
     1.<!NO_RECEIVER_ALLOWED!>{}<!>()
 }

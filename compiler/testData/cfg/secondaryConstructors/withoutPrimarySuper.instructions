@@ -56,7 +56,7 @@ error:
 sink:
     <SINK>     PREV:[<ERROR>, <END>]
 =====================
-== <init> ==
+== A ==
 constructor(): super(11) {
         x = 1
         y = 2
@@ -97,7 +97,7 @@ error:
 sink:
     <SINK>                                  PREV:[<ERROR>, <END>]
 =====================
-== <init> ==
+== A ==
 constructor(a: Int, b: Int = 3): super(b) {
         x = a
         y = x
@@ -149,7 +149,7 @@ error:
 sink:
     <SINK>                                         PREV:[<ERROR>, <END>]
 =====================
-== <init> ==
+== A ==
 constructor(a: String, b: Int = 4): this() {
         y = 5
     }
@@ -179,7 +179,7 @@ error:
 sink:
     <SINK>                                         PREV:[<ERROR>, <END>]
 =====================
-== <init> ==
+== A ==
 constructor(a: Double, b: Int = 6): this(a.toInt()) {
         y = 7
     }

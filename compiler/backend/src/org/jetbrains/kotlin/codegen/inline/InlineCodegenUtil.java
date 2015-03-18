@@ -63,6 +63,7 @@ import static org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isTrait;
 
 public class InlineCodegenUtil {
+    public static final boolean GENERATE_SMAP = false;
     public static final int API = Opcodes.ASM5;
     public static final String INVOKE = "invoke";
 
@@ -124,7 +125,7 @@ public class InlineCodegenUtil {
                 }
                 return null;
             }
-        }, ClassReader.SKIP_FRAMES);
+        }, ClassReader.SKIP_FRAMES | (GENERATE_SMAP ? 0 : ClassReader.SKIP_DEBUG));
 
         SMAP smap = SMAPParser.parseOrCreateDefault(debugInfo[1], debugInfo[0], classId.toString(), lines[0], lines[1]);
         return new SMAPAndMethodNode(node[0], smap);

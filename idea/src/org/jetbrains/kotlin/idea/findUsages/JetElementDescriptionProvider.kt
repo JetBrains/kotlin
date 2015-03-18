@@ -36,6 +36,7 @@ public class JetElementDescriptionProvider : ElementDescriptionProvider {
             is JetClass -> if (targetElement.isTrait()) "trait" else "class"
             is JetObjectDeclaration -> "object"
             is JetNamedFunction -> "function"
+            is JetSecondaryConstructor -> "constructor"
             is JetProperty -> "property"
             is JetTypeParameter -> "type parameter"
             is JetParameter -> "parameter"

@@ -7,5 +7,5 @@ class A(a<!SYNTAX!><!>)
 
 val bar = fun test(<!CANNOT_INFER_PARAMETER_TYPE!>a<!>){}
 
-val la = { (<!CANNOT_INFER_PARAMETER_TYPE!>a<!>) -> }
-val las = { (a: Int) -> }
+val la = { <!CANNOT_INFER_PARAMETER_TYPE!>a<!> -> }
+val las = { a: Int -> }

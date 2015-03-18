@@ -20,6 +20,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.inline.FileMapping;
+import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil;
 import org.jetbrains.kotlin.codegen.inline.SMAPBuilder;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.org.objectweb.asm.*;
@@ -103,7 +104,7 @@ public abstract class AbstractClassBuilder implements ClassBuilder {
 
     @Override
     public void done() {
-        if (!fileMappings.isEmpty()) {
+        if (!fileMappings.isEmpty() && InlineCodegenUtil.GENERATE_SMAP) {
             FileMapping origin = fileMappings.get(0);
             assert sourceName == null || origin.getName().equals(sourceName) : "Error " + origin.getName() +  " != "  + sourceName;
             getVisitor().visitSource(origin.getName(), new SMAPBuilder(origin.getName(), origin.getPath(), fileMappings).build());

@@ -24,7 +24,8 @@
         <dependency>
             <groupId>com.google.protobuf</groupId>
             <artifactId>protobuf-java</artifactId>
-            <version>${protobuf.version}</version>
+            <!-- Do not use ${protobuf.version} because it couldn't be resolve in gradle -->
+            <version>2.5.0</version>
         </dependency>
         <dependency>
             <groupId>javax.inject</groupId>

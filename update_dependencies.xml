@@ -220,6 +220,10 @@
                 </exec>
             </then>
         </if>
+
+        <!-- Markdown parser -->
+        <get src="https://teamcity.jetbrains.com/guestAuth/repository/download/IntelliJMarkdownParser_Build/.lastFinished/markdown_jar/markdown.jar"
+             dest="dependencies/markdown.jar" usetimestamp="true"/>
     </target>
 
     <macrodef name="get_android_sdk">

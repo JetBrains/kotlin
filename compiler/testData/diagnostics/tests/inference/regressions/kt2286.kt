@@ -14,7 +14,7 @@ abstract class Buggy {
         get() = <!TYPE_MISMATCH!>coll.find{ it > 3 }<!> // does not work here
 
     val yetAnotherThree : Int
-        get() = <!TYPE_MISMATCH!>coll.find({ (v:Int) -> v > 3 })<!> // neither here
+        get() = <!TYPE_MISMATCH!>coll.find({ v:Int -> v > 3 })<!> // neither here
 
     val extendedGetter : Int
         get() {

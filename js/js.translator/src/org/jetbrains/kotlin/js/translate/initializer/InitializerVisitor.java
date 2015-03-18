@@ -58,7 +58,10 @@ public final class InitializerVisitor extends TranslatorVisitor<Void> {
 
     @Override
     public Void visitAnonymousInitializer(@NotNull JetClassInitializer initializer, @NotNull TranslationContext context) {
-        result.add(translateAsStatementAndMergeInBlockIfNeeded(initializer.getBody(), context));
+        JetExpression initializerBody = initializer.getBody();
+        if (initializerBody != null) {
+            result.add(translateAsStatementAndMergeInBlockIfNeeded(initializerBody, context));
+        }
         return null;
     }
 

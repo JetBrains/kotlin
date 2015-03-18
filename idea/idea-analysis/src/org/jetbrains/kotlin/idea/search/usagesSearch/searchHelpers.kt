@@ -191,8 +191,8 @@ class FunctionUsagesSearchHelper(
         override val selfUsages: Boolean = true,
         override val overrideUsages: Boolean = true,
         skipImports: Boolean = false
-) : DefaultSearchHelper<JetNamedFunction>(skipImports), OverrideSearchHelper {
-    override fun makeFilter(target: UsagesSearchTarget<JetNamedFunction>): UsagesSearchFilter {
+) : DefaultSearchHelper<JetFunction>(skipImports), OverrideSearchHelper {
+    override fun makeFilter(target: UsagesSearchTarget<JetFunction>): UsagesSearchFilter {
         return (isTargetOrOverrideUsage
         or isOverloadUsage.ifOrFalse(overloadUsages)
         or isExtensionUsage.ifOrFalse(extensionUsages)) and isFilteredImport

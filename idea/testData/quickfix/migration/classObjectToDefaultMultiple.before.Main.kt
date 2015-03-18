@@ -1,4 +1,4 @@
-// "Replace 'class' keyword with 'default' modifier in whole project" "true"
+// "Replace 'class' keyword with 'companion' modifier in whole project" "true"
 
 class A {
     public class<caret> object {

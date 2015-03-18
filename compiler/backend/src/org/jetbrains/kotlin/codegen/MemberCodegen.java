@@ -330,7 +330,10 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
                 }
             }
             else if (declaration instanceof JetClassInitializer) {
-                codegen.invoke().gen(((JetClassInitializer) declaration).getBody(), Type.VOID_TYPE);
+                JetExpression body = ((JetClassInitializer) declaration).getBody();
+                if (body != null) {
+                    codegen.invoke().gen(body, Type.VOID_TYPE);
+                }
             }
         }
     }

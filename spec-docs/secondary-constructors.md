@@ -20,14 +20,14 @@ class Foo(a: Bar): MySuper() {
 No primary constructor:
 ``` kotlin
 class Foo: MySuper { // initialization of superclass is not allowed
-  constructor(a: Int): super(a + 1) { ... } // must call super() here
+  constructor(a: Int) : super(a + 1) { ... } // must call super() here
 }
 ```
 
 No primary constructor + two overloaded constructors
 ``` kotlin
 class Foo: MySuper { // initialization of superclass is not allowed
-  constructor(a: Int): super(a + 1) { ... } 
+  constructor(a: Int) : super(a + 1) { ... }
   constructor() : this(1) { ... } // either super() or delegate to another constructor
 }
 ```
@@ -47,7 +47,7 @@ class Foo: MySuper { // initialization of superclass is not allowed
 No primary constructor => no supertype initialization allowed in the class header:
 ``` kotlin
 class Foo : Bar() { // Error
-  constructor(x: Int): this() {}
+  constructor(x: Int) : this() {}
 }
 ```
 

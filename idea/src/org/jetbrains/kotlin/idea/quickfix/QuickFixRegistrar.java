@@ -231,6 +231,7 @@ public class QuickFixRegistrar {
         QuickFixes.factories.put(NO_VALUE_FOR_PARAMETER, ChangeFunctionSignatureFix.createFactory());
         QuickFixes.factories.put(UNUSED_PARAMETER, ChangeFunctionSignatureFix.createFactoryForUnusedParameter());
         QuickFixes.factories.put(EXPECTED_PARAMETERS_NUMBER_MISMATCH, ChangeFunctionSignatureFix.createFactoryForParametersNumberMismatch());
+        QuickFixes.factories.put(DEPRECATED_LAMBDA_SYNTAX, DeprecatedLambdaSyntaxFix.Factory);
 
         QuickFixes.factories.put(EXPECTED_PARAMETER_TYPE_MISMATCH, ChangeTypeFix.createFactoryForExpectedParameterTypeMismatch());
         QuickFixes.factories.put(EXPECTED_RETURN_TYPE_MISMATCH, ChangeTypeFix.createFactoryForExpectedReturnTypeMismatch());
@@ -299,6 +300,7 @@ public class QuickFixRegistrar {
 
         QuickFixes.factories.put(DEPRECATED_CLASS_OBJECT_SYNTAX, ClassObjectToCompanionObjectFix.Factory);
         QuickFixes.factories.put(DEPRECATED_CLASS_OBJECT_SYNTAX, ClassObjectToCompanionObjectInWholeProjectFix.Factory);
-        QuickFixes.factories.put(INIT_KEYWORD_BEFORE_CLASS_INITIALIZER_EXPECTED, AddInitKeywordFix.OBJECT$);
+        QuickFixes.factories.put(INIT_KEYWORD_BEFORE_CLASS_INITIALIZER_EXPECTED, AddInitKeywordFix.Factory);
+        QuickFixes.factories.put(INIT_KEYWORD_BEFORE_CLASS_INITIALIZER_EXPECTED, AddInitKeywordFixInWholeProjectFix.Factory);
     }
 }
