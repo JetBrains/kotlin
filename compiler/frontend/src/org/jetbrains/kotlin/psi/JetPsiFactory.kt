@@ -230,8 +230,10 @@ public class JetPsiFactory(private val project: Project) {
     }
 
     public fun createAnonymousInitializer(): JetClassInitializer {
-        return createClass("class A { {} }").getAnonymousInitializers().first()
+        return createClass("class A { init {} }").getAnonymousInitializers().first()
     }
+
+    public fun createInitKeyword(): PsiElement = createAnonymousInitializer().getInitKeyword()!!
 
     public fun createEmptyClassBody(): JetClassBody {
         return createClass("class A(){}").getBody()!!

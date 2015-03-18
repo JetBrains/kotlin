@@ -58,6 +58,11 @@ public class JetClassInitializer extends JetDeclarationStub<KotlinPlaceHolderStu
     }
 
     public boolean hasInitKeyword() {
-        return findChildByType(JetTokens.INIT_KEYWORD) != null;
+        return getInitKeyword() != null;
+    }
+
+    @Nullable
+    public PsiElement getInitKeyword() {
+        return findChildByType(JetTokens.INIT_KEYWORD);
     }
 }

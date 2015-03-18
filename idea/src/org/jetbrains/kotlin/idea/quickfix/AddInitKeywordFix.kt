@@ -24,30 +24,34 @@ import org.jetbrains.kotlin.idea.*
 import com.intellij.openapi.project.*
 import com.intellij.openapi.editor.*
 import com.intellij.psi.*
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.psiUtil.*
 
 
 public class AddInitKeywordFix(element: JetClassInitializer) : JetIntentionAction<JetClassInitializer>(element) {
     override fun getText() = JetBundle.message("add.init.keyword")
 
-    override fun getFamilyName() = JetBundle.message("add.init.keyword")
+    override fun getFamilyName() = JetBundle.message("add.init.keyword.family")
 
     override fun invoke(project: Project, editor: Editor?, file: JetFile) {
-        val initializer = element.copy() as JetClassInitializer
-        val aClass = JetPsiFactory(file).createClass("""class A {
-                ${initializer.getModifierList()?.getText() ?: ""} init ${initializer.getBody().getText()}
-                }"""
-        )
-        val newInitializers = aClass.getAnonymousInitializers()
-        assert(newInitializers.size() == 1)
-        element.replace(newInitializers[0])
+        addInitKeyword(file, element)
     }
 
-    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile?): Boolean {
-        return super.isAvailable(project, editor, file)
-    }
+    class object Factory : JetSingleIntentionActionFactory() {
+        fun addInitKeyword(file: JetFile, element: JetClassInitializer) {
+            if (element.hasInitKeyword()) return
 
-    class object : JetSingleIntentionActionFactory() {
+            val psiFactory = JetPsiFactory(file)
+            val initKeyword = psiFactory.createInitKeyword()
+            val anchor = element.getBody()
+            element.addBefore(initKeyword, anchor)
+            element.addBefore(psiFactory.createWhiteSpace(), anchor)
+
+            val prevLeaf: PsiElement? = element.prevLeafSkipWhitespaces()
+            if (prevLeaf?.getNode()?.getElementType() == JetTokens.SEMICOLON) {
+                prevLeaf!!.delete()
+            }
+        }
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             return AddInitKeywordFix(diagnostic.getPsiElement().getNonStrictParentOfType<JetClassInitializer>() ?: return null)
         }

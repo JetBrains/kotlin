@@ -2985,6 +2985,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("beforeAddInitKeywordRemoveSemicolon.kt")
+        public void testAddInitKeywordRemoveSemicolon() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/beforeAddInitKeywordRemoveSemicolon.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("beforeAddInitKeywordRemoveSemicolonSameLine.kt")
+        public void testAddInitKeywordRemoveSemicolonSameLine() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/beforeAddInitKeywordRemoveSemicolonSameLine.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("beforeAddInitKeywordWithModifiers.kt")
         public void testAddInitKeywordWithModifiers() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/beforeAddInitKeywordWithModifiers.kt");
