@@ -33,10 +33,10 @@ open class KMemberExtensionPropertyImpl<D : Any, E, out R>(
 
     override val field: Field? get() = null
 
-    override fun get(dispatchReceiver: D, extensionReceiver: E): R {
+    override fun get(instance: D, extensionReceiver: E): R {
         try {
             [suppress("UNCHECKED_CAST")]
-            return getter.invoke(dispatchReceiver, extensionReceiver) as R
+            return getter.invoke(instance, extensionReceiver) as R
         }
         catch (e: IllegalAccessException) {
             throw IllegalPropertyAccessException(e)
@@ -60,9 +60,9 @@ class KMutableMemberExtensionPropertyImpl<D : Any, E, R>(
 ) : KMemberExtensionPropertyImpl<D, E, R>(container, computeDescriptor), KMutableMemberExtensionProperty<D, E, R>, KMutablePropertyImpl<R> {
     override val setter: Method get() = super<KMemberExtensionPropertyImpl>.setter!!
 
-    override fun set(dispatchReceiver: D, extensionReceiver: E, value: R) {
+    override fun set(instance: D, extensionReceiver: E, value: R) {
         try {
-            setter.invoke(dispatchReceiver, extensionReceiver, value)
+            setter.invoke(instance, extensionReceiver, value)
         }
         catch (e: IllegalAccessException) {
             throw IllegalPropertyAccessException(e)

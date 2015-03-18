@@ -31,6 +31,7 @@ fun <T> foreignKotlinClass(jClass: Class<T>): KClassImpl<T> {
     val name = jClass.getName()
     val cached = FOREIGN_K_CLASSES[name]
     if (cached is WeakReference<*>) {
+        [suppress("UNCHECKED_CAST")]
         val kClass = cached.get() as KClassImpl<T>?
         if (kClass?.jClass == jClass) {
             return kClass!!

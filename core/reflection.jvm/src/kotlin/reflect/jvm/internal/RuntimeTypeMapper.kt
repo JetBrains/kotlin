@@ -36,7 +36,7 @@ object RuntimeTypeMapper : JavaToKotlinClassMapBuilder() {
     private val kotlinFqNameToJvmDescNullable = linkedMapOf<FqName, String>()
     private val jvmDescToKotlinClassId = linkedMapOf<String, ClassId>();
 
-    {
+    init {
         init()
         initPrimitives()
     }
@@ -85,6 +85,13 @@ object RuntimeTypeMapper : JavaToKotlinClassMapBuilder() {
         val classifier = type.getConstructor().getDeclarationDescriptor()
         if (classifier is TypeParameterDescriptor) return mapTypeToJvmDesc(classifier.getUpperBounds().first())
 
+        if (KotlinBuiltIns.isArray(type)) {
+            val elementType = KotlinBuiltIns.getInstance().getArrayElementType(type)
+            // makeNullable is called here to map primitive types to the corresponding wrappers,
+            // because the given type is Array<Something>, not SomethingArray
+            return "[" + mapTypeToJvmDesc(TypeUtils.makeNullable(elementType))
+        }
+
         val classDescriptor = classifier as ClassDescriptor
         val fqNameUnsafe = DescriptorUtils.getFqName(classDescriptor)
         if (fqNameUnsafe.isSafe()) {
@@ -93,18 +100,6 @@ object RuntimeTypeMapper : JavaToKotlinClassMapBuilder() {
                 kotlinFqNameToJvmDescNullable[fqName]?.let { return it }
             }
             kotlinFqNameToJvmDesc[fqName]?.let { return it }
-        }
-
-        if (KotlinBuiltIns.isArray(type)) {
-            var dimension = 0
-            var elementType = type
-
-            while (KotlinBuiltIns.isArray(elementType)) {
-                elementType = KotlinBuiltIns.getInstance().getArrayElementType(elementType)
-                dimension++
-            }
-
-            return "[".repeat(dimension) + mapTypeToJvmDesc(TypeUtils.makeNullable(elementType))
         }
 
         return classDescriptor.classId.desc
