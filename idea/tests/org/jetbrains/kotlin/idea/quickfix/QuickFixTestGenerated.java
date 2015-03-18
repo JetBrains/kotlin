@@ -3222,6 +3222,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("beforeSecondaryCtrDelegationInHeader.kt")
+            public void testSecondaryCtrDelegationInHeader() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/addOpenToClassDeclaration/beforeSecondaryCtrDelegationInHeader.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("beforeSecondaryCtrDelegationInSecondary.kt")
+            public void testSecondaryCtrDelegationInSecondary() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/addOpenToClassDeclaration/beforeSecondaryCtrDelegationInSecondary.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("idea/testData/quickfix/modifiers/addOpenToClassDeclaration/finalJavaClass")
             @TestDataPath("$PROJECT_ROOT")
             @InnerTestClasses({
