@@ -4,15 +4,40 @@ import java.io.*
 import java.nio.charset.Charset
 import java.nio.charset.CharsetDecoder
 import java.nio.charset.CharsetEncoder
-
-// Note: hasNext() is incorrect because available() means "number of available bytes WITHOUT BLOCKING"
+import java.util.NoSuchElementException
 
 /** Returns an [Iterator] of bytes in this input stream. */
+deprecated("It's not recommended to iterate through input stream bytes")
 public fun InputStream.iterator(): ByteIterator =
         object : ByteIterator() {
-            override fun hasNext(): Boolean = available() > 0
 
-            public override fun nextByte(): Byte = read().toByte()
+            var nextByte = -1
+
+            var nextPrepared = false
+
+            var finished = false
+
+            private fun prepareNext() {
+                if (!nextPrepared && !finished) {
+                    nextByte = read()
+                    nextPrepared = true
+                    finished = (nextByte == -1)
+                }
+            }
+
+            public override fun hasNext(): Boolean {
+                prepareNext()
+                return !finished
+            }
+
+            public override fun nextByte(): Byte {
+                prepareNext()
+                if (finished)
+                    throw NoSuchElementException("Input stream is over")
+                val res = nextByte.toByte()
+                nextPrepared = false
+                return res
+            }
         }
 
 /**
@@ -28,11 +53,20 @@ else
 /** Creates a reader on this input stream using UTF-8 or the specified [charset]. */
 public fun InputStream.reader(charset: Charset = Charsets.UTF_8): InputStreamReader = InputStreamReader(this, charset)
 
+/** Creates a buffered reader on this input stream using UTF-8 or the specified [charset]. */
+public fun InputStream.bufferedReader(charset: Charset = Charsets.UTF_8): BufferedReader = reader(charset).buffered()
+
 /** Creates a reader on this input stream using the specified [charset]. */
 public fun InputStream.reader(charset: String): InputStreamReader = InputStreamReader(this, charset)
 
+/** Creates a buffered reader on this input stream using the specified [charset]. */
+public fun InputStream.bufferedReader(charset: String): BufferedReader = reader(charset).buffered()
+
 /** Creates a reader on this input stream using the specified [decoder]. */
 public fun InputStream.reader(decoder: CharsetDecoder): InputStreamReader = InputStreamReader(this, decoder)
+
+/** Creates a reader on this input stream using the specified [decoder]. */
+public fun InputStream.bufferedReader(decoder: CharsetDecoder): BufferedReader = reader(decoder).buffered()
 
 /**
  * Creates a buffered output stream wrapping this stream.
@@ -74,7 +108,7 @@ public fun InputStream.copyTo(out: OutputStream, bufferSize: Int = defaultBuffer
  */
 public fun InputStream.readBytes(estimatedSize: Int = defaultBufferSize): ByteArray {
     val buffer = ByteArrayOutputStream(estimatedSize)
-    this.copyTo(buffer)
+    copyTo(buffer)
     return buffer.toByteArray()
 }
 

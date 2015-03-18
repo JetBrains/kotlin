@@ -1,4 +1,4 @@
-package kotlin.io.files
+package kotlin.io
 
 import java.io.File
 import java.io.FileNotFoundException
@@ -13,7 +13,12 @@ import java.util.Stack
  * An alternative version of file walker
  */
 
-enum class FileWalkDirection {
+/**
+ * An enumeration to describe possible walk directions.
+ * There are two of them: beginning from parents, ending with children,
+ * and beginning from children, ending with parents. Both use depth-first search.
+ */
+public enum class FileWalkDirection {
     /** Depth-first search, directory is visited BEFORE its files */
     TOP_DOWN
     /** Depth-first search, directory is visited AFTER its files */
@@ -21,24 +26,31 @@ enum class FileWalkDirection {
     // Do we want also breadth-first search?
 }
 
-class FileTreeWalk(private val start: File,
-                   private val direction: FileWalkDirection = FileWalkDirection.TOP_DOWN,
-                   private val enter: (File) -> Unit = {},
-                   private val leave: (File) -> Unit = {},
-                   private val fail:  (f: File, e: IOException) -> Unit = { f, e -> Unit },
-                   private val filter: (File) -> Boolean = { it -> true },
-                   private val maxDepth: Int = Int.MAX_VALUE
-                   ): Stream<File> {
+/**
+ * This class is intended to implement different file walk methods.
+ * It allows to iterate through all files inside [start] directory.
+ * If [start] is just a file, walker iterates only it.
+ * If [start] does not exist, walker does not do any iterations at all.
+ */
+public class FileTreeWalk(private val start: File,
+                          private val direction: FileWalkDirection = FileWalkDirection.TOP_DOWN,
+                          private val enter: (File) -> Unit = {},
+                          private val leave: (File) -> Unit = {},
+                          private val fail: (f: File, e: IOException) -> Unit = { f, e -> Unit },
+                          private val filter: (File) -> Boolean = { true },
+                          private val maxDepth: Int = Int.MAX_VALUE
+) : Sequence<File> {
 
-    private abstract class DirectoryState(val rootDir: File) {
+    private abstract class DirectoryState(public val rootDir: File) {
         init {
             if (!rootDir.isDirectory())
                 throw IllegalArgumentException("Directory is needed")
         }
+
         abstract public fun step(): File?
     }
 
-    private inner class BottomUpDirectoryState(rootDir: File): DirectoryState(rootDir) {
+    private inner class BottomUpDirectoryState(rootDir: File) : DirectoryState(rootDir) {
 
         private var rootVisited = false
 
@@ -72,7 +84,7 @@ class FileTreeWalk(private val start: File,
         }
     }
 
-    private inner class TopDownDirectoryState(rootDir: File): DirectoryState(rootDir) {
+    private inner class TopDownDirectoryState(rootDir: File) : DirectoryState(rootDir) {
 
         private var rootVisited = false
 
@@ -119,9 +131,8 @@ class FileTreeWalk(private val start: File,
 
     init {
         if (!start.exists()) {
-            throw FileNotFoundException("The start file doesn't exist: $start")
-        }
-        if (start.isDirectory() && filter(start)) {
+            end = true
+        } else if (start.isDirectory() && filter(start)) {
             pushState(start)
         }
     }
@@ -133,6 +144,7 @@ class FileTreeWalk(private val start: File,
         })
     }
 
+    tailRecursive
     private fun gotoNext(): File? {
         if (end) {
             // We are already at the end
@@ -141,7 +153,7 @@ class FileTreeWalk(private val start: File,
             // There is nothing in the state
             // We must visit "start" if it's a file and matches the filter
             end = true
-            return if (!start.isDirectory() && filter(start)) start else null
+            return if (start.exists() && !start.isDirectory() && filter(start)) start else null
         }
         // Take next file from the top of the stack
         val topState = state.peek()
@@ -210,13 +222,14 @@ class FileTreeWalk(private val start: File,
         return FileTreeWalk(start, direction, enter, leave, fail, filter, depth)
     }
 
-    private val it = object: Iterator<File> {
-        override fun hasNext(): Boolean {
+    private val it = object : Iterator<File> {
+        override public fun hasNext(): Boolean {
             if (nextFile == null)
                 nextFile = gotoNext()
             return (nextFile != null)
         }
-        override fun next(): File {
+
+        override public fun next(): File {
             if (nextFile == null)
                 nextFile = gotoNext()
             val res = nextFile
@@ -229,23 +242,38 @@ class FileTreeWalk(private val start: File,
         }
     }
 
-    override fun iterator(): Iterator<File> {
+    override public fun iterator(): Iterator<File> {
         return it
     }
 }
 
-fun File.walk(direction: FileWalkDirection = FileWalkDirection.TOP_DOWN): FileTreeWalk =
+/**
+ * Gets a sequence for visiting this directory and all its content.
+ *
+ * @param direction walk direction, top-down (by default) or bottom-up
+ */
+public fun File.walk(direction: FileWalkDirection = FileWalkDirection.TOP_DOWN): FileTreeWalk =
         FileTreeWalk(this, direction)
 
 /**
- * Gets a stream for visiting this directory and all its content in top-down order.
+ * Gets a sequence for visiting this directory and all its content in top-down order.
  * Depth-first search is used and directories are visited before all their files
  */
 public fun File.walkTopDown(): FileTreeWalk = walk(FileWalkDirection.TOP_DOWN)
 
 /**
- * Gets a stream for visiting this directory and all its content in bottom-up order.
+ * Gets a sequence for visiting this directory and all its content in bottom-up order.
  * Depth-first search is used and directories are visited after all their files
  */
 public fun File.walkBottomUp(): FileTreeWalk = walk(FileWalkDirection.BOTTOM_UP)
 
+/**
+ * Recursively process this file and all children with the given block.
+ * Note that if this file doesn't exist, then the block will be executed on it anyway.
+ *
+ * @param block the function to call on each file
+ */
+deprecated("It's recommended to use walkTopDown() / walkBottomUp()")
+public fun File.recurse(block: (File) -> Unit): Unit {
+    walkTopDown().forEach { block(it) }
+}

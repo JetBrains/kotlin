@@ -1,15 +1,13 @@
 package test.io
 
+import java.io.*
 import org.junit.Test as test
 import kotlin.test.assertEquals
-import java.io.File
-import java.io.IOException
-import java.io.FileNotFoundException
 import java.util.NoSuchElementException
 import java.util.HashSet
 import java.util.ArrayList
-import kotlin.io.files.walkBottomUp
-import kotlin.io.files.walkTopDown
+import kotlin.io.walkBottomUp
+import kotlin.io.walkTopDown
 import kotlin.test.assertFalse
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
@@ -29,7 +27,8 @@ class FilesTest {
         try {
             createTempDir("a")
             assert(false)
-        } catch(e: IllegalArgumentException) {}
+        } catch(e: IllegalArgumentException) {
+        }
 
         val dir2 = createTempDir("temp")
         assert(dir2.exists() && dir2.isDirectory() && dir2.name.endsWith(".tmp"))
@@ -49,7 +48,8 @@ class FilesTest {
         try {
             createTempFile("a")
             assert(false)
-        } catch(e: IllegalArgumentException) {}
+        } catch(e: IllegalArgumentException) {
+        }
         val file2 = createTempFile("temp")
         assert(file2.exists() && file2.name.endsWith(".tmp"))
 
@@ -81,7 +81,7 @@ class FilesTest {
             try {
                 val referenceNames =
                         listOf("", "1", "1/2", "1/3", "1/3/4.txt", "1/3/5.txt", "6", "7.txt", "8", "8/9.txt").map(
-                        {it -> it.separatorsToSystem()}).toHashSet()
+                                { it -> it.separatorsToSystem() }).toHashSet()
                 val namesTopDown = HashSet<String>()
                 for (file in basedir.walkTopDown()) {
                     val name = file.relativeTo(basedir)
@@ -106,7 +106,7 @@ class FilesTest {
             try {
                 val referenceNames =
                         listOf("", "1", "1/2", "1/3", "6", "8").map(
-                                {it -> it.separatorsToSystem()}).toHashSet()
+                                { it -> it.separatorsToSystem() }).toHashSet()
                 val namesTopDownEnter = HashSet<String>()
                 val namesTopDownLeave = HashSet<String>()
                 val namesTopDown = HashSet<String>()
@@ -116,12 +116,14 @@ class FilesTest {
                     namesTopDownEnter.add(name)
                     assertFalse(namesTopDownLeave.contains(name), "$name is left before entrance")
                 }
+
                 fun leave(file: File) {
                     val name = file.relativeTo(basedir)
                     assertFalse(namesTopDownLeave.contains(name), "$name is left twice")
                     namesTopDownLeave.add(name)
                     assertTrue(namesTopDownEnter.contains(name), "$name is left before entrance")
                 }
+
                 fun visit(file: File) {
                     val name = file.relativeTo(basedir)
                     if (file.isDirectory()) {
@@ -163,9 +165,10 @@ class FilesTest {
             try {
                 val referenceNames =
                         listOf("", "1", "1/2", "1/3", "6", "8").map(
-                                {it -> it.separatorsToSystem()}).toHashSet()
-                assertEquals(referenceNames, basedir.walkTopDown().filter{ it.isDirectory() }.map{
-                    it.relativeTo(basedir) }.toHashSet())
+                                { it -> it.separatorsToSystem() }).toHashSet()
+                assertEquals(referenceNames, basedir.walkTopDown().filter { it.isDirectory() }.map {
+                    it.relativeTo(basedir)
+                }.toHashSet())
             } finally {
                 basedir.deleteRecursively()
             }
@@ -177,7 +180,7 @@ class FilesTest {
             try {
                 val referenceNames =
                         listOf("", "1", "1/2", "1/3", "6", "8").map(
-                                {it -> it.separatorsToSystem()}).toHashSet()
+                                { it -> it.separatorsToSystem() }).toHashSet()
                 val namesTopDown = HashSet<String>()
                 fun enter(file: File) {
                     assertTrue(file.isDirectory())
@@ -202,7 +205,7 @@ class FilesTest {
             try {
                 val referenceNames =
                         listOf("", "1", "1/2", "1/3", "6", "8").map(
-                                {it -> it.separatorsToSystem()}).toHashSet()
+                                { it -> it.separatorsToSystem() }).toHashSet()
                 val namesTopDown = HashSet<String>()
                 fun enter(file: File) {
                     assertTrue(file.isDirectory())
@@ -229,9 +232,10 @@ class FilesTest {
                     // Everything ended with 3 is filtered
                     return (!file.name.endsWith("3"));
                 }
+
                 val referenceNames =
                         listOf("", "1", "1/2", "6", "7.txt", "8", "8/9.txt").map(
-                                {it -> it.separatorsToSystem()}).toHashSet()
+                                { it -> it.separatorsToSystem() }).toHashSet()
                 val namesTopDown = HashSet<String>()
                 for (file in basedir.walkTopDown().filter(::filter)) {
                     val name = file.relativeTo(basedir)
@@ -254,18 +258,18 @@ class FilesTest {
         test fun withTotalFilter() {
             val basedir = createTestFiles()
             try {
-                // Everything is filtered
-                fun filter(file: File) = false
                 val referenceNames: Set<String> = setOf()
                 val namesTopDown = HashSet<String>()
-                for (file in basedir.walkTopDown().filter(::filter)) {
+                // Everything is filtered
+                for (file in basedir.walkTopDown().filter({ false })) {
                     val name = file.relativeTo(basedir)
                     assertFalse(namesTopDown.contains(name), "$name is visited twice")
                     namesTopDown.add(name)
                 }
                 assertEquals(referenceNames, namesTopDown)
                 val namesBottomUp = HashSet<String>()
-                for (file in basedir.walkBottomUp().filter(::filter)) {
+                // Everything is filtered
+                for (file in basedir.walkBottomUp().filter({ false })) {
                     val name = file.relativeTo(basedir)
                     assertFalse(namesBottomUp.contains(name), "$name is visited twice")
                     namesBottomUp.add(name)
@@ -303,7 +307,7 @@ class FilesTest {
         test fun withReduce() {
             val basedir = createTestFiles()
             try {
-                val res = basedir.walkTopDown().reduce { (a, b) -> if (a.canonicalPath > b.canonicalPath) a else b }
+                val res = basedir.walkTopDown().reduce { a, b -> if (a.canonicalPath > b.canonicalPath) a else b }
                 assertTrue(res.endsWith("9.txt"), "Expected end with 9.txt actual: ${res.name}")
             } finally {
                 basedir.deleteRecursively()
@@ -321,27 +325,30 @@ class FilesTest {
                     stack.add(dir)
                     dirs.add(dir.relativeTo(basedir))
                 }
+
                 fun afterVisitDirectory(dir: File) {
                     assertEquals(stack.last(), dir)
                     stack.remove(stack.lastIndex)
                 }
+
                 fun visitFile(file: File) {
                     assert(stack.last().listFiles().contains(file), file)
                     files.add(file.relativeTo(basedir))
                 }
+
                 fun visitDirectoryFailed(dir: File, e: IOException) {
                     assertEquals(stack.last(), dir)
                     stack.remove(stack.lastIndex)
                     failed.add(dir.name)
                 }
                 basedir.walkTopDown().enter(::beforeVisitDirectory).leave(::afterVisitDirectory).
-                        fail(::visitDirectoryFailed).forEach{ it -> if (!it.isDirectory()) visitFile(it) }
+                        fail(::visitDirectoryFailed).forEach { it -> if (!it.isDirectory()) visitFile(it) }
                 assert(stack.isEmpty())
                 val sep = File.separator
                 for (fileName in array("", "1", "1${sep}2", "1${sep}3", "6", "8")) {
                     assert(dirs.contains(fileName), fileName)
                 }
-                for (fileName in array("1${sep}3${sep}4.txt", "1${sep}3${sep}4.txt",  "7.txt", "8${sep}9.txt")) {
+                for (fileName in array("1${sep}3${sep}4.txt", "1${sep}3${sep}4.txt", "7.txt", "8${sep}9.txt")) {
                     assert(files.contains(fileName), fileName)
                 }
 
@@ -349,7 +356,7 @@ class FilesTest {
                 files.clear()
                 dirs.clear()
                 basedir.walkTopDown().enter(::beforeVisitDirectory).leave(::afterVisitDirectory).maxDepth(1).
-                        forEach{ it -> if (it != basedir) visitFile(it) }
+                        forEach { it -> if (it != basedir) visitFile(it) }
                 assert(stack.isEmpty())
                 assert(dirs.size() == 1 && dirs.contains(""), dirs.size())
                 for (file in array("1", "6", "7.txt", "8")) {
@@ -362,7 +369,7 @@ class FilesTest {
                         files.clear()
                         dirs.clear()
                         basedir.walkTopDown().enter(::beforeVisitDirectory).leave(::afterVisitDirectory).
-                                fail(::visitDirectoryFailed).forEach{ it -> if (!it.isDirectory()) visitFile(it) }
+                                fail(::visitDirectoryFailed).forEach { it -> if (!it.isDirectory()) visitFile(it) }
                         assert(stack.isEmpty())
                         assert(failed.size() == 1 && failed.contains("1"), failed.size())
                         assert(dirs.size() == 4, dirs.size())
@@ -393,7 +400,7 @@ class FilesTest {
                     assert(it == basedir && visited.isEmpty() || visited.contains(it.getParentFile()), it)
                     visited.add(it)
                 }
-                basedir.walkTopDown().forEach( block )
+                basedir.walkTopDown().forEach(block)
                 assert(visited.size() == 10, visited.size())
 
             } finally {
@@ -412,7 +419,7 @@ class FilesTest {
                         assert(it == basedir && visited.isEmpty() || visited.contains(it.getParentFile()), it)
                         visited.add(it)
                     }
-                    basedir.walkTopDown().forEach( block )
+                    basedir.walkTopDown().forEach(block)
                     assert(visited.size() == 6, visited.size())
                 }
             } finally {
@@ -460,7 +467,7 @@ class FilesTest {
             try {
                 File(basedir, "8/4.txt".separatorsToSystem()).createNewFile()
                 var count = 0
-                basedir.walkTopDown().takeWhile{ it -> count == 0 }.forEach {
+                basedir.walkTopDown().takeWhile { it -> count == 0 }.forEach {
                     if (it.name == "4.txt") {
                         count++
                     }
@@ -511,10 +518,13 @@ class FilesTest {
             } finally {
                 dir.delete()
             }
-            try {
-                dir.walkTopDown()
-                assert(false)
-            } catch(e: FileNotFoundException) {}
+        }
+
+        test fun recurse() {
+            val set: MutableSet<String> = HashSet()
+            val dir = createTestFiles()
+            dir.recurse { set.add(it.path) }
+            assertEquals(10, set.size())
         }
     }
 
@@ -525,8 +535,12 @@ class FilesTest {
         createTempFile("temp2", ".java", dir)
         createTempFile("temp3", ".kt", dir)
 
+        // This line works only with Kotlin File.listFiles(filter)
         val result = dir.listFiles { it.getName().endsWith(".kt") }
         assertEquals(2, result!!.size())
+        // This line works both with Kotlin File.listFiles(filter) and the same Java function because of SAM
+        val result2 = dir.listFiles { it -> it.getName().endsWith(".kt") }
+        assertEquals(2, result2!!.size())
     }
 
     test fun relativeToTest() {
@@ -570,11 +584,10 @@ class FilesTest {
         val file1 = File("C:/dir1".separatorsToSystem())
         val file2 = File("D:/dir2".separatorsToSystem())
         try {
-            val winRelPath = file1.relativeTo(file2)
-            assert(file1.canonicalPath.charAt(0) == '/')
-            assertEquals("../../C:/dir1", winRelPath)
+            file1.relativeTo(file2)
+            assert(false);
         } catch (e: IllegalArgumentException) {
-            assert(Character.isLetter(file1.canonicalPath.charAt(0)))
+            // It's the thing we should get here
         } catch (e: IOException) {
             // The device is not ready (D) ==> DO NOTHING
         }
@@ -593,8 +606,8 @@ class FilesTest {
     private fun checkFileElements(f: File, root: File?, elements: List<String>) {
         var i = 0
         assertEquals(root, f.root)
-        for (elem in f) {
-            assertTrue(i < elements.size())
+        for (elem in f.filePathComponents().fileList) {
+            assertTrue(i < elements.size(), i.toString())
             assertEquals(elements[i++], elem.toString())
         }
         assertEquals(elements.size(), i)
@@ -602,11 +615,14 @@ class FilesTest {
 
     test fun fileIterator() {
         checkFileElements(File("/foo/bar"), File("/"), listOf("foo", "bar"))
+        checkFileElements(File("\\foo\\bar"), File("\\".separatorsToSystem()), listOf("foo", "bar"))
         checkFileElements(File("/foo/bar/gav"), File("/"), listOf("foo", "bar", "gav"))
         checkFileElements(File("/foo/bar/gav/"), File("/"), listOf("foo", "bar", "gav"))
         checkFileElements(File("bar/gav"), null, listOf("bar", "gav"))
-        checkFileElements(File("C:\\bar\\gav"), File("C:\\"), listOf("bar", "gav"))
-        checkFileElements(File("C:\\"), File("C:\\"), listOf())
+        checkFileElements(File("C:\\bar\\gav"), File("C:\\".separatorsToSystem()), listOf("bar", "gav"))
+        checkFileElements(File("C:/bar/gav"), File("C:/"), listOf("bar", "gav"))
+        checkFileElements(File("C:\\"), File("C:\\".separatorsToSystem()), listOf())
+        checkFileElements(File("C:/"), File("C:/"), listOf())
         checkFileElements(File("C:"), File("C:"), listOf())
         checkFileElements(File("//host.ru/home/mike"), File("//host.ru/home"), listOf("mike"))
         checkFileElements(File(""), null, listOf(""))
@@ -631,13 +647,18 @@ class FilesTest {
 
     test fun subPath() {
         assertEquals(File("mike"), File("//my.host.net/home/mike/temp").subPath(0, 1))
+        assertEquals(File("mike"), File("\\\\my.host.net\\home\\mike\\temp").subPath(0, 1))
         assertEquals(File("bar/gav"), File("/foo/bar/gav/hi").subPath(1, 3))
     }
 
     test fun normalize() {
         assertEquals(File("/foo/bar/baaz"), File("/foo/./bar/gav/../baaz").normalize())
+        assertEquals(File("/foo/bar/baaz"), File("/foo/bak/../bar/gav/../baaz").normalize())
         assertEquals(File("../../bar"), File("../foo/../../bar").normalize())
-        assertEquals(File("C:\\windows"), File("C:\\home\\..\\documents\\..\\windows").normalize())
+        // For Unix C:\windows is not correct so it's not the same as C:/windows
+        assertEquals(File("C:\\windows").separatorsToSystem(),
+                File("C:\\home\\..\\documents\\..\\windows").normalize().separatorsToSystem())
+        assertEquals(File("C:/windows"), File("C:/home/../documents/../windows").normalize())
         assertEquals(File("foo"), File("gav/bar/../../foo").normalize())
     }
 
@@ -645,16 +666,22 @@ class FilesTest {
         assertEquals(File("/foo/bar/gav"), File("/foo/bar").resolve("gav"))
         assertEquals(File("/foo/bar/gav"), File("/foo/bar/").resolve("gav"))
         assertEquals(File("/gav"), File("/foo/bar").resolve("/gav"))
-        assertEquals(File("C:\\Users\\Me\\Documents\\important.doc"),
-                File("C:\\Users\\Me").resolve("Documents\\important.doc"))
+        // For Unix C:\path is not correct so it's cannot be automatically converted
+        assertEquals(File("C:\\Users\\Me\\Documents\\important.doc").separatorsToSystem(),
+                File("C:\\Users\\Me").resolve("Documents\\important.doc").separatorsToSystem())
+        assertEquals(File("C:/Users/Me/Documents/important.doc"),
+                File("C:/Users/Me").resolve("Documents/important.doc"))
     }
 
     test fun resolveSibling() {
         assertEquals(File("/foo/gav"), File("/foo/bar").resolveSibling("gav"))
         assertEquals(File("/foo/gav"), File("/foo/bar/").resolveSibling("gav"))
         assertEquals(File("/gav"), File("/foo/bar").resolveSibling("/gav"))
-        assertEquals(File("C:\\Users\\Me\\Documents\\important.doc"),
-                File("C:\\Users\\Me\\profile.ini").resolveSibling("Documents\\important.doc"))
+        // For Unix C:\path is not correct so it's cannot be automatically converted
+        assertEquals(File("C:\\Users\\Me\\Documents\\important.doc").separatorsToSystem(),
+                File("C:\\Users\\Me\\profile.ini").resolveSibling("Documents\\important.doc").separatorsToSystem())
+        assertEquals(File("C:/Users/Me/Documents/important.doc"),
+                File("C:/Users/Me/profile.ini").resolveSibling("Documents/important.doc"))
     }
 
     test fun extension() {
@@ -701,7 +728,8 @@ class FilesTest {
         try {
             srcFile.copyTo(dstFile)
             assert(false)
-        } catch (e: FileAlreadyExistsException) {}
+        } catch (e: FileAlreadyExistsException) {
+        }
 
         var len = srcFile.copyTo(dstFile, overwrite = true)
         assertEquals(13L, len)
@@ -727,13 +755,15 @@ class FilesTest {
         try {
             srcFile.copyTo(dstFile)
             assert(false)
-        } catch (e: NoSuchFileException) {}
+        } catch (e: NoSuchFileException) {
+        }
 
         srcFile.mkdir()
         try {
             srcFile.copyTo(dstFile)
             assert(false)
-        } catch (e: IllegalArgumentException) {}
+        } catch (e: IllegalArgumentException) {
+        }
         srcFile.delete()
     }
 
@@ -787,7 +817,7 @@ class FilesTest {
 
             var conflicts = 0
             src.copyRecursively(dst) {
-                (file: File, e: IOException) ->
+                file: File, e: IOException ->
                 if (e is FileAlreadyExistsException) {
                     conflicts++
                     OnErrorAction.SKIP
@@ -802,7 +832,7 @@ class FilesTest {
                     dst.deleteRecursively()
                     var caught = false
                     assert(src.copyRecursively(dst) {
-                        (file: File, e: IOException) ->
+                        file: File, e: IOException ->
                         if (e is AccessDeniedException) {
                             caught = true
                             OnErrorAction.SKIP
@@ -826,12 +856,36 @@ class FilesTest {
             }
 
             assert(!src.copyRecursively(dst) {
-                (file: File, e: IOException) ->
+                file: File, e: IOException ->
                 OnErrorAction.TERMINATE
             })
         } finally {
             src.deleteRecursively()
             dst.deleteRecursively()
         }
+    }
+
+    test fun helpers1() {
+        val str = "123456789\n"
+        System.setIn(str.byteInputStream())
+        val reader = System.`in`.bufferedReader()
+        assertEquals("123456789", reader.readLine())
+        val stringReader = str.reader()
+        assertEquals('1', stringReader.read().toChar())
+        assertEquals('2', stringReader.read().toChar())
+        assertEquals('3', stringReader.read().toChar())
+    }
+
+    test fun helpers2() {
+        val file = createTempFile()
+        val writer = file.printWriter()
+        val str1 = "Hello, world!"
+        val str2 = "Everything is wonderful!"
+        writer.println(str1)
+        writer.println(str2)
+        writer.close()
+        val reader = file.bufferedReader()
+        assertEquals(str1, reader.readLine())
+        assertEquals(str2, reader.readLine())
     }
 }

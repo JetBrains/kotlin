@@ -1,6 +1,7 @@
 package kotlin.io
 
 import java.io.*
+import java.nio.charset.Charset
 import java.util.ArrayList
 
 /**
@@ -11,7 +12,7 @@ import java.util.ArrayList
  * If [directory] is not specified then the default temporary-file directory will be used.
  *
  * @return a file object corresponding to a newly-created directory.
- *
+*
  * @throws IOException in case of input/output error
  * @throws IllegalArgumentException if [prefix] is shorter than three symbols
  */
@@ -33,7 +34,7 @@ public fun createTempDir(prefix: String = "tmp", suffix: String? = null, directo
  * If [directory] is not specified then the default temporary-file directory will be used.
  *
  * @return a file object corresponding to a newly-created file.
- *
+*
  * @throws IOException in case of input/output error
  * @throws IllegalArgumentException if [prefix] is shorter than three symbols
  */
@@ -42,39 +43,37 @@ public fun createTempFile(prefix: String = "tmp", suffix: String? = null, direct
 }
 
 /**
- * @return this if this file is a directory, or the parent if it is a file inside a directory
- *
- * Note: this property looks strange
+ * Returns this if this file is a directory, or the parent if it is a file inside a directory
  */
 public val File.directory: File
     get() = if (isDirectory()) this else parent!!
 
 /**
- * @return parent of this abstract path name, or null if it has no parent
+ * Returns parent of this abstract path name, or null if it has no parent
  */
 public val File.parent: File?
     get() = getParentFile()
 
 /**
- * @return the canonical path of this file.
+ * Returns the canonical path of this file.
  */
 public val File.canonicalPath: String
     get() = getCanonicalPath()
 
 /**
- * @return the file name or "" for an empty name
+ * Returns the file name
  */
 public val File.name: String
     get() = getName()
 
 /**
- * @return the file path or "" for an empty name
+ * Returns the file path
  */
 public val File.path: String
     get() = getPath()
 
 /**
- * @return the extension of this file (not including the dot), or an empty string if it doesn't have one.
+ * Returns the extension of this file (not including the dot), or an empty string if it doesn't have one.
  */
 public val File.extension: String
     get() {
@@ -110,6 +109,12 @@ public fun String.allSeparatorsToSystem(): String {
     return separatorsToSystem().pathSeparatorsToSystem()
 }
 
+/** Creates a new reader for the string */
+public fun String.reader(): StringReader = StringReader(this)
+
+/** Creates a new byte input stream for the string */
+public fun String.byteInputStream(charset: Charset = Charsets.UTF_8): InputStream = ByteArrayInputStream(toByteArray(charset))
+
 /**
  * Returns a pathname of this file with all path separators replaced with File.pathSeparator
  *
@@ -120,7 +125,7 @@ public fun File.separatorsToSystem(): String {
 }
 
 /**
- * @return file's name without an extension.
+ * Returns file's name without an extension.
  */
 public val File.nameWithoutExtension: String
     get() = name.substringBeforeLast(".")
@@ -131,51 +136,43 @@ public val File.nameWithoutExtension: String
  * If this file matches the [base] file, then an empty string will be returned.
  *
  * @return relative path from [base] to this
- *
+*
  * @throws IllegalArgumentException if child and parent have different roots.
  */
 public fun File.relativeTo(base: File): String {
     // Check roots
-    if (root != base.root)
+    val components = filePathComponents()
+    val baseComponents = base.filePathComponents()
+    if (components.rootName != base.rootName)
         throw IllegalArgumentException("this and base files have different roots")
-    var it = iterator()
-    var baseIt = base.iterator()
-    var same = true
-    var sameComponents = 0
-    var baseComponents = 0
-    // Determine number of same components for this and base
-    // and total number of components for base
-    while (baseIt.hasNext()) {
-        baseComponents++
-        val baseName = baseIt.next()
-        if (same && it.hasNext()) {
-            if(it.next() == baseName) {
-                sameComponents++
-            } else {
-                same = false
-            }
-        } else {
-            same = false
-        }
-    }
+    var i = 0
+    while (i < components.size && i < baseComponents.size && components.fileList[i] == baseComponents.fileList[i])
+        i++
+    val sameCount = i
+    val baseCount = baseComponents.size
     // Add all ..
     var res = ""
-    for (i in sameComponents+1..baseComponents-1)
+    for (j in sameCount + 1..baseCount - 1)
         res += (".." + File.separator)
-    val components = nameCount
     // If .. is the last element, no separator should present
-    if (baseComponents > sameComponents) {
-        res += if (sameComponents < components) ".." + File.separator else ".."
+    if (baseCount > sameCount) {
+        res += if (sameCount < components.size) ".." + File.separator else ".."
     }
     // Add remaining this components
-    if (sameComponents < components-1)
-        res += (subPath(sameComponents, components-1).toString() + File.separator)
+    if (sameCount < components.size - 1)
+        res += (components.subPath(sameCount, components.size - 1).toString() + File.separator)
     // The last one should be without separator
-    if (sameComponents < components)
-        res += subPath(components-1, components).toString()
+    if (sameCount < components.size)
+        res += components.subPath(components.size - 1, components.size).toString()
     return res
 }
 
+/**
+ * Calculates the relative path for this file from [descendant] file.
+ * Note that the [descendant] file is treated as a directory.
+ * If this file matches the [descendant] directory or does not belong to it,
+ * then an empty string will be returned.
+ */
 deprecated("Use relativeTo() function instead")
 public fun File.relativePath(descendant: File): String {
     val prefix = directory.canonicalPath
@@ -192,7 +189,7 @@ public fun File.relativePath(descendant: File): String {
 
 /**
  * Copies this file to the given output [dst], returning the number of bytes copied.
- * 
+ *
  * If some directories on a way to the [dst] are missing, then they will be created.
  * If the [dst] file already exists, then this function will fail unless [overwrite] argument is set to true and
  * the [dst] file is not a non-empty directory.
@@ -215,8 +212,8 @@ public fun File.copyTo(dst: File, overwrite: Boolean = false, bufferSize: Int = 
     } else if (dst.exists()) {
         if (!overwrite) {
             throw FileAlreadyExistsException(file = this,
-                                             other = dst,
-                                             reason = "The destination file already exists")
+                    other = dst,
+                    reason = "The destination file already exists")
         } else if (dst.isDirectory() && dst.listFiles().any()) {
             // In this case file should be copied *into* this directory,
             // no matter whether it is empty or not
@@ -246,6 +243,8 @@ public enum class OnErrorAction {
     TERMINATE
 }
 
+private class TerminateException(file: File) : FileSystemException(file) {}
+
 /**
  * Copies this file with all its children to the specified destination [dst] path.
  * If some directories on the way to the destination are missing, then they will be created.
@@ -261,83 +260,68 @@ public enum class OnErrorAction {
  * IOException - if some problems occur when copying.
  *
  * @return false if the copying was terminated, true otherwise.
- *
- * Note that if this function fails, then partial copying may have taken place.
+*
+* Note that if this function fails, then partial copying may have taken place.
  */
 public fun File.copyRecursively(dst: File,
                                 onError: (File, IOException) -> OnErrorAction =
-                                {(file: File, e: IOException) -> throw e }
-                               ): Boolean {
-    fun copy(src: File): OnErrorAction? {
-        if (!src.exists()) {
-            return onError(this, NoSuchFileException(file = this, reason = "The source file doesn't exist"))
-        }
-        val relPath = src.relativeTo(this@copyRecursively)
-        val dstFile = File(dst, relPath)
-        if (dstFile.exists() && !(src.isDirectory() && dstFile.isDirectory())) {
-            return onError(dstFile, FileAlreadyExistsException(file = src,
-                                                               other = dstFile,
-                                                               reason = "The destination file already exists"))
-        }
-        try {
-            if (src.isDirectory()) {
-                dstFile.mkdirs()
-                val children = src.listFiles()
-                if (children == null) {
-                    return onError(src, AccessDeniedException(file = src,
-                                                              reason = "Cannot list files in a directory"))
-                }
-                for (child in children) {
-                    val result = copy(child)
-                    if (result == OnErrorAction.TERMINATE) {
-                        return result
+                                { file, e -> throw e }
+): Boolean {
+    if (!exists()) {
+        return onError(this, NoSuchFileException(file = this, reason = "The source file doesn't exist")) !=
+                OnErrorAction.TERMINATE
+    }
+    try {
+        for (src in walkTopDown().fail { f, e -> if (onError(f, e) == OnErrorAction.TERMINATE) throw TerminateException(f) }) {
+            if (!src.exists()) {
+                if (onError(src, NoSuchFileException(file = src, reason = "The source file doesn't exist")) ==
+                        OnErrorAction.TERMINATE)
+                    return false
+            } else {
+                val relPath = src.relativeTo(this)
+                val dstFile = File(dst, relPath)
+                if (dstFile.exists() && !(src.isDirectory() && dstFile.isDirectory())) {
+                    if (onError(dstFile, FileAlreadyExistsException(file = src,
+                            other = dstFile,
+                            reason = "The destination file already exists")) == OnErrorAction.TERMINATE)
+                        return false
+                } else if (src.isDirectory()) {
+                    dstFile.mkdirs()
+                } else {
+                    if (src.copyTo(dstFile, true) != src.length()) {
+                        if (onError(src, IOException("src.length() != dst.length()")) == OnErrorAction.TERMINATE)
+                            return false
                     }
                 }
-            } else {
-                if (src.copyTo(dstFile, true) != src.length()) {
-                    return onError(src, IOException("src.length() != dst.length()"))
-                }
             }
-        } catch (e: IOException) {
-            return onError(src, e)
         }
-        return null
+        return true
+    } catch (e: TerminateException) {
+        return false
     }
-
-    val result = copy(this)
-
-    return result != OnErrorAction.TERMINATE
 }
 
 /**
  * Delete this file with all its children.
+ * Note that if this operation fails then partial deletion may have taken place.
  *
  * @return true if the file or directory is successfully deleted, false otherwise.
- *
- * Note that if this operation fails then partial deletion may have taken place.
  */
 public fun File.deleteRecursively(): Boolean {
-    if (isDirectory()) {
-        listFiles()?.forEach { it.deleteRecursively() }
-    }
-    return delete()
+    var result = exists()
+    walkBottomUp().forEach { if (!it.delete()) result = false }
+    return result
 }
 
 /**
- * @return an array of files and directories in the directory that match the specified [filter]
+ * Returns an array of files and directories in the directory that match the specified [filter]
  * or null if this file does not denote a directory.
  */
 public fun File.listFiles(filter: (file: File) -> Boolean): Array<File>? = listFiles(
         object : FileFilter {
             override fun accept(file: File) = filter(file)
         }
-                                                                                    )
-
-/**
- * @return an iterator to go through pathname components, e.g.
- * /foo/bar/gav has components foo, bar and gav
- */
-public fun File.iterator(): Iterator<File> = FileIterator(this)
+)
 
 /**
  * Determines whether this file belongs to the same root as [o]
@@ -348,22 +332,14 @@ public fun File.iterator(): Iterator<File> = FileIterator(this)
  * @return true if this path starts with [o] path, false otherwise
  */
 public fun File.startsWith(o: File): Boolean {
-    val it = FileIterator(this)
-    val otherIt = FileIterator(o)
-    // Roots must be same OR other path can have no root
-    if (it.root != otherIt.root && otherIt.root != "")
+    val components = filePathComponents()
+    val otherComponents = o.filePathComponents()
+    if (components.rootName != otherComponents.rootName && otherComponents.rootName != "")
         return false
-    // Other path is empty
-    if (!otherIt.hasNext())
-        return true
-    val count = this.nameCount
-    val otherCount = o.nameCount
-    // This path is shorted than the other
-    if (count < otherCount)
+    if (components.size < otherComponents.size)
         return false
-    // Compare first elements until other ends
-    while (otherIt.hasNext()) {
-        if (it.next() != otherIt.next())
+    for (i in 0..otherComponents.size - 1) {
+        if (components.fileList[i] != otherComponents.fileList[i])
             return false
     }
     return true
@@ -388,32 +364,17 @@ public fun File.startsWith(o: String): Boolean = startsWith(File(o))
  * @return true if this path ends with [o] path, false otherwise
  */
 public fun File.endsWith(o: File): Boolean {
-    val it = FileIterator(this)
-    val otherIt = FileIterator(o)
-    // Roots must be same OR other path can have no root
-    if (it.root != otherIt.root && otherIt.root != "")
+    val components = filePathComponents()
+    val otherComponents = o.filePathComponents()
+    if (components.rootName != otherComponents.rootName && otherComponents.rootName != "")
         return false
-    // Other path is empty
-    if (!otherIt.hasNext())
-        return true
-    var theirs = otherIt.next()
-    val count = this.nameCount
-    val otherCount = o.nameCount
-    // This path is shorted than the other
-    if (count < otherCount)
+    val shift = components.size - otherComponents.size
+    if (shift < 0)
         return false
-    var ours = it.next()
-    // Move forward to have same number of elements remaining
-    for (i in 0..count-otherCount-1) {
-        ours = it.next()
+    for (i in 0..otherComponents.size - 1) {
+        if (components.fileList[i + shift] != otherComponents.fileList[i])
+            return false
     }
-    // Check all next elements are same, until the end
-    while (ours == theirs && it.hasNext() && otherIt.hasNext()) {
-        ours = it.next()
-        theirs = otherIt.next()
-    }
-    if (ours != theirs || it.hasNext() || otherIt.hasNext())
-        return false
     return true
 }
 
@@ -434,17 +395,15 @@ public fun File.endsWith(o: String): Boolean = endsWith(File(o))
  * @return normalized pathname with . and possibly .. removed
  */
 public fun File.normalize(): File {
-    val rootName = rootName
-    val list: MutableList<String> = ArrayList()
-    for (elem in this)
-        if (elem.toString() != ".")
-            list.add(elem.toString())
+    val components = filePathComponents()
+    val rootName = components.rootName
+    val list: MutableList<String> = components.fileList.filter { it.toString() != "." }.map { it.toString() }.toLinkedList()
     var first = 0
     var dots = list.subList(first, list.size()).indexOf("..")
     while (dots != -1) {
         if (dots > 0) {
-            list.remove(dots+first)
-            list.remove(dots+first-1)
+            list.remove(dots + first)
+            list.remove(dots + first - 1)
         } else {
             first++
         }
@@ -474,10 +433,7 @@ public fun File.resolve(o: File): File {
     if (o.root != null)
         return o
     val ourName = toString()
-    if (ourName.endsWith(File.separatorChar))
-        return File(ourName + o)
-    else
-        return File(ourName + File.separatorChar + o)
+    return if (ourName.endsWith(File.separatorChar)) File(ourName + o) else File(ourName + File.separatorChar + o)
 }
 
 /**
@@ -497,11 +453,14 @@ public fun File.resolve(o: String): File = resolve(File(o))
  * @return concatenated this.parent and [o] paths, or just [o] if it's absolute or this has no parent
  */
 public fun File.resolveSibling(o: File): File {
-    val parentFile = parent
-    if (parentFile != null)
-        return parentFile.resolve(o)
-    else
-        return o
+    val components = filePathComponents()
+    val rootName = components.rootName
+    val parentFile = when (components.size) {
+        0 -> null
+        1 -> File(rootName)
+        else -> File(rootName + components.subPath(0, components.size - 1).path)
+    }
+    return if (parentFile != null) parentFile.resolve(o) else o
 }
 
 /**

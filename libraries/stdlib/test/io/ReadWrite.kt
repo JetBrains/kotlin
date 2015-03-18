@@ -71,12 +71,12 @@ class ReadWriteTest {
         writer.close()
 
         //file.replaceText("Hello\nWorld")
-        file.forEachBlock{ (arr: ByteArray, size: Int) ->
+        file.forEachBlock {(arr: ByteArray, size: Int) ->
             assertTrue(size >= 11 && size <= 12, size.toString())
             assertTrue(arr.contains('W'.toByte()))
         }
         val list = ArrayList<String>()
-        file.forEachLine{
+        file.forEachLine {
             list.add(it)
         }
         assertEquals(arrayListOf("Hello", "World"), list)

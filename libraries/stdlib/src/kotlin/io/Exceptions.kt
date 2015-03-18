@@ -20,7 +20,7 @@ private fun constructMessage(file: File, other: File?, reason: String?): String 
 open public class FileSystemException(public val file: File,
                                       public val other: File? = null,
                                       public val reason: String? = null
-                                     ) : IOException(constructMessage(file, other, reason))
+) : IOException(constructMessage(file, other, reason))
 
 /**
  * An exception class which is used when some file to create or copy to already exists
