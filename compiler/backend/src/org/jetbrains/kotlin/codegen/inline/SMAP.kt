@@ -35,12 +35,17 @@ public class SMAPBuilder(val source: String,
     val header = "SMAP\n$source\nKotlin\n*S Kotlin"
 
     fun build(): String? {
-        if (fileMappings.isEmpty()) {
+        var realMappings = fileMappings.filter {
+            val mappings = it.lineMappings
+            mappings.isNotEmpty() && mappings.first() != RangeMapping.SKIP
+        }
+
+        if (realMappings.isEmpty()) {
             return null;
         }
 
-        val fileIds = "*F" + fileMappings.mapIndexed {(id, file) -> "\n${file.toSMAPFile(id + 1)}" }.join("")
-        val lineMappings = "*L" + fileMappings.map { it.toSMAPMapping() }.join("")
+        val fileIds = "*F" + realMappings.mapIndexed {(id, file) -> "\n${file.toSMAPFile(id + 1)}" }.join("")
+        val lineMappings = "*L" + realMappings.map { it.toSMAPMapping() }.join("")
 
         return "$header\n$fileIds\n$lineMappings\n*E\n"
     }
@@ -212,6 +217,10 @@ public open class DefaultSourceMapper(val sourceInfo: SourceInfo, override val p
     }
 
     override fun visitLineNumber(iv: MethodVisitor, lineNumber: Int, start: Label) {
+        if (lineNumber < 0) {
+            //no source information, so just skip this linenumber
+            return
+        }
         val mappedLineIndex = createMapping(lineNumber)
         iv.visitLineNumber(mappedLineIndex, start)
     }
@@ -305,7 +314,7 @@ class RawFileMapping(val name: String, val path: String) {
     }
 }
 
-public class FileMapping(val name: String, val path: String) {
+open public class FileMapping(val name: String, val path: String) {
     val lineMappings = arrayListOf<RangeMapping>()
 
     var id = -1;
@@ -314,18 +323,24 @@ public class FileMapping(val name: String, val path: String) {
         lineMappings.add(lineMapping)
         lineMapping.parent = this
     }
+
+    public object SKIP : FileMapping("no-source-info", "no-source-info") {
+        init {
+            addRangeMapping(RangeMapping.SKIP)
+        }
+    }
 }
 
 //TODO comparable
-data public class RangeMapping(val source: Int, val dest: Int, var range: Int = 1) {
+data open public class RangeMapping(val source: Int, val dest: Int, var range: Int = 1) {
 
     var parent: FileMapping? = null;
 
-    fun contains(destLine: Int): Boolean {
+    open fun contains(destLine: Int): Boolean {
         return dest <= destLine && destLine < dest + range
     }
 
-    fun map(destLine: Int): Int {
+    open fun map(destLine: Int): Int {
         return source + (destLine - dest)
     }
 
@@ -340,6 +355,16 @@ data public class RangeMapping(val source: Int, val dest: Int, var range: Int = 
             else {
                 return res
             }
+        }
+    }
+
+    public object SKIP : RangeMapping(-1, -1, 1) {
+        override fun contains(destLine: Int): Boolean {
+            return true
+        }
+
+        override fun map(destLine: Int): Int {
+            return -1
         }
     }
 }

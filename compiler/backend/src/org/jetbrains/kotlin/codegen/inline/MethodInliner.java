@@ -330,6 +330,13 @@ public class MethodInliner {
             }
 
             @Override
+            public void visitLineNumber(int line, @NotNull Label start) {
+                if(isInliningLambda || InlineCodegenUtil.GENERATE_SMAP) {
+                    super.visitLineNumber(line, start);
+                }
+            }
+
+            @Override
             public void visitLocalVariable(
                     @NotNull String name, @NotNull String desc, String signature, @NotNull Label start, @NotNull Label end, int index
             ) {

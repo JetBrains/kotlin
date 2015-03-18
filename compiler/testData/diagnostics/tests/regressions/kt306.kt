@@ -1,14 +1,14 @@
 // KT-306 Ambiguity when different this's have same-looking functions
 
 fun test() {
-    <!UNUSED_FUNCTION_LITERAL!>{Foo.() ->
+    <!UNUSED_FUNCTION_LITERAL!>{<!DEPRECATED_LAMBDA_SYNTAX!>Foo.()<!> ->
         bar();
-        {Barr.() ->
+        {<!DEPRECATED_LAMBDA_SYNTAX!>Barr.()<!> ->
             this.bar()
             bar()
         }
     }<!>
-    <!UNUSED_FUNCTION_LITERAL!>{Barr.() ->
+    <!UNUSED_FUNCTION_LITERAL!>{<!DEPRECATED_LAMBDA_SYNTAX!>Barr.()<!> ->
         bar()
     }<!>
 }

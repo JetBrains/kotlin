@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.lang.resolve.android
+package org.jetbrains.kotlin.plugin.android
 
 import com.intellij.ide.highlighter.XmlFileType
-import com.intellij.openapi.components.ServiceManager
-import com.intellij.psi.impl.*
-import com.intellij.openapi.util.*
-import com.intellij.openapi.roots.*
-import com.intellij.openapi.module.*
-import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ProjectRootManager
+import com.intellij.openapi.util.DefaultModificationTracker
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.resolve.SimpleModificationTracker
+import com.intellij.psi.impl.PsiTreeChangeEventImpl
+import com.intellij.psi.impl.PsiTreeChangePreprocessor
+import org.jetbrains.kotlin.lang.resolve.android.AndroidResourceManager
 
-public class AndroidPsiTreeChangePreprocessor : PsiTreeChangePreprocessor, SimpleModificationTracker() {
+public class AndroidPsiTreeChangePreprocessor : PsiTreeChangePreprocessor, DefaultModificationTracker() {
 
     class object {
         private val HANDLED_EVENTS = setOf(

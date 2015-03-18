@@ -46,6 +46,18 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/formatter"), Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), true);
         }
 
+        @TestMetadata("AnonymousInitializers.after.kt")
+        public void testAnonymousInitializers() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/AnonymousInitializers.after.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("AnonymousInitializersLineBreak.after.kt")
+        public void testAnonymousInitializersLineBreak() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/AnonymousInitializersLineBreak.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ArrayAccess.after.kt")
         public void testArrayAccess() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/ArrayAccess.after.kt");
@@ -703,6 +715,12 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
     public static class FormatterInverted extends AbstractJetFormatterTest {
         public void testAllFilesPresentInFormatterInverted() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/formatter"), Pattern.compile("^([^\\.]+)\\.after\\.inv\\.kt.*$"), true);
+        }
+
+        @TestMetadata("AnonymousInitializersLineBreak.after.inv.kt")
+        public void testAnonymousInitializersLineBreak() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/AnonymousInitializersLineBreak.after.inv.kt");
+            doTestInverted(fileName);
         }
 
         @TestMetadata("BinaryExpressions.after.inv.kt")

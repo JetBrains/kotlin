@@ -43,8 +43,8 @@ public class KotlinDefinitionsSearcher implements QueryExecutor<PsiElement, Defi
             return processClassImplementations((JetClass) element, consumer);
         }
 
-        if (element instanceof JetNamedFunction) {
-            return processFunctionImplementations((JetNamedFunction) element, scope, consumer);
+        if (element instanceof JetNamedFunction || element instanceof JetSecondaryConstructor) {
+            return processFunctionImplementations((JetFunction) element, scope, consumer);
         }
 
         if (element instanceof JetProperty) {
@@ -74,7 +74,7 @@ public class KotlinDefinitionsSearcher implements QueryExecutor<PsiElement, Defi
         return true;
     }
 
-    private static boolean processFunctionImplementations(final JetNamedFunction function, SearchScope scope, Processor<PsiElement> consumer) {
+    private static boolean processFunctionImplementations(final JetFunction function, SearchScope scope, Processor<PsiElement> consumer) {
         PsiMethod psiMethod = ApplicationManager.getApplication().runReadAction(new Computable<PsiMethod>() {
             @Override
             public PsiMethod compute() {

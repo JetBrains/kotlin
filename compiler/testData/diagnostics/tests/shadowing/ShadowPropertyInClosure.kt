@@ -1,3 +1,3 @@
 val i = 17
 
-val f = { (): Int -> var i = 17; i }
+val f: () -> Int = { var i = 17; i }

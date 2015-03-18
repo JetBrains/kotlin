@@ -1,0 +1,84 @@
+JetFile: initRecovery.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('A')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      ANONYMOUS_INITIALIZER
+        PsiElement(init)('init')
+        PsiErrorElement:Expecting '{' after 'init'
+          <empty list>
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('B')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      ANONYMOUS_INITIALIZER
+        MODIFIER_LIST
+          ANNOTATION_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Ann')
+        PsiWhiteSpace(' ')
+        PsiElement(init)('init')
+        PsiErrorElement:Expecting '{' after 'init'
+          <empty list>
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('x')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace('\n    ')
+      ANONYMOUS_INITIALIZER
+        PsiElement(init)('init')
+        PsiErrorElement:Expecting '{' after 'init'
+          <empty list>
+      PsiWhiteSpace('\n    ')
+      FUN
+        PsiElement(fun)('fun')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('foo')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      ANONYMOUS_INITIALIZER
+        PsiElement(init)('init')
+        PsiErrorElement:Expecting '{' after 'init'
+          <empty list>
+      PsiWhiteSpace('\n    ')
+      ANONYMOUS_INITIALIZER
+        PsiElement(init)('init')
+        PsiErrorElement:Expecting '{' after 'init'
+          <empty list>
+      PsiWhiteSpace('\n    ')
+      ANONYMOUS_INITIALIZER
+        PsiElement(init)('init')
+        PsiWhiteSpace(' ')
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

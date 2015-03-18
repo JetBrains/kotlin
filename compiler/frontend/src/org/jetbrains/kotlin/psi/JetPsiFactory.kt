@@ -230,8 +230,10 @@ public class JetPsiFactory(private val project: Project) {
     }
 
     public fun createAnonymousInitializer(): JetClassInitializer {
-        return createClass("class A { {} }").getAnonymousInitializers().first()
+        return createClass("class A { init {} }").getAnonymousInitializers().first()
     }
+
+    public fun createInitKeyword(): PsiElement = createAnonymousInitializer().getInitKeyword()!!
 
     public fun createEmptyClassBody(): JetClassBody {
         return createClass("class A(){}").getBody()!!
@@ -357,6 +359,11 @@ public class JetPsiFactory(private val project: Project) {
 
     public fun createDelegatorToSuperCall(text: String): JetDelegatorToSuperCall {
         return createClass("class A: $text").getDelegationSpecifiers().first() as JetDelegatorToSuperCall
+    }
+
+    public fun createConstructorDelegationCall(text: String): JetConstructorDelegationCall {
+        val colonOrEmpty = if (text.isEmpty()) "" else ": "
+        return createClass("class A { constructor()$colonOrEmpty$text {}").getSecondaryConstructors().first().getDelegationCall()!!
     }
 
     public inner class IfChainBuilder() {

@@ -103,8 +103,8 @@ public class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStructure {
                     Collections.singleton((PsiMethod) element), descriptor, methodToDescriptorMap, searchScope, true
             );
         }
-        if (element instanceof JetNamedFunction) {
-            PsiMethod lightMethod = LightClassUtil.getLightClassMethod((JetNamedFunction) element);
+        if (element instanceof JetNamedFunction || element instanceof JetSecondaryConstructor) {
+            PsiMethod lightMethod = LightClassUtil.getLightClassMethod((JetFunction) element);
             processPsiMethodCallers(Collections.singleton(lightMethod), descriptor, methodToDescriptorMap, searchScope, false);
         }
         if (element instanceof JetProperty) {

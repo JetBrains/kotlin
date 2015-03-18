@@ -1087,7 +1087,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private void generateSecondaryConstructor(@NotNull ConstructorDescriptor constructorDescriptor) {
         ConstructorContext constructorContext = context.intoConstructor(constructorDescriptor);
 
-        functionCodegen.generateMethod(OtherOrigin(myClass, constructorDescriptor), constructorDescriptor, constructorContext,
+        functionCodegen.generateMethod(OtherOrigin(descriptorToDeclaration(constructorDescriptor), constructorDescriptor),
+                                       constructorDescriptor, constructorContext,
                                        new FunctionGenerationStrategy.CodegenBased<ConstructorDescriptor>(state, constructorDescriptor) {
                                            @Override
                                            public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {

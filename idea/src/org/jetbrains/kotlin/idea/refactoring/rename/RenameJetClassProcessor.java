@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.refactoring.rename;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import org.jetbrains.annotations.NotNull;
@@ -27,15 +28,17 @@ import org.jetbrains.kotlin.asJava.KotlinLightClass;
 import org.jetbrains.kotlin.asJava.KotlinLightClassForExplicitDeclaration;
 import org.jetbrains.kotlin.asJava.KotlinLightClassForPackage;
 import org.jetbrains.kotlin.idea.JetBundle;
+import org.jetbrains.kotlin.psi.JetClass;
 import org.jetbrains.kotlin.psi.JetClassOrObject;
 import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.JetSecondaryConstructor;
 
 import java.util.Map;
 
 public class RenameJetClassProcessor extends RenameKotlinPsiProcessor {
     @Override
     public boolean canProcessElement(@NotNull PsiElement element) {
-        return element instanceof JetClassOrObject || element instanceof KotlinLightClass;
+        return element instanceof JetClassOrObject || element instanceof KotlinLightClass || element instanceof JetSecondaryConstructor;
     }
 
     @Nullable
@@ -82,6 +85,9 @@ public class RenameJetClassProcessor extends RenameKotlinPsiProcessor {
             else {
                 assert false : "Should not be suggested to rename element of type " + element.getClass() + " " + element;
             }
+        }
+        else if (element instanceof JetSecondaryConstructor) {
+            return PsiTreeUtil.getParentOfType(element, JetClassOrObject.class);
         }
 
         return (JetClassOrObject) element;

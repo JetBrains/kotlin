@@ -18,6 +18,19 @@
     <build>
         <sourceDirectory>target/copied-sources</sourceDirectory>
 
+        <resources>
+            <resource>
+                <directory>${basedir}/../../../dist/builtins</directory>
+                <includes>
+                    <include>**/*.kotlin_*</include>
+                </includes>
+                <excludes>
+                    <exclude>kotlin/reflect/**/*</exclude>
+                    <exclude>kotlin/internal/**/*</exclude>
+                </excludes>
+            </resource>
+        </resources>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -30,7 +43,7 @@
                         <phase>process-sources</phase>
                         <configuration>
                             <target>
-                                <delete dir="${basedir}/target/copied-sources" failonerror="false" />
+                                <delete dir="${basedir}/target/copied-sources" failonerror="false"/>
                                 <copy todir="${basedir}/target/copied-sources">
                                     <fileset dir="${basedir}/../../../core/builtins/src"/>
                                     <fileset dir="${basedir}/../../../core/runtime.jvm/src"/>

@@ -230,6 +230,8 @@ public class DefaultErrorMessages {
 
         MAP.put(FUNCTION_EXPRESSION_PARAMETER_WITH_DEFAULT_VALUE, "A function expression is not allowed to specify default values for its parameters");
         MAP.put(USELESS_VARARG_ON_PARAMETER, "Vararg on this parameter is useless");
+        MAP.put(DEPRECATED_LAMBDA_SYNTAX,
+                "This syntax for lambda is deprecated. Use short lambda notation {a[: Int], b[: String] -> ...} or function expression instead.");
 
         MAP.put(PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT, "Projections are not allowed on type arguments of functions and properties");
         MAP.put(SUPERTYPE_NOT_INITIALIZED, "This type has a constructor, and thus must be initialized here");

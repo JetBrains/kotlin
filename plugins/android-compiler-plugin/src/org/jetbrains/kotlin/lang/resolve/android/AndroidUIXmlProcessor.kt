@@ -63,13 +63,7 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
 
     public abstract val resourceManager: AndroidResourceManager
 
-    public abstract val psiTreeChangePreprocessor: PsiTreeChangePreprocessor
-
-    private val cachedSources: CachedValue<List<String>> by Delegates.lazy {
-        cachedValue {
-            Result.create(parse(), psiTreeChangePreprocessor)
-        }
-    }
+    protected abstract val cachedSources: CachedValue<List<String>>
 
     private val cachedJetFiles: CachedValue<List<JetFile>> by Delegates.lazy {
         cachedValue {
@@ -152,7 +146,7 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
 
     private fun renderClearCacheFunction(receiver: String) = "public fun $receiver.${AndroidConst.CLEAR_FUNCTION_NAME}() {}\n"
 
-    private fun <T> cachedValue(result: () -> CachedValueProvider.Result<T>): CachedValue<T> {
+    protected fun <T> cachedValue(result: () -> CachedValueProvider.Result<T>): CachedValue<T> {
         return CachedValuesManager.getManager(project).createCachedValue(result, false)
     }
 

@@ -98,8 +98,8 @@ public class KotlinReferencesSearcher extends QueryExecutorBase<PsiReference, Re
         if (element instanceof JetClassOrObject) {
             processJetClassOrObject((JetClassOrObject) element, queryParameters);
         }
-        else if (element instanceof JetNamedFunction) {
-            final JetNamedFunction function = (JetNamedFunction) element;
+        else if (element instanceof JetNamedFunction || element instanceof JetSecondaryConstructor) {
+            final JetFunction function = (JetFunction) element;
             String name = function.getName();
             if (name != null) {
                 PsiMethod method = ApplicationManager.getApplication().runReadAction(new Computable<PsiMethod>() {

@@ -2,7 +2,7 @@
 package o
 
 class TestFunctionLiteral {
-    val sum: (Int) -> Int = { (x: Int) ->
+    val sum: (Int) -> Int = { x: Int ->
         sum(x - 1) + x
     }
     val foo: () -> Unit = @l ({ foo() })

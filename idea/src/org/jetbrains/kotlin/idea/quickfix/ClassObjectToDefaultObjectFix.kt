@@ -25,19 +25,19 @@ import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 
 public class ClassObjectToCompanionObjectFix(private val elem: JetObjectDeclaration) : JetIntentionAction<JetObjectDeclaration>(elem) {
-    override fun getText(): String = JetBundle.message("migrate.class.object.to.default")
+    override fun getText(): String = JetBundle.message("migrate.class.object.to.companion")
 
-    override fun getFamilyName(): String = JetBundle.message("migrate.class.object.to.default.family")
+    override fun getFamilyName(): String = JetBundle.message("migrate.class.object.to.companion.family")
 
     override fun invoke(project: Project, editor: Editor, file: JetFile) {
-        classKeywordToDefaultModifier(elem)
+        classKeywordToCompanionModifier(elem)
     }
 
     class object Factory : JetSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic) =
                 (diagnostic.getPsiElement() as? JetObjectDeclaration)?.let { ClassObjectToCompanionObjectFix(it) }
 
-        fun classKeywordToDefaultModifier(objectDeclaration: JetObjectDeclaration) {
+        fun classKeywordToCompanionModifier(objectDeclaration: JetObjectDeclaration) {
             objectDeclaration.getClassKeyword()?.delete()
             if (!objectDeclaration.hasModifier(JetTokens.COMPANION_KEYWORD)) {
                 objectDeclaration.addModifier(JetTokens.COMPANION_KEYWORD)
@@ -47,9 +47,9 @@ public class ClassObjectToCompanionObjectFix(private val elem: JetObjectDeclarat
 }
 
 public class ClassObjectToCompanionObjectInWholeProjectFix(private val elem: JetObjectDeclaration) : JetIntentionAction<JetObjectDeclaration>(elem) {
-    override fun getText(): String = JetBundle.message("migrate.class.object.to.default.in.whole.project")
+    override fun getText(): String = JetBundle.message("migrate.class.object.to.companion.in.whole.project")
 
-    override fun getFamilyName(): String = JetBundle.message("migrate.class.object.to.default.in.whole.project.family")
+    override fun getFamilyName(): String = JetBundle.message("migrate.class.object.to.companion.in.whole.project.family")
 
     override fun invoke(project: Project, editor: Editor, file: JetFile) {
         val files = PluginJetFilesProvider.allFilesInProject(file.getProject())
@@ -61,7 +61,7 @@ public class ClassObjectToCompanionObjectInWholeProjectFix(private val elem: Jet
         override fun visitObjectDeclaration(objectDeclaration: JetObjectDeclaration) {
             objectDeclaration.acceptChildren(this)
             if (objectDeclaration.getClassKeyword() != null) {
-                ClassObjectToCompanionObjectFix.classKeywordToDefaultModifier(objectDeclaration)
+                ClassObjectToCompanionObjectFix.classKeywordToCompanionModifier(objectDeclaration)
             }
         }
     }

@@ -8,7 +8,7 @@ private fun <T> test(value: T, extf: String.(value: T)->Unit) {
 }
 
 fun main(args: Array<String>) {
-    test(1, {(value) -> println(value)})
+    test(1, {value -> println(value)})
 }
 
 fun tests() {

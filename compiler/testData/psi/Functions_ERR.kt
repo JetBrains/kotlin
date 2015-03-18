@@ -6,3 +6,4 @@ fun [a()] T.foo<, T, , T>(a : foo) : bar
 fun [a()] T.foo<T, T>(, a : foo, , a: b) : bar
 
 fun foo() : = a;
+fun foo() = ;

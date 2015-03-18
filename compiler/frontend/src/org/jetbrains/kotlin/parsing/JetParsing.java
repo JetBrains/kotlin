@@ -846,7 +846,12 @@ public class JetParsing extends AbstractJetParsing {
         }
         else if (at(INIT_KEYWORD)) {
             advance(); // init
-            parseBlock();
+            if (at(LBRACE)) {
+                parseBlock();
+            }
+            else {
+                mark().error("Expecting '{' after 'init'");
+            }
             declType = ANONYMOUS_INITIALIZER;
         }
         else if (at(CONSTRUCTOR_KEYWORD)) {

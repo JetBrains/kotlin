@@ -20,3 +20,4 @@ fun [a()] T.foo<T : [a]  (a) -> b>(a : foo) : bar {}
 
 fun A?.foo() : bar?
 fun A? .foo() : bar?
+fun foo() = 5

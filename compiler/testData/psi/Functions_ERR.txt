@@ -291,3 +291,17 @@ JetFile: Functions_ERR.kt
     REFERENCE_EXPRESSION
       PsiElement(IDENTIFIER)('a')
     PsiElement(SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiErrorElement:Expecting an expression
+      <empty list>
+    PsiWhiteSpace(' ')
+    PsiElement(SEMICOLON)(';')

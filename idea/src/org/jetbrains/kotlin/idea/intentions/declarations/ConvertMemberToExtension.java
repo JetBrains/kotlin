@@ -71,6 +71,7 @@ public class ConvertMemberToExtension extends BaseIntentionAction {
             if (((JetProperty) declaration).hasInitializer()) return false;
         }
         return declaration != null
+               && !(declaration instanceof JetSecondaryConstructor)
                && declaration.getParent() instanceof JetClassBody
                && declaration.getParent().getParent() instanceof JetClass
                && declaration.getReceiverTypeReference() == null;

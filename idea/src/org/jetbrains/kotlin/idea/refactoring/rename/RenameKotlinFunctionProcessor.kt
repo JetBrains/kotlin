@@ -20,12 +20,14 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.search.SearchScope
-import org.jetbrains.kotlin.asJava.LightClassUtil
-import org.jetbrains.kotlin.psi.JetNamedFunction
 import com.intellij.refactoring.rename.RenameJavaMethodProcessor
 import org.jetbrains.kotlin.asJava.KotlinLightMethod
-import kotlin.properties.Delegates
+import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.psi.JetFunction
+import org.jetbrains.kotlin.psi.JetNamedFunction
+import org.jetbrains.kotlin.psi.JetSecondaryConstructor
+import kotlin.properties.Delegates
 
 public class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
     private val javaMethodProcessorInstance by Delegates.lazy {
@@ -61,7 +63,9 @@ public class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
 
     private fun wrapPsiMethod(element: PsiElement?): PsiMethod? = when (element) {
         is KotlinLightMethod -> element
-        is JetNamedFunction -> runReadAction { LightClassUtil.getLightClassMethod(element) }
+        is JetNamedFunction, is JetSecondaryConstructor -> runReadAction {
+            LightClassUtil.getLightClassMethod(element as JetFunction)
+        }
         else -> throw IllegalStateException("Can't be for element $element there because of canProcessElement()")
     }
 }

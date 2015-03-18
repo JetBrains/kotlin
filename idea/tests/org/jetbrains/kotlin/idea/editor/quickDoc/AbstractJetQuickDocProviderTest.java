@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.idea.ProjectDescriptorWithStdlibSources;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.util.UtilPackage;
-import org.junit.Assert;
 
 import java.io.File;
 import java.util.List;
@@ -44,6 +43,12 @@ public abstract class AbstractJetQuickDocProviderTest extends JetLightCodeInsigh
         PsiElement targetElement = documentationManager.findTargetElement(myFixture.getEditor(), myFixture.getFile());
 
         String info = CtrlMouseHandler.getInfo(targetElement, element);
+        if (info != null) {
+            info = StringUtil.convertLineSeparators(info);
+        }
+        if (info != null && !info.endsWith("\n")) {
+            info += "\n";
+        }
 
         File testDataFile = new File(path);
         String textData = FileUtil.loadFile(testDataFile, true);
@@ -56,14 +61,15 @@ public abstract class AbstractJetQuickDocProviderTest extends JetLightCodeInsigh
                     textData + "\n\n//INFO: " + info,
                     testDataFile.getAbsolutePath());
         }
-        else if (directives.size() == 1) {
-            assertNotNull(info);
+        else {
+            StringBuilder expectedInfoBuilder = new StringBuilder();
+            for (String directive : directives) {
+                expectedInfoBuilder.append(directive).append("\n");
+            }
+            String expectedInfo = expectedInfoBuilder.toString();
 
-            String expectedInfo = directives.get(0);
-
-            // We can avoid testing for too long comments with \n character by placing '...' in test data
-            if (expectedInfo.endsWith("...")) {
-                if (!info.startsWith(StringUtil.trimEnd(expectedInfo, "..."))) {
+            if (expectedInfo.endsWith("...\n")) {
+                if (!info.startsWith(StringUtil.trimEnd(expectedInfo, "...\n"))) {
                     wrapToFileComparisonFailure(info, path, textData);
                 }
             }
@@ -71,18 +77,16 @@ public abstract class AbstractJetQuickDocProviderTest extends JetLightCodeInsigh
                 wrapToFileComparisonFailure(info, path, textData);
             }
         }
-        else {
-            Assert.fail("Too many '// INFO:' directives in file " + path);
-        }
     }
 
     private static void wrapToFileComparisonFailure(String info, String filePath, String fileData) {
-        int newLineIndex = info.indexOf('\n');
-        if (newLineIndex != -1) {
-            info = info.substring(0, newLineIndex) + "...";
+        List<String> infoLines = StringUtil.split(info, "\n");
+        StringBuilder infoBuilder = new StringBuilder();
+        for (String line : infoLines) {
+            infoBuilder.append("//INFO: ").append(line).append("\n");
         }
 
-        String correctedFileText = fileData.replaceFirst("//\\s?INFO: .*", "// INFO: " + info);
+        String correctedFileText = fileData.replaceAll("//\\s?INFO: .*\n?", "") + infoBuilder.toString();
         throw new FileComparisonFailure("Unexpected info", fileData, correctedFileText, new File(filePath).getAbsolutePath());
     }
 

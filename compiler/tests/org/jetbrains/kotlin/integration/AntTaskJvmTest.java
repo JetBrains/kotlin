@@ -52,9 +52,8 @@ public class AntTaskJvmTest extends AntTaskBaseTest {
 
     private static String getClassPathForAnt() {
         return UtilsPackage.join(Arrays.asList(
-                getCompilerLib() + File.separator + "kotlin-ant.jar",
                 getCompilerLib() + File.separator + "kotlin-compiler.jar",
-                ForTestCompileRuntime.runtimeJarForTests().getAbsolutePath()
+                getCompilerLib() + File.separator + "kotlin-ant.jar"
         ), File.pathSeparator);
     }
 

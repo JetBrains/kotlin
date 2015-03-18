@@ -20,10 +20,8 @@ import com.intellij.codeInsight.FileModificationService
 import com.intellij.codeInsight.daemon.QuickFixBundle
 import com.intellij.codeInspection.*
 import com.intellij.codeInspection.deadCode.UnusedDeclarationInspection
-import com.intellij.codeInspection.ex.EntryPointsManager
 import com.intellij.codeInspection.ex.EntryPointsManagerImpl
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.project.ProjectUtil
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
@@ -64,7 +62,7 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
 
             val lightElement: PsiElement? = when (declaration) {
                 is JetClassOrObject -> declaration.toLightClass()
-                is JetNamedFunction -> LightClassUtil.getLightClassMethod(declaration)
+                is JetNamedFunction, is JetSecondaryConstructor -> LightClassUtil.getLightClassMethod(declaration as JetFunction)
                 else -> return false
             }
             return lightElement != null && javaInspection.isEntryPoint(lightElement)
@@ -108,6 +106,9 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
                 if (declaration is JetProperty && declaration.isLocal()) return
                 if (declaration is JetParameter && (declaration.getParent()?.getParent() !is JetClass || !declaration.hasValOrVarNode())) return
                 if (declaration is JetNamedFunction && isConventionalName(declaration)) return
+
+                // TODO companion objects are temporarily disabled
+                if (isCompanionObject) return
 
                 // More expensive, resolve-based checks
                 if (isEntryPoint(declaration)) return

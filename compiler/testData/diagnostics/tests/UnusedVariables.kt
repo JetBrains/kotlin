@@ -103,11 +103,11 @@ fun testInnerFunctions() {
 
 fun testFunctionLiterals() {
     var x = 1
-    var <!UNUSED_VARIABLE!>fl<!> = { (): Int ->
+    var <!UNUSED_VARIABLE!>fl<!> = {
         x
     }
     var y = 2
-    var <!UNUSED_VARIABLE!>fl1<!> = { (): Unit ->
+    var <!UNUSED_VARIABLE!>fl1<!> = {
         doSmth(y)
     }
 }

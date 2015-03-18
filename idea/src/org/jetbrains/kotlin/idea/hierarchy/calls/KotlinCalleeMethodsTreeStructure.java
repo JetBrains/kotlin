@@ -70,7 +70,10 @@ public class KotlinCalleeMethodsTreeStructure extends KotlinCallTreeStructure {
             JetClassBody body = classOrObject.getBody();
             if (body != null) {
                 for (JetClassInitializer initializer : body.getAnonymousInitializers()) {
-                    elementsToAnalyze.add(initializer.getBody());
+                    JetExpression initializerBody = initializer.getBody();
+                    if (initializerBody != null) {
+                        elementsToAnalyze.add(initializerBody);
+                    }
                 }
                 for (JetProperty property : body.getProperties()) {
                     JetExpression initializer = property.getInitializer();

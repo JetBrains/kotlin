@@ -8,12 +8,12 @@ fun foo(f: (Trait) -> Trait) = f
 
 fun test(s: Sub) {
     foo {
-        (t: Super): Sub -> s
+        <!DEPRECATED_LAMBDA_SYNTAX!>(t: Super): Sub<!> -> s
     }
     foo {
-        (t: Trait): Trait -> s
+        <!DEPRECATED_LAMBDA_SYNTAX!>(t: Trait): Trait<!> -> s
     }
     foo {
-        (<!EXPECTED_PARAMETER_TYPE_MISMATCH!>t: Sub<!>): <!EXPECTED_RETURN_TYPE_MISMATCH!>Super<!> -> s
+        <!DEPRECATED_LAMBDA_SYNTAX!>(<!EXPECTED_PARAMETER_TYPE_MISMATCH!>t: Sub<!>): <!EXPECTED_RETURN_TYPE_MISMATCH!>Super<!><!> -> s
     }
 }

@@ -16,10 +16,8 @@ class Global(val value: String)
 fun test1(intKind: Kind, extKind: Kind): Global {
 
     var externalResult = doCall @ext {
-        () : External ->
 
         val internalResult = doCall @int {
-            () : Internal ->
             if (intKind == Kind.LOCAL) {
                 return@test1 Global("internal to global")
             } else if (intKind == EXT_RETURN) {

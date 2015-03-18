@@ -21,11 +21,11 @@ fun foo(i: Int, f: (Int)->Int) = f(i)
 fun id<T>(t: T) = t
 
 fun test() {
-    foo(1, id { (x1: Int):Int ->
-        foo(2, id { (x2: Int): Int ->
-            foo(3, id { (x3: Int): Int ->
-                foo(4, id { (x4: Int): Int ->
-                    foo(5, id { (x5: Int): Int ->
+    foo(1, id { <!DEPRECATED_LAMBDA_SYNTAX!>(x1: Int):Int<!> ->
+        foo(2, id { <!DEPRECATED_LAMBDA_SYNTAX!>(x2: Int): Int<!> ->
+            foo(3, id { <!DEPRECATED_LAMBDA_SYNTAX!>(x3: Int): Int<!> ->
+                foo(4, id { <!DEPRECATED_LAMBDA_SYNTAX!>(x4: Int): Int<!> ->
+                    foo(5, id { <!DEPRECATED_LAMBDA_SYNTAX!>(x5: Int): Int<!> ->
                         x1 + x2 + x3 + x4 + x5 + A.iii
                     })
                 })

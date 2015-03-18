@@ -99,10 +99,10 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
         }
 
         if (isStatement) {
-            return DataFlowUtils.checkStatementType(function, context as ResolutionContext<*>, context.dataFlowInfo)
+            return DataFlowUtils.checkStatementType(function, context, context.dataFlowInfo)
         }
         else {
-            return DataFlowUtils.checkType(createFunctionType(functionDescriptor), function, context as ResolutionContext<*>, context.dataFlowInfo)
+            return DataFlowUtils.checkType(createFunctionType(functionDescriptor), function, context, context.dataFlowInfo)
         }
     }
 
@@ -124,6 +124,10 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
     override fun visitFunctionLiteralExpression(expression: JetFunctionLiteralExpression, context: ExpressionTypingContext): JetTypeInfo? {
         if (!expression.getFunctionLiteral().hasBody()) return null
 
+        if (JetPsiUtil.isDeprecatedLambdaSyntax(expression)) {
+            context.trace.report(DEPRECATED_LAMBDA_SYNTAX.on(expression))
+        }
+
         val expectedType = context.expectedType
         val functionTypeExpected = !noExpectedType(expectedType) && KotlinBuiltIns.isFunctionOrExtensionFunctionType(expectedType)
 
@@ -137,7 +141,7 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
             return JetTypeInfo.create(resultType, context.dataFlowInfo)
         }
 
-        return DataFlowUtils.checkType(resultType, expression, context as ResolutionContext<*>, context.dataFlowInfo)
+        return DataFlowUtils.checkType(resultType, expression, context, context.dataFlowInfo)
     }
 
     private fun createFunctionDescriptor(

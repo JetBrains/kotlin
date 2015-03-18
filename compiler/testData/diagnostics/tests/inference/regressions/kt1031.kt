@@ -11,7 +11,7 @@ public fun<TItem, TResult> select(<!UNUSED_PARAMETER!>yielder<!>: ()->Iterable<T
 
 fun a() {
     val x = 0..200
-    val z = x where { (i: Int) -> i % 2 == 0 }
+    val z = x where { i: Int -> i % 2 == 0 }
     val yielder = select(x where { it%2==0 }, { it.toString() })
 
     z : () -> Iterable<Int>

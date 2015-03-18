@@ -856,8 +856,16 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
 
     @TestMetadata("idea/testData/quickfix/migration")
     @TestDataPath("$PROJECT_ROOT")
+    @InnerTestClasses({
+    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Migration extends AbstractQuickFixMultiFileTest {
+        @TestMetadata("addInitKeywordMultiple.before.Main.kt")
+        public void testAddInitKeywordMultiple() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/addInitKeywordMultiple.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+
         public void testAllFilesPresentInMigration() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
         }
@@ -867,6 +875,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/classObjectToDefaultMultiple.before.Main.kt");
             doTestWithExtraFile(fileName);
         }
+
     }
 
     @TestMetadata("idea/testData/quickfix/modifiers")

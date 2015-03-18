@@ -30,7 +30,7 @@ fun test2(s : String) : Int? {
         22
     } finally {
             <!UNUSED_FUNCTION_LITERAL!>{
-            (x : Int) -> x
+            x : Int -> x
             }<!>
     }
 }

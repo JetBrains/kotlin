@@ -346,6 +346,9 @@ public interface Errors {
 
     DiagnosticFactory0<JetParameter> USELESS_VARARG_ON_PARAMETER = DiagnosticFactory0.create(WARNING);
 
+    DiagnosticFactory0<JetFunctionLiteralExpression> DEPRECATED_LAMBDA_SYNTAX =
+            DiagnosticFactory0.create(WARNING, FUNCTION_LITERAL_EXPRESSION_DECLARATION);
+
     // Named parameters
 
     DiagnosticFactory0<JetParameter> DEFAULT_VALUE_NOT_ALLOWED_IN_OVERRIDE = DiagnosticFactory0.create(ERROR, PARAMETER_DEFAULT_VALUE);

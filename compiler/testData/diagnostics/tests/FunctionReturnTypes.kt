@@ -174,12 +174,12 @@ fun testFunctionLiterals() {
         <!EXPECTED_TYPE_MISMATCH!>val <!UNUSED_VARIABLE!>x<!> = 2<!>
     }
 
-    val <!UNUSED_VARIABLE!>endsWithAssignment<!> = { () : Int ->
+    val <!UNUSED_VARIABLE!>endsWithAssignment<!>: () -> Int = {
         var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>x<!> = 1
         <!EXPECTED_TYPE_MISMATCH!>x = <!UNUSED_VALUE!>333<!><!>
     }
 
-    val <!UNUSED_VARIABLE!>endsWithReAssignment<!> = { () : Int ->
+    val <!UNUSED_VARIABLE!>endsWithReAssignment<!>: () -> Int = {
         var x = 1
         <!ASSIGNMENT_TYPE_MISMATCH!>x += 333<!>
     }
@@ -196,11 +196,11 @@ fun testFunctionLiterals() {
         <!LOCAL_OBJECT_NOT_ALLOWED, EXPECTED_TYPE_MISMATCH!>object A<!> {}
     }
 
-    val <!UNUSED_VARIABLE!>expectedUnitReturnType1<!> = { () : Unit ->
+    val <!UNUSED_VARIABLE!>expectedUnitReturnType1<!>: () -> Unit = {
         val <!UNUSED_VARIABLE!>x<!> = 1
     }
 
-    val <!UNUSED_VARIABLE!>expectedUnitReturnType2<!> = { () : Unit ->
+    val <!UNUSED_VARIABLE!>expectedUnitReturnType2<!>: () -> Unit = {
         fun meow() : Unit {}
         <!LOCAL_OBJECT_NOT_ALLOWED!>object A<!> {}
     }

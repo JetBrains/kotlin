@@ -6317,6 +6317,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class SecondaryConstructors extends AbstractBlackBoxCodegenTest {
+        @TestMetadata("accessToCompanion.kt")
+        public void testAccessToCompanion() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/accessToCompanion.kt");
+            doTest(fileName);
+        }
+
         public void testAllFilesPresentInSecondaryConstructors() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/secondaryConstructors"), Pattern.compile("^(.+)\\.kt$"), true);
         }

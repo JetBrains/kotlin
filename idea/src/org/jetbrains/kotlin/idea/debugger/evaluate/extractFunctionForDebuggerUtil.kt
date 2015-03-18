@@ -179,8 +179,8 @@ private fun addDebugExpressionBeforeContextElement(codeFragment: JetCodeFragment
     fun insertNewInitializer(classBody: JetClassBody): PsiElement? {
         val initializer = psiFactory.createAnonymousInitializer()
         val newInitializer = (classBody.addAfter(initializer, classBody.getFirstChild()) as JetClassInitializer)
-        val block = newInitializer.getBody() as JetBlockExpression
-        return block.getLastChild()
+        val block = newInitializer.getBody() as JetBlockExpression?
+        return block?.getLastChild()
     }
 
     val elementBefore = when {
