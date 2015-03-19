@@ -2782,6 +2782,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 doTestWithStdlib(fileName);
             }
 
+            @TestMetadata("syntheticFields.kt")
+            public void testSyntheticFields() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/mapping/syntheticFields.kt");
+                doTestWithStdlib(fileName);
+            }
+
             @TestMetadata("topLevelProperty.kt")
             public void testTopLevelProperty() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/mapping/topLevelProperty.kt");
