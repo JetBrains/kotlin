@@ -26,17 +26,13 @@ import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.PsiElementProcessor;
 import com.intellij.psi.search.PsiElementProcessorAdapter;
-import com.intellij.psi.search.SearchScope;
+import com.intellij.psi.search.searches.MethodReferencesSearch;
 import com.intellij.usageView.UsageInfo;
+import com.intellij.util.CommonProcessors;
 import com.intellij.util.Processor;
-import jet.runtime.typeinfo.JetValueParameter;
-import kotlin.Function1;
-import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.asJava.LightClassUtil;
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.idea.findUsages.*;
 import org.jetbrains.kotlin.idea.findUsages.dialogs.KotlinFindFunctionUsagesDialog;
 import org.jetbrains.kotlin.idea.findUsages.dialogs.KotlinFindPropertyUsagesDialog;
@@ -44,7 +40,6 @@ import org.jetbrains.kotlin.idea.search.declarationsSearch.DeclarationsSearchPac
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest;
 import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearch;
 import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchHelper;
-import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchPackage;
 import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchRequest;
 import org.jetbrains.kotlin.psi.*;
 
@@ -158,18 +153,23 @@ public abstract class KotlinFindMemberUsagesHandler<T extends JetNamedDeclaratio
                         UsagesSearchRequest request =
                                 getSearchHelper(kotlinOptions).newRequest(FindUsagesPackage.<T>toSearchTarget(options, (T) element, true));
 
+                        final CommonProcessors.UniqueProcessor<UsageInfo> uniqueProcessor =
+                                new CommonProcessors.UniqueProcessor<UsageInfo>(processor);
+
                         for (PsiReference ref : UsagesSearch.INSTANCE$.search(request)) {
-                            processUsage(processor, ref);
+                            processUsage(uniqueProcessor, ref);
                         }
 
-                        if (element instanceof JetSecondaryConstructor || element instanceof PsiMethod) {
-                            UsagesSearchPackage.processDelegationCallConstructorUsages(element, options.searchScope, new Function1<PsiElement, Unit>() {
-                                @Override
-                                public Unit invoke(PsiElement element) {
-                                    processUsage(processor, element);
-                                    return null;
-                                }
-                            });
+                        PsiMethod psiMethod =
+                                element instanceof PsiMethod
+                                ? (PsiMethod) element
+                                : element instanceof JetSecondaryConstructor
+                                  ? LightClassUtil.getLightClassMethod((JetFunction) element)
+                                  : null;
+                        if (psiMethod != null) {
+                            for (PsiReference ref : MethodReferencesSearch.search(psiMethod, options.searchScope, true)) {
+                                processUsage(uniqueProcessor, ref.getElement());
+                            }
                         }
 
                         if (kotlinOptions.getSearchOverrides()) {
@@ -180,7 +180,7 @@ public abstract class KotlinFindMemberUsagesHandler<T extends JetNamedDeclaratio
                                             new PsiElementProcessor<PsiMethod>() {
                                                 @Override
                                                 public boolean execute(@NotNull PsiMethod method) {
-                                                    return processUsage(processor, method.getNavigationElement());
+                                                    return processUsage(uniqueProcessor, method.getNavigationElement());
                                                 }
                                             }
                                     )
