@@ -29,6 +29,12 @@ object ClientObject: Server() {
 
 }
 
+class Servers: Iterator<Server> {
+
+}
+
+fun Iterator<Server>.f(p: Iterator<Server>): Iterator<Server> = this
+
 fun Client.bar(s: Server = Server.NAME) {
     foo(s)
 }

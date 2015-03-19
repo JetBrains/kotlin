@@ -64,6 +64,8 @@ public object UsageTypeUtils {
         }
 
         fun getClassUsageType(): UsageTypeEnum? {
+            if (refExpr.getNonStrictParentOfType<JetTypeProjection>() != null) return TYPE_PARAMETER
+
             val property = refExpr.getNonStrictParentOfType<JetProperty>()
             if (property != null) {
                 when {
@@ -96,9 +98,6 @@ public object UsageTypeUtils {
 
                 refExpr.getParentOfTypeAndBranch<JetTypedef>(){ getTypeReference() } != null ->
                     TYPE_DEFINITION
-
-                refExpr.getNonStrictParentOfType<JetTypeProjection>() != null ->
-                    TYPE_PARAMETER
 
                 refExpr.getParentOfTypeAndBranch<JetParameter>(){ getTypeReference() } != null ->
                     VALUE_PARAMETER_TYPE
