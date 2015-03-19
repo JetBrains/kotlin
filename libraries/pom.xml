@@ -103,9 +103,6 @@
         <module>kotlin-jdbc</module>
         <module>kotlin-swing</module>
 
-        <module>docs/apidoc</module>
-        <module>docs/website</module>
-
         <module>examples/kotlin-java-example</module>
         <module>examples/js-example</module>
         <module>examples/kotlin-js-library-example</module>
