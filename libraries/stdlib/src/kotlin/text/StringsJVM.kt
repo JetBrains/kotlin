@@ -49,11 +49,6 @@ public fun String.replace(oldChar: Char, newChar: Char): String = (this as java.
 public fun String.replaceAll(regex: String, replacement: String): String = (this as java.lang.String).replaceAll(regex, replacement)
 
 /**
- * Returns a copy of this string with leading and trailing whitespace trimmed.
- */
-public fun String.trim(): String = (this as java.lang.String).trim()
-
-/**
  * Returns a copy of this string converted to upper case using the rules of the default locale.
  */
 public fun String.toUpperCase(): String = (this as java.lang.String).toUpperCase()

@@ -7,6 +7,56 @@ public fun String.trim(text: String): String = trimLeading(text).trimTrailing(te
 public fun String.trim(prefix: String, postfix: String): String = trimLeading(prefix).trimTrailing(postfix)
 
 /**
+ * Returns the string with leading and trailing characters matching the [predicate] trimmed.
+ */
+inline public fun String.trim(predicate: (Char) -> Boolean): String {
+    val indices = this.indices
+    for (startIndex in indices)
+        if (!predicate(this[startIndex]))
+            for (endIndex in indices.reversed())
+                if (!predicate(this[endIndex]))
+                    return substring(startIndex, endIndex + 1)
+    return ""
+}
+
+/**
+ * Returns the string with leading characters matching the [predicate] trimmed.
+ */
+inline public fun String.trimLeading(predicate: (Char) -> Boolean): String {
+    for (index in this.indices)
+        if (!predicate(this[index]))
+            return substring(index)
+
+    return ""
+}
+
+/**
+ * Returns the string with trailing characters matching the [predicate] trimmed.
+ */
+inline public fun String.trimTrailing(predicate: (Char) -> Boolean): String {
+    for (index in this.indices.reversed())
+        if (!predicate(this[index]))
+            return substring(0, index + 1)
+
+    return ""
+}
+
+/**
+ * Returns the string with leading and trailing characters in the [chars] array trimmed.
+ */
+public fun String.trim(vararg chars: Char): String = trim { it in chars }
+
+/**
+ * Returns the string with leading and trailing characters in the [chars] array trimmed.
+ */
+public fun String.trimLeading(vararg chars: Char): String = trimLeading { it in chars }
+
+/**
+ * Returns the string with trailing characters in the [chars] array trimmed.
+ */
+public fun String.trimTrailing(vararg chars: Char): String = trimTrailing { it in chars }
+
+/**
  * If this string starts with the given [prefix], returns a copy of this string
  * with the prefix removed. Otherwise, returns this string.
  */
@@ -31,27 +81,56 @@ public fun String.trimTrailing(postfix: String): String {
 }
 
 /**
- * Returns a copy of this String with leading whitespace removed.
+ * Returns a string with leading and trailing whitespace trimmed.
  */
-public fun String.trimLeading(): String {
-    var count = 0
+public fun String.trim(): String = trim { it.isWhitespace() }
 
-    while ((count < this.length) && (this[count] <= ' ')) {
-        count++
-    }
-    return if (count > 0) substring(count) else this
+/**
+ * Returns a string with leading whitespace removed.
+ */
+public fun String.trimLeading(): String = trimLeading { it.isWhitespace() }
+
+/**
+ * Returns a string with trailing whitespace removed.
+ */
+public fun String.trimTrailing(): String = trimTrailing { it.isWhitespace() }
+
+/**
+ * Left pad a String with a specified character or space.
+ *
+ * @param length the desired string length.
+ * @param padChar the character to pad string with, if it has length less than the [length] specified. Space is used by default.
+ */
+public fun String.padLeft(length: Int, padChar: Char = ' '): String {
+    if (length < 0)
+        throw IllegalArgumentException("String length $length is less than zero.")
+    if (length <= this.length())
+        return this
+
+    val sb = StringBuilder(length)
+    for (i in 1..(length - this.length()))
+        sb.append(padChar)
+    sb.append(this)
+    return sb.toString()
 }
 
 /**
- * Returns a copy of this String with trailing whitespace removed.
+ * Right pad a String with a specified character or space.
+ *
+ * @param length the desired string length.
+ * @param padChar the character to pad string with, if it has length less than the [length] specified. Space is used by default.
  */
-public fun String.trimTrailing(): String {
-    var count = this.length
+public fun String.padRight(length: Int, padChar: Char = ' '): String {
+    if (length < 0)
+        throw IllegalArgumentException("String length $length is less than zero.")
+    if (length <= this.length())
+        return this
 
-    while (count > 0 && this[count - 1] <= ' ') {
-        count--
-    }
-    return if (count < this.length) substring(0, count) else this
+    val sb = StringBuilder(length)
+    sb.append(this)
+    for (i in 1..(length - this.length()))
+        sb.append(padChar)
+    return sb.toString()
 }
 
 /** Returns true if the string is not null and not empty */

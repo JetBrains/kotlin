@@ -143,11 +143,15 @@ class StringTest {
         assertEquals("a  ", "  a  ".trimLeading())
         assertEquals("a b", "  a b".trimLeading())
         assertEquals("a b ", "  a b ".trimLeading())
+        assertEquals("a", " \u00A0 a".trimLeading())
 
         assertEquals("a", "\ta".trimLeading())
         assertEquals("a", "\t\ta".trimLeading())
         assertEquals("a", "\ra".trimLeading())
         assertEquals("a", "\na".trimLeading())
+
+        assertEquals("a=", "-=-=a=".trimLeading('-','='))
+        assertEquals("123a", "ab123a".trimLeading { !it.isDigit() })
     }
 
     test fun trimTrailing() {
@@ -158,11 +162,15 @@ class StringTest {
         assertEquals("  a", "  a  ".trimTrailing())
         assertEquals("a b", "a b  ".trimTrailing())
         assertEquals(" a b", " a b  ".trimTrailing())
+        assertEquals("a", "a \u00A0 ".trimTrailing())
 
         assertEquals("a", "a\t".trimTrailing())
         assertEquals("a", "a\t\t".trimTrailing())
         assertEquals("a", "a\r".trimTrailing())
         assertEquals("a", "a\n".trimTrailing())
+
+        assertEquals("=a", "=a=-=-".trimTrailing('-','='))
+        assertEquals("ab123", "ab123a".trimTrailing { !it.isDigit() })
     }
 
     test fun trimTrailingAndLeading() {
@@ -174,12 +182,46 @@ class StringTest {
                 "\ta\tb\t",
                 "\t\ta\t\t",
                 "\ra\r",
-                "\na\n"
+                "\na\n",
+                " \u00A0 a \u00A0 "
         )
 
         for (example in examples) {
             assertEquals(example.trim(), example.trimTrailing().trimLeading())
             assertEquals(example.trim(), example.trimLeading().trimTrailing())
         }
+
+        val examplesForPredicate = array(
+                "123",
+                "-=123=-"
+        )
+
+        val trimChars = charArray('-','=')
+        val trimPredicate = { (it: Char) -> !it.isDigit() }
+        for (example in examplesForPredicate) {
+            assertEquals(example.trimLeading(*trimChars).trimTrailing(*trimChars), example.trim(*trimChars))
+            assertEquals(example.trimLeading(trimPredicate).trimTrailing(trimPredicate), example.trim(trimPredicate))
+        }
     }
+
+    test fun padLeft() {
+        assertEquals("s", "s".padLeft(0))
+        assertEquals("s", "s".padLeft(1))
+        assertEquals("  ", "".padLeft(2))
+        assertEquals("--s", "s".padLeft(3, '-'))
+        fails {
+            "s".padLeft(-1)
+        }
+    }
+
+    test fun padRight() {
+        assertEquals("s", "s".padRight(0))
+        assertEquals("s", "s".padRight(1))
+        assertEquals("  ", "".padRight(2))
+        assertEquals("s--", "s".padRight(3, '-'))
+        fails {
+            "s".padRight(-1)
+        }
+    }
+
 }
