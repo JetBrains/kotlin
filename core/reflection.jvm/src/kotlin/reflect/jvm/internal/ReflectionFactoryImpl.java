@@ -19,6 +19,9 @@ package kotlin.reflect.jvm.internal;
 import kotlin.jvm.internal.ReflectionFactory;
 import kotlin.reflect.*;
 
+/**
+ * @suppress
+ */
 @SuppressWarnings({"UnusedDeclaration", "unchecked"})
 public class ReflectionFactoryImpl extends ReflectionFactory {
     @Override

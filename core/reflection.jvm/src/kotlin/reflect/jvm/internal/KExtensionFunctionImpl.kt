@@ -18,4 +18,7 @@ package kotlin.reflect.jvm.internal
 
 import kotlin.jvm.internal.ExtensionFunctionImpl
 
+/**
+ * @suppress
+ */
 public abstract class KExtensionFunctionImpl<in T, out R> : ExtensionFunctionImpl<T, R>()
