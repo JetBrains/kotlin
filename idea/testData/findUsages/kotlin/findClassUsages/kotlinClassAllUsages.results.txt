@@ -12,6 +12,7 @@ Supertype (23: 23) companion object: Server() {
 Supertype (28: 22) object ClientObject: Server() {
 Supertype (5: 43) class Client(name: String = Server.NAME): Server() {
 Target type of 'is' operation (42: 12) is Server -> println("Server!")
-Target type of 'is' operation (44: 24) return if (this is Server) this as Server else null
-Usage in cast target type (44: 40) return if (this is Server) this as Server else null
+Target type of 'is' operation (44: 24) return if (this is Server) this: Server else this as? Server
+Usage in cast target type (44: 38) return if (this is Server) this: Server else this as? Server
+Usage in cast target type (44: 59) return if (this is Server) this: Server else this as? Server
 Usage in import (3: 15) import server.Server
