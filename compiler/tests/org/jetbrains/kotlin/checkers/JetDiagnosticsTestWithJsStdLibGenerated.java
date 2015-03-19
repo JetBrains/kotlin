@@ -34,6 +34,7 @@ import java.util.regex.Pattern;
         JetDiagnosticsTestWithJsStdLibGenerated.DynamicTypes.class,
         JetDiagnosticsTestWithJsStdLibGenerated.JsCode.class,
         JetDiagnosticsTestWithJsStdLibGenerated.Native.class,
+        JetDiagnosticsTestWithJsStdLibGenerated.UnsupportedFeatures.class,
 })
 @RunWith(JUnit3RunnerWithInners.class)
 public class JetDiagnosticsTestWithJsStdLibGenerated extends AbstractJetDiagnosticsTestWithJsStdLib {
@@ -549,6 +550,27 @@ public class JetDiagnosticsTestWithJsStdLibGenerated extends AbstractJetDiagnost
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/unusedParam/nativeSetter.kt");
                 doTest(fileName);
             }
+        }
+    }
+
+    @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/unsupportedFeatures")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class UnsupportedFeatures extends AbstractJetDiagnosticsTestWithJsStdLib {
+        public void testAllFilesPresentInUnsupportedFeatures() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/unsupportedFeatures"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("localClassifier.kt")
+        public void testLocalClassifier() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/unsupportedFeatures/localClassifier.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nestedInnerClassifier.kt")
+        public void testNestedInnerClassifier() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/unsupportedFeatures/nestedInnerClassifier.kt");
+            doTest(fileName);
         }
     }
 }
