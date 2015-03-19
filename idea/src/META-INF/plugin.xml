@@ -864,6 +864,13 @@
         level="WARNING"
         />
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.UnusedReceiverParameterInspection"
+        displayName="Unused receiver parameter"
+        groupName="Kotlin"
+        enabledByDefault="true"
+        level="WARNING"
+        />
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.kdoc.KDocUnresolvedReferenceInspection"
         displayName="Unresolved reference in KDoc"
         groupName="Kotlin"
