@@ -209,7 +209,7 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
         for (line in dependenciesTxt.readLines()) {
             val split = line.split("->")
             val module = split[0]
-            val dependencies = split[1].split(",")
+            val dependencies = if (split.size > 1) split[1].split(",") else array()
 
             result[module] = dependencies.toList()
         }
