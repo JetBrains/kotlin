@@ -65,7 +65,7 @@ import java.util.Collections
 class PositionedElement(val className: String?, val element: PsiElement?)
 
 public class JetPositionManager(private val myDebugProcess: DebugProcess) : MultiRequestPositionManager {
-    private val myTypeMappers = WeakHashMap<Pair<FqName, IdeaModuleInfo>, CachedValue<JetTypeMapper>>()
+    private val myTypeMappers = WeakHashMap<String, CachedValue<JetTypeMapper>>()
 
     override fun getSourcePosition(location: Location?): SourcePosition? {
         if (location == null) {
@@ -215,7 +215,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
         if (value == null) {
             value = CachedValuesManager.getManager(file.getProject()).createCachedValue<JetTypeMapper>(
                     {() ->
-                        val typeMapper = createTypeMapper(file, key.second)
+                        val typeMapper = createTypeMapper(file)
                         CachedValueProvider.Result<JetTypeMapper>(typeMapper, PsiModificationTracker.MODIFICATION_COUNT)
                     }, false)
 
@@ -274,16 +274,14 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
     }
 
     class object {
-        public fun createTypeMapper(file: JetFile, moduleInfo: IdeaModuleInfo): JetTypeMapper {
+        public fun createTypeMapper(file: JetFile): JetTypeMapper {
             val project = file.getProject()
-            val packageFacadeScope = moduleInfo.contentScope()
-            val packageFiles = PackageIndexUtil.findFilesWithExactPackage(file.getPackageFqName(), packageFacadeScope, project)
 
-            val analysisResult = KotlinCacheService.getInstance(project).getAnalysisResults(packageFiles)
+            val analysisResult = file.analyzeFullyAndGetResult()
             analysisResult.throwIfError()
 
             val state = GenerationState(project, ClassBuilderFactories.THROW_EXCEPTION, analysisResult.moduleDescriptor,
-                                        analysisResult.bindingContext, packageFiles.toList())
+                                        analysisResult.bindingContext, listOf(file))
             state.beforeCompile()
             return state.getTypeMapper()
         }
@@ -427,7 +425,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
             return false
         }
 
-        private fun createKeyForTypeMapper(file: JetFile) = Pair(file.getPackageFqName(), file.getModuleInfo())
+        private fun createKeyForTypeMapper(file: JetFile) = PackagePartClassUtils.getPackagePartInternalName(file)
     }
 
     private fun findInlinedCalls(element: PsiElement?, jetFile: PsiFile?): List<String> {
