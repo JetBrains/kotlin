@@ -113,7 +113,10 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
 
                 module.initialize(injectorForLazyResolve.getResolveSession().getPackageFragmentProvider());
 
-                injectorForLazyResolve.getResolveSession().forceResolveAll();
+                if (!ApplicationManager.getApplication().isUnitTestMode()) {
+                    // Use lazy initialization in tests
+                    injectorForLazyResolve.getResolveSession().forceResolveAll();
+                }
 
                 List<PackageFragmentDescriptor> fragments =
                         module.getPackageFragmentProvider().getPackageFragments(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME);
