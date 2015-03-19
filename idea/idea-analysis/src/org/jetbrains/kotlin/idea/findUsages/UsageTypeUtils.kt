@@ -103,7 +103,8 @@ public object UsageTypeUtils {
                 refExpr.getParentOfTypeAndBranch<JetParameter>(){ getTypeReference() } != null ->
                     VALUE_PARAMETER_TYPE
 
-                refExpr.getParentOfTypeAndBranch<JetIsExpression>(){ getTypeReference() } != null ->
+                refExpr.getParentOfTypeAndBranch<JetIsExpression>(){ getTypeReference() } != null
+                || refExpr.getParentOfTypeAndBranch<JetWhenConditionIsPattern>(){ getTypeReference() } != null ->
                     IS
 
                 with(refExpr.getParentOfTypeAndBranch<JetBinaryExpressionWithTypeRHS>(){ getRight() }) {

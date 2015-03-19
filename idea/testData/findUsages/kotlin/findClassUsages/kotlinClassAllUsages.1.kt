@@ -38,5 +38,8 @@ fun Client.hasNextServer(): Boolean {
 }
 
 fun Any.asServer(): Server? {
+    when (this) {
+        is Server -> println("Server!")
+    }
     return if (this is Server) this as Server else null
 }

@@ -11,6 +11,7 @@ Super type qualifier (19: 15) super<Server>.work()
 Supertype (23: 23) companion object: Server() {
 Supertype (28: 22) object ClientObject: Server() {
 Supertype (5: 43) class Client(name: String = Server.NAME): Server() {
-Target type of 'is' operation (41: 24) return if (this is Server) this as Server else null
-Usage in cast target type (41: 40) return if (this is Server) this as Server else null
+Target type of 'is' operation (42: 12) is Server -> println("Server!")
+Target type of 'is' operation (44: 24) return if (this is Server) this as Server else null
+Usage in cast target type (44: 40) return if (this is Server) this as Server else null
 Usage in import (3: 15) import server.Server
