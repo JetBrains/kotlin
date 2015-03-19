@@ -118,12 +118,15 @@ public val Class<*>.kotlinPackage: KPackage
     get() = KPackageImpl(this)
 
 
-// TODO: make nullable to filter out synthetic fields (KT-5759)
 /**
- * Returns a [KProperty] instance corresponding to the given Java [Field] instance.
+ * Returns a [KProperty] instance corresponding to the given Java [Field] instance,
+ * or `null` if this field cannot be represented by a Kotlin property
+ * (for example, if it is a synthetic field).
  */
-public val Field.kotlin: KProperty<*>
+public val Field.kotlin: KProperty<*>?
     get() {
+        if (isSynthetic()) return null
+
         val clazz = getDeclaringClass()
         val name = getName()
         val modifiers = getModifiers()
