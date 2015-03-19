@@ -45,6 +45,7 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
             Kotlin.FindPackageUsages.class,
             Kotlin.FindParameterUsages.class,
             Kotlin.FindPropertyUsages.class,
+            Kotlin.FindSecondaryConstructorUsages.class,
             Kotlin.FindTypeParameterUsages.class,
             Kotlin.FindWithFilteringImports.class,
             Kotlin.FindWithStructuralGrouping.class,
@@ -879,6 +880,27 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
             }
         }
 
+        @TestMetadata("idea/testData/findUsages/kotlin/findSecondaryConstructorUsages")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class FindSecondaryConstructorUsages extends AbstractJetFindUsagesTest {
+            public void testAllFilesPresentInFindSecondaryConstructorUsages() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/findUsages/kotlin/findSecondaryConstructorUsages"), Pattern.compile("^(.+)\\.0\\.kt$"), true);
+            }
+
+            @TestMetadata("defaultSecondaryConstructor.0.kt")
+            public void testDefaultSecondaryConstructor() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findSecondaryConstructorUsages/defaultSecondaryConstructor.0.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("secondaryConstructor.0.kt")
+            public void testSecondaryConstructor() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findSecondaryConstructorUsages/secondaryConstructor.0.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("idea/testData/findUsages/kotlin/findTypeParameterUsages")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -1000,6 +1022,7 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
     @TestMetadata("idea/testData/findUsages/java")
     @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({
+            Java.FindConstructorUsages.class,
             Java.FindJavaClassUsages.class,
             Java.FindJavaFieldUsages.class,
             Java.FindJavaMethodUsages.class,
@@ -1008,6 +1031,39 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
     public static class Java extends AbstractJetFindUsagesTest {
         public void testAllFilesPresentInJava() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/findUsages/java"), Pattern.compile("^(.+)\\.0\\.java$"), true);
+        }
+
+        @TestMetadata("idea/testData/findUsages/java/findConstructorUsages")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class FindConstructorUsages extends AbstractJetFindUsagesTest {
+            public void testAllFilesPresentInFindConstructorUsages() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/findUsages/java/findConstructorUsages"), Pattern.compile("^(.+)\\.0\\.java$"), true);
+            }
+
+            @TestMetadata("javaConstructorInDelegationCall.0.java")
+            public void testJavaConstructorInDelegationCall() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/java/findConstructorUsages/javaConstructorInDelegationCall.0.java");
+                doTest(fileName);
+            }
+
+            @TestMetadata("javaDefaultConstructorInDelegationCall.0.java")
+            public void testJavaDefaultConstructorInDelegationCall() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/java/findConstructorUsages/javaDefaultConstructorInDelegationCall.0.java");
+                doTest(fileName);
+            }
+
+            @TestMetadata("secondaryConstructorByJavaNewExpression.0.java")
+            public void testSecondaryConstructorByJavaNewExpression() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/java/findConstructorUsages/secondaryConstructorByJavaNewExpression.0.java");
+                doTest(fileName);
+            }
+
+            @TestMetadata("secondaryConstructorByJavaSuperCall.0.java")
+            public void testSecondaryConstructorByJavaSuperCall() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/java/findConstructorUsages/secondaryConstructorByJavaSuperCall.0.java");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("idea/testData/findUsages/java/findJavaClassUsages")
