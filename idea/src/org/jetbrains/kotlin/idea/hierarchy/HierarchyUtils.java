@@ -26,10 +26,7 @@ import com.intellij.util.ArrayUtil;
 import kotlin.Function1;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil;
-import org.jetbrains.kotlin.psi.JetClassOrObject;
-import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.psi.JetNamedFunction;
-import org.jetbrains.kotlin.psi.JetProperty;
+import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 
 public class HierarchyUtils {
@@ -40,6 +37,7 @@ public class HierarchyUtils {
                    input instanceof PsiClass ||
                    input instanceof JetFile ||
                    input instanceof JetNamedFunction ||
+                   input instanceof JetSecondaryConstructor ||
                    input instanceof JetClassOrObject ||
                    input instanceof JetProperty;
         }
