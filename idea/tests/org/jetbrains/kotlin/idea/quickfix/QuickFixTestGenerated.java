@@ -45,6 +45,7 @@ import java.util.regex.Pattern;
         QuickFixTestGenerated.Override.class,
         QuickFixTestGenerated.PlatformClasses.class,
         QuickFixTestGenerated.RemoveUnused.class,
+        QuickFixTestGenerated.RemoveUnusedReceiver.class,
         QuickFixTestGenerated.Supercalls.class,
         QuickFixTestGenerated.SupertypeInitialization.class,
         QuickFixTestGenerated.Suppress.class,
@@ -3770,6 +3771,27 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("beforeUnusedTypeParameter.kt")
         public void testUnusedTypeParameter() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/removeUnused/beforeUnusedTypeParameter.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/quickfix/removeUnusedReceiver")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RemoveUnusedReceiver extends AbstractQuickFixTest {
+        public void testAllFilesPresentInRemoveUnusedReceiver() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/removeUnusedReceiver"), Pattern.compile("^before(\\w+)\\.kt$"), true);
+        }
+
+        @TestMetadata("beforeInFunction.kt")
+        public void testInFunction() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/removeUnusedReceiver/beforeInFunction.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("beforeInProperty.kt")
+        public void testInProperty() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/removeUnusedReceiver/beforeInProperty.kt");
             doTest(fileName);
         }
     }

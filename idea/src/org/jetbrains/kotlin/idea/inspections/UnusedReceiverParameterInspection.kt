@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.codeInspection.*
-import com.intellij.extapi.psi.ASTDelegatePsiElement
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
@@ -27,7 +26,7 @@ import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isOverridable
-import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.psi.typeRefHelpers.setReceiverTypeReference
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
 
@@ -62,7 +61,12 @@ public class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
                 })
 
                 if (!used) {
-                    holder.registerProblem(receiverTypeReference, JetBundle.message("unused.receiver.parameter"), ProblemHighlightType.LIKE_UNUSED_SYMBOL) // TODO add quick fix
+                    holder.registerProblem(
+                            receiverTypeReference,
+                            JetBundle.message("unused.receiver.parameter"),
+                            ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                            MyQuickFix(callableDeclaration)
+                    )
                 }
             }
 
@@ -74,5 +78,17 @@ public class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
                 check(property)
             }
         }
+    }
+
+    private class MyQuickFix(val declaration: JetCallableDeclaration): LocalQuickFix {
+        override fun getName(): String {
+            return JetBundle.message("unused.receiver.parameter.remove")
+        }
+
+        override fun applyFix(project: Project, descriptor: ProblemDescriptor?) {
+            declaration.setReceiverTypeReference(null)
+        }
+
+        override fun getFamilyName(): String = "whatever"
     }
 }
