@@ -18,4 +18,7 @@ package kotlin.reflect.jvm.internal
 
 import kotlin.jvm.internal.FunctionImpl
 
+/**
+ * @suppress
+ */
 public abstract class KFunctionImpl<out R> : FunctionImpl<R>()
