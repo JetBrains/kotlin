@@ -308,16 +308,37 @@ public fun String.replaceRange(firstIndex: Int, lastIndex: Int, replacement: Str
 
 /**
  * Replace the part of string at the given [range] with the [replacement] string.
+ *
+ * The end index of the [range] is included in the part to be replaced.
  */
-public fun String.replaceRange(range: IntRange, replacement: String): String {
-    if (range.end < range.start)
-        throw IndexOutOfBoundsException("Last index (${range.start}) is less than first index (${range.end})")
-    val sb = StringBuilder()
-    sb.append(this, 0, range.start)
-    sb.append(replacement)
-    sb.append(this, range.end, length)
+public fun String.replaceRange(range: IntRange, replacement: String): String = replaceRange(range.start, range.end + 1, replacement)
+
+/**
+ * Removes the part of a string at a given range.
+ * @param firstIndex the index of the first character to be removed.
+ * @param lastIndex the index of the first character after the removed part to keep in the string.
+*
+*  [lastIndex] is not included in the removed part.
+ */
+public fun String.removeRange(firstIndex: Int, lastIndex: Int): String {
+    if (lastIndex < firstIndex)
+        throw IndexOutOfBoundsException("Last index ($lastIndex) is less than first index ($firstIndex)")
+
+    if (lastIndex == firstIndex)
+        return this
+
+    val sb = StringBuilder(length() - (lastIndex - firstIndex))
+    sb.append(this, 0, firstIndex)
+    sb.append(this, lastIndex, length())
     return sb.toString()
 }
+
+/**
+ * Removes the part of a string at the given [range].
+ *
+ * The end index of the [range] is included in the removed part.
+ */
+public fun String.removeRange(range: IntRange): String = removeRange(range.start, range.end + 1)
 
 /**
  * Replace part of string before the first occurrence of given delimiter with the [replacement] string.

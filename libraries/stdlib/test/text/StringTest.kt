@@ -72,13 +72,31 @@ class StringTest {
     test fun replaceRange() {
         val s = "sample text"
         assertEquals("sa??e text", s.replaceRange(2, 5, "??"))
-        assertEquals("sa??e text", s.replaceRange(2..5, "??"))
+        assertEquals("sa?? text", s.replaceRange(2..5, "??"))
         fails {
             s.replaceRange(5..2, "??")
         }
         fails {
             s.replaceRange(5, 2, "??")
         }
+
+        // symmetry with indices
+        assertEquals("??", s.replaceRange(s.indices, "??"))
+    }
+
+    test fun removeRange() {
+        val s = "sample text"
+        assertEquals("sae text", s.removeRange(2, 5))
+        assertEquals("sa text", s.removeRange(2..5))
+
+        assertEquals(s, s.removeRange(2,2))
+
+        // symmetry with indices
+        assertEquals("", s.removeRange(s.indices))
+
+        // symmetry with replaceRange
+        assertEquals(s.replaceRange(2, 5, ""), s.removeRange(2, 5))
+        assertEquals(s.replaceRange(2..5, ""), s.removeRange(2..5))
     }
 
     test fun substringDelimited() {
