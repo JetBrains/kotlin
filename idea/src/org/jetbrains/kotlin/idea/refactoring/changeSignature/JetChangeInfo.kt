@@ -41,6 +41,7 @@ import kotlin.properties.Delegates
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import org.jetbrains.kotlin.idea.project.*
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetMethodDescriptor.Kind
 
 public class JetChangeInfo(
         val methodDescriptor: JetMethodDescriptor,
@@ -149,30 +150,34 @@ public class JetChangeInfo(
     public fun getNewSignature(inheritedFunction: JetFunctionDefinitionUsage<PsiElement>): String {
         val buffer = StringBuilder()
 
-        if (isConstructor) {
+        val defaultVisibility = if (kind.isConstructor) Visibilities.PUBLIC else Visibilities.INTERNAL
+
+        if (kind == Kind.PRIMARY_CONSTRUCTOR) {
             buffer.append(name)
 
-            if (newVisibility != Visibilities.PUBLIC) {
+            if (newVisibility != defaultVisibility) {
                 buffer.append(' ').append(newVisibility).append(' ')
             }
         }
         else {
-            if (newVisibility != Visibilities.INTERNAL) {
+            if (newVisibility != defaultVisibility) {
                 buffer.append(newVisibility).append(' ')
             }
 
-            buffer.append(JetTokens.FUN_KEYWORD).append(' ')
-        }
+            buffer.append(if (kind == Kind.SECONDARY_CONSTRUCTOR) JetTokens.CONSTRUCTOR_KEYWORD else JetTokens.FUN_KEYWORD).append(' ')
 
-        receiverParameterInfo?.let {
-            buffer.append(it.currentTypeText).append('.')
-        }
+            if (kind == Kind.FUNCTION) {
+                receiverParameterInfo?.let {
+                    buffer.append(it.currentTypeText).append('.')
+                }
+            }
 
-        buffer.append(name)
+            buffer.append(name)
+        }
 
         buffer.append(getNewParametersSignature(inheritedFunction))
 
-        if (newReturnType != null && !KotlinBuiltIns.isUnit(newReturnType) && !isConstructor)
+        if (newReturnType != null && !KotlinBuiltIns.isUnit(newReturnType) && kind == Kind.FUNCTION)
             buffer.append(": ").append(newReturnTypeText)
 
         return buffer.toString()
@@ -272,7 +277,7 @@ public class JetChangeInfo(
 public val JetChangeInfo.originalBaseFunctionDescriptor: FunctionDescriptor
     get() = methodDescriptor.baseDescriptor
 
-public val JetChangeInfo.isConstructor: Boolean get() = methodDescriptor.isConstructor
+public val JetChangeInfo.kind: Kind get() = methodDescriptor.kind
 
 public val JetChangeInfo.oldName: String?
     get() = (methodDescriptor.getMethod() as? JetFunction)?.getName()
