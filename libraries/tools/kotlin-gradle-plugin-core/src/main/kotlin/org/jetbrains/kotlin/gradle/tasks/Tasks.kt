@@ -284,69 +284,6 @@ public open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArgumen
     }
 }
 
-public open class KDoc() : SourceTask() {
-
-    private val logger = Logging.getLogger(this.javaClass)
-    override fun getLogger() = logger
-
-    public var kdocArgs: KDocArguments = KDocArguments()
-
-    public var destinationDir: File? = null
-
-    init {
-        // by default, output dir is not defined in options
-        kdocArgs.docConfig.docOutputDir = ""
-    }
-
-    TaskAction fun generateDocs() {
-        val args = KDocArguments()
-        val cfg = args.docConfig
-
-        val kdocOptions = kdocArgs.docConfig
-
-        cfg.docOutputDir = if ((kdocOptions.docOutputDir.length() == 0) && (destinationDir != null)) {
-            destinationDir!!.path
-        } else {
-            kdocOptions.docOutputDir
-        }
-        cfg.title = kdocOptions.title
-        cfg.sourceRootHref = kdocOptions.sourceRootHref
-        cfg.projectRootDir = kdocOptions.projectRootDir
-        cfg.warnNoComments = kdocOptions.warnNoComments
-
-        cfg.packagePrefixToUrls.putAll(kdocOptions.packagePrefixToUrls)
-        cfg.ignorePackages.addAll(kdocOptions.ignorePackages)
-        cfg.packageDescriptionFiles.putAll(kdocOptions.packageDescriptionFiles)
-        cfg.packageSummaryText.putAll(kdocOptions.packageSummaryText)
-
-        // KDoc compiler does not accept list of files as input. Try to pass directories instead.
-        args.freeArgs = getSource().map { it.getParentFile()!!.getAbsolutePath() }
-        // Drop compiled sources to temp. Why KDoc compiles anything after all?!
-        args.destination = getTemporaryDir()?.getAbsolutePath()
-
-        getLogger().warn(args.freeArgs.toString())
-        val embeddedAnnotations = getAnnotations(getProject(), getLogger())
-        val userAnnotations = (kdocArgs.annotations ?: "").split(File.pathSeparatorChar).toList()
-        val allAnnotations = if (kdocArgs.noJdkAnnotations) userAnnotations else userAnnotations.plus(embeddedAnnotations.map { it.getPath() })
-        args.annotations = allAnnotations.joinToString(File.pathSeparator)
-
-        args.noStdlib = true
-        args.noJdkAnnotations = true
-
-
-        val compiler = KDocCompiler()
-
-        val messageCollector = GradleMessageCollector(getLogger())
-        val exitCode = compiler.exec(messageCollector, Services.EMPTY, args)
-
-        when (exitCode) {
-            ExitCode.COMPILATION_ERROR -> throw GradleException("Failed to generate kdoc. See log for more details")
-            ExitCode.INTERNAL_ERROR -> throw GradleException("Internal generation error. See log for more details")
-        }
-
-    }
-}
-
 private fun <T: Any> ExtraPropertiesExtension.getOrNull(id: String): T? {
     try {
         @suppress("UNCHECKED_CAST")
