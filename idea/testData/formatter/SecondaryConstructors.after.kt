@@ -8,8 +8,7 @@ class A {
     fun foo() {
     }
 
-    constructor() {
-    }
+    constructor()
 
     fun foo() {
     }
@@ -55,8 +54,7 @@ class A {
     constructor() : this() {
     }
 
-    constructor() : this() {
-    }
+    constructor() : this()
 
     constructor() : super() {
     }

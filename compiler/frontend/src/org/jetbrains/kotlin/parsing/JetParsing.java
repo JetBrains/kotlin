@@ -908,7 +908,9 @@ public class JetParsing extends AbstractJetParsing {
             emptyDelegationCall.done(CONSTRUCTOR_DELEGATION_CALL);
         }
 
-        parseBlock();
+        if (at(LBRACE)) {
+            parseBlock();
+        }
     }
 
     private void parseThisOrSuper() {
