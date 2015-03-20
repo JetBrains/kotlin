@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.context.ContextPackage;
 import org.jetbrains.kotlin.context.GlobalContextImpl;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
-import org.jetbrains.kotlin.di.InjectorForLazyTopDownAnalyzerBasic;
+import org.jetbrains.kotlin.di.InjectorForLazyResolve;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
 import org.jetbrains.kotlin.psi.JetFile;
@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.types.DynamicTypesSettings;
 import org.jetbrains.kotlin.utils.UtilsPackage;
 
 import java.io.File;
@@ -96,11 +97,6 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
             public void run() {
                 GlobalContextImpl globalContext = ContextPackage.GlobalContext();
 
-                // TODO built-ins and lazy resolve
-                TopDownAnalysisParameters topDownAnalysisParameters = TopDownAnalysisParameters.create(
-                        globalContext.getStorageManager(),
-                        globalContext.getExceptionTracker(),
-                        true, false);
                 ModuleDescriptorImpl module = new ModuleDescriptorImpl(
                         Name.special("<built-ins resolver module>"), Collections.<ImportPath>emptyList(), PlatformToKotlinClassMap.EMPTY
                 );
@@ -108,13 +104,19 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
                 module.seal();
 
                 FileBasedDeclarationProviderFactory declarationFactory =
-                        new FileBasedDeclarationProviderFactory(topDownAnalysisParameters.getStorageManager(), jetBuiltInsFiles);
+                        new FileBasedDeclarationProviderFactory(globalContext.getStorageManager(), jetBuiltInsFiles);
 
-                LazyTopDownAnalyzerForTopLevel analyzer = new InjectorForLazyTopDownAnalyzerBasic(
-                        myProject, topDownAnalysisParameters, new BindingTraceContext(), module, declarationFactory
-                ).getLazyTopDownAnalyzerForTopLevel();
+                InjectorForLazyResolve injectorForLazyResolve =
+                        new InjectorForLazyResolve(myProject, globalContext, module, declarationFactory, new BindingTraceContext(),
+                                                   AdditionalCheckerProvider.DefaultProvider.INSTANCE$,
+                                                   new DynamicTypesSettings());
 
-                analyzer.analyzeFiles(topDownAnalysisParameters, jetBuiltInsFiles, Collections.<PackageFragmentProvider>emptyList());
+                module.initialize(injectorForLazyResolve.getResolveSession().getPackageFragmentProvider());
+
+                if (!ApplicationManager.getApplication().isUnitTestMode()) {
+                    // Use lazy initialization in tests
+                    injectorForLazyResolve.getResolveSession().forceResolveAll();
+                }
 
                 List<PackageFragmentDescriptor> fragments =
                         module.getPackageFragmentProvider().getPackageFragments(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME);

@@ -1,0 +1,21 @@
+<project name="Kotlin standard library" default="document">
+    <!-- Generates the standard library documentation using Dokka. -->
+    <typedef resource="dokka-antlib.xml">
+        <classpath>
+            <pathelement path="${dokka.path}/dokka.jar"/>
+        </classpath>
+    </typedef>
+
+    <target name="document">
+        <delete dir="doc/stdlib"/>
+        <mkdir dir="doc/stdlib"/>
+        <dokka src="stdlib/src:../core/builtins:../core/reflection.jvm"
+            samples="stdlib/test" outputDir="doc" moduleName="stdlib" skipDeprecated="true" outputFormat="kotlin-website">
+            <sourcelink path="." url="http://github.com/JetBrains/kotlin/blob/master#L" linesuffix="#L"/>
+        </dokka>
+    </target>
+
+    <target name="zip" depends="document">
+        <zip destfile="target/stdlib-docs.zip" basedir="doc/stdlib"/>
+    </target>
+</project>

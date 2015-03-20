@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * A persistent map from non-null keys to non-null values.
+ * @suppress
  */
 public final class HashPMap<K, V> {
     private static final HashPMap<Object, Object> EMPTY = new HashPMap<Object, Object>(IntTreePMap.<ConsPStack<MapEntry<Object, Object>>>empty(), 0);

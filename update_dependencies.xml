@@ -484,7 +484,7 @@
             <delete file="ideaSDK/lib/junit.jar"/>
 
             <build-protobuf-java-lite/>
-            
+
             <antcall target="get-android-plugin"/>
         </sequential>
     </macrodef>
