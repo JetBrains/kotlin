@@ -31,7 +31,8 @@ native public fun String.concat(str : String) : String = noImpl
 
 native public fun String.match(regex : String) : Array<String> = noImpl
 
-native public fun String.trim() : String = noImpl
+//native public fun String.trim() : String = noImpl
+//TODO: String.replace to implement effective trimLeading and trimTrailing
 
 native("length")
 public val CharSequence.size: Int get() = noImpl

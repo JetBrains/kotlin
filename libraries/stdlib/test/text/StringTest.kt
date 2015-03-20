@@ -169,7 +169,7 @@ class StringTest {
         assertEquals("a", "\na".trimLeading())
 
         assertEquals("a=", "-=-=a=".trimLeading('-','='))
-        assertEquals("123a", "ab123a".trimLeading { !it.isDigit() })
+        assertEquals("123a", "ab123a".trimLeading { it < '0' || it > '9' }) // TODO: Use !it.isDigit when available in JS
     }
 
     test fun trimTrailing() {
@@ -188,7 +188,7 @@ class StringTest {
         assertEquals("a", "a\n".trimTrailing())
 
         assertEquals("=a", "=a=-=-".trimTrailing('-','='))
-        assertEquals("ab123", "ab123a".trimTrailing { !it.isDigit() })
+        assertEquals("ab123", "ab123a".trimTrailing { it < '0' || it > '9' }) // TODO: Use !it.isDigit when available in JS
     }
 
     test fun trimTrailingAndLeading() {
@@ -215,7 +215,7 @@ class StringTest {
         )
 
         val trimChars = charArray('-','=')
-        val trimPredicate = { (it: Char) -> !it.isDigit() }
+        val trimPredicate = { (it: Char) -> it < '0' || it > '9' } // TODO: Use !it.isDigit when available in JS
         for (example in examplesForPredicate) {
             assertEquals(example.trimLeading(*trimChars).trimTrailing(*trimChars), example.trim(*trimChars))
             assertEquals(example.trimLeading(trimPredicate).trimTrailing(trimPredicate), example.trim(trimPredicate))
