@@ -10,13 +10,29 @@ public fun String.trim(prefix: String, postfix: String): String = trimLeading(pr
  * Returns the string with leading and trailing characters matching the [predicate] trimmed.
  */
 inline public fun String.trim(predicate: (Char) -> Boolean): String {
-    val indices = this.indices
-    for (startIndex in indices)
-        if (!predicate(this[startIndex]))
-            for (endIndex in indices.reversed())
-                if (!predicate(this[endIndex]))
-                    return substring(startIndex, endIndex + 1)
-    return ""
+    var startIndex = 0
+    var endIndex = length() - 1
+    var startFound = false
+
+    while (startIndex <= endIndex) {
+        val index = if (!startFound) startIndex else endIndex
+        val match = predicate(this[index])
+
+        if (!startFound) {
+            if (!match)
+                startFound = true
+            else
+                startIndex += 1
+        }
+        else {
+            if (!match)
+                break
+            else
+                endIndex -= 1
+        }
+    }
+
+    return substring(startIndex, endIndex + 1)
 }
 
 /**
