@@ -84,7 +84,7 @@ public class AndroidRenameProcessor : RenamePsiElementProcessor() {
             scope: SearchScope
     ) {
         if (element != null && element.namedUnwrappedElement is JetProperty) {
-            renameSyntheticProperty(element.namedUnwrappedElement as JetProperty, newName, allRenames, scope)
+            renameSyntheticProperty(element.namedUnwrappedElement as JetProperty, newName, allRenames)
         }
         else if (element is XmlAttributeValue) {
             renameAttributeValue(element, newName, allRenames, scope)
@@ -97,16 +97,14 @@ public class AndroidRenameProcessor : RenamePsiElementProcessor() {
     private fun renameSyntheticProperty(
             jetProperty: JetProperty,
             newName: String,
-            allRenames: MutableMap<PsiElement, String>,
-            scope: SearchScope
+            allRenames: MutableMap<PsiElement, String>
     ) {
-        val oldName = jetProperty.getName()
         val module = jetProperty.getModule()
         if (module == null) return
 
         val processor = ModuleServiceManager.getService(module, javaClass<AndroidUIXmlProcessor>())
         val resourceManager = processor.resourceManager
-        val attr = resourceManager.idToXmlAttribute(oldName) as XmlAttribute
+        val attr = resourceManager.propertyToXmlAttribute(jetProperty) as XmlAttribute
         allRenames[XmlAttributeValueWrapper(attr.getValueElement())] = nameToIdDeclaration(newName)
         val name = AndroidResourceUtil.getResourceNameByReferenceText(newName)
         for (resField in AndroidResourceUtil.findIdFields(attr)) {

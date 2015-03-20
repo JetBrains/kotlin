@@ -26,12 +26,13 @@ import com.intellij.openapi.vfs.*
 import com.intellij.openapi.components.*
 import com.intellij.openapi.extensions.*
 import com.intellij.openapi.module.*
+import org.jetbrains.kotlin.psi.JetProperty
 
 public abstract class AndroidResourceManager(val project: Project) {
 
     public abstract val androidModuleInfo: AndroidModuleInfo?
 
-    public open fun idToXmlAttribute(id: String): PsiElement? = null
+    public open fun propertyToXmlAttribute(property: JetProperty): PsiElement? = null
 
     public fun getLayoutXmlFiles(): Map<String, List<PsiFile>> {
         val info = androidModuleInfo
