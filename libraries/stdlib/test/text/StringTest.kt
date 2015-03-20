@@ -242,4 +242,26 @@ class StringTest {
         }
     }
 
+    test fun removePrefix() {
+        assertEquals("fix", "prefix".removePrefix("pre"), "Removes prefix")
+        assertEquals("prefix", "preprefix".removePrefix("pre"), "Removes prefix once")
+        assertEquals("sample", "sample".removePrefix("value"))
+        assertEquals("sample", "sample".removePrefix(""))
+    }
+
+    test fun removeSuffix() {
+        assertEquals("suf", "suffix".removeSuffix("fix"), "Removes suffix")
+        assertEquals("suffix", "suffixfix".removeSuffix("fix"), "Removes suffix once")
+        assertEquals("sample", "sample".removeSuffix("value"))
+        assertEquals("sample", "sample".removeSuffix(""))
+    }
+
+    test fun removeEnclosing() {
+        assertEquals("value", "<value>".removeEnclosing("<", ">"))
+        assertEquals("<value>", "<<value>>".removeEnclosing("<", ">"), "Removes enclosing once")
+        assertEquals("<value", "<value".removeEnclosing("<", ">"), "Only removes enclosing when both prefix and suffix present")
+        assertEquals("value>", "value>".removeEnclosing("<", ">"), "Only removes enclosing when both prefix and suffix present")
+        assertEquals("value", "value".removeEnclosing("<", ">"))
+    }
+
 }

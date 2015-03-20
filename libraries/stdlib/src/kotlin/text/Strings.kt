@@ -1,10 +1,12 @@
 package kotlin
 
 /** Returns the string with leading and trailing text matching the given string removed */
-public fun String.trim(text: String): String = trimLeading(text).trimTrailing(text)
+deprecated("Use removeEnclosing(text, text) or removePrefix(text).removeSuffix(text)")
+public fun String.trim(text: String): String = removePrefix(text).removeSuffix(text)
 
 /** Returns the string with the prefix and postfix text trimmed */
-public fun String.trim(prefix: String, postfix: String): String = trimLeading(prefix).trimTrailing(postfix)
+deprecated("Use removeEnclosing(prefix, suffix) or removePrefix(prefix).removeSuffix(suffix)")
+public fun String.trim(prefix: String, postfix: String): String = removePrefix(prefix).removeSuffix(postfix)
 
 /**
  * Returns the string with leading and trailing characters matching the [predicate] trimmed.
@@ -72,29 +74,11 @@ public fun String.trimLeading(vararg chars: Char): String = trimLeading { it in 
  */
 public fun String.trimTrailing(vararg chars: Char): String = trimTrailing { it in chars }
 
-/**
- * If this string starts with the given [prefix], returns a copy of this string
- * with the prefix removed. Otherwise, returns this string.
- */
-public fun String.trimLeading(prefix: String): String {
-    var answer = this
-    if (answer.startsWith(prefix)) {
-        answer = answer.substring(prefix.length())
-    }
-    return answer
-}
+deprecated("Use removePrefix() instead")
+public fun String.trimLeading(prefix: String): String = removePrefix(prefix)
 
-/**
- * If this string ends with the given [postfix], returns a copy of this string
- * with the postfix removed. Otherwise, returns this string.
- */
-public fun String.trimTrailing(postfix: String): String {
-    var answer = this
-    if (answer.endsWith(postfix)) {
-        answer = answer.substring(0, length() - postfix.length())
-    }
-    return answer
-}
+deprecated("Use removeSuffix() instead")
+public fun String.trimTrailing(postfix: String): String = removeSuffix(postfix)
 
 /**
  * Returns a string with leading and trailing whitespace trimmed.
@@ -355,6 +339,47 @@ public fun String.removeRange(firstIndex: Int, lastIndex: Int): String {
  * The end index of the [range] is included in the removed part.
  */
 public fun String.removeRange(range: IntRange): String = removeRange(range.start, range.end + 1)
+
+/**
+ * If this string starts with the given [prefix], returns a copy of this string
+ * with the prefix removed. Otherwise, returns this string.
+ */
+public fun String.removePrefix(prefix: String): String {
+    if (startsWith(prefix)) {
+        return substring(prefix.length())
+    }
+    return this
+}
+
+/**
+ * If this string ends with the given [suffix], returns a copy of this string
+ * with the suffix removed. Otherwise, returns this string.
+ */
+public fun String.removeSuffix(suffix: String): String {
+    if (endsWith(suffix)) {
+        return substring(0, length() - suffix.length())
+    }
+    return this
+}
+
+/**
+ * Removes from a string both the given [prefix] and [suffix] if and only if
+ * it starts with the [prefix] and ends with the [suffix].
+ * Otherwise returns this string unchanged.
+ */
+public fun String.removeEnclosing(prefix: String, suffix: String): String {
+    if (startsWith(prefix) && endsWith(suffix)) {
+        return substring(prefix.length(), length() - suffix.length())
+    }
+    return this
+}
+
+/**
+ * Removes the given [enclosing] string both from the start and the end of this string
+ * if and only if it starts with and ends with the [enclosing].
+ * Otherwise returns this string unchanged.
+ */
+public fun String.removeEnclosing(enclosing: String): String = removeEnclosing(enclosing, enclosing)
 
 /**
  * Replace part of string before the first occurrence of given delimiter with the [replacement] string.
