@@ -71,6 +71,12 @@ public class AndroidXml2KConversionTestGenerated extends AbstractAndroidXml2KCon
             String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/android/converter/simple/singleFile/");
             doTest(fileName);
         }
+
+        @TestMetadata("specialTags")
+        public void testSpecialTags() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/android/converter/simple/specialTags/");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("plugins/android-compiler-plugin/testData/android/converter/exceptions")
