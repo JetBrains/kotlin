@@ -1,4 +1,4 @@
 class A {
-    constructor() {}
+    constructor()
     init {}
 }

@@ -88,7 +88,7 @@ public class JetSecondaryConstructor extends JetDeclarationStub<KotlinPlaceHolde
 
     @Nullable
     @Override
-    public JetExpression getBodyExpression() {
+    public JetBlockExpression getBodyExpression() {
         return findChildByClass(JetBlockExpression.class);
     }
 
@@ -105,7 +105,7 @@ public class JetSecondaryConstructor extends JetDeclarationStub<KotlinPlaceHolde
 
     @Override
     public boolean hasBody() {
-        return true;
+        return getBodyExpression() != null;
     }
 
     @Override

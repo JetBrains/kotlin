@@ -1,11 +1,11 @@
 open class B<T>(val x: T, val y: T) {
-    constructor(x: T): this(x, x) {}
+    constructor(x: T): this(x, x)
     override fun toString() = "$x#$y"
 }
 
 class A : B<String> {
-    constructor(): super("default") {}
-    constructor(x: String): super(x, "default") {}
+    constructor(): super("default")
+    constructor(x: String): super(x, "default")
 }
 
 fun box(): String {
