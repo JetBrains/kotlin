@@ -34,6 +34,12 @@ class ClassDeclarationChecker : DeclarationChecker {
 
         if (declaration !is JetClassOrObject || declaration is JetObjectDeclaration || declaration is JetEnumEntry) return
 
+        if (declaration is JetClass) {
+            declaration.getSecondaryConstructors().forEach {
+                diagnosticHolder.report(ErrorsJs.SECONDARY_CONSTRUCTOR.on(it))
+            }
+        }
+
         // hack to avoid to get diagnostics when compile kotlin builtins
         val fqNameUnsafe = DescriptorUtils.getFqName(descriptor)
         if (fqNameUnsafe.asString().startsWith("kotlin.")) return
