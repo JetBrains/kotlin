@@ -66,7 +66,9 @@ public class JetBlock extends AbstractBlock {
             CLASS_BODY,
             FUNCTION_LITERAL);
 
-    private static final TokenSet KDOC_CONTENT = TokenSet.create(KDocTokens.KDOC, KDocElementTypes.KDOC_SECTION);
+    private static final TokenSet KDOC_CONTENT = TokenSet.create(KDocTokens.KDOC,
+                                                                 KDocElementTypes.KDOC_SECTION,
+                                                                 KDocElementTypes.KDOC_TAG);
 
     // private static final List<IndentWhitespaceRule>
 
