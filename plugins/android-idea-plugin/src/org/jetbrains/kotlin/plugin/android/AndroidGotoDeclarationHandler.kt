@@ -35,20 +35,16 @@ public class AndroidGotoDeclarationHandler : GotoDeclarationHandler {
     override fun getGotoDeclarationTargets(sourceElement: PsiElement?, offset: Int, editor: Editor?): Array<PsiElement>? {
         if (sourceElement is LeafPsiElement && sourceElement.getParent() is JetSimpleNameExpression) {
             val resolved = JetSimpleNameReference(sourceElement.getParent() as JetSimpleNameExpression).resolve()
-            if (resolved == null) return null
-            val name = if (resolved is JetProperty) {
-                resolved.getName()
-            }
-            else null
-            if (name != null) {
-                val moduleInfo = sourceElement.getModuleInfo()
-                if (moduleInfo !is ModuleSourceInfo) return null
+            val property = resolved as? JetProperty ?: return null
 
-                val parser = ModuleServiceManager.getService(moduleInfo.module, javaClass<AndroidUIXmlProcessor>())
-                val psiElement = parser.resourceManager.idToXmlAttribute(name) as? XmlAttribute
-                if (psiElement != null) {
-                    return array(psiElement.getValueElement())
-                }
+            val moduleInfo = sourceElement.getModuleInfo()
+            if (moduleInfo !is ModuleSourceInfo) return null
+
+            val parser = ModuleServiceManager.getService(moduleInfo.module, javaClass<AndroidUIXmlProcessor>())
+            val psiElement = parser.resourceManager.propertyToXmlAttribute(property) as? XmlAttribute
+            val attributeValue = psiElement?.getValueElement()
+            if (attributeValue != null) {
+                return array(attributeValue)
             }
         }
         return null
