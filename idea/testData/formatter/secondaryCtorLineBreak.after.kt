@@ -23,6 +23,8 @@ class A
     }
 
     constructor()
+
+    constructor()
     {
     }
 }

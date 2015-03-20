@@ -1917,6 +1917,12 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
                 doParsingTest(fileName);
             }
 
+            @TestMetadata("emptyBody.kt")
+            public void testEmptyBody() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/secondaryConstructors/emptyBody.kt");
+                doParsingTest(fileName);
+            }
+
             @TestMetadata("enumParsing.kt")
             public void testEnumParsing() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/secondaryConstructors/enumParsing.kt");
