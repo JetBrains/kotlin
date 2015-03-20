@@ -27,6 +27,9 @@ import com.intellij.psi.xml.XmlAttribute
 import org.jetbrains.android.util.AndroidResourceUtil
 import java.util.ArrayList
 import com.intellij.find.findUsages.JavaVariableFindUsagesOptions
+import com.intellij.openapi.module.ModuleServiceManager
+import org.jetbrains.kotlin.idea.caches.resolve.ModuleSourceInfo
+import org.jetbrains.kotlin.idea.caches.resolve.getModuleInfo
 import org.jetbrains.kotlin.plugin.findUsages.handlers.KotlinFindUsagesHandlerDecorator
 import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import org.jetbrains.kotlin.psi.JetProperty
@@ -52,9 +55,10 @@ class AndroidFindMemberUsagesHandler(
         assert(isAndroidSyntheticElement(declaration))
 
         val property = declaration as JetProperty
-        val name = property.getName()!!
-        val parser = ServiceManager.getService(declaration.getProject(), javaClass<AndroidUIXmlProcessor>())
-        val psiElement = parser?.resourceManager?.idToXmlAttribute(name) as? XmlAttribute
+        val moduleInfo = declaration.getModuleInfo() as? ModuleSourceInfo ?: return super.getPrimaryElements()
+        val parser = ModuleServiceManager.getService(moduleInfo.module, javaClass<AndroidUIXmlProcessor>())
+
+        val psiElement = parser?.resourceManager?.propertyToXmlAttribute(property) as? XmlAttribute
         if (psiElement != null && psiElement.getValueElement() != null) {
             return array(psiElement.getValueElement()!!)
         }
@@ -69,9 +73,11 @@ class AndroidFindMemberUsagesHandler(
     override fun getSecondaryElements(): Array<PsiElement> {
         assert(isAndroidSyntheticElement(declaration))
 
-        val name = (declaration as JetProperty).getName()!!
-        val parser = ServiceManager.getService(declaration.getProject(), javaClass<AndroidUIXmlProcessor>())
-        val psiElement = parser?.resourceManager?.idToXmlAttribute(name) as? XmlAttribute
+        val property = declaration as JetProperty
+        val moduleInfo = declaration.getModuleInfo() as? ModuleSourceInfo ?: return super.getPrimaryElements()
+        val parser = ModuleServiceManager.getService(moduleInfo.module, javaClass<AndroidUIXmlProcessor>())
+
+        val psiElement = parser?.resourceManager?.propertyToXmlAttribute(property) as? XmlAttribute
         if (psiElement != null) {
             val res = ArrayList<PsiElement>()
             val fields = AndroidResourceUtil.findIdFields(psiElement)

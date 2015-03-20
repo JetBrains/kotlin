@@ -85,7 +85,7 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
 
     public fun parse(generateCommonFiles: Boolean = true): List<String> {
         val commonFiles = if (generateCommonFiles) {
-            val clearCacheFile = renderLayoutFile("kotlinx.android.synthetic") {} +
+            val clearCacheFile = renderLayoutFile(AndroidConst.SYNTHETIC_PACKAGE) {} +
                              renderClearCacheFunction("Activity") + renderClearCacheFunction("Fragment")
             listOf(clearCacheFile, FLEXIBLE_TYPE_FILE)
         } else listOf()
@@ -133,7 +133,7 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
     }
 
     private fun PsiFile.genSyntheticPackageName(): String {
-        return AndroidConst.SYNTHETIC_PACKAGE + getName().substringBefore('.')
+        return AndroidConst.SYNTHETIC_PACKAGE + "." + getName().substringBefore('.')
     }
 
     private fun KotlinStringWriter.writeSyntheticProperty(receiver: String, widget: AndroidWidget, stubCall: String) {

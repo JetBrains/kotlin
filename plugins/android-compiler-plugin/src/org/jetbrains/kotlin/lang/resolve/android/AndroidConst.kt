@@ -21,7 +21,8 @@ import com.intellij.openapi.util.Key
 public object AndroidConst {
     val ANDROID_USER_PACKAGE: Key<String> = Key.create<String>("ANDROID_USER_PACKAGE")
     val SYNTHETIC_FILENAME: String = "ANDROIDXML"
-    val SYNTHETIC_PACKAGE: String = "kotlinx.android.synthetic."
+    val SYNTHETIC_PACKAGE: String = "kotlinx.android.synthetic"
+    val SYNTHETIC_PACKAGE_PATH_LENGTH = SYNTHETIC_PACKAGE.count { it == '.' } + 1
 
     val ANDROID_NAMESPACE: String = "android"
     val ID_ATTRIBUTE_NO_NAMESPACE: String = "id"
