@@ -35,6 +35,10 @@ public class JetCommenterTest  extends LightCodeInsightTestCase {
         doNewLineTypingTest();
     }
 
+    public void testNewLineInTag() throws Exception {
+        doNewLineTypingTest();
+    }
+
     private void doNewLineTypingTest() throws Exception {
         configure();
         EditorTestUtil.performTypingAction(getEditor(), '\n');
