@@ -754,6 +754,12 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
             doTest(fileName);
         }
 
+        @TestMetadata("constructor.kt")
+        public void testConstructor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/native/constructor.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("inline.kt")
         public void testInline() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/native/inline.kt");
