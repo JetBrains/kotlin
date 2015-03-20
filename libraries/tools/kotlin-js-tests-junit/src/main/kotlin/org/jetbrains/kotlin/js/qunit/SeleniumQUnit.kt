@@ -64,21 +64,18 @@ public class SeleniumQUnit(val driver: WebDriver) {
             !result.startsWith("run")
         }
         if ("pass" != result) {
-            var message: String? = null
-            try {
-                val messageElement = element.findElement(By.xpath("descendant::*[@class = 'test-message']"))!!
-                message = messageElement.getText()
-            } catch (e: Exception) {
-                // ignore
-            }
             val testName = "${findTestName(element)} result: $result"
-            val fullMessage = if (message != null) {
-                "$testName. $message"
-            } else {
-                "test result for test case $testName"
-            }
-            println("FAILED: $fullMessage")
-            fail(fullMessage)
+            val failMessages =
+                try {
+                    element.findElements(By.xpath("descendant::li[@class!='pass']/*[@class = 'test-message']"))
+                            .map { "$testName. ${it.getText()}" }
+                } catch (e: Exception) {
+                    listOf("test result for test case $testName")
+                }
+
+            for (message in failMessages)
+                println("FAILED: $message")
+            fail(failMessages.join("\n"))
         }
     }
 }
