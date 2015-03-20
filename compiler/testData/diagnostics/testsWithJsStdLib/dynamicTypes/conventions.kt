@@ -1,3 +1,4 @@
+// !DIAGNOSTICS: -NON_TOPLEVEL_CLASS_DECLARATION
 // !MARK_DYNAMIC_CALLS
 
 fun test(d: dynamic) {
