@@ -54,6 +54,12 @@ public class AndroidXml2KConversionTestGenerated extends AbstractAndroidXml2KCon
             doTest(fileName);
         }
 
+        @TestMetadata("layoutVariants")
+        public void testLayoutVariants() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/android/converter/simple/layoutVariants/");
+            doTest(fileName);
+        }
+
         @TestMetadata("multiFile")
         public void testMultiFile() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/android/converter/simple/multiFile/");
@@ -63,6 +69,12 @@ public class AndroidXml2KConversionTestGenerated extends AbstractAndroidXml2KCon
         @TestMetadata("noIds")
         public void testNoIds() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/android/converter/simple/noIds/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("sameIds")
+        public void testSameIds() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/android/converter/simple/sameIds/");
             doTest(fileName);
         }
 
