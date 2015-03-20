@@ -43,14 +43,16 @@ public class CliAndroidUIXmlProcessor(
         }
     }
 
-    override fun parseSingleFile(file: PsiFile): List<AndroidWidget> {
+    override fun parseLayout(files: List<PsiFile>): List<AndroidWidget> {
         val widgets = arrayListOf<AndroidWidget>()
-        val handler = AndroidXmlHandler { id, clazz -> widgets.add(AndroidWidget(id, clazz)) }
+        val handler = AndroidXmlHandler { id, widgetType -> widgets.add(AndroidWidget(id, widgetType)) }
 
         try {
-            val inputStream = ByteArrayInputStream(file.getVirtualFile().contentsToByteArray())
-            resourceManager.saxParser.parse(inputStream, handler)
-            return widgets
+            for (file in files) {
+                val inputStream = ByteArrayInputStream(file.getVirtualFile().contentsToByteArray())
+                resourceManager.saxParser.parse(inputStream, handler)
+            }
+            return removeDuplicates(widgets)
         }
         catch (e: Throwable) {
             LOG.error(e)

@@ -70,7 +70,7 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
             val psiManager = PsiManager.getInstance(project)
             val applicationPackage = resourceManager.androidModuleInfo?.applicationPackage
 
-            val jetFiles = cachedSources.getValue().mapIndexed { (index, text) ->
+            val jetFiles = cachedSources.getValue().mapIndexed { index, text ->
                 val virtualFile = LightVirtualFile(AndroidConst.SYNTHETIC_FILENAME + index + ".kt", text)
                 val jetFile = psiManager.findFile(virtualFile) as JetFile
                 if (applicationPackage != null) {
@@ -90,10 +90,11 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
             listOf(clearCacheFile, FLEXIBLE_TYPE_FILE)
         } else listOf()
 
-        return resourceManager.getLayoutXmlFiles().flatMap { file ->
-            val widgets = parseSingleFile(file)
+        return resourceManager.getLayoutXmlFiles().flatMap { entry ->
+            val files = entry.getValue()
+            val widgets = parseLayout(files)
             if (widgets.isNotEmpty()) {
-                val layoutPackage = file.genSyntheticPackageName()
+                val layoutPackage = files[0].genSyntheticPackageName()
 
                 val mainLayoutFile = renderLayoutFile(layoutPackage, widgets) {
                     writeSyntheticProperty("Activity", it, "findViewById(0)")
@@ -111,7 +112,7 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
 
     public fun parseToPsi(): List<JetFile>? = cachedJetFiles.getValue()
 
-    protected abstract fun parseSingleFile(file: PsiFile): List<AndroidWidget>
+    protected abstract fun parseLayout(files: List<PsiFile>): List<AndroidWidget>
 
     private fun renderLayoutFile(
             packageName: String,
@@ -151,7 +152,22 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
         return CachedValuesManager.getManager(project).createCachedValue(result, false)
     }
 
-    class object {
+    protected fun removeDuplicates(widgets: List<AndroidWidget>): List<AndroidWidget> {
+        val widgetMap = linkedMapOf<String, AndroidWidget>()
+        for (widget in widgets) {
+            if (widgetMap.contains(widget.id)) {
+                val existingElement = widgetMap.get(widget.id)
+                if (existingElement.className != widget.className) {
+                    // Widgets with the same id but different types exist.
+                    widgetMap.put(widget.id, widget.copy(className = "View"))
+                }
+            }
+            else widgetMap.put(widget.id, widget)
+        }
+        return widgetMap.values().toList()
+    }
+
+    companion object {
         private val EXPLICIT_FLEXIBLE_PACKAGE = Flexibility.FLEXIBLE_TYPE_CLASSIFIER.getPackageFqName().asString()
         private val EXPLICIT_FLEXIBLE_CLASS_NAME = Flexibility.FLEXIBLE_TYPE_CLASSIFIER.getRelativeClassName().asString()
 

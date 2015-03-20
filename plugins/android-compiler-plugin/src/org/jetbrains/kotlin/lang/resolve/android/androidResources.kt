@@ -20,4 +20,4 @@ public data class AndroidModuleInfo(val applicationPackage: String, val mainResD
 
 trait AndroidResource
 
-public class AndroidWidget(val id: String, val className: String) : AndroidResource
+public data class AndroidWidget(val id: String, val className: String) : AndroidResource
