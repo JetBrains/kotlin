@@ -47,3 +47,8 @@ public fun isResourceIdDeclaration(str: String?): Boolean = str?.startsWith(Andr
 public fun isResourceIdUsage(str: String?): Boolean = str?.startsWith(AndroidConst.ID_USAGE_PREFIX) ?: false
 
 public fun isResourceDeclarationOrUsage(id: String?): Boolean = isResourceIdDeclaration(id) || isResourceIdUsage(id)
+
+public fun getRealWidgetType(xmlType: String): String = when (xmlType) {
+    "fragment", "include", "merge" -> "View"
+    else -> xmlType
+}
