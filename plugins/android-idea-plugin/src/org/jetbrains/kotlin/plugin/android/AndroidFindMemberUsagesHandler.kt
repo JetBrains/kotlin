@@ -51,7 +51,8 @@ class AndroidFindMemberUsagesHandler(
     override fun getPrimaryElements(): Array<PsiElement> {
         assert(isAndroidSyntheticElement(declaration))
 
-        val name = (declaration as JetProperty).getName()!!
+        val property = declaration as JetProperty
+        val name = property.getName()!!
         val parser = ServiceManager.getService(declaration.getProject(), javaClass<AndroidUIXmlProcessor>())
         val psiElement = parser?.resourceManager?.idToXmlAttribute(name) as? XmlAttribute
         if (psiElement != null && psiElement.getValueElement() != null) {
