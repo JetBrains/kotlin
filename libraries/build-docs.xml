@@ -11,7 +11,7 @@
         <mkdir dir="doc/stdlib"/>
         <dokka src="stdlib/src:../core/builtins:../core/reflection.jvm"
             samples="stdlib/test" outputDir="doc" moduleName="stdlib" skipDeprecated="true" outputFormat="kotlin-website">
-            <sourcelink path="." url="http://github.com/JetBrains/kotlin/blob/master#L" linesuffix="#L"/>
+            <sourcelink path=".." url="http://github.com/JetBrains/kotlin/blob/master" linesuffix="#L"/>
         </dokka>
     </target>
 
