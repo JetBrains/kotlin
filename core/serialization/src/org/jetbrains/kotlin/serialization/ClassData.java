@@ -30,7 +30,7 @@ public final class ClassData {
     public static ClassData read(@NotNull byte[] bytes, @NotNull ExtensionRegistryLite registry) {
         try {
             ByteArrayInputStream in = new ByteArrayInputStream(bytes);
-            NameResolver nameResolver = NameSerializationUtil.deserializeNameResolver(in);
+            NameResolver nameResolver = NameResolver.read(in);
             ProtoBuf.Class classProto = ProtoBuf.Class.parseFrom(in, registry);
             return new ClassData(nameResolver, classProto);
         }
@@ -40,7 +40,6 @@ public final class ClassData {
     }
 
     private final NameResolver nameResolver;
-
     private final ProtoBuf.Class classProto;
 
     public ClassData(@NotNull NameResolver nameResolver, @NotNull ProtoBuf.Class classProto) {

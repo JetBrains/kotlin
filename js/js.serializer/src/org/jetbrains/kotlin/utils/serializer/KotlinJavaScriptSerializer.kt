@@ -39,8 +39,10 @@ public class KotlinJavaScriptSerializer() {
         val contentMap = hashMapOf<String, ByteArray>()
 
         DescriptorUtils.getPackagesFqNames(moduleDescriptor).forEach {
-            fqName -> serializePackage(moduleDescriptor, fqName) {
-                (fileName, stream) -> contentMap[fileName] = stream.toByteArray()
+            fqName ->
+            serializePackage(moduleDescriptor, fqName) {
+                fileName, stream ->
+                contentMap[fileName] = stream.toByteArray()
             }
         }
 
@@ -50,9 +52,6 @@ public class KotlinJavaScriptSerializer() {
 
     fun serializePackage(module: ModuleDescriptor, fqName: FqName, writeFun: (String, ByteArrayOutputStream) -> Unit) {
         val packageView = module.getPackage(fqName) ?: error("No package resolved in $module")
-
-        // TODO: perform some kind of validation? At the moment not possible because DescriptorValidator is in compiler-tests
-        // DescriptorValidator.validate(packageView)
 
         val skip: (DeclarationDescriptor) -> Boolean = { DescriptorUtils.getContainingModule(it) != module}
 
@@ -75,7 +74,8 @@ public class KotlinJavaScriptSerializer() {
         writeFun(BuiltInsSerializationUtil.getPackageFilePath(fqName), packageStream)
 
         val nameStream = ByteArrayOutputStream()
-        NameSerializationUtil.serializeStringTable(nameStream, serializer.getStringTable())
+        val strings = serializer.getStringTable()
+        NameSerializationUtil.serializeStringTable(nameStream, strings.serializeSimpleNames(), strings.serializeQualifiedNames())
         writeFun(BuiltInsSerializationUtil.getStringTableFilePath(fqName), nameStream)
     }
 

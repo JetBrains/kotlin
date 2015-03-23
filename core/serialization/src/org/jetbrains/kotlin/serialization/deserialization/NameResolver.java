@@ -21,12 +21,27 @@ import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.serialization.ProtoBuf;
+import org.jetbrains.kotlin.utils.UtilsPackage;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.LinkedList;
 
 import static org.jetbrains.kotlin.serialization.ProtoBuf.QualifiedNameTable.QualifiedName;
 
 public class NameResolver {
+    @NotNull
+    public static NameResolver read(@NotNull InputStream in) {
+        try {
+            ProtoBuf.StringTable simpleNames = ProtoBuf.StringTable.parseDelimitedFrom(in);
+            ProtoBuf.QualifiedNameTable qualifiedNames = ProtoBuf.QualifiedNameTable.parseDelimitedFrom(in);
+            return new NameResolver(simpleNames, qualifiedNames);
+        }
+        catch (IOException e) {
+            throw UtilsPackage.rethrow(e);
+        }
+    }
+
     private final ProtoBuf.StringTable strings;
     private final ProtoBuf.QualifiedNameTable qualifiedNames;
 

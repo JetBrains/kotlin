@@ -30,7 +30,7 @@ public final class PackageData {
     public static PackageData read(@NotNull byte[] bytes, @NotNull ExtensionRegistryLite registry) {
         try {
             ByteArrayInputStream in = new ByteArrayInputStream(bytes);
-            NameResolver nameResolver = NameSerializationUtil.deserializeNameResolver(in);
+            NameResolver nameResolver = NameResolver.read(in);
             ProtoBuf.Package packageProto = ProtoBuf.Package.parseFrom(in, registry);
             return new PackageData(nameResolver, packageProto);
         }
@@ -40,7 +40,6 @@ public final class PackageData {
     }
 
     private final NameResolver nameResolver;
-
     private final ProtoBuf.Package packageProto;
 
     public PackageData(@NotNull NameResolver nameResolver, @NotNull ProtoBuf.Package packageProto) {
