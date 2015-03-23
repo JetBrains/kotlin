@@ -35,7 +35,7 @@ open class Context(val buffer: StringBuffer = StringBuffer(), private var indent
         indentDepth--
         if (indentDepth < 0)
             throw InvalidIndent(indentDepth)
-        currentIndent = currentIndent.substring(0, currentIndent.length - indentUnit.length)
+        currentIndent = currentIndent.substring(0, currentIndent.length() - indentUnit.length())
     }
 
     public open fun write(what: String) {
