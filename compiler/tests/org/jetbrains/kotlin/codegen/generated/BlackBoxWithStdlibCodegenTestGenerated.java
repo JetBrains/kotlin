@@ -2563,6 +2563,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 doTestWithStdlib(fileName);
             }
 
+            @TestMetadata("localClassSimpleName.kt")
+            public void testLocalClassSimpleName() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/classLiterals/localClassSimpleName.kt");
+                doTestWithStdlib(fileName);
+            }
+
             @TestMetadata("simpleClassLiteral.kt")
             public void testSimpleClassLiteral() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/classLiterals/simpleClassLiteral.kt");
@@ -2773,6 +2779,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             @TestMetadata("package.kt")
             public void testPackage() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/mapping/package.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("syntheticFields.kt")
+            public void testSyntheticFields() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/mapping/syntheticFields.kt");
                 doTestWithStdlib(fileName);
             }
 

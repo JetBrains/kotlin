@@ -1,0 +1,4 @@
+/**
+ * @param foo
+ * <caret>
+ */

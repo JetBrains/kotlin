@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.isSubpackageOf
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.makeStarProjection
@@ -124,5 +126,13 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
         }
         arguments.add(TypeProjectionImpl(returnType))
         return JetTypeImpl(annotations, classDescriptor.getTypeConstructor(), false, arguments, classDescriptor.getMemberScope(arguments))
+    }
+
+    companion object {
+        public fun isReflectionType(type: JetType): Boolean {
+            val descriptor = type.getConstructor().getDeclarationDescriptor() ?: return false
+            val fqName = DescriptorUtils.getFqName(descriptor)
+            return fqName.isSafe() && fqName.toSafe().isSubpackageOf(KOTLIN_REFLECT_FQ_NAME)
+        }
     }
 }
