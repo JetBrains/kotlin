@@ -93,7 +93,7 @@ public class KotlinLightClassForPackage private(
     private val implementsList: LightEmptyImplementsList =
             LightEmptyImplementsList(manager)
 
-    private val packageClsFile: ClsFileImpl = KotlinJavaFileStubProvider.createFakeClsFile(manager.getProject(), packageClassFqName, files) {
+    private val packageClsFile: ClsFileImpl = KotlinJavaFileStubProvider.createFakeClsFile(manager.getProject(), packageFqName, files) {
         (getDelegate().getContainingFile() as ClsFileImpl).getStub()
     }
 

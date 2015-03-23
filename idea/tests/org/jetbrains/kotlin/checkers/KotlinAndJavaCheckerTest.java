@@ -97,6 +97,10 @@ public class KotlinAndJavaCheckerTest extends KotlinDaemonAnalyzerTestCase {
         doTest(true, true, "NoNotNullOnParameterInOverride.java", "NoNotNullOnParameterInOverride.kt");
     }
 
+    public void testTopLevelFunctionInDataFlowInspection() throws Exception {
+        doTest(true, true, "TopLevelFunctionInDataFlowInspection.java", "TopLevelFunctionInDataFlowInspection.kt");
+    }
+
     public void testUsingKotlinPackageDeclarations() throws Exception {
         doTest(true, true, "UsingKotlinPackageDeclarations.java", "UsingKotlinPackageDeclarations.kt");
     }
