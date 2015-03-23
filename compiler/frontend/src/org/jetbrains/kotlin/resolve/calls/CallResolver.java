@@ -188,7 +188,17 @@ public class CallResolver {
             @NotNull Collection<ResolutionCandidate<D>> candidates,
             @NotNull CallTransformer<D, F> callTransformer
     ) {
-        TracingStrategy tracing = TracingStrategyImpl.create(referenceExpression, context.call);
+        return computeTasksFromCandidatesAndResolvedCall(context, candidates, callTransformer,
+                                                         TracingStrategyImpl.create(referenceExpression, context.call));
+    }
+
+    @NotNull
+    private <D extends CallableDescriptor, F extends D> OverloadResolutionResults<F> computeTasksFromCandidatesAndResolvedCall(
+            @NotNull BasicCallResolutionContext context,
+            @NotNull Collection<ResolutionCandidate<D>> candidates,
+            @NotNull CallTransformer<D, F> callTransformer,
+            @NotNull TracingStrategy tracing
+    ) {
         List<ResolutionTask<D, F>> prioritizedTasks =
                 taskPrioritizer.<D, F>computePrioritizedTasksFromCandidates(context, candidates, tracing);
         return doResolveCallOrGetCachedResults(context, prioritizedTasks, callTransformer, tracing);
@@ -313,6 +323,7 @@ public class CallResolver {
 
         return resolveConstructorDelegationCall(
                 context,
+                call,
                 call.getCalleeExpression(),
                 constructorDescriptor
         );
@@ -321,6 +332,7 @@ public class CallResolver {
     @NotNull
     private OverloadResolutionResults<FunctionDescriptor> resolveConstructorDelegationCall(
             @NotNull BasicCallResolutionContext context,
+            @NotNull JetConstructorDelegationCall call,
             @NotNull JetConstructorDelegationReferenceExpression calleeExpression,
             @NotNull ConstructorDescriptor calleeConstructor
     ) {
@@ -364,7 +376,11 @@ public class CallResolver {
                     knownTypeParametersSubstitutor));
         }
 
-        return computeTasksFromCandidatesAndResolvedCall(context, calleeExpression, candidates, CallTransformer.FUNCTION_CALL_TRANSFORMER);
+        TracingStrategy tracing = calleeExpression.isEmpty() ?
+                                  new TracingStrategyForEmptyConstructorDelegationCall(call, context.call) :
+                                  TracingStrategyImpl.create(calleeExpression, context.call);
+
+        return computeTasksFromCandidatesAndResolvedCall(context, candidates, CallTransformer.FUNCTION_CALL_TRANSFORMER, tracing);
     }
 
     public OverloadResolutionResults<FunctionDescriptor> resolveCallWithKnownCandidate(
