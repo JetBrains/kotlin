@@ -27,4 +27,8 @@ object Test7 {
 }
 
 // ANNOTATION: java.lang.Deprecated
-// SEARCH: PsiMethod:test1, PsiMethod:test2, PsiMethod:test4, PsiMethod:test6, PsiMethod:test7
+// SEARCH: KotlinLightMethodForDeclaration:test1
+// SEARCH: KotlinLightMethodForDeclaration:test2
+// SEARCH: KotlinLightMethodForDeclaration:test4
+// SEARCH: KotlinLightMethodForDeclaration:test6
+// SEARCH: KotlinLightMethodForDeclaration:test7

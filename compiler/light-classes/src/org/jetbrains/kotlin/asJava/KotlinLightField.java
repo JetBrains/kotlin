@@ -148,7 +148,7 @@ public abstract class KotlinLightField<T extends JetDeclaration, D extends PsiFi
 
     @Override
     public String toString() {
-        return "PsiField:" + getName();
+        return "KotlinLightField:" + getName();
     }
 
     @NotNull

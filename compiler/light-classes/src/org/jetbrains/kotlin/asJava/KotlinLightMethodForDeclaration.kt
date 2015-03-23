@@ -125,4 +125,6 @@ open public class KotlinLightMethodForDeclaration(
             getContainingClass() == other.getContainingClass()
 
     override fun hashCode(): Int = (getName().hashCode() * 31 + origin.hashCode()) * 31 + getContainingClass()!!.hashCode()
+
+    override fun toString(): String = "KotlinLightMethodForDeclaration:" + getName()
 }

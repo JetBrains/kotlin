@@ -10,4 +10,6 @@ class MyTestClass {
 }
 
 // ANNOTATION: org.junit.Test
-// SEARCH: PsiMethod:test1, PsiMethod:test2, PsiMethod:test3
+// SEARCH: KotlinLightMethodForDeclaration:test1
+// SEARCH: KotlinLightMethodForDeclaration:test2
+// SEARCH: KotlinLightMethodForDeclaration:test3
