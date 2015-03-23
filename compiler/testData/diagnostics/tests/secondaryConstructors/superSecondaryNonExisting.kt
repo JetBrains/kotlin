@@ -6,5 +6,5 @@ open class B(x: Double) {
 trait C
 class A : B, C {
     constructor(): <!NONE_APPLICABLE!>super<!>(' ')
-    <!EXPLICIT_DELEGATION_CALL_REQUIRED!>constructor<!>(x: Int)
+    <!EXPLICIT_DELEGATION_CALL_REQUIRED!>constructor(x: Int)<!>
 }
