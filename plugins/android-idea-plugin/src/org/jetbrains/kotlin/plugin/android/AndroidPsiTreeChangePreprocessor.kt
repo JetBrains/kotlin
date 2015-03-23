@@ -22,6 +22,7 @@ import com.intellij.openapi.util.SimpleModificationTracker
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.PsiTreeChangeEventImpl
 import com.intellij.psi.impl.PsiTreeChangePreprocessor
+import com.intellij.psi.xml.XmlFile
 import org.jetbrains.kotlin.lang.resolve.android.AndroidResourceManager
 
 public class AndroidPsiTreeChangePreprocessor : PsiTreeChangePreprocessor, SimpleModificationTracker() {
@@ -37,7 +38,7 @@ public class AndroidPsiTreeChangePreprocessor : PsiTreeChangePreprocessor, Simpl
 
     override fun treeChanged(event: PsiTreeChangeEventImpl) {
         if (event.getCode() in HANDLED_EVENTS) {
-            val file = event.getFile()
+            val file = event.getFile() ?: (event.getChild() as? XmlFile)
             if (file != null) {
                 val project = file.getProject()
 
