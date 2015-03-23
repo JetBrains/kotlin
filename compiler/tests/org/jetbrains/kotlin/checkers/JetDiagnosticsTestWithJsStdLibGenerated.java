@@ -572,5 +572,11 @@ public class JetDiagnosticsTestWithJsStdLibGenerated extends AbstractJetDiagnost
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/unsupportedFeatures/nestedInnerClassifier.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("secondaryConstructor.kt")
+        public void testSecondaryConstructor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/unsupportedFeatures/secondaryConstructor.kt");
+            doTest(fileName);
+        }
     }
 }
