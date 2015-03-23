@@ -1,22 +1,42 @@
-Kotlin standard library is a set of functions and types implementing idiomatic patterns when working with collections,
+# Module stdlib
+
+## Kotlin Standard Library
+
+The Kotlin standard library is a set of functions and types implementing idiomatic patterns when working with collections,
 text and files.
 
-$kotlin: Core functions and types, available on all supported platforms,
+# Package kotlin
 
-$kotlin.browser: API to access the web browser DOM
+Core functions and types, available on all supported platforms.
 
-$kotlin.concurrent: Concurrent programing API
+# Package kotlin.browser
 
-$kotlin.dom: Functions for working with the W3C DOM
+API to access the web browser DOM.
 
-$kotlin.io: IO API for working with files and streams
+# Package kotlin.concurrent
 
-$kotlin.math: Mathematics API
+Utility functions for concurrent programming.
 
-$kotlin.modules: API for defining compilation units
+# Package kotlin.dom
 
-$kotlin.template: Text processing API
+Functions for working with the W3C DOM.
 
-$kotlin.test: Functions for writing tests
+# Package kotlin.io
 
-$kotlin.util: Utility functions
+IO API for working with files and streams.
+
+# Package kotlin.math
+
+Mathematics API.
+
+# Package kotlin.modules
+
+API for defining compilation units.
+
+# Package kotlin.test
+
+Functions for writing tests
+
+# Package kotlin.util
+
+Utility functions
