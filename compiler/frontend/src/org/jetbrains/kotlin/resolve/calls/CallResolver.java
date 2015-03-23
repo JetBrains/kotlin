@@ -339,7 +339,7 @@ public class CallResolver {
 
         boolean isThisCall = calleeExpression.isThis();
         if (currentClassDescriptor.getKind() == ClassKind.ENUM_CLASS && !isThisCall) {
-            context.trace.report(DELEGATION_SUPER_CALL_IN_ENUM_CONSTRUCTOR.on((JetConstructorDelegationCall) calleeExpression.getParent()));
+            context.trace.report(DELEGATION_SUPER_CALL_IN_ENUM_CONSTRUCTOR.on(calleeExpression));
             return checkArgumentTypesAndFail(context);
         }
 
