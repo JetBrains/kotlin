@@ -420,7 +420,8 @@ public object PositioningStrategies {
                 override fun mark(element: JetConstructorDelegationCall): List<TextRange> {
                     if (element.isEmpty()) {
                         val constructor = element.getStrictParentOfType<JetSecondaryConstructor>()!!
-                        return markElement(constructor.getConstructorKeyword())
+                        val valueParameterList = constructor.getValueParameterList() ?: return markElement(constructor)
+                        return markRange(constructor.getConstructorKeyword(), valueParameterList.getLastChild())
                     }
                     return markElement(element.getCalleeExpression() ?: element)
                 }

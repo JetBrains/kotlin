@@ -82,8 +82,7 @@ public class TracingStrategyForEmptyConstructorDelegationCall(
     }
 
     private fun reportError(trace: BindingTrace) {
-        val declaration = delegationCall.getParent() as JetSecondaryConstructor
-        trace.report(Errors.EXPLICIT_DELEGATION_CALL_REQUIRED.on(declaration.getConstructorKeyword()))
+        trace.report(Errors.EXPLICIT_DELEGATION_CALL_REQUIRED.on(delegationCall))
     }
 
     // Underlying methods should not be called because such errors are impossible
