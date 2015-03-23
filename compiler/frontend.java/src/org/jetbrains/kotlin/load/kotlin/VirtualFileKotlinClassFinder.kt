@@ -18,12 +18,12 @@ package org.jetbrains.kotlin.load.kotlin
 
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
-import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.utils.sure
 
 public abstract class VirtualFileKotlinClassFinder : VirtualFileFinder {
     override fun findKotlinClass(classId: ClassId): KotlinJvmBinaryClass? {
-        val file = findVirtualFileWithHeader(classId.asSingleFqName().toSafe()) ?: return null
+        val file = findVirtualFileWithHeader(classId.asSingleFqName()) ?: return null
         return KotlinBinaryClassCache.getKotlinBinaryClass(file)
     }
 

@@ -16,27 +16,31 @@
 
 package org.jetbrains.kotlin.resolve
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.context.TypeLazinessToken
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.codeFragmentUtil.debugTypeInfo
+import org.jetbrains.kotlin.psi.debugText.getDebugText
+import org.jetbrains.kotlin.resolve.PossiblyBareType.type
+import org.jetbrains.kotlin.resolve.TypeResolver.FlexibleTypeCapabilitiesProvider
+import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
+import org.jetbrains.kotlin.resolve.lazy.LazyEntity
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.LazyScopeAdapter
-import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
-
-import org.jetbrains.kotlin.diagnostics.Errors.*
-import org.jetbrains.kotlin.resolve.PossiblyBareType.type
-import org.jetbrains.kotlin.types.Variance.*
-import org.jetbrains.kotlin.resolve.TypeResolver.FlexibleTypeCapabilitiesProvider
-import kotlin.platform.platformStatic
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.context.TypeLazinessToken
-import org.jetbrains.kotlin.resolve.lazy.LazyEntity
-import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
+import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.Variance.INVARIANT
+import org.jetbrains.kotlin.types.Variance.IN_VARIANCE
+import org.jetbrains.kotlin.types.Variance.OUT_VARIANCE
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import org.jetbrains.kotlin.psi.debugText.getDebugText
-import org.jetbrains.kotlin.psi.codeFragmentUtil.debugTypeInfo
+import kotlin.platform.platformStatic
 
 public class TypeResolver(
         private val annotationResolver: AnnotationResolver,
@@ -175,7 +179,7 @@ public class TypeResolver(
                                 result = type(ErrorUtils.createErrorTypeWithArguments("" + typeConstructor, arguments))
                             }
                             else {
-                                if (Flexibility.FLEXIBLE_TYPE_CLASSIFIER.asSingleFqName() == DescriptorUtils.getFqName(classifierDescriptor)
+                                if (Flexibility.FLEXIBLE_TYPE_CLASSIFIER.asSingleFqName().toUnsafe() == DescriptorUtils.getFqName(classifierDescriptor)
                                     && classifierDescriptor.getTypeConstructor().getParameters().size() == 2) {
                                     // We create flexible types by convention here
                                     // This is not intended to be used in normal users' environments, only for tests and debugger etc

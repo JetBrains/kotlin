@@ -175,7 +175,7 @@ fun createAnnotationStubs(annotationIds: List<ClassId>, modifierList: KotlinModi
     annotationClassId ->
     val annotationEntryStubImpl = KotlinAnnotationEntryStubImpl(
             modifierList,
-            shortName = annotationClassId.asSingleFqName().shortName().ref(),
+            shortName = annotationClassId.getShortClassName().ref(),
             hasValueArguments = false
     )
     val constructorCallee = KotlinPlaceHolderStubImpl<JetConstructorCalleeExpression>(annotationEntryStubImpl, JetStubElementTypes.CONSTRUCTOR_CALLEE)

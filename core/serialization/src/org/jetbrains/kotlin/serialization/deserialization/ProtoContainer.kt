@@ -16,19 +16,16 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
-import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.serialization.deserialization.NameResolver
-import org.jetbrains.kotlin.name.FqNameUnsafe
+import org.jetbrains.kotlin.serialization.ProtoBuf
 
 public data class ProtoContainer(val classProto: ProtoBuf.Class?, val packageFqName: FqName?) {
-    {
-        assert(classProto != null || packageFqName != null)
-        assert(classProto == null || packageFqName == null)
+    init {
+        assert((classProto != null) xor (packageFqName != null))
     }
 
-    fun getFqName(nameResolver: NameResolver): FqNameUnsafe {
-        if (packageFqName != null) return packageFqName.toUnsafe()
+    fun getFqName(nameResolver: NameResolver): FqName {
+        if (packageFqName != null) return packageFqName
 
         return nameResolver.getClassId(classProto!!.getFqName()).asSingleFqName()
     }

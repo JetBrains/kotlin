@@ -16,42 +16,27 @@
 
 package org.jetbrains.kotlin.idea.decompiler.stubBuilder
 
-import com.intellij.psi.stubs.StubElement
-import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.name.FqName
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderStubImpl
-import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinNameReferenceExpressionStubImpl
-import org.jetbrains.kotlin.psi.JetTypeReference
+import com.intellij.psi.stubs.StubElement
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
 import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetParameterList
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinParameterStubImpl
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.JetNullableType
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.psi.JetTypeArgumentList
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeProjectionStubImpl
-import org.jetbrains.kotlin.psi.JetFunctionType
-import org.jetbrains.kotlin.psi.JetFunctionTypeReceiver
-import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
-import org.jetbrains.kotlin.psi.JetTypeParameterList
-import org.jetbrains.kotlin.serialization.ProtoBuf.Type
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeParameterStubImpl
-import org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameter.Variance
-import org.jetbrains.kotlin.psi.JetTypeConstraintList
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeConstraintStubImpl
 import org.jetbrains.kotlin.name.ClassId
-import java.util.ArrayList
-import org.jetbrains.kotlin.serialization.Flags
-import org.jetbrains.kotlin.serialization.ProtoBuf.Callable.CallableKind
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinModifierListStubImpl
-import org.jetbrains.kotlin.psi.stubs.impl.ModifierMaskUtils
-import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub
+import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes
+import org.jetbrains.kotlin.psi.stubs.impl.*
+import org.jetbrains.kotlin.serialization.Flags
+import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.serialization.ProtoBuf.Callable.CallableKind
+import org.jetbrains.kotlin.serialization.ProtoBuf.Type
 import org.jetbrains.kotlin.serialization.ProtoBuf.Type.Argument.Projection
-import org.jetbrains.kotlin.psi.JetProjectionKind
+import org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameter.Variance
+import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
+import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
+import java.util.ArrayList
 
 class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
 
@@ -76,7 +61,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
 
     private fun createClassReferenceTypeStub(parent: StubElement<out PsiElement>, type: Type) {
         val classId = c.nameResolver.getClassId(type.getConstructor().getId())
-        val fqName = classId.asSingleFqName()
+        val fqName = classId.asSingleFqName().toUnsafe()
         val isFunctionType = KotlinBuiltIns.isExactFunctionType(fqName)
         val isExtensionFunctionType = KotlinBuiltIns.isExactExtensionFunctionType(fqName)
         if (isFunctionType || isExtensionFunctionType) {
@@ -237,6 +222,6 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             return false
         }
         val classId = c.nameResolver.getClassId(constructor.getId())
-        return KotlinBuiltIns.isAny(classId.asSingleFqName()) && this.getNullable()
+        return KotlinBuiltIns.isAny(classId.asSingleFqName().toUnsafe()) && this.getNullable()
     }
 }

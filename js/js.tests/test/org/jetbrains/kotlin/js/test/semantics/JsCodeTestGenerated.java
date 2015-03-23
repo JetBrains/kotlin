@@ -102,6 +102,12 @@ public class JsCodeTestGenerated extends AbstractJsCodeTest {
         doTest(fileName);
     }
 
+    @TestMetadata("labelNestedClashWithKotlin.kt")
+    public void testLabelNestedClashWithKotlin() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/jsCode/cases/labelNestedClashWithKotlin.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("labelSiblingClash.kt")
     public void testLabelSiblingClash() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/jsCode/cases/labelSiblingClash.kt");

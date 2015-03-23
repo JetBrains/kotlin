@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.context.GlobalContext;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
+import org.jetbrains.kotlin.js.config.Config;
 import org.jetbrains.kotlin.js.config.EcmaVersion;
 import org.jetbrains.kotlin.js.config.LibrarySourcesConfig;
 import org.jetbrains.kotlin.js.config.LibrarySourcesConfigWithCaching;
@@ -92,5 +93,9 @@ public abstract class AbstractJetDiagnosticsTestWithJsStdLib extends AbstractJet
         module.seal();
 
         return module;
+    }
+
+    protected Config getConfig() {
+        return config;
     }
 }

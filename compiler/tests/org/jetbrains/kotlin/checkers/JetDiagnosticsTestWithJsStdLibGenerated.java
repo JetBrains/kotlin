@@ -257,6 +257,12 @@ public class JetDiagnosticsTestWithJsStdLibGenerated extends AbstractJetDiagnost
             doTest(fileName);
         }
 
+        @TestMetadata("noJavaScriptProduced.kt")
+        public void testNoJavaScriptProduced() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/jsCode/noJavaScriptProduced.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("warning.kt")
         public void testWarning() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/jsCode/warning.kt");
