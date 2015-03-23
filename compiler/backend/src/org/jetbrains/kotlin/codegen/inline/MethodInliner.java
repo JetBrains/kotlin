@@ -340,7 +340,7 @@ public class MethodInliner {
             public void visitLocalVariable(
                     @NotNull String name, @NotNull String desc, String signature, @NotNull Label start, @NotNull Label end, int index
             ) {
-                if (isInliningLambda) {
+                if (isInliningLambda || InlineCodegenUtil.GENERATE_SMAP) {
                     super.visitLocalVariable(name, desc, signature, start, end, getNewIndex(index));
                 }
             }

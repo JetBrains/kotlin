@@ -63,7 +63,7 @@ import static org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isTrait;
 
 public class InlineCodegenUtil {
-    public static final boolean GENERATE_SMAP = false;
+    public static final boolean GENERATE_SMAP = true;
     public static final int API = Opcodes.ASM5;
     public static final String INVOKE = "invoke";
 
