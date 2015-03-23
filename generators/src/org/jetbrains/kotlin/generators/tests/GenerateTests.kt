@@ -72,6 +72,7 @@ import org.jetbrains.kotlin.idea.intentions.AbstractIntentionTest
 import org.jetbrains.kotlin.idea.intentions.declarations.AbstractJoinLinesTest
 import org.jetbrains.kotlin.idea.kdoc.AbstractKDocHighlightingTest
 import org.jetbrains.kotlin.idea.navigation.AbstractGotoSuperTest
+import org.jetbrains.kotlin.idea.navigation.AbstractKotlinGotoImplementationTest
 import org.jetbrains.kotlin.idea.navigation.AbstractKotlinGotoTest
 import org.jetbrains.kotlin.idea.parameterInfo.AbstractFunctionParameterInfoTest
 import org.jetbrains.kotlin.idea.quickfix.AbstractQuickFixMultiFileTest
@@ -405,6 +406,10 @@ fun main(args: Array<String>) {
         testClass(javaClass<AbstractKotlinGotoTest>()) {
             model("navigation/gotoClass", testMethod = "doClassTest")
             model("navigation/gotoSymbol", testMethod = "doSymbolTest")
+        }
+
+        testClass(javaClass<AbstractKotlinGotoImplementationTest>()) {
+            model("navigation/implementations", recursive = false)
         }
 
         testClass(javaClass<AbstractQuickFixMultiFileTest>()) {
