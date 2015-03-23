@@ -39,15 +39,6 @@ open class KTopLevelVariableImpl<out R>(
             throw IllegalPropertyAccessException(e)
         }
     }
-
-    override fun equals(other: Any?): Boolean =
-            other is KTopLevelVariableImpl<*> && descriptor == other.descriptor
-
-    override fun hashCode(): Int =
-            descriptor.hashCode()
-
-    override fun toString(): String =
-            ReflectionObjectRenderer.renderProperty(descriptor)
 }
 
 class KMutableTopLevelVariableImpl<R>(
