@@ -76,6 +76,12 @@ public class ResolveElementCache extends ElementResolver {
         return additionalResolveCache.getValue().invoke(jetElement);
     }
 
+    @Override
+    public boolean hasElementAdditionalResolveCached(@NotNull JetElement jetElement) {
+        if (!additionalResolveCache.hasUpToDateValue()) return false;
+        return additionalResolveCache.getValue().isComputed(jetElement);
+    }
+
     @NotNull
     @Override
     public AdditionalCheckerProvider getAdditionalCheckerProvider(@NotNull JetFile jetFile) {

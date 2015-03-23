@@ -16,8 +16,13 @@
 
 package org.jetbrains.kotlin.storage
 
-public trait MemoizedFunctionToNotNull<P, R : Any> : Function1<P, R>
-public trait MemoizedFunctionToNullable<P, R : Any> : Function1<P, R?>
+public trait MemoizedFunctionToNotNull<P, R : Any> : Function1<P, R> {
+    public fun isComputed(key: P): Boolean
+}
+
+public trait MemoizedFunctionToNullable<P, R : Any> : Function1<P, R?> {
+    public fun isComputed(key: P): Boolean
+}
 
 public trait NotNullLazyValue<T : Any> : Function0<T> {
     public fun isComputed(): Boolean

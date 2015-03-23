@@ -61,6 +61,10 @@ public abstract class ElementResolver {
         return elementAdditionalResolve(jetElement, jetElement, BodyResolveMode.FULL);
     }
 
+    public boolean hasElementAdditionalResolveCached(@NotNull JetElement jetElement) {
+        return false;
+    }
+
     @NotNull
     public BindingContext resolveToElement(@NotNull JetElement jetElement) {
         return resolveToElement(jetElement, BodyResolveMode.FULL);
@@ -95,8 +99,7 @@ public abstract class ElementResolver {
                 elementOfAdditionalResolve = jetElement;
             }
 
-            if (bodyResolveMode != BodyResolveMode.FULL) {
-                //TODO: do not resolve with filter if whole body resolve cached already
+            if (bodyResolveMode != BodyResolveMode.FULL && !hasElementAdditionalResolveCached(jetElement)) {
                 return elementAdditionalResolve(elementOfAdditionalResolve, jetElement, bodyResolveMode);
             }
 
