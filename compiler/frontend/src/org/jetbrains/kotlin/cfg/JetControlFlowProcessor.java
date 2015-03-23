@@ -1441,9 +1441,7 @@ public class JetControlFlowProcessor {
             processParameters(constructor.getValueParameters());
             generateCallOrMarkUnresolved(constructor.getDelegationCall());
 
-            if (constructor.getDelegationCall() != null &&
-                constructor.getDelegationCall().getCalleeExpression() != null &&
-                !constructor.getDelegationCall().getCalleeExpression().isThis()
+            if (constructor.getDelegationCall() != null && !constructor.getDelegationCall().isCallToThis()
             ) {
                 generateClassOrObjectInitializers(classOrObject);
             }
