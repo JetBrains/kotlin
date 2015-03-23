@@ -17,5 +17,5 @@ class A1<R> : B<R> {
 }
 
 class A2<R> {
-    constructor(t: R, i: Int) : <!CYCLIC_CONSTRUCTOR_DELEGATION_CALL!>this<!>(<!TYPE_MISMATCH!>i<!>, 1)
+    constructor(t: R, i: Int) : this(<!TYPE_MISMATCH!>i<!>, 1)
 }
