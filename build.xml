@@ -15,13 +15,7 @@
     <property name="bootstrap.home" value="dependencies/bootstrap-compiler"/>
     <property name="bootstrap.compiler.home" value="${bootstrap.home}/Kotlin/kotlinc"/>
     <property name="bootstrap.runtime" value="${bootstrap.compiler.home}/lib/kotlin-runtime.jar"/>
-
-    <!-- TODO: temporary, remove "else" after bootstrap -->
-    <condition property="bootstrap.reflect"
-               value="${bootstrap.compiler.home}/lib/kotlin-reflect.jar"
-               else="${bootstrap.runtime}">
-        <available file="${bootstrap.compiler.home}/lib/kotlin-reflect.jar"/>
-    </condition>
+    <property name="bootstrap.reflect" value="${bootstrap.compiler.home}/lib/kotlin-reflect.jar"/>
 
     <property name="output" value="${basedir}/dist"/>
     <property name="kotlin-home" value="${output}/kotlinc"/>
