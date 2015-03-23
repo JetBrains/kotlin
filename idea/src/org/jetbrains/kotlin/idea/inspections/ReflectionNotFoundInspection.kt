@@ -51,10 +51,14 @@ import org.jetbrains.kotlin.utils.singletonOrEmptyList
 import java.io.File
 
 public class ReflectionNotFoundInspection : AbstractKotlinInspection() {
+    companion object {
+        val EMPTY_VISITOR = object : PsiElementVisitor() {}
+    }
+
     override fun runForWholeFile() = true
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
-        if (!shouldReportInFile(holder.getFile())) return PsiElementVisitor.EMPTY_VISITOR
+        if (!shouldReportInFile(holder.getFile())) return EMPTY_VISITOR
 
         return object : JetVisitorVoid() {
             private fun createQuickFix(): LocalQuickFix? {
