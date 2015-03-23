@@ -316,8 +316,7 @@ public class CallResolver {
 
         if (call.getCalleeExpression() == null) return checkArgumentTypesAndFail(context);
 
-        if (constructorDescriptor.getContainingDeclaration().getKind() == ClassKind.ENUM_CLASS &&
-            call.getCalleeExpression().isEmpty()) {
+        if (constructorDescriptor.getContainingDeclaration().getKind() == ClassKind.ENUM_CLASS && call.isEmpty()) {
             return null;
         }
 
@@ -376,7 +375,7 @@ public class CallResolver {
                     knownTypeParametersSubstitutor));
         }
 
-        TracingStrategy tracing = calleeExpression.isEmpty() ?
+        TracingStrategy tracing = call.isEmpty() ?
                                   new TracingStrategyForEmptyConstructorDelegationCall(call, context.call) :
                                   TracingStrategyImpl.create(calleeExpression, context.call);
 
