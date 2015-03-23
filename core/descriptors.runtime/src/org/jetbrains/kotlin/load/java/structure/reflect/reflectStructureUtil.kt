@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import java.lang.reflect.Array
 import java.lang.reflect.Modifier
@@ -43,7 +42,7 @@ public fun Class<*>.isEnumClassOrSpecializedEnumEntryClass(): Boolean =
         javaClass<Enum<*>>().isAssignableFrom(this)
 
 public val Class<*>.fqName: FqName
-    get() = classId.asSingleFqName().toSafe()
+    get() = classId.asSingleFqName()
 
 public val Class<*>.classId: ClassId
     get() = when {
@@ -51,7 +50,7 @@ public val Class<*>.classId: ClassId
         isArray() -> throw IllegalArgumentException("Can't compute ClassId for array type: $this")
         getEnclosingMethod() != null, getEnclosingConstructor() != null, getSimpleName().isEmpty() -> {
             val fqName = FqName(getName())
-            ClassId(fqName.parent(), FqNameUnsafe.topLevel(fqName.shortName()), /* local = */ true)
+            ClassId(fqName.parent(), FqName.topLevel(fqName.shortName()), /* local = */ true)
         }
         else -> getDeclaringClass()?.classId?.createNestedClassId(Name.identifier(getSimpleName())) ?: ClassId.topLevel(FqName(getName()))
     }

@@ -91,8 +91,8 @@ public class BuiltinsPackageFragment(
 
             val classProto = ProtoBuf.Class.parseFrom(stream, extensionRegistry)
 
-            val expectedShortName = classId.getRelativeClassName().shortName()
-            val actualShortName = nameResolver.getClassId(classProto.getFqName()).getRelativeClassName().shortName()
+            val expectedShortName = classId.getShortClassName()
+            val actualShortName = nameResolver.getClassId(classProto.getFqName()).getShortClassName()
             if (!actualShortName.isSpecial() && actualShortName != expectedShortName) {
                 // Workaround for case-insensitive file systems,
                 // otherwise we'd find "Collection" for "collection" etc

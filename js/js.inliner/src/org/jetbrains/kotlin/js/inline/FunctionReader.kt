@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.js.inline
 import com.google.dart.compiler.backend.js.ast.*
 import com.google.dart.compiler.backend.js.ast.metadata.inlineStrategy
 import com.google.dart.compiler.common.SourceInfoImpl
-import com.google.gwt.dev.js.JsParser
+import com.google.gwt.dev.js.JsAstMapper
 import com.google.gwt.dev.js.ThrowExceptionOnErrorReporter
 import com.google.gwt.dev.js.parserExceptions.AbortParsingException
 import com.google.gwt.dev.js.parserExceptions.JsParserException
@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.utils.*
 import com.intellij.util.containers.SLRUCache
 import java.io.*
 import java.net.URL
+import org.jetbrains.kotlin.js.parser.*
 
 // TODO: add hash checksum to defineModule?
 /**
@@ -115,28 +116,17 @@ public class FunctionReader(private val context: TranslationContext) {
     }
 
     private fun readFunctionFromSource(descriptor: CallableDescriptor, source: String): JsFunction? {
-        val startTag = Namer.getInlineStartTag(descriptor)
-        val endTag = Namer.getInlineEndTag(descriptor)
+        val tag = Namer.getFunctionTag(descriptor)
+        val index = source.indexOf(tag)
+        if (index < 0) return null
 
-        val startIndex = source.indexOf(startTag)
-        if (startIndex < 0) return null
-
-        val endIndex = source.indexOf(endTag, startIndex)
-        if (endIndex < 0) return null
-
-        val metadataString = source.substring(startIndex - 1, endIndex + endTag.length() + 1)
-        val statements = parseJavaScript(metadataString)
-        val statement = statements.firstOrNull()
-
-        if (statement !is JsExpressionStatement) throw IllegalStateException("Expected JsExpressionStatement, got: $statement")
-        val expression = statement.getExpression()
-
-        val metadata = InlineMetadata.decompose(expression)
-        if (metadata == null) {
-            throw IllegalStateException("Could not get inline metadata from expression: $expression")
+        // + 1 for closing quote
+        var offset = index + tag.length() + 1
+        while (offset < source.length() && source.charAt(offset).isWhitespaceOrComma) {
+            offset++
         }
 
-        val function = metadata.function
+        val function = parseFunction(source, offset, ThrowExceptionOnErrorReporter, JsRootScope(JsProgram("<inline>")))
         val moduleName = getExternalModuleName(descriptor)!!
         val moduleNameLiteral = context.program().getStringLiteral(moduleName)
         val moduleReference =  context.namer().getModuleReference(moduleNameLiteral)
@@ -146,19 +136,10 @@ public class FunctionReader(private val context: TranslationContext) {
         replaceExternalNames(function, replacements)
         return function
     }
-
-    private fun parseJavaScript(source: String): List<JsStatement> {
-        try {
-            val info = SourceInfoImpl(null, 0, 0, 0, 0)
-            val scope = JsRootScope(context.program())
-            val reader = StringReader(source)
-            return JsParser.parse(info, scope, reader, ThrowExceptionOnErrorReporter, /* insideFunction= */ false)
-        }
-        catch (e: Exception) {
-            throw RuntimeException(e)
-        }
-    }
 }
+
+private val Char.isWhitespaceOrComma: Boolean
+    get() = this == ',' || this.isWhitespace()
 
 private fun JsFunction.markInlineArguments(descriptor: CallableDescriptor) {
     val params = descriptor.getValueParameters()

@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl;
 import org.jetbrains.kotlin.load.java.structure.impl.JavaPackageImpl;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.resolve.jvm.JavaClassFinderPostConstruct;
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade;
 
@@ -87,14 +86,14 @@ public class JavaClassFinderImpl implements JavaClassFinder {
     @Nullable
     @Override
     public JavaClass findClass(@NotNull ClassId classId) {
-        FqNameUnsafe fqName = classId.asSingleFqName();
+        FqName fqName = classId.asSingleFqName();
 
         PsiClass psiClass = javaFacade.findClass(fqName.asString(), javaSearchScope);
         if (psiClass == null) return null;
 
         JavaClassImpl javaClass = new JavaClassImpl(psiClass);
 
-        if (!fqName.equalsTo(javaClass.getFqName())) {
+        if (!fqName.equals(javaClass.getFqName())) {
             throw new IllegalStateException("Requested " + fqName + ", got " + javaClass.getFqName());
         }
 

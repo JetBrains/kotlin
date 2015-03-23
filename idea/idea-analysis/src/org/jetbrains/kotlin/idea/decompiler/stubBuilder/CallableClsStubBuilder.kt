@@ -147,6 +147,6 @@ private class CallableClsStubBuilder(
     private fun isProbablyNothing(callableProto: ProtoBuf.Callable): Boolean {
         val constructor = callableProto.getReturnType().getConstructor()
         return constructor.getKind() == ProtoBuf.Type.Constructor.Kind.CLASS &&
-               c.nameResolver.getClassId(constructor.getId()).getRelativeClassName().shortName().asString() == "Nothing"
+               c.nameResolver.getClassId(constructor.getId()).getShortClassName().asString() == "Nothing"
     }
 }

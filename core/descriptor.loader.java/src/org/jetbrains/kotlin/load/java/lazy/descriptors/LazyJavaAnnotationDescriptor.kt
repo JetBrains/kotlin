@@ -16,25 +16,26 @@
 
 package org.jetbrains.kotlin.load.java.lazy.descriptors
 
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
-import org.jetbrains.kotlin.load.java.structure.*
-import org.jetbrains.kotlin.resolve.constants.*
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames.*
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames.DEFAULT_ANNOTATION_MEMBER_NAME
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames.isSpecialAnnotation
 import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils
 import org.jetbrains.kotlin.load.java.components.TypeUsage
-import org.jetbrains.kotlin.utils.valuesToMap
-import org.jetbrains.kotlin.utils.keysToMapExceptNulls
+import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.lazy.types.toAttributes
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.load.java.structure.*
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
 import org.jetbrains.kotlin.resolve.jvm.PLATFORM_TYPES
+import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.utils.keysToMapExceptNulls
+import org.jetbrains.kotlin.utils.valuesToMap
 
 private object DEPRECATED_IN_JAVA : JavaLiteralAnnotationArgument {
     override val name: Name? = null
@@ -49,13 +50,11 @@ fun LazyJavaResolverContext.resolveAnnotation(annotation: JavaAnnotation): LazyJ
 
 class LazyJavaAnnotationDescriptor(
         private val c: LazyJavaResolverContext,
-        val javaAnnotation : JavaAnnotation
+        val javaAnnotation: JavaAnnotation
 ) : AnnotationDescriptor {
 
     private val fqName = c.storageManager.createNullableLazyValue {
-        javaAnnotation.getClassId().asSingleFqName().let {
-            if (it.isSafe()) it.toSafe() else null
-        }
+        javaAnnotation.getClassId()?.asSingleFqName()
     }
 
     private val type = c.storageManager.createLazyValue {(): JetType ->

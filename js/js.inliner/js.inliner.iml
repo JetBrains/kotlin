@@ -13,5 +13,6 @@
     <orderEntry type="module" module-name="js.translator" />
     <orderEntry type="module" module-name="util" />
     <orderEntry type="module" module-name="js.parser" />
+    <orderEntry type="module" module-name="frontend" />
   </component>
 </module>

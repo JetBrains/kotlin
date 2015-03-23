@@ -34,10 +34,10 @@ public final class ClassId {
     }
 
     private final FqName packageFqName;
-    private final FqNameUnsafe relativeClassName;
+    private final FqName relativeClassName;
     private final boolean local;
 
-    public ClassId(@NotNull FqName packageFqName, @NotNull FqNameUnsafe relativeClassName, boolean local) {
+    public ClassId(@NotNull FqName packageFqName, @NotNull FqName relativeClassName, boolean local) {
         this.packageFqName = packageFqName;
         assert !relativeClassName.isRoot() :
                 "Class name must not be root: " + packageFqName + (local ? " (local)" : "");
@@ -46,7 +46,7 @@ public final class ClassId {
     }
 
     public ClassId(@NotNull FqName packageFqName, @NotNull Name topLevelName) {
-        this(packageFqName, FqNameUnsafe.topLevel(topLevelName), false);
+        this(packageFqName, FqName.topLevel(topLevelName), false);
     }
 
     @NotNull
@@ -55,8 +55,13 @@ public final class ClassId {
     }
 
     @NotNull
-    public FqNameUnsafe getRelativeClassName() {
+    public FqName getRelativeClassName() {
         return relativeClassName;
+    }
+
+    @NotNull
+    public Name getShortClassName() {
+        return relativeClassName.shortName();
     }
 
     public boolean isLocal() {
@@ -78,9 +83,9 @@ public final class ClassId {
     }
 
     @NotNull
-    public FqNameUnsafe asSingleFqName() {
+    public FqName asSingleFqName() {
         if (packageFqName.isRoot()) return relativeClassName;
-        return new FqNameUnsafe(packageFqName.asString() + "." + relativeClassName.asString());
+        return new FqName(packageFqName.asString() + "." + relativeClassName.asString());
     }
 
     @Override
@@ -115,7 +120,7 @@ public final class ClassId {
         if (lastSlash == -1) {
             throw new IllegalArgumentException("Class id should contain slash: " + string);
         }
-        FqNameUnsafe relativeClassName = new FqNameUnsafe(string.substring(lastSlash + 1));
+        FqName relativeClassName = new FqName(string.substring(lastSlash + 1));
         FqName packageFqName = new FqName(string.substring(0, lastSlash).replace('/', '.'));
         return new ClassId(packageFqName, relativeClassName, false);
     }

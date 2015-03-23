@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.js.inline.exception;
+package org.jetbrains.kotlin.js.parser
 
-public class InlineRecursionException extends RuntimeException {
-    public InlineRecursionException() {
-        super("Encountered mutual inline recursion, inline will lead to stack overflow");
-    }
+import com.google.gwt.dev.js.rhino.*
+
+public object ParserEvents {
+
+    public class OnFunctionParsingStart
+
+    public class OnFunctionParsingEnd(public val tokenStream: TokenStream)
 }
