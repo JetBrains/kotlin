@@ -79,10 +79,10 @@ public class AndroidRenameProcessor : RenamePsiElementProcessor() {
             renameSyntheticProperty(element.namedUnwrappedElement as JetProperty, newName, allRenames)
         }
         else if (element is XmlAttributeValue) {
-            renameAttributeValue(element, newName, allRenames, scope)
+            renameAttributeValue(element, newName, allRenames)
         }
         else if (element is LightElement) {
-            renameLightClassField(element, newName, allRenames, scope)
+            renameLightClassField(element, newName, allRenames)
         }
     }
 
@@ -97,8 +97,9 @@ public class AndroidRenameProcessor : RenamePsiElementProcessor() {
         val processor = ModuleServiceManager.getService(module, javaClass<AndroidUIXmlProcessor>())
         val resourceManager = processor.resourceManager
         val attr = resourceManager.propertyToXmlAttribute(jetProperty) as XmlAttribute
-        allRenames[XmlAttributeValueWrapper(attr.getValueElement())] = nameToIdDeclaration(newName)
-        val name = AndroidResourceUtil.getResourceNameByReferenceText(newName)
+        val attributeValue = attr.getValueElement() ?: return
+        allRenames[XmlAttributeValueWrapper(attributeValue)] = nameToIdDeclaration(newName)
+        val name = AndroidResourceUtil.getResourceNameByReferenceText(newName) ?: return
         for (resField in AndroidResourceUtil.findIdFields(attr)) {
             allRenames.put(resField, AndroidResourceUtil.getFieldNameByResourceName(name))
         }
@@ -107,8 +108,7 @@ public class AndroidRenameProcessor : RenamePsiElementProcessor() {
     private fun renameAttributeValue(
             attribute: XmlAttributeValue,
             newName: String,
-            allRenames: MutableMap<PsiElement, String>,
-            scope: SearchScope
+            allRenames: MutableMap<PsiElement, String>
     ) {
         val element = LazyValueResourceElementWrapper.computeLazyElement(attribute)
         val module = attribute.getModule() ?: ModuleUtilCore.findModuleForFile(
@@ -140,8 +140,7 @@ public class AndroidRenameProcessor : RenamePsiElementProcessor() {
     private fun renameLightClassField(
             field: LightElement,
             newName: String,
-            allRenames: MutableMap<PsiElement, String>,
-            scope: SearchScope
+            allRenames: MutableMap<PsiElement, String>
     ) {
         val oldName = field.getName()
         val processor = ServiceManager.getService(field.getProject(), javaClass<AndroidUIXmlProcessor>())
