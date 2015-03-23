@@ -63,7 +63,7 @@ public abstract class AbstractAndroidBoxTest : AbstractBlackBoxCodegenTest() {
     }
 
     private fun needsInvocationTest(path: String): Boolean {
-        return !FileUtil.findFilesByMask(Pattern.compile("^0.kt$"), File(path)).empty
+        return !FileUtil.findFilesByMask(Pattern.compile("^0.kt$"), File(path)).isEmpty()
     }
 
     override fun codegenTestBasePath(): String {
