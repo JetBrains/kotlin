@@ -5007,10 +5007,18 @@ public final class ProtoBuf {
       // optional .org.jetbrains.kotlin.serialization.Type type = 2;
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
+       *
+       * <pre>
+       * when projection is STAR, no type is written, otherwise type must be specified
+       * </pre>
        */
       boolean hasType();
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
+       *
+       * <pre>
+       * when projection is STAR, no type is written, otherwise type must be specified
+       * </pre>
        */
       org.jetbrains.kotlin.serialization.ProtoBuf.Type getType();
     }
@@ -5201,12 +5209,20 @@ public final class ProtoBuf {
       private org.jetbrains.kotlin.serialization.ProtoBuf.Type type_;
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
+       *
+       * <pre>
+       * when projection is STAR, no type is written, otherwise type must be specified
+       * </pre>
        */
       public boolean hasType() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
+       *
+       * <pre>
+       * when projection is STAR, no type is written, otherwise type must be specified
+       * </pre>
        */
       public org.jetbrains.kotlin.serialization.ProtoBuf.Type getType() {
         return type_;
@@ -5466,18 +5482,30 @@ public final class ProtoBuf {
         private org.jetbrains.kotlin.serialization.ProtoBuf.Type type_ = org.jetbrains.kotlin.serialization.ProtoBuf.Type.getDefaultInstance();
         /**
          * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
+         *
+         * <pre>
+         * when projection is STAR, no type is written, otherwise type must be specified
+         * </pre>
          */
         public boolean hasType() {
           return ((bitField0_ & 0x00000002) == 0x00000002);
         }
         /**
          * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
+         *
+         * <pre>
+         * when projection is STAR, no type is written, otherwise type must be specified
+         * </pre>
          */
         public org.jetbrains.kotlin.serialization.ProtoBuf.Type getType() {
           return type_;
         }
         /**
          * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
+         *
+         * <pre>
+         * when projection is STAR, no type is written, otherwise type must be specified
+         * </pre>
          */
         public Builder setType(org.jetbrains.kotlin.serialization.ProtoBuf.Type value) {
           if (value == null) {
@@ -5490,6 +5518,10 @@ public final class ProtoBuf {
         }
         /**
          * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
+         *
+         * <pre>
+         * when projection is STAR, no type is written, otherwise type must be specified
+         * </pre>
          */
         public Builder setType(
             org.jetbrains.kotlin.serialization.ProtoBuf.Type.Builder builderForValue) {
@@ -5500,6 +5532,10 @@ public final class ProtoBuf {
         }
         /**
          * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
+         *
+         * <pre>
+         * when projection is STAR, no type is written, otherwise type must be specified
+         * </pre>
          */
         public Builder mergeType(org.jetbrains.kotlin.serialization.ProtoBuf.Type value) {
           if (((bitField0_ & 0x00000002) == 0x00000002) &&
@@ -5515,6 +5551,10 @@ public final class ProtoBuf {
         }
         /**
          * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
+         *
+         * <pre>
+         * when projection is STAR, no type is written, otherwise type must be specified
+         * </pre>
          */
         public Builder clearType() {
           type_ = org.jetbrains.kotlin.serialization.ProtoBuf.Type.getDefaultInstance();

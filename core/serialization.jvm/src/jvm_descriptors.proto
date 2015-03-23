@@ -22,6 +22,8 @@ option java_outer_classname = "JvmProtoBuf";
 option optimize_for = LITE_RUNTIME;
 
 message JvmType {
+  // Either a primitive type, or a class FQ name should be present
+
   enum PrimitiveType {
     // These values correspond to ASM Type sorts
     VOID = 0;
@@ -35,8 +37,9 @@ message JvmType {
     DOUBLE = 8;
   }
 
-  // One of these should be present
   optional PrimitiveType primitive_type = 1;
+
+  // id in QualifiedNameTable of a name in the following format: 'package.Outer$Nested'
   optional int32 class_fq_name = 2;
 
   optional int32 array_dimension = 3 [default = 0];

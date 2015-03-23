@@ -6229,14 +6229,26 @@ public final class DebugProtoBuf {
       // optional .org.jetbrains.kotlin.serialization.Type type = 2;
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
+       *
+       * <pre>
+       * when projection is STAR, no type is written, otherwise type must be specified
+       * </pre>
        */
       boolean hasType();
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
+       *
+       * <pre>
+       * when projection is STAR, no type is written, otherwise type must be specified
+       * </pre>
        */
       org.jetbrains.kotlin.serialization.DebugProtoBuf.Type getType();
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
+       *
+       * <pre>
+       * when projection is STAR, no type is written, otherwise type must be specified
+       * </pre>
        */
       org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder getTypeOrBuilder();
     }
@@ -6476,18 +6488,30 @@ public final class DebugProtoBuf {
       private org.jetbrains.kotlin.serialization.DebugProtoBuf.Type type_;
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
+       *
+       * <pre>
+       * when projection is STAR, no type is written, otherwise type must be specified
+       * </pre>
        */
       public boolean hasType() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
+       *
+       * <pre>
+       * when projection is STAR, no type is written, otherwise type must be specified
+       * </pre>
        */
       public org.jetbrains.kotlin.serialization.DebugProtoBuf.Type getType() {
         return type_;
       }
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
+       *
+       * <pre>
+       * when projection is STAR, no type is written, otherwise type must be specified
+       * </pre>
        */
       public org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder getTypeOrBuilder() {
         return type_;
@@ -6800,12 +6824,20 @@ public final class DebugProtoBuf {
             org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder> typeBuilder_;
         /**
          * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
+         *
+         * <pre>
+         * when projection is STAR, no type is written, otherwise type must be specified
+         * </pre>
          */
         public boolean hasType() {
           return ((bitField0_ & 0x00000002) == 0x00000002);
         }
         /**
          * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
+         *
+         * <pre>
+         * when projection is STAR, no type is written, otherwise type must be specified
+         * </pre>
          */
         public org.jetbrains.kotlin.serialization.DebugProtoBuf.Type getType() {
           if (typeBuilder_ == null) {
@@ -6816,6 +6848,10 @@ public final class DebugProtoBuf {
         }
         /**
          * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
+         *
+         * <pre>
+         * when projection is STAR, no type is written, otherwise type must be specified
+         * </pre>
          */
         public Builder setType(org.jetbrains.kotlin.serialization.DebugProtoBuf.Type value) {
           if (typeBuilder_ == null) {
@@ -6832,6 +6868,10 @@ public final class DebugProtoBuf {
         }
         /**
          * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
+         *
+         * <pre>
+         * when projection is STAR, no type is written, otherwise type must be specified
+         * </pre>
          */
         public Builder setType(
             org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder builderForValue) {
@@ -6846,6 +6886,10 @@ public final class DebugProtoBuf {
         }
         /**
          * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
+         *
+         * <pre>
+         * when projection is STAR, no type is written, otherwise type must be specified
+         * </pre>
          */
         public Builder mergeType(org.jetbrains.kotlin.serialization.DebugProtoBuf.Type value) {
           if (typeBuilder_ == null) {
@@ -6865,6 +6909,10 @@ public final class DebugProtoBuf {
         }
         /**
          * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
+         *
+         * <pre>
+         * when projection is STAR, no type is written, otherwise type must be specified
+         * </pre>
          */
         public Builder clearType() {
           if (typeBuilder_ == null) {
@@ -6878,6 +6926,10 @@ public final class DebugProtoBuf {
         }
         /**
          * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
+         *
+         * <pre>
+         * when projection is STAR, no type is written, otherwise type must be specified
+         * </pre>
          */
         public org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder getTypeBuilder() {
           bitField0_ |= 0x00000002;
@@ -6886,6 +6938,10 @@ public final class DebugProtoBuf {
         }
         /**
          * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
+         *
+         * <pre>
+         * when projection is STAR, no type is written, otherwise type must be specified
+         * </pre>
          */
         public org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder getTypeOrBuilder() {
           if (typeBuilder_ != null) {
@@ -6896,6 +6952,10 @@ public final class DebugProtoBuf {
         }
         /**
          * <code>optional .org.jetbrains.kotlin.serialization.Type type = 2;</code>
+         *
+         * <pre>
+         * when projection is STAR, no type is written, otherwise type must be specified
+         * </pre>
          */
         private com.google.protobuf.SingleFieldBuilder<
             org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder> 

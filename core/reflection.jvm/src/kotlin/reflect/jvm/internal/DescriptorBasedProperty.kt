@@ -68,4 +68,13 @@ abstract class DescriptorBasedProperty(computeDescriptor: () -> PropertyDescript
         if (proto == null || !proto.signature.hasSetter()) null
         else container.findMethodBySignature(proto.signature.getSetter(), proto.nameResolver)
     }
+
+    override fun equals(other: Any?): Boolean =
+            other is DescriptorBasedProperty && descriptor == other.descriptor
+
+    override fun hashCode(): Int =
+            descriptor.hashCode()
+
+    override fun toString(): String =
+            ReflectionObjectRenderer.renderProperty(descriptor)
 }

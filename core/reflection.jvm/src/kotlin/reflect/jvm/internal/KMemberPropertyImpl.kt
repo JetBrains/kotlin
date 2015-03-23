@@ -27,25 +27,16 @@ open class KMemberPropertyImpl<T : Any, out R>(
 ) : DescriptorBasedProperty(computeDescriptor), KMemberProperty<T, R>, KPropertyImpl<R> {
     override val name: String get() = descriptor.getName().asString()
 
-    override fun get(receiver: T): R {
+    override fun get(instance: T): R {
         try {
             val getter = getter
             [suppress("UNCHECKED_CAST")]
-            return if (getter != null) getter(receiver) as R else field!!.get(receiver) as R
+            return if (getter != null) getter(instance) as R else field!!.get(instance) as R
         }
         catch (e: IllegalAccessException) {
             throw IllegalPropertyAccessException(e)
         }
     }
-
-    override fun equals(other: Any?): Boolean =
-            other is KMemberPropertyImpl<*, *> && descriptor == other.descriptor
-
-    override fun hashCode(): Int =
-            descriptor.hashCode()
-
-    override fun toString(): String =
-            ReflectionObjectRenderer.renderProperty(descriptor)
 }
 
 
@@ -53,10 +44,10 @@ class KMutableMemberPropertyImpl<T : Any, R>(
         container: KClassImpl<T>,
         computeDescriptor: () -> PropertyDescriptor
 ) : KMemberPropertyImpl<T, R>(container, computeDescriptor), KMutableMemberProperty<T, R>, KMutablePropertyImpl<R> {
-    override fun set(receiver: T, value: R) {
+    override fun set(instance: T, value: R) {
         try {
             val setter = setter
-            if (setter != null) setter(receiver, value) else field!!.set(receiver, value)
+            if (setter != null) setter(instance, value) else field!!.set(instance, value)
         }
         catch (e: IllegalAccessException) {
             throw IllegalPropertyAccessException(e)
