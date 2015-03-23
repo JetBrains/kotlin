@@ -52,6 +52,8 @@ import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.serialization.DescriptorSerializer;
 import org.jetbrains.kotlin.serialization.PackageData;
 import org.jetbrains.kotlin.serialization.ProtoBuf;
+import org.jetbrains.kotlin.serialization.StringTable;
+import org.jetbrains.kotlin.serialization.deserialization.NameResolver;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor;
@@ -71,7 +73,6 @@ import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.K_PACKAGE_TYPE;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.getType;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.*;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
-import static org.jetbrains.kotlin.serialization.NameSerializationUtil.createNameResolver;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class PackageCodegen {
@@ -278,7 +279,9 @@ public class PackageCodegen {
 
         if (packageProto.getMemberCount() == 0) return;
 
-        PackageData data = new PackageData(createNameResolver(serializer.getStringTable()), packageProto);
+        StringTable strings = serializer.getStringTable();
+        NameResolver nameResolver = new NameResolver(strings.serializeSimpleNames(), strings.serializeQualifiedNames());
+        PackageData data = new PackageData(nameResolver, packageProto);
 
         AnnotationVisitor av = v.newAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_PACKAGE), true);
         av.visit(JvmAnnotationNames.ABI_VERSION_FIELD_NAME, JvmAbi.VERSION);

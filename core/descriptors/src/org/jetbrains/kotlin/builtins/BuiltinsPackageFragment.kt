@@ -25,13 +25,9 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.ClassData
-import org.jetbrains.kotlin.serialization.NameSerializationUtil
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf
-import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
-import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
-import org.jetbrains.kotlin.serialization.deserialization.FlexibleTypeCapabilitiesDeserializer
-import org.jetbrains.kotlin.serialization.deserialization.LocalClassResolverImpl
+import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 import org.jetbrains.kotlin.storage.StorageManager
 import java.io.InputStream
@@ -46,13 +42,13 @@ public class BuiltinsPackageFragment(
 
     private val extensionRegistry: ExtensionRegistryLite
 
-    ;{
+    init {
         extensionRegistry = ExtensionRegistryLite.newInstance()
         BuiltInsProtoBuf.registerAllExtensions(extensionRegistry)
         extensionRegistry
     }
 
-    private val nameResolver = NameSerializationUtil.deserializeNameResolver(
+    private val nameResolver = NameResolver.read(
             getStream(BuiltInsSerializationUtil.getStringTableFilePath(fqName))
     )
 

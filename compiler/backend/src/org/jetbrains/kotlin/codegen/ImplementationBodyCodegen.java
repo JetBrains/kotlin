@@ -62,6 +62,8 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.serialization.ClassData;
 import org.jetbrains.kotlin.serialization.DescriptorSerializer;
 import org.jetbrains.kotlin.serialization.ProtoBuf;
+import org.jetbrains.kotlin.serialization.StringTable;
+import org.jetbrains.kotlin.serialization.deserialization.NameResolver;
 import org.jetbrains.kotlin.serialization.jvm.BitEncoding;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
@@ -81,7 +83,6 @@ import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.*;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
-import static org.jetbrains.kotlin.serialization.NameSerializationUtil.createNameResolver;
 import static org.jetbrains.kotlin.types.Variance.INVARIANT;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
@@ -240,7 +241,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         ProtoBuf.Class classProto = serializer.classProto(descriptor).build();
 
-        ClassData data = new ClassData(createNameResolver(serializer.getStringTable()), classProto);
+        StringTable strings = serializer.getStringTable();
+        NameResolver nameResolver = new NameResolver(strings.serializeSimpleNames(), strings.serializeQualifiedNames());
+        ClassData data = new ClassData(nameResolver, classProto);
 
         AnnotationVisitor av = v.getVisitor().visitAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_CLASS), true);
         av.visit(JvmAnnotationNames.ABI_VERSION_FIELD_NAME, JvmAbi.VERSION);
