@@ -10,7 +10,7 @@ IntegerLiteral
   : Digit+?
 
 FloatLiteral
-  : <java double literal>;
+  : <Java double literal>;
 
 [helper]
 HexDigit
@@ -26,11 +26,23 @@ CharacterLiteral
 See [Basic types](basic-types.html)
 */
 
-StringWithTemplates
-  : <single-quoted string, $ can be escaped>;
-
 NoEscapeString
   : <"""-quoted string>;
+
+RegularStringPart
+  : <any character other than backslash, quote, $ or newline>
+
+ShortTemplateEntryStart:
+  : "$"
+
+EscapeSequence:
+  : UnicodeEscapeSequence | RegularEscapeSequence
+
+UnicodeEscapeSequence:
+  : "\u" HexDigit{4}
+
+RegularEscapeSequence:
+  : "\" <any character other than newline>
 
 /**
 See [String templates](basic-types.html#templates)
@@ -52,7 +64,9 @@ See [Java interoperability](java-interop.html)
 FieldName
   : "$" SimpleName;
 
+/*
 See [Properties And Fields](properties.html)
+*/
 
 LabelName
   : "@" SimpleName;

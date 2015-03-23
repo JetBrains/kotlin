@@ -29,6 +29,12 @@ object ClientObject: Server() {
 
 }
 
+class Servers: Iterator<Server> {
+
+}
+
+fun Iterator<Server>.f(p: Iterator<Server>): Iterator<Server> = this
+
 fun Client.bar(s: Server = Server.NAME) {
     foo(s)
 }
@@ -38,5 +44,8 @@ fun Client.hasNextServer(): Boolean {
 }
 
 fun Any.asServer(): Server? {
-    return if (this is Server) this as Server else null
+    when (this) {
+        is Server -> println("Server!")
+    }
+    return if (this is Server) this: Server else this as? Server
 }

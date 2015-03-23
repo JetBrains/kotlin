@@ -84,7 +84,8 @@ public class KotlinReferencesSearcher extends QueryExecutorBase<PsiReference, Re
                         UsagesSearchRequestItem requestItem = new UsagesSearchRequestItem(
                                 searchTarget,
                                 UsagesSearchPackage.getSpecialNamesToSearch(unwrappedElement),
-                                UsagesSearchPackage.getIsTargetUsage()
+                                UsagesSearchPackage.getIsTargetUsage(),
+                                null
                         );
                         searchHelper.processFilesWithText(requestItem, consumer);
                     }

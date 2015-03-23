@@ -48,6 +48,7 @@ private fun differenceModulo(a: Long, b: Long, c: Long): Long {
  * @param end ending bound for the progression
  * @param increment increment, or difference of successive elements in the progression
  * @return the final element of the progression
+ * @suppress
  */
 public fun getProgressionFinalElement(start: Int, end: Int, increment: Int): Int {
     if (increment > 0) {
@@ -69,6 +70,7 @@ public fun getProgressionFinalElement(start: Int, end: Int, increment: Int): Int
  * @param end ending bound for the progression
  * @param increment increment, or difference of successive elements in the progression
  * @return the final element of the progression
+ * @suppress
  */
 public fun getProgressionFinalElement(start: Long, end: Long, increment: Long): Long {
     if (increment > 0) {

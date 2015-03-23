@@ -448,6 +448,7 @@
     <definitionsScopedSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinDefinitionsSearcher"/>
     <annotatedElementsSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinAnnotatedElementsSearcher"/>
     <methodReferencesSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinLightPropertyAccessorsReferenceSearcher"/>
+    <methodReferencesSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinConstructorDelegationCallReferenceSearcher"/>
 
     <exceptionFilter implementation="org.jetbrains.kotlin.idea.filters.JetExceptionFilterFactory" order="first"/>
 
@@ -822,6 +823,11 @@
       <category>Kotlin</category>
     </intentionAction>
 
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.InvertIfConditionIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ExplicitGetInspection"
         displayName="Explicit 'get'"
         groupName="Kotlin"
@@ -859,6 +865,13 @@
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.UnusedSymbolInspection"
         displayName="Unused Symbol"
+        groupName="Kotlin"
+        enabledByDefault="true"
+        level="WARNING"
+        />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.UnusedReceiverParameterInspection"
+        displayName="Unused receiver parameter"
         groupName="Kotlin"
         enabledByDefault="true"
         level="WARNING"

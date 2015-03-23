@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.builtins.*
 
 
-public class DataClassAnnotationChecker : AnnotationChecker {
+public class DataClassAnnotationChecker : DeclarationChecker {
     override fun check(declaration: JetDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink) {
         if (descriptor !is ClassDescriptor) return
         if (declaration !is JetClassOrObject) return

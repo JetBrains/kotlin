@@ -148,7 +148,7 @@ stringTemplate
 
 stringTemplateElement
   : RegularStringPart
-  : ShortTemplateEntrySTART (SimpleName | "this")
+  : ShortTemplateEntryStart (SimpleName | "this")
   : EscapeSequence
   : longTemplate
   ;

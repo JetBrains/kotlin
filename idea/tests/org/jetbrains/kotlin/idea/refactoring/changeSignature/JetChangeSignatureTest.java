@@ -728,6 +728,72 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         doTest(changeInfo);
     }
 
+    public void testSecondaryConstructor() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        changeInfo.addParameter(new JetParameterInfo(-1, "s", KotlinBuiltIns.getInstance().getStringType(), null, "\"foo\"", null, null));
+        doTest(changeInfo);
+    }
+
+    public void testJavaConstructorInDelegationCall() throws Exception {
+        doJavaTest(
+                new JavaRefactoringProvider() {
+                    @NotNull
+                    @Override
+                    ParameterInfoImpl[] getNewParameters(@NotNull PsiMethod method) {
+                        ParameterInfoImpl[] newParameters = super.getNewParameters(method);
+                        newParameters = Arrays.copyOf(newParameters, newParameters.length + 1);
+
+                        PsiType paramType = PsiType.getJavaLangString(getPsiManager(), GlobalSearchScope.allScope(getProject()));
+                        newParameters[newParameters.length - 1] = new ParameterInfoImpl(-1, "s", paramType, "\"foo\"");
+
+                        return newParameters;
+                    }
+                }
+        );
+    }
+
+    public void testPrimaryConstructorByThisRef() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        changeInfo.addParameter(new JetParameterInfo(-1, "s", KotlinBuiltIns.getInstance().getStringType(), null, "\"foo\"", null, null));
+        doTest(changeInfo);
+    }
+
+    public void testPrimaryConstructorBySuperRef() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        changeInfo.addParameter(new JetParameterInfo(-1, "s", KotlinBuiltIns.getInstance().getStringType(), null, "\"foo\"", null, null));
+        doTest(changeInfo);
+    }
+
+    public void testSecondaryConstructorByThisRef() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        changeInfo.addParameter(new JetParameterInfo(-1, "s", KotlinBuiltIns.getInstance().getStringType(), null, "\"foo\"", null, null));
+        doTest(changeInfo);
+    }
+
+    public void testSecondaryConstructorBySuperRef() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        changeInfo.addParameter(new JetParameterInfo(-1, "s", KotlinBuiltIns.getInstance().getStringType(), null, "\"foo\"", null, null));
+        doTest(changeInfo);
+    }
+
+    public void testJavaConstructorBySuperRef() throws Exception {
+        doJavaTest(
+                new JavaRefactoringProvider() {
+                    @NotNull
+                    @Override
+                    ParameterInfoImpl[] getNewParameters(@NotNull PsiMethod method) {
+                        ParameterInfoImpl[] newParameters = super.getNewParameters(method);
+                        newParameters = Arrays.copyOf(newParameters, newParameters.length + 1);
+
+                        PsiType paramType = PsiType.getJavaLangString(getPsiManager(), GlobalSearchScope.allScope(getProject()));
+                        newParameters[newParameters.length - 1] = new ParameterInfoImpl(-1, "s", paramType, "\"foo\"");
+
+                        return newParameters;
+                    }
+                }
+        );
+    }
+
     @NotNull
     @Override
     protected String getTestDataPath() {
@@ -823,7 +889,10 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
     private void doJavaTest(JavaRefactoringProvider provider) throws Exception {
         configureFiles();
 
-        PsiElement targetElement = TargetElementUtilBase.findTargetElement(getEditor(), TargetElementUtilBase.ELEMENT_NAME_ACCEPTED);
+        PsiElement targetElement = TargetElementUtilBase.findTargetElement(
+                getEditor(),
+                TargetElementUtilBase.ELEMENT_NAME_ACCEPTED | TargetElementUtilBase.REFERENCED_ELEMENT_ACCEPTED
+        );
         assertTrue("<caret> is not on method name", targetElement instanceof PsiMethod);
 
         provider.getProcessor((PsiMethod)targetElement).run();

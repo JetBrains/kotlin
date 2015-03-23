@@ -725,7 +725,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     /*
      * literalConstant
      *   : "true" | "false"
-     *   : StringWithTemplates
+     *   : stringTemplate
      *   : NoEscapeString
      *   : IntegerLiteral
      *   : LongLiteral
