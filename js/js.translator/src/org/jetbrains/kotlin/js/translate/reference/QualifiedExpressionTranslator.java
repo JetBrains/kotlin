@@ -73,19 +73,7 @@ public final class QualifiedExpressionTranslator {
             return VariableAccessTranslator.newInstance(context, (JetSimpleNameExpression)selector, receiver).translateAsGet();
         }
         if (selector instanceof JetCallExpression) {
-            if (shouldBeInlined((JetCallExpression) selector, context) &&
-                BindingContextUtilPackage.isUsedAsExpression(selector, context.bindingContext())) {
-                TemporaryVariable temporaryVariable = context.declareTemporary(null);
-
-                JsNode result = invokeCallExpressionTranslator(receiver, selector, context);
-                assert result instanceof JsExpression;
-
-                JsExpression assignment = JsAstUtils.assignment(temporaryVariable.reference(), (JsExpression) result);
-                context.addStatementToCurrentBlock(assignment.makeStmt());
-                return temporaryVariable.reference();
-            } else {
-                return invokeCallExpressionTranslator(receiver, selector, context);
-            }
+            return invokeCallExpressionTranslator(receiver, selector, context);
         }
         //TODO: never get there
         if (selector instanceof JetSimpleNameExpression) {
