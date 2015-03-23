@@ -26,11 +26,11 @@ import org.jetbrains.kotlin.psi.JetSecondaryConstructor
 
 public class JetConstructorDelegationCallUsage(call: JetConstructorDelegationCall) : JetUsageInfo<JetConstructorDelegationCall>(call) {
     override fun processUsage(changeInfo: JetChangeInfo, element: JetConstructorDelegationCall): Boolean {
-        val isThisCall = element.getCalleeExpression()!!.isThis()
+        val isThisCall = element.isCallToThis()
 
         val psiFactory = JetPsiFactory(element)
         var elementToWorkWith = element
-        if (changeInfo.getNewParametersCount() > 0 && element.getCalleeExpression()!!.isEmpty()) {
+        if (changeInfo.getNewParametersCount() > 0 && element.isEmpty()) {
             val delegationKindName = if (isThisCall) "this" else "super"
             elementToWorkWith =
                     element.replace(psiFactory.createConstructorDelegationCall("$delegationKindName()")) as JetConstructorDelegationCall
@@ -40,7 +40,7 @@ public class JetConstructorDelegationCallUsage(call: JetConstructorDelegationCal
         val result = JetFunctionCallUsage(
                 elementToWorkWith, changeInfo.methodDescriptor.originalPrimaryFunction).processUsage(changeInfo, elementToWorkWith)
 
-        if (changeInfo.getNewParametersCount() == 0 && !isThisCall && !elementToWorkWith.getCalleeExpression()!!.isEmpty()) {
+        if (changeInfo.getNewParametersCount() == 0 && !isThisCall && !elementToWorkWith.isEmpty()) {
             (elementToWorkWith.getParent() as? JetSecondaryConstructor)?.getColon()?.delete()
             elementToWorkWith.replace(psiFactory.createConstructorDelegationCall(""))
         }
