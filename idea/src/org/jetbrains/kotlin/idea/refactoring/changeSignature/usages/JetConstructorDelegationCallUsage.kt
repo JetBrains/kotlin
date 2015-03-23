@@ -28,13 +28,10 @@ public class JetConstructorDelegationCallUsage(call: JetConstructorDelegationCal
     override fun processUsage(changeInfo: JetChangeInfo, element: JetConstructorDelegationCall): Boolean {
         val isThisCall = element.isCallToThis()
 
-        val psiFactory = JetPsiFactory(element)
         var elementToWorkWith = element
         if (changeInfo.getNewParametersCount() > 0 && element.isEmpty()) {
-            val delegationKindName = if (isThisCall) "this" else "super"
-            elementToWorkWith =
-                    element.replace(psiFactory.createConstructorDelegationCall("$delegationKindName()")) as JetConstructorDelegationCall
-            elementToWorkWith.getParent()!!.addBefore(psiFactory.createColon(), elementToWorkWith)
+            val constructor = element.getParent() as JetSecondaryConstructor
+            elementToWorkWith = constructor.replaceEmptyDelegationCallWithExplicit(isThisCall)
         }
 
         val result = JetFunctionCallUsage(
@@ -42,7 +39,7 @@ public class JetConstructorDelegationCallUsage(call: JetConstructorDelegationCal
 
         if (changeInfo.getNewParametersCount() == 0 && !isThisCall && !elementToWorkWith.isEmpty()) {
             (elementToWorkWith.getParent() as? JetSecondaryConstructor)?.getColon()?.delete()
-            elementToWorkWith.replace(psiFactory.createConstructorDelegationCall(""))
+            elementToWorkWith.replace(JetPsiFactory(element).createConstructorDelegationCall(""))
         }
 
         return result

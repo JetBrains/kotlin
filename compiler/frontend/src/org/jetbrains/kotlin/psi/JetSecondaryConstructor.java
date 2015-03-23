@@ -177,9 +177,30 @@ public class JetSecondaryConstructor extends JetDeclarationStub<KotlinPlaceHolde
         return findChildByClass(JetConstructorDelegationCall.class);
     }
 
+    public boolean hasEmptyDelegationCall() {
+        JetConstructorDelegationCall call = getDelegationCall();
+        return call != null && call.isEmpty();
+    }
+
     @NotNull
     public JetClassOrObject getClassOrObject() {
         return (JetClassOrObject) getParent().getParent();
+    }
+
+    @NotNull
+    public JetConstructorDelegationCall replaceEmptyDelegationCallWithExplicit(boolean isThis) {
+        JetPsiFactory psiFactory = new JetPsiFactory(getProject());
+        JetConstructorDelegationCall current = getDelegationCall();
+
+        assert current != null && current.isEmpty()
+                : "Method should not be called with non-existing or non-empty delegation call: " + getText();
+        current.delete();
+
+        PsiElement colon = addAfter(psiFactory.createColon(), getValueParameterList());
+
+        String delegationName = isThis ? "this" : "super";
+
+        return (JetConstructorDelegationCall) addAfter(psiFactory.createConstructorDelegationCall(delegationName + "()"), colon);
     }
 
     @NotNull
