@@ -16,64 +16,62 @@
 
 package org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine
 
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle
-import org.jetbrains.kotlin.psi.psiUtil.isInsideOf
-import java.util.*
-import org.jetbrains.kotlin.idea.refactoring.createTempCopy
-import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.idea.refactoring.JetNameSuggester
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
-import org.jetbrains.kotlin.cfg.pseudocode.*
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.idea.refactoring.JetNameValidatorImpl
-import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import com.intellij.psi.PsiNamedElement
-import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
-import org.jetbrains.kotlin.utils.DFS
-import org.jetbrains.kotlin.utils.DFS.*
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.util.RefactoringUIUtil
 import com.intellij.util.containers.MultiMap
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AnalysisResult.Status
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AnalysisResult.ErrorMessage
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.*
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.*
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.cfg.pseudocode.*
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithResult
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionWithNext
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.JetElementInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.*
-import kotlin.properties.Delegates
-import org.jetbrains.kotlin.cfg.pseudocodeTraverser.traverse
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.LocalFunctionDeclarationInstruction
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.MarkInstruction
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getTargetFunctionDescriptor
-import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.idea.imports.importableFqNameSafe
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.Initializer
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.ParameterUpdate
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.ExpressionValue
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.Jump
+import org.jetbrains.kotlin.cfg.pseudocodeTraverser.traverse
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.traverseFollowingInstructions
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValueBoxer.AsList
-import org.jetbrains.kotlin.idea.refactoring.getContextForContainingDeclarationBody
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.idea.refactoring.comparePossiblyOverridingDescriptors
-import org.jetbrains.kotlin.idea.util.makeNullable
-import org.jetbrains.kotlin.resolve.calls.CallTransformer
-import org.jetbrains.kotlin.resolve.calls.callUtil.*
-import org.jetbrains.kotlin.diagnostics.*
-import java.util.logging.*
-import com.intellij.openapi.diagnostic.Logger
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
+import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
+import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
+import org.jetbrains.kotlin.idea.imports.importableFqNameSafe
+import org.jetbrains.kotlin.idea.refactoring.*
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AnalysisResult.ErrorMessage
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AnalysisResult.Status
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.ExpressionValue
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.Initializer
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.Jump
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.ParameterUpdate
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValueBoxer.AsList
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.makeNullable
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.isInsideOf
+import org.jetbrains.kotlin.psi.psiUtil.parents
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
+import org.jetbrains.kotlin.resolve.calls.CallTransformer
+import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
+import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.utils.DFS
+import org.jetbrains.kotlin.utils.DFS.CollectingNodeHandler
+import org.jetbrains.kotlin.utils.DFS.Neighbors
+import org.jetbrains.kotlin.utils.DFS.VisitedWithSet
+import java.util.*
+import kotlin.properties.Delegates
 
 private val DEFAULT_RETURN_TYPE = KotlinBuiltIns.getInstance().getUnitType()
 private val DEFAULT_PARAMETER_TYPE = KotlinBuiltIns.getInstance().getNullableAnyType()
@@ -221,12 +219,6 @@ private fun ExtractionData.analyzeControlFlow(
         options: ExtractionOptions,
         parameters: Set<Parameter>
 ): Pair<ControlFlow, ErrorMessage?> {
-    fun isCurrentFunctionReturn(expression: JetReturnExpression): Boolean {
-        val functionDescriptor = expression.getTargetFunctionDescriptor(bindingContext)
-        val currentDescriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, pseudocode.getCorrespondingElement()]
-        return currentDescriptor == functionDescriptor
-    }
-
     val exitPoints = localInstructions.getExitPoints()
 
     val valuedReturnExits = ArrayList<ReturnValueInstruction>()
@@ -246,21 +238,19 @@ private fun ExtractionData.analyzeControlFlow(
 
         when (insn) {
             is ReturnValueInstruction -> {
-                val returnExpression = insn.returnExpressionIfAny
-                if (returnExpression == null) {
-                    val containingDeclaration = insn.returnedValue.element?.getNonStrictParentOfType<JetDeclarationWithBody>()
-                    if (containingDeclaration == pseudocode.getCorrespondingElement()) {
+                if (insn.owner == pseudocode) {
+                    if (insn.returnExpressionIfAny == null) {
                         defaultExits.add(insn)
                     }
-                }
-                else if (isCurrentFunctionReturn(returnExpression)) {
-                    valuedReturnExits.add(insn)
+                    else {
+                        valuedReturnExits.add(insn)
+                    }
                 }
             }
 
             is AbstractJumpInstruction -> {
                 val element = insn.element
-                if ((element is JetReturnExpression && isCurrentFunctionReturn(element))
+                if ((element is JetReturnExpression && insn.owner == pseudocode)
                         || element is JetBreakExpression
                         || element is JetContinueExpression) {
                     jumpExits.add(insn)
@@ -775,11 +765,23 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
     val bindingContext = commonParent.getContextForContainingDeclarationBody()
     if (bindingContext == null) return noContainerError
 
-    val pseudocodeDeclaration = PsiTreeUtil.getParentOfType(
-            commonParent, javaClass<JetDeclarationWithBody>(), javaClass<JetClassOrObject>()
-    ) ?: commonParent.getNonStrictParentOfType<JetProperty>()
-    ?: return noContainerError
-    val pseudocode = PseudocodeUtil.generatePseudocode(pseudocodeDeclaration, bindingContext)
+    val pseudocodeDeclaration =
+            PsiTreeUtil.getParentOfType(commonParent, javaClass<JetDeclarationWithBody>(), javaClass<JetClassOrObject>())
+            ?: commonParent.getNonStrictParentOfType<JetProperty>()
+            ?: return noContainerError
+
+    val enclosingPseudocodeDeclaration = if (pseudocodeDeclaration is JetFunctionLiteral) {
+        commonParent.parents(withItself = false)
+                .firstOrNull { it is JetDeclaration && it !is JetFunctionLiteral } as? JetDeclaration
+        ?: pseudocodeDeclaration
+    }
+    else {
+        pseudocodeDeclaration
+    }
+
+    val enclosingPseudocode = PseudocodeUtil.generatePseudocode(enclosingPseudocodeDeclaration, bindingContext)
+    val pseudocode = enclosingPseudocode.getPseudocodeByElement(pseudocodeDeclaration)
+                     ?: throw AssertionError("Can't find nested pseudocode for element: ${JetPsiUtil.getElementTextWithContext(pseudocodeDeclaration)}")
     val localInstructions = getLocalInstructions(pseudocode)
 
     val modifiedVarDescriptorsWithExpressions = localInstructions.getModifiedVarDescriptors(bindingContext)

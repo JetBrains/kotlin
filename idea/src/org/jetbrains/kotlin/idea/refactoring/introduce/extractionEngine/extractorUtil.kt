@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.intentions.ConvertToExpressionBodyAction
 import org.jetbrains.kotlin.idea.refactoring.JetNameSuggester
@@ -286,10 +287,17 @@ private fun makeCall(
 
     fun wrapCall(outputValue: OutputValue, callText: String): List<PsiElement> {
         return when (outputValue) {
-            is OutputValue.ExpressionValue ->
-                Collections.singletonList(
-                        if (outputValue.callSiteReturn) psiFactory.createReturn(callText) else psiFactory.createExpression(callText)
-                )
+            is OutputValue.ExpressionValue -> {
+                val exprText = if (outputValue.callSiteReturn) {
+                    val firstReturn = outputValue.originalExpressions.filterIsInstance<JetReturnExpression>().firstOrNull()
+                    val label = firstReturn?.getTargetLabel()?.getText() ?: ""
+                    "return$label $callText"
+                }
+                else {
+                    callText
+                }
+                Collections.singletonList(psiFactory.createExpression(exprText))
+            }
 
             is ParameterUpdate ->
                 Collections.singletonList(
@@ -403,6 +411,17 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
         nameByOffset.entrySet().forEach { e -> counterpartMap[e.getValue()]?.let { e.setValue(it) } }
     }
 
+    fun getCounterparts<T : JetExpression>(originalExpressions: Collection<T>,
+                                           body: JetExpression,
+                                           bodyOffset: Int,
+                                           file: PsiFile): List<T> {
+        return originalExpressions.map { originalExpression ->
+            val offsetInBody = originalExpression.getTextRange()!!.getStartOffset() - descriptor.extractionData.originalStartOffset!!
+            file.findElementAt(bodyOffset + offsetInBody)?.getNonStrictParentOfType(originalExpression.javaClass)
+            ?: throw AssertionError("Couldn't find expression at $offsetInBody in '${body.getText()}'")
+        }
+    }
+
     fun adjustDeclarationBody(declaration: JetNamedDeclaration) {
         val body = declaration.getGeneratedBody()
 
@@ -432,16 +451,14 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
         val replacingReturn: JetExpression?
         val expressionsToReplaceWithReturn: List<JetElement>
 
+        val returnsForLabelRemoval = descriptor.controlFlow.outputValues
+                .flatMapTo(ArrayList<JetReturnExpression>()) { it.originalExpressions.filterIsInstance<JetReturnExpression>() }
+
         val jumpValue = descriptor.controlFlow.jumpOutputValue
         if (jumpValue != null) {
             replacingReturn = psiFactory.createExpression(if (jumpValue.conditional) "return true" else "return")
-            expressionsToReplaceWithReturn = jumpValue.elementsToReplace.map { jumpElement ->
-                val offsetInBody = jumpElement.getTextRange()!!.getStartOffset() - descriptor.extractionData.originalStartOffset!!
-                val expr = file.findElementAt(bodyOffset + offsetInBody)?.getNonStrictParentOfType(jumpElement.javaClass)
-                assert(expr != null, "Couldn't find expression at $offsetInBody in '${body.getText()}'")
-
-                expr!!
-            }
+            returnsForLabelRemoval.removeAll(jumpValue.elementsToReplace)
+            expressionsToReplaceWithReturn = getCounterparts(jumpValue.elementsToReplace, body, bodyOffset, file)
         }
         else {
             replacingReturn = null
@@ -453,6 +470,8 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
                 expr.replace(replacingReturn)
             }
         }
+
+        getCounterparts(returnsForLabelRemoval, body, bodyOffset, file).forEach { it.getTargetLabel()?.delete() }
 
         for ((expr, originalOffset) in originalOffsetByExpr) {
             if (expr.isValid()) {

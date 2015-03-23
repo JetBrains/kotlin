@@ -668,6 +668,36 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                     doExtractFunctionTest(fileName);
                 }
 
+                @TestMetadata("labeledAndUnlabeledReturn1.kt")
+                public void testLabeledAndUnlabeledReturn1() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/definiteReturns/labeledAndUnlabeledReturn1.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
+                @TestMetadata("labeledAndUnlabeledReturn2.kt")
+                public void testLabeledAndUnlabeledReturn2() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/definiteReturns/labeledAndUnlabeledReturn2.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
+                @TestMetadata("nonLocalReturn.kt")
+                public void testNonLocalReturn() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/definiteReturns/nonLocalReturn.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
+                @TestMetadata("nonLocalReturnWithLabel.kt")
+                public void testNonLocalReturnWithLabel() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/definiteReturns/nonLocalReturnWithLabel.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
+                @TestMetadata("returnWithLabel.kt")
+                public void testReturnWithLabel() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/definiteReturns/returnWithLabel.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
                 @TestMetadata("singleDefiniteReturn.kt")
                 public void testSingleDefiniteReturn() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/definiteReturns/singleDefiniteReturn.kt");
@@ -1115,6 +1145,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 @TestMetadata("multipleReturnsWithDefault.kt")
                 public void testMultipleReturnsWithDefault() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/unextractable/multipleReturnsWithDefault.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
+                @TestMetadata("unmatchedReturnTargets.kt")
+                public void testUnmatchedReturnTargets() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/unextractable/unmatchedReturnTargets.kt");
                     doExtractFunctionTest(fileName);
                 }
 

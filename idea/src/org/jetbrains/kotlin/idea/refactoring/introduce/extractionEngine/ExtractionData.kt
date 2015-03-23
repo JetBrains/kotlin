@@ -100,7 +100,8 @@ data class ExtractionData(
         getCodeFragmentTextRange()?.let { originalFile.getText()?.substring(it.getStartOffset(), it.getEndOffset()) } ?: ""
     }
 
-    val originalStartOffset = originalElements.firstOrNull()?.let { e -> e.getTextRange()!!.getStartOffset() }
+    val originalStartOffset: Int?
+        get() = originalElements.firstOrNull()?.let { e -> e.getTextRange()!!.getStartOffset() }
 
     private val itFakeDeclaration by Delegates.lazy { JetPsiFactory(originalFile).createParameter("it: Any?") }
 
@@ -110,6 +111,8 @@ data class ExtractionData(
             val function = DescriptorToSourceUtils.descriptorToDeclaration(descriptor.getContainingDeclaration()) as? JetFunctionLiteral
             return function == null || !function.isInsideOf(originalElements)
         }
+
+        val originalStartOffset = originalStartOffset
 
         if (originalStartOffset != null) {
             val resultMap = HashMap<Int, ResolveResult>()
