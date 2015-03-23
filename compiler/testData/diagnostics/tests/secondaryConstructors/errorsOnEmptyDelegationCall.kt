@@ -2,7 +2,7 @@
 open class B0(x: Int)
 
 class A0 : B0 {
-    <!EXPLICIT_DELEGATION_CALL_REQUIRED!>constructor<!>()
+    <!EXPLICIT_DELEGATION_CALL_REQUIRED!>constructor()<!>
     constructor(x: Int) : super(<!NO_VALUE_FOR_PARAMETER!>)<!>
 }
 
@@ -14,7 +14,7 @@ open class B1 {
 }
 
 class A1 : B1 {
-    <!EXPLICIT_DELEGATION_CALL_REQUIRED!>constructor<!>()
+    <!EXPLICIT_DELEGATION_CALL_REQUIRED!>constructor()<!>
     constructor(x: Int) : <!OVERLOAD_RESOLUTION_AMBIGUITY!>super<!>()
 }
 
@@ -26,7 +26,7 @@ open class B2 {
 }
 
 class A2 : B2 {
-    <!EXPLICIT_DELEGATION_CALL_REQUIRED!>constructor<!>()
+    <!EXPLICIT_DELEGATION_CALL_REQUIRED!>constructor()<!>
     constructor(x: Int) : <!NONE_APPLICABLE!>super<!>()
 }
 
@@ -37,6 +37,6 @@ open class B3 {
 }
 
 class A3 : B3 {
-    <!EXPLICIT_DELEGATION_CALL_REQUIRED!>constructor<!>()
+    <!EXPLICIT_DELEGATION_CALL_REQUIRED!>constructor()<!>
     constructor(x: Int) : <!INVISIBLE_MEMBER!>super<!>()
 }
