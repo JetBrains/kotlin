@@ -62,12 +62,6 @@ public fun InputStream.reader(charset: String): InputStreamReader = InputStreamR
 /** Creates a buffered reader on this input stream using the specified [charset]. */
 public fun InputStream.bufferedReader(charset: String): BufferedReader = reader(charset).buffered()
 
-/** Creates a reader on this input stream using the specified [decoder]. */
-public fun InputStream.reader(decoder: CharsetDecoder): InputStreamReader = InputStreamReader(this, decoder)
-
-/** Creates a reader on this input stream using the specified [decoder]. */
-public fun InputStream.bufferedReader(decoder: CharsetDecoder): BufferedReader = reader(decoder).buffered()
-
 /**
  * Creates a buffered output stream wrapping this stream.
  * @param bufferSize the buffer size to use.
@@ -78,11 +72,14 @@ public fun OutputStream.buffered(bufferSize: Int = defaultBufferSize): BufferedO
 /** Creates a writer on this output stream using UTF-8 or the specified [charset]. */
 public fun OutputStream.writer(charset: Charset = Charsets.UTF_8): OutputStreamWriter = OutputStreamWriter(this, charset)
 
+/** Creates a buffered writer on this output stream using UTF-8 or the specified [charset]. */
+public fun OutputStream.bufferedWriter(charset: Charset = Charsets.UTF_8): BufferedWriter = writer(charset).buffered()
+
 /** Creates a writer on this output stream using the specified [charset]. */
 public fun OutputStream.writer(charset: String): OutputStreamWriter = OutputStreamWriter(this, charset)
 
-/** Creates a writer on this output stream using the specified [encoder]. */
-public fun OutputStream.writer(encoder: CharsetEncoder): OutputStreamWriter = OutputStreamWriter(this, encoder)
+/** Creates a buffered writer on this output stream using the specified [charset]. */
+public fun OutputStream.bufferedWriter(charset: String): BufferedWriter = writer(charset).buffered()
 
 /**
  * Copies this stream to the given output stream, returning the number of bytes copied
@@ -112,16 +109,3 @@ public fun InputStream.readBytes(estimatedSize: Int = defaultBufferSize): ByteAr
     return buffer.toByteArray()
 }
 
-/**
- * Constructs a new FileInputStream of this file and returns it as a result.
- */
-public fun File.inputStream(): InputStream {
-    return FileInputStream(this)
-}
-
-/**
- * Constructs a new FileOutputStream of this file and returns it as a result.
- */
-public fun File.outputStream(): OutputStream {
-    return FileOutputStream(this)
-}

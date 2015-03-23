@@ -1,8 +1,22 @@
 package kotlin.io
 
 import java.io.File
+import java.util.Collections
 import java.util.NoSuchElementException
 
+/**
+ * Estimation of a root name by a given file name.
+ *
+ * This implementation is able to find /, Drive:/, Drive: or
+ * //network.name/root as possible root names.
+ * / denotes File.separator here so \ can be used instead.
+ * All other possible roots cannot be identified by this implementation.
+ * It's also not guaranteed (but possible) that function will be able to detect a root
+ * which is incorrect for current OS. For instance, in Unix function cannot detect
+ * network root names like //network.name/root, but can detect Windows roots like C:/.
+ *
+ * @return string representing the root for this file, or empty string is this file name is relative
+ */
 private fun String.getRootName(): String {
     // Note: separators should be already replaced to system ones
     var first = indexOf(File.separatorChar, 0)
@@ -36,9 +50,17 @@ private fun String.getRootName(): String {
 }
 
 /**
- * Returns a string representation of root component of this abstract name, like / from /home/user, or C:\ from C:\file.tmp,
- * or //my.host/home for //my.host/home/user,
- * or empty string if this name is relative, like bar/gav
+ * Estimation of a root name for this file.
+ *
+ * This implementation is able to find /, Drive:/, Drive: or
+ * //network.name/root as possible root names.
+ * / denotes File.separator here so \ can be used instead.
+ * All other possible roots cannot be identified by this implementation.
+ * It's also not guaranteed (but possible) that function will be able to detect a root
+ * which is incorrect for current OS. For instance, in Unix function cannot detect
+ * network root names like //network.name/root, but can detect Windows roots like C:/.
+ *
+ * @return string representing the root for this file, or empty string is this file name is relative
  */
 public val File.rootName: String
     get() = separatorsToSystem().getRootName()
@@ -55,23 +77,13 @@ public val File.root: File?
     }
 
 public data class FilePathComponents(public val rootName: String, public val fileList: List<File>) {
-    public val size: Int = fileList.size()
+    public fun size(): Int = fileList.size()
 
     public fun subPath(beginIndex: Int, endIndex: Int): File {
-        if (beginIndex < 0 || beginIndex >= endIndex || endIndex > size)
+        if (beginIndex < 0 || beginIndex > endIndex || endIndex > size())
             throw IllegalArgumentException()
 
-        var res = ""
-        var first = true
-        for (elem in fileList.subList(beginIndex, endIndex)) {
-            if (!first) {
-                res += File.separatorChar
-            } else {
-                first = false
-            }
-            res += elem.toString()
-        }
-        return File(res)
+        return File(fileList.subList(beginIndex, endIndex).joinToString(File.separator))
     }
 }
 
@@ -82,6 +94,7 @@ public fun File.filePathComponents(): FilePathComponents {
     // if: a special case when we have only root component
     // Split not only by / or \, but also by //, ///, \\, \\\, etc.
     val list = if (rootName.length() > 0 && subPath.isEmpty()) listOf() else
+        // Looks awful but we split just by /+ or \+ depending on OS
         subPath.split("""\Q${File.separatorChar}\E+""").toList().map { it -> File(it) }
     return FilePathComponents(rootName, list)
 }
@@ -94,6 +107,6 @@ public fun File.filePathComponents(): FilePathComponents {
  * number count-1 belongs to a component farthest from the root
  * @throws IllegalArgumentException if [beginIndex] is negative,
 * or [endIndex] is greater than existing number of components,
-* or [beginIndex] is greater than or equals to [endIndex]
+* or [beginIndex] is greater than [endIndex]
  */
 public fun File.subPath(beginIndex: Int, endIndex: Int): File = filePathComponents().subPath(beginIndex, endIndex)

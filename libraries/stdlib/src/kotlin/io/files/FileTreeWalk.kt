@@ -8,9 +8,9 @@ import java.util.NoSuchElementException
 import java.util.Stack
 
 /**
- * Created by Mikhail.Glukhikh on 13/03/2015.
+ * Created by Mikhail Glukhikh on 13/03/2015.
  *
- * An alternative version of file walker
+ * An implementation of file walker
  */
 
 /**
@@ -31,6 +31,15 @@ public enum class FileWalkDirection {
  * It allows to iterate through all files inside [start] directory.
  * If [start] is just a file, walker iterates only it.
  * If [start] does not exist, walker does not do any iterations at all.
+ *
+ * @param start directory to walk into
+ * @param direction selects top-down or bottom-up order (in other words, parents first or children first).
+ * @param enter is called on any entered directory before its files are visited and before it is visited itself
+ * @param leave is called on any left directory after its files are visited and after it is visited itself
+ * @param fail is called on a directory when it's impossible to get its file list
+ * @param filter is called just before visiting a file, and if false is returned, file is not visited
+ * @param maxDepth is maximum walking depth, it must be positive. With a value of 1,
+ * walker visits [start] and all its children, with a value of 2 also grandchildren, etc.
  */
 public class FileTreeWalk(private val start: File,
                           private val direction: FileWalkDirection = FileWalkDirection.TOP_DOWN,
@@ -41,15 +50,18 @@ public class FileTreeWalk(private val start: File,
                           private val maxDepth: Int = Int.MAX_VALUE
 ) : Sequence<File> {
 
+    /** Abstract class that encapsulates file visiting in some order, beginning from a given [rootDir] */
     private abstract class DirectoryState(public val rootDir: File) {
         init {
             if (!rootDir.isDirectory())
                 throw IllegalArgumentException("Directory is needed")
         }
 
+        /** Call of this function proceeds to a next file for visiting and returns it */
         abstract public fun step(): File?
     }
 
+    /** Visiting in bottom-up order */
     private inner class BottomUpDirectoryState(rootDir: File) : DirectoryState(rootDir) {
 
         private var rootVisited = false
@@ -60,6 +72,7 @@ public class FileTreeWalk(private val start: File,
 
         private var failed = false
 
+        /** First all children, then root directory */
         override public fun step(): File? {
             if (!failed && fileList == null) {
                 enter(rootDir)
@@ -84,6 +97,7 @@ public class FileTreeWalk(private val start: File,
         }
     }
 
+    /** Visiting in top-down order */
     private inner class TopDownDirectoryState(rootDir: File) : DirectoryState(rootDir) {
 
         private var rootVisited = false
@@ -92,6 +106,7 @@ public class FileTreeWalk(private val start: File,
 
         private var fileIndex = 0
 
+        /** First root directory, then all children */
         override public fun step(): File? {
             if (!rootVisited) {
                 // First visit root
@@ -167,10 +182,10 @@ public class FileTreeWalk(private val start: File,
             if (!filter(file))
                 return gotoNext()
             if (file == topState.rootDir || !file.isDirectory() || state.size() >= maxDepth) {
-                // Proceed a root directory or a simple file
+                // Proceed to a root directory or a simple file
                 return file
             } else {
-                // Proceed a sub-directory
+                // Proceed to a sub-directory
                 pushState(file)
                 return gotoNext()
             }
@@ -178,42 +193,42 @@ public class FileTreeWalk(private val start: File,
     }
 
     /**
-     * Sets enter directory function.
-     * Enter function is called BEFORE the corresponding directory and its files are visited
+     * Sets enter directory [function].
+     * Enter [function] is called BEFORE the corresponding directory and its files are visited
      */
-    public fun enter(f: (File) -> Unit): FileTreeWalk {
-        return FileTreeWalk(start, direction, f, leave, fail, filter, maxDepth)
+    public fun enter(function: (File) -> Unit): FileTreeWalk {
+        return FileTreeWalk(start, direction, function, leave, fail, filter, maxDepth)
     }
 
     /**
-     * Sets leave directory function.
-     * Leave function is called AFTER the corresponding directory and its files are visited
+     * Sets leave directory [function].
+     * Leave [function] is called AFTER the corresponding directory and its files are visited
      */
-    public fun leave(f: (File) -> Unit): FileTreeWalk {
-        return FileTreeWalk(start, direction, enter, f, fail, filter, maxDepth)
+    public fun leave(function: (File) -> Unit): FileTreeWalk {
+        return FileTreeWalk(start, direction, enter, function, fail, filter, maxDepth)
     }
 
     /**
-     * Set fail entering directory function.
-     * Fail function is called when walker is unable to get list of directory files.
+     * Set fail entering directory [function].
+     * Fail [function] is called when walker is unable to get list of directory files.
      * Enter and leave functions are called even in this case.
      */
-    public fun fail(f: (File, IOException) -> Unit): FileTreeWalk {
-        return FileTreeWalk(start, direction, enter, leave, f, filter, maxDepth)
+    public fun fail(function: (File, IOException) -> Unit): FileTreeWalk {
+        return FileTreeWalk(start, direction, enter, leave, function, filter, maxDepth)
     }
 
     /**
-     * Sets filter function.
-     * Filter function is called before visiting files and entering directories.
+     * Sets filter [predicate].
+     * Filter [predicate] function is called before visiting files and entering directories.
      * If it returns false, file is not visited, directory is not entered and all its content is also not visited.
      * If it returns true, everything goes in the regular way
      */
-    public fun filter(f: (File) -> Boolean): FileTreeWalk {
-        return FileTreeWalk(start, direction, enter, leave, fail, f, maxDepth)
+    public fun filter(predicate: (File) -> Boolean): FileTreeWalk {
+        return FileTreeWalk(start, direction, enter, leave, fail, predicate, maxDepth)
     }
 
     /**
-     * Sets maximum depth of walk. Int.MAX_VALUE is used for unlimited.
+     * Sets maximum [depth] of walk. Int.MAX_VALUE is used for unlimited.
      * Negative and zero values are not allowed
      */
     public fun maxDepth(depth: Int): FileTreeWalk {
@@ -222,6 +237,7 @@ public class FileTreeWalk(private val start: File,
         return FileTreeWalk(start, direction, enter, leave, fail, filter, depth)
     }
 
+    /** An iterator associated with this walker */
     private val it = object : Iterator<File> {
         override public fun hasNext(): Boolean {
             if (nextFile == null)
@@ -242,6 +258,7 @@ public class FileTreeWalk(private val start: File,
         }
     }
 
+    /** Returns an associated file iterator */
     override public fun iterator(): Iterator<File> {
         return it
     }
@@ -271,9 +288,9 @@ public fun File.walkBottomUp(): FileTreeWalk = walk(FileWalkDirection.BOTTOM_UP)
  * Recursively process this file and all children with the given block.
  * Note that if this file doesn't exist, then the block will be executed on it anyway.
  *
- * @param block the function to call on each file
+ * @param function the function to call on each file
  */
 deprecated("It's recommended to use walkTopDown() / walkBottomUp()")
-public fun File.recurse(block: (File) -> Unit): Unit {
-    walkTopDown().forEach { block(it) }
+public fun File.recurse(function: (File) -> Unit): Unit {
+    walkTopDown().forEach { function(it) }
 }

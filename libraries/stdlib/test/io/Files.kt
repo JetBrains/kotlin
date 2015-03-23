@@ -733,21 +733,22 @@ class FilesTest {
     test fun testCopyTo() {
         val srcFile = createTempFile()
         val dstFile = createTempFile()
-        srcFile.replaceText("Hello, World!")
+        srcFile.writeText("Hello, World!", "UTF8")
         try {
             srcFile.copyTo(dstFile)
             assert(false)
         } catch (e: FileAlreadyExistsException) {
+            println(e.getMessage())
         }
 
         var len = srcFile.copyTo(dstFile, overwrite = true)
         assertEquals(13L, len)
-        assertEquals(srcFile.readText(), dstFile.readText())
+        assertEquals(srcFile.readText(), dstFile.readText("UTF8"))
 
         assert(dstFile.delete())
         len = srcFile.copyTo(dstFile)
         assertEquals(13L, len)
-        assertEquals(srcFile.readText(), dstFile.readText())
+        assertEquals(srcFile.readText("UTF8"), dstFile.readText())
 
         assert(dstFile.delete())
         dstFile.mkdir()
@@ -811,8 +812,8 @@ class FilesTest {
             createTempDir(prefix = "d1_", directory = subDir1)
             val file1 = createTempFile(prefix = "f1_", directory = src)
             val file2 = createTempFile(prefix = "f2_", directory = subDir1)
-            file1.replaceText("hello")
-            file2.replaceText("wazzup")
+            file1.writeText("hello")
+            file2.writeText("wazzup")
             createTempDir(prefix = "d1_", directory = subDir2)
 
             assert(src.copyRecursively(dst))
