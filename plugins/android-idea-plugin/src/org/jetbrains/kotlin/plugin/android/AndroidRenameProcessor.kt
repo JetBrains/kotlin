@@ -66,15 +66,7 @@ public class AndroidRenameProcessor : RenamePsiElementProcessor() {
 
     private fun PsiElement.getModule(): Module? {
         val moduleInfo = getModuleInfo()
-        if (moduleInfo is ModuleSourceInfo) return moduleInfo.module
-
-        val file = getContainingFile() as? JetFile
-        if (file != null) {
-            val moduleInfo = file.moduleInfo
-            if (moduleInfo is ModuleSourceInfo) return moduleInfo.module
-        }
-
-        return null
+        return if (moduleInfo is ModuleSourceInfo) moduleInfo.module else null
     }
 
     override fun prepareRenaming(
