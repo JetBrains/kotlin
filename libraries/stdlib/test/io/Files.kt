@@ -624,7 +624,11 @@ class FilesTest {
         checkFileElements(File("C:\\"), File("C:\\".separatorsToSystem()), listOf())
         checkFileElements(File("C:/"), File("C:/"), listOf())
         checkFileElements(File("C:"), File("C:"), listOf())
-        checkFileElements(File("//host.ru/home/mike"), File("//host.ru/home"), listOf("mike"))
+        if (File.separatorChar == '\\') {
+            // Check only in Windows
+            checkFileElements(File("\\\\host.ru\\home\\mike"), File("\\\\host.ru\\home"), listOf("mike"))
+            checkFileElements(File("//host.ru/home/mike"), File("//host.ru/home"), listOf("mike"))
+        }
         checkFileElements(File(""), null, listOf(""))
         checkFileElements(File("."), null, listOf("."))
         checkFileElements(File(".."), null, listOf(".."))
@@ -646,9 +650,14 @@ class FilesTest {
     }
 
     test fun subPath() {
-        assertEquals(File("mike"), File("//my.host.net/home/mike/temp").subPath(0, 1))
-        assertEquals(File("mike"), File("\\\\my.host.net\\home\\mike\\temp").subPath(0, 1))
+        if (File.separatorChar == '\\') {
+            // Check only in Windows
+            assertEquals(File("mike"), File("//my.host.net/home/mike/temp").subPath(0, 1))
+            assertEquals(File("mike"), File("\\\\my.host.net\\home\\mike\\temp").subPath(0, 1))
+        }
         assertEquals(File("bar/gav"), File("/foo/bar/gav/hi").subPath(1, 3))
+        assertEquals(File("foo"), File("/foo/bar/gav/hi").subPath(0, 1))
+        assertEquals(File("gav/hi"), File("/foo/bar/gav/hi").subPath(2, 4))
     }
 
     test fun normalize() {

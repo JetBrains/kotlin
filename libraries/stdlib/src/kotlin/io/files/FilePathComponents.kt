@@ -6,12 +6,11 @@ import java.util.NoSuchElementException
 private fun String.getRootName(): String {
     // Note: separators should be already replaced to system ones
     var first = indexOf(File.separatorChar, 0)
-    println("$this.getRootName: first=$first")
     if (first == 0) {
-        if (length() > 1) {
+        if (length() > 1 && this[1] == File.separatorChar) {
             // Network names like //my.host/home/something ? => //my.host/home/ should be root
-            // We have to consider here also /my.host/home/something because on Unix
-            // File converts // just to /
+            // NB: does not work in Unix because //my.host/home is converted into /my.host/home there
+            // So in Windows we'll have root of //my.host/home but in Unix just /
             first = indexOf(File.separatorChar, 2)
             if (first >= 0) {
                 val dot = indexOf('.', 2)
