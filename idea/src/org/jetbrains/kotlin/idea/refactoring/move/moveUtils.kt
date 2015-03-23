@@ -215,10 +215,9 @@ fun postProcessMoveUsages(usages: List<UsageInfo>,
             }
 
             is MoveRenameUsageInfo -> {
-                val moveRenameUsage = usage as MoveRenameUsageInfo
-                val oldElement = moveRenameUsage.getReferencedElement()!!
+                val oldElement = usage.getReferencedElement()!!
                 val newElement = counterpart(oldElement)
-                moveRenameUsage.getReference()?.let {
+                usage.getReference()?.let {
                     try {
                         if (it is JetSimpleNameReference) {
                             it.bindToElement(newElement, shorteningMode)
