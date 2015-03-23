@@ -92,20 +92,19 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
         return resourceManager.getLayoutXmlFiles().flatMap { entry ->
             val files = entry.getValue()
             val widgets = parseLayout(files)
-            if (widgets.isNotEmpty()) {
-                val layoutPackage = files[0].genSyntheticPackageName()
 
-                val mainLayoutFile = renderLayoutFile(layoutPackage, widgets) {
-                    writeSyntheticProperty("Activity", it, "findViewById(0)")
-                    writeSyntheticProperty("Fragment", it, "getView().findViewById(0)")
-                }
+            val layoutPackage = files[0].genSyntheticPackageName()
 
-                val viewLayoutFile = renderLayoutFile("$layoutPackage.view", widgets) {
-                    writeSyntheticProperty("View", it, "findViewById(0)")
-                }
+            val mainLayoutFile = renderLayoutFile(layoutPackage, widgets) {
+                writeSyntheticProperty("Activity", it, "findViewById(0)")
+                writeSyntheticProperty("Fragment", it, "getView().findViewById(0)")
+            }
 
-                listOf(mainLayoutFile, viewLayoutFile)
-            } else listOf()
+            val viewLayoutFile = renderLayoutFile("$layoutPackage.view", widgets) {
+                writeSyntheticProperty("View", it, "findViewById(0)")
+            }
+
+            listOf(mainLayoutFile, viewLayoutFile)
         }.filterNotNull() + commonFiles
     }
 
@@ -156,7 +155,7 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
         for (widget in widgets) {
             if (widgetMap.contains(widget.id)) {
                 val existingElement = widgetMap.get(widget.id)
-                if (existingElement.className != widget.className) {
+                if (existingElement.className != widget.className && existingElement.className != "View") {
                     // Widgets with the same id but different types exist.
                     widgetMap.put(widget.id, widget.copy(className = "View"))
                 }
