@@ -62,6 +62,9 @@ public object PositioningStrategies {
                             element.getNameIdentifier() ?: element.getObjectKeyword()
                     )
                 }
+                is JetConstructorDelegationCall -> {
+                    return SECONDARY_CONSTRUCTOR_DELEGATION_CALL.mark(element)
+                }
                 else -> {
                     return super.mark(element)
                 }
@@ -420,19 +423,6 @@ public object PositioningStrategies {
                         return markElement(constructor.getConstructorKeyword())
                     }
                     return markElement(element.getCalleeExpression() ?: element)
-                }
-            }
-
-    public val SECONDARY_CONSTRUCTOR_DELEGATION_CALL_OR_DEFAULT: PositioningStrategy<PsiElement> =
-            object : PositioningStrategy<PsiElement>() {
-                override fun mark(element: PsiElement): List<TextRange> {
-                    val parent = element.getParent()
-                    if (parent is JetConstructorDelegationCall) {
-                        return SECONDARY_CONSTRUCTOR_DELEGATION_CALL.mark(parent)
-                    }
-                    else {
-                        return DEFAULT.mark(element)
-                    }
                 }
             }
 }
