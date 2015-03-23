@@ -16,38 +16,24 @@
 
 package org.jetbrains.kotlin.idea.kdoc
 
-import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
 import com.intellij.openapi.util.TextRange
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.idea.references.JetMultiReference
-import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptorNonRoot
-import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.resolve.scopes.RedeclarationHandler
-import org.jetbrains.kotlin.resolve.scopes.WritableScopeImpl
-import org.jetbrains.kotlin.resolve.scopes.WritableScope
-import org.jetbrains.kotlin.resolve.scopes.ChainedScope
-import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil
-import org.jetbrains.kotlin.resolve.scopes.JetScopeUtils
-import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.KotlinCacheService
-import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
-import org.jetbrains.kotlin.resolve.source.PsiSourceElement
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
+import org.jetbrains.kotlin.idea.references.JetMultiReference
 import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
-import com.intellij.psi.PsiReference
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil
+import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
+import org.jetbrains.kotlin.resolve.scopes.*
+import org.jetbrains.kotlin.resolve.source.PsiSourceElement
+import org.jetbrains.kotlin.utils.Printer
 
 public class KDocReference(element: KDocName): JetMultiReference<KDocName>(element) {
     override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
@@ -87,9 +73,23 @@ public fun resolveKDocLink(session: KotlinCodeAnalyzer,
         return resolveParamLink(fromDescriptor, qualifiedName)
     }
 
+    // Try to find a matching local descriptor (parameter or type parameter) first.
+    if (qualifiedName.size() == 1) {
+        val scope = getResolutionScope(session, fromDescriptor)
+        val localResult = scope.getDescriptors().filter {
+            it.getName().asString() == qualifiedName.single() && it.getContainingDeclaration() == fromDescriptor
+        }
+        if (!localResult.isEmpty()) {
+            return localResult
+        }
+    }
+
     var result: Collection<DeclarationDescriptor> = listOf(fromDescriptor)
     qualifiedName.forEach { nameComponent ->
         if (result.size() != 1) return listOf()
+        if (!Name.isValidIdentifier(nameComponent)) {
+            return listOf()
+        }
         val scope = getResolutionScope(session, result.first())
         result = scope.getDescriptors().filter { it.getName().asString() == nameComponent }
     }
