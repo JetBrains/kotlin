@@ -1,15 +1,16 @@
 package c;
 
 import b.Test;
+import b.BPackage;
 
 class J {
     void bar() {
         Test t = new Test();
-        b.BPackage.test();
-        b.BPackage.test(t);
-        System.out.println(b.BPackage.getTEST());
-        System.out.println(b.BPackage.getTEST(t));
-        b.BPackage.setTEST("");
-        b.BPackage.setTEST(t, "");
+        BPackage.test();
+        BPackage.test(t);
+        System.out.println(BPackage.getTEST());
+        System.out.println(BPackage.getTEST(t));
+        BPackage.setTEST("");
+        BPackage.setTEST(t, "");
     }
 }

@@ -336,6 +336,12 @@ public class JetMoveTestGenerated extends AbstractJetMoveTest {
         doTest(fileName);
     }
 
+    @TestMetadata("kotlin/moveTopLevelDeclarations/moveFunctionToPackageUsedInJava/moveFunctionToPackageUsedInJava.test")
+    public void testKotlin_moveTopLevelDeclarations_moveFunctionToPackageUsedInJava_MoveFunctionToPackageUsedInJava() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/moveFunctionToPackageUsedInJava/moveFunctionToPackageUsedInJava.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("kotlin/moveTopLevelDeclarations/moveFunctionToPackageWithConflicts/moveFunctionToPackageWithConflicts.test")
     public void testKotlin_moveTopLevelDeclarations_moveFunctionToPackageWithConflicts_MoveFunctionToPackageWithConflicts() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/moveFunctionToPackageWithConflicts/moveFunctionToPackageWithConflicts.test");
@@ -357,6 +363,12 @@ public class JetMoveTestGenerated extends AbstractJetMoveTest {
     @TestMetadata("kotlin/moveTopLevelDeclarations/moveObjectToPackageWithConflicts/moveObjectToPackageWithConflicts.test")
     public void testKotlin_moveTopLevelDeclarations_moveObjectToPackageWithConflicts_MoveObjectToPackageWithConflicts() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/moveObjectToPackageWithConflicts/moveObjectToPackageWithConflicts.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kotlin/moveTopLevelDeclarations/moveOnlyFunctionToPackageUsedInJava/moveOnlyFunctionToPackageUsedInJava.test")
+    public void testKotlin_moveTopLevelDeclarations_moveOnlyFunctionToPackageUsedInJava_MoveOnlyFunctionToPackageUsedInJava() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/moveOnlyFunctionToPackageUsedInJava/moveOnlyFunctionToPackageUsedInJava.test");
         doTest(fileName);
     }
 

@@ -1,8 +1,10 @@
 package a;
 
+import b.BPackage;
+
 class J {
     void bar() {
-        b.BPackage.setTest("");
-        System.out.println(b.BPackage.getTest());
+        BPackage.setTest("");
+        System.out.println(BPackage.getTest());
     }
 }

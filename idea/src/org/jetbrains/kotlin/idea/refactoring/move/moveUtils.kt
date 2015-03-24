@@ -16,47 +16,38 @@
 
 package org.jetbrains.kotlin.idea.refactoring.move
 
+import com.intellij.openapi.util.Comparing
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.*
+import com.intellij.refactoring.move.moveMembers.MockMoveMembersOptions
+import com.intellij.refactoring.move.moveMembers.MoveMemberHandler
+import com.intellij.refactoring.move.moveMembers.MoveMembersProcessor
+import com.intellij.refactoring.util.MoveRenameUsageInfo
+import com.intellij.refactoring.util.NonCodeUsageInfo
+import com.intellij.usageView.UsageInfo
+import com.intellij.util.IncorrectOperationException
+import org.jetbrains.kotlin.asJava.namedUnwrappedElement
+import org.jetbrains.kotlin.asJava.unwrapped
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind
+import org.jetbrains.kotlin.idea.JetFileType
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.codeInsight.JetFileReferencesResolver
+import org.jetbrains.kotlin.idea.refactoring.fqName.isImported
+import org.jetbrains.kotlin.idea.references.JetReference
+import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
+import org.jetbrains.kotlin.idea.references.JetSimpleNameReference.ShorteningMode
+import org.jetbrains.kotlin.idea.util.ImportInsertHelper
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.idea.JetFileType
-import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.psi.psiUtil.isAncestor
-import java.util.Collections
-import org.jetbrains.kotlin.idea.refactoring.fqName.isImported
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
-import com.intellij.usageView.UsageInfo
-import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiReference
-import com.intellij.refactoring.util.MoveRenameUsageInfo
-import org.jetbrains.kotlin.idea.references.JetReference
-import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import java.util.ArrayList
-import com.intellij.refactoring.util.NonCodeUsageInfo
-import org.jetbrains.kotlin.idea.util.ImportInsertHelper
-import org.jetbrains.kotlin.idea.references.JetSimpleNameReference.ShorteningMode
-import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.util.Comparing
-import java.util.Comparator
-import com.intellij.util.IncorrectOperationException
-import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
-import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.idea.caches.resolve.*
-import org.jetbrains.kotlin.asJava.*
-import org.jetbrains.kotlin.psi.JetSuperExpression
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import java.util.ArrayList
+import java.util.Collections
+import java.util.Comparator
 
 public class PackageNameInfo(val oldPackageName: FqName, val newPackageName: FqName)
 
@@ -171,6 +162,24 @@ public fun JetNamedDeclaration.getFileNameAfterMove(): String? {
     }
 }
 
+// returns true if successful
+private fun updateJavaReference(reference: PsiReferenceExpression, newElement: PsiElement): Boolean {
+    if (newElement is PsiMember) {
+        val newClass = newElement.getContainingClass()
+        if (newClass != null && reference.getQualifierExpression() != null) {
+            val mockMoveMembersOptions = MockMoveMembersOptions(newClass.getQualifiedName(), array(newElement))
+            val moveMembersUsageInfo = MoveMembersProcessor.MoveMembersUsageInfo(
+                    newElement, reference.getElement(), newClass, reference.getQualifierExpression(), reference)
+            val moveMemberHandler = MoveMemberHandler.EP_NAME.forLanguage(reference.getElement().getLanguage())
+            if (moveMemberHandler != null) {
+                moveMemberHandler.changeExternalUsage(mockMoveMembersOptions, moveMembersUsageInfo)
+                return true
+            }
+        }
+    }
+    return false
+}
+
 /**
  * Perform usage postprocessing and return non-code usages
  */
@@ -221,6 +230,8 @@ fun postProcessMoveUsages(usages: List<UsageInfo>,
                     try {
                         if (it is JetSimpleNameReference) {
                             it.bindToElement(newElement, shorteningMode)
+                        }
+                        else if (it is PsiReferenceExpression && updateJavaReference(it, newElement)) {
                         }
                         else {
                             it.bindToElement(newElement)
