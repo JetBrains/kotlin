@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 
 public trait JetReference : PsiPolyVariantReference {
     public fun resolveToDescriptors(): Collection<DeclarationDescriptor>
-    public fun resolveMap(): Map<DeclarationDescriptor, Collection<PsiElement>>
 }
 
 public abstract class AbstractJetReference<T : JetElement>(element: T)
@@ -75,10 +74,6 @@ public abstract class AbstractJetReference<T : JetElement>(element: T)
 
     override fun resolveToDescriptors(): Collection<DeclarationDescriptor> {
         return getTargetDescriptors(expression.analyze())
-    }
-
-    override fun resolveMap(): Map<DeclarationDescriptor, Collection<PsiElement>> {
-        return getTargetDescriptors(expression.analyze()) keysToMap { resolveToPsiElements(it) }
     }
 
     private fun resolveToPsiElements(context: BindingContext, targetDescriptors: Collection<DeclarationDescriptor>): Collection<PsiElement> {
