@@ -58,10 +58,9 @@ class AndroidFindMemberUsagesHandler(
         val moduleInfo = declaration.getModuleInfo() as? ModuleSourceInfo ?: return super.getPrimaryElements()
         val parser = ModuleServiceManager.getService(moduleInfo.module, javaClass<AndroidUIXmlProcessor>())
 
-        val psiElement = parser?.resourceManager?.propertyToXmlAttribute(property) as? XmlAttribute
-        if (psiElement != null && psiElement.getValueElement() != null) {
-            return array(psiElement.getValueElement()!!)
-        }
+        val psiElements = parser?.resourceManager?.propertyToXmlAttributes(property)
+        val valueElements = psiElements?.map { (it as? XmlAttribute)?.getValueElement() as? PsiElement }?.filterNotNull()
+        if (valueElements != null && valueElements.isNotEmpty()) return valueElements.copyToArray()
 
         return super.getPrimaryElements()
     }
@@ -77,16 +76,20 @@ class AndroidFindMemberUsagesHandler(
         val moduleInfo = declaration.getModuleInfo() as? ModuleSourceInfo ?: return super.getPrimaryElements()
         val parser = ModuleServiceManager.getService(moduleInfo.module, javaClass<AndroidUIXmlProcessor>())
 
-        val psiElement = parser?.resourceManager?.propertyToXmlAttribute(property) as? XmlAttribute
-        if (psiElement != null) {
-            val res = ArrayList<PsiElement>()
-            val fields = AndroidResourceUtil.findIdFields(psiElement)
-            for (field in fields) {
-                res.add(field)
+        val psiElements = parser?.resourceManager?.propertyToXmlAttributes(property) ?: listOf()
+
+        val res = ArrayList<PsiElement>()
+        for (psiElement in psiElements) {
+            if (psiElement is XmlAttribute) {
+                val fields = AndroidResourceUtil.findIdFields(psiElement)
+                for (field in fields) {
+                    res.add(field)
+                }
+                res.add(declaration)
             }
-            res.add(declaration)
-            return res.copyToArray()
         }
+
+        if (res.isNotEmpty()) return res.copyToArray()
 
         return super.getSecondaryElements()
     }
