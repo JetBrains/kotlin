@@ -40,7 +40,7 @@ inline public fun String.trim(predicate: (Char) -> Boolean): String {
 /**
  * Returns the string with leading characters matching the [predicate] trimmed.
  */
-inline public fun String.trimLeading(predicate: (Char) -> Boolean): String {
+inline public fun String.trimStart(predicate: (Char) -> Boolean): String {
     for (index in this.indices)
         if (!predicate(this[index]))
             return substring(index)
@@ -51,7 +51,7 @@ inline public fun String.trimLeading(predicate: (Char) -> Boolean): String {
 /**
  * Returns the string with trailing characters matching the [predicate] trimmed.
  */
-inline public fun String.trimTrailing(predicate: (Char) -> Boolean): String {
+inline public fun String.trimEnd(predicate: (Char) -> Boolean): String {
     for (index in this.indices.reversed())
         if (!predicate(this[index]))
             return substring(0, index + 1)
@@ -67,12 +67,12 @@ public fun String.trim(vararg chars: Char): String = trim { it in chars }
 /**
  * Returns the string with leading and trailing characters in the [chars] array trimmed.
  */
-public fun String.trimLeading(vararg chars: Char): String = trimLeading { it in chars }
+public fun String.trimStart(vararg chars: Char): String = trimStart { it in chars }
 
 /**
  * Returns the string with trailing characters in the [chars] array trimmed.
  */
-public fun String.trimTrailing(vararg chars: Char): String = trimTrailing { it in chars }
+public fun String.trimEnd(vararg chars: Char): String = trimEnd { it in chars }
 
 deprecated("Use removePrefix() instead")
 public fun String.trimLeading(prefix: String): String = removePrefix(prefix)
@@ -88,20 +88,28 @@ public fun String.trim(): String = trim { it.isWhitespace() }
 /**
  * Returns a string with leading whitespace removed.
  */
-public fun String.trimLeading(): String = trimLeading { it.isWhitespace() }
+public fun String.trimStart(): String = trimStart { it.isWhitespace() }
+
+deprecated("Use trimStart instead.")
+public fun String.trimLeading(): String = trimStart { it.isWhitespace() }
 
 /**
  * Returns a string with trailing whitespace removed.
  */
-public fun String.trimTrailing(): String = trimTrailing { it.isWhitespace() }
+public fun String.trimEnd(): String = trimEnd { it.isWhitespace() }
+
+deprecated("Use trimEnd instead.")
+public fun String.trimTrailing(): String = trimEnd { it.isWhitespace() }
 
 /**
  * Left pad a String with a specified character or space.
  *
  * @param length the desired string length.
  * @param padChar the character to pad string with, if it has length less than the [length] specified. Space is used by default.
+ * @returns Returns a string, of length at least [length], consisting of string prepended with [padChar] as many times.
+ * as are necessary to reach that length.
  */
-public fun String.padLeft(length: Int, padChar: Char = ' '): String {
+public fun String.padStart(length: Int, padChar: Char = ' '): String {
     if (length < 0)
         throw IllegalArgumentException("String length $length is less than zero.")
     if (length <= this.length())
@@ -119,8 +127,10 @@ public fun String.padLeft(length: Int, padChar: Char = ' '): String {
  *
  * @param length the desired string length.
  * @param padChar the character to pad string with, if it has length less than the [length] specified. Space is used by default.
+ * @returns Returns a string, of length at least [length], consisting of string prepended with [padChar] as many times.
+ * as are necessary to reach that length.
  */
-public fun String.padRight(length: Int, padChar: Char = ' '): String {
+public fun String.padEnd(length: Int, padChar: Char = ' '): String {
     if (length < 0)
         throw IllegalArgumentException("String length $length is less than zero.")
     if (length <= this.length())
@@ -367,7 +377,7 @@ public fun String.removeSuffix(suffix: String): String {
  * it starts with the [prefix] and ends with the [suffix].
  * Otherwise returns this string unchanged.
  */
-public fun String.removeEnclosing(prefix: String, suffix: String): String {
+public fun String.removeSurrounding(prefix: String, suffix: String): String {
     if (startsWith(prefix) && endsWith(suffix)) {
         return substring(prefix.length(), length() - suffix.length())
     }
@@ -375,11 +385,11 @@ public fun String.removeEnclosing(prefix: String, suffix: String): String {
 }
 
 /**
- * Removes the given [enclosing] string both from the start and the end of this string
- * if and only if it starts with and ends with the [enclosing].
+ * Removes the given [delimiter] string from both the start and the end of this string
+ * if and only if it starts with and ends with the [delimiter].
  * Otherwise returns this string unchanged.
  */
-public fun String.removeEnclosing(enclosing: String): String = removeEnclosing(enclosing, enclosing)
+public fun String.removeSurrounding(delimiter: String): String = removeSurrounding(delimiter, delimiter)
 
 /**
  * Replace part of string before the first occurrence of given delimiter with the [replacement] string.
