@@ -3918,7 +3918,10 @@ The "returned" value of try expression with no finally is either the last expres
                     public Unit invoke(InstructionAdapter v) {
                         value.put(boxType(value.type), v);
 
-                        if (opToken != JetTokens.AS_SAFE) {
+                        if (value.type == Type.VOID_TYPE) {
+                            v.aconst(null);
+                        }
+                        else if (opToken != JetTokens.AS_SAFE) {
                             if (!TypeUtils.isNullableType(rightType)) {
                                 v.dup();
                                 Label nonnull = new Label();
@@ -3930,9 +3933,6 @@ The "returned" value of try expression with no finally is either the last expres
                                                                         DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(rightType));
                                 v.mark(nonnull);
                             }
-                        }
-                        else if (value.type == Type.VOID_TYPE) {
-                            v.aconst(null);
                         }
                         else {
                             v.dup();
