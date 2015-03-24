@@ -1,0 +1,4 @@
+package
+
+internal fun calc(/*0*/ x: kotlin.String?): kotlin.Unit
+internal fun kotlin.String.foo(/*0*/ arg: kotlin.Int): kotlin.Char
