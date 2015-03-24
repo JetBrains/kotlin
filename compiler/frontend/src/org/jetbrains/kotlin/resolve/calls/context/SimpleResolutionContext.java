@@ -37,10 +37,11 @@ public class SimpleResolutionContext extends ResolutionContext<SimpleResolutionC
             @NotNull AdditionalTypeChecker additionalTypeChecker,
             @NotNull StatementFilter statementFilter,
             boolean isAnnotationContext,
-            boolean collectAllCandidates
+            boolean collectAllCandidates,
+            boolean insideSafeCallChain
     ) {
         super(trace, scope, expectedType, dataFlowInfo, contextDependency, resolutionResultsCache, callChecker, additionalTypeChecker,
-              statementFilter, isAnnotationContext, collectAllCandidates);
+              statementFilter, isAnnotationContext, collectAllCandidates, insideSafeCallChain);
     }
 
     public SimpleResolutionContext(
@@ -54,7 +55,7 @@ public class SimpleResolutionContext extends ResolutionContext<SimpleResolutionC
             @NotNull StatementFilter statementFilter
     ) {
         this(trace, scope, expectedType, dataFlowInfo, contextDependency, new ResolutionResultsCacheImpl(),
-             callChecker, additionalTypeChecker, statementFilter, false, false);
+             callChecker, additionalTypeChecker, statementFilter, false, false, false);
     }
 
     @Override
@@ -66,10 +67,11 @@ public class SimpleResolutionContext extends ResolutionContext<SimpleResolutionC
             @NotNull ContextDependency contextDependency,
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @NotNull StatementFilter statementFilter,
-            boolean collectAllCandidates
+            boolean collectAllCandidates,
+            boolean insideSafeCallChain
     ) {
         return new SimpleResolutionContext(
                 trace, scope, expectedType, dataFlowInfo, contextDependency, resolutionResultsCache, callChecker, additionalTypeChecker,
-                statementFilter, isAnnotationContext, collectAllCandidates);
+                statementFilter, isAnnotationContext, collectAllCandidates, insideSafeCallChain);
     }
 }

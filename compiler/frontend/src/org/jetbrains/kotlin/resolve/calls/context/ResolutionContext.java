@@ -27,6 +27,12 @@ import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeUtils;
 
+/**
+ * This class together with its descendants is intended to transfer data flow analysis information
+ * in top-down direction, from AST parents to children.
+ *
+ * NB: all descendants must be immutable!
+ */
 public abstract class ResolutionContext<Context extends ResolutionContext<Context>> {
     @NotNull
     public final BindingTrace trace;
@@ -51,6 +57,9 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
 
     public final boolean collectAllCandidates;
 
+    // True if we are inside call chain like x?.foo()!!.bar()?.gav()
+    public final boolean insideCallChain;
+
     protected ResolutionContext(
             @NotNull BindingTrace trace,
             @NotNull JetScope scope,
@@ -62,7 +71,8 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
             @NotNull AdditionalTypeChecker additionalTypeChecker,
             @NotNull StatementFilter statementFilter,
             boolean isAnnotationContext,
-            boolean collectAllCandidates
+            boolean collectAllCandidates,
+            boolean insideCallChain
     ) {
         this.trace = trace;
         this.scope = scope;
@@ -75,6 +85,7 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
         this.additionalTypeChecker = additionalTypeChecker;
         this.isAnnotationContext = isAnnotationContext;
         this.collectAllCandidates = collectAllCandidates;
+        this.insideCallChain = insideCallChain;
     }
 
     protected abstract Context create(
@@ -85,7 +96,8 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
             @NotNull ContextDependency contextDependency,
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @NotNull StatementFilter statementFilter,
-            boolean collectAllCandidates
+            boolean collectAllCandidates,
+            boolean insideSafeCallChain
     );
 
     @NotNull
@@ -98,14 +110,14 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
     public Context replaceBindingTrace(@NotNull BindingTrace trace) {
         if (this.trace == trace) return self();
         return create(trace, scope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache, statementFilter,
-                      collectAllCandidates);
+                      collectAllCandidates, insideCallChain);
     }
 
     @NotNull
     public Context replaceDataFlowInfo(@NotNull DataFlowInfo newDataFlowInfo) {
         if (newDataFlowInfo == dataFlowInfo) return self();
         return create(trace, scope, newDataFlowInfo, expectedType, contextDependency, resolutionResultsCache, statementFilter,
-                      collectAllCandidates);
+                      collectAllCandidates, insideCallChain);
     }
 
     @NotNull
@@ -113,28 +125,28 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
         if (newExpectedType == null) return replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE);
         if (expectedType == newExpectedType) return self();
         return create(trace, scope, dataFlowInfo, newExpectedType, contextDependency, resolutionResultsCache, statementFilter,
-                      collectAllCandidates);
+                      collectAllCandidates, insideCallChain);
     }
 
     @NotNull
     public Context replaceScope(@NotNull JetScope newScope) {
         if (newScope == scope) return self();
         return create(trace, newScope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache, statementFilter,
-                      collectAllCandidates);
+                      collectAllCandidates, insideCallChain);
     }
 
     @NotNull
     public Context replaceContextDependency(@NotNull ContextDependency newContextDependency) {
         if (newContextDependency == contextDependency) return self();
         return create(trace, scope, dataFlowInfo, expectedType, newContextDependency, resolutionResultsCache, statementFilter,
-                      collectAllCandidates);
+                      collectAllCandidates, insideCallChain);
     }
 
     @NotNull
     public Context replaceResolutionResultsCache(@NotNull ResolutionResultsCache newResolutionResultsCache) {
         if (newResolutionResultsCache == resolutionResultsCache) return self();
         return create(trace, scope, dataFlowInfo, expectedType, contextDependency, newResolutionResultsCache, statementFilter,
-                      collectAllCandidates);
+                      collectAllCandidates, insideCallChain);
     }
 
     @NotNull
@@ -145,12 +157,19 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
     @NotNull
     public Context replaceCollectAllCandidates(boolean newCollectAllCandidates) {
         return create(trace, scope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache, statementFilter,
-                      newCollectAllCandidates);
+                      newCollectAllCandidates, insideCallChain);
     }
 
     @NotNull
-    public Context replacestatementFilter(@NotNull StatementFilter statementFilter) {
+    public Context replaceStatementFilter(@NotNull StatementFilter statementFilter) {
         return create(trace, scope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache, statementFilter,
-                      collectAllCandidates);
+                      collectAllCandidates, insideCallChain);
+    }
+
+    @NotNull
+    public Context replaceInsideCallChain(boolean insideSafeCallChain) {
+        return create(trace, scope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache, statementFilter,
+                      collectAllCandidates, insideSafeCallChain);
+
     }
 }

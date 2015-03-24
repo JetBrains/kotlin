@@ -1,0 +1,3 @@
+package
+
+internal fun calc(/*0*/ x: kotlin.List<kotlin.String>?, /*1*/ y: kotlin.List<kotlin.Int>?): kotlin.Unit
