@@ -85,8 +85,13 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
     public fun parse(generateCommonFiles: Boolean = true): List<String> {
         val commonFiles = if (generateCommonFiles) {
             val clearCacheFile = renderLayoutFile(AndroidConst.SYNTHETIC_PACKAGE) {} +
-                             renderClearCacheFunction("Activity") + renderClearCacheFunction("Fragment")
-            listOf(clearCacheFile, FLEXIBLE_TYPE_FILE)
+                     renderClearCacheFunction("android.app.Activity") + renderClearCacheFunction("android.app.Fragment")
+
+            listOf(clearCacheFile,
+                   FLEXIBLE_TYPE_FILE,
+                   FAKE_SUPPORT_V4_APP_FILE,
+                   FAKE_SUPPORT_V4_VIEW_FILE,
+                   FAKE_SUPPORT_V4_WIDGET_FILE)
         } else listOf()
 
         return resourceManager.getLayoutXmlFiles().flatMap { entry ->
@@ -96,12 +101,12 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
             val layoutPackage = files[0].genSyntheticPackageName()
 
             val mainLayoutFile = renderLayoutFile(layoutPackage, widgets) {
-                writeSyntheticProperty("Activity", it, "findViewById(0)")
-                writeSyntheticProperty("Fragment", it, "getView().findViewById(0)")
+                writeSyntheticProperty("android.app.Activity", it, "findViewById(0)")
+                writeSyntheticProperty("android.app.Fragment", it, "getView().findViewById(0)")
             }
 
             val viewLayoutFile = renderLayoutFile("$layoutPackage.view", widgets) {
-                writeSyntheticProperty("View", it, "findViewById(0)")
+                writeSyntheticProperty("android.view.View", it, "findViewById(0)")
             }
 
             listOf(mainLayoutFile, viewLayoutFile)
@@ -170,13 +175,25 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
         private val EXPLICIT_FLEXIBLE_CLASS_NAME = Flexibility.FLEXIBLE_TYPE_CLASSIFIER.getRelativeClassName().asString()
 
         private val ANDROID_IMPORTS = listOf(
-                "android.app.Activity",
-                "android.app.Fragment",
-                "android.view.View",
+                "android.app.*",
+                "android.view.*",
                 "android.widget.*",
+                "android.webkit.*",
+                "android.inputmethodservice.*",
+                "android.opengl.*",
+                "android.appwidget.*",
+                "android.support.v4.app.*",
+                "android.support.v4.view.*",
+                "android.support.v4.widget.*",
                 Flexibility.FLEXIBLE_TYPE_CLASSIFIER.asSingleFqName().asString())
 
         private val FLEXIBLE_TYPE_FILE = "package $EXPLICIT_FLEXIBLE_PACKAGE\n\nclass $EXPLICIT_FLEXIBLE_CLASS_NAME<L, U>"
+
+        private val FAKE_SUPPORT_V4_WIDGET_FILE = "package android.support.v4.widget"
+
+        private val FAKE_SUPPORT_V4_VIEW_FILE = "package android.support.v4.view"
+
+        private val FAKE_SUPPORT_V4_APP_FILE = "package android.support.v4.app"
     }
 
 }
