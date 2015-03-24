@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.preloading;
 
 import java.io.*;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.*;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
@@ -28,8 +30,6 @@ import java.util.zip.ZipInputStream;
 public class ClassPreloadingUtils {
     /**
      * Creates a class loader that loads all classes from {@code jarFiles} into memory to make loading faster (avoid skipping through zip archives).
-     *
-     * NOTE: if many resources with the same name exist, only the first one will be loaded
      *
      * @param jarFiles jars to load all classes from
      * @param classCountEstimation an estimated number of classes in a the jars
@@ -53,7 +53,15 @@ public class ClassPreloadingUtils {
             parentClassLoader = preloadClasses(classpath, classCountEstimation, parentClassLoader, null, handler);
         }
 
-        return new MemoryBasedClassLoader(classesToLoadByParent, parentClassLoader, entries, handler);
+        return new MemoryBasedClassLoader(classesToLoadByParent, createFallbackClassLoader(jarFiles, parentClassLoader), entries, handler);
+    }
+
+    private static URLClassLoader createFallbackClassLoader(Collection<File> files, ClassLoader parent) throws IOException {
+        List<URL> urls = new ArrayList<URL>(files.size());
+        for (File file : files) {
+            urls.add(file.toURI().toURL());
+        }
+        return new URLClassLoader(urls.toArray(new URL[urls.size()]), parent);
     }
 
     public static ClassLoader preloadClasses(
