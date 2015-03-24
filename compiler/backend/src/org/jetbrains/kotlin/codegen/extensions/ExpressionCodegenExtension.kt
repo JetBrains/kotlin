@@ -35,9 +35,17 @@ public trait ExpressionCodegenExtension {
             public val v: InstructionAdapter
     )
 
-    // Function is responsible to put the value on stack by itself.
-    // Returns false if not applicable, and if stack was not modified.
-    public fun apply(receiver: StackValue, resolvedCall: ResolvedCall<*>, c: Context): Boolean
+    /**
+     *  Used for generating custom byte code for the property value obtain. This function has lazy semantics.
+     *  Returns new stack value.
+     */
+    public fun applyProperty(receiver: StackValue, resolvedCall: ResolvedCall<*>, c: Context): StackValue? = null
+
+    /**
+     *  Used for generating custom byte code for the function call. This function has non-lazy semantics.
+     *  Returns true if the stack was modified.
+     */
+    public fun applyFunction(receiver: StackValue, resolvedCall: ResolvedCall<*>, c: Context): Boolean = false
 
     public fun generateClassSyntheticParts(
             classBuilder: ClassBuilder,
