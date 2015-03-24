@@ -1,16 +1,16 @@
 <component name="libraryTable">
-  <library name="junit-4.11">
+  <library name="junit-4.12">
     <ANNOTATIONS>
       <root url="file://$PROJECT_DIR$/annotations" />
     </ANNOTATIONS>
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/ideaSDK/lib/hamcrest-core-1.3.jar!/" />
-      <root url="jar://$PROJECT_DIR$/ideaSDK/lib/junit-4.11.jar!/" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/lib/junit-4.12.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
       <root url="jar://$PROJECT_DIR$/dependencies/hamcrest-core-1.3-sources.jar!/" />
-      <root url="jar://$PROJECT_DIR$/dependencies/junit-4.11-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/junit-4.12-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

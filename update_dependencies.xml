@@ -169,7 +169,7 @@
         <!-- <get-asm-sources-and-rename-packages asm.version="5.0.1"/> -->
 
         <!-- Junit Sources -->
-        <get-maven-library prefix="junit" lib="junit" version="4.11" bin="false"/>
+        <get-maven-library prefix="junit" lib="junit" version="4.12" bin="false"/>
         <get-maven-library prefix="org/hamcrest" lib="hamcrest-core" version="1.3" bin="false"/>
 
         <!-- Protocol Buffers -->

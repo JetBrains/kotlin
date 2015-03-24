@@ -33,7 +33,7 @@ import java.util.List;
 
 public class JUnitMembersSearcherTest extends AbstractSearcherTest {
     private static final LightProjectDescriptor junitProjectDescriptor =
-            new JetJdkAndLibraryProjectDescriptor(new File(PathManager.getHomePath().replace(File.separatorChar, '/') + "/lib/junit-4.11.jar"));
+            new JetJdkAndLibraryProjectDescriptor(new File(PathManager.getHomePath().replace(File.separatorChar, '/') + "/lib/junit-4.12.jar"));
 
     public void testJunit3() throws IOException {
         doJUnit3test();

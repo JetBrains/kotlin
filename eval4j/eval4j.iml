@@ -10,7 +10,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="kotlin-runtime" level="project" />
     <orderEntry type="library" name="asm" level="project" />
-    <orderEntry type="library" scope="TEST" name="junit-4.11" level="project" />
+    <orderEntry type="library" scope="TEST" name="junit-4.12" level="project" />
   </component>
 </module>
-
