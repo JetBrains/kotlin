@@ -59,16 +59,9 @@ public class KotlinSourcePositionProvider: SourcePositionProvider() {
         return null
     }
 
-    fun computeSourcePosition(descriptor: LocalVariableDescriptor, project: Project, context: DebuggerContextImpl, nearest: Boolean): SourcePosition? {
-        val place = PositionUtil.getContextElement(context)
-        if (place == null) {
-            return null
-        }
-
-        val contextElement = PsiTreeUtil.getParentOfType(place, javaClass<JetElement>())
-        if (contextElement == null) {
-            return null
-        }
+    private fun computeSourcePosition(descriptor: LocalVariableDescriptor, project: Project, context: DebuggerContextImpl, nearest: Boolean): SourcePosition? {
+        val place = PositionUtil.getContextElement(context) ?: return null
+        val contextElement = PsiTreeUtil.getParentOfType(place, javaClass<JetElement>()) ?: return null
 
         val codeFragment = JetPsiFactory(project).createExpressionCodeFragment(descriptor.getName(), contextElement)
         val expression = codeFragment.getContentElement()
@@ -77,10 +70,7 @@ public class KotlinSourcePositionProvider: SourcePositionProvider() {
             val declarationDescriptor = BindingContextUtils.extractVariableDescriptorIfAny(bindingContext, expression, false)
             val sourceElement = declarationDescriptor?.getSource()
             if (sourceElement is KotlinSourceElement) {
-                val element = sourceElement.getPsi()
-                if (element == null) {
-                    return null
-                }
+                val element = sourceElement.getPsi() ?: return null
                 if (nearest) {
                     return DebuggerContextUtil.findNearest(context, element, element.getContainingFile())
                 }
@@ -91,20 +81,16 @@ public class KotlinSourcePositionProvider: SourcePositionProvider() {
         return null
     }
 
-    fun computeSourcePosition(descriptor: FieldDescriptor, project: Project, context: DebuggerContextImpl, nearest: Boolean): SourcePosition? {
+    private fun computeSourcePosition(descriptor: FieldDescriptor, project: Project, context: DebuggerContextImpl, nearest: Boolean): SourcePosition? {
         val fieldName = descriptor.getField().name()
         if (fieldName == AsmUtil.CAPTURED_THIS_FIELD || fieldName == AsmUtil.CAPTURED_RECEIVER_FIELD) {
             return null
         }
 
         val type = descriptor.getField().declaringType()
-        val myClass = findClassByType(project, type, context)?.getNavigationElement()
-        if (myClass !is JetClassOrObject) {
-            return null
-        }
+        val myClass = findClassByType(project, type, context)?.getNavigationElement() as? JetClassOrObject ?: return null
 
-        val field = myClass.getDeclarations().firstOrNull { fieldName == it.getName() }
-        if (field == null) return null
+        val field = myClass.getDeclarations().firstOrNull { fieldName == it.getName() } ?: return null
 
         if (nearest) {
             return DebuggerContextUtil.findNearest(context, field, myClass.getContainingFile())
