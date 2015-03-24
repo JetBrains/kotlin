@@ -30,23 +30,23 @@ public class IDEAndroidResourceManager(val module: Module) : AndroidResourceMana
 
     override val androidModuleInfo: AndroidModuleInfo? by Delegates.lazy { module.androidFacet?.toAndroidModuleInfo() }
 
-    override fun propertyToXmlAttribute(property: JetProperty): PsiElement? {
-        val fqPath = property.getFqName()?.pathSegments() ?: return null
-        if (fqPath.size() <= AndroidConst.SYNTHETIC_PACKAGE_PATH_LENGTH) return null
+    override fun propertyToXmlAttributes(property: JetProperty): List<PsiElement> {
+        val fqPath = property.getFqName()?.pathSegments() ?: return listOf()
+        if (fqPath.size() <= AndroidConst.SYNTHETIC_PACKAGE_PATH_LENGTH) return listOf()
 
         val layoutPackageName = fqPath[AndroidConst.SYNTHETIC_PACKAGE_PATH_LENGTH].asString()
         val layoutFiles = getLayoutXmlFiles()[layoutPackageName]
-        if (layoutFiles == null || layoutFiles.isEmpty()) return null
+        if (layoutFiles == null || layoutFiles.isEmpty()) return listOf()
 
         val propertyName = property.getName()
 
-        var ret: PsiElement? = null
+        val attributes = arrayListOf<PsiElement>()
         val visitor = AndroidXmlVisitor { retId, wClass, valueElement ->
-            if (retId == propertyName) ret = valueElement
+            if (retId == propertyName) attributes.add(valueElement)
         }
 
-        layoutFiles.first().accept(visitor)
-        return ret
+        layoutFiles.forEach { it.accept(visitor) }
+        return attributes
     }
 
     private val Module.androidFacet: AndroidFacet?
