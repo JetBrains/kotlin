@@ -32,7 +32,7 @@ public abstract class AndroidResourceManager(val project: Project) {
 
     public abstract val androidModuleInfo: AndroidModuleInfo?
 
-    public open fun propertyToXmlAttribute(property: JetProperty): PsiElement? = null
+    public open fun propertyToXmlAttributes(property: JetProperty): List<PsiElement> = listOf()
 
     public fun getLayoutXmlFiles(): Map<String, List<PsiFile>> {
         val info = androidModuleInfo
