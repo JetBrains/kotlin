@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 
@@ -91,7 +92,7 @@ public class JetAnonymousSuperMacro extends Macro {
         JetExpression expression = PsiTreeUtil.getParentOfType(psiFile.findElementAt(context.getStartOffset()), JetExpression.class);
         if (expression == null) return null;
 
-        BindingContext bc = ResolvePackage.analyze(expression);
+        BindingContext bc = ResolvePackage.analyze(expression, BodyResolveMode.FULL);
         JetScope scope = bc.get(BindingContext.RESOLUTION_SCOPE, expression);
         if (scope == null) return null;
 

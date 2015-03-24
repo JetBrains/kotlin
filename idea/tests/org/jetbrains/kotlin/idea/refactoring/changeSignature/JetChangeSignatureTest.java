@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle;
 import org.jetbrains.kotlin.psi.JetElement;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.dataClassUtils.DataClassUtilsPackage;
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 
 import java.io.File;
 import java.util.*;
@@ -238,7 +239,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
                     return true;
                 }
             };
-            BindingContext context = ResolvePackage.analyze(method);
+            BindingContext context = ResolvePackage.analyze(method, BodyResolveMode.FULL);
 
             ChangeSignaturePackage
                     .runChangeSignature(getProject(), ChangeSignaturePackage.getOriginalBaseFunctionDescriptor(changeInfo), empty, context, method, "test");
@@ -880,7 +881,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         JetElement element = (JetElement) new JetChangeSignatureHandler().findTargetMember(file, editor);
         assertNotNull("Target element is null", element);
 
-        BindingContext bindingContext = ResolvePackage.analyze(element);
+        BindingContext bindingContext = ResolvePackage.analyze(element, BodyResolveMode.FULL);
         PsiElement context = file.findElementAt(editor.getCaretModel().getOffset());
         assertNotNull(context);
 

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.types.JetType;
 
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
@@ -44,7 +45,7 @@ public class DeclarationUtils {
     private static JetType getPropertyTypeIfNeeded(@NotNull JetProperty property) {
         if (property.getTypeReference() != null) return null;
 
-        JetType type = ResolvePackage.analyze(property).get(
+        JetType type = ResolvePackage.analyze(property, BodyResolveMode.FULL).get(
                 BindingContext.EXPRESSION_TYPE, property.getInitializer()
         );
         return type == null || type.isError() ? null : type;

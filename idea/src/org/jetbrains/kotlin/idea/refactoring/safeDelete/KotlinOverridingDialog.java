@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.psi.JetProperty;
 import org.jetbrains.kotlin.psi.JetPsiUtil;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -93,7 +94,7 @@ class KotlinOverridingDialog extends DialogWrapper {
     private static String formatElement(PsiElement element) {
         element = JetPsiUtil.ascendIfPropertyAccessor(element);
         if (element instanceof JetNamedFunction || element instanceof JetProperty) {
-            BindingContext bindingContext = ResolvePackage.analyze((JetElement) element);
+            BindingContext bindingContext = ResolvePackage.analyze((JetElement) element, BodyResolveMode.FULL);
 
             DeclarationDescriptor declarationDescriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
             if (declarationDescriptor instanceof CallableMemberDescriptor) {

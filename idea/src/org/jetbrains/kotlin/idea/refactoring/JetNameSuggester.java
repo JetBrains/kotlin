@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeUtils;
@@ -67,7 +68,7 @@ public class JetNameSuggester {
     public static @NotNull String[] suggestNames(@NotNull JetExpression expression, @NotNull JetNameValidator validator, @Nullable String defaultName) {
         ArrayList<String> result = new ArrayList<String>();
 
-        BindingContext bindingContext = ResolvePackage.analyze(expression);
+        BindingContext bindingContext = ResolvePackage.analyze(expression, BodyResolveMode.FULL);
         JetType jetType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression);
         if (jetType != null) {
             addNamesForType(result, jetType, validator);

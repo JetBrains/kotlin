@@ -231,7 +231,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
             return null;
         }
 
-        BindingContext context = ResolvePackage.analyze(initializer);
+        BindingContext context = ResolvePackage.analyze(initializer, BodyResolveMode.FULL);
         SimpleFunctionDescriptor fun = context.get(BindingContext.FUNCTION, functionLiteralExpression.getFunctionLiteral());
         if (fun == null || ErrorUtils.containsErrorType(fun)) {
             return null;
@@ -343,7 +343,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
 
     @Nullable
     private static String getTypeArgumentsStringForCall(@NotNull JetExpression initializer) {
-        BindingContext context = ResolvePackage.analyze(initializer);
+        BindingContext context = ResolvePackage.analyze(initializer, BodyResolveMode.FULL);
         ResolvedCall<?> call = CallUtilPackage.getResolvedCall(initializer, context);
         if (call == null) return null;
 
