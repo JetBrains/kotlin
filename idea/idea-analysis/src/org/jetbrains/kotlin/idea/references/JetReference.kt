@@ -20,14 +20,14 @@ import com.intellij.psi.*
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
-import org.jetbrains.kotlin.resolve.BindingContext
-import java.util.Collections
-import org.jetbrains.kotlin.psi.JetReferenceExpression
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.kotlin.utils.keysToMap
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.psi.JetReferenceExpression
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
+import java.util.Collections
 
 public trait JetReference : PsiPolyVariantReference {
     public fun resolveToDescriptors(bindingContext: BindingContext): Collection<DeclarationDescriptor>
@@ -68,7 +68,7 @@ public abstract class AbstractJetReference<T : JetElement>(element: T)
     override fun isSoft(): Boolean = false
 
     private fun resolveToPsiElements(): Collection<PsiElement> {
-        val bindingContext = expression.analyze()
+        val bindingContext = expression.analyze(BodyResolveMode.PARTIAL)
         return resolveToPsiElements(bindingContext, getTargetDescriptors(bindingContext))
     }
 
