@@ -206,6 +206,11 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
         ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(
                 INDEPENDENT);
+        // Preliminary analysis
+        PreliminaryLoopVisitor loopVisitor = new PreliminaryLoopVisitor(expression);
+        loopVisitor.launch();
+        context = context.replaceDataFlowInfo(loopVisitor.clearDataFlowInfoForAssignedLocalVariables(context.dataFlowInfo));
+
         JetExpression condition = expression.getCondition();
         // Extract data flow info from condition itself without taking value into account
         DataFlowInfo dataFlowInfo = checkCondition(context.scope, condition, context);
@@ -230,7 +235,9 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         // .and it with entrance data flow information, because while body until break is executed at least once in this case
         // See KT-6284
         if (bodyTypeInfo != null && isTrueConstant(condition)) {
-            dataFlowInfo = dataFlowInfo.and(bodyTypeInfo.getJumpFlowInfo());
+            // We should take data flow info from the first jump point,
+            // but without affecting changing variables
+            dataFlowInfo = dataFlowInfo.and(loopVisitor.clearDataFlowInfoForAssignedLocalVariables(bodyTypeInfo.getJumpFlowInfo()));
         }
         return DataFlowUtils.checkType(components.builtIns.getUnitType(), expression, contextWithExpectedType, dataFlowInfo);
     }
@@ -286,6 +293,13 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT);
         JetExpression body = expression.getBody();
         JetScope conditionScope = context.scope;
+        // Preliminary analysis
+        PreliminaryLoopVisitor loopVisitor = new PreliminaryLoopVisitor(expression);
+        loopVisitor.launch();
+        context = context.replaceDataFlowInfo(loopVisitor.clearDataFlowInfoForAssignedLocalVariables(context.dataFlowInfo));
+        // Here we must record data flow information at the end of the body (or at the first jump, to be precise) and
+        // .and it with entrance data flow information, because do-while body is executed at least once
+        // See KT-6283
         LoopTypeInfo bodyTypeInfo = null;
         if (body instanceof JetFunctionLiteralExpression) {
             JetFunctionLiteralExpression function = (JetFunctionLiteralExpression) body;
@@ -328,7 +342,9 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         // .and it with entrance data flow information, because do-while body is executed at least once
         // See KT-6283
         if (bodyTypeInfo != null) {
-            dataFlowInfo = dataFlowInfo.and(bodyTypeInfo.getJumpFlowInfo());
+            // We should take data flow info from the first jump point,
+            // but without affecting changing variables
+            dataFlowInfo = dataFlowInfo.and(loopVisitor.clearDataFlowInfoForAssignedLocalVariables(bodyTypeInfo.getJumpFlowInfo()));
         }
         return DataFlowUtils.checkType(components.builtIns.getUnitType(), expression, contextWithExpectedType, dataFlowInfo);
     }
@@ -343,6 +359,11 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
         ExpressionTypingContext context =
                 contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT);
+        // Preliminary analysis
+        PreliminaryLoopVisitor loopVisitor = new PreliminaryLoopVisitor(expression);
+        loopVisitor.launch();
+        context = context.replaceDataFlowInfo(loopVisitor.clearDataFlowInfoForAssignedLocalVariables(context.dataFlowInfo));
+
         JetExpression loopRange = expression.getLoopRange();
         JetType expectedParameterType = null;
         DataFlowInfo dataFlowInfo = context.dataFlowInfo;

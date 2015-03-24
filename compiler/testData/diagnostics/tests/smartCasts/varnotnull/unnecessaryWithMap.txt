@@ -1,0 +1,15 @@
+package
+
+internal fun create(): kotlin.Map<kotlin.String, kotlin.String>
+internal fun </*0*/ K, /*1*/ V> kotlin.Map.Entry<K, V>.component1(): K
+internal fun </*0*/ K, /*1*/ V> kotlin.Map.Entry<K, V>.component2(): V
+internal fun </*0*/ K, /*1*/ V> kotlin.Map<K, V>.iterator(): kotlin.Iterator<kotlin.Map.Entry<K, V>>
+
+internal final class MyClass {
+    public constructor MyClass()
+    private final var m: kotlin.Map<kotlin.String, kotlin.String>?
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal final fun foo(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

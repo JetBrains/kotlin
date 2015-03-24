@@ -10,7 +10,7 @@ internal fun f13(/*0*/ a: A?): kotlin.Unit
 internal fun f14(/*0*/ a: A?): kotlin.Unit
 internal fun f15(/*0*/ a: A?): kotlin.Unit
 internal fun f9(/*0*/ init: A?): kotlin.Unit
-internal fun foo(/*0*/ aa: kotlin.Any): kotlin.Int
+internal fun foo(/*0*/ aa: kotlin.Any?): kotlin.Int
 internal fun getStringLength(/*0*/ obj: kotlin.Any): kotlin.Char?
 internal fun illegalWhenBlock(/*0*/ a: kotlin.Any): kotlin.Int
 internal fun illegalWhenBody(/*0*/ a: kotlin.Any): kotlin.Int

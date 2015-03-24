@@ -1,0 +1,15 @@
+package
+
+internal fun list(/*0*/ start: SomeObject): kotlin.Unit
+
+kotlin.data() internal final class SomeObject {
+    public constructor SomeObject(/*0*/ n: SomeObject?)
+    internal final val n: SomeObject?
+    internal final /*synthesized*/ fun component1(): SomeObject?
+    public final /*synthesized*/ fun copy(/*0*/ n: SomeObject? = ...): SomeObject
+    internal final fun doSomething(): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    internal final fun next(): SomeObject?
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

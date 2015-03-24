@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 
 fun renderDataFlowValue(value: DataFlowValue): String? {
     // If it is not a stable identifier, there's no point in rendering it
-    if (!value.isStableIdentifier()) return null
+    if (!value.isStableIdentifier() && !value.isLocalVariable()) return null
 
     fun renderId(id: Any?): String? {
         return when (id) {

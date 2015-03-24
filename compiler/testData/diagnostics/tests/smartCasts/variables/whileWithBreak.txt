@@ -1,0 +1,4 @@
+package
+
+internal fun list(/*0*/ start: kotlin.String): kotlin.Unit
+internal fun kotlin.String.next(): kotlin.String

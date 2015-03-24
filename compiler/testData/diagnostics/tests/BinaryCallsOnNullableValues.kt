@@ -4,7 +4,7 @@ class A() {
 
 fun f(): Unit {
   var x: Int? = <!VARIABLE_WITH_REDUNDANT_INITIALIZER!>1<!>
-  x = 1
+  x = null
   x <!UNSAFE_INFIX_CALL!>+<!> 1
   x <!UNSAFE_INFIX_CALL!>plus<!> 1
   x <!UNSAFE_INFIX_CALL!><<!> 1

@@ -179,7 +179,11 @@ public class SmartCastUtils {
         JetExpression expression = ((ExpressionReceiver) receiver).getExpression();
         DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiver, context);
 
-        recordCastOrError(expression, smartCastSubType, context.trace, dataFlowValue.isStableIdentifier(), true);
+        recordCastOrError(expression,
+                          smartCastSubType,
+                          context.trace,
+                          dataFlowValue.isStableIdentifier() || dataFlowValue.isLocalVariable(),
+                          true);
         return true;
     }
 

@@ -198,8 +198,8 @@ fun mergeSmartCasts(a: Any?) {
 fun f(): String {
     var <info>a</info>: Any = 11
     if (<info>a</info> is String) {
-        val <warning>i</warning>: String = <error descr="[SMARTCAST_IMPOSSIBLE] Smart cast to 'kotlin.String' is impossible, because 'a' could have changed since the is-check">a</error>
-        <error descr="[SMARTCAST_IMPOSSIBLE] Smart cast to 'kotlin.String' is impossible, because 'a' could have changed since the is-check">a</error>.compareTo("f")
+        val <warning>i</warning>: String = <info descr="Smart cast to kotlin.String"><info descr="Wrapped into a reference object to be modified when captured in a closure">a</info></info>
+        <info descr="Smart cast to kotlin.String"><info descr="Wrapped into a reference object to be modified when captured in a closure">a</info></info>.compareTo("f")
         val <warning>f</warning>: Function0<String> = { <error descr="[SMARTCAST_IMPOSSIBLE] Smart cast to 'kotlin.String' is impossible, because 'a' could have changed since the is-check">a</error> }
         return <error descr="[SMARTCAST_IMPOSSIBLE] Smart cast to 'kotlin.String' is impossible, because 'a' could have changed since the is-check">a</error>
     }
@@ -209,7 +209,7 @@ fun f(): String {
 fun foo(aa: Any): Int {
     var a = aa
     if (a is Int) {
-        return <error descr="[SMARTCAST_IMPOSSIBLE] Smart cast to 'kotlin.Int' is impossible, because 'a' could have changed since the is-check">a</error>
+        return <info descr="Smart cast to kotlin.Int">a</info>
     }
     return 1
 }

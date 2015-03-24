@@ -1,0 +1,4 @@
+package
+
+internal fun foo(): kotlin.Int
+internal fun get(): kotlin.Any

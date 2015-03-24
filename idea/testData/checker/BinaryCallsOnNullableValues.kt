@@ -5,10 +5,10 @@ class A() {
 fun f(): Unit {
   var x: Int? = <warning>1</warning>
   x = 1
-  x <error>+</error> 1
-  x <error>plus</error> 1
-  x <error><</error> 1
-  x <error>+=</error> 1
+  x + 1
+  x plus 1
+  x < 1
+  x += 1
 
   x == 1
   x != 1
@@ -21,8 +21,8 @@ fun f(): Unit {
   x === 1
   x !== 1
 
-  x<error>..</error>2
-  <error>x</error> in 1..2
+  x..2
+  x in 1..2
 
   val y : Boolean? = true
   <warning>false || <error>y</error></warning>

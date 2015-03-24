@@ -10,10 +10,11 @@ fun foo1(e: PsiElement) {
     var first = true
     while (current != null) {
         if (current is JetExpression && first) {
-            println(current!!.getText()) // error: smart cast not possible. But it's not needed in fact!
+            // Smartcast is possible here
+            println(<!DEBUG_INFO_SMARTCAST!>current<!>.getText())
         }
 
-        current = current?.getParent()
+        current = <!DEBUG_INFO_SMARTCAST!>current<!>.getParent()
     }
 }
 

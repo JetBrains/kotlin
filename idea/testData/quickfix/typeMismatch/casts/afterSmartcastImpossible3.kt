@@ -1,11 +1,15 @@
 // "Cast expression 'x' to 'Foo<*>'" "true"
+
 trait Foo<T: Number> {
-    fun foo()
+    fun bar()
 }
 
-fun bar(_x: Any) {
-    var x = _x
+open class MyClass {
+    public open val x: Any = "42"
+}
+
+fun MyClass.bar() {
     if (x is Foo<*>) {
-        (x as Foo<*>).foo()
+        (x as Foo<*>).bar()
     }
 }

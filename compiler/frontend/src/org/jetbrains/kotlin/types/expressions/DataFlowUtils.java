@@ -199,7 +199,11 @@ public class DataFlowUtils {
 
         for (JetType possibleType : c.dataFlowInfo.getPossibleTypes(dataFlowValue)) {
             if (JetTypeChecker.DEFAULT.isSubtypeOf(possibleType, c.expectedType)) {
-                SmartCastUtils.recordCastOrError(expression, possibleType, c.trace, dataFlowValue.isStableIdentifier(), false);
+                SmartCastUtils.recordCastOrError(expression,
+                                                 possibleType,
+                                                 c.trace,
+                                                 dataFlowValue.isStableIdentifier() || dataFlowValue.isLocalVariable(),
+                                                 false);
                 return possibleType;
             }
         }

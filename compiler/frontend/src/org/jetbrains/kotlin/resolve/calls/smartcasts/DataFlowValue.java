@@ -22,20 +22,26 @@ import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 
+/**
+ * This class describes an arbitrary object which has some value in data flow analysis.
+ * In general case it's some r-value.
+ */
 public class DataFlowValue {
     
-    public static final DataFlowValue NULL = new DataFlowValue(new Object(), KotlinBuiltIns.getInstance().getNullableNothingType(), false, Nullability.NULL);
-    public static final DataFlowValue NULLABLE = new DataFlowValue(new Object(), KotlinBuiltIns.getInstance().getNullableAnyType(), false, Nullability.UNKNOWN);
-    public static final DataFlowValue ERROR = new DataFlowValue(new Object(), ErrorUtils.createErrorType("Error type for data flow"), false, Nullability.IMPOSSIBLE);
+    public static final DataFlowValue NULL = new DataFlowValue(new Object(), KotlinBuiltIns.getInstance().getNullableNothingType(), false, false, Nullability.NULL);
+    public static final DataFlowValue NULLABLE = new DataFlowValue(new Object(), KotlinBuiltIns.getInstance().getNullableAnyType(), false, false, Nullability.UNKNOWN);
+    public static final DataFlowValue ERROR = new DataFlowValue(new Object(), ErrorUtils.createErrorType("Error type for data flow"), false, false, Nullability.IMPOSSIBLE);
 
     private final boolean stableIdentifier;
+    private final boolean localVariable;
     private final JetType type;
     private final Object id;
     private final Nullability immanentNullability;
 
     // Use DataFlowValueFactory
-    /*package*/ DataFlowValue(Object id, JetType type, boolean stableIdentifier, Nullability immanentNullability) {
+    /*package*/ DataFlowValue(Object id, JetType type, boolean stableIdentifier, boolean localVariable, Nullability immanentNullability) {
         this.stableIdentifier = stableIdentifier;
+        this.localVariable = localVariable;
         this.type = type;
         this.id = id;
         this.immanentNullability = immanentNullability;
@@ -56,6 +62,13 @@ public class DataFlowValue {
      */
     public boolean isStableIdentifier() {
         return stableIdentifier;
+    }
+
+    /**
+     * Identifier is considered a local variable here if it's mutable (var), local and not captured in a closure
+     */
+    public boolean isLocalVariable() {
+        return localVariable;
     }
 
     @NotNull
