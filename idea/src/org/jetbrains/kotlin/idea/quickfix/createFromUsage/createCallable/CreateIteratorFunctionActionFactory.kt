@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import java.util.Collections
 import org.jetbrains.kotlin.types.JetTypeImpl
@@ -40,9 +41,9 @@ object CreateIteratorFunctionActionFactory : JetIntentionActionsFactory() {
         val iterableType = TypeInfo(iterableExpr, Variance.IN_VARIANCE)
         val returnJetType = KotlinBuiltIns.getInstance().getIterator().getDefaultType()
 
-        val context = file.analyzeFully()
-        val returnJetTypeParameterTypes = variableExpr.guessTypes(context, null)
-        if (returnJetTypeParameterTypes.size != 1) return null
+        val analysisResult = file.analyzeFullyAndGetResult()
+        val returnJetTypeParameterTypes = variableExpr.guessTypes(analysisResult.bindingContext, analysisResult.moduleDescriptor)
+        if (returnJetTypeParameterTypes.size() != 1) return null
 
         val returnJetTypeParameterType = TypeProjectionImpl(returnJetTypeParameterTypes[0])
         val returnJetTypeArguments = Collections.singletonList(returnJetTypeParameterType)

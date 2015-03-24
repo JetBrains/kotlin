@@ -53,7 +53,6 @@ public class DataFlowValue {
 
     /**
      * Stable identifier is a non-literal value that is statically known to be immutable
-     * @return
      */
     public boolean isStableIdentifier() {
         return stableIdentifier;

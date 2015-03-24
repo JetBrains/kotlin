@@ -161,7 +161,7 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
                         }
                     }
             )
-            handler.selectElements(editor, file) {(elements, previousSibling) ->
+            handler.selectElements(editor, file) { elements, previousSibling ->
                 handler.doInvoke(editor, file, elements, explicitPreviousSibling ?: previousSibling)
             }
         }
@@ -177,7 +177,7 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
         val mainFileName = mainFile.getName()
         val mainFileBaseName = FileUtil.getNameWithoutExtension(mainFileName)
         mainFile.getParentFile()
-                .listFiles {(file, name) ->
+                .listFiles { file, name ->
                     name != mainFileName && name.startsWith("$mainFileBaseName.") && (name.endsWith(".kt") || name.endsWith(".java"))
                 }.forEach {
                     fixture.configureByFile(it.getName())
@@ -192,7 +192,7 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
         try {
             action(file)
 
-            assert(!conflictFile.exists())
+            assert(!conflictFile.exists(), "Conflict file $conflictFile should not exist")
             JetTestUtils.assertEqualsToFile(afterFile, file.getText()!!)
         }
         catch(e: Exception) {

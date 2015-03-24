@@ -16,34 +16,21 @@
 
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations
 
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.psi.JetBlockExpression
-import org.jetbrains.kotlin.psi.JetBinaryExpression
-import org.jetbrains.kotlin.psi.JetIfExpression
-import org.jetbrains.kotlin.psi.JetPsiUtil
 import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetPsiFactory
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler
-import org.jetbrains.kotlin.psi.JetSafeQualifiedExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.refactoring.inline.KotlinInlineValHandler
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.search.LocalSearchScope
-import org.jetbrains.kotlin.psi.JetDeclaration
-import org.jetbrains.kotlin.psi.JetThrowExpression
-import org.jetbrains.kotlin.psi.JetPostfixExpression
-import org.jetbrains.kotlin.psi.JetCallExpression
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
-import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.psi.*
 
 val NULL_PTR_EXCEPTION = "NullPointerException"
 val NULL_PTR_EXCEPTION_FQ = "java.lang.NullPointerException"
@@ -65,9 +52,9 @@ fun JetExpression.extractExpressionIfSingle(): JetExpression? {
     val innerExpression = JetPsiUtil.deparenthesize(this)
     if (innerExpression is JetBlockExpression) {
         return if (innerExpression.getStatements().size() == 1)
-                   JetPsiUtil.deparenthesize(innerExpression.getStatements().first as? JetExpression)
-               else
-                   null
+            JetPsiUtil.deparenthesize(innerExpression.getStatements().firstOrNull() as? JetExpression)
+        else
+            null
     }
 
     return innerExpression
@@ -86,7 +73,7 @@ fun JetBinaryExpression.getNonNullExpression(): JetExpression? = when {
 
 fun JetExpression.isNullExpression(): Boolean = this.extractExpressionIfSingle()?.getText() == "null"
 
-fun JetExpression.isNullExpressionOrEmptyBlock(): Boolean = this.isNullExpression() || this is JetBlockExpression && this.getStatements().empty
+fun JetExpression.isNullExpressionOrEmptyBlock(): Boolean = this.isNullExpression() || this is JetBlockExpression && this.getStatements().isEmpty()
 
 fun JetExpression.isThrowExpression(): Boolean = this.extractExpressionIfSingle() is JetThrowExpression
 
@@ -171,5 +158,6 @@ fun JetPostfixExpression.inlineBaseExpressionIfApplicableWithPrompt(editor: Edit
 fun JetExpression.isStableVariable(): Boolean {
     val context = this.analyze()
     val descriptor = BindingContextUtils.extractVariableDescriptorIfAny(context, this, false)
-    return descriptor is VariableDescriptor && DataFlowValueFactory.isStableVariable(descriptor)
+    return descriptor is VariableDescriptor &&
+           DataFlowValueFactory.isStableVariable(descriptor, DescriptorUtils.getContainingModule(descriptor))
 }

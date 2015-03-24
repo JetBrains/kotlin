@@ -188,7 +188,7 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
         doCheckType(
                 expressionType,
                 c.expectedType,
-                DataFlowValueFactory.createDataFlowValue(expression, expressionType, c.trace.getBindingContext()),
+                DataFlowValueFactory.createDataFlowValue(expression, expressionType, c),
                 c.dataFlowInfo
         ) {
             expectedMustNotBeNull,
@@ -202,7 +202,7 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
                         val baseExpression = expression.getBaseExpression()
                         val baseExpressionType = c.trace.get(BindingContext.EXPRESSION_TYPE, baseExpression) ?: return
                         doIfNotNull(
-                                DataFlowValueFactory.createDataFlowValue(baseExpression, baseExpressionType, c.trace.getBindingContext()),
+                                DataFlowValueFactory.createDataFlowValue(baseExpression, baseExpressionType, c),
                                 c
                         ) {
                             c.trace.report(Errors.UNNECESSARY_NOT_NULL_ASSERTION.on(expression.getOperationReference(), baseExpressionType))
@@ -214,7 +214,7 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
                         val baseExpression = expression.getLeft()
                         val baseExpressionType = c.trace.get(BindingContext.EXPRESSION_TYPE, baseExpression) ?: return
                         doIfNotNull(
-                                DataFlowValueFactory.createDataFlowValue(baseExpression, baseExpressionType, c.trace.getBindingContext()),
+                                DataFlowValueFactory.createDataFlowValue(baseExpression, baseExpressionType, c),
                                 c
                         ) {
                             c.trace.report(Errors.USELESS_ELVIS.on(expression.getOperationReference(), baseExpressionType))
@@ -226,7 +226,7 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
                     JetTokens.EXCLEQEQEQ -> {
                         if (expression.getLeft() != null && expression.getRight() != null) {
                             SenselessComparisonChecker.checkSenselessComparisonWithNull(
-                                    expression, expression.getLeft()!!, expression.getRight()!!, c.trace,
+                                    expression, expression.getLeft()!!, expression.getRight()!!, c,
                                     { c.trace.get(BindingContext.EXPRESSION_TYPE, it) },
                                     {
                                         value ->
@@ -253,7 +253,7 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
             safeAccess: Boolean,
             c: CallResolutionContext<*>
     ) {
-        val dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiverArgument, c.trace.getBindingContext())
+        val dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiverArgument, c)
         if (!safeAccess) {
             doCheckType(
                     receiverArgument.getType(),

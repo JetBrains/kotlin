@@ -137,7 +137,7 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
             val (receivers, callType) = referenceVariantsHelper!!.getReferenceVariantsReceivers(expression)
             val dataFlowInfo = bindingContext!!.getDataFlowInfo(expression)
             var receiverTypes = receivers.flatMap {
-                SmartCastUtils.getSmartCastVariantsWithLessSpecificExcluded(it, bindingContext, dataFlowInfo)
+                SmartCastUtils.getSmartCastVariantsWithLessSpecificExcluded(it, bindingContext, moduleDescriptor, dataFlowInfo)
             }
             if (callType == CallType.SAFE) {
                 receiverTypes = receiverTypes.map { it.makeNotNullable() }

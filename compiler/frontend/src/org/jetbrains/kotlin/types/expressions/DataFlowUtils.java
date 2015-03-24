@@ -53,7 +53,11 @@ public class DataFlowUtils {
     }
 
     @NotNull
-    public static DataFlowInfo extractDataFlowInfoFromCondition(@Nullable JetExpression condition, final boolean conditionValue, final ExpressionTypingContext context) {
+    public static DataFlowInfo extractDataFlowInfoFromCondition(
+            @Nullable JetExpression condition,
+            final boolean conditionValue,
+            final ExpressionTypingContext context
+    ) {
         if (condition == null) return context.dataFlowInfo;
         final Ref<DataFlowInfo> result = new Ref<DataFlowInfo>(null);
         condition.accept(new JetVisitorVoid() {
@@ -93,9 +97,8 @@ public class DataFlowUtils {
                     JetType rhsType = context.trace.getBindingContext().get(BindingContext.EXPRESSION_TYPE, right);
                     if (rhsType == null) return;
 
-                    BindingContext bindingContext = context.trace.getBindingContext();
-                    DataFlowValue leftValue = DataFlowValueFactory.createDataFlowValue(left, lhsType, bindingContext);
-                    DataFlowValue rightValue = DataFlowValueFactory.createDataFlowValue(right, rhsType, bindingContext);
+                    DataFlowValue leftValue = DataFlowValueFactory.createDataFlowValue(left, lhsType, context);
+                    DataFlowValue rightValue = DataFlowValueFactory.createDataFlowValue(right, rhsType, context);
 
                     Boolean equals = null;
                     if (operationToken == JetTokens.EQEQ || operationToken == JetTokens.EQEQEQ) {
@@ -192,7 +195,7 @@ public class DataFlowUtils {
             return expressionType;
         }
 
-        DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(expression, expressionType, c.trace.getBindingContext());
+        DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(expression, expressionType, c);
 
         for (JetType possibleType : c.dataFlowInfo.getPossibleTypes(dataFlowValue)) {
             if (JetTypeChecker.DEFAULT.isSubtypeOf(possibleType, c.expectedType)) {
@@ -254,9 +257,9 @@ public class DataFlowUtils {
             @NotNull JetExpression expression,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull JetType type,
-            @NotNull BindingContext bindingContext
+            @NotNull ResolutionContext c
     ) {
-        DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(expression, type, bindingContext);
+        DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(expression, type, c);
         Collection<JetType> possibleTypes = Sets.newHashSet(type);
         if (dataFlowValue.isStableIdentifier()) {
             possibleTypes.addAll(dataFlowInfo.getPossibleTypes(dataFlowValue));

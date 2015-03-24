@@ -444,7 +444,7 @@ public class CandidateResolver {
         JetExpression deparenthesizedArgument = getLastElementDeparenthesized(argumentExpression, context);
         if (deparenthesizedArgument == null || type == null) return type;
 
-        DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(deparenthesizedArgument, type, context.trace.getBindingContext());
+        DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(deparenthesizedArgument, type, context);
         if (!dataFlowValue.isStableIdentifier()) return type;
 
         Set<JetType> possibleTypes = context.dataFlowInfo.getPossibleTypes(dataFlowValue);
@@ -564,8 +564,7 @@ public class CandidateResolver {
             @NotNull ResolutionContext<?> context
     ) {
         ExpressionReceiver receiverToCast = new ExpressionReceiver(JetPsiUtil.safeDeparenthesize(expression, false), actualType);
-        Collection<JetType> variants = SmartCastUtils.getSmartCastVariantsExcludingReceiver(
-                context.trace.getBindingContext(), context.dataFlowInfo, receiverToCast);
+        Collection<JetType> variants = SmartCastUtils.getSmartCastVariantsExcludingReceiver(context, receiverToCast);
         for (JetType possibleType : variants) {
             if (JetTypeChecker.DEFAULT.isSubtypeOf(possibleType, expectedType)) {
                 return possibleType;
@@ -637,12 +636,12 @@ public class CandidateResolver {
 
         BindingContext bindingContext = trace.getBindingContext();
         if (!safeAccess && !receiverParameter.getType().isMarkedNullable() && receiverArgumentType.isMarkedNullable()) {
-            if (!SmartCastUtils.canBeSmartCast(receiverParameter, receiverArgument, bindingContext, context.dataFlowInfo)) {
+            if (!SmartCastUtils.canBeSmartCast(receiverParameter, receiverArgument, context)) {
                 context.tracing.unsafeCall(trace, receiverArgumentType, implicitInvokeCheck);
                 return UNSAFE_CALL_ERROR;
             }
         }
-        DataFlowValue receiverValue = DataFlowValueFactory.createDataFlowValue(receiverArgument, bindingContext);
+        DataFlowValue receiverValue = DataFlowValueFactory.createDataFlowValue(receiverArgument, bindingContext, context.scope.getContainingDeclaration());
         if (safeAccess && !context.dataFlowInfo.getNullability(receiverValue).canBeNull()) {
             context.tracing.unnecessarySafeCall(trace, receiverArgumentType);
         }
