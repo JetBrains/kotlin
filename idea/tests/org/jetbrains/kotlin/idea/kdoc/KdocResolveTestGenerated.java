@@ -17,9 +17,10 @@
 package org.jetbrains.kotlin.idea.kdoc;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.idea.resolve.AbstractReferenceResolveTest;
+import org.jetbrains.kotlin.test.InnerTestClasses;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.idea.resolve.AbstractReferenceResolveTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -39,6 +40,12 @@ public class KdocResolveTestGenerated extends AbstractReferenceResolveTest {
     @TestMetadata("AmbiguousReference.kt")
     public void testAmbiguousReference() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/kdoc/resolve/AmbiguousReference.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("AmbiguousReferenceTypeParameter.kt")
+    public void testAmbiguousReferenceTypeParameter() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/kdoc/resolve/AmbiguousReferenceTypeParameter.kt");
         doTest(fileName);
     }
 
