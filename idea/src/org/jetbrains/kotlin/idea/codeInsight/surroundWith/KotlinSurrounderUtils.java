@@ -20,14 +20,9 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.JetBundle;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils;
 import org.jetbrains.kotlin.psi.JetBlockExpression;
-import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.types.JetType;
 
 public class KotlinSurrounderUtils {
     public static String SURROUND_WITH = JetBundle.message("surround.with");
@@ -42,12 +37,6 @@ public class KotlinSurrounderUtils {
     ) {
         PsiElement lBrace = block.getFirstChild();
         block.addRangeAfter(statements[0], statements[statements.length - 1], lBrace);
-    }
-
-    @Nullable
-    public static JetType getExpressionType(JetExpression expression) {
-        BindingContext expressionBindingContext = ResolvePackage.analyze(expression);
-        return expressionBindingContext.get(BindingContext.EXPRESSION_TYPE, expression);
     }
 
     public static void showErrorHint(@NotNull Project project, @NotNull Editor editor, @NotNull String message) {

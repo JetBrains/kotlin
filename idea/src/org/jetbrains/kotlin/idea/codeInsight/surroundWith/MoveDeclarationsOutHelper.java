@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.types.JetType;
 
 import java.util.ArrayList;
@@ -116,9 +117,9 @@ public class MoveDeclarationsOutHelper {
 
     @NotNull
     private static JetType getPropertyType(@NotNull JetProperty property) {
-        BindingContext expressionBindingContext = ResolvePackage.analyze(property);
+        BindingContext bindingContext = ResolvePackage.analyze(property, BodyResolveMode.PARTIAL);
 
-        VariableDescriptor propertyDescriptor = expressionBindingContext.get(BindingContext.VARIABLE, property);
+        VariableDescriptor propertyDescriptor = bindingContext.get(BindingContext.VARIABLE, property);
         assert propertyDescriptor != null : "Couldn't resolve property to property descriptor " + property.getText();
         return propertyDescriptor.getType();
     }
