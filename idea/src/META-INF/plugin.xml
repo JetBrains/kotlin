@@ -6,7 +6,8 @@
   <version>@snapshot@</version>
   <vendor url="http://www.jetbrains.com">JetBrains s.r.o.</vendor>
 
-  <idea-version since-build="135.1286" until-build="136.9999"/>
+  <!-- Run replicateIdeaVersions Ant task after changing the versions. -->
+  <idea-version since-build="141.2" until-build="142.9999"/>
 
   <depends optional="true" config-file="junit.xml">JUnit</depends>
   <depends optional="true" config-file="gradle.xml">org.jetbrains.plugins.gradle</depends>
