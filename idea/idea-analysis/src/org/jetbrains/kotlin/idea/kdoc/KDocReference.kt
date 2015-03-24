@@ -75,10 +75,7 @@ public fun resolveKDocLink(session: KotlinCodeAnalyzer,
 
     // Try to find a matching local descriptor (parameter or type parameter) first.
     if (qualifiedName.size() == 1) {
-        val scope = getResolutionScope(session, fromDescriptor)
-        val localResult = scope.getDescriptors().filter {
-            it.getName().asString() == qualifiedName.single() && it.getContainingDeclaration() == fromDescriptor
-        }
+        val localResult = resolveInLocalScope(fromDescriptor, qualifiedName.single(), session)
         if (!localResult.isEmpty()) {
             return localResult
         }
@@ -87,14 +84,20 @@ public fun resolveKDocLink(session: KotlinCodeAnalyzer,
     var result: Collection<DeclarationDescriptor> = listOf(fromDescriptor)
     qualifiedName.forEach { nameComponent ->
         if (result.size() != 1) return listOf()
-        if (!Name.isValidIdentifier(nameComponent)) {
-            return listOf()
-        }
         val scope = getResolutionScope(session, result.first())
         result = scope.getDescriptors().filter { it.getName().asString() == nameComponent }
     }
 
     return result
+}
+
+private fun resolveInLocalScope(fromDescriptor: DeclarationDescriptor,
+                                name: String,
+                                session: KotlinCodeAnalyzer): List<DeclarationDescriptor> {
+    val scope = getResolutionScope(session, fromDescriptor)
+    return scope.getDescriptors().filter {
+        it.getName().asString() == name && it.getContainingDeclaration() == fromDescriptor
+    }
 }
 
 public fun getParamDescriptors(fromDescriptor: DeclarationDescriptor): List<DeclarationDescriptor> {
