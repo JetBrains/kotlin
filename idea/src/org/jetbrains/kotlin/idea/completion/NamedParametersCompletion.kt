@@ -16,30 +16,31 @@
 
 package org.jetbrains.kotlin.idea.completion
 
-import org.jetbrains.kotlin.psi.JetValueArgument
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetCallElement
-import org.jetbrains.kotlin.idea.references.JetReference
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import com.intellij.codeInsight.lookup.LookupElementBuilder
-import org.jetbrains.kotlin.idea.JetIcons
-import org.jetbrains.kotlin.idea.quickfix.QuickFixUtil
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import com.intellij.codeInsight.lookup.LookupElement
-import com.intellij.codeInsight.completion.InsertionContext
-import com.intellij.psi.filters.AndFilter
-import org.jetbrains.kotlin.psi.JetValueArgumentName
-import com.intellij.psi.filters.position.ParentElementFilter
-import com.intellij.psi.filters.OrFilter
-import com.intellij.psi.filters.ClassFilter
-import org.jetbrains.kotlin.idea.util.FirstChildInParentFilter
-import org.jetbrains.kotlin.psi.psiUtil.getCallNameExpression
-import com.intellij.psi.PsiElement
 import com.intellij.codeInsight.completion.InsertHandler
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import com.intellij.codeInsight.completion.InsertionContext
+import com.intellij.codeInsight.lookup.LookupElement
+import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.psi.PsiElement
+import com.intellij.psi.filters.AndFilter
+import com.intellij.psi.filters.ClassFilter
+import com.intellij.psi.filters.OrFilter
+import com.intellij.psi.filters.position.ParentElementFilter
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.JetIcons
 import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
+import org.jetbrains.kotlin.idea.quickfix.QuickFixUtil
+import org.jetbrains.kotlin.idea.references.JetReference
+import org.jetbrains.kotlin.idea.util.FirstChildInParentFilter
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.JetCallElement
+import org.jetbrains.kotlin.psi.JetValueArgument
+import org.jetbrains.kotlin.psi.JetValueArgumentName
+import org.jetbrains.kotlin.psi.psiUtil.getCallNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.resolve.BindingContext
 
 object NamedParametersCompletion {
     private val positionFilter = AndFilter(
@@ -68,7 +69,7 @@ object NamedParametersCompletion {
         return false
     }
 
-    public fun complete(position: PsiElement, collector: LookupElementsCollector) {
+    public fun complete(position: PsiElement, collector: LookupElementsCollector, bindingContext: BindingContext) {
         if (!positionFilter.isAcceptable(position, position)) return
 
         val valueArgument = position.getStrictParentOfType<JetValueArgument>()!!
@@ -78,7 +79,7 @@ object NamedParametersCompletion {
 
         val callReference = callSimpleName.getReference() as JetReference
 
-        val functionDescriptors = callReference.resolveToDescriptors().map { it as? FunctionDescriptor }.filterNotNull()
+        val functionDescriptors = callReference.resolveToDescriptors(bindingContext).map { it as? FunctionDescriptor }.filterNotNull()
 
         for (funDescriptor in functionDescriptors) {
             if (!funDescriptor.hasStableParameterNames()) continue

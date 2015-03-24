@@ -119,7 +119,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
 
         val reference = element.getReference() as? JetReference ?: return listOf()
 
-        val descriptors = reference.resolveToDescriptors()
+        val descriptors = reference.resolveToDescriptors((element as JetElement).analyze()) //TODO: we could use partial body resolve for all references together
         //check whether this reference is unambiguous
         if (reference !is JetMultiReference<*> && descriptors.size() > 1) return listOf()
 
@@ -231,7 +231,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
     private fun createReferenceToRestoreData(element: JetElement, refData: KotlinReferenceData): ReferenceToRestoreData? {
         val reference = element.getReference() as? JetReference ?: return null
         val referencedDescriptors = try {
-            reference.resolveToDescriptors()
+            reference.resolveToDescriptors(element.analyze()) //TODO: we could use partial body resolve for all references together
         }
         catch (e: Throwable) {
             LOG.error("Failed to analyze reference (${element.getText()}) after copy paste", e)

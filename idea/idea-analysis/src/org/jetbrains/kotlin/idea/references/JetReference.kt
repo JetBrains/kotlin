@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 
 public trait JetReference : PsiPolyVariantReference {
-    public fun resolveToDescriptors(): Collection<DeclarationDescriptor>
+    public fun resolveToDescriptors(bindingContext: BindingContext): Collection<DeclarationDescriptor>
 }
 
 public abstract class AbstractJetReference<T : JetElement>(element: T)
@@ -72,8 +72,8 @@ public abstract class AbstractJetReference<T : JetElement>(element: T)
         return resolveToPsiElements(bindingContext, getTargetDescriptors(bindingContext))
     }
 
-    override fun resolveToDescriptors(): Collection<DeclarationDescriptor> {
-        return getTargetDescriptors(expression.analyze())
+    override fun resolveToDescriptors(bindingContext: BindingContext): Collection<DeclarationDescriptor> {
+        return getTargetDescriptors(bindingContext)
     }
 
     private fun resolveToPsiElements(context: BindingContext, targetDescriptors: Collection<DeclarationDescriptor>): Collection<PsiElement> {

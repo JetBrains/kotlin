@@ -20,16 +20,18 @@ import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
+import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.rename.RenameProcessor
 import com.intellij.usageView.UsageInfo
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.idea.JetBundle
-import com.intellij.psi.codeStyle.CodeStyleManager
-import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
-import org.jetbrains.kotlin.idea.references.JetReference
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
+import org.jetbrains.kotlin.idea.JetBundle
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.references.JetReference
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 public class ReplaceExplicitFunctionLiteralParamWithItIntention() : PsiElementBaseIntentionAction() {
     override fun invoke(project: Project, editor: Editor, element: PsiElement) {
@@ -73,7 +75,7 @@ public class ReplaceExplicitFunctionLiteralParamWithItIntention() : PsiElementBa
             }
             is JetSimpleNameExpression -> {
                 val reference = expression.getReference() as JetReference?
-                val variableDescriptor = reference?.resolveToDescriptors()?.firstOrNull() as? VariableDescriptor?
+                val variableDescriptor = reference?.resolveToDescriptors(expression.analyze(BodyResolveMode.PARTIAL))?.firstOrNull() as? VariableDescriptor?
                 if (variableDescriptor != null) {
                     val containingDescriptor = variableDescriptor.getContainingDeclaration()
                     if (containingDescriptor is AnonymousFunctionDescriptor) {

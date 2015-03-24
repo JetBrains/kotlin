@@ -23,6 +23,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 
 class JetMultiDeclarationReference(element: JetMultiDeclaration) : JetMultiReference<JetMultiDeclaration>(element) {
     override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
@@ -39,7 +40,8 @@ class JetMultiDeclarationReference(element: JetMultiDeclaration) : JetMultiRefer
     }
 
     override fun canRename(): Boolean {
-        return resolveToDescriptors().all { it is CallableMemberDescriptor && it.getKind() == CallableMemberDescriptor.Kind.SYNTHESIZED}
+        val bindingContext = expression.analyze() //TODO: should it use full body resolve?
+        return resolveToDescriptors(bindingContext).all { it is CallableMemberDescriptor && it.getKind() == CallableMemberDescriptor.Kind.SYNTHESIZED}
     }
 
     override fun handleElementRename(newElementName: String?): PsiElement? {
