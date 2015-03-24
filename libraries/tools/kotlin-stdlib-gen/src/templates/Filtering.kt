@@ -12,8 +12,24 @@ fun filtering(): List<GenericFunction> {
         body {
             """
             require(n >= 0, { "Requested element count $n is less than zero." })
+            val list: ArrayList<T>
+            if (this is Collection<*>) {
+                val resultSize = size() - n
+                if (resultSize <= 0)
+                    return emptyList()
+
+                list = ArrayList<T>(resultSize)
+                if (this is List<T>) {
+                    for (index in n..size() - 1) {
+                        list.add(this[index])
+                    }
+                    return list
+                }
+            }
+            else {
+                list = ArrayList<T>()
+            }
             var count = 0
-            val list = ArrayList<T>()
             for (item in this) {
                 if (count++ >= n) list.add(item)
             }
@@ -34,22 +50,7 @@ fun filtering(): List<GenericFunction> {
         body(Strings) { "return substring(Math.min(n, length()))" }
         returns(Strings) { "String" }
 
-        body(Collections) {
-            """
-            require(n >= 0, { "Requested element count $n is less than zero." })
-            if (n >= size())
-                return emptyList()
-
-            var count = 0
-            val list = ArrayList<T>(size() - n)
-            for (item in this) {
-                if (count++ >= n) list.add(item)
-            }
-            return list
-            """
-        }
-
-        body(Lists, ArraysOfObjects, ArraysOfPrimitives) {
+        body(ArraysOfObjects, ArraysOfPrimitives) {
             """
             require(n >= 0, { "Requested element count $n is less than zero." })
             if (n >= size())
@@ -72,7 +73,7 @@ fun filtering(): List<GenericFunction> {
             """
             require(n >= 0, { "Requested element count $n is less than zero." })
             var count = 0
-            val list = ArrayList<T>(n)
+            val list = ArrayList<T>(Math.min(n, collectionSizeOrDefault(n)))
             for (item in this) {
                 if (count++ == n)
                     break
@@ -83,7 +84,12 @@ fun filtering(): List<GenericFunction> {
         }
 
         doc(Strings) { "Returns a string containing the first [n] characters from this string, or the entire string if this string is shorter"}
-        body(Strings) { "return substring(0, Math.min(n, length()))" }
+        body(Strings) {
+            """
+            require(n >= 0, { "Requested element count $n is less than zero." })
+            return substring(0, Math.min(n, length()))
+            """
+        }
         returns(Strings) { "String" }
 
         doc(Sequences) { "Returns a sequence containing first *n* elements" }
@@ -95,12 +101,11 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
-        include(Collections)
-        body(Collections, ArraysOfObjects, ArraysOfPrimitives) {
+        body(ArraysOfObjects, ArraysOfPrimitives) {
             """
             require(n >= 0, "Requested element count $n is less than zero.")
             var count = 0
-            val realN = if (n > size()) size() else n
+            val realN = Math.min(n, size())
             val list = ArrayList<T>(realN)
             for (item in this) {
                 if (count++ == realN)
@@ -119,14 +124,20 @@ fun filtering(): List<GenericFunction> {
         returns("List<T>")
 
         doc(Strings) { "Returns a string containing the last [n] characters from this string, or the entire string if this string is shorter"}
-        body(Strings) { "return substring(length() - Math.min(n, length()), length())" }
+        body(Strings) {
+            """
+            require(n >= 0, { "Requested element count $n is less than zero." })
+            val length = length()
+            return substring(length - Math.min(n, length), length)
+            """
+        }
         returns(Strings) { "String" }
 
         body(Lists, ArraysOfObjects, ArraysOfPrimitives) {
             """
             require(n >= 0, { "Requested element count $n is less than zero." })
             val size = size()
-            val realN = if (n > size) size else n
+            val realN = Math.min(n, size)
             val list = ArrayList<T>(realN)
             for (index in size - realN .. size - 1)
                 list.add(this[index])
@@ -366,7 +377,7 @@ fun filtering(): List<GenericFunction> {
         returns("List<T>")
         body {
             """
-            val list = ArrayList<T>()
+            val list = ArrayList<T>(indices.collectionSizeOrDefault(10))
             for (index in indices) {
                 list.add(get(index))
             }
@@ -378,7 +389,7 @@ fun filtering(): List<GenericFunction> {
         returns(Strings) { "String" }
         body(Strings) {
             """
-            val result = StringBuilder()
+            val result = StringBuilder(indices.collectionSizeOrDefault(10))
             for (i in indices) {
                 result.append(get(i))
             }
