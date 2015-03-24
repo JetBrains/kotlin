@@ -41,11 +41,9 @@ public class AndroidGotoDeclarationHandler : GotoDeclarationHandler {
             if (moduleInfo !is ModuleSourceInfo) return null
 
             val parser = ModuleServiceManager.getService(moduleInfo.module, javaClass<AndroidUIXmlProcessor>())
-            val psiElement = parser.resourceManager.propertyToXmlAttribute(property) as? XmlAttribute
-            val attributeValue = psiElement?.getValueElement()
-            if (attributeValue != null) {
-                return array(attributeValue)
-            }
+            val psiElements = parser.resourceManager.propertyToXmlAttributes(property)
+            val valueElements = psiElements.map { (it as? XmlAttribute)?.getValueElement() as? PsiElement }.filterNotNull()
+            if (valueElements.isNotEmpty()) return valueElements.copyToArray()
         }
         return null
     }
