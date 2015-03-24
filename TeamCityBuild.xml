@@ -12,6 +12,10 @@
     <property name="plugin.xml.bk" value="${version_substitute_dir}/plugin.xml.bk"/>
     <property name="plugin.xml.versioned" value="${plugin.xml}.versioned" />
 
+    <property name="android-extensions.plugin.xml" value="plugins/android-idea-plugin/src/META-INF/plugin.xml"/>
+    <property name="android-extensions.plugin.xml.bk" value="${version_substitute_dir}/kotlin-android-extensions.plugin.xml.bk"/>
+    <property name="android-extensions.plugin.xml.versioned" value="${android-extensions.plugin.xml}.versioned" />
+
     <property name="compiler.version.java" value="compiler/cli/cli-common/src/org/jetbrains/kotlin/cli/common/KotlinVersion.java"/>
     <property name="compiler.version.java.bk" value="${version_substitute_dir}/KotlinVersion.java.bk"/>
     <property name="compiler.version.java.versioned" value="${compiler.version.java}.versioned" />
@@ -83,6 +87,12 @@
           test.string="&lt;version&gt;@snapshot@&lt;/version&gt;"/>
 
       <substituteVersionInFile
+          target.file="${android-extensions.plugin.xml}"
+          target.file.bk="${android-extensions.plugin.xml.bk}"
+          target.file.versioned="${android-extensions.plugin.xml.versioned}"
+          test.string="&lt;version&gt;@snapshot@&lt;/version&gt;"/>
+
+      <substituteVersionInFile
           target.file="${compiler.version.java}"
           target.file.bk="${compiler.version.java.bk}"
           target.file.versioned="${compiler.version.java.versioned}"
@@ -91,6 +101,7 @@
 
   <target name="revertTemplateFiles">
       <copy file="${plugin.xml.bk}" tofile="${plugin.xml}" overwrite="true"/>
+      <copy file="${android-extensions.plugin.xml.bk}" tofile="${android-extensions.plugin.xml}" overwrite="true"/>
       <copy file="${compiler.version.java.bk}" tofile="${compiler.version.java}" overwrite="true"/>
 
       <delete dir="${version_substitute_dir}" quiet="true"/>
