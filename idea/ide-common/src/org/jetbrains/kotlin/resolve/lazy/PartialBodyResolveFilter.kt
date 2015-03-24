@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.resolve.StatementFilter
 import org.jetbrains.kotlin.psi.psiUtil.isProbablyNothing
+import org.jetbrains.kotlin.utils.addToStdlib.swap
 
 //TODO: do resolve anonymous object's body
 
@@ -189,15 +190,23 @@ class PartialBodyResolveFilter(
                 val thenBranch = expression.getThen()
                 val elseBranch = expression.getElse()
 
-                val smartCastNames = collectPossiblySmartCastInCondition(condition).filter(filter)
-                if (smartCastNames.isNotEmpty()) {
-                    val exits = collectAlwaysExitPoints(thenBranch) + collectAlwaysExitPoints(elseBranch)
-                    if (exits.isNotEmpty()) {
-                        for (name in smartCastNames) {
-                            addPlaces(name, exits)
+                val (thenSmartCastNames, elseSmartCastNames) = possiblySmartCastInCondition(condition)
+
+                fun processBranchExits(smartCastNames: Collection<SmartCastName>, branch: JetExpression?) {
+                    if (branch == null) return
+                    val filteredNames = smartCastNames.filter(filter)
+                    if (filteredNames.isNotEmpty()) {
+                        val exits = collectAlwaysExitPoints(branch)
+                        if (exits.isNotEmpty()) {
+                            for (name in filteredNames) {
+                                addPlaces(name, exits)
+                            }
                         }
                     }
                 }
+
+                processBranchExits(thenSmartCastNames, elseBranch)
+                processBranchExits(elseSmartCastNames, thenBranch)
 
                 condition?.accept(this)
 
@@ -243,29 +252,59 @@ class PartialBodyResolveFilter(
     }
 
     /**
-     * Returns names of expressions that would possibly be smart cast after
-     * either a statement "if (condition) return" or "if (!condition) return"
+     * Returns names of expressions that would possibly be smart cast
+     * in then (first component) and else (second component)
+     * branches of an if-statement with such condition
      */
-    private fun collectPossiblySmartCastInCondition(condition: JetExpression?): Set<SmartCastName> {
-        val result = HashSet<SmartCastName>()
-        condition?.accept(object : ControlFlowVisitor() {
-            override fun visitBinaryExpression(expression: JetBinaryExpression) {
-                expression.acceptChildren(this)
+    private fun possiblySmartCastInCondition(condition: JetExpression?): Pair<Set<SmartCastName>, Set<SmartCastName>> {
+        val emptyResult = Pair(setOf<SmartCastName>(), setOf<SmartCastName>())
+        when (condition) {
+            is JetBinaryExpression -> {
+                val operation = condition.getOperationToken()
+                val left = condition.getLeft() ?: return emptyResult
+                val right = condition.getRight() ?: return emptyResult
 
-                val operation = expression.getOperationToken()
-                if (operation == JetTokens.EQEQ || operation == JetTokens.EXCLEQ || operation == JetTokens.EQEQEQ || operation == JetTokens.EXCLEQEQEQ) {
-                    result.addIfNotNull(expression.getLeft()?.smartCastExpressionName())
-                    result.addIfNotNull(expression.getRight()?.smartCastExpressionName())
+                fun smartCastInEq(): Pair<Set<SmartCastName>, Set<SmartCastName>> {
+                    if (left.isNullLiteral()) {
+                        return Pair(setOf(), right.smartCastExpressionName().singletonOrEmptySet())
+                    }
+                    else if (right.isNullLiteral()) {
+                        return Pair(setOf(), left.smartCastExpressionName().singletonOrEmptySet())
+                    }
+                    else {
+                        val leftName = left.smartCastExpressionName()
+                        val rightName = right.smartCastExpressionName()
+                        val names = listOf(leftName, rightName).filterNotNull().toSet()
+                        return Pair(names, setOf())
+                    }
+                }
+
+                when (operation) {
+                    JetTokens.EQEQ, JetTokens.EQEQEQ -> return smartCastInEq()
+
+                    JetTokens.EXCLEQ, JetTokens.EXCLEQEQEQ -> return smartCastInEq().swap()
+
+                    JetTokens.ANDAND -> {
+                        val casts1 = possiblySmartCastInCondition(left)
+                        val casts2 = possiblySmartCastInCondition(right)
+                        return Pair(casts1.first.union(casts2.first), casts1.second.intersect(casts2.second))
+                    }
+
+                    JetTokens.OROR -> {
+                        val casts1 = possiblySmartCastInCondition(left)
+                        val casts2 = possiblySmartCastInCondition(right)
+                        return Pair(casts1.first.intersect(casts2.first), casts1.second.union(casts2.second))
+                    }
                 }
             }
 
-            override fun visitIsExpression(expression: JetIsExpression) {
-                expression.acceptChildren(this)
-
-                result.addIfNotNull(expression.getLeftHandSide().smartCastExpressionName())
+            is JetIsExpression -> {
+                val cast = condition.getLeftHandSide().smartCastExpressionName().singletonOrEmptySet()
+                return if (condition.isNegated()) Pair(setOf(), cast) else Pair(cast, setOf())
             }
-        })
-        return result
+        }
+
+        return emptyResult
     }
 
     /**
@@ -484,10 +523,12 @@ class PartialBodyResolveFilter(
             return result
         }
 
-        //    private fun JetExpression?.isNullLiteral() = this?.getNode()?.getElementType() == JetNodeTypes.NULL
+        private fun JetExpression?.isNullLiteral() = this?.getNode()?.getElementType() == JetNodeTypes.NULL
 
         private fun JetExpression?.isTrueConstant()
                 = this != null && getNode()?.getElementType() == JetNodeTypes.BOOLEAN_CONSTANT && getText() == "true"
+
+        private fun <T : Any> T?.singletonOrEmptySet(): Set<T> = if (this != null) setOf(this) else setOf()
 
         //TODO: review logic
         private fun isValueNeeded(expression: JetExpression): Boolean {
@@ -571,6 +612,5 @@ class PartialBodyResolveFilter(
                     .first { statementMark(it) >= minLevel }
         }
     }
-
 }
 
