@@ -3912,6 +3912,9 @@ The "returned" value of try expression with no finally is either the last expres
             DeclarationDescriptor descriptor = rightType.getConstructor().getDeclarationDescriptor();
             if (descriptor instanceof ClassDescriptor || descriptor instanceof TypeParameterDescriptor) {
                 final StackValue value = genQualified(receiver, left);
+                if (KotlinBuiltIns.isUnit(rightType)) {
+                    return value;
+                }
 
                 return StackValue.operation(rightTypeAsm, new Function1<InstructionAdapter, Unit>() {
                     @Override
