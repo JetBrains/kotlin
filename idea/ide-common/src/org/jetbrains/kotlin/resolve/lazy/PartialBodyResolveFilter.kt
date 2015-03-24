@@ -157,8 +157,9 @@ class PartialBodyResolveFilter(
         }
 
         fun addPlaces(name: SmartCastName, places: Collection<JetExpression>) {
-            assert(!places.isEmpty())
-            map.getOrPut(name, { ArrayList(places.size()) }).addAll(places)
+            if (places.isNotEmpty()) {
+                map.getOrPut(name, { ArrayList(places.size()) }).addAll(places)
+            }
         }
 
         fun addIfCanBeSmartCast(expression: JetExpression) {
@@ -182,6 +183,22 @@ class PartialBodyResolveFilter(
 
                 if (expression.getOperationReference().getReferencedNameElementType() == JetTokens.AS_KEYWORD) {
                     addIfCanBeSmartCast(expression.getLeft())
+                }
+            }
+
+            override fun visitBinaryExpression(expression: JetBinaryExpression) {
+                expression.acceptChildren(this)
+
+                if (expression.getOperationToken() == JetTokens.ELVIS) {
+                    val left = expression.getLeft()
+                    val right = expression.getRight()
+                    if (left != null && right != null) {
+                        val smartCastName = left.smartCastExpressionName()
+                        if (smartCastName != null && filter(smartCastName)) {
+                            val exits = collectAlwaysExitPoints(right)
+                            addPlaces(smartCastName, exits)
+                        }
+                    }
                 }
             }
 
