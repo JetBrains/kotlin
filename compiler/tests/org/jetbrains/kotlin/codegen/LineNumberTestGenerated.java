@@ -219,6 +219,30 @@ public class LineNumberTestGenerated extends AbstractLineNumberTest {
             doTestCustom(fileName);
         }
 
+        @TestMetadata("smapInlineAsArgument.kt")
+        public void testSmapInlineAsArgument() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/lineNumber/custom/smapInlineAsArgument.kt");
+            doTestCustom(fileName);
+        }
+
+        @TestMetadata("smapInlineAsInfixArgument.kt")
+        public void testSmapInlineAsInfixArgument() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/lineNumber/custom/smapInlineAsInfixArgument.kt");
+            doTestCustom(fileName);
+        }
+
+        @TestMetadata("smapInlineAsInlineArgument.kt")
+        public void testSmapInlineAsInlineArgument() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/lineNumber/custom/smapInlineAsInlineArgument.kt");
+            doTestCustom(fileName);
+        }
+
+        @TestMetadata("smapInlineInIntrinsicArgument.kt")
+        public void testSmapInlineInIntrinsicArgument() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/lineNumber/custom/smapInlineInIntrinsicArgument.kt");
+            doTestCustom(fileName);
+        }
+
         @TestMetadata("tryCatchExpression.kt")
         public void testTryCatchExpression() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/lineNumber/custom/tryCatchExpression.kt");

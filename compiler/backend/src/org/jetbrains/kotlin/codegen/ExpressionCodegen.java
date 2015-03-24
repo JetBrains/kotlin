@@ -1717,6 +1717,21 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         v.visitLineNumber(lineNumber, label);
     }
 
+    //we should generate additional linenumber info after inline call only if it used as argument
+    public void markLineNumberAfterInlineIfNeeded() {
+        if (!shouldMarkLineNumbers) {
+            //if it used as general argument
+            if (myLastLineNumber > -1) {
+                Label label = new Label();
+                v.visitLabel(label);
+                v.visitLineNumber(myLastLineNumber, label);
+            }
+        } else {
+            //if it used as argument of infix call (in this case lineNumber for simple inlineCall also would be reset)
+            myLastLineNumber = -1;
+        }
+    }
+
     private void doFinallyOnReturn() {
         if(!blockStackElements.isEmpty()) {
             BlockStackElement stackElement = blockStackElements.peek();

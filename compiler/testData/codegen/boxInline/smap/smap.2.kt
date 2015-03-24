@@ -8,8 +8,8 @@ inline fun initTag2(init: () -> Unit) {
     val p = 1;
     init()
 }
-
-inline fun head(init: () -> Unit) = initTag2(init)
+//{val p = initTag2(init); return p} to remove difference in linenumber processing through MethodNode and MethodVisitor should be: = initTag2(init)
+inline fun head(init: () -> Unit) {val p = initTag2(init); return p}
 
 
 inline fun html(init: () -> Unit) {
