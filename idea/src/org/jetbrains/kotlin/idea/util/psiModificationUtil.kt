@@ -16,32 +16,42 @@
 
 package org.jetbrains.kotlin.idea.util.psiModificationUtil
 
-import org.jetbrains.kotlin.psi.JetFunctionLiteralArgument
+import com.intellij.psi.PsiWhiteSpace
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetCallExpression
 import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentsInParentheses
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
+import org.jetbrains.kotlin.psi.JetFunctionLiteralArgument
 import org.jetbrains.kotlin.psi.JetPsiFactory
-import com.intellij.psi.PsiWhiteSpace
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentsInParentheses
+import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 
 fun JetFunctionLiteralArgument.moveInsideParentheses(bindingContext: BindingContext): JetCallExpression {
     return moveInsideParenthesesAndReplaceWith(this.getArgumentExpression(), bindingContext)
 }
 
+fun JetFunctionLiteralArgument.getFunctionLiteralArgumentName(bindingContext: BindingContext): String? {
+    val callExpression = getParent() as JetCallExpression
+    val resolvedCall = callExpression.getResolvedCall(bindingContext)
+    return (resolvedCall?.getArgumentMapping(this) as? ArgumentMatch)?.valueParameter?.getName()?.toString()
+}
+
 fun JetFunctionLiteralArgument.moveInsideParenthesesAndReplaceWith(
         replacement: JetExpression,
         bindingContext: BindingContext
+): JetCallExpression = moveInsideParenthesesAndReplaceWith(replacement, getFunctionLiteralArgumentName(bindingContext))
+
+fun JetFunctionLiteralArgument.moveInsideParenthesesAndReplaceWith(
+        replacement: JetExpression,
+        functionLiteralArgumentName: String?
 ): JetCallExpression {
     val oldCallExpression = getParent() as JetCallExpression
     val newCallExpression = oldCallExpression.copy() as JetCallExpression
 
     val psiFactory = JetPsiFactory(getProject())
     val argument = if (newCallExpression.getValueArgumentsInParentheses().any { it.getArgumentName() != null }) {
-        val resolvedCall = oldCallExpression.getResolvedCall(bindingContext)
-        val name = (resolvedCall?.getArgumentMapping(this) as? ArgumentMatch)?.valueParameter?.getName()?.toString()
-        psiFactory.createArgumentWithName(name, replacement)
+        psiFactory.createArgumentWithName(functionLiteralArgumentName, replacement)
     }
     else {
         psiFactory.createArgument(replacement)
