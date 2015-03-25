@@ -163,8 +163,19 @@ public fun JetNamedDeclaration.getFileNameAfterMove(): String? {
 }
 
 // returns true if successful
-private fun updateJavaReference(reference: PsiReferenceExpression, newElement: PsiElement): Boolean {
-    if (newElement is PsiMember) {
+private fun updateJavaReference(reference: PsiReferenceExpression, oldElement: PsiElement, newElement: PsiElement): Boolean {
+    if (oldElement is PsiMember && newElement is PsiMember) {
+        // Remove import of old package facade, if any
+        val oldClassName = oldElement.getContainingClass()?.getQualifiedName()
+        if (oldClassName != null) {
+            val importOfOldClass = (reference.getContainingFile() as? PsiJavaFile)?.getImportList()?.getImportStatements()?.firstOrNull {
+                it.getQualifiedName() == oldClassName
+            }
+            if (importOfOldClass != null && importOfOldClass.resolve() == null) {
+                importOfOldClass.delete()
+            }
+        }
+
         val newClass = newElement.getContainingClass()
         if (newClass != null && reference.getQualifierExpression() != null) {
             val mockMoveMembersOptions = MockMoveMembersOptions(newClass.getQualifiedName(), array(newElement))
@@ -231,7 +242,7 @@ fun postProcessMoveUsages(usages: List<UsageInfo>,
                         if (it is JetSimpleNameReference) {
                             it.bindToElement(newElement, shorteningMode)
                         }
-                        else if (it is PsiReferenceExpression && updateJavaReference(it, newElement)) {
+                        else if (it is PsiReferenceExpression && updateJavaReference(it, oldElement, newElement)) {
                         }
                         else {
                             it.bindToElement(newElement)
