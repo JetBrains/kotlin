@@ -25,6 +25,16 @@ object ClientObject: Server() {
 
 }
 
+class Client2: Server {
+    constructor(name: String) {
+
+    }
+
+    constructor(): super() {
+
+    }
+}
+
 fun Client.bar(s: Server) {
     foo(s)
 }
