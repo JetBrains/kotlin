@@ -22,11 +22,11 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArguments
 import org.jetbrains.kotlin.idea.intentions.SimplifyNegatedBinaryExpressionIntention
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToSafeAccessIntention
 import org.jetbrains.kotlin.idea.quickfix.RemoveRightPartOfBinaryExpressionFix
 import org.jetbrains.kotlin.j2k.PostProcessor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.utils.printAndReturn
 import java.util.ArrayList
 
 public class J2kPostProcessor(override val contextToAnalyzeIn: PsiElement) : PostProcessor {
@@ -61,6 +61,15 @@ public class J2kPostProcessor(override val contextToAnalyzeIn: PsiElement) : Pos
                 super.visitPrefixExpression(expression)
 
                 val intention = SimplifyNegatedBinaryExpressionIntention()
+                if (intention.isApplicableTo(expression)) {
+                    intention.applyTo(expression)
+                }
+            }
+
+            override fun visitIfExpression(expression: JetIfExpression) {
+                super.visitIfExpression(expression)
+
+                val intention = IfThenToSafeAccessIntention()
                 if (intention.isApplicableTo(expression)) {
                     intention.applyTo(expression)
                 }
