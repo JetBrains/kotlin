@@ -79,6 +79,6 @@ public final class K2JSTranslator {
         JsProgram program = JsInliner.process(context);
         if (hasError(diagnostics)) return new TranslationResult.Fail(diagnostics);
 
-        return new TranslationResult.Success(config, files, program, diagnostics);
+        return new TranslationResult.Success(config, files, program, diagnostics, moduleDescriptor);
     }
 }

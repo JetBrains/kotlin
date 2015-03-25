@@ -192,10 +192,6 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         }
         OutputUtilsPackage.writeAll(outputFiles, outputDir, messageCollector);
 
-        if (arguments.metaInfo != null) {
-            new KotlinJavaScriptSerializer().serialize(config.getModuleId(), analysisResult.getModuleDescriptor(), new File(arguments.metaInfo));
-        }
-
         return OK;
     }
 
