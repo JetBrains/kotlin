@@ -60,6 +60,11 @@ public class IfThenToElvisIntention : JetSelfTargetingIntention<JetIfExpression>
     }
 
     override fun applyTo(element: JetIfExpression, editor: Editor) {
+        val elvis = applyTo(element)
+        elvis.inlineLeftSideIfApplicableWithPrompt(editor)
+    }
+
+    public fun applyTo(element: JetIfExpression): JetBinaryExpression {
         val condition = element.getCondition() as JetBinaryExpression
 
         val thenClause = checkNotNull(element.getThen(), "The then clause cannot be null")
@@ -80,7 +85,6 @@ public class IfThenToElvisIntention : JetSelfTargetingIntention<JetIfExpression>
         assert(resultingExpression is JetBinaryExpression,
                "Unexpected expression type: ${resultingExpression?.javaClass}, expected JetBinaryExpression, element = '${element.getText()}'")
 
-        val elvis = resultingExpression as JetBinaryExpression
-        elvis.inlineLeftSideIfApplicableWithPrompt(editor)
+        return resultingExpression as JetBinaryExpression
     }
 }

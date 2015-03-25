@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArguments
 import org.jetbrains.kotlin.idea.intentions.SimplifyNegatedBinaryExpressionIntention
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToElvisIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToSafeAccessIntention
 import org.jetbrains.kotlin.idea.quickfix.RemoveRightPartOfBinaryExpressionFix
 import org.jetbrains.kotlin.j2k.PostProcessor
@@ -69,9 +70,20 @@ public class J2kPostProcessor(override val contextToAnalyzeIn: PsiElement) : Pos
             override fun visitIfExpression(expression: JetIfExpression) {
                 super.visitIfExpression(expression)
 
-                val intention = IfThenToSafeAccessIntention()
-                if (intention.isApplicableTo(expression)) {
-                    intention.applyTo(expression)
+                run {
+                    val intention = IfThenToSafeAccessIntention()
+                    if (intention.isApplicableTo(expression)) {
+                        intention.applyTo(expression)
+                        return
+                    }
+                }
+
+                run {
+                    val intention = IfThenToElvisIntention()
+                    if (intention.isApplicableTo(expression)) {
+                        intention.applyTo(expression)
+                        return
+                    }
                 }
             }
         })
