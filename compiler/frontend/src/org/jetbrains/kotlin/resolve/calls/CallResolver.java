@@ -301,11 +301,10 @@ public class CallResolver {
     public OverloadResolutionResults<FunctionDescriptor> resolveConstructorDelegationCall(
             @NotNull BindingTrace trace, @NotNull JetScope scope, @NotNull DataFlowInfo dataFlowInfo,
             @NotNull ConstructorDescriptor constructorDescriptor,
-            @Nullable JetConstructorDelegationCall call
+            @NotNull JetConstructorDelegationCall call
     ) {
-        // Returns `null` when there is nothing to resolve in trivial cases like `null` call expression or
+        // Method returns `null` when there is nothing to resolve in trivial cases like `null` call expression or
         // when super call should be conventional enum constructor and super call should be empty
-        if (call == null) return null;
 
         BasicCallResolutionContext context = BasicCallResolutionContext.create(
                 trace, scope,
