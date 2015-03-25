@@ -1,7 +1,7 @@
 package demo
 
 class Collection<E>(e: E) {
-    {
+    init {
         System.out.println(e)
     }
 }

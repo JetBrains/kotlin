@@ -2,7 +2,7 @@
 package demo
 
 class C(a: Int) {
-    {
+    init {
         abc = a * 2
     }
 

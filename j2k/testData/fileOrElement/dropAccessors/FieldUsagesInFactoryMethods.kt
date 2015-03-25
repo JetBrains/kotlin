@@ -12,7 +12,7 @@ class C(val arg1: Int) {
         arg3 = 0
     }
 
-    {
+    init {
         arg2 = 0
         arg3 = 0
     }

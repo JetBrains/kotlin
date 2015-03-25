@@ -2,7 +2,7 @@ package org.test.customer
 
 class Customer(public val firstName: String, public val lastName: String) {
 
-    {
+    init {
         doSmthBefore()
         doSmthAfter()
     }

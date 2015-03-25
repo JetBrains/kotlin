@@ -2,7 +2,7 @@
 class C(arg1: Int, arg2: Int = 0, arg3: Int = 0) {
     private val field: Int
 
-    {
+    init {
         var arg1 = arg1
         var arg3 = arg3
         arg1++

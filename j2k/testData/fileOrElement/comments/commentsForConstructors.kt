@@ -2,7 +2,7 @@ class A// this is a primary constructor
 (p: Int = 1) {
     private val v: Int
 
-    {
+    init {
         v = 1
     } // end of primary constructor body
 
