@@ -17,20 +17,32 @@
 package org.jetbrains.kotlin.idea.j2k
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArguments
 import org.jetbrains.kotlin.idea.intentions.SimplifyNegatedBinaryExpressionIntention
+import org.jetbrains.kotlin.idea.quickfix.RemoveRightPartOfBinaryExpressionFix
 import org.jetbrains.kotlin.j2k.PostProcessor
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetPrefixExpression
-import org.jetbrains.kotlin.psi.JetTreeVisitorVoid
-import org.jetbrains.kotlin.psi.JetTypeArgumentList
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.utils.printAndReturn
 import java.util.ArrayList
 
 public class J2kPostProcessor(override val contextToAnalyzeIn: PsiElement) : PostProcessor {
     override fun analyzeFile(file: JetFile): BindingContext {
         return file.analyzeFullyAndGetResult().bindingContext
+    }
+
+    override fun fixForProblem(problem: Diagnostic): (() -> Unit)? {
+        val psiElement = problem.getPsiElement()
+        return when (problem.getFactory()) {
+            Errors.USELESS_CAST, Errors.USELESS_CAST_STATIC_ASSERT_IS_FINE -> { ->
+                RemoveRightPartOfBinaryExpressionFix(psiElement as JetBinaryExpressionWithTypeRHS, "").invoke()
+            }
+
+            else -> super.fixForProblem(problem)
+        }
     }
 
     override fun doAdditionalProcessing(file: JetFile) {

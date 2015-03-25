@@ -45,6 +45,10 @@ public class RemoveRightPartOfBinaryExpressionFix<T extends JetExpression> exten
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
+        invoke();
+    }
+
+    public void invoke() throws IncorrectOperationException {
         PsiElement newElement = null;
 
         if (element instanceof JetBinaryExpression) {

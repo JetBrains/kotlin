@@ -987,6 +987,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/codeSimplifications/NotIs.java");
             doTest(fileName);
         }
+
+        @TestMetadata("RedundantTypeCast.java")
+        public void testRedundantTypeCast() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/codeSimplifications/RedundantTypeCast.java");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("j2k/testData/fileOrElement/comments")
