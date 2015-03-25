@@ -3675,15 +3675,15 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
 
             Callable callable = resolveToCallable(operationDescriptor, false);
-            Method asmMethod = resolveToCallableMethod(operationDescriptor, false, context).getAsmMethod();
-            Type[] argumentTypes = asmMethod.getArgumentTypes();
+            CallableMethod callableMethod = resolveToCallableMethod(operationDescriptor, false, context);
+            Type[] argumentTypes = callableMethod.getArgumentTypes();
 
             StackValue collectionElementReceiver =
                     createCollectionElementReceiver(expression, receiver, array, arrayType, operationDescriptor, isGetter, resolvedGetCall, resolvedSetCall,
                                                     callable,
                                                     argumentTypes);
 
-            Type elementType = isGetter ? asmMethod.getReturnType() : ArrayUtil.getLastElement(argumentTypes);
+            Type elementType = isGetter ? callableMethod.getReturnType() : ArrayUtil.getLastElement(argumentTypes);
             return StackValue.collectionElement(collectionElementReceiver, elementType, resolvedGetCall, resolvedSetCall, this, state);
         }
     }

@@ -932,11 +932,10 @@ public abstract class StackValue {
             }
             if (setter instanceof CallableMethod) {
                 CallableMethod method = (CallableMethod) setter;
-                Method asmMethod = method.getAsmMethod();
-                Type[] argumentTypes = asmMethod.getArgumentTypes();
+                Type[] argumentTypes = method.getArgumentTypes();
                 coerce(topOfStackType, argumentTypes[argumentTypes.length - 1], v);
                 method.invokeWithNotNullAssertion(v, state, resolvedSetCall);
-                Type returnType = asmMethod.getReturnType();
+                Type returnType = method.getReturnType();
                 if (returnType != Type.VOID_TYPE) {
                     pop(v, returnType);
                 }
@@ -1008,7 +1007,7 @@ public abstract class StackValue {
             }
             else {
                 getter.invokeWithoutAssertions(v);
-                coerce(getter.getAsmMethod().getReturnType(), type, v);
+                coerce(getter.getReturnType(), type, v);
             }
         }
 

@@ -954,7 +954,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             }
         }
 
-        for (Type argType : callableMethod.getAsmMethod().getArgumentTypes()) {
+        for (Type argType : callableMethod.getArgumentTypes()) {
             iv.load(reg, argType);
             reg += argType.getSize();
         }

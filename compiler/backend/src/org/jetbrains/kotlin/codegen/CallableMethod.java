@@ -95,6 +95,10 @@ public class CallableMethod implements ExtendedCallable {
         return signature.getAsmMethod();
     }
 
+    public Type[] getArgumentTypes() {
+        return signature.getAsmMethod().getArgumentTypes();
+    }
+
     @Nullable
     public Type getThisType() {
         return thisClass;
