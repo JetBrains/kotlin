@@ -14,56 +14,49 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.jps.build;
+package org.jetbrains.kotlin.jps.build
 
-import com.intellij.util.Consumer;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jps.incremental.ModuleBuildTarget;
-import org.jetbrains.jps.model.java.JavaSourceRootType;
-import org.jetbrains.jps.model.java.JpsJavaModuleType;
-import org.jetbrains.jps.model.library.JpsLibrary;
-import org.jetbrains.jps.model.library.JpsLibraryRoot;
-import org.jetbrains.jps.model.library.JpsOrderRootType;
-import org.jetbrains.jps.model.module.JpsModule;
-import org.jetbrains.jps.model.module.JpsModuleSourceRoot;
-import org.jetbrains.jps.util.JpsPathUtil;
+import com.intellij.util.Consumer
+import org.jetbrains.jps.incremental.ModuleBuildTarget
+import org.jetbrains.jps.model.java.JavaSourceRootProperties
+import org.jetbrains.jps.model.java.JavaSourceRootType
+import org.jetbrains.jps.model.java.JpsJavaModuleType
+import org.jetbrains.jps.model.library.JpsOrderRootType
+import org.jetbrains.jps.model.module.JpsModule
+import org.jetbrains.jps.util.JpsPathUtil
+import java.util.ArrayList
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+class JpsJsModuleUtils private() {
+    companion object {
 
-class JpsJsModuleUtils {
-    private JpsJsModuleUtils() {}
-
-    @NotNull
-    static List<String> getLibraryFilesAndDependencies(@NotNull ModuleBuildTarget target) {
-        List<String> result = new ArrayList<String>();
-        getLibraryFiles(target, result);
-        getDependencyModulesAndSources(target, result);
-        return result;
-    }
-
-    static void getLibraryFiles(@NotNull ModuleBuildTarget target, @NotNull List<String> result) {
-        Set<JpsLibrary> libraries = JpsUtils.getAllDependencies(target).getLibraries();
-        for (JpsLibrary library : libraries) {
-            for (JpsLibraryRoot root : library.getRoots(JpsOrderRootType.COMPILED)) {
-                result.add(JpsPathUtil.urlToPath(root.getUrl()));
-            }
+        fun getLibraryFilesAndDependencies(target: ModuleBuildTarget): List<String> {
+            val result = ArrayList<String>()
+            getLibraryFiles(target, result)
+            getDependencyModulesAndSources(target, result)
+            return result
         }
-    }
 
-    static void getDependencyModulesAndSources(@NotNull final ModuleBuildTarget target, @NotNull final List<String> result) {
-        JpsUtils.getAllDependencies(target).processModules(new Consumer<JpsModule>() {
-            @Override
-            public void consume(JpsModule module) {
-                if (module == target.getModule() || module.getModuleType() != JpsJavaModuleType.INSTANCE) return;
-
-                result.add("@" + module.getName());
-
-                for (JpsModuleSourceRoot root : module.getSourceRoots(JavaSourceRootType.SOURCE)) {
-                    result.add(JpsPathUtil.urlToPath(root.getUrl()));
+        fun getLibraryFiles(target: ModuleBuildTarget, result: MutableList<String>) {
+            val libraries = JpsUtils.getAllDependencies(target).getLibraries()
+            for (library in libraries) {
+                for (root in library.getRoots(JpsOrderRootType.COMPILED)) {
+                    result.add(JpsPathUtil.urlToPath(root.getUrl()))
                 }
             }
-        });
+        }
+
+        fun getDependencyModulesAndSources(target: ModuleBuildTarget, result: MutableList<String>) {
+            JpsUtils.getAllDependencies(target).processModules(object : Consumer<JpsModule> {
+                override fun consume(module: JpsModule) {
+                    if (module == target.getModule() || module.getModuleType() != JpsJavaModuleType.INSTANCE) return
+
+                    result.add("@" + module.getName())
+
+                    for (root in module.getSourceRoots<JavaSourceRootProperties>(JavaSourceRootType.SOURCE)) {
+                        result.add(JpsPathUtil.urlToPath(root.getUrl()))
+                    }
+                }
+            })
+        }
     }
 }
