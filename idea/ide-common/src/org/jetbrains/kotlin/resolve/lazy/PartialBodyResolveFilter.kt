@@ -319,6 +319,18 @@ class PartialBodyResolveFilter(
                 val cast = condition.getLeftHandSide().smartCastExpressionName().singletonOrEmptySet()
                 return if (condition.isNegated()) Pair(setOf(), cast) else Pair(cast, setOf())
             }
+
+            is JetPrefixExpression -> {
+                if (condition.getOperationToken() == JetTokens.EXCL) {
+                    val operand = condition.getBaseExpression() ?: return emptyResult
+                    return possiblySmartCastInCondition(operand).swap()
+                }
+            }
+
+            is JetParenthesizedExpression -> {
+                val operand = condition.getExpression() ?: return emptyResult
+                return possiblySmartCastInCondition(operand)
+            }
         }
 
         return emptyResult
