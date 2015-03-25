@@ -2,13 +2,13 @@ package test;
 
 class ClassObject {
     void accessToClassObject() {
-        WithClassObject.OBJECT$.foo();
-        WithClassObject.OBJECT$.getValue();
-        WithClassObject.OBJECT$.getValueWithGetter();
-        WithClassObject.OBJECT$.getVariable();
-        WithClassObject.OBJECT$.setVariable(0);
-        WithClassObject.OBJECT$.getVariableWithAccessors();
-        WithClassObject.OBJECT$.setVariableWithAccessors(0);
+        WithClassObject.Companion.foo();
+        WithClassObject.Companion.getValue();
+        WithClassObject.Companion.getValueWithGetter();
+        WithClassObject.Companion.getVariable();
+        WithClassObject.Companion.setVariable(0);
+        WithClassObject.Companion.getVariableWithAccessors();
+        WithClassObject.Companion.setVariableWithAccessors(0);
     }
 
     void accessToPackageObject() {

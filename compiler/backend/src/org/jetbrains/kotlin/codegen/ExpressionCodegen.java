@@ -1908,7 +1908,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         if (descriptor instanceof PropertyDescriptor) {
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
 
-            Collection<ExpressionCodegenExtension> codegenExtensions = ExpressionCodegenExtension.OBJECT$.getInstances(state.getProject());
+            Collection<ExpressionCodegenExtension> codegenExtensions = ExpressionCodegenExtension.Companion.getInstances(state.getProject());
             if (!codegenExtensions.isEmpty() && resolvedCall != null) {
                 ExpressionCodegenExtension.Context context = new ExpressionCodegenExtension.Context(typeMapper, v);
                 JetType returnType = propertyDescriptor.getReturnType();
@@ -2348,7 +2348,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         if (!(resolvedCall.getResultingDescriptor() instanceof ConstructorDescriptor)) { // otherwise already
             receiver = StackValue.receiver(resolvedCall, receiver, this, callableMethod);
 
-            Collection<ExpressionCodegenExtension> codegenExtensions = ExpressionCodegenExtension.OBJECT$.getInstances(state.getProject());
+            Collection<ExpressionCodegenExtension> codegenExtensions = ExpressionCodegenExtension.Companion.getInstances(state.getProject());
             if (!codegenExtensions.isEmpty()) {
                 ExpressionCodegenExtension.Context context = new ExpressionCodegenExtension.Context(typeMapper, v);
                 for (ExpressionCodegenExtension extension : codegenExtensions) {
