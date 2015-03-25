@@ -240,6 +240,12 @@ public class PartialBodyResolveTestGenerated extends AbstractPartialBodyResolveT
         doTest(fileName);
     }
 
+    @TestMetadata("IfNullElseReturn.kt")
+    public void testIfNullElseReturn() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfNullElseReturn.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("IfNullElvisReturn.kt")
     public void testIfNullElvisReturn() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfNullElvisReturn.kt");
