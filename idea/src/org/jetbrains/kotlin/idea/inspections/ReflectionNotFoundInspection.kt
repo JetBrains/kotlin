@@ -21,24 +21,30 @@ import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.extensions.Extensions
+import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.psi.PsiElementVisitor
+import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.JetBundle
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtils
 import org.jetbrains.kotlin.idea.configuration.KotlinJavaModuleConfigurator
 import org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator
 import org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider
+import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.versions.KotlinRuntimeLibraryUtil
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.JetDoubleColonExpression
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetVisitorVoid
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
+import org.jetbrains.kotlin.types.reflect.ReflectionTypes
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
@@ -48,11 +54,7 @@ public class ReflectionNotFoundInspection : AbstractKotlinInspection() {
     override fun runForWholeFile() = true
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
-        val file = holder.getFile()
-        val reportProblem =
-                file is JetFile &&
-                ProjectRootsUtil.isInProjectSource(file) &&
-                file.findModuleDescriptor().findClassAcrossModuleDependencies(JvmAbi.REFLECTION_FACTORY_IMPL) == null
+        if (!shouldReportInFile(holder.getFile())) return PsiElementVisitor.EMPTY_VISITOR
 
         return object : JetVisitorVoid() {
             private fun createQuickFix(): LocalQuickFix? {
@@ -70,16 +72,29 @@ public class ReflectionNotFoundInspection : AbstractKotlinInspection() {
             }
 
             override fun visitDoubleColonExpression(expression: JetDoubleColonExpression) {
-                if (reportProblem) {
-                    holder.registerProblem(
-                            expression.getDoubleColonTokenReference(),
-                            JetBundle.message("reflection.not.found"),
-                            ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                            *(createQuickFix().singletonOrEmptyList().copyToArray())
-                    )
-                }
+                val expectedType = expression.analyze().get(BindingContext.EXPECTED_EXPRESSION_TYPE, expression)
+                if (expectedType != null && !ReflectionTypes.isReflectionType(expectedType)) return
+
+                // If a callable reference is used where a KFunction/KProperty/... expected, we should report that usage as dangerous
+                // because reflection features will fail without kotlin-reflect.jar in the classpath.
+                // If it's only used as a Function however (for example, "list.map(::function)"), we should not report anything
+                holder.registerProblem(
+                        expression.getDoubleColonTokenReference(),
+                        JetBundle.message("reflection.not.found"),
+                        ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                        *(createQuickFix().singletonOrEmptyList().copyToArray())
+                )
             }
         }
+    }
+
+    private fun shouldReportInFile(file: PsiFile): Boolean {
+        if (file !is JetFile || !ProjectRootsUtil.isInProjectSource(file)) return false
+
+        val module = ModuleUtilCore.findModuleForPsiElement(file)
+        if (module == null || !ProjectStructureUtil.isJavaKotlinModule(module)) return false
+
+        return file.findModuleDescriptor().findClassAcrossModuleDependencies(JvmAbi.REFLECTION_FACTORY_IMPL) == null
     }
 
     class AddReflectJarQuickFix(

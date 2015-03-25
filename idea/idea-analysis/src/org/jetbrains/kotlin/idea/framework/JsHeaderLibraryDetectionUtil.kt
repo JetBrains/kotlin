@@ -29,22 +29,17 @@ public object JsHeaderLibraryDetectionUtil {
     platformStatic
     public fun isJsHeaderLibraryDetected(classesRoots: List<VirtualFile>): Boolean =
         isJsLibraryWithAcceptedFile(classesRoots) {
-            val extension = it.getExtension()
-            JetFileType.EXTENSION == extension ||
-            JavaScript.EXTENSION == extension && KotlinJavascriptMetadataUtils.hasMetadata(String(it.contentsToByteArray(false)))
+            JetFileType.EXTENSION == it.getExtension() || isJsFileWithMetadata(it)
         }
 
     platformStatic
     public fun isJsHeaderLibraryWithSources(classesRoots: List<VirtualFile>): Boolean =
             isJsLibraryWithAcceptedFile(classesRoots) { JetFileType.EXTENSION == it.getExtension() }
 
-    private fun isJsLibraryWithAcceptedFile(classesRoots: List<VirtualFile>, accept: (VirtualFile) -> Boolean): Boolean {
-        return if (JavaRuntimeDetectionUtil.getJavaRuntimeVersion(classesRoots) != null) {
-            // Prevent clashing with java runtime
-            false
-        }
-        else {
-            classesRoots.firstOrNull<VirtualFile> { !VfsUtilCore.processFilesRecursively(it, { !accept(it) }) } != null
-        }
-    }
+    private fun isJsLibraryWithAcceptedFile(classesRoots: List<VirtualFile>, accept: (VirtualFile) -> Boolean): Boolean =
+        JavaRuntimeDetectionUtil.getJavaRuntimeVersion(classesRoots) == null // Prevent clashing with java runtime
+        && classesRoots.any { !VfsUtilCore.processFilesRecursively(it, { !accept(it) }) }
+
+    private fun isJsFileWithMetadata(file: VirtualFile): Boolean =
+            !file.isDirectory() && JavaScript.EXTENSION == file.getExtension() && KotlinJavascriptMetadataUtils.hasMetadata(String(file.contentsToByteArray(false)))
 }

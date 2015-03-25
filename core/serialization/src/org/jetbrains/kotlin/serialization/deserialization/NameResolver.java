@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.serialization.deserialization;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.serialization.ProtoBuf;
 
@@ -85,7 +84,7 @@ public class NameResolver {
             index = proto.getParentQualifiedName();
         }
 
-        return new ClassId(FqName.fromSegments(packageFqName), FqNameUnsafe.fromSegments(relativeClassName), local);
+        return new ClassId(FqName.fromSegments(packageFqName), FqName.fromSegments(relativeClassName), local);
     }
 
     @NotNull

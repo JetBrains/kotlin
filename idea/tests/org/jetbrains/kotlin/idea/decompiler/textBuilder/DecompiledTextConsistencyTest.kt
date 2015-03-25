@@ -16,27 +16,27 @@
 
 package org.jetbrains.kotlin.idea.decompiler.textBuilder
 
-import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.JetWithJdkAndRuntimeLightProjectDescriptor
-import org.jetbrains.kotlin.name.FqName
-import org.junit.Assert
-import org.jetbrains.kotlin.idea.PluginTestCaseBase
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import com.intellij.openapi.project.Project
+import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.context.GlobalContext
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
-import org.jetbrains.kotlin.resolve.BindingTraceContext
+import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.JetWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.PluginTestCaseBase
+import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
+import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.MemberComparator
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.context.GlobalContext
-import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
-import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
+import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
+import org.junit.Assert
 
 public class DecompiledTextConsistencyTest : JetLightCodeInsightFixtureTestCase() {
 
@@ -70,7 +70,7 @@ class ProjectBasedResolverForDecompiler(project: Project) : ResolverForDecompile
     }
 
     override fun resolveTopLevelClass(classId: ClassId): ClassDescriptor? {
-        return module.resolveTopLevelClass(classId.asSingleFqName().toSafe())
+        return module.resolveTopLevelClass(classId.asSingleFqName())
     }
 
     override fun resolveDeclarationsInPackage(packageFqName: FqName): Collection<DeclarationDescriptor> {

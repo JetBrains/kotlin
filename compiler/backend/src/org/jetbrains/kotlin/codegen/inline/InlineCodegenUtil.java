@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder;
 import org.jetbrains.kotlin.name.ClassId;
-import org.jetbrains.kotlin.name.FqNameUnsafe;
+import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
@@ -150,7 +150,7 @@ public class InlineCodegenUtil {
     @NotNull
     public static VirtualFile getVirtualFileForCallable(@NotNull ClassId containerClassId, @NotNull GenerationState state) {
         VirtualFileFinder fileFinder = VirtualFileFinder.SERVICE.getInstance(state.getProject());
-        VirtualFile file = fileFinder.findVirtualFileWithHeader(containerClassId.asSingleFqName().toSafe());
+        VirtualFile file = fileFinder.findVirtualFileWithHeader(containerClassId.asSingleFqName());
         if (file == null) {
             throw new IllegalStateException("Couldn't find declaration file for " + containerClassId);
         }
@@ -193,7 +193,7 @@ public class InlineCodegenUtil {
         if (containerDescriptor instanceof ClassDescriptor) {
             ClassId classId = DescriptorUtilPackage.getClassId((ClassDescriptor) containerDescriptor);
             if (isTrait(containerDescriptor)) {
-                FqNameUnsafe relativeClassName = classId.getRelativeClassName();
+                FqName relativeClassName = classId.getRelativeClassName();
                 //TODO test nested trait fun inlining
                 classId = new ClassId(classId.getPackageFqName(), Name.identifier(relativeClassName.shortName().asString() + JvmAbi.TRAIT_IMPL_SUFFIX));
             }

@@ -9,42 +9,61 @@ import java.io.BufferedReader
  */
 public val defaultBufferSize: Int = 64 * 1024
 
+/**
+ * Returns the default block size for forEachBlock()
+ */
+public val defaultBlockSize: Int = 4096
+
+/**
+ * Returns the minimum block size for forEachBlock()
+ */
+public val minimumBlockSize: Int = 512
+
 /** Prints the given message to the standard output stream. */
 public fun print(message: Any?) {
     System.out.print(message)
 }
+
 /** Prints the given message to the standard output stream. */
 public fun print(message: Int) {
     System.out.print(message)
 }
+
 /** Prints the given message to the standard output stream. */
 public fun print(message: Long) {
     System.out.print(message)
 }
+
 /** Prints the given message to the standard output stream. */
 public fun print(message: Byte) {
     System.out.print(message)
 }
+
 /** Prints the given message to the standard output stream. */
 public fun print(message: Short) {
     System.out.print(message)
 }
+
 /** Prints the given message to the standard output stream. */
 public fun print(message: Char) {
     System.out.print(message)
 }
+
 /** Prints the given message to the standard output stream. */
 public fun print(message: Boolean) {
     System.out.print(message)
 }
+
 /** Prints the given message to the standard output stream. */
 public fun print(message: Float) {
     System.out.print(message)
 }
+
 /** Prints the given message to the standard output stream. */
 public fun print(message: Double) {
     System.out.print(message)
 }
+
 /** Prints the given message to the standard output stream. */
 public fun print(message: CharArray) {
     System.out.print(message)
@@ -54,42 +73,52 @@ public fun print(message: CharArray) {
 public fun println(message: Any?) {
     System.out.println(message)
 }
+
 /** Prints the given message and newline to the standard output stream. */
 public fun println(message: Int) {
     System.out.println(message)
 }
+
 /** Prints the given message and newline to the standard output stream. */
 public fun println(message: Long) {
     System.out.println(message)
 }
+
 /** Prints the given message and newline to the standard output stream. */
 public fun println(message: Byte) {
     System.out.println(message)
 }
+
 /** Prints the given message and newline to the standard output stream. */
 public fun println(message: Short) {
     System.out.println(message)
 }
+
 /** Prints the given message and newline to the standard output stream. */
 public fun println(message: Char) {
     System.out.println(message)
 }
+
 /** Prints the given message and newline to the standard output stream. */
 public fun println(message: Boolean) {
     System.out.println(message)
 }
+
 /** Prints the given message and newline to the standard output stream. */
 public fun println(message: Float) {
     System.out.println(message)
 }
+
 /** Prints the given message and newline to the standard output stream. */
 public fun println(message: Double) {
     System.out.println(message)
 }
+
 /** Prints the given message and newline to the standard output stream. */
 public fun println(message: CharArray) {
     System.out.println(message)
 }
+
 /** Prints a newline to the standard output stream. */
 public fun println() {
     System.out.println()

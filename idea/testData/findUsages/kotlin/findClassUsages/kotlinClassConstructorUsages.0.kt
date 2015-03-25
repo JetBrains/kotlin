@@ -3,6 +3,10 @@
 package server
 
 open class <caret>Server {
+    constructor(name: String): this() {
+
+    }
+
     companion object {
         val NAME = "Server"
     }

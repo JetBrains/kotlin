@@ -37,7 +37,7 @@ public trait Appendable {
 }
 
 library
-public class StringBuilder() : Appendable {
+public class StringBuilder(capacity: Int? = null) : Appendable {
     override fun append(c: Char): StringBuilder = noImpl
     override fun append(csq: CharSequence?): StringBuilder = noImpl
     override fun append(csq: CharSequence?, start: Int, end: Int): StringBuilder = noImpl

@@ -26,6 +26,21 @@ import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 
 public trait JetMethodDescriptor : MethodDescriptor<JetParameterInfo, Visibility> {
+    enum class Kind(val isConstructor: Boolean) {
+        FUNCTION: Kind(false)
+        PRIMARY_CONSTRUCTOR: Kind(true)
+        SECONDARY_CONSTRUCTOR: Kind(true)
+    }
+
+    val kind: Kind get() {
+        val descriptor = baseDescriptor
+        return when {
+            descriptor !is ConstructorDescriptor -> Kind.FUNCTION
+            descriptor.isPrimary() -> Kind.PRIMARY_CONSTRUCTOR
+            else -> Kind.SECONDARY_CONSTRUCTOR
+        }
+    }
+
     val baseDeclaration: PsiElement
     val baseDescriptor: FunctionDescriptor
 
@@ -35,9 +50,6 @@ public trait JetMethodDescriptor : MethodDescriptor<JetParameterInfo, Visibility
 
     val receiver: JetParameterInfo?
 }
-
-val JetMethodDescriptor.isConstructor: Boolean
-    get() = baseDescriptor is ConstructorDescriptor
 
 fun JetMethodDescriptor.renderOriginalReturnType(): String =
         baseDescriptor.getReturnType()?.let { IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(it) } ?: ""

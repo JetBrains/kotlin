@@ -18,6 +18,7 @@ package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
 import kotlin.reflect.*
@@ -28,7 +29,7 @@ class KClassImpl<T>(override val jClass: Class<T>) : KCallableContainerImpl(), K
 
     val descriptor by ReflectProperties.lazySoft {
         val moduleData = jClass.getOrCreateModule()
-        val classId = RuntimeTypeMapper.mapJvmClassToKotlinClassId(jClass)
+        val classId = classId
 
         val descriptor =
                 if (classId.isLocal()) moduleData.localClassResolver.resolveLocalClass(classId)
@@ -37,11 +38,28 @@ class KClassImpl<T>(override val jClass: Class<T>) : KCallableContainerImpl(), K
         descriptor ?: throw KotlinReflectionInternalError("Class not resolved: $jClass")
     }
 
+    private val classId: ClassId get() = RuntimeTypeMapper.mapJvmClassToKotlinClassId(jClass)
+
     override val scope: JetScope get() = descriptor.getDefaultType().getMemberScope()
 
     override val simpleName: String? get() {
-        val name = descriptor.getName()
-        return if (name.isSpecial()) null else name.asString()
+        val classId = classId
+        return when {
+            jClass.isAnonymousClass() -> null
+            classId.isLocal() -> calculateLocalClassName(jClass)
+            else -> classId.getShortClassName().asString()
+        }
+    }
+
+    private fun calculateLocalClassName(jClass: Class<*>): String {
+        val name = jClass.getSimpleName()
+        jClass.getEnclosingMethod()?.let { method ->
+            return name.substringAfter(method.getName() + "$")
+        }
+        jClass.getEnclosingConstructor()?.let { constructor ->
+            return name.substringAfter(constructor.getName() + "$")
+        }
+        return name.substringAfter('$')
     }
 
     override val properties: Collection<KMemberProperty<T, *>>

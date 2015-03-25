@@ -64,10 +64,7 @@ import org.jetbrains.kotlin.utils.UtilsPackage;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsageProcessor {
     @Override
@@ -350,7 +347,8 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
 
         JetScope functionScope = RefactoringPackage.getContainingScope(oldDescriptor, bindingContext);
 
-        if (!ChangeSignaturePackage.getIsConstructor(changeInfo) && functionScope != null && !info.getNewName().isEmpty()) {
+        JetMethodDescriptor.Kind kind = ChangeSignaturePackage.getKind(changeInfo);
+        if (!kind.getIsConstructor() && functionScope != null && !info.getNewName().isEmpty()) {
             for (FunctionDescriptor conflict : functionScope.getFunctions(Name.identifier(info.getNewName()))) {
                 if (conflict == oldDescriptor) continue;
 
@@ -364,15 +362,15 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
             }
         }
 
-        for (ParameterInfo parameter : info.getNewParameters()) {
-            JetValVar valOrVar = ((JetParameterInfo) parameter).getValOrVar();
+        for (JetParameterInfo parameter : changeInfo.getNonReceiverParameters()) {
+            JetValVar valOrVar = parameter.getValOrVar();
             String parameterName = parameter.getName();
 
             if (!parameterNames.add(parameterName)) {
                 result.putValue(element, "Duplicating parameter '" + parameterName + "'");
             }
             if (parametersScope != null) {
-                if (ChangeSignaturePackage.getIsConstructor(changeInfo) && valOrVar != JetValVar.None) {
+                if (kind == JetMethodDescriptor.Kind.PRIMARY_CONSTRUCTOR && valOrVar != JetValVar.None) {
                     for (VariableDescriptor property : parametersScope.getProperties(Name.identifier(parameterName))) {
                         PsiElement propertyDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(property);
 

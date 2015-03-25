@@ -97,6 +97,7 @@ import com.intellij.psi.PsiJavaCodeReferenceElement
 import com.intellij.lang.java.JavaLanguage
 import com.intellij.psi.PsiClass
 import com.intellij.codeInsight.daemon.impl.quickfix.CreateFromUsageUtils
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 
 fun <T: Any> PsiElement.getAndRemoveCopyableUserData(key: Key<T>): T? {
     val data = getCopyableUserData(key)
@@ -403,16 +404,19 @@ public fun chooseContainerElementIfNecessary<T>(
 
 public fun PsiElement.isTrueJavaMethod(): Boolean = this is PsiMethod && this !is KotlinLightMethod
 
-fun compareDescriptors(d1: DeclarationDescriptor?, d2: DeclarationDescriptor?): Boolean {
-    return d1 == d2 ||
-           (d1 != null && d2 != null &&
-            DescriptorRenderer.FQ_NAMES_IN_TYPES.render(d1) == DescriptorRenderer.FQ_NAMES_IN_TYPES.render(d2))
+fun compareDescriptors(project: Project, d1: DeclarationDescriptor?, d2: DeclarationDescriptor?): Boolean {
+    if (d1 == d2) return true
+    if (d1 == null || d2 == null) return false
+    if (DescriptorToSourceUtilsIde.getAllDeclarations(project, d1) == DescriptorToSourceUtilsIde.getAllDeclarations(project, d2)) return true
+    return DescriptorRenderer.FQ_NAMES_IN_TYPES.render(d1) == DescriptorRenderer.FQ_NAMES_IN_TYPES.render(d2)
 }
 
-public fun comparePossiblyOverridingDescriptors(currentDescriptor: DeclarationDescriptor?, originalDescriptor: DeclarationDescriptor?): Boolean {
-    if (compareDescriptors(currentDescriptor, originalDescriptor)) return true
+public fun comparePossiblyOverridingDescriptors(project: Project,
+                                                currentDescriptor: DeclarationDescriptor?,
+                                                originalDescriptor: DeclarationDescriptor?): Boolean {
+    if (compareDescriptors(project, currentDescriptor, originalDescriptor)) return true
     if (originalDescriptor is CallableDescriptor) {
-        if (!OverridingUtil.traverseOverridenDescriptors(originalDescriptor) { !compareDescriptors(currentDescriptor, it) }) return true
+        if (!OverridingUtil.traverseOverridenDescriptors(originalDescriptor) { !compareDescriptors(project, currentDescriptor, it) }) return true
         if (originalDescriptor !is CallableMemberDescriptor || currentDescriptor !is CallableMemberDescriptor) return false
         val kind = originalDescriptor.getKind()
         if (kind != Kind.FAKE_OVERRIDE && kind != Kind.DELEGATION) return false
@@ -422,7 +426,7 @@ public fun comparePossiblyOverridingDescriptors(currentDescriptor: DeclarationDe
         val currentOverriddenDescriptors = currentDescriptor.getOverriddenDescriptors()
         if (originalOverriddenDescriptors.size() != currentOverriddenDescriptors.size()) return false
         return (currentOverriddenDescriptors zip originalOverriddenDescriptors ).all {
-            comparePossiblyOverridingDescriptors(it.first, it.second)
+            comparePossiblyOverridingDescriptors(project, it.first, it.second)
         }
     }
 

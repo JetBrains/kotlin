@@ -49,11 +49,6 @@ public fun String.replace(oldChar: Char, newChar: Char): String = (this as java.
 public fun String.replaceAll(regex: String, replacement: String): String = (this as java.lang.String).replaceAll(regex, replacement)
 
 /**
- * Returns a copy of this string with leading and trailing whitespace trimmed.
- */
-public fun String.trim(): String = (this as java.lang.String).trim()
-
-/**
  * Returns a copy of this string converted to upper case using the rules of the default locale.
  */
 public fun String.toUpperCase(): String = (this as java.lang.String).toUpperCase()
@@ -186,6 +181,16 @@ public fun String(bytes: ByteArray): String = java.lang.String(bytes, Charsets.U
  * Converts the characters in the specified array to a string.
  */
 public fun String(chars: CharArray): String = java.lang.String(chars) as String
+
+/**
+ * Converts the characters from a portion of the specified array to a string.
+ */
+public fun String(chars: CharArray, offset: Int, length: Int): String = java.lang.String(chars, offset, length) as String
+
+/**
+ * Converts the code points from a portion of the specified Unicode code point array to a string.
+ */
+public fun String(codePoints: IntArray, offset: Int, length: Int): String = java.lang.String(codePoints, offset, length) as String
 
 /**
  * Converts the contents of the specified StringBuffer to a string.

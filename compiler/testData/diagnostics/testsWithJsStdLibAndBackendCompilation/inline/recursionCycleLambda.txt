@@ -1,0 +1,5 @@
+package
+
+kotlin.inline() internal fun f(): kotlin.Unit
+kotlin.inline() internal fun g(): kotlin.Unit
+kotlin.inline() internal fun h(/*0*/ fn: () -> kotlin.Unit): kotlin.Unit

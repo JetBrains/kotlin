@@ -54,16 +54,20 @@ public abstract class AbstractJetSafeDeleteTest extends JetLightCodeInsightFixtu
         doTest(path, JetClass.class, false);
     }
 
+    public void doClassTestWithJava(@NotNull String path) throws Exception {
+        doTest(path, JetClass.class, true);
+    }
+
     public void doObjectTest(@NotNull String path) throws Exception {
         doTest(path, JetObjectDeclaration.class, false);
     }
 
     public void doFunctionTest(@NotNull String path) throws Exception {
-        doTest(path, JetNamedFunction.class, false);
+        doTest(path, JetFunction.class, false);
     }
 
     public void doFunctionTestWithJava(@NotNull String path) throws Exception {
-        doTest(path, JetNamedFunction.class, true);
+        doTest(path, JetFunction.class, true);
     }
 
     public void doJavaMethodTest(@NotNull String path) throws Exception {

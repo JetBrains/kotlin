@@ -13,12 +13,12 @@ import java.util.Collections // TODO: it's temporary while we have java.util.Col
  * Returns a list containing all elements except first [n] elements
  */
 public fun <T> Array<out T>.drop(n: Int): List<T> {
+    require(n >= 0, { "Requested element count $n is less than zero." })
     if (n >= size())
         return emptyList()
-    var count = 0
     val list = ArrayList<T>(size() - n)
-    for (item in this) {
-        if (count++ >= n) list.add(item)
+    for (index in n..size() - 1) {
+        list.add(this[index])
     }
     return list
 }
@@ -27,12 +27,12 @@ public fun <T> Array<out T>.drop(n: Int): List<T> {
  * Returns a list containing all elements except first [n] elements
  */
 public fun BooleanArray.drop(n: Int): List<Boolean> {
+    require(n >= 0, { "Requested element count $n is less than zero." })
     if (n >= size())
         return emptyList()
-    var count = 0
     val list = ArrayList<Boolean>(size() - n)
-    for (item in this) {
-        if (count++ >= n) list.add(item)
+    for (index in n..size() - 1) {
+        list.add(this[index])
     }
     return list
 }
@@ -41,12 +41,12 @@ public fun BooleanArray.drop(n: Int): List<Boolean> {
  * Returns a list containing all elements except first [n] elements
  */
 public fun ByteArray.drop(n: Int): List<Byte> {
+    require(n >= 0, { "Requested element count $n is less than zero." })
     if (n >= size())
         return emptyList()
-    var count = 0
     val list = ArrayList<Byte>(size() - n)
-    for (item in this) {
-        if (count++ >= n) list.add(item)
+    for (index in n..size() - 1) {
+        list.add(this[index])
     }
     return list
 }
@@ -55,12 +55,12 @@ public fun ByteArray.drop(n: Int): List<Byte> {
  * Returns a list containing all elements except first [n] elements
  */
 public fun CharArray.drop(n: Int): List<Char> {
+    require(n >= 0, { "Requested element count $n is less than zero." })
     if (n >= size())
         return emptyList()
-    var count = 0
     val list = ArrayList<Char>(size() - n)
-    for (item in this) {
-        if (count++ >= n) list.add(item)
+    for (index in n..size() - 1) {
+        list.add(this[index])
     }
     return list
 }
@@ -69,12 +69,12 @@ public fun CharArray.drop(n: Int): List<Char> {
  * Returns a list containing all elements except first [n] elements
  */
 public fun DoubleArray.drop(n: Int): List<Double> {
+    require(n >= 0, { "Requested element count $n is less than zero." })
     if (n >= size())
         return emptyList()
-    var count = 0
     val list = ArrayList<Double>(size() - n)
-    for (item in this) {
-        if (count++ >= n) list.add(item)
+    for (index in n..size() - 1) {
+        list.add(this[index])
     }
     return list
 }
@@ -83,12 +83,12 @@ public fun DoubleArray.drop(n: Int): List<Double> {
  * Returns a list containing all elements except first [n] elements
  */
 public fun FloatArray.drop(n: Int): List<Float> {
+    require(n >= 0, { "Requested element count $n is less than zero." })
     if (n >= size())
         return emptyList()
-    var count = 0
     val list = ArrayList<Float>(size() - n)
-    for (item in this) {
-        if (count++ >= n) list.add(item)
+    for (index in n..size() - 1) {
+        list.add(this[index])
     }
     return list
 }
@@ -97,12 +97,12 @@ public fun FloatArray.drop(n: Int): List<Float> {
  * Returns a list containing all elements except first [n] elements
  */
 public fun IntArray.drop(n: Int): List<Int> {
+    require(n >= 0, { "Requested element count $n is less than zero." })
     if (n >= size())
         return emptyList()
-    var count = 0
     val list = ArrayList<Int>(size() - n)
-    for (item in this) {
-        if (count++ >= n) list.add(item)
+    for (index in n..size() - 1) {
+        list.add(this[index])
     }
     return list
 }
@@ -111,12 +111,12 @@ public fun IntArray.drop(n: Int): List<Int> {
  * Returns a list containing all elements except first [n] elements
  */
 public fun LongArray.drop(n: Int): List<Long> {
+    require(n >= 0, { "Requested element count $n is less than zero." })
     if (n >= size())
         return emptyList()
-    var count = 0
     val list = ArrayList<Long>(size() - n)
-    for (item in this) {
-        if (count++ >= n) list.add(item)
+    for (index in n..size() - 1) {
+        list.add(this[index])
     }
     return list
 }
@@ -125,26 +125,12 @@ public fun LongArray.drop(n: Int): List<Long> {
  * Returns a list containing all elements except first [n] elements
  */
 public fun ShortArray.drop(n: Int): List<Short> {
+    require(n >= 0, { "Requested element count $n is less than zero." })
     if (n >= size())
         return emptyList()
-    var count = 0
     val list = ArrayList<Short>(size() - n)
-    for (item in this) {
-        if (count++ >= n) list.add(item)
-    }
-    return list
-}
-
-/**
- * Returns a list containing all elements except first [n] elements
- */
-public fun <T> Collection<T>.drop(n: Int): List<T> {
-    if (n >= size())
-        return emptyList()
-    var count = 0
-    val list = ArrayList<T>(size() - n)
-    for (item in this) {
-        if (count++ >= n) list.add(item)
+    for (index in n..size() - 1) {
+        list.add(this[index])
     }
     return list
 }
@@ -153,8 +139,24 @@ public fun <T> Collection<T>.drop(n: Int): List<T> {
  * Returns a list containing all elements except first [n] elements
  */
 public fun <T> Iterable<T>.drop(n: Int): List<T> {
+    require(n >= 0, { "Requested element count $n is less than zero." })
+    val list: ArrayList<T>
+    if (this is Collection<*>) {
+        val resultSize = size() - n
+        if (resultSize <= 0)
+            return emptyList()
+        list = ArrayList<T>(resultSize)
+        if (this is List<T>) {
+            for (index in n..size() - 1) {
+                list.add(this[index])
+            }
+            return list
+        }
+    }
+    else {
+        list = ArrayList<T>()
+    }
     var count = 0
-    val list = ArrayList<T>()
     for (item in this) {
         if (count++ >= n) list.add(item)
     }
@@ -165,6 +167,7 @@ public fun <T> Iterable<T>.drop(n: Int): List<T> {
  * Returns a sequence containing all elements except first [n] elements
  */
 public fun <T> Sequence<T>.drop(n: Int): Sequence<T> {
+    require(n >= 0, { "Requested element count $n is less than zero." })
     return DropSequence(this, n)
 }
 
@@ -174,6 +177,7 @@ deprecated("Migrate to using Sequence<T> and respective functions")
  * Returns a stream containing all elements except first [n] elements
  */
 public fun <T> Stream<T>.drop(n: Int): Stream<T> {
+    require(n >= 0, { "Requested element count $n is less than zero." })
     return DropStream(this, n)
 }
 
@@ -840,7 +844,7 @@ public inline fun <C : Appendable> String.filterTo(destination: C, predicate: (C
  * Returns a list containing elements at specified positions
  */
 public fun <T> Array<out T>.slice(indices: Iterable<Int>): List<T> {
-    val list = ArrayList<T>()
+    val list = ArrayList<T>(indices.collectionSizeOrDefault(10))
     for (index in indices) {
         list.add(get(index))
     }
@@ -851,7 +855,7 @@ public fun <T> Array<out T>.slice(indices: Iterable<Int>): List<T> {
  * Returns a list containing elements at specified positions
  */
 public fun BooleanArray.slice(indices: Iterable<Int>): List<Boolean> {
-    val list = ArrayList<Boolean>()
+    val list = ArrayList<Boolean>(indices.collectionSizeOrDefault(10))
     for (index in indices) {
         list.add(get(index))
     }
@@ -862,7 +866,7 @@ public fun BooleanArray.slice(indices: Iterable<Int>): List<Boolean> {
  * Returns a list containing elements at specified positions
  */
 public fun ByteArray.slice(indices: Iterable<Int>): List<Byte> {
-    val list = ArrayList<Byte>()
+    val list = ArrayList<Byte>(indices.collectionSizeOrDefault(10))
     for (index in indices) {
         list.add(get(index))
     }
@@ -873,7 +877,7 @@ public fun ByteArray.slice(indices: Iterable<Int>): List<Byte> {
  * Returns a list containing elements at specified positions
  */
 public fun CharArray.slice(indices: Iterable<Int>): List<Char> {
-    val list = ArrayList<Char>()
+    val list = ArrayList<Char>(indices.collectionSizeOrDefault(10))
     for (index in indices) {
         list.add(get(index))
     }
@@ -884,7 +888,7 @@ public fun CharArray.slice(indices: Iterable<Int>): List<Char> {
  * Returns a list containing elements at specified positions
  */
 public fun DoubleArray.slice(indices: Iterable<Int>): List<Double> {
-    val list = ArrayList<Double>()
+    val list = ArrayList<Double>(indices.collectionSizeOrDefault(10))
     for (index in indices) {
         list.add(get(index))
     }
@@ -895,7 +899,7 @@ public fun DoubleArray.slice(indices: Iterable<Int>): List<Double> {
  * Returns a list containing elements at specified positions
  */
 public fun FloatArray.slice(indices: Iterable<Int>): List<Float> {
-    val list = ArrayList<Float>()
+    val list = ArrayList<Float>(indices.collectionSizeOrDefault(10))
     for (index in indices) {
         list.add(get(index))
     }
@@ -906,7 +910,7 @@ public fun FloatArray.slice(indices: Iterable<Int>): List<Float> {
  * Returns a list containing elements at specified positions
  */
 public fun IntArray.slice(indices: Iterable<Int>): List<Int> {
-    val list = ArrayList<Int>()
+    val list = ArrayList<Int>(indices.collectionSizeOrDefault(10))
     for (index in indices) {
         list.add(get(index))
     }
@@ -917,7 +921,7 @@ public fun IntArray.slice(indices: Iterable<Int>): List<Int> {
  * Returns a list containing elements at specified positions
  */
 public fun LongArray.slice(indices: Iterable<Int>): List<Long> {
-    val list = ArrayList<Long>()
+    val list = ArrayList<Long>(indices.collectionSizeOrDefault(10))
     for (index in indices) {
         list.add(get(index))
     }
@@ -928,7 +932,7 @@ public fun LongArray.slice(indices: Iterable<Int>): List<Long> {
  * Returns a list containing elements at specified positions
  */
 public fun ShortArray.slice(indices: Iterable<Int>): List<Short> {
-    val list = ArrayList<Short>()
+    val list = ArrayList<Short>(indices.collectionSizeOrDefault(10))
     for (index in indices) {
         list.add(get(index))
     }
@@ -939,7 +943,7 @@ public fun ShortArray.slice(indices: Iterable<Int>): List<Short> {
  * Returns a list containing elements at specified positions
  */
 public fun <T> List<T>.slice(indices: Iterable<Int>): List<T> {
-    val list = ArrayList<T>()
+    val list = ArrayList<T>(indices.collectionSizeOrDefault(10))
     for (index in indices) {
         list.add(get(index))
     }
@@ -950,7 +954,7 @@ public fun <T> List<T>.slice(indices: Iterable<Int>): List<T> {
  * Returns a string containing characters at specified positions
  */
 public fun String.slice(indices: Iterable<Int>): String {
-    val result = StringBuilder()
+    val result = StringBuilder(indices.collectionSizeOrDefault(10))
     for (i in indices) {
         result.append(get(i))
     }
@@ -961,8 +965,9 @@ public fun String.slice(indices: Iterable<Int>): String {
  * Returns a list containing first [n] elements
  */
 public fun <T> Array<out T>.take(n: Int): List<T> {
+    require(n >= 0, "Requested element count $n is less than zero.")
     var count = 0
-    val realN = if (n > size()) size() else n
+    val realN = Math.min(n, size())
     val list = ArrayList<T>(realN)
     for (item in this) {
         if (count++ == realN)
@@ -976,8 +981,9 @@ public fun <T> Array<out T>.take(n: Int): List<T> {
  * Returns a list containing first [n] elements
  */
 public fun BooleanArray.take(n: Int): List<Boolean> {
+    require(n >= 0, "Requested element count $n is less than zero.")
     var count = 0
-    val realN = if (n > size()) size() else n
+    val realN = Math.min(n, size())
     val list = ArrayList<Boolean>(realN)
     for (item in this) {
         if (count++ == realN)
@@ -991,8 +997,9 @@ public fun BooleanArray.take(n: Int): List<Boolean> {
  * Returns a list containing first [n] elements
  */
 public fun ByteArray.take(n: Int): List<Byte> {
+    require(n >= 0, "Requested element count $n is less than zero.")
     var count = 0
-    val realN = if (n > size()) size() else n
+    val realN = Math.min(n, size())
     val list = ArrayList<Byte>(realN)
     for (item in this) {
         if (count++ == realN)
@@ -1006,8 +1013,9 @@ public fun ByteArray.take(n: Int): List<Byte> {
  * Returns a list containing first [n] elements
  */
 public fun CharArray.take(n: Int): List<Char> {
+    require(n >= 0, "Requested element count $n is less than zero.")
     var count = 0
-    val realN = if (n > size()) size() else n
+    val realN = Math.min(n, size())
     val list = ArrayList<Char>(realN)
     for (item in this) {
         if (count++ == realN)
@@ -1021,8 +1029,9 @@ public fun CharArray.take(n: Int): List<Char> {
  * Returns a list containing first [n] elements
  */
 public fun DoubleArray.take(n: Int): List<Double> {
+    require(n >= 0, "Requested element count $n is less than zero.")
     var count = 0
-    val realN = if (n > size()) size() else n
+    val realN = Math.min(n, size())
     val list = ArrayList<Double>(realN)
     for (item in this) {
         if (count++ == realN)
@@ -1036,8 +1045,9 @@ public fun DoubleArray.take(n: Int): List<Double> {
  * Returns a list containing first [n] elements
  */
 public fun FloatArray.take(n: Int): List<Float> {
+    require(n >= 0, "Requested element count $n is less than zero.")
     var count = 0
-    val realN = if (n > size()) size() else n
+    val realN = Math.min(n, size())
     val list = ArrayList<Float>(realN)
     for (item in this) {
         if (count++ == realN)
@@ -1051,8 +1061,9 @@ public fun FloatArray.take(n: Int): List<Float> {
  * Returns a list containing first [n] elements
  */
 public fun IntArray.take(n: Int): List<Int> {
+    require(n >= 0, "Requested element count $n is less than zero.")
     var count = 0
-    val realN = if (n > size()) size() else n
+    val realN = Math.min(n, size())
     val list = ArrayList<Int>(realN)
     for (item in this) {
         if (count++ == realN)
@@ -1066,8 +1077,9 @@ public fun IntArray.take(n: Int): List<Int> {
  * Returns a list containing first [n] elements
  */
 public fun LongArray.take(n: Int): List<Long> {
+    require(n >= 0, "Requested element count $n is less than zero.")
     var count = 0
-    val realN = if (n > size()) size() else n
+    val realN = Math.min(n, size())
     val list = ArrayList<Long>(realN)
     for (item in this) {
         if (count++ == realN)
@@ -1081,8 +1093,9 @@ public fun LongArray.take(n: Int): List<Long> {
  * Returns a list containing first [n] elements
  */
 public fun ShortArray.take(n: Int): List<Short> {
+    require(n >= 0, "Requested element count $n is less than zero.")
     var count = 0
-    val realN = if (n > size()) size() else n
+    val realN = Math.min(n, size())
     val list = ArrayList<Short>(realN)
     for (item in this) {
         if (count++ == realN)
@@ -1095,24 +1108,10 @@ public fun ShortArray.take(n: Int): List<Short> {
 /**
  * Returns a list containing first [n] elements
  */
-public fun <T> Collection<T>.take(n: Int): List<T> {
-    var count = 0
-    val realN = if (n > size()) size() else n
-    val list = ArrayList<T>(realN)
-    for (item in this) {
-        if (count++ == realN)
-            break;
-        list.add(item)
-    }
-    return list
-}
-
-/**
- * Returns a list containing first [n] elements
- */
 public fun <T> Iterable<T>.take(n: Int): List<T> {
+    require(n >= 0, { "Requested element count $n is less than zero." })
     var count = 0
-    val list = ArrayList<T>(n)
+    val list = ArrayList<T>(Math.min(n, collectionSizeOrDefault(n)))
     for (item in this) {
         if (count++ == n)
             break
@@ -1125,6 +1124,7 @@ public fun <T> Iterable<T>.take(n: Int): List<T> {
  * Returns a sequence containing first *n* elements
  */
 public fun <T> Sequence<T>.take(n: Int): Sequence<T> {
+    require(n >= 0, { "Requested element count $n is less than zero." })
     return TakeSequence(this, n)
 }
 
@@ -1134,6 +1134,7 @@ deprecated("Migrate to using Sequence<T> and respective functions")
  * Returns a stream containing first *n* elements
  */
 public fun <T> Stream<T>.take(n: Int): Stream<T> {
+    require(n >= 0, { "Requested element count $n is less than zero." })
     return TakeStream(this, n)
 }
 
@@ -1141,7 +1142,147 @@ public fun <T> Stream<T>.take(n: Int): Stream<T> {
  * Returns a string containing the first [n] characters from this string, or the entire string if this string is shorter
  */
 public fun String.take(n: Int): String {
+    require(n >= 0, { "Requested element count $n is less than zero." })
     return substring(0, Math.min(n, length()))
+}
+
+/**
+ * Returns a list containing last [n] elements
+ */
+public fun <T> Array<out T>.takeLast(n: Int): List<T> {
+    require(n >= 0, { "Requested element count $n is less than zero." })
+    val size = size()
+    val realN = Math.min(n, size)
+    val list = ArrayList<T>(realN)
+    for (index in size - realN .. size - 1)
+        list.add(this[index])
+    return list
+}
+
+/**
+ * Returns a list containing last [n] elements
+ */
+public fun BooleanArray.takeLast(n: Int): List<Boolean> {
+    require(n >= 0, { "Requested element count $n is less than zero." })
+    val size = size()
+    val realN = Math.min(n, size)
+    val list = ArrayList<Boolean>(realN)
+    for (index in size - realN .. size - 1)
+        list.add(this[index])
+    return list
+}
+
+/**
+ * Returns a list containing last [n] elements
+ */
+public fun ByteArray.takeLast(n: Int): List<Byte> {
+    require(n >= 0, { "Requested element count $n is less than zero." })
+    val size = size()
+    val realN = Math.min(n, size)
+    val list = ArrayList<Byte>(realN)
+    for (index in size - realN .. size - 1)
+        list.add(this[index])
+    return list
+}
+
+/**
+ * Returns a list containing last [n] elements
+ */
+public fun CharArray.takeLast(n: Int): List<Char> {
+    require(n >= 0, { "Requested element count $n is less than zero." })
+    val size = size()
+    val realN = Math.min(n, size)
+    val list = ArrayList<Char>(realN)
+    for (index in size - realN .. size - 1)
+        list.add(this[index])
+    return list
+}
+
+/**
+ * Returns a list containing last [n] elements
+ */
+public fun DoubleArray.takeLast(n: Int): List<Double> {
+    require(n >= 0, { "Requested element count $n is less than zero." })
+    val size = size()
+    val realN = Math.min(n, size)
+    val list = ArrayList<Double>(realN)
+    for (index in size - realN .. size - 1)
+        list.add(this[index])
+    return list
+}
+
+/**
+ * Returns a list containing last [n] elements
+ */
+public fun FloatArray.takeLast(n: Int): List<Float> {
+    require(n >= 0, { "Requested element count $n is less than zero." })
+    val size = size()
+    val realN = Math.min(n, size)
+    val list = ArrayList<Float>(realN)
+    for (index in size - realN .. size - 1)
+        list.add(this[index])
+    return list
+}
+
+/**
+ * Returns a list containing last [n] elements
+ */
+public fun IntArray.takeLast(n: Int): List<Int> {
+    require(n >= 0, { "Requested element count $n is less than zero." })
+    val size = size()
+    val realN = Math.min(n, size)
+    val list = ArrayList<Int>(realN)
+    for (index in size - realN .. size - 1)
+        list.add(this[index])
+    return list
+}
+
+/**
+ * Returns a list containing last [n] elements
+ */
+public fun LongArray.takeLast(n: Int): List<Long> {
+    require(n >= 0, { "Requested element count $n is less than zero." })
+    val size = size()
+    val realN = Math.min(n, size)
+    val list = ArrayList<Long>(realN)
+    for (index in size - realN .. size - 1)
+        list.add(this[index])
+    return list
+}
+
+/**
+ * Returns a list containing last [n] elements
+ */
+public fun ShortArray.takeLast(n: Int): List<Short> {
+    require(n >= 0, { "Requested element count $n is less than zero." })
+    val size = size()
+    val realN = Math.min(n, size)
+    val list = ArrayList<Short>(realN)
+    for (index in size - realN .. size - 1)
+        list.add(this[index])
+    return list
+}
+
+/**
+ * Returns a list containing last [n] elements
+ */
+public fun <T> List<T>.takeLast(n: Int): List<T> {
+    require(n >= 0, { "Requested element count $n is less than zero." })
+    val size = size()
+    val realN = Math.min(n, size)
+    val list = ArrayList<T>(realN)
+    for (index in size - realN .. size - 1)
+        list.add(this[index])
+    return list
+}
+
+/**
+ * Returns a string containing the last [n] characters from this string, or the entire string if this string is shorter
+ */
+public fun String.takeLast(n: Int): String {
+    require(n >= 0, { "Requested element count $n is less than zero." })
+    val length = length()
+    return substring(length - Math.min(n, length), length)
 }
 
 /**

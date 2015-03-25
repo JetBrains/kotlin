@@ -40,6 +40,11 @@ import org.jetbrains.kotlin.idea.util.application.runReadAction
 import java.util.Collections
 import com.intellij.find.findUsages.JavaFindUsagesHandler
 import com.intellij.find.findUsages.JavaFindUsagesHandlerFactory
+import com.intellij.psi.PsiMethod
+import com.intellij.psi.search.searches.MethodReferencesSearch
+import com.intellij.util.CommonProcessors
+import org.jetbrains.kotlin.asJava.toLightClass
+import org.jetbrains.kotlin.idea.search.usagesSearch.processDelegationCallConstructorUsages
 
 public class KotlinFindClassUsagesHandler(
         jetClass: JetClassOrObject,
@@ -78,12 +83,23 @@ public class KotlinFindClassUsagesHandler(
 
         val classOrObject = element as JetClassOrObject
 
+        val uniqueProcessor = CommonProcessors.UniqueProcessor(processor)
+
         return runReadAction {
             val target = kotlinOptions.toSearchTarget(classOrObject, true)
             val classUsages = kotlinOptions.toClassHelper().newRequest(target).search()
             val declarationUsages = kotlinOptions.toClassDeclarationsHelper().newRequest(target).search()
 
-            (classUsages + declarationUsages).all { ref -> KotlinFindUsagesHandler.processUsage(processor, ref) } && processInheritors()
+            if (kotlinOptions.searchConstructorUsages) {
+                val constructors = classOrObject.toLightClass()?.getConstructors() ?: PsiMethod.EMPTY_ARRAY
+                for (constructor in constructors) {
+                    constructor.processDelegationCallConstructorUsages(constructor.getUseScope()) {
+                        it.getCalleeExpression()?.getReference()?.let { KotlinFindUsagesHandler.processUsage(uniqueProcessor, it) }
+                    }
+                }
+            }
+
+            (classUsages + declarationUsages).all { KotlinFindUsagesHandler.processUsage(uniqueProcessor, it)} && processInheritors()
         }
     }
 

@@ -1,0 +1,3 @@
+fun Int.<caret>foo() {
+
+}

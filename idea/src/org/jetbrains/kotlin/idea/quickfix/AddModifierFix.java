@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetModifierListOwner;
+import org.jetbrains.kotlin.psi.JetObjectDeclaration;
 import org.jetbrains.kotlin.psi.JetPropertyAccessor;
 
 import static org.jetbrains.kotlin.lexer.JetTokens.ABSTRACT_KEYWORD;
@@ -90,6 +91,11 @@ public class AddModifierFix extends JetIntentionAction<JetModifierListOwner> {
             public IntentionAction createAction(Diagnostic diagnostic) {
                 JetModifierListOwner modifierListOwner = QuickFixUtil.getParentElementOfType(diagnostic, modifierOwnerClass);
                 if (modifierListOwner == null) return null;
+
+                if (modifier == JetTokens.ABSTRACT_KEYWORD &&
+                    modifierListOwner instanceof JetObjectDeclaration &&
+                    ((JetObjectDeclaration) modifierListOwner).isObjectLiteral()) return null;
+
                 return new AddModifierFix(modifierListOwner, modifier);
             }
         };

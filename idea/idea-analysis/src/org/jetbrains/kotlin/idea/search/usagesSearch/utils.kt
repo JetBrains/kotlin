@@ -44,7 +44,14 @@ val JetDeclaration.descriptor: DeclarationDescriptor?
     get() = this.analyze().get(BindingContext.DECLARATION_TO_DESCRIPTOR, this)
 
 val JetDeclaration.constructor: ConstructorDescriptor?
-    get() = this.analyze().get(BindingContext.CONSTRUCTOR, this)
+    get() {
+        val context = this.analyze()
+        return when (this) {
+            is JetClassOrObject -> context[BindingContext.CLASS, this]?.getUnsubstitutedPrimaryConstructor()
+            is JetFunction -> context[BindingContext.CONSTRUCTOR, this]
+            else -> null
+        }
+    }
 
 val JetParameter.propertyDescriptor: PropertyDescriptor?
     get() = this.analyze().get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, this)

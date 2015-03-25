@@ -1,7 +1,10 @@
 <node text="KA.KA()  ()" base="true">
-  <node text="KClient  ()"/>
   <node text="KClient.bar()  ()"/>
   <node text="KClient.getBar()  ()"/>
+  <node text="KClient  ()"/>
+  <node text="JA.JA()  ()"/>
   <node text="JA.newKA()  ()"/>
   <node text="JA  ()"/>
+  <node text="JA.JA(Int)  ()"/>
+  <node text="JA2  ()"/>
 </node>

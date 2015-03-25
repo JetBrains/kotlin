@@ -18,28 +18,28 @@ public final class DebugJvmProtoBuf {
     // optional .org.jetbrains.kotlin.serialization.jvm.JvmType.PrimitiveType primitive_type = 1;
     /**
      * <code>optional .org.jetbrains.kotlin.serialization.jvm.JvmType.PrimitiveType primitive_type = 1;</code>
-     *
-     * <pre>
-     * One of these should be present
-     * </pre>
      */
     boolean hasPrimitiveType();
     /**
      * <code>optional .org.jetbrains.kotlin.serialization.jvm.JvmType.PrimitiveType primitive_type = 1;</code>
-     *
-     * <pre>
-     * One of these should be present
-     * </pre>
      */
     org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmType.PrimitiveType getPrimitiveType();
 
     // optional int32 class_fq_name = 2;
     /**
      * <code>optional int32 class_fq_name = 2;</code>
+     *
+     * <pre>
+     * id in QualifiedNameTable of a name in the following format: 'package.Outer$Nested'
+     * </pre>
      */
     boolean hasClassFqName();
     /**
      * <code>optional int32 class_fq_name = 2;</code>
+     *
+     * <pre>
+     * id in QualifiedNameTable of a name in the following format: 'package.Outer$Nested'
+     * </pre>
      */
     int getClassFqName();
 
@@ -55,6 +55,10 @@ public final class DebugJvmProtoBuf {
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.serialization.jvm.JvmType}
+   *
+   * <pre>
+   * Either a primitive type, or a class FQ name should be present
+   * </pre>
    */
   public static final class JvmType extends
       com.google.protobuf.GeneratedMessage
@@ -323,20 +327,12 @@ public final class DebugJvmProtoBuf {
     private org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmType.PrimitiveType primitiveType_;
     /**
      * <code>optional .org.jetbrains.kotlin.serialization.jvm.JvmType.PrimitiveType primitive_type = 1;</code>
-     *
-     * <pre>
-     * One of these should be present
-     * </pre>
      */
     public boolean hasPrimitiveType() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
      * <code>optional .org.jetbrains.kotlin.serialization.jvm.JvmType.PrimitiveType primitive_type = 1;</code>
-     *
-     * <pre>
-     * One of these should be present
-     * </pre>
      */
     public org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmType.PrimitiveType getPrimitiveType() {
       return primitiveType_;
@@ -347,12 +343,20 @@ public final class DebugJvmProtoBuf {
     private int classFqName_;
     /**
      * <code>optional int32 class_fq_name = 2;</code>
+     *
+     * <pre>
+     * id in QualifiedNameTable of a name in the following format: 'package.Outer$Nested'
+     * </pre>
      */
     public boolean hasClassFqName() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
      * <code>optional int32 class_fq_name = 2;</code>
+     *
+     * <pre>
+     * id in QualifiedNameTable of a name in the following format: 'package.Outer$Nested'
+     * </pre>
      */
     public int getClassFqName() {
       return classFqName_;
@@ -501,6 +505,10 @@ public final class DebugJvmProtoBuf {
     }
     /**
      * Protobuf type {@code org.jetbrains.kotlin.serialization.jvm.JvmType}
+     *
+     * <pre>
+     * Either a primitive type, or a class FQ name should be present
+     * </pre>
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder>
@@ -639,30 +647,18 @@ public final class DebugJvmProtoBuf {
       private org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmType.PrimitiveType primitiveType_ = org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmType.PrimitiveType.VOID;
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.jvm.JvmType.PrimitiveType primitive_type = 1;</code>
-       *
-       * <pre>
-       * One of these should be present
-       * </pre>
        */
       public boolean hasPrimitiveType() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.jvm.JvmType.PrimitiveType primitive_type = 1;</code>
-       *
-       * <pre>
-       * One of these should be present
-       * </pre>
        */
       public org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmType.PrimitiveType getPrimitiveType() {
         return primitiveType_;
       }
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.jvm.JvmType.PrimitiveType primitive_type = 1;</code>
-       *
-       * <pre>
-       * One of these should be present
-       * </pre>
        */
       public Builder setPrimitiveType(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmType.PrimitiveType value) {
         if (value == null) {
@@ -675,10 +671,6 @@ public final class DebugJvmProtoBuf {
       }
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.jvm.JvmType.PrimitiveType primitive_type = 1;</code>
-       *
-       * <pre>
-       * One of these should be present
-       * </pre>
        */
       public Builder clearPrimitiveType() {
         bitField0_ = (bitField0_ & ~0x00000001);
@@ -691,18 +683,30 @@ public final class DebugJvmProtoBuf {
       private int classFqName_ ;
       /**
        * <code>optional int32 class_fq_name = 2;</code>
+       *
+       * <pre>
+       * id in QualifiedNameTable of a name in the following format: 'package.Outer$Nested'
+       * </pre>
        */
       public boolean hasClassFqName() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       /**
        * <code>optional int32 class_fq_name = 2;</code>
+       *
+       * <pre>
+       * id in QualifiedNameTable of a name in the following format: 'package.Outer$Nested'
+       * </pre>
        */
       public int getClassFqName() {
         return classFqName_;
       }
       /**
        * <code>optional int32 class_fq_name = 2;</code>
+       *
+       * <pre>
+       * id in QualifiedNameTable of a name in the following format: 'package.Outer$Nested'
+       * </pre>
        */
       public Builder setClassFqName(int value) {
         bitField0_ |= 0x00000002;
@@ -712,6 +716,10 @@ public final class DebugJvmProtoBuf {
       }
       /**
        * <code>optional int32 class_fq_name = 2;</code>
+       *
+       * <pre>
+       * id in QualifiedNameTable of a name in the following format: 'package.Outer$Nested'
+       * </pre>
        */
       public Builder clearClassFqName() {
         bitField0_ = (bitField0_ & ~0x00000002);
