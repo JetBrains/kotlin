@@ -289,6 +289,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
     @InnerTestClasses({
             CreateFromUsage.CreateClass.class,
             CreateFromUsage.CreateFunction.class,
+            CreateFromUsage.CreateSecondaryConstructor.class,
             CreateFromUsage.CreateVariable.class,
     })
     @RunWith(JUnit3RunnerWithInners.class)
@@ -754,6 +755,27 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
                 }
             }
 
+        }
+
+        @TestMetadata("idea/testData/quickfix/createFromUsage/createSecondaryConstructor")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class CreateSecondaryConstructor extends AbstractQuickFixMultiFileTest {
+            public void testAllFilesPresentInCreateSecondaryConstructor() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createSecondaryConstructor"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+            }
+
+            @TestMetadata("groovyConstructor.before.Main.kt")
+            public void testGroovyConstructor() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createSecondaryConstructor/groovyConstructor.before.Main.kt");
+                doTestWithExtraFile(fileName);
+            }
+
+            @TestMetadata("javaConstructor.before.Main.kt")
+            public void testJavaConstructor() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createSecondaryConstructor/javaConstructor.before.Main.kt");
+                doTestWithExtraFile(fileName);
+            }
         }
 
         @TestMetadata("idea/testData/quickfix/createFromUsage/createVariable")

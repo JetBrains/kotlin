@@ -37,10 +37,17 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import com.intellij.psi.PsiClass
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
 import org.jetbrains.kotlin.idea.refactoring.*
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
+import java.util.ArrayList
 
-object CreateFunctionOrPropertyFromCallActionFactory : JetIntentionActionsFactory() {
+object CreateCallableFromCallActionFactory : JetIntentionActionsFactory() {
     override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction>? {
         val diagElement = diagnostic.getPsiElement()
         if (PsiTreeUtil.getParentOfType(
@@ -87,9 +94,12 @@ object CreateFunctionOrPropertyFromCallActionFactory : JetIntentionActionsFactor
                 }
                 else Collections.emptyList()
 
-        val callableInfo = when (callExpr) {
+        val name = calleeExpr.getReferencedName()
+        val anyType = KotlinBuiltIns.getInstance().getNullableAnyType()
+
+        val callableInfos = ArrayList<CallableInfo>(2)
+        when (callExpr) {
             is JetCallExpression -> {
-                val anyType = KotlinBuiltIns.getInstance().getNullableAnyType()
                 val parameters = callExpr.getValueArguments().map {
                     ParameterInfo(
                             it.getArgumentExpression()?.let { TypeInfo(it, Variance.IN_VARIANCE) } ?: TypeInfo(anyType, Variance.IN_VARIANCE),
@@ -98,7 +108,17 @@ object CreateFunctionOrPropertyFromCallActionFactory : JetIntentionActionsFactor
                 }
                 val typeParameters = callExpr.getTypeInfoForTypeArguments()
                 val returnType = TypeInfo(fullCallExpr, Variance.OUT_VARIANCE)
-                FunctionInfo(calleeExpr.getReferencedName(), receiverType, returnType, possibleContainers, parameters, typeParameters)
+                callableInfos.add(FunctionInfo(name, receiverType, returnType, possibleContainers, parameters, typeParameters))
+
+                val expectedType = context[BindingContext.EXPECTED_EXPRESSION_TYPE, fullCallExpr] ?: anyType
+                val constructorDescriptor = callExpr.getResolvedCall(context)?.getResultingDescriptor() as? ConstructorDescriptor
+                val classDescriptor = constructorDescriptor?.getContainingDeclaration() as? ClassDescriptor
+                val klass = classDescriptor?.let { DescriptorToSourceUtilsIde.getAnyDeclaration(project, it) }
+                if ((klass is JetClass || klass is PsiClass) && klass.canRefactor()
+                    && typeParameters.isEmpty()
+                    && classDescriptor!!.getDefaultType().isSubtypeOf(expectedType)) {
+                    callableInfos.add(SecondaryConstructorInfo(parameters, klass))
+                }
             }
 
             is JetSimpleNameExpression -> {
@@ -107,13 +127,11 @@ object CreateFunctionOrPropertyFromCallActionFactory : JetIntentionActionsFactor
                         fullCallExpr.getExpressionForTypeGuess(),
                         if (varExpected) Variance.INVARIANT else Variance.OUT_VARIANCE
                 )
-                PropertyInfo(calleeExpr.getReferencedName(), receiverType, returnType, varExpected, possibleContainers)
+                callableInfos.add(PropertyInfo(name, receiverType, returnType, varExpected, possibleContainers))
             }
-
-            else -> return null
         }
 
-        return CreateCallableFromUsageFixes(callExpr, callableInfo)
+        return callableInfos.flatMap{ CreateCallableFromUsageFixes(callExpr, it) }
     }
 
     private fun getReceiverTypeInfo(context: BindingContext, project: Project, receiver: ReceiverValue): TypeInfo? {
