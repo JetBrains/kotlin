@@ -1935,6 +1935,30 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
                 doParsingTest(fileName);
             }
 
+            @TestMetadata("recoveryJustConstructorKeyword.kt")
+            public void testRecoveryJustConstructorKeyword() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/secondaryConstructors/recoveryJustConstructorKeyword.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("recoveryJustConstructorKeywordSameLineBrace.kt")
+            public void testRecoveryJustConstructorKeywordSameLineBrace() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/secondaryConstructors/recoveryJustConstructorKeywordSameLineBrace.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("recoveryNoDelegationCallAfterColon.kt")
+            public void testRecoveryNoDelegationCallAfterColon() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/secondaryConstructors/recoveryNoDelegationCallAfterColon.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("recoveryWithoutBodyWrongDelegationName.kt")
+            public void testRecoveryWithoutBodyWrongDelegationName() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/secondaryConstructors/recoveryWithoutBodyWrongDelegationName.kt");
+                doParsingTest(fileName);
+            }
+
             @TestMetadata("recoveryWithoutParameterList.kt")
             public void testRecoveryWithoutParameterList() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/secondaryConstructors/recoveryWithoutParameterList.kt");
