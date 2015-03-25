@@ -30,7 +30,7 @@ public class LeafElementFilter(private val elementType: IElementType) : ElementF
     override fun isClassAcceptable(hintClass: Class<*>)
             = LEAF_CLASS_FILTER.isClassAcceptable(hintClass)
 
-    class object {
+    companion object {
         private val LEAF_CLASS_FILTER = ClassFilter(javaClass<LeafPsiElement>())
     }
 }

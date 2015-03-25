@@ -46,7 +46,7 @@ public trait Qualifier: ReceiverValue {
     public val name: Name
         get() = classifier?.getName() ?: packageView!!.getName()
 
-    // package, classifier or class object descriptor
+    // package, classifier or companion object descriptor
     public val resultingDescriptor: DeclarationDescriptor
 
     public val scope: JetScope

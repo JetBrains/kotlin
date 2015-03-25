@@ -310,7 +310,7 @@ public class TypeResolver(
         return classifierDescriptor
     }
 
-    class object {
+    companion object {
         [platformStatic]
         public fun resolveProjectionKind(projectionKind: JetProjectionKind): Variance {
             return when (projectionKind) {

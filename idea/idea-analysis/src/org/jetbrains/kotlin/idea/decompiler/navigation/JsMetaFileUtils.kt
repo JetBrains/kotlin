@@ -94,7 +94,7 @@ private fun getLibraryName(module: ModuleDescriptor): String? {
 
 
 class JsMetaFileVirtualFileHolder private(val myProject: Project) {
-    class object {
+    companion object {
         public val MODULE_DESCRIPTOR_KEY: Key<ModuleDescriptorImpl> = Key.create("MODULE_DESCRIPTOR")
         public val PACKAGE_FQNAME_KEY: Key<FqName> = Key.create("PACKAGE_FQNAME_KEY")
         private val JS_META_FILE_HOLDER_KEY: Key<JsMetaFileVirtualFileHolder> = Key.create("JS_META_FILE_HOLDER_KEY")

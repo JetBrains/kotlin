@@ -30,7 +30,7 @@ import javax.inject.Inject
 
 public class TraceBasedErrorReporter : ErrorReporter {
 
-    class object {
+    companion object {
         private val LOG = Logger.getInstance(javaClass<TraceBasedErrorReporter>())
 
         public val ABI_VERSION_ERRORS: WritableSlice<String, AbiVersionErrorData> = Slices.createCollectiveSlice()

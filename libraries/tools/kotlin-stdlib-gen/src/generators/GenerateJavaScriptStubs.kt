@@ -150,7 +150,7 @@ $imports
             if (fields != null) {
                 if (fields.isNotEmpty()) {
                     println("")
-                    println("    public class object {")
+                    println("    public companion object {")
                     for (field in fields) {
                         if (field != null) {
                             val modifiers = field.getModifiers()

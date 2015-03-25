@@ -76,7 +76,7 @@ class PlatformStaticGenerator(
         )
     }
 
-    class object {
+    companion object {
         [platformStatic]
         public fun createStaticFunctionDescriptor(descriptor: FunctionDescriptor): FunctionDescriptor {
             val memberDescriptor = if (descriptor is PropertyAccessorDescriptor) descriptor.getCorrespondingProperty() else descriptor

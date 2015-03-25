@@ -29,7 +29,7 @@ public class RuntimeModuleData private(private val injector: InjectorForRuntimeD
 
     public val localClassResolver: LocalClassResolver get() = injector.getDeserializationComponentsForJava().components.localClassResolver
 
-    class object {
+    companion object {
         public fun create(classLoader: ClassLoader): RuntimeModuleData {
             val module = ModuleDescriptorImpl(Name.special("<runtime module for $classLoader>"), listOf(), JavaToKotlinClassMap.INSTANCE)
             module.addDependencyOnModule(module)

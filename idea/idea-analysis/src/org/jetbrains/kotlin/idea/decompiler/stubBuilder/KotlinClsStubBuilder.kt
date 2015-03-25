@@ -87,7 +87,7 @@ public open class KotlinClsStubBuilder : ClsStubBuilder() {
         return ClsStubBuilderComponents(classDataFinder, annotationLoader)
     }
 
-    class object {
+    companion object {
         val LOG = Logger.getInstance(javaClass<KotlinClsStubBuilder>())
     }
 }

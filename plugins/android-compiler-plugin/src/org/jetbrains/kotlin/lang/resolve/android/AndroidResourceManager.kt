@@ -70,7 +70,7 @@ public abstract class AndroidResourceManager(val project: Project) {
         return VirtualFileManager.getInstance().findFileByUrl("file://" + info.mainResDirectory)
     }
 
-    class object {
+    companion object {
         public fun getInstance(module: Module): AndroidResourceManager {
             val service = ModuleServiceManager.getService<AndroidResourceManager>(module, javaClass<AndroidResourceManager>())
             return service ?: module.getComponent<AndroidResourceManager>(javaClass<AndroidResourceManager>())

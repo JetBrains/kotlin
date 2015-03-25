@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.idea.JetIcons
 import org.jetbrains.kotlin.idea.project.TargetPlatform
 
 public class KotlinTemplatesFactory : ProjectTemplatesFactory() {
-    class object {
+    companion object {
         public val KOTLIN_GROUP_NAME: String = "Kotlin"
     }
 

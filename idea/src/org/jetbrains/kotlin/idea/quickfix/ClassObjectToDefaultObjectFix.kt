@@ -33,7 +33,7 @@ public class ClassObjectToCompanionObjectFix(private val elem: JetObjectDeclarat
         classKeywordToCompanionModifier(elem)
     }
 
-    class object Factory : JetSingleIntentionActionFactory() {
+    companion object Factory : JetSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic) =
                 (diagnostic.getPsiElement() as? JetObjectDeclaration)?.let { ClassObjectToCompanionObjectFix(it) }
 
@@ -66,7 +66,7 @@ public class ClassObjectToCompanionObjectInWholeProjectFix(private val elem: Jet
         }
     }
 
-    class object Factory : JetSingleIntentionActionFactory() {
+    companion object Factory : JetSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic) =
                 (diagnostic.getPsiElement() as? JetObjectDeclaration)?.let { ClassObjectToCompanionObjectInWholeProjectFix(it) }
     }
