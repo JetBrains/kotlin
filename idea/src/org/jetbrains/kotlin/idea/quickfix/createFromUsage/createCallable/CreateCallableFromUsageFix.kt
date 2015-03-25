@@ -32,12 +32,16 @@ import java.util.Collections
 import java.util.HashSet
 
 public class CreateCallableFromUsageFix(
-        originalExpression: JetExpression,
+        originalElement: JetElement,
         val callableInfos: List<CallableInfo>,
         val isExtension: Boolean
-) : CreateFromUsageFixBase(originalExpression) {
-    {
-        assert (callableInfos.isNotEmpty(), "No CallableInfos: ${JetPsiUtil.getElementTextWithContext(originalExpression)}")
+) : CreateFromUsageFixBase(originalElement) {
+    constructor(originalExpression: JetElement,
+                callableInfo: CallableInfo,
+                isExtension: Boolean) : this(originalExpression, Collections.singletonList(callableInfo), isExtension) { }
+
+    init {
+        assert (callableInfos.isNotEmpty(), "No CallableInfos: ${JetPsiUtil.getElementTextWithContext(originalElement)}")
         if (callableInfos.size > 1) {
             val receiverSet = callableInfos.mapTo(HashSet<TypeInfo>()) { it.receiverTypeInfo }
             if (receiverSet.size > 1) throw AssertionError("All functions must have common receiver: $receiverSet")
@@ -103,7 +107,7 @@ public class CreateCallableFromUsageFix(
         val callableInfo = callableInfos.first()
 
         val callableBuilder =
-                CallableBuilderConfiguration(callableInfos, element as JetExpression, file!!, editor!!, isExtension).createBuilder()
+                CallableBuilderConfiguration(callableInfos, element as JetElement, file!!, editor!!, isExtension).createBuilder()
 
         fun runBuilder(placement: CallablePlacement) {
             callableBuilder.placement = placement

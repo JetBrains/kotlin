@@ -258,6 +258,9 @@ public class QuickFixRegistrar {
         QuickFixes.factories.put(TOO_MANY_ARGUMENTS, CreateCallableFromCallActionFactory.INSTANCE$);
         QuickFixes.factories.put(EXPRESSION_EXPECTED_PACKAGE_FOUND, CreateCallableFromCallActionFactory.INSTANCE$);
 
+        QuickFixes.factories.put(NO_VALUE_FOR_PARAMETER, CreateConstructorFromDelegationCallActionFactory.INSTANCE$);
+        QuickFixes.factories.put(TOO_MANY_ARGUMENTS, CreateConstructorFromDelegationCallActionFactory.INSTANCE$);
+
         QuickFixes.factories.put(UNRESOLVED_REFERENCE_WRONG_RECEIVER, CreateClassFromConstructorCallActionFactory.INSTANCE$);
         QuickFixes.factories.put(UNRESOLVED_REFERENCE, CreateClassFromConstructorCallActionFactory.INSTANCE$);
         QuickFixes.factories.put(EXPRESSION_EXPECTED_PACKAGE_FOUND, CreateClassFromConstructorCallActionFactory.INSTANCE$);

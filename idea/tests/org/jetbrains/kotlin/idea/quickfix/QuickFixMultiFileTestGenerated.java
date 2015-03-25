@@ -776,6 +776,12 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createSecondaryConstructor/javaConstructor.before.Main.kt");
                 doTestWithExtraFile(fileName);
             }
+
+            @TestMetadata("superCallJavaClass.before.Main.kt")
+            public void testSuperCallJavaClass() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createSecondaryConstructor/superCallJavaClass.before.Main.kt");
+                doTestWithExtraFile(fileName);
+            }
         }
 
         @TestMetadata("idea/testData/quickfix/createFromUsage/createVariable")
