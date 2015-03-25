@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.JetType
 
 
-public class TracingStrategyForEmptyConstructorDelegationCall(
+public class TracingStrategyForImplicitConstructorDelegationCall(
         val delegationCall: JetConstructorDelegationCall, call: Call
 ) : AbstractTracingStrategy(delegationCall.getCalleeExpression()!!, call) {
 
