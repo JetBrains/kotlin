@@ -177,9 +177,8 @@ public class JetSecondaryConstructor extends JetDeclarationStub<KotlinPlaceHolde
         return findChildByClass(JetConstructorDelegationCall.class);
     }
 
-    public boolean hasEmptyDelegationCall() {
-        JetConstructorDelegationCall call = getDelegationCall();
-        return call.isEmpty();
+    public boolean hasImplicitDelegationCall() {
+        return getDelegationCall().isImplicit();
     }
 
     @NotNull
@@ -188,12 +187,12 @@ public class JetSecondaryConstructor extends JetDeclarationStub<KotlinPlaceHolde
     }
 
     @NotNull
-    public JetConstructorDelegationCall replaceEmptyDelegationCallWithExplicit(boolean isThis) {
+    public JetConstructorDelegationCall replaceImplicitDelegationCallWithExplicit(boolean isThis) {
         JetPsiFactory psiFactory = new JetPsiFactory(getProject());
         JetConstructorDelegationCall current = getDelegationCall();
 
-        assert current.isEmpty()
-                : "Method should not be called with non-existing or non-empty delegation call: " + getText();
+        assert current.isImplicit()
+                : "Method should not be called with explicit delegation call: " + getText();
         current.delete();
 
         PsiElement colon = addAfter(psiFactory.createColon(), getValueParameterList());
