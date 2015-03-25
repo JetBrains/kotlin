@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.psi.JetDeclaration;
 import org.jetbrains.kotlin.psi.JetPsiUtil;
 import org.jetbrains.kotlin.renderer.AbstractDescriptorRendererTest;
 import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
 
 public abstract class AbstractAdditionalResolveDescriptorRendererTest extends AbstractDescriptorRendererTest {
@@ -33,7 +34,7 @@ public abstract class AbstractAdditionalResolveDescriptorRendererTest extends Ab
         if (declaration instanceof JetClassInitializer || JetPsiUtil.isLocal(declaration)) {
             ResolveElementCache resolveElementCache = new ResolveElementCache(resolveSession, getProject());
             //noinspection ConstantConditions
-            return resolveElementCache.resolveToElement(declaration).get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
+            return resolveElementCache.resolveToElement(declaration, BodyResolveMode.FULL).get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
         }
         return resolveSession.resolveToDescriptor(declaration);
     }

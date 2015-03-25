@@ -80,7 +80,7 @@ public class ResolveSessionForBodies implements KotlinCodeAnalyzer {
             return resolveSession.resolveToDescriptor(declaration);
         }
 
-        BindingContext context = resolveElementCache.resolveToElement(declaration);
+        BindingContext context = resolveElementCache.resolveToElement(declaration, BodyResolveMode.FULL);
         return BindingContextUtils.getNotNull(context, BindingContext.DECLARATION_TO_DESCRIPTOR, declaration,
                                               "Descriptor wasn't found for declaration " + declaration.toString() + "\n" +
                                               JetPsiUtil.getElementTextWithContext(declaration));

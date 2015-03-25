@@ -58,7 +58,7 @@ public class ResolveElementCache extends ElementResolver {
                                         manager.createSoftlyRetainedMemoizedFunction(new Function1<JetElement, BindingContext>() {
                                             @Override
                                             public BindingContext invoke(JetElement jetElement) {
-                                                return elementAdditionalResolve(jetElement, jetElement, BodyResolveMode.FULL);
+                                                return performElementAdditionalResolve(jetElement, jetElement, BodyResolveMode.FULL);
                                             }
                                         });
 
