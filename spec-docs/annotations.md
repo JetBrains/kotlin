@@ -29,23 +29,23 @@ Example fun foo() {}
 
 To check applicability, we can use the following constants:
 
-------
+
 | Kotlin constant | Java constant | 
-------
+|-----------------|---------------|
 | ANNOTATION_CLASS | ANNOTATION_TYPE |
-| CONSTRUCTOR | <same> |
-| FIELD | <same>
-| LOCAL_VARIABLE | <same> |
+| CONSTRUCTOR | \<same> |
+| FIELD | \<same>
+| LOCAL_VARIABLE | \<same> |
 | FUNCITON | METHOD |
 | PROPERTY_GETTER | METHOD |
 | PROPERTY_SETTER | METHOD |
-| PACKAGE | <same> |
+| PACKAGE | \<same> |
 | VALUE_PARAMETER | PARAMETER |
 | CLASSIFIER | TYPE |
-| TYPE_PARAMETER | <same>
+| TYPE_PARAMETER | \<same>
 | TYPE | TYPE_USE |
-| PROPERTY | <no analog> |
-| EXPRESSION | <no analog> |
+| PROPERTY | \<no analog> |
+| EXPRESSION | \<no analog> |
 
 **TODO** Open question: what about traits/classes/objects?  
 **TODO** local variables are just like properties, but local  
