@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.lang.resolve.android
 
 import com.intellij.openapi.util.Key
+import org.jetbrains.kotlin.lexer.JetKeywordToken
+import org.jetbrains.kotlin.lexer.JetTokens
 
 public object AndroidConst {
     val ANDROID_USER_PACKAGE: Key<String> = Key.create<String>("ANDROID_USER_PACKAGE")
@@ -35,14 +37,19 @@ public object AndroidConst {
     val CLEAR_FUNCTION_NAME = "clearFindViewByIdCache"
 
     val IGNORED_XML_WIDGET_TYPES = setOf("requestFocus", "merge", "tag", "check")
+
+    val ESCAPED_IDENTIFIERS = JetTokens.KEYWORDS.getTypes()
+            .map { it as? JetKeywordToken }.filterNotNull().map { it.getValue() }.toSet()
 }
 
 public fun nameToIdDeclaration(name: String): String = AndroidConst.ID_DECLARATION_PREFIX + name
 
 public fun idToName(id: String): String? {
-    return if (isResourceIdDeclaration(id)) id.replace(AndroidConst.ID_DECLARATION_PREFIX, "")
-    else if (isResourceIdUsage(id)) id.replace(AndroidConst.ID_USAGE_PREFIX, "")
-    else null
+    val unescaped =
+            if (isResourceIdDeclaration(id)) id.replace(AndroidConst.ID_DECLARATION_PREFIX, "")
+            else if (isResourceIdUsage(id)) id.replace(AndroidConst.ID_USAGE_PREFIX, "")
+            else null
+    return if (unescaped != null) escapeWidgetId(unescaped) else null
 }
 
 public fun isResourceIdDeclaration(str: String?): Boolean = str?.startsWith(AndroidConst.ID_DECLARATION_PREFIX) ?: false
@@ -58,4 +65,8 @@ public fun isWidgetTypeIgnored(xmlType: String): Boolean {
 public fun getRealWidgetType(xmlType: String): String = when (xmlType) {
     "fragment", "include" -> "View"
     else -> xmlType
+}
+
+public fun escapeWidgetId(id: String): String {
+    return if (id in AndroidConst.ESCAPED_IDENTIFIERS) "`$id`" else id
 }
