@@ -120,14 +120,8 @@ public class LibrarySourcesConfig extends Config {
         VirtualFileSystem fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL);
         VirtualFileSystem jarFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.JAR_PROTOCOL);
 
-        String moduleName = null;
-
         for (String path : files) {
             VirtualFile file;
-            if (path.charAt(0) == '@') {
-                moduleName = path.substring(1);
-                continue;
-            }
 
             File filePath = new File(path);
             if (!filePath.exists()) {
@@ -149,10 +143,7 @@ public class LibrarySourcesConfig extends Config {
             else {
                 String actualModuleName;
 
-                if (moduleName != null) {
-                    actualModuleName = moduleName;
-                }
-                else if (isOldKotlinJavascriptLibrary(filePath)) {
+                if (isOldKotlinJavascriptLibrary(filePath)) {
                     actualModuleName = LibraryUtils.getKotlinJsModuleName(filePath);
                 }
                 else if (isKotlinJavascriptLibraryWithMetadata(filePath)) {
@@ -167,7 +158,6 @@ public class LibrarySourcesConfig extends Config {
                     action.invoke(actualModuleName, file);
                 }
             }
-            moduleName = null;
         }
 
         return false;

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.js.test
 
+import org.jetbrains.kotlin.js.JavaScript
 import org.jetbrains.kotlin.js.config.EcmaVersion
 import org.jetbrains.kotlin.js.facade.MainCallParameters
 import org.jetbrains.kotlin.js.test.rhino.RhinoFunctionResultChecker
@@ -52,10 +53,13 @@ public abstract class MultipleModulesTranslationTest(main: String) : BasicTest(m
         val fullFilePaths = getAllFilesInDir(pathToDir + File.separator + moduleName)
         val libraries = ArrayList<String>()
         for (dependencyName in dependencies) {
-            libraries.add("@" + dependencyName)
-            libraries.add(pathToDir + File.separator + dependencyName)
+            libraries.add(getMetaInfo(getModuleDirectoryName(dirName, dependencyName)))
         }
         generateJavaScriptFiles(fullFilePaths, moduleDirectoryName, MainCallParameters.noCall(), BasicTest.DEFAULT_ECMA_VERSIONS, moduleName, libraries)
+    }
+
+    override fun getMetaInfo(moduleId: String): String? {
+        return getOutputPath() + moduleId + ".meta" + JavaScript.DOT_EXTENSION
     }
 
     override fun additionalJsFiles(ecmaVersion: EcmaVersion): List<String> {
