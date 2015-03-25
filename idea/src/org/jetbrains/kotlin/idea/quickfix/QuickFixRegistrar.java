@@ -233,6 +233,7 @@ public class QuickFixRegistrar {
         QuickFixes.factories.put(UNUSED_PARAMETER, ChangeFunctionSignatureFix.createFactoryForUnusedParameter());
         QuickFixes.factories.put(EXPECTED_PARAMETERS_NUMBER_MISMATCH, ChangeFunctionSignatureFix.createFactoryForParametersNumberMismatch());
         QuickFixes.factories.put(DEPRECATED_LAMBDA_SYNTAX, DeprecatedLambdaSyntaxFix.Factory);
+        QuickFixes.factories.put(DEPRECATED_LAMBDA_SYNTAX, DeprecatedLambdaSyntaxInWholeProjectFix.Factory);
 
         QuickFixes.factories.put(EXPECTED_PARAMETER_TYPE_MISMATCH, ChangeTypeFix.createFactoryForExpectedParameterTypeMismatch());
         QuickFixes.factories.put(EXPECTED_RETURN_TYPE_MISMATCH, ChangeTypeFix.createFactoryForExpectedReturnTypeMismatch());
