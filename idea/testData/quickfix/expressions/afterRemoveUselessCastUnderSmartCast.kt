@@ -1,0 +1,7 @@
+// "Remove cast" "true"
+fun test(x: Any): String? {
+    if (x is String) {
+        return x
+    }
+    return null
+}

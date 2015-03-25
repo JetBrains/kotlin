@@ -16,24 +16,20 @@
 
 package org.jetbrains.kotlin.idea.findUsages.handlers
 
+import com.intellij.find.findUsages.AbstractFindUsagesDialog
 import com.intellij.find.findUsages.FindUsagesHandler
+import com.intellij.find.findUsages.FindUsagesOptions
+import com.intellij.find.findUsages.JavaFindUsagesHandler
+import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiMethod
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.Processor
-import com.intellij.find.findUsages.FindUsagesOptions
 import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
-import kotlin.properties.Delegates
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
-import com.intellij.psi.PsiMethod
-import com.intellij.find.findUsages.JavaFindUsagesHandler
 import org.jetbrains.kotlin.idea.findUsages.KotlinFunctionFindUsagesOptions
 import org.jetbrains.kotlin.idea.findUsages.toJavaMethodOptions
-import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.openapi.components.ServiceManager
-import com.intellij.psi.xml.XmlAttribute
-import org.jetbrains.kotlin.psi.JetProperty
-import com.intellij.find.findUsages.JavaVariableFindUsagesOptions
-import java.util.ArrayList
+import org.jetbrains.kotlin.psi.JetNamedDeclaration
+import kotlin.properties.Delegates
 
 class DelegatingFindMemberUsagesHandler(
         val declaration: JetNamedDeclaration,
@@ -41,10 +37,6 @@ class DelegatingFindMemberUsagesHandler(
         val factory: KotlinFindUsagesHandlerFactory
 ) : FindUsagesHandler(declaration) {
     private val kotlinHandler = KotlinFindMemberUsagesHandler.getInstance(declaration, elementsToSearch, factory)
-
-    private val javaHandler: JavaFindUsagesHandler by Delegates.lazy {
-        JavaFindUsagesHandler(declaration, elementsToSearch.copyToArray(), factory.javaHandlerFactory)
-    }
 
     private fun getHandler(element: PsiElement): FindUsagesHandler? =
             when (element) {
@@ -56,6 +48,11 @@ class DelegatingFindMemberUsagesHandler(
 
                 else -> null
             }
+
+    override fun getFindUsagesDialog(isSingleFile: Boolean, toShowInNewTab: Boolean, mustOpenInNewTab: Boolean): AbstractFindUsagesDialog {
+        return getHandler(getPsiElement())?.getFindUsagesDialog(isSingleFile, toShowInNewTab, mustOpenInNewTab)
+               ?: super.getFindUsagesDialog(isSingleFile, toShowInNewTab, mustOpenInNewTab)
+    }
 
     override fun getPrimaryElements(): Array<PsiElement> {
         return kotlinHandler.getPrimaryElements()

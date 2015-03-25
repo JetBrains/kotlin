@@ -20,13 +20,14 @@ import com.intellij.psi.ElementDescriptionLocation
 import com.intellij.psi.ElementDescriptionProvider
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
+import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.refactoring.util.RefactoringDescriptionLocation
 import com.intellij.usageView.UsageViewLongNameLocation
-import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.asJava.unwrapped
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import com.intellij.refactoring.util.CommonRefactoringUtil
 
 public class JetElementDescriptionProvider : ElementDescriptionProvider {
     public override fun getElementDescription(element: PsiElement, location: ElementDescriptionLocation): String? {
@@ -45,26 +46,26 @@ public class JetElementDescriptionProvider : ElementDescriptionProvider {
 
         if (targetElement !is PsiNamedElement || targetElement !is JetElement) return null
 
-        val name = (targetElement as PsiNamedElement).getName()
+        val name = (targetElement : PsiNamedElement).getName()
 
         return when(location) {
             is UsageViewLongNameLocation ->
                 name
             is RefactoringDescriptionLocation -> {
-                val kind = elementKind()
-                if (kind != null) {
-                    val descriptor = (targetElement as JetDeclaration).descriptor
-                    if (descriptor != null) {
-                        val desc = if (location.includeParent() && targetElement !is JetTypeParameter && targetElement !is JetParameter) {
+                val kind = elementKind() ?: return null
+                var descriptor = (targetElement as JetDeclaration).descriptor ?: return null
+                if (descriptor is ConstructorDescriptor) {
+                    descriptor = (descriptor as ConstructorDescriptor).getContainingDeclaration()
+                }
+                val desc =
+                        if (location.includeParent() && targetElement !is JetTypeParameter && targetElement !is JetParameter) {
                             DescriptorUtils.getFqName(descriptor).asString()
                         }
-                        else descriptor.getName().asString()
+                        else {
+                            descriptor.getName().asString()
+                        }
 
-                        "$kind ${CommonRefactoringUtil.htmlEmphasize(desc)}"
-                    }
-                    else null
-                }
-                else null
+                "$kind ${CommonRefactoringUtil.htmlEmphasize(desc)}"
             }
             else -> null
         }

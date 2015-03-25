@@ -24,11 +24,16 @@ import com.intellij.openapi.util.Conditions
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiParameter
+import com.intellij.psi.PsiReference
+import com.intellij.psi.impl.search.ConstructorReferencesSearchHelper
+import com.intellij.psi.search.SearchRequestCollector
+import com.intellij.psi.search.SearchSession
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.safeDelete.JavaSafeDeleteProcessor
 import com.intellij.refactoring.safeDelete.NonCodeUsageSearchInfo
 import com.intellij.refactoring.safeDelete.usageInfo.*
 import com.intellij.usageView.UsageInfo
+import com.intellij.util.Processor
 import org.jetbrains.kotlin.asJava.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
@@ -170,6 +175,13 @@ public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
                 element.toLightClass()?.let { klass ->
                     findDelegationCallUsages(klass)
                     findUsagesByJavaProcessor(klass, false)
+                }
+            }
+
+            is JetSecondaryConstructor -> {
+                element.getRepresentativeLightMethod()?.let { method ->
+                    findDelegationCallUsages(method)
+                    findUsagesByJavaProcessor(method, false)
                 }
             }
 

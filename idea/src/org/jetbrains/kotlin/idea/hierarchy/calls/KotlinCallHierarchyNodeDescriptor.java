@@ -36,10 +36,7 @@ import com.intellij.ui.LayeredIcon;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
@@ -188,7 +185,7 @@ public class KotlinCallHierarchyNodeDescriptor extends HierarchyNodeDescriptor i
                     }
                 }
             }
-            else if (element instanceof JetNamedFunction) {
+            else if (element instanceof JetNamedFunction || element instanceof JetSecondaryConstructor) {
                 elementText = renderNamedFunction((FunctionDescriptor) descriptor);
             }
             else if (element instanceof JetProperty) {
@@ -213,7 +210,10 @@ public class KotlinCallHierarchyNodeDescriptor extends HierarchyNodeDescriptor i
     }
 
     private static String renderNamedFunction(FunctionDescriptor descriptor) {
-        String name = descriptor.getName().asString();
+        DeclarationDescriptor descriptorForName = descriptor instanceof ConstructorDescriptor
+                                                  ? descriptor.getContainingDeclaration()
+                                                  : descriptor;
+        String name = descriptorForName.getName().asString();
         String paramTypes = StringUtil.join(
                 descriptor.getValueParameters(),
                 new Function<ValueParameterDescriptor, String>() {

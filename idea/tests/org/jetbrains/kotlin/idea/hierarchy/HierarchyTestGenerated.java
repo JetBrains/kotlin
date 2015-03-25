@@ -391,6 +391,12 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
             doCallerHierarchyTest(fileName);
         }
 
+        @TestMetadata("kotlinSecondaryConstructor")
+        public void testKotlinSecondaryConstructor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callers/kotlinSecondaryConstructor/");
+            doCallerHierarchyTest(fileName);
+        }
+
         @TestMetadata("kotlinUnresolvedFunction")
         public void testKotlinUnresolvedFunction() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callers/kotlinUnresolvedFunction/");

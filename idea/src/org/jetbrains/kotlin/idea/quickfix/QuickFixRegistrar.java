@@ -87,6 +87,7 @@ public class QuickFixRegistrar {
 
         QuickFixes.factories.put(USELESS_CAST_STATIC_ASSERT_IS_FINE, ReplaceOperationInBinaryExpressionFix.createChangeCastToStaticAssertFactory());
         QuickFixes.factories.put(USELESS_CAST, RemoveRightPartOfBinaryExpressionFix.createRemoveCastFactory());
+        QuickFixes.factories.put(USELESS_CAST_STATIC_ASSERT_IS_FINE, RemoveRightPartOfBinaryExpressionFix.createRemoveCastFactory());
 
         JetSingleIntentionActionFactory changeAccessorTypeFactory = ChangeAccessorTypeFix.createFactory();
         QuickFixes.factories.put(WRONG_SETTER_PARAMETER_TYPE, changeAccessorTypeFactory);
