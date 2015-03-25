@@ -29,15 +29,15 @@ public class JetConstructorDelegationCallUsage(call: JetConstructorDelegationCal
         val isThisCall = element.isCallToThis()
 
         var elementToWorkWith = element
-        if (changeInfo.getNewParametersCount() > 0 && element.isEmpty()) {
+        if (changeInfo.getNewParametersCount() > 0 && element.isImplicit()) {
             val constructor = element.getParent() as JetSecondaryConstructor
-            elementToWorkWith = constructor.replaceEmptyDelegationCallWithExplicit(isThisCall)
+            elementToWorkWith = constructor.replaceImplicitDelegationCallWithExplicit(isThisCall)
         }
 
         val result = JetFunctionCallUsage(
                 elementToWorkWith, changeInfo.methodDescriptor.originalPrimaryFunction).processUsage(changeInfo, elementToWorkWith)
 
-        if (changeInfo.getNewParametersCount() == 0 && !isThisCall && !elementToWorkWith.isEmpty()) {
+        if (changeInfo.getNewParametersCount() == 0 && !isThisCall && !elementToWorkWith.isImplicit()) {
             (elementToWorkWith.getParent() as? JetSecondaryConstructor)?.getColon()?.delete()
             elementToWorkWith.replace(JetPsiFactory(element).createConstructorDelegationCall(""))
         }

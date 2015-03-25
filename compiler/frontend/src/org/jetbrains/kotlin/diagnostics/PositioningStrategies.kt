@@ -418,7 +418,7 @@ public object PositioningStrategies {
     public val SECONDARY_CONSTRUCTOR_DELEGATION_CALL: PositioningStrategy<JetConstructorDelegationCall> =
             object : PositioningStrategy<JetConstructorDelegationCall>() {
                 override fun mark(element: JetConstructorDelegationCall): List<TextRange> {
-                    if (element.isEmpty()) {
+                    if (element.isImplicit()) {
                         val constructor = element.getStrictParentOfType<JetSecondaryConstructor>()!!
                         val valueParameterList = constructor.getValueParameterList() ?: return markElement(constructor)
                         return markRange(constructor.getConstructorKeyword(), valueParameterList.getLastChild())

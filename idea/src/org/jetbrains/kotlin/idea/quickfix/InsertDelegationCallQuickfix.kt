@@ -40,7 +40,7 @@ public class InsertDelegationCallQuickfix(val isThis: Boolean, element: JetSecon
     private val keywordToUse = if (isThis) "this" else "super"
 
     override fun invoke(project: Project, editor: Editor?, file: JetFile?) {
-        val newDelegationCall = element.replaceEmptyDelegationCallWithExplicit(isThis)
+        val newDelegationCall = element.replaceImplicitDelegationCallWithExplicit(isThis)
 
         val context = element.analyzeFully()
         val resolvedCall = newDelegationCall.getResolvedCall(context)
@@ -55,14 +55,14 @@ public class InsertDelegationCallQuickfix(val isThis: Boolean, element: JetSecon
     }
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile?): Boolean {
-        return super.isAvailable(project, editor, file) && element.hasEmptyDelegationCall()
+        return super.isAvailable(project, editor, file) && element.hasImplicitDelegationCall()
     }
 
     object InsertThisDelegationCallFactory : JetSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val secondaryConstructor = diagnostic.getPsiElement().getNonStrictParentOfType<JetSecondaryConstructor>() ?: return null
             if (secondaryConstructor.getClassOrObject().getConstructorsCount() <= 1 ||
-                !secondaryConstructor.hasEmptyDelegationCall()) return null
+                !secondaryConstructor.hasImplicitDelegationCall()) return null
 
             return InsertDelegationCallQuickfix(isThis = true, element = secondaryConstructor)
         }
@@ -73,7 +73,7 @@ public class InsertDelegationCallQuickfix(val isThis: Boolean, element: JetSecon
     object InsertSuperDelegationCallFactory : JetSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val secondaryConstructor = diagnostic.getPsiElement().getNonStrictParentOfType<JetSecondaryConstructor>() ?: return null
-            if (!secondaryConstructor.hasEmptyDelegationCall()) return null
+            if (!secondaryConstructor.hasImplicitDelegationCall()) return null
             val klass = secondaryConstructor.getClassOrObject() as? JetClass ?: return null
             if (klass.hasPrimaryConstructor()) return null
 
