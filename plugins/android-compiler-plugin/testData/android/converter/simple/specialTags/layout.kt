@@ -18,3 +18,9 @@ val Activity.fragmentTag: ft<View, View?>
 val Fragment.fragmentTag: ft<View, View?>
     get() = getView().findViewById(0) : View
 
+val Activity.`fun`: ft<TextView, TextView?>
+    get() = findViewById(0) as TextView
+
+val Fragment.`fun`: ft<TextView, TextView?>
+    get() = getView().findViewById(0) as TextView
+
