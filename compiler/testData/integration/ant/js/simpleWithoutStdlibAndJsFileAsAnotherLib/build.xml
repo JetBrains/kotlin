@@ -9,7 +9,7 @@
 
     <kotlin2js src="${test.data}/root1" noStdlib="true" output="${temp}/out.js" main="call">
       <library>
-        <pathelement path="${temp.library.path}"/>
+        <pathelement path="${temp.library.path}/jslib-example.meta.js"/>
       </library>
     </kotlin2js>
     <copy todir="${temp}">

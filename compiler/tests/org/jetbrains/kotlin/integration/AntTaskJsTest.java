@@ -118,6 +118,11 @@ public class AntTaskJsTest extends AntTaskBaseTest {
     }
 
     @Test
+    public void simpleWithoutStdlibAndJsFileAsAnotherLib() throws Exception {
+        doJsAntTest("jslib-example.js");
+    }
+
+    @Test
     public void simpleWithMainFQArgs() throws Exception {
         doJsAntTest();
     }
