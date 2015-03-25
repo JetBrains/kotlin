@@ -3,8 +3,5 @@ class A {
     val x: Int
 }
 
-class B {
-    constructor() : thhiis(3, 4)
-}
 
 val x: Int = 1
