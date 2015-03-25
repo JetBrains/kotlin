@@ -1935,6 +1935,30 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/infiniteFor.java");
             doTest(fileName);
         }
+
+        @TestMetadata("withContinue1.java")
+        public void testWithContinue1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/withContinue1.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withContinue2.java")
+        public void testWithContinue2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/withContinue2.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withContinue3.java")
+        public void testWithContinue3() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/withContinue3.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withContinueAndLabels.java")
+        public void testWithContinueAndLabels() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/withContinueAndLabels.java");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("j2k/testData/fileOrElement/foreachStatement")

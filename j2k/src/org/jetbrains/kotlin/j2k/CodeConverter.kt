@@ -63,6 +63,9 @@ class CodeConverter(
     public fun withSpecialExpressionConverter(specialConverter: SpecialExpressionConverter): CodeConverter
             = CodeConverter(converter, expressionConverter.withSpecialConverter(specialConverter), statementConverter, methodReturnType)
 
+    public fun withSpecialStatementConverter(specialConverter: SpecialStatementConverter): CodeConverter
+            = CodeConverter(converter, expressionConverter, statementConverter.withSpecialConverter(specialConverter), methodReturnType)
+
     public fun withMethodReturnType(methodReturnType: PsiType?): CodeConverter
             = CodeConverter(converter, expressionConverter, statementConverter, methodReturnType)
 

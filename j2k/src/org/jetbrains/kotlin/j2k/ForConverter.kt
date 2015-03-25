@@ -16,44 +16,9 @@
 
 package org.jetbrains.kotlin.j2k
 
-import com.intellij.psi.PsiForStatement
-import org.jetbrains.kotlin.j2k.ast.ForeachStatement
-import com.intellij.psi.PsiDeclarationStatement
-import com.intellij.psi.PsiLocalVariable
-import com.intellij.psi.PsiBinaryExpression
-import com.intellij.psi.JavaTokenType
-import com.intellij.psi.PsiReferenceExpression
-import com.intellij.psi.PsiExpressionStatement
-import org.jetbrains.kotlin.j2k.ast.PrimitiveType
-import org.jetbrains.kotlin.j2k.ast.Identifier
-import org.jetbrains.kotlin.j2k.ast.assignNoPrototype
-import org.jetbrains.kotlin.j2k.ast.declarationIdentifier
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiVariable
-import com.intellij.psi.PsiPostfixExpression
-import com.intellij.psi.PsiPrefixExpression
-import com.intellij.psi.PsiExpression
+import com.intellij.psi.*
 import com.intellij.psi.tree.IElementType
-import org.jetbrains.kotlin.j2k.ast.Expression
-import com.intellij.psi.PsiLiteralExpression
-import com.intellij.psi.PsiMethodCallExpression
-import com.intellij.psi.PsiElementFactory
-import com.intellij.psi.CommonClassNames
-import org.jetbrains.kotlin.j2k.ast.QualifiedExpression
-import com.intellij.psi.PsiArrayType
-import org.jetbrains.kotlin.j2k.ast.BinaryExpression
-import org.jetbrains.kotlin.j2k.ast.LiteralExpression
-import org.jetbrains.kotlin.j2k.ast.RangeExpression
-import com.intellij.psi.PsiBlockStatement
-import com.intellij.psi.PsiNamedElement
-import org.jetbrains.kotlin.j2k.ast.Block
-import org.jetbrains.kotlin.j2k.ast.LBrace
-import org.jetbrains.kotlin.j2k.ast.RBrace
-import org.jetbrains.kotlin.j2k.ast.assignPrototypesFrom
-import org.jetbrains.kotlin.j2k.ast.WhileStatement
-import org.jetbrains.kotlin.j2k.ast.MethodCallExpression
-import org.jetbrains.kotlin.j2k.ast.LambdaExpression
-import org.jetbrains.kotlin.j2k.ast.Statement
+import org.jetbrains.kotlin.j2k.ast.*
 
 class ForConverter(
         private val statement: PsiForStatement,
@@ -83,27 +48,51 @@ class ForConverter(
         val whileBody = if (updateConverted.isEmpty) {
             codeConverter.convertStatementOrBlock(body)
         }
-        else if (body is PsiBlockStatement) {
-            val nameConflict = initialization is PsiDeclarationStatement && initialization.getDeclaredElements().any { loopVar ->
-                loopVar is PsiNamedElement && body.getCodeBlock().getStatements().any { statement ->
-                    statement is PsiDeclarationStatement && statement.getDeclaredElements().any {
-                        it is PsiNamedElement && it.getName() == loopVar.getName()
+        else {
+            // we should process all continue-statements because we need to add update statement(s) before them
+            val codeConverterToUse = codeConverter.withSpecialStatementConverter(object : SpecialStatementConverter {
+                override fun convertStatement(statement: PsiStatement, codeConverter: CodeConverter): Statement? {
+                    if (statement !is PsiContinueStatement) return null
+                    if (statement.findContinuedStatement()?.toContinuedLoop() != this@ForConverter.statement) return null
+
+                    val continueConverted = this@ForConverter.codeConverter.convertStatement(statement)
+                    val statements = listOf(updateConverted, continueConverted)
+                    if (statement.getParent() is PsiCodeBlock) {
+                        // generate fictive statement which will generate multiple statements
+                        return object : Statement() {
+                            override fun generateCode(builder: CodeBuilder) {
+                                builder.append(statements, "\n")
+                            }
+                        }
+                    }
+                    else {
+                        return Block(statements, LBrace().assignNoPrototype(), RBrace().assignNoPrototype())
                     }
                 }
-            }
+            })
 
-            if (nameConflict) {
-                val statements = listOf(codeConverter.convertStatement(body), updateConverted)
-                Block(statements, LBrace().assignNoPrototype(), RBrace().assignNoPrototype(), true).assignNoPrototype()
+            if (body is PsiBlockStatement) {
+                val nameConflict = initialization is PsiDeclarationStatement && initialization.getDeclaredElements().any { loopVar ->
+                    loopVar is PsiNamedElement && body.getCodeBlock().getStatements().any { statement ->
+                        statement is PsiDeclarationStatement && statement.getDeclaredElements().any {
+                            it is PsiNamedElement && it.getName() == loopVar.getName()
+                        }
+                    }
+                }
+
+                if (nameConflict) {
+                    val statements = listOf(codeConverterToUse.convertStatement(body), updateConverted)
+                    Block(statements, LBrace().assignNoPrototype(), RBrace().assignNoPrototype(), true).assignNoPrototype()
+                }
+                else {
+                    val block = codeConverterToUse.convertBlock(body.getCodeBlock(), true)
+                    Block(block.statements + listOf(updateConverted), block.lBrace, block.rBrace, true).assignPrototypesFrom(block)
+                }
             }
             else {
-                val block = codeConverter.convertBlock(body.getCodeBlock(), true)
-                Block(block.statements + listOf(updateConverted), block.lBrace, block.rBrace, true).assignPrototypesFrom(block)
+                val statements = listOf(codeConverterToUse.convertStatement(body), updateConverted)
+                Block(statements, LBrace().assignNoPrototype(), RBrace().assignNoPrototype(), true).assignNoPrototype()
             }
-        }
-        else {
-            val statements = listOf(codeConverter.convertStatement(body), updateConverted)
-            Block(statements, LBrace().assignNoPrototype(), RBrace().assignNoPrototype(), true).assignNoPrototype()
         }
 
         val whileStatement = WhileStatement(
@@ -112,9 +101,24 @@ class ForConverter(
                 statement.isInSingleLine()).assignNoPrototype()
         if (initializationConverted.isEmpty) return whileStatement
 
-        val statements = listOf(initializationConverted, whileStatement)
-        val block = Block(statements, LBrace().assignNoPrototype(), RBrace().assignNoPrototype()).assignNoPrototype()
-        return MethodCallExpression.build(null, "run", listOf(), listOf(), false, LambdaExpression(null, block))
+        //TODO: we could omit "run { ... }" when it won't cause any name conflicts
+        return RunBlockWithLoopStatement(initializationConverted, whileStatement)
+    }
+
+    public class RunBlockWithLoopStatement(
+            public val initialization: Statement,
+            public val loop: Statement
+    ) : Statement() {
+
+        private val methodCall = run {
+            val statements = listOf(initialization, loop)
+            val block = Block(statements, LBrace().assignNoPrototype(), RBrace().assignNoPrototype()).assignNoPrototype()
+            MethodCallExpression.build(null, "run", listOf(), listOf(), false, LambdaExpression(null, block))
+        }
+
+        override fun generateCode(builder: CodeBuilder) {
+            methodCall.generateCode(builder)
+        }
     }
 
     private fun convertToForeach(): ForeachStatement? {
@@ -194,4 +198,11 @@ class ForConverter(
         return RangeExpression(codeConverter.convertExpression(start), endExpression)
     }
 
+    private fun PsiStatement.toContinuedLoop(): PsiLoopStatement? {
+        return when (this) {
+            is PsiLoopStatement -> this
+            is PsiLabeledStatement -> this.getStatement()?.toContinuedLoop()
+            else -> null
+        }
+    }
 }

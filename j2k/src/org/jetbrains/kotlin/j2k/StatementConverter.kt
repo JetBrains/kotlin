@@ -24,6 +24,17 @@ trait StatementConverter {
     fun convertStatement(statement: PsiStatement, codeConverter: CodeConverter): Statement
 }
 
+trait SpecialStatementConverter {
+    fun convertStatement(statement: PsiStatement, codeConverter: CodeConverter): Statement?
+}
+
+fun StatementConverter.withSpecialConverter(specialConverter: SpecialStatementConverter): StatementConverter {
+    return object: StatementConverter {
+        override fun convertStatement(statement: PsiStatement, codeConverter: CodeConverter): Statement
+                = specialConverter.convertStatement(statement, codeConverter) ?: this@withSpecialConverter.convertStatement(statement, codeConverter)
+    }
+}
+
 class DefaultStatementConverter : JavaElementVisitor(), StatementConverter {
     private var _codeConverter: CodeConverter? = null
     private var result: Statement = Statement.Empty
@@ -133,8 +144,16 @@ class DefaultStatementConverter : JavaElementVisitor(), StatementConverter {
     }
 
     override fun visitLabeledStatement(statement: PsiLabeledStatement) {
-        result = LabelStatement(converter.convertIdentifier(statement.getLabelIdentifier()),
-                                codeConverter.convertStatement(statement.getStatement()))
+        //TODO: multiple labels
+        val statementConverted = codeConverter.convertStatement(statement.getStatement())
+        val identifier = converter.convertIdentifier(statement.getLabelIdentifier())
+        if (statementConverted is ForConverter.RunBlockWithLoopStatement) { // special case - if our loop gets converted to run { ... } we should move label inside
+            val labeledLoop = LabeledStatement(identifier, statementConverted.loop).assignPrototype(statement)
+            result = ForConverter.RunBlockWithLoopStatement(statementConverted.initialization, labeledLoop)
+        }
+        else {
+            result = LabeledStatement(identifier, statementConverted)
+        }
     }
 
     override fun visitSwitchLabelStatement(statement: PsiSwitchLabelStatement) {
