@@ -30,6 +30,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @InnerTestClasses({
         JetSafeDeleteTestGenerated.KotlinClass.class,
+        JetSafeDeleteTestGenerated.KotlinClassWithJava.class,
         JetSafeDeleteTestGenerated.KotlinObject.class,
         JetSafeDeleteTestGenerated.KotlinFunction.class,
         JetSafeDeleteTestGenerated.KotlinFunctionWithJava.class,
@@ -116,6 +117,21 @@ public class JetSafeDeleteTestGenerated extends AbstractJetSafeDeleteTest {
         public void testUnsafeImport() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/safeDelete/deleteClass/kotlinClass/unsafeImport.kt");
             doClassTest(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/safeDelete/deleteClass/kotlinClassWithJava")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class KotlinClassWithJava extends AbstractJetSafeDeleteTest {
+        public void testAllFilesPresentInKotlinClassWithJava() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/safeDelete/deleteClass/kotlinClassWithJava"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("classWithDelegationCalls.kt")
+        public void testClassWithDelegationCalls() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/safeDelete/deleteClass/kotlinClassWithJava/classWithDelegationCalls.kt");
+            doClassTestWithJava(fileName);
         }
     }
 
@@ -358,6 +374,12 @@ public class JetSafeDeleteTestGenerated extends AbstractJetSafeDeleteTest {
         @TestMetadata("overrideAndImplement2.kt")
         public void testOverrideAndImplement2() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/safeDelete/deleteFunction/kotlinFunctionWithJava/overrideAndImplement2.kt");
+            doFunctionTestWithJava(fileName);
+        }
+
+        @TestMetadata("secondaryConstructor.kt")
+        public void testSecondaryConstructor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/safeDelete/deleteFunction/kotlinFunctionWithJava/secondaryConstructor.kt");
             doFunctionTestWithJava(fileName);
         }
     }

@@ -54,8 +54,13 @@ public fun PsiReference.matchesTarget(candidateTarget: PsiElement): Boolean {
             || it is JetObjectDeclaration && it.isCompanion() && it.getNonStrictParentOfType<JetClass>() == unwrappedCandidate
         }
     }
-    else {
-        if (targets.any { unwrappedCandidate.isConstructorOf(it) }) return true
+    // TODO: Workaround for Kotlin constructor search in Java code. To be removed after refactoring of the search API
+    else if (this is PsiJavaCodeReferenceElement && unwrappedCandidate is JetSecondaryConstructor) {
+        var parent = getElement().getParent()
+        if (parent is PsiAnonymousClass) {
+            parent = parent.getParent()
+        }
+        if ((parent as? PsiNewExpression)?.resolveConstructor()?.unwrapped == unwrappedCandidate) return true
     }
     if (this is PsiReferenceExpression && candidateTarget is JetObjectDeclaration && unwrappedTargets.size() == 1) {
         val referredClass = unwrappedTargets.first()

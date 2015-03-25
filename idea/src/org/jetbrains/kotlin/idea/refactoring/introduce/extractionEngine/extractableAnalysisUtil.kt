@@ -912,7 +912,7 @@ fun ExtractableCodeDescriptor.validate(): ExtractableCodeDescriptorWithConflicts
             if (diagnostics.any { it.getFactory() == Errors.UNRESOLVED_REFERENCE }
                 || (currentDescriptor != null
                     && !ErrorUtils.isError(currentDescriptor)
-                    && !comparePossiblyOverridingDescriptors(currentDescriptor, resolveResult.descriptor))) {
+                    && !comparePossiblyOverridingDescriptors(extractionData.project, currentDescriptor, resolveResult.descriptor))) {
                 conflicts.putValue(
                         resolveResult.originalRefExpr,
                         getDeclarationMessage(resolveResult.declaration, "0.will.no.longer.be.accessible.after.extraction")

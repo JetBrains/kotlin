@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.idea.findUsages.KotlinPropertyFindUsagesOptions;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.JetTestUtils;
+import static com.intellij.codeInsight.TargetElementUtil.*;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -326,7 +327,7 @@ public abstract class AbstractJetFindUsagesTest extends JetLightCodeInsightFixtu
 
         PsiElement originalElement =
                 InTextDirectivesUtils.isDirectiveDefined(mainFileText, "// FIND_BY_REF")
-                ? TargetElementUtilBase.findTargetElement(myFixture.getEditor(), TargetElementUtilBase.REFERENCED_ELEMENT_ACCEPTED)
+                ? TargetElementUtilBase.findTargetElement(myFixture.getEditor(), REFERENCED_ELEMENT_ACCEPTED | NEW_AS_CONSTRUCTOR)
                 : myFixture.getElementAtCaret();
         if (InTextDirectivesUtils.isDirectiveDefined(mainFileText, "// FIND_BY_MIRROR_ELEMENT")) {
             assert originalElement instanceof PsiCompiledElement : "PsiCompiledElement is expected: " + originalElement;
