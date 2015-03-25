@@ -16,35 +16,20 @@
 
 package org.jetbrains.kotlin.idea.quickfix
 
-import com.intellij.codeInsight.intention.IntentionAction
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.progress.ProgressIndicator
-import com.intellij.openapi.progress.ProgressManager
-import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
-import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
-import org.jetbrains.kotlin.idea.project.PluginJetFilesProvider
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
-import org.jetbrains.kotlin.idea.util.application.runReadAction
-import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.idea.util.psiModificationUtil.getFunctionLiteralArgumentName
 import org.jetbrains.kotlin.idea.util.psiModificationUtil.moveInsideParenthesesAndReplaceWith
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.types.expressions.FunctionsTypingVisitor
-import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.ArrayList
 
 public class DeprecatedLambdaSyntaxFix(element: JetFunctionLiteralExpression) : JetIntentionAction<JetFunctionLiteralExpression>(element) {
@@ -52,7 +37,7 @@ public class DeprecatedLambdaSyntaxFix(element: JetFunctionLiteralExpression) : 
     override fun getFamilyName() = JetBundle.message("migrate.lambda.syntax.family")
 
     override fun invoke(project: Project, editor: Editor, file: JetFile) {
-        LambdaWithDeprecatedSyntax(element, JetPsiFactory(project)).runFix()
+        DeprecatedSyntaxFix.createFix(element).runFix()
     }
 
     companion object Factory : JetSingleIntentionActionFactory() {
@@ -61,43 +46,125 @@ public class DeprecatedLambdaSyntaxFix(element: JetFunctionLiteralExpression) : 
     }
 }
 
-private class LambdaWithDeprecatedSyntax(val functionLiteralExpression: JetFunctionLiteralExpression, val psiFactory: JetPsiFactory, val level: Int = 0) {
-    val functionLiteral = functionLiteralExpression.getFunctionLiteral()
-    val hasNoReturnAndReceiverType = !functionLiteral.hasDeclaredReturnType() && functionLiteral.getReceiverTypeReference() == null
+public class DeprecatedLambdaSyntaxInWholeProjectFix(element: JetFunctionLiteralExpression) :
+        JetWholeProjectModalAction<JetFunctionLiteralExpression, Collection<DeprecatedSyntaxFix>>(
+                element, JetBundle.message("migrate.lambda.syntax.in.whole.project.modal.title")) {
 
-    val bindingContext = if (hasNoReturnAndReceiverType) null else functionLiteralExpression.analyze()
-    val functionLiteralType: JetType? = if (hasNoReturnAndReceiverType) null else {
-        val type = bindingContext!!.get(BindingContext.EXPRESSION_TYPE, functionLiteralExpression)
-        assert(type != null && KotlinBuiltIns.isFunctionOrExtensionFunctionType(type)) {
-            "Broken function type for expression: ${functionLiteralExpression.getText()}, at: ${DiagnosticUtils.atLocation(functionLiteralExpression)}"
-        }
-        type
+    override fun getText() = JetBundle.message("migrate.lambda.syntax.in.whole.project")
+    override fun getFamilyName() = JetBundle.message("migrate.lambda.syntax.in.whole.project.family")
+
+    override fun collectDataForFile(project: Project, file: JetFile): Collection<DeprecatedSyntaxFix>? {
+        val lambdas = ArrayList<DeprecatedSyntaxFix>()
+        file.accept(LambdaCollectionVisitor(lambdas), 0)
+        return lambdas.sortBy { -it.level }
     }
 
+    override fun applyChangesForFile(project: Project, file: JetFile, data: Collection<DeprecatedSyntaxFix>) {
+        data.forEach {
+            it.runFix()
+        }
+    }
+
+    private class LambdaCollectionVisitor(val lambdas: MutableCollection<DeprecatedSyntaxFix>) : JetTreeVisitor<Int>() {
+        override fun visitFunctionLiteralExpression(functionLiteralExpression: JetFunctionLiteralExpression, data: Int): Void? {
+            functionLiteralExpression.acceptChildren(this, data + 1)
+            if (JetPsiUtil.isDeprecatedLambdaSyntax(functionLiteralExpression)) {
+                lambdas.add(DeprecatedSyntaxFix.createFix(functionLiteralExpression, data))
+            }
+            return null
+        }
+
+        override fun visitJetFile(file: JetFile, data: Int?): Void? {
+            super.visitJetFile(file, data)
+            file.acceptChildren(this, data)
+            return null
+        }
+    }
+
+    companion object Factory : JetSingleIntentionActionFactory() {
+        override fun createAction(diagnostic: Diagnostic)
+                = (diagnostic.getPsiElement() as? JetFunctionLiteralExpression)?.let { DeprecatedLambdaSyntaxInWholeProjectFix(it) }
+    }
+}
+
+private trait DeprecatedSyntaxFix {
+    val level: Int
+
     // you must run it under write action
-    fun runFix() {
+    fun runFix()
+
+    internal companion object {
+        fun createFix(functionLiteralExpression: JetFunctionLiteralExpression, level: Int = 0): DeprecatedSyntaxFix {
+            val functionLiteral = functionLiteralExpression.getFunctionLiteral()
+            val hasNoReturnAndReceiverType = !functionLiteral.hasDeclaredReturnType() && functionLiteral.getReceiverTypeReference() == null
+
+            return if (hasNoReturnAndReceiverType) DeparenthesizeParameterList(functionLiteralExpression, level)
+            else LambdaToFunctionExpression(functionLiteralExpression, level)
+        }
+    }
+}
+
+private class DeparenthesizeParameterList(
+        val functionLiteralExpression: JetFunctionLiteralExpression,
+        override val level: Int = 0
+): DeprecatedSyntaxFix {
+
+    override fun runFix() {
         if (!JetPsiUtil.isDeprecatedLambdaSyntax(functionLiteralExpression)) return
 
-        if (hasNoReturnAndReceiverType) {
-            removeExternalParenthesesOnParameterList(functionLiteral, psiFactory)
+        val psiFactory = JetPsiFactory(functionLiteralExpression)
+        val functionLiteral = functionLiteralExpression.getFunctionLiteral()
+        val parameterList = functionLiteral.getValueParameterList()
+        if (parameterList != null && parameterList.isParenthesized()) {
+            val oldParameterList = parameterList.getText()
+            val newParameterList = oldParameterList.substring(1..oldParameterList.length() - 2)
+            parameterList.replace(psiFactory.createFunctionLiteralParameterList(newParameterList))
+        }
+    }
+}
+
+private class LambdaToFunctionExpression(
+        val functionLiteralExpression: JetFunctionLiteralExpression,
+        override val level: Int = 0
+): DeprecatedSyntaxFix {
+    val functionLiteralArgumentName: String?
+    val receiverType: String?
+    val returnType: String?
+
+    init {
+        val bindingContext = functionLiteralExpression.analyze()
+        val functionLiteralType = bindingContext.get(BindingContext.EXPRESSION_TYPE, functionLiteralExpression)
+        assert(functionLiteralType != null && KotlinBuiltIns.isFunctionOrExtensionFunctionType(functionLiteralType)) {
+            "Broken function type for expression: ${functionLiteralExpression.getText()}, at: ${DiagnosticUtils.atLocation(functionLiteralExpression)}"
+        }
+        receiverType = KotlinBuiltIns.getReceiverType(functionLiteralType)?.let { IdeDescriptorRenderers.SOURCE_CODE.renderType(it) }
+        returnType = KotlinBuiltIns.getReturnTypeFromFunctionType(functionLiteralType).let {
+            if (KotlinBuiltIns.isUnit(it))
+                null
+            else
+                IdeDescriptorRenderers.SOURCE_CODE.renderType(it)
+        }
+        functionLiteralArgumentName = getFunctionLiteralArgument()?.getFunctionLiteralArgumentName(bindingContext)
+    }
+
+    override fun runFix() {
+        if (!JetPsiUtil.isDeprecatedLambdaSyntax(functionLiteralExpression)) return
+
+        val newFunctionExpression = createFunctionExpression()
+
+        val literalArgument = getFunctionLiteralArgument()
+        val replacedFunctionExpression = if (literalArgument == null) {
+            functionLiteralExpression.replace(newFunctionExpression)
         }
         else {
-            val functionExpression = convertToFunctionExpression(functionLiteralType!!)
-
-            val literalArgument = getFunctionLiteralArgument()
-            val newFunctionExpression = if (literalArgument == null) {
-                functionLiteralExpression.replace(functionExpression) as JetNamedFunction
-            }
-            else {
-                literalArgument.moveInsideParenthesesAndReplaceWith(functionExpression, bindingContext!!).
-                        getValueArguments().last().getArgumentExpression() as JetNamedFunction
-            }
-
-            // todo move outside
-            ShortenReferences.DEFAULT.process(
-                    listOf(newFunctionExpression.getReceiverTypeReference(), newFunctionExpression.getTypeReference()).filterNotNull()
-            )
+            literalArgument.moveInsideParenthesesAndReplaceWith(newFunctionExpression, functionLiteralArgumentName).
+                    getValueArguments().last().getArgumentExpression()
         }
+
+        val functionExpression = JetPsiUtil.deparenthesize(replacedFunctionExpression as JetExpression) as JetNamedFunction
+
+        ShortenReferences.DEFAULT.process(
+                listOf(functionExpression.getReceiverTypeReference(), functionExpression.getTypeReference()).filterNotNull())
     }
 
     private fun getFunctionLiteralArgument(): JetFunctionLiteralArgument? {
@@ -107,15 +174,6 @@ private class LambdaWithDeprecatedSyntax(val functionLiteralExpression: JetFunct
             return argument
         }
         return null
-    }
-
-    private fun removeExternalParenthesesOnParameterList(functionLiteral: JetFunctionLiteral, psiFactory: JetPsiFactory) {
-        val parameterList = functionLiteral.getValueParameterList()
-        if (parameterList != null && parameterList.isParenthesized()) {
-            val oldParameterList = parameterList.getText()
-            val newParameterList = oldParameterList.substring(1..oldParameterList.length() - 2)
-            parameterList.replace(psiFactory.createFunctionLiteralParameterList(newParameterList))
-        }
     }
 
     private fun JetElement.replaceWithReturn(psiFactory: JetPsiFactory) {
@@ -135,18 +193,11 @@ private class LambdaWithDeprecatedSyntax(val functionLiteralExpression: JetFunct
         return null
     }
 
-    private fun convertToFunctionExpression(
-            functionLiteralType: JetType
-    ): JetNamedFunction {
+    private fun createFunctionExpression(): JetNamedFunction {
+        val psiFactory = JetPsiFactory(functionLiteralExpression)
+        val functionLiteral = functionLiteralExpression.getFunctionLiteral()
         val functionName = getLambdaLabelName()
         val parameterList = functionLiteral.getValueParameterList()?.getText()
-        val receiverType = KotlinBuiltIns.getReceiverType(functionLiteralType)?.let { IdeDescriptorRenderers.SOURCE_CODE.renderType(it) }
-        val returnType = KotlinBuiltIns.getReturnTypeFromFunctionType(functionLiteralType).let {
-            if (KotlinBuiltIns.isUnit(it))
-                null
-            else
-                IdeDescriptorRenderers.SOURCE_CODE.renderType(it)
-        }
 
         val functionDeclaration = "fun " +
                                   (receiverType?.let { "$it." } ?: "") +
