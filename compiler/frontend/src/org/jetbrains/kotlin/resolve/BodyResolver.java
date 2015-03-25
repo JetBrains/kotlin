@@ -217,7 +217,8 @@ public class BodyResolver {
             PsiElement constructorToReport = DescriptorToSourceUtils.descriptorToDeclaration(currentConstructor);
             if (constructorToReport != null) {
                 JetConstructorDelegationCall call = ((JetSecondaryConstructor) constructorToReport).getDelegationCall();
-                assert call != null && call.getCalleeExpression() != null : "resolved call and it's callee can't be null";
+                assert call.getCalleeExpression() != null
+                        : "Callee expression of delegation call should not be null on cycle as there should be explicit 'this' calls";
                 trace.report(CYCLIC_CONSTRUCTOR_DELEGATION_CALL.on(call.getCalleeExpression()));
             }
 
