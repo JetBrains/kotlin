@@ -794,6 +794,12 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         );
     }
 
+    public void testNoConflictWithReceiverName() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        changeInfo.addParameter(new JetParameterInfo(-1, "i", KotlinBuiltIns.getInstance().getIntType(), null, "0", null, null));
+        doTest(changeInfo);
+    }
+
     @NotNull
     @Override
     protected String getTestDataPath() {

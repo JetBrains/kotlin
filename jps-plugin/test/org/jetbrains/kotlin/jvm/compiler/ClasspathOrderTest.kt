@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.jvm.compiler
 
-import org.jetbrains.kotlin.test.TestCaseWithTmpdir
+import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilder
 import org.jetbrains.kotlin.test.JetTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
-import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilderFactory
-import java.io.File
+import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.utils.PathUtil
+import java.io.File
 
 /**
  * This test checks that Java classes from sources have higher priority in Kotlin resolution process than classes from binaries.
@@ -38,7 +38,7 @@ public class ClasspathOrderTest : TestCaseWithTmpdir() {
     }
 
     public fun testClasspathOrderForModuleScriptBuild() {
-        val xmlContent = KotlinModuleXmlBuilderFactory.INSTANCE.create().addModule(
+        val xmlContent = KotlinModuleXmlBuilder().addModule(
                 "name",
                 File(tmpdir, "output").getAbsolutePath(),
                 listOf(sourceDir),

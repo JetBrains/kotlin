@@ -216,6 +216,7 @@ class ArraysJVMTest {
     }
 
     test fun drop() {
+        expect(listOf(1), { intArray(1).drop(0) })
         expect(listOf(), { intArray().drop(1) })
         expect(listOf(), { intArray(1).drop(1) })
         expect(listOf(3), { intArray(2, 3).drop(1) })
@@ -227,6 +228,9 @@ class ArraysJVMTest {
         expect(listOf(false), { booleanArray(true, false).drop(1) })
         expect(listOf('b'), { charArray('a', 'b').drop(1) })
         expect(listOf("b"), { array("a", "b").drop(1) })
+        fails {
+            listOf(2).drop(-1)
+        }
     }
 
     test fun dropWhile() {
@@ -245,6 +249,7 @@ class ArraysJVMTest {
 
     test fun take() {
         expect(listOf(), { intArray().take(1) })
+        expect(listOf(), { intArray(1).take(0) })
         expect(listOf(1), { intArray(1).take(1) })
         expect(listOf(2), { intArray(2, 3).take(1) })
         expect(listOf(3000000000000), { longArray(3000000000000, 2000000000000).take(1) })
@@ -255,6 +260,27 @@ class ArraysJVMTest {
         expect(listOf(true), { booleanArray(true, false).take(1) })
         expect(listOf('a'), { charArray('a', 'b').take(1) })
         expect(listOf("a"), { array("a", "b").take(1) })
+        fails {
+            listOf(1).take(-1)
+        }
+    }
+
+    test fun takeLast() {
+        expect(listOf(), { intArray().takeLast(1) })
+        expect(listOf(), { intArray(1).takeLast(0) })
+        expect(listOf(1), { intArray(1).takeLast(1) })
+        expect(listOf(3), { intArray(2, 3).takeLast(1) })
+        expect(listOf(2000000000000), { longArray(3000000000000, 2000000000000).takeLast(1) })
+        expect(listOf(3.toByte()), { byteArray(2, 3).takeLast(1) })
+        expect(listOf(3.toShort()), { shortArray(2, 3).takeLast(1) })
+        expect(listOf(3.0f), { floatArray(2f, 3f).takeLast(1) })
+        expect(listOf(3.0), { doubleArray(2.0, 3.0).takeLast(1) })
+        expect(listOf(false), { booleanArray(true, false).takeLast(1) })
+        expect(listOf('b'), { charArray('a', 'b').takeLast(1) })
+        expect(listOf("b"), { array("a", "b").takeLast(1) })
+        fails {
+            listOf(1).takeLast(-1)
+        }
     }
 
     test fun takeWhile() {

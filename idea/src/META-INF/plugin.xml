@@ -6,6 +6,7 @@
   <version>@snapshot@</version>
   <vendor url="http://www.jetbrains.com">JetBrains s.r.o.</vendor>
 
+  <!-- Run replicateIdeaVersions Ant task after changing the versions. -->
   <idea-version since-build="139.1408" until-build="139.9999"/>
 
   <depends optional="true" config-file="junit.xml">JUnit</depends>

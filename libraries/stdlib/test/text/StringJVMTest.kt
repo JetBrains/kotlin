@@ -332,5 +332,12 @@ class StringJVMTest {
         assertEquals("BCDabc", builder.slice(1..6))
         assertEquals("baD", builder.slice(5 downTo 3))
         assertEquals("aDAB", builder.slice(iter))
+
+        fails {
+            "abc".slice(listOf(1,4))
+        }
+        fails {
+            builder.slice(listOf(10))
+        }
     }
 }

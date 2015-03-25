@@ -5,17 +5,22 @@ import java.io.File
 import kotlin.test.assertEquals
 import java.io.Reader
 import java.io.StringReader
+import java.net.URL
 import java.util.ArrayList
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 fun sample(): Reader = StringReader("Hello\nWorld");
 
 class ReadWriteTest {
     test fun testAppendText() {
         val file = File.createTempFile("temp", System.nanoTime().toString())
-        file.writeText("Hello\n")
-        file.appendText("World")
+        file.writeText("Hello\n", "UTF8")
+        file.appendText("World\n", "UTF8")
+        file.appendText("Again")
 
-        assertEquals("Hello\nWorld", file.readText())
+        assertEquals("Hello\nWorld\nAgain", file.readText())
+        assertEquals(listOf("Hello", "World", "Again"), file.readLines("UTF8"))
         file.deleteOnExit()
     }
 
@@ -60,13 +65,26 @@ class ReadWriteTest {
 
     test fun file() {
         val file = File.createTempFile("temp", System.nanoTime().toString())
+        val writer = file.outputStream().writer().buffered()
 
-        file.writeText("Hello\nWorld")
-        val list = ArrayList<String>()
-        file.forEachLine{
-            list.add(it)
+        writer.write("Hello")
+        writer.newLine()
+        writer.write("World")
+        writer.close()
+
+        //file.replaceText("Hello\nWorld")
+        file.forEachBlock { arr: ByteArray, size: Int ->
+            assertTrue(size >= 11 && size <= 12, size.toString())
+            assertTrue(arr.contains('W'.toByte()))
         }
+        val list = ArrayList<String>()
+        file.forEachLine("UTF8", {
+            list.add(it)
+        })
         assertEquals(arrayListOf("Hello", "World"), list)
+        val text = file.inputStream().reader().readText()
+        assertTrue(text.contains("Hello"))
+        assertTrue(text.contains("World"))
 
         file.writeText("")
         var c = 0
@@ -145,5 +163,13 @@ class ReadWriteTest {
         }
 
         assertEquals(arrayListOf("Hello", "World"), list)
+    }
+
+    test fun testURL() {
+        val url = URL("http://kotlinlang.org")
+        val text = url.readText()
+        assertFalse(text.isEmpty())
+        val text2 = url.readText("UTF8")
+        assertFalse(text2.isEmpty())
     }
 }
