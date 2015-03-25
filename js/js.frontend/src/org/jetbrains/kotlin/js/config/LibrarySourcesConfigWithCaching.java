@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.js.config;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadata;
 import org.jetbrains.kotlin.utils.PathUtil;
@@ -40,10 +41,22 @@ public class LibrarySourcesConfigWithCaching extends LibrarySourcesConfig {
             @NotNull EcmaVersion ecmaVersion,
             boolean sourcemap,
             boolean inlineEnabled,
+            boolean isUnitTestConfig,
+            @Nullable String metaInfo
+    ) {
+        super(project, moduleId, JS_STDLIB, ecmaVersion, sourcemap, inlineEnabled, metaInfo);
+        this.isUnitTestConfig = isUnitTestConfig;
+    }
+
+    public LibrarySourcesConfigWithCaching(
+            @NotNull Project project,
+            @NotNull String moduleId,
+            @NotNull EcmaVersion ecmaVersion,
+            boolean sourcemap,
+            boolean inlineEnabled,
             boolean isUnitTestConfig
     ) {
-        super(project, moduleId, JS_STDLIB, ecmaVersion, sourcemap, inlineEnabled);
-        this.isUnitTestConfig = isUnitTestConfig;
+        this(project, moduleId, ecmaVersion, sourcemap, inlineEnabled, isUnitTestConfig, null);
     }
 
     @Override

@@ -204,6 +204,11 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
         return false;
     }
 
+    @Nullable
+    protected String getMetaInfo(@NotNull String moduleId) {
+        return null;
+    }
+
     protected void processJsProgram(@NotNull JsProgram program) throws Exception { }
 
     protected void runRhinoTests(
@@ -279,10 +284,10 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
     @NotNull
     private Config createConfig(@NotNull Project project, @NotNull String moduleId, @NotNull EcmaVersion ecmaVersion, @Nullable List<String> libraries) {
         if (libraries == null) {
-            return new LibrarySourcesConfigWithCaching(project, moduleId, ecmaVersion, shouldGenerateSourceMap(), IS_INLINE_ENABLED, shouldBeTranslateAsUnitTestClass());
+            return new LibrarySourcesConfigWithCaching(project, moduleId, ecmaVersion, shouldGenerateSourceMap(), IS_INLINE_ENABLED, shouldBeTranslateAsUnitTestClass(), getMetaInfo(moduleId));
         }
         else {
-            return new LibrarySourcesConfig(project, moduleId, librariesWithJsStdlib(libraries), ecmaVersion, shouldGenerateSourceMap(), IS_INLINE_ENABLED);
+            return new LibrarySourcesConfig(project, moduleId, librariesWithJsStdlib(libraries), ecmaVersion, shouldGenerateSourceMap(), IS_INLINE_ENABLED, getMetaInfo(moduleId));
         }
     }
 
@@ -294,7 +299,7 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
     }
 
     @NotNull
-    private String getOutputPath() {
+    protected String getOutputPath() {
         return pathToTestDir() + OUT;
     }
 

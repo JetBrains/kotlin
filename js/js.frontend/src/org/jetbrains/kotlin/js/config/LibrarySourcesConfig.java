@@ -61,9 +61,10 @@ public class LibrarySourcesConfig extends Config {
             @NotNull List<String> files,
             @NotNull EcmaVersion ecmaVersion,
             boolean sourcemap,
-            boolean inlineEnabled
+            boolean inlineEnabled,
+            @Nullable String metaInfo
     ) {
-        super(project, moduleId, ecmaVersion, sourcemap, inlineEnabled);
+        super(project, moduleId, ecmaVersion, sourcemap, inlineEnabled, metaInfo);
         this.files = files;
     }
 

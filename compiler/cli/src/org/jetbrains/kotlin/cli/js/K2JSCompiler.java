@@ -245,7 +245,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             ContainerUtil.addAllNotNull(libraryFiles, arguments.libraryFiles);
         }
 
-        return new LibrarySourcesConfig(project, moduleId, libraryFiles, ecmaVersion, arguments.sourceMap, inlineEnabled);
+        return new LibrarySourcesConfig(project, moduleId, libraryFiles, ecmaVersion, arguments.sourceMap, inlineEnabled, arguments.metaInfo);
     }
 
     public static MainCallParameters createMainCallParameters(String main) {
