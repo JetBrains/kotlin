@@ -27,24 +27,32 @@ Example fun foo() {}
 
 ## Annotation Targets
 
-Possible annotation targets in Kotlin are:
-* PACKAGE
-* CLASSIFIER (class, trait, object, annotation class, enum class, type parameter)
-* CONSTRUCTOR
-* FUNCTION
-* PROPERTY (val, var)
-* PROPERTY_ACCESSOR (getter, setter)
-* TYPE (type usage)
-* (?) TYPE_ARGUMENT (including `*`)
-* VARIABLE (parameter, local variable)
-* EXPRESSION (maybe have lambdas separately?)
+To check applicability, we can use the following constants:
 
-Possible modifiers:
-* LOCALS_ALLOWED
-* LOCALCS_REQUIRED
+------
+| Kotlin constant | Java constant | 
+------
+| ANNOTATION_CLASS | ANNOTATION_TYPE |
+| CONSTRUCTOR | <same> |
+| FIELD | <same>
+| LOCAL_VARIABLE | <same> |
+| FUNCITON | METHOD |
+| PROPERTY_GETTER | METHOD |
+| PROPERTY_SETTER | METHOD |
+| PACKAGE | <same> |
+| VALUE_PARAMETER | PARAMETER |
+| CLASSIFIER | TYPE |
+| TYPE_PARAMETER | <same>
+| TYPE | TYPE_USE |
+| PROPERTY | <no analog> |
+| EXPRESSION | <no analog> |
+
+**TODO** Open question: what about traits/classes/objects?  
+**TODO** local variables are just like properties, but local  
+
+> Consider: we could have modifiers (parameters) to the `Target` annotation, that regulate applicability, e.g.: LOCALS_ALLOWED/REQUIRED
+> TYPE_ARGUMENTS_ALLOWED/REQUIRED, TRAIT_FORBIDDEN/REQUIRED 
  
-Or have LOCAL_VARIABLE separately
-
 Platform-specific targets
 * SINGLETON_FIELD for objects
 * PROPERTY_FIELD
