@@ -52,7 +52,7 @@ public class ResolveElementCache extends ElementResolver {
                             @Nullable
                             @Override
                             public Result<MemoizedFunctionToNotNull<JetElement, BindingContext>> compute() {
-                                ResolveSession resolveSession = ResolveElementCache.this.resolveSession;
+                                ResolveSession resolveSession = ResolveElementCache.this.getResolveSession();
                                 LazyResolveStorageManager manager = resolveSession.getStorageManager();
                                 MemoizedFunctionToNotNull<JetElement, BindingContext> elementsCacheFunction =
                                         manager.createSoftlyRetainedMemoizedFunction(new Function1<JetElement, BindingContext>() {
