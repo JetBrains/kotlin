@@ -33,6 +33,8 @@ public object AndroidConst {
     val ID_USAGE_PREFIX = "@id/"
 
     val CLEAR_FUNCTION_NAME = "clearFindViewByIdCache"
+
+    val IGNORED_XML_WIDGET_TYPES = setOf("requestFocus", "merge", "tag", "check")
 }
 
 public fun nameToIdDeclaration(name: String): String = AndroidConst.ID_DECLARATION_PREFIX + name
@@ -49,7 +51,11 @@ public fun isResourceIdUsage(str: String?): Boolean = str?.startsWith(AndroidCon
 
 public fun isResourceDeclarationOrUsage(id: String?): Boolean = isResourceIdDeclaration(id) || isResourceIdUsage(id)
 
+public fun isWidgetTypeIgnored(xmlType: String): Boolean {
+    return (xmlType.isEmpty() || xmlType in AndroidConst.IGNORED_XML_WIDGET_TYPES)
+}
+
 public fun getRealWidgetType(xmlType: String): String = when (xmlType) {
-    "fragment", "include", "merge" -> "View"
+    "fragment", "include" -> "View"
     else -> xmlType
 }
