@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicLong
 
 class TeamcityStatisticsLogger {
-    private val isOnTeamcity = true
+    private val isOnTeamcity = System.getenv("TEAMCITY_VERSION") != null
 
     private val totalTime = AtomicLong()
 
