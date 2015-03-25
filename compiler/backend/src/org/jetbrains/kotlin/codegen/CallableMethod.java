@@ -37,7 +37,7 @@ import java.util.List;
 import static org.jetbrains.org.objectweb.asm.Opcodes.INVOKESPECIAL;
 import static org.jetbrains.org.objectweb.asm.Opcodes.INVOKESTATIC;
 
-public class CallableMethod implements Callable {
+public class CallableMethod implements ExtendedCallable {
     private final Type owner;
     private final Type defaultImplOwner;
     private final Type defaultImplParam;
@@ -67,6 +67,7 @@ public class CallableMethod implements Callable {
         this.generateCalleeType = generateCalleeType;
     }
 
+    @Override
     @NotNull
     public Type getOwner() {
         return owner;
@@ -94,10 +95,6 @@ public class CallableMethod implements Callable {
         return signature.getAsmMethod();
     }
 
-    public int getInvokeOpcode() {
-        return invokeOpcode;
-    }
-
     @Nullable
     public Type getThisType() {
         return thisClass;
@@ -109,9 +106,10 @@ public class CallableMethod implements Callable {
     }
 
     private void invoke(InstructionAdapter v) {
-        v.visitMethodInsn(getInvokeOpcode(), owner.getInternalName(), getAsmMethod().getName(), getAsmMethod().getDescriptor());
+        v.visitMethodInsn(invokeOpcode, owner.getInternalName(), getAsmMethod().getName(), getAsmMethod().getDescriptor());
     }
 
+    @Override
     public void invokeWithNotNullAssertion(
             @NotNull InstructionAdapter v,
             @NotNull GenerationState state,
@@ -121,10 +119,12 @@ public class CallableMethod implements Callable {
         AsmUtil.genNotNullAssertionForMethod(v, state, resolvedCall);
     }
 
+    @Override
     public void invokeWithoutAssertions(@NotNull InstructionAdapter v) {
         invoke(v);
     }
 
+    @Override
     @Nullable
     public Type getGenerateCalleeType() {
         return generateCalleeType;
@@ -137,7 +137,7 @@ public class CallableMethod implements Callable {
 
         Method method = getAsmMethod();
         String desc = JetTypeMapper.getDefaultDescriptor(method,
-                                                         getInvokeOpcode() == INVOKESTATIC ? null : defaultImplParam.getDescriptor(),
+                                                         invokeOpcode == INVOKESTATIC ? null : defaultImplParam.getDescriptor(),
                                                          receiverParameterType != null);
         if ("<init>".equals(method.getName())) {
             v.aconst(null);
@@ -158,10 +158,7 @@ public class CallableMethod implements Callable {
         AsmUtil.genNotNullAssertionForMethod(v, state, resolvedCall);
     }
 
-    public boolean isNeedsThis() {
-        return thisClass != null && generateCalleeType == null;
-    }
-
+    @Override
     @NotNull
     public Type getReturnType() {
         return signature.getReturnType();
@@ -172,7 +169,8 @@ public class CallableMethod implements Callable {
         return Printer.OPCODES[invokeOpcode] + " " + owner.getInternalName() + "." + signature;
     }
 
+    @Override
     public boolean isStaticCall() {
-        return getInvokeOpcode() == Opcodes.INVOKESTATIC;
+        return invokeOpcode == Opcodes.INVOKESTATIC;
     }
 }
