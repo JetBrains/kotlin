@@ -69,6 +69,10 @@ public class SimplifyNegatedBinaryExpressionIntention : JetSelfTargetingIntentio
     }
 
     override fun applyTo(element: JetPrefixExpression, editor: Editor) {
+        applyTo(element)
+    }
+
+    public fun applyTo(element: JetPrefixExpression) {
         // Guaranteed to succeed (by isApplicableTo)
         val expression = element.unparenthesize()!!
         val invertedOperation = JetPsiUtil.getOperationToken(expression as JetOperationExpression)!!.negate()!!
@@ -87,7 +91,7 @@ public class SimplifyNegatedBinaryExpressionIntention : JetSelfTargetingIntentio
                             expression.getRight()
                     )
                     else -> throw IllegalStateException(
-                         "Expression is neither a JetIsExpression or JetBinaryExpression (checked by isApplicableTo): ${expression.getText()}"
+                            "Expression is neither a JetIsExpression or JetBinaryExpression (checked by isApplicableTo): ${expression.getText()}"
                     )
                 }
         )

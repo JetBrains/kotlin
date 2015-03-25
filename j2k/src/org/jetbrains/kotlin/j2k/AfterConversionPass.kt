@@ -50,13 +50,13 @@ class AfterConversionPass(val project: Project, val postProcessor: PostProcessor
     private fun fixForProblem(problem: Diagnostic): (() -> Unit)? {
         val psiElement = problem.getPsiElement()
         return when (problem.getFactory()) {
-            Errors.UNNECESSARY_NOT_NULL_ASSERTION -> { () ->
+            Errors.UNNECESSARY_NOT_NULL_ASSERTION -> { ->
                 val exclExclOp = psiElement as JetSimpleNameExpression
                 val exclExclExpr = exclExclOp.getParent() as JetUnaryExpression
                 exclExclExpr.replace(exclExclExpr.getBaseExpression()!!)
             }
 
-            Errors.VAL_REASSIGNMENT -> { () ->
+            Errors.VAL_REASSIGNMENT -> { ->
                 val property = (psiElement as? JetSimpleNameExpression)?.getReference()?.resolve() as? JetProperty
                 if (property != null && !property.isVar()) {
                     property.getValOrVarNode().getPsi()!!.replace(JetPsiFactory(project).createVarNode().getPsi()!!)

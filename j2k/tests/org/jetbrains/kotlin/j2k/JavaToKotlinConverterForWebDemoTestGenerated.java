@@ -45,6 +45,7 @@ import java.util.regex.Pattern;
         JavaToKotlinConverterForWebDemoTestGenerated.CallChainExpression.class,
         JavaToKotlinConverterForWebDemoTestGenerated.Class.class,
         JavaToKotlinConverterForWebDemoTestGenerated.ClassExpression.class,
+        JavaToKotlinConverterForWebDemoTestGenerated.CodeSimplifications.class,
         JavaToKotlinConverterForWebDemoTestGenerated.Comments.class,
         JavaToKotlinConverterForWebDemoTestGenerated.ConditionalExpression.class,
         JavaToKotlinConverterForWebDemoTestGenerated.Constructors.class,
@@ -969,6 +970,21 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
         @TestMetadata("stringClass.java")
         public void testStringClass() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/classExpression/stringClass.java");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("j2k/testData/fileOrElement/codeSimplifications")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class CodeSimplifications extends AbstractJavaToKotlinConverterForWebDemoTest {
+        public void testAllFilesPresentInCodeSimplifications() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/codeSimplifications"), Pattern.compile("^(.+)\\.java$"), true);
+        }
+
+        @TestMetadata("NotIs.java")
+        public void testNotIs() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/codeSimplifications/NotIs.java");
             doTest(fileName);
         }
     }

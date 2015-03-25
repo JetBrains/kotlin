@@ -16,13 +16,17 @@
 
 package org.jetbrains.kotlin.idea.j2k
 
-import org.jetbrains.kotlin.j2k.PostProcessor
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArguments
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
-import java.util.ArrayList
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
+import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArguments
+import org.jetbrains.kotlin.idea.intentions.SimplifyNegatedBinaryExpressionIntention
+import org.jetbrains.kotlin.j2k.PostProcessor
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.JetPrefixExpression
+import org.jetbrains.kotlin.psi.JetTreeVisitorVoid
+import org.jetbrains.kotlin.psi.JetTypeArgumentList
+import org.jetbrains.kotlin.resolve.BindingContext
+import java.util.ArrayList
 
 public class J2kPostProcessor(override val contextToAnalyzeIn: PsiElement) : PostProcessor {
     override fun analyzeFile(file: JetFile): BindingContext {
@@ -39,6 +43,15 @@ public class J2kPostProcessor(override val contextToAnalyzeIn: PsiElement) : Pos
                 }
 
                 super.visitTypeArgumentList(typeArgumentList)
+            }
+
+            override fun visitPrefixExpression(expression: JetPrefixExpression) {
+                super.visitPrefixExpression(expression)
+
+                val intention = SimplifyNegatedBinaryExpressionIntention()
+                if (intention.isApplicableTo(expression)) {
+                    intention.applyTo(expression)
+                }
             }
         })
 
