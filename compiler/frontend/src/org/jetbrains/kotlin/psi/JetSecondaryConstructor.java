@@ -172,14 +172,14 @@ public class JetSecondaryConstructor extends JetDeclarationStub<KotlinPlaceHolde
         throw new IncorrectOperationException("setName to constructor");
     }
 
-    @Nullable
+    @NotNull
     public JetConstructorDelegationCall getDelegationCall() {
         return findChildByClass(JetConstructorDelegationCall.class);
     }
 
     public boolean hasEmptyDelegationCall() {
         JetConstructorDelegationCall call = getDelegationCall();
-        return call != null && call.isEmpty();
+        return call.isEmpty();
     }
 
     @NotNull
@@ -192,7 +192,7 @@ public class JetSecondaryConstructor extends JetDeclarationStub<KotlinPlaceHolde
         JetPsiFactory psiFactory = new JetPsiFactory(getProject());
         JetConstructorDelegationCall current = getDelegationCall();
 
-        assert current != null && current.isEmpty()
+        assert current.isEmpty()
                 : "Method should not be called with non-existing or non-empty delegation call: " + getText();
         current.delete();
 
