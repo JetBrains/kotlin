@@ -399,8 +399,8 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         val outputDir = KotlinBuilderModuleScriptGenerator.getOutputDirSafe(representativeTarget)
 
         val moduleName = representativeTarget.getModule().getName()
-        val outputFile = File(outputDir, "$moduleName.js")
-        val metaInfoFile = File(outputDir, "$moduleName.meta.js")
+        val outputFile = JpsJsModuleUtils.getOutputFile(outputDir, moduleName)
+        val metaInfoFile = JpsJsModuleUtils.getOutputMetaFile(outputDir, moduleName)
         val libraryFiles = JpsJsModuleUtils.getLibraryFilesAndDependencies(representativeTarget)
         val compilerSettings = JpsKotlinCompilerSettings.getCompilerSettings(project)
         val k2JsArguments = JpsKotlinCompilerSettings.getK2JsCompilerArguments(project)
