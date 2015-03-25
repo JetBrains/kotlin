@@ -410,8 +410,9 @@ public class KotlinJpsBuildTest extends AbstractKotlinJpsBuildTestCase {
     @NotNull
     private static String[] k2jsOutput(String moduleName) {
         String outputDir = "out/production/" + moduleName;
-        String[] result = new String[1];
+        String[] result = new String[2];
         result[0] = outputDir + "/" + moduleName + ".js";
+        result[1] = outputDir + "/" + moduleName + ".meta.js";
         return result;
     }
 
@@ -560,7 +561,7 @@ public class KotlinJpsBuildTest extends AbstractKotlinJpsBuildTestCase {
         return klass(moduleName, AsmUtil.internalNameByFqNameWithoutInnerClasses(packagePartFqName));
     }
 
-    private static enum Operation {
+    private enum Operation {
         CHANGE, DELETE
     }
 
