@@ -27,6 +27,7 @@ import com.intellij.psi.*
 import org.jetbrains.kotlin.idea.project.PluginJetFilesProvider
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.psiUtil.*
+import java.util.ArrayList
 
 
 public class AddInitKeywordFix(element: JetClassInitializer) : JetIntentionAction<JetClassInitializer>(element) {
@@ -35,14 +36,14 @@ public class AddInitKeywordFix(element: JetClassInitializer) : JetIntentionActio
     override fun getFamilyName() = JetBundle.message("add.init.keyword.family")
 
     override fun invoke(project: Project, editor: Editor?, file: JetFile) {
-        addInitKeyword(file, element)
+        addInitKeyword(element)
     }
 
     companion object Factory : JetSingleIntentionActionFactory() {
-        fun addInitKeyword(file: JetFile, element: JetClassInitializer) {
+        fun addInitKeyword(element: JetClassInitializer) {
             if (element.hasInitKeyword()) return
 
-            val psiFactory = JetPsiFactory(file)
+            val psiFactory = JetPsiFactory(element)
             val initKeyword = psiFactory.createInitKeyword()
             val anchor = element.getBody() ?: return
             element.addBefore(initKeyword, anchor)
@@ -59,22 +60,29 @@ public class AddInitKeywordFix(element: JetClassInitializer) : JetIntentionActio
     }
 }
 
-public class AddInitKeywordFixInWholeProjectFix(elem: JetClassInitializer) : JetIntentionAction<JetClassInitializer>(elem) {
+public class AddInitKeywordFixInWholeProjectFix(elem: JetClassInitializer)
+: JetWholeProjectModalAction<JetClassInitializer, Collection<JetClassInitializer>>(
+        elem, JetBundle.message("add.init.keyword.in.whole.project.modal.title")) {
     override fun getText(): String = JetBundle.message("add.init.keyword.in.whole.project")
 
     override fun getFamilyName(): String = JetBundle.message("add.init.keyword.in.whole.project.family")
 
-    override fun invoke(project: Project, editor: Editor, file: JetFile) {
-        val files = PluginJetFilesProvider.allFilesInProject(file.getProject())
+    override fun collectDataForFile(project: Project, file: JetFile): Collection<JetClassInitializer>? {
+        val classInitializers = ArrayList<JetClassInitializer>()
+        file.accept(AddInitKeywordVisitor(classInitializers))
 
-        files.forEach { it.accept(AddInitKeywordVisitor(file)) }
+        return if (classInitializers.isEmpty()) null else classInitializers
     }
 
-    private class AddInitKeywordVisitor(private val file: JetFile) : JetTreeVisitorVoid() {
+    override fun applyChangesForFile(project: Project, file: JetFile, data: Collection<JetClassInitializer>) {
+        data.forEach { AddInitKeywordFix.addInitKeyword(it) }
+    }
+
+    private class AddInitKeywordVisitor(val classInitializers: MutableCollection<JetClassInitializer>) : JetTreeVisitorVoid() {
         override fun visitAnonymousInitializer(initializer: JetClassInitializer) {
             initializer.acceptChildren(this)
             if (!initializer.hasInitKeyword()) {
-                AddInitKeywordFix.addInitKeyword(file, initializer)
+                classInitializers.add(initializer)
             }
         }
     }
