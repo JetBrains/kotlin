@@ -62,6 +62,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix"), Pattern.compile("^before(\\w+)\\.kt$"), true);
     }
 
+    @TestMetadata("beforeAnonymousObject.kt")
+    public void testAnonymousObject() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/beforeAnonymousObject.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("idea/testData/quickfix/abstract")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -535,6 +541,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("beforeFixExtensionLambdaSignature.kt")
+        public void testFixExtensionLambdaSignature() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/beforeFixExtensionLambdaSignature.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("beforeLinearHierarchy.kt")
         public void testLinearHierarchy() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/beforeLinearHierarchy.kt");
@@ -592,6 +604,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("beforeRemoveParameterNotAvailableForBuiltins.kt")
         public void testRemoveParameterNotAvailableForBuiltins() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/beforeRemoveParameterNotAvailableForBuiltins.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("beforeRemoveUnusedExtensionParameter.kt")
+        public void testRemoveUnusedExtensionParameter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/beforeRemoveUnusedExtensionParameter.kt");
             doTest(fileName);
         }
 
@@ -2825,6 +2843,30 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("beforeRemoveUselessCast.kt")
+        public void testRemoveUselessCast() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/expressions/beforeRemoveUselessCast.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("beforeRemoveUselessCastInParens.kt")
+        public void testRemoveUselessCastInParens() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/expressions/beforeRemoveUselessCastInParens.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("beforeRemoveUselessCastUnderSmartCast.kt")
+        public void testRemoveUselessCastUnderSmartCast() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/expressions/beforeRemoveUselessCastUnderSmartCast.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("beforeReplaceUselessCastWithStaticAssert.kt")
+        public void testReplaceUselessCastWithStaticAssert() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/expressions/beforeReplaceUselessCastWithStaticAssert.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("beforeUnnecessaryNonNullAssertion1.kt")
         public void testUnnecessaryNonNullAssertion1() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/expressions/beforeUnnecessaryNonNullAssertion1.kt");
@@ -2864,12 +2906,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("beforeUnsafeCall3.kt")
         public void testUnsafeCall3() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/expressions/beforeUnsafeCall3.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("beforeUselessCast.kt")
-        public void testUselessCast() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/expressions/beforeUselessCast.kt");
             doTest(fileName);
         }
 
@@ -4570,8 +4606,44 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class TypeMismatch extends AbstractQuickFixTest {
+        @TestMetadata("beforeAccessibleLocalClassInReturn.kt")
+        public void testAccessibleLocalClassInReturn() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/beforeAccessibleLocalClassInReturn.kt");
+            doTest(fileName);
+        }
+
         public void testAllFilesPresentInTypeMismatch() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeMismatch"), Pattern.compile("^before(\\w+)\\.kt$"), true);
+        }
+
+        @TestMetadata("beforeAnonymousObjectInCall.kt")
+        public void testAnonymousObjectInCall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/beforeAnonymousObjectInCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("beforeAnonymousObjectInInfixCall.kt")
+        public void testAnonymousObjectInInfixCall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/beforeAnonymousObjectInInfixCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("beforeAnonymousObjectInInitializer.kt")
+        public void testAnonymousObjectInInitializer() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/beforeAnonymousObjectInInitializer.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("beforeAnonymousObjectInReturn.kt")
+        public void testAnonymousObjectInReturn() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/beforeAnonymousObjectInReturn.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("beforeAnyInReturn.kt")
+        public void testAnyInReturn() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/beforeAnyInReturn.kt");
+            doTest(fileName);
         }
 
         @TestMetadata("beforeChangeFunctionLiteralParameterTypeToFunctionType.kt")
@@ -4655,6 +4727,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("beforeHasNextFunctionReturnTypeMismatch.kt")
         public void testHasNextFunctionReturnTypeMismatch() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/beforeHasNextFunctionReturnTypeMismatch.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("beforeLocalClassInReturn1.kt")
+        public void testLocalClassInReturn1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/beforeLocalClassInReturn1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("beforeLocalClassInReturn2.kt")
+        public void testLocalClassInReturn2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/beforeLocalClassInReturn2.kt");
             doTest(fileName);
         }
 
@@ -4951,6 +5035,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @TestMetadata("beforeMultiFakeOverrideForOperatorConvention.kt")
             public void testMultiFakeOverrideForOperatorConvention() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/beforeMultiFakeOverrideForOperatorConvention.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("beforeNonLocalReturnRuntime.kt")
+            public void testNonLocalReturnRuntime() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/beforeNonLocalReturnRuntime.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("beforeNonLocalReturnWithLabelRuntime.kt")
+            public void testNonLocalReturnWithLabelRuntime() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/beforeNonLocalReturnWithLabelRuntime.kt");
                 doTest(fileName);
             }
 

@@ -39,9 +39,7 @@ import org.jetbrains.jps.model.module.JpsDependencyElement;
 import org.jetbrains.jps.model.module.JpsModule;
 import org.jetbrains.jps.model.module.JpsSdkDependency;
 import org.jetbrains.kotlin.config.IncrementalCompilation;
-import org.jetbrains.kotlin.modules.KotlinModuleDescriptionBuilder;
-import org.jetbrains.kotlin.modules.KotlinModuleDescriptionBuilderFactory;
-import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilderFactory;
+import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilder;
 
 import java.io.File;
 import java.io.IOException;
@@ -51,8 +49,6 @@ import static org.jetbrains.kotlin.jps.build.JpsUtils.getAllDependencies;
 
 public class KotlinBuilderModuleScriptGenerator {
 
-    public static final KotlinModuleDescriptionBuilderFactory FACTORY = KotlinModuleXmlBuilderFactory.INSTANCE;
-
     @Nullable
     public static File generateModuleDescription(
             CompileContext context,
@@ -60,7 +56,7 @@ public class KotlinBuilderModuleScriptGenerator {
             MultiMap<ModuleBuildTarget, File> sourceFiles, // ignored for non-incremental compilation
             boolean hasRemovedFiles
     ) throws IOException, ProjectBuildException {
-        KotlinModuleDescriptionBuilder builder = FACTORY.create();
+        KotlinModuleXmlBuilder builder = new KotlinModuleXmlBuilder();
 
         boolean noSources = true;
 

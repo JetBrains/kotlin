@@ -25,7 +25,7 @@ import java.util.Collections;
 
 public class KotlinModuleXmlGeneratorTest extends TestCase {
     public void testBasic() throws Exception {
-        String actual = KotlinModuleXmlBuilderFactory.INSTANCE.create().addModule(
+        String actual = new KotlinModuleXmlBuilder().addModule(
                 "name",
                 "output",
                 Arrays.asList(new File("s1"), new File("s2")),
@@ -39,7 +39,7 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
     }
 
     public void testFiltered() throws Exception {
-        String actual = KotlinModuleXmlBuilderFactory.INSTANCE.create().addModule(
+        String actual = new KotlinModuleXmlBuilder().addModule(
                 "name",
                 "output",
                 Arrays.asList(new File("s1"), new File("s2")),
@@ -53,7 +53,7 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
     }
 
     public void testMultiple() throws Exception {
-        KotlinModuleDescriptionBuilder builder = KotlinModuleXmlBuilderFactory.INSTANCE.create();
+        KotlinModuleXmlBuilder builder = new KotlinModuleXmlBuilder();
         builder.addModule(
                 "name",
                 "output",

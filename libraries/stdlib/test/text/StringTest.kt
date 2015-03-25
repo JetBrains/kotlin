@@ -72,13 +72,31 @@ class StringTest {
     test fun replaceRange() {
         val s = "sample text"
         assertEquals("sa??e text", s.replaceRange(2, 5, "??"))
-        assertEquals("sa??e text", s.replaceRange(2..5, "??"))
+        assertEquals("sa?? text", s.replaceRange(2..5, "??"))
         fails {
             s.replaceRange(5..2, "??")
         }
         fails {
             s.replaceRange(5, 2, "??")
         }
+
+        // symmetry with indices
+        assertEquals("??", s.replaceRange(s.indices, "??"))
+    }
+
+    test fun removeRange() {
+        val s = "sample text"
+        assertEquals("sae text", s.removeRange(2, 5))
+        assertEquals("sa text", s.removeRange(2..5))
+
+        assertEquals(s, s.removeRange(2,2))
+
+        // symmetry with indices
+        assertEquals("", s.removeRange(s.indices))
+
+        // symmetry with replaceRange
+        assertEquals(s.replaceRange(2, 5, ""), s.removeRange(2, 5))
+        assertEquals(s.replaceRange(2..5, ""), s.removeRange(2..5))
     }
 
     test fun substringDelimited() {
@@ -135,37 +153,45 @@ class StringTest {
         assertTrue(sum == 14)
     }
 
-    test fun trimLeading() {
-        assertEquals("", "".trimLeading())
-        assertEquals("a", "a".trimLeading())
-        assertEquals("a", " a".trimLeading())
-        assertEquals("a", "  a".trimLeading())
-        assertEquals("a  ", "  a  ".trimLeading())
-        assertEquals("a b", "  a b".trimLeading())
-        assertEquals("a b ", "  a b ".trimLeading())
+    test fun trimStart() {
+        assertEquals("", "".trimStart())
+        assertEquals("a", "a".trimStart())
+        assertEquals("a", " a".trimStart())
+        assertEquals("a", "  a".trimStart())
+        assertEquals("a  ", "  a  ".trimStart())
+        assertEquals("a b", "  a b".trimStart())
+        assertEquals("a b ", "  a b ".trimStart())
+        assertEquals("a", " \u00A0 a".trimStart())
 
-        assertEquals("a", "\ta".trimLeading())
-        assertEquals("a", "\t\ta".trimLeading())
-        assertEquals("a", "\ra".trimLeading())
-        assertEquals("a", "\na".trimLeading())
+        assertEquals("a", "\ta".trimStart())
+        assertEquals("a", "\t\ta".trimStart())
+        assertEquals("a", "\ra".trimStart())
+        assertEquals("a", "\na".trimStart())
+
+        assertEquals("a=", "-=-=a=".trimStart('-','='))
+        assertEquals("123a", "ab123a".trimStart { it < '0' || it > '9' }) // TODO: Use !it.isDigit when available in JS
     }
 
-    test fun trimTrailing() {
-        assertEquals("", "".trimTrailing())
-        assertEquals("a", "a".trimTrailing())
-        assertEquals("a", "a ".trimTrailing())
-        assertEquals("a", "a  ".trimTrailing())
-        assertEquals("  a", "  a  ".trimTrailing())
-        assertEquals("a b", "a b  ".trimTrailing())
-        assertEquals(" a b", " a b  ".trimTrailing())
+    test fun trimEnd() {
+        assertEquals("", "".trimEnd())
+        assertEquals("a", "a".trimEnd())
+        assertEquals("a", "a ".trimEnd())
+        assertEquals("a", "a  ".trimEnd())
+        assertEquals("  a", "  a  ".trimEnd())
+        assertEquals("a b", "a b  ".trimEnd())
+        assertEquals(" a b", " a b  ".trimEnd())
+        assertEquals("a", "a \u00A0 ".trimEnd())
 
-        assertEquals("a", "a\t".trimTrailing())
-        assertEquals("a", "a\t\t".trimTrailing())
-        assertEquals("a", "a\r".trimTrailing())
-        assertEquals("a", "a\n".trimTrailing())
+        assertEquals("a", "a\t".trimEnd())
+        assertEquals("a", "a\t\t".trimEnd())
+        assertEquals("a", "a\r".trimEnd())
+        assertEquals("a", "a\n".trimEnd())
+
+        assertEquals("=a", "=a=-=-".trimEnd('-','='))
+        assertEquals("ab123", "ab123a".trimEnd { it < '0' || it > '9' }) // TODO: Use !it.isDigit when available in JS
     }
 
-    test fun trimTrailingAndLeading() {
+    test fun trimStartAndEnd() {
         val examples = array(
                 "a",
                 " a ",
@@ -174,12 +200,68 @@ class StringTest {
                 "\ta\tb\t",
                 "\t\ta\t\t",
                 "\ra\r",
-                "\na\n"
+                "\na\n",
+                " \u00A0 a \u00A0 "
         )
 
         for (example in examples) {
-            assertEquals(example.trim(), example.trimTrailing().trimLeading())
-            assertEquals(example.trim(), example.trimLeading().trimTrailing())
+            assertEquals(example.trim(), example.trimEnd().trimStart())
+            assertEquals(example.trim(), example.trimStart().trimEnd())
+        }
+
+        val examplesForPredicate = array(
+                "123",
+                "-=123=-"
+        )
+
+        val trimChars = charArray('-','=')
+        val trimPredicate = { (it: Char) -> it < '0' || it > '9' } // TODO: Use !it.isDigit when available in JS
+        for (example in examplesForPredicate) {
+            assertEquals(example.trimStart(*trimChars).trimEnd(*trimChars), example.trim(*trimChars))
+            assertEquals(example.trimStart(trimPredicate).trimEnd(trimPredicate), example.trim(trimPredicate))
         }
     }
+
+    test fun padStart() {
+        assertEquals("s", "s".padStart(0))
+        assertEquals("s", "s".padStart(1))
+        assertEquals("  ", "".padStart(2))
+        assertEquals("--s", "s".padStart(3, '-'))
+        fails {
+            "s".padStart(-1)
+        }
+    }
+
+    test fun padEnd() {
+        assertEquals("s", "s".padEnd(0))
+        assertEquals("s", "s".padEnd(1))
+        assertEquals("  ", "".padEnd(2))
+        assertEquals("s--", "s".padEnd(3, '-'))
+        fails {
+            "s".padEnd(-1)
+        }
+    }
+
+    test fun removePrefix() {
+        assertEquals("fix", "prefix".removePrefix("pre"), "Removes prefix")
+        assertEquals("prefix", "preprefix".removePrefix("pre"), "Removes prefix once")
+        assertEquals("sample", "sample".removePrefix("value"))
+        assertEquals("sample", "sample".removePrefix(""))
+    }
+
+    test fun removeSuffix() {
+        assertEquals("suf", "suffix".removeSuffix("fix"), "Removes suffix")
+        assertEquals("suffix", "suffixfix".removeSuffix("fix"), "Removes suffix once")
+        assertEquals("sample", "sample".removeSuffix("value"))
+        assertEquals("sample", "sample".removeSuffix(""))
+    }
+
+    test fun removeSurrounding() {
+        assertEquals("value", "<value>".removeSurrounding("<", ">"))
+        assertEquals("<value>", "<<value>>".removeSurrounding("<", ">"), "Removes surrounding once")
+        assertEquals("<value", "<value".removeSurrounding("<", ">"), "Only removes surrounding when both prefix and suffix present")
+        assertEquals("value>", "value>".removeSurrounding("<", ">"), "Only removes surrounding when both prefix and suffix present")
+        assertEquals("value", "value".removeSurrounding("<", ">"))
+    }
+
 }

@@ -288,7 +288,9 @@ public class JetChangeSignatureDialog extends ChangeSignatureDialogBase<
                                 new ItemListener() {
                                     @Override
                                     public void itemStateChanged(@NotNull ItemEvent e) {
-                                        ((JetFunctionParameterTableModel)myParametersTableModel).setReceiver(item.parameter);
+                                        ((JetFunctionParameterTableModel)myParametersTableModel).setReceiver(
+                                                e.getStateChange() == ItemEvent.SELECTED ? item.parameter : null
+                                        );
                                         updateSignature();
                                         updateNameEditor();
                                     }

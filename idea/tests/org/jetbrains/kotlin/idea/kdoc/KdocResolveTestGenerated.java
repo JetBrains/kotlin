@@ -37,6 +37,18 @@ public class KdocResolveTestGenerated extends AbstractReferenceResolveTest {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/kdoc/resolve"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
+    @TestMetadata("AmbiguousReference.kt")
+    public void testAmbiguousReference() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/kdoc/resolve/AmbiguousReference.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("AmbiguousReferenceTypeParameter.kt")
+    public void testAmbiguousReferenceTypeParameter() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/kdoc/resolve/AmbiguousReferenceTypeParameter.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ClassSelfReference.kt")
     public void testClassSelfReference() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/kdoc/resolve/ClassSelfReference.kt");

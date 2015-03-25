@@ -28,13 +28,12 @@ import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.ChangeSignaturePackage;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeSignatureConfiguration;
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetMutableMethodDescriptor;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetMethodDescriptor;
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetMutableMethodDescriptor;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
 
 import java.util.Collection;
-import java.util.List;
 
 import static org.jetbrains.kotlin.idea.refactoring.changeSignature.ChangeSignaturePackage.runChangeSignature;
 
@@ -68,8 +67,8 @@ public class RemoveFunctionParametersFix extends ChangeFunctionSignatureFix {
                         new ExtensionFunction0<JetMutableMethodDescriptor, Unit>() {
                             @Override
                             public Unit invoke(JetMutableMethodDescriptor descriptor) {
-                                List<ValueParameterDescriptor> parameters = functionDescriptor.getValueParameters();
-                                descriptor.removeParameter(parameters.indexOf(parameterToRemove));
+                                int index = functionDescriptor.getValueParameters().indexOf(parameterToRemove);
+                                descriptor.removeParameter(descriptor.getReceiver() != null ? index + 1 : index);
                                 return null;
                             }
                         }

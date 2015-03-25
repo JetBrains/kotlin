@@ -59,9 +59,10 @@ deprecated("Please use Char.isJavaIdentifierPart() instead")
 public fun Char.isJavaLetterOrDigit(): Boolean = Character.isJavaLetterOrDigit(this)
 
 /**
+ * Determines whether a character is whitespace according to the Unicode standard.
  * Returns `true` if the character is whitespace.
  */
-public fun Char.isWhitespace(): Boolean = Character.isWhitespace(this)
+public fun Char.isWhitespace(): Boolean = Character.isWhitespace(this) || Character.isSpaceChar(this)
 
 /**
  * Returns `true` if this character is upper case.

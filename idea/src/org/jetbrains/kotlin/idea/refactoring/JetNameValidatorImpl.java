@@ -23,13 +23,13 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes;
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.JetScopeUtils;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -76,9 +76,7 @@ public class JetNameValidatorImpl extends JetNameValidator {
     private boolean checkElement(String name, PsiElement sibling, final Set<JetScope> visitedScopes) {
         if (!(sibling instanceof JetElement)) return true;
 
-        AnalysisResult analysisResult = ResolvePackage.analyzeAndGetResult((JetElement) sibling);
-        final BindingContext bindingContext = analysisResult.getBindingContext();
-        final ModuleDescriptor module = analysisResult.getModuleDescriptor();
+        final AnalysisResult analysisResult = ResolvePackage.analyzeAndGetResult((JetElement) sibling);
         final Name identifier = Name.identifier(name);
 
         final Ref<Boolean> result = new Ref<Boolean>(true);
@@ -90,29 +88,9 @@ public class JetNameValidatorImpl extends JetNameValidator {
                 }
             }
 
-            @Nullable
-            private JetScope getScope(@NotNull JetExpression expression) {
-                PsiElement parent = expression.getParent();
-
-                if (parent instanceof JetClassBody) {
-                    JetClassOrObject classOrObject = (JetClassOrObject) parent.getParent();
-                    ClassDescriptor classDescriptor = bindingContext.get(BindingContext.CLASS, classOrObject);
-                    return classDescriptor instanceof ClassDescriptorWithResolutionScopes
-                           ? ((ClassDescriptorWithResolutionScopes) classDescriptor).getScopeForMemberDeclarationResolution()
-                           : null;
-                }
-
-                if (parent instanceof JetFile) {
-                    PackageViewDescriptor packageViewDescriptor = module.getPackage(((JetFile) parent).getPackageFqName());
-                    return packageViewDescriptor != null ? packageViewDescriptor.getMemberScope() : null;
-                }
-
-                return bindingContext.get(BindingContext.RESOLUTION_SCOPE, expression);
-            }
-
             @Override
             public void visitExpression(@NotNull JetExpression expression) {
-                JetScope resolutionScope = getScope(expression);
+                JetScope resolutionScope = JetScopeUtils.getResolutionScope(expression, analysisResult);
 
                 if (resolutionScope != null) {
                     if (!visitedScopes.add(resolutionScope)) return;

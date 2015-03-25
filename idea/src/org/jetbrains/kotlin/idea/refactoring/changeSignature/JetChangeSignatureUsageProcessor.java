@@ -359,8 +359,8 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
             }
         }
 
-        for (ParameterInfo parameter : info.getNewParameters()) {
-            JetValVar valOrVar = ((JetParameterInfo) parameter).getValOrVar();
+        for (JetParameterInfo parameter : changeInfo.getNonReceiverParameters()) {
+            JetValVar valOrVar = parameter.getValOrVar();
             String parameterName = parameter.getName();
 
             if (!parameterNames.add(parameterName)) {

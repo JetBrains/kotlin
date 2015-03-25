@@ -374,6 +374,7 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
             val file = File(workDir, path)
 
             val oldLastModified = file.lastModified()
+            file.delete()
             dataFile.copyTo(file)
 
             val newLastModified = file.lastModified()

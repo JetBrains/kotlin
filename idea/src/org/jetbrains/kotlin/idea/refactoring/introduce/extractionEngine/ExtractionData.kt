@@ -158,7 +158,7 @@ data class ExtractionData(
             if (parent is JetUserType && (parent.getParent() as? JetUserType)?.getQualifier() == parent) continue
 
             val descriptor = context[BindingContext.REFERENCE_TARGET, ref]
-            if (!compareDescriptors(originalResolveResult.descriptor, descriptor)
+            if (!compareDescriptors(project, originalResolveResult.descriptor, descriptor)
                     && !originalResolveResult.declaration.isInsideOf(originalElements)) {
                 referencesInfo.add(ResolvedReferenceInfo(ref, offset, originalResolveResult))
             }
