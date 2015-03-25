@@ -924,7 +924,7 @@ public class JetTypeMapper {
             @NotNull ResolvedCall<ConstructorDescriptor> superCall,
             boolean hasOuter
     ) {
-        ConstructorDescriptor superDescriptor = superCall.getResultingDescriptor();
+        ConstructorDescriptor superDescriptor = SamCodegenUtil.resolveSamAdapter(superCall.getResultingDescriptor());
         List<ResolvedValueArgument> valueArguments = superCall.getValueArgumentsByIndex();
         assert valueArguments != null : "Failed to arrange value arguments by index: " + superDescriptor;
 

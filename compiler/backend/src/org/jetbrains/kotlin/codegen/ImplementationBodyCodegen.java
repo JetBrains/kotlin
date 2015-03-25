@@ -1466,7 +1466,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             return;
         }
         iv.load(0, OBJECT_TYPE);
-        ConstructorDescriptor delegateConstructor = delegationConstructorCall.getResultingDescriptor();
+        ConstructorDescriptor delegateConstructor = SamCodegenUtil.resolveSamAdapter(delegationConstructorCall.getResultingDescriptor());
 
         CallableMethod delegateConstructorCallable = typeMapper.mapToCallableMethod(delegateConstructor);
         CallableMethod callable = typeMapper.mapToCallableMethod(constructorDescriptor);
