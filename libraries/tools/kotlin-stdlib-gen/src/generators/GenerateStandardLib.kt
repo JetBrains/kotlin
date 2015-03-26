@@ -29,6 +29,7 @@ fun main(args: Array<String>) {
     generateDomEventsAPI(File(jsCoreDir, "domEvents.kt"))
 
     generateCollectionsAPI(outDir)
+    generateCollectionsJsAPI(jsCoreDir)
 
     generateDownTos(File(outDir, "_DownTo.kt"), "package kotlin")
 }
