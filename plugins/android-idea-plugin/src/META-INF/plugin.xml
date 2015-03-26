@@ -6,7 +6,7 @@
   <version>@snapshot@</version>
   <vendor url="http://www.jetbrains.com">JetBrains Inc.</vendor>
 
-  <idea-version since-build="141.2" until-build="141.9999"/>
+  <!-- IDEA VERSION -->
 
   <depends optional="false">org.jetbrains.kotlin</depends>
   <depends optional="false">org.jetbrains.android</depends>
