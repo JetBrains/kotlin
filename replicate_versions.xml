@@ -5,6 +5,7 @@
     <macrodef name="replicateIdeaVersion">
         <attribute name="target.file"/>
         <attribute name="idea-version-pattern" default="&lt;idea-version since-build=&quot;[0-9.]+&quot; until-build=&quot;[0-9.]+&quot;/&gt;"/>
+        <attribute name="replace-pattern" default="&lt;!-- IDEA VERSION --&gt;"/>
 
         <sequential>
             <loadfile srcfile="${plugin.xml}" property="main.plugin.version">
@@ -34,11 +35,7 @@
                 </condition>
             </fail>
 
-            <replaceregexp file="@{target.file}" byline="true" match="@{idea-version-pattern}" replace="${main.plugin.version}" />
+            <replaceregexp file="@{target.file}" byline="true" match="@{replace-pattern}" replace="${main.plugin.version}" />
         </sequential>
     </macrodef>
-
-    <target name="replicateIdeaVersions">
-        <replicateIdeaVersion target.file="${android-extensions.plugin.xml}" />
-    </target>
 </project>
