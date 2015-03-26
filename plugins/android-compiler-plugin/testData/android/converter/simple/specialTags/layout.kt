@@ -13,20 +13,20 @@ import android.support.v4.widget.*
 import kotlin.internal.flexible.ft
 
 val android.app.Activity.includeTag: ft<View, View?>
-    get() = findViewById(0) : View
+    get() = findViewById(0)
 
 val android.app.Fragment.includeTag: ft<View, View?>
-    get() = getView().findViewById(0) : View
+    get() = getView().findViewById(0)
 
 val android.app.Activity.fragmentTag: ft<View, View?>
-    get() = findViewById(0) : View
+    get() = findViewById(0)
 
 val android.app.Fragment.fragmentTag: ft<View, View?>
-    get() = getView().findViewById(0) : View
+    get() = getView().findViewById(0)
 
 val android.app.Activity.`fun`: ft<TextView, TextView?>
-    get() = findViewById(0) as TextView
+    get() = findViewById(0) as? TextView
 
 val android.app.Fragment.`fun`: ft<TextView, TextView?>
-    get() = getView().findViewById(0) as TextView
+    get() = getView().findViewById(0) as? TextView
 
