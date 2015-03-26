@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.util.UtilPackage;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.types.JetType;
@@ -103,15 +102,10 @@ public class QuickFixFactoryForTypeMismatchError extends JetIntentionActionsFact
             }
         }
 
-        PsiElement expressionParent = expression.getParent();
-
         // Mismatch in returned expression:
-
-        JetCallableDeclaration function = expressionParent instanceof JetReturnExpression
-                               ? BindingContextUtilPackage.getTargetFunction((JetReturnExpression) expressionParent, context)
-                               : PsiTreeUtil.getParentOfType(expression, JetFunction.class, true);
-        if (function instanceof JetFunction && QuickFixUtil.canFunctionOrGetterReturnExpression(function, expression)) {
-            actions.add(new ChangeFunctionReturnTypeFix((JetFunction) function, expressionType));
+        JetFunction function = PsiTreeUtil.getParentOfType(expression, JetFunction.class, true);
+        if (function != null && QuickFixUtil.canFunctionOrGetterReturnExpression(function, expression)) {
+            actions.add(new ChangeFunctionReturnTypeFix(function, expressionType));
         }
 
         // Fixing overloaded operators:
