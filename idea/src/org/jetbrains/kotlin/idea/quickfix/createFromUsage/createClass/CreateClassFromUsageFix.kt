@@ -26,14 +26,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiDirectory
 import org.jetbrains.kotlin.idea.JetFileType
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.ParameterInfo
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.ConstructorInfo
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.CallableBuilderConfiguration
 import java.util.Collections
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.createBuilder
 import com.intellij.openapi.command.CommandProcessor
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.CallablePlacement
 import org.jetbrains.kotlin.idea.refactoring.getOrCreateKotlinFile
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.ClassKind.*
 import com.intellij.psi.PsiPackage
@@ -45,6 +39,7 @@ import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
 
 enum class ClassKind(val keyword: String, val description: String) {
     PLAIN_CLASS: ClassKind("class", "class")
@@ -124,7 +119,7 @@ public class CreateClassFromUsageFix(
                         else -> throw AssertionError("Unexpected element: " + targetParent.getText())
                     } ?: return
 
-            val constructorInfo = ConstructorInfo(classInfo, expectedTypeInfo)
+            val constructorInfo = PrimaryConstructorInfo(classInfo, expectedTypeInfo)
             val builder = CallableBuilderConfiguration(
                     Collections.singletonList(constructorInfo), element as JetElement, file, editor, false, kind == PLAIN_CLASS || kind == TRAIT
             ).createBuilder()

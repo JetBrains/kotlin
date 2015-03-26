@@ -207,6 +207,10 @@ public class JetPsiFactory(private val project: Project) {
         return createDeclaration(funDecl)
     }
 
+    public fun createSecondaryConstructor(decl: String): JetSecondaryConstructor {
+        return createClass("class Foo {\n $decl \n}").getSecondaryConstructors().first()
+    }
+
     public fun createModifierList(modifier: JetKeywordToken): JetModifierList {
         return createModifierList(modifier.getValue())
     }
