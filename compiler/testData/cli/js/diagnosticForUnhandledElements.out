@@ -1,4 +1,3 @@
 WARNING: compiler/testData/cli/js/diagnosticForUnhandledElements.kt: (8, 21) Parameter 'foo' is never used
 ERROR: compiler/testData/cli/js/diagnosticForUnhandledElements.kt: (9, 16) Cannot translate (not supported yet): '[fancy] 1'
-ERROR: compiler/testData/cli/js/diagnosticForUnhandledElements.kt: (15, 5) Cannot translate (not supported yet): 'class A {...'
 COMPILATION_ERROR
