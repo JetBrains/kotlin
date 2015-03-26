@@ -14,10 +14,14 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.js.inline.exception;
+package org.jetbrains.kotlin.resolve
 
-public class InlineRecursionException extends RuntimeException {
-    public InlineRecursionException() {
-        super("Encountered mutual inline recursion, inline will lead to stack overflow");
-    }
+import org.jetbrains.kotlin.psi.JetDeclaration
+import org.jetbrains.kotlin.diagnostics.DiagnosticSink
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+
+public trait DeclarationChecker {
+
+    public fun check(declaration: JetDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink);
+
 }

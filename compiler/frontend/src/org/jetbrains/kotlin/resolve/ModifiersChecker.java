@@ -148,14 +148,14 @@ public class ModifiersChecker {
             checkVarianceModifiersOfTypeParameters(modifierListOwner);
         }
         checkPlatformNameApplicability(descriptor);
-        runAnnotationCheckers(modifierListOwner, descriptor);
+        runDeclarationCheckers(modifierListOwner, descriptor);
     }
 
     public void checkModifiersForLocalDeclaration(@NotNull JetDeclaration modifierListOwner, @NotNull DeclarationDescriptor descriptor) {
         reportIllegalModalityModifiers(modifierListOwner);
         reportIllegalVisibilityModifiers(modifierListOwner);
         checkPlatformNameApplicability(descriptor);
-        runAnnotationCheckers(modifierListOwner, descriptor);
+        runDeclarationCheckers(modifierListOwner, descriptor);
     }
 
     public void reportIllegalModalityModifiers(@NotNull JetModifierListOwner modifierListOwner) {
@@ -394,8 +394,8 @@ public class ModifiersChecker {
         return Visibilities.INTERNAL;
     }
 
-    private void runAnnotationCheckers(@NotNull JetDeclaration declaration, @NotNull DeclarationDescriptor descriptor) {
-        for (AnnotationChecker checker : additionalCheckerProvider.getAnnotationCheckers()) {
+    private void runDeclarationCheckers(@NotNull JetDeclaration declaration, @NotNull DeclarationDescriptor descriptor) {
+        for (DeclarationChecker checker : additionalCheckerProvider.getDeclarationCheckers()) {
             checker.check(declaration, descriptor, trace);
         }
     }

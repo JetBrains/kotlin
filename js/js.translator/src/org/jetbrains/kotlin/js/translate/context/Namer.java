@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.idea.JetLanguage;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 
 import java.util.Arrays;
@@ -32,7 +33,6 @@ import static com.google.dart.compiler.backend.js.ast.AstPackage.JsObjectScope;
 import static org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getModuleName;
 import static org.jetbrains.kotlin.js.translate.utils.ManglingUtils.getStableMangledNameForDescriptor;
 import static org.jetbrains.kotlin.js.translate.utils.ManglingUtils.getSuggestedName;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.getFqNameSafe;
 
 /**
  * Encapsulates different types of constants and naming conventions.
@@ -91,8 +91,6 @@ public final class Namer {
     public static final String CAPTURED_VAR_FIELD = "v";
 
     public static final JsNameRef CREATE_INLINE_FUNCTION = new JsNameRef("defineInlineFunction", KOTLIN_OBJECT_REF);
-    private static final String INLINE_START_TAG = "inlineStartTag";
-    private static final String INLINE_END_TAG = "inlineEndTag";
 
     @NotNull
     public static final JsExpression UNDEFINED_EXPRESSION = new JsPrefixOperation(JsUnaryOperator.VOID, JsNumberLiteral.ZERO);
@@ -108,24 +106,17 @@ public final class Namer {
     }
 
     @NotNull
-    public static String getInlineStartTag(@NotNull CallableDescriptor functionDescriptor) {
-        return formatInlineTag(functionDescriptor, INLINE_START_TAG);
-    }
-
-    @NotNull
-    public static String getInlineEndTag(@NotNull CallableDescriptor functionDescriptor) {
-        return formatInlineTag(functionDescriptor, INLINE_END_TAG);
-    }
-
-    @NotNull
-    private static String formatInlineTag(
-            @NotNull CallableDescriptor functionDescriptor,
-            @NotNull String tag
-    ) {
-        FqName fqName = getFqNameSafe(functionDescriptor);
-        String mangledName = getSuggestedName(functionDescriptor);
+    public static String getFunctionTag(@NotNull CallableDescriptor functionDescriptor) {
         String moduleName = getModuleName(functionDescriptor);
-        return StringUtil.join(Arrays.asList(tag, moduleName, fqName, mangledName), ".");
+        FqNameUnsafe fqNameParent = DescriptorUtils.getFqName(functionDescriptor).parent();
+        String qualifier = null;
+
+        if (!fqNameParent.isRoot()) {
+            qualifier = fqNameParent.asString();
+        }
+
+        String mangledName = getSuggestedName(functionDescriptor);
+        return StringUtil.join(Arrays.asList(moduleName, qualifier, mangledName), ".");
     }
 
     @NotNull

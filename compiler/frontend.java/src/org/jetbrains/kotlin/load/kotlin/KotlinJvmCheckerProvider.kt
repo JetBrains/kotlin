@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.load.kotlin
 
 import org.jetbrains.kotlin.resolve.AdditionalCheckerProvider
-import org.jetbrains.kotlin.resolve.AnnotationChecker
+import org.jetbrains.kotlin.resolve.DeclarationChecker
 import org.jetbrains.kotlin.resolve.annotations.hasPlatformStaticAnnotation
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -59,12 +59,12 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.expressions.SenselessComparisonChecker
 
 public object KotlinJvmCheckerProvider : AdditionalCheckerProvider(
-        additionalAnnotationCheckers = listOf(PlatformStaticAnnotationChecker(), LocalFunInlineChecker(), ReifiedTypeParameterAnnotationChecker(), NativeFunChecker()),
+        additionalDeclarationCheckers = listOf(PlatformStaticAnnotationChecker(), LocalFunInlineChecker(), ReifiedTypeParameterAnnotationChecker(), NativeFunChecker()),
         additionalCallCheckers = listOf(NeedSyntheticChecker()),
         additionalTypeCheckers = listOf(JavaNullabilityWarningsChecker())
 )
 
-public class LocalFunInlineChecker : AnnotationChecker {
+public class LocalFunInlineChecker : DeclarationChecker {
 
     override fun check(declaration: JetDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink) {
         if (descriptor.hasInlineAnnotation() &&
@@ -76,7 +76,7 @@ public class LocalFunInlineChecker : AnnotationChecker {
     }
 }
 
-public class PlatformStaticAnnotationChecker : AnnotationChecker {
+public class PlatformStaticAnnotationChecker : DeclarationChecker {
 
     override fun check(declaration: JetDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink) {
         if (descriptor.hasPlatformStaticAnnotation()) {
@@ -116,7 +116,7 @@ public class PlatformStaticAnnotationChecker : AnnotationChecker {
     }
 }
 
-public class ReifiedTypeParameterAnnotationChecker : AnnotationChecker {
+public class ReifiedTypeParameterAnnotationChecker : DeclarationChecker {
 
     override fun check(declaration: JetDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink) {
         if (descriptor.hasIntrinsicAnnotation()) return
