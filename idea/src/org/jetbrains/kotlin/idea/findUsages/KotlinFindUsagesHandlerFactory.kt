@@ -29,7 +29,6 @@ import com.intellij.find.findUsages.JavaFindUsagesHandlerFactory
 import org.jetbrains.kotlin.idea.findUsages.handlers.DelegatingFindMemberUsagesHandler
 import org.jetbrains.kotlin.plugin.findUsages.handlers.KotlinFindUsagesHandlerDecorator
 import com.intellij.openapi.extensions.Extensions
-import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.psi.*
 
 public class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandlerFactory() {
@@ -58,19 +57,7 @@ public class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandle
 
                 if (forHighlightUsages) return KotlinFindMemberUsagesHandler.getInstance(declaration, this)
                 JetRefactoringUtil.checkSuperMethods(declaration, null, "super.methods.action.key.find.usages")?.let { callables ->
-                    when (callables.size()) {
-                        0 -> FindUsagesHandler.NULL_HANDLER
-                        1 -> {
-                            val target = callables.first().unwrapped ?: return FindUsagesHandler.NULL_HANDLER
-                            if (target is JetNamedDeclaration) {
-                                KotlinFindMemberUsagesHandler.getInstance(target, this)
-                            }
-                            else {
-                                javaHandlerFactory.createFindUsagesHandler(target, false)
-                            }
-                        }
-                        else -> DelegatingFindMemberUsagesHandler(declaration, callables, this)
-                    }
+                    if (callables.empty) FindUsagesHandler.NULL_HANDLER else DelegatingFindMemberUsagesHandler(declaration, callables, this)
                 }
             }
 
