@@ -123,7 +123,7 @@ class ForConverter(
 
     private fun convertToForeach(): ForeachStatement? {
         if (initialization is PsiDeclarationStatement) {
-            val loopVar = initialization.getDeclaredElements().singleOrNull2() as? PsiLocalVariable
+            val loopVar = initialization.getDeclaredElements().singleOrNull() as? PsiLocalVariable
             if (loopVar != null
                     && !loopVar.hasWriteAccesses(referenceSearcher, body)
                     && !loopVar.hasWriteAccesses(referenceSearcher, condition)
