@@ -256,6 +256,12 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("FunctionExpression.after.kt")
+        public void testFunctionExpression() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/FunctionExpression.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("FunctionLineBreak.after.kt")
         public void testFunctionLineBreak() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/FunctionLineBreak.after.kt");
