@@ -423,9 +423,13 @@ public class JetExpressionParsing extends AbstractJetParsing {
     private void parsePostfixExpression() {
         PsiBuilder.Marker expression = mark();
 
+        boolean firstExpressionParsed;
         boolean doubleColonExpression = parseDoubleColonExpression();
         if (!doubleColonExpression) {
-            parseAtomicExpression();
+            firstExpressionParsed = parseAtomicExpression();
+        }
+        else {
+            firstExpressionParsed = true;
         }
 
         while (true) {
@@ -439,19 +443,24 @@ public class JetExpressionParsing extends AbstractJetParsing {
             else if (!doubleColonExpression && parseCallSuffix()) {
                 expression.done(CALL_EXPRESSION);
             }
-            else if (at(DOT)) {
-                advance(); // DOT
+            else if (at(DOT) || at(SAFE_ACCESS)) {
+                IElementType expressionType = at(DOT) ? DOT_QUALIFIED_EXPRESSION : SAFE_ACCESS_EXPRESSION;
+                advance(); // DOT or SAFE_ACCESS
+
+                if (!firstExpressionParsed) {
+                    expression.drop();
+                    expression = mark();
+                }
 
                 parseCallExpression();
 
-                expression.done(DOT_QUALIFIED_EXPRESSION);
-            }
-            else if (at(SAFE_ACCESS)) {
-                advance(); // SAFE_ACCESS
-
-                parseCallExpression();
-
-                expression.done(SAFE_ACCESS_EXPRESSION);
+                if (firstExpressionParsed) {
+                    expression.done(expressionType);
+                }
+                else {
+                    firstExpressionParsed = true;
+                    continue;
+                }
             }
             else if (atSet(Precedence.POSTFIX.getOperations())) {
                 parseOperationReference();
@@ -557,8 +566,10 @@ public class JetExpressionParsing extends AbstractJetParsing {
      *   : "package" // for the root package
      *   ;
      */
-    private void parseAtomicExpression() {
+    private boolean parseAtomicExpression() {
         //        System.out.println("atom at "  + myBuilder.getTokenText());
+
+        boolean ok = true;
 
         if (at(LPAR)) {
             parseParenthesizedExpression();
@@ -625,9 +636,12 @@ public class JetExpressionParsing extends AbstractJetParsing {
             parseStringTemplate();
         }
         else if (!parseLiteralConstant()) {
+            ok = false;
             // TODO: better recovery if FIRST(element) did not match
             errorWithRecovery("Expecting an element", EXPRESSION_FOLLOW);
         }
+
+        return ok;
     }
 
     /*

@@ -1,0 +1,61 @@
+JetFile: qualifiedExpressionWithoutSelector.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('test')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      BINARY_EXPRESSION
+        BINARY_EXPRESSION
+          DOT_QUALIFIED_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('MyClass')
+            PsiElement(DOT)('.')
+            PsiErrorElement:Expecting an element
+              PsiElement(LT)('<')
+          OPERATION_REFERENCE
+            PsiElement(IDENTIFIER)('warning')
+          PsiWhiteSpace(' ')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('descr')
+        OPERATION_REFERENCE
+          PsiElement(EQ)('=')
+        BINARY_EXPRESSION
+          BINARY_EXPRESSION
+            STRING_TEMPLATE
+              PsiElement(OPEN_QUOTE)('"')
+              PsiElement(CLOSING_QUOTE)('"')
+            OPERATION_REFERENCE
+              PsiElement(GT)('>')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Companion')
+          OPERATION_REFERENCE
+            PsiElement(LT)('<')
+          BINARY_EXPRESSION
+            BINARY_EXPRESSION
+              PsiErrorElement:Expecting an element
+                PsiElement(DIV)('/')
+              OPERATION_REFERENCE
+                PsiElement(IDENTIFIER)('warning')
+              PsiErrorElement:Expecting an element
+                PsiElement(GT)('>')
+              PsiElement(DOT)('.')
+              DOT_QUALIFIED_EXPRESSION
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('test')
+                PsiElement(DOT)('.')
+                PsiErrorElement:Expecting an element
+                  PsiElement(LT)('<')
+            OPERATION_REFERENCE
+              PsiElement(IDENTIFIER)('ff')
+            PsiErrorElement:Expecting an element
+              PsiElement(GT)('>')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
