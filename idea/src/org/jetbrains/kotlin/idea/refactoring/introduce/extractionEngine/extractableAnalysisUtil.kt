@@ -598,6 +598,11 @@ private fun ExtractionData.inferParametersInfo(
         val hasThisReceiver = thisDescriptor != null
         val thisExpr = ref.getParent() as? JetThisExpression
 
+        if (hasThisReceiver
+            && DescriptorToSourceUtilsIde.getAllDeclarations(project, thisDescriptor!!).all { it.isInsideOf(originalElements) }) {
+            continue
+        }
+
         val referencedClassDescriptor: ClassDescriptor? = (thisDescriptor ?: originalDescriptor).let {
             when (it) {
                 is ClassDescriptor ->
@@ -638,9 +643,6 @@ private fun ExtractionData.inferParametersInfo(
                             ?: DEFAULT_PARAMETER_TYPE
                 }
 
-                val parameterTypePredicate =
-                        and(pseudocode.getElementValuesRecursively(originalRef).map { getExpectedTypePredicate(it, bindingContext) })
-
                 val parameter = extractedDescriptorToParameter.getOrPut(descriptorToExtract) {
                     val argumentText =
                             if (hasThisReceiver && extractThis) {
@@ -661,7 +663,20 @@ private fun ExtractionData.inferParametersInfo(
                 info.originalRefToParameter[originalRef] = parameter
 
                 parameter.addDefaultType(parameterType)
-                parameter.addTypePredicate(parameterTypePredicate)
+
+                if (extractThis && thisExpr == null) {
+                    val callElement = resolvedCall!!.getCall().getCallElement()
+                    val instruction = pseudocode.getElementValue(callElement)?.createdAt as? InstructionWithReceivers
+                    val receiverValue = instruction?.receiverValues?.entrySet()?.singleOrNull { it.getValue() == receiverToExtract }?.getKey()
+                    if (receiverValue != null) {
+                        parameter.addTypePredicate(getExpectedTypePredicate(receiverValue, bindingContext))
+                    }
+                }
+                else {
+                    pseudocode.getElementValuesRecursively(originalRef).forEach {
+                        parameter.addTypePredicate(getExpectedTypePredicate(it, bindingContext))
+                    }
+                }
 
                 info.replacementMap[refInfo.offsetInBody] =
                         if (hasThisReceiver && extractThis) AddPrefixReplacement(parameter) else RenameReplacement(parameter)
