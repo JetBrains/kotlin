@@ -1,6 +1,6 @@
 // "Change 'foo' function return type to 'Int'" "true"
 fun foo(n: Int): Int {
     n.let {
-        return 1
+        return@foo 1
     }
 }
