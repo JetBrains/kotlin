@@ -65,7 +65,7 @@
       <filterchain>
         <tokenfilter>
           <filetokenizer/>
-          <replaceregex pattern="^(.*)(http://download\.jetbrains\.com/idea/ideaIC\-[\w\-\.]+tar\.gz)(.*)$" replace="\2" flags="s"/>
+          <replaceregex pattern="^(.*)(https+://download\.jetbrains\.com/idea/ideaIC\-[\w\-\.]+tar\.gz)(.*)$" replace="\2" flags="s"/>
         </tokenfilter>
       </filterchain>
     </loadresource>
