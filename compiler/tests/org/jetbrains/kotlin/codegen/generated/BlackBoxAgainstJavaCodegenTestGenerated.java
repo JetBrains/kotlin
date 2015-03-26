@@ -499,6 +499,24 @@ public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxCod
                 doTestAgainstJava(fileName);
             }
 
+            @TestMetadata("localClass.kt")
+            public void testLocalClass() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/sam/adapters/localClass.kt");
+                doTestAgainstJava(fileName);
+            }
+
+            @TestMetadata("localObjectConstructor.kt")
+            public void testLocalObjectConstructor() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/sam/adapters/localObjectConstructor.kt");
+                doTestAgainstJava(fileName);
+            }
+
+            @TestMetadata("localObjectConstructorWithFnValue.kt")
+            public void testLocalObjectConstructorWithFnValue() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/sam/adapters/localObjectConstructorWithFnValue.kt");
+                doTestAgainstJava(fileName);
+            }
+
             @TestMetadata("nonLiteralAndLiteralRunnable.kt")
             public void testNonLiteralAndLiteralRunnable() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/sam/adapters/nonLiteralAndLiteralRunnable.kt");
@@ -544,6 +562,12 @@ public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxCod
             @TestMetadata("superconstructor.kt")
             public void testSuperconstructor() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/sam/adapters/superconstructor.kt");
+                doTestAgainstJava(fileName);
+            }
+
+            @TestMetadata("superconstructorWithClosure.kt")
+            public void testSuperconstructorWithClosure() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/sam/adapters/superconstructorWithClosure.kt");
                 doTestAgainstJava(fileName);
             }
 

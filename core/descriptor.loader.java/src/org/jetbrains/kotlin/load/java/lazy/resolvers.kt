@@ -49,7 +49,7 @@ class LazyJavaTypeParameterResolver(
     private val typeParameters: Map<JavaTypeParameter, Int> = typeParameterOwner.getTypeParameters().mapToIndex()
 
     private val resolve = c.storageManager.createMemoizedFunctionWithNullableValues {
-        (typeParameter: JavaTypeParameter) ->
+        typeParameter: JavaTypeParameter ->
         typeParameters[typeParameter]?.let { index ->
             LazyJavaTypeParameterDescriptor(c.child(this), typeParameter, index, containingDeclaration)
         }
@@ -73,13 +73,9 @@ fun LazyJavaResolverContext.findClassInJava(classId: ClassId): JavaClassLookupRe
     if (binaryClassResult != null) return binaryClassResult
 
     val javaClass = finder.findClass(classId)
-    if (javaClass == null) return JavaClassLookupResult()
+    if (javaClass != null) return JavaClassLookupResult(javaClass)
 
-    // Light classes are not proper binaries either
-    if (javaClass.getOriginKind() == JavaClass.OriginKind.KOTLIN_LIGHT_CLASS) return JavaClassLookupResult()
-
-    return JavaClassLookupResult(javaClass)
-
+    return JavaClassLookupResult()
 }
 
 private fun LazyJavaResolverContext.resolveBinaryClass(kotlinClass: KotlinJvmBinaryClass?): JavaClassLookupResult? {

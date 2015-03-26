@@ -16,13 +16,8 @@
 
 package org.jetbrains.kotlin.diagnostics.rendering;
 
-import com.google.common.collect.ImmutableList;
-import com.intellij.openapi.application.Application;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.extensions.ExtensionPointName;
-import com.intellij.openapi.extensions.Extensions;
 import kotlin.Function1;
-import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -38,9 +33,11 @@ import org.jetbrains.kotlin.renderer.MultiRenderer;
 import org.jetbrains.kotlin.renderer.Renderer;
 import org.jetbrains.kotlin.resolve.varianceChecker.VarianceChecker.VarianceConflictDiagnosticData;
 import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.util.MappedExtensionProvider;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -58,61 +55,36 @@ public class DefaultErrorMessages {
     }
 
     private static final DiagnosticFactoryToRendererMap MAP = new DiagnosticFactoryToRendererMap();
-    private static List<DiagnosticFactoryToRendererMap> maps = null;
-    private static Application application = ApplicationManager.getApplication();
-    private static DispatchingDiagnosticRenderer renderer = null;
+    private static final MappedExtensionProvider<Extension, List<DiagnosticFactoryToRendererMap>> RENDERER_MAPS = MappedExtensionProvider.create(
+            Extension.EP_NAME,
+            new Function1<List<? extends Extension>, List<DiagnosticFactoryToRendererMap>>() {
+                @Override
+                public List<DiagnosticFactoryToRendererMap> invoke(List<? extends Extension> extensions) {
+                    List<DiagnosticFactoryToRendererMap> result = new ArrayList<DiagnosticFactoryToRendererMap>(extensions.size() + 1);
+                    for (Extension extension : extensions) {
+                        result.add(extension.getMap());
+                    }
+                    result.add(MAP);
+                    return result;
+                }
+            });
 
     @NotNull
     public static String render(@NotNull Diagnostic diagnostic) {
-        return getRenderer().render(diagnostic);
-    }
-
-    @NotNull
-    private static DiagnosticRenderer<Diagnostic> getRenderer() {
-        boolean mapsChanged = resetMapsIfNeeded();
-
-        // Renderer is changed in tests only
-        if (renderer == null || mapsChanged) {
-            renderer = new DispatchingDiagnosticRenderer(maps);
+        for (DiagnosticFactoryToRendererMap map : RENDERER_MAPS.get()) {
+            DiagnosticRenderer renderer = map.get(diagnostic.getFactory());
+            if (renderer != null) {
+                //noinspection unchecked
+                return renderer.render(diagnostic);
+            }
         }
-
-        return renderer;
-    }
-
-    private static boolean resetMapsIfNeeded() {
-        boolean needToResetMaps = maps == null;
-        Application newApp = ApplicationManager.getApplication();
-
-        if (application != newApp) {
-            assert newApp.isUnitTestMode(): "Expected application switch only in tests";
-            application = newApp;
-            needToResetMaps = true;
-        }
-
-        if (!needToResetMaps) return false;
-
-        maps = ImmutableList.<DiagnosticFactoryToRendererMap>builder()
-                .addAll(
-                        KotlinPackage.map(
-                                Extensions.getExtensions(Extension.EP_NAME),
-                                new Function1<Extension, DiagnosticFactoryToRendererMap>() {
-                                    @Override
-                                    public DiagnosticFactoryToRendererMap invoke(Extension extension) {
-                                        return extension.getMap();
-                                    }
-                                }
-                        )
-                )
-                .add(MAP)
-                .build();
-
-        return true;
+        throw new IllegalArgumentException("Don't know how to render diagnostic of type " + diagnostic.getFactory().getName());
     }
 
     @TestOnly
     @Nullable
     public static DiagnosticRenderer getRendererForDiagnostic(@NotNull Diagnostic diagnostic) {
-        for (DiagnosticFactoryToRendererMap map : maps) {
+        for (DiagnosticFactoryToRendererMap map : RENDERER_MAPS.get()) {
             DiagnosticRenderer renderer = map.get(diagnostic.getFactory());
 
             if (renderer != null) return renderer;
@@ -642,8 +614,6 @@ public class DefaultErrorMessages {
                 }
             }
         }
-
-        resetMapsIfNeeded();
     }
 
     private DefaultErrorMessages() {
