@@ -56,7 +56,6 @@ import org.jetbrains.kotlin.idea.JetFileType;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle;
 import org.jetbrains.kotlin.psi.JetTypeCodeFragment;
 import org.jetbrains.kotlin.types.JetType;
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetMethodDescriptor.Kind;
 
 import javax.swing.*;
 import java.awt.*;
@@ -92,15 +91,10 @@ public class JetChangeSignatureDialog extends ChangeSignatureDialogBase<
 
     @Override
     protected JetCallableParameterTableModel createParametersInfoModel(JetMethodDescriptor descriptor) {
-        switch (descriptor.getKind()) {
-            case FUNCTION:
-                return new JetFunctionParameterTableModel(descriptor, myDefaultValueContext);
-            case PRIMARY_CONSTRUCTOR:
-                return new JetPrimaryConstructorParameterTableModel(myDefaultValueContext);
-            case SECONDARY_CONSTRUCTOR:
-                return new JetSecondaryConstructorParameterTableModel(myDefaultValueContext);
-        }
-        throw new AssertionError("Invalid kind: " + descriptor.getKind());
+        if (ChangeSignaturePackage.getIsConstructor(descriptor))
+            return new JetConstructorParameterTableModel(myDefaultValueContext);
+        else
+            return new JetFunctionParameterTableModel(descriptor, myDefaultValueContext);
     }
 
     @Override
@@ -124,7 +118,7 @@ public class JetChangeSignatureDialog extends ChangeSignatureDialogBase<
         JPanel panel = new JPanel(new BorderLayout());
         String valOrVar = "";
 
-        if (myMethod.getKind() == Kind.PRIMARY_CONSTRUCTOR) {
+        if (ChangeSignaturePackage.getIsConstructor(myMethod)) {
             switch (item.parameter.getValOrVar()) {
                 case None:
                     valOrVar = "    ";
@@ -269,7 +263,7 @@ public class JetChangeSignatureDialog extends ChangeSignatureDialogBase<
                         Document document = PsiDocumentManager.getInstance(getProject()).getDocument(item.defaultValueCodeFragment);
                         component = editor = new EditorTextField(document, getProject(), getFileType());
                     }
-                    else if (JetPrimaryConstructorParameterTableModel.isValVarColumn(columnInfo)) {
+                    else if (JetConstructorParameterTableModel.isValVarColumn(columnInfo)) {
                         JComboBox comboBox = new JComboBox(JetValVar.values());
                         comboBox.setSelectedItem(item.parameter.getValOrVar());
                         comboBox.addItemListener(new ItemListener() {
@@ -327,7 +321,7 @@ public class JetChangeSignatureDialog extends ChangeSignatureDialogBase<
                     public Object getValueAt(int column) {
                         ColumnInfo columnInfo = myParametersTableModel.getColumnInfos()[column];
 
-                        if (JetPrimaryConstructorParameterTableModel.isValVarColumn(columnInfo))
+                        if (JetConstructorParameterTableModel.isValVarColumn(columnInfo))
                             return ((JComboBox) components.get(column)).getSelectedItem();
                         else if (JetCallableParameterTableModel.isTypeColumn(columnInfo))
                             return item.typeCodeFragment;
@@ -353,7 +347,7 @@ public class JetChangeSignatureDialog extends ChangeSignatureDialogBase<
                                       new int[] { 4, getParamNamesMaxLength(), getTypesMaxLength() };
                 int columnIndex = 0;
 
-                for (int i = myMethod.getKind() == Kind.PRIMARY_CONSTRUCTOR ? 0 : 1; i < columnLetters.length; i ++) {
+                for (int i = ChangeSignaturePackage.getIsConstructor(myMethod) ? 0 : 1; i < columnLetters.length; i ++) {
                     int width = getColumnWidth(columnLetters[i]);
 
                     if (x <= width)
@@ -371,7 +365,7 @@ public class JetChangeSignatureDialog extends ChangeSignatureDialogBase<
                 MouseEvent me = getMouseEvent();
                 int index = me != null
                             ? getEditorIndex((int) me.getPoint().getX())
-                            : myMethod.getKind() == Kind.PRIMARY_CONSTRUCTOR ? 1 : 0;
+                            : ChangeSignaturePackage.getIsConstructor(myMethod) ? 1 : 0;
                 JComponent component = components.get(index);
                 return component instanceof EditorTextField ? ((EditorTextField) component).getFocusTarget() : component;
             }
