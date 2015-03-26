@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.resolve
+package org.jetbrains.kotlin.js.parser
 
-import org.jetbrains.kotlin.psi.JetDeclaration
-import org.jetbrains.kotlin.diagnostics.DiagnosticSink
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import com.google.gwt.dev.js.rhino.*
 
-public trait AnnotationChecker {
+public object ParserEvents {
 
-    public fun check(declaration: JetDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink);
+    public class OnFunctionParsingStart
 
+    public class OnFunctionParsingEnd(public val tokenStream: TokenStream)
 }

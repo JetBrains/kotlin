@@ -26,7 +26,7 @@ public object JsDynamicScope : JsScope(null, "Scope for dynamic declarations", n
     override fun doCreateName(name: String) = JsName(this, name)
 }
 
-public class JsFunctionScope(parent: JsScope, description: String) : JsScope(parent, description, null) {
+public open class JsFunctionScope(parent: JsScope, description: String) : JsScope(parent, description, null) {
 
     private val labelScopes = Stack<LabelScope>()
     private val topLabelScope: LabelScope?
@@ -36,20 +36,20 @@ public class JsFunctionScope(parent: JsScope, description: String) : JsScope(par
 
     override fun hasOwnName(name: String): Boolean = RESERVED_WORDS.contains(name) || super.hasOwnName(name)
 
-    public fun declareNameUnsafe(identifier: String): JsName = super.declareName(identifier)
+    public open fun declareNameUnsafe(identifier: String): JsName = super.declareName(identifier)
 
-    public fun enterLabel(label: String): JsName {
+    public open fun enterLabel(label: String): JsName {
         val scope = LabelScope(topLabelScope, label)
         labelScopes.push(scope)
         return scope.labelName
     }
 
-    public fun exitLabel() {
+    public open fun exitLabel() {
         assert(labelScopes.isNotEmpty()) { "No scope to exit from" }
         labelScopes.pop()
     }
 
-    public fun findLabel(label: String): JsName? =
+    public open fun findLabel(label: String): JsName? =
             topLabelScope?.findName(label)
 
     private inner class LabelScope(parent: LabelScope?, val ident: String) : JsScope(parent, "Label scope for $ident", null) {
@@ -105,4 +105,37 @@ public class JsFunctionScope(parent: JsScope, description: String) : JsScope(par
                 "Kotlin"
         )
     }
+}
+
+public class DelegatingJsFunctionScopeWithTemporaryParent(
+        private val delegatingScope: JsFunctionScope,
+        parent: JsScope
+) : JsFunctionScope(parent, "<delegating scope to delegatingScope>") {
+
+    override fun hasOwnName(name: String): Boolean =
+            delegatingScope.hasOwnName(name)
+
+    override fun findOwnName(ident: String): JsName? =
+            delegatingScope.findOwnName(ident)
+
+    override fun declareNameUnsafe(identifier: String): JsName =
+            delegatingScope.declareNameUnsafe(identifier)
+
+    override fun declareName(identifier: String): JsName =
+            delegatingScope.declareName(identifier)
+
+    override fun declareFreshName(suggestedName: String): JsName =
+            delegatingScope.declareFreshName(suggestedName)
+
+    override fun declareTemporary(): JsName =
+            delegatingScope.declareTemporary()
+
+    override fun enterLabel(label: String): JsName =
+            delegatingScope.enterLabel(label)
+
+    override fun exitLabel() =
+            delegatingScope.exitLabel()
+
+    override fun findLabel(label: String): JsName? =
+            delegatingScope.findLabel(label)
 }

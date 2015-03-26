@@ -198,6 +198,18 @@ public class InlineJsTestGenerated extends AbstractInlineJsTest {
         doTest(fileName);
     }
 
+    @TestMetadata("jsCode.kt")
+    public void testJsCode() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inline/cases/jsCode.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("jsCodeVarDeclared.kt")
+    public void testJsCodeVarDeclared() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inline/cases/jsCodeVarDeclared.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("lambdaInLambda.kt")
     public void testLambdaInLambda() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inline/cases/lambdaInLambda.kt");
