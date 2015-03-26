@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.refactoring.introduce
 
 import com.intellij.ide.DataManager
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ExtractKotlinFunctionHandler
@@ -174,15 +173,7 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
 
         fixture.setTestDataPath("${JetTestUtils.getHomeDirectory()}/${mainFile.getParent()}")
 
-        val mainFileName = mainFile.getName()
-        val mainFileBaseName = FileUtil.getNameWithoutExtension(mainFileName)
-        mainFile.getParentFile()
-                .listFiles {(file, name) ->
-                    name != mainFileName && name.startsWith("$mainFileBaseName.") && (name.endsWith(".kt") || name.endsWith(".java"))
-                }.forEach {
-                    fixture.configureByFile(it.getName())
-                }
-        val file = fixture.configureByFile(mainFileName) as JetFile
+        val file = fixture.configureByFile(mainFile.getName()) as JetFile
 
         val addKotlinRuntime = InTextDirectivesUtils.findStringWithPrefixes(file.getText(), "// WITH_RUNTIME") != null
         if (addKotlinRuntime) {
