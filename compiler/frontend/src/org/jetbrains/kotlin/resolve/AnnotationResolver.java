@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyAnnotationDescriptor;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyAnnotationsContextImpl;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
+import org.jetbrains.kotlin.resolve.validation.CompositeSymbolUsageValidator;
 import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.JetType;
@@ -365,6 +366,7 @@ public class AnnotationResolver {
                             new SimpleResolutionContext(trace, JetScope.Empty.INSTANCE$, NO_EXPECTED_TYPE, DataFlowInfo.EMPTY,
                                                         ContextDependency.INDEPENDENT,
                                                         new CompositeChecker(Lists.<CallChecker>newArrayList()),
+                                                        new CompositeSymbolUsageValidator(),
                                                         new AdditionalTypeChecker.Composite(Lists.<AdditionalTypeChecker>newArrayList()),
                                                         StatementFilter.NONE);
                     ArgumentTypeResolver.updateNumberType(defaultType, argumentExpression, context);

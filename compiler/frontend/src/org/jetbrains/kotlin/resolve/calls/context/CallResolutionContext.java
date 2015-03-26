@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.resolve.calls.model.DataFlowInfoForArgumentsImpl;
 import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator;
 import org.jetbrains.kotlin.types.JetType;
 
 public abstract class CallResolutionContext<Context extends CallResolutionContext<Context>> extends ResolutionContext<Context> {
@@ -49,13 +50,15 @@ public abstract class CallResolutionContext<Context extends CallResolutionContex
             @SuppressWarnings("NullableProblems")
             @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments,
             @NotNull CallChecker callChecker,
+            SymbolUsageValidator symbolUsageValidator,
             @NotNull AdditionalTypeChecker additionalTypeChecker,
             @NotNull StatementFilter statementFilter,
             boolean isAnnotationContext,
             boolean collectAllCandidates,
             boolean insideSafeCallChain
     ) {
-        super(trace, scope, expectedType, dataFlowInfo, contextDependency, resolutionResultsCache, callChecker, additionalTypeChecker,
+        super(trace, scope, expectedType, dataFlowInfo, contextDependency, resolutionResultsCache, callChecker, symbolUsageValidator,
+              additionalTypeChecker,
               statementFilter, isAnnotationContext, collectAllCandidates, insideSafeCallChain);
         this.call = call;
         this.checkArguments = checkArguments;

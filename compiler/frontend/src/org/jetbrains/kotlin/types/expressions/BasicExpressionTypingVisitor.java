@@ -62,6 +62,7 @@ import org.jetbrains.kotlin.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
+import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
@@ -436,8 +437,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         trace.record(RESOLVED_CALL, call, resolvedCall);
         trace.record(CALL, expression, call);
 
-        context.callChecker.check(resolvedCall,
-                                  BasicCallResolutionContext.create(context, call, CheckValueArgumentsMode.DISABLED));
+        BasicCallResolutionContext resolutionContext = BasicCallResolutionContext.create(context, call, CheckValueArgumentsMode.DISABLED);
+        context.callChecker.check(resolvedCall, resolutionContext);
+        context.symbolUsageValidator.validateCall(descriptor, trace, expression);
     }
 
     private static boolean isDeclaredInClass(ReceiverParameterDescriptor receiver) {
@@ -1006,11 +1008,19 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         boolean result = true;
         JetExpression reportOn = expression != null ? expression : expressionWithParenthesis;
+        if (reportOn instanceof JetQualifiedExpression)
+            reportOn = ((JetQualifiedExpression)reportOn).getSelectorExpression();
+
         if (variable instanceof PropertyDescriptor) {
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) variable;
+            PropertySetterDescriptor setter = propertyDescriptor.getSetter();
             if (propertyDescriptor.isSetterProjectedOut()) {
                 trace.report(SETTER_PROJECTED_OUT.on(reportOn, propertyDescriptor));
                 result = false;
+            } else {
+                if (setter != null) {
+                    context.symbolUsageValidator.validateCall(setter, trace, reportOn);
+                }
             }
         }
 

@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.resolve.lazy.NoTopLevelDescriptorProvider;
 import org.jetbrains.kotlin.resolve.lazy.NoFileScopeProvider;
 import org.jetbrains.kotlin.types.expressions.DeclarationScopeProviderForLocalClassifierAnalyzer;
 import org.jetbrains.kotlin.types.expressions.LocalLazyDeclarationResolver;
+import org.jetbrains.kotlin.resolve.validation.DefaultSymbolUsageValidator;
 import org.jetbrains.kotlin.resolve.BodyResolver;
 import org.jetbrains.kotlin.resolve.AnnotationResolver;
 import org.jetbrains.kotlin.resolve.calls.CallResolver;
@@ -85,6 +86,7 @@ public class InjectorForLazyLocalClassifierAnalyzer {
     private final NoFileScopeProvider noFileScopeProvider;
     private final DeclarationScopeProviderForLocalClassifierAnalyzer declarationScopeProviderForLocalClassifierAnalyzer;
     private final LocalLazyDeclarationResolver localLazyDeclarationResolver;
+    private final DefaultSymbolUsageValidator defaultSymbolUsageValidator;
     private final BodyResolver bodyResolver;
     private final AnnotationResolver annotationResolver;
     private final CallResolver callResolver;
@@ -142,6 +144,7 @@ public class InjectorForLazyLocalClassifierAnalyzer {
         this.noFileScopeProvider = NoFileScopeProvider.INSTANCE$;
         this.localLazyDeclarationResolver = new LocalLazyDeclarationResolver(globalContext, bindingTrace, localClassDescriptorHolder);
         this.declarationScopeProviderForLocalClassifierAnalyzer = new DeclarationScopeProviderForLocalClassifierAnalyzer(localLazyDeclarationResolver, localClassDescriptorHolder);
+        this.defaultSymbolUsageValidator = DefaultSymbolUsageValidator.INSTANCE$;
         this.bodyResolver = new BodyResolver();
         this.annotationResolver = new AnnotationResolver();
         this.callResolver = new CallResolver();
@@ -239,6 +242,7 @@ public class InjectorForLazyLocalClassifierAnalyzer {
         expressionTypingComponents.setLocalClassifierAnalyzer(localClassifierAnalyzer);
         expressionTypingComponents.setPlatformToKotlinClassMap(platformToKotlinClassMap);
         expressionTypingComponents.setReflectionTypes(reflectionTypes);
+        expressionTypingComponents.setSymbolUsageValidator(defaultSymbolUsageValidator);
 
         forLoopConventionsChecker.setBuiltIns(kotlinBuiltIns);
         forLoopConventionsChecker.setExpressionTypingServices(expressionTypingServices);
@@ -255,6 +259,8 @@ public class InjectorForLazyLocalClassifierAnalyzer {
         delegatedPropertyResolver.setBuiltIns(kotlinBuiltIns);
         delegatedPropertyResolver.setCallResolver(callResolver);
         delegatedPropertyResolver.setExpressionTypingServices(expressionTypingServices);
+
+        qualifiedExpressionResolver.setSymbolUsageValidator(defaultSymbolUsageValidator);
 
         callExpressionResolver.setExpressionTypingServices(expressionTypingServices);
 

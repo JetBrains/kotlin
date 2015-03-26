@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator;
 import org.jetbrains.kotlin.types.JetType;
 
 import java.util.Collection;
@@ -57,6 +58,7 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments,
             @NotNull CallChecker callChecker,
+            @NotNull SymbolUsageValidator symbolUsageValidator,
             @NotNull AdditionalTypeChecker additionalTypeChecker,
             @NotNull StatementFilter statementFilter,
             @NotNull Collection<MutableResolvedCall<F>> resolvedCalls,
@@ -65,7 +67,7 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
             boolean insideSafeCallChain
     ) {
         super(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, resolutionResultsCache,
-              dataFlowInfoForArguments, callChecker, additionalTypeChecker, statementFilter, isAnnotationContext, collectAllCandidates, insideSafeCallChain);
+              dataFlowInfoForArguments, callChecker, symbolUsageValidator, additionalTypeChecker, statementFilter, isAnnotationContext, collectAllCandidates, insideSafeCallChain);
         this.lazyCandidates = lazyCandidates;
         this.resolvedCalls = resolvedCalls;
         this.tracing = tracing;
@@ -80,7 +82,8 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
              context.trace, context.scope, context.call,
              context.expectedType, context.dataFlowInfo, context.contextDependency, context.checkArguments,
              context.resolutionResultsCache, context.dataFlowInfoForArguments,
-             context.callChecker, context.additionalTypeChecker, context.statementFilter, Lists.<MutableResolvedCall<F>>newArrayList(),
+             context.callChecker, context.symbolUsageValidator, context.additionalTypeChecker,
+             context.statementFilter, Lists.<MutableResolvedCall<F>>newArrayList(),
              context.isAnnotationContext, context.collectAllCandidates, context.insideCallChain);
     }
 
@@ -125,7 +128,9 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
     ) {
         return new ResolutionTask<D, F>(
                 lazyCandidates, tracing, trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments,
-                resolutionResultsCache, dataFlowInfoForArguments, callChecker, additionalTypeChecker, statementFilter, resolvedCalls,
+                resolutionResultsCache, dataFlowInfoForArguments,
+                callChecker, symbolUsageValidator, additionalTypeChecker,
+                statementFilter, resolvedCalls,
                 isAnnotationContext, collectAllCandidates, insideSafeCallChain);
     }
 
@@ -136,7 +141,9 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
     public ResolutionTask<D, F> replaceCall(@NotNull Call newCall) {
         return new ResolutionTask<D, F>(
                 lazyCandidates, tracing, trace, scope, newCall, expectedType, dataFlowInfo, contextDependency, checkArguments,
-                resolutionResultsCache, dataFlowInfoForArguments, callChecker, additionalTypeChecker, statementFilter, resolvedCalls,
+                resolutionResultsCache, dataFlowInfoForArguments,
+                callChecker, symbolUsageValidator, additionalTypeChecker,
+                statementFilter, resolvedCalls,
                 isAnnotationContext, collectAllCandidates, insideCallChain);
     }
 

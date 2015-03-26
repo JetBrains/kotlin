@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.resolve.AdditionalCheckerProvider;
 import org.jetbrains.kotlin.types.DynamicTypesSettings;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
+import org.jetbrains.kotlin.resolve.validation.DefaultSymbolUsageValidator;
 import org.jetbrains.kotlin.resolve.LazyTopDownAnalyzerForTopLevel;
 import org.jetbrains.kotlin.resolve.lazy.ScopeProvider.AdditionalFileScopeProvider;
 import org.jetbrains.kotlin.resolve.lazy.DeclarationScopeProviderImpl;
@@ -82,6 +83,7 @@ public class InjectorForLazyBodyResolve {
     private final DynamicTypesSettings dynamicTypesSettings;
     private final KotlinBuiltIns kotlinBuiltIns;
     private final PlatformToKotlinClassMap platformToKotlinClassMap;
+    private final DefaultSymbolUsageValidator defaultSymbolUsageValidator;
     private final LazyTopDownAnalyzerForTopLevel lazyTopDownAnalyzerForTopLevel;
     private final AdditionalFileScopeProvider additionalFileScopeProvider;
     private final DeclarationScopeProviderImpl declarationScopeProvider;
@@ -139,6 +141,7 @@ public class InjectorForLazyBodyResolve {
         this.dynamicTypesSettings = dynamicTypesSettings;
         this.kotlinBuiltIns = moduleDescriptor.getBuiltIns();
         this.platformToKotlinClassMap = moduleDescriptor.getPlatformToKotlinClassMap();
+        this.defaultSymbolUsageValidator = DefaultSymbolUsageValidator.INSTANCE$;
         this.lazyTopDownAnalyzerForTopLevel = new LazyTopDownAnalyzerForTopLevel();
         this.additionalFileScopeProvider = new AdditionalFileScopeProvider();
         this.lazyDeclarationResolver = new LazyDeclarationResolver(globalContext, bindingTrace);
@@ -244,6 +247,7 @@ public class InjectorForLazyBodyResolve {
         expressionTypingComponents.setLocalClassifierAnalyzer(localClassifierAnalyzer);
         expressionTypingComponents.setPlatformToKotlinClassMap(platformToKotlinClassMap);
         expressionTypingComponents.setReflectionTypes(reflectionTypes);
+        expressionTypingComponents.setSymbolUsageValidator(defaultSymbolUsageValidator);
 
         forLoopConventionsChecker.setBuiltIns(kotlinBuiltIns);
         forLoopConventionsChecker.setExpressionTypingServices(expressionTypingServices);
@@ -260,6 +264,8 @@ public class InjectorForLazyBodyResolve {
         delegatedPropertyResolver.setBuiltIns(kotlinBuiltIns);
         delegatedPropertyResolver.setCallResolver(callResolver);
         delegatedPropertyResolver.setExpressionTypingServices(expressionTypingServices);
+
+        qualifiedExpressionResolver.setSymbolUsageValidator(defaultSymbolUsageValidator);
 
         callExpressionResolver.setExpressionTypingServices(expressionTypingServices);
 

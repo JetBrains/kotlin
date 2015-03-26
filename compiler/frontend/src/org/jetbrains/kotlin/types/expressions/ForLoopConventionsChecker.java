@@ -80,8 +80,10 @@ public class ForLoopConventionsChecker {
         if (iteratorResolutionResults.isSuccess()) {
             ResolvedCall<FunctionDescriptor> iteratorResolvedCall = iteratorResolutionResults.getResultingCall();
             context.trace.record(LOOP_RANGE_ITERATOR_RESOLVED_CALL, loopRangeExpression, iteratorResolvedCall);
-
             FunctionDescriptor iteratorFunction = iteratorResolvedCall.getResultingDescriptor();
+
+            expressionTypingServices.getSymbolUsageValidator().validateCall(iteratorFunction, context.trace, loopRangeExpression);
+
             JetType iteratorType = iteratorFunction.getReturnType();
             JetType hasNextType = checkConventionForIterator(context, loopRangeExpression, iteratorType, "hasNext",
                                                              HAS_NEXT_FUNCTION_AMBIGUITY, HAS_NEXT_MISSING, HAS_NEXT_FUNCTION_NONE_APPLICABLE,
@@ -130,7 +132,9 @@ public class ForLoopConventionsChecker {
             assert nextResolutionResults.isSuccess();
             ResolvedCall<FunctionDescriptor> resolvedCall = nextResolutionResults.getResultingCall();
             context.trace.record(resolvedCallKey, loopRangeExpression, resolvedCall);
-            return resolvedCall.getResultingDescriptor().getReturnType();
+            FunctionDescriptor functionDescriptor = resolvedCall.getResultingDescriptor();
+            expressionTypingServices.getSymbolUsageValidator().validateCall(functionDescriptor, context.trace, loopRangeExpression);
+            return functionDescriptor.getReturnType();
         }
         return null;
     }

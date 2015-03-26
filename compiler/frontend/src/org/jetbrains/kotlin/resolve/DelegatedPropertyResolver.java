@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve;
 
 import com.google.common.collect.Lists;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -208,7 +209,17 @@ public class DelegatedPropertyResolver {
             return;
         }
 
-        trace.record(DELEGATED_PROPERTY_RESOLVED_CALL, accessor, functionResults.getResultingCall());
+        ResolvedCall<FunctionDescriptor> resultingCall = functionResults.getResultingCall();
+        PsiElement declaration = DescriptorToSourceUtils.descriptorToDeclaration(propertyDescriptor);
+        if (declaration instanceof JetProperty) {
+            JetProperty property = (JetProperty) declaration;
+            JetPropertyDelegate delegate = property.getDelegate();
+            if (delegate != null) {
+                PsiElement byKeyword = delegate.getByKeywordNode().getPsi();
+                expressionTypingServices.getSymbolUsageValidator().validateCall(resultingCall.getResultingDescriptor(), trace, byKeyword);
+            }
+        }
+        trace.record(DELEGATED_PROPERTY_RESOLVED_CALL, accessor, resultingCall);
     }
 
     /* Resolve get() or set() methods from delegate */

@@ -262,7 +262,11 @@ public class ExpressionTypingUtils {
             JetType componentType = null;
             if (results.isSuccess()) {
                 context.trace.record(COMPONENT_RESOLVED_CALL, entry, results.getResultingCall());
-                componentType = results.getResultingDescriptor().getReturnType();
+                FunctionDescriptor componentFunction = results.getResultingDescriptor();
+
+                expressionTypingServices.getSymbolUsageValidator().validateCall(componentFunction, context.trace, entry);
+
+                componentType = componentFunction.getReturnType();
                 if (componentType != null && !noExpectedType(expectedType)
                        && !JetTypeChecker.DEFAULT.isSubtypeOf(componentType, expectedType)) {
 

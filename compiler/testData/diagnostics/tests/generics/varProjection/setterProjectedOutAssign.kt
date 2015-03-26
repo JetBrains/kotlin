@@ -6,6 +6,6 @@ trait Tr<T> {
 }
 
 fun test(t: Tr<*>) {
-    <!SETTER_PROJECTED_OUT!>t.v<!> = null!!
+    t.<!SETTER_PROJECTED_OUT!>v<!> = null!!
     t.v checkType { it : _<Any?> }
 }

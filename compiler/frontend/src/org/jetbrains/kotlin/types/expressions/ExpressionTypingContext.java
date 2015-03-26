@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstantChecker;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator;
 import org.jetbrains.kotlin.types.JetType;
 
 public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingContext> {
@@ -56,6 +57,7 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
         return newContext(trace, scope, dataFlowInfo, expectedType,
                           ContextDependency.INDEPENDENT, new ResolutionResultsCacheImpl(),
                           callChecker != null ? callChecker : expressionTypingServices.getCallChecker(),
+                          expressionTypingServices.getSymbolUsageValidator(),
                           expressionTypingServices.getAdditionalTypeChecker(),
                           StatementFilter.NONE, false);
     }
@@ -64,7 +66,8 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
     public static ExpressionTypingContext newContext(@NotNull ResolutionContext context) {
         return new ExpressionTypingContext(
                 context.trace, context.scope, context.dataFlowInfo, context.expectedType,
-                context.contextDependency, context.resolutionResultsCache, context.callChecker, context.additionalTypeChecker,
+                context.contextDependency, context.resolutionResultsCache,
+                context.callChecker, context.symbolUsageValidator, context.additionalTypeChecker,
                 context.statementFilter,
                 context.isAnnotationContext, context.collectAllCandidates, context.insideCallChain
         );
@@ -79,12 +82,14 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull ContextDependency contextDependency,
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @NotNull CallChecker callChecker,
+            @NotNull SymbolUsageValidator symbolUsageValidator,
             @NotNull AdditionalTypeChecker additionalTypeChecker,
             @NotNull StatementFilter statementFilter,
             boolean isAnnotationContext
     ) {
         return new ExpressionTypingContext(
-                trace, scope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache, callChecker, additionalTypeChecker,
+                trace, scope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache, callChecker, symbolUsageValidator,
+                additionalTypeChecker,
                 statementFilter, isAnnotationContext, false, false);
     }
 
@@ -98,13 +103,15 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull ContextDependency contextDependency,
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @NotNull CallChecker callChecker,
+            @NotNull SymbolUsageValidator symbolUsageValidator,
             @NotNull AdditionalTypeChecker additionalTypeChecker,
             @NotNull StatementFilter statementFilter,
             boolean isAnnotationContext,
             boolean collectAllCandidates,
             boolean insideSafeCallChain
     ) {
-        super(trace, scope, expectedType, dataFlowInfo, contextDependency, resolutionResultsCache, callChecker, additionalTypeChecker,
+        super(trace, scope, expectedType, dataFlowInfo, contextDependency, resolutionResultsCache,
+              callChecker, symbolUsageValidator, additionalTypeChecker,
               statementFilter, isAnnotationContext, collectAllCandidates, insideSafeCallChain);
     }
 
@@ -121,7 +128,8 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             boolean insideSafeCallChain
     ) {
         return new ExpressionTypingContext(trace, scope, dataFlowInfo,
-                                           expectedType, contextDependency, resolutionResultsCache, callChecker, additionalTypeChecker,
+                                           expectedType, contextDependency, resolutionResultsCache,
+                                           callChecker, symbolUsageValidator, additionalTypeChecker,
                                            statementFilter, isAnnotationContext, collectAllCandidates, insideSafeCallChain);
     }
 

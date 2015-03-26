@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.context.GlobalContext;
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
 import org.jetbrains.kotlin.resolve.AdditionalCheckerProvider;
 import org.jetbrains.kotlin.resolve.calls.CallResolver;
+import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator;
 import org.jetbrains.kotlin.types.DynamicTypesSettings;
 import org.jetbrains.kotlin.builtins.ReflectionTypes;
 
@@ -37,6 +38,7 @@ public class ExpressionTypingComponents {
     /*package*/ ForLoopConventionsChecker forLoopConventionsChecker;
     /*package*/ ReflectionTypes reflectionTypes;
     /*package*/ AdditionalCheckerProvider additionalCheckerProvider;
+    /*package*/ SymbolUsageValidator symbolUsageValidator;
     /*package*/ DynamicTypesSettings dynamicTypesSettings;
     /*package*/ KotlinBuiltIns builtIns;
     /*package*/ LocalClassifierAnalyzer localClassifierAnalyzer;
@@ -84,6 +86,11 @@ public class ExpressionTypingComponents {
     @Inject
     public void setAdditionalCheckerProvider(AdditionalCheckerProvider additionalCheckerProvider) {
         this.additionalCheckerProvider = additionalCheckerProvider;
+    }
+
+    @Inject
+    public void setSymbolUsageValidator(SymbolUsageValidator symbolUsageValidator) {
+        this.symbolUsageValidator = symbolUsageValidator;
     }
 
     @Inject

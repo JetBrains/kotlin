@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.resolve.TypeResolver;
 import org.jetbrains.kotlin.context.GlobalContext;
 import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmCheckerProvider;
+import org.jetbrains.kotlin.resolve.validation.DefaultSymbolUsageValidator;
 import org.jetbrains.kotlin.resolve.AnnotationResolver;
 import org.jetbrains.kotlin.resolve.calls.CallResolver;
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver;
@@ -65,6 +66,7 @@ public class InjectorForTests {
     private final GlobalContext globalContext;
     private final StorageManager storageManager;
     private final KotlinJvmCheckerProvider kotlinJvmCheckerProvider;
+    private final DefaultSymbolUsageValidator defaultSymbolUsageValidator;
     private final AnnotationResolver annotationResolver;
     private final CallResolver callResolver;
     private final ArgumentTypeResolver argumentTypeResolver;
@@ -107,6 +109,7 @@ public class InjectorForTests {
         this.callResolver = new CallResolver();
         this.expressionTypingUtils = new ExpressionTypingUtils(getExpressionTypingServices(), callResolver, kotlinBuiltIns);
         this.kotlinJvmCheckerProvider = KotlinJvmCheckerProvider.INSTANCE$;
+        this.defaultSymbolUsageValidator = DefaultSymbolUsageValidator.INSTANCE$;
         this.argumentTypeResolver = new ArgumentTypeResolver();
         this.candidateResolver = new CandidateResolver();
         this.callCompleter = new CallCompleter(argumentTypeResolver, candidateResolver);
@@ -169,6 +172,7 @@ public class InjectorForTests {
         expressionTypingComponents.setLocalClassifierAnalyzer(localClassifierAnalyzer);
         expressionTypingComponents.setPlatformToKotlinClassMap(platformToKotlinClassMap);
         expressionTypingComponents.setReflectionTypes(reflectionTypes);
+        expressionTypingComponents.setSymbolUsageValidator(defaultSymbolUsageValidator);
 
         forLoopConventionsChecker.setBuiltIns(kotlinBuiltIns);
         forLoopConventionsChecker.setExpressionTypingServices(expressionTypingServices);
@@ -176,6 +180,8 @@ public class InjectorForTests {
         forLoopConventionsChecker.setProject(project);
 
         callExpressionResolver.setExpressionTypingServices(expressionTypingServices);
+
+        qualifiedExpressionResolver.setSymbolUsageValidator(defaultSymbolUsageValidator);
 
     }
 

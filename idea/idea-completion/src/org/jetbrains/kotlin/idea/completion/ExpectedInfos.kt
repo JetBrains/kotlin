@@ -71,6 +71,7 @@ import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.resolve.validation.CompositeSymbolUsageValidator
 
 enum class Tail {
     COMMA
@@ -170,17 +171,11 @@ class ExpectedInfos(
 
         val expectedType = (callElement as? JetExpression)?.let { bindingContext[BindingContext.EXPECTED_EXPRESSION_TYPE, it] } ?: TypeUtils.NO_EXPECTED_TYPE
         val dataFlowInfo = bindingContext.getDataFlowInfo(calleeExpression)
-        val callResolutionContext = BasicCallResolutionContext.create(
-                DelegatingBindingTrace(bindingContext, "Temporary trace for completion"),
-                resolutionScope,
-                call,
-                expectedType,
-                dataFlowInfo,
-                ContextDependency.INDEPENDENT,
-                CheckValueArgumentsMode.ENABLED,
-                CompositeChecker(listOf()),
-                AdditionalTypeChecker.Composite(listOf()),
-                false).replaceCollectAllCandidates(true)
+        val bindingTrace = DelegatingBindingTrace(bindingContext, "Temporary trace for completion")
+        val context = BasicCallResolutionContext.create(bindingTrace, resolutionScope, call, expectedType, dataFlowInfo,
+                                                                           ContextDependency.INDEPENDENT, CheckValueArgumentsMode.ENABLED,
+                                                                           CompositeChecker(listOf()), CompositeSymbolUsageValidator(), AdditionalTypeChecker.Composite(listOf()), false)
+        val callResolutionContext = context.replaceCollectAllCandidates(true)
         val callResolver = InjectorForMacros(
                 callElement.getProject(),
                 resolutionFacade.findModuleDescriptor(callElement)

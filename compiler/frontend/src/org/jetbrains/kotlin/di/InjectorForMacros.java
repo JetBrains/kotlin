@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.resolve.TypeResolver;
 import org.jetbrains.kotlin.context.GlobalContext;
 import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.resolve.AdditionalCheckerProvider.DefaultProvider;
+import org.jetbrains.kotlin.resolve.validation.DefaultSymbolUsageValidator;
 import org.jetbrains.kotlin.resolve.AnnotationResolver;
 import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver;
 import org.jetbrains.kotlin.resolve.DescriptorResolver;
@@ -64,6 +65,7 @@ public class InjectorForMacros {
     private final GlobalContext globalContext;
     private final StorageManager storageManager;
     private final DefaultProvider defaultProvider;
+    private final DefaultSymbolUsageValidator defaultSymbolUsageValidator;
     private final AnnotationResolver annotationResolver;
     private final CallExpressionResolver callExpressionResolver;
     private final DescriptorResolver descriptorResolver;
@@ -104,6 +106,7 @@ public class InjectorForMacros {
         this.dynamicTypesSettings = new DynamicTypesSettings();
         this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, moduleDescriptor, flexibleTypeCapabilitiesProvider, storageManager, typeLazinessToken, dynamicTypesSettings);
         this.defaultProvider = DefaultProvider.INSTANCE$;
+        this.defaultSymbolUsageValidator = DefaultSymbolUsageValidator.INSTANCE$;
         this.callExpressionResolver = new CallExpressionResolver();
         this.descriptorResolver = new DescriptorResolver();
         this.delegatedPropertyResolver = new DelegatedPropertyResolver();
@@ -141,6 +144,7 @@ public class InjectorForMacros {
         this.expressionTypingComponents.setLocalClassifierAnalyzer(localClassifierAnalyzer);
         this.expressionTypingComponents.setPlatformToKotlinClassMap(platformToKotlinClassMap);
         this.expressionTypingComponents.setReflectionTypes(reflectionTypes);
+        this.expressionTypingComponents.setSymbolUsageValidator(defaultSymbolUsageValidator);
 
         this.callResolver.setArgumentTypeResolver(argumentTypeResolver);
         this.callResolver.setCallCompleter(callCompleter);
@@ -176,6 +180,8 @@ public class InjectorForMacros {
         argumentTypeResolver.setTypeResolver(typeResolver);
 
         candidateResolver.setArgumentTypeResolver(argumentTypeResolver);
+
+        qualifiedExpressionResolver.setSymbolUsageValidator(defaultSymbolUsageValidator);
 
     }
 

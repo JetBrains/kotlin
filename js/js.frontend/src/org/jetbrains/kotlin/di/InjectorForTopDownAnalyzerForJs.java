@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory;
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
 import org.jetbrains.kotlin.resolve.lazy.ScopeProvider;
+import org.jetbrains.kotlin.resolve.validation.DefaultSymbolUsageValidator;
 import org.jetbrains.kotlin.resolve.LazyTopDownAnalyzerForTopLevel;
 import org.jetbrains.kotlin.js.resolve.KotlinJsCheckerProvider;
 import org.jetbrains.kotlin.types.DynamicTypesAllowed;
@@ -83,6 +84,7 @@ public class InjectorForTopDownAnalyzerForJs {
     private final DeclarationProviderFactory declarationProviderFactory;
     private final ResolveSession resolveSession;
     private final ScopeProvider scopeProvider;
+    private final DefaultSymbolUsageValidator defaultSymbolUsageValidator;
     private final LazyTopDownAnalyzerForTopLevel lazyTopDownAnalyzerForTopLevel;
     private final KotlinJsCheckerProvider kotlinJsCheckerProvider;
     private final DynamicTypesAllowed dynamicTypesAllowed;
@@ -141,6 +143,7 @@ public class InjectorForTopDownAnalyzerForJs {
         this.declarationProviderFactory = declarationProviderFactory;
         this.resolveSession = new ResolveSession(project, globalContext, getModule(), declarationProviderFactory, bindingTrace);
         this.scopeProvider = new ScopeProvider(getResolveSession());
+        this.defaultSymbolUsageValidator = DefaultSymbolUsageValidator.INSTANCE$;
         this.lazyTopDownAnalyzerForTopLevel = new LazyTopDownAnalyzerForTopLevel();
         this.kotlinJsCheckerProvider = KotlinJsCheckerProvider.INSTANCE$;
         this.dynamicTypesAllowed = new DynamicTypesAllowed();
@@ -235,6 +238,7 @@ public class InjectorForTopDownAnalyzerForJs {
         expressionTypingComponents.setLocalClassifierAnalyzer(localClassifierAnalyzer);
         expressionTypingComponents.setPlatformToKotlinClassMap(platformToKotlinClassMap);
         expressionTypingComponents.setReflectionTypes(reflectionTypes);
+        expressionTypingComponents.setSymbolUsageValidator(defaultSymbolUsageValidator);
 
         forLoopConventionsChecker.setBuiltIns(kotlinBuiltIns);
         forLoopConventionsChecker.setExpressionTypingServices(expressionTypingServices);
@@ -251,6 +255,8 @@ public class InjectorForTopDownAnalyzerForJs {
         delegatedPropertyResolver.setBuiltIns(kotlinBuiltIns);
         delegatedPropertyResolver.setCallResolver(callResolver);
         delegatedPropertyResolver.setExpressionTypingServices(expressionTypingServices);
+
+        qualifiedExpressionResolver.setSymbolUsageValidator(defaultSymbolUsageValidator);
 
         callExpressionResolver.setExpressionTypingServices(expressionTypingServices);
 

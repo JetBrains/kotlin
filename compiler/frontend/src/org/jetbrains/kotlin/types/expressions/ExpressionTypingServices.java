@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluat
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.resolve.scopes.WritableScope;
 import org.jetbrains.kotlin.resolve.scopes.WritableScopeImpl;
+import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryPackage;
@@ -459,6 +460,11 @@ public class ExpressionTypingServices {
     public CallChecker getCallChecker() {
         List<CallChecker> checkers = expressionTypingComponents.additionalCheckerProvider.getCallCheckers();
         return new CompositeChecker(checkers);
+    }
+
+    @NotNull
+    public SymbolUsageValidator getSymbolUsageValidator() {
+        return expressionTypingComponents.symbolUsageValidator;
     }
 
     @NotNull

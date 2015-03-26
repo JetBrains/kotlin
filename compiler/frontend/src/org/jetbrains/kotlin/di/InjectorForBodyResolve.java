@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
 import org.jetbrains.kotlin.resolve.AdditionalCheckerProvider;
 import org.jetbrains.kotlin.resolve.StatementFilter;
 import org.jetbrains.kotlin.resolve.BodyResolver;
+import org.jetbrains.kotlin.resolve.validation.DefaultSymbolUsageValidator;
 import org.jetbrains.kotlin.resolve.AnnotationResolver;
 import org.jetbrains.kotlin.resolve.calls.CallResolver;
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver;
@@ -70,6 +71,7 @@ public class InjectorForBodyResolve {
     private final AdditionalCheckerProvider additionalCheckerProvider;
     private final StatementFilter statementFilter;
     private final BodyResolver bodyResolver;
+    private final DefaultSymbolUsageValidator defaultSymbolUsageValidator;
     private final AnnotationResolver annotationResolver;
     private final CallResolver callResolver;
     private final ArgumentTypeResolver argumentTypeResolver;
@@ -116,6 +118,7 @@ public class InjectorForBodyResolve {
         this.additionalCheckerProvider = additionalCheckerProvider;
         this.statementFilter = statementFilter;
         this.bodyResolver = new BodyResolver();
+        this.defaultSymbolUsageValidator = DefaultSymbolUsageValidator.INSTANCE$;
         this.annotationResolver = new AnnotationResolver();
         this.callResolver = new CallResolver();
         this.argumentTypeResolver = new ArgumentTypeResolver();
@@ -191,6 +194,7 @@ public class InjectorForBodyResolve {
         expressionTypingComponents.setLocalClassifierAnalyzer(localClassifierAnalyzer);
         expressionTypingComponents.setPlatformToKotlinClassMap(platformToKotlinClassMap);
         expressionTypingComponents.setReflectionTypes(reflectionTypes);
+        expressionTypingComponents.setSymbolUsageValidator(defaultSymbolUsageValidator);
 
         forLoopConventionsChecker.setBuiltIns(kotlinBuiltIns);
         forLoopConventionsChecker.setExpressionTypingServices(expressionTypingServices);
@@ -207,6 +211,8 @@ public class InjectorForBodyResolve {
         delegatedPropertyResolver.setBuiltIns(kotlinBuiltIns);
         delegatedPropertyResolver.setCallResolver(callResolver);
         delegatedPropertyResolver.setExpressionTypingServices(expressionTypingServices);
+
+        qualifiedExpressionResolver.setSymbolUsageValidator(defaultSymbolUsageValidator);
 
         callExpressionResolver.setExpressionTypingServices(expressionTypingServices);
 

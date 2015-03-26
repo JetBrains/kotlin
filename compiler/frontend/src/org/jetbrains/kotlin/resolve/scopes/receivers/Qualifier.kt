@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName
 import org.jetbrains.kotlin.resolve.bindingContextUtil.recordScopeAndDataFlowInfo
 import org.jetbrains.kotlin.resolve.descriptorUtil.classObjectType
-import org.jetbrains.kotlin.resolve.descriptorUtil.getClassObjectReferenceTarget
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasClassObjectType
 import org.jetbrains.kotlin.resolve.scopes.ChainedScope
 import org.jetbrains.kotlin.resolve.scopes.FilteringScope
@@ -182,12 +181,18 @@ private fun QualifierReceiver.resolveReferenceTarget(
     val isCallableWithReceiver = selector is CallableDescriptor &&
                                  (selector.getDispatchReceiverParameter() != null || selector.getExtensionReceiverParameter() != null)
 
-    if (classifier is ClassDescriptor && classifier.hasClassObjectType && isCallableWithReceiver) {
-        if (classifier.getCompanionObjectDescriptor() != null) {
+    val declarationDescriptor = descriptor
+    if (declarationDescriptor is ClassifierDescriptor)
+        context.symbolUsageValidator.validateTypeUsage(declarationDescriptor, context.trace, referenceExpression)
+
+    if (isCallableWithReceiver && classifier is ClassDescriptor && classifier.hasClassObjectType) {
+        val companionObjectDescriptor = classifier.getCompanionObjectDescriptor()
+        if (companionObjectDescriptor != null) {
             context.trace.record(SHORT_REFERENCE_TO_COMPANION_OBJECT, referenceExpression, classifier)
+            context.symbolUsageValidator.validateTypeUsage(companionObjectDescriptor, context.trace, referenceExpression)
+            return companionObjectDescriptor
         }
-        return classifier.getClassObjectReferenceTarget()
     }
 
-    return descriptor
+    return declarationDescriptor
 }

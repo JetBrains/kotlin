@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsImpl
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.calls.context.CheckValueArgumentsMode
-import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem
@@ -33,10 +32,7 @@ import org.jetbrains.kotlin.resolve.calls.context.CallCandidateResolutionContext
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData
 import org.jetbrains.kotlin.psi.ValueArgument
-import org.jetbrains.kotlin.resolve.calls.model.ArgumentMapping
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
-import org.jetbrains.kotlin.resolve.calls.model.ArgumentUnmapped
-import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.*
@@ -52,6 +48,7 @@ import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 import org.jetbrains.kotlin.psi.JetQualifiedExpression
 import java.util.ArrayList
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.*
+import org.jetbrains.kotlin.resolve.calls.model.*
 
 public class CallCompleter(
         val argumentTypeResolver: ArgumentTypeResolver,
@@ -78,7 +75,14 @@ public class CallCompleter(
             temporaryTrace.commit()
         }
 
-        resolvedCall?.let { context.callChecker.check(it, context) }
+        if (resolvedCall != null) {
+            context.callChecker.check(resolvedCall, context)
+            val element = if (resolvedCall is VariableAsFunctionResolvedCall)
+                resolvedCall.variableCall.getCall().getCalleeExpression()
+            else
+                resolvedCall.getCall().getCalleeExpression()
+            context.symbolUsageValidator.validateCall(resolvedCall.getResultingDescriptor(), context.trace, element)
+        }
 
         if (results.isSingleResult() && results.getResultingCall().getStatus().isSuccess()) {
             return results.changeStatusToSuccess()

@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.types.DynamicTypesSettings;
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
 import org.jetbrains.kotlin.resolve.lazy.ScopeProvider;
 import org.jetbrains.kotlin.context.LazyResolveToken;
+import org.jetbrains.kotlin.resolve.validation.DefaultSymbolUsageValidator;
 import org.jetbrains.kotlin.resolve.AnnotationResolver;
 import org.jetbrains.kotlin.resolve.calls.CallResolver;
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver;
@@ -75,6 +76,7 @@ public class InjectorForLazyResolve {
     private final ResolveSession resolveSession;
     private final ScopeProvider scopeProvider;
     private final LazyResolveToken lazyResolveToken;
+    private final DefaultSymbolUsageValidator defaultSymbolUsageValidator;
     private final AnnotationResolver annotationResolver;
     private final CallResolver callResolver;
     private final ArgumentTypeResolver argumentTypeResolver;
@@ -124,6 +126,7 @@ public class InjectorForLazyResolve {
         this.resolveSession = new ResolveSession(project, globalContext, moduleDescriptor, declarationProviderFactory, bindingTrace);
         this.scopeProvider = new ScopeProvider(getResolveSession());
         this.lazyResolveToken = new LazyResolveToken();
+        this.defaultSymbolUsageValidator = DefaultSymbolUsageValidator.INSTANCE$;
         this.annotationResolver = new AnnotationResolver();
         this.callResolver = new CallResolver();
         this.argumentTypeResolver = new ArgumentTypeResolver();
@@ -201,6 +204,7 @@ public class InjectorForLazyResolve {
         expressionTypingComponents.setLocalClassifierAnalyzer(localClassifierAnalyzer);
         expressionTypingComponents.setPlatformToKotlinClassMap(platformToKotlinClassMap);
         expressionTypingComponents.setReflectionTypes(reflectionTypes);
+        expressionTypingComponents.setSymbolUsageValidator(defaultSymbolUsageValidator);
 
         forLoopConventionsChecker.setBuiltIns(kotlinBuiltIns);
         forLoopConventionsChecker.setExpressionTypingServices(expressionTypingServices);
@@ -217,6 +221,8 @@ public class InjectorForLazyResolve {
         delegatedPropertyResolver.setBuiltIns(kotlinBuiltIns);
         delegatedPropertyResolver.setCallResolver(callResolver);
         delegatedPropertyResolver.setExpressionTypingServices(expressionTypingServices);
+
+        qualifiedExpressionResolver.setSymbolUsageValidator(defaultSymbolUsageValidator);
 
         callExpressionResolver.setExpressionTypingServices(expressionTypingServices);
 

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker;
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator;
 import org.jetbrains.kotlin.types.JetType;
 
 public class SimpleResolutionContext extends ResolutionContext<SimpleResolutionContext> {
@@ -34,13 +35,15 @@ public class SimpleResolutionContext extends ResolutionContext<SimpleResolutionC
             @NotNull ContextDependency contextDependency,
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @NotNull CallChecker callChecker,
+            @NotNull SymbolUsageValidator symbolUsageValidator,
             @NotNull AdditionalTypeChecker additionalTypeChecker,
             @NotNull StatementFilter statementFilter,
             boolean isAnnotationContext,
             boolean collectAllCandidates,
             boolean insideSafeCallChain
     ) {
-        super(trace, scope, expectedType, dataFlowInfo, contextDependency, resolutionResultsCache, callChecker, additionalTypeChecker,
+        super(trace, scope, expectedType, dataFlowInfo, contextDependency, resolutionResultsCache, callChecker, symbolUsageValidator,
+              additionalTypeChecker,
               statementFilter, isAnnotationContext, collectAllCandidates, insideSafeCallChain);
     }
 
@@ -51,11 +54,12 @@ public class SimpleResolutionContext extends ResolutionContext<SimpleResolutionC
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull ContextDependency contextDependency,
             @NotNull CallChecker callChecker,
+            @NotNull SymbolUsageValidator symbolUsageValidator,
             @NotNull AdditionalTypeChecker additionalTypeChecker,
             @NotNull StatementFilter statementFilter
     ) {
         this(trace, scope, expectedType, dataFlowInfo, contextDependency, new ResolutionResultsCacheImpl(),
-             callChecker, additionalTypeChecker, statementFilter, false, false, false);
+             callChecker, symbolUsageValidator, additionalTypeChecker, statementFilter, false, false, false);
     }
 
     @Override
@@ -71,7 +75,8 @@ public class SimpleResolutionContext extends ResolutionContext<SimpleResolutionC
             boolean insideSafeCallChain
     ) {
         return new SimpleResolutionContext(
-                trace, scope, expectedType, dataFlowInfo, contextDependency, resolutionResultsCache, callChecker, additionalTypeChecker,
+                trace, scope, expectedType, dataFlowInfo, contextDependency, resolutionResultsCache,
+                callChecker, symbolUsageValidator, additionalTypeChecker,
                 statementFilter, isAnnotationContext, collectAllCandidates, insideSafeCallChain);
     }
 }

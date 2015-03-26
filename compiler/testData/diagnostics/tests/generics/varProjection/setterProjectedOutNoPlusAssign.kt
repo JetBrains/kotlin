@@ -4,5 +4,5 @@ trait Tr<T> {
 }
 
 fun test(t: Tr<out String>) {
-    <!SETTER_PROJECTED_OUT!>t.v<!> += null!!
+    t.<!SETTER_PROJECTED_OUT!>v<!> += null!!
 }
