@@ -13,5 +13,5 @@ import android.support.v4.widget.*
 import kotlin.internal.flexible.ft
 
 val android.view.View.button: ft<View, View?>
-    get() = findViewById(0) : View
+    get() = findViewById(0)
 

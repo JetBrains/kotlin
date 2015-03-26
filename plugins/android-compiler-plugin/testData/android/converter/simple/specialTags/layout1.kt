@@ -13,11 +13,11 @@ import android.support.v4.widget.*
 import kotlin.internal.flexible.ft
 
 val android.view.View.includeTag: ft<View, View?>
-    get() = findViewById(0) : View
+    get() = findViewById(0)
 
 val android.view.View.fragmentTag: ft<View, View?>
-    get() = findViewById(0) : View
+    get() = findViewById(0)
 
 val android.view.View.`fun`: ft<TextView, TextView?>
-    get() = findViewById(0) as TextView
+    get() = findViewById(0) as? TextView
 
