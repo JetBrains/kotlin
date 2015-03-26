@@ -201,7 +201,7 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
         else {
             return descriptors.filter { desc ->
                 !alreadyAddedDescriptors.any {
-                    comparePossiblyOverridingDescriptors(project, it, desc)
+                    comparePossiblyOverridingDescriptors(it, desc)
                 }
             }
         }
