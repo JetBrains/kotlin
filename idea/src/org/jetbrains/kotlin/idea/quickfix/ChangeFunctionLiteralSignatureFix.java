@@ -69,7 +69,7 @@ public class ChangeFunctionLiteralSignatureFix extends ChangeFunctionSignatureFi
                             @Override
                             public Unit invoke(JetMutableMethodDescriptor descriptor) {
                                 JetNameValidator validator = new SimpleCollectingValidator();
-                                descriptor.clearNonReceiverParameters();
+                                descriptor.clearParameters();
                                 for (JetType type : parameterTypes) {
                                     String name = JetNameSuggester.suggestNames(type, validator, "param")[0];
                                     descriptor.addParameter(new JetParameterInfo(-1, name, type, null, "", null, null));

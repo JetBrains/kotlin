@@ -540,12 +540,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
-        @TestMetadata("beforeFixExtensionLambdaSignature.kt")
-        public void testFixExtensionLambdaSignature() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/beforeFixExtensionLambdaSignature.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("beforeLinearHierarchy.kt")
         public void testLinearHierarchy() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/beforeLinearHierarchy.kt");
@@ -603,12 +597,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("beforeRemoveParameterNotAvailableForBuiltins.kt")
         public void testRemoveParameterNotAvailableForBuiltins() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/beforeRemoveParameterNotAvailableForBuiltins.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("beforeRemoveUnusedExtensionParameter.kt")
-        public void testRemoveUnusedExtensionParameter() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/beforeRemoveUnusedExtensionParameter.kt");
             doTest(fileName);
         }
 
