@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.kotlin.codegen.CodegenTestCase;
 import org.jetbrains.kotlin.codegen.GenerationUtils;
-import org.jetbrains.kotlin.codegen.InlineTestUtil;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.test.ConfigurationKind;
@@ -158,6 +157,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
             Method method = aClass.getMethod("box");
             String r = (String) method.invoke(null);
             assertEquals("OK", r);
+            System.out.println(generateToText());
         }
         catch (Throwable e) {
             System.out.println(generateToText());

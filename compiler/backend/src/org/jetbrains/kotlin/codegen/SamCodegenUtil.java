@@ -42,6 +42,11 @@ public class SamCodegenUtil {
         return null;
     }
 
+    public static <T extends FunctionDescriptor> T resolveSamAdapter(@NotNull T descriptor) {
+        FunctionDescriptor original = getOriginalIfSamAdapter(descriptor);
+        return original != null ? (T) original : descriptor;
+    }
+
     private SamCodegenUtil() {
     }
 }
