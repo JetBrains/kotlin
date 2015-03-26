@@ -263,7 +263,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                     final JetExpression originalBody = originalDeclaration.getBodyExpression();
                     assert originalBody != null : "Original body is not found: " + originalDeclaration;
 
-                    JetDeclarationWithBody newDeclaration = ConvertToBlockBodyAction.OBJECT$.convert(originalDeclaration);
+                    JetDeclarationWithBody newDeclaration = ConvertToBlockBodyAction.Companion.convert(originalDeclaration);
 
                     JetBlockExpression newCommonContainer = (JetBlockExpression) newDeclaration.getBodyExpression();
                     assert newCommonContainer != null : "New body is not found: " + newDeclaration;

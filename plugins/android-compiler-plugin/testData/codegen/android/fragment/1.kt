@@ -10,7 +10,7 @@ import kotlinx.android.synthetic.layout.*
 
 class R {
     class id {
-        class object {
+        companion object {
             val login = 5
         }
     }

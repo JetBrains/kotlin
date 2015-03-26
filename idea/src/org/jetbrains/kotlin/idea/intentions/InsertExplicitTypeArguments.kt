@@ -59,7 +59,7 @@ public class InsertExplicitTypeArguments : JetSelfTargetingIntention<JetCallExpr
         ShortenReferences.DEFAULT.process(element.getTypeArgumentList()!!)
     }
 
-    class object {
+    companion object {
         fun createTypeArguments(element: JetCallExpression): JetTypeArgumentList? {
             val context = element.analyze()
             val resolvedCall = element.getResolvedCall(context)

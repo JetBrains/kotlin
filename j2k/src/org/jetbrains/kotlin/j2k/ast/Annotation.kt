@@ -64,7 +64,7 @@ class Annotations(val annotations: List<Annotation>) : Element() {
 
     fun plus(other: Annotations) = Annotations(annotations + other.annotations).assignNoPrototype()
 
-    class object {
+    companion object {
         val Empty = Annotations(listOf())
     }
 }

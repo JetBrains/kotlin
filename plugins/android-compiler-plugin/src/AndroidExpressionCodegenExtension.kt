@@ -51,7 +51,7 @@ private enum class AndroidClassType(val internalClassName: String, val supportsC
 }
 
 public class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
-    class object {
+    companion object {
         private val PROPERTY_NAME = "_\$_findViewCache"
         private val CACHED_FIND_VIEW_BY_ID_METHOD_NAME = "_\$_findCachedViewById"
         private val CLEAR_CACHE_METHOD_NAME = "_\$_clearFindViewByIdCache"

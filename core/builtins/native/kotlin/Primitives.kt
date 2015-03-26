@@ -23,7 +23,7 @@ package kotlin
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `byte`.
  */
 public class Byte private () : Number, Comparable<Byte> {
-    class object Companion {}
+    companion object {}
 
 /**
  * Compares this value with the specified value for order.
@@ -181,7 +181,7 @@ public class Byte private () : Number, Comparable<Byte> {
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `char`.
  */
 public class Char private () : Comparable<Char> {
-    class object Companion {}
+    companion object {}
 
 /**
  * Compares the character code of this character with the specified value for order.
@@ -326,7 +326,7 @@ public class Char private () : Comparable<Char> {
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `short`.
  */
 public class Short private () : Number, Comparable<Short> {
-    class object Companion {}
+    companion object {}
 
 /**
  * Compares this value with the specified value for order.
@@ -484,7 +484,7 @@ public class Short private () : Number, Comparable<Short> {
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `int`.
  */
 public class Int private () : Number, Comparable<Int> {
-    class object Companion {}
+    companion object {}
 
 /**
  * Compares this value with the specified value for order.
@@ -657,7 +657,7 @@ public class Int private () : Number, Comparable<Int> {
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `long`.
  */
 public class Long private () : Number, Comparable<Long> {
-    class object Companion {}
+    companion object {}
 
 /**
  * Compares this value with the specified value for order.
@@ -830,7 +830,7 @@ public class Long private () : Number, Comparable<Long> {
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `float`.
  */
 public class Float private () : Number, Comparable<Float> {
-    class object Companion : FloatingPointConstants<Float> {}
+    companion object : FloatingPointConstants<Float> {}
 
 /**
  * Compares this value with the specified value for order.
@@ -988,7 +988,7 @@ public class Float private () : Number, Comparable<Float> {
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `double`.
  */
 public class Double private () : Number, Comparable<Double> {
-    class object Companion : FloatingPointConstants<Double> {}
+    companion object : FloatingPointConstants<Double> {}
 
 /**
  * Compares this value with the specified value for order.

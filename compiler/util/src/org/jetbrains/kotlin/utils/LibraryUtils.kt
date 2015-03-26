@@ -126,8 +126,10 @@ public object LibraryUtils {
                     traverseArchive(lib) { (content, path) ->
                         files.add(content)
                     }
+                lib.getName().endsWith(KotlinJavascriptMetadataUtils.JS_EXT) ->
+                    files.add(FileUtil.loadFile(lib))
                 else ->
-                    throw IllegalArgumentException("Unknown library format (directory or zip expected): $lib")
+                    throw IllegalArgumentException("Unknown library format (directory, zip or js file expected): $lib")
             }
         }
 

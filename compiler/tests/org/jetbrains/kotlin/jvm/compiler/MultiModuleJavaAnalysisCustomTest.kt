@@ -165,7 +165,7 @@ public class MultiModuleJavaAnalysisCustomTest : UsefulTestCase() {
         )
     }
 
-    class object {
+    companion object {
         val PATH_TO_TEST_ROOT_DIR = "compiler/testData/multiModule/java/custom"
     }
 }

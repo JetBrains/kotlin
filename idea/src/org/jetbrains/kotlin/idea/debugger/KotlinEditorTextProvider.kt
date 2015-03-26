@@ -42,7 +42,7 @@ class KotlinEditorTextProvider : EditorTextProvider {
         return Pair(expression, expressionRange)
     }
 
-    class object {
+    companion object {
 
         fun <T> getElementInfo(expr: JetExpression, f: (PsiElement) -> T): T {
             var expressionText = f(expr)

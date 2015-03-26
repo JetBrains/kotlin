@@ -116,7 +116,7 @@ public class KotlinCoverageExtension(): JavaCoverageEngineExtension() {
         return false
     }
 
-    class object {
+    companion object {
         private val LOG = Logger.getInstance(javaClass<KotlinCoverageExtension>())
 
         fun collectGeneratedClassQualifiedNames(outputRoot: VirtualFile?, file: JetFile): List<String>? {

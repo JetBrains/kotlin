@@ -31,7 +31,7 @@ public object ExampleConfigurationKeys {
 }
 
 public class ExampleCommandLineProcessor : CommandLineProcessor {
-    class object {
+    companion object {
         public val EXAMPLE_PLUGIN_ID: String = "example.plugin"
         public val EXAMPLE_OPTION: CliOption = CliOption("exampleKey", "<value>", "")
     }
