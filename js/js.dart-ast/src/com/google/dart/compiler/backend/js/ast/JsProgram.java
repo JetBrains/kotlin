@@ -18,8 +18,6 @@ import static com.google.dart.compiler.backend.js.ast.JsNumberLiteral.JsIntLiter
  * A JavaScript program.
  */
 public final class JsProgram extends SourceInfoAwareJsNode {
-    @NotNull
-    private final JsEmpty emptyStatement;
     @NotNull final JsExpression emptyExpression;
 
     private JsProgramFragment[] fragments;
@@ -36,13 +34,7 @@ public final class JsProgram extends SourceInfoAwareJsNode {
         topScope = new JsObjectScope(rootScope, "Global", unitId);
         setFragmentCount(1);
 
-        emptyStatement = new JsEmpty();
         emptyExpression = new JsEmptyExpression();
-    }
-
-    @NotNull
-    public JsEmpty getEmptyStatement() {
-        return emptyStatement;
     }
 
     @NotNull

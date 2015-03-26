@@ -26,7 +26,7 @@ public class JsEmptyExpression extends JsExpressionImpl {
     @Override
     @NotNull
     public JsStatement makeStmt() {
-        return new JsEmpty();
+        return JsEmpty.INSTANCE$;
     }
 
     @Override

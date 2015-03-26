@@ -154,7 +154,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         if (expressionInside != null) {
             return Translation.translateExpression(expressionInside, context);
         }
-        return context.getEmptyStatement();
+        return JsEmpty.INSTANCE$;
     }
 
     @Override

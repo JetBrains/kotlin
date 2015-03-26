@@ -303,11 +303,6 @@ public class TranslationContext {
     }
 
     @NotNull
-    public JsEmpty getEmptyStatement() {
-        return program().getEmptyStatement();
-    }
-
-    @NotNull
     public JsExpression getEmptyExpression() {
         return program().getEmptyExpression();
     }

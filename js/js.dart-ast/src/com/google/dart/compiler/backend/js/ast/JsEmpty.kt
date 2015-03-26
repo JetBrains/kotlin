@@ -4,7 +4,7 @@
 
 package com.google.dart.compiler.backend.js.ast
 
-public class JsEmpty : SourceInfoAwareJsNode(), JsStatement {
+public object JsEmpty : SourceInfoAwareJsNode(), JsStatement {
 
     override fun accept(v: JsVisitor) {
         v.visitEmpty(this)

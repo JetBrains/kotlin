@@ -283,12 +283,6 @@ public class JsInliner extends JsVisitorWithContextImpl {
                     return getLastStatementLevelContext();
                 }
 
-                @NotNull
-                @Override
-                protected JsStatement getEmptyStatement() {
-                    return getFunctionContext().getEmpty();
-                }
-
                 @Override
                 public void shiftCurrentStatementForward() {
                     super.shiftCurrentStatementForward();

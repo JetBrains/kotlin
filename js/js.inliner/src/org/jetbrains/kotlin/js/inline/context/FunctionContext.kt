@@ -52,10 +52,6 @@ abstract class FunctionContext(
         return getFunctionDefinitionImpl(call) != null
     }
 
-    public fun getEmpty(): JsEmpty {
-        return getScope().getProgram()?.getEmptyStatement()!!
-    }
-
     public fun getScope(): JsScope {
         return function.getScope()
     }

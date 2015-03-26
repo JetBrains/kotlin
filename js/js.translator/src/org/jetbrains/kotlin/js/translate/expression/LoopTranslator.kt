@@ -45,7 +45,7 @@ public fun createWhile(doWhile: Boolean, expression: JetWhileExpressionBase, con
         if (body != null)
             Translation.translateAsStatementAndMergeInBlockIfNeeded(body, context)
         else
-            context.getEmptyStatement()
+            JsEmpty
 
     if (!conditionBlock.isEmpty()) {
         val breakIfConditionIsFalseStatement = JsIf(not(jsCondition), JsBreak())

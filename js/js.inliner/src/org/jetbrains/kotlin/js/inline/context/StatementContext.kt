@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.js.inline.context
 
 import com.google.dart.compiler.backend.js.ast.JsContext
+import com.google.dart.compiler.backend.js.ast.JsEmpty
 import com.google.dart.compiler.backend.js.ast.JsStatement
 
 abstract class StatementContext {
@@ -28,20 +29,18 @@ abstract class StatementContext {
 
     public fun removeCurrentStatement() {
         val statementContext = getCurrentStatementContext()
-        statementContext.replaceMe(getEmptyStatement())
+        statementContext.replaceMe(JsEmpty)
     }
 
     open public fun shiftCurrentStatementForward() {
         val statementContext = getCurrentStatementContext()
         val currentStatement = getCurrentStatement()
         statementContext.insertAfter(currentStatement)
-        statementContext.replaceMe(getEmptyStatement())
+        statementContext.replaceMe(JsEmpty)
     }
 
     public fun getCurrentStatement(): JsStatement {
         val statementContext = getCurrentStatementContext()
         return statementContext.getCurrentNode() as JsStatement
     }
-
-    protected abstract fun getEmptyStatement(): JsStatement
 }
