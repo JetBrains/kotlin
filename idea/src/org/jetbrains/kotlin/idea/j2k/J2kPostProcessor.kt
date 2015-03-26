@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.idea.j2k
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.search.LocalSearchScope
+import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
@@ -39,7 +41,17 @@ public class J2kPostProcessor(override val contextToAnalyzeIn: PsiElement) : Pos
         val psiElement = problem.getPsiElement()
         return when (problem.getFactory()) {
             Errors.USELESS_CAST, Errors.USELESS_CAST_STATIC_ASSERT_IS_FINE -> { ->
-                RemoveRightPartOfBinaryExpressionFix(psiElement as JetBinaryExpressionWithTypeRHS, "").invoke()
+                val expression = RemoveRightPartOfBinaryExpressionFix(psiElement as JetBinaryExpressionWithTypeRHS, "").invoke()
+
+                val variable = expression.getParent() as? JetProperty
+                if (variable != null && expression == variable.getInitializer() && variable.isLocal()) {
+                    val refs = ReferencesSearch.search(variable, LocalSearchScope(variable.getContainingFile())).findAll()
+                    for (ref in refs) {
+                        val usage = ref.getElement() as? JetSimpleNameExpression ?: continue
+                        usage.replace(expression)
+                    }
+                    variable.delete()
+                }
             }
 
             else -> super.fixForProblem(problem)
