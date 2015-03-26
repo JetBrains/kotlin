@@ -2299,6 +2299,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("beforeDelegatorToSuperCall.kt")
+            public void testDelegatorToSuperCall() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createSecondaryConstructor/beforeDelegatorToSuperCall.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("beforeDelegatorToSuperCallNoClass.kt")
+            public void testDelegatorToSuperCallNoClass() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createSecondaryConstructor/beforeDelegatorToSuperCallNoClass.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("beforeSuperCall.kt")
             public void testSuperCall() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createSecondaryConstructor/beforeSuperCall.kt");
