@@ -1,4 +1,2 @@
-run {
-    init()
-    while (condition()) body()
-}
+init()
+while (condition()) body()

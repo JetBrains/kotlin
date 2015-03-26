@@ -2002,6 +2002,42 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("nameConflict1.java")
+        public void testNameConflict1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/nameConflict1.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nameConflict2.java")
+        public void testNameConflict2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/nameConflict2.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nameConflict3.java")
+        public void testNameConflict3() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/nameConflict3.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nameConflict4.java")
+        public void testNameConflict4() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/nameConflict4.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nameConflict5.java")
+        public void testNameConflict5() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/nameConflict5.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notInBlock.java")
+        public void testNotInBlock() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/notInBlock.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("withContinue1.java")
         public void testWithContinue1() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/withContinue1.java");

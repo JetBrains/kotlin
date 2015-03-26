@@ -18,7 +18,10 @@ package org.jetbrains.kotlin.j2k
 
 import com.intellij.psi.*
 import com.intellij.psi.tree.IElementType
+import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.j2k.ast.*
+import org.jetbrains.kotlin.psi.psiUtil.parents
+import org.jetbrains.kotlin.psi.psiUtil.siblings
 
 class ForConverter(
         private val statement: PsiForStatement,
@@ -101,23 +104,44 @@ class ForConverter(
                 statement.isInSingleLine()).assignNoPrototype()
         if (initializationConverted.isEmpty) return whileStatement
 
-        //TODO: we could omit "run { ... }" when it won't cause any name conflicts
-        return RunBlockWithLoopStatement(initializationConverted, whileStatement)
+        val kind = if (statement.parents(withItself = false).filter { it !is PsiLabeledStatement }.first() !is PsiCodeBlock) {
+            WhileWithInitializationPseudoStatement.Kind.WITH_BLOCK
+        }
+        else if (hasNameConflict())
+            WhileWithInitializationPseudoStatement.Kind.WITH_RUN_BLOCK
+        else
+            WhileWithInitializationPseudoStatement.Kind.SIMPLE
+        return WhileWithInitializationPseudoStatement(initializationConverted, whileStatement, kind)
     }
 
-    public class RunBlockWithLoopStatement(
+    public class WhileWithInitializationPseudoStatement(
             public val initialization: Statement,
-            public val loop: Statement
+            public val loop: Statement,
+            public val kind: WhileWithInitializationPseudoStatement.Kind
     ) : Statement() {
 
-        private val methodCall = run {
-            val statements = listOf(initialization, loop)
-            val block = Block(statements, LBrace().assignNoPrototype(), RBrace().assignNoPrototype()).assignNoPrototype()
-            MethodCallExpression.build(null, "run", listOf(), listOf(), false, LambdaExpression(null, block))
+        public enum class Kind {
+            SIMPLE
+            WITH_BLOCK
+            WITH_RUN_BLOCK
         }
 
+        private val statements = listOf(initialization, loop)
+
         override fun generateCode(builder: CodeBuilder) {
-            methodCall.generateCode(builder)
+            if (kind == Kind.SIMPLE) {
+                builder.append(statements, "\n")
+            }
+            else {
+                val block = Block(statements, LBrace().assignNoPrototype(), RBrace().assignNoPrototype()).assignNoPrototype()
+                if (kind == Kind.WITH_BLOCK) {
+                    block.generateCode(builder)
+                }
+                else {
+                    val call = MethodCallExpression.build(null, "run", listOf(), listOf(), false, LambdaExpression(null, block))
+                    call.generateCode(builder)
+                }
+            }
         }
     }
 
@@ -259,5 +283,43 @@ class ForConverter(
             is PsiLabeledStatement -> this.getStatement()?.toContinuedLoop()
             else -> null
         }
+    }
+
+    private fun hasNameConflict(): Boolean {
+        val names = statement.getInitialization()?.declaredVariableNames() ?: return false
+        if (names.isEmpty()) return false
+
+        val factory = PsiElementFactory.SERVICE.getInstance(project)
+        for (name in names) {
+            val refExpr = try {
+                factory.createExpressionFromText(name, statement) as? PsiReferenceExpression ?: return true
+            }
+            catch(e: IncorrectOperationException) {
+                return true
+            }
+            if (refExpr.resolve() != null) return true
+        }
+
+        var hasConflict = false
+        for (laterStatement in statement.siblings(forward = true, withItself = false)) {
+            laterStatement.accept(object: JavaRecursiveElementVisitor() {
+                override fun visitDeclarationStatement(statement: PsiDeclarationStatement) {
+                    super.visitDeclarationStatement(statement)
+
+                    if (statement.declaredVariableNames().any { it in names }) {
+                        hasConflict = true
+                    }
+                }
+            })
+        }
+
+        return hasConflict
+    }
+
+    private fun PsiStatement.declaredVariableNames(): Collection<String> {
+        val declarationStatement = this as? PsiDeclarationStatement ?: return listOf()
+        return declarationStatement.getDeclaredElements()
+                .filterIsInstance<PsiVariable>()
+                .map { it.getName() }
     }
 }

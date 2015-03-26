@@ -144,12 +144,11 @@ class DefaultStatementConverter : JavaElementVisitor(), StatementConverter {
     }
 
     override fun visitLabeledStatement(statement: PsiLabeledStatement) {
-        //TODO: multiple labels
         val statementConverted = codeConverter.convertStatement(statement.getStatement())
         val identifier = converter.convertIdentifier(statement.getLabelIdentifier())
-        if (statementConverted is ForConverter.RunBlockWithLoopStatement) { // special case - if our loop gets converted to run { ... } we should move label inside
+        if (statementConverted is ForConverter.WhileWithInitializationPseudoStatement) { // special case - if our loop gets converted to while with initialization we should move the label to the loop
             val labeledLoop = LabeledStatement(identifier, statementConverted.loop).assignPrototype(statement)
-            result = ForConverter.RunBlockWithLoopStatement(statementConverted.initialization, labeledLoop)
+            result = ForConverter.WhileWithInitializationPseudoStatement(statementConverted.initialization, labeledLoop, statementConverted.kind)
         }
         else {
             result = LabeledStatement(identifier, statementConverted)

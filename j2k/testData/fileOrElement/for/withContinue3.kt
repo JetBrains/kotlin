@@ -1,16 +1,14 @@
 public class TestClass {
     companion object {
         public fun main(args: Array<String>) {
-            run {
-                var i = 1
-                while (i < 1000) {
-                    if (i == 4 || i == 8) {
-                        i *= 2
-                        continue
-                    }
-                    System.err.println(i)
+            var i = 1
+            while (i < 1000) {
+                if (i == 4 || i == 8) {
                     i *= 2
+                    continue
                 }
+                System.err.println(i)
+                i *= 2
             }
         }
     }
