@@ -1,11 +1,11 @@
 class <!REDECLARATION!>A<!>
 class <!REDECLARATION!>A<!> {
-    constructor() {}
+    constructor()
 }
 
 class B
 class Outer {
     class B {
-        constructor() {}
+        constructor()
     }
 }

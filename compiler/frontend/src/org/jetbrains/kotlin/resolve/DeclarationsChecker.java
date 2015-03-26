@@ -105,6 +105,14 @@ public class DeclarationsChecker {
             modifiersChecker.checkModifiersForDeclaration(property, propertyDescriptor);
         }
 
+        for (Map.Entry<JetSecondaryConstructor, ConstructorDescriptor> entry : bodiesResolveContext.getSecondaryConstructors().entrySet()) {
+            ConstructorDescriptor constructorDescriptor = entry.getValue();
+            JetSecondaryConstructor declaration = entry.getKey();
+            modifiersChecker.reportIllegalModalityModifiers(declaration);
+            reportErrorIfHasIllegalModifier(declaration);
+            modifiersChecker.checkModifiersForDeclaration(declaration, constructorDescriptor);
+        }
+
     }
 
     private void reportErrorIfHasIllegalModifier(JetModifierListOwner declaration) {

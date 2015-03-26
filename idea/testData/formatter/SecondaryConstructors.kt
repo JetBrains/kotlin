@@ -2,7 +2,7 @@ class A {
     constructor() {}
     constructor() {}
     fun foo() {}
-    constructor() {}
+    constructor()
     fun foo() {}
     constructor() {}
     val x = 1
@@ -26,6 +26,6 @@ constructor() {}
     constructor()   : this() {}
 constructor():this() {}
 
-    constructor(): this   () {}
+    constructor(): this   ()
     constructor(): super(){}
 }
