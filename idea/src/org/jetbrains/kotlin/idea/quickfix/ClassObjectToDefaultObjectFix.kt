@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.project.PluginJetFilesProvider
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
+import java.util.ArrayList
 
 public class ClassObjectToCompanionObjectFix(private val elem: JetObjectDeclaration) : JetIntentionAction<JetObjectDeclaration>(elem) {
     override fun getText(): String = JetBundle.message("migrate.class.object.to.companion")
@@ -46,22 +47,29 @@ public class ClassObjectToCompanionObjectFix(private val elem: JetObjectDeclarat
     }
 }
 
-public class ClassObjectToCompanionObjectInWholeProjectFix(private val elem: JetObjectDeclaration) : JetIntentionAction<JetObjectDeclaration>(elem) {
+public class ClassObjectToCompanionObjectInWholeProjectFix(private val elem: JetObjectDeclaration)
+    : JetWholeProjectModalAction<JetObjectDeclaration, Collection<JetObjectDeclaration>>(
+        elem, JetBundle.message("migrate.class.object.to.companion.in.whole.project.modal.title")) {
     override fun getText(): String = JetBundle.message("migrate.class.object.to.companion.in.whole.project")
 
     override fun getFamilyName(): String = JetBundle.message("migrate.class.object.to.companion.in.whole.project.family")
 
-    override fun invoke(project: Project, editor: Editor, file: JetFile) {
-        val files = PluginJetFilesProvider.allFilesInProject(file.getProject())
+    override fun collectDataForFile(project: Project, file: JetFile): Collection<JetObjectDeclaration>? {
+        val classObjects = ArrayList<JetObjectDeclaration>()
+        file.accept(ClassObjectToCompanionObjectVisitor(classObjects))
 
-        files.forEach { it.accept(ClassObjectToCompanionObjectVisitor) }
+        return if (classObjects.isEmpty()) null else classObjects
     }
 
-    private object ClassObjectToCompanionObjectVisitor : JetTreeVisitorVoid() {
+    override fun applyChangesForFile(project: Project, file: JetFile, data: Collection<JetObjectDeclaration>) {
+        data.forEach { ClassObjectToCompanionObjectFix.classKeywordToCompanionModifier(it) }
+    }
+
+    private class ClassObjectToCompanionObjectVisitor(val classObjects: MutableCollection<JetObjectDeclaration>) : JetTreeVisitorVoid() {
         override fun visitObjectDeclaration(objectDeclaration: JetObjectDeclaration) {
             objectDeclaration.acceptChildren(this)
             if (objectDeclaration.getClassKeyword() != null) {
-                ClassObjectToCompanionObjectFix.classKeywordToCompanionModifier(objectDeclaration)
+                classObjects.add(objectDeclaration)
             }
         }
     }

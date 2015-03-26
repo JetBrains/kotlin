@@ -98,7 +98,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
             // ENUM_ENTRY - ENUM_ENTRY is exception
             between(ENUM_ENTRY, DECLARATIONS).blankLines(1)
 
-            before(FUN).lineBreakInCode()
+            beforeInside(FUN, TokenSet.create(BODY, CLASS_BODY)).lineBreakInCode()
             before(PROPERTY).lineBreakInCode()
 
 

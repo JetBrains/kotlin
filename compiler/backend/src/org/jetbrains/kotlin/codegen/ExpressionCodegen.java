@@ -1446,9 +1446,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 if (superCall != null) {
                     // For an anonymous object, we should also generate all non-default arguments that it captures for its super call
                     ConstructorDescriptor superConstructor = superCall.getResultingDescriptor();
+                    ConstructorDescriptor constructorToCall = SamCodegenUtil.resolveSamAdapter(superConstructor);
                     List<ValueParameterDescriptor> superValueParameters = superConstructor.getValueParameters();
                     int params = superValueParameters.size();
-                    List<Type> superMappedTypes = typeMapper.mapToCallableMethod(superConstructor).getValueParameterTypes();
+                    List<Type> superMappedTypes = typeMapper.mapToCallableMethod(constructorToCall).getValueParameterTypes();
                     assert superMappedTypes.size() >= params : String
                             .format("Incorrect number of mapped parameters vs arguments: %d < %d for %s",
                                     superMappedTypes.size(), params, classDescriptor);
@@ -1474,7 +1475,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 assert constructors.size() == 1 : "Unexpected number of constructors for class: " + classDescriptor + " " + constructors;
                 ConstructorDescriptor constructorDescriptor = KotlinPackage.single(constructors);
 
-                JvmMethodSignature constructor = typeMapper.mapSignature(constructorDescriptor);
+                JvmMethodSignature constructor = typeMapper.mapSignature(SamCodegenUtil.resolveSamAdapter(constructorDescriptor));
                 v.invokespecial(type.getInternalName(), "<init>", constructor.getAsmMethod().getDescriptor(), false);
                 return Unit.INSTANCE$;
             }
@@ -2313,8 +2314,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     @NotNull
     private CallableMethod resolveToCallableMethod(@NotNull FunctionDescriptor fd, boolean superCall, @NotNull CodegenContext context) {
-        SimpleFunctionDescriptor originalOfSamAdapter = (SimpleFunctionDescriptor) SamCodegenUtil.getOriginalIfSamAdapter(fd);
-        return typeMapper.mapToCallableMethod(originalOfSamAdapter != null ? originalOfSamAdapter : fd, superCall, context);
+        return typeMapper.mapToCallableMethod(SamCodegenUtil.resolveSamAdapter(fd), superCall, context);
     }
 
     public void invokeMethodWithArguments(
@@ -3593,8 +3593,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 // See StackValue.receiver for more info
                 pushClosureOnStack(constructor.getContainingDeclaration(), dispatchReceiver == null, defaultCallGenerator);
 
-                ConstructorDescriptor originalOfSamAdapter = (ConstructorDescriptor) SamCodegenUtil.getOriginalIfSamAdapter(constructor);
-                CallableMethod method = typeMapper.mapToCallableMethod(originalOfSamAdapter == null ? constructor : originalOfSamAdapter);
+                constructor = SamCodegenUtil.resolveSamAdapter(constructor);
+                CallableMethod method = typeMapper.mapToCallableMethod(constructor);
                 invokeMethodWithArguments(method, resolvedCall, StackValue.none());
 
                 return Unit.INSTANCE$;

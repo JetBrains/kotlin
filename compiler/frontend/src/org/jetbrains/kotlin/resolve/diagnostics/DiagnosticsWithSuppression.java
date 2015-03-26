@@ -17,11 +17,8 @@
 package org.jetbrains.kotlin.resolve.diagnostics;
 
 import com.google.common.collect.ImmutableSet;
-import com.intellij.openapi.application.Application;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.extensions.ExtensionPointName;
-import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.psi.PsiElement;
@@ -35,15 +32,12 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.Severity;
-import org.jetbrains.kotlin.psi.JetAnnotated;
-import org.jetbrains.kotlin.psi.JetAnnotationEntry;
-import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.psi.JetStubbedPsiUtil;
-import org.jetbrains.kotlin.psi.PsiPackage;
+import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.constants.ArrayValue;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.StringValue;
+import org.jetbrains.kotlin.util.ExtensionProvider;
 
 import java.util.*;
 
@@ -64,36 +58,10 @@ public class DiagnosticsWithSuppression implements Diagnostics {
 
     private static final Logger LOG = Logger.getInstance(DiagnosticsWithSuppression.class);
 
-    private static Application app = null;
-    private static SuppressStringProvider[] ADDITIONAL_SUPPRESS_STRING_PROVIDERS = null;
-    private static DiagnosticSuppressor[] DIAGNOSTIC_SUPPRESSORS = null;
-
-    static {
-        resetExtensionsIfNeed();
-    }
-
-    private static SuppressStringProvider[] getAdditionalSuppressStringProviders() {
-        resetExtensionsIfNeed();
-        return ADDITIONAL_SUPPRESS_STRING_PROVIDERS;
-    }
-
-    private static DiagnosticSuppressor[] getDiagnosticSuppressors() {
-        resetExtensionsIfNeed();
-        return DIAGNOSTIC_SUPPRESSORS;
-    }
-
-    // We need to update extensions in tests because they may be different for different tests.
-    private static void resetExtensionsIfNeed() {
-        if (app != null && !app.isUnitTestMode()) return;
-
-        Application newApp = ApplicationManager.getApplication();
-        if (app == newApp) return;
-
-        app = newApp;
-
-        ADDITIONAL_SUPPRESS_STRING_PROVIDERS = Extensions.getExtensions(SuppressStringProvider.EP_NAME);
-        DIAGNOSTIC_SUPPRESSORS = Extensions.getExtensions(DiagnosticSuppressor.EP_NAME);
-    }
+    private static final ExtensionProvider<SuppressStringProvider> ADDITIONAL_SUPPRESS_STRING_PROVIDERS
+            = ExtensionProvider.create(SuppressStringProvider.EP_NAME);
+    private static final ExtensionProvider<DiagnosticSuppressor> DIAGNOSTIC_SUPPRESSORS
+            = ExtensionProvider.create(DiagnosticSuppressor.EP_NAME);
 
     private final BindingContext context;
     private final Collection<Diagnostic> diagnostics;
@@ -153,7 +121,7 @@ public class DiagnosticsWithSuppression implements Diagnostics {
             if (PsiPackage.getDoNotAnalyze((JetFile) file) != null) return true;
         }
 
-        for (DiagnosticSuppressor suppressor : getDiagnosticSuppressors()) {
+        for (DiagnosticSuppressor suppressor : DIAGNOSTIC_SUPPRESSORS.get()) {
             if (suppressor.isSuppressed(diagnostic)) return true;
         }
 
@@ -239,7 +207,7 @@ public class DiagnosticsWithSuppression implements Diagnostics {
             AnnotationDescriptor annotationDescriptor = context.get(BindingContext.ANNOTATION, annotationEntry);
             if (annotationDescriptor == null) continue;
 
-            for (SuppressStringProvider suppressStringProvider : getAdditionalSuppressStringProviders()) {
+            for (SuppressStringProvider suppressStringProvider : ADDITIONAL_SUPPRESS_STRING_PROVIDERS.get()) {
                 builder.addAll(suppressStringProvider.get(annotationDescriptor));
             }
 
