@@ -1834,15 +1834,57 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/for"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
+        @TestMetadata("arrayIndicesReversed.java")
+        public void testArrayIndicesReversed() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/arrayIndicesReversed.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("commonCaseForTest.java")
         public void testCommonCaseForTest() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/commonCaseForTest.java");
             doTest(fileName);
         }
 
+        @TestMetadata("downTo1.java")
+        public void testDownTo1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/downTo1.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("downTo2.java")
+        public void testDownTo2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/downTo2.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("downTo3.java")
+        public void testDownTo3() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/downTo3.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("falseArrayIndicesReversed.java")
+        public void testFalseArrayIndicesReversed() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/falseArrayIndicesReversed.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("falseArrayIndicesReversed2.java")
+        public void testFalseArrayIndicesReversed2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/falseArrayIndicesReversed2.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("falseForRange.java")
         public void testFalseForRange() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/falseForRange.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("falseIndicesReversed.java")
+        public void testFalseIndicesReversed() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/falseIndicesReversed.java");
             doTest(fileName);
         }
 
@@ -1864,9 +1906,21 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("forRangeWithLT2.java")
+        public void testForRangeWithLT2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forRangeWithLT2.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("forThroughArrayIndices.java")
         public void testForThroughArrayIndices() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forThroughArrayIndices.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("forThroughCollectionIndices.java")
+        public void testForThroughCollectionIndices() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forThroughCollectionIndices.java");
             doTest(fileName);
         }
 
@@ -1933,6 +1987,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
         @TestMetadata("forWithReturn.java")
         public void testForWithReturn() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forWithReturn.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("indicesReversed.java")
+        public void testIndicesReversed() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/indicesReversed.java");
             doTest(fileName);
         }
 

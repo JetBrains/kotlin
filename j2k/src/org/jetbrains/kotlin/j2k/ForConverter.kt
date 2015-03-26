@@ -123,22 +123,25 @@ class ForConverter(
 
     private fun convertToForeach(): ForeachStatement? {
         if (initialization is PsiDeclarationStatement) {
-            val loopVar = initialization.getDeclaredElements().singleOrNull() as? PsiLocalVariable
-            if (loopVar != null
-                    && !loopVar.hasWriteAccesses(referenceSearcher, body)
-                    && !loopVar.hasWriteAccesses(referenceSearcher, condition)
-                    && condition is PsiBinaryExpression) {
+            val loopVar = initialization.getDeclaredElements().singleOrNull() as? PsiLocalVariable ?: return null
+            if (!loopVar.hasWriteAccesses(referenceSearcher, body)
+                && !loopVar.hasWriteAccesses(referenceSearcher, condition)
+                && condition is PsiBinaryExpression) {
+
                 val operationTokenType = condition.getOperationTokenType()
-                val lowerBound = condition.getLOperand()
-                val upperBound = condition.getROperand()
-                if ((operationTokenType == JavaTokenType.LT || operationTokenType == JavaTokenType.LE) &&
-                        lowerBound is PsiReferenceExpression &&
-                        lowerBound.resolve() == loopVar &&
-                        upperBound != null) {
-                    val start = loopVar.getInitializer()
-                    if (start != null &&
-                            (update as? PsiExpressionStatement)?.getExpression()?.isVariablePlusPlus(loopVar) ?: false) {
-                        val range = forIterationRange(start, upperBound, operationTokenType).assignNoPrototype()
+                val reversed = when (operationTokenType) {
+                    JavaTokenType.LT, JavaTokenType.LE -> false
+                    JavaTokenType.GT, JavaTokenType.GE -> true
+                    else -> return null
+                }
+
+                val left = condition.getLOperand() as? PsiReferenceExpression ?: return null
+                val right = condition.getROperand() ?: return null
+                if (left.resolve() == loopVar) {
+                    val start = loopVar.getInitializer() ?: return null
+                    val operationType = if (reversed) JavaTokenType.MINUSMINUS else JavaTokenType.PLUSPLUS
+                    if ((update as? PsiExpressionStatement)?.getExpression()?.isVariableIncrementOrDecrement(loopVar, operationType) ?: false) {
+                        val range = forIterationRange(start, right, operationTokenType).assignNoPrototype()
                         val explicitType = if (settings.specifyLocalVariableTypeByDefault)
                             PrimitiveType(Identifier("Int").assignNoPrototype()).assignNoPrototype()
                         else
@@ -151,51 +154,103 @@ class ForConverter(
         return null
     }
 
-    private fun PsiElement.isVariablePlusPlus(variable: PsiVariable): Boolean {
+    private fun PsiElement.isVariableIncrementOrDecrement(variable: PsiVariable, operationTokenType: IElementType): Boolean {
         //TODO: simplify code when KT-5453 fixed
         val pair = when (this) {
             is PsiPostfixExpression -> getOperationTokenType() to getOperand()
             is PsiPrefixExpression -> getOperationTokenType() to getOperand()
             else -> return false
         }
-        return pair.first == JavaTokenType.PLUSPLUS && (pair.second as? PsiReferenceExpression)?.resolve() == variable
+        return pair.first == operationTokenType && (pair.second as? PsiReferenceExpression)?.resolve() == variable
     }
 
-    private fun forIterationRange(start: PsiExpression, upperBound: PsiExpression, comparisonTokenType: IElementType): Expression {
-        if (start is PsiLiteralExpression
-                && start.getValue() == 0
-                && comparisonTokenType == JavaTokenType.LT) {
-            // check if it's iteration through list indices
-            if (upperBound is PsiMethodCallExpression && upperBound.getArgumentList().getExpressions().isEmpty()) {
-                val methodExpr = upperBound.getMethodExpression()
-                if (methodExpr is PsiReferenceExpression && methodExpr.getReferenceName() == "size") {
-                    val qualifier = methodExpr.getQualifierExpression()
-                    if (qualifier is PsiReferenceExpression /* we don't convert to .indices if qualifier is method call or something because of possible side effects */) {
-                        val listType = PsiElementFactory.SERVICE.getInstance(project).createTypeByFQClassName(CommonClassNames.JAVA_UTIL_LIST)
-                        val qualifierType = qualifier.getType()
-                        if (qualifierType != null && listType.isAssignableFrom(qualifierType)) {
-                            return QualifiedExpression(codeConverter.convertExpression(qualifier), Identifier("indices", false).assignNoPrototype())
-                        }
+    private fun forIterationRange(start: PsiExpression, bound: PsiExpression, comparisonTokenType: IElementType): Expression {
+        val indicesRange = indicesIterationRange(start, bound, comparisonTokenType)
+        if (indicesRange != null) return indicesRange
+
+        val startConverted = codeConverter.convertExpression(start)
+        return when (comparisonTokenType) {
+            JavaTokenType.LT, JavaTokenType.LE ->
+                RangeExpression(startConverted, convertBound(bound, if (comparisonTokenType == JavaTokenType.LT) -1 else 0))
+
+            JavaTokenType.GT, JavaTokenType.GE ->
+                DownToExpression(startConverted, convertBound(bound, if (comparisonTokenType == JavaTokenType.GT) +1 else 0))
+
+            else ->
+                throw IllegalAccessException()
+        }
+    }
+
+    private fun indicesIterationRange(start: PsiExpression, bound: PsiExpression, comparisonTokenType: IElementType): Expression? {
+        val reversed = when (comparisonTokenType) {
+            JavaTokenType.LT -> false
+            JavaTokenType.GE -> true
+            else -> return null
+        }
+
+        val lower = if (reversed) bound else start
+        val upper = if (reversed) start else bound
+
+        if ((lower as? PsiLiteralExpression)?.getValue() != 0) return null
+
+        val collectionSize = if (reversed) {
+            if (upper !is PsiBinaryExpression) return null
+            if (upper.getOperationTokenType() != JavaTokenType.MINUS) return null
+            if ((upper.getROperand() as? PsiLiteralExpression)?.getValue() != 1) return null
+            upper.getLOperand()
+        }
+        else {
+            upper
+        }
+
+        var indices: Expression? = null
+
+        // check if it's iteration through list indices
+        if (collectionSize is PsiMethodCallExpression && collectionSize.getArgumentList().getExpressions().isEmpty()) {
+            val methodExpr = collectionSize.getMethodExpression()
+            if (methodExpr is PsiReferenceExpression && methodExpr.getReferenceName() == "size") {
+                val qualifier = methodExpr.getQualifierExpression()
+                if (qualifier is PsiReferenceExpression /* we don't convert to .indices if qualifier is method call or something because of possible side effects */) {
+                    val collectionType = PsiElementFactory.SERVICE.getInstance(project).createTypeByFQClassName(CommonClassNames.JAVA_UTIL_COLLECTION)
+                    val qualifierType = qualifier.getType()
+                    if (qualifierType != null && collectionType.isAssignableFrom(qualifierType)) {
+                        indices = QualifiedExpression(codeConverter.convertExpression(qualifier), Identifier("indices", false).assignNoPrototype())
                     }
                 }
             }
-
-            // check if it's iteration through array indices
-            if (upperBound is PsiReferenceExpression /* we don't convert to .indices if qualifier is method call or something because of possible side effects */
-                    && upperBound.getReferenceName() == "length") {
-                val qualifier = upperBound.getQualifierExpression()
-                if (qualifier is PsiReferenceExpression && qualifier.getType() is PsiArrayType) {
-                    return QualifiedExpression(codeConverter.convertExpression(qualifier), Identifier("indices", false).assignNoPrototype())
-                }
+        }
+        // check if it's iteration through array indices
+        else if (collectionSize is PsiReferenceExpression /* we don't convert to .indices if qualifier is method call or something because of possible side effects */
+            && collectionSize.getReferenceName() == "length") {
+            val qualifier = collectionSize.getQualifierExpression()
+            if (qualifier is PsiReferenceExpression && qualifier.getType() is PsiArrayType) {
+                indices = QualifiedExpression(codeConverter.convertExpression(qualifier), Identifier("indices", false).assignNoPrototype())
             }
         }
 
-        val end = codeConverter.convertExpression(upperBound)
-        val endExpression = if (comparisonTokenType == JavaTokenType.LT)
-            BinaryExpression(end, LiteralExpression("1").assignNoPrototype(), "-").assignNoPrototype()
+        if (indices == null) return null
+
+        return if (reversed)
+            MethodCallExpression.build(indices!!.assignNoPrototype(), "reversed", listOf(), listOf(), false)
         else
-            end
-        return RangeExpression(codeConverter.convertExpression(start), endExpression)
+            indices
+    }
+
+    private fun convertBound(bound: PsiExpression, correction: Int): Expression {
+        if (correction == 0) {
+            return codeConverter.convertExpression(bound)
+        }
+
+        if (bound is PsiLiteralExpression) {
+            val value = bound.getValue()
+            if (value is Int) {
+                return LiteralExpression((value + correction).toString()).assignPrototype(bound)
+            }
+        }
+
+        val converted = codeConverter.convertExpression(bound)
+        val sign = if (correction > 0) "+" else "-"
+        return BinaryExpression(converted, LiteralExpression(Math.abs(correction).toString()).assignNoPrototype(), sign).assignNoPrototype()
     }
 
     private fun PsiStatement.toContinuedLoop(): PsiLoopStatement? {
