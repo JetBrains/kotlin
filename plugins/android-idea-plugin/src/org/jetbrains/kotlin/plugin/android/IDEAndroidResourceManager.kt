@@ -19,32 +19,47 @@ package org.jetbrains.kotlin.plugin.android
 import com.intellij.openapi.module.Module
 import com.intellij.psi.PsiElement
 import org.jetbrains.android.facet.AndroidFacet
+import org.jetbrains.kotlin.lang.resolve.android.AndroidConst
 import kotlin.properties.Delegates
 import org.jetbrains.kotlin.plugin.android.AndroidXmlVisitor
 import org.jetbrains.kotlin.lang.resolve.android.AndroidResourceManager
 import org.jetbrains.kotlin.lang.resolve.android.AndroidModuleInfo
+import org.jetbrains.kotlin.psi.JetProperty
 
 public class IDEAndroidResourceManager(val module: Module) : AndroidResourceManager(module.getProject()) {
 
     override val androidModuleInfo: AndroidModuleInfo? by Delegates.lazy { module.androidFacet?.toAndroidModuleInfo() }
 
-    override fun idToXmlAttribute(id: String): PsiElement? {
-        var ret: PsiElement? = null
-        for (file in getLayoutXmlFiles()) {
-            file.accept(AndroidXmlVisitor({ retId, wClass, valueElement ->
-                if (retId == id) ret = valueElement
-            }))
+    override fun propertyToXmlAttributes(property: JetProperty): List<PsiElement> {
+        val fqPath = property.getFqName()?.pathSegments() ?: return listOf()
+        if (fqPath.size() <= AndroidConst.SYNTHETIC_PACKAGE_PATH_LENGTH) return listOf()
+
+        val layoutPackageName = fqPath[AndroidConst.SYNTHETIC_PACKAGE_PATH_LENGTH].asString()
+        val layoutFiles = getLayoutXmlFiles()[layoutPackageName]
+        if (layoutFiles == null || layoutFiles.isEmpty()) return listOf()
+
+        val propertyName = property.getName()
+
+        val attributes = arrayListOf<PsiElement>()
+        val visitor = AndroidXmlVisitor { retId, wClass, valueElement ->
+            if (retId == propertyName) attributes.add(valueElement)
         }
-        return ret
+
+        layoutFiles.forEach { it.accept(visitor) }
+        return attributes
     }
 
     private val Module.androidFacet: AndroidFacet?
         get() = AndroidFacet.getInstance(this)
 
-    private fun AndroidFacet.toAndroidModuleInfo(): AndroidModuleInfo {
-        val applicationPackage = getManifest().getPackage().toString()
+    private fun AndroidFacet.toAndroidModuleInfo(): AndroidModuleInfo? {
+        val applicationPackage = getManifest()?.getPackage()?.toString()
         val mainResDirectory = getAllResourceDirectories().firstOrNull()?.getPath()
-        return AndroidModuleInfo(applicationPackage, mainResDirectory)
+
+        return if (applicationPackage != null) {
+            AndroidModuleInfo(applicationPackage, mainResDirectory)
+        }
+        else null
     }
 
 }

@@ -41,13 +41,14 @@ class IDEAndroidUIXmlProcessor(val module: Module) : AndroidUIXmlProcessor(modul
         }
     }
 
-    override fun parseSingleFile(file: PsiFile): List<AndroidWidget> {
+    override fun parseLayout(files: List<PsiFile>): List<AndroidWidget> {
         val widgets = arrayListOf<AndroidWidget>()
-        file.accept(AndroidXmlVisitor({ id, wClass, valueElement ->
-            widgets.add(AndroidWidget(id, wClass))
-        }))
+        val visitor = AndroidXmlVisitor { id, widgetType, attribute ->
+            widgets.add(AndroidWidget(id, widgetType))
+        }
 
-        return widgets
+        files.forEach { it.accept(visitor) }
+        return removeDuplicates(widgets)
     }
 
 }

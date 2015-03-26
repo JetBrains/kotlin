@@ -31,12 +31,13 @@ class AndroidXmlHandler(private val elementCallback: (String, String) -> Unit) :
     }
 
     override fun startElement(uri: String, localName: String, qName: String, attributes: Attributes) {
+        if (isWidgetTypeIgnored(localName)) return
         val attributesMap = attributes.toMap()
-        val idAttr = attributesMap[AndroidConst.ID_ATTRIBUTE_NO_NAMESPACE]
-        val classNameAttr = attributesMap[AndroidConst.CLASS_ATTRIBUTE_NO_NAMESPACE] ?: localName
-        if (isResourceDeclarationOrUsage(idAttr)) {
-            val name = idToName(idAttr)
-            if (name != null) elementCallback(name, classNameAttr)
+        val idAttribute = attributesMap[AndroidConst.ID_ATTRIBUTE_NO_NAMESPACE]
+        val widgetType = getRealWidgetType(attributesMap[AndroidConst.CLASS_ATTRIBUTE_NO_NAMESPACE] ?: localName)
+        if (isResourceDeclarationOrUsage(idAttribute)) {
+            val name = idToName(idAttribute)
+            if (name != null) elementCallback(name, widgetType)
         }
     }
 
