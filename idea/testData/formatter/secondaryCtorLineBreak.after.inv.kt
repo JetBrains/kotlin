@@ -18,6 +18,8 @@ class A {
     {
     }
 
+    constructor()
+
     constructor() {
     }
 }

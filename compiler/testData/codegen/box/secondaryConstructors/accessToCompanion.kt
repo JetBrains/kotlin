@@ -11,7 +11,7 @@ class A(val result: Int) {
     object C {
     }
 
-    constructor() : this(foo() + prop + B.bar() + B.prop + C) {}
+    constructor() : this(foo() + prop + B.bar() + B.prop + C)
 }
 
 fun box(): String {

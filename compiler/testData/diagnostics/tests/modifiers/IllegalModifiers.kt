@@ -30,7 +30,13 @@ annotation class annotated(val text: String = "not given")
 class LegalModifier(val a: Int, annotated private var b: String, annotated vararg <!UNUSED_PARAMETER!>v<!>: Int)
 
 //Check illegal modifier in constructor parameters
-class IllegalModifiers1(<!ILLEGAL_MODIFIER!>private<!> <!UNUSED_PARAMETER!>a<!>: Int)
+class IllegalModifiers1(
+        <!ILLEGAL_MODIFIER!>in<!>
+        <!ILLEGAL_MODIFIER!>out<!>
+        <!ILLEGAL_MODIFIER!>reified<!>
+        <!ILLEGAL_MODIFIER!>enum<!>
+        <!ILLEGAL_MODIFIER!>private<!>
+        <!UNUSED_PARAMETER!>a<!>: Int)
 
 //Check multiple illegal modifiers in constructor
 class IllegalModifiers2(<!ILLEGAL_MODIFIER!>private<!> <!ILLEGAL_MODIFIER!>abstract<!> <!UNUSED_PARAMETER!>a<!>: Int)
@@ -57,10 +63,10 @@ abstract class IllegalModifiers5() {
   private fun qux() {
 
     //Check illegal modifier in catch block
-    try {} catch (<!ILLEGAL_MODIFIER!>public<!> e: Exception) {}
+    try {} catch (<!ILLEGAL_MODIFIER!>in<!> <!ILLEGAL_MODIFIER!>out<!> <!ILLEGAL_MODIFIER!>reified<!> <!ILLEGAL_MODIFIER!>enum<!> <!ILLEGAL_MODIFIER!>public<!> e: Exception) {}
 
     //Check multiple illegal modifiers in catch block
-    try {} catch (<!ILLEGAL_MODIFIER!>abstract<!> <!ILLEGAL_MODIFIER!>public<!> e: Exception) {}
+    try {} catch (<!ILLEGAL_MODIFIER!>in<!> <!ILLEGAL_MODIFIER!>out<!> <!ILLEGAL_MODIFIER!>reified<!> <!ILLEGAL_MODIFIER!>enum<!> <!ILLEGAL_MODIFIER!>abstract<!> <!ILLEGAL_MODIFIER!>public<!> e: Exception) {}
 
     //Check annotations with illegal modifiers
     try {} catch (annotated("a text") <!ILLEGAL_MODIFIER!>abstract<!> <!ILLEGAL_MODIFIER!>public<!> e: Exception) {}
@@ -80,4 +86,52 @@ abstract class IllegalModifiers6() {
     <!ILLEGAL_MODIFIER!>public<!> annotated init {}
 
     <!ILLEGAL_MODIFIER!>private<!> <!NOT_AN_ANNOTATION_CLASS!>IllegalModifiers6()<!> init {}
+}
+
+// strange inappropriate modifiers usages
+<!ILLEGAL_MODIFIER!>override<!>
+<!ILLEGAL_MODIFIER!>out<!>
+<!ILLEGAL_MODIFIER!>in<!>
+<!ILLEGAL_MODIFIER!>vararg<!>
+<!ILLEGAL_MODIFIER!>reified<!>
+class IllegalModifiers7() {
+    <!ILLEGAL_ENUM_ANNOTATION!>enum<!>
+    <!ILLEGAL_MODIFIER!>inner<!>
+    <!ILLEGAL_ANNOTATION_KEYWORD!>annotation<!>
+    <!ILLEGAL_MODIFIER!>out<!>
+    <!ILLEGAL_MODIFIER!>in<!>
+    <!ILLEGAL_MODIFIER!>vararg<!>
+    <!ILLEGAL_MODIFIER!>reified<!>
+    val x = 1
+    <!ILLEGAL_ENUM_ANNOTATION!>enum<!>
+    <!ILLEGAL_MODIFIER!>inner<!>
+    <!ILLEGAL_ANNOTATION_KEYWORD!>annotation<!>
+    <!ILLEGAL_MODIFIER!>out<!>
+    <!ILLEGAL_MODIFIER!>in<!>
+    <!ILLEGAL_MODIFIER!>vararg<!>
+    <!ILLEGAL_MODIFIER!>reified<!>
+    fun foo() {}
+}
+
+// Secondary constructors
+class IllegalModifiers8 {
+    <!ILLEGAL_MODIFIER, INCOMPATIBLE_MODIFIERS!>abstract<!>
+    <!ILLEGAL_ENUM_ANNOTATION!>enum<!>
+    <!ILLEGAL_MODIFIER, REDUNDANT_MODIFIER, REDUNDANT_MODIFIER, INCOMPATIBLE_MODIFIERS!>open<!>
+    <!ILLEGAL_MODIFIER!>inner<!>
+    <!ILLEGAL_ANNOTATION_KEYWORD!>annotation<!>
+    <!ILLEGAL_MODIFIER!>override<!>
+    <!ILLEGAL_MODIFIER!>out<!>
+    <!ILLEGAL_MODIFIER!>in<!>
+    <!ILLEGAL_MODIFIER, INCOMPATIBLE_MODIFIERS!>final<!>
+    <!ILLEGAL_MODIFIER!>vararg<!>
+    <!ILLEGAL_MODIFIER!>reified<!>
+    constructor() {}
+
+    constructor(<!ILLEGAL_MODIFIER!>private<!> <!ILLEGAL_MODIFIER!>enum<!> <!ILLEGAL_MODIFIER!>abstract<!> <!UNUSED_PARAMETER!>x<!>: Int) {}
+}
+
+class IllegalModifiers9 {
+    <!INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>protected<!> constructor() {}
+    <!INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>internal<!> constructor(<!UNUSED_PARAMETER!>x<!>: Int) {}
 }

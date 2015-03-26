@@ -45,4 +45,8 @@ public class JetValueArgumentList extends JetElementImpl {
         return findChildByType(JetTokens.RPAR);
     }
 
+    @Nullable
+    public PsiElement getLeftParenthesis() {
+        return findChildByType(JetTokens.LPAR);
+    }
 }

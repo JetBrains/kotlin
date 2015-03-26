@@ -18,9 +18,9 @@ JetFile: recoveryWrongDelegationName.kt
         PsiElement(COLON)(':')
         PsiWhiteSpace(' ')
         CONSTRUCTOR_DELEGATION_CALL
-          PsiElement(IDENTIFIER)('superr')
           PsiErrorElement:Expecting a 'this' or 'super' constructor call
             <empty list>
+          PsiElement(IDENTIFIER)('superr')
           VALUE_ARGUMENT_LIST
             PsiElement(LPAR)('(')
             VALUE_ARGUMENT
@@ -48,3 +48,19 @@ JetFile: recoveryWrongDelegationName.kt
               PsiElement(IDENTIFIER)('Int')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('x')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('Int')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    INTEGER_CONSTANT
+      PsiElement(INTEGER_LITERAL)('1')

@@ -12,6 +12,6 @@ class A {
     object C {
     }
 
-    constructor(x: Int) {}
-    constructor() : this(foo() + prop + B.bar() + B.prop + C) {}
+    constructor(x: Int)
+    constructor() : this(foo() + prop + B.bar() + B.prop + C)
 }

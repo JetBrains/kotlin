@@ -1,12 +1,6 @@
 <component name="ArtifactManager">
   <artifact name="KotlinAndroidExtensions">
     <output-path>$PROJECT_DIR$/out/artifacts/KotlinAndroidExtensions</output-path>
-    <properties id="ant-preprocessing">
-      <options enabled="true">
-        <file>file://$PROJECT_DIR$/replicate_versions.xml</file>
-        <target>replicateIdeaVersions</target>
-      </options>
-    </properties>
     <root id="root">
       <element id="directory" name="lib">
         <element id="archive" name="kotlin-android-extensions.jar">

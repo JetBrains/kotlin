@@ -157,9 +157,9 @@ private fun processClassDelegationCallsToSpecifiedConstructor(
         klass: JetClass, constructor: DeclarationDescriptor, process: (JetConstructorDelegationCall) -> Unit
 ) {
     for (secondaryConstructor in klass.getSecondaryConstructors()) {
-        val delegationCallDescriptor = secondaryConstructor.getDelegationCall()?.getConstructorCallDescriptor()
+        val delegationCallDescriptor = secondaryConstructor.getDelegationCall().getConstructorCallDescriptor()
         if (constructor == delegationCallDescriptor) {
-            process(secondaryConstructor.getDelegationCall()!!)
+            process(secondaryConstructor.getDelegationCall())
         }
     }
 }
