@@ -28,10 +28,6 @@ public abstract class AbstractAndroidBytecodeShapeTest : AbstractBytecodeTextTes
         return createEnvironmentForConfiguration(JetTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.ANDROID_API), path)
     }
 
-    private fun createFakeAndroidEnvironment(path: String) {
-        return createEnvironmentForConfiguration(JetTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK), path)
-    }
-
     private fun createEnvironmentForConfiguration(configuration: CompilerConfiguration, path: String) {
         val resPath = path + "res/layout/"
         val manifestPath = path + "../AndroidManifest.xml"

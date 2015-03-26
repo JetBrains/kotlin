@@ -55,6 +55,8 @@ public class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
         private val PROPERTY_NAME = "_\$_findViewCache"
         private val CACHED_FIND_VIEW_BY_ID_METHOD_NAME = "_\$_findCachedViewById"
         private val CLEAR_CACHE_METHOD_NAME = "_\$_clearFindViewByIdCache"
+
+        fun isCacheSupported(descriptor: ClassifierDescriptor) = descriptor.getSource() is KotlinSourceElement
     }
 
     private class SyntheticPartsGenerateContext(
@@ -66,13 +68,20 @@ public class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
 
     }
 
-    override fun apply(receiver: StackValue, resolvedCall: ResolvedCall<*>, c: ExpressionCodegenExtension.Context): Boolean {
+    override fun applyProperty(receiver: StackValue, resolvedCall: ResolvedCall<*>, c: ExpressionCodegenExtension.Context): StackValue? {
         val resultingDescriptor = resolvedCall.getResultingDescriptor()
-        return when (resultingDescriptor) {
-            is PropertyDescriptor -> generateSyntheticPropertyCall(receiver, resolvedCall, c, resultingDescriptor)
-            is FunctionDescriptor -> generateSyntheticFunctionCall(receiver, resolvedCall, c, resultingDescriptor)
-            else -> false
+        return if (resultingDescriptor is PropertyDescriptor) {
+            return generateSyntheticPropertyCall(receiver, resolvedCall, c, resultingDescriptor)
         }
+        else null
+    }
+
+    override fun applyFunction(receiver: StackValue, resolvedCall: ResolvedCall<*>, c: ExpressionCodegenExtension.Context): Boolean {
+        val resultingDescriptor = resolvedCall.getResultingDescriptor()
+        return if (resultingDescriptor is FunctionDescriptor) {
+            return generateSyntheticFunctionCall(receiver, resolvedCall, c, resultingDescriptor)
+        }
+        else false
     }
 
     private fun generateSyntheticFunctionCall(
@@ -103,41 +112,51 @@ public class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
             resolvedCall: ResolvedCall<*>,
             c: ExpressionCodegenExtension.Context,
             descriptor: PropertyDescriptor
-    ): Boolean {
-        val androidPackage = descriptor.getAndroidPackage() ?: return false
-        val declarationDescriptor = resolvedCall.getReceiverDeclarationDescriptor() ?: return false
-
+    ): StackValue? {
+        val androidPackage = descriptor.getAndroidPackage() ?: return null
+        val declarationDescriptor = resolvedCall.getReceiverDeclarationDescriptor() ?: return null
         val androidClassType = getClassType(declarationDescriptor)
-        if (androidClassType.supportsCache && isCacheSupported(declarationDescriptor)) {
-            val className = DescriptorUtils.getFqName(declarationDescriptor).toString()
-            val bytecodeClassName = className.replace('.', '/')
 
-            receiver.put(c.typeMapper.mapType(declarationDescriptor), c.v)
-            c.v.getstatic(androidPackage.replace(".", "/") + "/R\$id", descriptor.getName().asString(), "I")
-            c.v.invokevirtual(bytecodeClassName, CACHED_FIND_VIEW_BY_ID_METHOD_NAME, "(I)Landroid/view/View;", false)
-        }
-        else {
-            when (androidClassType) {
-                AndroidClassType.ACTIVITY, AndroidClassType.VIEW -> {
-                    receiver.put(Type.getType("L${androidClassType.internalClassName};"), c.v)
-                    c.v.getstatic(androidPackage.replace(".", "/") + "/R\$id", descriptor.getName().asString(), "I")
-                    c.v.invokevirtual(androidClassType.internalClassName, "findViewById", "(I)Landroid/view/View;", false)
+
+        return SyntheticProperty(receiver, c.typeMapper, descriptor, declarationDescriptor, androidClassType, androidPackage)
+    }
+
+    private class SyntheticProperty(
+            val receiver: StackValue,
+            val typeMapper: JetTypeMapper,
+            val descriptor: PropertyDescriptor,
+            val declarationDescriptor: ClassifierDescriptor,
+            val androidClassType: AndroidClassType,
+            val androidPackage: String
+    ) : StackValue(typeMapper.mapType(descriptor.getReturnType()!!)) {
+
+        override fun putSelector(type: Type, v: InstructionAdapter) {
+            if (androidClassType.supportsCache && isCacheSupported(declarationDescriptor)) {
+
+                val declarationDescriptorType = typeMapper.mapType(declarationDescriptor)
+                receiver.put(declarationDescriptorType, v)
+                v.getstatic(androidPackage.replace(".", "/") + "/R\$id", descriptor.getName().asString(), "I")
+                v.invokevirtual(declarationDescriptorType.getInternalName(), CACHED_FIND_VIEW_BY_ID_METHOD_NAME, "(I)Landroid/view/View;", false)
+            }
+            else {
+                when (androidClassType) {
+                    AndroidClassType.ACTIVITY, AndroidClassType.VIEW -> {
+                        receiver.put(Type.getType("L${androidClassType.internalClassName};"), v)
+                        v.getstatic(androidPackage.replace(".", "/") + "/R\$id", descriptor.getName().asString(), "I")
+                        v.invokevirtual(androidClassType.internalClassName, "findViewById", "(I)Landroid/view/View;", false)
+                    }
+                    AndroidClassType.FRAGMENT -> {
+                        receiver.put(Type.getType("L${androidClassType.internalClassName};"), v)
+                        v.invokevirtual(androidClassType.internalClassName, "getView", "()Landroid/view/View;", false)
+                        v.getstatic(androidPackage.replace(".", "/") + "/R\$id", descriptor.getName().asString(), "I")
+                        v.invokevirtual("android/view/View", "findViewById", "(I)Landroid/view/View;", false)
+                    }
+                    else -> throw IllegalStateException("Invalid Android class type: $androidClassType") // Should never occur
                 }
-                AndroidClassType.FRAGMENT -> {
-                    receiver.put(Type.getType("L${androidClassType.internalClassName};"), c.v)
-                    c.v.invokevirtual(androidClassType.internalClassName, "getView", "()Landroid/view/View;", false)
-                    c.v.getstatic(androidPackage.replace(".", "/") + "/R\$id", descriptor.getName().asString(), "I")
-                    c.v.invokevirtual("android/view/View", "findViewById", "(I)Landroid/view/View;", false)
-                }
-                else -> return false
             }
 
-
+            v.checkcast(this.type)
         }
-
-        val retType = c.typeMapper.mapType(descriptor.getReturnType()!!)
-        c.v.checkcast(retType)
-        return true
     }
 
     private fun CallableDescriptor.getAndroidPackage(): String? {
@@ -147,8 +166,6 @@ public class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
     private fun ResolvedCall<*>.getReceiverDeclarationDescriptor(): ClassifierDescriptor? {
         return getExtensionReceiver().getType().getConstructor().getDeclarationDescriptor()
     }
-
-    private fun isCacheSupported(descriptor: ClassifierDescriptor) = descriptor.getSource() is KotlinSourceElement
 
     private fun getClassType(descriptor: ClassifierDescriptor): AndroidClassType {
         fun getClassTypeInternal(name: String): AndroidClassType? = when (name) {
