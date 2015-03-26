@@ -42,6 +42,12 @@ public class InlineJsStdlibTestGenerated extends AbstractInlineJsStdlibTest {
         doTest(fileName);
     }
 
+    @TestMetadata("callableRefToFunInCurrentModule.kt")
+    public void testCallableRefToFunInCurrentModule() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineStdlib/cases/callableRefToFunInCurrentModule.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("closure.kt")
     public void testClosure() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineStdlib/cases/closure.kt");

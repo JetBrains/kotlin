@@ -37,7 +37,10 @@
 
 package com.google.gwt.dev.js.rhino;
 
+import org.jetbrains.kotlin.js.parser.ParserEvents;
+
 import java.io.IOException;
+import java.util.Observable;
 
 /**
  * This class implements the JavaScript parser.
@@ -48,7 +51,7 @@ import java.io.IOException;
  * @see TokenStream
  */
 
-public class Parser {
+public class Parser extends Observable {
   public Parser(IRFactory nf, boolean insideFunction) {
       this.nf = nf;
       this.insideFunction = insideFunction;
@@ -165,8 +168,8 @@ public class Parser {
     return pn;
   }
 
-  private Object function(TokenStream ts, boolean isExpr) throws IOException,
-      JavaScriptException {
+  private Object function(TokenStream ts, boolean isExpr) throws IOException, JavaScriptException {
+    notifyObservers(new ParserEvents.OnFunctionParsingStart());
     int baseLineno = ts.getLineno(); // line number where source starts
 
     String name;
@@ -243,6 +246,7 @@ public class Parser {
       wellTerminated(ts, ts.FUNCTION);
     }
 
+    notifyObservers(new ParserEvents.OnFunctionParsingEnd(ts));
     return pn;
   }
 
@@ -1021,7 +1025,7 @@ public class Parser {
     return pn;
   }
 
-  private Object primaryExpr(TokenStream ts) throws IOException,
+  public Object primaryExpr(TokenStream ts) throws IOException,
       JavaScriptException {
     int tt;
 

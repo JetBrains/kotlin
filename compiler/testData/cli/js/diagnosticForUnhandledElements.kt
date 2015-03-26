@@ -9,10 +9,3 @@ class Foo {
         return [fancy] 1
     }
 }
-
-fun test() {
-
-    class A {
-        fun foo(){}
-    }
-}

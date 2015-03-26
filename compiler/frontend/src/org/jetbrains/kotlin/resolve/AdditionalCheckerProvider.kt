@@ -18,17 +18,17 @@ package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.resolve.calls.checkers.*
 
-private val DEFAULT_ANNOTATION_CHECKERS = listOf(DataClassAnnotationChecker())
+private val DEFAULT_DECLARATION_CHECKERS = listOf(DataClassAnnotationChecker())
 private val DEFAULT_CALL_CHECKERS = listOf(CapturingInClosureChecker(), InlineCheckerWrapper(), ReifiedTypeParameterSubstitutionChecker())
 private val DEFAULT_TYPE_CHECKERS = listOf(TypeApproximator())
 
 public abstract class AdditionalCheckerProvider(
-        additionalAnnotationCheckers: List<AnnotationChecker>,
+        additionalDeclarationCheckers: List<DeclarationChecker>,
         additionalCallCheckers: List<CallChecker>,
         additionalTypeCheckers: List<AdditionalTypeChecker>
 ) {
 
-    public val annotationCheckers: List<AnnotationChecker> = DEFAULT_ANNOTATION_CHECKERS + additionalAnnotationCheckers
+    public val declarationCheckers: List<DeclarationChecker> = DEFAULT_DECLARATION_CHECKERS + additionalDeclarationCheckers
     public val callCheckers: List<CallChecker> = DEFAULT_CALL_CHECKERS + additionalCallCheckers
     public val additionalTypeCheckers: List<AdditionalTypeChecker> = DEFAULT_TYPE_CHECKERS + additionalTypeCheckers
 

@@ -24,39 +24,20 @@ import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.*
 
 import kotlin.platform.platformStatic
 
-private val METADATA_PROPERTIES_COUNT = 3
+private val METADATA_PROPERTIES_COUNT = 2
 
-public class InlineMetadata(
-        val startTag: JsStringLiteral,
-        val function: JsFunction,
-        val endTag: JsStringLiteral
-) {
-    class object {
+public class InlineMetadata(val tag: JsStringLiteral, val function: JsFunction) {
+    companion object {
         platformStatic
         fun compose(function: JsFunction, descriptor: CallableDescriptor): InlineMetadata {
             val program = function.getScope().getProgram()
-            val startTag = program.getStringLiteral(Namer.getInlineStartTag(descriptor))
-            val endTag = program.getStringLiteral(Namer.getInlineEndTag(descriptor))
-            return InlineMetadata(startTag, function, endTag)
+            val tag = program.getStringLiteral(Namer.getFunctionTag(descriptor))
+            return InlineMetadata(tag, function)
         }
 
-        /**
-         * Reads metadata from expression.
-         *
-         * To read metadata from source one needs to:
-         * 1. find index of startTag and endTag in source;
-         * 2. parse substring between startTagIndex - 1 (for opening quote)
-         *    and endTagIndex + endTag.length() + 1 (for closing quote)
-         * 3. call InlineMetadata#decompose on resulting expression
-         *
-         * @see Namer#getInlineStartTag
-         * @see Namer#getInlineEndTag
-         * @see com.google.gwt.dev.js.JsParser
-         */
         platformStatic
         fun decompose(expression: JsExpression?): InlineMetadata? =
                 when (expression) {
-                    is JsBinaryOperation -> decomposeCommaExpression(expression)
                     is JsInvocation -> decomposeCreateFunctionCall(expression)
                     else -> null
                 }
@@ -64,44 +45,20 @@ public class InlineMetadata(
         private fun decomposeCreateFunctionCall(call: JsInvocation): InlineMetadata? {
             if (Namer.CREATE_INLINE_FUNCTION != call.getQualifier()) return null
 
-            return decomposePropertiesList(call.getArguments())
-        }
+            val arguments = call.getArguments()
+            if (arguments.size() != METADATA_PROPERTIES_COUNT) return null
 
-        private fun decomposeCommaExpression(expression: JsExpression): InlineMetadata? {
-            val properties = arrayListOf<JsExpression>()
-            var decomposable: JsExpression? = expression
+            val tag = arguments[0] as? JsStringLiteral
+            val function = arguments[1] as? JsFunction
+            if (tag == null || function == null) return null
 
-            while (decomposable is JsExpression) {
-                val binOp = decomposable as? JsBinaryOperation
-
-                if (JsBinaryOperator.COMMA == binOp?.getOperator()) {
-                    properties.add(binOp?.getArg2())
-                    decomposable = binOp?.getArg1()
-                } else {
-                    properties.add(decomposable)
-                    break
-                }
-            }
-
-            return decomposePropertiesList(properties.reverse())
-        }
-
-        private fun decomposePropertiesList(properties: List<JsExpression>): InlineMetadata? {
-            if (properties.size() != METADATA_PROPERTIES_COUNT) return null
-
-            val startTag = properties[0] as? JsStringLiteral
-            val function = properties[1] as? JsFunction
-            val endTag = properties[2] as? JsStringLiteral
-
-            if (startTag == null || function == null || endTag == null) return null
-
-            return InlineMetadata(startTag, function, endTag)
+            return InlineMetadata(tag, function)
         }
     }
 
     public val functionWithMetadata: JsExpression
         get() {
-            val propertiesList = listOf(startTag, function, endTag)
+            val propertiesList = listOf(tag, function)
             return JsInvocation(Namer.CREATE_INLINE_FUNCTION, propertiesList)
         }
 }
