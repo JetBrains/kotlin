@@ -24,4 +24,11 @@ public class JetTreeVisitor<D> extends JetVisitor<Void, D> {
         element.acceptChildren(this, data);
         return null;
     }
+
+    @Override
+    public Void visitJetFile(@NotNull JetFile file, D data) {
+        super.visitJetFile(file, data);
+        file.acceptChildren(this, data);
+        return null;
+    }
 }
