@@ -18,12 +18,14 @@ package org.jetbrains.kotlin.idea.quickfix;
 
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.JetBundle;
-import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.JetBinaryExpression;
+import org.jetbrains.kotlin.psi.JetBinaryExpressionWithTypeRHS;
+import org.jetbrains.kotlin.psi.JetExpression;
+import org.jetbrains.kotlin.psi.JetFile;
 
 public class RemoveRightPartOfBinaryExpressionFix<T extends JetExpression> extends JetIntentionAction<T> {
     private final String message;
@@ -45,19 +47,13 @@ public class RemoveRightPartOfBinaryExpressionFix<T extends JetExpression> exten
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        PsiElement newElement = null;
-
         if (element instanceof JetBinaryExpression) {
-            //noinspection ConstantConditions
-            newElement = element.replace(((JetBinaryExpression) element.copy()).getLeft());
+            JetBinaryExpression newElement = (JetBinaryExpression) element.copy();
+            element.replace(newElement.getLeft());
         }
         else if (element instanceof JetBinaryExpressionWithTypeRHS) {
-            newElement = element.replace(((JetBinaryExpressionWithTypeRHS) element.copy()).getLeft());
-        }
-
-        PsiElement parent = newElement != null ? newElement.getParent() : null;
-        if (parent instanceof JetParenthesizedExpression && JetPsiUtil.areParenthesesUseless((JetParenthesizedExpression) parent)) {
-            parent.replace(newElement);
+            JetBinaryExpressionWithTypeRHS newElement = (JetBinaryExpressionWithTypeRHS) element.copy();
+            element.replace(newElement.getLeft());
         }
     }
 

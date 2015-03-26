@@ -1,7 +1,0 @@
-// "Remove cast" "true"
-fun test(x: Any): Int {
-    if (x is String) {
-        return x.length()
-    }
-    return -1
-}
