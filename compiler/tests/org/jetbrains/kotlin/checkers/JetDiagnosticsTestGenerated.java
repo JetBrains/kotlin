@@ -10647,6 +10647,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("errorsOnEmptyDelegationCall.kt")
+            public void testErrorsOnEmptyDelegationCall() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/errorsOnEmptyDelegationCall.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("expectedInitKeywordOnInitializer.kt")
             public void testExpectedInitKeywordOnInitializer() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/expectedInitKeywordOnInitializer.kt");
@@ -10716,6 +10722,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("memberAccessBeforeSuperCall.kt")
             public void testMemberAccessBeforeSuperCall() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/memberAccessBeforeSuperCall.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nestedExtendsInner.kt")
+            public void testNestedExtendsInner() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/nestedExtendsInner.kt");
                 doTest(fileName);
             }
 

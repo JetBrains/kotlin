@@ -87,7 +87,7 @@ public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiE
         }
 
         for (PsiElement declaration : declarations) {
-            if (!QuickFixUtil.canModifyElement(declaration)) {
+            if (!declaration.isValid() || !QuickFixUtil.canModifyElement(declaration)) {
                 return false;
             }
         }

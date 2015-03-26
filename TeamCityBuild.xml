@@ -1,5 +1,6 @@
 <project name="Jet CI Steps" default="none">
     <import file="build.xml" optional="false"/>
+    <import file="replicate_versions.xml" optional="false"/>
 
     <property name="build.number" value="snapshot"/>
     <property name="jdk16.home" value="${java.home}"/>
@@ -97,6 +98,8 @@
           target.file.bk="${compiler.version.java.bk}"
           target.file.versioned="${compiler.version.java.versioned}"
           test.string="public static final String VERSION = &quot;@snapshot@&quot;;"/>
+
+      <replicateIdeaVersion target.file="${android-extensions.plugin.xml}" />
     </target>
 
   <target name="revertTemplateFiles">

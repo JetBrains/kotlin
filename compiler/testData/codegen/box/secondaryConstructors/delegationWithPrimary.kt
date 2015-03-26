@@ -9,7 +9,7 @@ class B : A {
 val global = B()
 
 class C(x: Int) : A by global {
-    constructor(): this(1) {}
+    constructor(): this(1)
 }
 
 fun box(): String {

@@ -1,3 +1,3 @@
 trait A {
-    <!CONSTRUCTOR_IN_TRAIT!>constructor() {}<!>
-}
+    <!CONSTRUCTOR_IN_TRAIT!>constructor()
+<!>}

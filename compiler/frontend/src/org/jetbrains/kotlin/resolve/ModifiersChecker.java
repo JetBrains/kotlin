@@ -145,10 +145,17 @@ public class ModifiersChecker {
             checkDefaultModifier(modifierListOwner);
             checkModalityModifiers(modifierListOwner);
             checkVisibilityModifiers(modifierListOwner, descriptor);
-            checkVarianceModifiersOfTypeParameters(modifierListOwner);
+            checkVarianceModifiers(modifierListOwner);
+            checkVarargsModifiers(modifierListOwner, descriptor);
         }
         checkPlatformNameApplicability(descriptor);
         runDeclarationCheckers(modifierListOwner, descriptor);
+    }
+
+    private void checkVarargsModifiers(@NotNull JetDeclaration owner, @NotNull MemberDescriptor descriptor) {
+        if (!(owner instanceof JetParameter)) {
+            reportIllegalModifiers(owner, Collections.singleton(VARARG_KEYWORD));
+        }
     }
 
     public void checkModifiersForLocalDeclaration(@NotNull JetDeclaration modifierListOwner, @NotNull DeclarationDescriptor descriptor) {
@@ -288,7 +295,8 @@ public class ModifiersChecker {
         JetAnnotationEntry annotationEntry = trace.get(BindingContext.ANNOTATION_DESCRIPTOR_TO_PSI_ELEMENT, annotation);
         if (annotationEntry == null) return;
 
-        if (!DescriptorUtils.isTopLevelDeclaration(descriptor) || !(descriptor instanceof FunctionDescriptor)) {
+        if (!DescriptorUtils.isTopLevelDeclaration(descriptor) || !(descriptor instanceof FunctionDescriptor) ||
+            descriptor instanceof ConstructorDescriptor) {
             trace.report(INAPPLICABLE_ANNOTATION.on(annotationEntry));
         }
 
@@ -400,7 +408,8 @@ public class ModifiersChecker {
         }
     }
 
-    public void checkVarianceModifiersOfTypeParameters(@NotNull JetModifierListOwner modifierListOwner) {
+    public void checkVarianceModifiers(@NotNull JetModifierListOwner modifierListOwner) {
+        reportIllegalModifiers(modifierListOwner, Arrays.asList(IN_KEYWORD, OUT_KEYWORD, REIFIED_KEYWORD));
         if (!(modifierListOwner instanceof JetTypeParameterListOwner)) return;
         List<JetTypeParameter> typeParameters = ((JetTypeParameterListOwner) modifierListOwner).getTypeParameters();
         for (JetTypeParameter typeParameter : typeParameters) {
