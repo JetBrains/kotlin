@@ -108,7 +108,7 @@ public abstract class AbstractEvaluateExpressionTest : AbstractAnnotationDescrip
         }
     }
 
-    class object {
+    companion object {
         val pattern = Pattern.compile(".+(?=:)")
     }
 }

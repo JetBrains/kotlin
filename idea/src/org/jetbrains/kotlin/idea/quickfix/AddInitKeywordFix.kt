@@ -38,7 +38,7 @@ public class AddInitKeywordFix(element: JetClassInitializer) : JetIntentionActio
         addInitKeyword(file, element)
     }
 
-    class object Factory : JetSingleIntentionActionFactory() {
+    companion object Factory : JetSingleIntentionActionFactory() {
         fun addInitKeyword(file: JetFile, element: JetClassInitializer) {
             if (element.hasInitKeyword()) return
 
@@ -79,7 +79,7 @@ public class AddInitKeywordFixInWholeProjectFix(elem: JetClassInitializer) : Jet
         }
     }
 
-    class object Factory : JetSingleIntentionActionFactory() {
+    companion object Factory : JetSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic) =
                 diagnostic.getPsiElement().getNonStrictParentOfType<JetClassInitializer>()?.let {
                     AddInitKeywordFixInWholeProjectFix(it)

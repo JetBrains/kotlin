@@ -50,7 +50,7 @@ public open class ExtractionEngineHelper {
         continuation(ExtractionGeneratorConfiguration(descriptorWithConflicts.descriptor, ExtractionGeneratorOptions.DEFAULT))
     }
 
-    class object {
+    companion object {
         public val DEFAULT: ExtractionEngineHelper = ExtractionEngineHelper()
     }
 }

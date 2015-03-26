@@ -51,7 +51,7 @@ class Identifier(
 
     override fun toString() = if (isNullable) "$name?" else name
 
-    class object {
+    companion object {
         val Empty = Identifier("")
 
         private val KEYWORDS = JetTokens.KEYWORDS.getTypes().map { (it as JetKeywordToken).getValue() }.toSet()

@@ -113,7 +113,7 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
         return MutablePackageFragmentDescriptor(moduleDescriptor, fqName)
     }
 
-    class object {
+    companion object {
         private val LOG = Logger.getInstance(javaClass<DeserializerForDecompiler>())
     }
 }

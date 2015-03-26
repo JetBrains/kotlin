@@ -23,7 +23,7 @@ public data class ConverterSettings(
         var openByDefault: Boolean
 ) {
 
-    class object {
+    companion object {
         public val defaultSettings: ConverterSettings = ConverterSettings(
                 forceNotNullTypes = true,
                 specifyLocalVariableTypeByDefault = false,

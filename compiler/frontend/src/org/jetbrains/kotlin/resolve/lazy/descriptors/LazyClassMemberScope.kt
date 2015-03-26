@@ -319,7 +319,7 @@ public open class LazyClassMemberScope(
     // Do not add details here, they may compromise the laziness during debugging
     override fun toString() = "lazy scope for class ${thisDescriptor.getName()}"
 
-    class object {
+    companion object {
         private val EXTRACT_FUNCTIONS: MemberExtractor<FunctionDescriptor> = object : MemberExtractor<FunctionDescriptor> {
             override fun extract(extractFrom: JetType, name: Name): Collection<FunctionDescriptor> {
                 return extractFrom.getMemberScope().getFunctions(name)

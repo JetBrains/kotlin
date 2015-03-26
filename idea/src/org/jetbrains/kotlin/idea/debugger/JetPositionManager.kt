@@ -277,7 +277,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Posi
         myTypeMappers.put(key, value)
     }
 
-    class object {
+    companion object {
         public fun createTypeMapper(file: JetFile): JetTypeMapper {
             val project = file.getProject()
 

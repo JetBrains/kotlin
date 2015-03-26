@@ -222,7 +222,7 @@ public open class JetPsiChecker : Annotator, HighlightRangeExtension {
         }
     }
 
-    class object {
+    companion object {
         var namesHighlightingEnabled = true
             [TestOnly] set
 

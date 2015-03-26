@@ -94,7 +94,7 @@ public final class AnnotationsUtils {
         }
 
         for (DeclarationDescriptor descriptor : descriptors) {
-            for (PredefinedAnnotation annotation : PredefinedAnnotation.OBJECT$.getWITH_CUSTOM_NAME()) {
+            for (PredefinedAnnotation annotation : PredefinedAnnotation.Companion.getWITH_CUSTOM_NAME()) {
                 if (!hasAnnotationOrInsideAnnotatedClass(descriptor, annotation)) {
                     continue;
                 }

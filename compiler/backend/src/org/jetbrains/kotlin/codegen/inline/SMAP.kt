@@ -143,7 +143,7 @@ trait SourceMapper {
         parent?.visitOrigin()
     }
 
-    class object {
+    companion object {
 
         fun flushToClassBuilder(mapper: SourceMapper, v: ClassBuilder) {
             for (fileMapping in mapper.resultMappings) {
@@ -253,7 +253,7 @@ class SMAP(val fileMappings: List<FileMapping>) {
         sourceInfo = SourceInfo(default.name, default.path, defaultMapping.source + defaultMapping.range - 1)
     }
 
-    class object {
+    companion object {
         val FILE_SECTION = "*F"
 
         val LINE_SECTION = "*L"

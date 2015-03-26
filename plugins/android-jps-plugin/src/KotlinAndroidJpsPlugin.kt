@@ -66,7 +66,7 @@ public class KotlinAndroidJpsPlugin : KotlinJpsCompilerArgumentsProvider {
         return AndroidJpsUtil.getManifestFileForCompilationPath(extension)!!.getAbsolutePath()
     }
 
-    class object {
+    companion object {
         private val JAR_FILE_NAME = "android-compiler-plugin.jar"
         private val ANDROID_COMPILER_PLUGIN_ID = "org.jetbrains.kotlin.android"
 

@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.name.Name
 abstract class ReflectJavaAnnotationArgument(
         override val name: Name?
 ) : JavaAnnotationArgument {
-    class object Factory {
+    companion object Factory {
         fun create(value: Any, name: Name?): ReflectJavaAnnotationArgument {
             return when {
                 value.javaClass.isEnumClassOrSpecializedEnumEntryClass() -> ReflectJavaEnumValueAnnotationArgument(name, value as Enum<*>)

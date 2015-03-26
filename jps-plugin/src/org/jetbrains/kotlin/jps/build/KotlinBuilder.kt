@@ -23,9 +23,12 @@ import com.intellij.util.containers.MultiMap
 import gnu.trove.THashSet
 import org.jetbrains.jps.ModuleChunk
 import org.jetbrains.jps.builders.DirtyFilesHolder
+import org.jetbrains.jps.builders.java.JavaBuilderUtil
 import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor
+import org.jetbrains.jps.builders.java.dependencyView.Mappings
 import org.jetbrains.jps.incremental.*
 import org.jetbrains.jps.incremental.ModuleLevelBuilder.ExitCode.*
+import org.jetbrains.jps.incremental.fs.CompilationRound
 import org.jetbrains.jps.incremental.java.JavaBuilder
 import org.jetbrains.jps.incremental.messages.BuildMessage
 import org.jetbrains.jps.incremental.messages.CompilerMessage
@@ -53,10 +56,17 @@ import org.jetbrains.kotlin.jps.incremental.IncrementalCacheImpl.RecompilationDe
 import org.jetbrains.kotlin.jps.incremental.IncrementalCacheImpl.RecompilationDecision.RECOMPILE_ALL
 import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCacheProvider
+import org.jetbrains.kotlin.jps.incremental.IncrementalCacheImpl.RecompilationDecision.RECOMPILE_ALL_IN_CHUNK_AND_DEPENDANTS
+import org.jetbrains.kotlin.jps.incremental.IncrementalCacheImpl.RecompilationDecision.RECOMPILE_OTHER_IN_CHUNK_AND_DEPENDANTS
+import org.jetbrains.kotlin.jps.incremental.IncrementalCacheImpl.RecompilationDecision.RECOMPILE_OTHER_KOTLIN_IN_CHUNK
+import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
+import org.jetbrains.kotlin.load.kotlin.header.isCompatiblePackageFacadeKind
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.utils.LibraryUtils
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.kotlin.utils.sure
+import org.jetbrains.org.objectweb.asm.ClassReader
 import java.io.File
 import java.util.ArrayList
 import java.util.HashMap
@@ -64,11 +74,13 @@ import java.util.HashSet
 import java.util.ServiceLoader
 
 public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
-    class object {
+    companion object {
         public val KOTLIN_BUILDER_NAME: String = "Kotlin Builder"
 
         private val LOG = Logger.getInstance("#org.jetbrains.jps.cmdline.BuildSession")
     }
+
+    private val statisticsLogger = TeamcityStatisticsLogger()
 
     override fun getPresentableName() = KOTLIN_BUILDER_NAME
 
@@ -121,43 +133,16 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         val allCompiledFiles = getAllCompiledFilesContainer(context)
         val filesToCompile = KotlinSourceFileCollector.getDirtySourceFiles(dirtyFilesHolder)
 
-        val outputItemCollector = if (JpsUtils.isJsKotlinModule(chunk.representativeTarget())) {
-            compileToJs(chunk, commonArguments, environment, messageCollector, project)
-        }
-        else {
-            if (IncrementalCompilation.ENABLED) {
-                for (target in chunk.getTargets()) {
-                    val cache = incrementalCaches[target]!!
-                    val removedAndDirtyFiles = filesToCompile[target] + dirtyFilesHolder.getRemovedFiles(target).map { File(it) }
-                    cache.markOutputClassesDirty(removedAndDirtyFiles)
-                }
-            }
+        val start = System.nanoTime()
+        val outputItemCollector = doCompileModuleChunk(allCompiledFiles, chunk, commonArguments, context, dirtyFilesHolder,
+                                                       environment, filesToCompile, incrementalCaches, messageCollector, project)
 
-            val representativeTarget = chunk.representativeTarget()
-
-            fun concatenate(strings: Array<String>?, cp: List<String>) = array(*(strings ?: array<String>()), *cp.copyToArray())
-
-            for (argumentProvider in ServiceLoader.load(javaClass<KotlinJpsCompilerArgumentsProvider>())) {
-                // appending to pluginOptions
-                commonArguments.pluginOptions = concatenate(commonArguments.pluginOptions,
-                                                            argumentProvider.getExtraArguments(representativeTarget, context))
-                // appending to classpath
-                commonArguments.pluginClasspaths = concatenate(commonArguments.pluginClasspaths,
-                                                               argumentProvider.getClasspath(representativeTarget, context))
-
-                messageCollector.report(
-                        INFO,
-                        "Plugin loaded: ${argumentProvider.javaClass.getSimpleName()}",
-                        NO_LOCATION
-                )
-            }
-
-            compileToJvm(allCompiledFiles, chunk, commonArguments, context, dirtyFilesHolder, environment, filesToCompile, messageCollector)
-        }
+        statisticsLogger.registerStatistic(chunk, System.nanoTime() - start)
 
         if (outputItemCollector == null) {
             return NOTHING_DONE
         }
+
 
         val compilationErrors = Utils.ERRORS_DETECTED_KEY[context, false]
         val generatedFiles = getGeneratedFiles(chunk, outputItemCollector)
@@ -200,6 +185,46 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         }
 
         return OK
+    }
+
+    private fun doCompileModuleChunk(
+            allCompiledFiles: MutableSet<File>, chunk: ModuleChunk, commonArguments: CommonCompilerArguments, context: CompileContext,
+            dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>, environment: CompilerEnvironment,
+            filesToCompile: MultiMap<ModuleBuildTarget, File>, incrementalCaches: Map<ModuleBuildTarget, IncrementalCacheImpl>,
+            messageCollector: MessageCollectorAdapter, project: JpsProject
+    ): OutputItemsCollectorImpl? {
+        if (JpsUtils.isJsKotlinModule(chunk.representativeTarget())) {
+            return compileToJs(chunk, commonArguments, environment, messageCollector, project)
+        }
+
+        if (IncrementalCompilation.ENABLED) {
+            for (target in chunk.getTargets()) {
+                val cache = incrementalCaches[target]!!
+                val removedAndDirtyFiles = filesToCompile[target] + dirtyFilesHolder.getRemovedFiles(target).map { File(it) }
+                cache.markOutputClassesDirty(removedAndDirtyFiles)
+            }
+        }
+
+        val representativeTarget = chunk.representativeTarget()
+
+        fun concatenate(strings: Array<String>?, cp: List<String>) = array(*(strings ?: array<String>()), *cp.copyToArray())
+
+        for (argumentProvider in ServiceLoader.load(javaClass<KotlinJpsCompilerArgumentsProvider>())) {
+            // appending to pluginOptions
+            commonArguments.pluginOptions = concatenate(commonArguments.pluginOptions,
+                                                        argumentProvider.getExtraArguments(representativeTarget, context))
+            // appending to classpath
+            commonArguments.pluginClasspaths = concatenate(commonArguments.pluginClasspaths,
+                                                           argumentProvider.getClasspath(representativeTarget, context))
+
+            messageCollector.report(
+                    INFO,
+                    "Plugin loaded: ${argumentProvider.javaClass.getSimpleName()}",
+                    NO_LOCATION
+            )
+        }
+
+        return compileToJvm(allCompiledFiles, chunk, commonArguments, context, dirtyFilesHolder, environment, filesToCompile, messageCollector)
     }
 
     private fun createCompileEnvironment(incrementalCaches: Map<ModuleBuildTarget, IncrementalCache>): CompilerEnvironment {
@@ -424,7 +449,10 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
                 else -> throw IllegalArgumentException("Unsupported severity: " + severity)
             }
         }
+    }
 
+    override fun buildFinished(context: CompileContext?) {
+        statisticsLogger.reportTotal()
     }
 }
 

@@ -34,7 +34,7 @@ class TypeKindHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
     public void visitSimpleNameExpression(@NotNull JetSimpleNameExpression expression) {
         PsiReference ref = expression.getReference();
         if (ref == null) return;
-        if (JetPsiChecker.OBJECT$.getNamesHighlightingEnabled()) {
+        if (JetPsiChecker.Companion.getNamesHighlightingEnabled()) {
             DeclarationDescriptor referenceTarget = bindingContext.get(BindingContext.REFERENCE_TARGET, expression);
             if (referenceTarget instanceof ConstructorDescriptor) {
                 referenceTarget = referenceTarget.getContainingDeclaration();
