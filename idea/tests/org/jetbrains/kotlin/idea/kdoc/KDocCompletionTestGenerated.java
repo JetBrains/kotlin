@@ -17,10 +17,9 @@
 package org.jetbrains.kotlin.idea.kdoc;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.InnerTestClasses;
+import org.jetbrains.kotlin.completion.AbstractJvmBasicCompletionTest;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.JetTestUtils;
-import org.jetbrains.kotlin.completion.AbstractJvmBasicCompletionTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -58,6 +57,18 @@ public class KDocCompletionTestGenerated extends AbstractJvmBasicCompletionTest 
     @TestMetadata("TagName.kt")
     public void testTagName() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/kdoc/completion/TagName.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("TagNameAfterAt.kt")
+    public void testTagNameAfterAt() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/kdoc/completion/TagNameAfterAt.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("TagNameMiddle.kt")
+    public void testTagNameMiddle() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/kdoc/completion/TagNameMiddle.kt");
         doTest(fileName);
     }
 
