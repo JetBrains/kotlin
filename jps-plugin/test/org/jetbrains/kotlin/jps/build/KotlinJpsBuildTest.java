@@ -47,8 +47,11 @@ import java.util.*;
 import java.util.regex.Pattern;
 import java.util.zip.ZipOutputStream;
 
+import static com.intellij.openapi.util.io.FileUtil.toSystemIndependentName;
+
 public class KotlinJpsBuildTest extends AbstractKotlinJpsBuildTestCase {
     private static final String PROJECT_NAME = "kotlinProject";
+    private static final String ADDITIONAL_MODULE_NAME = "module2";
     private static final String JDK_NAME = "IDEA_JDK";
 
     private static final String[] EXCLUDE_FILES = { "Excluded.class", "YetAnotherExcluded.class" };
@@ -59,6 +62,12 @@ public class KotlinJpsBuildTest extends AbstractKotlinJpsBuildTestCase {
     private static final Set<String> EXPECTED_JS_FILES_IN_OUTPUT_FOR_STDLIB_ONLY = KotlinPackage.hashSetOf(
             PROJECT_NAME + ".js",
             PROJECT_NAME + ".meta.js",
+            "lib/kotlin.js",
+            "lib/stdlib.meta.js"
+    );
+    private static final Set<String> EXPECTED_JS_FILES_IN_OUTPUT_FOR_MODULE_STDLIB_ONLY = KotlinPackage.hashSetOf(
+            ADDITIONAL_MODULE_NAME + ".js",
+            ADDITIONAL_MODULE_NAME + ".meta.js",
             "lib/kotlin.js",
             "lib/stdlib.meta.js"
     );
@@ -90,6 +99,7 @@ public class KotlinJpsBuildTest extends AbstractKotlinJpsBuildTestCase {
             "custom/META-INF-ex/file2.js",
             "custom/res0.js",
             "custom/resdir/res1.js");
+
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -146,6 +156,20 @@ public class KotlinJpsBuildTest extends AbstractKotlinJpsBuildTestCase {
 
         assertEquals(EXPECTED_JS_FILES_IN_OUTPUT_FOR_STDLIB_ONLY, contentOfOutputDir(PROJECT_NAME));
         checkWhen(touch("src/test1.kt"), null, k2jsOutput(PROJECT_NAME));
+    }
+
+    public void testKotlinJavaScriptProjectWithTwoModules() {
+        initProject();
+        addKotlinJavaScriptStdlibDependency();
+        makeAll().assertSuccessful();
+
+        assertEquals(EXPECTED_JS_FILES_IN_OUTPUT_FOR_STDLIB_ONLY, contentOfOutputDir(PROJECT_NAME));
+        assertEquals(EXPECTED_JS_FILES_IN_OUTPUT_FOR_MODULE_STDLIB_ONLY, contentOfOutputDir(ADDITIONAL_MODULE_NAME));
+
+        checkWhen(touch("src/test1.kt"), null, k2jsOutput(PROJECT_NAME));
+        checkWhen(touch("module2/src/module2.kt"), null, k2jsOutput(ADDITIONAL_MODULE_NAME));
+        checkWhen(new Action[]{ touch("src/test1.kt"), touch("module2/src/module2.kt")}, null, k2jsOutput(PROJECT_NAME,
+                                                                                                          ADDITIONAL_MODULE_NAME));
     }
 
     public void testKotlinJavaScriptProjectWithDirectoryAsStdlib() {
@@ -408,11 +432,15 @@ public class KotlinJpsBuildTest extends AbstractKotlinJpsBuildTestCase {
     }
 
     @NotNull
-    private static String[] k2jsOutput(String moduleName) {
-        String outputDir = "out/production/" + moduleName;
-        String[] result = new String[2];
-        result[0] = outputDir + "/" + moduleName + ".js";
-        result[1] = outputDir + "/" + moduleName + ".meta.js";
+    private static String[] k2jsOutput(String ...moduleNames) {
+        int length = moduleNames.length;
+        String[] result = new String[2 * length];
+        int index = 0;
+        for(String moduleName : moduleNames) {
+            File outputDir = new File("out/production/" + moduleName);
+            result[index++] = toSystemIndependentName(JpsJsModuleUtils.getOutputFile(outputDir, moduleName).getPath());
+            result[index++] = toSystemIndependentName(JpsJsModuleUtils.getOutputMetaFile(outputDir, moduleName).getPath());
+        }
         return result;
     }
 
@@ -425,7 +453,7 @@ public class KotlinJpsBuildTest extends AbstractKotlinJpsBuildTestCase {
         for(File file : files) {
             String relativePath = FileUtil.getRelativePath(baseDir, file);
             assert relativePath != null : "relativePath should not be null";
-            result.add(FileUtil.toSystemIndependentName(relativePath));
+            result.add(toSystemIndependentName(relativePath));
         }
         return result;
     }
