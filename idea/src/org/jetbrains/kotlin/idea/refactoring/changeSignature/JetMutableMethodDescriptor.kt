@@ -39,12 +39,6 @@ public class JetMutableMethodDescriptor(val original: JetMethodDescriptor): JetM
 
     public fun clearParameters() {
         parameters.clear()
-        receiver = null
-    }
-
-    public fun clearNonReceiverParameters() {
-        parameters.clear()
-        receiver?.let { parameters.add(it) }
     }
 
     override fun getVisibility(): Visibility? {
