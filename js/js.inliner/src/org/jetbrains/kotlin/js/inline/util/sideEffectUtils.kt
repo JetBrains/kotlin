@@ -46,7 +46,7 @@ private open class SideEffectVisitor() : RecursiveJsVisitor() {
     public var sideEffectFree: Boolean = true
         protected set
 
-    override fun visitElement(node: JsNode?) {
+    override fun visitElement(node: JsNode) {
         sideEffectFree = sideEffectFree && isSideEffectFree(node)
 
         if (sideEffectFree) {
@@ -54,7 +54,7 @@ private open class SideEffectVisitor() : RecursiveJsVisitor() {
         }
     }
 
-    protected open fun isSideEffectFree(node: JsNode?): Boolean =
+    protected open fun isSideEffectFree(node: JsNode): Boolean =
         when (node) {
             is JsValueLiteral,
             is JsConditional,
@@ -70,7 +70,7 @@ private open class SideEffectVisitor() : RecursiveJsVisitor() {
 }
 
 private class NeedToAliasVisitor() : SideEffectVisitor() {
-    override fun isSideEffectFree(node: JsNode?): Boolean =
+    override fun isSideEffectFree(node: JsNode): Boolean =
         when (node) {
             is JsThisRef,
             is JsConditional,

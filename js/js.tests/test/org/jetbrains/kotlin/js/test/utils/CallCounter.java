@@ -56,7 +56,7 @@ public class CallCounter extends RecursiveJsVisitor {
     }
 
     @Override
-    public void visitInvocation(JsInvocation invocation) {
+    public void visitInvocation(@NotNull JsInvocation invocation) {
         super.visitInvocation(invocation);
         JsExpression qualifier = invocation.getQualifier();
 

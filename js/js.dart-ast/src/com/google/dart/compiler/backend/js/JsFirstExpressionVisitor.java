@@ -6,6 +6,7 @@ package com.google.dart.compiler.backend.js;
 
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.backend.js.ast.JsExpressionStatement;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Determines if an expression statement needs to be surrounded by parentheses.
@@ -49,56 +50,56 @@ public class JsFirstExpressionVisitor extends RecursiveJsVisitor {
     }
 
     @Override
-    public void visitArrayAccess(JsArrayAccess x) {
+    public void visitArrayAccess(@NotNull JsArrayAccess x) {
         accept(x.getArrayExpression());
     }
 
     @Override
-    public void visitArray(JsArrayLiteral x) {
+    public void visitArray(@NotNull JsArrayLiteral x) {
     }
 
     @Override
-    public void visitBinaryExpression(JsBinaryOperation x) {
+    public void visitBinaryExpression(@NotNull JsBinaryOperation x) {
         accept(x.getArg1());
     }
 
     @Override
-    public void visitConditional(JsConditional x) {
+    public void visitConditional(@NotNull JsConditional x) {
         accept(x.getTestExpression());
     }
 
     @Override
-    public void visitFunction(JsFunction x) {
+    public void visitFunction(@NotNull JsFunction x) {
         needsParentheses = true;
     }
 
     @Override
-    public void visitInvocation(JsInvocation invocation) {
+    public void visitInvocation(@NotNull JsInvocation invocation) {
         accept(invocation.getQualifier());
     }
 
     @Override
-    public void visitNameRef(JsNameRef nameRef) {
+    public void visitNameRef(@NotNull JsNameRef nameRef) {
         if (!nameRef.isLeaf()) {
             accept(nameRef.getQualifier());
         }
     }
 
     @Override
-    public void visitNew(JsNew x) {
+    public void visitNew(@NotNull JsNew x) {
     }
 
     @Override
-    public void visitObjectLiteral(JsObjectLiteral x) {
+    public void visitObjectLiteral(@NotNull JsObjectLiteral x) {
         needsParentheses = true;
     }
 
     @Override
-    public void visitPostfixOperation(JsPostfixOperation x) {
+    public void visitPostfixOperation(@NotNull JsPostfixOperation x) {
         accept(x.getArg());
     }
 
     @Override
-    public void visitPrefixOperation(JsPrefixOperation x) {
+    public void visitPrefixOperation(@NotNull JsPrefixOperation x) {
     }
 }

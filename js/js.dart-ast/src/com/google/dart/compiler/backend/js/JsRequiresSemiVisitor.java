@@ -5,6 +5,7 @@
 package com.google.dart.compiler.backend.js;
 
 import com.google.dart.compiler.backend.js.ast.*;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Determines if a statement at the end of a block requires a semicolon.
@@ -34,21 +35,21 @@ public class JsRequiresSemiVisitor extends JsVisitor {
     }
 
     @Override
-    public void visitFor(JsFor x) {
+    public void visitFor(@NotNull JsFor x) {
         if (x.getBody() instanceof JsEmpty) {
             needsSemicolon = true;
         }
     }
 
     @Override
-    public void visitForIn(JsForIn x) {
+    public void visitForIn(@NotNull JsForIn x) {
         if (x.getBody() instanceof JsEmpty) {
             needsSemicolon = true;
         }
     }
 
     @Override
-    public void visitIf(JsIf x) {
+    public void visitIf(@NotNull JsIf x) {
         JsStatement thenStmt = x.getThenStatement();
         JsStatement elseStmt = x.getElseStatement();
         JsStatement toCheck = thenStmt;
@@ -65,14 +66,14 @@ public class JsRequiresSemiVisitor extends JsVisitor {
     }
 
     @Override
-    public void visitLabel(JsLabel x) {
+    public void visitLabel(@NotNull JsLabel x) {
         if (x.getStatement() instanceof JsEmpty) {
             needsSemicolon = true;
         }
     }
 
     @Override
-    public void visitWhile(JsWhile x) {
+    public void visitWhile(@NotNull JsWhile x) {
         if (x.getBody() instanceof JsEmpty) {
             needsSemicolon = true;
         }

@@ -23,7 +23,7 @@ import java.util.ArrayList
 class InstanceCollector<T : JsNode>(val klass: Class<T>) : RecursiveJsVisitor() {
     public val collected: MutableList<T> = ArrayList()
 
-    override fun visitElement(node: JsNode?) {
+    override fun visitElement(node: JsNode) {
         if (klass.isInstance(node)) {
             collected.add(klass.cast(node)!!)
         }

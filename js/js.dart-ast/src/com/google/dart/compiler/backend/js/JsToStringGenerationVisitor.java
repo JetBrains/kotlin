@@ -8,6 +8,7 @@ import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.backend.js.ast.JsVars.JsVar;
 import com.google.dart.compiler.util.TextOutput;
 import gnu.trove.THashSet;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 import java.util.List;
@@ -200,7 +201,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     @Override
-    public void visitArrayAccess(JsArrayAccess x) {
+    public void visitArrayAccess(@NotNull JsArrayAccess x) {
         printPair(x, x.getArrayExpression());
         leftSquare();
         accept(x.getIndexExpression());
@@ -208,7 +209,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     @Override
-    public void visitArray(JsArrayLiteral x) {
+    public void visitArray(@NotNull JsArrayLiteral x) {
         leftSquare();
         printExpressions(x.getExpressions());
         rightSquare();
@@ -227,7 +228,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     @Override
-    public void visitBinaryExpression(JsBinaryOperation binaryOperation) {
+    public void visitBinaryExpression(@NotNull JsBinaryOperation binaryOperation) {
         JsBinaryOperator operator = binaryOperation.getOperator();
         JsExpression arg1 = binaryOperation.getArg1();
         boolean isExpressionEnclosed = parenPush(binaryOperation, arg1, !operator.isLeftAssociative());
@@ -272,12 +273,12 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     @Override
-    public void visitBlock(JsBlock x) {
+    public void visitBlock(@NotNull JsBlock x) {
         printJsBlock(x, true);
     }
 
     @Override
-    public void visitBoolean(JsLiteral.JsBooleanLiteral x) {
+    public void visitBoolean(@NotNull JsLiteral.JsBooleanLiteral x) {
         if (x.getValue()) {
             p.print(CHARS_TRUE);
         }
@@ -287,13 +288,13 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     @Override
-    public void visitBreak(JsBreak x) {
+    public void visitBreak(@NotNull JsBreak x) {
         p.print(CHARS_BREAK);
         continueOrBreakLabel(x);
     }
 
     @Override
-    public void visitContinue(JsContinue x) {
+    public void visitContinue(@NotNull JsContinue x) {
         p.print(CHARS_CONTINUE);
         continueOrBreakLabel(x);
     }
@@ -307,7 +308,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     @Override
-    public void visitCase(JsCase x) {
+    public void visitCase(@NotNull JsCase x) {
         p.print(CHARS_CASE);
         space();
         accept(x.getCaseExpression());
@@ -332,7 +333,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     @Override
-    public void visitCatch(JsCatch x) {
+    public void visitCatch(@NotNull JsCatch x) {
         spaceOpt();
         p.print(CHARS_CATCH);
         spaceOpt();
@@ -355,7 +356,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     @Override
-    public void visitConditional(JsConditional x) {
+    public void visitConditional(@NotNull JsConditional x) {
         // Associativity: for the then and else branches, it is safe to insert
         // another
         // ternary expression, but if the test expression is a ternary, it should
@@ -387,12 +388,12 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     @Override
-    public void visitDebugger(JsDebugger x) {
+    public void visitDebugger(@NotNull JsDebugger x) {
         p.print(CHARS_DEBUGGER);
     }
 
     @Override
-    public void visitDefault(JsDefault x) {
+    public void visitDefault(@NotNull JsDefault x) {
         p.print(CHARS_DEFAULT);
         _colon();
 
@@ -400,7 +401,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     @Override
-    public void visitWhile(JsWhile x) {
+    public void visitWhile(@NotNull JsWhile x) {
         _while();
         spaceOpt();
         leftParen();
@@ -412,7 +413,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     @Override
-    public void visitDoWhile(JsDoWhile x) {
+    public void visitDoWhile(@NotNull JsDoWhile x) {
         p.print(CHARS_DO);
         nestedPush(x.getBody());
         accept(x.getBody());
@@ -433,11 +434,11 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     @Override
-    public void visitEmpty(JsEmpty x) {
+    public void visitEmpty(@NotNull JsEmpty x) {
     }
 
     @Override
-    public void visitExpressionStatement(JsExpressionStatement x) {
+    public void visitExpressionStatement(@NotNull JsExpressionStatement x) {
         boolean surroundWithParentheses = JsFirstExpressionVisitor.exec(x);
         if (surroundWithParentheses) {
             leftParen();
@@ -449,7 +450,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     @Override
-    public void visitFor(JsFor x) {
+    public void visitFor(@NotNull JsFor x) {
         _for();
         spaceOpt();
         leftParen();
@@ -488,7 +489,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     @Override
-    public void visitForIn(JsForIn x) {
+    public void visitForIn(@NotNull JsForIn x) {
         _for();
         spaceOpt();
         leftParen();
@@ -523,7 +524,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     @Override
-    public void visitFunction(JsFunction x) {
+    public void visitFunction(@NotNull JsFunction x) {
         p.print(CHARS_FUNCTION);
         space();
         if (x.getName() != null) {
@@ -546,7 +547,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     @Override
-    public void visitIf(JsIf x) {
+    public void visitIf(@NotNull JsIf x) {
         _if();
         spaceOpt();
         leftParen();
@@ -585,7 +586,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     @Override
-    public void visitInvocation(JsInvocation invocation) {
+    public void visitInvocation(@NotNull JsInvocation invocation) {
         printPair(invocation, invocation.getQualifier());
 
         leftParen();
@@ -594,7 +595,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     @Override
-    public void visitLabel(JsLabel x) {
+    public void visitLabel(@NotNull JsLabel x) {
         nameOf(x);
         _colon();
         spaceOpt();
@@ -602,7 +603,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     @Override
-    public void visitNameRef(JsNameRef nameRef) {
+    public void visitNameRef(@NotNull JsNameRef nameRef) {
         JsExpression qualifier = nameRef.getQualifier();
         if (qualifier != null) {
             final boolean enclose;
@@ -633,7 +634,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     @Override
-    public void visitNew(JsNew x) {
+    public void visitNew(@NotNull JsNew x) {
         p.print(CHARS_NEW);
         space();
 
@@ -653,22 +654,22 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     @Override
-    public void visitNull(JsNullLiteral x) {
+    public void visitNull(@NotNull JsNullLiteral x) {
         p.print(CHARS_NULL);
     }
 
     @Override
-    public void visitInt(JsIntLiteral x) {
+    public void visitInt(@NotNull JsIntLiteral x) {
         p.print(x.value);
     }
 
     @Override
-    public void visitDouble(JsDoubleLiteral x) {
+    public void visitDouble(@NotNull JsDoubleLiteral x) {
         p.print(x.value);
     }
 
     @Override
-    public void visitObjectLiteral(JsObjectLiteral objectLiteral) {
+    public void visitObjectLiteral(@NotNull JsObjectLiteral objectLiteral) {
         p.print('{');
         if (objectLiteral.isMultiline()) {
             p.indentIn();
@@ -720,12 +721,12 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     @Override
-    public void visitParameter(JsParameter x) {
+    public void visitParameter(@NotNull JsParameter x) {
         nameOf(x);
     }
 
     @Override
-    public void visitPostfixOperation(JsPostfixOperation x) {
+    public void visitPostfixOperation(@NotNull JsPostfixOperation x) {
         JsUnaryOperator op = x.getOperator();
         JsExpression arg = x.getArg();
         // unary operators always associate correctly (I think)
@@ -734,7 +735,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     @Override
-    public void visitPrefixOperation(JsPrefixOperation x) {
+    public void visitPrefixOperation(@NotNull JsPrefixOperation x) {
         JsUnaryOperator op = x.getOperator();
         p.print(op.getSymbol());
         JsExpression arg = x.getArg();
@@ -746,17 +747,17 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     @Override
-    public void visitProgram(JsProgram x) {
+    public void visitProgram(@NotNull JsProgram x) {
         p.print("<JsProgram>");
     }
 
     @Override
-    public void visitProgramFragment(JsProgramFragment x) {
+    public void visitProgramFragment(@NotNull JsProgramFragment x) {
         p.print("<JsProgramFragment>");
     }
 
     @Override
-    public void visitRegExp(JsRegExp x) {
+    public void visitRegExp(@NotNull JsRegExp x) {
         slash();
         p.print(x.getPattern());
         slash();
@@ -767,7 +768,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     @Override
-    public void visitReturn(JsReturn x) {
+    public void visitReturn(@NotNull JsReturn x) {
         p.print(CHARS_RETURN);
         JsExpression expr = x.getExpression();
         if (expr != null) {
@@ -777,12 +778,12 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     @Override
-    public void visitString(JsStringLiteral x) {
+    public void visitString(@NotNull JsStringLiteral x) {
         p.print(javaScriptString(x.getValue()));
     }
 
     @Override
-    public void visit(JsSwitch x) {
+    public void visit(@NotNull JsSwitch x) {
         p.print(CHARS_SWITCH);
         spaceOpt();
         leftParen();
@@ -795,19 +796,19 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     @Override
-    public void visitThis(JsLiteral.JsThisRef x) {
+    public void visitThis(@NotNull JsLiteral.JsThisRef x) {
         p.print(CHARS_THIS);
     }
 
     @Override
-    public void visitThrow(JsThrow x) {
+    public void visitThrow(@NotNull JsThrow x) {
         p.print(CHARS_THROW);
         space();
         accept(x.getExpression());
     }
 
     @Override
-    public void visitTry(JsTry x) {
+    public void visitTry(@NotNull JsTry x) {
         p.print(CHARS_TRY);
         spaceOpt();
         accept(x.getTryBlock());
@@ -823,7 +824,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     @Override
-    public void visit(JsVar var) {
+    public void visit(@NotNull JsVar var) {
         nameOf(var);
         JsExpression initExpr = var.getInitExpression();
         if (initExpr != null) {
@@ -839,7 +840,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     @Override
-    public void visitVars(JsVars vars) {
+    public void visitVars(@NotNull JsVars vars) {
         var();
         space();
         boolean sep = false;
@@ -860,7 +861,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     @Override
-    public void visitDocComment(JsDocComment comment) {
+    public void visitDocComment(@NotNull JsDocComment comment) {
         boolean asSingleLine = comment.getTags().size() == 1;
         if (!asSingleLine) {
             newlineOpt();

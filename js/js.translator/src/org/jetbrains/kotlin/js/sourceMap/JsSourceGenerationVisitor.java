@@ -20,6 +20,7 @@ import com.google.dart.compiler.backend.js.JsToStringGenerationVisitor;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.TextOutput;
 import com.intellij.util.SmartList;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -37,7 +38,7 @@ public class JsSourceGenerationVisitor extends JsToStringGenerationVisitor imple
     }
 
     @Override
-    public void visitProgramFragment(JsProgramFragment x) {
+    public void visitProgramFragment(@NotNull JsProgramFragment x) {
         x.acceptChildren(this);
     }
 
@@ -87,7 +88,7 @@ public class JsSourceGenerationVisitor extends JsToStringGenerationVisitor imple
     }
 
     @Override
-    public void visitProgram(JsProgram program) {
+    public void visitProgram(@NotNull JsProgram program) {
         program.acceptChildren(this);
         if (sourceMapBuilder != null) {
             sourceMapBuilder.addLink();

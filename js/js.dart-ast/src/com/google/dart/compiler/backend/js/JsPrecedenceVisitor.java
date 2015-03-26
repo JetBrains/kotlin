@@ -5,6 +5,7 @@
 package com.google.dart.compiler.backend.js;
 
 import com.google.dart.compiler.backend.js.ast.*;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Precedence indices from "JavaScript - The Definitive Guide" 4th Edition (page
@@ -45,42 +46,42 @@ class JsPrecedenceVisitor extends JsVisitor {
     }
 
     @Override
-    public void visitArrayAccess(JsArrayAccess x) {
+    public void visitArrayAccess(@NotNull JsArrayAccess x) {
         answer = 16;
     }
 
     @Override
-    public void visitArray(JsArrayLiteral x) {
+    public void visitArray(@NotNull JsArrayLiteral x) {
         answer = 17; // primary
     }
 
     @Override
-    public void visitBinaryExpression(JsBinaryOperation x) {
+    public void visitBinaryExpression(@NotNull JsBinaryOperation x) {
         answer = x.getOperator().getPrecedence();
     }
 
     @Override
-    public void visitBoolean(JsLiteral.JsBooleanLiteral x) {
+    public void visitBoolean(@NotNull JsLiteral.JsBooleanLiteral x) {
         answer = 17; // primary
     }
 
     @Override
-    public void visitConditional(JsConditional x) {
+    public void visitConditional(@NotNull JsConditional x) {
         answer = 3;
     }
 
     @Override
-    public void visitFunction(JsFunction x) {
+    public void visitFunction(@NotNull JsFunction x) {
         answer = 17; // primary
     }
 
     @Override
-    public void visitInvocation(JsInvocation invocation) {
+    public void visitInvocation(@NotNull JsInvocation invocation) {
         answer = 16;
     }
 
     @Override
-    public void visitNameRef(JsNameRef nameRef) {
+    public void visitNameRef(@NotNull JsNameRef nameRef) {
         if (nameRef.isLeaf()) {
             answer = 17; // primary
         }
@@ -90,62 +91,62 @@ class JsPrecedenceVisitor extends JsVisitor {
     }
 
     @Override
-    public void visitNew(JsNew x) {
+    public void visitNew(@NotNull JsNew x) {
         answer = PRECEDENCE_NEW;
     }
 
     @Override
-    public void visitNull(JsNullLiteral x) {
+    public void visitNull(@NotNull JsNullLiteral x) {
         answer = 17; // primary
     }
 
     @Override
-    public void visitInt(JsNumberLiteral.JsIntLiteral x) {
+    public void visitInt(@NotNull JsNumberLiteral.JsIntLiteral x) {
         answer = 17; // primary
     }
 
     @Override
-    public void visitDouble(JsNumberLiteral.JsDoubleLiteral x) {
+    public void visitDouble(@NotNull JsNumberLiteral.JsDoubleLiteral x) {
         answer = 17; // primary
     }
 
     @Override
-    public void visitObjectLiteral(JsObjectLiteral x) {
+    public void visitObjectLiteral(@NotNull JsObjectLiteral x) {
         answer = 17; // primary
     }
 
     @Override
-    public void visitPostfixOperation(JsPostfixOperation x) {
+    public void visitPostfixOperation(@NotNull JsPostfixOperation x) {
         answer = x.getOperator().getPrecedence();
     }
 
     @Override
-    public void visitPrefixOperation(JsPrefixOperation x) {
+    public void visitPrefixOperation(@NotNull JsPrefixOperation x) {
         answer = x.getOperator().getPrecedence();
     }
 
     @Override
-    public void visitPropertyInitializer(JsPropertyInitializer x) {
+    public void visitPropertyInitializer(@NotNull JsPropertyInitializer x) {
         answer = 17; // primary
     }
 
     @Override
-    public void visitRegExp(JsRegExp x) {
+    public void visitRegExp(@NotNull JsRegExp x) {
         answer = 17; // primary
     }
 
     @Override
-    public void visitString(JsStringLiteral x) {
+    public void visitString(@NotNull JsStringLiteral x) {
         answer = 17; // primary
     }
 
     @Override
-    public void visitThis(JsLiteral.JsThisRef x) {
+    public void visitThis(@NotNull JsLiteral.JsThisRef x) {
         answer = 17; // primary
     }
 
     @Override
-    protected void visitElement(JsNode node) {
+    protected void visitElement(@NotNull JsNode node) {
         throw new RuntimeException("Only expressions have precedence.");
     }
 }

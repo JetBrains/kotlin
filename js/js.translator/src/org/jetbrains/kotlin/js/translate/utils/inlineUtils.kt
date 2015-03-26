@@ -51,9 +51,7 @@ fun setInlineCallMetadata(
     val name = context.aliasedName(descriptor)
 
     val visitor = object : RecursiveJsVisitor() {
-        override fun visitInvocation(invocation: JsInvocation?) {
-            if (invocation == null) return
-
+        override fun visitInvocation(invocation: JsInvocation) {
             super.visitInvocation(invocation)
 
             if (name == invocation.name) {

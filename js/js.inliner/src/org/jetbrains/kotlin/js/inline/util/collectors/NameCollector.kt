@@ -28,12 +28,12 @@ import java.util.HashMap
 class NameCollector(private val scope: JsScope) : RecursiveJsVisitor() {
     public val names: MutableMap<String, JsName> = HashMap()
 
-    override fun visit(x: JsVars.JsVar?) {
+    override fun visit(x: JsVars.JsVar) {
         super.visit(x)
         addNameIfNeeded(x)
     }
 
-    override fun visitFunction(x: JsFunction?) { }
+    override fun visitFunction(x: JsFunction) { }
 
     private fun addNameIfNeeded(hasName: HasName?) {
         val name = hasName?.getName()

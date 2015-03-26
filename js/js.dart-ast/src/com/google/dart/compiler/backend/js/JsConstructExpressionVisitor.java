@@ -5,6 +5,7 @@
 package com.google.dart.compiler.backend.js;
 
 import com.google.dart.compiler.backend.js.ast.*;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Searches for method invocations in constructor expressions that would not
@@ -29,7 +30,7 @@ public class JsConstructExpressionVisitor extends RecursiveJsVisitor {
      * We only look at the array expression since the index has its own scope.
      */
     @Override
-    public void visitArrayAccess(JsArrayAccess x) {
+    public void visitArrayAccess(@NotNull JsArrayAccess x) {
         accept(x.getArrayExpression());
     }
 
@@ -37,23 +38,23 @@ public class JsConstructExpressionVisitor extends RecursiveJsVisitor {
      * Array literals have their own scoping.
      */
     @Override
-    public void visitArray(JsArrayLiteral x) {
+    public void visitArray(@NotNull JsArrayLiteral x) {
     }
 
     /**
      * Functions have their own scoping.
      */
     @Override
-    public void visitFunction(JsFunction x) {
+    public void visitFunction(@NotNull JsFunction x) {
     }
 
     @Override
-    public void visitInvocation(JsInvocation invocation) {
+    public void visitInvocation(@NotNull JsInvocation invocation) {
         containsInvocation = true;
     }
 
     @Override
-    public void visitNameRef(JsNameRef nameRef) {
+    public void visitNameRef(@NotNull JsNameRef nameRef) {
         if (!nameRef.isLeaf()) {
             accept(nameRef.getQualifier());
         }
@@ -63,14 +64,14 @@ public class JsConstructExpressionVisitor extends RecursiveJsVisitor {
      * New constructs bind to the nearest set of parentheses.
      */
     @Override
-    public void visitNew(JsNew x) {
+    public void visitNew(@NotNull JsNew x) {
     }
 
     /**
      * Object literals have their own scope.
      */
     @Override
-    public void visitObjectLiteral(JsObjectLiteral x) {
+    public void visitObjectLiteral(@NotNull JsObjectLiteral x) {
     }
 
     /**

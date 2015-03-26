@@ -7,8 +7,8 @@ package com.google.dart.compiler.backend.js.ast
 import com.google.dart.compiler.backend.js.ast.JsVars.JsVar
 
 public abstract class JsVisitor {
-    public open fun <T : JsNode> accept(node: T) {
-        node.accept(this)
+    public open fun <T : JsNode?> accept(node: T) {
+        node?.accept(this)
     }
 
     public fun <T : JsNode> acceptList(collection: List<T>) {

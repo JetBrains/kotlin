@@ -24,14 +24,14 @@ import java.util.IdentityHashMap
 class PropertyCollector : RecursiveJsVisitor() {
     public val properties: IdentityHashMap<JsName, JsExpression> = IdentityHashMap()
 
-    override fun visitPropertyInitializer(x: JsPropertyInitializer?) {
+    override fun visitPropertyInitializer(x: JsPropertyInitializer) {
         super.visitPropertyInitializer(x)
 
-        val label = x?.getLabelExpr() as? JsNameRef
+        val label = x.getLabelExpr() as? JsNameRef
         val name = label?.getName()
         if (name == null) return
 
-        val value = x?.getValueExpr()
+        val value = x.getValueExpr()
         properties[name] = value
     }
 }
