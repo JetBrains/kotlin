@@ -1455,6 +1455,7 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
         @TestDataPath("$PROJECT_ROOT")
         @InnerTestClasses({
                 Recovery.Objects.class,
+                Recovery.QualifiedExpression.class,
         })
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Recovery extends AbstractJetParsingTest {
@@ -1796,6 +1797,51 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
                         String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/objects/expressions/Where.kt");
                         doParsingTest(fileName);
                     }
+                }
+            }
+
+            @TestMetadata("compiler/testData/psi/recovery/qualifiedExpression")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class QualifiedExpression extends AbstractJetParsingTest {
+                public void testAllFilesPresentInQualifiedExpression() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/psi/recovery/qualifiedExpression"), Pattern.compile("^(.*)\\.kts?$"), true);
+                }
+
+                @TestMetadata("noQualifiedExpression.kt")
+                public void testNoQualifiedExpression() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/qualifiedExpression/noQualifiedExpression.kt");
+                    doParsingTest(fileName);
+                }
+
+                @TestMetadata("noSafeQualifiedExpression.kt")
+                public void testNoSafeQualifiedExpression() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/qualifiedExpression/noSafeQualifiedExpression.kt");
+                    doParsingTest(fileName);
+                }
+
+                @TestMetadata("qualifiedExpressionWithSelector.kt")
+                public void testQualifiedExpressionWithSelector() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/qualifiedExpression/qualifiedExpressionWithSelector.kt");
+                    doParsingTest(fileName);
+                }
+
+                @TestMetadata("qualifiedExpressionWithoutSelector.kt")
+                public void testQualifiedExpressionWithoutSelector() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/qualifiedExpression/qualifiedExpressionWithoutSelector.kt");
+                    doParsingTest(fileName);
+                }
+
+                @TestMetadata("safeQualifiedExpressionWithSelector.kt")
+                public void testSafeQualifiedExpressionWithSelector() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/qualifiedExpression/safeQualifiedExpressionWithSelector.kt");
+                    doParsingTest(fileName);
+                }
+
+                @TestMetadata("safeQualifiedExpressionWithoutSelector.kt")
+                public void testSafeQualifiedExpressionWithoutSelector() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/qualifiedExpression/safeQualifiedExpressionWithoutSelector.kt");
+                    doParsingTest(fileName);
                 }
             }
         }
