@@ -255,7 +255,7 @@ public class LookupElementFactory(
         }
     }
 
-    class object {
+    companion object {
         public fun getDefaultInsertHandler(descriptor: DeclarationDescriptor): InsertHandler<LookupElement> {
             return when (descriptor) {
                 is FunctionDescriptor -> {

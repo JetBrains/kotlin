@@ -29,7 +29,7 @@ class LocalFileKotlinClass private(
         innerClasses: FileBasedKotlinClass.InnerClassesInfo
 ) : FileBasedKotlinClass(className, classHeader, innerClasses) {
 
-    class object {
+    companion object {
         fun create(file: File): LocalFileKotlinClass? {
             val fileContents = file.readBytes()
             return FileBasedKotlinClass.create(fileContents) {

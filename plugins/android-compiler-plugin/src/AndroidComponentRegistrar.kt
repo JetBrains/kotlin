@@ -41,7 +41,7 @@ public object AndroidConfigurationKeys {
 }
 
 public class AndroidCommandLineProcessor : CommandLineProcessor {
-    class object {
+    companion object {
         public val ANDROID_COMPILER_PLUGIN_ID: String = "org.jetbrains.kotlin.android"
 
         public val RESOURCE_PATH_OPTION: CliOption = CliOption("androidRes", "<path>", "Android resources path")

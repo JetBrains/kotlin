@@ -149,7 +149,7 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
         return CachedValuesManager.getManager(project).createCachedValue(result, false)
     }
 
-    class object {
+    companion object {
         private val EXPLICIT_FLEXIBLE_PACKAGE = Flexibility.FLEXIBLE_TYPE_CLASSIFIER.getPackageFqName().asString()
         private val EXPLICIT_FLEXIBLE_CLASS_NAME = Flexibility.FLEXIBLE_TYPE_CLASSIFIER.getRelativeClassName().asString()
 

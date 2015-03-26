@@ -61,7 +61,7 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             }
             out.println("Comparable<$className> {")
 
-            out.print("    class object Companion")
+            out.print("    companion object")
             if (kind == PrimitiveType.FLOAT || kind == PrimitiveType.DOUBLE) {
                 out.print(" : FloatingPointConstants<$className>")
             }

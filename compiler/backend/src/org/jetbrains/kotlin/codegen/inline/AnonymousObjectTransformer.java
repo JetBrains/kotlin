@@ -161,7 +161,7 @@ public class AnonymousObjectTransformer {
 
         if (!inliningContext.isInliningLambda) {
             if (debugInfo != null && !debugInfo.isEmpty()) {
-                sourceMapper = SourceMapper.OBJECT$.createFromSmap(SMAPParser.parse(debugInfo));
+                sourceMapper = SourceMapper.Companion.createFromSmap(SMAPParser.parse(debugInfo));
             }
             else {
                 //seems we can't do any clever mapping cause we don't know any about original class name
@@ -195,7 +195,7 @@ public class AnonymousObjectTransformer {
 
         result.addAllClassesToRemove(constructorResult);
 
-        SourceMapper.OBJECT$.flushToClassBuilder(sourceMapper, classBuilder);
+        SourceMapper.Companion.flushToClassBuilder(sourceMapper, classBuilder);
 
         classBuilder.done();
 

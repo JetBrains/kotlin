@@ -1,5 +1,5 @@
 fun main(args: Array<String>) {
-    // class object usages
+    // companion object usages
     Foo.f()
     val x = Foo
 

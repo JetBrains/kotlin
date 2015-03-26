@@ -52,7 +52,7 @@ import java.net.URLClassLoader
 import java.util.regex.Pattern
 
 public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
-    class object {
+    companion object {
         private val renderer = DescriptorRendererBuilder()
                 .setWithDefinedIn(false)
                 .setExcludedAnnotationClasses(listOf(

@@ -51,7 +51,7 @@ import javax.swing.JComponent
 import javax.swing.JPanel
 
 public class UnusedSymbolInspection : AbstractKotlinInspection() {
-    class object {
+    companion object {
         private val javaInspection = UnusedDeclarationInspection()
 
         public fun isEntryPoint(declaration: JetNamedDeclaration): Boolean {

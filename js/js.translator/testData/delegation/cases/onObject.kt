@@ -9,7 +9,7 @@ class TImpl(val v: String) : T {
 }
 
 class A {
-    class object : T by TImpl("A.Default")
+    companion object : T by TImpl("A.Default")
 }
 
 object B : T by TImpl("B")

@@ -299,8 +299,8 @@ public class JetCoreEnvironment {
 
         project.registerService(VirtualFileFinderFactory.class, new CliVirtualFileFinderFactory(classPath));
 
-        ExternalDeclarationsProvider.OBJECT$.registerExtensionPoint(project);
-        ExpressionCodegenExtension.OBJECT$.registerExtensionPoint(project);
+        ExternalDeclarationsProvider.Companion.registerExtensionPoint(project);
+        ExpressionCodegenExtension.Companion.registerExtensionPoint(project);
 
         for (ComponentRegistrar registrar : configuration.getList(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS)) {
             registrar.registerProjectComponents(project, configuration);

@@ -890,6 +890,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("asAny.kt")
+        public void testAsAny() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/casts/asAny.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("asForConstants.kt")
         public void testAsForConstants() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/casts/asForConstants.kt");
@@ -914,6 +920,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("asUnit.kt")
+        public void testAsUnit() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/casts/asUnit.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("castGenericNull.kt")
         public void testCastGenericNull() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/casts/castGenericNull.kt");
@@ -923,6 +935,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("is.kt")
         public void testIs() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/casts/is.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lambdaToUnitCast.kt")
+        public void testLambdaToUnitCast() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/casts/lambdaToUnitCast.kt");
             doTest(fileName);
         }
 
