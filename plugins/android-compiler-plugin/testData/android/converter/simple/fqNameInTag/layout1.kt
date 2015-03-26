@@ -13,5 +13,5 @@ import android.support.v4.widget.*
 import kotlin.internal.flexible.ft
 
 val android.view.View.MyButton: ft<org.my.cool.Button, org.my.cool.Button?>
-    get() = findViewById(0) as org.my.cool.Button
+    get() = findViewById(0) as? org.my.cool.Button
 

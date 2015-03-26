@@ -140,8 +140,8 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
     }
 
     private fun KotlinStringWriter.writeSyntheticProperty(receiver: String, widget: AndroidWidget, stubCall: String) {
-        val cast = if (widget.className == "View") ":" else "as"
-        val body = arrayListOf("return $stubCall $cast ${widget.className}")
+        val cast = if (widget.className != "View") " as? ${widget.className}" else ""
+        val body = arrayListOf("return $stubCall$cast")
         val type = widget.className
         writeImmutableExtensionProperty(receiver,
                                         name = widget.id,
