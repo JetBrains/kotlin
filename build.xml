@@ -46,7 +46,7 @@
     located in dependencies/bootstrap-compiler/.../kotlin-runtime.jar, because the newly built compiler is just a Kotlin application,
     compiled by the old compiler with the old runtime in classpath. If you advance the ABI version, the newly built compiler will NOT work
     against the runtime it will produce on its own because they have different ABI versions.
-    So on the first step of bootstrap we copy that runtime to kotlin-runtime-internal-bootstrap.jar (see 'compiler' target) and change
+    So on the first step of bootstrap we copy that runtime to kotlin-runtime-internal-bootstrap.jar (see 'prepare-dist' target) and change
     the compiler classpath accordingly. On the second step this is believed to be not required, because there are
     little to no differences between the new and the newest runtime.
     -->
@@ -178,6 +178,23 @@
         <echo file="${kotlin-home}/build.txt" message="${build.number}"/>
 
         <chmod dir="${kotlin-home}/bin" excludes="**/*.bat" perm="755"/>
+
+        <if>
+            <istrue value="${bootstrap.or.local.build}"/>
+            <then>
+                <copy file="${bootstrap.runtime}" tofile="${kotlin-home}/lib/kotlin-runtime-internal-bootstrap.jar"/>
+                <copy file="${bootstrap.reflect}" tofile="${kotlin-home}/lib/kotlin-reflect-internal-bootstrap.jar"/>
+                <jar destfile="${kotlin-home}/lib/kotlin-reflect-internal-bootstrap.jar" update="true">
+                    <manifest>
+                        <attribute name="Class-Path" value="kotlin-runtime-internal-bootstrap.jar"/>
+                    </manifest>
+                </jar>
+            </then>
+            <else>
+                <copy file="${bootstrap.runtime}" todir="${kotlin-home}/lib"/>
+                <copy file="${bootstrap.reflect}" todir="${kotlin-home}/lib"/>
+            </else>
+        </if>
     </target>
 
     <target name="compiler-sources">
@@ -626,23 +643,6 @@
                         *** SKIP_FRAMES;
                     }
                 ]]></proguard>
-            </else>
-        </if>
-
-        <if>
-            <istrue value="${bootstrap.or.local.build}"/>
-            <then>
-                <copy file="${bootstrap.runtime}" tofile="${kotlin-home}/lib/kotlin-runtime-internal-bootstrap.jar"/>
-                <copy file="${bootstrap.reflect}" tofile="${kotlin-home}/lib/kotlin-reflect-internal-bootstrap.jar"/>
-                <jar destfile="${kotlin-home}/lib/kotlin-reflect-internal-bootstrap.jar" update="true">
-                    <manifest>
-                        <attribute name="Class-Path" value="kotlin-runtime-internal-bootstrap.jar"/>
-                    </manifest>
-                </jar>
-            </then>
-            <else>
-                <copy file="${bootstrap.runtime}" todir="${kotlin-home}/lib"/>
-                <copy file="${bootstrap.reflect}" todir="${kotlin-home}/lib"/>
             </else>
         </if>
 

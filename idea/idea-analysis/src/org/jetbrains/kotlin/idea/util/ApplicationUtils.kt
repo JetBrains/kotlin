@@ -32,6 +32,10 @@ public fun Project.executeWriteCommand(name: String, command: () -> Unit) {
     CommandProcessor.getInstance().executeCommand(this, { runWriteAction(command) }, name, null)
 }
 
+public fun Project.executeCommand(name: String, command: () -> Unit) {
+    CommandProcessor.getInstance().executeCommand(this, command, name, null)
+}
+
 public fun <T> Project.executeWriteCommand(name: String, command: () -> T): T {
     var result: T = null as T
     CommandProcessor.getInstance().executeCommand(this, { result = runWriteAction(command) }, name, null)

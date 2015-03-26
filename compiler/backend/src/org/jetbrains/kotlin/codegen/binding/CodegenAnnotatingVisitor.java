@@ -386,6 +386,10 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
     @Override
     public void visitCallExpression(@NotNull JetCallExpression expression) {
         super.visitCallExpression(expression);
+        checkSamCall(expression);
+    }
+
+    private void checkSamCall(@NotNull JetCallElement expression) {
         ResolvedCall<?> call = CallUtilPackage.getResolvedCall(expression, bindingContext);
         if (call == null) return;
 
@@ -416,7 +420,13 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         }
     }
 
-    private void recordSamConstructorIfNeeded(@NotNull JetCallExpression expression, @NotNull ResolvedCall<?> call) {
+    @Override
+    public void visitDelegationToSuperCallSpecifier(@NotNull JetDelegatorToSuperCall call) {
+        super.visitDelegationToSuperCallSpecifier(call);
+        checkSamCall(call);
+    }
+
+    private void recordSamConstructorIfNeeded(@NotNull JetCallElement expression, @NotNull ResolvedCall<?> call) {
         CallableDescriptor callableDescriptor = call.getResultingDescriptor();
         if (!(callableDescriptor.getOriginal() instanceof SamConstructorDescriptor)) return;
 
