@@ -34,6 +34,10 @@ public final class JsInvocation extends JsExpressionImpl.JsExpressionHasArgument
         return qualifier;
     }
 
+    public void setQualifier(@NotNull JsExpression qualifier) {
+        this.qualifier = qualifier;
+    }
+
     @Override
     public void accept(JsVisitor v) {
         v.visitInvocation(this);
