@@ -69,7 +69,7 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
             val psiManager = PsiManager.getInstance(project)
             val applicationPackage = resourceManager.androidModuleInfo?.applicationPackage
 
-            val jetFiles = cachedSources.getValue().mapIndexed { (index, text) ->
+            val jetFiles = cachedSources.getValue().mapIndexed { index, text ->
                 val virtualFile = LightVirtualFile(AndroidConst.SYNTHETIC_FILENAME + index + ".kt", text)
                 val jetFile = psiManager.findFile(virtualFile) as JetFile
                 if (applicationPackage != null) {
@@ -84,33 +84,38 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
 
     public fun parse(generateCommonFiles: Boolean = true): List<String> {
         val commonFiles = if (generateCommonFiles) {
-            val clearCacheFile = renderLayoutFile("kotlinx.android.synthetic") {} +
-                             renderClearCacheFunction("Activity") + renderClearCacheFunction("Fragment")
-            listOf(clearCacheFile, FLEXIBLE_TYPE_FILE)
+            val clearCacheFile = renderLayoutFile(AndroidConst.SYNTHETIC_PACKAGE) {} +
+                     renderClearCacheFunction("android.app.Activity") + renderClearCacheFunction("android.app.Fragment")
+
+            listOf(clearCacheFile,
+                   FLEXIBLE_TYPE_FILE,
+                   FAKE_SUPPORT_V4_APP_FILE,
+                   FAKE_SUPPORT_V4_VIEW_FILE,
+                   FAKE_SUPPORT_V4_WIDGET_FILE)
         } else listOf()
 
-        return resourceManager.getLayoutXmlFiles().flatMap { file ->
-            val widgets = parseSingleFile(file)
-            if (widgets.isNotEmpty()) {
-                val layoutPackage = file.genSyntheticPackageName()
+        return resourceManager.getLayoutXmlFiles().flatMap { entry ->
+            val files = entry.getValue()
+            val widgets = parseLayout(files)
 
-                val mainLayoutFile = renderLayoutFile(layoutPackage, widgets) {
-                    writeSyntheticProperty("Activity", it, "findViewById(0)")
-                    writeSyntheticProperty("Fragment", it, "getView().findViewById(0)")
-                }
+            val layoutPackage = files[0].genSyntheticPackageName()
 
-                val viewLayoutFile = renderLayoutFile("$layoutPackage.view", widgets) {
-                    writeSyntheticProperty("View", it, "findViewById(0)")
-                }
+            val mainLayoutFile = renderLayoutFile(layoutPackage, widgets) {
+                writeSyntheticProperty("android.app.Activity", it, "findViewById(0)")
+                writeSyntheticProperty("android.app.Fragment", it, "getView().findViewById(0)")
+            }
 
-                listOf(mainLayoutFile, viewLayoutFile)
-            } else listOf()
+            val viewLayoutFile = renderLayoutFile("$layoutPackage.view", widgets) {
+                writeSyntheticProperty("android.view.View", it, "findViewById(0)")
+            }
+
+            listOf(mainLayoutFile, viewLayoutFile)
         }.filterNotNull() + commonFiles
     }
 
     public fun parseToPsi(): List<JetFile>? = cachedJetFiles.getValue()
 
-    protected abstract fun parseSingleFile(file: PsiFile): List<AndroidWidget>
+    protected abstract fun parseLayout(files: List<PsiFile>): List<AndroidWidget>
 
     private fun renderLayoutFile(
             packageName: String,
@@ -131,11 +136,12 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
     }
 
     private fun PsiFile.genSyntheticPackageName(): String {
-        return AndroidConst.SYNTHETIC_PACKAGE + getName().substringBefore('.')
+        return AndroidConst.SYNTHETIC_PACKAGE + "." + getName().substringBefore('.')
     }
 
     private fun KotlinStringWriter.writeSyntheticProperty(receiver: String, widget: AndroidWidget, stubCall: String) {
-        val body = arrayListOf("return $stubCall as ${widget.className}")
+        val cast = if (widget.className != "View") " as? ${widget.className}" else ""
+        val body = arrayListOf("return $stubCall$cast")
         val type = widget.className
         writeImmutableExtensionProperty(receiver,
                                         name = widget.id,
@@ -149,18 +155,45 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
         return CachedValuesManager.getManager(project).createCachedValue(result, false)
     }
 
-    class object {
+    protected fun removeDuplicates(widgets: List<AndroidWidget>): List<AndroidWidget> {
+        val widgetMap = linkedMapOf<String, AndroidWidget>()
+        for (widget in widgets) {
+            if (widgetMap.contains(widget.id)) {
+                val existingElement = widgetMap.get(widget.id)
+                if (existingElement.className != widget.className && existingElement.className != "View") {
+                    // Widgets with the same id but different types exist.
+                    widgetMap.put(widget.id, widget.copy(className = "View"))
+                }
+            }
+            else widgetMap.put(widget.id, widget)
+        }
+        return widgetMap.values().toList()
+    }
+
+    companion object {
         private val EXPLICIT_FLEXIBLE_PACKAGE = Flexibility.FLEXIBLE_TYPE_CLASSIFIER.getPackageFqName().asString()
         private val EXPLICIT_FLEXIBLE_CLASS_NAME = Flexibility.FLEXIBLE_TYPE_CLASSIFIER.getRelativeClassName().asString()
 
         private val ANDROID_IMPORTS = listOf(
-                "android.app.Activity",
-                "android.app.Fragment",
-                "android.view.View",
+                "android.app.*",
+                "android.view.*",
                 "android.widget.*",
+                "android.webkit.*",
+                "android.inputmethodservice.*",
+                "android.opengl.*",
+                "android.appwidget.*",
+                "android.support.v4.app.*",
+                "android.support.v4.view.*",
+                "android.support.v4.widget.*",
                 Flexibility.FLEXIBLE_TYPE_CLASSIFIER.asSingleFqName().asString())
 
         private val FLEXIBLE_TYPE_FILE = "package $EXPLICIT_FLEXIBLE_PACKAGE\n\nclass $EXPLICIT_FLEXIBLE_CLASS_NAME<L, U>"
+
+        private val FAKE_SUPPORT_V4_WIDGET_FILE = "package android.support.v4.widget"
+
+        private val FAKE_SUPPORT_V4_VIEW_FILE = "package android.support.v4.view"
+
+        private val FAKE_SUPPORT_V4_APP_FILE = "package android.support.v4.app"
     }
 
 }

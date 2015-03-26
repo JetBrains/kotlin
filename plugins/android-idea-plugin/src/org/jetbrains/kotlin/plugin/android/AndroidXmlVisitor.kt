@@ -16,15 +16,13 @@
 
 package org.jetbrains.kotlin.plugin.android
 
-import org.jetbrains.kotlin.lang.resolve.android.AndroidResourceManager
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.XmlElementVisitor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.xml.XmlElement
 import com.intellij.psi.xml.XmlTag
-import org.jetbrains.kotlin.lang.resolve.android.AndroidConst
 import org.jetbrains.kotlin.lang.resolve.android
-import org.jetbrains.kotlin.lang.resolve.android.idToName
+import org.jetbrains.kotlin.lang.resolve.android.*
 
 class AndroidXmlVisitor(val elementCallback: (String, String, XmlAttribute) -> Unit) : XmlElementVisitor() {
 
@@ -37,14 +35,19 @@ class AndroidXmlVisitor(val elementCallback: (String, String, XmlAttribute) -> U
     }
 
     override fun visitXmlTag(tag: XmlTag?) {
-        val attribute = tag?.getAttribute(AndroidConst.ID_ATTRIBUTE)
-        if (attribute != null) {
-            val attributeValue = attribute.getValue()
-            if (attributeValue != null) {
-                val classNameAttr = tag?.getAttribute(AndroidConst.CLASS_ATTRIBUTE_NO_NAMESPACE)?.getValue() ?: tag?.getLocalName()
-                if (classNameAttr != null) {
-                    val name = idToName(attributeValue)
-                    if (name != null) elementCallback(name, classNameAttr!!, attribute)
+        val localName = tag?.getLocalName() ?: ""
+        if (isWidgetTypeIgnored(localName)) return
+
+        val idAttribute = tag?.getAttribute(AndroidConst.ID_ATTRIBUTE)
+        if (idAttribute != null) {
+            val idAttributeValue = idAttribute.getValue()
+            if (idAttributeValue != null) {
+                val classAttributeValue = tag?.getAttribute(AndroidConst.CLASS_ATTRIBUTE_NO_NAMESPACE)?.getValue()
+                val xmlType = classAttributeValue ?: localName
+                val widgetType = xmlType.let { getRealWidgetType(it) }
+                if (isResourceDeclarationOrUsage(idAttributeValue)) {
+                    val name = idToName(idAttributeValue)
+                    if (name != null) elementCallback(name, widgetType, idAttribute)
                 }
             }
         }
