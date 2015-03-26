@@ -73,12 +73,6 @@ public class DeprecatedLambdaSyntaxInWholeProjectFix(element: JetFunctionLiteral
             }
             return null
         }
-
-        override fun visitJetFile(file: JetFile, data: Int?): Void? {
-            super.visitJetFile(file, data)
-            file.acceptChildren(this, data)
-            return null
-        }
     }
 
     companion object Factory : JetSingleIntentionActionFactory() {
