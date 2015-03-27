@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.serialization.deserialization.NameResolver;
 import org.jetbrains.kotlin.utils.UtilsPackage;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 public final class ClassData {
@@ -55,18 +54,5 @@ public final class ClassData {
     @NotNull
     public ProtoBuf.Class getClassProto() {
         return classProto;
-    }
-
-    @NotNull
-    public byte[] toBytes() {
-        try {
-            ByteArrayOutputStream result = new ByteArrayOutputStream();
-            NameSerializationUtil.serializeNameResolver(result, nameResolver);
-            classProto.writeTo(result);
-            return result.toByteArray();
-        }
-        catch (IOException e) {
-            throw UtilsPackage.rethrow(e);
-        }
     }
 }
