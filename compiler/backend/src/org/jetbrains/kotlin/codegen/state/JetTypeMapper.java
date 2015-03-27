@@ -708,7 +708,7 @@ public class JetTypeMapper {
     @NotNull
     public static String getDefaultDescriptor(@NotNull Method method, boolean isExtension) {
         String descriptor = method.getDescriptor();
-        int argumentsCount = (Type.getArgumentsAndReturnSizes(descriptor) >> 2) - 1;
+        int argumentsCount = Type.getArgumentTypes(descriptor).length;
         if (isExtension) {
             argumentsCount--;
         }
