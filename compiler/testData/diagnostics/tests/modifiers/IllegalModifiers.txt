@@ -84,6 +84,31 @@ package illegal_modifiers {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
+    internal open class IllegalModifiers7 {
+        public constructor IllegalModifiers7()
+        internal final val x: kotlin.Int = 1
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        internal final fun foo(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final class IllegalModifiers8 {
+        public constructor IllegalModifiers8()
+        public constructor IllegalModifiers8(/*0*/ x: kotlin.Int)
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final class IllegalModifiers9 {
+        private constructor IllegalModifiers9()
+        private constructor IllegalModifiers9(/*0*/ x: kotlin.Int)
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
     internal final class LegalModifier {
         public constructor LegalModifier(/*0*/ a: kotlin.Int, /*1*/ illegal_modifiers.annotated() b: kotlin.String, /*2*/ illegal_modifiers.annotated() vararg v: kotlin.Int /*kotlin.IntArray*/)
         internal final val a: kotlin.Int

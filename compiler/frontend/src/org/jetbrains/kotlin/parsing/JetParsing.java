@@ -873,7 +873,7 @@ public class JetParsing extends AbstractJetParsing {
 
         advance(); // CONSTRUCTOR_KEYWORD
 
-        TokenSet valueArgsRecoverySet = TokenSet.create(COLON, LBRACE, SEMICOLON, RPAR);
+        TokenSet valueArgsRecoverySet = TokenSet.create(COLON, LBRACE, SEMICOLON, RPAR, EOL_OR_SEMICOLON, RBRACE);
         if (at(LPAR)) {
             parseValueParameterList(false, /*typeRequired = */ true, valueArgsRecoverySet);
         }
@@ -888,16 +888,26 @@ public class JetParsing extends AbstractJetParsing {
 
             if (at(THIS_KEYWORD) || at(SUPER_KEYWORD)) {
                 parseThisOrSuper();
+                myExpressionParsing.parseValueArgumentList();
             }
             else {
-                // if we're on LPAR it's probably start of value arguments list
-                if (!at(LPAR)) {
-                    advance(); // wrong delegation call keyword?
-                }
                 error("Expecting a 'this' or 'super' constructor call");
-            }
+                PsiBuilder.Marker beforeWrongDelegationCallee = null;
+                if (!at(LPAR)) {
+                    beforeWrongDelegationCallee = mark();
+                    advance(); // wrong delegation callee
+                }
+                myExpressionParsing.parseValueArgumentList();
 
-            myExpressionParsing.parseValueArgumentList();
+                if (beforeWrongDelegationCallee != null) {
+                    if (at(LBRACE)) {
+                        beforeWrongDelegationCallee.drop();
+                    }
+                    else {
+                        beforeWrongDelegationCallee.rollbackTo();
+                    }
+                }
+            }
 
             delegationCall.done(CONSTRUCTOR_DELEGATION_CALL);
         }
@@ -908,7 +918,9 @@ public class JetParsing extends AbstractJetParsing {
             emptyDelegationCall.done(CONSTRUCTOR_DELEGATION_CALL);
         }
 
-        parseBlock();
+        if (at(LBRACE)) {
+            parseBlock();
+        }
     }
 
     private void parseThisOrSuper() {

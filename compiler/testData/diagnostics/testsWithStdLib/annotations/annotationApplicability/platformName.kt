@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 
 import kotlin.platform.*
 
@@ -32,7 +32,8 @@ var vardef: Int = 1
     set
 
 [<!INAPPLICABLE_ANNOTATION!>platformName("C")<!>]
-class C {
+class C [platformName("primary")]() { // TODO: modifiers check on primary constructor KT-7057
+    <!INAPPLICABLE_ANNOTATION!>platformName("ctr")<!> constructor(x: Int): this() {}
     [<!INAPPLICABLE_ANNOTATION!>platformName("a")<!>]
     fun foo() {}
 

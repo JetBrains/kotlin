@@ -57,7 +57,6 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
     private final WritableScope scopeForMemberResolution;
     // This scope contains type parameters but does not contain inner classes
     private final WritableScope scopeForSupertypeResolution;
-    private final WritableScope scopeForSecondaryConstructorHeaderResolution;
     private WritableScope scopeForInitializers; //contains members + primary constructor value parameters + map for backing fields
     private JetScope scopeForMemberLookup;
     private final JetScope staticScope = new StaticScopeForKotlinClass(this);
@@ -84,8 +83,6 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
                 .changeLockLevel(WritableScope.LockLevel.BOTH);
         this.scopeForMemberResolution = new WritableScopeImpl(scopeForSupertypeResolution, this, redeclarationHandler, "MemberResolution")
                 .changeLockLevel(WritableScope.LockLevel.BOTH);
-        this.scopeForSecondaryConstructorHeaderResolution =
-                new WritableScopeImpl(scopeForSupertypeResolution, this, redeclarationHandler, "SecondaryConstructorHeaderResolution ");
 
         if (kind == ClassKind.TRAIT) {
             setUpScopeForInitializers(this);
@@ -93,7 +90,6 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
 
         scopeForMemberResolution.importScope(staticScope);
         scopeForMemberResolution.addLabeledDeclaration(this);
-        scopeForSecondaryConstructorHeaderResolution.importScope(staticScope);
     }
 
     @Nullable
@@ -291,12 +287,6 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
     @NotNull
     public JetScope getScopeForInitializerResolution() {
         return getWritableScopeForInitializers();
-    }
-
-    @NotNull
-    @Override
-    public JetScope getScopeForSecondaryConstructorHeaderResolution() {
-        return scopeForSecondaryConstructorHeaderResolution;
     }
 
     private void setUpScopeForInitializers(@NotNull DeclarationDescriptor containingDeclaration) {

@@ -10569,6 +10569,9 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
 
         @TestMetadata("compiler/testData/diagnostics/tests/secondaryConstructors")
         @TestDataPath("$PROJECT_ROOT")
+        @InnerTestClasses({
+                SecondaryConstructors.HeaderCallChecker.class,
+        })
         @RunWith(JUnit3RunnerWithInners.class)
         public static class SecondaryConstructors extends AbstractJetDiagnosticsTest {
             public void testAllFilesPresentInSecondaryConstructors() throws Exception {
@@ -10647,6 +10650,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("errorsOnEmptyDelegationCall.kt")
+            public void testErrorsOnEmptyDelegationCall() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/errorsOnEmptyDelegationCall.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("expectedInitKeywordOnInitializer.kt")
             public void testExpectedInitKeywordOnInitializer() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/expectedInitKeywordOnInitializer.kt");
@@ -10713,9 +10722,9 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("memberAccessBeforeSuperCall.kt")
-            public void testMemberAccessBeforeSuperCall() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/memberAccessBeforeSuperCall.kt");
+            @TestMetadata("nestedExtendsInner.kt")
+            public void testNestedExtendsInner() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/nestedExtendsInner.kt");
                 doTest(fileName);
             }
 
@@ -10825,6 +10834,99 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             public void testVarargsInDelegationCallToSecondary() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/varargsInDelegationCallToSecondary.kt");
                 doTest(fileName);
+            }
+
+            @TestMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/headerCallChecker")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class HeaderCallChecker extends AbstractJetDiagnosticsTest {
+                @TestMetadata("accessBaseGenericFromInnerExtendingSameBase.kt")
+                public void testAccessBaseGenericFromInnerExtendingSameBase() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/headerCallChecker/accessBaseGenericFromInnerExtendingSameBase.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("accessBaseGenericFromInnerExtendingSameBase2.kt")
+                public void testAccessBaseGenericFromInnerExtendingSameBase2() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/headerCallChecker/accessBaseGenericFromInnerExtendingSameBase2.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("accessBaseWithSameExtension.kt")
+                public void testAccessBaseWithSameExtension() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/headerCallChecker/accessBaseWithSameExtension.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("accessGenericBaseWithSameExtension.kt")
+                public void testAccessGenericBaseWithSameExtension() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/headerCallChecker/accessGenericBaseWithSameExtension.kt");
+                    doTest(fileName);
+                }
+
+                public void testAllFilesPresentInHeaderCallChecker() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/secondaryConstructors/headerCallChecker"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("innerInstanceCreation.kt")
+                public void testInnerInstanceCreation() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/headerCallChecker/innerInstanceCreation.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("memberFunAccess.kt")
+                public void testMemberFunAccess() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/headerCallChecker/memberFunAccess.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("passingInstance.kt")
+                public void testPassingInstance() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/headerCallChecker/passingInstance.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("propertyAccess.kt")
+                public void testPropertyAccess() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/headerCallChecker/propertyAccess.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("propertyAccessUnitialized.kt")
+                public void testPropertyAccessUnitialized() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/headerCallChecker/propertyAccessUnitialized.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("superFunAccess.kt")
+                public void testSuperFunAccess() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/headerCallChecker/superFunAccess.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("superFunAccessOverriden.kt")
+                public void testSuperFunAccessOverriden() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/headerCallChecker/superFunAccessOverriden.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("superPropertyAccess.kt")
+                public void testSuperPropertyAccess() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/headerCallChecker/superPropertyAccess.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("usingOuterInstance.kt")
+                public void testUsingOuterInstance() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/headerCallChecker/usingOuterInstance.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("usingOuterProperty.kt")
+                public void testUsingOuterProperty() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/headerCallChecker/usingOuterProperty.kt");
+                    doTest(fileName);
+                }
             }
         }
 

@@ -1,0 +1,11 @@
+package
+
+internal fun Base<kotlin.Int>.foo(): kotlin.Unit
+
+internal open class Base</*0*/ T> {
+    public constructor Base</*0*/ T>(/*0*/ p: kotlin.Any?)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal final fun foo1(/*0*/ t: T): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
