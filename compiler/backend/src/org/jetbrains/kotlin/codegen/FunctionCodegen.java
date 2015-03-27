@@ -113,6 +113,16 @@ public class FunctionCodegen {
 
         generateDefaultIfNeeded(owner.intoFunction(functionDescriptor), functionDescriptor, owner.getContextKind(),
                                 DefaultParameterValueLoader.DEFAULT, function);
+
+        generateOverloadsWithDefaultValues(function, functionDescriptor, functionDescriptor);
+    }
+
+    public void generateOverloadsWithDefaultValues(@NotNull JetNamedFunction function,
+            FunctionDescriptor functionDescriptor, FunctionDescriptor delegateFunctionDescriptor) {
+        new DefaultParameterValueSubstitutor(state).generateOverloadsIfNeeded(function,
+                                                                              functionDescriptor,
+                                                                              delegateFunctionDescriptor,
+                                                                              owner, v);
     }
 
     public void generateMethod(

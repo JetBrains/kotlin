@@ -1076,8 +1076,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         functionCodegen.generateDefaultIfNeeded(constructorContext, constructorDescriptor, OwnerKind.IMPLEMENTATION,
                                                 DefaultParameterValueLoader.DEFAULT, null);
 
-        CallableMethod callableMethod = typeMapper.mapToCallableMethod(constructorDescriptor);
-        new DefaultParameterValueSubstitutor(state).generateDefaultConstructorIfNeeded(callableMethod, constructorDescriptor, v, myClass);
+        new DefaultParameterValueSubstitutor(state).generateDefaultConstructorIfNeeded(constructorDescriptor, v,
+                                                                                       constructorContext, myClass);
 
         if (isCompanionObject(descriptor)) {
             context.recordSyntheticAccessorIfNeeded(constructorDescriptor, bindingContext);

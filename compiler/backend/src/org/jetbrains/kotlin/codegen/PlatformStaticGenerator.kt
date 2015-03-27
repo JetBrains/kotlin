@@ -16,19 +16,20 @@
 
 package org.jetbrains.kotlin.codegen
 
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.backend.common.CodegenUtil
+import org.jetbrains.kotlin.codegen.context.MethodContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
+import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.JetNamedFunction
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.Synthetic
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
-import org.jetbrains.kotlin.codegen.context.MethodContext
-import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.kotlin.backend.common.CodegenUtil
-import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
+import org.jetbrains.org.objectweb.asm.MethodVisitor
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import kotlin.platform.platformStatic
 
 class PlatformStaticGenerator(
@@ -40,8 +41,9 @@ class PlatformStaticGenerator(
     override fun invoke(codegen: ImplementationBodyCodegen, classBuilder: ClassBuilder) {
         val staticFunctionDescriptor = createStaticFunctionDescriptor(descriptor)
 
+        val originElement = declarationOrigin.element
         codegen.functionCodegen.generateMethod(
-                Synthetic(declarationOrigin.element, staticFunctionDescriptor),
+                Synthetic(originElement, staticFunctionDescriptor),
                 staticFunctionDescriptor,
                 object : FunctionGenerationStrategy() {
                     override fun generateBody(
@@ -74,6 +76,11 @@ class PlatformStaticGenerator(
                     }
                 }
         )
+
+
+        if (originElement is JetNamedFunction) {
+            codegen.functionCodegen.generateOverloadsWithDefaultValues(originElement, staticFunctionDescriptor, descriptor)
+        }
     }
 
     companion object {
