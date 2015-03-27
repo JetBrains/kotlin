@@ -135,11 +135,7 @@ public class PathUtil {
 
     @NotNull
     public static File getResourcePathForClass(@NotNull Class aClass) {
-        String path = "/" + aClass.getName().replace('.', '/') + ".class";
-        String resourceRoot = PathManager.getResourceRoot(aClass, path);
-        if (resourceRoot == null) {
-            throw new IllegalStateException("Resource not found: " + path);
-        }
+        String resourceRoot = PathManager.getResourceRoot(aClass, "/" + aClass.getName().replace('.', '/') + ".class");
         return new File(resourceRoot).getAbsoluteFile();
     }
 

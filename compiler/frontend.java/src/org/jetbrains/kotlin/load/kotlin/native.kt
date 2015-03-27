@@ -23,7 +23,9 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.psi.JetDeclarationWithBody
 import org.jetbrains.kotlin.resolve.annotations.hasInlineAnnotation
@@ -50,7 +52,10 @@ public class NativeFunChecker : DeclarationChecker {
             diagnosticHolder.report(ErrorsJvm.NATIVE_DECLARATION_CANNOT_BE_ABSTRACT.on(declaration))
         }
 
-        if (declaration is JetDeclarationWithBody && declaration.hasBody()) {
+        if (descriptor is ConstructorDescriptor) {
+            diagnosticHolder.report(Errors.INAPPLICABLE_ANNOTATION.on(declaration));
+        }
+        else if (declaration is JetDeclarationWithBody && declaration.hasBody()) {
             diagnosticHolder.report(ErrorsJvm.NATIVE_DECLARATION_CANNOT_HAVE_BODY.on(declaration))
         }
 

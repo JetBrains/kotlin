@@ -9,5 +9,5 @@ class A(val prop: Int, arg: Int) {
     fun foo() = 1
 }
 
-// EXIST: topLevel, abc
-// ABSENT: arg, local, prop, another, foo
+// EXIST: topLevel, abc, prop, another, foo
+// ABSENT: arg, local

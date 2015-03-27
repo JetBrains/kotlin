@@ -397,6 +397,10 @@ public class DefaultErrorMessages {
         MAP.put(PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED, "Primary constructor call expected");
         MAP.put(DELEGATION_SUPER_CALL_IN_ENUM_CONSTRUCTOR, "Call to super is not allowed in enum constructor");
         MAP.put(PRIMARY_CONSTRUCTOR_REQUIRED_FOR_DATA_CLASS, "Primary constructor required for data class");
+        MAP.put(EXPLICIT_DELEGATION_CALL_REQUIRED,
+                "Explicit 'this' or 'super' call is required. There is no constructor in superclass that can be called without arguments");
+
+        MAP.put(INSTANCE_ACCESS_BEFORE_SUPER_CALL, "Cannot access ''{0}'' before superclass constructor has been called", NAME);
 
         MAP.put(INIT_KEYWORD_BEFORE_CLASS_INITIALIZER_EXPECTED, "Expecting 'init' keyword before class initializer");
 

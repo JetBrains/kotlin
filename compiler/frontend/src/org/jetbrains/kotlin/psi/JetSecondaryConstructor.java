@@ -88,7 +88,7 @@ public class JetSecondaryConstructor extends JetDeclarationStub<KotlinPlaceHolde
 
     @Nullable
     @Override
-    public JetExpression getBodyExpression() {
+    public JetBlockExpression getBodyExpression() {
         return findChildByClass(JetBlockExpression.class);
     }
 
@@ -105,7 +105,7 @@ public class JetSecondaryConstructor extends JetDeclarationStub<KotlinPlaceHolde
 
     @Override
     public boolean hasBody() {
-        return true;
+        return getBodyExpression() != null;
     }
 
     @Override
@@ -172,14 +172,34 @@ public class JetSecondaryConstructor extends JetDeclarationStub<KotlinPlaceHolde
         throw new IncorrectOperationException("setName to constructor");
     }
 
-    @Nullable
+    @NotNull
     public JetConstructorDelegationCall getDelegationCall() {
         return findChildByClass(JetConstructorDelegationCall.class);
+    }
+
+    public boolean hasImplicitDelegationCall() {
+        return getDelegationCall().isImplicit();
     }
 
     @NotNull
     public JetClassOrObject getClassOrObject() {
         return (JetClassOrObject) getParent().getParent();
+    }
+
+    @NotNull
+    public JetConstructorDelegationCall replaceImplicitDelegationCallWithExplicit(boolean isThis) {
+        JetPsiFactory psiFactory = new JetPsiFactory(getProject());
+        JetConstructorDelegationCall current = getDelegationCall();
+
+        assert current.isImplicit()
+                : "Method should not be called with explicit delegation call: " + getText();
+        current.delete();
+
+        PsiElement colon = addAfter(psiFactory.createColon(), getValueParameterList());
+
+        String delegationName = isThis ? "this" : "super";
+
+        return (JetConstructorDelegationCall) addAfter(psiFactory.createConstructorDelegationCall(delegationName + "()"), colon);
     }
 
     @NotNull

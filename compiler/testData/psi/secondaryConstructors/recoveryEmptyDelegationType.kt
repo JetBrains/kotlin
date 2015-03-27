@@ -5,6 +5,10 @@ class A {
     fun foo() = 2
 }
 
+class C {
+    constructor(x: Int) : ()
+}
+
 class B {
     constructor(x: Int) : () {
         x = 3

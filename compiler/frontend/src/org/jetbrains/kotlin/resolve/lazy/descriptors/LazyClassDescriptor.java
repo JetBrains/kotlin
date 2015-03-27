@@ -92,7 +92,6 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     private final NotNullLazyValue<JetScope> scopeForClassHeaderResolution;
     private final NotNullLazyValue<JetScope> scopeForMemberDeclarationResolution;
     private final NotNullLazyValue<JetScope> scopeForPropertyInitializerResolution;
-    private final NotNullLazyValue<JetScope> scopeForSecondaryConstructorHeaderResolution;
 
     private final NullableLazyValue<Void> forceResolveAllContents;
     private final boolean isCompanionObject;
@@ -212,12 +211,6 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                 return computeScopeForPropertyInitializerResolution();
             }
         });
-        this.scopeForSecondaryConstructorHeaderResolution = storageManager.createLazyValue(new Function0<JetScope>() {
-            @Override
-            public JetScope invoke() {
-                return computeScopeForSecondaryConstructorHeaderResolution();
-            }
-        });
         this.forceResolveAllContents = storageManager.createRecursionTolerantNullableLazyValue(new Function0<Void>() {
             @Override
             public Void invoke() {
@@ -335,24 +328,6 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                 scope, getScopeForMemberDeclarationResolution());
     }
 
-    @NotNull
-    @Override
-    public JetScope getScopeForSecondaryConstructorHeaderResolution() {
-        return scopeForSecondaryConstructorHeaderResolution.invoke();
-    }
-
-
-    @NotNull
-    private JetScope computeScopeForSecondaryConstructorHeaderResolution() {
-        return new ChainedScope(
-                this,
-                "ScopeForSecondaryConstructorHeaderResolution: " + getName(),
-                getScopeForClassHeaderResolution(),
-                getCompanionObjectScope(),
-                DescriptorUtils.getStaticNestedClassesScope(this),
-                getStaticScope()
-        );
-    }
 
     @NotNull
     @Override

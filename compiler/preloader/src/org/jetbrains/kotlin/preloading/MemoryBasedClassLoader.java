@@ -21,14 +21,6 @@ import java.net.URL;
 import java.util.*;
 
 @SuppressWarnings("unchecked")
-/**
- * A class loader which loads classes and resources from the given map.
- *
- * To save memory, as soon as any class is loaded, its bytecode is removed from the map.
- * This means that once any class is loaded, it _cannot be found_ as a resource anymore.
- * Therefore if you need to be able to find classes via findResource(), you should pass a parent
- * class loader which is able to do that at any point of time.
- */
 public class MemoryBasedClassLoader extends ClassLoader {
     private final ClassCondition classesToLoadByParent;
     private final ClassLoader parent;
@@ -84,9 +76,6 @@ public class MemoryBasedClassLoader extends ClassLoader {
         String internalName = name.replace('.', '/').concat(".class");
         Object resources = preloadedResources.get(internalName);
         if (resources == null) return null;
-
-        // Clear the resource, we won't need it anymore
-        preloadedResources.remove(internalName);
 
         ResourceData resourceData = resources instanceof ResourceData
                                     ? ((ResourceData) resources)
