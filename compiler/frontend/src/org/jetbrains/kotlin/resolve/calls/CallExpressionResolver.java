@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.resolve.calls.context.TemporaryTraceAndCache;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsUtil;
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
@@ -168,6 +169,10 @@ public class CallExpressionResolver {
         return typeInfo;
     }
 
+    /**
+     * Visits a call expression and its arguments.
+     * Determines the result type and data flow information after the call.
+     */
     @NotNull
     public JetTypeInfo getCallExpressionTypeInfoWithoutFinalTypeCheck(
             @NotNull JetCallExpression callExpression, @NotNull ReceiverValue receiver,
@@ -200,7 +205,14 @@ public class CallExpressionResolver {
 
             JetType type = functionDescriptor.getReturnType();
 
-            return JetTypeInfo.create(type, resolvedCall.getDataFlowInfoForArguments().getResultInfo());
+
+            if (resolvedCall.isSafeCall()) {
+                // For safe call, we should not take arguments into account because it's only one branch, see KT-7204
+                return JetTypeInfo.create(type, context.dataFlowInfo);
+            } else {
+                // For simple call, we take data flow info for arguments as the result
+                return JetTypeInfo.create(type, resolvedCall.getDataFlowInfoForArguments().getResultInfo());
+            }
         }
 
         JetExpression calleeExpression = callExpression.getCalleeExpression();
@@ -256,6 +268,10 @@ public class CallExpressionResolver {
         return JetTypeInfo.create(null, context.dataFlowInfo);
     }
 
+    /**
+     * Visits a qualified expression like x.y or x?.z controlling data flow information changes.
+     * @return qualified expression type together with data flow information
+     */
     @NotNull
     public JetTypeInfo getQualifiedExpressionTypeInfo(
             @NotNull JetQualifiedExpression expression, @NotNull ExpressionTypingContext context
@@ -288,7 +304,6 @@ public class CallExpressionResolver {
                 }
             }
         }
-
         // TODO : this is suspicious: remove this code?
         if (selectorReturnType != null) {
             context.trace.record(BindingContext.EXPRESSION_TYPE, selectorExpression, selectorReturnType);

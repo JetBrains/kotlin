@@ -303,6 +303,10 @@ public class ExpressionTypingServices {
         }
     }
 
+    /**
+     * Visits block statements propagating data flow information from the first to the last.
+     * Determines block returned type and data flow information at the end of the block.
+     */
     /*package*/ JetTypeInfo getBlockReturnedTypeWithWritableScope(
             @NotNull WritableScope scope,
             @NotNull List<? extends JetElement> block,
