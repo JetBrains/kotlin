@@ -404,29 +404,38 @@ public class ExpressionTypingServices {
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull BindingTrace trace
     ) {
+        resolveValueParameters(
+                valueParameters, valueParameterDescriptors,
+                ExpressionTypingContext.newContext(this, trace, declaringScope, dataFlowInfo, NO_EXPECTED_TYPE));
+    }
+
+    public void resolveValueParameters(
+            @NotNull List<JetParameter> valueParameters,
+            @NotNull List<ValueParameterDescriptor> valueParameterDescriptors,
+            @NotNull ExpressionTypingContext context
+    ) {
         for (int i = 0; i < valueParameters.size(); i++) {
             ValueParameterDescriptor valueParameterDescriptor = valueParameterDescriptors.get(i);
             JetParameter jetParameter = valueParameters.get(i);
 
-            AnnotationResolver.resolveAnnotationsArguments(jetParameter.getModifierList(), trace);
+            AnnotationResolver.resolveAnnotationsArguments(jetParameter.getModifierList(), context.trace);
 
-            resolveDefaultValue(declaringScope, valueParameterDescriptor, jetParameter, dataFlowInfo, trace);
+            resolveDefaultValue(valueParameterDescriptor, jetParameter, context);
         }
     }
 
     private void resolveDefaultValue(
-            @NotNull JetScope declaringScope,
             @NotNull ValueParameterDescriptor valueParameterDescriptor,
             @NotNull JetParameter jetParameter,
-            @NotNull DataFlowInfo dataFlowInfo,
-            @NotNull BindingTrace trace
+            @NotNull ExpressionTypingContext context
     ) {
         if (valueParameterDescriptor.hasDefaultValue()) {
             JetExpression defaultValue = jetParameter.getDefaultValue();
             if (defaultValue != null) {
-                getType(declaringScope, defaultValue, valueParameterDescriptor.getType(), dataFlowInfo, trace);
-                if (DescriptorUtils.isAnnotationClass(DescriptorResolver.getContainingClass(declaringScope))) {
-                    ConstantExpressionEvaluator.evaluate(defaultValue, trace, valueParameterDescriptor.getType());
+                getTypeInfo(defaultValue, context.replaceExpectedType(valueParameterDescriptor.getType()));
+                if (DescriptorUtils.isAnnotationClass(DescriptorResolver.getContainingClass(context.scope))) {
+                    ConstantExpressionEvaluator.evaluate(
+                            defaultValue, context.trace, valueParameterDescriptor.getType());
                 }
             }
         }

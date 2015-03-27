@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.calls.CallResolver;
+import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.scopes.*;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.*;
+import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
 import org.jetbrains.kotlin.util.Box;
 import org.jetbrains.kotlin.util.ReenteringLazyValueComputationException;
@@ -142,22 +144,20 @@ public class BodyResolver {
             @NotNull final BindingTrace trace,
             @NotNull final JetSecondaryConstructor constructor,
             @NotNull final ConstructorDescriptor descriptor,
-            @NotNull JetScope bodyDeclaringScope
+            @NotNull JetScope declaringScope
     ) {
         AnnotationResolver.resolveAnnotationsArguments(constructor.getModifierList(), trace);
-        assert descriptor.getContainingDeclaration() instanceof ClassDescriptorWithResolutionScopes
-                : "When resolving body it should be class descriptor with resolution scopes";
 
-        ClassDescriptorWithResolutionScopes classDescriptor = (ClassDescriptorWithResolutionScopes) descriptor.getContainingDeclaration();
-
-        resolveFunctionBody(c, trace, constructor, descriptor, bodyDeclaringScope,
-                            classDescriptor.getScopeForSecondaryConstructorHeaderResolution(),
+        final CallChecker callChecker = new ConstructorHeaderCallChecker(descriptor, expressionTypingServices.getCallChecker());
+        resolveFunctionBody(c, trace, constructor, descriptor, declaringScope,
                             new Function1<JetScope, DataFlowInfo>() {
                                 @Override
                                 public DataFlowInfo invoke(@NotNull JetScope headerInnerScope) {
-                                    return resolveSecondaryConstructorDelegationCall(c, trace, headerInnerScope, constructor, descriptor);
+                                    return resolveSecondaryConstructorDelegationCall(c, trace, headerInnerScope, constructor, descriptor,
+                                                                                     callChecker);
                                 }
-                            });
+                            },
+                            callChecker);
     }
 
     @Nullable
@@ -166,11 +166,13 @@ public class BodyResolver {
             @NotNull BindingTrace trace,
             @NotNull JetScope scope,
             @NotNull JetSecondaryConstructor constructor,
-            @NotNull ConstructorDescriptor descriptor
+            @NotNull ConstructorDescriptor descriptor,
+            @NotNull CallChecker callChecker
     ) {
         OverloadResolutionResults<?> results = callResolver.resolveConstructorDelegationCall(
                 trace, scope, c.getOuterDataFlowInfo(),
-                descriptor, constructor.getDelegationCall());
+                descriptor, constructor.getDelegationCall(),
+                callChecker);
 
         if (results != null && results.isSingleResult()) {
             ResolvedCall<? extends CallableDescriptor> resolvedCall = results.getResultingCall();
@@ -217,8 +219,9 @@ public class BodyResolver {
             PsiElement constructorToReport = DescriptorToSourceUtils.descriptorToDeclaration(currentConstructor);
             if (constructorToReport != null) {
                 JetConstructorDelegationCall call = ((JetSecondaryConstructor) constructorToReport).getDelegationCall();
-                assert call != null : "resolved call can't be null";
-                trace.report(CYCLIC_CONSTRUCTOR_DELEGATION_CALL.on(call));
+                assert call.getCalleeExpression() != null
+                        : "Callee expression of delegation call should not be null on cycle as there should be explicit 'this' calls";
+                trace.report(CYCLIC_CONSTRUCTOR_DELEGATION_CALL.on(call.getCalleeExpression()));
             }
 
             currentConstructor = getDelegatedConstructor(currentConstructor);
@@ -229,7 +232,7 @@ public class BodyResolver {
     @Nullable
     private ConstructorDescriptor getDelegatedConstructor(@NotNull ConstructorDescriptor constructor) {
         ResolvedCall<ConstructorDescriptor> call = trace.get(CONSTRUCTOR_RESOLVED_DELEGATION_CALL, constructor);
-        return call == null ? null : call.getResultingDescriptor().getOriginal();
+        return call == null || !call.getStatus().isSuccess() ? null : call.getResultingDescriptor().getOriginal();
     }
 
     public void resolveBodies(@NotNull BodiesResolveContext c) {
@@ -714,30 +717,29 @@ public class BodyResolver {
             @NotNull BindingTrace trace,
             @NotNull JetDeclarationWithBody function,
             @NotNull FunctionDescriptor functionDescriptor,
-            @NotNull JetScope bodyDeclaringScope,
-            @Nullable JetScope headerDeclaringScope,
-            @Nullable Function1<JetScope, DataFlowInfo> beforeBlockBody
+            @NotNull JetScope scope,
+            @Nullable Function1<JetScope, DataFlowInfo> beforeBlockBody,
+            @Nullable CallChecker callChecker
     ) {
-        JetScope headerInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(
-                headerDeclaringScope == null ? bodyDeclaringScope : headerDeclaringScope, functionDescriptor, trace);
+        JetScope innerScope = FunctionDescriptorUtil.getFunctionInnerScope(scope, functionDescriptor, trace);
         List<JetParameter> valueParameters = function.getValueParameters();
         List<ValueParameterDescriptor> valueParameterDescriptors = functionDescriptor.getValueParameters();
 
-        expressionTypingServices.resolveValueParameters(valueParameters, valueParameterDescriptors, headerInnerScope,
-                                                        c.getOuterDataFlowInfo(), trace);
+        expressionTypingServices.resolveValueParameters(
+                valueParameters, valueParameterDescriptors,
+                ExpressionTypingContext.newContext(
+                        expressionTypingServices, trace, innerScope, c.getOuterDataFlowInfo(), NO_EXPECTED_TYPE, callChecker)
+        );
 
         DataFlowInfo dataFlowInfo = null;
 
         if (beforeBlockBody != null) {
-            dataFlowInfo = beforeBlockBody.invoke(headerInnerScope);
+            dataFlowInfo = beforeBlockBody.invoke(innerScope);
         }
-
-        JetScope bodyInnerScope = headerDeclaringScope == null ? headerInnerScope :
-                                  FunctionDescriptorUtil.getFunctionInnerScope(bodyDeclaringScope, functionDescriptor, trace);
 
         if (function.hasBody()) {
             expressionTypingServices.checkFunctionReturnType(
-                    bodyInnerScope, function, functionDescriptor, dataFlowInfo != null ? dataFlowInfo : c.getOuterDataFlowInfo(), null, trace);
+                    innerScope, function, functionDescriptor, dataFlowInfo != null ? dataFlowInfo : c.getOuterDataFlowInfo(), null, trace);
         }
 
         assert functionDescriptor.getReturnType() != null;

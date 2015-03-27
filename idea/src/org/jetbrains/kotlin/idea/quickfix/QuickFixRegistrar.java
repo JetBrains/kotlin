@@ -304,5 +304,10 @@ public class QuickFixRegistrar {
         QuickFixes.factories.put(DEPRECATED_CLASS_OBJECT_SYNTAX, ClassObjectToCompanionObjectInWholeProjectFix.Factory);
         QuickFixes.factories.put(INIT_KEYWORD_BEFORE_CLASS_INITIALIZER_EXPECTED, AddInitKeywordFix.Factory);
         QuickFixes.factories.put(INIT_KEYWORD_BEFORE_CLASS_INITIALIZER_EXPECTED, AddInitKeywordFixInWholeProjectFix.Factory);
+
+        QuickFixes.factories.put(PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED, InsertDelegationCallQuickfix.InsertThisDelegationCallFactory.INSTANCE$);
+
+        QuickFixes.factories.put(EXPLICIT_DELEGATION_CALL_REQUIRED, InsertDelegationCallQuickfix.InsertThisDelegationCallFactory.INSTANCE$);
+        QuickFixes.factories.put(EXPLICIT_DELEGATION_CALL_REQUIRED, InsertDelegationCallQuickfix.InsertSuperDelegationCallFactory.INSTANCE$);
     }
 }

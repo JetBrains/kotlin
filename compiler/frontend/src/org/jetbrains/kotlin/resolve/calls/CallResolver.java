@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
+import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
 import org.jetbrains.kotlin.resolve.calls.context.*;
 import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall;
@@ -188,7 +189,17 @@ public class CallResolver {
             @NotNull Collection<ResolutionCandidate<D>> candidates,
             @NotNull CallTransformer<D, F> callTransformer
     ) {
-        TracingStrategy tracing = TracingStrategyImpl.create(referenceExpression, context.call);
+        return computeTasksFromCandidatesAndResolvedCall(context, candidates, callTransformer,
+                                                         TracingStrategyImpl.create(referenceExpression, context.call));
+    }
+
+    @NotNull
+    private <D extends CallableDescriptor, F extends D> OverloadResolutionResults<F> computeTasksFromCandidatesAndResolvedCall(
+            @NotNull BasicCallResolutionContext context,
+            @NotNull Collection<ResolutionCandidate<D>> candidates,
+            @NotNull CallTransformer<D, F> callTransformer,
+            @NotNull TracingStrategy tracing
+    ) {
         List<ResolutionTask<D, F>> prioritizedTasks =
                 taskPrioritizer.<D, F>computePrioritizedTasksFromCandidates(context, candidates, tracing);
         return doResolveCallOrGetCachedResults(context, prioritizedTasks, callTransformer, tracing);
@@ -291,28 +302,27 @@ public class CallResolver {
     public OverloadResolutionResults<FunctionDescriptor> resolveConstructorDelegationCall(
             @NotNull BindingTrace trace, @NotNull JetScope scope, @NotNull DataFlowInfo dataFlowInfo,
             @NotNull ConstructorDescriptor constructorDescriptor,
-            @Nullable JetConstructorDelegationCall call
+            @NotNull JetConstructorDelegationCall call, @NotNull CallChecker callChecker
     ) {
-        // Returns `null` when there is nothing to resolve in trivial cases like `null` call expression or
+        // Method returns `null` when there is nothing to resolve in trivial cases like `null` call expression or
         // when super call should be conventional enum constructor and super call should be empty
-        if (call == null) return null;
 
         BasicCallResolutionContext context = BasicCallResolutionContext.create(
                 trace, scope,
                 CallMaker.makeCall(ReceiverValue.NO_RECEIVER, null, call),
                 NO_EXPECTED_TYPE,
                 dataFlowInfo, ContextDependency.INDEPENDENT, CheckValueArgumentsMode.ENABLED,
-                expressionTypingServices.getCallChecker(), expressionTypingServices.getAdditionalTypeChecker(), false);
+                callChecker, expressionTypingServices.getAdditionalTypeChecker(), false);
 
         if (call.getCalleeExpression() == null) return checkArgumentTypesAndFail(context);
 
-        if (constructorDescriptor.getContainingDeclaration().getKind() == ClassKind.ENUM_CLASS &&
-            call.getCalleeExpression().isEmpty()) {
+        if (constructorDescriptor.getContainingDeclaration().getKind() == ClassKind.ENUM_CLASS && call.isImplicit()) {
             return null;
         }
 
         return resolveConstructorDelegationCall(
                 context,
+                call,
                 call.getCalleeExpression(),
                 constructorDescriptor
         );
@@ -321,6 +331,7 @@ public class CallResolver {
     @NotNull
     private OverloadResolutionResults<FunctionDescriptor> resolveConstructorDelegationCall(
             @NotNull BasicCallResolutionContext context,
+            @NotNull JetConstructorDelegationCall call,
             @NotNull JetConstructorDelegationReferenceExpression calleeExpression,
             @NotNull ConstructorDescriptor calleeConstructor
     ) {
@@ -328,7 +339,7 @@ public class CallResolver {
 
         boolean isThisCall = calleeExpression.isThis();
         if (currentClassDescriptor.getKind() == ClassKind.ENUM_CLASS && !isThisCall) {
-            context.trace.report(DELEGATION_SUPER_CALL_IN_ENUM_CONSTRUCTOR.on((JetConstructorDelegationCall) calleeExpression.getParent()));
+            context.trace.report(DELEGATION_SUPER_CALL_IN_ENUM_CONSTRUCTOR.on(calleeExpression));
             return checkArgumentTypesAndFail(context);
         }
 
@@ -364,7 +375,11 @@ public class CallResolver {
                     knownTypeParametersSubstitutor));
         }
 
-        return computeTasksFromCandidatesAndResolvedCall(context, calleeExpression, candidates, CallTransformer.FUNCTION_CALL_TRANSFORMER);
+        TracingStrategy tracing = call.isImplicit() ?
+                                  new TracingStrategyForImplicitConstructorDelegationCall(call, context.call) :
+                                  TracingStrategyImpl.create(calleeExpression, context.call);
+
+        return computeTasksFromCandidatesAndResolvedCall(context, candidates, CallTransformer.FUNCTION_CALL_TRANSFORMER, tracing);
     }
 
     public OverloadResolutionResults<FunctionDescriptor> resolveCallWithKnownCandidate(

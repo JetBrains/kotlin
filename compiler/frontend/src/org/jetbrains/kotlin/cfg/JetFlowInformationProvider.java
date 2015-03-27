@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
+import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.ResolvedCallUtilPackage;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
@@ -830,7 +831,7 @@ public class JetFlowInformationProvider {
                         //       }
                         //   }
                         boolean sameDispatchReceiver =
-                                PseudocodeUtil.isThisOrNoDispatchReceiver(resolvedCall, trace.getBindingContext());
+                                ResolvedCallUtilPackage.hasThisOrNoDispatchReceiver(resolvedCall, trace.getBindingContext());
 
                         TailRecursionKind kind = isTail && sameDispatchReceiver ? TAIL_CALL : NON_TAIL;
 

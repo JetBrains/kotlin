@@ -1176,7 +1176,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         JetSecondaryConstructor constructor =
                 (JetSecondaryConstructor) DescriptorToSourceUtils.descriptorToDeclaration(constructorDescriptor);
         assert constructor != null;
-        codegen.gen(constructor.getBodyExpression(), Type.VOID_TYPE);
+        if (constructor.hasBody()) {
+            codegen.gen(constructor.getBodyExpression(), Type.VOID_TYPE);
+        }
 
         iv.visitInsn(RETURN);
     }

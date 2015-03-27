@@ -64,4 +64,14 @@ public class JetConstructorDelegationCall extends JetElementImpl implements JetC
     public JetConstructorDelegationReferenceExpression getCalleeExpression() {
         return findChildByClass(JetConstructorDelegationReferenceExpression.class);
     }
+
+    public boolean isImplicit() {
+        JetConstructorDelegationReferenceExpression callee = getCalleeExpression();
+        return callee != null && callee.getFirstChild() == null;
+    }
+
+    public boolean isCallToThis() {
+        JetConstructorDelegationReferenceExpression callee = getCalleeExpression();
+        return callee != null && callee.isThis();
+    }
 }

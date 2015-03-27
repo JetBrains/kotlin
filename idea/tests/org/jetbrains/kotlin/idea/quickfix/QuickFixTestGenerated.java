@@ -39,6 +39,7 @@ import java.util.regex.Pattern;
         QuickFixTestGenerated.ConflictingImports.class,
         QuickFixTestGenerated.CreateFromUsage.class,
         QuickFixTestGenerated.Expressions.class,
+        QuickFixTestGenerated.InsertDelegationCall.class,
         QuickFixTestGenerated.Migration.class,
         QuickFixTestGenerated.Modifiers.class,
         QuickFixTestGenerated.Nullables.class,
@@ -2918,6 +2919,63 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("beforeUselessElvis.kt")
         public void testUselessElvis() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/expressions/beforeUselessElvis.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/quickfix/insertDelegationCall")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class InsertDelegationCall extends AbstractQuickFixTest {
+        public void testAllFilesPresentInInsertDelegationCall() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/insertDelegationCall"), Pattern.compile("^before(\\w+)\\.kt$"), true);
+        }
+
+        @TestMetadata("beforeNonApplicableInsertSuper.kt")
+        public void testNonApplicableInsertSuper() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/insertDelegationCall/beforeNonApplicableInsertSuper.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("beforeNonApplicableInsertThis.kt")
+        public void testNonApplicableInsertThis() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/insertDelegationCall/beforeNonApplicableInsertThis.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("beforeNonApplicableOnEmpty.kt")
+        public void testNonApplicableOnEmpty() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/insertDelegationCall/beforeNonApplicableOnEmpty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("beforeNonApplicableWithOneConstructor.kt")
+        public void testNonApplicableWithOneConstructor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/insertDelegationCall/beforeNonApplicableWithOneConstructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("beforePrimaryRequiredNoSuper.kt")
+        public void testPrimaryRequiredNoSuper() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/insertDelegationCall/beforePrimaryRequiredNoSuper.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("beforePrimaryRequiredParameterless.kt")
+        public void testPrimaryRequiredParameterless() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/insertDelegationCall/beforePrimaryRequiredParameterless.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("beforePrimaryRequiredWithBody.kt")
+        public void testPrimaryRequiredWithBody() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/insertDelegationCall/beforePrimaryRequiredWithBody.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("beforePrimaryRequiredWithParameter.kt")
+        public void testPrimaryRequiredWithParameter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/insertDelegationCall/beforePrimaryRequiredWithParameter.kt");
             doTest(fileName);
         }
     }

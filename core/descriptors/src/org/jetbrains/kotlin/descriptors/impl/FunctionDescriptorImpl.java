@@ -216,6 +216,16 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
 
         ReceiverParameterDescriptor substitutedExpectedThis = null;
         if (dispatchReceiverParameter != null) {
+            // When generating fake-overridden member it's dispatch receiver parameter has type of Base, and it's correct.
+            // E.g.
+            // class Base { fun foo() }
+            // class Derived : Base
+            // val x: Base
+            // if (x is Derived) {
+            //    // `x` shouldn't be marked as smart-cast
+            //    // but it would if fake-overridden `foo` had `Derived` as it's dispatch receiver parameter type
+            //    x.foo()
+            // }
             substitutedExpectedThis = dispatchReceiverParameter.substitute(substitutor);
             if (substitutedExpectedThis == null) {
                 return null;

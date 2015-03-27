@@ -305,7 +305,7 @@ public open class LazyClassMemberScope(
 
         return classOrObject.getSecondaryConstructors().map { constructor ->
             val descriptor = c.functionDescriptorResolver.resolveSecondaryConstructorDescriptor(
-                    thisDescriptor.getScopeForSecondaryConstructorHeaderResolution(), thisDescriptor, constructor, trace
+                    thisDescriptor.getScopeForClassHeaderResolution(), thisDescriptor, constructor, trace
             )
             setDeferredReturnType(descriptor)
             descriptor

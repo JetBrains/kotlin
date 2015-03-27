@@ -11,5 +11,5 @@ class A {
     }
 }
 class A1(val x: Int, val y: Int) {
-    constructor(other: A1): this(other.x, other.y) {}
+    constructor(other: A1): this(other.x, other.y)
 }

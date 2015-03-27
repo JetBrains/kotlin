@@ -1,0 +1,18 @@
+package
+
+internal fun foo(/*0*/ x: Outer): kotlin.Int
+
+internal final class Outer {
+    public constructor Outer()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    internal final inner class Inner {
+        public constructor Inner(/*0*/ x: kotlin.Int)
+        public constructor Inner(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int, /*2*/ z: kotlin.Int = ...)
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
