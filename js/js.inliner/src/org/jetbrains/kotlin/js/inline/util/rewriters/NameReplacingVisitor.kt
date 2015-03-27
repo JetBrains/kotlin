@@ -27,7 +27,7 @@ import com.google.dart.compiler.backend.js.ast.JsLabel
 
 class NameReplacingVisitor(private val replaceMap: Map<JsName, JsExpression>) : JsVisitorWithContextImpl() {
 
-    override fun endVisit(x: JsNameRef?, ctx: JsContext?) {
+    override fun endVisit(x: JsNameRef?, ctx: JsContext<*>?) {
         if (x == null || ctx == null) return
 
         val replacement = replaceMap[x.getName()]
@@ -36,7 +36,7 @@ class NameReplacingVisitor(private val replaceMap: Map<JsName, JsExpression>) : 
         ctx.replaceMe(replacement)
     }
 
-    override fun endVisit(x: JsVars.JsVar?, ctx: JsContext?) {
+    override fun endVisit(x: JsVars.JsVar?, ctx: JsContext<*>?) {
         if (x == null || ctx == null) return
 
         val replacement = replaceMap[x.getName()]
@@ -46,7 +46,7 @@ class NameReplacingVisitor(private val replaceMap: Map<JsName, JsExpression>) : 
         }
     }
 
-    override fun endVisit(x: JsLabel?, ctx: JsContext?) {
+    override fun endVisit(x: JsLabel?, ctx: JsContext<*>?) {
         if (x == null || ctx == null) return
 
         val replacement = replaceMap[x.getName()]

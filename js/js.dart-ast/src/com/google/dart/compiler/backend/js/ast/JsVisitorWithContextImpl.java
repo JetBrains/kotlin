@@ -34,9 +34,9 @@ import java.util.Stack;
  */
 public class JsVisitorWithContextImpl extends JsVisitorWithContext {
 
-    private final Stack<JsContext> statementContexts = new Stack<JsContext>();
+    private final Stack<JsContext<JsStatement>> statementContexts = new Stack<JsContext<JsStatement>>();
 
-    public class ListContext<T extends JsNode> implements JsContext {
+    public class ListContext<T extends JsNode> extends JsContext<T> {
         private List<T> collection;
         private int index;
 
@@ -51,13 +51,13 @@ public class JsVisitorWithContextImpl extends JsVisitorWithContext {
         }
 
         @Override
-        public void insertAfter(JsNode node) {
+        public <R extends T> void insertAfter(R node) {
             //noinspection unchecked
             collection.add(index + 1, (T) node);
         }
 
         @Override
-        public void insertBefore(JsNode node) {
+        public <R extends T> void insertBefore(R node) {
             //noinspection unchecked
             collection.add(index++, (T) node);
         }
@@ -73,15 +73,14 @@ public class JsVisitorWithContextImpl extends JsVisitorWithContext {
         }
 
         @Override
-        public void replaceMe(JsNode node) {
+        public <R extends T> void replaceMe(R node) {
             checkReplacement(collection.get(index), node);
-            //noinspection unchecked
-            collection.set(index, (T) node);
+            collection.set(index, node);
         }
         
         @Nullable
         @Override
-        public JsNode getCurrentNode() {
+        public T getCurrentNode() {
             if (index < collection.size()) {
                 return collection.get(index);
             }
@@ -105,8 +104,7 @@ public class JsVisitorWithContextImpl extends JsVisitorWithContext {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private class NodeContext<T extends JsNode> implements JsContext {
+    private class NodeContext<T extends JsNode> extends JsContext<T> {
         protected T node;
 
         @Override
@@ -120,12 +118,12 @@ public class JsVisitorWithContextImpl extends JsVisitorWithContext {
         }
 
         @Override
-        public void insertAfter(JsNode node) {
+        public <R extends T> void insertAfter(R node) {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public void insertBefore(JsNode node) {
+        public <R extends T> void insertBefore(R node) {
             throw new UnsupportedOperationException();
         }
 
@@ -140,14 +138,14 @@ public class JsVisitorWithContextImpl extends JsVisitorWithContext {
         }
 
         @Override
-        public void replaceMe(JsNode node) {
+        public <R extends T> void replaceMe(R node) {
             checkReplacement(this.node, node);
-            this.node = (T) node;
+            this.node = node;
         }
 
         @Nullable
         @Override
-        public JsNode getCurrentNode() {
+        public T getCurrentNode() {
             return node;
         }
 
@@ -185,8 +183,8 @@ public class JsVisitorWithContextImpl extends JsVisitorWithContext {
     }
 
     @Override
-    protected <T extends JsStatement> void doAcceptStatementList(List<T> statements) {
-        ListContext<T> context = new ListContext<T>();
+    protected void doAcceptStatementList(List<JsStatement> statements) {
+        ListContext<JsStatement> context = new ListContext<JsStatement>();
         statementContexts.push(context);
         context.traverse(statements);
         statementContexts.pop();
@@ -198,7 +196,7 @@ public class JsVisitorWithContextImpl extends JsVisitorWithContext {
     }
 
     @NotNull
-    protected JsContext getLastStatementLevelContext() {
+    protected JsContext<JsStatement> getLastStatementLevelContext() {
         return statementContexts.peek();
     }
 

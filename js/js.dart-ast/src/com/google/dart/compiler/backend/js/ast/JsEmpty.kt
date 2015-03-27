@@ -10,7 +10,7 @@ public object JsEmpty : SourceInfoAwareJsNode(), JsStatement {
         v.visitEmpty(this)
     }
 
-    override fun traverse(v: JsVisitorWithContext, ctx: JsContext) {
+    override fun traverse(v: JsVisitorWithContext, ctx: JsContext<*>) {
         v.visit(this, ctx)
         v.endVisit(this, ctx)
     }

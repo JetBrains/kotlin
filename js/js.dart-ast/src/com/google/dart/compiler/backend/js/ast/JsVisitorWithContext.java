@@ -47,7 +47,7 @@ public abstract class JsVisitorWithContext {
         return (T) doAcceptStatement(statement);
     }
 
-    public final <T extends JsStatement> void acceptStatementList(List<T> statements) {
+    public final void acceptStatementList(List<JsStatement> statements) {
         doAcceptStatementList(statements);
     }
 
@@ -360,7 +360,7 @@ public abstract class JsVisitorWithContext {
 
     protected abstract <T extends JsStatement> JsStatement doAcceptStatement(T statement);
 
-    protected abstract <T extends JsStatement> void doAcceptStatementList(List<T> statements);
+    protected abstract void doAcceptStatementList(List<JsStatement> statements);
 
     protected abstract <T extends JsNode> void doTraverse(T node, JsContext ctx) ;
 }

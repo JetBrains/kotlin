@@ -11,21 +11,21 @@ import org.jetbrains.annotations.Nullable;
  * possible operations a JsVisitor subclass can perform on the currently visited
  * node.
  */
-public interface JsContext {
-  boolean canInsert();
+public abstract class JsContext<T extends JsNode> {
+  public abstract boolean canInsert();
 
-  boolean canRemove();
+  public abstract boolean canRemove();
 
-  void insertAfter(JsNode node);
+  public abstract <R extends T> void insertAfter(R node);
 
-  void insertBefore(JsNode node);
+  public abstract <R extends T> void insertBefore(R node);
 
-  boolean isLvalue();
+  public abstract boolean isLvalue();
 
-  void removeMe();
+  public abstract void removeMe();
 
-  void replaceMe(JsNode node);
+  public abstract <R extends T> void replaceMe(R node);
 
   @Nullable
-  JsNode getCurrentNode();
+  public abstract T getCurrentNode();
 }

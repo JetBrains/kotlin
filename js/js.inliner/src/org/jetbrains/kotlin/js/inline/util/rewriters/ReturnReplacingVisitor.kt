@@ -33,14 +33,14 @@ class ReturnReplacingVisitor(private val resultRef: JsNameRef?, private val brea
     /**
      * Prevents replacing returns in object literal
      */
-    override fun visit(x: JsObjectLiteral?, ctx: JsContext?): Boolean = false
+    override fun visit(x: JsObjectLiteral?, ctx: JsContext<*>?): Boolean = false
 
     /**
      * Prevents replacing returns in inner function
      */
-    override fun visit(x: JsFunction?, ctx: JsContext?): Boolean = false
+    override fun visit(x: JsFunction?, ctx: JsContext<*>?): Boolean = false
 
-    override fun endVisit(x: JsReturn?, ctx: JsContext?) {
+    override fun endVisit(x: JsReturn?, ctx: JsContext<*>?) {
         if (x == null || ctx == null) return
 
         if (breakLabel != null) {

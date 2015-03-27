@@ -28,7 +28,7 @@ class ReferenceNameCollector : JsVisitorWithContextImpl() {
     public val references: List<JsName>
         get() = referenceSet.toList()
 
-    override fun endVisit(x: JsNameRef?, ctx: JsContext?) {
+    override fun endVisit(x: JsNameRef?, ctx: JsContext<*>?) {
         val name = x?.getName()
         if (name != null) {
             referenceSet.add(name)

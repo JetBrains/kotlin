@@ -66,7 +66,7 @@ private class UnusedLocalFunctionsCollector(functions: Map<JsName, JsFunction>) 
         }
     }
 
-    override fun visit(x: JsPropertyInitializer?, ctx: JsContext?): Boolean {
+    override fun visit(x: JsPropertyInitializer?, ctx: JsContext<*>?): Boolean {
         val value = x?.getValueExpr()
 
         return when (value) {
@@ -75,17 +75,17 @@ private class UnusedLocalFunctionsCollector(functions: Map<JsName, JsFunction>) 
         }
     }
 
-    override fun visit(x: JsFunction?, ctx: JsContext?): Boolean {
+    override fun visit(x: JsFunction?, ctx: JsContext<*>?): Boolean {
         return !(wasProcessed(x))
     }
 
-    override fun endVisit(x: JsFunction?, ctx: JsContext?) {
+    override fun endVisit(x: JsFunction?, ctx: JsContext<*>?) {
         if (x == null) return
 
         processed.add(x)
     }
 
-    override fun endVisit(x: JsNameRef?, ctx: JsContext?) {
+    override fun endVisit(x: JsNameRef?, ctx: JsContext<*>?) {
         val name = x?.getName()
         if (isFunctionReference(x) && name != null) {
             tracker.markReachable(name)
