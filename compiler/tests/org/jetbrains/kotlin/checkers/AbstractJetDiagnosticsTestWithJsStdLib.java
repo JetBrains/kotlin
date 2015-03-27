@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
 import org.jetbrains.kotlin.js.config.Config;
 import org.jetbrains.kotlin.js.config.EcmaVersion;
 import org.jetbrains.kotlin.js.config.LibrarySourcesConfig;
-import org.jetbrains.kotlin.js.config.LibrarySourcesConfigWithCaching;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 
@@ -36,12 +35,12 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class AbstractJetDiagnosticsTestWithJsStdLib extends AbstractJetDiagnosticsTest {
-    private LibrarySourcesConfig config;
+    private Config config;
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        config = new LibrarySourcesConfigWithCaching(getProject(), "module", EcmaVersion.defaultVersion(), false, true, false);
+        config = new LibrarySourcesConfig.Builder(getProject(), "module", LibrarySourcesConfig.JS_STDLIB).build();
     }
 
     @Override
