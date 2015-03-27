@@ -3804,42 +3804,42 @@ public final class DebugJvmProtoBuf {
     java.lang.String[] descriptorData = {
       "\n;core/descriptor.loader.java/src/jvm_de" +
       "scriptors.debug.proto\022&org.jetbrains.kot" +
-      "lin.serialization.jvm\032.core/serializatio" +
-      "n/src/descriptors.debug.proto\"\204\002\n\007JvmTyp" +
-      "e\022U\n\016primitive_type\030\001 \001(\0162=.org.jetbrain" +
-      "s.kotlin.serialization.jvm.JvmType.Primi" +
-      "tiveType\022\025\n\rclass_fq_name\030\002 \001(\005\022\032\n\017array" +
-      "_dimension\030\003 \001(\005:\0010\"o\n\rPrimitiveType\022\010\n\004" +
-      "VOID\020\000\022\013\n\007BOOLEAN\020\001\022\010\n\004CHAR\020\002\022\010\n\004BYTE\020\003\022" +
-      "\t\n\005SHORT\020\004\022\007\n\003INT\020\005\022\t\n\005FLOAT\020\006\022\010\n\004LONG\020\007",
-      "\022\n\n\006DOUBLE\020\010\"\261\001\n\022JvmMethodSignature\022\014\n\004n" +
-      "ame\030\001 \002(\005\022D\n\013return_type\030\002 \002(\0132/.org.jet" +
-      "brains.kotlin.serialization.jvm.JvmType\022" +
-      "G\n\016parameter_type\030\003 \003(\0132/.org.jetbrains." +
-      "kotlin.serialization.jvm.JvmType\"\203\001\n\021Jvm" +
-      "FieldSignature\022\014\n\004name\030\001 \002(\005\022=\n\004type\030\002 \002" +
-      "(\0132/.org.jetbrains.kotlin.serialization." +
-      "jvm.JvmType\022!\n\022is_static_in_outer\030\003 \001(\010:" +
-      "\005false\"\316\002\n\024JvmPropertySignature\022H\n\005field" +
-      "\030\001 \001(\01329.org.jetbrains.kotlin.serializat",
-      "ion.jvm.JvmFieldSignature\022T\n\020synthetic_m" +
-      "ethod\030\002 \001(\0132:.org.jetbrains.kotlin.seria" +
-      "lization.jvm.JvmMethodSignature\022J\n\006gette" +
-      "r\030\003 \001(\0132:.org.jetbrains.kotlin.serializa" +
-      "tion.jvm.JvmMethodSignature\022J\n\006setter\030\004 " +
-      "\001(\0132:.org.jetbrains.kotlin.serialization" +
-      ".jvm.JvmMethodSignature:\202\001\n\020method_signa" +
-      "ture\022,.org.jetbrains.kotlin.serializatio" +
-      "n.Callable\030d \001(\0132:.org.jetbrains.kotlin." +
-      "serialization.jvm.JvmMethodSignature:\206\001\n",
-      "\022property_signature\022,.org.jetbrains.kotl" +
-      "in.serialization.Callable\030e \001(\0132<.org.je" +
-      "tbrains.kotlin.serialization.jvm.JvmProp" +
-      "ertySignature:E\n\017impl_class_name\022,.org.j" +
-      "etbrains.kotlin.serialization.Callable\030f" +
-      " \001(\005:J\n\005index\022;.org.jetbrains.kotlin.ser" +
-      "ialization.Callable.ValueParameter\030d \001(\005" +
-      "B\022B\020DebugJvmProtoBuf"
+      "lin.serialization.jvm\0320core/deserializat" +
+      "ion/src/descriptors.debug.proto\"\204\002\n\007JvmT" +
+      "ype\022U\n\016primitive_type\030\001 \001(\0162=.org.jetbra" +
+      "ins.kotlin.serialization.jvm.JvmType.Pri" +
+      "mitiveType\022\025\n\rclass_fq_name\030\002 \001(\005\022\032\n\017arr" +
+      "ay_dimension\030\003 \001(\005:\0010\"o\n\rPrimitiveType\022\010" +
+      "\n\004VOID\020\000\022\013\n\007BOOLEAN\020\001\022\010\n\004CHAR\020\002\022\010\n\004BYTE\020" +
+      "\003\022\t\n\005SHORT\020\004\022\007\n\003INT\020\005\022\t\n\005FLOAT\020\006\022\010\n\004LONG",
+      "\020\007\022\n\n\006DOUBLE\020\010\"\261\001\n\022JvmMethodSignature\022\014\n" +
+      "\004name\030\001 \002(\005\022D\n\013return_type\030\002 \002(\0132/.org.j" +
+      "etbrains.kotlin.serialization.jvm.JvmTyp" +
+      "e\022G\n\016parameter_type\030\003 \003(\0132/.org.jetbrain" +
+      "s.kotlin.serialization.jvm.JvmType\"\203\001\n\021J" +
+      "vmFieldSignature\022\014\n\004name\030\001 \002(\005\022=\n\004type\030\002" +
+      " \002(\0132/.org.jetbrains.kotlin.serializatio" +
+      "n.jvm.JvmType\022!\n\022is_static_in_outer\030\003 \001(" +
+      "\010:\005false\"\316\002\n\024JvmPropertySignature\022H\n\005fie" +
+      "ld\030\001 \001(\01329.org.jetbrains.kotlin.serializ",
+      "ation.jvm.JvmFieldSignature\022T\n\020synthetic" +
+      "_method\030\002 \001(\0132:.org.jetbrains.kotlin.ser" +
+      "ialization.jvm.JvmMethodSignature\022J\n\006get" +
+      "ter\030\003 \001(\0132:.org.jetbrains.kotlin.seriali" +
+      "zation.jvm.JvmMethodSignature\022J\n\006setter\030" +
+      "\004 \001(\0132:.org.jetbrains.kotlin.serializati" +
+      "on.jvm.JvmMethodSignature:\202\001\n\020method_sig" +
+      "nature\022,.org.jetbrains.kotlin.serializat" +
+      "ion.Callable\030d \001(\0132:.org.jetbrains.kotli" +
+      "n.serialization.jvm.JvmMethodSignature:\206",
+      "\001\n\022property_signature\022,.org.jetbrains.ko" +
+      "tlin.serialization.Callable\030e \001(\0132<.org." +
+      "jetbrains.kotlin.serialization.jvm.JvmPr" +
+      "opertySignature:E\n\017impl_class_name\022,.org" +
+      ".jetbrains.kotlin.serialization.Callable" +
+      "\030f \001(\005:J\n\005index\022;.org.jetbrains.kotlin.s" +
+      "erialization.Callable.ValueParameter\030d \001" +
+      "(\005B\022B\020DebugJvmProtoBuf"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {

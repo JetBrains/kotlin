@@ -47,8 +47,8 @@ public class ProtoPath(public val file: String) {
 }
 
 public val PROTO_PATHS: List<ProtoPath> = listOf(
-        ProtoPath("core/serialization/src/descriptors.proto"),
-        ProtoPath("core/serialization/src/builtins.proto"),
+        ProtoPath("core/deserialization/src/descriptors.proto"),
+        ProtoPath("core/deserialization/src/builtins.proto"),
         ProtoPath("js/js.serializer/src/js.proto"),
         ProtoPath("core/descriptor.loader.java/src/jvm_descriptors.proto")
 )
