@@ -41,16 +41,6 @@ public class JsVisitorWithContextImpl extends JsVisitorWithContext {
         private int index;
 
         @Override
-        public boolean canInsert() {
-            return true;
-        }
-
-        @Override
-        public boolean canRemove() {
-            return true;
-        }
-
-        @Override
         public <R extends T> void insertAfter(R node) {
             //noinspection unchecked
             collection.add(index + 1, (T) node);
@@ -60,11 +50,6 @@ public class JsVisitorWithContextImpl extends JsVisitorWithContext {
         public <R extends T> void insertBefore(R node) {
             //noinspection unchecked
             collection.add(index++, (T) node);
-        }
-
-        @Override
-        public boolean isLvalue() {
-            return false;
         }
 
         @Override
@@ -98,24 +83,10 @@ public class JsVisitorWithContextImpl extends JsVisitorWithContext {
     }
 
     private class LvalueContext extends NodeContext<JsExpression> {
-        @Override
-        public boolean isLvalue() {
-            return true;
-        }
     }
 
     private class NodeContext<T extends JsNode> extends JsContext<T> {
         protected T node;
-
-        @Override
-        public boolean canInsert() {
-            return false;
-        }
-
-        @Override
-        public boolean canRemove() {
-            return false;
-        }
 
         @Override
         public <R extends T> void insertAfter(R node) {
@@ -125,11 +96,6 @@ public class JsVisitorWithContextImpl extends JsVisitorWithContext {
         @Override
         public <R extends T> void insertBefore(R node) {
             throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public boolean isLvalue() {
-            return false;
         }
 
         @Override

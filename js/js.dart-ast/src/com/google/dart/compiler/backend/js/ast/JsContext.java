@@ -12,15 +12,10 @@ import org.jetbrains.annotations.Nullable;
  * node.
  */
 public abstract class JsContext<T extends JsNode> {
-  public abstract boolean canInsert();
-
-  public abstract boolean canRemove();
 
   public abstract <R extends T> void insertAfter(R node);
 
   public abstract <R extends T> void insertBefore(R node);
-
-  public abstract boolean isLvalue();
 
   public abstract void removeMe();
 
