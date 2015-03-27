@@ -307,7 +307,7 @@ public fun File.copyRecursively(dst: File,
  *
  * @return true if the file or directory is successfully deleted, false otherwise.
  */
-public fun File.deleteRecursively(): Boolean = walkBottomUp().fold(exists(), { res, it -> res && it.delete() })
+public fun File.deleteRecursively(): Boolean = walkBottomUp().fold(exists(), { res, it -> it.delete() && res })
 
 /**
  * Returns an array of files and directories in the directory that match the specified [filter]
