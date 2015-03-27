@@ -23,7 +23,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.js.inline.context.FunctionContext;
 import org.jetbrains.kotlin.js.inline.context.InliningContext;
 import org.jetbrains.kotlin.js.inline.context.NamingContext;
-import org.jetbrains.kotlin.js.inline.context.StatementContext;
 
 import java.util.List;
 
@@ -168,8 +167,8 @@ class FunctionInlineMutator {
     }
 
     private boolean isResultNeeded(JsInvocation call) {
-        StatementContext statementContext = inliningContext.getStatementContext();
-        JsStatement currentStatement = statementContext.getCurrentStatement();
+        JsContext<JsStatement> statementContext = inliningContext.getStatementContext();
+        JsStatement currentStatement = statementContext.getCurrentNode();
         return !(currentStatement instanceof JsExpressionStatement)
                || call != ((JsExpressionStatement) currentStatement).getExpression();
     }

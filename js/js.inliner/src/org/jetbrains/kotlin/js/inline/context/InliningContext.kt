@@ -16,8 +16,11 @@
 
 package org.jetbrains.kotlin.js.inline.context
 
+import com.google.dart.compiler.backend.js.ast.JsContext
+import com.google.dart.compiler.backend.js.ast.JsStatement
+
 trait InliningContext {
-    public val statementContext: StatementContext
+    public val statementContext: JsContext<JsStatement>
     public val functionContext: FunctionContext
 
     public fun newNamingContext(): NamingContext

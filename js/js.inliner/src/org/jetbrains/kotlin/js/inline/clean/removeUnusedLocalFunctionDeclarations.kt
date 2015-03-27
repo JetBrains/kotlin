@@ -52,9 +52,7 @@ private class UnusedInstanceCollector : JsVisitorWithContextImpl() {
 
         val name = x.getName()!!
         val statementContext = getLastStatementLevelContext()
-        val currentNode = statementContext.getCurrentNode()
-        assert(currentNode is JsStatement) { "expected context containing statement" }
-        val currentStatement = currentNode as JsStatement
+        val currentStatement = statementContext.getCurrentNode()
         tracker.addCandidateForRemoval(name, currentStatement)
 
         val references = collectReferencesInside(x)

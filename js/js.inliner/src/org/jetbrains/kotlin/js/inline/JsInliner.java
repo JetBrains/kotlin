@@ -174,7 +174,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
 
         JsStatement inlineableBody = inlineableResult.getInlineableBody();
         JsExpression resultExpression = inlineableResult.getResultExpression();
-        StatementContext statementContext = inliningContext.getStatementContext();
+        JsContext<JsStatement> statementContext = inliningContext.getStatementContext();
         accept(inlineableBody);
 
         /**
@@ -189,8 +189,6 @@ public class JsInliner extends JsVisitorWithContextImpl {
 
         /** @see #lastStatementWasShifted */
         statementContext.shiftCurrentStatementForward();
-        InsertionPoint<JsStatement> insertionPoint = statementContext.getInsertionPoint();
-        insertionPoint.insertAllAfter(flattenStatement(inlineableBody));
     }
 
     /**
@@ -269,26 +267,13 @@ public class JsInliner extends JsVisitorWithContextImpl {
         @Override
         public NamingContext newNamingContext() {
             JsScope scope = getFunctionContext().getScope();
-            InsertionPoint<JsStatement> insertionPoint = getStatementContext().getInsertionPoint();
-            return new NamingContext(scope, insertionPoint);
+            return new NamingContext(scope, getStatementContext());
         }
 
         @NotNull
         @Override
-        public StatementContext getStatementContext() {
-            return new StatementContext() {
-                @NotNull
-                @Override
-                public JsContext getCurrentStatementContext() {
-                    return getLastStatementLevelContext();
-                }
-
-                @Override
-                public void shiftCurrentStatementForward() {
-                    super.shiftCurrentStatementForward();
-                    lastStatementWasShifted = true;
-                }
-            };
+        public JsContext<JsStatement> getStatementContext() {
+            return getLastStatementLevelContext();
         }
 
         @NotNull

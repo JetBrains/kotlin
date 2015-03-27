@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.js.inline.util.replaceNames
 
 class NamingContext(
         private val scope: JsScope,
-        private val insertionPoint: InsertionPoint<JsStatement>
+        private val statementContext: JsContext<JsStatement>
 ) {
     private val renamings = IdentityHashMap<JsName, JsExpression>()
     private val declarations = ArrayList<JsVars>()
@@ -36,7 +36,7 @@ class NamingContext(
         if (renamingApplied) throw RuntimeException("RenamingContext has been applied already")
 
         val result = replaceNames(target, renamings)
-        insertionPoint.insertAllBefore(declarations)
+        statementContext.insertAllBefore(declarations)
         renamingApplied = true
 
         return result
