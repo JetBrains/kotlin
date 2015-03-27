@@ -26,9 +26,7 @@ import com.intellij.core.JavaCoreApplicationEnvironment
 import com.intellij.core.JavaCoreProjectEnvironment
 import com.intellij.lang.java.JavaParserDefinition
 import com.intellij.mock.MockApplication
-import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.application.Application
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.extensions.Extensions
@@ -39,7 +37,6 @@ import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.FileContextProvider
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.PsiManager
@@ -52,9 +49,6 @@ import com.intellij.psi.impl.compiled.ClsStubBuilderFactory
 import com.intellij.psi.impl.file.impl.JavaFileManager
 import com.intellij.psi.meta.MetaDataContributor
 import com.intellij.psi.stubs.BinaryFileStubBuilders
-import com.intellij.util.containers.ContainerUtil
-import kotlin.Function1
-import kotlin.Unit
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.JavaElementFinder
 import org.jetbrains.kotlin.asJava.KotlinLightClassForPackage
@@ -62,7 +56,8 @@ import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.WARNING
 import org.jetbrains.kotlin.cli.jvm.JVMConfigurationKeys
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
@@ -80,84 +75,77 @@ import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import org.jetbrains.kotlin.resolve.lazy.declarations.CliDeclarationProviderFactoryService
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
 import org.jetbrains.kotlin.utils.PathUtil
-
 import java.io.File
-import java.util.*
+import java.util.ArrayList
+import java.util.Comparator
+import kotlin.platform.platformStatic
 
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.WARNING
+public class JetCoreEnvironment private(
+        parentDisposable: Disposable, 
+        applicationEnvironment: JavaCoreApplicationEnvironment, 
+        configuration: CompilerConfiguration
+) {
 
-SuppressWarnings("AssignmentToStaticFieldFromInstanceMethod")
-public class JetCoreEnvironment private(parentDisposable: Disposable, applicationEnvironment: JavaCoreApplicationEnvironment, configuration: CompilerConfiguration) {
-
-    private val projectEnvironment: JavaCoreProjectEnvironment
+    private val projectEnvironment: JavaCoreProjectEnvironment = object : JavaCoreProjectEnvironment(parentDisposable, applicationEnvironment) {
+        override fun preregisterServices() {
+            registerProjectExtensionPoints(Extensions.getArea(getProject()))
+        }
+    }
     private val sourceFiles = ArrayList<JetFile>()
     private val classPath = ClassPath()
 
     private val annotationsManager: CoreExternalAnnotationsManager
 
-    public val configuration: CompilerConfiguration
+    public val configuration: CompilerConfiguration = configuration.copy().let {
+        it.setReadOnly(true)
+        it
+    }
 
-    {
-        this.configuration = configuration.copy()
-        this.configuration.setReadOnly(true)
-
-        projectEnvironment = object : JavaCoreProjectEnvironment(parentDisposable, applicationEnvironment) {
-            override fun preregisterServices() {
-                registerProjectExtensionPoints(Extensions.getArea(getProject()))
-            }
-        }
-
+    init {
         val project = projectEnvironment.getProject()
-        annotationsManager = CoreExternalAnnotationsManager(project.getComponent<PsiManager>(javaClass<PsiManager>()))
-        project.registerService<ExternalAnnotationsManager>(javaClass<ExternalAnnotationsManager>(), annotationsManager)
-        project.registerService<DeclarationProviderFactoryService>(javaClass<DeclarationProviderFactoryService>(), CliDeclarationProviderFactoryService(sourceFiles))
+        annotationsManager = CoreExternalAnnotationsManager(project.getComponent(javaClass<PsiManager>()))
+        project.registerService(javaClass<ExternalAnnotationsManager>(), annotationsManager)
+        project.registerService(javaClass<DeclarationProviderFactoryService>(), CliDeclarationProviderFactoryService(sourceFiles))
 
         registerProjectServicesForCLI(projectEnvironment)
         registerProjectServices(projectEnvironment)
 
-        for (path in configuration.getList<File>(JVMConfigurationKeys.CLASSPATH_KEY)) {
+        for (path in configuration.getList(JVMConfigurationKeys.CLASSPATH_KEY)) {
             addToClasspath(path)
         }
-        for (path in configuration.getList<File>(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY)) {
+        for (path in configuration.getList(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY)) {
             addExternalAnnotationsRoot(path)
         }
-        sourceFiles.addAll(CompileEnvironmentUtil.getJetFiles(getProject(), getSourceRootsCheckingForDuplicates(), object : Function1<String, Unit> {
-            override fun invoke(s: String): Unit {
-                report(ERROR, s)
-                return Unit.`INSTANCE$`
-            }
+        sourceFiles.addAll(CompileEnvironmentUtil.getJetFiles(project, getSourceRootsCheckingForDuplicates(), {
+            message ->
+            report(ERROR, message)
         }))
-
-        ContainerUtil.sort<JetFile>(sourceFiles, object : Comparator<JetFile> {
+        sourceFiles.sortBy(object : Comparator<JetFile> {
             override fun compare(o1: JetFile, o2: JetFile): Int {
                 return o1.getVirtualFile().getPath().compareToIgnoreCase(o2.getVirtualFile().getPath())
             }
         })
 
-        JetScriptDefinitionProvider.getInstance(project).addScriptDefinitions(configuration.getList<JetScriptDefinition>(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY))
+        JetScriptDefinitionProvider.getInstance(project).addScriptDefinitions(configuration.getList(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY))
 
-        project.registerService<VirtualFileFinderFactory>(javaClass<VirtualFileFinderFactory>(), CliVirtualFileFinderFactory(classPath))
+        project.registerService(javaClass<VirtualFileFinderFactory>(), CliVirtualFileFinderFactory(classPath))
 
         ExternalDeclarationsProvider.registerExtensionPoint(project)
         ExpressionCodegenExtension.registerExtensionPoint(project)
 
-        for (registrar in configuration.getList<ComponentRegistrar>(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS)) {
+        for (registrar in configuration.getList(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS)) {
             registrar.registerProjectComponents(project, configuration)
         }
     }
 
-    private fun getMyApplicationEnvironment(): CoreApplicationEnvironment {
-        return projectEnvironment.getEnvironment()
-    }
+    private val applicationEnvironment: CoreApplicationEnvironment
+        get() = projectEnvironment.getEnvironment()
 
-    public fun getApplication(): MockApplication {
-        return getMyApplicationEnvironment().getApplication()
-    }
+    public val application: MockApplication
+        get() = applicationEnvironment.getApplication()
 
-    public fun getProject(): Project {
-        return projectEnvironment.getProject()
-    }
+    public val project: Project
+        get() = projectEnvironment.getProject()
 
     private fun addExternalAnnotationsRoot(path: File) {
         if (!path.exists()) {
@@ -169,18 +157,18 @@ public class JetCoreEnvironment private(parentDisposable: Disposable, applicatio
 
     private fun addToClasspath(path: File) {
         if (path.isFile()) {
-            val jarFile = getMyApplicationEnvironment().getJarFileSystem().findFileByPath(path + "!/")
+            val jarFile = applicationEnvironment.getJarFileSystem().findFileByPath("${path}!/")
             if (jarFile == null) {
-                report(WARNING, "Classpath entry points to a file that is not a JAR archive: " + path)
+                report(WARNING, "Classpath entry points to a file that is not a JAR archive: $path")
                 return
             }
             projectEnvironment.addJarToClassPath(path)
             classPath.add(jarFile)
         }
         else {
-            val root = getMyApplicationEnvironment().getLocalFileSystem().findFileByPath(path.getAbsolutePath())
+            val root = applicationEnvironment.getLocalFileSystem().findFileByPath(path.getAbsolutePath())
             if (root == null) {
-                report(WARNING, "Classpath entry points to a non-existent location: " + path)
+                report(WARNING, "Classpath entry points to a non-existent location: $path")
                 return
             }
             projectEnvironment.addSourcesToClasspath(root)
@@ -191,7 +179,7 @@ public class JetCoreEnvironment private(parentDisposable: Disposable, applicatio
     private fun getSourceRootsCheckingForDuplicates(): Collection<String> {
         val uniqueSourceRoots = Sets.newLinkedHashSet<String>()
 
-        for (sourceRoot in configuration.getList<String>(CommonConfigurationKeys.SOURCE_ROOTS_KEY)) {
+        for (sourceRoot in configuration.getList(CommonConfigurationKeys.SOURCE_ROOTS_KEY)) {
             if (!uniqueSourceRoots.add(sourceRoot)) {
                 report(WARNING, "Duplicate source root: " + sourceRoot)
             }
@@ -200,18 +188,12 @@ public class JetCoreEnvironment private(parentDisposable: Disposable, applicatio
         return uniqueSourceRoots
     }
 
-    public fun getSourceFiles(): List<JetFile> {
-        return sourceFiles
-    }
+    public fun getSourceFiles(): List<JetFile> = sourceFiles
 
     private fun report(severity: CompilerMessageSeverity, message: String) {
-        val messageCollector = configuration.get<MessageCollector>(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-        if (messageCollector != null) {
-            messageCollector.report(severity, message, CompilerMessageLocation.NO_LOCATION)
-        }
-        else {
-            throw CompileEnvironmentException(message)
-        }
+        val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+                               ?: throw CompileEnvironmentException(message)
+        messageCollector.report(severity, message, CompilerMessageLocation.NO_LOCATION)
     }
 
     companion object {
@@ -220,7 +202,9 @@ public class JetCoreEnvironment private(parentDisposable: Disposable, applicatio
         private var ourApplicationEnvironment: JavaCoreApplicationEnvironment? = null
         private var ourProjectCount = 0
 
-        public fun createForProduction(parentDisposable: Disposable, configuration: CompilerConfiguration, configFilePaths: List<String>): JetCoreEnvironment {
+        platformStatic public fun createForProduction(
+                parentDisposable: Disposable, configuration: CompilerConfiguration, configFilePaths: List<String>
+        ): JetCoreEnvironment {
             // JPS may run many instances of the compiler in parallel (there's an option for compiling independent modules in parallel in IntelliJ)
             // All projects share the same ApplicationEnvironment, and when the last project is disposed, the ApplicationEnvironment is disposed as well
             Disposer.register(parentDisposable, object : Disposable {
@@ -240,15 +224,16 @@ public class JetCoreEnvironment private(parentDisposable: Disposable, applicatio
             return environment
         }
 
-        TestOnly
-        public fun createForTests(parentDisposable: Disposable, configuration: CompilerConfiguration, extensionConfigs: List<String>): JetCoreEnvironment {
+        TestOnly platformStatic public fun createForTests(
+                parentDisposable: Disposable, configuration: CompilerConfiguration, extensionConfigs: List<String>
+        ): JetCoreEnvironment {
             // Tests are supposed to create a single project and dispose it right after use
             return JetCoreEnvironment(parentDisposable, createApplicationEnvironment(parentDisposable, configuration, extensionConfigs), configuration)
         }
 
         private fun getOrCreateApplicationEnvironmentForProduction(configuration: CompilerConfiguration, configFilePaths: List<String>): JavaCoreApplicationEnvironment {
             synchronized (APPLICATION_LOCK) {
-                if (ourApplicationEnvironment != null) return ourApplicationEnvironment
+                if (ourApplicationEnvironment != null) return ourApplicationEnvironment!!
 
                 val parentDisposable = Disposer.newDisposable()
                 ourApplicationEnvironment = createApplicationEnvironment(parentDisposable, configuration, configFilePaths)
@@ -260,7 +245,7 @@ public class JetCoreEnvironment private(parentDisposable: Disposable, applicatio
                         }
                     }
                 })
-                return ourApplicationEnvironment
+                return ourApplicationEnvironment!!
             }
         }
 
@@ -269,7 +254,7 @@ public class JetCoreEnvironment private(parentDisposable: Disposable, applicatio
                 if (ourApplicationEnvironment == null) return
                 val environment = ourApplicationEnvironment
                 ourApplicationEnvironment = null
-                Disposer.dispose(environment.getParentDisposable())
+                Disposer.dispose(environment!!.getParentDisposable())
             }
         }
 
@@ -289,28 +274,29 @@ public class JetCoreEnvironment private(parentDisposable: Disposable, applicatio
         }
 
         private fun registerAppExtensionPoints() {
-            CoreApplicationEnvironment.registerExtensionPoint<ContentBasedFileSubstitutor>(Extensions.getRootArea(), ContentBasedFileSubstitutor.EP_NAME, javaClass<ContentBasedFileSubstitutor>())
-            CoreApplicationEnvironment.registerExtensionPoint<FileTypeExtensionPoint<Any>>(Extensions.getRootArea(), BinaryFileStubBuilders.EP_NAME, javaClass<FileTypeExtensionPoint<Any>>())
-            CoreApplicationEnvironment.registerExtensionPoint<FileContextProvider>(Extensions.getRootArea(), FileContextProvider.EP_NAME, javaClass<FileContextProvider>())
+            CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), ContentBasedFileSubstitutor.EP_NAME, javaClass<ContentBasedFileSubstitutor>())
+            CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), BinaryFileStubBuilders.EP_NAME, javaClass<FileTypeExtensionPoint<Any>>())
+            CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), FileContextProvider.EP_NAME, javaClass<FileContextProvider>())
             //
-            CoreApplicationEnvironment.registerExtensionPoint<MetaDataContributor>(Extensions.getRootArea(), MetaDataContributor.EP_NAME, javaClass<MetaDataContributor>())
-            CoreApplicationEnvironment.registerExtensionPoint<ClsStubBuilderFactory>(Extensions.getRootArea(), ClsStubBuilderFactory.EP_NAME, javaClass<ClsStubBuilderFactory<PsiFile>>())
-            CoreApplicationEnvironment.registerExtensionPoint<PsiAugmentProvider>(Extensions.getRootArea(), PsiAugmentProvider.EP_NAME, javaClass<PsiAugmentProvider>())
-            CoreApplicationEnvironment.registerExtensionPoint<JavaMainMethodProvider>(Extensions.getRootArea(), JavaMainMethodProvider.EP_NAME, javaClass<JavaMainMethodProvider>())
+            CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), MetaDataContributor.EP_NAME, javaClass<MetaDataContributor>())
+            CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), ClsStubBuilderFactory.EP_NAME, javaClass<ClsStubBuilderFactory<*>>())
+            CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), PsiAugmentProvider.EP_NAME, javaClass<PsiAugmentProvider>())
+            CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), JavaMainMethodProvider.EP_NAME, javaClass<JavaMainMethodProvider>())
             //
-            CoreApplicationEnvironment.registerExtensionPoint<ContainerProvider>(Extensions.getRootArea(), ContainerProvider.EP_NAME, javaClass<ContainerProvider>())
-            CoreApplicationEnvironment.registerExtensionPoint<ClsCustomNavigationPolicy>(Extensions.getRootArea(), ClsCustomNavigationPolicy.EP_NAME, javaClass<ClsCustomNavigationPolicy>())
-            CoreApplicationEnvironment.registerExtensionPoint<Decompiler>(Extensions.getRootArea(), ClassFileDecompilers.EP_NAME, javaClass<ClassFileDecompilers.Decompiler>())
+            CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), ContainerProvider.EP_NAME, javaClass<ContainerProvider>())
+            CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), ClsCustomNavigationPolicy.EP_NAME, javaClass<ClsCustomNavigationPolicy>())
+            CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), ClassFileDecompilers.EP_NAME, javaClass<ClassFileDecompilers.Decompiler>())
         }
 
         private fun registerApplicationExtensionPointsAndExtensionsFrom(configuration: CompilerConfiguration, configFilePath: String) {
-            val locator = configuration.get<CompilerJarLocator>(JVMConfigurationKeys.COMPILER_JAR_LOCATOR)
+            val locator = configuration.get(JVMConfigurationKeys.COMPILER_JAR_LOCATOR)
             var pluginRoot = if (locator == null) PathUtil.getPathUtilJar() else locator.getCompilerJar()
 
             val app = ApplicationManager.getApplication()
             val parentFile = pluginRoot.getParentFile()
 
-            if (pluginRoot.isDirectory() && app != null && app.isUnitTestMode() && FileUtil.toCanonicalPath(parentFile.getPath()).endsWith("out/production")) {
+            if (pluginRoot.isDirectory() && app != null && app.isUnitTestMode()
+                && FileUtil.toCanonicalPath(parentFile.getPath()).endsWith("out/production")) {
                 // hack for load extensions when compiler run directly from out directory(e.g. in tests)
                 val srcDir = parentFile.getParentFile().getParentFile()
                 pluginRoot = File(srcDir, "idea/src")
@@ -326,42 +312,42 @@ public class JetCoreEnvironment private(parentDisposable: Disposable, applicatio
         }
 
         // made public for Upsource
-        public fun registerApplicationServices(applicationEnvironment: JavaCoreApplicationEnvironment) {
-            applicationEnvironment.registerFileType(JetFileType.INSTANCE, "kt")
-            applicationEnvironment.registerFileType(JetFileType.INSTANCE, "ktm")
-            applicationEnvironment.registerFileType(JetFileType.INSTANCE, JetParserDefinition.STD_SCRIPT_SUFFIX) // should be renamed to kts
-            applicationEnvironment.registerParserDefinition(JetParserDefinition())
-
-            applicationEnvironment.getApplication().registerService<KotlinBinaryClassCache>(javaClass<KotlinBinaryClassCache>(), KotlinBinaryClassCache())
+        platformStatic public fun registerApplicationServices(applicationEnvironment: JavaCoreApplicationEnvironment) {
+            with(applicationEnvironment) {
+                registerFileType(JetFileType.INSTANCE, "kt")
+                registerFileType(JetFileType.INSTANCE, "ktm")
+                registerFileType(JetFileType.INSTANCE, JetParserDefinition.STD_SCRIPT_SUFFIX)
+                registerParserDefinition(JetParserDefinition())
+                getApplication().registerService(javaClass<KotlinBinaryClassCache>(), KotlinBinaryClassCache())
+            }
         }
 
         private fun registerProjectExtensionPoints(area: ExtensionsArea) {
-            CoreApplicationEnvironment.registerExtensionPoint<PsiTreeChangePreprocessor>(area, PsiTreeChangePreprocessor.EP_NAME, javaClass<PsiTreeChangePreprocessor>())
-            CoreApplicationEnvironment.registerExtensionPoint<PsiElementFinder>(area, PsiElementFinder.EP_NAME, javaClass<PsiElementFinder>())
+            CoreApplicationEnvironment.registerExtensionPoint(area, PsiTreeChangePreprocessor.EP_NAME, javaClass<PsiTreeChangePreprocessor>())
+            CoreApplicationEnvironment.registerExtensionPoint(area, PsiElementFinder.EP_NAME, javaClass<PsiElementFinder>())
         }
 
         // made public for Upsource
-        public fun registerProjectServices(projectEnvironment: JavaCoreProjectEnvironment) {
-            val project = projectEnvironment.getProject()
-            project.registerService<JetScriptDefinitionProvider>(javaClass<JetScriptDefinitionProvider>(), JetScriptDefinitionProvider())
-
-            project.registerService<KotlinJavaPsiFacade>(javaClass<KotlinJavaPsiFacade>(), KotlinJavaPsiFacade(project))
-            project.registerService<KotlinLightClassForPackage.FileStubCache>(javaClass<KotlinLightClassForPackage.FileStubCache>(), KotlinLightClassForPackage.FileStubCache(project))
+        platformStatic public fun registerProjectServices(projectEnvironment: JavaCoreProjectEnvironment) {
+            with (projectEnvironment.getProject()) {
+                registerService(javaClass<JetScriptDefinitionProvider>(), JetScriptDefinitionProvider())
+                registerService(javaClass<KotlinJavaPsiFacade>(), KotlinJavaPsiFacade(this))
+                registerService(javaClass<KotlinLightClassForPackage.FileStubCache>(), KotlinLightClassForPackage.FileStubCache(this))
+            }
         }
 
         private fun registerProjectServicesForCLI(projectEnvironment: JavaCoreProjectEnvironment) {
-            val project = projectEnvironment.getProject()
-            project.registerService<CoreJavaFileManager>(javaClass<CoreJavaFileManager>(), ServiceManager.getService<JavaFileManager>(project, javaClass<JavaFileManager>()) as CoreJavaFileManager)
-            val cliLightClassGenerationSupport = CliLightClassGenerationSupport(project)
-            project.registerService<LightClassGenerationSupport>(javaClass<LightClassGenerationSupport>(), cliLightClassGenerationSupport)
-            project.registerService<CliLightClassGenerationSupport>(javaClass<CliLightClassGenerationSupport>(), cliLightClassGenerationSupport)
-            project.registerService<CodeAnalyzerInitializer>(javaClass<CodeAnalyzerInitializer>(), cliLightClassGenerationSupport)
+            with (projectEnvironment.getProject()) {
+                registerService(javaClass<CoreJavaFileManager>(), ServiceManager.getService(this, javaClass<JavaFileManager>()) as CoreJavaFileManager)
+                val cliLightClassGenerationSupport = CliLightClassGenerationSupport(this)
+                registerService(javaClass<LightClassGenerationSupport>(), cliLightClassGenerationSupport)
+                registerService(javaClass<CliLightClassGenerationSupport>(), cliLightClassGenerationSupport)
+                registerService(javaClass<CodeAnalyzerInitializer>(), cliLightClassGenerationSupport)
 
-            val area = Extensions.getArea(project)
-
-            area.getExtensionPoint<PsiElementFinder>(PsiElementFinder.EP_NAME).registerExtension(PsiElementFinderImpl(project, ServiceManager.getService<JavaFileManager>(project, javaClass<JavaFileManager>())))
-
-            area.getExtensionPoint<PsiElementFinder>(PsiElementFinder.EP_NAME).registerExtension(JavaElementFinder(project, cliLightClassGenerationSupport))
+                val area = Extensions.getArea(this)
+                area.getExtensionPoint(PsiElementFinder.EP_NAME).registerExtension(PsiElementFinderImpl(this, ServiceManager.getService(this, javaClass<JavaFileManager>())))
+                area.getExtensionPoint(PsiElementFinder.EP_NAME).registerExtension(JavaElementFinder(this, cliLightClassGenerationSupport))
+            }
         }
     }
 }
