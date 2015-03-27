@@ -5,6 +5,9 @@
 package com.google.dart.compiler.backend.js.ast;
 
 import org.jetbrains.annotations.Nullable;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
+import java.util.List;
 
 /**
  * The context in which a JsNode visitation occurs. This represents the set of
@@ -13,9 +16,19 @@ import org.jetbrains.annotations.Nullable;
  */
 public abstract class JsContext<T extends JsNode> {
 
-  public abstract <R extends T> void insertAfter(R node);
+  public <R extends T> void addPrevious(R node) {
+    throw new NotImplementedException();
+  }
 
-  public abstract <R extends T> void insertBefore(R node);
+  public <R extends T> void addPrevious(List<R> nodes) {
+    for (R node : nodes) {
+      addPrevious(node);
+    }
+  }
+
+  public <R extends T> void addNext(R node) {
+    throw new NotImplementedException();
+  }
 
   public abstract void removeMe();
 

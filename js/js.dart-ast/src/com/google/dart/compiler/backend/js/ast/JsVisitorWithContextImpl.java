@@ -26,8 +26,7 @@ import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * A visitor for iterating through and modifying an AST.
@@ -37,47 +36,71 @@ public class JsVisitorWithContextImpl extends JsVisitorWithContext {
     private final Stack<JsContext<JsStatement>> statementContexts = new Stack<JsContext<JsStatement>>();
 
     public class ListContext<T extends JsNode> extends JsContext<T> {
-        private List<T> collection;
+        private List<T> nodes;
         private int index;
 
+        // Those are reset in every iteration of traverse()
+        private final List<T> previous = new SmartList<T>();
+        private final List<T> next = new SmartList<T>();
+        private boolean removed = false;
+
         @Override
-        public <R extends T> void insertAfter(R node) {
-            //noinspection unchecked
-            collection.add(index + 1, (T) node);
+        public <R extends T> void addPrevious(R node) {
+            previous.add(node);
         }
 
         @Override
-        public <R extends T> void insertBefore(R node) {
-            //noinspection unchecked
-            collection.add(index++, (T) node);
+        public <R extends T> void addNext(R node) {
+            next.add(node);
         }
 
         @Override
         public void removeMe() {
-            collection.remove(index--);
+            removed = true;
         }
 
         @Override
         public <R extends T> void replaceMe(R node) {
-            checkReplacement(collection.get(index), node);
-            collection.set(index, node);
+            checkReplacement(nodes.get(index), node);
+            nodes.set(index, node);
+            removed = false;
         }
         
         @Nullable
         @Override
         public T getCurrentNode() {
-            if (index < collection.size()) {
-                return collection.get(index);
+            if (!removed && index < nodes.size()) {
+                return nodes.get(index);
             }
 
             return null;
         }
 
-        protected void traverse(List<T> collection) {
-            this.collection = collection;
-            for (index = 0; index < collection.size(); ++index) {
-                T node = collection.get(index);
-                doTraverse(node, this);
+        protected void traverse(List<T> nodes) {
+            assert previous.isEmpty(): "addPrevious() was called before traverse()";
+            assert next.isEmpty(): "addNext() was called before traverse()";
+            this.nodes = nodes;
+
+            for (index = 0; index < nodes.size(); index++) {
+                removed = false;
+                previous.clear();
+                next.clear();
+                doTraverse(getCurrentNode(), this);
+
+                if (!previous.isEmpty()) {
+                    nodes.addAll(index, previous);
+                    index += previous.size();
+                }
+
+                if (removed) {
+                    nodes.remove(index);
+                    index--;
+                }
+
+                if (!next.isEmpty()) {
+                    nodes.addAll(index + 1, next);
+                    index += next.size();
+                }
             }
         }
     }
@@ -87,16 +110,6 @@ public class JsVisitorWithContextImpl extends JsVisitorWithContext {
 
     private class NodeContext<T extends JsNode> extends JsContext<T> {
         protected T node;
-
-        @Override
-        public <R extends T> void insertAfter(R node) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public <R extends T> void insertBefore(R node) {
-            throw new UnsupportedOperationException();
-        }
 
         @Override
         public void removeMe() {

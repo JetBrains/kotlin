@@ -36,7 +36,7 @@ class NamingContext(
         if (renamingApplied) throw RuntimeException("RenamingContext has been applied already")
 
         val result = replaceNames(target, renamings)
-        statementContext.insertAllBefore(declarations)
+        statementContext.addPrevious(declarations)
         renamingApplied = true
 
         return result

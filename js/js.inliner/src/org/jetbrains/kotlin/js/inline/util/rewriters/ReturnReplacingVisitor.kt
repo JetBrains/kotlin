@@ -43,16 +43,17 @@ class ReturnReplacingVisitor(private val resultRef: JsNameRef?, private val brea
     override fun endVisit(x: JsReturn?, ctx: JsContext<*>?) {
         if (x == null || ctx == null) return
 
-        if (breakLabel != null) {
-            ctx.insertAfter(JsBreak(breakLabel))
-        }
+        ctx.removeMe()
 
         val returnReplacement = getReturnReplacement(x.getExpression())
         if (returnReplacement != null) {
-            ctx.insertBefore(JsExpressionStatement(returnReplacement))
+            ctx.addNext(JsExpressionStatement(returnReplacement))
         }
 
-        ctx.removeMe()
+        if (breakLabel != null) {
+            ctx.addNext(JsBreak(breakLabel))
+        }
+
     }
 
     private fun getReturnReplacement(returnExpression: JsExpression?): JsExpression? {
