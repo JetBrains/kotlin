@@ -57,7 +57,7 @@ public class MultiModuleJavaAnalysisCustomTest : UsefulTestCase() {
         val environment = createEnvironment(moduleDirs)
         val modules = setupModules(environment, moduleDirs)
         val resolverForProject = JvmAnalyzerFacade.setupResolverForProject(
-                GlobalContext(), environment.getProject(), modules,
+                GlobalContext(), environment.project, modules,
                 { m -> ModuleContent(m.kotlinFiles, m.javaFilesScope) },
                 JvmPlatformParameters {
                     javaClass ->
@@ -76,7 +76,7 @@ public class MultiModuleJavaAnalysisCustomTest : UsefulTestCase() {
     }
 
     private fun setupModules(environment: JetCoreEnvironment, moduleDirs: Array<File>): List<TestModule> {
-        val project = environment.getProject()
+        val project = environment.project
         val modules = HashMap<String, TestModule>()
         for (dir in moduleDirs) {
             val name = dir.getName()

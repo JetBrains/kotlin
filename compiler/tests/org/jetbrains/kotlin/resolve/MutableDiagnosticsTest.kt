@@ -130,7 +130,7 @@ class MutableDiagnosticsTest : KotlinTestWithEnvironment() {
     }
 
     private inner class DummyDiagnostic : Diagnostic {
-        val dummyElement = JetPsiFactory(getEnvironment().getProject()).createType("Int")
+        val dummyElement = JetPsiFactory(getEnvironment().project).createType("Int")
 
         ;{
             dummyElement.getContainingJetFile().doNotAnalyze = null

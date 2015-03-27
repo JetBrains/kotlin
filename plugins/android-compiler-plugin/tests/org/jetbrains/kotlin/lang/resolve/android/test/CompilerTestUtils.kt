@@ -50,7 +50,7 @@ fun UsefulTestCase.createAndroidTestEnvironment(
     configuration.put(AndroidConfigurationKeys.ANDROID_RES_PATH, resPath)
     configuration.put(AndroidConfigurationKeys.ANDROID_MANIFEST, manifestPath)
     val myEnvironment = JetCoreEnvironment.createForTests(getTestRootDisposable()!!, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
-    val project = myEnvironment.getProject()
+    val project = myEnvironment.project
     ExternalDeclarationsProvider.registerExtension(project, AndroidTestExternalDeclarationsProvider(project, resPath, manifestPath))
     ExpressionCodegenExtension.registerExtension(project, AndroidExpressionCodegenExtension())
     return myEnvironment

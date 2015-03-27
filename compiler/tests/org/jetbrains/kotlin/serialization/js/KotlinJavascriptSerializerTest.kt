@@ -70,7 +70,7 @@ public class KotlinJavascriptSerializerTest : TestCaseWithTmpdir() {
         try {
             val environment = JetCoreEnvironment.createForTests(rootDisposable, configuration, EnvironmentConfigFiles.JS_CONFIG_FILES)
             val files = environment.getSourceFiles()
-            val config = LibrarySourcesConfigWithCaching(environment.getProject(), MODULE_NAME, EcmaVersion.defaultVersion(), false, true, false)
+            val config = LibrarySourcesConfigWithCaching(environment.project, MODULE_NAME, EcmaVersion.defaultVersion(), false, true, false)
             val analysisResult = TopDownAnalyzerFacadeForJS.analyzeFiles(files, config)
             KotlinJavaScriptSerializer().serialize(MODULE_NAME, analysisResult.moduleDescriptor, metaFile)
         }

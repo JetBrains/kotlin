@@ -42,7 +42,7 @@ public class KotlinClassFinderTest : KotlinTestWithEnvironmentManagement() {
                                                                     ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, tmpdir),
                                                             EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
-        val project = environment.getProject()
+        val project = environment.project
         val className = "test.A.B.C"
         val psiClass = JavaPsiFacade.getInstance(project).findClass(className, GlobalSearchScope.allScope(project))
         assertNotNull(psiClass, "Psi class not found for $className")

@@ -63,8 +63,8 @@ public abstract class AbstractLocalClassProtoTest : TestCaseWithTmpdir() {
         val providerFactory = FileBasedDeclarationProviderFactory(globalContext.storageManager, emptyList())
 
         val injector = InjectorForTopDownAnalyzerForJvm(
-                environment.getProject(), params, CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(), module,
-                providerFactory, GlobalSearchScope.allScope(environment.getProject())
+                environment.project, params, CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(), module,
+                providerFactory, GlobalSearchScope.allScope(environment.project)
         )
         module.initialize(injector.getJavaDescriptorResolver().packageFragmentProvider)
 
