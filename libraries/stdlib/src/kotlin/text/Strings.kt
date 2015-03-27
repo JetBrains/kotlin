@@ -468,15 +468,26 @@ public fun String.replaceBeforeLast(delimiter: String, replacement: String, miss
 /**
  * Returns `true` if this string starts with the specified character.
  */
-public fun String.startsWith(char: Char, ignoreCase: Boolean = false): Boolean =
+public fun String.startsWith(char: Char, ignoreCase: Boolean): Boolean =
         this.length() > 0 && this[0].equals(char, ignoreCase)
+
+/**
+ * Returns `true` if this string starts with the specified character.
+ */
+// TODO: temporary overload to keep binary compatibility, remove after fixing markdown parser
+public fun String.startsWith(char: Char): Boolean = startsWith(char, ignoreCase = false)
 
 /**
  * Returns `true` if this string ends with the specified character.
  */
-public fun String.endsWith(char: Char, ignoreCase: Boolean = false): Boolean =
+public fun String.endsWith(char: Char, ignoreCase: Boolean): Boolean =
         this.length() > 0 && this[lastIndex].equals(char, ignoreCase)
 
+/**
+ * Returns `true` if this string ends with the specified character.
+ */
+// TODO: temporary overload to keep binary compatibility, remove after fixing markdown parser
+public fun String.endsWith(char: Char): Boolean = endsWith(char, ignoreCase = false)
 
 // indexOfAny()
 
