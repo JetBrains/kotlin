@@ -1645,6 +1645,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("companionObject.java")
+        public void testCompanionObject() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/enum/companionObject.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("emptyEnum.java")
         public void testEmptyEnum() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/enum/emptyEnum.java");

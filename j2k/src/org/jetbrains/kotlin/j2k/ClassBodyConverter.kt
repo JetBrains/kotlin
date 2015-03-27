@@ -16,27 +16,15 @@
 
 package org.jetbrains.kotlin.j2k
 
-import com.intellij.psi.PsiClass
-import java.util.HashSet
-import com.intellij.psi.PsiMember
-import java.util.LinkedHashMap
-import com.intellij.psi.PsiAnnotationMethod
-import java.util.ArrayList
-import com.intellij.psi.PsiModifier
-import com.intellij.psi.PsiMethod
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.*
 import org.jetbrains.kotlin.j2k.ast.*
 import org.jetbrains.kotlin.j2k.ast.Class
-import com.intellij.psi.PsiField
-import com.intellij.psi.PsiReturnStatement
-import com.intellij.psi.PsiReferenceExpression
-import com.intellij.openapi.util.text.StringUtil
-import java.util.HashMap
-import com.intellij.psi.PsiClassInitializer
-import com.intellij.psi.PsiExpressionStatement
-import com.intellij.psi.PsiAssignmentExpression
-import com.intellij.psi.PsiExpression
-import com.intellij.psi.JavaTokenType
 import org.jetbrains.kotlin.j2k.usageProcessing.AccessorToPropertyProcessing
+import java.util.ArrayList
+import java.util.HashMap
+import java.util.HashSet
+import java.util.LinkedHashMap
 
 class FieldCorrectionInfo(val name: String, val access: Modifier?, val setterAccess: Modifier?) {
     val identifier = Identifier(name).assignNoPrototype()
@@ -97,7 +85,7 @@ class ClassBodyConverter(private val psiClass: PsiClass,
                 primaryConstructorSignature = member.createSignature(converter)
                 members.add(member.initializer())
             }
-            else if (useCompanionObject && member !is Class && psiMember.hasModifierProperty(PsiModifier.STATIC)) {
+            else if (useCompanionObject && member !is Class && psiMember !is PsiEnumConstant && psiMember.hasModifierProperty(PsiModifier.STATIC)) {
                 companionObjectMembers.add(member)
             }
             else {
@@ -131,10 +119,8 @@ class ClassBodyConverter(private val psiClass: PsiClass,
 
     // do not convert private static methods into companion object if possible
     private fun shouldGenerateCompanionObject(convertedMembers: Map<PsiMember, Member>): Boolean {
-        if (psiClass.isEnum()) return false
-
         val members = convertedMembers.keySet().filter { !it.isConstructor() }
-        val companionObjectMembers = members.filter { it !is PsiClass && it.hasModifierProperty(PsiModifier.STATIC) }
+        val companionObjectMembers = members.filter { it !is PsiClass && it !is PsiEnumConstant && it.hasModifierProperty(PsiModifier.STATIC) }
         val nestedClasses = members.filterIsInstance<PsiClass>().filter { it.hasModifierProperty(PsiModifier.STATIC) }
         if (companionObjectMembers.all { it is PsiMethod && it.hasModifierProperty(PsiModifier.PRIVATE) }) {
             return nestedClasses.any { nestedClass -> companionObjectMembers.any { converter.referenceSearcher.findMethodCalls(it as PsiMethod, nestedClass).isNotEmpty() } }
