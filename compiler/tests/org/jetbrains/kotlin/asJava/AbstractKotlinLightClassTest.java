@@ -22,7 +22,7 @@ import com.intellij.psi.impl.compiled.ClsElementImpl;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.checkers.KotlinMultiFileTestWithWithJava;
-import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.test.JetTestUtils;
 
 import java.io.File;
@@ -42,7 +42,7 @@ public abstract class AbstractKotlinLightClassTest extends KotlinMultiFileTestWi
     }
 
     @NotNull
-    public static JavaElementFinder createFinder(@NotNull JetCoreEnvironment environment) throws IOException {
+    public static JavaElementFinder createFinder(@NotNull KotlinCoreEnvironment environment) throws IOException {
         // We need to resolve all the files in order too fill in the trace that sits inside LightClassGenerationSupport
         JetTestUtils.resolveAllKotlinFiles(environment);
 

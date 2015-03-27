@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.resolve.typeApproximation
 
 import org.jetbrains.kotlin.test.JetLiteFixture
-import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.test.ConfigurationKind
 import java.io.File
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
@@ -40,7 +40,7 @@ public class CapturedTypeApproximationTest() : JetLiteFixture() {
 
     override fun getTestDataPath() = "compiler/testData/capturedTypeApproximation/"
 
-    override fun createEnvironment(): JetCoreEnvironment = createEnvironmentWithMockJdk(ConfigurationKind.JDK_ONLY)
+    override fun createEnvironment(): KotlinCoreEnvironment = createEnvironmentWithMockJdk(ConfigurationKind.JDK_ONLY)
 
     public fun doTest(filePath: String, vararg substitutions: String) {
         assert(substitutions.size() in 1..2, "Captured type approximation test requires substitutions for (T) or (T, R)")

@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.resolve.constraintSystem
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.JetLiteFixture
 import org.jetbrains.kotlin.test.JetTestUtils
-import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.di.InjectorForTests
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers
@@ -48,7 +48,7 @@ abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {
     private val testDeclarations: ConstraintSystemTestData
         get() = _testDeclarations!!
 
-    override fun createEnvironment(): JetCoreEnvironment {
+    override fun createEnvironment(): KotlinCoreEnvironment {
         return createEnvironmentWithMockJdk(ConfigurationKind.ALL)
     }
 

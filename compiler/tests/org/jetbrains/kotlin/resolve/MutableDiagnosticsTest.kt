@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.resolve
 
 import org.junit.Assert
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.resolve.lazy.KotlinTestWithEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
@@ -27,8 +27,8 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.psi.*
 
 class MutableDiagnosticsTest : KotlinTestWithEnvironment() {
-    override fun createEnvironment(): JetCoreEnvironment? {
-        return JetCoreEnvironment.createForTests(getTestRootDisposable()!!, CompilerConfiguration(), EnvironmentConfigFiles.JVM_CONFIG_FILES)
+    override fun createEnvironment(): KotlinCoreEnvironment? {
+        return KotlinCoreEnvironment.createForTests(getTestRootDisposable()!!, CompilerConfiguration(), EnvironmentConfigFiles.JVM_CONFIG_FILES)
     }
 
     private val BindingTrace.diagnostics: Diagnostics

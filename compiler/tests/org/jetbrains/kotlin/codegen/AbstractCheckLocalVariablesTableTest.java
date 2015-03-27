@@ -25,7 +25,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
-import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir;
@@ -46,7 +46,7 @@ import java.util.regex.Pattern;
 public abstract class AbstractCheckLocalVariablesTableTest extends TestCaseWithTmpdir {
 
     private File ktFile;
-    private JetCoreEnvironment jetCoreEnvironment;
+    private KotlinCoreEnvironment jetCoreEnvironment;
 
     public AbstractCheckLocalVariablesTableTest() {
     }

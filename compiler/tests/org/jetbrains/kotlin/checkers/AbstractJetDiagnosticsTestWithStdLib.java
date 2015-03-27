@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.checkers;
 
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
-import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
@@ -27,9 +27,9 @@ import java.util.Arrays;
 
 public abstract class AbstractJetDiagnosticsTestWithStdLib extends AbstractJetDiagnosticsTest {
     @Override
-    protected JetCoreEnvironment createEnvironment() {
+    protected KotlinCoreEnvironment createEnvironment() {
         File javaFilesDir = createJavaFilesDir();
-        return JetCoreEnvironment.createForTests(getTestRootDisposable(),
+        return KotlinCoreEnvironment.createForTests(getTestRootDisposable(),
                                                  JetTestUtils.compilerConfigurationForTests(
                                                          ConfigurationKind.ALL,
                                                          TestJdkKind.MOCK_JDK,

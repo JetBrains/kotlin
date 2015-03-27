@@ -80,7 +80,7 @@ import java.util.ArrayList
 import java.util.Comparator
 import kotlin.platform.platformStatic
 
-public class JetCoreEnvironment private(
+public class KotlinCoreEnvironment private(
         parentDisposable: Disposable, 
         applicationEnvironment: JavaCoreApplicationEnvironment, 
         configuration: CompilerConfiguration
@@ -204,7 +204,7 @@ public class JetCoreEnvironment private(
 
         platformStatic public fun createForProduction(
                 parentDisposable: Disposable, configuration: CompilerConfiguration, configFilePaths: List<String>
-        ): JetCoreEnvironment {
+        ): KotlinCoreEnvironment {
             // JPS may run many instances of the compiler in parallel (there's an option for compiling independent modules in parallel in IntelliJ)
             // All projects share the same ApplicationEnvironment, and when the last project is disposed, the ApplicationEnvironment is disposed as well
             Disposer.register(parentDisposable, object : Disposable {
@@ -216,7 +216,7 @@ public class JetCoreEnvironment private(
                     }
                 }
             })
-            val environment = JetCoreEnvironment(parentDisposable, getOrCreateApplicationEnvironmentForProduction(configuration, configFilePaths), configuration)
+            val environment = KotlinCoreEnvironment(parentDisposable, getOrCreateApplicationEnvironmentForProduction(configuration, configFilePaths), configuration)
 
             synchronized (APPLICATION_LOCK) {
                 ourProjectCount++
@@ -226,9 +226,9 @@ public class JetCoreEnvironment private(
 
         TestOnly platformStatic public fun createForTests(
                 parentDisposable: Disposable, configuration: CompilerConfiguration, extensionConfigs: List<String>
-        ): JetCoreEnvironment {
+        ): KotlinCoreEnvironment {
             // Tests are supposed to create a single project and dispose it right after use
-            return JetCoreEnvironment(parentDisposable, createApplicationEnvironment(parentDisposable, configuration, extensionConfigs), configuration)
+            return KotlinCoreEnvironment(parentDisposable, createApplicationEnvironment(parentDisposable, configuration, extensionConfigs), configuration)
         }
 
         private fun getOrCreateApplicationEnvironmentForProduction(configuration: CompilerConfiguration, configFilePaths: List<String>): JavaCoreApplicationEnvironment {

@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import com.intellij.openapi.editor.impl.DocumentImpl
 import org.jetbrains.kotlin.test.JetTestUtils
 import java.util.ArrayList
-import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.test.ConfigurationKind
 import com.intellij.testFramework.UsefulTestCase
 import java.io.File
@@ -132,7 +132,7 @@ public abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment
         UsefulTestCase.assertSameLines(JetTestUtils.getLastCommentedLines(document), renderedDescriptors.toString())
     }
 
-    override fun createEnvironment(): JetCoreEnvironment {
+    override fun createEnvironment(): KotlinCoreEnvironment {
         return createEnvironmentWithMockJdk(ConfigurationKind.JDK_ONLY)
     }
 }

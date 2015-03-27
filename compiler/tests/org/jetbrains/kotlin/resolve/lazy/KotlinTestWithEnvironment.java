@@ -18,11 +18,11 @@ package org.jetbrains.kotlin.resolve.lazy;
 
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironmentManagement;
 
 public abstract class KotlinTestWithEnvironment extends KotlinTestWithEnvironmentManagement {
-    private JetCoreEnvironment environment;
+    private KotlinCoreEnvironment environment;
 
     @Override
     protected void setUp() throws Exception {
@@ -36,10 +36,10 @@ public abstract class KotlinTestWithEnvironment extends KotlinTestWithEnvironmen
         super.tearDown();
     }
 
-    protected abstract JetCoreEnvironment createEnvironment();
+    protected abstract KotlinCoreEnvironment createEnvironment();
 
     @NotNull
-    public JetCoreEnvironment getEnvironment() {
+    public KotlinCoreEnvironment getEnvironment() {
         return environment;
     }
 

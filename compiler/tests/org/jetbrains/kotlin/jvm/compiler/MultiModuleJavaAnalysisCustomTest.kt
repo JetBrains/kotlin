@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.descriptors.*
 import org.junit.Assert
-import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.cli.jvm.JVMConfigurationKeys
 import com.intellij.psi.search.DelegatingGlobalSearchScope
@@ -69,13 +69,13 @@ public class MultiModuleJavaAnalysisCustomTest : UsefulTestCase() {
         performChecks(resolverForProject, modules)
     }
 
-    private fun createEnvironment(moduleDirs: Array<File>): JetCoreEnvironment {
+    private fun createEnvironment(moduleDirs: Array<File>): KotlinCoreEnvironment {
         val configuration = CompilerConfiguration()
         configuration.addAll(JVMConfigurationKeys.CLASSPATH_KEY, moduleDirs.toList())
-        return JetCoreEnvironment.createForTests(getTestRootDisposable()!!, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+        return KotlinCoreEnvironment.createForTests(getTestRootDisposable()!!, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
     }
 
-    private fun setupModules(environment: JetCoreEnvironment, moduleDirs: Array<File>): List<TestModule> {
+    private fun setupModules(environment: KotlinCoreEnvironment, moduleDirs: Array<File>): List<TestModule> {
         val project = environment.project
         val modules = HashMap<String, TestModule>()
         for (dir in moduleDirs) {

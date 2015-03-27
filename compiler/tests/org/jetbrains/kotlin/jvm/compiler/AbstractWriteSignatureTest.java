@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
 import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsPackage;
-import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.GenerationUtils;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.test.JetTestUtils;
@@ -50,7 +50,7 @@ import java.util.regex.Pattern;
  */
 public abstract class AbstractWriteSignatureTest extends TestCaseWithTmpdir {
 
-    private JetCoreEnvironment jetCoreEnvironment;
+    private KotlinCoreEnvironment jetCoreEnvironment;
 
     @Override
     protected void setUp() throws Exception {

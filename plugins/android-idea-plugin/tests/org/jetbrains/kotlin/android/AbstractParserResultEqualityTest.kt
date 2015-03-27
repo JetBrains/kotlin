@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.android
 
-import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.plugin.android.TestConst
 import org.jetbrains.kotlin.lang.resolve.android.CliAndroidUIXmlProcessor
 import com.intellij.openapi.module.ModuleManager
@@ -41,11 +41,11 @@ public abstract class AbstractParserResultEqualityTest : KotlinAndroidTestCase()
         assertEquals(cliResult, ideResult)
     }
 
-    private fun getEnvironment(testPath: String): JetCoreEnvironment {
+    private fun getEnvironment(testPath: String): KotlinCoreEnvironment {
         val configuration = JetTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK)
                 configuration.put<String>(AndroidConfigurationKeys.ANDROID_RES_PATH, testPath + "/layout")
                 configuration.put<String>(AndroidConfigurationKeys.ANDROID_MANIFEST, testPath + "/AndroidManifest.xml")
-        return JetCoreEnvironment.createForTests(getTestRootDisposable()!!, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+        return KotlinCoreEnvironment.createForTests(getTestRootDisposable()!!, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
     }
 
     override fun getTestDataPath(): String? {
