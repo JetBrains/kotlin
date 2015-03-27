@@ -411,8 +411,36 @@ fun elements(): List<GenericFunction> {
                     found = true
                 }
             }
-            if (!found) throw NoSuchElementException("Collection doesn't contain any element matching predicate")
+            if (!found) throw NoSuchElementException("Collection doesn't contain any element matching the predicate.")
             return last as T
+            """
+        }
+
+        body(Iterables) {
+            """
+            if (this is List<T>)
+                return this.last(predicate)
+
+            var last: T? = null
+            var found = false
+            for (element in this) {
+                if (predicate(element)) {
+                    last = element
+                    found = true
+                }
+            }
+            if (!found) throw NoSuchElementException("Collection doesn't contain any element matching the predicate.")
+            return last as T
+            """
+        }
+
+        body(ArraysOfPrimitives, ArraysOfObjects, Lists) {
+            """
+            for (index in this.indices.reversed()) {
+                val element = this[index]
+                if (predicate(element)) return element
+            }
+            throw NoSuchElementException("Collection doesn't contain any element matching the predicate.")
             """
         }
     }
@@ -431,6 +459,33 @@ fun elements(): List<GenericFunction> {
                 }
             }
             return last
+            """
+        }
+
+        body(Iterables) {
+            """
+            if (this is List<T>)
+                return this.lastOrNull(predicate)
+
+            var last: T? = null
+            for (element in this) {
+                if (predicate(element)) {
+                    last = element
+                }
+            }
+            return last
+            """
+        }
+
+
+
+        body(ArraysOfPrimitives, ArraysOfObjects, Lists) {
+            """
+            for (index in this.indices.reversed()) {
+                val element = this[index]
+                if (predicate(element)) return element
+            }
+            return null
             """
         }
     }
