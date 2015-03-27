@@ -42,6 +42,21 @@ public fun <T:Any> requireNotNull(value: T?, message: Any = "Required value was 
 }
 
 /**
+ * Throws an [IllegalArgumentException] with the result of calling [lazyMessage] if the [value] is null. Otherwise
+ * returns the not null value.
+ *
+ * @sample test.collections.PreconditionsTest.requireNotNullWithLazyMessage
+ */
+public fun <T:Any> requireNotNull(value: T?, lazyMessage: () -> Any): T {
+    if (value == null) {
+        val message = lazyMessage()
+        throw IllegalArgumentException(message.toString())
+    } else {
+        return value
+    }
+}
+
+/**
  * Throws an [IllegalStateException] with an optional [message] if the [value] is false.
  *
  * @sample test.collections.PreconditionsTest.failingCheckWithMessage
@@ -65,7 +80,7 @@ public inline fun check(value: Boolean, lazyMessage: () -> Any): Unit {
 }
 
 /**
- * Throws an [IllegalArgumentException] with the given [message] if the [value] is null. Otherwise
+ * Throws an [IllegalStateException] with the given [message] if the [value] is null. Otherwise
  * returns the not null value.
  *
  * @sample test.collections.PreconditionsTest.checkNotNull
