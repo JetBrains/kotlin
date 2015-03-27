@@ -4,23 +4,21 @@
 // ERROR: Unresolved reference: close
 import java.io.*
 
-class FileRead {
-    companion object {
-        public fun main(args: Array<String>) {
-            try {
-                val fstream = FileInputStream()
-                val `in` = DataInputStream(fstream)
-                val br = BufferedReader(InputStreamReader(`in`))
-                val strLine: String
-                while ((strLine = br.readLine()) != null) {
-                    System.out.println(strLine)
-                }
-                `in`.close()
-            } catch (e: Exception) {
-                System.err.println("Error: " + e.getMessage())
+object FileRead {
+    public fun main(args: Array<String>) {
+        try {
+            val fstream = FileInputStream()
+            val `in` = DataInputStream(fstream)
+            val br = BufferedReader(InputStreamReader(`in`))
+            val strLine: String
+            while ((strLine = br.readLine()) != null) {
+                System.out.println(strLine)
             }
-
+            `in`.close()
+        } catch (e: Exception) {
+            System.err.println("Error: " + e.getMessage())
         }
+
     }
 }
 

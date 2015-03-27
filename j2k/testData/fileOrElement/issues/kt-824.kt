@@ -4,10 +4,8 @@ class Container {
     var myBoolean = true
 }
 
-class One {
-    companion object {
-        var myContainer = Container()
-    }
+object One {
+    var myContainer = Container()
 }
 
 class Test {

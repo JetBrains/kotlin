@@ -11,12 +11,10 @@ class C {
     }
 }
 
-public class User {
-    companion object {
-        public fun main() {
-            val c1 = C(1, 2, 3)
-            val c2 = C(5, 6)
-            val c3 = C(7)
-        }
+public object User {
+    public fun main() {
+        val c1 = C(1, 2, 3)
+        val c2 = C(5, 6)
+        val c3 = C(7)
     }
 }

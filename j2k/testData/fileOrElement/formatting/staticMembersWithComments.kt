@@ -1,28 +1,26 @@
-class F {
-    companion object {
+object F {
 
-        //c1
+    //c1
 
-        /*c2*/
+    /*c2*/
 
-        fun f1() {
-        }
+    fun f1() {
+    }
 
 
-        //c3
-
+    //c3
 
 
 
-        //c4
 
-        fun f2() {
-        }
+    //c4
 
-        var i: Int? = 0
+    fun f2() {
+    }
 
-        fun f3() {
-        }
+    var i: Int? = 0
+
+    fun f3() {
     }
 
     //c5

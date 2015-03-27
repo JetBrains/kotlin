@@ -1,10 +1,8 @@
 package demo
 
-class Program {
-    companion object {
-        public fun main(args: Array<String>) {
-            System.out.println("Halo!")
-        }
+object Program {
+    public fun main(args: Array<String>) {
+        System.out.println("Halo!")
     }
 }
 

@@ -1,8 +1,6 @@
 // ERROR: Property must be initialized or be abstract
-class Library {
-    companion object {
-        val ourOut: java.io.PrintStream
-    }
+object Library {
+    val ourOut: java.io.PrintStream
 }
 
 class User {

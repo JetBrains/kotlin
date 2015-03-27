@@ -16,20 +16,21 @@
 
 package org.jetbrains.kotlin.j2k
 
+import com.intellij.openapi.project.Project
 import com.intellij.psi.*
+import com.intellij.psi.CommonClassNames.*
+import com.intellij.psi.util.PsiMethodUtil
+import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.j2k.ast.*
 import org.jetbrains.kotlin.j2k.ast.Annotation
 import org.jetbrains.kotlin.j2k.ast.Class
 import org.jetbrains.kotlin.j2k.ast.Enum
-import java.util.*
-import com.intellij.psi.CommonClassNames.*
-import org.jetbrains.kotlin.types.expressions.OperatorConventions.*
-import com.intellij.openapi.project.Project
-import com.intellij.psi.util.PsiMethodUtil
-import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.j2k.usageProcessing.UsageProcessing
+import org.jetbrains.kotlin.j2k.ast.Object
 import org.jetbrains.kotlin.j2k.usageProcessing.FieldToPropertyProcessing
+import org.jetbrains.kotlin.j2k.usageProcessing.UsageProcessing
 import org.jetbrains.kotlin.j2k.usageProcessing.UsageProcessingExpressionConverter
+import org.jetbrains.kotlin.types.expressions.OperatorConventions.*
+import java.util.ArrayList
 
 class Converter private(
         private val elementToConvert: PsiElement,
@@ -150,42 +151,71 @@ class Converter private(
         val annotations = convertAnnotations(psiClass)
         var modifiers = convertModifiers(psiClass)
         val typeParameters = convertTypeParameterList(psiClass.getTypeParameterList())
-        val implementsTypes = convertToNotNullableTypes(psiClass.getImplementsListTypes())
         val extendsTypes = convertToNotNullableTypes(psiClass.getExtendsListTypes())
+        val implementsTypes = convertToNotNullableTypes(psiClass.getImplementsListTypes())
         val name = psiClass.declarationIdentifier()
 
         return when {
             psiClass.isInterface() -> {
-                var classBody = ClassBodyConverter(psiClass, this, false).convertBody()
+                val classBody = ClassBodyConverter(psiClass, this, isOpenClass = false, isObject = false).convertBody()
                 Trait(name, annotations, modifiers, typeParameters, extendsTypes, listOf(), implementsTypes, classBody)
             }
 
             psiClass.isEnum() -> {
-                var classBody = ClassBodyConverter(psiClass, this, false).convertBody()
+                val classBody = ClassBodyConverter(psiClass, this, isOpenClass = false, isObject = false).convertBody()
                 Enum(name, annotations, modifiers, typeParameters, listOf(), listOf(), implementsTypes, classBody)
             }
 
             else -> {
-                if (needOpenModifier(psiClass)) {
-                    modifiers = modifiers.with(Modifier.OPEN)
+                if (shouldConvertIntoObject(psiClass)) {
+                    val classBody = ClassBodyConverter(psiClass, this, isOpenClass = false, isObject = true).convertBody()
+                    Object(name, annotations, modifiers.without(Modifier.ABSTRACT), classBody)
                 }
+                else {
+                    if (psiClass.getContainingClass() != null && !psiClass.hasModifierProperty(PsiModifier.STATIC)) {
+                        modifiers = modifiers.with(Modifier.INNER)
+                    }
 
-                if (psiClass.getContainingClass() != null && !psiClass.hasModifierProperty(PsiModifier.STATIC)) {
-                    modifiers = modifiers.with(Modifier.INNER)
+                    val openModifier = if (psiClass.hasModifierProperty(PsiModifier.FINAL) || psiClass.hasModifierProperty(PsiModifier.ABSTRACT))
+                        false
+                    else
+                        settings.openByDefault || referenceSearcher.hasInheritors(psiClass)
+
+                    if (openModifier) {
+                        modifiers = modifiers.with(Modifier.OPEN)
+                    }
+
+                    val classBody = ClassBodyConverter(psiClass, this, modifiers.contains(Modifier.OPEN) || modifiers.contains(Modifier.ABSTRACT), isObject = false).convertBody()
+                    Class(name, annotations, modifiers, typeParameters, extendsTypes, classBody.baseClassParams, implementsTypes, classBody)
                 }
-
-                var classBody = ClassBodyConverter(psiClass, this, modifiers.contains(Modifier.OPEN)).convertBody()
-
-                Class(name, annotations, modifiers, typeParameters, extendsTypes, classBody.baseClassParams, implementsTypes, classBody)
             }
         }.assignPrototype(psiClass)
     }
 
-    private fun needOpenModifier(psiClass: PsiClass): Boolean {
-        return if (settings.openByDefault)
-            !psiClass.hasModifierProperty(PsiModifier.FINAL) && !psiClass.hasModifierProperty(PsiModifier.ABSTRACT)
-        else
-            referenceSearcher.hasInheritors(psiClass)
+    private fun shouldConvertIntoObject(psiClass: PsiClass): Boolean {
+        val methods = psiClass.getMethods()
+        val fields = psiClass.getFields()
+        val classes = psiClass.getInnerClasses()
+        if (methods.isEmpty() && fields.isEmpty()) return false
+        fun isStatic(member: PsiMember) = member.hasModifierProperty(PsiModifier.STATIC)
+        if (!methods.all { isStatic(it) || it.isConstructor() } || !fields.all(::isStatic) || !classes.all(::isStatic)) return false
+
+        val constructors = psiClass.getConstructors()
+        if (constructors.size() > 1) return false
+        val constructor = constructors.singleOrNull()
+        if (constructor != null) {
+            if (!constructor.hasModifierProperty(PsiModifier.PRIVATE)) return false
+            if (constructor.getParameterList().getParameters().isNotEmpty()) return false
+            if (constructor.getBody()?.getStatements()?.isNotEmpty() ?: false) return false
+            if (constructor.getModifierList().getAnnotations().isNotEmpty()) return false
+        }
+
+        if (psiClass.getExtendsListTypes().isNotEmpty() || psiClass.getImplementsListTypes().isNotEmpty()) return false
+        if (psiClass.getTypeParameters().isNotEmpty()) return false
+
+        if (referenceSearcher.hasInheritors(psiClass)) return false
+
+        return true
     }
 
     private fun convertAnnotationType(psiClass: PsiClass): Class {
@@ -215,7 +245,7 @@ class Converter private(
             null
 
         // to convert fields and nested types - they are not allowed in Kotlin but we convert them and let user refactor code
-        var classBody = ClassBodyConverter(psiClass, this, false).convertBody()
+        var classBody = ClassBodyConverter(psiClass, this, isOpenClass = false, isObject = false).convertBody()
         classBody = ClassBody(constructorSignature, classBody.baseClassParams, classBody.members, classBody.companionObjectMembers, classBody.lBrace, classBody.rBrace)
 
         val annotationAnnotation = Annotation(Identifier("annotation").assignNoPrototype(), listOf(), false, false).assignNoPrototype()

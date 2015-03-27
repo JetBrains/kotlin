@@ -153,7 +153,7 @@ class CodeConverter(
     }
 
     public fun convertAnonymousClassBody(anonymousClass: PsiAnonymousClass): AnonymousClassBody {
-        return AnonymousClassBody(ClassBodyConverter(anonymousClass, converter, false).convertBody(),
+        return AnonymousClassBody(ClassBodyConverter(anonymousClass, converter, isOpenClass = false, isObject = false).convertBody(),
                                   anonymousClass.getBaseClassType().resolve()?.isInterface() ?: false).assignPrototype(anonymousClass)
     }
 

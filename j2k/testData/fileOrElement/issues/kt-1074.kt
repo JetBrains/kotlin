@@ -1,14 +1,12 @@
 package demo
 
-class Test {
-    companion object {
-        fun subListRangeCheck(fromIndex: Int, toIndex: Int, size: Int) {
-            if (fromIndex < 0)
-                throw IndexOutOfBoundsException("fromIndex = " + fromIndex)
-            if (toIndex > size)
-                throw IndexOutOfBoundsException("toIndex = " + toIndex)
-            if (fromIndex > toIndex)
-                throw IllegalArgumentException("fromIndex(" + fromIndex + ") > toIndex(" + toIndex + ")")
-        }
+object Test {
+    fun subListRangeCheck(fromIndex: Int, toIndex: Int, size: Int) {
+        if (fromIndex < 0)
+            throw IndexOutOfBoundsException("fromIndex = " + fromIndex)
+        if (toIndex > size)
+            throw IndexOutOfBoundsException("toIndex = " + toIndex)
+        if (fromIndex > toIndex)
+            throw IllegalArgumentException("fromIndex(" + fromIndex + ") > toIndex(" + toIndex + ")")
     }
 }

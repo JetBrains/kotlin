@@ -18,12 +18,10 @@ class C(val myArg1: Int) {
     }
 }
 
-public class User {
-    companion object {
-        public fun main() {
-            val c1 = C(100, 100, 100)
-            val c2 = C(100, 100)
-            val c3 = C(100)
-        }
+public object User {
+    public fun main() {
+        val c1 = C(100, 100, 100)
+        val c2 = C(100, 100)
+        val c3 = C(100)
     }
 }

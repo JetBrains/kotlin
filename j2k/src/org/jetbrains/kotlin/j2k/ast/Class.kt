@@ -16,7 +16,8 @@
 
 package org.jetbrains.kotlin.j2k.ast
 
-import org.jetbrains.kotlin.j2k.*
+import org.jetbrains.kotlin.j2k.CodeBuilder
+import org.jetbrains.kotlin.j2k.append
 
 open class Class(
         val name: Identifier,
@@ -67,4 +68,15 @@ open class Class(
 
     protected open fun presentationModifiers(): Modifiers
             = if (modifiers.contains(Modifier.ABSTRACT)) modifiers.without(Modifier.OPEN) else modifiers
+}
+
+class Object(
+        name: Identifier,
+        annotations: Annotations,
+        modifiers: Modifiers,
+        body: ClassBody
+) : Class(name, annotations, modifiers, TypeParameterList.Empty, emptyList(), emptyList(), emptyList(), body) {
+
+    override val keyword: String
+        get() = "object"
 }

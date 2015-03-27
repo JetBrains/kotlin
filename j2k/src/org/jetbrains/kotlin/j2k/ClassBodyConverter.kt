@@ -49,14 +49,15 @@ enum class AccessorKind {
 
 class ClassBodyConverter(private val psiClass: PsiClass,
                          private val converter: Converter,
-                         private val isOpenClass: Boolean) {
+                         private val isOpenClass: Boolean,
+                         private val isObject: Boolean) {
     private val membersToRemove = HashSet<PsiMember>()
     private val fieldCorrections = HashMap<PsiField, FieldCorrectionInfo>()
 
     public fun convertBody(): ClassBody {
         processAccessorsToDrop()
 
-        val constructorConverter = if (psiClass.getName() != null)
+        val constructorConverter = if (psiClass.getName() != null && !isObject)
             ConstructorConverter(psiClass, converter, fieldCorrections)
         else
             null
@@ -65,9 +66,10 @@ class ClassBodyConverter(private val psiClass: PsiClass,
         for (element in psiClass.getChildren()) {
             if (element is PsiMember) {
                 if (element is PsiAnnotationMethod) continue // converted in convertAnnotationType()
+                if (isObject && element.isConstructor()) continue // no constructor in object
 
                 val converted = converter.convertMember(element, membersToRemove, constructorConverter)
-                if (converted != null/* && !converted.isEmpty()*/) {
+                if (converted != null) {
                     convertedMembers.put(element, converted)
                 }
             }
@@ -75,6 +77,13 @@ class ClassBodyConverter(private val psiClass: PsiClass,
 
         for (member in membersToRemove) {
             convertedMembers.remove(member)
+        }
+
+        val lBrace = LBrace().assignPrototype(psiClass.getLBrace())
+        val rBrace = RBrace().assignPrototype(psiClass.getRBrace())
+
+        if (isObject) {
+            return ClassBody(null, emptyList(), convertedMembers.values().toList(), emptyList(), lBrace, rBrace)
         }
 
         val useCompanionObject = shouldGenerateCompanionObject(convertedMembers)
@@ -104,9 +113,6 @@ class ClassBodyConverter(private val psiClass: PsiClass,
         ) {
             primaryConstructorSignature = null // no "()" after class name is needed in this case
         }
-
-        val lBrace = LBrace().assignPrototype(psiClass.getLBrace())
-        val rBrace = RBrace().assignPrototype(psiClass.getRBrace())
 
         return ClassBody(primaryConstructorSignature, constructorConverter?.baseClassParams ?: listOf(), members, companionObjectMembers, lBrace, rBrace)
     }

@@ -886,6 +886,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("notUtilityClass.java")
+        public void testNotUtilityClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/notUtilityClass.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("oneStaticFieldOneNonStatic.java")
         public void testOneStaticFieldOneNonStatic() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/oneStaticFieldOneNonStatic.java");
@@ -937,6 +943,24 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
         @TestMetadata("twoStaticMethod.java")
         public void testTwoStaticMethod() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/twoStaticMethod.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("utilityClass1.java")
+        public void testUtilityClass1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/utilityClass1.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("utilityClass2.java")
+        public void testUtilityClass2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/utilityClass2.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("utilityClass3.java")
+        public void testUtilityClass3() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/utilityClass3.java");
             doTest(fileName);
         }
     }
