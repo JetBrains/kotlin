@@ -40,8 +40,8 @@ import org.jetbrains.kotlin.resolve.jvm.JvmAnalyzerFacade
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
-import org.jetbrains.kotlin.serialization.NameSerializationUtil
 import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.serialization.SerializationUtil
 import org.jetbrains.kotlin.utils.recursePostOrder
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -136,7 +136,7 @@ public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
 
         val nameStream = ByteArrayOutputStream()
         val strings = serializer.getStringTable()
-        NameSerializationUtil.serializeStringTable(nameStream, strings.serializeSimpleNames(), strings.serializeQualifiedNames())
+        SerializationUtil.serializeStringTable(nameStream, strings.serializeSimpleNames(), strings.serializeQualifiedNames())
         write(destDir, BuiltInsSerializationUtil.getStringTableFilePath(fqName), nameStream)
     }
 

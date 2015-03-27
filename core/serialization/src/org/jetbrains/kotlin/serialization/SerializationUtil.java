@@ -20,14 +20,41 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver;
 import org.jetbrains.kotlin.utils.UtilsPackage;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public class NameSerializationUtil {
-    private NameSerializationUtil() {
+public class SerializationUtil {
+    private SerializationUtil() {
     }
 
-    public static void serializeNameResolver(@NotNull OutputStream out, @NotNull NameResolver nameResolver) {
+    @NotNull
+    public static byte[] serializeClassData(@NotNull ClassData classData) {
+        try {
+            ByteArrayOutputStream result = new ByteArrayOutputStream();
+            serializeNameResolver(result, classData.getNameResolver());
+            classData.getClassProto().writeTo(result);
+            return result.toByteArray();
+        }
+        catch (IOException e) {
+            throw UtilsPackage.rethrow(e);
+        }
+    }
+
+    @NotNull
+    public static byte[] serializePackageData(@NotNull PackageData packageData) {
+        try {
+            ByteArrayOutputStream result = new ByteArrayOutputStream();
+            serializeNameResolver(result, packageData.getNameResolver());
+            packageData.getPackageProto().writeTo(result);
+            return result.toByteArray();
+        }
+        catch (IOException e) {
+            throw UtilsPackage.rethrow(e);
+        }
+    }
+
+    private static void serializeNameResolver(@NotNull OutputStream out, @NotNull NameResolver nameResolver) {
         serializeStringTable(out, nameResolver.getStringTable(), nameResolver.getQualifiedNameTable());
     }
 
