@@ -162,19 +162,22 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
         val psiSearchHelper = PsiSearchHelper.SERVICE.getInstance(declaration.getProject())
 
         val useScope = declaration.getUseScope()
-        if (!(declaration is JetObjectDeclaration && declaration.isCompanion())) {
-            if (useScope is GlobalSearchScope) {
-                var zeroOccurrences = true
+        if (useScope is GlobalSearchScope) {
+            var zeroOccurrences = true
 
-                for (name in listOf(declaration.getName()) + declaration.getAccessorNames() + declaration.getClassNameForCompanionObject().singletonOrEmptyList()) {
-                    when (psiSearchHelper.isCheapEnoughToSearch(name, useScope, null, null)) {
-                        ZERO_OCCURRENCES -> {} // go on, check other names
-                        FEW_OCCURRENCES -> zeroOccurrences = false
-                        TOO_MANY_OCCURRENCES -> return true // searching usages is too expensive; behave like it is used
-                    }
+            for (name in listOf(declaration.getName()) + declaration.getAccessorNames() + declaration.getClassNameForCompanionObject().singletonOrEmptyList()) {
+                when (psiSearchHelper.isCheapEnoughToSearch(name, useScope, null, null)) {
+                    ZERO_OCCURRENCES -> {} // go on, check other names
+                    FEW_OCCURRENCES -> zeroOccurrences = false
+                    TOO_MANY_OCCURRENCES -> return true // searching usages is too expensive; behave like it is used
                 }
+            }
 
-                if (zeroOccurrences) {
+            if (zeroOccurrences) {
+                if (declaration is JetObjectDeclaration && declaration.isCompanion()) {
+                    // go on: companion object can be used only in containing class
+                }
+                else {
                     return false
                 }
             }
