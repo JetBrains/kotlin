@@ -23,10 +23,14 @@ import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.checkers.KotlinMultiFileTestWithWithJava;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
+import org.jetbrains.kotlin.config.CompilerConfiguration;
+import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.TestJdkKind;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -34,6 +38,17 @@ import java.util.regex.Pattern;
 
 public abstract class AbstractKotlinLightClassTest extends KotlinMultiFileTestWithWithJava<Void, Void> {
     private static final Pattern SUBJECT_FQ_NAME_PATTERN = Pattern.compile("^//\\s*(.*)$", Pattern.MULTILINE);
+
+    @Override
+    @NotNull
+    protected CompilerConfiguration createCompilerConfiguration(File javaFilesDir) {
+        return JetTestUtils.compilerConfigurationForTests(
+                ConfigurationKind.ALL,
+                TestJdkKind.MOCK_JDK,
+                Arrays.asList(JetTestUtils.getAnnotationsJar()),
+                Arrays.asList(javaFilesDir)
+        );
+    }
 
     @NotNull
     @Override

@@ -1655,6 +1655,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib(fileName);
         }
 
+        @TestMetadata("defaultsNotAtEnd.kt")
+        public void testDefaultsNotAtEnd() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmOverloads/defaultsNotAtEnd.kt");
+            doTestWithStdlib(fileName);
+        }
+
         @TestMetadata("doubleParameters.kt")
         public void testDoubleParameters() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmOverloads/doubleParameters.kt");
@@ -1676,6 +1682,18 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
         @TestMetadata("nonDefaultParameter.kt")
         public void testNonDefaultParameter() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmOverloads/nonDefaultParameter.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("primaryConstructor.kt")
+        public void testPrimaryConstructor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmOverloads/primaryConstructor.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("secondaryConstructor.kt")
+        public void testSecondaryConstructor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmOverloads/secondaryConstructor.kt");
             doTestWithStdlib(fileName);
         }
 
