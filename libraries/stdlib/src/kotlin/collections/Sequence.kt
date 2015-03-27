@@ -442,6 +442,7 @@ public class DropWhileSequence<T>(private val sequence: Sequence<T>,
  * A sequence which repeatedly calls the specified [producer] function and returns its return values, until
  * `null` is returned from [producer].
  */
+deprecated("Implementation detail. Use function sequence(nextFunction: () -> T?) instead.")
 public class FunctionSequence<T : Any>(private val producer: () -> T?) : Sequence<T> {
     override fun iterator(): Iterator<T> = object : Iterator<T> {
         var nextState: Int = -1 // -1 for unknown, 0 for done, 1 for continue
@@ -478,11 +479,42 @@ public class FunctionSequence<T : Any>(private val producer: () -> T?) : Sequenc
     }
 }
 
+private class GeneratorSequence<T: Any>(private val getInitialValue: () -> T?, private val getNextValue: (T) -> T?): Sequence<T> {
+    override fun iterator(): Iterator<T> = object : Iterator<T> {
+        var nextItem: T? = getInitialValue()
+        var nextState: Int = if (nextItem == null) 0 else 1 // -1 for unknown, 0 for done, 1 for continue
+
+        private fun calcNext() {
+            nextItem = getNextValue(nextItem!!)
+            nextState = if (nextItem == null) 0 else 1
+        }
+
+        override fun next(): T {
+            if (nextState == -1)
+                calcNext()
+            if (nextState == 0)
+                throw NoSuchElementException()
+            val result = nextItem as T
+            // Clean next to avoid keeping reference on yielded instance
+            // need to keep state
+            // nextItem = null
+            nextState = -1
+            return result
+        }
+
+        override fun hasNext(): Boolean {
+            if (nextState == -1)
+                calcNext()
+            return nextState == 1
+        }
+    }
+}
+
 /**
  * Returns a sequence which invokes the function to calculate the next value on each iteration until the function returns `null`.
  */
 public fun <T : Any> sequence(nextFunction: () -> T?): Sequence<T> {
-    return FunctionSequence(nextFunction)
+    return GeneratorSequence(nextFunction, { nextFunction() })
 }
 
 deprecated("Use sequence() instead")
@@ -490,10 +522,20 @@ public fun <T : Any> stream(nextFunction: () -> T?): Sequence<T> = sequence(next
 
 /**
  * Returns a sequence which invokes the function to calculate the next value based on the previous one on each iteration
- * until the function returns `null`.
+ * until the function returns `null`. The sequence starts with the specified [initialValue].
+ *
+ * The sequence can be iterated multiple times, each time starting with the [initialValue].
  */
 public /*inline*/ fun <T : Any> sequence(initialValue: T, nextFunction: (T) -> T?): Sequence<T> =
-        sequence(nextFunction.toGenerator(initialValue))
+        GeneratorSequence({ initialValue }, nextFunction)
+
+/**
+ * Returns a sequence which invokes the function [initialValueFunction] to get the first item and then
+ * [nextFunction] to calculate the next value based on the previous one on each iteration
+ * until the function returns `null`. The sequence starts with the value returned by [initialValueFunction].
+ */
+public fun <T: Any> sequence(initialValueFunction: () -> T?, nextFunction: (T) -> T?): Sequence<T> =
+        GeneratorSequence(initialValueFunction, nextFunction)
 
 deprecated("Use sequence() instead")
 public /*inline*/ fun <T : Any> stream(initialValue: T, nextFunction: (T) -> T?): Sequence<T> = sequence(initialValue, nextFunction)
