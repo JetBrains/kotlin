@@ -20,7 +20,10 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.resolve.jvm.kotlinSignature.CollectionClassMapping
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.resolve.scopes.JetScope
 import java.util.LinkedHashSet
 import org.jetbrains.kotlin.types.typeUtil.substitute
 
@@ -86,4 +89,20 @@ public fun JetType.nullability(): TypeNullability {
         TypeUtils.isNullableType(this) -> TypeNullability.NULLABLE
         else -> TypeNullability.NOT_NULL
     }
+}
+
+fun JetType.isResolvableInScope(scope: JetScope?, checkTypeParameters: Boolean): Boolean {
+    if (canBeReferencedViaImport()) return true
+
+    val descriptor = getConstructor().getDeclarationDescriptor()
+    if (descriptor == null || descriptor.getName().isSpecial()) return false
+    if (!checkTypeParameters && descriptor is TypeParameterDescriptor) return true
+
+    return scope != null && scope.getClassifier(descriptor.getName()) == descriptor
+}
+
+public fun JetType.approximateWithResolvableType(scope: JetScope?, checkTypeParameters: Boolean): JetType {
+    if (isError() || isResolvableInScope(scope, checkTypeParameters)) return this
+    return supertypes().firstOrNull { it.isResolvableInScope(scope, checkTypeParameters) }
+           ?: KotlinBuiltIns.getInstance().getAnyType()
 }

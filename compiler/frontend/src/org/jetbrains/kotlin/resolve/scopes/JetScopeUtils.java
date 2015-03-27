@@ -20,15 +20,12 @@ import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.psi.JetClassBody;
-import org.jetbrains.kotlin.psi.JetClassOrObject;
-import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.TraceBasedRedeclarationHandler;
@@ -158,12 +155,12 @@ public final class JetScopeUtils {
     }
 
     @Nullable
-    public static JetScope getResolutionScope(@NotNull JetExpression expression, @NotNull AnalysisResult analysisResult) {
-        PsiElement parent = expression.getParent();
+    public static JetScope getResolutionScope(@NotNull PsiElement element, @NotNull BindingContext context) {
+        PsiElement parent = element.getParent();
 
         if (parent instanceof JetClassBody) {
             JetClassOrObject classOrObject = (JetClassOrObject) parent.getParent();
-            ClassDescriptor classDescriptor = analysisResult.getBindingContext().get(BindingContext.CLASS, classOrObject);
+            ClassDescriptor classDescriptor = context.get(BindingContext.CLASS, classOrObject);
             if (classDescriptor instanceof ClassDescriptorWithResolutionScopes) {
                 return ((ClassDescriptorWithResolutionScopes) classDescriptor).getScopeForMemberDeclarationResolution();
             }
@@ -171,10 +168,14 @@ public final class JetScopeUtils {
         }
 
         if (parent instanceof JetFile) {
-            PackageViewDescriptor packageView = analysisResult.getModuleDescriptor().getPackage(((JetFile) parent).getPackageFqName());
+            PackageFragmentDescriptor packageFragment = context.get(BindingContext.FILE_TO_PACKAGE_FRAGMENT, (JetFile) parent);
+            if (packageFragment == null) return null;
+
+            PackageViewDescriptor packageView = packageFragment.getContainingDeclaration().getPackage(((JetFile) parent).getPackageFqName());
             return packageView != null ? packageView.getMemberScope() : null;
         }
 
-        return analysisResult.getBindingContext().get(BindingContext.RESOLUTION_SCOPE, expression);
+        JetExpression expression = PsiTreeUtil.getParentOfType(element, JetExpression.class, false);
+        return expression != null ? context.get(BindingContext.RESOLUTION_SCOPE, expression) : null;
     }
 }

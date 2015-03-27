@@ -1,1 +1,1 @@
-Cannot extract method since following types are not denotable in the target scope:  &lt;no name provided&gt;
+Following declarations are used outside of selected code fragment:  override fun call(): Int

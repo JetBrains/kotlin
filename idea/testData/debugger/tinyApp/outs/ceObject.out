@@ -3,6 +3,7 @@ LineBreakpoint created at ceObject.kt:5
 Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 ceObject.kt:5
 Compile bytecode for (object: T {}).test()
+Compile bytecode for (object: T { fun a() = 1 }).a()
 Compile bytecode for object: T {}
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 

@@ -1897,9 +1897,39 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                     doExtractFunctionTest(fileName);
                 }
 
+                @TestMetadata("anonymousObjectWithCall.kt")
+                public void testAnonymousObjectWithCall() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/nonDenotableTypes/anonymousObjectWithCall.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
                 @TestMetadata("localClass.kt")
                 public void testLocalClass() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/nonDenotableTypes/localClass.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
+                @TestMetadata("localClassWithSuperclass.kt")
+                public void testLocalClassWithSuperclass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/nonDenotableTypes/localClassWithSuperclass.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
+                @TestMetadata("localClassWithSuperclassParameter.kt")
+                public void testLocalClassWithSuperclassParameter() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/nonDenotableTypes/localClassWithSuperclassParameter.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
+                @TestMetadata("localClassWithSuperclassParameterInLocalFun.kt")
+                public void testLocalClassWithSuperclassParameterInLocalFun() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/nonDenotableTypes/localClassWithSuperclassParameterInLocalFun.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
+                @TestMetadata("localClassWithSuperclassParameterNoApproximation.kt")
+                public void testLocalClassWithSuperclassParameterNoApproximation() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/nonDenotableTypes/localClassWithSuperclassParameterNoApproximation.kt");
                     doExtractFunctionTest(fileName);
                 }
             }

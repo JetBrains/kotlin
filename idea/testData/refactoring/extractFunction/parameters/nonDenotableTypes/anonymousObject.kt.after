@@ -1,0 +1,7 @@
+trait T
+
+fun foo(): T {
+    return t()
+}
+
+private fun t() = object : T() {}

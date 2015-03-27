@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.idea.imports.importableFqNameSafe
 import org.jetbrains.kotlin.idea.refactoring.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AnalysisResult.ErrorMessage
@@ -52,6 +51,8 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputVa
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.ParameterUpdate
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValueBoxer.AsList
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.approximateWithResolvableType
+import org.jetbrains.kotlin.idea.util.isResolvableInScope
 import org.jetbrains.kotlin.idea.util.makeNullable
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
@@ -63,6 +64,8 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
+import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.JetScopeUtils
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
 import org.jetbrains.kotlin.types.*
@@ -127,7 +130,9 @@ private fun List<Instruction>.getExitPoints(): List<Instruction> =
 
 private fun List<Instruction>.getResultTypeAndExpressions(
         bindingContext: BindingContext,
-        options: ExtractionOptions): Pair<JetType, List<JetExpression>> {
+        targetScope: JetScope?,
+        options: ExtractionOptions
+): Pair<JetType, List<JetExpression>> {
     fun instructionToExpression(instruction: Instruction, unwrapReturn: Boolean): JetExpression? {
         return when (instruction) {
             is ReturnValueInstruction ->
@@ -148,7 +153,9 @@ private fun List<Instruction>.getResultTypeAndExpressions(
     }
 
     val resultTypes = map(::instructionToType).filterNotNull()
-    val resultType = if (resultTypes.isNotEmpty()) CommonSupertypes.commonSupertype(resultTypes) else DEFAULT_RETURN_TYPE
+    var commonSupertype = if (resultTypes.isNotEmpty()) CommonSupertypes.commonSupertype(resultTypes) else DEFAULT_RETURN_TYPE
+    val resultType = if (options.allowSpecialClassNames) commonSupertype else commonSupertype.approximateWithResolvableType(targetScope, false)
+
     val expressions = map { instructionToExpression(it, false) }.filterNotNull()
 
     return resultType to expressions
@@ -217,6 +224,7 @@ private fun ExtractionData.analyzeControlFlow(
         bindingContext: BindingContext,
         modifiedVarDescriptors: Map<VariableDescriptor, List<JetExpression>>,
         options: ExtractionOptions,
+        targetScope: JetScope?,
         parameters: Set<Parameter>
 ): Pair<ControlFlow, ErrorMessage?> {
     val exitPoints = localInstructions.getExitPoints()
@@ -269,8 +277,8 @@ private fun ExtractionData.analyzeControlFlow(
     val nonLocallyUsedDeclarations = getLocalDeclarationsWithNonLocalUsages(pseudocode, localInstructions, bindingContext)
     val (declarationsToCopy, declarationsToReport) = nonLocallyUsedDeclarations.partition { it is JetProperty && it.isLocal() }
 
-    val (typeOfDefaultFlow, defaultResultExpressions) = defaultExits.getResultTypeAndExpressions(bindingContext, options)
-    val (returnValueType, valuedReturnExpressions) = valuedReturnExits.getResultTypeAndExpressions(bindingContext, options)
+    val (typeOfDefaultFlow, defaultResultExpressions) = defaultExits.getResultTypeAndExpressions(bindingContext, targetScope, options)
+    val (returnValueType, valuedReturnExpressions) = valuedReturnExits.getResultTypeAndExpressions(bindingContext, targetScope, options)
 
     val emptyControlFlow =
             ControlFlow(Collections.emptyList(), { OutputValueBoxer.AsTuple(it, module) }, declarationsToCopy)
@@ -421,14 +429,14 @@ fun TypeParameter.collectReferencedTypes(bindingContext: BindingContext): List<J
             .filterNotNull()
 }
 
-private fun JetType.isExtractable(): Boolean {
+private fun JetType.isExtractable(targetScope: JetScope?): Boolean {
     return collectReferencedTypes(true).fold(true) { (extractable, typeToCheck) ->
         val parameterTypeDescriptor = typeToCheck.getConstructor().getDeclarationDescriptor() as? TypeParameterDescriptor
         val typeParameter = parameterTypeDescriptor?.let {
             DescriptorToSourceUtils.descriptorToDeclaration(it)
         } as? JetTypeParameter
 
-        extractable && (typeParameter != null || typeToCheck.canBeReferencedViaImport())
+        extractable && (typeParameter != null || typeToCheck.isResolvableInScope(targetScope, false))
     }
 }
 
@@ -436,6 +444,7 @@ private fun JetType.processTypeIfExtractable(
         typeParameters: MutableSet<TypeParameter>,
         nonDenotableTypes: MutableSet<JetType>,
         options: ExtractionOptions,
+        targetScope: JetScope?,
         processTypeArguments: Boolean = true
 ): Boolean {
     return collectReferencedTypes(processTypeArguments).fold(true) { (extractable, typeToCheck) ->
@@ -450,7 +459,7 @@ private fun JetType.processTypeIfExtractable(
                 extractable
             }
 
-            typeToCheck.canBeReferencedViaImport() ->
+            typeToCheck.isResolvableInScope(targetScope, false) ->
                 extractable
 
             options.allowSpecialClassNames && typeToCheck.isSpecial() ->
@@ -470,7 +479,8 @@ private fun JetType.processTypeIfExtractable(
 private class MutableParameter(
         override val argumentText: String,
         override val originalDescriptor: DeclarationDescriptor,
-        override val receiverCandidate: Boolean
+        override val receiverCandidate: Boolean,
+        private val targetScope: JetScope?
 ): Parameter {
     // All modifications happen in the same thread
     private var writable: Boolean = true
@@ -525,7 +535,7 @@ private class MutableParameter(
 
     override fun getParameterTypeCandidates(allowSpecialClassNames: Boolean): List<JetType> {
             return if (!allowSpecialClassNames) {
-                parameterTypeCandidates.filter { it.isExtractable() }
+                parameterTypeCandidates.filter { it.isExtractable(targetScope) }
             } else {
                 parameterTypeCandidates
             }
@@ -560,6 +570,7 @@ private fun ExtractionData.inferParametersInfo(
         commonParent: PsiElement,
         pseudocode: Pseudocode,
         bindingContext: BindingContext,
+        targetScope: JetScope?,
         modifiedVarDescriptors: Set<VariableDescriptor>
 ): ParametersInfo {
     val info = ParametersInfo()
@@ -610,7 +621,7 @@ private fun ExtractionData.inferParametersInfo(
 
         if (referencedClassDescriptor != null) {
             if (!referencedClassDescriptor.getDefaultType().processTypeIfExtractable(
-                    info.typeParameters, info.nonDenotableTypes, options, false
+                    info.typeParameters, info.nonDenotableTypes, options, targetScope, false
             )) continue
 
             info.replacementMap[refInfo.offsetInBody] = FqNameReplacement(originalDescriptor.importableFqNameSafe)
@@ -642,7 +653,7 @@ private fun ExtractionData.inferParametersInfo(
                             else
                                 (thisExpr ?: ref).getText() ?: throw AssertionError("'this' reference shouldn't be empty: code fragment = $codeFragmentText")
 
-                    MutableParameter(argumentText, descriptorToExtract, extractThis)
+                    MutableParameter(argumentText, descriptorToExtract, extractThis, targetScope)
                 }
 
                 if (!extractThis) {
@@ -681,7 +692,9 @@ private fun ExtractionData.inferParametersInfo(
     )
 
     for ((descriptorToExtract, parameter) in extractedDescriptorToParameter) {
-        if (!parameter.getParameterType(options.allowSpecialClassNames).processTypeIfExtractable(info.typeParameters, info.nonDenotableTypes, options)) continue
+        if (!parameter
+                .getParameterType(options.allowSpecialClassNames)
+                .processTypeIfExtractable(info.typeParameters, info.nonDenotableTypes, options, targetScope)) continue
 
         with (parameter) {
             if (currentName == null) {
@@ -693,7 +706,7 @@ private fun ExtractionData.inferParametersInfo(
     }
 
     for (typeToCheck in info.typeParameters.flatMapTo(HashSet<JetType>()) { it.collectReferencedTypes(bindingContext) }) {
-        typeToCheck.processTypeIfExtractable(info.typeParameters, info.nonDenotableTypes, options)
+        typeToCheck.processTypeIfExtractable(info.typeParameters, info.nonDenotableTypes, options, targetScope)
     }
 
 
@@ -765,6 +778,8 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
     val bindingContext = commonParent.getContextForContainingDeclarationBody()
     if (bindingContext == null) return noContainerError
 
+    val targetScope = JetScopeUtils.getResolutionScope(targetSibling, bindingContext)
+
     val pseudocodeDeclaration =
             PsiTreeUtil.getParentOfType(commonParent, javaClass<JetDeclarationWithBody>(), javaClass<JetClassOrObject>())
             ?: commonParent.getNonStrictParentOfType<JetProperty>()
@@ -786,7 +801,7 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
 
     val modifiedVarDescriptorsWithExpressions = localInstructions.getModifiedVarDescriptors(bindingContext)
 
-    val paramsInfo = inferParametersInfo(commonParent, pseudocode, bindingContext, modifiedVarDescriptorsWithExpressions.keySet())
+    val paramsInfo = inferParametersInfo(commonParent, pseudocode, bindingContext, targetScope, modifiedVarDescriptorsWithExpressions.keySet())
     if (paramsInfo.errorMessage != null) {
         return AnalysisResult(null, Status.CRITICAL_ERROR, listOf(paramsInfo.errorMessage!!))
     }
@@ -803,12 +818,13 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
                     bindingContext,
                     modifiedVarDescriptorsForControlFlow,
                     options,
+                    targetScope,
                     paramsInfo.parameters
             )
     controlFlowMessage?.let { messages.add(it) }
 
     val returnType = controlFlow.outputValueBoxer.returnType
-    returnType.processTypeIfExtractable(paramsInfo.typeParameters, paramsInfo.nonDenotableTypes, options)
+    returnType.processTypeIfExtractable(paramsInfo.typeParameters, paramsInfo.nonDenotableTypes, options, targetScope)
 
     if (paramsInfo.nonDenotableTypes.isNotEmpty()) {
         val typeStr = paramsInfo.nonDenotableTypes.map {it.renderForMessage()}.sort()
