@@ -30,6 +30,7 @@ public object KotlinJavascriptMetadataUtils {
     private val LOG = Logger.getInstance(javaClass<KotlinJavascriptMetadataUtils>())
 
     public val JS_EXT: String = ".js"
+    public val META_JS_SUFFIX: String = ".meta.js"
     private val KOTLIN_JAVASCRIPT_METHOD_NAME = "kotlin_module_metadata"
     private val KOTLIN_JAVASCRIPT_METHOD_NAME_PATTERN = "\\.kotlin_module_metadata\\(".toRegex()
     /**
@@ -41,11 +42,7 @@ public object KotlinJavascriptMetadataUtils {
     platformStatic
     public fun hasMetadata(text: String): Boolean = METADATA_PATTERN.matcher(text).find()
 
-    public fun writeMetadata(moduleName: String, content: ByteArray, metaFile: File) {
-        FileUtil.writeToFile(metaFile, writeMetadataToString(moduleName, content))
-    }
-
-    public fun writeMetadataToString(moduleName: String, content: ByteArray): String =
+    public fun formatMetadataAsString(moduleName: String, content: ByteArray): String =
         "// Kotlin.$KOTLIN_JAVASCRIPT_METHOD_NAME($ABI_VERSION, \"$moduleName\", \"${printBase64Binary(content)}\");\n"
 
     platformStatic

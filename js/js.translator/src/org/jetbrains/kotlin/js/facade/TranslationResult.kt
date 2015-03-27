@@ -31,8 +31,8 @@ import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder
 import org.jetbrains.kotlin.js.sourceMap.SourceMapBuilder
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
+import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.utils.fileUtils.readTextOrEmpty
-import org.jetbrains.kotlin.utils.serializer.KotlinJavaScriptSerializer
 import java.io.File
 import java.util.ArrayList
 
@@ -73,7 +73,7 @@ public abstract class TranslationResult protected (public val diagnostics: Diagn
 
             config.getMetaInfo()?.let {
                 val metaFile = File(it)
-                val metaFileContent = KotlinJavaScriptSerializer.metadataAsString(config.getModuleId(), moduleDescriptor)
+                val metaFileContent = KotlinJavascriptSerializationUtil.metadataAsString(config.getModuleId(), moduleDescriptor)
                 val sourceFilesForMetaFile = ArrayList<File>(sourceFiles)
                 val jsMetaFile = SimpleOutputFile(sourceFilesForMetaFile, metaFile.getName(), metaFileContent)
                 outputFiles.add(jsMetaFile)
