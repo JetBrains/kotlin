@@ -2908,15 +2908,33 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("double.java")
+        public void testDouble() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/literalExpression/double.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("endsWithDFL.java")
         public void testEndsWithDFL() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/literalExpression/endsWithDFL.java");
             doTest(fileName);
         }
 
+        @TestMetadata("float.java")
+        public void testFloat() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/literalExpression/float.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("hex.java")
         public void testHex() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/literalExpression/hex.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("long.java")
+        public void testLong() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/literalExpression/long.java");
             doTest(fileName);
         }
 

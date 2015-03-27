@@ -39,7 +39,7 @@ private fun Expression.precedence(): Int? {
     return when(this) {
         is QualifiedExpression, is MethodCallExpression, is ArrayAccessExpression, is PostfixOperator, is BangBangExpression, is StarExpression -> 0
 
-        is PrefixOperator -> 1
+        is PrefixExpression -> 1
 
         is TypeCastExpression -> 2
 

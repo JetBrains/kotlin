@@ -74,11 +74,12 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
     }
 
     override fun visitArrayInitializerExpression(expression: PsiArrayInitializerExpression) {
-        val expressionType = typeConverter.convertType(expression.getType())
+        val arrayType = expression.getType()
+        val componentType = (arrayType as? PsiArrayType)?.getComponentType()
+        val expressionType = typeConverter.convertType(arrayType)
         assert(expressionType is ArrayType) { "Array initializer must have array type: expressionType = $expressionType expression = $expression" }
         result = createArrayInitializerExpression(expressionType as ArrayType,
-                                                  codeConverter.convertExpressions(expression.getInitializers()),
-                                                  needExplicitType = true/*TODO: it's often redundant*/)
+                                                  expression.getInitializers().map { codeConverter.convertExpression(it, componentType) })
     }
 
     override fun visitAssignmentExpression(expression: PsiAssignmentExpression) {
@@ -104,17 +105,13 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
     }
 
     override fun visitBinaryExpression(expression: PsiBinaryExpression) {
-        val operandsExpectedType = when (expression.getOperationTokenType()) {
-            JavaTokenType.ANDAND, JavaTokenType.OROR -> PsiType.BOOLEAN
+        var lhs = codeConverter.convertExpression(expression.getLOperand(), null)
+        var rhs = codeConverter.convertExpression(expression.getROperand(), null)
 
-            JavaTokenType.PLUS, JavaTokenType.MINUS, JavaTokenType.ASTERISK,
-            JavaTokenType.DIV, JavaTokenType.PERC, JavaTokenType.LTLT, JavaTokenType.GTGT,
-            JavaTokenType.GTGTGT -> expression.getType()
-
-            else -> null
+        if (expression.getOperationTokenType() in NON_NULL_OPERAND_OPS) {
+            lhs = BangBangExpression.surroundIfNullable(lhs)
+            rhs = BangBangExpression.surroundIfNullable(rhs)
         }
-        val lhs = codeConverter.convertExpression(expression.getLOperand(), operandsExpectedType)
-        val rhs = codeConverter.convertExpression(expression.getROperand(), operandsExpectedType)
         if (expression.getOperationTokenType() == JavaTokenType.GTGTGT) {
             result = MethodCallExpression.buildNotNull(lhs, "ushr", listOf(rhs))
         }
@@ -122,6 +119,18 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
             result = BinaryExpression(lhs, rhs, getOperatorString(expression.getOperationSign().getTokenType()))
         }
     }
+
+    private val NON_NULL_OPERAND_OPS = setOf(
+            JavaTokenType.ANDAND,
+            JavaTokenType.OROR,
+            JavaTokenType.PLUS,
+            JavaTokenType.MINUS,
+            JavaTokenType.ASTERISK,
+            JavaTokenType.DIV,
+            JavaTokenType.PERC,
+            JavaTokenType.LTLT,
+            JavaTokenType.GTGT,
+            JavaTokenType.GTGTGT)
 
     override fun visitClassObjectAccessExpression(expression: PsiClassObjectAccessExpression) {
         val operand = expression.getOperand()
@@ -173,8 +182,8 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
         var text = expression.getText()!!
         val type = expression.getType()
         if (type != null) {
-            val canonicalTypeStr = type.getCanonicalText()
-            if (canonicalTypeStr == "double" || canonicalTypeStr == JAVA_LANG_DOUBLE) {
+            val typeStr = type.getCanonicalText()
+            if (typeStr == "double") {
                 text = text.replace("D", "").replace("d", "")
                 if (!text.contains(".")) {
                     text += ".0"
@@ -182,15 +191,15 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
 
             }
 
-            if (canonicalTypeStr == "float" || canonicalTypeStr == JAVA_LANG_FLOAT) {
-                text = text.replace("F", "").replace("f", "") + "." + OperatorConventions.FLOAT + "()"
+            if (typeStr == "float") {
+                text = text.replace("F", "f")
             }
 
-            if (canonicalTypeStr == "long" || canonicalTypeStr == JAVA_LANG_LONG) {
-                text = text.replace("L", "").replace("l", "")
+            if (typeStr == "long") {
+                text = text.replace("l", "L")
             }
 
-            if (canonicalTypeStr == "int" || canonicalTypeStr == JAVA_LANG_INTEGER) {
+            if (typeStr == "int") {
                 text = if (value != null) value.toString() else text
             }
         }
@@ -341,7 +350,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
             result = BinaryExpression(operand.left, operand.right, "!=")
         }
         else {
-            result = PrefixOperator(getOperatorString(token), operand)
+            result = PrefixExpression(getOperatorString(token), operand)
         }
     }
 
@@ -480,23 +489,6 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
             JavaTokenType.MINUSMINUS -> "--"
             else -> "" //System.out.println("UNSUPPORTED TOKEN TYPE: " + tokenType?.toString())
         }
-    }
-
-    protected fun getClassName(expression: PsiExpression): String {
-        var context = expression.getContext()
-        while (context != null) {
-            val _context = context!!
-            if (_context is PsiClass) {
-                val identifier = _context.getNameIdentifier()
-                if (identifier != null) {
-                    return identifier.getText()!!
-                }
-
-            }
-
-            context = _context.getContext()
-        }
-        return ""
     }
 
     companion object {

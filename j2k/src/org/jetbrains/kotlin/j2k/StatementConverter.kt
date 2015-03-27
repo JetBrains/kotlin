@@ -125,7 +125,7 @@ class DefaultStatementConverter : JavaElementVisitor(), StatementConverter {
 
     override fun visitForeachStatement(statement: PsiForeachStatement) {
         val iteratorExpr = codeConverter.convertExpression(statement.getIteratedValue())
-        val iterator = if (iteratorExpr.isNullable) BangBangExpression(iteratorExpr).assignNoPrototype() else iteratorExpr
+        val iterator = BangBangExpression.surroundIfNullable(iteratorExpr)
         val iterationParameter = statement.getIterationParameter()
         result = ForeachStatement(iterationParameter.declarationIdentifier(),
                                   if (codeConverter.settings.specifyLocalVariableTypeByDefault) codeConverter.typeConverter.convertVariableType(iterationParameter) else null,
