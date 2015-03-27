@@ -16,11 +16,11 @@
 
 package org.jetbrains.kotlin.js.test
 
-import org.jetbrains.kotlin.js.JavaScript
 import org.jetbrains.kotlin.js.config.EcmaVersion
 import org.jetbrains.kotlin.js.facade.MainCallParameters
 import org.jetbrains.kotlin.js.test.rhino.RhinoFunctionResultChecker
 import org.jetbrains.kotlin.js.test.utils.JsTestUtils.getAllFilesInDir
+import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import java.io.File
 import java.util.ArrayList
 import java.util.LinkedHashMap
@@ -53,14 +53,13 @@ public abstract class MultipleModulesTranslationTest(main: String) : BasicTest(m
         val fullFilePaths = getAllFilesInDir(pathToDir + File.separator + moduleName)
         val libraries = ArrayList<String>()
         for (dependencyName in dependencies) {
-            libraries.add(getMetaInfo(getModuleDirectoryName(dirName, dependencyName)))
+            libraries.add(getMetaFileOutputPath(getModuleDirectoryName(dirName, dependencyName)))
         }
         generateJavaScriptFiles(fullFilePaths, moduleDirectoryName, MainCallParameters.noCall(), BasicTest.DEFAULT_ECMA_VERSIONS, moduleName, libraries)
     }
 
-    override fun getMetaInfo(moduleId: String): String? {
-        return getOutputPath() + moduleId + ".meta" + JavaScript.DOT_EXTENSION
-    }
+    override fun getMetaFileOutputPath(moduleId: String): String? =
+        getOutputPath() + moduleId + KotlinJavascriptMetadataUtils.META_JS_SUFFIX
 
     override fun additionalJsFiles(ecmaVersion: EcmaVersion): List<String> {
         val result = super.additionalJsFiles(ecmaVersion)

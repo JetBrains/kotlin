@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.idea.PluginTestCaseBase;
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
 import org.jetbrains.kotlin.js.config.Config;
 import org.jetbrains.kotlin.js.config.EcmaVersion;
-import org.jetbrains.kotlin.js.config.LibrarySourcesConfigWithCaching;
+import org.jetbrains.kotlin.js.config.LibrarySourcesConfig;
 import org.jetbrains.kotlin.js.resolve.diagnostics.ErrorsJs;
 import org.jetbrains.kotlin.psi.JetFile;
 
@@ -61,11 +61,9 @@ public abstract class AbstractDiagnosticMessageJsTest extends AbstractDiagnostic
 
     @NotNull
     private Config getConfig() {
-        return new LibrarySourcesConfigWithCaching(getProject(),
-                                                   "testModule",
-                                                   EcmaVersion.defaultVersion(),
-                                                   /* sourceMap = */ false,
-                                                   /* inlineEnabled = */ false,
-                                                   /* isUnitTestMode = */ true);
+        return new LibrarySourcesConfig.Builder(getProject(), "testModule", LibrarySourcesConfig.JS_STDLIB)
+                .inlineEnabled(false)
+                .isUnitTestConfig(true)
+                .build();
     }
 }
