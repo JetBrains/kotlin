@@ -801,15 +801,18 @@ class FilesTest {
             if (restricted.setReadable(false)) {
                 if (File(basedir, "7.txt").setReadable(false)) {
                     basedir.deleteRecursively()
+                    restricted.setReadable(true)
+                    File(basedir, "7.txt").setReadable(true)
                     var i = 0
                     for (file in basedir.walkTopDown()) {
                         i++
                     }
-                    assertEquals(7, i)
+                    assertEquals(6, i)
                 }
             }
         } finally {
             restricted.setReadable(true)
+            File(basedir, "7.txt").setReadable(true)
             basedir.deleteRecursively()
         }
     }
