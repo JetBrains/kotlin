@@ -31,6 +31,7 @@ public object KotlinJavascriptMetadataUtils {
 
     public val JS_EXT: String = ".js"
     private val KOTLIN_JAVASCRIPT_METHOD_NAME = "kotlin_module_metadata"
+    private val KOTLIN_JAVASCRIPT_METHOD_NAME_PATTERN = "\\.kotlin_module_metadata\\(".toRegex()
     /**
      * Matches string like <name>.kotlin_module_metadata(<abi version>, <module name>, <base64 data>)
      */
@@ -68,6 +69,9 @@ public object KotlinJavascriptMetadataUtils {
     public fun loadMetadata(path: String): List<KotlinJavascriptMetadata> = loadMetadata(File(path))
 
     private fun parseMetadata(text: String, path: String, metadataList: MutableList<KotlinJavascriptMetadata>) {
+        // Check for literal pattern first in order to reduce time for large files without metadata
+        if (!KOTLIN_JAVASCRIPT_METHOD_NAME_PATTERN.matcher(text).find()) return
+
         val matcher = METADATA_PATTERN.matcher(text)
         while (matcher.find()) {
             var abiVersion = Integer.parseInt(matcher.group(1));
