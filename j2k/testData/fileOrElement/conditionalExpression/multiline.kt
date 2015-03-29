@@ -1,6 +1,6 @@
 fun foo(b: Boolean) {
     if (b)
-        System.out.println("true")
+        println("true")
     else
-        System.out.println("false")
+        println("false")
 }

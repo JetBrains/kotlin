@@ -8,7 +8,7 @@ public object NonDefault {
             2 -> valueString = "TWO"
             3 -> valueString = "THREE"
         }
-        System.out.println(valueString)
+        println(valueString)
     }
 }
 

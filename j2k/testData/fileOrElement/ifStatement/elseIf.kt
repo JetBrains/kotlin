@@ -1,14 +1,14 @@
 fun foo() {
     if (a)
-        System.out.println("a")
+        println("a")
     else if (b)
-        System.out.println("b")
+        println("b")
     else
-        System.out.println("else")
+        println("else")
 
     if (c) {
-        System.out.println("c")
+        println("c")
     } else if (d) {
-        System.out.println("d")
+        println("d")
     }
 }

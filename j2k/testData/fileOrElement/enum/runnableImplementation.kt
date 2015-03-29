@@ -6,6 +6,6 @@ enum class Color : Runnable {
     BLUE
 
     override fun run() {
-        System.out.println("name()=" + name() + ", toString()=" + toString())
+        println("name()=" + name() + ", toString()=" + toString())
     }
 }

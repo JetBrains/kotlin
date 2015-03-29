@@ -5,5 +5,5 @@ public fun foo(list: List<String>) {
         array[i] = i
     }
 
-    for (s: String in list) System.out.print(s)
+    for (s: String in list) print(s)
 }

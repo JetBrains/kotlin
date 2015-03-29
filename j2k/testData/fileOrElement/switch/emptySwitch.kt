@@ -6,7 +6,7 @@ public object NonDefault {
         when (value) {
 
         }
-        System.out.println(valueString)
+        println(valueString)
     }
 }
 

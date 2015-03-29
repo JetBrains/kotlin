@@ -3,7 +3,7 @@ class A {
 
     fun foo() {
         for (e in list!!) {
-            System.out.println(e)
+            println(e)
         }
     }
 }

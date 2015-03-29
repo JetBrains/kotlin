@@ -9,7 +9,7 @@ public class Test(str: String?) {
     }
 
     public fun sout(str: String?) {
-        System.out.println(str)
+        println(str)
     }
 
     public fun dummy(str: String?): String? {

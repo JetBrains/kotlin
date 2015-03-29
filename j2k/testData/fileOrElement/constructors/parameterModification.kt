@@ -6,7 +6,7 @@ class C(arg1: Int, arg2: Int = 0, arg3: Int = 0) {
         var arg1 = arg1
         var arg3 = arg3
         arg1++
-        System.out.print(arg1 + arg2)
+        print(arg1 + arg2)
         field = arg3
         arg3++
     }

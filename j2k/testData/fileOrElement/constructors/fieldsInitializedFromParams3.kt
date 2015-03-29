@@ -4,7 +4,7 @@ class C(p: Int) {
     init {
         var p = p
         this.p = p
-        System.out.println(p++)
-        System.out.println(p)
+        println(p++)
+        println(p)
     }
 }

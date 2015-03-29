@@ -4,17 +4,17 @@ public object C {
             1 -> {
                 run {
                     val a = 1
-                    System.out.print("1")
+                    print("1")
                 }
                 run {
                     val a = 2
-                    System.out.print("2")
+                    print("2")
                 }
             }
 
             2 -> {
                 val a = 2
-                System.out.print("2")
+                print("2")
             }
         }
     }

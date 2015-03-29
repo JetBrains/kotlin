@@ -2,7 +2,7 @@ package demo
 
 object Program {
     public fun main(args: Array<String>) {
-        System.out.println("Halo!")
+        println("Halo!")
     }
 }
 

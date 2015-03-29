@@ -4,12 +4,12 @@ class Test {
         res = res and false
         res = res or false
         res = res xor false
-        System.out.println(true and false)
-        System.out.println(true or false)
-        System.out.println(true xor false)
-        System.out.println(!true)
+        println(true and false)
+        println(true or false)
+        println(true xor false)
+        println(!true)
 
-        System.out.println(true && false)
-        System.out.println(true || false)
+        println(true && false)
+        println(true || false)
     }
 }

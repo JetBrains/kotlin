@@ -3064,6 +3064,12 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("systemOut.java")
+        public void testSystemOut() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/methodCallExpression/systemOut.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("vararg1.java")
         public void testVararg1() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/methodCallExpression/vararg1.java");

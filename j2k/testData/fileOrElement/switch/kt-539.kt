@@ -20,7 +20,7 @@ public object SwitchDemo {
             12 -> monthString = "December"
             else -> monthString = "Invalid month"
         }
-        System.out.println(monthString)
+        println(monthString)
     }
 }
 

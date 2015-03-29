@@ -12,7 +12,7 @@ object FileRead {
             val br = BufferedReader(InputStreamReader(`in`))
             val strLine: String
             while ((strLine = br.readLine()) != null) {
-                System.out.println(strLine)
+                println(strLine)
             }
             `in`.close()
         } catch (e: Exception) {

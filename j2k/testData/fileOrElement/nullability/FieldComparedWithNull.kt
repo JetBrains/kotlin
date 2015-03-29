@@ -4,7 +4,7 @@ class C {
 
     fun foo() {
         if (s == null) {
-            System.out.print("null")
+            print("null")
         }
     }
 }

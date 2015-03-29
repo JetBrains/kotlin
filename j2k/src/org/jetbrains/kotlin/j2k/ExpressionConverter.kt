@@ -274,7 +274,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
 
         if (target is PsiMethod) {
             val specialMethod = SpecialMethod.values().firstOrNull { it.matches(target) }
-            if (specialMethod != null && arguments.size() == specialMethod.parameterCount) {
+            if (specialMethod != null && (specialMethod.parameterCount == null || specialMethod.parameterCount == arguments.size())) {
                 val converted = specialMethod.convertCall(methodExpr.getQualifierExpression(), arguments, typeArguments, codeConverter)
                 if (converted != null) {
                     result = converted

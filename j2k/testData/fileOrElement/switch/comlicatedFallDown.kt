@@ -2,7 +2,7 @@ package demo
 
 public object SwitchDemo {
     public fun print(o: Any) {
-        System.out.println(o)
+        println(o)
     }
 
     public fun test(i: Int) {
@@ -73,7 +73,7 @@ public object SwitchDemo {
             12 -> monthString = "December"
             else -> monthString = "Invalid month"
         }
-        System.out.println(monthString)
+        println(monthString)
     }
 
     public fun main(args: Array<String>) {
