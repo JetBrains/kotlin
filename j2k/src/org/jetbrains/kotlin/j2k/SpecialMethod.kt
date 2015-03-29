@@ -48,17 +48,17 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
 
     COLLECTIONS_EMPTY_LIST: SpecialMethod("java.util.Collections", "emptyList", 0) {
         override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = MethodCallExpression.build(null, "listOf", listOf(), typeArgumentsConverted, false)
+                = MethodCallExpression.build(null, "emptyList", listOf(), typeArgumentsConverted, false)
     }
 
     COLLECTIONS_EMPTY_SET: SpecialMethod("java.util.Collections", "emptySet", 0) {
         override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = MethodCallExpression.build(null, "setOf", listOf(), typeArgumentsConverted, false)
+                = MethodCallExpression.build(null, "emptySet", listOf(), typeArgumentsConverted, false)
     }
 
     COLLECTIONS_EMPTY_MAP: SpecialMethod("java.util.Collections", "emptyMap", 0) {
         override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = MethodCallExpression.build(null, "mapOf", listOf(), typeArgumentsConverted, false)
+                = MethodCallExpression.build(null, "emptyMap", listOf(), typeArgumentsConverted, false)
     }
 
     COLLECTIONS_SINGLETON_LIST: SpecialMethod("java.util.Collections", "singletonList", 1) {
