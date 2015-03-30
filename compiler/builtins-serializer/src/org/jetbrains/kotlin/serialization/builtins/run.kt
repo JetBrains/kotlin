@@ -42,7 +42,7 @@ found top-level declarations to <destination dir> (files such as
     val missing = srcDirs filterNot { it.exists() }
     assert(missing.isEmpty()) { "These source directories are missing: $missing" }
 
-    BuiltInsSerializer(dependOnOldBuiltIns = false).serialize(destDir, srcDirs, listOf()) { (totalSize, totalFiles) ->
+    BuiltInsSerializer(dependOnOldBuiltIns = false).serialize(destDir, srcDirs, listOf()) { totalSize, totalFiles ->
         println("Total bytes written: $totalSize to $totalFiles files")
     }
 }
