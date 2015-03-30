@@ -16,34 +16,35 @@
 
 package org.jetbrains.kotlin.serialization.builtins
 
-import java.io.File
-import com.intellij.openapi.util.Disposer
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.serialization.*
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.name.Name
-import java.io.ByteArrayOutputStream
-import org.jetbrains.kotlin.builtins.BuiltInsSerializationUtil
 import com.intellij.openapi.Disposable
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.utils.recursePostOrder
+import com.intellij.openapi.util.Disposer
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.resolve.jvm.JvmAnalyzerFacade
-import org.jetbrains.kotlin.context.GlobalContext
-import org.jetbrains.kotlin.analyzer.ModuleInfo
-import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
 import org.jetbrains.kotlin.analyzer.ModuleContent
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.builtins.BuiltInsSerializationUtil
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.JVMConfigurationKeys
-import org.jetbrains.kotlin.resolve.constants.NullValue
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.context.GlobalContext
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
+import org.jetbrains.kotlin.resolve.jvm.JvmAnalyzerFacade
+import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.serialization.DescriptorSerializer
+import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.serialization.SerializationUtil
+import org.jetbrains.kotlin.utils.recursePostOrder
+import java.io.ByteArrayOutputStream
+import java.io.File
 
 public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
     private var totalSize = 0
@@ -121,7 +122,7 @@ public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
         val classifierDescriptors = DescriptorSerializer.sort(packageView.getMemberScope().getDescriptors(DescriptorKindFilter.CLASSIFIERS))
 
         serializeClasses(classifierDescriptors, serializer) {
-            (classDescriptor, classProto) ->
+            classDescriptor, classProto ->
             val stream = ByteArrayOutputStream()
             classProto.writeTo(stream)
             write(destDir, getFileName(classDescriptor), stream)
@@ -134,7 +135,8 @@ public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
         write(destDir, BuiltInsSerializationUtil.getPackageFilePath(fqName), packageStream)
 
         val nameStream = ByteArrayOutputStream()
-        NameSerializationUtil.serializeStringTable(nameStream, serializer.getStringTable())
+        val strings = serializer.getStringTable()
+        SerializationUtil.serializeStringTable(nameStream, strings.serializeSimpleNames(), strings.serializeQualifiedNames())
         write(destDir, BuiltInsSerializationUtil.getStringTableFilePath(fqName), nameStream)
     }
 

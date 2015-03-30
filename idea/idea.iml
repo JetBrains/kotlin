@@ -34,8 +34,6 @@
     <orderEntry type="library" scope="PROVIDED" name="properties" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="java-i18n" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="gradle-and-groovy-plugin" level="project" />
-    <orderEntry type="module" module-name="serialization" />
-    <orderEntry type="module" module-name="serialization.jvm" />
     <orderEntry type="library" scope="PROVIDED" name="maven" level="project" />
     <orderEntry type="module" module-name="eval4j" />
     <orderEntry type="module" module-name="idea-analysis" exported="" />

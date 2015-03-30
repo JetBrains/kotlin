@@ -10,7 +10,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="PROVIDED" name="intellij-core" level="project" />
     <orderEntry type="library" name="javax.inject" level="project" />
-    <orderEntry type="module" module-name="serialization" />
     <orderEntry type="module" module-name="descriptors" exported="" />
     <orderEntry type="module" module-name="util" />
     <orderEntry type="module" module-name="plugin-api" exported="" />

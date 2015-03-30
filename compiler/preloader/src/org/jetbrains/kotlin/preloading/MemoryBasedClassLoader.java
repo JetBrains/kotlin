@@ -21,23 +21,34 @@ import java.net.URL;
 import java.util.*;
 
 @SuppressWarnings("unchecked")
+/**
+ * A class loader which loads classes and resources from the given map.
+ *
+ * To save memory, as soon as any class is loaded, its bytecode is removed from the map.
+ * This means that once any class is loaded, it _cannot be found_ as a resource anymore.
+ * Therefore if you need to be able to find classes via findResource(), you should pass a fallback
+ * class loader which is able to do that at any point of time.
+ */
 public class MemoryBasedClassLoader extends ClassLoader {
     private final ClassCondition classesToLoadByParent;
     private final ClassLoader parent;
     private final Map<String, Object> preloadedResources;
     private final ClassHandler handler;
+    private final ClassLoader fallbackResourceLoader;
 
     public MemoryBasedClassLoader(
             ClassCondition classesToLoadByParent,
             ClassLoader parent,
             Map<String, Object> preloadedResources,
-            ClassHandler handler
+            ClassHandler handler,
+            ClassLoader fallbackResourceLoader
     ) {
         super(null);
         this.classesToLoadByParent = classesToLoadByParent;
         this.parent = parent;
         this.preloadedResources = preloadedResources;
         this.handler = handler;
+        this.fallbackResourceLoader = fallbackResourceLoader;
     }
 
     @Override
@@ -77,6 +88,9 @@ public class MemoryBasedClassLoader extends ClassLoader {
         Object resources = preloadedResources.get(internalName);
         if (resources == null) return null;
 
+        // Clear the resource, we won't need it anymore
+        preloadedResources.remove(internalName);
+
         ResourceData resourceData = resources instanceof ResourceData
                                     ? ((ResourceData) resources)
                                     : ((List<ResourceData>) resources).get(0);
@@ -98,6 +112,10 @@ public class MemoryBasedClassLoader extends ClassLoader {
     @Override
     public URL getResource(String name) {
         URL resource = super.getResource(name);
+        if (resource == null) {
+            resource = fallbackResourceLoader.getResource(name);
+        }
+
         if (resource == null && parent != null) {
             return parent.getResource(name);
         }
@@ -112,11 +130,25 @@ public class MemoryBasedClassLoader extends ClassLoader {
 
     @Override
     public Enumeration<URL> getResources(String name) throws IOException {
-        Enumeration<URL> resources = super.getResources(name);
-        if (!resources.hasMoreElements() && parent != null) {
-            return parent.getResources(name);
+        Enumeration<URL> own = super.getResources(name);
+        if (!own.hasMoreElements()) {
+            own = fallbackResourceLoader.getResources(name);
         }
-        return resources;
+
+        if (parent == null) return own;
+
+        Enumeration<URL> fromParent = parent.getResources(name);
+        if (!own.hasMoreElements()) return fromParent;
+
+        List<URL> result = new ArrayList<URL>();
+        while (own.hasMoreElements()) {
+            result.add(own.nextElement());
+        }
+        while (fromParent.hasMoreElements()) {
+            result.add(fromParent.nextElement());
+        }
+
+        return Collections.enumeration(result);
     }
 
     @Override

@@ -90,21 +90,21 @@
     </if>
 
     <dirset id="compilerSources.dirset" dir="${basedir}/">
-        <include name="core/descriptors/src"/>
-        <include name="core/serialization/src"/>
         <include name="core/descriptor.loader.java/src"/>
-        <include name="core/serialization.jvm/src"/>
+        <include name="core/descriptors/src"/>
+        <include name="core/deserialization/src"/>
         <include name="core/util.runtime/src"/>
-        <include name="compiler/frontend/src"/>
-        <include name="compiler/frontend.java/src"/>
-        <include name="compiler/backend-common/src"/>
         <include name="compiler/backend/src"/>
+        <include name="compiler/backend-common/src"/>
+        <include name="compiler/builtins-serializer/src"/>
         <include name="compiler/cli/src"/>
         <include name="compiler/cli/cli-common/src"/>
-        <include name="compiler/util/src"/>
+        <include name="compiler/frontend/src"/>
+        <include name="compiler/frontend.java/src"/>
         <include name="compiler/light-classes/src"/>
         <include name="compiler/plugin-api/src"/>
-        <include name="compiler/builtins-serializer/src"/>
+        <include name="compiler/serialization/src"/>
+        <include name="compiler/util/src"/>
         <include name="js/js.dart-ast/src"/>
         <include name="js/js.translator/src"/>
         <include name="js/js.frontend/src"/>
@@ -117,10 +117,10 @@
     <patternset id="compilerClassesFromIDEA.fileset">
         <include name="frontend/**"/>
         <include name="descriptors/**"/>
+        <include name="deserialization/**"/>
         <include name="serialization/**"/>
         <include name="descriptor.loader.java/**"/>
         <include name="frontend.java/**"/>
-        <include name="serialization.jvm/**"/>
         <include name="backend/**"/>
         <include name="backend-common/**"/>
         <include name="cli/**"/>
@@ -200,21 +200,21 @@
     <target name="compiler-sources">
         <jar jarfile="${output}/kotlin-compiler-sources.jar">
             <!-- TODO How to convert it from pathset or dirset ? -->
-            <fileset dir="core/descriptors/src"/>
             <fileset dir="core/descriptor.loader.java/src"/>
-            <fileset dir="core/serialization/src"/>
-            <fileset dir="core/serialization.jvm/src"/>
+            <fileset dir="core/descriptors/src"/>
+            <fileset dir="core/deserialization/src"/>
             <fileset dir="core/util.runtime/src"/>
-            <fileset dir="compiler/frontend/src"/>
-            <fileset dir="compiler/frontend.java/src"/>
-            <fileset dir="compiler/backend-common/src"/>
             <fileset dir="compiler/backend/src"/>
+            <fileset dir="compiler/backend-common/src"/>
+            <fileset dir="compiler/builtins-serializer"/>
             <fileset dir="compiler/cli/src"/>
             <fileset dir="compiler/cli/cli-common/src"/>
-            <fileset dir="compiler/util/src"/>
+            <fileset dir="compiler/frontend/src"/>
+            <fileset dir="compiler/frontend.java/src"/>
             <fileset dir="compiler/light-classes/src"/>
             <fileset dir="compiler/plugin-api/src"/>
-            <fileset dir="compiler/builtins-serializer"/>
+            <fileset dir="compiler/serialization/src"/>
+            <fileset dir="compiler/util/src"/>
             <fileset dir="js/js.dart-ast/src"/>
             <fileset dir="js/js.translator/src"/>
             <fileset dir="js/js.frontend/src"/>
@@ -808,8 +808,7 @@
                 <include name="core/descriptor.loader.java/src"/>
                 <include name="core/descriptors/src"/>
                 <include name="core/descriptors.runtime/src"/>
-                <include name="core/serialization/src"/>
-                <include name="core/serialization.jvm/src"/>
+                <include name="core/deserialization/src"/>
                 <include name="core/util.runtime/src"/>
             </src>
             <class-path>
@@ -894,10 +893,9 @@
                 <fileset dir="${basedir}/core/descriptor.loader.java/src" includes="**/*"/>
                 <fileset dir="${basedir}/core/descriptors/src" includes="**/*"/>
                 <fileset dir="${basedir}/core/descriptors.runtime/src" includes="**/*"/>
+                <fileset dir="${basedir}/core/deserialization/src" includes="**/*"/>
                 <fileset dir="${basedir}/core/reflection.jvm/src" includes="**/*"/>
                 <fileset dir="${basedir}/core/runtime.jvm/src" includes="**/*"/>
-                <fileset dir="${basedir}/core/serialization/src" includes="**/*"/>
-                <fileset dir="${basedir}/core/serialization.jvm/src" includes="**/*"/>
                 <fileset dir="${basedir}/core/util.runtime/src" includes="**/*"/>
                 <fileset dir="${basedir}/libraries/stdlib/src" includes="**/*"/>
             </jar-content>

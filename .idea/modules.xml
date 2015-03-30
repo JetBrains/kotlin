@@ -20,6 +20,7 @@
       <module fileurl="file://$PROJECT_DIR$/core/descriptor.loader.java/descriptor.loader.java.iml" filepath="$PROJECT_DIR$/core/descriptor.loader.java/descriptor.loader.java.iml" group="core" />
       <module fileurl="file://$PROJECT_DIR$/core/descriptors/descriptors.iml" filepath="$PROJECT_DIR$/core/descriptors/descriptors.iml" group="core" />
       <module fileurl="file://$PROJECT_DIR$/core/descriptors.runtime/descriptors.runtime.iml" filepath="$PROJECT_DIR$/core/descriptors.runtime/descriptors.runtime.iml" group="core" />
+      <module fileurl="file://$PROJECT_DIR$/core/deserialization/deserialization.iml" filepath="$PROJECT_DIR$/core/deserialization/deserialization.iml" group="core" />
       <module fileurl="file://$PROJECT_DIR$/eval4j/eval4j.iml" filepath="$PROJECT_DIR$/eval4j/eval4j.iml" group="ide" />
       <module fileurl="file://$PROJECT_DIR$/compiler/frontend/frontend.iml" filepath="$PROJECT_DIR$/compiler/frontend/frontend.iml" group="compiler" />
       <module fileurl="file://$PROJECT_DIR$/compiler/frontend.java/frontend.java.iml" filepath="$PROJECT_DIR$/compiler/frontend.java/frontend.java.iml" group="compiler/java" />
@@ -48,8 +49,7 @@
       <module fileurl="file://$PROJECT_DIR$/compiler/preloader/preloader.iml" filepath="$PROJECT_DIR$/compiler/preloader/preloader.iml" group="compiler/cli" />
       <module fileurl="file://$PROJECT_DIR$/core/reflection.jvm/reflection.jvm.iml" filepath="$PROJECT_DIR$/core/reflection.jvm/reflection.jvm.iml" group="core" />
       <module fileurl="file://$PROJECT_DIR$/core/runtime.jvm/runtime.jvm.iml" filepath="$PROJECT_DIR$/core/runtime.jvm/runtime.jvm.iml" group="core" />
-      <module fileurl="file://$PROJECT_DIR$/core/serialization/serialization.iml" filepath="$PROJECT_DIR$/core/serialization/serialization.iml" group="core" />
-      <module fileurl="file://$PROJECT_DIR$/core/serialization.jvm/serialization.jvm.iml" filepath="$PROJECT_DIR$/core/serialization.jvm/serialization.jvm.iml" group="core" />
+      <module fileurl="file://$PROJECT_DIR$/compiler/serialization/serialization.iml" filepath="$PROJECT_DIR$/compiler/serialization/serialization.iml" group="compiler" />
       <module fileurl="file://$PROJECT_DIR$/compiler/util/util.iml" filepath="$PROJECT_DIR$/compiler/util/util.iml" />
       <module fileurl="file://$PROJECT_DIR$/core/util.runtime/util.runtime.iml" filepath="$PROJECT_DIR$/core/util.runtime/util.runtime.iml" group="core" />
     </modules>

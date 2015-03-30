@@ -17,7 +17,6 @@
     <orderEntry type="module" module-name="cli-common" exported="" />
     <orderEntry type="module" module-name="backend-common" />
     <orderEntry type="module" module-name="serialization" />
-    <orderEntry type="module" module-name="serialization.jvm" />
     <orderEntry type="module" module-name="js.serializer" />
     <orderEntry type="module" module-name="util" />
   </component>

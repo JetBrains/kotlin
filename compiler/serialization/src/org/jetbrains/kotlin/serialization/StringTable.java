@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.serialization;
 
-import kotlin.Function1;
-import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassOrPackageFragmentDescriptor;
@@ -25,8 +23,6 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
-
-import java.util.List;
 
 import static org.jetbrains.kotlin.serialization.ProtoBuf.QualifiedNameTable.QualifiedName;
 
@@ -64,21 +60,6 @@ public class StringTable {
 
     public StringTable(@NotNull SerializerExtension extension) {
         this.extension = extension;
-    }
-
-    @NotNull
-    public List<String> getStrings() {
-        return strings.getAllInternedObjects();
-    }
-
-    @NotNull
-    public List<QualifiedName.Builder> getFqNames() {
-        return KotlinPackage.map(qualifiedNames.getAllInternedObjects(), new Function1<FqNameProto, QualifiedName.Builder>() {
-            @Override
-            public QualifiedName.Builder invoke(FqNameProto proto) {
-                return proto.fqName;
-            }
-        });
     }
 
     public int getSimpleNameIndex(@NotNull Name name) {
@@ -135,5 +116,23 @@ public class StringTable {
             result = qualifiedNames.intern(new FqNameProto(builder));
         }
         return result;
+    }
+
+    @NotNull
+    public ProtoBuf.StringTable serializeSimpleNames() {
+        ProtoBuf.StringTable.Builder builder = ProtoBuf.StringTable.newBuilder();
+        for (String simpleName : strings.getAllInternedObjects()) {
+            builder.addString(simpleName);
+        }
+        return builder.build();
+    }
+
+    @NotNull
+    public ProtoBuf.QualifiedNameTable serializeQualifiedNames() {
+        ProtoBuf.QualifiedNameTable.Builder builder = ProtoBuf.QualifiedNameTable.newBuilder();
+        for (FqNameProto fqName : qualifiedNames.getAllInternedObjects()) {
+            builder.addQualifiedName(fqName.fqName);
+        }
+        return builder.build();
     }
 }

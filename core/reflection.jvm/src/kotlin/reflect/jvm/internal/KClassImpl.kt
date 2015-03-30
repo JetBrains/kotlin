@@ -28,7 +28,6 @@ class KClassImpl<T>(override val jClass: Class<T>) : KCallableContainerImpl(), K
     // resulting in infinite recursion
 
     val descriptor by ReflectProperties.lazySoft {
-        val moduleData = jClass.getOrCreateModule()
         val classId = classId
 
         val descriptor =

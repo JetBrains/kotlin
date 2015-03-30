@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.serialization.deserialization.NameResolver;
 import org.jetbrains.kotlin.utils.UtilsPackage;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 public final class PackageData {
@@ -30,7 +29,7 @@ public final class PackageData {
     public static PackageData read(@NotNull byte[] bytes, @NotNull ExtensionRegistryLite registry) {
         try {
             ByteArrayInputStream in = new ByteArrayInputStream(bytes);
-            NameResolver nameResolver = NameSerializationUtil.deserializeNameResolver(in);
+            NameResolver nameResolver = NameResolver.read(in);
             ProtoBuf.Package packageProto = ProtoBuf.Package.parseFrom(in, registry);
             return new PackageData(nameResolver, packageProto);
         }
@@ -40,7 +39,6 @@ public final class PackageData {
     }
 
     private final NameResolver nameResolver;
-
     private final ProtoBuf.Package packageProto;
 
     public PackageData(@NotNull NameResolver nameResolver, @NotNull ProtoBuf.Package packageProto) {
@@ -56,18 +54,5 @@ public final class PackageData {
     @NotNull
     public ProtoBuf.Package getPackageProto() {
         return packageProto;
-    }
-
-    @NotNull
-    public byte[] toBytes() {
-        try {
-            ByteArrayOutputStream result = new ByteArrayOutputStream();
-            NameSerializationUtil.serializeNameResolver(result, nameResolver);
-            packageProto.writeTo(result);
-            return result.toByteArray();
-        }
-        catch (IOException e) {
-            throw UtilsPackage.rethrow(e);
-        }
     }
 }

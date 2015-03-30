@@ -31,10 +31,8 @@ import java.util.regex.Pattern
 // You may need to provide custom path to protoc executable, just modify this constant:
 val PROTOC_EXE = "protoc"
 
-public data class ProtoPath(
-        public val file: String,
-        public val outPath: String
-) {
+public class ProtoPath(public val file: String) {
+    public val outPath: String = File(file).getParent()
     public val packageName: String = findFirst(Pattern.compile("package (.+);"))
     public val className: String = findFirst(Pattern.compile("option java_outer_classname = \"(.+)\";"))
     public val debugClassName: String = "Debug$className"
@@ -49,10 +47,10 @@ public data class ProtoPath(
 }
 
 public val PROTO_PATHS: List<ProtoPath> = listOf(
-        ProtoPath("core/serialization/src/descriptors.proto", "core/serialization/src"),
-        ProtoPath("core/serialization/src/builtins.proto", "core/serialization/src"),
-        ProtoPath("js/js.serializer/src/js.proto", "js/js.serializer/src"),
-        ProtoPath("core/serialization.jvm/src/jvm_descriptors.proto", "core/serialization.jvm/src")
+        ProtoPath("core/deserialization/src/descriptors.proto"),
+        ProtoPath("core/deserialization/src/builtins.proto"),
+        ProtoPath("js/js.serializer/src/js.proto"),
+        ProtoPath("core/descriptor.loader.java/src/jvm_descriptors.proto")
 )
 
 fun main(args: Array<String>) {
