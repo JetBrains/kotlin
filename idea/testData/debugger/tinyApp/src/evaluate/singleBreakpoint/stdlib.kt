@@ -25,3 +25,6 @@ fun main(args: Array<String>) {
 
 // EXPRESSION: 100.toLong()
 // RESULT: 100: J
+
+// EXPRESSION: args.sortBy { it }.size()
+// RESULT: 0: I
