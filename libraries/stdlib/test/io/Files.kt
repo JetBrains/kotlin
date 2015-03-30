@@ -62,18 +62,21 @@ class FilesTest {
     }
 
     class Walks {
-        fun createTestFiles(): File {
-            val basedir = createTempDir()
-            File(basedir, "1").mkdir()
-            File(basedir, "1/2".separatorsToSystem()).mkdir()
-            File(basedir, "1/3".separatorsToSystem()).mkdir()
-            File(basedir, "1/3/4.txt".separatorsToSystem()).createNewFile()
-            File(basedir, "1/3/5.txt".separatorsToSystem()).createNewFile()
-            File(basedir, "6").mkdir()
-            File(basedir, "7.txt").createNewFile()
-            File(basedir, "8").mkdir()
-            File(basedir, "8/9.txt".separatorsToSystem()).createNewFile()
-            return basedir
+
+        companion object {
+            fun createTestFiles(): File {
+                val basedir = createTempDir()
+                File(basedir, "1").mkdir()
+                File(basedir, "1/2".separatorsToSystem()).mkdir()
+                File(basedir, "1/3".separatorsToSystem()).mkdir()
+                File(basedir, "1/3/4.txt".separatorsToSystem()).createNewFile()
+                File(basedir, "1/3/5.txt".separatorsToSystem()).createNewFile()
+                File(basedir, "6").mkdir()
+                File(basedir, "7.txt").createNewFile()
+                File(basedir, "8").mkdir()
+                File(basedir, "8/9.txt".separatorsToSystem()).createNewFile()
+                return basedir
+            }
         }
 
         test fun withSimple() {
@@ -789,6 +792,29 @@ class FilesTest {
         assert(dir.deleteRecursively())
         assert(!dir.exists())
         assert(!dir.deleteRecursively())
+    }
+    
+    test fun deleteRecursivelyWithFail() {
+        val basedir = Walks.createTestFiles()
+        val restricted = File(basedir, "1")
+        try {
+            if (restricted.setReadable(false)) {
+                if (File(basedir, "7.txt").setReadable(false)) {
+                    basedir.deleteRecursively()
+                    restricted.setReadable(true)
+                    File(basedir, "7.txt").setReadable(true)
+                    var i = 0
+                    for (file in basedir.walkTopDown()) {
+                        i++
+                    }
+                    assertEquals(6, i)
+                }
+            }
+        } finally {
+            restricted.setReadable(true)
+            File(basedir, "7.txt").setReadable(true)
+            basedir.deleteRecursively()
+        }
     }
 
     test fun copyRecursively() {
