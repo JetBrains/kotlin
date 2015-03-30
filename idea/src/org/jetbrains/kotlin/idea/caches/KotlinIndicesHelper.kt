@@ -69,7 +69,7 @@ public class KotlinIndicesHelper(
     }
 
     public fun getTopLevelCallables(nameFilter: (String) -> Boolean): Collection<CallableDescriptor> {
-        val sourceNames = JetTopLevelFunctionFqnNameIndex.getInstance().getAllKeys(project).stream() + JetTopLevelPropertyFqnNameIndex.getInstance().getAllKeys(project).stream()
+        val sourceNames = JetTopLevelFunctionFqnNameIndex.getInstance().getAllKeys(project).sequence() + JetTopLevelPropertyFqnNameIndex.getInstance().getAllKeys(project).sequence()
         val allFqNames = sourceNames.map { FqName(it) }
         return allFqNames.filter { nameFilter(it.shortName().asString()) }
                 .toSet()
@@ -82,8 +82,8 @@ public class KotlinIndicesHelper(
         val functionsIndex = JetTopLevelFunctionFqnNameIndex.getInstance()
         val propertiesIndex = JetTopLevelPropertyFqnNameIndex.getInstance()
 
-        val sourceFunctionNames = functionsIndex.getAllKeys(project).stream().map { FqName(it) }
-        val sourcePropertyNames = propertiesIndex.getAllKeys(project).stream().map { FqName(it) }
+        val sourceFunctionNames = functionsIndex.getAllKeys(project).sequence().map { FqName(it) }
+        val sourcePropertyNames = propertiesIndex.getAllKeys(project).sequence().map { FqName(it) }
 
         val result = HashSet<CallableDescriptor>()
         result.fqNamesToSuitableExtensions(sourceFunctionNames, nameFilter, functionsIndex, expression, bindingContext, dataFlowInfo)
@@ -92,7 +92,7 @@ public class KotlinIndicesHelper(
     }
 
     private fun MutableCollection<CallableDescriptor>.fqNamesToSuitableExtensions(
-            fqNames: Stream<FqName>,
+            fqNames: Sequence<FqName>,
             nameFilter: (String) -> Boolean,
             index: StringStubIndexExtension<out JetCallableDeclaration>,
             expression: JetSimpleNameExpression,
@@ -132,7 +132,7 @@ public class KotlinIndicesHelper(
                                        receiverValue: ReceiverValue,
                                        dataFlowInfo: DataFlowInfo,
                                        callType: CallType,
-                                       bindingContext: BindingContext): Stream<CallableDescriptor> {
+                                       bindingContext: BindingContext): Sequence<CallableDescriptor> {
         val extensions = index.get(callableFQN.asString(), project, scope).filter { it.getReceiverTypeReference() != null }
         val descriptors = if (extensions.any { it.getContainingJetFile().isCompiled() } ) {
             analyzeImportReference(callableFQN)
@@ -140,13 +140,13 @@ public class KotlinIndicesHelper(
                     .filter { it.getExtensionReceiverParameter() != null }
         }
         else extensions.map { resolutionFacade.resolveToDescriptor(it) as CallableDescriptor }
-        return descriptors.stream()
+        return descriptors.sequence()
                 .filter(visibilityFilter)
-                .flatMap { it.substituteExtensionIfCallable(receiverValue, callType, bindingContext, dataFlowInfo).stream() }
+                .flatMap { it.substituteExtensionIfCallable(receiverValue, callType, bindingContext, dataFlowInfo).sequence() }
     }
 
     public fun getClassDescriptors(nameFilter: (String) -> Boolean, kindFilter: (ClassKind) -> Boolean): Collection<ClassDescriptor> {
-        return JetFullClassNameIndex.getInstance().getAllKeys(project).stream()
+        return JetFullClassNameIndex.getInstance().getAllKeys(project).sequence()
                 .map { FqName(it) }
                 .filter { nameFilter(it.shortName().asString()) }
                 .toList()
