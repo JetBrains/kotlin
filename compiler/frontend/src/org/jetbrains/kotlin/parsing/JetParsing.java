@@ -626,7 +626,8 @@ public class JetParsing extends AbstractJetParsing {
 
         OptionalMarker constructorModifiersMarker = new OptionalMarker(object);
         PsiBuilder.Marker beforeConstructorModifiers = mark();
-        boolean hasConstructorModifiers = parseModifierList(PRIMARY_CONSTRUCTOR_MODIFIER_LIST, REGULAR_ANNOTATIONS_ONLY_WITH_BRACKETS);
+        PsiBuilder.Marker primaryConstructorMarker = mark();
+        boolean hasConstructorModifiers = parseModifierList(MODIFIER_LIST, REGULAR_ANNOTATIONS_ONLY_WITH_BRACKETS);
 
         // Some modifiers found, but no parentheses following: class has already ended, and we are looking at something else
         if (hasConstructorModifiers && !atSet(LPAR, LBRACE, COLON)) {
@@ -640,13 +641,18 @@ public class JetParsing extends AbstractJetParsing {
 
         if (at(LPAR)) {
             parseValueParameterList(false, /* typeRequired  = */ true, TokenSet.create(COLON, LBRACE));
+            primaryConstructorMarker.done(PRIMARY_CONSTRUCTOR);
         }
         else if (hasConstructorModifiers) {
             // A comprehensive error message for cases like:
             //    class A private : Foo
             // or
             //    class A private {
+            primaryConstructorMarker.done(PRIMARY_CONSTRUCTOR);
             error("Expecting primary constructor parameter list");
+        }
+        else {
+            primaryConstructorMarker.drop();
         }
         constructorModifiersMarker.error("Constructors are not allowed for objects");
 

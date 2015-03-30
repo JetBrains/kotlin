@@ -17,9 +17,10 @@ JetFile: TypeParametersAndParentheses.kt
           PsiElement(IDENTIFIER)('R')
         PsiElement(GT)('>')
     PsiErrorElement:Constructors are not allowed for objects
-      VALUE_PARAMETER_LIST
-        PsiElement(LPAR)('(')
-        PsiElement(RPAR)(')')
+      PRIMARY_CONSTRUCTOR
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
   PsiWhiteSpace('\n\n')
   OBJECT_DECLARATION
     PsiElement(object)('object')
@@ -37,17 +38,18 @@ JetFile: TypeParametersAndParentheses.kt
           PsiElement(IDENTIFIER)('R')
         PsiElement(GT)('>')
     PsiErrorElement:Constructors are not allowed for objects
-      VALUE_PARAMETER_LIST
-        PsiElement(LPAR)('(')
-        VALUE_PARAMETER
-          PsiElement(IDENTIFIER)('x')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('Int')
-        PsiElement(RPAR)(')')
+      PRIMARY_CONSTRUCTOR
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('x')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Int')
+          PsiElement(RPAR)(')')
     PsiWhiteSpace(' ')
     CLASS_BODY
       PsiElement(LBRACE)('{')
@@ -69,9 +71,10 @@ JetFile: TypeParametersAndParentheses.kt
           PsiElement(IDENTIFIER)('R')
         PsiElement(GT)('>')
     PsiErrorElement:Constructors are not allowed for objects
-      VALUE_PARAMETER_LIST
-        PsiElement(LPAR)('(')
-        PsiElement(RPAR)(')')
+      PRIMARY_CONSTRUCTOR
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
     PsiWhiteSpace(' ')
     PsiElement(COLON)(':')
     PsiWhiteSpace(' ')

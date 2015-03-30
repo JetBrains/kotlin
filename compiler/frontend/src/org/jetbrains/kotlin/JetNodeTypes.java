@@ -38,6 +38,7 @@ public interface JetNodeTypes {
     IElementType ENUM_ENTRY            = JetStubElementTypes.ENUM_ENTRY;
     IElementType ANONYMOUS_INITIALIZER = JetStubElementTypes.ANONYMOUS_INITIALIZER;
     IElementType SECONDARY_CONSTRUCTOR  = JetStubElementTypes.SECONDARY_CONSTRUCTOR;
+    IElementType PRIMARY_CONSTRUCTOR    = JetStubElementTypes.PRIMARY_CONSTRUCTOR;
 
     IElementType TYPE_PARAMETER_LIST                 = JetStubElementTypes.TYPE_PARAMETER_LIST;
     IElementType TYPE_PARAMETER                      = JetStubElementTypes.TYPE_PARAMETER;
@@ -55,7 +56,6 @@ public interface JetNodeTypes {
     IElementType FILE_ANNOTATION_LIST               = JetStubElementTypes.FILE_ANNOTATION_LIST;
     IElementType IMPORT_DIRECTIVE                   = JetStubElementTypes.IMPORT_DIRECTIVE;
     IElementType MODIFIER_LIST                      = JetStubElementTypes.MODIFIER_LIST;
-    IElementType PRIMARY_CONSTRUCTOR_MODIFIER_LIST  = JetStubElementTypes.PRIMARY_CONSTRUCTOR_MODIFIER_LIST;
     IElementType ANNOTATION                         = JetStubElementTypes.ANNOTATION;
     IElementType ANNOTATION_ENTRY                   = JetStubElementTypes.ANNOTATION_ENTRY;
 

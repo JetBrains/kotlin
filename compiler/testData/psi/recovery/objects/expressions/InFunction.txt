@@ -27,9 +27,10 @@ JetFile: InFunction.kt
               PsiElement(IDENTIFIER)('private')
             PsiWhiteSpace(' ')
             PsiErrorElement:Constructors are not allowed for objects
-              VALUE_PARAMETER_LIST
-                PsiElement(LPAR)('(')
-                PsiElement(RPAR)(')')
+              PRIMARY_CONSTRUCTOR
+                VALUE_PARAMETER_LIST
+                  PsiElement(LPAR)('(')
+                  PsiElement(RPAR)(')')
             PsiWhiteSpace('\n\n    ')
             CLASS_BODY
               PsiErrorElement:Expecting a class body
@@ -49,9 +50,10 @@ JetFile: InFunction.kt
               PsiElement(IDENTIFIER)('private')
             PsiWhiteSpace(' ')
             PsiErrorElement:Constructors are not allowed for objects
-              VALUE_PARAMETER_LIST
-                PsiElement(LPAR)('(')
-                PsiElement(RPAR)(')')
+              PRIMARY_CONSTRUCTOR
+                VALUE_PARAMETER_LIST
+                  PsiElement(LPAR)('(')
+                  PsiElement(RPAR)(')')
             PsiWhiteSpace(' ')
             PsiElement(COLON)(':')
             PsiWhiteSpace(' ')
@@ -77,35 +79,36 @@ JetFile: InFunction.kt
             PsiElement(object)('object')
             PsiWhiteSpace(' ')
             PsiErrorElement:Constructors are not allowed for objects
-              PRIMARY_CONSTRUCTOR_MODIFIER_LIST
-                ANNOTATION
-                  PsiElement(LBRACKET)('[')
-                  ANNOTATION_ENTRY
-                    CONSTRUCTOR_CALLEE
-                      TYPE_REFERENCE
-                        USER_TYPE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('foo')
-                  PsiElement(RBRACKET)(']')
+              PRIMARY_CONSTRUCTOR
+                MODIFIER_LIST
+                  ANNOTATION
+                    PsiElement(LBRACKET)('[')
+                    ANNOTATION_ENTRY
+                      CONSTRUCTOR_CALLEE
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('foo')
+                    PsiElement(RBRACKET)(']')
+                  PsiWhiteSpace(' ')
+                  PsiElement(private)('private')
+                  PsiWhiteSpace(' ')
+                  ANNOTATION
+                    PsiElement(LBRACKET)('[')
+                    ANNOTATION_ENTRY
+                      CONSTRUCTOR_CALLEE
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('bar')
+                      VALUE_ARGUMENT_LIST
+                        PsiElement(LPAR)('(')
+                        PsiElement(RPAR)(')')
+                    PsiElement(RBRACKET)(']')
                 PsiWhiteSpace(' ')
-                PsiElement(private)('private')
-                PsiWhiteSpace(' ')
-                ANNOTATION
-                  PsiElement(LBRACKET)('[')
-                  ANNOTATION_ENTRY
-                    CONSTRUCTOR_CALLEE
-                      TYPE_REFERENCE
-                        USER_TYPE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('bar')
-                    VALUE_ARGUMENT_LIST
-                      PsiElement(LPAR)('(')
-                      PsiElement(RPAR)(')')
-                  PsiElement(RBRACKET)(']')
-              PsiWhiteSpace(' ')
-              VALUE_PARAMETER_LIST
-                PsiElement(LPAR)('(')
-                PsiElement(RPAR)(')')
+                VALUE_PARAMETER_LIST
+                  PsiElement(LPAR)('(')
+                  PsiElement(RPAR)(')')
             PsiWhiteSpace('\n\n    ')
             CLASS_BODY
               PsiErrorElement:Expecting a class body
@@ -125,9 +128,10 @@ JetFile: InFunction.kt
               PsiElement(IDENTIFIER)('private')
             PsiWhiteSpace(' ')
             PsiErrorElement:Constructors are not allowed for objects
-              VALUE_PARAMETER_LIST
-                PsiElement(LPAR)('(')
-                PsiElement(RPAR)(')')
+              PRIMARY_CONSTRUCTOR
+                VALUE_PARAMETER_LIST
+                  PsiElement(LPAR)('(')
+                  PsiElement(RPAR)(')')
             PsiWhiteSpace('\n')
             CLASS_BODY
               PsiErrorElement:Expecting a class body

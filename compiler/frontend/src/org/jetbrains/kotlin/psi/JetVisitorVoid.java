@@ -37,6 +37,10 @@ public class JetVisitorVoid extends JetVisitor<Void, Void> {
         super.visitSecondaryConstructor(constructor, null);
     }
 
+    public void visitPrimaryConstructor(@NotNull JetPrimaryConstructor constructor) {
+        super.visitPrimaryConstructor(constructor, null);
+    }
+
     public void visitNamedFunction(@NotNull JetNamedFunction function) {
         super.visitNamedFunction(function, null);
     }
