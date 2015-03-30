@@ -64,7 +64,6 @@ import java.util.regex.Pattern;
         JavaToKotlinConverterForWebDemoTestGenerated.Identifier.class,
         JavaToKotlinConverterForWebDemoTestGenerated.IfStatement.class,
         JavaToKotlinConverterForWebDemoTestGenerated.ImportStatement.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.InProjectionType.class,
         JavaToKotlinConverterForWebDemoTestGenerated.Inheritance.class,
         JavaToKotlinConverterForWebDemoTestGenerated.IsOperator.class,
         JavaToKotlinConverterForWebDemoTestGenerated.Issues.class,
@@ -79,16 +78,15 @@ import java.util.regex.Pattern;
         JavaToKotlinConverterForWebDemoTestGenerated.NewClassExpression.class,
         JavaToKotlinConverterForWebDemoTestGenerated.Nullability.class,
         JavaToKotlinConverterForWebDemoTestGenerated.ObjectLiteral.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.OutProjectionType.class,
         JavaToKotlinConverterForWebDemoTestGenerated.PackageStatement.class,
         JavaToKotlinConverterForWebDemoTestGenerated.ParenthesizedExpression.class,
         JavaToKotlinConverterForWebDemoTestGenerated.PolyadicExpression.class,
         JavaToKotlinConverterForWebDemoTestGenerated.PostfixOperator.class,
         JavaToKotlinConverterForWebDemoTestGenerated.PrefixOperator.class,
+        JavaToKotlinConverterForWebDemoTestGenerated.Projections.class,
         JavaToKotlinConverterForWebDemoTestGenerated.RawGenerics.class,
         JavaToKotlinConverterForWebDemoTestGenerated.ReturnStatement.class,
         JavaToKotlinConverterForWebDemoTestGenerated.Settings.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.StarProjectionType.class,
         JavaToKotlinConverterForWebDemoTestGenerated.StaticMembers.class,
         JavaToKotlinConverterForWebDemoTestGenerated.SuperExpression.class,
         JavaToKotlinConverterForWebDemoTestGenerated.Switch.class,
@@ -2459,21 +2457,6 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
         }
     }
 
-    @TestMetadata("j2k/testData/fileOrElement/inProjectionType")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class InProjectionType extends AbstractJavaToKotlinConverterForWebDemoTest {
-        public void testAllFilesPresentInInProjectionType() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/inProjectionType"), Pattern.compile("^(.+)\\.java$"), true);
-        }
-
-        @TestMetadata("methodParams.java")
-        public void testMethodParams() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/inProjectionType/methodParams.java");
-            doTest(fileName);
-        }
-    }
-
     @TestMetadata("j2k/testData/fileOrElement/inheritance")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -3464,21 +3447,6 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
         }
     }
 
-    @TestMetadata("j2k/testData/fileOrElement/outProjectionType")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class OutProjectionType extends AbstractJavaToKotlinConverterForWebDemoTest {
-        public void testAllFilesPresentInOutProjectionType() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/outProjectionType"), Pattern.compile("^(.+)\\.java$"), true);
-        }
-
-        @TestMetadata("methodParams.java")
-        public void testMethodParams() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/outProjectionType/methodParams.java");
-            doTest(fileName);
-        }
-    }
-
     @TestMetadata("j2k/testData/fileOrElement/packageStatement")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -3626,6 +3594,21 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
         }
     }
 
+    @TestMetadata("j2k/testData/fileOrElement/projections")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Projections extends AbstractJavaToKotlinConverterForWebDemoTest {
+        public void testAllFilesPresentInProjections() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/projections"), Pattern.compile("^(.+)\\.java$"), true);
+        }
+
+        @TestMetadata("projections.java")
+        public void testProjections() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/projections/projections.java");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("j2k/testData/fileOrElement/rawGenerics")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -3727,21 +3710,6 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
         @TestMetadata("specifyLocalVariableTypeByDefaultInFor.java")
         public void testSpecifyLocalVariableTypeByDefaultInFor() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/settings/specifyLocalVariableTypeByDefaultInFor.java");
-            doTest(fileName);
-        }
-    }
-
-    @TestMetadata("j2k/testData/fileOrElement/starProjectionType")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class StarProjectionType extends AbstractJavaToKotlinConverterForWebDemoTest {
-        public void testAllFilesPresentInStarProjectionType() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/starProjectionType"), Pattern.compile("^(.+)\\.java$"), true);
-        }
-
-        @TestMetadata("methodParams.java")
-        public void testMethodParams() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/starProjectionType/methodParams.java");
             doTest(fileName);
         }
     }
