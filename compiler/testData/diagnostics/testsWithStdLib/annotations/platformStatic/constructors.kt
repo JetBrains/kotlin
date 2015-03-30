@@ -6,4 +6,4 @@ class A {
     }
 }
 
-class C [platformStatic] () // TODO KT-7057
+class C <!PLATFORM_STATIC_ILLEGAL_USAGE!>[platformStatic] ()<!>

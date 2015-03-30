@@ -3250,6 +3250,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("beforeRemoveAbstractModifier.kt")
+        public void testRemoveAbstractModifier() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/beforeRemoveAbstractModifier.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("beforeRemoveIncompatibleModifier.kt")
         public void testRemoveIncompatibleModifier() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/beforeRemoveIncompatibleModifier.kt");
@@ -3259,6 +3265,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("beforeRemoveInnerForClassInTrait.kt")
         public void testRemoveInnerForClassInTrait() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/beforeRemoveInnerForClassInTrait.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("beforeRemoveProtectedModifier.kt")
+        public void testRemoveProtectedModifier() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/beforeRemoveProtectedModifier.kt");
             doTest(fileName);
         }
 

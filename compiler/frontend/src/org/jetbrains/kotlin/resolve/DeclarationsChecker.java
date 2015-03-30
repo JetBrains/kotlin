@@ -108,11 +108,15 @@ public class DeclarationsChecker {
         for (Map.Entry<JetSecondaryConstructor, ConstructorDescriptor> entry : bodiesResolveContext.getSecondaryConstructors().entrySet()) {
             ConstructorDescriptor constructorDescriptor = entry.getValue();
             JetSecondaryConstructor declaration = entry.getKey();
-            modifiersChecker.reportIllegalModalityModifiers(declaration);
-            reportErrorIfHasIllegalModifier(declaration);
-            modifiersChecker.checkModifiersForDeclaration(declaration, constructorDescriptor);
+            checkConstructorDeclaration(constructorDescriptor, declaration);
         }
 
+    }
+
+    private void checkConstructorDeclaration(ConstructorDescriptor constructorDescriptor, JetDeclaration declaration) {
+        modifiersChecker.reportIllegalModalityModifiers(declaration);
+        reportErrorIfHasIllegalModifier(declaration);
+        modifiersChecker.checkModifiersForDeclaration(declaration, constructorDescriptor);
     }
 
     private void reportErrorIfHasIllegalModifier(JetModifierListOwner declaration) {
@@ -279,7 +283,7 @@ public class DeclarationsChecker {
 
     private void checkClass(BodiesResolveContext c, JetClass aClass, ClassDescriptorWithResolutionScopes classDescriptor) {
         checkOpenMembers(classDescriptor);
-        checkConstructorParameters(aClass);
+        checkPrimaryConstructor(aClass, classDescriptor);
         checkTypeParameters(aClass);
 
         if (aClass.isTrait()) {
@@ -301,13 +305,19 @@ public class DeclarationsChecker {
         }
     }
 
-    private void checkConstructorParameters(JetClass aClass) {
-        for (JetParameter parameter : aClass.getPrimaryConstructorParameters()) {
+    private void checkPrimaryConstructor(JetClass aClass, ClassDescriptor classDescriptor) {
+        ConstructorDescriptor primaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
+        JetPrimaryConstructor declaration = aClass.getPrimaryConstructor();
+        if (primaryConstructor == null || declaration == null) return;
+
+        for (JetParameter parameter : declaration.getValueParameters()) {
             PropertyDescriptor propertyDescriptor = trace.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter);
             if (propertyDescriptor != null) {
                 modifiersChecker.checkModifiersForDeclaration(parameter, propertyDescriptor);
             }
         }
+
+        checkConstructorDeclaration(primaryConstructor, declaration);
     }
 
     private void checkTypeParameters(JetTypeParameterListOwner typeParameterListOwner) {

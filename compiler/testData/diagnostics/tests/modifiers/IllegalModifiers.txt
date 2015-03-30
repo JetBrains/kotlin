@@ -44,6 +44,20 @@ package illegal_modifiers {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
+    internal final class IllegalModifiers10 {
+        public constructor IllegalModifiers10()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final class IllegalModifiers11 {
+        private constructor IllegalModifiers11()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
     internal final class IllegalModifiers2 {
         public constructor IllegalModifiers2(/*0*/ a: kotlin.Int)
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
