@@ -24,6 +24,7 @@ import kotlin.properties.Delegates
 import com.intellij.psi.impl.*
 import com.intellij.openapi.components.*
 import com.intellij.openapi.util.ModificationTracker
+import com.intellij.psi.PsiManager
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider.Result
 
@@ -44,18 +45,22 @@ public class CliAndroidUIXmlProcessor(
     }
 
     override fun parseSingleFile(file: PsiFile): List<AndroidWidget> {
-        val widgets = arrayListOf<AndroidWidget>()
-        val handler = AndroidXmlHandler { id, clazz -> widgets.add(AndroidWidget(id, clazz)) }
+        val parser = LayoutParser(resourceManager, PsiManager.getInstance(project), { file ->
+            val xmlElements = arrayListOf<LayoutParser.UIXmlElement>()
+            val handler = AndroidXmlHandler(
+                    elementCallback({ id, clazz, layoutName -> xmlElements.add(LayoutParser.UIXmlElement(id, clazz, layoutName)) })
+            )
+            try {
+                val inputStream = ByteArrayInputStream(file.getVirtualFile().contentsToByteArray())
+                resourceManager.saxParser.parse(inputStream, handler)
+            }
+            catch (e: Throwable) {
+                LOG.error(e)
+            }
 
-        try {
-            val inputStream = ByteArrayInputStream(file.getVirtualFile().contentsToByteArray())
-            resourceManager.saxParser.parse(inputStream, handler)
-            return widgets
-        }
-        catch (e: Throwable) {
-            LOG.error(e)
-            return listOf()
-        }
+            xmlElements
+        })
+        return parser.parse(file)
     }
 }
 
