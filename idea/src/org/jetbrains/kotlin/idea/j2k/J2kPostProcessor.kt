@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArguments
 import org.jetbrains.kotlin.idea.intentions.SimplifyNegatedBinaryExpressionIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToElvisIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToSafeAccessIntention
+import org.jetbrains.kotlin.idea.quickfix.RemoveModifierFix
 import org.jetbrains.kotlin.idea.quickfix.RemoveRightPartOfBinaryExpressionFix
 import org.jetbrains.kotlin.j2k.PostProcessor
 import org.jetbrains.kotlin.psi.*
@@ -52,6 +53,11 @@ public class J2kPostProcessor(override val contextToAnalyzeIn: PsiElement) : Pos
                     }
                     variable.delete()
                 }
+            }
+
+            Errors.REDUNDANT_PROJECTION -> { ->
+                val fix = RemoveModifierFix.createRemoveProjectionFactory(true).createActions(problem).single() as RemoveModifierFix
+                fix.invoke()
             }
 
             else -> super.fixForProblem(problem)

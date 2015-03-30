@@ -1,2 +1,2 @@
-fun <T : Any, K : Node> max(coll: Collection<out T>): T where T : Comparable<in T>, K : Collection<in K> {
+fun <T : Any, K : Node> max(coll: Collection<T>): T where T : Comparable<T>, K : Collection<in K> {
 }
