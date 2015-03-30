@@ -156,7 +156,8 @@ public class QuickFixFactoryForTypeMismatchError extends JetIntentionActionsFact
                                             ? expressionType
                                             : context.get(BindingContext.EXPRESSION_TYPE, valueArgument.getArgumentExpression());
                 if (correspondingParameter != null && valueArgumentType != null) {
-                    JetScope scope = JetScopeUtils.getResolutionScope(valueArgument.getArgumentExpression(), context);
+                    JetCallableDeclaration callable = PsiTreeUtil.getParentOfType(correspondingParameter, JetCallableDeclaration.class, true);
+                    JetScope scope = callable != null ? JetScopeUtils.getResolutionScope(callable, context) : null;
                     JetType typeToInsert = UtilPackage.approximateWithResolvableType(valueArgumentType, scope, true);
                     actions.add(new ChangeParameterTypeFix(correspondingParameter, typeToInsert));
                 }
