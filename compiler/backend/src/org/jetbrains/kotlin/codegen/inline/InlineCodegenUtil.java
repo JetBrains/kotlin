@@ -179,7 +179,7 @@ public class InlineCodegenUtil {
     @Nullable
     public static VirtualFile findVirtualFile(@NotNull Project project, @NotNull String internalName) {
         VirtualFileFinder fileFinder = VirtualFileFinder.SERVICE.getInstance(project);
-        return fileFinder.findVirtualFile(internalName);
+        return fileFinder.findVirtualFileWithHeader(new FqName(internalName.replace('/', '.')));
     }
 
     //TODO: navigate to inner classes

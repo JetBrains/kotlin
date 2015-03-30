@@ -9,6 +9,7 @@ Compile bytecode for javaClass<String>()
 Compile bytecode for javaClass<Int>()
 Compile bytecode for 100.toInt()
 Compile bytecode for 100.toLong()
+Compile bytecode for args.sortBy { it }.size()
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 
 Process finished with exit code 0

@@ -34,8 +34,4 @@ public interface VirtualFileFinder extends KotlinClassFinder {
 
     @Nullable
     VirtualFile findVirtualFileWithHeader(@NotNull FqName className);
-
-    /*Also finds files without kotlin header*/
-    @Nullable
-    VirtualFile findVirtualFile(@NotNull String internalName);
 }
