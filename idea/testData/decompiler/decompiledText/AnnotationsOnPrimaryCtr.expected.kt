@@ -3,10 +3,6 @@
 
 package test
 
-public final enum class Enum private () : kotlin.Enum<test.Enum>, dependency.Tr {
-    ONE
-
-    TWO
-
-    THREE
+internal final class AnnotationsOnPrimaryCtr [dependency.A dependency.B dependency.C] private () {
 }
+

@@ -3,13 +3,15 @@ PsiJetFileStubImpl[package=test]
     REFERENCE_EXPRESSION:[referencedName=test]
   CLASS:[fqName=test.SecondaryConstructors, isEnumEntry=false, isLocal=false, isTopLevel=true, isTrait=false, name=SecondaryConstructors, superNames=[]]
     MODIFIER_LIST:[internal final]
-    VALUE_PARAMETER_LIST:
-      VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=x]
-        TYPE_REFERENCE:
-          USER_TYPE:[isAbsoluteInRootPackage=false]
+    PRIMARY_CONSTRUCTOR:
+      MODIFIER_LIST:[public]
+      VALUE_PARAMETER_LIST:
+        VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=x]
+          TYPE_REFERENCE:
             USER_TYPE:[isAbsoluteInRootPackage=false]
-              REFERENCE_EXPRESSION:[referencedName=kotlin]
-            REFERENCE_EXPRESSION:[referencedName=Boolean]
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                REFERENCE_EXPRESSION:[referencedName=kotlin]
+              REFERENCE_EXPRESSION:[referencedName=Boolean]
     CLASS_BODY:
       SECONDARY_CONSTRUCTOR:
         MODIFIER_LIST:[public]

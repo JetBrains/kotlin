@@ -60,6 +60,12 @@ public class StubBuilderTestGenerated extends AbstractStubBuilderTest {
         doTest(fileName);
     }
 
+    @TestMetadata("AnnotationsOnPrimaryCtr.kt")
+    public void testAnnotationsOnPrimaryCtr() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/stubs/AnnotationsOnPrimaryCtr.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("AnonymousObject.kt")
     public void testAnonymousObject() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/stubs/AnonymousObject.kt");

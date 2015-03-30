@@ -7,31 +7,39 @@ PsiJetFileStubImpl[package=]
           TYPE_REFERENCE:
             USER_TYPE:[isAbsoluteInRootPackage=false]
               REFERENCE_EXPRESSION:[referencedName=a]
-    VALUE_PARAMETER_LIST:
-      VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=c1]
-        MODIFIER_LIST:[]
+    PRIMARY_CONSTRUCTOR:
+      MODIFIER_LIST:[private]
+        ANNOTATION:
           ANNOTATION_ENTRY:[hasValueArguments=false, shortName=a]
             CONSTRUCTOR_CALLEE:
               TYPE_REFERENCE:
                 USER_TYPE:[isAbsoluteInRootPackage=false]
                   REFERENCE_EXPRESSION:[referencedName=a]
-        TYPE_REFERENCE:
-          USER_TYPE:[isAbsoluteInRootPackage=false]
+      VALUE_PARAMETER_LIST:
+        VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=c1]
+          MODIFIER_LIST:[]
+            ANNOTATION_ENTRY:[hasValueArguments=false, shortName=a]
+              CONSTRUCTOR_CALLEE:
+                TYPE_REFERENCE:
+                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                    REFERENCE_EXPRESSION:[referencedName=a]
+          TYPE_REFERENCE:
             USER_TYPE:[isAbsoluteInRootPackage=false]
-              REFERENCE_EXPRESSION:[referencedName=kotlin]
-            REFERENCE_EXPRESSION:[referencedName=Int]
-      VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=c2]
-        MODIFIER_LIST:[]
-          ANNOTATION_ENTRY:[hasValueArguments=false, shortName=a]
-            CONSTRUCTOR_CALLEE:
-              TYPE_REFERENCE:
-                USER_TYPE:[isAbsoluteInRootPackage=false]
-                  REFERENCE_EXPRESSION:[referencedName=a]
-        TYPE_REFERENCE:
-          USER_TYPE:[isAbsoluteInRootPackage=false]
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                REFERENCE_EXPRESSION:[referencedName=kotlin]
+              REFERENCE_EXPRESSION:[referencedName=Int]
+        VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=c2]
+          MODIFIER_LIST:[]
+            ANNOTATION_ENTRY:[hasValueArguments=false, shortName=a]
+              CONSTRUCTOR_CALLEE:
+                TYPE_REFERENCE:
+                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                    REFERENCE_EXPRESSION:[referencedName=a]
+          TYPE_REFERENCE:
             USER_TYPE:[isAbsoluteInRootPackage=false]
-              REFERENCE_EXPRESSION:[referencedName=kotlin]
-            REFERENCE_EXPRESSION:[referencedName=Int]
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                REFERENCE_EXPRESSION:[referencedName=kotlin]
+              REFERENCE_EXPRESSION:[referencedName=Int]
     CLASS_BODY:
       OBJECT_DECLARATION:[fqName=Annotations.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST:[private companion]
@@ -145,3 +153,25 @@ PsiJetFileStubImpl[package=]
             USER_TYPE:[isAbsoluteInRootPackage=false]
               REFERENCE_EXPRESSION:[referencedName=kotlin]
             REFERENCE_EXPRESSION:[referencedName=Unit]
+      CLASS:[fqName=Annotations.Nested, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=Nested, superNames=[]]
+        MODIFIER_LIST:[internal final]
+        PRIMARY_CONSTRUCTOR:
+          MODIFIER_LIST:[private]
+            ANNOTATION:
+              ANNOTATION_ENTRY:[hasValueArguments=false, shortName=a]
+                CONSTRUCTOR_CALLEE:
+                  TYPE_REFERENCE:
+                    USER_TYPE:[isAbsoluteInRootPackage=false]
+                      REFERENCE_EXPRESSION:[referencedName=a]
+              ANNOTATION_ENTRY:[hasValueArguments=false, shortName=b]
+                CONSTRUCTOR_CALLEE:
+                  TYPE_REFERENCE:
+                    USER_TYPE:[isAbsoluteInRootPackage=false]
+                      REFERENCE_EXPRESSION:[referencedName=b]
+              ANNOTATION_ENTRY:[hasValueArguments=false, shortName=b]
+                CONSTRUCTOR_CALLEE:
+                  TYPE_REFERENCE:
+                    USER_TYPE:[isAbsoluteInRootPackage=false]
+                      REFERENCE_EXPRESSION:[referencedName=b]
+          VALUE_PARAMETER_LIST:
+        CLASS_BODY:

@@ -3,6 +3,6 @@
 
 package test
 
-public final class DependencyOnNestedClasses() : dependency.D.Nested {
+public final class DependencyOnNestedClasses public () : dependency.D.Nested {
     internal final fun f(nc: dependency.D.Companion.NestedInClassObject, i: dependency.D.Inner, ii: dependency.D.Inner.Inner, nn: dependency.D.Nested.Nested): dependency.D.Nested { /* compiled code */ }
 }

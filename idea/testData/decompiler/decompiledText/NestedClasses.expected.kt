@@ -3,25 +3,25 @@
 
 package test
 
-internal final class NestedClasses() {
+internal final class NestedClasses public () {
     internal final fun f(): kotlin.Unit { /* compiled code */ }
 
-    public final inner class Inner() {
+    public final inner class Inner public () {
         internal final fun f(): kotlin.Unit { /* compiled code */ }
 
-        private final inner class II() {
+        private final inner class II public () {
             internal final fun f(): kotlin.Unit { /* compiled code */ }
         }
     }
 
-    private final class Nested() {
+    private final class Nested public () {
         internal final fun f(): kotlin.Unit { /* compiled code */ }
 
-        internal final inner class NI() {
+        internal final inner class NI public () {
             internal final fun f(): kotlin.Unit { /* compiled code */ }
         }
 
-        public final class NN() {
+        public final class NN public () {
             internal final fun f(): kotlin.Unit { /* compiled code */ }
         }
     }
