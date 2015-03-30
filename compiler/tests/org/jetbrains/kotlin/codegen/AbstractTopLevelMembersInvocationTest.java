@@ -21,7 +21,7 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
-import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.MockLibraryUtil;
@@ -66,7 +66,7 @@ public abstract class AbstractTopLevelMembersInvocationTest extends AbstractByte
         assert !sourceFiles.isEmpty() : getTestName(true) + " should contain at least one .kt file";
         Collections.sort(sourceFiles);
 
-        myEnvironment = JetCoreEnvironment.createForTests(
+        myEnvironment = KotlinCoreEnvironment.createForTests(
                 getTestRootDisposable(),
                 JetTestUtils.compilerConfigurationForTests(ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK,
                                                            Arrays.asList(JetTestUtils.getAnnotationsJar()), classPath),

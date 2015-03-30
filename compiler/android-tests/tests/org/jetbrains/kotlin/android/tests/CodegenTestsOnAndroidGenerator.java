@@ -24,7 +24,7 @@ import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
 import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsPackage;
-import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.CodegenTestFiles;
 import org.jetbrains.kotlin.codegen.GenerationUtils;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
@@ -129,14 +129,14 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
         private final boolean isFullJdk;
 
         public List<JetFile> files = new ArrayList<JetFile>();
-        private JetCoreEnvironment environment;
+        private KotlinCoreEnvironment environment;
 
         private FilesWriter(boolean isFullJdk) {
             this.isFullJdk = isFullJdk;
             environment = createEnvironment(isFullJdk);
         }
 
-        private JetCoreEnvironment createEnvironment(boolean isFullJdk) {
+        private KotlinCoreEnvironment createEnvironment(boolean isFullJdk) {
             return isFullJdk
                     ? JetTestUtils.createEnvironmentWithFullJdk(myTestRootDisposable)
                     : JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable, ConfigurationKind.JDK_AND_ANNOTATIONS);

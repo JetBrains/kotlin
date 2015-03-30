@@ -20,7 +20,7 @@ import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
-import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.context.ContextPackage;
 import org.jetbrains.kotlin.context.GlobalContextImpl;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
@@ -71,17 +71,17 @@ public class LazyResolveTestUtil {
     @NotNull
     public static KotlinCodeAnalyzer resolveLazilyWithSession(
             @NotNull List<JetFile> files,
-            @NotNull JetCoreEnvironment environment,
+            @NotNull KotlinCoreEnvironment environment,
             boolean addBuiltIns
     ) {
         return createResolveSessionForFiles(environment.getProject(), files, addBuiltIns);
     }
 
-    public static ModuleDescriptor resolveLazily(List<JetFile> files, JetCoreEnvironment environment) {
+    public static ModuleDescriptor resolveLazily(List<JetFile> files, KotlinCoreEnvironment environment) {
         return resolveLazily(files, environment, true);
     }
 
-    public static ModuleDescriptor resolveLazily(List<JetFile> files, JetCoreEnvironment environment, boolean addBuiltIns) {
+    public static ModuleDescriptor resolveLazily(List<JetFile> files, KotlinCoreEnvironment environment, boolean addBuiltIns) {
         return resolveLazilyWithSession(files, environment, addBuiltIns).getModuleDescriptor();
     }
 

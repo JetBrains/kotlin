@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
-import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
@@ -140,8 +140,8 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
                 ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, tmpdir);
         configuration.put(CommonConfigurationKeys.SOURCE_ROOTS_KEY, Arrays.asList(sourcesDir.getAbsolutePath()));
         configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, new File("compiler/tests")); // for @ExpectLoadError annotation
-        JetCoreEnvironment environment =
-                JetCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
+        KotlinCoreEnvironment environment =
+                KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
 
         BindingTrace trace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
         ModuleDescriptorImpl module = TopDownAnalyzerFacadeForJVM.createSealedJavaModule();
@@ -180,7 +180,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
                 getTestRootDisposable()
         );
 
-        JetCoreEnvironment environment = JetCoreEnvironment.createForTests(
+        KotlinCoreEnvironment environment = KotlinCoreEnvironment.createForTests(
                 getTestRootDisposable(),
                 compilerConfigurationForTests(ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, getAnnotationsJar(), libraryOut),
                 EnvironmentConfigFiles.JVM_CONFIG_FILES);

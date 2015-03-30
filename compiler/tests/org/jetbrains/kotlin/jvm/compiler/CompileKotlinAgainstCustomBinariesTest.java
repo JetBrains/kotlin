@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorPlainTextToStream;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
-import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
@@ -95,14 +95,14 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
     }
 
     @NotNull
-    private JetCoreEnvironment createEnvironment(@NotNull List<File> extraClassPath) {
+    private KotlinCoreEnvironment createEnvironment(@NotNull List<File> extraClassPath) {
         List<File> extras = new ArrayList<File>();
         extras.addAll(extraClassPath);
         extras.add(JetTestUtils.getAnnotationsJar());
 
         CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(
                 ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, extras.toArray(new File[extras.size()]));
-        return JetCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
+        return KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
     }
 
     @NotNull

@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.psi;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
-import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
@@ -98,8 +98,8 @@ public class JetPsiUtilTest extends JetLiteFixture {
     }
 
     @Override
-    protected JetCoreEnvironment createEnvironment() {
-        return JetCoreEnvironment.createForTests(getTestRootDisposable(), new CompilerConfiguration(), EnvironmentConfigFiles.JVM_CONFIG_FILES);
+    protected KotlinCoreEnvironment createEnvironment() {
+        return KotlinCoreEnvironment.createForTests(getTestRootDisposable(), new CompilerConfiguration(), EnvironmentConfigFiles.JVM_CONFIG_FILES);
     }
 
     private ImportPath getImportPathFromParsed(String text) {

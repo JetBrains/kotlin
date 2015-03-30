@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
@@ -68,9 +68,9 @@ public class KotlinJavascriptSerializerTest : TestCaseWithTmpdir() {
     private fun serialize(configuration: CompilerConfiguration, metaFile: File) {
         val rootDisposable = Disposer.newDisposable()
         try {
-            val environment = JetCoreEnvironment.createForTests(rootDisposable, configuration, EnvironmentConfigFiles.JS_CONFIG_FILES)
+            val environment = KotlinCoreEnvironment.createForTests(rootDisposable, configuration, EnvironmentConfigFiles.JS_CONFIG_FILES)
             val files = environment.getSourceFiles()
-            val config = LibrarySourcesConfigWithCaching(environment.getProject(), MODULE_NAME, EcmaVersion.defaultVersion(), false, true, false)
+            val config = LibrarySourcesConfigWithCaching(environment.project, MODULE_NAME, EcmaVersion.defaultVersion(), false, true, false)
             val analysisResult = TopDownAnalyzerFacadeForJS.analyzeFiles(files, config)
             KotlinJavaScriptSerializer().serialize(MODULE_NAME, analysisResult.moduleDescriptor, metaFile)
         }

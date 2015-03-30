@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.lang.resolve.android.test
 
 import com.intellij.testFramework.UsefulTestCase
-import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import java.io.File
 import org.jetbrains.kotlin.test.JetTestUtils
 import org.jetbrains.kotlin.test.ConfigurationKind
@@ -31,7 +31,7 @@ public abstract class AbstractAndroidXml2KConversionTest : UsefulTestCase() {
 
     public fun doTest(path: String) {
         val jetCoreEnvironment = getEnvironment(path)
-        val parser = CliAndroidUIXmlProcessor(jetCoreEnvironment.getProject(), path + "AndroidManifest.xml", path + "/res")
+        val parser = CliAndroidUIXmlProcessor(jetCoreEnvironment.project, path + "AndroidManifest.xml", path + "/res")
 
         val actual = parser.parse(false)
 
@@ -55,8 +55,8 @@ public abstract class AbstractAndroidXml2KConversionTest : UsefulTestCase() {
         }
     }
 
-    private fun getEnvironment(testPath: String): JetCoreEnvironment {
+    private fun getEnvironment(testPath: String): KotlinCoreEnvironment {
         val configuration = JetTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK)
-        return JetCoreEnvironment.createForTests(getTestRootDisposable()!!, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+        return KotlinCoreEnvironment.createForTests(getTestRootDisposable()!!, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
     }
 }

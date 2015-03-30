@@ -27,7 +27,7 @@ import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
-import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
@@ -160,9 +160,9 @@ public class ResolveDescriptorsFromExternalLibraries {
             public void dispose() { }
         };
 
-        JetCoreEnvironment jetCoreEnvironment;
+        KotlinCoreEnvironment jetCoreEnvironment;
         if (jar != null) {
-            jetCoreEnvironment = JetCoreEnvironment.createForTests(
+            jetCoreEnvironment = KotlinCoreEnvironment.createForTests(
                     junk,
                     JetTestUtils.compilerConfigurationForTests(ConfigurationKind.JDK_AND_ANNOTATIONS, TestJdkKind.MOCK_JDK,
                                                                JetTestUtils.getAnnotationsJar(), jar),
@@ -171,7 +171,7 @@ public class ResolveDescriptorsFromExternalLibraries {
         else {
             CompilerConfiguration configuration =
                     JetTestUtils.compilerConfigurationForTests(ConfigurationKind.JDK_AND_ANNOTATIONS, TestJdkKind.FULL_JDK);
-            jetCoreEnvironment = JetCoreEnvironment.createForTests(junk, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
+            jetCoreEnvironment = KotlinCoreEnvironment.createForTests(junk, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
             if (!findRtJar().equals(jar)) {
                 throw new RuntimeException("rt.jar mismatch: " + jar + ", " + findRtJar());
             }

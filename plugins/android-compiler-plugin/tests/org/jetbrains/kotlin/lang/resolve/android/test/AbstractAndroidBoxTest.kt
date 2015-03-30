@@ -93,7 +93,7 @@ public abstract class AbstractAndroidBoxTest : AbstractBlackBoxCodegenTest() {
             files.addAll(additionalFiles)
         }
         myFiles = CodegenTestFiles.create(
-                myEnvironment!!.getProject(),
+                myEnvironment!!.project,
                 ArrayUtil.toStringArray(files),
                 JetTestUtils.getHomeDirectory() + "/plugins/android-compiler-plugin/testData"
         )

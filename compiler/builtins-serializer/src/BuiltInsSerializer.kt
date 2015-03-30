@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.serialization.builtins
 import java.io.File
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.serialization.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
@@ -83,13 +83,13 @@ public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
             configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, path)
         }
 
-        val environment = JetCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+        val environment = KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
         val files = environment.getSourceFiles()
 
         val builtInModule = BuiltinsSourcesModule()
         val resolver = JvmAnalyzerFacade.setupResolverForProject(
-                GlobalContext(), environment.getProject(), listOf(builtInModule),
+                GlobalContext(), environment.project, listOf(builtInModule),
                 { ModuleContent(files, GlobalSearchScope.EMPTY_SCOPE) },
                 platformParameters = JvmPlatformParameters { throw IllegalStateException() }
         )

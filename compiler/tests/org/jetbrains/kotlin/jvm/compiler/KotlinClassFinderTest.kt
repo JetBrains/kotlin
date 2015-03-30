@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.jvm.compiler
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironmentManagement
 import org.jetbrains.kotlin.test.JetTestUtils
 import java.io.File
-import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
@@ -37,12 +37,12 @@ public class KotlinClassFinderTest : KotlinTestWithEnvironmentManagement() {
                 listOf(), listOf(File("compiler/testData/kotlinClassFinder/nestedClass.kt")), tmpdir, getTestRootDisposable()!!
         )
 
-        val environment = JetCoreEnvironment.createForTests(getTestRootDisposable()!!,
+        val environment = KotlinCoreEnvironment.createForTests(getTestRootDisposable()!!,
                                                             JetTestUtils.compilerConfigurationForTests(
                                                                     ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, tmpdir),
                                                             EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
-        val project = environment.getProject()
+        val project = environment.project
         val className = "test.A.B.C"
         val psiClass = JavaPsiFacade.getInstance(project).findClass(className, GlobalSearchScope.allScope(project))
         assertNotNull(psiClass, "Psi class not found for $className")

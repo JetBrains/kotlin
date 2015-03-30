@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.test.util;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
-import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
@@ -35,7 +35,7 @@ import java.util.List;
 
 public class RecursiveDescriptorProcessorTest extends KotlinTestWithEnvironment {
     @Override
-    protected JetCoreEnvironment createEnvironment() {
+    protected KotlinCoreEnvironment createEnvironment() {
         return JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(getTestRootDisposable());
     }
 

@@ -20,7 +20,7 @@ import com.google.common.base.Predicates
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.context.GlobalContext
 import org.jetbrains.kotlin.di.InjectorForTopDownAnalyzerForJvm
@@ -50,7 +50,7 @@ public abstract class AbstractLocalClassProtoTest : TestCaseWithTmpdir() {
         val clazz = classLoader.loadClass(classFile.name.substringBeforeLast(".class"))
         assertHasAnnotationData(clazz)
 
-        val environment = JetCoreEnvironment.createForTests(
+        val environment = KotlinCoreEnvironment.createForTests(
                 getTestRootDisposable(),
                 JetTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, tmpdir),
                 EnvironmentConfigFiles.JVM_CONFIG_FILES
@@ -63,8 +63,8 @@ public abstract class AbstractLocalClassProtoTest : TestCaseWithTmpdir() {
         val providerFactory = FileBasedDeclarationProviderFactory(globalContext.storageManager, emptyList())
 
         val injector = InjectorForTopDownAnalyzerForJvm(
-                environment.getProject(), params, CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(), module,
-                providerFactory, GlobalSearchScope.allScope(environment.getProject())
+                environment.project, params, CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(), module,
+                providerFactory, GlobalSearchScope.allScope(environment.project)
         )
         module.initialize(injector.getJavaDescriptorResolver().packageFragmentProvider)
 

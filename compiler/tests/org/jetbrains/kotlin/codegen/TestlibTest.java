@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorPlainTextToStream;
 import org.jetbrains.kotlin.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
-import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
@@ -60,7 +60,7 @@ public class TestlibTest extends UsefulTestCase {
     private GeneratedClassLoader classLoader;
     private JetTypeMapper typeMapper;
     private GenerationState generationState;
-    private JetCoreEnvironment myEnvironment;
+    private KotlinCoreEnvironment myEnvironment;
 
     private Test buildTestSuite() {
         suite = new TestSuite("stdlib_test");
@@ -94,7 +94,7 @@ public class TestlibTest extends UsefulTestCase {
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY,
                           new MessageCollectorPlainTextToStream(System.out, MessageCollectorPlainTextToStream.NON_VERBOSE));
 
-        myEnvironment = JetCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
+        myEnvironment = KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
 
         generationState = KotlinToJVMBytecodeCompiler.analyzeAndGenerate(myEnvironment);
         if (generationState == null) {

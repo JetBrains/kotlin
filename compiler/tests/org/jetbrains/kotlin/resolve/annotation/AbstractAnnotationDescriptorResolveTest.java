@@ -21,7 +21,7 @@ import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
-import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
@@ -60,7 +60,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
     protected BindingContext context;
 
     @Override
-    protected JetCoreEnvironment createEnvironment() {
+    protected KotlinCoreEnvironment createEnvironment() {
         return JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(getTestRootDisposable());
     }
 

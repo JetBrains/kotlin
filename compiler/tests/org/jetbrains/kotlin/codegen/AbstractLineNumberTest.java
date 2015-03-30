@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
 import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsPackage;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
-import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.name.FqName;
@@ -57,8 +57,8 @@ public class AbstractLineNumberTest extends TestCaseWithTmpdir {
     }
 
     @NotNull
-    private JetCoreEnvironment createEnvironment() {
-        return JetCoreEnvironment.createForTests(
+    private KotlinCoreEnvironment createEnvironment() {
+        return KotlinCoreEnvironment.createForTests(
                 myTestRootDisposable,
                 JetTestUtils.compilerConfigurationForTests(ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK,
                                                            JetTestUtils.getAnnotationsJar(), tmpdir),
@@ -69,7 +69,7 @@ public class AbstractLineNumberTest extends TestCaseWithTmpdir {
     public void setUp() throws Exception {
         super.setUp();
 
-        JetCoreEnvironment environment = createEnvironment();
+        KotlinCoreEnvironment environment = createEnvironment();
         JetFile psiFile = JetTestUtils.createFile(LINE_NUMBER_FUN + ".kt",
                                                "package test;\n\npublic fun " + LINE_NUMBER_FUN + "(): Int = 0\n",
                                                environment.getProject());
@@ -81,7 +81,7 @@ public class AbstractLineNumberTest extends TestCaseWithTmpdir {
     @NotNull
     private JetFile createPsiFile(@NotNull String filename) {
         File file = new File(filename);
-        JetCoreEnvironment environment = createEnvironment();
+        KotlinCoreEnvironment environment = createEnvironment();
 
         String text;
         try {

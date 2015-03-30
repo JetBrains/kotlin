@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.psi
 
 import org.junit.Assert
 import org.jetbrains.kotlin.test.JetLiteFixture
-import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -35,7 +35,7 @@ public class JetSimpleNameExpressionTest : JetLiteFixture() {
         val expression = JetPsiFactory(getProject()).createExpression(exprString) as JetBinaryExpression
         Assert.assertEquals(expected, expression.getOperationReference().getReceiverExpression()!!.getText())
     }
-    override fun createEnvironment(): JetCoreEnvironment {
-        return JetCoreEnvironment.createForTests(getTestRootDisposable()!!, CompilerConfiguration(), EnvironmentConfigFiles.JVM_CONFIG_FILES)
+    override fun createEnvironment(): KotlinCoreEnvironment {
+        return KotlinCoreEnvironment.createForTests(getTestRootDisposable()!!, CompilerConfiguration(), EnvironmentConfigFiles.JVM_CONFIG_FILES)
     }
 }

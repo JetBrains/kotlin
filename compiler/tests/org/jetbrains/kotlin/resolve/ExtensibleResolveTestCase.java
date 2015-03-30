@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.resolve;
 
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.JetLiteFixture;
@@ -32,7 +32,7 @@ public abstract class ExtensibleResolveTestCase extends JetLiteFixture {
     private ExpectedResolveData expectedResolveData;
 
     @Override
-    protected JetCoreEnvironment createEnvironment() {
+    protected KotlinCoreEnvironment createEnvironment() {
         return createEnvironmentWithMockJdk(ConfigurationKind.JDK_AND_ANNOTATIONS);
     }
 

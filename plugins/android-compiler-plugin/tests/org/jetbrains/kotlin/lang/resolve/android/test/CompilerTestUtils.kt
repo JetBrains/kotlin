@@ -27,7 +27,7 @@ import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.lang.resolve.android.CliAndroidUIXmlProcessor
 
@@ -45,12 +45,12 @@ private class AndroidTestExternalDeclarationsProvider(
 fun UsefulTestCase.createAndroidTestEnvironment(
         configuration: CompilerConfiguration,
         resPath: String,
-        manifestPath: String): JetCoreEnvironment
+        manifestPath: String): KotlinCoreEnvironment
 {
     configuration.put(AndroidConfigurationKeys.ANDROID_RES_PATH, resPath)
     configuration.put(AndroidConfigurationKeys.ANDROID_MANIFEST, manifestPath)
-    val myEnvironment = JetCoreEnvironment.createForTests(getTestRootDisposable()!!, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
-    val project = myEnvironment.getProject()
+    val myEnvironment = KotlinCoreEnvironment.createForTests(getTestRootDisposable()!!, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+    val project = myEnvironment.project
     ExternalDeclarationsProvider.registerExtension(project, AndroidTestExternalDeclarationsProvider(project, resPath, manifestPath))
     ExpressionCodegenExtension.registerExtension(project, AndroidExpressionCodegenExtension())
     return myEnvironment

@@ -119,7 +119,7 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
             }
             fileName.endsWith(".kt") -> {
                 val environment = JetTestUtils.createEnvironmentWithFullJdk(myTestRootDisposable)
-                val jetFile = JetTestUtils.createFile(file.getPath(), addRuntimeRetentionToKotlinSource(text), environment.getProject())
+                val jetFile = JetTestUtils.createFile(file.getPath(), addRuntimeRetentionToKotlinSource(text), environment.project)
                 GenerationUtils.compileFileGetClassFileFactoryForTest(jetFile).writeAllTo(tmpdir)
             }
         }
