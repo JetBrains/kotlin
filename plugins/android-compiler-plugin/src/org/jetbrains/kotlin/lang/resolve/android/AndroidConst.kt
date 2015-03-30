@@ -27,9 +27,11 @@ public object AndroidConst {
     val ID_ATTRIBUTE_NO_NAMESPACE: String = "id"
     val ID_ATTRIBUTE: String = "$ANDROID_NAMESPACE:$ID_ATTRIBUTE_NO_NAMESPACE"
     val CLASS_ATTRIBUTE_NO_NAMESPACE: String = "class"
+    val LAYOUT_ATTRIBUTE_NO_NAMESPACE: String = "layout"
 
     val ID_DECLARATION_PREFIX = "@+id/"
     val ID_USAGE_PREFIX = "@id/"
+    val LAYOUT_PREFIX = "@layout/"
 
     val CLEAR_FUNCTION_NAME = "clearFindViewByIdCache"
 }
@@ -40,6 +42,10 @@ public fun idToName(id: String): String? {
     return if (isResourceIdDeclaration(id)) id.replace(AndroidConst.ID_DECLARATION_PREFIX, "")
     else if (isResourceIdUsage(id)) id.replace(AndroidConst.ID_USAGE_PREFIX, "")
     else null
+}
+
+public fun layoutToName(layoutAttr: String?): String? {
+    return layoutAttr?.replace(AndroidConst.LAYOUT_PREFIX, "")
 }
 
 public fun isResourceIdDeclaration(str: String?): Boolean = str?.startsWith(AndroidConst.ID_DECLARATION_PREFIX) ?: false
