@@ -219,11 +219,11 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
     protected fun shouldRunExtensionsCompletion(): Boolean
             = configuration.completeNonImportedDeclarations || prefix.length() >= 3
 
-    protected fun getKotlinTopLevelCallables(): Collection<DeclarationDescriptor>
+    protected fun getTopLevelCallables(): Collection<DeclarationDescriptor>
             = indicesHelper.getTopLevelCallables({ prefixMatcher.prefixMatches(it) })
 
-    protected fun getKotlinExtensions(): Collection<CallableDescriptor>
-            = indicesHelper.getCallableExtensions({ prefixMatcher.prefixMatches(it) }, reference!!.expression)
+    protected fun getTopLevelExtensions(): Collection<CallableDescriptor>
+            = indicesHelper.getCallableTopLevelExtensions({ prefixMatcher.prefixMatches(it) }, reference!!.expression)
 
     protected fun addAllClasses(kindFilter: (ClassKind) -> Boolean) {
         AllClassesCompletion(
@@ -371,12 +371,12 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
             }
 
             if (completionKind == CompletionKind.ALL) {
-                collector.addDescriptorElements(getKotlinTopLevelCallables(), suppressAutoInsertion = true)
+                collector.addDescriptorElements(getTopLevelCallables(), suppressAutoInsertion = true)
             }
         }
 
         if (completionKind == CompletionKind.ALL && shouldRunExtensionsCompletion()) {
-            collector.addDescriptorElements(getKotlinExtensions(), suppressAutoInsertion = true)
+            collector.addDescriptorElements(getTopLevelExtensions(), suppressAutoInsertion = true)
         }
     }
 
@@ -431,11 +431,11 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
 
     private fun processNonImported(processor: (DeclarationDescriptor) -> Unit) {
         if (shouldRunTopLevelCompletion()) {
-            getKotlinTopLevelCallables().forEach(processor)
+            getTopLevelCallables().forEach(processor)
         }
 
         if (shouldRunExtensionsCompletion()) {
-            getKotlinExtensions().forEach(processor)
+            getTopLevelExtensions().forEach(processor)
         }
     }
 }

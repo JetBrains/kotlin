@@ -77,18 +77,18 @@ public class KotlinIndicesHelper(
                 .flatMap { findTopLevelCallables(it).filter(visibilityFilter) }
     }
 
-    public fun getCallableExtensions(nameFilter: (String) -> Boolean, expression: JetSimpleNameExpression): Collection<CallableDescriptor> {
+    public fun getCallableTopLevelExtensions(nameFilter: (String) -> Boolean, expression: JetSimpleNameExpression): Collection<CallableDescriptor> {
         val dataFlowInfo = bindingContext.getDataFlowInfo(expression)
 
         val functionsIndex = JetTopLevelFunctionFqnNameIndex.getInstance()
         val propertiesIndex = JetTopLevelPropertyFqnNameIndex.getInstance()
 
-        val sourceFunctionNames = functionsIndex.getAllKeys(project).sequence().map { FqName(it) }
-        val sourcePropertyNames = propertiesIndex.getAllKeys(project).sequence().map { FqName(it) }
+        val functionFqNames = functionsIndex.getAllKeys(project).sequence().map { FqName(it) }
+        val propertyFqNames = propertiesIndex.getAllKeys(project).sequence().map { FqName(it) }
 
         val result = HashSet<CallableDescriptor>()
-        result.fqNamesToSuitableExtensions(sourceFunctionNames, nameFilter, functionsIndex, expression, bindingContext, dataFlowInfo)
-        result.fqNamesToSuitableExtensions(sourcePropertyNames, nameFilter, propertiesIndex, expression, bindingContext, dataFlowInfo)
+        result.fqNamesToSuitableExtensions(functionFqNames, nameFilter, functionsIndex, expression, bindingContext, dataFlowInfo)
+        result.fqNamesToSuitableExtensions(propertyFqNames, nameFilter, propertiesIndex, expression, bindingContext, dataFlowInfo)
         return result
     }
 

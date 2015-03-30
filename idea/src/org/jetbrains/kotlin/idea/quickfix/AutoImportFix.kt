@@ -145,7 +145,7 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
             result.addAll(indicesHelper.getTopLevelCallablesByName(referenceName))
         }
 
-        result.addAll(indicesHelper.getCallableExtensions({ it == referenceName }, element))
+        result.addAll(indicesHelper.getCallableTopLevelExtensions({ it == referenceName }, element))
 
         return result
     }
