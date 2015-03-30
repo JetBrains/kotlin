@@ -2,6 +2,7 @@ package
 
 internal final class C {
     public constructor C()
+    internal final fun breakContinueInWhen(/*0*/ i: kotlin.Int): kotlin.Unit
     internal final fun containsBreak(/*0*/ a: kotlin.String?, /*1*/ b: kotlin.String?): kotlin.Unit
     internal final fun containsBreakInsideLoopWithLabel(/*0*/ a: kotlin.String?, /*1*/ array: kotlin.Array<kotlin.Int>): kotlin.Unit
     internal final fun containsBreakToOuterLoop(/*0*/ a: kotlin.String?, /*1*/ b: kotlin.String?): kotlin.Unit
