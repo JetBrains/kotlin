@@ -5,8 +5,6 @@
 
     <!-- Set to false to disable proguard run on kotlin-compiler.jar. Speeds up the build -->
     <property name="shrink" value="true"/>
-    <!-- Set to false to disable compiler's @NotNull assertions. Speeds up the build -->
-    <property name="generate.assertions" value="true"/>
     <!-- Set to false to disable compiler's javadoc generation. Speeds up the build -->
     <property name="generate.javadoc" value="true"/>
 
@@ -71,23 +69,12 @@
     <typedef resource="org/jetbrains/kotlin/ant/antlib.xml" classpath="${bootstrap.compiler.home}/lib/kotlin-ant.jar"/>
     <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${dependencies.dir}/ant-contrib.jar"/>
 
-    <taskdef name="javac2" classname="org.apache.tools.ant.taskdefs.Javac"/>
-    <if>
-        <istrue value="${generate.assertions}"/>
-        <then>
-            <path id="javac2.classpath">
-                <pathelement location="${idea.sdk}/lib/javac2.jar"/>
-                <pathelement location="${idea.sdk}/lib/asm-all.jar"/>
-            </path>
-            <taskdef name="javac2" classname="com.intellij.ant.Javac2" classpathref="javac2.classpath" loaderref="javac2.loader"/>
-            <typedef name="skip" classname="com.intellij.ant.ClassFilterAnnotationRegexp" classpathref="javac2.classpath"
-                     loaderref="javac2.loader"/>
-            <echo message="Use javac2 from Idea lib"/>
-        </then>
-        <else>
-            <echo message="Use default javac compiler"/>
-        </else>
-    </if>
+    <path id="javac2.classpath">
+        <pathelement location="${idea.sdk}/lib/javac2.jar"/>
+        <pathelement location="${idea.sdk}/lib/asm-all.jar"/>
+    </path>
+    <taskdef name="javac2" classname="com.intellij.ant.Javac2" classpathref="javac2.classpath" loaderref="javac2.loader"/>
+    <typedef name="skip" classname="com.intellij.ant.ClassFilterAnnotationRegexp" classpathref="javac2.classpath" loaderref="javac2.loader"/>
 
     <dirset id="compilerSources.dirset" dir="${basedir}/">
         <include name="core/descriptor.loader.java/src"/>
