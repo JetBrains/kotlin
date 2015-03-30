@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.completion;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.InnerTestClasses;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
@@ -141,6 +140,12 @@ public class MultiFileJvmBasicCompletionTestGenerated extends AbstractMultiFileJ
     @TestMetadata("NotImportedExtensionFunction")
     public void testNotImportedExtensionFunction() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/multifile/NotImportedExtensionFunction/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("NotImportedExtensionFunction2")
+    public void testNotImportedExtensionFunction2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/multifile/NotImportedExtensionFunction2/");
         doTest(fileName);
     }
 

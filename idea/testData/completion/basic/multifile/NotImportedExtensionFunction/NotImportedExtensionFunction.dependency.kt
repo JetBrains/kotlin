@@ -1,6 +1,6 @@
 package second
 
-fun String.helloFun() {
+fun String?.helloFun() {
 }
 
 fun String.helloWithParams(i : Int) : String {
@@ -8,6 +8,9 @@ fun String.helloWithParams(i : Int) : String {
 }
 
 fun String.helloFunPreventAutoInsert() {
+}
+
+fun <T: CharSequence> T.helloFunGeneric() {
 }
 
 fun Int.helloFake() {

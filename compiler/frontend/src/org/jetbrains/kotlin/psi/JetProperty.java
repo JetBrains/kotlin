@@ -98,7 +98,7 @@ public class JetProperty extends JetTypeParameterListOwnerStub<KotlinPropertyStu
     public JetTypeReference getReceiverTypeReference() {
         KotlinPropertyStub stub = getStub();
         if (stub != null) {
-            if (!stub.hasReceiverTypeRef()) {
+            if (!stub.isExtension()) {
                 return null;
             }
             else {
@@ -134,7 +134,7 @@ public class JetProperty extends JetTypeParameterListOwnerStub<KotlinPropertyStu
             }
             else {
                 List<JetTypeReference> typeReferences = getStubOrPsiChildrenAsList(JetStubElementTypes.TYPE_REFERENCE);
-                int returnTypeRefPositionInPsi = stub.hasReceiverTypeRef() ? 1 : 0;
+                int returnTypeRefPositionInPsi = stub.isExtension() ? 1 : 0;
                 if (typeReferences.size() <= returnTypeRefPositionInPsi) {
                     LOG.error("Invalid stub structure built for property:\n" + getText());
                     return null;

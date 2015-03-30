@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.idea.stubindex;
 
 import com.intellij.psi.stubs.IndexSink;
-import com.intellij.psi.stubs.StubElement;
-import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetClassOrObject;
 import org.jetbrains.kotlin.psi.stubs.*;
 import org.jetbrains.kotlin.psi.stubs.elements.StubIndexService;
@@ -95,6 +92,7 @@ public class StubIndexServiceImpl implements StubIndexService {
             if (fqName != null) {
                 sink.occurrence(JetTopLevelFunctionFqnNameIndex.getInstance().getKey(), fqName.asString());
                 sink.occurrence(JetTopLevelFunctionByPackageIndex.getInstance().getKey(), fqName.parent().asString());
+                StubindexPackage.indexTopLevelExtension(stub, sink);
             }
         }
     }
@@ -116,6 +114,7 @@ public class StubIndexServiceImpl implements StubIndexService {
             if (fqName != null) {
                 sink.occurrence(JetTopLevelPropertyFqnNameIndex.getInstance().getKey(), fqName.asString());
                 sink.occurrence(JetTopLevelPropertyByPackageIndex.getInstance().getKey(), fqName.parent().asString());
+                StubindexPackage.indexTopLevelExtension(stub, sink);
             }
         }
     }

@@ -428,6 +428,7 @@
     <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.JetSuperClassIndex"/>
     <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.JetTopLevelFunctionFqnNameIndex"/>
     <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.JetTopLevelPropertyFqnNameIndex"/>
+    <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.JetTopLevelExtensionsByReceiverTypeIndex"/>
     <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.JetAnnotationsIndex"/>
     <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.JetProbablyNothingFunctionShortNameIndex"/>
     <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.JetProbablyNothingPropertyShortNameIndex"/>

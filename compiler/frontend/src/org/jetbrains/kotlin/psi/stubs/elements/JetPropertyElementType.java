@@ -61,7 +61,7 @@ public class JetPropertyElementType extends JetStubElementType<KotlinPropertyStu
         dataStream.writeBoolean(stub.hasDelegate());
         dataStream.writeBoolean(stub.hasDelegateExpression());
         dataStream.writeBoolean(stub.hasInitializer());
-        dataStream.writeBoolean(stub.hasReceiverTypeRef());
+        dataStream.writeBoolean(stub.isExtension());
         dataStream.writeBoolean(stub.hasReturnTypeRef());
         dataStream.writeBoolean(stub.isProbablyNothingType());
 

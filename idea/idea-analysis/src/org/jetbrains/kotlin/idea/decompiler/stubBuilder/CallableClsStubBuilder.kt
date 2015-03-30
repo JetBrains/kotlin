@@ -133,7 +133,7 @@ private class CallableClsStubBuilder(
                         hasDelegate = false,
                         hasDelegateExpression = false,
                         hasInitializer = false,
-                        hasReceiverTypeRef = callableProto.hasReceiverType(),
+                        isExtension = callableProto.hasReceiverType(),
                         hasReturnTypeRef = true,
                         fqName = c.containerFqName.child(callableName),
                         isProbablyNothingType = isProbablyNothing(callableProto)
