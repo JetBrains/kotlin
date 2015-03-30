@@ -122,6 +122,11 @@ public class JetClass extends JetTypeParameterListOwnerStub<KotlinClassStub> imp
         return getStubOrPsiChild(JetStubElementTypes.CLASS_BODY);
     }
 
+    @Nullable
+    public PsiElement getColon() {
+        return findChildByType(JetTokens.COLON);
+    }
+
     public List<JetProperty> getProperties() {
         JetClassBody body = getBody();
         if (body == null) return Collections.emptyList();

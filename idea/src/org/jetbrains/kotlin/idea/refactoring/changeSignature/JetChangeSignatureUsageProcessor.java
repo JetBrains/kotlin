@@ -159,7 +159,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
 
         if (functionPsi instanceof JetClass && ((JetClass) functionPsi).isEnum()) {
             for (JetDeclaration declaration : ((JetClass) functionPsi).getDeclarations()) {
-                if (declaration instanceof JetEnumEntry && ((JetEnumEntry) declaration).getDelegationSpecifierList() == null) {
+                if (declaration instanceof JetEnumEntry && ((JetEnumEntry) declaration).getDelegationSpecifiers().isEmpty()) {
                     result.add(new JetEnumEntryWithoutSuperCallUsage((JetEnumEntry) declaration));
                 }
             }

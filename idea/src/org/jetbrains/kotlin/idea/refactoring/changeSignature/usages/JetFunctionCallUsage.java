@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.refactoring.changeSignature.usages;
 
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -66,6 +67,16 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
             }
             else {
                 changeArgumentNames(changeInfo, element);
+            }
+        }
+
+        if (changeInfo.getNewParametersCount() == 0
+            && element instanceof JetDelegatorToSuperCall) {
+            JetEnumEntry enumEntry = PsiTreeUtil.getParentOfType(element, JetEnumEntry.class, true);
+            if (enumEntry != null && enumEntry.getInitializerList() == element.getParent()) {
+                PsiElement colon = enumEntry.getColon();
+                JetInitializerList initializerList = enumEntry.getInitializerList();
+                enumEntry.deleteChildRange(colon != null ? colon : initializerList, initializerList);
             }
         }
 
