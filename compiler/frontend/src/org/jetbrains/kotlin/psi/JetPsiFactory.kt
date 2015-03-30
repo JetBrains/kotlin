@@ -309,8 +309,8 @@ public class JetPsiFactory(private val project: Project) {
         return importDirective.getParent() as JetImportList
     }
 
-    public fun createPrimaryConstructor(): PsiElement {
-        return createClass("class A()").findElementAt(7)!!.getParent()!!
+    public fun createPrimaryConstructor(): JetPrimaryConstructor {
+        return createClass("class A()").getPrimaryConstructor()!!
     }
 
     public fun createClassLabel(labelName: String): JetSimpleNameExpression {

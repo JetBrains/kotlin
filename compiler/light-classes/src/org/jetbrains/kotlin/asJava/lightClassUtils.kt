@@ -75,7 +75,7 @@ public fun JetParameter.toPsiParameter(): PsiParameter? {
     val method: PsiMethod? = when (owner) {
         is JetFunction -> LightClassUtil.getLightClassMethod(owner)
         is JetPropertyAccessor -> LightClassUtil.getLightClassAccessorMethod(owner)
-        is JetClass -> LightClassUtil.getPsiClass(owner)?.getConstructors()?.let { constructors ->
+        is JetPrimaryConstructor -> LightClassUtil.getPsiClass(owner.getContainingClass())?.getConstructors()?.let { constructors ->
             if (constructors.isNotEmpty()) constructors[0] else null
         }
         else -> null

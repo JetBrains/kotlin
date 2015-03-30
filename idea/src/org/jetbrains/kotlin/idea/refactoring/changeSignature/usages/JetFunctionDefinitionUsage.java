@@ -285,7 +285,11 @@ public class JetFunctionDefinitionUsage<T extends PsiElement> extends JetUsageIn
                     anchor = ((JetClass) element).getNameIdentifier();
                 }
                 if (anchor != null) {
-                    newParameterList = (JetParameterList) element.addAfter(newParameterList, anchor);
+                    JetPrimaryConstructor constructor =
+                            (JetPrimaryConstructor) element.addAfter(psiFactory.createPrimaryConstructor(), anchor);
+                    JetParameterList oldParameterList = constructor.getValueParameterList();
+                    assert oldParameterList != null : "primary constructor from factory has parameter list";
+                    newParameterList = (JetParameterList) oldParameterList.replace(newParameterList);
                 }
             }
             else if (isLambda) {
@@ -339,7 +343,9 @@ public class JetFunctionDefinitionUsage<T extends PsiElement> extends JetUsageIn
             ((JetFunction)element).addModifier(newVisibilityToken);
         }
         else {
-            ((JetClass)element).addPrimaryConstructorModifier(newVisibilityToken);
+            JetPrimaryConstructor constructor = ((JetClass) element).getPrimaryConstructor();
+            assert constructor != null : "Primary constructor should be created before changing visibility";
+            constructor.addModifier(newVisibilityToken);
         }
     }
 

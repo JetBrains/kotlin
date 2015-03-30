@@ -671,8 +671,10 @@ public class JetFlowInformationProvider {
                                             return;
                                         }
                                         report(Errors.UNUSED_PARAMETER.on((JetParameter) element, variableDescriptor), ctxt);
-                                    } else if (owner instanceof JetClass) {
-                                        if (!((JetParameter) element).hasValOrVarNode() && !((JetClass) owner).isAnnotation()) {
+                                    }
+                                    else if (owner instanceof JetPrimaryConstructor) {
+                                        if (!((JetParameter) element).hasValOrVarNode() &&
+                                            !((JetPrimaryConstructor) owner).getContainingClass().isAnnotation()) {
                                             report(Errors.UNUSED_PARAMETER.on((JetParameter) element, variableDescriptor), ctxt);
                                         }
                                     }
