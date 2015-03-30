@@ -76,7 +76,7 @@ public fun <C: ResolutionContext<C>> Call.hasUnresolvedArguments(context: Resolu
 
 public fun Call.getValueArgumentsInParentheses(): List<ValueArgument> = getValueArguments().filterArgsInParentheses()
 
-public fun JetCallExpression.getValueArgumentsInParentheses(): List<ValueArgument> = getValueArguments().filterArgsInParentheses()
+public fun JetCallElement.getValueArgumentsInParentheses(): List<ValueArgument> = getValueArguments().filterArgsInParentheses()
 
 public fun Call.getValueArgumentListOrElement(): JetElement = getValueArgumentList() ?: getCalleeExpression() ?: getCallElement()
 

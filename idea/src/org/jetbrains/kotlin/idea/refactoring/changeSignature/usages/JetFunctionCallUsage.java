@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.refactoring.changeSignature.usages;
 
 import com.intellij.psi.PsiElement;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo;
+import org.jetbrains.kotlin.idea.util.psiModificationUtil.PsiModificationUtilPackage;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
@@ -73,7 +75,7 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
     private void updateArgumentsAndReceiver(JetChangeInfo changeInfo, JetCallElement element) {
         JetValueArgumentList arguments = element.getValueArgumentList();
         assert arguments != null : "Argument list is expected: " + element.getText();
-        List<JetValueArgument> oldArguments = arguments.getArguments();
+        List<? extends ValueArgument> oldArguments = element.getValueArguments();
 
         boolean isNamedCall = oldArguments.size() > 1 && oldArguments.get(0).getArgumentName() != null;
         StringBuilder parametersBuilder = new StringBuilder("(");
@@ -99,7 +101,7 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
         parametersBuilder.append(')');
         JetValueArgumentList newArguments = JetPsiFactory(getProject()).createCallArguments(parametersBuilder.toString());
 
-        Map<Integer, JetValueArgument> argumentMap = getParamIndexToArgumentMap(changeInfo, oldArguments);
+        Map<Integer, ? extends ValueArgument> argumentMap = getParamIndexToArgumentMap(changeInfo, oldArguments);
         int argIndex = 0;
 
         JetParameterInfo newReceiverInfo = changeInfo.getReceiverParameterInfo();
@@ -131,37 +133,58 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
                 continue;
             }
 
-            JetValueArgument oldArgument = argumentMap.get(parameterInfo.getOldIndex());
+            ValueArgument oldArgument = argumentMap.get(parameterInfo.getOldIndex());
 
             if (oldArgument != null) {
                 JetValueArgumentName argumentName = oldArgument.getArgumentName();
                 JetSimpleNameExpression argumentNameExpression = argumentName != null ? argumentName.getReferenceExpression() : null;
                 changeArgumentName(argumentNameExpression, parameterInfo);
-                newArgument.replace(oldArgument);
+                //noinspection ConstantConditions
+                newArgument.replace(oldArgument instanceof JetFunctionLiteralArgument
+                                    ? psiFactory.createArgument(oldArgument.getArgumentExpression())
+                                    : oldArgument.asElement());
             }
             else if (parameterInfo.getDefaultValueForCall().isEmpty())
                 newArgument.delete();
         }
 
-        arguments.replace(newArguments);
-
-        if (newReceiverInfo == originalReceiverInfo) return;
-
-        PsiElement replacingElement = element;
-        if (newReceiverInfo != null) {
-            JetValueArgument receiverArgument = argumentMap.get(newReceiverInfo.getOldIndex());
-            JetExpression extensionReceiverExpression = receiverArgument != null ? receiverArgument.getArgumentExpression() : null;
-            String receiverText = extensionReceiverExpression != null
-                                  ? extensionReceiverExpression.getText()
-                                  : newReceiverInfo.getDefaultValueForCall();
-            if (receiverText.isEmpty()) {
-                receiverText = "_";
-            }
-
-            replacingElement = psiFactory.createExpression(receiverText + "." + element.getText());
+        List<JetFunctionLiteralArgument> lambdaArguments = element.getFunctionLiteralArguments();
+        boolean hasLambdaArgumentsBefore = !lambdaArguments.isEmpty();
+        if (hasLambdaArgumentsBefore) {
+            element.deleteChildRange(KotlinPackage.first(lambdaArguments), KotlinPackage.last(lambdaArguments));
         }
 
-        elementToReplace.replace(replacingElement);
+        JetValueArgument lastArgument = KotlinPackage.lastOrNull(newArguments.getArguments());
+        boolean hasTrailingLambdaInArgumentListAfter = lastArgument != null && lastArgument.getArgumentExpression() instanceof JetFunctionLiteralExpression;
+
+        arguments.replace(newArguments);
+
+        JetElement newElement = element;
+        if (newReceiverInfo != originalReceiverInfo) {
+            PsiElement replacingElement = element;
+            if (newReceiverInfo != null) {
+                ValueArgument receiverArgument = argumentMap.get(newReceiverInfo.getOldIndex());
+                JetExpression extensionReceiverExpression = receiverArgument != null ? receiverArgument.getArgumentExpression() : null;
+                String receiverText = extensionReceiverExpression != null
+                                      ? extensionReceiverExpression.getText()
+                                      : newReceiverInfo.getDefaultValueForCall();
+                if (receiverText.isEmpty()) {
+                    receiverText = "_";
+                }
+
+                replacingElement = psiFactory.createExpression(receiverText + "." + element.getText());
+            }
+
+            newElement = (JetElement) elementToReplace.replace(replacingElement);
+        }
+
+        if (hasLambdaArgumentsBefore && hasTrailingLambdaInArgumentListAfter) {
+            JetCallElement newCallElement =
+                    (JetCallElement) (newElement instanceof JetQualifiedExpression
+                                      ? ((JetQualifiedExpression) newElement).getSelectorExpression()
+                                      : newElement);
+            PsiModificationUtilPackage.moveLambdaOutsideParentheses(newCallElement);
+        }
     }
 
     @Nullable
@@ -177,11 +200,11 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
         return null;
     }
 
-    private static Map<Integer, JetValueArgument> getParamIndexToArgumentMap(JetChangeInfo changeInfo, List<JetValueArgument> oldArguments) {
-        Map<Integer, JetValueArgument> argumentMap = new HashMap<Integer, JetValueArgument>();
+    private static Map<Integer, ? extends ValueArgument> getParamIndexToArgumentMap(JetChangeInfo changeInfo, List<? extends ValueArgument> oldArguments) {
+        Map<Integer, ValueArgument> argumentMap = new HashMap<Integer, ValueArgument>();
 
         for (int i = 0; i < oldArguments.size(); i++) {
-            JetValueArgument argument = oldArguments.get(i);
+            ValueArgument argument = oldArguments.get(i);
             JetValueArgumentName argumentName = argument.getArgumentName();
             JetSimpleNameExpression argumentNameExpression = argumentName != null ? argumentName.getReferenceExpression() : null;
             String oldParameterName = argumentNameExpression != null ? argumentNameExpression.getReferencedName() : null;

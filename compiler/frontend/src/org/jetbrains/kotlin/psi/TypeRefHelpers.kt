@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.psi.JetPsiFactory
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.PsiErrorElement
 import org.jetbrains.kotlin.psi.JetCallableDeclaration
+import org.jetbrains.kotlin.psi.JetFunctionType
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 fun getTypeReference(declaration: JetCallableDeclaration): JetTypeReference? {
@@ -56,17 +57,25 @@ fun setTypeReference(declaration: JetCallableDeclaration, addAfter: PsiElement?,
 }
 
 fun JetCallableDeclaration.setReceiverTypeReference(typeRef: JetTypeReference?): JetTypeReference? {
+    val needParentheses = typeRef != null && typeRef.getTypeElement() is JetFunctionType && !typeRef.hasParentheses()
     val oldTypeRef = getReceiverTypeReference()
     if (typeRef != null) {
-        if (oldTypeRef != null) {
-            return oldTypeRef.replace(typeRef) as JetTypeReference
+        val newTypeRef =
+                if (oldTypeRef != null) {
+                    oldTypeRef.replace(typeRef) as JetTypeReference
+                }
+                else {
+                    val anchor = getNameIdentifier()
+                    val newTypeRef = addBefore(typeRef, anchor) as JetTypeReference
+                    addAfter(JetPsiFactory(getProject()).createDot(), newTypeRef)
+                    newTypeRef
+                }
+        if (needParentheses) {
+            val argList = JetPsiFactory(getProject()).createCallArguments("()")
+            newTypeRef.addBefore(argList.getLeftParenthesis()!!, newTypeRef.getFirstChild())
+            newTypeRef.add(argList.getRightParenthesis()!!)
         }
-        else {
-            val anchor = getNameIdentifier()
-            val newTypeRef = addBefore(typeRef, anchor) as JetTypeReference
-            addAfter(JetPsiFactory(getProject()).createDot(), newTypeRef)
-            return newTypeRef
-        }
+        return newTypeRef
     }
     else {
         if (oldTypeRef != null) {

@@ -18,10 +18,7 @@ package org.jetbrains.kotlin.idea.util.psiModificationUtil
 
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.JetCallExpression
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.psi.JetFunctionLiteralArgument
-import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentsInParentheses
@@ -77,3 +74,20 @@ fun JetFunctionLiteralArgument.moveInsideParenthesesAndReplaceWith(
     return oldCallExpression.replace(newCallExpression) as JetCallExpression
 }
 
+fun JetCallElement.moveLambdaOutsideParentheses() {
+    val args = getValueArgumentsInParentheses()
+    val functionLiteral = args.last!!.getArgumentExpression()?.getText()
+    val calleeText = getCalleeExpression()?.getText()
+    if (calleeText == null || functionLiteral == null) return
+
+    val params = args.subList(0, args.size - 1).map { it.asElement().getText() ?: "" }.joinToString(", ", "(", ")")
+
+    val newCall =
+            if (params == "()") {
+                "$calleeText $functionLiteral"
+            }
+            else {
+                "$calleeText$params $functionLiteral"
+            }
+    replace(JetPsiFactory(this).createExpression(newCall))
+}
