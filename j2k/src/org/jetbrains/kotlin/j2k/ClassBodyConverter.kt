@@ -71,7 +71,7 @@ class ClassBodyConverter(private val psiClass: PsiClass,
         val rBrace = RBrace().assignPrototype(psiClass.getRBrace())
 
         if (isObject) {
-            return ClassBody(null, emptyList(), convertedMembers.values().toList(), emptyList(), lBrace, rBrace)
+            return ClassBody(null, null, convertedMembers.values().toList(), emptyList(), lBrace, rBrace)
         }
 
         val useCompanionObject = shouldGenerateCompanionObject(convertedMembers)
@@ -102,7 +102,7 @@ class ClassBodyConverter(private val psiClass: PsiClass,
             primaryConstructorSignature = null // no "()" after class name is needed in this case
         }
 
-        return ClassBody(primaryConstructorSignature, constructorConverter?.baseClassParams ?: listOf(), members, companionObjectMembers, lBrace, rBrace)
+        return ClassBody(primaryConstructorSignature, constructorConverter?.baseClassParams, members, companionObjectMembers, lBrace, rBrace)
     }
 
     private fun Converter.convertMember(member: PsiMember,

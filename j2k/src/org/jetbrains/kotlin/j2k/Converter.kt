@@ -158,12 +158,12 @@ class Converter private(
         return when {
             psiClass.isInterface() -> {
                 val classBody = ClassBodyConverter(psiClass, this, isOpenClass = false, isObject = false).convertBody()
-                Trait(name, annotations, modifiers, typeParameters, extendsTypes, listOf(), implementsTypes, classBody)
+                Trait(name, annotations, modifiers, typeParameters, extendsTypes, implementsTypes, classBody)
             }
 
             psiClass.isEnum() -> {
                 val classBody = ClassBodyConverter(psiClass, this, isOpenClass = false, isObject = false).convertBody()
-                Enum(name, annotations, modifiers, typeParameters, listOf(), listOf(), implementsTypes, classBody)
+                Enum(name, annotations, modifiers, typeParameters, implementsTypes, classBody)
             }
 
             else -> {
@@ -254,7 +254,7 @@ class Converter private(
                      convertModifiers(psiClass).without(Modifier.ABSTRACT),
                      TypeParameterList.Empty,
                      listOf(),
-                     listOf(),
+                     null,
                      listOf(),
                      classBody).assignPrototype(psiClass)
     }

@@ -1,4 +1,6 @@
-class C {
+open class Base
+
+class C : Base {
     constructor(arg1: Int, arg2: Int, arg3: Int) {
     }
 

@@ -23,11 +23,9 @@ class Enum(
         annotations: Annotations,
         modifiers: Modifiers,
         typeParameterList: TypeParameterList,
-        extendsTypes: List<Type>,
-        baseClassParams: List<DeferredElement<Expression>>,
         implementsTypes: List<Type>,
         body: ClassBody
-) : Class(name, annotations, modifiers, typeParameterList, extendsTypes, baseClassParams, implementsTypes, body) {
+) : Class(name, annotations, modifiers, typeParameterList, emptyList(), null, implementsTypes, body) {
 
     override fun generateCode(builder: CodeBuilder) {
         builder append annotations appendWithSpaceAfter presentationModifiers() append "enum class " append name

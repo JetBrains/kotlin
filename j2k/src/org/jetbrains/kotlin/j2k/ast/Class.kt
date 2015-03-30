@@ -25,7 +25,7 @@ open class Class(
         modifiers: Modifiers,
         val typeParameterList: TypeParameterList,
         val extendsTypes: List<Type>,
-        val baseClassParams: List<DeferredElement<Expression>>,
+        val baseClassParams: List<DeferredElement<Expression>>?,
         val implementsTypes: List<Type>,
         val body: ClassBody
 ) : Member(annotations, modifiers) {
@@ -56,7 +56,7 @@ open class Class(
     }
 
     private fun baseClassSignatureWithParams(builder: CodeBuilder): List<() -> CodeBuilder> {
-        if (keyword.equals("class") && extendsTypes.size() == 1) {
+        if (keyword.equals("class") && extendsTypes.size() == 1 && baseClassParams != null) {
             return listOf({
                               builder append extendsTypes[0] append "("
                               builder.append(baseClassParams, ", ")
@@ -75,7 +75,7 @@ class Object(
         annotations: Annotations,
         modifiers: Modifiers,
         body: ClassBody
-) : Class(name, annotations, modifiers, TypeParameterList.Empty, emptyList(), emptyList(), emptyList(), body) {
+) : Class(name, annotations, modifiers, TypeParameterList.Empty, emptyList(), null, emptyList(), body) {
 
     override val keyword: String
         get() = "object"

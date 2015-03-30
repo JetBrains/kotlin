@@ -22,7 +22,7 @@ abstract class Member(val annotations: Annotations, val modifiers: Modifiers) : 
 
 class ClassBody (
         val primaryConstructorSignature: PrimaryConstructorSignature?,
-        val baseClassParams: List<DeferredElement<Expression>>,
+        val baseClassParams: List<DeferredElement<Expression>>?,
         val members: List<Member>,
         val companionObjectMembers: List<Member>,
         val lBrace: LBrace,
