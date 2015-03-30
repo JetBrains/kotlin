@@ -45,9 +45,7 @@ private class UnusedInstanceCollector : JsVisitorWithContextImpl() {
     public val removableDeclarations: List<JsStatement>
         get() = tracker.removable
 
-    override fun visit(x: JsVars.JsVar?, ctx: JsContext<*>?): Boolean {
-        if (x == null) return false
-
+    override fun visit(x: JsVars.JsVar, ctx: JsContext<*>): Boolean {
         if (!isLocalFunctionDeclaration(x)) return super.visit(x, ctx)
 
         val name = x.getName()!!

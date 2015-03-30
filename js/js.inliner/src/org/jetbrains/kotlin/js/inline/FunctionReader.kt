@@ -149,9 +149,7 @@ private fun JsFunction.markInlineArguments(descriptor: CallableDescriptor) {
     }
 
     val visitor = object: JsVisitorWithContextImpl() {
-        override fun endVisit(x: JsInvocation?, ctx: JsContext<*>?) {
-            if (x == null || ctx == null) return
-
+        override fun endVisit(x: JsInvocation, ctx: JsContext<*>) {
             val qualifier: JsExpression?
             val namesSet: Set<JsName>
 
@@ -180,11 +178,11 @@ private fun replaceExternalNames(function: JsFunction, externalReplacements: Map
     if (replacements.isEmpty()) return
 
     val visitor = object: JsVisitorWithContextImpl() {
-        override fun endVisit(x: JsNameRef?, ctx: JsContext<*>?) {
-            if (x == null || x.getQualifier() != null) return
+        override fun endVisit(x: JsNameRef, ctx: JsContext<*>) {
+            if (x.getQualifier() != null) return
 
             replacements[x.getIdent()]?.let {
-                ctx?.replaceMe(it)
+                ctx.replaceMe(it)
             }
         }
     }

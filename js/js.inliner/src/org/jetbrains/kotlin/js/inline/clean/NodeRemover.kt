@@ -22,9 +22,7 @@ import com.google.dart.compiler.backend.js.ast.JsContext
 
 private class NodeRemover<T>(val klass: Class<T>, val predicate: (T) -> Boolean): JsVisitorWithContextImpl() {
 
-    override fun <T : JsNode?> doTraverse(node: T?, ctx: JsContext<*>?) {
-        if (node == null || ctx == null) return
-
+    override fun <T : JsNode> doTraverse(node: T, ctx: JsContext<*>) {
         if (klass.isInstance(node)) {
             val instance = klass.cast(node)!!
 

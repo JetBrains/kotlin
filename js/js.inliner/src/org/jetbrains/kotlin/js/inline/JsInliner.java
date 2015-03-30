@@ -68,7 +68,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
     }
 
     @Override
-    public boolean visit(JsFunction function, JsContext context) {
+    public boolean visit(@NotNull JsFunction function, @NotNull JsContext context) {
         inliningContexts.push(new JsInliningContext(function));
         assert !inProcessFunctions.contains(function): "Inliner has revisited function";
         inProcessFunctions.add(function);
@@ -81,7 +81,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
     }
 
     @Override
-    public void endVisit(JsFunction function, JsContext context) {
+    public void endVisit(@NotNull JsFunction function, @NotNull JsContext context) {
         super.endVisit(function, context);
         refreshLabelNames(getInliningContext().newNamingContext(), function);
 
@@ -99,7 +99,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
     }
 
     @Override
-    public boolean visit(JsInvocation call, JsContext context) {
+    public boolean visit(@NotNull JsInvocation call, @NotNull JsContext context) {
         if (shouldInline(call) && canInline(call)) {
             JsFunction containingFunction = getCurrentNamedFunction();
             if (containingFunction != null) {
@@ -124,7 +124,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
     }
 
     @Override
-    public void endVisit(JsInvocation x, JsContext ctx) {
+    public void endVisit(@NotNull JsInvocation x, @NotNull JsContext ctx) {
         JsCallInfo lastCallInfo = null;
 
         if (!inlineCallInfos.isEmpty()) {

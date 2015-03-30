@@ -24,10 +24,10 @@ import com.google.dart.compiler.backend.js.ast.JsContext
 import com.google.dart.compiler.backend.js.ast.JsLabel
 
 class LabelNameRefreshingVisitor(val context: NamingContext, val functionScope: JsFunctionScope) : JsVisitorWithContextImpl() {
-    override fun visit(x: JsFunction?, ctx: JsContext<*>?): Boolean = false
+    override fun visit(x: JsFunction, ctx: JsContext<*>): Boolean = false
 
-    override fun visit(x: JsLabel?, ctx: JsContext<*>?): Boolean {
-        val labelName = x!!.getName()
+    override fun visit(x: JsLabel, ctx: JsContext<*>): Boolean {
+        val labelName = x.getName()
         val freshName = functionScope.enterLabel(labelName.getIdent())
 
         if (freshName.getIdent() != labelName.getIdent()) {
@@ -37,7 +37,7 @@ class LabelNameRefreshingVisitor(val context: NamingContext, val functionScope: 
         return super.visit(x, ctx)
     }
 
-    override fun endVisit(x: JsLabel?, ctx: JsContext<*>?) {
+    override fun endVisit(x: JsLabel, ctx: JsContext<*>) {
         super.endVisit(x, ctx)
         functionScope.exitLabel()
     }

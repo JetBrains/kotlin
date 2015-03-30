@@ -22,6 +22,8 @@ package com.google.dart.compiler.backend.js.ast;
  *  file: dev/core/src/com/google/gwt/dev/js/ast/JsVisitor.java
  */
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 /**
@@ -31,10 +33,14 @@ import java.util.List;
 public abstract class JsVisitorWithContext {
 
     public final <T extends JsNode> T accept(T node) {
+        if (node == null) return null;
+
         return doAccept(node);
     }
 
     public JsExpression acceptLvalue(JsExpression expr) {
+        if (expr == null) return null;
+
         return doAcceptLvalue(expr);
     }
 
@@ -43,6 +49,8 @@ public abstract class JsVisitorWithContext {
     }
 
     public final <T extends JsStatement> T acceptStatement(T statement) {
+        if (statement == null) return null;
+
         //noinspection unchecked
         return (T) doAcceptStatement(statement);
     }
@@ -51,304 +59,304 @@ public abstract class JsVisitorWithContext {
         doAcceptStatementList(statements);
     }
 
-    public void endVisit(JsArrayAccess x, JsContext ctx) {
+    public void endVisit(@NotNull JsArrayAccess x, @NotNull JsContext ctx) {
     }
 
-    public void endVisit(JsArrayLiteral x, JsContext ctx) {
+    public void endVisit(@NotNull JsArrayLiteral x, @NotNull JsContext ctx) {
     }
 
-    public void endVisit(JsBinaryOperation x, JsContext ctx) {
+    public void endVisit(@NotNull JsBinaryOperation x, @NotNull JsContext ctx) {
     }
 
-    public void endVisit(JsBlock x, JsContext ctx) {
+    public void endVisit(@NotNull JsBlock x, @NotNull JsContext ctx) {
     }
 
-    public void endVisit(JsLiteral.JsBooleanLiteral x, JsContext ctx) {
+    public void endVisit(@NotNull JsLiteral.JsBooleanLiteral x, @NotNull JsContext ctx) {
     }
 
-    public void endVisit(JsBreak x, JsContext ctx) {
+    public void endVisit(@NotNull JsBreak x, @NotNull JsContext ctx) {
     }
 
-    public void endVisit(JsCase x, JsContext ctx) {
+    public void endVisit(@NotNull JsCase x, @NotNull JsContext ctx) {
     }
 
-    public void endVisit(JsCatch x, JsContext ctx) {
+    public void endVisit(@NotNull JsCatch x, @NotNull JsContext ctx) {
     }
 
-    public void endVisit(JsConditional x, JsContext ctx) {
+    public void endVisit(@NotNull JsConditional x, @NotNull JsContext ctx) {
     }
 
-    public void endVisit(JsContinue x, JsContext ctx) {
+    public void endVisit(@NotNull JsContinue x, @NotNull JsContext ctx) {
     }
 
-    public void endVisit(JsDebugger x, JsContext ctx) {
+    public void endVisit(@NotNull JsDebugger x, @NotNull JsContext ctx) {
     }
 
-    public void endVisit(JsDefault x, JsContext ctx) {
+    public void endVisit(@NotNull JsDefault x, @NotNull JsContext ctx) {
     }
 
-    public void endVisit(JsDoWhile x, JsContext ctx) {
+    public void endVisit(@NotNull JsDoWhile x, @NotNull JsContext ctx) {
     }
 
-    public void endVisit(JsEmpty x, JsContext ctx) {
+    public void endVisit(@NotNull JsEmpty x, @NotNull JsContext ctx) {
     }
 
-    public void endVisit(JsExpressionStatement x, JsContext ctx) {
+    public void endVisit(@NotNull JsExpressionStatement x, @NotNull JsContext ctx) {
     }
 
-    public void endVisit(JsFor x, JsContext ctx) {
+    public void endVisit(@NotNull JsFor x, @NotNull JsContext ctx) {
     }
 
-    public void endVisit(JsForIn x, JsContext ctx) {
+    public void endVisit(@NotNull JsForIn x, @NotNull JsContext ctx) {
     }
 
-    public void endVisit(JsFunction x, JsContext ctx) {
+    public void endVisit(@NotNull JsFunction x, @NotNull JsContext ctx) {
     }
 
-    public void endVisit(JsIf x, JsContext ctx) {
+    public void endVisit(@NotNull JsIf x, @NotNull JsContext ctx) {
     }
 
-    public void endVisit(JsInvocation x, JsContext ctx) {
+    public void endVisit(@NotNull JsInvocation x, @NotNull JsContext ctx) {
     }
 
-    public void endVisit(JsLabel x, JsContext ctx) {
+    public void endVisit(@NotNull JsLabel x, @NotNull JsContext ctx) {
     }
 
-    public void endVisit(JsName x, JsContext ctx) {
+    public void endVisit(@NotNull JsName x, @NotNull JsContext ctx) {
     }
 
-    public void endVisit(JsNameRef x, JsContext ctx) {
+    public void endVisit(@NotNull JsNameRef x, @NotNull JsContext ctx) {
     }
 
-    public void endVisit(JsNew x, JsContext ctx) {
+    public void endVisit(@NotNull JsNew x, @NotNull JsContext ctx) {
     }
 
-    public void endVisit(JsNullLiteral x, JsContext ctx) {
+    public void endVisit(@NotNull JsNullLiteral x, @NotNull JsContext ctx) {
     }
 
-    public void endVisit(JsNumberLiteral x, JsContext ctx) {
+    public void endVisit(@NotNull JsNumberLiteral x, @NotNull JsContext ctx) {
     }
 
-    public void endVisit(JsObjectLiteral x, JsContext ctx) {
+    public void endVisit(@NotNull JsObjectLiteral x, @NotNull JsContext ctx) {
     }
 
-    public void endVisit(JsParameter x, JsContext ctx) {
+    public void endVisit(@NotNull JsParameter x, @NotNull JsContext ctx) {
     }
 
-    public void endVisit(JsPostfixOperation x, JsContext ctx) {
+    public void endVisit(@NotNull JsPostfixOperation x, @NotNull JsContext ctx) {
     }
 
-    public void endVisit(JsPrefixOperation x, JsContext ctx) {
+    public void endVisit(@NotNull JsPrefixOperation x, @NotNull JsContext ctx) {
     }
 
-    public void endVisit(JsProgram x, JsContext ctx) {
+    public void endVisit(@NotNull JsProgram x, @NotNull JsContext ctx) {
     }
 
-    public void endVisit(JsProgramFragment x, JsContext ctx) {
+    public void endVisit(@NotNull JsProgramFragment x, @NotNull JsContext ctx) {
     }
 
-    public void endVisit(JsPropertyInitializer x, JsContext ctx) {
+    public void endVisit(@NotNull JsPropertyInitializer x, @NotNull JsContext ctx) {
     }
 
-    public void endVisit(JsRegExp x, JsContext ctx) {
+    public void endVisit(@NotNull JsRegExp x, @NotNull JsContext ctx) {
     }
 
-    public void endVisit(JsReturn x, JsContext ctx) {
+    public void endVisit(@NotNull JsReturn x, @NotNull JsContext ctx) {
     }
 
-    public void endVisit(JsStringLiteral x, JsContext ctx) {
+    public void endVisit(@NotNull JsStringLiteral x, @NotNull JsContext ctx) {
     }
 
-    public void endVisit(JsSwitch x, JsContext ctx) {
+    public void endVisit(@NotNull JsSwitch x, @NotNull JsContext ctx) {
     }
 
-    public void endVisit(JsLiteral.JsThisRef x, JsContext ctx) {
+    public void endVisit(@NotNull JsLiteral.JsThisRef x, @NotNull JsContext ctx) {
     }
 
-    public void endVisit(JsThrow x, JsContext ctx) {
+    public void endVisit(@NotNull JsThrow x, @NotNull JsContext ctx) {
     }
 
-    public void endVisit(JsTry x, JsContext ctx) {
+    public void endVisit(@NotNull JsTry x, @NotNull JsContext ctx) {
     }
 
-    public void endVisit(JsVars.JsVar x, JsContext ctx) {
+    public void endVisit(@NotNull JsVars.JsVar x, @NotNull JsContext ctx) {
     }
 
-    public void endVisit(JsVars x, JsContext ctx) {
+    public void endVisit(@NotNull JsVars x, @NotNull JsContext ctx) {
     }
 
-    public void endVisit(JsWhile x, JsContext ctx) {
+    public void endVisit(@NotNull JsWhile x, @NotNull JsContext ctx) {
     }
 
-    public boolean visit(JsArrayAccess x, JsContext ctx) {
+    public boolean visit(@NotNull JsArrayAccess x, @NotNull JsContext ctx) {
         return true;
     }
 
-    public boolean visit(JsArrayLiteral x, JsContext ctx) {
+    public boolean visit(@NotNull JsArrayLiteral x, @NotNull JsContext ctx) {
         return true;
     }
 
-    public boolean visit(JsBinaryOperation x, JsContext ctx) {
+    public boolean visit(@NotNull JsBinaryOperation x, @NotNull JsContext ctx) {
         return true;
     }
 
-    public boolean visit(JsBlock x, JsContext ctx) {
+    public boolean visit(@NotNull JsBlock x, @NotNull JsContext ctx) {
         return true;
     }
 
-    public boolean visit(JsLiteral.JsBooleanLiteral x, JsContext ctx) {
+    public boolean visit(@NotNull JsLiteral.JsBooleanLiteral x, @NotNull JsContext ctx) {
         return true;
     }
 
-    public boolean visit(JsBreak x, JsContext ctx) {
+    public boolean visit(@NotNull JsBreak x, @NotNull JsContext ctx) {
         return true;
     }
 
-    public boolean visit(JsCase x, JsContext ctx) {
+    public boolean visit(@NotNull JsCase x, @NotNull JsContext ctx) {
         return true;
     }
 
-    public boolean visit(JsCatch x, JsContext ctx) {
+    public boolean visit(@NotNull JsCatch x, @NotNull JsContext ctx) {
         return true;
     }
 
-    public boolean visit(JsConditional x, JsContext ctx) {
+    public boolean visit(@NotNull JsConditional x, @NotNull JsContext ctx) {
         return true;
     }
 
-    public boolean visit(JsContinue x, JsContext ctx) {
+    public boolean visit(@NotNull JsContinue x, @NotNull JsContext ctx) {
         return true;
     }
 
-    public boolean visit(JsDebugger x, JsContext ctx) {
+    public boolean visit(@NotNull JsDebugger x, @NotNull JsContext ctx) {
         return true;
     }
 
-    public boolean visit(JsDefault x, JsContext ctx) {
+    public boolean visit(@NotNull JsDefault x, @NotNull JsContext ctx) {
         return true;
     }
 
-    public boolean visit(JsDoWhile x, JsContext ctx) {
+    public boolean visit(@NotNull JsDoWhile x, @NotNull JsContext ctx) {
         return true;
     }
 
-    public boolean visit(JsEmpty x, JsContext ctx) {
+    public boolean visit(@NotNull JsEmpty x, @NotNull JsContext ctx) {
         return true;
     }
 
-    public boolean visit(JsExpressionStatement x, JsContext ctx) {
+    public boolean visit(@NotNull JsExpressionStatement x, @NotNull JsContext ctx) {
         return true;
     }
 
-    public boolean visit(JsFor x, JsContext ctx) {
+    public boolean visit(@NotNull JsFor x, @NotNull JsContext ctx) {
         return true;
     }
 
-    public boolean visit(JsForIn x, JsContext ctx) {
+    public boolean visit(@NotNull JsForIn x, @NotNull JsContext ctx) {
         return true;
     }
 
-    public boolean visit(JsFunction x, JsContext ctx) {
+    public boolean visit(@NotNull JsFunction x, @NotNull JsContext ctx) {
         return true;
     }
 
-    public boolean visit(JsIf x, JsContext ctx) {
+    public boolean visit(@NotNull JsIf x, @NotNull JsContext ctx) {
         return true;
     }
 
-    public boolean visit(JsInvocation x, JsContext ctx) {
+    public boolean visit(@NotNull JsInvocation x, @NotNull JsContext ctx) {
         return true;
     }
 
-    public boolean visit(JsLabel x, JsContext ctx) {
+    public boolean visit(@NotNull JsLabel x, @NotNull JsContext ctx) {
         return true;
     }
 
-    public boolean visit(JsName x, JsContext ctx) {
+    public boolean visit(@NotNull JsName x, @NotNull JsContext ctx) {
         return true;
     }
 
-    public boolean visit(JsNameRef x, JsContext ctx) {
+    public boolean visit(@NotNull JsNameRef x, @NotNull JsContext ctx) {
         return true;
     }
 
-    public boolean visit(JsNew x, JsContext ctx) {
+    public boolean visit(@NotNull JsNew x, @NotNull JsContext ctx) {
         return true;
     }
 
-    public boolean visit(JsNullLiteral x, JsContext ctx) {
+    public boolean visit(@NotNull JsNullLiteral x, @NotNull JsContext ctx) {
         return true;
     }
 
-    public boolean visit(JsNumberLiteral x, JsContext ctx) {
+    public boolean visit(@NotNull JsNumberLiteral x, @NotNull JsContext ctx) {
         return true;
     }
 
-    public boolean visit(JsObjectLiteral x, JsContext ctx) {
+    public boolean visit(@NotNull JsObjectLiteral x, @NotNull JsContext ctx) {
         return true;
     }
 
-    public boolean visit(JsParameter x, JsContext ctx) {
+    public boolean visit(@NotNull JsParameter x, @NotNull JsContext ctx) {
         return true;
     }
 
-    public boolean visit(JsPostfixOperation x, JsContext ctx) {
+    public boolean visit(@NotNull JsPostfixOperation x, @NotNull JsContext ctx) {
         return true;
     }
 
-    public boolean visit(JsPrefixOperation x, JsContext ctx) {
+    public boolean visit(@NotNull JsPrefixOperation x, @NotNull JsContext ctx) {
         return true;
     }
 
-    public boolean visit(JsProgram x, JsContext ctx) {
+    public boolean visit(@NotNull JsProgram x, @NotNull JsContext ctx) {
         return true;
     }
 
-    public boolean visit(JsProgramFragment x, JsContext ctx) {
+    public boolean visit(@NotNull JsProgramFragment x, @NotNull JsContext ctx) {
         return true;
     }
 
-    public boolean visit(JsPropertyInitializer x, JsContext ctx) {
+    public boolean visit(@NotNull JsPropertyInitializer x, @NotNull JsContext ctx) {
         return true;
     }
 
-    public boolean visit(JsRegExp x, JsContext ctx) {
+    public boolean visit(@NotNull JsRegExp x, @NotNull JsContext ctx) {
         return true;
     }
 
-    public boolean visit(JsReturn x, JsContext ctx) {
+    public boolean visit(@NotNull JsReturn x, @NotNull JsContext ctx) {
         return true;
     }
 
-    public boolean visit(JsStringLiteral x, JsContext ctx) {
+    public boolean visit(@NotNull JsStringLiteral x, @NotNull JsContext ctx) {
         return true;
     }
 
-    public boolean visit(JsSwitch x, JsContext ctx) {
+    public boolean visit(@NotNull JsSwitch x, @NotNull JsContext ctx) {
         return true;
     }
 
-    public boolean visit(JsLiteral.JsThisRef x, JsContext ctx) {
+    public boolean visit(@NotNull JsLiteral.JsThisRef x, @NotNull JsContext ctx) {
         return true;
     }
 
-    public boolean visit(JsThrow x, JsContext ctx) {
+    public boolean visit(@NotNull JsThrow x, @NotNull JsContext ctx) {
         return true;
     }
 
-    public boolean visit(JsTry x, JsContext ctx) {
+    public boolean visit(@NotNull JsTry x, @NotNull JsContext ctx) {
         return true;
     }
 
-    public boolean visit(JsVars.JsVar x, JsContext ctx) {
+    public boolean visit(@NotNull JsVars.JsVar x, @NotNull JsContext ctx) {
         return true;
     }
 
-    public boolean visit(JsVars x, JsContext ctx) {
+    public boolean visit(@NotNull JsVars x, @NotNull JsContext ctx) {
         return true;
     }
 
-    public boolean visit(JsWhile x, JsContext ctx) {
+    public boolean visit(@NotNull JsWhile x, @NotNull JsContext ctx) {
         return true;
     }
 

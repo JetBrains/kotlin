@@ -24,11 +24,11 @@ import com.google.dart.compiler.backend.js.ast.JsObjectLiteral
 import com.google.dart.compiler.backend.js.ast.JsVisitorWithContextImpl
 
 class ThisReplacingVisitor(private val thisReplacement: JsExpression) : JsVisitorWithContextImpl() {
-    override fun endVisit(x: JsLiteral.JsThisRef?, ctx: JsContext<*>?) {
-        ctx?.replaceMe(thisReplacement)
+    override fun endVisit(x: JsLiteral.JsThisRef, ctx: JsContext<*>) {
+        ctx.replaceMe(thisReplacement)
     }
 
-    override fun visit(x: JsFunction?, ctx: JsContext<*>?) = false
+    override fun visit(x: JsFunction, ctx: JsContext<*>) = false
 
-    override fun visit(x: JsObjectLiteral?, ctx: JsContext<*>?) = false
+    override fun visit(x: JsObjectLiteral, ctx: JsContext<*>) = false
 }
