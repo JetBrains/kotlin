@@ -112,11 +112,21 @@ public class MemoryBasedClassLoader extends ClassLoader {
 
     @Override
     public Enumeration<URL> getResources(String name) throws IOException {
-        Enumeration<URL> resources = super.getResources(name);
-        if (!resources.hasMoreElements() && parent != null) {
-            return parent.getResources(name);
+        Enumeration<URL> own = super.getResources(name);
+        if (parent == null) return own;
+
+        Enumeration<URL> fromParent = parent.getResources(name);
+        if (!own.hasMoreElements()) return fromParent;
+
+        List<URL> result = new ArrayList<URL>();
+        while (own.hasMoreElements()) {
+            result.add(own.nextElement());
         }
-        return resources;
+        while (fromParent.hasMoreElements()) {
+            result.add(fromParent.nextElement());
+        }
+
+        return Collections.enumeration(result);
     }
 
     @Override
