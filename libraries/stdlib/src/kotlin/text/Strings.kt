@@ -491,8 +491,7 @@ public fun String.endsWith(char: Char): Boolean = endsWith(char, ignoreCase = fa
 
 // indexOfAny()
 
-
-private fun String.indexOfAny(chars: CharArray, startIndex: Int, ignoreCase: Boolean, last: Boolean): Pair<Int, Char>? {
+private fun String.findAnyOf(chars: CharArray, startIndex: Int, ignoreCase: Boolean, last: Boolean): Pair<Int, Char>? {
     if (!ignoreCase && chars.size() == 1) {
         val char = chars.single()
         val index = if (!last) nativeIndexOf(char, startIndex) else nativeLastIndexOf(char, startIndex)
@@ -511,31 +510,31 @@ private fun String.indexOfAny(chars: CharArray, startIndex: Int, ignoreCase: Boo
 }
 
 /**
- * Finds the first occurrence of any of the specified [chars] in this string, starting from the specified [startIndex] and
+ * Finds the index of the first occurrence of any of the specified [chars] in this string, starting from the specified [startIndex] and
  * optionally ignoring the case.
  *
  * @param ignoreCase `true` to ignore character case when matching a character. By default `false`.
- * @returns A pair of an index of the first occurrence of matched character from [chars] and the character matched or `null` if none of [chars] are found.
+ * @returns An index of the first occurrence of matched character from [chars] or -1 if none of [chars] are found.
  *
  */
-public fun String.indexOfAny(chars: CharArray, startIndex: Int = 0, ignoreCase: Boolean = false): Pair<Int, Char>? =
-    indexOfAny(chars, startIndex, ignoreCase, last = false)
+public fun String.indexOfAny(chars: CharArray, startIndex: Int = 0, ignoreCase: Boolean = false): Int =
+    findAnyOf(chars, startIndex, ignoreCase, last = false)?.first ?: -1
 
 /**
- * Finds the last occurrence of any of the specified [chars] in this string, starting from the specified [startIndex] and
+ * Finds the index of the last occurrence of any of the specified [chars] in this string, starting from the specified [startIndex] and
  * optionally ignoring the case.
  *
  * @param startIndex The index of character to start searching at. The search proceeds backward toward the beginning of the string.
  * @param ignoreCase `true` to ignore character case when matching a character. By default `false`.
- * @returns A pair of an index of the last occurrence of matched character from [chars] and the character matched or `null` if none of [chars] are found.
+ * @returns An index of the last occurrence of matched character from [chars] or -1 if none of [chars] are found.
  *
  */
-public fun String.lastIndexOfAny(chars: CharArray, startIndex: Int = lastIndex, ignoreCase: Boolean = false): Pair<Int, Char>? =
-    indexOfAny(chars, startIndex, ignoreCase, last = true)
+public fun String.lastIndexOfAny(chars: CharArray, startIndex: Int = lastIndex, ignoreCase: Boolean = false): Int =
+    findAnyOf(chars, startIndex, ignoreCase, last = true)?.first ?: -1
 
 
 
-private fun String.indexOfAny(strings: Collection<String>, startIndex: Int, ignoreCase: Boolean, last: Boolean): Pair<Int, String>? {
+private fun String.findAnyOf(strings: Collection<String>, startIndex: Int, ignoreCase: Boolean, last: Boolean): Pair<Int, String>? {
     if (!ignoreCase && strings.size() == 1) {
         val string = strings.single()
         val index = if (!last) nativeIndexOf(string, startIndex) else nativeLastIndexOf(string, startIndex)
@@ -557,14 +556,14 @@ private fun String.indexOfAny(strings: Collection<String>, startIndex: Int, igno
  * optionally ignoring the case.
  *
  * @param ignoreCase `true` to ignore character case when matching a string. By default `false`.
- * @returns A pair of an index of the first occurrence of matched string from [stromgs] and the string matched or `null` if none of [strings] are found.
+ * @returns A pair of an index of the first occurrence of matched string from [strings] and the string matched or `null` if none of [strings] are found.
  *
  * To avoid ambiguous results when strings in [strings] have characters in common, this method proceeds from
  * the beginning to the end of this string, and finds at each position the first element in [strings]
  * that matches this string at that position.
  */
-public fun String.indexOfAny(strings: Collection<String>, startIndex: Int = 0, ignoreCase: Boolean = false): Pair<Int, String>? =
-    indexOfAny(strings, startIndex, ignoreCase, last = false)
+public fun String.findAnyOf(strings: Collection<String>, startIndex: Int = 0, ignoreCase: Boolean = false): Pair<Int, String>? =
+    findAnyOf(strings, startIndex, ignoreCase, last = false)
 
 /**
  * Finds the last occurrence of any of the specified [strings] in this string, starting from the specified [startIndex] and
@@ -578,8 +577,37 @@ public fun String.indexOfAny(strings: Collection<String>, startIndex: Int = 0, i
  * the end toward the beginning of this string, and finds at each position the first element in [strings]
  * that matches this string at that position.
  */
-public fun String.lastIndexOfAny(strings: Collection<String>, startIndex: Int = lastIndex, ignoreCase: Boolean = false): Pair<Int, String>? =
-    indexOfAny(strings, startIndex, ignoreCase, last = true)
+public fun String.findLastAnyOf(strings: Collection<String>, startIndex: Int = lastIndex, ignoreCase: Boolean = false): Pair<Int, String>? =
+    findAnyOf(strings, startIndex, ignoreCase, last = true)
+
+/**
+ * Finds the index of the first occurrence of any of the specified [strings] in this string, starting from the specified [startIndex] and
+ * optionally ignoring the case.
+ *
+ * @param ignoreCase `true` to ignore character case when matching a string. By default `false`.
+ * @returns An index of the first occurrence of matched string from [strings] or -1 if none of [strings] are found.
+ *
+ * To avoid ambiguous results when strings in [strings] have characters in common, this method proceeds from
+ * the beginning to the end of this string, and finds at each position the first element in [strings]
+ * that matches this string at that position.
+ */
+public fun String.indexOfAny(strings: Collection<String>, startIndex: Int = 0, ignoreCase: Boolean = false): Int =
+    findAnyOf(strings, startIndex, ignoreCase, last = false)?.first ?: -1
+
+/**
+ * Finds the index of the last occurrence of any of the specified [strings] in this string, starting from the specified [startIndex] and
+ * optionally ignoring the case.
+ *
+ * @param startIndex The index of character to start searching at. The search proceeds backward toward the beginning of the string.
+ * @param ignoreCase `true` to ignore character case when matching a string. By default `false`.
+ * @returns An index of the last occurrence of matched string from [strings] or -1 if none of [strings] are found.
+ *
+ * To avoid ambiguous results when strings in [strings] have characters in common, this method proceeds from
+ * the end toward the beginning of this string, and finds at each position the first element in [strings]
+ * that matches this string at that position.
+ */
+public fun String.lastIndexOfAny(strings: Collection<String>, startIndex: Int = lastIndex, ignoreCase: Boolean = false): Int =
+    findAnyOf(strings, startIndex, ignoreCase, last = true)?.first ?: -1
 
 
 // indexOf
@@ -592,7 +620,7 @@ public fun String.lastIndexOfAny(strings: Collection<String>, startIndex: Int = 
  */
 public fun String.indexOf(char: Char, startIndex: Int = 0, ignoreCase: Boolean = false): Int {
     return if (ignoreCase) 
-        indexOfAny(charArray(char), startIndex, ignoreCase)?.first ?: -1
+        indexOfAny(charArray(char), startIndex, ignoreCase)
     else
         nativeIndexOf(char, startIndex)
 }
@@ -605,7 +633,7 @@ public fun String.indexOf(char: Char, startIndex: Int = 0, ignoreCase: Boolean =
  */
 public fun String.indexOf(string: String, startIndex: Int = 0, ignoreCase: Boolean = false): Int {
     return if (ignoreCase)
-        indexOfAny(listOf(string), startIndex, ignoreCase)?.first ?: -1
+        indexOfAny(listOf(string), startIndex, ignoreCase)
     else
         nativeIndexOf(string, startIndex)
 }
@@ -619,7 +647,7 @@ public fun String.indexOf(string: String, startIndex: Int = 0, ignoreCase: Boole
  */
 public fun String.lastIndexOf(char: Char, startIndex: Int = lastIndex, ignoreCase: Boolean = false): Int {
     return if (ignoreCase)
-        lastIndexOfAny(charArray(char), startIndex, ignoreCase)?.first ?: -1
+        lastIndexOfAny(charArray(char), startIndex, ignoreCase)
     else
         nativeLastIndexOf(char, startIndex)
 }
@@ -633,7 +661,7 @@ public fun String.lastIndexOf(char: Char, startIndex: Int = lastIndex, ignoreCas
  */
 public fun String.lastIndexOf(string: String, startIndex: Int = lastIndex, ignoreCase: Boolean = false): Int {
     return if (ignoreCase)
-        lastIndexOfAny(listOf(string), startIndex, ignoreCase)?.first ?: -1
+        lastIndexOfAny(listOf(string), startIndex, ignoreCase)
     else
         nativeLastIndexOf(string, startIndex)
 }
@@ -717,7 +745,7 @@ private class DelimitedRangesSequence(private val string: String, private val st
 private fun String.rangesDelimitedBy(vararg delimiters: Char, startIndex: Int = 0, ignoreCase: Boolean = false, limit: Int = 0): Sequence<IntRange> {
     require(limit >= 0, { "Limit must be non-negative, but was $limit" })
 
-    return DelimitedRangesSequence(this, startIndex, limit, { startIndex -> indexOfAny(delimiters, startIndex, ignoreCase = ignoreCase)?.let { Pair(it.first, 1) }})
+    return DelimitedRangesSequence(this, startIndex, limit, { startIndex -> findAnyOf(delimiters, startIndex, ignoreCase = ignoreCase, last = false)?.let { it.first to 1 } })
 }
 
 
@@ -739,7 +767,7 @@ private fun String.rangesDelimitedBy(vararg delimiters: String, startIndex: Int 
     require(limit >= 0, { "Limit must be non-negative, but was $limit" } )
     val delimitersList = delimiters.asList()
 
-    return DelimitedRangesSequence(this, startIndex, limit, { startIndex -> indexOfAny(delimitersList, startIndex, ignoreCase = ignoreCase)?.let { Pair(it.first, it.second.length() )} })
+    return DelimitedRangesSequence(this, startIndex, limit, { startIndex -> findAnyOf(delimitersList, startIndex, ignoreCase = ignoreCase, last = false)?.let { it.first to it.second.length ()} })
 
 }
 

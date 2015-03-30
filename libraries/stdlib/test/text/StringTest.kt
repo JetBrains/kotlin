@@ -315,57 +315,87 @@ class StringTest {
     test fun indexOfAnyChar() {
         val string = "abracadabra"
         val chars = charArray('d','b')
-        assertEquals(1 to 'b', string.indexOfAny(chars))
-        assertEquals(6 to 'd', string.indexOfAny(chars, startIndex = 2))
-        assertEquals(null, string.indexOfAny(chars, startIndex = 9))
+        assertEquals(1, string.indexOfAny(chars))
+        assertEquals(6, string.indexOfAny(chars, startIndex = 2))
+        assertEquals(-1, string.indexOfAny(chars, startIndex = 9))
 
-        assertEquals(8 to 'b', string.lastIndexOfAny(chars))
-        assertEquals(6 to 'd', string.lastIndexOfAny(chars, startIndex = 7))
-        assertEquals(null, string.lastIndexOfAny(chars, startIndex = 0))
+        assertEquals(8, string.lastIndexOfAny(chars))
+        assertEquals(6, string.lastIndexOfAny(chars, startIndex = 7))
+        assertEquals(-1, string.lastIndexOfAny(chars, startIndex = 0))
 
-        assertEquals(null, string.indexOfAny(charArray()))
+        assertEquals(-1, string.indexOfAny(charArray()))
     }
 
     test fun indexOfAnyCharIgnoreCase() {
         val string = "abraCadabra"
         val chars = charArray('B','c')
-        assertEquals(1 to 'B', string.indexOfAny(chars, ignoreCase = true))
-        assertEquals(4 to 'c', string.indexOfAny(chars, startIndex = 2, ignoreCase = true))
-        assertEquals(null, string.indexOfAny(chars, startIndex = 9, ignoreCase = true))
+        assertEquals(1, string.indexOfAny(chars, ignoreCase = true))
+        assertEquals(4, string.indexOfAny(chars, startIndex = 2, ignoreCase = true))
+        assertEquals(-1, string.indexOfAny(chars, startIndex = 9, ignoreCase = true))
 
-        assertEquals(8 to 'B', string.lastIndexOfAny(chars, ignoreCase = true))
-        assertEquals(4 to 'c', string.lastIndexOfAny(chars, startIndex = 7, ignoreCase = true))
-        assertEquals(null, string.lastIndexOfAny(chars, startIndex = 0, ignoreCase = true))
+        assertEquals(8, string.lastIndexOfAny(chars, ignoreCase = true))
+        assertEquals(4, string.lastIndexOfAny(chars, startIndex = 7, ignoreCase = true))
+        assertEquals(-1, string.lastIndexOfAny(chars, startIndex = 0, ignoreCase = true))
     }
 
     test fun indexOfAnyString() {
         val string = "abracadabra"
         val substrings = listOf("rac", "ra")
-        assertEquals(2 to "rac", string.indexOfAny(substrings))
-        assertEquals(9 to "ra", string.indexOfAny(substrings, startIndex = 3))
-        assertEquals(2 to "ra", string.indexOfAny(substrings.reverse()))
-        assertEquals(null, string.indexOfAny(substrings, 10))
+        assertEquals(2, string.indexOfAny(substrings))
+        assertEquals(9, string.indexOfAny(substrings, startIndex = 3))
+        assertEquals(2, string.indexOfAny(substrings.reverse()))
+        assertEquals(-1, string.indexOfAny(substrings, 10))
 
-        assertEquals(9 to "ra", string.lastIndexOfAny(substrings))
-        assertEquals(2 to "rac", string.lastIndexOfAny(substrings, startIndex = 8))
-        assertEquals(2 to "ra", string.lastIndexOfAny(substrings.reverse(), startIndex = 8))
-        assertEquals(null, string.lastIndexOfAny(substrings, 1))
+        assertEquals(9, string.lastIndexOfAny(substrings))
+        assertEquals(2, string.lastIndexOfAny(substrings, startIndex = 8))
+        assertEquals(2, string.lastIndexOfAny(substrings.reverse(), startIndex = 8))
+        assertEquals(-1, string.lastIndexOfAny(substrings, 1))
 
-        assertEquals(0 to "", string.indexOfAny(listOf("dab", "")), "empty strings are not ignored")
-        assertEquals(null, string.indexOfAny(listOf()))
+        assertEquals(0, string.indexOfAny(listOf("dab", "")), "empty strings are not ignored")
+        assertEquals(-1, string.indexOfAny(listOf()))
     }
 
     test fun indexOfAnyStringIgnoreCase() {
         val string = "aBraCadaBrA"
         val substrings = listOf("rAc", "Ra")
 
-        assertEquals(2 to substrings[0], string.indexOfAny(substrings, ignoreCase = true))
-        assertEquals(9 to substrings[1], string.indexOfAny(substrings, startIndex = 3, ignoreCase = true))
-        assertEquals(null, string.indexOfAny(substrings, startIndex = 10, ignoreCase = true))
+        assertEquals(2, string.indexOfAny(substrings, ignoreCase = true))
+        assertEquals(9, string.indexOfAny(substrings, startIndex = 3, ignoreCase = true))
+        assertEquals(-1, string.indexOfAny(substrings, startIndex = 10, ignoreCase = true))
 
-        assertEquals(9 to substrings[1], string.lastIndexOfAny(substrings, ignoreCase = true))
-        assertEquals(2 to substrings[0], string.lastIndexOfAny(substrings, startIndex = 8, ignoreCase = true))
-        assertEquals(null, string.lastIndexOfAny(substrings, startIndex = 1, ignoreCase = true))
+        assertEquals(9, string.lastIndexOfAny(substrings, ignoreCase = true))
+        assertEquals(2, string.lastIndexOfAny(substrings, startIndex = 8, ignoreCase = true))
+        assertEquals(-1, string.lastIndexOfAny(substrings, startIndex = 1, ignoreCase = true))
+    }
+
+    test fun findAnyOfStrings() {
+        val string = "abracadabra"
+        val substrings = listOf("rac", "ra")
+        assertEquals(2 to "rac", string.findAnyOf(substrings))
+        assertEquals(9 to "ra", string.findAnyOf(substrings, startIndex = 3))
+        assertEquals(2 to "ra", string.findAnyOf(substrings.reverse()))
+        assertEquals(null, string.findAnyOf(substrings, 10))
+
+        assertEquals(9 to "ra", string.findLastAnyOf(substrings))
+        assertEquals(2 to "rac", string.findLastAnyOf(substrings, startIndex = 8))
+        assertEquals(2 to "ra", string.findLastAnyOf(substrings.reverse(), startIndex = 8))
+        assertEquals(null, string.findLastAnyOf(substrings, 1))
+
+        assertEquals(0 to "", string.findAnyOf(listOf("dab", "")), "empty strings are not ignored")
+        assertEquals(null, string.findAnyOf(listOf()))
+    }
+
+    test fun findAnyOfStringsIgnoreCase() {
+        val string = "aBraCadaBrA"
+        val substrings = listOf("rAc", "Ra")
+
+        assertEquals(2 to substrings[0], string.findAnyOf(substrings, ignoreCase = true))
+        assertEquals(9 to substrings[1], string.findAnyOf(substrings, startIndex = 3, ignoreCase = true))
+        assertEquals(null, string.findAnyOf(substrings, startIndex = 10, ignoreCase = true))
+
+        assertEquals(9 to substrings[1], string.findLastAnyOf(substrings, ignoreCase = true))
+        assertEquals(2 to substrings[0], string.findLastAnyOf(substrings, startIndex = 8, ignoreCase = true))
+        assertEquals(null, string.findLastAnyOf(substrings, startIndex = 1, ignoreCase = true))
     }
 
     test fun indexOfChar() {
@@ -378,8 +408,8 @@ class StringTest {
         assertEquals(2, string.lastIndexOf('e', 3))
 
         for (startIndex in -1..string.length()+1) {
-            assertEquals(string.indexOfAny(charArray('e'), startIndex)?.first ?: -1, string.indexOf('e', startIndex))
-            assertEquals(string.lastIndexOfAny(charArray('e'), startIndex)?.first ?: -1, string.lastIndexOf('e', startIndex))
+            assertEquals(string.indexOfAny(charArray('e'), startIndex), string.indexOf('e', startIndex))
+            assertEquals(string.lastIndexOfAny(charArray('e'), startIndex), string.lastIndexOf('e', startIndex))
         }
 
     }
@@ -395,8 +425,8 @@ class StringTest {
 
 
         for (startIndex in -1..string.length()+1){
-            assertEquals(string.indexOfAny(charArray('e'), startIndex, ignoreCase = true)?.first ?: -1, string.indexOf('E', startIndex, ignoreCase = true))
-            assertEquals(string.lastIndexOfAny(charArray('E'), startIndex, ignoreCase = true)?.first ?: -1, string.lastIndexOf('e', startIndex, ignoreCase = true))
+            assertEquals(string.indexOfAny(charArray('e'), startIndex, ignoreCase = true), string.indexOf('E', startIndex, ignoreCase = true))
+            assertEquals(string.lastIndexOfAny(charArray('E'), startIndex, ignoreCase = true), string.lastIndexOf('e', startIndex, ignoreCase = true))
         }
     }
 
