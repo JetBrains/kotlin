@@ -16,12 +16,9 @@
 
 package org.jetbrains.kotlin.idea.vfilefinder;
 
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.impl.file.impl.JavaFileManager;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.indexing.FileBasedIndex;
 import org.jetbrains.annotations.NotNull;
@@ -59,27 +56,5 @@ public final class IDEVirtualFileFinder extends VirtualFileKotlinClassFinder imp
             LOG.warn("There are " + files.size() + " classes with same fqName: " + className + " found.");
         }
         return files.iterator().next();
-    }
-
-    @Override
-    public VirtualFile findVirtualFile(@NotNull String internalName) {
-        JavaFileManager fileFinder = ServiceManager.getService(project, JavaFileManager.class);
-
-        String qName = internalName.replace('/', '.');
-        PsiClass psiClass = fileFinder.findClass(qName, scope);
-        if (psiClass == null) {
-            int dollarIndex = qName.indexOf('$');
-            assert dollarIndex > 0 : "Only inner classes could be found with this patch: " + internalName;
-            String newName = qName.substring(0, dollarIndex);
-            psiClass = fileFinder.findClass(newName, scope);
-            if (psiClass != null) {
-                int i = qName.lastIndexOf('.');
-                return psiClass.getContainingFile().getVirtualFile().getParent().findChild(qName.substring(i + 1) + ".class");
-            }
-        }
-        if (psiClass != null) {
-            return psiClass.getContainingFile().getVirtualFile();
-        }
-        return null;
     }
 }

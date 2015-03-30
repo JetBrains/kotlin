@@ -46,17 +46,6 @@ public class CliVirtualFileFinder extends VirtualFileKotlinClassFinder implement
         return null;
     }
 
-    @Override
-    public VirtualFile findVirtualFile(@NotNull String internalName) {
-        for (VirtualFile root : classPath) {
-            VirtualFile fileInRoot = findFileInRoot(internalName, root, '/');
-            if (fileInRoot != null) {
-                return fileInRoot;
-            }
-        }
-        return null;
-    }
-
     //NOTE: copied with some changes from CoreJavaFileManager
     @Nullable
     private static VirtualFile findFileInRoot(@NotNull String qName, @NotNull VirtualFile root, char separator) {
