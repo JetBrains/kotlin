@@ -180,6 +180,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("BreakContinueInWhen.kt")
+        public void testBreakContinueInWhen() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/BreakContinueInWhen.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("Builders.kt")
         public void testBuilders() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/Builders.kt");

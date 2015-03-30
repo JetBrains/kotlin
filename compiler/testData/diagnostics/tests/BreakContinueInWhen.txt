@@ -1,0 +1,6 @@
+package 
+
+internal fun breakContinueInWhen(/*0*/ i: kotlin.Int): kotlin.Unit
+internal fun breakContinueInWhenWithDoWhile(/*0*/ i: kotlin.Int, /*1*/ j: kotlin.Int): kotlin.Unit
+internal fun breakContinueInWhenWithWhile(/*0*/ i: kotlin.Int, /*1*/ j: kotlin.Int): kotlin.Unit
+internal fun labeledBreakContinue(/*0*/ i: kotlin.Int): kotlin.Unit

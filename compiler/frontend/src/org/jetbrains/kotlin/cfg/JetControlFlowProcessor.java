@@ -977,6 +977,12 @@ public class JetControlFlowProcessor {
                 loop = builder.getCurrentLoop();
                 if (loop == null) {
                     trace.report(BREAK_OR_CONTINUE_OUTSIDE_A_LOOP.on(expression));
+                } else {
+                    JetWhenExpression whenExpression = PsiTreeUtil.getParentOfType(expression, JetWhenExpression.class, true,
+                                                                                   JetLoopExpression.class);
+                    if (whenExpression != null) {
+                        trace.report(BREAK_OR_CONTINUE_IN_WHEN.on(expression));
+                    }
                 }
             }
             if (loop != null && loop.getBody() != null
