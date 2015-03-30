@@ -52,7 +52,7 @@ public class KotlinIndicesHelper(
         declarations.addTopLevelNonExtensionCallablesByName(JetFunctionShortNameIndex.getInstance(), name)
         declarations.addTopLevelNonExtensionCallablesByName(JetPropertyShortNameIndex.getInstance(), name)
         return declarations.flatMap {
-            if (it.getContainingJetFile().isCompiled()) {
+            if (it.getContainingJetFile().isCompiled()) { //TODO: it's temporary while resolveToDescriptor does not work for compiled declarations
                 analyzeImportReference(it.getFqName()!!).filterIsInstance<CallableDescriptor>()
             }
             else {
@@ -69,9 +69,10 @@ public class KotlinIndicesHelper(
     }
 
     public fun getTopLevelCallables(nameFilter: (String) -> Boolean): Collection<CallableDescriptor> {
-        val sourceNames = JetTopLevelFunctionFqnNameIndex.getInstance().getAllKeys(project).sequence() + JetTopLevelPropertyFqnNameIndex.getInstance().getAllKeys(project).sequence()
-        val allFqNames = sourceNames.map { FqName(it) }
-        return allFqNames.filter { nameFilter(it.shortName().asString()) }
+        return (JetTopLevelFunctionFqnNameIndex.getInstance().getAllKeys(project).sequence() +
+                    JetTopLevelPropertyFqnNameIndex.getInstance().getAllKeys(project).sequence())
+                .map { FqName(it) }
+                .filter { nameFilter(it.shortName().asString()) }
                 .toSet()
                 .flatMap { findTopLevelCallables(it).filter(visibilityFilter) }
     }
@@ -134,12 +135,14 @@ public class KotlinIndicesHelper(
                                        callType: CallType,
                                        bindingContext: BindingContext): Sequence<CallableDescriptor> {
         val extensions = index.get(callableFQN.asString(), project, scope).filter { it.getReceiverTypeReference() != null }
-        val descriptors = if (extensions.any { it.getContainingJetFile().isCompiled() } ) {
+        val descriptors = if (extensions.any { it.getContainingJetFile().isCompiled() } ) { //TODO: it's temporary while resolveToDescriptor does not work for compiled declarations
             analyzeImportReference(callableFQN)
                     .filterIsInstance<CallableDescriptor>()
                     .filter { it.getExtensionReceiverParameter() != null }
         }
-        else extensions.map { resolutionFacade.resolveToDescriptor(it) as CallableDescriptor }
+        else {
+            extensions.map { resolutionFacade.resolveToDescriptor(it) as CallableDescriptor }
+        }
         return descriptors.sequence()
                 .filter(visibilityFilter)
                 .flatMap { it.substituteExtensionIfCallable(receiverValue, callType, bindingContext, dataFlowInfo).sequence() }
@@ -158,7 +161,7 @@ public class KotlinIndicesHelper(
 
         if (declarations.isEmpty()) {
             // This fqn is absent in caches, dead or not in scope
-            return listOf()
+            return emptyList()
         }
 
         // Note: Can't search with psi element as analyzer could be built over temp files
