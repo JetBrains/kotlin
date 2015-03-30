@@ -13,4 +13,4 @@ class B [Anon5(11)]
 ()
 
 class C [Anon5(12)]
-private()
+private ()
