@@ -3,7 +3,31 @@ package test.text
 import kotlin.test.*
 import org.junit.Test as test
 
+// could not be local inside isEmptyAndBlank, because non-toplevel declarations is not yet supported for JS
+class IsEmptyCase(val value: String?, val isNull: Boolean = false, val isEmpty: Boolean = false, val isBlank: Boolean = false)
+
 class StringTest {
+
+    test fun isEmptyAndBlank() {
+
+        val cases = listOf(
+            IsEmptyCase(null,              isNull = true),
+            IsEmptyCase("",                isEmpty = true, isBlank = true),
+            IsEmptyCase("  \r\n\t\u00A0",  isBlank = true),
+            IsEmptyCase(" Some ")
+        )
+
+        for (case in cases) {
+            assertEquals(case.isNull || case.isEmpty, case.value.isNullOrEmpty(), "failed for case '${case.value}'")
+            assertEquals(case.isNull || case.isBlank, case.value.isNullOrBlank(), "failed for case '${case.value}'")
+            if (case.value != null)
+            {
+                assertEquals(case.isEmpty, case.value.isEmpty(), "failed for case '${case.value}'")
+                assertEquals(case.isBlank, case.value.isBlank(), "failed for case '${case.value}'")
+            }
+
+        }
+    }
 
     test fun startsWithString() {
         assertTrue("abcd".startsWith("ab"))

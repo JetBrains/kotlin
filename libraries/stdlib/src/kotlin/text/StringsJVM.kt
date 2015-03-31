@@ -275,10 +275,9 @@ public fun String.getChars(srcBegin: Int, srcEnd: Int, dst: CharArray, dstBegin:
 public fun String.intern(): String = (this as java.lang.String).intern()
 
 /**
- * Returns `true` if this string is empty (contains no characters).
+ * Returns `true` if this string is empty or consists solely of whitespace characters.
  */
-public fun String.isEmpty(): Boolean = (this as java.lang.String).isEmpty()
-
+public fun String.isBlank(): Boolean = length() == 0 || all { it.isWhitespace() }
 
 /**
  * Returns `true` if this string matches the given regular expression.
