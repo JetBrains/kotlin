@@ -101,7 +101,7 @@ class CodeConverter(
                         text += "f"
                     }
                     else {
-                        if (text.indexOf('.') < 0) {
+                        if (!text.contains(".")) {
                             text += ".0"
                         }
                     }

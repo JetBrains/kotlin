@@ -176,20 +176,22 @@ class Converter private(
                         modifiers = modifiers.with(Modifier.INNER)
                     }
 
-                    val openModifier = if (psiClass.hasModifierProperty(PsiModifier.FINAL) || psiClass.hasModifierProperty(PsiModifier.ABSTRACT))
-                        false
-                    else
-                        settings.openByDefault || referenceSearcher.hasInheritors(psiClass)
-
-                    if (openModifier) {
+                    if (needOpenModifier(psiClass)) {
                         modifiers = modifiers.with(Modifier.OPEN)
                     }
 
-                    val classBody = ClassBodyConverter(psiClass, this, modifiers.contains(Modifier.OPEN) || modifiers.contains(Modifier.ABSTRACT), isObject = false).convertBody()
+                    val classBody = ClassBodyConverter(psiClass, this, isOpenClass = modifiers.contains(Modifier.OPEN) || modifiers.contains(Modifier.ABSTRACT), isObject = false).convertBody()
                     Class(name, annotations, modifiers, typeParameters, extendsTypes, classBody.baseClassParams, implementsTypes, classBody)
                 }
             }
         }.assignPrototype(psiClass)
+    }
+
+    private fun needOpenModifier(psiClass: PsiClass): Boolean {
+        return if (psiClass.hasModifierProperty(PsiModifier.FINAL) || psiClass.hasModifierProperty(PsiModifier.ABSTRACT))
+            false
+        else
+            settings.openByDefault || referenceSearcher.hasInheritors(psiClass)
     }
 
     private fun shouldConvertIntoObject(psiClass: PsiClass): Boolean {

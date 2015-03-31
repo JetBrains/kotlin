@@ -87,7 +87,7 @@ class PrefixExpression(val op: String, val expression: Expression) : Expression(
         get() = expression.isNullable
 }
 
-class PostfixOperator(val op: String, val expression: Expression) : Expression() {
+class PostfixExpression(val op: String, val expression: Expression) : Expression() {
     override fun generateCode(builder: CodeBuilder) {
         builder.appendOperand(this, expression) append op
     }

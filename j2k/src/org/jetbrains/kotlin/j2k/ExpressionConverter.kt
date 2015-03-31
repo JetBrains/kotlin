@@ -336,7 +336,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
     }
 
     override fun visitPostfixExpression(expression: PsiPostfixExpression) {
-        result = PostfixOperator(getOperatorString(expression.getOperationSign().getTokenType()),
+        result = PostfixExpression(getOperatorString(expression.getOperationSign().getTokenType()),
                                    codeConverter.convertExpression(expression.getOperand()))
     }
 
