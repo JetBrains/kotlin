@@ -1,0 +1,11 @@
+package
+
+internal fun currentAccess(/*0*/ user: User?): kotlin.Int
+
+internal final class User {
+    public constructor User(/*0*/ login: kotlin.Boolean)
+    internal final val login: kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
