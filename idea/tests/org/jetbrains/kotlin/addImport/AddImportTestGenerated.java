@@ -180,6 +180,12 @@ public class AddImportTestGenerated extends AbstractAddImportTest {
         doTest(fileName);
     }
 
+    @TestMetadata("ImportFunctionBug.kt")
+    public void testImportFunctionBug() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/ImportFunctionBug.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ImportPackage.kt")
     public void testImportPackage() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/ImportPackage.kt");

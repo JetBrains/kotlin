@@ -368,7 +368,7 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
             return result
         }
 
-        private fun JetImportDirective.getImportedName(): String? = JetPsiUtil.getAliasName(this)?.getIdentifier()
+        private fun JetImportDirective.getImportedName(): String? = if (isAllUnder()) null else JetPsiUtil.getAliasName(this)?.getIdentifier()
 
         private fun targetFqName(ref: JetReferenceExpression): FqName? {
             return ref.resolveTargets().map { it.importableFqName }.toSet().singleOrNull()
