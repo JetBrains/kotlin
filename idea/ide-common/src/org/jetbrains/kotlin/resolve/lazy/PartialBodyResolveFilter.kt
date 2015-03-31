@@ -46,7 +46,7 @@ class PartialBodyResolveFilter(
 
     override val filter: ((JetElement) -> Boolean)? = { it is JetExpression && statementMarks.statementMark(it) != MarkLevel.SKIP }
 
-    ;{
+    init {
         assert(declaration.isAncestor(elementToResolve))
         assert(!JetPsiUtil.isLocal(declaration),
                "Should never be invoked on local declaration otherwise we may miss some local declarations with type Nothing")
@@ -383,7 +383,7 @@ class PartialBodyResolveFilter(
             private val receiverName: SmartCastName?,
             private val selectorName: String? /* null means "this" (and receiverName should be null */
     ) {
-        {
+        init {
             if (selectorName == null) {
                 assert(receiverName == null, "selectorName is allowed to be null only when receiverName is also null (which means 'this')")
             }

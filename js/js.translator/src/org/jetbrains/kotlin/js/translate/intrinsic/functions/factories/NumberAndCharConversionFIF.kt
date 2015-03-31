@@ -70,7 +70,7 @@ public object NumberAndCharConversionFIF : CompositeFIF() {
         }
     }
 
-    {
+    init {
         add(USE_AS_IS!!, ConversionUnaryIntrinsic(ID))
         for((stringPattern, intrinsic) in convertOperations) {
             add(pattern(stringPattern), intrinsic)

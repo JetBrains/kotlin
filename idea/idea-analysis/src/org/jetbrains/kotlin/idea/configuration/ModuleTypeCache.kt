@@ -52,7 +52,7 @@ class ModuleTypeCacheManager private (project: Project) {
     }
 
     private class VfsModificationTracker(project: Project): SimpleModificationTracker() {
-        {
+        init {
             val connection = project.getMessageBus().connect();
             connection.subscribe(VirtualFileManager.VFS_CHANGES, BulkVirtualFileListenerAdapter(
                     object : VirtualFileAdapter() {

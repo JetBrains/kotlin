@@ -90,7 +90,7 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
         }
     }
 
-    {
+    init {
         moduleDescriptor.initialize(packageFragmentProvider)
         moduleDescriptor.addDependencyOnModule(moduleDescriptor)
         moduleDescriptor.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule())

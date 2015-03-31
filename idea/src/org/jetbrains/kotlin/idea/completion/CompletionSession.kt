@@ -72,7 +72,7 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
     protected val reference: JetSimpleNameReference?
     protected val expression: JetExpression?
 
-    ;{
+    init {
         val reference = position.getParent()?.getReferences()?.firstIsInstanceOrNull<JetSimpleNameReference>()
         if (reference != null) {
             if (reference.expression is JetLabelReferenceExpression) {
@@ -104,7 +104,7 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
     private val kotlinIdentifierStartPattern: ElementPattern<Char>
     private val kotlinIdentifierPartPattern: ElementPattern<Char>
 
-    ;{
+    init {
         val includeDollar = position.prevLeaf()?.getNode()?.getElementType() != JetTokens.SHORT_TEMPLATE_ENTRY_START
         if (includeDollar) {
             kotlinIdentifierStartPattern = StandardPatterns.character().javaIdentifierStart()

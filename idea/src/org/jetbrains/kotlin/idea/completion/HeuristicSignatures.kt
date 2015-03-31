@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 public object HeuristicSignatures {
     private val signatures = HashMap<Pair<FqName, Name>, List<String>>()
 
-    ;{
+    init {
         registerSignature("kotlin.Collection", "contains", "E")
         registerSignature("kotlin.Collection", "containsAll", "kotlin.Collection<E>")
         registerSignature("kotlin.MutableCollection", "remove", "E")

@@ -35,7 +35,7 @@ class LibraryModificationTracker(project: Project) : SimpleModificationTracker()
         platformStatic fun getInstance(project: Project) = ServiceManager.getService(project, javaClass<LibraryModificationTracker>())!!
     }
 
-    {
+    init {
         val connection = project.getMessageBus().connect()
         connection.subscribe(VirtualFileManager.VFS_CHANGES, BulkVirtualFileListenerAdapter(
                 object : VirtualFileAdapter() {

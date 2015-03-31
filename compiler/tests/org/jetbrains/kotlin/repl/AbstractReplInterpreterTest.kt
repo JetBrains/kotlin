@@ -34,7 +34,7 @@ private val INCOMPLETE_PATTERN = Pattern.compile("\\.\\.\\.( *)(.*)$")
 private val INCOMPLETE_LINE_MESSAGE = "incomplete line"
 
 public abstract class AbstractReplInterpreterTest : UsefulTestCase() {
-    {
+    init {
         System.setProperty("java.awt.headless", "true")
     }
 

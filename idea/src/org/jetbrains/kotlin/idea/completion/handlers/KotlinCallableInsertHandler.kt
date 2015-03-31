@@ -96,7 +96,7 @@ public enum class CaretPosition {
 public data class GenerateLambdaInfo(val lambdaType: JetType, val explicitParameters: Boolean)
 
 public class KotlinFunctionInsertHandler(val caretPosition : CaretPosition, val lambdaInfo: GenerateLambdaInfo?) : KotlinCallableInsertHandler() {
-    {
+    init {
         if (caretPosition == CaretPosition.AFTER_BRACKETS && lambdaInfo != null) {
             throw IllegalArgumentException("CaretPosition.AFTER_BRACKETS with lambdaInfo != null combination is not supported")
         }

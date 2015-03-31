@@ -35,7 +35,7 @@ public class KotlinFunctionStubImpl(
         private val hasTypeParameterListBeforeFunctionName: Boolean,
         private val isProbablyNothingType: Boolean
 ) : KotlinStubBaseImpl<JetNamedFunction>(parent, JetStubElementTypes.FUNCTION), KotlinFunctionStub {
-    {
+    init {
         if (isTopLevel && fqName == null) {
             throw IllegalArgumentException("fqName shouldn't be null for top level functions")
         }

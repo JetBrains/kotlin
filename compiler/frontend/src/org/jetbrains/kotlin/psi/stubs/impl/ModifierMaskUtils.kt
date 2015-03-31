@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
 import kotlin.platform.platformStatic
 
 public object ModifierMaskUtils {
-    {
+    init {
         assert(MODIFIER_KEYWORDS_ARRAY.size() <= 32, "Current implementation depends on the ability to represent modifier list as bit mask")
     }
 

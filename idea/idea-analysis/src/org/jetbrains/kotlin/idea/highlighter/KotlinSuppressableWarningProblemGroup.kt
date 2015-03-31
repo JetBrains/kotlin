@@ -31,7 +31,7 @@ class KotlinSuppressableWarningProblemGroup(
         private val diagnosticFactory: DiagnosticFactory<*>
 ) : SuppressableProblemGroup {
 
-    {
+    init {
         assert (diagnosticFactory.getSeverity() == Severity.WARNING)
     }
 

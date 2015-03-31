@@ -490,7 +490,7 @@ public class JetPsiFactory(private val project: Project) {
             return createExpression(sb.toString()) as JetWhenExpression
         }
 
-        {
+        init {
             if (subjectText != null) {
                 sb.append("(").append(subjectText).append(") ")
             }

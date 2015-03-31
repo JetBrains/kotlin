@@ -37,9 +37,9 @@ public object LibraryUtils {
     private val METAINF = "META-INF/"
     private val MANIFEST_PATH = "${METAINF}MANIFEST.MF"
     private val METAINF_RESOURCES = "${METAINF}resources/"
-    private val KOTLIN_JS_MODULE_ATTRIBUTE_NAME = Attributes.Name(KOTLIN_JS_MODULE_NAME);
+    private val KOTLIN_JS_MODULE_ATTRIBUTE_NAME = Attributes.Name(KOTLIN_JS_MODULE_NAME)
 
-    {
+    init {
         var jsStdLib = ""
         var jsLib = ""
 

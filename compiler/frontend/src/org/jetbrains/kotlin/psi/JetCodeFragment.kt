@@ -41,9 +41,9 @@ public abstract class JetCodeFragment(
 ): JetFile((PsiManager.getInstance(_project) as PsiManagerEx).getFileManager().createFileViewProvider(LightVirtualFile(name, JetFileType.INSTANCE, text), true), false), JavaCodeFragment {
 
     private var viewProvider = super<JetFile>.getViewProvider() as SingleRootFileViewProvider
-    private var myImports = LinkedHashSet<String>();
+    private var myImports = LinkedHashSet<String>()
 
-    {
+    init {
         getViewProvider().forceCachedPsi(this)
         init(TokenType.CODE_FRAGMENT, elementType)
         if (context != null) {

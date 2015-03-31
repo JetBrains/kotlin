@@ -32,7 +32,7 @@ public class ModuleDescriptorImpl(
         override val defaultImports: List<ImportPath>,
         override val platformToKotlinClassMap: PlatformToKotlinClassMap
 ) : DeclarationDescriptorImpl(Annotations.EMPTY, moduleName), ModuleDescriptor {
-    {
+    init {
         if (!moduleName.isSpecial()) {
             throw IllegalArgumentException("Module name must be special: $moduleName")
         }

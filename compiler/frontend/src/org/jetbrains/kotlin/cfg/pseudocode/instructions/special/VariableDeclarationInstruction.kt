@@ -29,7 +29,7 @@ public class VariableDeclarationInstruction(
         element: JetDeclaration,
         lexicalScope: LexicalScope
 ) : InstructionWithNext(element, lexicalScope) {
-    {
+    init {
         assert(element is JetVariableDeclaration || element is JetParameter) { "Invalid element: ${render(element)}}" }
     }
 

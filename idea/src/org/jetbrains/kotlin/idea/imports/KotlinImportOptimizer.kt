@@ -55,7 +55,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
         private val codeStyleSettings = JetCodeStyleSettings.getInstance(file.getProject())
         private val aliasImports: Map<Name, FqName>
 
-        ;{
+        init {
             val imports = file.getImportDirectives()
             val aliasImports = HashMap<Name, FqName>()
             for (import in imports) {

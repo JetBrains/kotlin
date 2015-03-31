@@ -40,9 +40,9 @@ public class SubpackagesIndexService(private val project: Project) {
 
     public inner class SubpackagesIndex(allPackageFqNames: Collection<String>) {
         // a map from any existing package (in kotlin) to a set of subpackages (not necessarily direct) containing files
-        private val fqNameByPrefix = MultiMap.createSet<FqName, FqName>();
+        private val fqNameByPrefix = MultiMap.createSet<FqName, FqName>()
 
-        {
+        init {
             for (fqNameAsString in allPackageFqNames) {
                 val fqName = FqName(fqNameAsString)
                 var prefix = fqName

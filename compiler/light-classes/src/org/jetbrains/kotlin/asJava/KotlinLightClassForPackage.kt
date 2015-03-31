@@ -72,7 +72,7 @@ public class KotlinLightClassForPackage private(
         }
     }
 
-    {
+    init {
         assert(!files.isEmpty()) { "No files for package " + packageFqName }
     }
 

@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 public class CapturedTypeConstructor(
         public val typeProjection: TypeProjection
 ): TypeConstructor {
-    {
+    init {
         assert(typeProjection.getProjectionKind() != Variance.INVARIANT) {
             "Only nontrivial projections can be captured, not: $typeProjection"
         }

@@ -52,7 +52,7 @@ public class KotlinCompletionContributor : CompletionContributor() {
 
     private val DEFAULT_DUMMY_IDENTIFIER = CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED + "$" // add '$' to ignore context after the caret
 
-    ;{
+    init {
         val provider = object : CompletionProvider<CompletionParameters>() {
             override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
                 performCompletion(parameters, result)

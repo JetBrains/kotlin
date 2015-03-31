@@ -27,9 +27,9 @@ import org.jetbrains.kotlin.asJava.toLightMethods
 import com.intellij.util.containers.ContainerUtil
 
 class KotlinOverrideTreeStructure(project: Project, val element: PsiElement) : HierarchyTreeStructure(project, null) {
-    val javaTreeStructures = element.toLightMethods().map { method -> MethodHierarchyTreeStructure(project, method) };
+    val javaTreeStructures = element.toLightMethods().map { method -> MethodHierarchyTreeStructure(project, method) }
 
-    {
+    init {
         setBaseElement(javaTreeStructures.first().getBaseDescriptor()!!)
     }
 
