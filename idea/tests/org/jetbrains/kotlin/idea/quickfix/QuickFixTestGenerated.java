@@ -395,9 +395,27 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("beforeLibraryClassJsRuntime.kt")
+        public void testLibraryClassJsRuntime() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/beforeLibraryClassJsRuntime.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("beforeLibraryPropertyJsRuntime.kt")
+        public void testLibraryPropertyJsRuntime() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/beforeLibraryPropertyJsRuntime.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("beforeLibraryPropertyRuntime.kt")
         public void testLibraryPropertyRuntime() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/beforeLibraryPropertyRuntime.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("beforeLibraryTopLevelFunctionImportJsRuntime.kt")
+        public void testLibraryTopLevelFunctionImportJsRuntime() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/beforeLibraryTopLevelFunctionImportJsRuntime.kt");
             doTest(fileName);
         }
 

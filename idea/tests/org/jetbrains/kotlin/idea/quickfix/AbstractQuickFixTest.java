@@ -67,12 +67,8 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
     }
 
     protected void doTest(@NotNull String beforeFileName) throws Exception {
-        boolean isWithRuntime = beforeFileName.endsWith("Runtime.kt");
-
         try {
-            if (isWithRuntime) {
-                ConfigLibraryUtil.configureKotlinRuntime(getModule(), getFullJavaJDK());
-            }
+            configureRuntimeIfNeeded(beforeFileName);
 
             enableInspections(beforeFileName);
 
@@ -81,9 +77,25 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
             checkForUnexpectedErrors();
         }
         finally {
-            if (isWithRuntime) {
-                ConfigLibraryUtil.unConfigureKotlinRuntime(getModule(), getProjectJDK());
-            }
+            unConfigureRuntimeIfNeeded(beforeFileName);
+        }
+    }
+
+    private static void configureRuntimeIfNeeded(@NotNull String beforeFileName) {
+        if (beforeFileName.endsWith("JsRuntime.kt")) {
+            ConfigLibraryUtil.configureKotlinJsRuntime(getModule(), getFullJavaJDK());
+        }
+        else if (beforeFileName.endsWith("Runtime.kt")) {
+            ConfigLibraryUtil.configureKotlinRuntime(getModule(), getFullJavaJDK());
+        }
+    }
+
+    private void unConfigureRuntimeIfNeeded(@NotNull String beforeFileName) {
+        if (beforeFileName.endsWith("JsRuntime.kt")) {
+            ConfigLibraryUtil.unConfigureKotlinJsRuntime(getModule(), getProjectJDK());
+        }
+        else if (beforeFileName.endsWith("Runtime.kt")) {
+            ConfigLibraryUtil.unConfigureKotlinRuntime(getModule(), getProjectJDK());
         }
     }
 

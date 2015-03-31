@@ -60,6 +60,10 @@ public class ConfigLibraryUtil {
         unConfigureLibrary(module, sdk, DEFAULT_JAVA_RUNTIME_LIB_NAME);
     }
 
+    public static void unConfigureKotlinJsRuntime(Module module, Sdk sdk) {
+        unConfigureLibrary(module, sdk, DEFAULT_KOTLIN_JS_STDLIB_NAME);
+    }
+
     public static void configureLibrary(Module module, Sdk sdk, NewLibraryEditor libraryEditor) {
         configureSdk(module, sdk);
         addLibrary(libraryEditor, module);
