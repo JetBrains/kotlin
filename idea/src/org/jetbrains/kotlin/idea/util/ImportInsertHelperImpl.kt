@@ -184,8 +184,19 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
             else
                 file.getImportDirectives()
 
-            //TODO: is that correct? What if function is imported and we need to import class?
-            if (imports.any { it.getImportedName() == name.asString() }) return ImportDescriptorResult.FAIL
+            // check there is an explicit import of a class/package with the same name already
+            val conflict = when (target) {
+                is ClassDescriptor -> topLevelScope.getClassifier(name)
+                is PackageViewDescriptor -> topLevelScope.getPackage(name)
+                else -> null
+            }
+            if (conflict != null && imports.any {
+                !it.isAllUnder()
+                && it.getImportPath()?.fqnPart() == conflict.importableFqNameSafe
+                && it.getImportPath()?.getImportedName() == name
+            }) {
+                return ImportDescriptorResult.FAIL
+            }
 
             val fqName = target.importableFqNameSafe
             val packageFqName = fqName.parent()
@@ -368,11 +379,8 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
             return result
         }
 
-        private fun JetImportDirective.getImportedName(): String? = if (isAllUnder()) null else JetPsiUtil.getAliasName(this)?.getIdentifier()
-
         private fun targetFqName(ref: JetReferenceExpression): FqName? {
             return ref.resolveTargets().map { it.importableFqName }.toSet().singleOrNull()
-
         }
 
         private fun JetReferenceExpression.resolveTargets(): Collection<DeclarationDescriptor> {

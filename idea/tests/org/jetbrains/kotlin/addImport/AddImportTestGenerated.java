@@ -48,12 +48,6 @@ public class AddImportTestGenerated extends AbstractAddImportTest {
         doTest(fileName);
     }
 
-    @TestMetadata("CannotImportClass3.kt")
-    public void testCannotImportClass3() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/CannotImportClass3.kt");
-        doTest(fileName);
-    }
-
     @TestMetadata("ClassAlreadyImported1.kt")
     public void testClassAlreadyImported1() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/ClassAlreadyImported1.kt");
@@ -180,6 +174,12 @@ public class AddImportTestGenerated extends AbstractAddImportTest {
         doTest(fileName);
     }
 
+    @TestMetadata("ImportClassWhenFunctionImported.kt")
+    public void testImportClassWhenFunctionImported() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/ImportClassWhenFunctionImported.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ImportFunctionBug.kt")
     public void testImportFunctionBug() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/ImportFunctionBug.kt");
@@ -189,6 +189,12 @@ public class AddImportTestGenerated extends AbstractAddImportTest {
     @TestMetadata("ImportPackage.kt")
     public void testImportPackage() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/ImportPackage.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ImportSecondFunction.kt")
+    public void testImportSecondFunction() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/ImportSecondFunction.kt");
         doTest(fileName);
     }
 
@@ -231,6 +237,12 @@ public class AddImportTestGenerated extends AbstractAddImportTest {
     @TestMetadata("PackageAlreadyImported.kt")
     public void testPackageAlreadyImported() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/PackageAlreadyImported.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("PackageDoesNotConflictWithClass.kt")
+    public void testPackageDoesNotConflictWithClass() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/PackageDoesNotConflictWithClass.kt");
         doTest(fileName);
     }
 
