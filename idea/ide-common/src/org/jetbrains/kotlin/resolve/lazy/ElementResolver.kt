@@ -55,7 +55,8 @@ public abstract class ElementResolver protected(
 
     public open fun hasElementAdditionalResolveCached(jetElement: JetElement): Boolean = false
 
-    protected open fun probablyNothingCallableNames(): ProbablyNothingCallableNames = DefaultNothingCallableNames
+    protected open fun probablyNothingCallableNames(): ProbablyNothingCallableNames
+            = throw UnsupportedOperationException("Cannot use partial body resolve with no Nothing-functions index");
 
     public fun resolveToElement(jetElement: JetElement, bodyResolveMode: BodyResolveMode = BodyResolveMode.FULL): BindingContext {
         var jetElement = jetElement
