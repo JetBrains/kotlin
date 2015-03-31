@@ -43,6 +43,7 @@ import com.intellij.find.findUsages.JavaFindUsagesHandlerFactory
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.search.searches.MethodReferencesSearch
 import com.intellij.util.CommonProcessors
+import org.jetbrains.kotlin.asJava.KotlinLightMethod
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.search.usagesSearch.processDelegationCallConstructorUsages
 
@@ -93,6 +94,7 @@ public class KotlinFindClassUsagesHandler(
             if (kotlinOptions.searchConstructorUsages) {
                 val constructors = classOrObject.toLightClass()?.getConstructors() ?: PsiMethod.EMPTY_ARRAY
                 for (constructor in constructors) {
+                    if (constructor !is KotlinLightMethod) continue
                     constructor.processDelegationCallConstructorUsages(constructor.getUseScope()) {
                         it.getCalleeExpression()?.getReference()?.let { KotlinFindUsagesHandler.processUsage(uniqueProcessor, it) }
                     }

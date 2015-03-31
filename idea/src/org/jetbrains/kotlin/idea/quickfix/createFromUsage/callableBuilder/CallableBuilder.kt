@@ -16,73 +16,61 @@
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder
 
+import com.intellij.codeInsight.daemon.impl.quickfix.CreateFromUsageUtils
 import com.intellij.codeInsight.navigation.NavigationUtil
 import com.intellij.codeInsight.template.*
+import com.intellij.codeInsight.template.impl.TemplateImpl
+import com.intellij.codeInsight.template.impl.TemplateManagerImpl
 import com.intellij.ide.fileTemplates.FileTemplate
 import com.intellij.ide.fileTemplates.FileTemplateManager
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.editor.ScrollType
 import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.openapi.progress.ProcessCanceledException
-import com.intellij.psi.PsiDocumentManager
+import com.intellij.openapi.ui.DialogWrapper
+import com.intellij.psi.*
+import com.intellij.psi.codeStyle.JavaCodeStyleManager
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.IncorrectOperationException
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import kotlin.properties.Delegates
-import java.util.LinkedHashSet
-import java.util.Collections
-import java.util.HashMap
-import java.util.ArrayList
-import java.util.Properties
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import com.intellij.psi.PsiWhiteSpace
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.types.checker.JetTypeChecker
-import com.intellij.psi.SmartPointerManager
-import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor
+import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
-import java.util.LinkedHashMap
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.ClassKind
-import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
-import com.intellij.openapi.editor.ScrollType
-import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
-import com.intellij.psi.PsiClass
-import com.intellij.codeInsight.daemon.impl.quickfix.CreateFromUsageUtils
-import com.intellij.psi.PsiMethod
-import com.intellij.openapi.fileEditor.OpenFileDescriptor
-import com.intellij.psi.codeStyle.JavaCodeStyleManager
-import com.intellij.psi.PsiModifier
-import com.intellij.psi.PsiField
-import com.intellij.psi.PsiMember
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaClassDescriptor
-import org.jetbrains.kotlin.resolve.scopes.ChainedScope
-import org.jetbrains.kotlin.resolve.scopes.WritableScopeImpl
-import org.jetbrains.kotlin.resolve.scopes.RedeclarationHandler
-import org.jetbrains.kotlin.resolve.scopes.WritableScope
-import com.intellij.psi.PsiMethodCallExpression
-import com.intellij.psi.PsiExpressionStatement
+import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.ClassKind
 import org.jetbrains.kotlin.idea.refactoring.*
 import org.jetbrains.kotlin.idea.util.*
-import com.intellij.openapi.ui.*
-import com.intellij.codeInsight.template.impl.*
-import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
-import org.jetbrains.kotlin.idea.util.application.*
-import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.isAncestor
+import org.jetbrains.kotlin.psi.psiUtil.parents
+import org.jetbrains.kotlin.psi.psiUtil.siblings
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.scopes.*
+import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.TypeProjectionImpl
+import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
+import java.util.*
+import kotlin.properties.Delegates
 
 private val TYPE_PARAMETER_LIST_VARIABLE_NAME = "typeParameterList"
 private val TEMPLATE_FROM_USAGE_FUNCTION_BODY = "New Kotlin Function Body.kt"
+private val TEMPLATE_FROM_USAGE_SECONDARY_CONSTRUCTOR_BODY = "New Kotlin Secondary Constructor Body.kt"
 private val ATTRIBUTE_FUNCTION_NAME = "FUNCTION_NAME"
 
 /**
@@ -322,8 +310,9 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             skipReturnType = when (callableInfo.kind) {
                 CallableKind.FUNCTION ->
                     returnTypeCandidate?.theType?.isUnit() ?: false
-                CallableKind.CONSTRUCTOR ->
+                CallableKind.CLASS_WITH_PRIMARY_CONSTRUCTOR ->
                     callableInfo.returnTypeInfo == TypeInfo.Empty || returnTypeCandidate?.theType?.isAny() ?: false
+                CallableKind.SECONDARY_CONSTRUCTOR -> true
                 CallableKind.PROPERTY -> containingElement is JetBlockExpression
             }
 
@@ -437,7 +426,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
                 val ownerTypeString = if (isExtension) "${receiverTypeCandidate!!.renderedType!!}." else ""
 
-                val classKind = (callableInfo as? ConstructorInfo)?.classInfo?.kind
+                val classKind = (callableInfo as? PrimaryConstructorInfo)?.classInfo?.kind
 
                 fun renderParamList(): String {
                     val prefix = if (classKind == ClassKind.ANNOTATION_CLASS) "val " else ""
@@ -446,7 +435,8 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 }
 
                 val paramList = when (callableInfo.kind) {
-                    CallableKind.FUNCTION, CallableKind.CONSTRUCTOR -> renderParamList()
+                    CallableKind.FUNCTION, CallableKind.CLASS_WITH_PRIMARY_CONSTRUCTOR, CallableKind.SECONDARY_CONSTRUCTOR ->
+                        renderParamList()
                     CallableKind.PROPERTY -> ""
                 }
                 val returnTypeString = if (skipReturnType || assignmentToReplace != null) "" else ": Any"
@@ -455,20 +445,27 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 val psiFactory = JetPsiFactory(currentFile)
 
                 val modifiers =
-                        if (containingElement is JetClassOrObject && containingElement.isAncestor(config.originalElement))
+                        if (containingElement is JetClassOrObject
+                            && containingElement.isAncestor(config.originalElement)
+                            && callableInfo.kind != CallableKind.SECONDARY_CONSTRUCTOR)
                             "private "
                         else ""
 
                 val declaration : JetNamedDeclaration = when (callableInfo.kind) {
-                    CallableKind.FUNCTION -> {
+                    CallableKind.FUNCTION, CallableKind.SECONDARY_CONSTRUCTOR -> {
                         val body = when {
                             containingElement is JetClass && containingElement.isTrait() && !config.isExtension -> ""
                             else -> "{}"
                         }
-                        psiFactory.createFunction("${modifiers}fun<> $header $body")
+                        if (callableInfo.kind == CallableKind.FUNCTION) {
+                            psiFactory.createFunction("${modifiers}fun<> $header $body")
+                        }
+                        else {
+                            psiFactory.createSecondaryConstructor("${modifiers}constructor$paramList $body")
+                        }
                     }
-                    CallableKind.CONSTRUCTOR -> {
-                        with((callableInfo as ConstructorInfo).classInfo) {
+                    CallableKind.CLASS_WITH_PRIMARY_CONSTRUCTOR -> {
+                        with((callableInfo as PrimaryConstructorInfo).classInfo) {
                             val classBody = when (kind) {
                                 ClassKind.ANNOTATION_CLASS, ClassKind.ENUM_ENTRY -> ""
                                 else -> "{\n\n}"
@@ -557,23 +554,19 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
                     containingElement is JetFile -> containingElement.add(declaration) as JetNamedDeclaration
 
-                    containingElement is PsiClass -> jetFileToEdit.add(declaration) as JetNamedDeclaration
+                    containingElement is PsiClass -> {
+                        if (declaration is JetSecondaryConstructor) {
+                            val wrappingClass = psiFactory.createClass("class ${containingElement.getName()} {\n}")
+                            addDeclarationToClassOrObject(wrappingClass, declaration, psiFactory)
+                            (jetFileToEdit.add(wrappingClass) as JetClass).getDeclarations().first() as JetNamedDeclaration
+                        }
+                        else {
+                            jetFileToEdit.add(declaration) as JetNamedDeclaration
+                        }
+                    }
 
                     containingElement is JetClassOrObject -> {
-                        var classBody = containingElement.getBody()
-                        if (classBody == null) {
-                            classBody = containingElement.add(psiFactory.createEmptyClassBody()) as JetClassBody
-                            containingElement.addBefore(psiFactory.createWhiteSpace(), classBody)
-                        }
-
-                        if (declaration is JetNamedFunction) {
-                            val anchor = PsiTreeUtil.skipSiblingsBackward(
-                                    classBody!!.getRBrace() ?: classBody!!.getLastChild()!!,
-                                    javaClass<PsiWhiteSpace>()
-                            )
-                            classBody.addAfter(declaration, anchor) as JetNamedDeclaration
-                        }
-                        else classBody.addAfter(declaration, classBody!!.getLBrace()!!) as JetNamedDeclaration
+                        addDeclarationToClassOrObject(containingElement, declaration, psiFactory)
                     }
                     else -> throw AssertionError("Invalid containing element: ${containingElement.getText()}")
                 }
@@ -588,6 +581,25 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
                 return declarationInPlace
             }
+        }
+
+        private fun addDeclarationToClassOrObject(classOrObject: JetClassOrObject,
+                                                  declaration: JetNamedDeclaration,
+                                                  psiFactory: JetPsiFactory): JetNamedDeclaration {
+            var classBody = classOrObject.getBody()
+            if (classBody == null) {
+                classBody = classOrObject.add(psiFactory.createEmptyClassBody()) as JetClassBody
+                classOrObject.addBefore(psiFactory.createWhiteSpace(), classBody)
+            }
+
+            return if (declaration is JetNamedFunction) {
+                val anchor = PsiTreeUtil.skipSiblingsBackward(
+                        classBody!!.getRBrace() ?: classBody!!.getLastChild()!!,
+                        javaClass<PsiWhiteSpace>()
+                )
+                classBody.addAfter(declaration, anchor) as JetNamedDeclaration
+            }
+            else classBody.addAfter(declaration, classBody!!.getLBrace()!!) as JetNamedDeclaration
         }
 
         private fun getTypeParameterRenames(scope: JetScope): Map<TypeParameterDescriptor, String> {
@@ -660,17 +672,24 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             return typeRefsToShorten
         }
 
-        private fun setupFunctionBody(func: JetNamedFunction) {
+        private fun setupFunctionBody(func: JetFunction) {
             val oldBody = func.getBodyExpression() ?: return
 
-            val fileTemplate = FileTemplateManager.getInstance()!!.getCodeTemplate(TEMPLATE_FROM_USAGE_FUNCTION_BODY)
+            val templateName = when (func) {
+                is JetSecondaryConstructor -> TEMPLATE_FROM_USAGE_SECONDARY_CONSTRUCTOR_BODY
+                is JetNamedFunction -> TEMPLATE_FROM_USAGE_FUNCTION_BODY
+                else -> throw AssertionError("Unexpected declaration: " + JetPsiUtil.getElementTextWithContext(func))
+            }
+            val fileTemplate = FileTemplateManager.getInstance()!!.getCodeTemplate(templateName)
             val properties = Properties()
             properties.setProperty(FileTemplate.ATTRIBUTE_RETURN_TYPE, if (skipReturnType) "Unit" else func.getTypeReference()!!.getText())
             receiverClassDescriptor?.let {
                 properties.setProperty(FileTemplate.ATTRIBUTE_CLASS_NAME, DescriptorUtils.getFqName(it).asString())
                 properties.setProperty(FileTemplate.ATTRIBUTE_SIMPLE_CLASS_NAME, it.getName().asString())
             }
-            properties.setProperty(ATTRIBUTE_FUNCTION_NAME, callableInfo.name)
+            if (callableInfo.name.isNotEmpty()) {
+                properties.setProperty(ATTRIBUTE_FUNCTION_NAME, callableInfo.name)
+            }
 
             val bodyText = try {
                 fileTemplate!!.getText(properties)
@@ -766,7 +785,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             val expression = TypeParameterListExpression(
                     mandatoryTypeParameters,
                     typeParameterMap,
-                    callableInfo.kind != CallableKind.CONSTRUCTOR
+                    callableInfo.kind != CallableKind.CLASS_WITH_PRIMARY_CONSTRUCTOR
             )
             builder.replaceElement(typeParameterList, expression, false)
             return expression
@@ -831,8 +850,8 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 }
 
                 return when (adjustedDeclaration) {
-                    is JetNamedFunction -> {
-                        createJavaMethod(adjustedDeclaration, targetClass)
+                    is JetNamedFunction, is JetSecondaryConstructor -> {
+                        createJavaMethod(adjustedDeclaration as JetFunction, targetClass)
                     }
                     is JetProperty -> {
                         createJavaField(adjustedDeclaration, targetClass)
@@ -859,7 +878,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             }
 
             val needStatic = when (callableInfo) {
-                is ConstructorInfo -> with(callableInfo.classInfo) {
+                is PrimaryConstructorInfo -> with(callableInfo.classInfo) {
                     !inner && kind != ClassKind.ENUM_ENTRY && kind != ClassKind.ENUM_CLASS
                 }
                 else -> callableInfo.receiverTypeInfo.staticContextRequired
@@ -896,7 +915,12 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             val caretModel = containingFileEditor.getCaretModel()
             val selectionModel = containingFileEditor.getSelectionModel()
 
-            caretModel.moveToOffset(declaration.getNameIdentifier().getTextRange().getEndOffset())
+            if (declaration is JetSecondaryConstructor) {
+                caretModel.moveToOffset(declaration.getConstructorKeyword().getTextRange().getEndOffset())
+            }
+            else {
+                caretModel.moveToOffset(declaration.getNameIdentifier()!!.getTextRange().getEndOffset())
+            }
 
             fun positionBetween(left: PsiElement, right: PsiElement) {
                 val from = left.siblings(withItself = false, forward = true).firstOrNull { it !is PsiWhiteSpace } ?: return
@@ -908,8 +932,10 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             }
 
             when (declaration) {
-                is JetNamedFunction -> {
-                    (declaration.getBodyExpression() as? JetBlockExpression)?.let { positionBetween(it.getLBrace(), it.getRBrace()) }
+                is JetNamedFunction, is JetSecondaryConstructor -> {
+                    ((declaration as JetFunction).getBodyExpression() as? JetBlockExpression)?.let {
+                        positionBetween(it.getLBrace(), it.getRBrace())
+                    }
                 }
                 is JetClassOrObject -> {
                     caretModel.moveToOffset(declaration.getTextRange().getStartOffset())
@@ -995,8 +1021,8 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
                         runWriteAction {
                             // file templates
-                            if (newDeclaration is JetNamedFunction) {
-                                setupFunctionBody(newDeclaration)
+                            if (newDeclaration is JetNamedFunction || newDeclaration is JetSecondaryConstructor) {
+                                setupFunctionBody(newDeclaration as JetFunction)
                             }
 
                             val callElement = config.originalElement as? JetCallElement
