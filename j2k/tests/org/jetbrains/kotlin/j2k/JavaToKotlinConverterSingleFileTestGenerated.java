@@ -1892,6 +1892,12 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("downTo4.java")
+        public void testDownTo4() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/downTo4.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("falseArrayIndicesReversed.java")
         public void testFalseArrayIndicesReversed() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/falseArrayIndicesReversed.java");
@@ -1940,6 +1946,12 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("forRangeWithNE.java")
+        public void testForRangeWithNE() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forRangeWithNE.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("forThroughArrayIndices.java")
         public void testForThroughArrayIndices() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forThroughArrayIndices.java");
@@ -1955,6 +1967,12 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         @TestMetadata("forThroughListIndices.java")
         public void testForThroughListIndices() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forThroughListIndices.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("forThroughListIndicesNE.java")
+        public void testForThroughListIndicesNE() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forThroughListIndicesNE.java");
             doTest(fileName);
         }
 

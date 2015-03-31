@@ -152,80 +152,77 @@ class ForConverter(
                 && !loopVar.hasWriteAccesses(referenceSearcher, condition)
                 && condition is PsiBinaryExpression) {
 
-                val operationTokenType = condition.getOperationTokenType()
-                val reversed = when (operationTokenType) {
-                    JavaTokenType.LT, JavaTokenType.LE -> false
-                    JavaTokenType.GT, JavaTokenType.GE -> true
-                    else -> return null
-                }
-
                 val left = condition.getLOperand() as? PsiReferenceExpression ?: return null
                 val right = condition.getROperand() ?: return null
                 if (left.resolve() == loopVar) {
                     val start = loopVar.getInitializer() ?: return null
-                    val operationType = if (reversed) JavaTokenType.MINUSMINUS else JavaTokenType.PLUSPLUS
-                    if ((update as? PsiExpressionStatement)?.getExpression()?.isVariableIncrementOrDecrement(loopVar, operationType) ?: false) {
-                        val range = forIterationRange(start, right, operationTokenType).assignNoPrototype()
-                        val explicitType = if (settings.specifyLocalVariableTypeByDefault)
-                            PrimitiveType(Identifier("Int").assignNoPrototype()).assignNoPrototype()
-                        else
-                            null
-                        return ForeachStatement(loopVar.declarationIdentifier(), explicitType, range, codeConverter.convertStatementOrBlock(body), statement.isInSingleLine())
+                    val operationType = (update as? PsiExpressionStatement)?.getExpression()?.isVariableIncrementOrDecrement(loopVar)
+                    val reversed = when (operationType) {
+                        JavaTokenType.PLUSPLUS -> false
+                        JavaTokenType.MINUSMINUS -> true
+                        else -> return null
                     }
+
+                    val inclusive = when (condition.getOperationTokenType()) {
+                        JavaTokenType.LT -> if (reversed) return null else false
+                        JavaTokenType.LE -> if (reversed) return null else true
+                        JavaTokenType.GT -> if (reversed) false else return null
+                        JavaTokenType.GE -> if (reversed) true else return null
+                        JavaTokenType.NE -> false
+                        else -> return null
+                    }
+
+                    val range = forIterationRange(start, right, reversed, inclusive).assignNoPrototype()
+                    val explicitType = if (settings.specifyLocalVariableTypeByDefault)
+                        PrimitiveType(Identifier("Int").assignNoPrototype()).assignNoPrototype()
+                    else
+                        null
+                    return ForeachStatement(loopVar.declarationIdentifier(), explicitType, range, codeConverter.convertStatementOrBlock(body), statement.isInSingleLine())
                 }
             }
         }
         return null
     }
 
-    private fun PsiElement.isVariableIncrementOrDecrement(variable: PsiVariable, operationTokenType: IElementType): Boolean {
+    private fun PsiElement.isVariableIncrementOrDecrement(variable: PsiVariable): IElementType? {
         //TODO: simplify code when KT-5453 fixed
         val pair = when (this) {
             is PsiPostfixExpression -> getOperationTokenType() to getOperand()
             is PsiPrefixExpression -> getOperationTokenType() to getOperand()
-            else -> return false
+            else -> return null
         }
-        return pair.first == operationTokenType && (pair.second as? PsiReferenceExpression)?.resolve() == variable
+        if ((pair.second as? PsiReferenceExpression)?.resolve() != variable) return null
+        return pair.first
     }
 
-    private fun forIterationRange(start: PsiExpression, bound: PsiExpression, comparisonTokenType: IElementType): Expression {
-        val indicesRange = indicesIterationRange(start, bound, comparisonTokenType)
+    private fun forIterationRange(start: PsiExpression, bound: PsiExpression, reversed: Boolean, inclusiveComparison: Boolean): Expression {
+        val indicesRange = indicesIterationRange(start, bound, reversed, inclusiveComparison)
         if (indicesRange != null) return indicesRange
 
         val startConverted = codeConverter.convertExpression(start)
-        return when (comparisonTokenType) {
-            JavaTokenType.LT, JavaTokenType.LE ->
-                RangeExpression(startConverted, convertBound(bound, if (comparisonTokenType == JavaTokenType.LT) -1 else 0))
-
-            JavaTokenType.GT, JavaTokenType.GE ->
-                DownToExpression(startConverted, convertBound(bound, if (comparisonTokenType == JavaTokenType.GT) +1 else 0))
-
-            else ->
-                throw IllegalAccessException()
-        }
+        return if (reversed)
+            DownToExpression(startConverted, convertBound(bound, if (inclusiveComparison) 0 else +1))
+        else
+            RangeExpression(startConverted, convertBound(bound, if (inclusiveComparison) 0 else -1))
     }
 
-    private fun indicesIterationRange(start: PsiExpression, bound: PsiExpression, comparisonTokenType: IElementType): Expression? {
-        val reversed = when (comparisonTokenType) {
-            JavaTokenType.LT -> false
-            JavaTokenType.GE -> true
-            else -> return null
-        }
-
-        val lower = if (reversed) bound else start
-        val upper = if (reversed) start else bound
-
-        if ((lower as? PsiLiteralExpression)?.getValue() != 0) return null
-
+    private fun indicesIterationRange(start: PsiExpression, bound: PsiExpression, reversed: Boolean, inclusiveComparison: Boolean): Expression? {
         val collectionSize = if (reversed) {
-            if (upper !is PsiBinaryExpression) return null
-            if (upper.getOperationTokenType() != JavaTokenType.MINUS) return null
-            if ((upper.getROperand() as? PsiLiteralExpression)?.getValue() != 1) return null
-            upper.getLOperand()
+            if (!inclusiveComparison) return null
+
+            if ((bound as? PsiLiteralExpression)?.getValue() != 0) return null
+
+            if (start !is PsiBinaryExpression) return null
+            if (start.getOperationTokenType() != JavaTokenType.MINUS) return null
+            if ((start.getROperand() as? PsiLiteralExpression)?.getValue() != 1) return null
+            start.getLOperand()
         }
         else {
-            upper
+            if (inclusiveComparison) return null
+            if ((start as? PsiLiteralExpression)?.getValue() != 0) return null
+            bound
         }
+
 
         var indices: Expression? = null
 
