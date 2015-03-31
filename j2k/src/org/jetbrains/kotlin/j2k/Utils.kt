@@ -22,7 +22,7 @@ import com.intellij.psi.util.PsiUtil
 import org.jetbrains.kotlin.j2k.ast.*
 import com.intellij.psi.util.PsiMethodUtil
 
-fun quoteKeywords(packageName: String): String = packageName.split("\\.").map { Identifier.toKotlin(it) }.joinToString(".")
+fun quoteKeywords(packageName: String): String = packageName.split('.').map { Identifier.toKotlin(it) }.joinToString(".")
 
 fun PsiVariable.countWriteAccesses(searcher: ReferenceSearcher, scope: PsiElement?): Int
         = if (scope != null) searcher.findVariableUsages(this, scope).count { PsiUtil.isAccessedForWriting(it) } else 0
