@@ -149,6 +149,12 @@ public class MultiFileJvmBasicCompletionTestGenerated extends AbstractMultiFileJ
         doTest(fileName);
     }
 
+    @TestMetadata("NotImportedExtensionFunctionAndAlias")
+    public void testNotImportedExtensionFunctionAndAlias() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/multifile/NotImportedExtensionFunctionAndAlias/");
+        doTest(fileName);
+    }
+
     @TestMetadata("NotImportedExtensionProperty")
     public void testNotImportedExtensionProperty() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/multifile/NotImportedExtensionProperty/");
