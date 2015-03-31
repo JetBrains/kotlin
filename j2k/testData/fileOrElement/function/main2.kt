@@ -1,7 +1,5 @@
-public class A {
-    companion object {
-        public fun main(args: Array<String>) {
-        }
+public object A {
+    public fun main(args: Array<String>) {
     }
 }
 

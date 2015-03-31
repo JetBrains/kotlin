@@ -32,7 +32,7 @@ class AfterConversionPass(val project: Project, val postProcessor: PostProcessor
         val bindingContext = postProcessor.analyzeFile(kotlinFile)
 
         val fixes = bindingContext.getDiagnostics().map {
-            val fix = fixForProblem(it)
+            val fix = postProcessor.fixForProblem(it)
             if (fix != null) it.getPsiElement() to fix else null
         }.filterNotNull()
 
@@ -45,25 +45,5 @@ class AfterConversionPass(val project: Project, val postProcessor: PostProcessor
         postProcessor.doAdditionalProcessing(kotlinFile)
 
         return kotlinFile.getText()!!
-    }
-
-    private fun fixForProblem(problem: Diagnostic): (() -> Unit)? {
-        val psiElement = problem.getPsiElement()
-        return when (problem.getFactory()) {
-            Errors.UNNECESSARY_NOT_NULL_ASSERTION -> { () ->
-                val exclExclOp = psiElement as JetSimpleNameExpression
-                val exclExclExpr = exclExclOp.getParent() as JetUnaryExpression
-                exclExclExpr.replace(exclExclExpr.getBaseExpression()!!)
-            }
-
-            Errors.VAL_REASSIGNMENT -> { () ->
-                val property = (psiElement as? JetSimpleNameExpression)?.getReference()?.resolve() as? JetProperty
-                if (property != null && !property.isVar()) {
-                    property.getValOrVarNode().getPsi()!!.replace(JetPsiFactory(project).createVarNode().getPsi()!!)
-                }
-            }
-
-            else -> null
-        }
     }
 }

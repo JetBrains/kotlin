@@ -1,4 +1,4 @@
 val array = IntArray(10)
-for (i in 0..10 - 1) {
+for (i in 0..9) {
     array[i] = i
 }

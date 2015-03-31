@@ -5,7 +5,7 @@ class C {
 class D {
     fun foo(c: C) {
         if (null == c.s) {
-            System.out.println("null")
+            println("null")
         }
     }
 }

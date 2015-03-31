@@ -2,7 +2,7 @@ package org.test.customer
 
 class Customer(public val firstName: String, public val lastName: String) {
 
-    {
+    init {
         doSmthBefore()
         doSmthAfter()
     }
@@ -33,12 +33,10 @@ class CustomerBuilder {
     }
 }
 
-public class User {
-    companion object {
-        public fun main() {
-            val customer = CustomerBuilder().WithFirstName("Homer").WithLastName("Simpson").Build()
-            System.out.println(customer.firstName)
-            System.out.println(customer.lastName)
-        }
+public object User {
+    public fun main() {
+        val customer = CustomerBuilder().WithFirstName("Homer").WithLastName("Simpson").Build()
+        println(customer.firstName)
+        println(customer.lastName)
     }
 }

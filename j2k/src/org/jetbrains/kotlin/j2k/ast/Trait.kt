@@ -22,10 +22,9 @@ class Trait(
         modifiers: Modifiers,
         typeParameterList: TypeParameterList,
         extendsTypes: List<Type>,
-        baseClassParams: List<DeferredElement<Expression>>,
         implementsTypes: List<Type>,
         body: ClassBody
-) : Class(name, annotations, modifiers, typeParameterList, extendsTypes, baseClassParams, implementsTypes, body) {
+) : Class(name, annotations, modifiers, typeParameterList, extendsTypes, null, implementsTypes, body) {
 
     override val keyword: String
         get() = "trait"

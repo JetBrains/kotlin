@@ -1,4 +1,7 @@
-class C {
+class Base {
+}
+
+class C extends Base {
   C(int arg1, int arg2, int arg3) {
   }
 

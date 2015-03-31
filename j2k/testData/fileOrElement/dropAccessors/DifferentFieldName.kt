@@ -3,8 +3,8 @@ public class AAA {
         private set
 
     public fun foo(other: AAA) {
-        System.out.println(x)
-        System.out.println(other.x)
+        println(x)
+        println(other.x)
         x = 10
     }
 }

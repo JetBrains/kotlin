@@ -1,8 +1,8 @@
 package demo
 
 class Collection<E>(e: E) {
-    {
-        System.out.println(e)
+    init {
+        println(e)
     }
 }
 

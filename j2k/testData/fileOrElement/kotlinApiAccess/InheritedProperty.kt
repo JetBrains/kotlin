@@ -3,7 +3,7 @@ import kotlinApi.*
 
 class C : KotlinClass() {
     fun foo() {
-        System.out.println(property)
+        println(property)
         property = "a"
     }
 }

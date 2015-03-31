@@ -1,9 +1,8 @@
-run {
-    var i = 0
-    while (i < 10) {
-        System.out.println(i)
-        System.out.println(j)
-        j++
-        i++
-    }
+var j = 1
+var i = 0
+while (i < 10) {
+    println(i)
+    println(j)
+    j++
+    i++
 }

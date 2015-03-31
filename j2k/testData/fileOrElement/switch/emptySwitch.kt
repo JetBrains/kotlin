@@ -1,14 +1,12 @@
-public class NonDefault {
-    companion object {
-        public fun main(args: Array<String>) {
+public object NonDefault {
+    public fun main(args: Array<String>) {
 
-            val value = 3
-            val valueString = ""
-            when (value) {
+        val value = 3
+        val valueString = ""
+        when (value) {
 
-            }
-            System.out.println(valueString)
         }
+        println(valueString)
     }
 }
 

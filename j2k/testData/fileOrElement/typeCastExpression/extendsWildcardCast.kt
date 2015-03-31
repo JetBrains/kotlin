@@ -1,1 +1,1 @@
-list as List<out String>
+list as List<String>

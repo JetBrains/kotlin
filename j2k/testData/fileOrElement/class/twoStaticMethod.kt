@@ -1,11 +1,9 @@
-class S {
-    companion object {
-        fun sB(): Boolean {
-            return true
-        }
+object S {
+    fun sB(): Boolean {
+        return true
+    }
 
-        fun sI(): Int {
-            return 1
-        }
+    fun sI(): Int {
+        return 1
     }
 }

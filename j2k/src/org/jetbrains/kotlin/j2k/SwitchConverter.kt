@@ -93,7 +93,7 @@ class SwitchConverter(private val codeConverter: CodeConverter) {
             false
         }
         else {
-            val block = case.statements.singleOrNull2() as? PsiBlockStatement
+            val block = case.statements.singleOrNull() as? PsiBlockStatement
             val statements = if (block != null) block.getCodeBlock().getStatements().toList() else case.statements
             !statements.any { it is PsiBreakStatement || it is PsiContinueStatement || it is PsiReturnStatement || it is PsiThrowStatement }
         }

@@ -16,27 +16,15 @@
 
 package org.jetbrains.kotlin.j2k
 
-import com.intellij.psi.PsiClass
-import java.util.HashSet
-import com.intellij.psi.PsiMember
-import java.util.LinkedHashMap
-import com.intellij.psi.PsiAnnotationMethod
-import java.util.ArrayList
-import com.intellij.psi.PsiModifier
-import com.intellij.psi.PsiMethod
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.*
 import org.jetbrains.kotlin.j2k.ast.*
 import org.jetbrains.kotlin.j2k.ast.Class
-import com.intellij.psi.PsiField
-import com.intellij.psi.PsiReturnStatement
-import com.intellij.psi.PsiReferenceExpression
-import com.intellij.openapi.util.text.StringUtil
-import java.util.HashMap
-import com.intellij.psi.PsiClassInitializer
-import com.intellij.psi.PsiExpressionStatement
-import com.intellij.psi.PsiAssignmentExpression
-import com.intellij.psi.PsiExpression
-import com.intellij.psi.JavaTokenType
 import org.jetbrains.kotlin.j2k.usageProcessing.AccessorToPropertyProcessing
+import java.util.ArrayList
+import java.util.HashMap
+import java.util.HashSet
+import java.util.LinkedHashMap
 
 class FieldCorrectionInfo(val name: String, val access: Modifier?, val setterAccess: Modifier?) {
     val identifier = Identifier(name).assignNoPrototype()
@@ -49,14 +37,15 @@ enum class AccessorKind {
 
 class ClassBodyConverter(private val psiClass: PsiClass,
                          private val converter: Converter,
-                         private val isOpenClass: Boolean) {
+                         private val isOpenClass: Boolean,
+                         private val isObject: Boolean) {
     private val membersToRemove = HashSet<PsiMember>()
     private val fieldCorrections = HashMap<PsiField, FieldCorrectionInfo>()
 
     public fun convertBody(): ClassBody {
         processAccessorsToDrop()
 
-        val constructorConverter = if (psiClass.getName() != null)
+        val constructorConverter = if (psiClass.getName() != null && !isObject)
             ConstructorConverter(psiClass, converter, fieldCorrections)
         else
             null
@@ -65,9 +54,10 @@ class ClassBodyConverter(private val psiClass: PsiClass,
         for (element in psiClass.getChildren()) {
             if (element is PsiMember) {
                 if (element is PsiAnnotationMethod) continue // converted in convertAnnotationType()
+                if (isObject && element.isConstructor()) continue // no constructor in object
 
                 val converted = converter.convertMember(element, membersToRemove, constructorConverter)
-                if (converted != null/* && !converted.isEmpty()*/) {
+                if (converted != null) {
                     convertedMembers.put(element, converted)
                 }
             }
@@ -75,6 +65,13 @@ class ClassBodyConverter(private val psiClass: PsiClass,
 
         for (member in membersToRemove) {
             convertedMembers.remove(member)
+        }
+
+        val lBrace = LBrace().assignPrototype(psiClass.getLBrace())
+        val rBrace = RBrace().assignPrototype(psiClass.getRBrace())
+
+        if (isObject) {
+            return ClassBody(null, null, convertedMembers.values().toList(), emptyList(), lBrace, rBrace)
         }
 
         val useCompanionObject = shouldGenerateCompanionObject(convertedMembers)
@@ -88,7 +85,7 @@ class ClassBodyConverter(private val psiClass: PsiClass,
                 primaryConstructorSignature = member.createSignature(converter)
                 members.add(member.initializer())
             }
-            else if (useCompanionObject && member !is Class && psiMember.hasModifierProperty(PsiModifier.STATIC)) {
+            else if (useCompanionObject && member !is Class && psiMember !is PsiEnumConstant && psiMember.hasModifierProperty(PsiModifier.STATIC)) {
                 companionObjectMembers.add(member)
             }
             else {
@@ -105,10 +102,7 @@ class ClassBodyConverter(private val psiClass: PsiClass,
             primaryConstructorSignature = null // no "()" after class name is needed in this case
         }
 
-        val lBrace = LBrace().assignPrototype(psiClass.getLBrace())
-        val rBrace = RBrace().assignPrototype(psiClass.getRBrace())
-
-        return ClassBody(primaryConstructorSignature, constructorConverter?.baseClassParams ?: listOf(), members, companionObjectMembers, lBrace, rBrace)
+        return ClassBody(primaryConstructorSignature, constructorConverter?.baseClassParams, members, companionObjectMembers, lBrace, rBrace)
     }
 
     private fun Converter.convertMember(member: PsiMember,
@@ -125,10 +119,8 @@ class ClassBodyConverter(private val psiClass: PsiClass,
 
     // do not convert private static methods into companion object if possible
     private fun shouldGenerateCompanionObject(convertedMembers: Map<PsiMember, Member>): Boolean {
-        if (psiClass.isEnum()) return false
-
         val members = convertedMembers.keySet().filter { !it.isConstructor() }
-        val companionObjectMembers = members.filter { it !is PsiClass && it.hasModifierProperty(PsiModifier.STATIC) }
+        val companionObjectMembers = members.filter { it !is PsiClass && it !is PsiEnumConstant && it.hasModifierProperty(PsiModifier.STATIC) }
         val nestedClasses = members.filterIsInstance<PsiClass>().filter { it.hasModifierProperty(PsiModifier.STATIC) }
         if (companionObjectMembers.all { it is PsiMethod && it.hasModifierProperty(PsiModifier.PRIVATE) }) {
             return nestedClasses.any { nestedClass -> companionObjectMembers.any { converter.referenceSearcher.findMethodCalls(it as PsiMethod, nestedClass).isNotEmpty() } }

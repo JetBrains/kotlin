@@ -16,19 +16,14 @@
 
 package org.jetbrains.kotlin.j2k
 
-import com.intellij.psi.PsiMethod
-import com.intellij.psi.PsiExpression
-import org.jetbrains.kotlin.j2k.ast.BinaryExpression
-import org.jetbrains.kotlin.j2k.ast.Expression
-import org.jetbrains.kotlin.j2k.ast.MethodCallExpression
 import com.intellij.psi.CommonClassNames.JAVA_LANG_OBJECT
+import com.intellij.psi.PsiExpression
+import com.intellij.psi.PsiMethod
+import com.intellij.psi.PsiReferenceExpression
 import com.intellij.psi.PsiSuperExpression
-import org.jetbrains.kotlin.j2k.ast.QualifiedExpression
-import org.jetbrains.kotlin.j2k.ast.Identifier
-import org.jetbrains.kotlin.j2k.ast.assignNoPrototype
-import org.jetbrains.kotlin.j2k.ast.Type
+import org.jetbrains.kotlin.j2k.ast.*
 
-enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String, val parameterCount: Int) {
+enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String, val parameterCount: Int?) {
     OBJECT_EQUALS: SpecialMethod(null, "equals", 1) {
         override fun matches(method: PsiMethod)
                 = super.matches(method) && method.getParameterList().getParameters().single().getType().getCanonicalText() == JAVA_LANG_OBJECT
@@ -53,17 +48,17 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
 
     COLLECTIONS_EMPTY_LIST: SpecialMethod("java.util.Collections", "emptyList", 0) {
         override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = MethodCallExpression.build(null, "listOf", listOf(), typeArgumentsConverted, false)
+                = MethodCallExpression.build(null, "emptyList", listOf(), typeArgumentsConverted, false)
     }
 
     COLLECTIONS_EMPTY_SET: SpecialMethod("java.util.Collections", "emptySet", 0) {
         override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = MethodCallExpression.build(null, "setOf", listOf(), typeArgumentsConverted, false)
+                = MethodCallExpression.build(null, "emptySet", listOf(), typeArgumentsConverted, false)
     }
 
     COLLECTIONS_EMPTY_MAP: SpecialMethod("java.util.Collections", "emptyMap", 0) {
         override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = MethodCallExpression.build(null, "mapOf", listOf(), typeArgumentsConverted, false)
+                = MethodCallExpression.build(null, "emptyMap", listOf(), typeArgumentsConverted, false)
     }
 
     COLLECTIONS_SINGLETON_LIST: SpecialMethod("java.util.Collections", "singletonList", 1) {
@@ -76,11 +71,36 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
                 = MethodCallExpression.build(null, "setOf", listOf(codeConverter.convertExpression(arguments.single())), typeArgumentsConverted, false)
     }
 
+    SYSTEM_OUT_PRINTLN: SpecialMethod("java.io.PrintStream", "println", null) {
+        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
+                = convertSystemOutMethodCall(methodName, qualifier, arguments, typeArgumentsConverted, codeConverter)
+    }
+
+    SYSTEM_OUT_PRINT: SpecialMethod("java.io.PrintStream", "print", null) {
+        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
+                = convertSystemOutMethodCall(methodName, qualifier, arguments, typeArgumentsConverted, codeConverter)
+    }
+
     open fun matches(method: PsiMethod): Boolean {
         if (method.getName() != methodName) return false
         if (qualifiedClassName != null && method.getContainingClass()?.getQualifiedName() != qualifiedClassName) return false
-        return method.getParameterList().getParametersCount() == parameterCount
+        return parameterCount == null || parameterCount == method.getParameterList().getParametersCount()
     }
 
     abstract fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter): Expression?
+}
+
+private fun convertSystemOutMethodCall(
+        methodName: String,
+        qualifier: PsiExpression?,
+        arguments: Array<PsiExpression>,
+        typeArgumentsConverted: List<Type>,
+        codeConverter: CodeConverter
+): Expression? {
+    if (qualifier !is PsiReferenceExpression) return null
+    val qqualifier = qualifier.getQualifierExpression() as? PsiReferenceExpression ?: return null
+    if (qqualifier.getCanonicalText() != "java.lang.System") return null
+    if (qualifier.getReferenceName() != "out") return null
+    if (typeArgumentsConverted.isNotEmpty()) return null
+    return MethodCallExpression.build(null, methodName, arguments.map { codeConverter.convertExpression(it) }, emptyList(), false)
 }

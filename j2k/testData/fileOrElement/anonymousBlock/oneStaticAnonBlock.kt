@@ -1,9 +1,7 @@
-class Test {
-    companion object {
-        var str: String
+object Test {
+    var str: String
 
-        {
-            str = "Ola"
-        }
+    init {
+        str = "Ola"
     }
 }

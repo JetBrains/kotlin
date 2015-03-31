@@ -58,6 +58,11 @@ public class IfThenToSafeAccessIntention : JetSelfTargetingIntention<JetIfExpres
     }
 
     override fun applyTo(element: JetIfExpression, editor: Editor) {
+        val safeAccessExpr = applyTo(element)
+        safeAccessExpr.inlineReceiverIfApplicableWithPrompt(editor)
+    }
+
+    public fun applyTo(element: JetIfExpression): JetSafeQualifiedExpression {
         val condition = element.getCondition() as JetBinaryExpression
         val receiverExpression = checkNotNull(condition.getNonNullExpression(), "The receiver expression cannot be null")
 
@@ -79,8 +84,7 @@ public class IfThenToSafeAccessIntention : JetSelfTargetingIntention<JetIfExpres
                 }
 
         val resultingExprString = "${receiverExpression.getText()}?.${selectorExpression?.getText()}"
-        val safeAccessExpr = element.replace(resultingExprString) as JetSafeQualifiedExpression
-        safeAccessExpr.inlineReceiverIfApplicableWithPrompt(editor)
+        return element.replace(resultingExprString) as JetSafeQualifiedExpression
     }
 
     fun clauseContainsAppropriateDotQualifiedExpression(clause: JetExpression, receiverExpression: JetExpression): Boolean =

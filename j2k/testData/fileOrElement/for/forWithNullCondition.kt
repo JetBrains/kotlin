@@ -1,7 +1,5 @@
-run {
-    init()
-    while (true) {
-        body()
-        update()
-    }
+init()
+while (true) {
+    body()
+    update()
 }

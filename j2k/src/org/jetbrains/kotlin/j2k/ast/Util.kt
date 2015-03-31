@@ -25,7 +25,7 @@ fun CodeBuilder.appendWithPrefix(element: Element, prefix: String): CodeBuilder 
 fun CodeBuilder.appendWithSuffix(element: Element, suffix: String): CodeBuilder = if (!element.isEmpty) this append element append suffix else this
 
 fun CodeBuilder.appendOperand(expression: Expression, operand: Expression, parenthesisForSamePrecedence: Boolean = false): CodeBuilder {
-    val parentPrecedence = expression.precedence() ?: throw IllegalArgumentException("Unknown precendence for $this")
+    val parentPrecedence = expression.precedence() ?: throw IllegalArgumentException("Unknown precendence for $expression")
     val operandPrecedence = operand.precedence()
     val needParenthesis = operandPrecedence != null &&
             (parentPrecedence < operandPrecedence || parentPrecedence == operandPrecedence && parenthesisForSamePrecedence)
@@ -37,9 +37,9 @@ fun CodeBuilder.appendOperand(expression: Expression, operand: Expression, paren
 
 private fun Expression.precedence(): Int? {
     return when(this) {
-        is QualifiedExpression, is MethodCallExpression, is ArrayAccessExpression, is PostfixOperator, is BangBangExpression, is StarExpression -> 0
+        is QualifiedExpression, is MethodCallExpression, is ArrayAccessExpression, is PostfixExpression, is BangBangExpression, is StarExpression -> 0
 
-        is PrefixOperator -> 1
+        is PrefixExpression -> 1
 
         is TypeCastExpression -> 2
 
@@ -54,7 +54,7 @@ private fun Expression.precedence(): Int? {
             else -> 6 /* simple name */
         }
 
-        is RangeExpression -> 5
+        is RangeExpression, is DownToExpression -> 5
 
         is IsOperator -> 8
 

@@ -20,12 +20,10 @@ public class Identifier<T> {
     }
 }
 
-public class User {
-    companion object {
-        public fun main() {
-            val i1 = Identifier("name", false, true)
-            val i2 = Identifier("name", false)
-            val i3 = Identifier("name")
-        }
+public object User {
+    public fun main() {
+        val i1 = Identifier("name", false, true)
+        val i2 = Identifier("name", false)
+        val i3 = Identifier("name")
     }
 }

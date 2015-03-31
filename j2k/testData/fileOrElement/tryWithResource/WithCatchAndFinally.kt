@@ -6,12 +6,12 @@ public class C {
             ByteArrayInputStream(ByteArray(10)).use { stream ->
                 // reading something
                 val c = stream.read()
-                System.out.println(c)
+                println(c)
             }
         } catch (e: IOException) {
-            System.out.println(e)
+            println(e)
         } finally {
-            System.out.println("Finally!")
+            println("Finally!")
         }
     }
 }

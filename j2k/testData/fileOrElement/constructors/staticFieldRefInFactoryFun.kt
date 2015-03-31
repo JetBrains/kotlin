@@ -1,7 +1,7 @@
 class C() {
 
     constructor(p: Int) : this() {
-        System.out.println(staticField1 + C.staticField2)
+        println(staticField1 + C.staticField2)
     }
 
     companion object {

@@ -1,11 +1,9 @@
-class Library {
-    companion object {
-        fun call() {
-        }
+object Library {
+    fun call() {
+    }
 
-        fun getString(): String {
-            return ""
-        }
+    fun getString(): String {
+        return ""
     }
 }
 

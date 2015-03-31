@@ -4,7 +4,7 @@ public class X {
             var value = 10
 
             override fun run() {
-                System.out.println(value)
+                println(value)
             }
         }
     }

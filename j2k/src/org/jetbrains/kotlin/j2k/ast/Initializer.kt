@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.j2k.*
 
 class Initializer(val body: DeferredElement<Block>, modifiers: Modifiers) : Member(Annotations.Empty, modifiers) {
     override fun generateCode(builder: CodeBuilder) {
-        builder.append(body)
+        builder append "init" append body
     }
 
     override val isEmpty: Boolean
