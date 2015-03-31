@@ -1,7 +1,6 @@
 package kotlin
 
 import java.util.NoSuchElementException
-import kotlin.platform.platformName
 
 /** Returns the string with leading and trailing text matching the given string removed */
 deprecated("Use removeEnclosing(text, text) or removePrefix(text).removeSuffix(text)")
@@ -147,8 +146,7 @@ public fun String.padEnd(length: Int, padChar: Char = ' '): String {
 }
 
 /** Returns true if the string is not null and not empty */
-deprecated("Use isNotNullOrEmpty for nullable strings.")
-platformName("isNotEmptyNullable")
+deprecated("Use !isNullOrEmpty() or isNullOrEmpty().not() for nullable strings.")
 public fun String?.isNotEmpty(): Boolean = this != null && this.length() > 0
 
 /**
@@ -157,38 +155,17 @@ public fun String?.isNotEmpty(): Boolean = this != null && this.length() > 0
 public fun String?.isNullOrEmpty(): Boolean = this == null || this.length() == 0
 
 /**
- * Return `true` if this nullable string is neither null nor empty.
- */
-public fun String?.isNotNullOrEmpty(): Boolean = this != null && this.length() > 0
-
-/**
  * Returns `true` if this string is empty (contains no characters).
  */
 public fun String.isEmpty(): Boolean = length() == 0
 
-/**
- * Returns `true` if this string is not empty.
- */
-public fun String.isNotEmpty(): Boolean = length() > 0
-
 // implemented differently in JVM and JS
 //public fun String.isBlank(): Boolean = length() == 0 || all { it.isWhitespace() }
-
-
-/**
- * Returns `true` if this string is not empty and contains some characters except of whitespace characters.
- */
-public fun String.isNotBlank(): Boolean = !isBlank()
 
 /**
  * Returns `true` if this nullable string is either null or empty or consists solely of whitespace characters.
  */
 public fun String?.isNullOrBlank(): Boolean = this == null || this.isBlank()
-
-/**
- * Returns `true` if this nullable string is neither null nor empty, and contains some characters except of whitespace characters.
- */
-public fun String?.isNotNullOrBlank(): Boolean = this != null && !this.isBlank()
 
 /**
  * Iterator for characters of given CharSequence
