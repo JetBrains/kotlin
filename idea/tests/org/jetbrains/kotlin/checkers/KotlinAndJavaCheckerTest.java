@@ -124,4 +124,8 @@ public class KotlinAndJavaCheckerTest extends KotlinDaemonAnalyzerTestCase {
     public void testEnumEntriesInSwitch() throws Exception {
         doTest(true, true, "EnumEntriesInSwitch.java", "EnumEntriesInSwitch.kt");
     }
+
+    public void testEnumStaticImportInJava() throws Exception {
+        doTest(true, true, "EnumStaticImportInJava.java", "EnumStaticImportInJava.kt");
+    }
 }

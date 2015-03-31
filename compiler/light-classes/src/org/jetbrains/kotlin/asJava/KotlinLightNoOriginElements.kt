@@ -25,6 +25,15 @@ public class KotlinNoOriginLightMethod(manager: PsiManager, method: PsiMethod, c
         LightMethod(manager, method, containingClass) {
 
     override fun toString() = "KotlinNoOriginLightMethod:${getName()}" + if (isConstructor()) " ctor" else ""
+
+    override fun accept(visitor: PsiElementVisitor) {
+        if (visitor is JavaElementVisitor) {
+            visitor.visitMethod(this)
+        }
+        else {
+            visitor.visitElement(this)
+        }
+    }
 }
 
 public class KotlinNoOriginLightField(manager: PsiManager, field: PsiField, containingClass: PsiClass) :

@@ -74,6 +74,15 @@ open public class KotlinLightMethodForDeclaration(
 
     override fun getParent(): PsiElement? = getContainingClass()
 
+    override fun accept(visitor: PsiElementVisitor) {
+        if (visitor is JavaElementVisitor) {
+            visitor.visitMethod(this)
+        }
+        else {
+            visitor.visitElement(this)
+        }
+    }
+
     override fun setName(name: String): PsiElement? {
         (origin as PsiNamedElement).setName(name)
         return this
