@@ -216,9 +216,6 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
         return parent is JetSimpleNameExpression && !JetPsiUtil.isSelectorInQualified(parent)
     }
 
-    protected fun shouldRunExtensionsCompletion(): Boolean
-            = configuration.completeNonImportedDeclarations || prefix.length() >= 3
-
     protected fun getTopLevelCallables(): Collection<DeclarationDescriptor>
             = indicesHelper.getTopLevelCallables({ prefixMatcher.prefixMatches(it) })
 
@@ -362,6 +359,12 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
     }
 
     private fun addNonImported(completionKind: CompletionKind) {
+        if (completionKind == CompletionKind.ALL) {
+            collector.addDescriptorElements(getTopLevelExtensions(), suppressAutoInsertion = true)
+        }
+
+        flushToResultSet()
+
         if (shouldRunTopLevelCompletion()) {
             addAllClasses {
                 if (completionKind != CompletionKind.ANNOTATION_TYPES && completionKind != CompletionKind.ANNOTATION_TYPES_OR_PARAMETER_NAME)
@@ -373,10 +376,6 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
             if (completionKind == CompletionKind.ALL) {
                 collector.addDescriptorElements(getTopLevelCallables(), suppressAutoInsertion = true)
             }
-        }
-
-        if (completionKind == CompletionKind.ALL && shouldRunExtensionsCompletion()) {
-            collector.addDescriptorElements(getTopLevelExtensions(), suppressAutoInsertion = true)
         }
     }
 
@@ -430,12 +429,12 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
     }
 
     private fun processNonImported(processor: (DeclarationDescriptor) -> Unit) {
+        getTopLevelExtensions().forEach(processor)
+
+        flushToResultSet()
+
         if (shouldRunTopLevelCompletion()) {
             getTopLevelCallables().forEach(processor)
-        }
-
-        if (shouldRunExtensionsCompletion()) {
-            getTopLevelExtensions().forEach(processor)
         }
     }
 }
