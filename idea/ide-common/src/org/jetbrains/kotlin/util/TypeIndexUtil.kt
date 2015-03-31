@@ -18,12 +18,20 @@ package org.jetbrains.kotlin.util
 
 import com.google.common.collect.HashMultimap
 import com.google.common.collect.Multimap
+import com.google.common.collect.Multimaps
 import com.intellij.openapi.util.Key
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetTypeReference
 import org.jetbrains.kotlin.psi.JetUserType
+import org.jetbrains.kotlin.psi.stubs.getContainingFileStub
 
-public fun JetFile.aliasImportMap(): Multimap<String, String> {
+public fun JetUserType.aliasImportMap(): Multimap<String, String> {
+    // we need to access containing file via stub because getPsi() may return null when indexing and getContainingFile() will crash
+    val file = getStub()?.getContainingFileStub()?.getPsi() ?: return HashMultimap.create()
+    return (file as JetFile).aliasImportMap()
+}
+
+private fun JetFile.aliasImportMap(): Multimap<String, String> {
     val cached = getUserData(ALIAS_IMPORT_DATA_KEY)
     val modificationStamp = getModificationStamp()
     if (cached != null && modificationStamp == cached.fileModificationStamp) {
@@ -55,6 +63,9 @@ public fun JetTypeReference?.isProbablyNothing(): Boolean {
     return userType.isProbablyNothing()
 }
 
-public fun JetUserType?.isProbablyNothing(): Boolean
-        = this?.getReferencedName() == "Nothing"
+public fun JetUserType?.isProbablyNothing(): Boolean {
+    if (this == null) return false
+    val referencedName = getReferencedName()
+    return referencedName == "Nothing" || aliasImportMap()[referencedName].contains("Nothing")
+}
 

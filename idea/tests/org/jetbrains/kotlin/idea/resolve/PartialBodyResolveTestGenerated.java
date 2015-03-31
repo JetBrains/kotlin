@@ -174,6 +174,12 @@ public class PartialBodyResolveTestGenerated extends AbstractPartialBodyResolveT
         doTest(fileName);
     }
 
+    @TestMetadata("IfNotIsMyErrorWithAliasImport.kt")
+    public void testIfNotIsMyErrorWithAliasImport() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfNotIsMyErrorWithAliasImport.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("IfNotIsNothingProp.kt")
     public void testIfNotIsNothingProp() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfNotIsNothingProp.kt");

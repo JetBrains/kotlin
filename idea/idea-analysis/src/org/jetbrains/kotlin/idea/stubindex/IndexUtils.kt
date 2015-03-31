@@ -28,11 +28,11 @@ import org.jetbrains.kotlin.util.aliasImportMap
 fun indexTopLevelExtension<TDeclaration : JetCallableDeclaration>(stub: KotlinCallableStubBase<TDeclaration>, sink: IndexSink) {
     if (stub.isExtension()) {
         val declaration = stub.getPsi()
-        declaration.getReceiverTypeReference()!!.getTypeElement()?.index(declaration, stub.getContainingFileStub().getPsi() != null, sink)
+        declaration.getReceiverTypeReference()!!.getTypeElement()?.index(declaration, sink)
     }
 }
 
-private fun <TDeclaration : JetCallableDeclaration> JetTypeElement.index(declaration: TDeclaration, hasFile: Boolean, sink: IndexSink) {
+private fun <TDeclaration : JetCallableDeclaration> JetTypeElement.index(declaration: TDeclaration, sink: IndexSink) {
     fun occurrence(typeName: String) {
         val name = declaration.getName() ?: return
         sink.occurrence(JetTopLevelExtensionsByReceiverTypeIndex.INSTANCE.getKey(),
@@ -48,7 +48,7 @@ private fun <TDeclaration : JetCallableDeclaration> JetTypeElement.index(declara
                 if (typeParameter != null) {
                     val bound = typeParameter.getExtendsBound()
                     if (bound != null) {
-                        bound.getTypeElement()?.index(declaration, hasFile, sink)
+                        bound.getTypeElement()?.index(declaration, sink)
                         return
                     }
                     occurrence("Any")
@@ -58,13 +58,10 @@ private fun <TDeclaration : JetCallableDeclaration> JetTypeElement.index(declara
 
             occurrence(referenceName)
 
-            if (hasFile) {
-                val aliasNames = declaration.getContainingJetFile().aliasImportMap()[referenceName]
-                aliasNames.forEach { occurrence(it) }
-            }
+            aliasImportMap()[referenceName].forEach { occurrence(it) }
         }
 
-        is JetNullableType -> getInnerType()?.index(declaration, hasFile, sink)
+        is JetNullableType -> getInnerType()?.index(declaration, sink)
 
         is JetFunctionType -> {
             val typeName = (if (getReceiverTypeReference() != null) "ExtensionFunction" else "Function") + getParameters().size()
