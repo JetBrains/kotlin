@@ -22,7 +22,6 @@ import com.intellij.util.Processor;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsPackage;
-import org.jetbrains.kotlin.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.CodegenTestCase;
@@ -40,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.addJvmClasspathRoot;
 import static org.jetbrains.kotlin.codegen.CodegenTestUtil.compileJava;
 import static org.jetbrains.kotlin.load.kotlin.PackageClassUtils.getPackageClassFqName;
 
@@ -126,7 +126,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(
                 ConfigurationKind.ALL, TestJdkKind.FULL_JDK, JetTestUtils.getAnnotationsJar()
         );
-        configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, dirFile);
+        addJvmClasspathRoot(configuration, dirFile);
         myEnvironment = KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
         loadFiles(ArrayUtil.toStringArray(ktFilePaths));
         classFileFactory =
@@ -137,7 +137,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         // TODO: support several Java sources
         File javaOut = compileJava(KotlinPackage.single(javaFilePaths), kotlinOut.getPath());
         // Add javac output to classpath so that the created class loader can find generated Java classes
-        configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, javaOut);
+        addJvmClasspathRoot(configuration, javaOut);
 
         blackBox();
     }

@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.config;
+package org.jetbrains.kotlin.config
 
-import org.jetbrains.kotlin.parsing.JetScriptDefinition;
+public trait ContentRoot
 
-import java.util.List;
+public data class KotlinSourceRoot(public val path: String): ContentRoot
 
-public class CommonConfigurationKeys {
-    private CommonConfigurationKeys() {
-    }
-
-    // roots, including dependencies and own source
-    public static final CompilerConfigurationKey<List<ContentRoot>> CONTENT_ROOTS = CompilerConfigurationKey.create("content roots");
-
-    public static final CompilerConfigurationKey<List<JetScriptDefinition>> SCRIPT_DEFINITIONS_KEY = CompilerConfigurationKey.create("script definitions");
+public fun CompilerConfiguration.addKotlinSourceRoot(source: String) {
+    add(CommonConfigurationKeys.CONTENT_ROOTS, KotlinSourceRoot(source))
 }
+
+public fun CompilerConfiguration.addKotlinSourceRoots(sources: List<String>): Unit = sources.forEach { addKotlinSourceRoot(it) }
+

@@ -24,14 +24,12 @@ import junit.framework.TestSuite;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorPlainTextToStream;
-import org.jetbrains.kotlin.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
-import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.psi.JetClass;
@@ -47,6 +45,8 @@ import org.jetbrains.kotlin.types.JetType;
 import java.io.File;
 import java.lang.reflect.Modifier;
 
+import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.addJvmClasspathRoot;
+import static org.jetbrains.kotlin.config.ConfigPackage.addKotlinSourceRoot;
 import static org.jetbrains.kotlin.types.TypeUtils.getAllSupertypes;
 
 @SuppressWarnings("JUnitTestCaseWithNoTests")
@@ -83,14 +83,14 @@ public class TestlibTest extends UsefulTestCase {
         super.setUp();
 
         CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.FULL_JDK);
-        configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, JetTestUtils.getAnnotationsJar());
+        addJvmClasspathRoot(configuration, JetTestUtils.getAnnotationsJar());
 
         junitJar = new File("libraries/lib/junit-4.11.jar");
         assertTrue(junitJar.exists());
-        configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, junitJar);
+        addJvmClasspathRoot(configuration, junitJar);
 
-        configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, JetTestUtils.getHomeDirectory() + "/libraries/stdlib/test");
-        configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, JetTestUtils.getHomeDirectory() + "/libraries/kunit/src");
+        addKotlinSourceRoot(configuration, JetTestUtils.getHomeDirectory() + "/libraries/stdlib/test");
+        addKotlinSourceRoot(configuration, JetTestUtils.getHomeDirectory() + "/libraries/kunit/src");
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY,
                           new MessageCollectorPlainTextToStream(System.out, MessageCollectorPlainTextToStream.NON_VERBOSE));
 

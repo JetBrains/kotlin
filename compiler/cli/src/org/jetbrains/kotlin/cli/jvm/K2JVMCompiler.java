@@ -27,10 +27,12 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.kotlin.cli.common.messages.*;
 import org.jetbrains.kotlin.cli.common.modules.ModuleScriptData;
 import org.jetbrains.kotlin.cli.jvm.compiler.*;
+import org.jetbrains.kotlin.cli.jvm.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.cli.jvm.repl.ReplFromTerminal;
 import org.jetbrains.kotlin.codegen.CompilationException;
-import org.jetbrains.kotlin.compiler.plugin.*;
-import org.jetbrains.kotlin.config.CommonConfigurationKeys;
+import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException;
+import org.jetbrains.kotlin.compiler.plugin.PluginCliOptionProcessingException;
+import org.jetbrains.kotlin.compiler.plugin.PluginPackage;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.Services;
 import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCacheProvider;
@@ -45,6 +47,8 @@ import java.util.List;
 
 import static com.google.common.base.Predicates.in;
 import static org.jetbrains.kotlin.cli.common.ExitCode.*;
+import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.*;
+import static org.jetbrains.kotlin.config.ConfigPackage.addKotlinSourceRoot;
 
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
@@ -83,7 +87,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
 
         try {
             if (!arguments.noJdk) {
-                configuration.addAll(JVMConfigurationKeys.CLASSPATH_KEY, PathUtil.getJdkClassesRoots());
+                addJvmClasspathRoots(configuration, PathUtil.getJdkClassesRoots());
             }
         }
         catch (Throwable t) {
@@ -114,21 +118,20 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
                                         CompilerMessageLocation.NO_LOCATION);
                 return COMPILATION_ERROR;
             }
-            configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, arguments.freeArgs.get(0));
+            addKotlinSourceRoot(configuration, arguments.freeArgs.get(0));
         }
         else if (arguments.module == null) {
-            configuration.addAll(CommonConfigurationKeys.SOURCE_ROOTS_KEY, arguments.freeArgs);
-
-            // Adding all directory sources to classpath to resolve Java symbols from Kotlin
-            for (String source : arguments.freeArgs) {
-                File file = new File(source);
+            for (String arg : arguments.freeArgs) {
+                addKotlinSourceRoot(configuration, arg);
+                File file = new File(arg);
                 if (file.isDirectory()) {
-                    configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, file);
+                    addJavaSourceRoot(configuration, file);
                 }
             }
         }
 
-        configuration.addAll(JVMConfigurationKeys.CLASSPATH_KEY, getClasspath(paths, arguments));
+        addJvmClasspathRoots(configuration, getClasspath(paths, arguments));
+
         configuration.addAll(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, getAnnotationsPath(paths, arguments));
 
         if (arguments.module == null && arguments.freeArgs.isEmpty() && !arguments.version) {

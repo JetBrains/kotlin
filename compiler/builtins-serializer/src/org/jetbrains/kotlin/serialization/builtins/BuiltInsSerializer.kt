@@ -24,11 +24,11 @@ import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.builtins.BuiltInsSerializationUtil
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.jvm.JVMConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.addKotlinSourceRoots
 import org.jetbrains.kotlin.context.GlobalContext
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -52,8 +52,8 @@ public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
 
     public fun serialize(
             destDir: File,
-            srcDirs: Collection<File>,
-            extraClassPath: Collection<File>,
+            srcDirs: List<File>,
+            extraClassPath: List<File>,
             onComplete: (totalSize: Int, totalFiles: Int) -> Unit
     ) {
         val rootDisposable = Disposer.newDisposable()
@@ -73,16 +73,12 @@ public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
                 if (dependOnOldBuiltIns) ModuleInfo.DependenciesOnBuiltins.LAST else ModuleInfo.DependenciesOnBuiltins.NONE
     }
 
-    private fun serialize(disposable: Disposable, destDir: File, srcDirs: Collection<File>, extraClassPath: Collection<File>) {
+    private fun serialize(disposable: Disposable, destDir: File, srcDirs: List<File>, extraClassPath: List<File>) {
         val configuration = CompilerConfiguration()
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
 
-        val sourceRoots = srcDirs map { it.path }
-        configuration.put(CommonConfigurationKeys.SOURCE_ROOTS_KEY, sourceRoots)
-
-        for (path in extraClassPath) {
-            configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, path)
-        }
+        configuration.addKotlinSourceRoots(srcDirs.map { it.path })
+        configuration.addJvmClasspathRoots(extraClassPath)
 
         val environment = KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 

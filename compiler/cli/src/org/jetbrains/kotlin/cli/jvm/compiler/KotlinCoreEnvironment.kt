@@ -37,6 +37,7 @@ import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.FileContextProvider
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.PsiManager
@@ -58,11 +59,13 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.WARNING
-import org.jetbrains.kotlin.cli.jvm.JVMConfigurationKeys
+import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.ContentRoot
+import org.jetbrains.kotlin.config.KotlinSourceRoot
 import org.jetbrains.kotlin.extensions.ExternalDeclarationsProvider
 import org.jetbrains.kotlin.idea.JetFileType
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
@@ -110,9 +113,8 @@ public class KotlinCoreEnvironment private(
         registerProjectServicesForCLI(projectEnvironment)
         registerProjectServices(projectEnvironment)
 
-        for (path in configuration.getList(JVMConfigurationKeys.CLASSPATH_KEY)) {
-            addToClasspath(path)
-        }
+        fillClasspath(configuration)
+
         for (path in configuration.getList(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY)) {
             addExternalAnnotationsRoot(path)
         }
@@ -155,33 +157,55 @@ public class KotlinCoreEnvironment private(
         annotationsManager.addExternalAnnotationsRoot(PathUtil.jarFileOrDirectoryToVirtualFile(path))
     }
 
-    private fun addToClasspath(path: File) {
-        if (path.isFile()) {
-            val jarFile = applicationEnvironment.getJarFileSystem().findFileByPath("${path}!/")
-            if (jarFile == null) {
-                report(WARNING, "Classpath entry points to a file that is not a JAR archive: $path")
-                return
-            }
-            projectEnvironment.addJarToClassPath(path)
-            classPath.add(jarFile)
+    private fun fillClasspath(configuration: CompilerConfiguration) {
+        for (root in configuration.getList(CommonConfigurationKeys.CONTENT_ROOTS)) {
+            val javaRoot = root as? JvmContentRoot ?: continue
+            val virtualFile = contentRootToVirtualFile(javaRoot) ?: continue
+
+            projectEnvironment.addSourcesToClasspath(virtualFile)
+            classPath.add(virtualFile)
         }
-        else {
-            val root = applicationEnvironment.getLocalFileSystem().findFileByPath(path.getAbsolutePath())
-            if (root == null) {
-                report(WARNING, "Classpath entry points to a non-existent location: $path")
-                return
+    }
+
+    private fun contentRootToVirtualFile(root: JvmContentRoot): VirtualFile? {
+        when (root) {
+            is JvmClasspathRoot -> {
+                return if (root.file.isFile()) findJarRoot(root) else findLocalDirectory(root)
             }
-            projectEnvironment.addSourcesToClasspath(root)
-            classPath.add(root)
+            is JavaSourceRoot -> {
+                return if (root.file.isDirectory()) findLocalDirectory(root) else null
+            }
+            else -> throw IllegalStateException("Unexpected root: $root")
         }
+    }
+
+    private fun findLocalDirectory(root: JvmContentRoot): VirtualFile? {
+        val path = root.file
+        val localFile = applicationEnvironment.getLocalFileSystem().findFileByPath(path.getAbsolutePath())
+        if (localFile == null) {
+            report(WARNING, "Classpath entry points to a non-existent location: $path")
+            return null
+        }
+        return localFile
+    }
+
+    private fun findJarRoot(root: JvmClasspathRoot): VirtualFile? {
+        val path = root.file
+        val jarFile = applicationEnvironment.getJarFileSystem().findFileByPath("${path}!/")
+        if (jarFile == null) {
+            report(WARNING, "Classpath entry points to a file that is not a JAR archive: $path")
+            return null
+        }
+        return jarFile
     }
 
     private fun getSourceRootsCheckingForDuplicates(): Collection<String> {
         val uniqueSourceRoots = Sets.newLinkedHashSet<String>()
 
-        for (sourceRoot in configuration.getList(CommonConfigurationKeys.SOURCE_ROOTS_KEY)) {
-            if (!uniqueSourceRoots.add(sourceRoot)) {
-                report(WARNING, "Duplicate source root: " + sourceRoot)
+        configuration.getList(CommonConfigurationKeys.CONTENT_ROOTS).filterIsInstance<KotlinSourceRoot>().forEach { sourceRoot ->
+            val path = sourceRoot.path
+            if (!uniqueSourceRoots.add(path)) {
+                report(WARNING, "Duplicate source root: $path")
             }
         }
 
