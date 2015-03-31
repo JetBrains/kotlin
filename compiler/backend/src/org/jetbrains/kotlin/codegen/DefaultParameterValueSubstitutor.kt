@@ -39,10 +39,15 @@ public class DefaultParameterValueSubstitutor(val state: GenerationState) {
      * If all of the parameters of the specified constructor declare default values,
      * generates a no-argument constructor that passes default values for all arguments.
      */
-    fun generateDefaultConstructorIfNeeded(constructorDescriptor: ConstructorDescriptor,
-                                           classBuilder: ClassBuilder,
-                                           context: CodegenContext<*>,
-                                           classOrObject: JetClassOrObject) {
+    fun generateConstructorOverloadsIfNeeded(constructorDescriptor: ConstructorDescriptor,
+                                             classBuilder: ClassBuilder,
+                                             context: CodegenContext<*>,
+                                             classOrObject: JetClassOrObject) {
+        if (generateOverloadsIfNeeded(classOrObject, constructorDescriptor, constructorDescriptor,
+                                      context, classBuilder)) {
+            return
+        }
+
         if (!isEmptyConstructorNeeded(constructorDescriptor, classOrObject)) {
             return
         }
@@ -63,21 +68,24 @@ public class DefaultParameterValueSubstitutor(val state: GenerationState) {
      *     (same as [functionDescriptor] in all cases except for companion object methods annotated with [platformStatic],
      *     where [functionDescriptor] is the static method in the main class and [delegateFunctionDescriptor] is the
      *     implementation in the companion object class)
+     * @return true if the overloads annotation was found on the element, false otherwise
      */
-    fun generateOverloadsIfNeeded(function: JetNamedFunction,
+    fun generateOverloadsIfNeeded(methodElement: JetElement,
                                   functionDescriptor: FunctionDescriptor,
                                   delegateFunctionDescriptor: FunctionDescriptor,
                                   owner: CodegenContext<*>,
-                                  classBuilder: ClassBuilder) {
-        val overloadsFqName = FqName.fromSegments(listOf("kotlin", "jvm", "overloads"))
-        if (functionDescriptor.getAnnotations().findAnnotation(overloadsFqName) == null) return
+                                  classBuilder: ClassBuilder): Boolean {
+        if (functionDescriptor.getAnnotations().findAnnotation(FqName("kotlin.jvm.overloads")) == null) {
+            return false
+        }
 
         val count = functionDescriptor.countDefaultParameters()
         val context = owner.intoFunction(functionDescriptor)
 
         for (i in 1..count) {
-            generateOverloadWithSubstitutedParameters(functionDescriptor, delegateFunctionDescriptor, classBuilder, function, context, i)
+            generateOverloadWithSubstitutedParameters(functionDescriptor, delegateFunctionDescriptor, classBuilder, methodElement, context, i)
         }
+        return true
     }
 
     private fun FunctionDescriptor.countDefaultParameters() =
@@ -100,53 +108,66 @@ public class DefaultParameterValueSubstitutor(val state: GenerationState) {
                                                   methodElement: JetElement?,
                                                   context: CodegenContext<*>,
                                                   substituteCount: Int) {
+        val typeMapper = state.getTypeMapper()
+
         val isStatic = AsmUtil.isStaticMethod(context.getContextKind(), functionDescriptor)
         val flags = AsmUtil.getVisibilityAccessFlag(functionDescriptor) or (if (isStatic) Opcodes.ACC_STATIC else 0)
         val remainingParameters = getRemainingParameters(functionDescriptor.getOriginal(), substituteCount)
-        val signature = state.getTypeMapper().mapSignature(functionDescriptor, context.getContextKind(),
-                                                           remainingParameters)
+        val signature = typeMapper.mapSignature(functionDescriptor, context.getContextKind(), remainingParameters)
         val mv = classBuilder.newMethod(OtherOrigin(functionDescriptor), flags,
                                         signature.getAsmMethod().getName(),
-                                        signature.getAsmMethod().getDescriptor(), null,
-                                        FunctionCodegen.getThrownExceptions(functionDescriptor, state.getTypeMapper()))
+                                        signature.getAsmMethod().getDescriptor(),
+                                        signature.getGenericsSignature(),
+                                        FunctionCodegen.getThrownExceptions(functionDescriptor, typeMapper))
 
-        if (state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES) return
+        AnnotationCodegen.forMethod(mv, typeMapper).genAnnotations(functionDescriptor, signature.getReturnType())
+
+        remainingParameters.withIndex().forEach {
+            val annotationCodegen = AnnotationCodegen.forParameter(it.index, mv, typeMapper)
+            annotationCodegen.genAnnotations(it.value, signature.getValueParameters()[it.index].getAsmType())
+        }
+
+        if (state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES) {
+            mv.visitEnd()
+            return
+        }
 
         val frameMap = FrameMap()
         val v = InstructionAdapter(mv)
         mv.visitCode()
 
-        val methodOwner = state.getTypeMapper().mapToCallableMethod(delegateFunctionDescriptor, false, context).getOwner()
+        val methodOwner = typeMapper.mapToCallableMethod(delegateFunctionDescriptor, false, context).getOwner()
         if (!isStatic) {
-            frameMap.enterTemp(AsmTypes.OBJECT_TYPE)
-            v.load(0, methodOwner) // Load this on stack
-        } else {
+            val thisIndex = frameMap.enterTemp(AsmTypes.OBJECT_TYPE)
+            v.load(thisIndex, methodOwner) // Load this on stack
+        }
+        else {
             val delegateOwner = delegateFunctionDescriptor.getContainingDeclaration()
             if (delegateOwner is ClassDescriptor && delegateOwner.isCompanionObject()) {
-                val singletonValue = StackValue.singleton(delegateOwner, state.getTypeMapper())
+                val singletonValue = StackValue.singleton(delegateOwner, typeMapper)
                 singletonValue.put(singletonValue.type, v);
             }
         }
 
         val receiver = functionDescriptor.getExtensionReceiverParameter()
         if (receiver != null) {
-            val receiverType = state.getTypeMapper().mapType(receiver)
+            val receiverType = typeMapper.mapType(receiver)
             val receiverIndex = frameMap.enter(receiver, receiverType)
             StackValue.local(receiverIndex, receiverType).put(receiverType, v)
         }
         remainingParameters.forEach {
-            frameMap.enter(it, state.getTypeMapper().mapType(it))
+            frameMap.enter(it, typeMapper.mapType(it))
         }
 
         var mask = 0
         val masks = arrayListOf<Int>()
         for (parameterDescriptor in functionDescriptor.getValueParameters()) {
-            val paramType = state.getTypeMapper().mapType(parameterDescriptor.getType())
+            val paramType = typeMapper.mapType(parameterDescriptor.getType())
             if (parameterDescriptor in remainingParameters) {
                 val index = frameMap.getIndex(parameterDescriptor)
-                val type = state.getTypeMapper().mapType(parameterDescriptor)
-                StackValue.local(index, type).put(type, v)
-            } else {
+                StackValue.local(index, paramType).put(paramType, v)
+            }
+            else {
                 AsmUtil.pushDefaultValueOnStack(paramType, v)
                 val i = parameterDescriptor.getIndex()
                 if (i != 0 && i % Integer.SIZE == 0) {
@@ -166,10 +187,11 @@ public class DefaultParameterValueSubstitutor(val state: GenerationState) {
             v.aconst(null)
         }
 
-        val defaultMethod = state.getTypeMapper().mapDefaultMethod(delegateFunctionDescriptor, context.getContextKind(), context)
+        val defaultMethod = typeMapper.mapDefaultMethod(delegateFunctionDescriptor, context.getContextKind(), context)
         if (functionDescriptor is ConstructorDescriptor) {
             v.invokespecial(methodOwner.getInternalName(), defaultMethod.getName(), defaultMethod.getDescriptor(), false)
-        } else {
+        }
+        else {
             v.invokestatic(methodOwner.getInternalName(), defaultMethod.getName(), defaultMethod.getDescriptor(), false)
         }
         v.areturn(signature.getReturnType())

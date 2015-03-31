@@ -1076,8 +1076,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         functionCodegen.generateDefaultIfNeeded(constructorContext, constructorDescriptor, OwnerKind.IMPLEMENTATION,
                                                 DefaultParameterValueLoader.DEFAULT, null);
 
-        new DefaultParameterValueSubstitutor(state).generateDefaultConstructorIfNeeded(constructorDescriptor, v,
-                                                                                       constructorContext, myClass);
+        new DefaultParameterValueSubstitutor(state).generateConstructorOverloadsIfNeeded(constructorDescriptor, v,
+                                                                                         constructorContext, myClass);
 
         if (isCompanionObject(descriptor)) {
             context.recordSyntheticAccessorIfNeeded(constructorDescriptor, bindingContext);
@@ -1099,6 +1099,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         functionCodegen.generateDefaultIfNeeded(constructorContext, constructorDescriptor, OwnerKind.IMPLEMENTATION,
                                                 DefaultParameterValueLoader.DEFAULT, null);
+
+        new DefaultParameterValueSubstitutor(state).generateOverloadsIfNeeded(myClass, constructorDescriptor, constructorDescriptor,
+                                                                              constructorContext, v);
     }
 
     private void generatePrimaryConstructorImpl(
