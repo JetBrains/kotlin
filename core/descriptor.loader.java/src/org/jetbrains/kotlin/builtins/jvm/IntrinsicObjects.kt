@@ -14,21 +14,22 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.backend.common.builtins
+package org.jetbrains.kotlin.builtins.jvm
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.CompanionObjectMapping
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import kotlin.platform.platformStatic
 
-public abstract class CompanionObjectMapping {
-    public fun hasMappingToObject(classDescriptor: ClassDescriptor): Boolean {
-        if (!DescriptorUtils.isCompanionObject(classDescriptor)) return false
+public object IntrinsicObjects : CompanionObjectMapping() {
+    private val kotlinJvmInternal = FqName("kotlin.jvm.internal")
+
+    public platformStatic fun mapType(classDescriptor: ClassDescriptor): FqName? {
+        if (!hasMappingToObject(classDescriptor)) return null
 
         val containingDeclaration = classDescriptor.getContainingDeclaration()
-        if (containingDeclaration !is ClassDescriptor) return false
-
-        return KotlinBuiltIns.isPrimitiveType(containingDeclaration.getDefaultType()) ||
-               KotlinBuiltIns.getInstance().getString() == containingDeclaration ||
-               KotlinBuiltIns.getInstance().getEnum() == containingDeclaration
+        val name = Name.identifier(containingDeclaration.getName().asString() + "CompanionObject")
+        return kotlinJvmInternal.child(name)
     }
 }
