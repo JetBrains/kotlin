@@ -133,7 +133,7 @@ fun <T, C : MutableCollection<T>> Array<T>.to(result: C): C {
 }
 
 fun makeField(s: String): Field {
-    val lines: Array<String> = s.split("\n")
+    val lines: List<String> = s.splitBy("\n")
 
     val w = max<String>(lines.toList(), comparator<String> { o1, o2 ->
         val l1: Int = o1.size

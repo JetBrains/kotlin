@@ -12,7 +12,7 @@ fun box(): String {
     for (test in tests) {
         val regexp = test.first
         val expected = test.second
-        val result = testInput.split(regexp)
+        val result = testInput.splitWithRegex(regexp)
 
         if (result != expected) return "Wrong result for '$regexp' -- Expected: $expected | Actual: $result"
     }
@@ -21,7 +21,7 @@ fun box(): String {
         val regexp = test.first
         val limit = 2
         val expected = Array(limit) { test.second[it] }
-        val result = testInput.split(regexp, limit)
+        val result = testInput.splitWithRegex(regexp, limit)
 
         if (result != expected) return "Wrong result for '$regexp' -- Expected: $expected | Actual: $result"
     }
