@@ -52,12 +52,4 @@ public final class AstUtil {
 
         return nodesCopy;
     }
-
-    @NotNull
-    public static JsFunctionScope toFunctionScope(JsScope scope) {
-        assert scope instanceof JsFunctionScope: "JsFunctionScope type is expected, but "
-                                                 + scope.getClass().getSimpleName() + " is found";
-
-        return (JsFunctionScope) scope;
-    }
 }
