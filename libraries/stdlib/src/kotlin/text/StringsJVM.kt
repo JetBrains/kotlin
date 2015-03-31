@@ -7,35 +7,50 @@ import java.util.regex.MatchResult
 import java.util.regex.Pattern
 import java.nio.charset.Charset
 
+
 /**
- * Returns the index within this string of the last occurrence of the specified substring.
+ * Returns the index within this string of the first occurrence of the specified character, starting from the specified offset.
  */
-public fun String.lastIndexOf(str: String): Int = (this as java.lang.String).lastIndexOf(str)
+private fun String.nativeIndexOf(ch: Char, fromIndex: Int): Int = (this as java.lang.String).indexOf(ch.toInt(), fromIndex)
+
+/**
+ * Returns the index within this string of the first occurrence of the specified substring, starting from the specified offset.
+ */
+private fun String.nativeIndexOf(str: String, fromIndex: Int): Int = (this as java.lang.String).indexOf(str, fromIndex)
 
 /**
  * Returns the index within this string of the last occurrence of the specified character.
  */
-public fun String.lastIndexOf(ch: Char): Int = (this as java.lang.String).lastIndexOf(ch.toString())
+private fun String.nativeLastIndexOf(ch: Char, fromIndex: Int): Int = (this as java.lang.String).lastIndexOf(ch.toInt(), fromIndex)
+
+/**
+ * Returns the index within this string of the last occurrence of the specified character, starting from the specified offset.
+ */
+private fun String.nativeLastIndexOf(str: String, fromIndex: Int): Int = (this as java.lang.String).lastIndexOf(str, fromIndex)
+
 
 /**
  * Compares this string to another string, ignoring case considerations.
  */
-public fun String.equalsIgnoreCase(anotherString: String): Boolean = (this as java.lang.String).equalsIgnoreCase(anotherString)
+deprecated("Use equals(anotherString, ignoreCase = true) instead")
+public fun String.equalsIgnoreCase(anotherString: String): Boolean = equals(anotherString, ignoreCase = true)
+
+/**
+ * Returns `true` if this string is equal to [anotherString], optionally ignoring character case.
+ *
+ * @param ignoreCase `true` to ignore character case when comparing strings. By default `false`.
+ */
+public fun String.equals(anotherString: String, ignoreCase: Boolean = false): Boolean =
+    if (!ignoreCase)
+        (this as java.lang.String).equals(anotherString)
+    else
+        (this as java.lang.String).equalsIgnoreCase(anotherString)
 
 /**
  * Returns the hash code of this string.
  */
 public fun String.hashCode(): Int = (this as java.lang.String).hashCode()
 
-/**
- * Returns the index within this string of the first occurrence of the specified substring.
- */
-public fun String.indexOf(str: String): Int = (this as java.lang.String).indexOf(str)
-
-/**
- * Returns the index within this string of the first occurrence of the specified substring, starting from the specified offset.
- */
-public fun String.indexOf(str: String, fromIndex: Int): Int = (this as java.lang.String).indexOf(str, fromIndex)
 
 /**
  * Returns a copy of this string with all occurrences of [oldChar] replaced with [newChar].
@@ -78,12 +93,14 @@ public fun String.format(locale: Locale, vararg args : Any?) : String = java.lan
 /**
  * Splits this string around matches of the given regular expression.
  */
-public fun String.split(regex: String): Array<String> = (this as java.lang.String).split(regex)
+public fun String.split(regex: Pattern, limit: Int = 0): List<String> = regex.split(this, limit).asList()
 
 /**
- * Splits this string around occurrences of the specified character.
+ * Splits this string around matches of the given regular expression.
  */
-public fun String.split(ch: Char): Array<String> = (this as java.lang.String).split(java.util.regex.Pattern.quote(ch.toString()))
+deprecated("Convert an argument to regex with toRegex or use splitBy instead.")
+public fun String.split(regex: String): Array<String> = split(regex.toRegex()).copyToArray()
+
 
 /**
  * Returns a substring of this string starting with the specified index.
@@ -98,32 +115,32 @@ public fun String.substring(beginIndex: Int, endIndex: Int): String = (this as j
 /**
  * Returns `true` if this string starts with the specified prefix.
  */
-public fun String.startsWith(prefix: String): Boolean = (this as java.lang.String).startsWith(prefix)
+public fun String.startsWith(prefix: String, ignoreCase: Boolean = false): Boolean {
+    if (!ignoreCase)
+        return (this as java.lang.String).startsWith(prefix)
+    else
+        return regionMatches(0, prefix, 0, prefix.length(), ignoreCase)
+}
 
 /**
- * Returns `true` if a subsring of this string starting at the specified offset starts with the specified prefix.
+ * Returns `true` if a substring of this string starting at the specified offset [thisOffset] starts with the specified prefix.
  */
-public fun String.startsWith(prefix: String, toffset: Int): Boolean = (this as java.lang.String).startsWith(prefix, toffset)
-
-/**
- * Returns `true` if this string starts with the specified character.
- */
-public fun String.startsWith(ch: Char): Boolean = (this as java.lang.String).startsWith(ch.toString())
-
-/**
- * Returns `true` if this string contains the specified sequence of characters as a substring.
- */
-public fun String.contains(seq: CharSequence): Boolean = (this as java.lang.String).contains(seq)
+public fun String.startsWith(prefix: String, thisOffset: Int, ignoreCase: Boolean = false): Boolean {
+    if (!ignoreCase)
+        return (this as java.lang.String).startsWith(prefix, thisOffset)
+    else
+        return regionMatches(thisOffset, prefix, 0, prefix.length(), ignoreCase)
+}
 
 /**
  * Returns `true` if this string ends with the specified suffix.
  */
-public fun String.endsWith(suffix: String): Boolean = (this as java.lang.String).endsWith(suffix)
-
-/**
- * Returns `true` if this string ends with the specified character.
- */
-public fun String.endsWith(ch: Char): Boolean = (this as java.lang.String).endsWith(ch.toString())
+public fun String.endsWith(suffix: String, ignoreCase: Boolean = false): Boolean {
+    if (!ignoreCase)
+        return (this as java.lang.String).endsWith(suffix)
+    else
+        return regionMatches(length() - suffix.length(), suffix, 0, suffix.length(), ignoreCase = true)
+}
 
 // "constructors" for String
 
@@ -208,11 +225,6 @@ public fun String(stringBuilder: java.lang.StringBuilder): String = java.lang.St
 public fun String.replaceFirst(regex: String, replacement: String): String = (this as java.lang.String).replaceFirst(regex, replacement)
 
 /**
- * Splits this string into at most [limit] chunks around matches of the given regular expression.
- */
-public fun String.split(regex: String, limit: Int): Array<String> = (this as java.lang.String).split(regex, limit)
-
-/**
  * Returns the character (Unicode code point) at the specified index.
  */
 public fun String.codePointAt(index: Int): Int = (this as java.lang.String).codePointAt(index)
@@ -256,15 +268,6 @@ public fun String.contentEquals(sb: StringBuffer): Boolean = (this as java.lang.
  */
 public fun String.getChars(srcBegin: Int, srcEnd: Int, dst: CharArray, dstBegin: Int): Unit = (this as java.lang.String).getChars(srcBegin, srcEnd, dst, dstBegin)
 
-/**
- * Returns the index within this string of the first occurrence of the specified character.
- */
-public fun String.indexOf(ch: Char): Int = (this as java.lang.String).indexOf(ch.toString())
-
-/**
- * Returns the index within this string of the first occurrence of the specified character, starting from the specified offset.
- */
-public fun String.indexOf(ch: Char, fromIndex: Int): Int = (this as java.lang.String).indexOf(ch.toString(), fromIndex)
 
 /**
  * Returns a canonical representation for this string object.
@@ -276,15 +279,6 @@ public fun String.intern(): String = (this as java.lang.String).intern()
  */
 public fun String.isEmpty(): Boolean = (this as java.lang.String).isEmpty()
 
-/**
- * Returns the index within this string of the last occurrence of the specified character.
- */
-public fun String.lastIndexOf(ch: Char, fromIndex: Int): Int = (this as java.lang.String).lastIndexOf(ch.toString(), fromIndex)
-
-/**
- * Returns the index within this string of the last occurrence of the specified character, starting from the specified offset.
- */
-public fun String.lastIndexOf(str: String, fromIndex: Int): Int = (this as java.lang.String).lastIndexOf(str, fromIndex)
 
 /**
  * Returns `true` if this string matches the given regular expression.
@@ -304,16 +298,21 @@ public fun String.offsetByCodePoints(index: Int, codePointOffset: Int): Int = (t
  * @param ooffset the start offset in the other string of the substring to compare.
  * @param len the length of the substring to compare.
  */
+deprecated("Use regionMatches overload with ignoreCase as optional last parameter.")
 public fun String.regionMatches(ignoreCase: Boolean, toffset: Int, other: String, ooffset: Int, len: Int): Boolean = (this as java.lang.String).regionMatches(ignoreCase, toffset, other, ooffset, len)
 
 /**
  * Returns `true` if the specified range in this string is equal to the specified range in another string.
- * @param toffset the start offset in this string of the substring to compare.
+ * @param thisOffset the start offset in this string of the substring to compare.
  * @param other the string against a substring of which the comparison is performed.
- * @param ooffset the start offset in the other string of the substring to compare.
- * @param len the length of the substring to compare.
+ * @param otherOffset the start offset in the other string of the substring to compare.
+ * @param length the length of the substring to compare.
  */
-public fun String.regionMatches(toffset: Int, other: String, ooffset: Int, len: Int): Boolean = (this as java.lang.String).regionMatches(toffset, other, ooffset, len)
+public fun String.regionMatches(thisOffset: Int, other: String, otherOffset: Int, length: Int, ignoreCase: Boolean = false): Boolean =
+        if (!ignoreCase)
+            (this as java.lang.String).regionMatches(thisOffset, other, otherOffset, length)
+        else
+            (this as java.lang.String).regionMatches(ignoreCase, thisOffset, other, otherOffset, length)
 
 /**
  * Returns a new string obtained by replacing all occurrences of the [target] substring in this string

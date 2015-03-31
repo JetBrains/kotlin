@@ -1,28 +1,29 @@
 package kotlin.js
 
-native public fun String.startsWith(s: String): Boolean = noImpl
-native public fun String.endsWith(s: String): Boolean = noImpl
-native public fun String.contains(s: String): Boolean = noImpl
-
-native public fun String.startsWith(char: Char): Boolean = noImpl
-native public fun String.endsWith(char: Char): Boolean = noImpl
-native public fun String.contains(char: Char): Boolean = noImpl
-
 native public fun String.toUpperCase() : String = noImpl
 
 native public fun String.toLowerCase() : String = noImpl
 
-native public fun String.indexOf(str : String) : Int = noImpl
-native public fun String.indexOf(str : String, fromIndex : Int) : Int = noImpl
+native("indexOf")
+public fun String.nativeIndexOf(str : String, fromIndex : Int) : Int = noImpl
 
-native public fun String.lastIndexOf(str: String) : Int = noImpl
-native public fun String.lastIndexOf(str : String, fromIndex : Int) : Int = noImpl
+native("lastIndexOf")
+public fun String.nativeLastIndexOf(str : String, fromIndex : Int) : Int = noImpl
 
+library("splitString")
+public fun String.splitWithRegex(regex: String): Array<String> = noImpl
+
+library("splitString")
+public fun String.splitWithRegex(regex: String, limit: Int): Array<String> = noImpl
+
+deprecated("Use splitWithRegex (temporary)")
 library("splitString")
 public fun String.split(regex: String): Array<String> = noImpl
 
+deprecated("Use splitWithRegex (temporary)")
 library("splitString")
 public fun String.split(regex: String, limit: Int): Array<String> = noImpl
+
 
 native public fun String.substring(beginIndex : Int) : String = noImpl
 native public fun String.substring(beginIndex : Int, endIndex : Int) : String = noImpl

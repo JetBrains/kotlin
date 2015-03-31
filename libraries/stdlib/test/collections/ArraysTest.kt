@@ -269,6 +269,21 @@ class ArraysTest {
         assertEquals(iter4.toList(), emptyList<String>())
     }
 
+    test fun asList() {
+        assertEquals(listOf(1, 2, 3), intArray(1, 2, 3).asList())
+        assertEquals(listOf<Byte>(1, 2, 3), byteArray(1, 2, 3).asList())
+        assertEquals(listOf(true, false), booleanArray(true, false).asList())
+
+        assertEquals(listOf(1, 2, 3), array(1, 2, 3).asList())
+        assertEquals(listOf("abc", "def"), array("abc", "def").asList())
+
+        val ints = intArray(1, 5, 7)
+        val intsAsList = ints.asList()
+        assertEquals(5, intsAsList[1])
+        ints[1] = 10
+        assertEquals(10, intsAsList[1], "Should reflect changes in original array")
+    }
+
     /*
 
     TODO FIXME ASAP: These currently fail on JS due to missing upto() method on numbers

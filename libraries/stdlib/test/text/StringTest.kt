@@ -5,31 +5,40 @@ import org.junit.Test as test
 
 class StringTest {
 
-    test fun startsWith() {
+    test fun startsWithString() {
         assertTrue("abcd".startsWith("ab"))
         assertTrue("abcd".startsWith("abcd"))
         assertTrue("abcd".startsWith("a"))
         assertFalse("abcd".startsWith("abcde"))
         assertFalse("abcd".startsWith("b"))
-        assertFalse("".startsWith('a'))
+        assertFalse("".startsWith("a"))
+        assertTrue("some".startsWith(""))
+        assertTrue("".startsWith(""))
+
+        assertTrue("abcd".startsWith("aB", ignoreCase = true))
     }
 
-    test fun endsWith() {
+    test fun endsWithString() {
         assertTrue("abcd".endsWith("d"))
         assertTrue("abcd".endsWith("abcd"))
         assertFalse("abcd".endsWith("b"))
-        assertFalse("".endsWith('a'))
+        assertTrue("strö".endsWith("RÖ", ignoreCase = true))
+        assertFalse("".endsWith("a"))
+        assertTrue("some".endsWith(""))
+        assertTrue("".endsWith(""))
     }
 
-    test fun testStartsWithChar() {
+    test fun startsWithChar() {
         assertTrue("abcd".startsWith('a'))
         assertFalse("abcd".startsWith('b'))
+        assertTrue("abcd".startsWith('A', ignoreCase = true))
         assertFalse("".startsWith('a'))
     }
 
-    test fun testEndsWithChar() {
+    test fun endsWithChar() {
         assertTrue("abcd".endsWith('d'))
         assertFalse("abcd".endsWith('b'))
+        assertTrue("strö".endsWith('Ö', ignoreCase = true))
         assertFalse("".endsWith('a'))
     }
 
@@ -264,4 +273,193 @@ class StringTest {
         assertEquals("value", "value".removeSurrounding("<", ">"))
     }
 
+
+    /*
+    // unit test commented out until rangesDelimitiedBy would become public
+
+    test fun rangesDelimitedBy() {
+        assertEquals(listOf(0..2, 4..3, 5..7), "abc--def".rangesDelimitedBy('-').toList())
+        assertEquals(listOf(0..2, 5..7, 9..10), "abc--def-xy".rangesDelimitedBy("--", "-").toList())
+        assertEquals(listOf(0..2, 7..9, 14..16), "123<br>456<BR>789".rangesDelimitedBy("<br>", ignoreCase = true).toList())
+        assertEquals(listOf(2..2, 4..6), "a=b=c=d".rangesDelimitedBy("=", startIndex = 2, limit = 2).toList())
+
+        val s = "sample"
+        assertEquals(listOf(s.indices), s.rangesDelimitedBy("-").toList())
+        assertEquals(listOf(s.indices), s.rangesDelimitedBy("-", startIndex = -1).toList())
+        assertTrue(s.rangesDelimitedBy("-", startIndex = s.length()).single().isEmpty())
+    }
+    */
+
+
+    test fun split() {
+        assertEquals(listOf(""), "".splitBy(";"))
+        assertEquals(listOf("test"), "test".split(*charArray()), "empty list of delimiters, none matched -> entire string returned")
+        assertEquals(listOf("test"), "test".splitBy(*array<String>()), "empty list of delimiters, none matched -> entire string returned")
+
+        assertEquals(listOf("abc", "def", "123;456"), "abc;def,123;456".split(';', ',', limit = 3))
+        assertEquals(listOf("abc", "def", "123", "456"), "abc<BR>def<br>123<bR>456".splitBy("<BR>", ignoreCase = true))
+
+        assertEquals(listOf("abc", "def", "123", "456"), "abc=-def==123=456".splitBy("==", "=-", "="))
+    }
+
+    test fun splitToLines() {
+        val string = "first line\rsecond line\nthird line\r\nlast line"
+        assertEquals(listOf("first line", "second line", "third line", "last line"), string.lines())
+
+
+        val singleLine = "single line"
+        assertEquals(listOf(singleLine), singleLine.lines())
+    }
+
+
+    test fun indexOfAnyChar() {
+        val string = "abracadabra"
+        val chars = charArray('d','b')
+        assertEquals(1, string.indexOfAny(chars))
+        assertEquals(6, string.indexOfAny(chars, startIndex = 2))
+        assertEquals(-1, string.indexOfAny(chars, startIndex = 9))
+
+        assertEquals(8, string.lastIndexOfAny(chars))
+        assertEquals(6, string.lastIndexOfAny(chars, startIndex = 7))
+        assertEquals(-1, string.lastIndexOfAny(chars, startIndex = 0))
+
+        assertEquals(-1, string.indexOfAny(charArray()))
+    }
+
+    test fun indexOfAnyCharIgnoreCase() {
+        val string = "abraCadabra"
+        val chars = charArray('B','c')
+        assertEquals(1, string.indexOfAny(chars, ignoreCase = true))
+        assertEquals(4, string.indexOfAny(chars, startIndex = 2, ignoreCase = true))
+        assertEquals(-1, string.indexOfAny(chars, startIndex = 9, ignoreCase = true))
+
+        assertEquals(8, string.lastIndexOfAny(chars, ignoreCase = true))
+        assertEquals(4, string.lastIndexOfAny(chars, startIndex = 7, ignoreCase = true))
+        assertEquals(-1, string.lastIndexOfAny(chars, startIndex = 0, ignoreCase = true))
+    }
+
+    test fun indexOfAnyString() {
+        val string = "abracadabra"
+        val substrings = listOf("rac", "ra")
+        assertEquals(2, string.indexOfAny(substrings))
+        assertEquals(9, string.indexOfAny(substrings, startIndex = 3))
+        assertEquals(2, string.indexOfAny(substrings.reverse()))
+        assertEquals(-1, string.indexOfAny(substrings, 10))
+
+        assertEquals(9, string.lastIndexOfAny(substrings))
+        assertEquals(2, string.lastIndexOfAny(substrings, startIndex = 8))
+        assertEquals(2, string.lastIndexOfAny(substrings.reverse(), startIndex = 8))
+        assertEquals(-1, string.lastIndexOfAny(substrings, 1))
+
+        assertEquals(0, string.indexOfAny(listOf("dab", "")), "empty strings are not ignored")
+        assertEquals(-1, string.indexOfAny(listOf()))
+    }
+
+    test fun indexOfAnyStringIgnoreCase() {
+        val string = "aBraCadaBrA"
+        val substrings = listOf("rAc", "Ra")
+
+        assertEquals(2, string.indexOfAny(substrings, ignoreCase = true))
+        assertEquals(9, string.indexOfAny(substrings, startIndex = 3, ignoreCase = true))
+        assertEquals(-1, string.indexOfAny(substrings, startIndex = 10, ignoreCase = true))
+
+        assertEquals(9, string.lastIndexOfAny(substrings, ignoreCase = true))
+        assertEquals(2, string.lastIndexOfAny(substrings, startIndex = 8, ignoreCase = true))
+        assertEquals(-1, string.lastIndexOfAny(substrings, startIndex = 1, ignoreCase = true))
+    }
+
+    test fun findAnyOfStrings() {
+        val string = "abracadabra"
+        val substrings = listOf("rac", "ra")
+        assertEquals(2 to "rac", string.findAnyOf(substrings))
+        assertEquals(9 to "ra", string.findAnyOf(substrings, startIndex = 3))
+        assertEquals(2 to "ra", string.findAnyOf(substrings.reverse()))
+        assertEquals(null, string.findAnyOf(substrings, 10))
+
+        assertEquals(9 to "ra", string.findLastAnyOf(substrings))
+        assertEquals(2 to "rac", string.findLastAnyOf(substrings, startIndex = 8))
+        assertEquals(2 to "ra", string.findLastAnyOf(substrings.reverse(), startIndex = 8))
+        assertEquals(null, string.findLastAnyOf(substrings, 1))
+
+        assertEquals(0 to "", string.findAnyOf(listOf("dab", "")), "empty strings are not ignored")
+        assertEquals(null, string.findAnyOf(listOf()))
+    }
+
+    test fun findAnyOfStringsIgnoreCase() {
+        val string = "aBraCadaBrA"
+        val substrings = listOf("rAc", "Ra")
+
+        assertEquals(2 to substrings[0], string.findAnyOf(substrings, ignoreCase = true))
+        assertEquals(9 to substrings[1], string.findAnyOf(substrings, startIndex = 3, ignoreCase = true))
+        assertEquals(null, string.findAnyOf(substrings, startIndex = 10, ignoreCase = true))
+
+        assertEquals(9 to substrings[1], string.findLastAnyOf(substrings, ignoreCase = true))
+        assertEquals(2 to substrings[0], string.findLastAnyOf(substrings, startIndex = 8, ignoreCase = true))
+        assertEquals(null, string.findLastAnyOf(substrings, startIndex = 1, ignoreCase = true))
+    }
+
+    test fun indexOfChar() {
+        val string = "bcedef"
+        assertEquals(-1, string.indexOf('a'))
+        assertEquals(2, string.indexOf('e'))
+        assertEquals(2, string.indexOf('e', 2))
+        assertEquals(4, string.indexOf('e', 3))
+        assertEquals(4, string.lastIndexOf('e'))
+        assertEquals(2, string.lastIndexOf('e', 3))
+
+        for (startIndex in -1..string.length()+1) {
+            assertEquals(string.indexOfAny(charArray('e'), startIndex), string.indexOf('e', startIndex))
+            assertEquals(string.lastIndexOfAny(charArray('e'), startIndex), string.lastIndexOf('e', startIndex))
+        }
+
+    }
+
+    test fun indexOfCharIgnoreCase() {
+        val string = "bCEdef"
+        assertEquals(-1, string.indexOf('a', ignoreCase = true))
+        assertEquals(2, string.indexOf('E', ignoreCase = true))
+        assertEquals(2, string.indexOf('e', 2, ignoreCase = true))
+        assertEquals(4, string.indexOf('E', 3, ignoreCase = true))
+        assertEquals(4, string.lastIndexOf('E', ignoreCase = true))
+        assertEquals(2, string.lastIndexOf('e', 3, ignoreCase = true))
+
+
+        for (startIndex in -1..string.length()+1){
+            assertEquals(string.indexOfAny(charArray('e'), startIndex, ignoreCase = true), string.indexOf('E', startIndex, ignoreCase = true))
+            assertEquals(string.lastIndexOfAny(charArray('E'), startIndex, ignoreCase = true), string.lastIndexOf('e', startIndex, ignoreCase = true))
+        }
+    }
+
+    test fun indexOfString() {
+        val string = "bceded"
+        for (index in string.indices)
+            assertEquals(index, string.indexOf("", index))
+        assertEquals(1, string.indexOf("ced"))
+        assertEquals(4, string.indexOf("ed", 3))
+        assertEquals(-1, string.indexOf("abcdefgh"))
+    }
+
+    test fun indexOfStringIgnoreCase() {
+        val string = "bceded"
+        for (index in string.indices)
+            assertEquals(index, string.indexOf("", index, ignoreCase = true))
+        assertEquals(1, string.indexOf("cEd", ignoreCase = true))
+        assertEquals(4, string.indexOf("Ed", 3, ignoreCase = true))
+        assertEquals(-1, string.indexOf("abcdefgh", ignoreCase = true))
+    }
+
+
+    test fun contains() {
+        assertTrue("sample".contains("pl"))
+        assertFalse("sample".contains("PL"))
+        assertTrue("sömple".contains("Ö", ignoreCase = true))
+
+        assertTrue("sample".contains(""))
+        assertTrue("".contains(""))
+    }
+
+    test fun equalsIgnoreCase() {
+        assertFalse("sample".equals("Sample", ignoreCase = false))
+        assertTrue("sample".equals("Sample", ignoreCase = true))
+    }
 }
