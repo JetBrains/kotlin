@@ -32,8 +32,7 @@ public class KotlinFunctionStubImpl(
         private val isExtension: Boolean,
         private val hasBlockBody: Boolean,
         private val hasBody: Boolean,
-        private val hasTypeParameterListBeforeFunctionName: Boolean,
-        private val isProbablyNothingType: Boolean
+        private val hasTypeParameterListBeforeFunctionName: Boolean
 ) : KotlinStubBaseImpl<JetNamedFunction>(parent, JetStubElementTypes.FUNCTION), KotlinFunctionStub {
     init {
         if (isTopLevel && fqName == null) {
@@ -48,5 +47,4 @@ public class KotlinFunctionStubImpl(
     override fun hasBlockBody() = hasBlockBody
     override fun hasBody() = hasBody
     override fun hasTypeParameterListBeforeFunctionName() = hasTypeParameterListBeforeFunctionName
-    override fun isProbablyNothingType() = isProbablyNothingType
 }

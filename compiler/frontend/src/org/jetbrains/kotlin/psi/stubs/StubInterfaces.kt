@@ -100,7 +100,6 @@ public trait KotlinPropertyStub : KotlinCallableStubBase<JetProperty> {
 public trait KotlinCallableStubBase<TDeclaration: JetCallableDeclaration> : KotlinStubWithFqName<TDeclaration> {
     public fun isTopLevel(): Boolean
     public fun isExtension(): Boolean
-    public fun isProbablyNothingType(): Boolean
 }
 
 public trait KotlinTypeParameterStub : KotlinStubWithFqName<JetTypeParameter> {
@@ -114,4 +113,11 @@ public trait KotlinTypeProjectionStub : StubElement<JetTypeProjection> {
 
 public trait KotlinUserTypeStub : StubElement<JetUserType> {
     public fun isAbsoluteInRootPackage(): Boolean
+}
+
+public fun StubElement<*>.getContainingFileStub(): PsiFileStub<*> {
+    return if (this is PsiFileStub)
+        this
+    else
+        getParentStub().getContainingFileStub()
 }

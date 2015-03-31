@@ -9,14 +9,14 @@ PsiJetFileStubImpl[package=test]
       MODIFIER_LIST:[public]
       VALUE_PARAMETER_LIST:
     CLASS_BODY:
-      PROPERTY:[fqName=test.NestedClasses.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=c]
+      PROPERTY:[fqName=test.NestedClasses.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
         MODIFIER_LIST:[internal final]
         TYPE_REFERENCE:
           USER_TYPE:[isAbsoluteInRootPackage=false]
             USER_TYPE:[isAbsoluteInRootPackage=false]
               REFERENCE_EXPRESSION:[referencedName=kotlin]
             REFERENCE_EXPRESSION:[referencedName=Int]
-      FUN:[fqName=test.NestedClasses.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isProbablyNothingType=false, isTopLevel=false, name=f]
+      FUN:[fqName=test.NestedClasses.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=f]
         MODIFIER_LIST:[internal final]
         VALUE_PARAMETER_LIST:
         TYPE_REFERENCE:
@@ -35,7 +35,7 @@ PsiJetFileStubImpl[package=test]
           MODIFIER_LIST:[public]
           VALUE_PARAMETER_LIST:
         CLASS_BODY:
-          FUN:[fqName=test.NestedClasses.Inner.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isProbablyNothingType=false, isTopLevel=false, name=f]
+          FUN:[fqName=test.NestedClasses.Inner.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=f]
             MODIFIER_LIST:[internal final]
             VALUE_PARAMETER_LIST:
               VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=p1]
@@ -55,7 +55,7 @@ PsiJetFileStubImpl[package=test]
               MODIFIER_LIST:[public]
               VALUE_PARAMETER_LIST:
             CLASS_BODY:
-              FUN:[fqName=test.NestedClasses.Inner.II.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isProbablyNothingType=false, isTopLevel=false, name=f]
+              FUN:[fqName=test.NestedClasses.Inner.II.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=f]
                 MODIFIER_LIST:[internal final]
                 VALUE_PARAMETER_LIST:
                   VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=p1]
@@ -101,14 +101,14 @@ PsiJetFileStubImpl[package=test]
           MODIFIER_LIST:[public]
           VALUE_PARAMETER_LIST:
         CLASS_BODY:
-          PROPERTY:[fqName=test.NestedClasses.Nested.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=c]
+          PROPERTY:[fqName=test.NestedClasses.Nested.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
             MODIFIER_LIST:[internal final]
             TYPE_REFERENCE:
               USER_TYPE:[isAbsoluteInRootPackage=false]
                 USER_TYPE:[isAbsoluteInRootPackage=false]
                   REFERENCE_EXPRESSION:[referencedName=kotlin]
                 REFERENCE_EXPRESSION:[referencedName=Int]
-          FUN:[fqName=test.NestedClasses.Nested.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isProbablyNothingType=false, isTopLevel=false, name=f]
+          FUN:[fqName=test.NestedClasses.Nested.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=f]
             MODIFIER_LIST:[internal final]
             VALUE_PARAMETER_LIST:
               VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=p1]
@@ -131,7 +131,7 @@ PsiJetFileStubImpl[package=test]
               MODIFIER_LIST:[public]
               VALUE_PARAMETER_LIST:
             CLASS_BODY:
-              FUN:[fqName=test.NestedClasses.Nested.NI.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isProbablyNothingType=false, isTopLevel=false, name=f]
+              FUN:[fqName=test.NestedClasses.Nested.NI.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=f]
                 MODIFIER_LIST:[internal final]
                 VALUE_PARAMETER_LIST:
                   VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=p1]
@@ -155,14 +155,14 @@ PsiJetFileStubImpl[package=test]
               MODIFIER_LIST:[public]
               VALUE_PARAMETER_LIST:
             CLASS_BODY:
-              PROPERTY:[fqName=test.NestedClasses.Nested.NN.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=c]
+              PROPERTY:[fqName=test.NestedClasses.Nested.NN.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
                 MODIFIER_LIST:[internal final]
                 TYPE_REFERENCE:
                   USER_TYPE:[isAbsoluteInRootPackage=false]
                     USER_TYPE:[isAbsoluteInRootPackage=false]
                       REFERENCE_EXPRESSION:[referencedName=kotlin]
                     REFERENCE_EXPRESSION:[referencedName=Int]
-              FUN:[fqName=test.NestedClasses.Nested.NN.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isProbablyNothingType=false, isTopLevel=false, name=f]
+              FUN:[fqName=test.NestedClasses.Nested.NN.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=f]
                 MODIFIER_LIST:[internal final]
                 VALUE_PARAMETER_LIST:
                   VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=p1]

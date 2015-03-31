@@ -1,6 +1,6 @@
 PsiJetFileStubImpl[package=]
   PACKAGE_DIRECTIVE:
-  FUN:[fqName=some, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isProbablyNothingType=false, isTopLevel=true, name=some]
+  FUN:[fqName=some, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, name=some]
     VALUE_PARAMETER_LIST:
       VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=t]
         TYPE_REFERENCE:

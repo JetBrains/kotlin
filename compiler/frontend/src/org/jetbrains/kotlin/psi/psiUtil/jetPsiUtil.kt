@@ -439,14 +439,6 @@ public fun Call.isSafeCall(): Boolean {
 
 public fun Call.isExplicitSafeCall(): Boolean = getCallOperationNode()?.getElementType() == JetTokens.SAFE_ACCESS
 
-public fun JetTypeReference?.isProbablyNothing(): Boolean {
-    val userType = this?.getTypeElement() as? JetUserType ?: return false
-    return userType.isProbablyNothing()
-}
-
-public fun JetUserType?.isProbablyNothing(): Boolean
-        = this?.getReferencedName() == "Nothing"
-
 public fun JetStringTemplateExpression.getContentRange(): TextRange {
     val start = getNode().getFirstChildNode().getTextLength()
     val lastChild = getNode().getLastChildNode()

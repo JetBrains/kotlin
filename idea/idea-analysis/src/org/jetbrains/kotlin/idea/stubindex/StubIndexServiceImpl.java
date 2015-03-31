@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetClassOrObject;
 import org.jetbrains.kotlin.psi.stubs.*;
 import org.jetbrains.kotlin.psi.stubs.elements.StubIndexService;
+import org.jetbrains.kotlin.util.UtilPackage;
 
 public class StubIndexServiceImpl implements StubIndexService {
 
@@ -81,7 +82,7 @@ public class StubIndexServiceImpl implements StubIndexService {
         if (name != null) {
             sink.occurrence(JetFunctionShortNameIndex.getInstance().getKey(), name);
 
-            if (stub.isProbablyNothingType()) {
+            if (UtilPackage.isProbablyNothing(stub.getPsi().getTypeReference())) {
                 sink.occurrence(JetProbablyNothingFunctionShortNameIndex.getInstance().getKey(), name);
             }
         }
@@ -103,7 +104,7 @@ public class StubIndexServiceImpl implements StubIndexService {
         if (name != null) {
             sink.occurrence(JetPropertyShortNameIndex.getInstance().getKey(), name);
 
-            if (stub.isProbablyNothingType()) {
+            if (UtilPackage.isProbablyNothing(stub.getPsi().getTypeReference())) {
                 sink.occurrence(JetProbablyNothingPropertyShortNameIndex.getInstance().getKey(), name);
             }
         }

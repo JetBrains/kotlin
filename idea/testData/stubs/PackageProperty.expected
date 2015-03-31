@@ -3,4 +3,4 @@ PsiJetFileStubImpl[package=test.testing]
     DOT_QUALIFIED_EXPRESSION:
       REFERENCE_EXPRESSION:[referencedName=test]
       REFERENCE_EXPRESSION:[referencedName=testing]
-  PROPERTY:[fqName=test.testing.some, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isProbablyNothingType=false, isTopLevel=true, isVar=false, name=some]
+  PROPERTY:[fqName=test.testing.some, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=some]

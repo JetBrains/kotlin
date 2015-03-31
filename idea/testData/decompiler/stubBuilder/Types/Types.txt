@@ -7,7 +7,7 @@ PsiJetFileStubImpl[package=test]
       MODIFIER_LIST:[public]
       VALUE_PARAMETER_LIST:
     CLASS_BODY:
-      PROPERTY:[fqName=test.Types.deepExtFunctionType, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=deepExtFunctionType]
+      PROPERTY:[fqName=test.Types.deepExtFunctionType, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=deepExtFunctionType]
         MODIFIER_LIST:[abstract internal]
         TYPE_REFERENCE:
           FUNCTION_TYPE:
@@ -54,7 +54,7 @@ PsiJetFileStubImpl[package=test]
                             USER_TYPE:[isAbsoluteInRootPackage=false]
                               REFERENCE_EXPRESSION:[referencedName=kotlin]
                             REFERENCE_EXPRESSION:[referencedName=String]
-      PROPERTY:[fqName=test.Types.extFunction, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=extFunction]
+      PROPERTY:[fqName=test.Types.extFunction, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=extFunction]
         MODIFIER_LIST:[abstract internal]
         TYPE_REFERENCE:
           FUNCTION_TYPE:
@@ -77,7 +77,7 @@ PsiJetFileStubImpl[package=test]
                         USER_TYPE:[isAbsoluteInRootPackage=false]
                           REFERENCE_EXPRESSION:[referencedName=kotlin]
                         REFERENCE_EXPRESSION:[referencedName=String]
-      PROPERTY:[fqName=test.Types.extFunctionWithNullables, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=extFunctionWithNullables]
+      PROPERTY:[fqName=test.Types.extFunctionWithNullables, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=extFunctionWithNullables]
         MODIFIER_LIST:[abstract internal]
         TYPE_REFERENCE:
           FUNCTION_TYPE:
@@ -116,7 +116,7 @@ PsiJetFileStubImpl[package=test]
                             USER_TYPE:[isAbsoluteInRootPackage=false]
                               REFERENCE_EXPRESSION:[referencedName=kotlin]
                             REFERENCE_EXPRESSION:[referencedName=String]
-      PROPERTY:[fqName=test.Types.extFunctionWithParam, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=extFunctionWithParam]
+      PROPERTY:[fqName=test.Types.extFunctionWithParam, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=extFunctionWithParam]
         MODIFIER_LIST:[abstract internal]
         TYPE_REFERENCE:
           FUNCTION_TYPE:
@@ -151,7 +151,7 @@ PsiJetFileStubImpl[package=test]
                         USER_TYPE:[isAbsoluteInRootPackage=false]
                           REFERENCE_EXPRESSION:[referencedName=kotlin]
                         REFERENCE_EXPRESSION:[referencedName=String]
-      PROPERTY:[fqName=test.Types.function, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=function]
+      PROPERTY:[fqName=test.Types.function, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=function]
         MODIFIER_LIST:[internal final]
         TYPE_REFERENCE:
           FUNCTION_TYPE:
@@ -161,7 +161,7 @@ PsiJetFileStubImpl[package=test]
                 USER_TYPE:[isAbsoluteInRootPackage=false]
                   REFERENCE_EXPRESSION:[referencedName=kotlin]
                 REFERENCE_EXPRESSION:[referencedName=Unit]
-      PROPERTY:[fqName=test.Types.functionWithParam, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=functionWithParam]
+      PROPERTY:[fqName=test.Types.functionWithParam, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=functionWithParam]
         MODIFIER_LIST:[abstract internal]
         TYPE_REFERENCE:
           FUNCTION_TYPE:
@@ -190,7 +190,7 @@ PsiJetFileStubImpl[package=test]
                         USER_TYPE:[isAbsoluteInRootPackage=false]
                           REFERENCE_EXPRESSION:[referencedName=kotlin]
                         REFERENCE_EXPRESSION:[referencedName=String]
-      PROPERTY:[fqName=test.Types.list, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=list]
+      PROPERTY:[fqName=test.Types.list, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=list]
         MODIFIER_LIST:[abstract internal]
         TYPE_REFERENCE:
           USER_TYPE:[isAbsoluteInRootPackage=false]
@@ -204,7 +204,7 @@ PsiJetFileStubImpl[package=test]
                     USER_TYPE:[isAbsoluteInRootPackage=false]
                       REFERENCE_EXPRESSION:[referencedName=kotlin]
                     REFERENCE_EXPRESSION:[referencedName=Int]
-      PROPERTY:[fqName=test.Types.map, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=map]
+      PROPERTY:[fqName=test.Types.map, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=map]
         MODIFIER_LIST:[abstract internal]
         TYPE_REFERENCE:
           USER_TYPE:[isAbsoluteInRootPackage=false]
@@ -224,7 +224,7 @@ PsiJetFileStubImpl[package=test]
                     USER_TYPE:[isAbsoluteInRootPackage=false]
                       REFERENCE_EXPRESSION:[referencedName=kotlin]
                     REFERENCE_EXPRESSION:[referencedName=Int]
-      PROPERTY:[fqName=test.Types.nullable, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=nullable]
+      PROPERTY:[fqName=test.Types.nullable, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nullable]
         MODIFIER_LIST:[internal final]
         TYPE_REFERENCE:
           NULLABLE_TYPE:
@@ -232,7 +232,7 @@ PsiJetFileStubImpl[package=test]
               USER_TYPE:[isAbsoluteInRootPackage=false]
                 REFERENCE_EXPRESSION:[referencedName=kotlin]
               REFERENCE_EXPRESSION:[referencedName=Int]
-      PROPERTY:[fqName=test.Types.nullableMap, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=nullableMap]
+      PROPERTY:[fqName=test.Types.nullableMap, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nullableMap]
         MODIFIER_LIST:[abstract internal]
         TYPE_REFERENCE:
           NULLABLE_TYPE:
@@ -255,7 +255,7 @@ PsiJetFileStubImpl[package=test]
                         USER_TYPE:[isAbsoluteInRootPackage=false]
                           REFERENCE_EXPRESSION:[referencedName=kotlin]
                         REFERENCE_EXPRESSION:[referencedName=Int]
-      PROPERTY:[fqName=test.Types.projections, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=projections]
+      PROPERTY:[fqName=test.Types.projections, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=projections]
         MODIFIER_LIST:[abstract internal]
         TYPE_REFERENCE:
           USER_TYPE:[isAbsoluteInRootPackage=false]
@@ -277,7 +277,7 @@ PsiJetFileStubImpl[package=test]
                     USER_TYPE:[isAbsoluteInRootPackage=false]
                       REFERENCE_EXPRESSION:[referencedName=kotlin]
                     REFERENCE_EXPRESSION:[referencedName=String]
-      FUN:[fqName=test.Types.extOnFunctionType, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isProbablyNothingType=false, isTopLevel=false, name=extOnFunctionType]
+      FUN:[fqName=test.Types.extOnFunctionType, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=false, name=extOnFunctionType]
         MODIFIER_LIST:[public final]
         TYPE_PARAMETER_LIST:
           TYPE_PARAMETER:[fqName=null, isInVariance=false, isOutVariance=false, name=P1]
