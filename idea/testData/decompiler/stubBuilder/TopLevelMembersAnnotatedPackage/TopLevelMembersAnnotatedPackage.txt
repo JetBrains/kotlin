@@ -7,7 +7,7 @@ PsiJetFileStubImpl[package=a.b.c.topLevelMembersAnnotated]
           REFERENCE_EXPRESSION:[referencedName=b]
         REFERENCE_EXPRESSION:[referencedName=c]
       REFERENCE_EXPRESSION:[referencedName=topLevelMembersAnnotated]
-  PROPERTY:[fqName=a.b.c.topLevelMembersAnnotated.i, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=true, isVar=false, name=i]
+  PROPERTY:[fqName=a.b.c.topLevelMembersAnnotated.i, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isProbablyNothingType=false, isTopLevel=true, isVar=false, name=i]
     MODIFIER_LIST:[internal]
       ANNOTATION_ENTRY:[hasValueArguments=false, shortName=a]
         CONSTRUCTOR_CALLEE:

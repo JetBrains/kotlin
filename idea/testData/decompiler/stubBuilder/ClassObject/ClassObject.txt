@@ -12,7 +12,7 @@ PsiJetFileStubImpl[package=test.class_object]
       OBJECT_DECLARATION:[fqName=test.class_object.ClassObject.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST:[public companion]
         CLASS_BODY:
-          PROPERTY:[fqName=test.class_object.ClassObject.Companion.j, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=j]
+          PROPERTY:[fqName=test.class_object.ClassObject.Companion.j, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=j]
             MODIFIER_LIST:[internal final]
             TYPE_REFERENCE:
               USER_TYPE:[isAbsoluteInRootPackage=false]
@@ -39,7 +39,7 @@ PsiJetFileStubImpl[package=test.class_object]
                   MODIFIER_LIST:[public]
                   VALUE_PARAMETER_LIST:
                 CLASS_BODY:
-                  PROPERTY:[fqName=test.class_object.ClassObject.Companion.A.B.i, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=i]
+                  PROPERTY:[fqName=test.class_object.ClassObject.Companion.A.B.i, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=i]
                     MODIFIER_LIST:[internal final]
                     TYPE_REFERENCE:
                       USER_TYPE:[isAbsoluteInRootPackage=false]
@@ -54,7 +54,7 @@ PsiJetFileStubImpl[package=test.class_object]
                         USER_TYPE:[isAbsoluteInRootPackage=false]
                           REFERENCE_EXPRESSION:[referencedName=kotlin]
                         REFERENCE_EXPRESSION:[referencedName=Int]
-      PROPERTY:[fqName=test.class_object.ClassObject.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=c]
+      PROPERTY:[fqName=test.class_object.ClassObject.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=c]
         MODIFIER_LIST:[internal final]
         TYPE_REFERENCE:
           USER_TYPE:[isAbsoluteInRootPackage=false]
@@ -96,7 +96,7 @@ PsiJetFileStubImpl[package=test.class_object]
                           OBJECT_DECLARATION:[fqName=test.class_object.ClassObject.B.Companion.C.Companion.D.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
                             MODIFIER_LIST:[internal companion]
                             CLASS_BODY:
-                              PROPERTY:[fqName=test.class_object.ClassObject.B.Companion.C.Companion.D.Companion.i, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=i]
+                              PROPERTY:[fqName=test.class_object.ClassObject.B.Companion.C.Companion.D.Companion.i, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=i]
                                 MODIFIER_LIST:[internal final]
                                 TYPE_REFERENCE:
                                   USER_TYPE:[isAbsoluteInRootPackage=false]

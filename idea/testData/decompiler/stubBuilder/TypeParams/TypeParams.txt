@@ -78,12 +78,12 @@ PsiJetFileStubImpl[package=test]
           USER_TYPE:[isAbsoluteInRootPackage=false]
             REFERENCE_EXPRESSION:[referencedName=T6]
     CLASS_BODY:
-      PROPERTY:[fqName=test.TypeParams.useSomeParam, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=useSomeParam]
+      PROPERTY:[fqName=test.TypeParams.useSomeParam, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=useSomeParam]
         MODIFIER_LIST:[internal final]
         TYPE_REFERENCE:
           USER_TYPE:[isAbsoluteInRootPackage=false]
             REFERENCE_EXPRESSION:[referencedName=T2]
-      PROPERTY:[fqName=test.TypeParams.withOwnBoundedParam, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=withOwnBoundedParam]
+      PROPERTY:[fqName=test.TypeParams.withOwnBoundedParam, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=withOwnBoundedParam]
         MODIFIER_LIST:[internal final]
         TYPE_PARAMETER_LIST:
           TYPE_PARAMETER:[fqName=null, isInVariance=false, isOutVariance=false, name=G1]
@@ -96,7 +96,7 @@ PsiJetFileStubImpl[package=test]
         TYPE_REFERENCE:
           USER_TYPE:[isAbsoluteInRootPackage=false]
             REFERENCE_EXPRESSION:[referencedName=G1]
-      PROPERTY:[fqName=test.TypeParams.withOwnBoundedParamByOther, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=withOwnBoundedParamByOther]
+      PROPERTY:[fqName=test.TypeParams.withOwnBoundedParamByOther, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=withOwnBoundedParamByOther]
         MODIFIER_LIST:[internal final]
         TYPE_PARAMETER_LIST:
           TYPE_PARAMETER:[fqName=null, isInVariance=false, isOutVariance=false, name=G1]
@@ -106,7 +106,7 @@ PsiJetFileStubImpl[package=test]
         TYPE_REFERENCE:
           USER_TYPE:[isAbsoluteInRootPackage=false]
             REFERENCE_EXPRESSION:[referencedName=G1]
-      PROPERTY:[fqName=test.TypeParams.withOwnParam, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=withOwnParam]
+      PROPERTY:[fqName=test.TypeParams.withOwnParam, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=withOwnParam]
         MODIFIER_LIST:[internal final]
         TYPE_PARAMETER_LIST:
           TYPE_PARAMETER:[fqName=null, isInVariance=false, isOutVariance=false, name=G1]

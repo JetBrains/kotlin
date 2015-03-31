@@ -1,6 +1,6 @@
 PsiJetFileStubImpl[package=]
   PACKAGE_DIRECTIVE:
-  PROPERTY:[fqName=v, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=true, isVar=false, name=v]
+  PROPERTY:[fqName=v, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isProbablyNothingType=false, isTopLevel=true, isVar=false, name=v]
     TYPE_REFERENCE:
       USER_TYPE:[isAbsoluteInRootPackage=false]
         REFERENCE_EXPRESSION:[referencedName=Foo]
