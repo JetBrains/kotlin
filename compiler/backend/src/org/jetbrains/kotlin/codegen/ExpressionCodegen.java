@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.codegen.inline.*;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethod;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
+import org.jetbrains.kotlin.codegen.stackvalue.BranchedValue;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegen;
@@ -436,7 +437,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             @Override
             public Unit invoke(InstructionAdapter v) {
                 Label elseLabel = new Label();
-                condition.condJump(elseLabel, true, v);   // == 0, i.e. false
+                BranchedValue.Companion.condJump(condition, elseLabel, true, v);
 
                 Label end = new Label();
 
@@ -463,7 +464,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         blockStackElements.push(new LoopBlockStackElement(end, condition, targetLabel(expression)));
 
         StackValue conditionValue = gen(expression.getCondition());
-        conditionValue.condJump(end, true, v);
+        BranchedValue.Companion.condJump(conditionValue, end, true, v);
 
         generateLoopBody(expression.getBody());
 
@@ -510,7 +511,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             conditionValue = gen(condition);
         }
 
-        conditionValue.condJump(beginLoopLabel, false, v);
+        BranchedValue.Companion.condJump(conditionValue, beginLoopLabel, false, v);
         v.mark(breakLabel);
 
         blockStackElements.pop();
@@ -1250,7 +1251,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             @Override
             public Unit invoke(InstructionAdapter v) {
                 Label elseLabel = new Label();
-                condition.condJump(elseLabel, inverse, v);
+                BranchedValue.Companion.condJump(condition, elseLabel, inverse, v);
 
                 if (isStatement) {
                     gen(expression, Type.VOID_TYPE);
@@ -4099,7 +4100,7 @@ The "returned" value of try expression with no finally is either the last expres
                         JetWhenCondition[] conditions = whenEntry.getConditions();
                         for (int i = 0; i < conditions.length; i++) {
                             StackValue conditionValue = generateWhenCondition(subjectType, subjectLocal, conditions[i]);
-                            conditionValue.condJump(nextCondition, true, v);
+                            BranchedValue.Companion.condJump(conditionValue, nextCondition, true, v);
                             if (i < conditions.length - 1) {
                                 v.goTo(thisEntry);
                                 v.mark(nextCondition);

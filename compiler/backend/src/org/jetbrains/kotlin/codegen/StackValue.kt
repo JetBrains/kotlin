@@ -39,10 +39,6 @@ class CoercionValue(
         value.putReceiver(v, isRead)
     }
 
-    override fun condJump(label: Label, jumpIfFalse: Boolean, v: InstructionAdapter) {
-        value.condJump(label, jumpIfFalse, v)
-    }
-
     override fun isNonStaticAccess(isRead: Boolean): Boolean {
         return value.isNonStaticAccess(isRead)
     }
@@ -53,11 +49,6 @@ public class StackValueWithLeaveTask(
         val stackValue: StackValue,
         val leaveTasks: StackValueWithLeaveTask.() -> Unit
 ) : StackValue(stackValue.type) {
-
-    override fun condJump(label: Label, jumpIfFalse: Boolean, v: InstructionAdapter) {
-        stackValue.condJump(label, jumpIfFalse, v)
-        leaveTasks()
-    }
 
     override fun putReceiver(v: InstructionAdapter, isRead: Boolean) {
         stackValue.putReceiver(v, isRead)

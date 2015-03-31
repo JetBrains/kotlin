@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethod;
+import org.jetbrains.kotlin.codegen.stackvalue.BranchedValue;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
@@ -138,17 +139,6 @@ public abstract class StackValue {
         throw new UnsupportedOperationException("Cannot store to value " + this);
     }
 
-    public void condJump(@NotNull Label label, boolean jumpIfFalse, @NotNull InstructionAdapter v) {
-        put(this.type, v);
-        coerceTo(Type.BOOLEAN_TYPE, v);
-        if (jumpIfFalse) {
-            v.ifeq(label);
-        }
-        else {
-            v.ifne(label);
-        }
-    }
-
     @NotNull
     public static Local local(int index, @NotNull Type type) {
         return new Local(index, type);
@@ -166,17 +156,23 @@ public abstract class StackValue {
 
     @NotNull
     public static StackValue constant(@Nullable Object value, @NotNull Type type) {
-        return new Constant(value, type);
+        if (type == Type.BOOLEAN_TYPE) {
+            assert value instanceof Boolean : "Value for boolean constant should have boolean type: " + value;
+            return BranchedValue.Companion.booleanConstant((Boolean) value);
+        }
+        else {
+            return new Constant(value, type);
+        }
     }
 
     @NotNull
     public static StackValue cmp(@NotNull IElementType opToken, @NotNull Type type, StackValue left, StackValue right) {
-        return type.getSort() == Type.OBJECT ? new ObjectCompare(opToken, type, left, right) : new NumberCompare(opToken, type, left, right);
+        return BranchedValue.Companion.cmp(opToken, type, left, right);
     }
 
     @NotNull
     public static StackValue not(@NotNull StackValue stackValue) {
-        return new Invert(stackValue);
+        return BranchedValue.Companion.createInvertValue(stackValue);
     }
 
     @NotNull
@@ -377,17 +373,6 @@ public abstract class StackValue {
 
     public static StackValue unit() {
         return UNIT;
-    }
-
-    public void putAsBoolean(InstructionAdapter v) {
-        Label ifTrue = new Label();
-        Label end = new Label();
-        condJump(ifTrue, false, v);
-        v.iconst(0);
-        v.goTo(end);
-        v.mark(ifTrue);
-        v.iconst(1);
-        v.mark(end);
     }
 
     public static StackValue none() {
@@ -630,129 +615,6 @@ public abstract class StackValue {
             }
 
             coerceTo(type, v);
-        }
-
-        @Override
-        public void condJump(@NotNull Label label, boolean jumpIfFalse, @NotNull InstructionAdapter v) {
-            if (value instanceof Boolean) {
-                boolean boolValue = (Boolean) value;
-                if (boolValue ^ jumpIfFalse) {
-                    v.goTo(label);
-                }
-            }
-            else {
-                throw new UnsupportedOperationException("don't know how to generate this condjump");
-            }
-        }
-    }
-
-    private static class NumberCompare extends StackValue {
-        protected final IElementType opToken;
-        protected final Type operandType;
-        protected final StackValue left;
-        protected final StackValue right;
-
-        public NumberCompare(IElementType opToken, Type operandType, StackValue left, StackValue right) {
-            super(Type.BOOLEAN_TYPE);
-            this.opToken = opToken;
-            this.operandType = operandType;
-            this.left = left;
-            this.right = right;
-        }
-
-        @Override
-        public void putSelector(@NotNull Type type, @NotNull InstructionAdapter v) {
-            putAsBoolean(v);
-            coerceTo(type, v);
-        }
-
-        @Override
-        public void condJump(@NotNull Label label, boolean jumpIfFalse, @NotNull InstructionAdapter v) {
-            left.put(this.operandType, v);
-            right.put(this.operandType, v);
-            int opcode;
-            if (opToken == JetTokens.EQEQ || opToken == JetTokens.EQEQEQ) {
-                opcode = jumpIfFalse ? IFNE : IFEQ;
-            }
-            else if (opToken == JetTokens.EXCLEQ || opToken == JetTokens.EXCLEQEQEQ) {
-                opcode = jumpIfFalse ? IFEQ : IFNE;
-            }
-            else if (opToken == JetTokens.GT) {
-                opcode = jumpIfFalse ? IFLE : IFGT;
-            }
-            else if (opToken == JetTokens.GTEQ) {
-                opcode = jumpIfFalse ? IFLT : IFGE;
-            }
-            else if (opToken == JetTokens.LT) {
-                opcode = jumpIfFalse ? IFGE : IFLT;
-            }
-            else if (opToken == JetTokens.LTEQ) {
-                opcode = jumpIfFalse ? IFGT : IFLE;
-            }
-            else {
-                throw new UnsupportedOperationException("Don't know how to generate this condJump: " + opToken);
-            }
-            if (operandType == Type.FLOAT_TYPE || operandType == Type.DOUBLE_TYPE) {
-                if (opToken == JetTokens.GT || opToken == JetTokens.GTEQ) {
-                    v.cmpl(operandType);
-                }
-                else {
-                    v.cmpg(operandType);
-                }
-            }
-            else if (operandType == Type.LONG_TYPE) {
-                v.lcmp();
-            }
-            else {
-                opcode += (IF_ICMPEQ - IFEQ);
-            }
-            v.visitJumpInsn(opcode, label);
-        }
-    }
-
-    private static class ObjectCompare extends NumberCompare {
-        public ObjectCompare(IElementType opToken, Type operandType, StackValue left, StackValue right) {
-            super(opToken, operandType, left, right);
-        }
-
-        @Override
-        public void condJump(@NotNull Label label, boolean jumpIfFalse, @NotNull InstructionAdapter v) {
-            left.put(this.operandType, v);
-            right.put(this.operandType, v);
-            int opcode;
-            if (opToken == JetTokens.EQEQEQ) {
-                opcode = jumpIfFalse ? IF_ACMPNE : IF_ACMPEQ;
-            }
-            else if (opToken == JetTokens.EXCLEQEQEQ) {
-                opcode = jumpIfFalse ? IF_ACMPEQ : IF_ACMPNE;
-            }
-            else {
-                throw new UnsupportedOperationException("don't know how to generate this condjump");
-            }
-            v.visitJumpInsn(opcode, label);
-        }
-    }
-
-    private static class Invert extends StackValue {
-        private final StackValue myOperand;
-
-        private Invert(StackValue operand) {
-            super(Type.BOOLEAN_TYPE);
-            myOperand = operand;
-            if (myOperand.type != Type.BOOLEAN_TYPE) {
-                throw new UnsupportedOperationException("operand of ! must be boolean");
-            }
-        }
-
-        @Override
-        public void putSelector(@NotNull Type type, @NotNull InstructionAdapter v) {
-            putAsBoolean(v);
-            coerceTo(type, v);
-        }
-
-        @Override
-        public void condJump(@NotNull Label label, boolean jumpIfFalse, @NotNull InstructionAdapter v) {
-            myOperand.condJump(label, !jumpIfFalse, v);
         }
     }
 
