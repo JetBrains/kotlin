@@ -43,8 +43,8 @@ public fun getSimpleName(call: JsInvocation): JsName? {
  */
 public fun getSimpleIdent(call: JsInvocation): String? {
     var qualifier: JsExpression? = call.getQualifier()
-    
-    while (qualifier != null) {
+
+    @qualifiers while (qualifier != null) {
         when (qualifier) {
             is JsInvocation -> {
                 val callableQualifier = qualifier as JsInvocation
@@ -55,7 +55,7 @@ public fun getSimpleIdent(call: JsInvocation): String? {
                 }
             }
             is HasName -> return (qualifier as HasName).getName()?.getIdent()
-            else -> break
+            else -> break@qualifiers
         }
     }
     
