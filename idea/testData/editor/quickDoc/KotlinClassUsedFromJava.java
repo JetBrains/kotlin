@@ -1,8 +1,8 @@
-import testing.Test
+import testing.Test;
 
 class KotlinClassUsedFromJava {
     void test() {
-        <caret>Test()
+        <caret>Test();
     }
 }
 

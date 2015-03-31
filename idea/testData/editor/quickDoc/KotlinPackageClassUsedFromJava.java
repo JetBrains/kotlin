@@ -1,8 +1,8 @@
-import testing.TestingPackage
+import testing.TestingPackage;
 
-class KotlinClassUsedFromJava {
+class KotlinPackageClassUsedFromJava {
     void test() {
-        <caret>TestingPackage.foo()
+        <caret>TestingPackage.foo();
     }
 }
 
