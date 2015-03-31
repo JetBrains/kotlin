@@ -20,6 +20,10 @@
 
     <property name="idea.sdk.fetch.needed" value="true"/>
 
+    <property name="dependencies.info.file" value="dependencies/dependencies.properties"/>
+
+    <property file="${dependencies.info.file}" prefix="dependencies.info.prev"/>
+
     <target name="update" depends="fetch-third-party,fetch-annotations" description="Update dependencies from public server">
         <execute_update_with_id_resolve
             teamcity.server.url="https://teamcity.jetbrains.com"
@@ -33,15 +37,21 @@
     </target>
 
     <target name="jb_update_continuous_139" depends="fetch-third-party,fetch-annotations">
-        <execute_update base.url="http://buildserver.labs.intellij.net/guestAuth/app/rest/builds/buildType:ijplatform_IjPlatformMaster_IdeaTrunk_CommunityDist,status:SUCCESS"/>
+        <execute_update_with_id_resolve
+            teamcity.server.url="http://buildserver.labs.intellij.net"
+            build.locator.request="buildType:ijplatform_IjPlatformMaster_IdeaTrunk_CommunityDist,status:SUCCESS"/>
     </target>
 
     <target name="jb_update_continuous_141" depends="fetch-third-party,fetch-annotations">
-        <execute_update base.url="http://buildserver.labs.intellij.net/guestAuth/app/rest/builds/buildType:ijplatform_IjPlatform141_IdeaTrunk_CommunityDist,status:SUCCESS"/>
+        <execute_update_with_id_resolve
+            teamcity.server.url="http://buildserver.labs.intellij.net"
+            build.locator.request="buildType:ijplatform_IjPlatform141_IdeaTrunk_CommunityDist,status:SUCCESS"/>
     </target>
 
     <target name="jb_update_continuous_142" depends="fetch-third-party,fetch-annotations">
-        <execute_update base.url="http://buildserver.labs.intellij.net/guestAuth/app/rest/builds/buildType:bt662,status:SUCCESS"/>
+        <execute_update_with_id_resolve
+            teamcity.server.url="http://buildserver.labs.intellij.net"
+            build.locator.request="buildType:bt662,status:SUCCESS"/>
     </target>
 
     <macrodef name="get-maven-library">
@@ -331,7 +341,7 @@
 
         <sequential>
             <loadresource property="execute.build.id">
-                <url url="@{teamcity.server.url}/guestAuth/app/rest/builds/?locator=@{build.locator.request}"/>
+                <url url="@{teamcity.server.url}/guestAuth/app/rest/builds/?locator=@{build.locator.request},count:1"/>
                 <filterchain>
                     <tokenfilter>
                         <filetokenizer/>
@@ -340,9 +350,20 @@
                 </filterchain>
             </loadresource>
 
-            <echo message="IDEA build id: ${execute.build.id}"/>
+            <if>
+                <equals arg1="${dependencies.info.prev.idea.build.id}" arg2="${execute.build.id}"/>
+                <then>
+                    <echo message="IDEA build id: ${execute.build.id}. Already downloaded."/>
+                </then>
+                <else>
+                    <echo message="IDEA build id: ${execute.build.id}, previous build id: ${dependencies.info.prev.idea.build.id}"/>
+                    <execute_update base.url="@{teamcity.server.url}/guestAuth/app/rest/builds/id:${execute.build.id}"/>
 
-            <execute_update base.url="@{teamcity.server.url}/guestAuth/app/rest/builds/id:${execute.build.id}"/>
+                    <propertyfile file="${dependencies.info.file}">
+                        <entry key="idea.build.id" value="${execute.build.id}" />
+                    </propertyfile>
+                </else>
+            </if>
         </sequential>
     </macrodef>
 
@@ -388,18 +409,16 @@
                     <mkdir dir="${core-analysis}"/>
                     <mkdir dir="${jps}"/>
                     <mkdir dir="${jps-test}"/>
-                    <get src="${content.base.url}/core/intellij-core.jar" dest="${core}/intellij-core.jar" usetimestamp="true"/>
-                    <get src="${content.base.url}/core/intellij-core-analysis.jar" dest="${core-analysis}/intellij-core-analysis.jar"
-                         usetimestamp="true"/>
-                    <get src="${content.base.url}/core/annotations.jar" dest="${core}/annotations.jar" usetimestamp="true"/>
-                    <get src="${content.base.url}/core/guava-17.0.jar" dest="${core}/guava-17.0.jar" usetimestamp="true"/>
-                    <get src="${content.base.url}/core/picocontainer.jar" dest="${core}/picocontainer.jar" usetimestamp="true"/>
-                    <get src="${content.base.url}/core/trove4j.jar" dest="${core}/trove4j.jar" usetimestamp="true"/>
-                    <!--<get src="${content.base.url}/core/snappy-java-1.0.5.jar" dest="${core}/snappy-java-1.0.5.jar" usetimestamp="true"/>-->
+                    <get src="${content.base.url}/core/intellij-core.jar" dest="${core}/intellij-core.jar"/>
+                    <get src="${content.base.url}/core/intellij-core-analysis.jar" dest="${core-analysis}/intellij-core-analysis.jar"/>
+                    <get src="${content.base.url}/core/annotations.jar" dest="${core}/annotations.jar"/>
+                    <get src="${content.base.url}/core/guava-17.0.jar" dest="${core}/guava-17.0.jar"/>
+                    <get src="${content.base.url}/core/picocontainer.jar" dest="${core}/picocontainer.jar"/>
+                    <get src="${content.base.url}/core/trove4j.jar" dest="${core}/trove4j.jar"/>
+                    <!--<get src="${content.base.url}/core/snappy-java-1.0.5.jar" dest="${core}/snappy-java-1.0.5.jar"/>-->
 
                     <get src="${content.base.url}/jps/standalone-jps-IC-${idea.build.number}.zip"
-                         dest="dependencies/download/standalone-jps.zip"
-                         usetimestamp="true"/>
+                         dest="dependencies/download/standalone-jps.zip"/>
 
                     <property name="jps.extracted.dir" value="dependencies/download/standalone-jps"/>
                     <unzip src="dependencies/download/standalone-jps.zip" dest="${jps.extracted.dir}"/>
@@ -425,10 +444,11 @@
                     <get src="${content.base.url}/jps/jps-build-test-IC-${idea.build.number}.jar" dest="${jps-test}/jps-build-test.jar"
                          usetimestamp="true"/>
 
-                    <get src="${content.base.url}/${idea.archive.name}" dest="dependencies/download/${idea.archive.name}" usetimestamp="true"/>
+                    <delete file="dependencies/download/${idea.archive.name}" failonerror="false"/>
+                    <get src="${content.base.url}/${idea.archive.name}" dest="dependencies/download/${idea.archive.name}"/>
 
                     <delete file="dependencies/download/idea-sdk-sources.zip" failonerror="false"/>
-                    <get src="${content.base.url}/sources.zip" dest="dependencies/download/idea-sdk-sources.zip" usetimestamp="true"/>
+                    <get src="${content.base.url}/sources.zip" dest="dependencies/download/idea-sdk-sources.zip"/>
                 </then>
             </if>
 
