@@ -16,22 +16,19 @@
 
 package org.jetbrains.kotlin.resolve.calls.checkers
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
-import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingContext.CAPTURED_IN_CLOSURE
-import org.jetbrains.kotlin.types.expressions.CaptureKind
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.psi.JetFunctionLiteral
 import org.jetbrains.kotlin.psi.JetFunctionLiteralExpression
-import org.jetbrains.kotlin.resolve.calls.callUtil.*
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext.CAPTURED_IN_CLOSURE
+import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.calls.callUtil.getParentResolvedCall
+import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
+import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.types.expressions.CaptureKind
 
 class CapturingInClosureChecker : CallChecker {
     override fun <F : CallableDescriptor> check(resolvedCall: ResolvedCall<F>, context: BasicCallResolutionContext) {
@@ -45,12 +42,24 @@ class CapturingInClosureChecker : CallChecker {
     private fun checkCapturingInClosure(variable: VariableDescriptor, trace: BindingTrace, scope: JetScope) {
         val variableParent = variable.getContainingDeclaration()
         val scopeContainer = scope.getContainingDeclaration()
-        if (scopeContainer != variableParent && variableParent is CallableDescriptor) {
+        if (isCapturedVariable(variableParent, scopeContainer)) {
             if (trace.get(CAPTURED_IN_CLOSURE, variable) != CaptureKind.NOT_INLINE) {
                 val inline = isCapturedInInline(trace.getBindingContext(), scopeContainer, variableParent)
                 trace.record(CAPTURED_IN_CLOSURE, variable, if (inline) CaptureKind.INLINE_ONLY else CaptureKind.NOT_INLINE)
             }
         }
+    }
+
+    private fun isCapturedVariable(variableParent: DeclarationDescriptor, scopeContainer: DeclarationDescriptor): Boolean {
+        if (variableParent !is FunctionDescriptor || scopeContainer == variableParent) return false
+
+        if (variableParent is ConstructorDescriptor) {
+            val classDescriptor = variableParent.getContainingDeclaration()
+
+            if (scopeContainer == classDescriptor) return false
+            if (scopeContainer is PropertyDescriptor && scopeContainer.getContainingDeclaration() == classDescriptor) return false
+        }
+        return true
     }
 
     private fun isCapturedInInline(
@@ -68,7 +77,7 @@ class CapturingInClosureChecker : CallChecker {
         if (callable is SimpleFunctionDescriptor && callable.getInlineStrategy().isInline()) {
             val scopeContainerParent = scopeContainer.getContainingDeclaration()
             assert(scopeContainerParent != null) { "parent is null for " + scopeContainer }
-            return scopeContainerParent == variableParent || isCapturedInInline(context, scopeContainerParent, variableParent)
+            return !isCapturedVariable(variableParent, scopeContainerParent) || isCapturedInInline(context, scopeContainerParent, variableParent)
         }
         return false
     }
