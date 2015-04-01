@@ -30,3 +30,9 @@ val android.app.Activity.`fun`: ft<TextView, TextView?>
 val android.app.Fragment.`fun`: ft<TextView, TextView?>
     get() = getView().findViewById(0) as? TextView
 
+val android.app.Activity.`set`: ft<Button, Button?>
+    get() = findViewById(0) as? Button
+
+val android.app.Fragment.`set`: ft<Button, Button?>
+    get() = getView().findViewById(0) as? Button
+

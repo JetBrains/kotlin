@@ -38,7 +38,7 @@ public object AndroidConst {
 
     val IGNORED_XML_WIDGET_TYPES = setOf("requestFocus", "merge", "tag", "check")
 
-    val ESCAPED_IDENTIFIERS = JetTokens.KEYWORDS.getTypes()
+    val ESCAPED_IDENTIFIERS = (JetTokens.KEYWORDS.getTypes() + JetTokens.SOFT_KEYWORDS.getTypes())
             .map { it as? JetKeywordToken }.filterNotNull().map { it.getValue() }.toSet()
 }
 

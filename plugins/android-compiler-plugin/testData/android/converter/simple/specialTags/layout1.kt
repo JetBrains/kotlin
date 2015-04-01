@@ -21,3 +21,6 @@ val android.view.View.fragmentTag: ft<View, View?>
 val android.view.View.`fun`: ft<TextView, TextView?>
     get() = findViewById(0) as? TextView
 
+val android.view.View.`set`: ft<Button, Button?>
+    get() = findViewById(0) as? Button
+
