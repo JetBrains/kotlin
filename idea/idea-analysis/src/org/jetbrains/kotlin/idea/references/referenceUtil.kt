@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.references
 import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
+import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -43,7 +44,16 @@ public val PsiReference.unwrappedTargets: Set<PsiElement>
         }
     }
 
+//
+public fun PsiReference.canBeReferenceTo(candidateTarget: PsiElement): Boolean {
+    // optimization
+    return getElement().getContainingFile() == candidateTarget.getContainingFile()
+            || ProjectRootsUtil.isInProjectOrLibSource(getElement())
+}
+
 public fun PsiReference.matchesTarget(candidateTarget: PsiElement): Boolean {
+    if (!canBeReferenceTo(candidateTarget)) return false
+
     val unwrappedCandidate = candidateTarget.unwrapped?.getOriginalElement() ?: return false
     val targets = unwrappedTargets
     if (unwrappedCandidate in targets) return true
