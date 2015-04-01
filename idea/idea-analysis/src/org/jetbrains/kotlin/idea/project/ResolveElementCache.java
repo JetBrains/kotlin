@@ -52,13 +52,13 @@ public class ResolveElementCache extends ElementResolver {
                             @Nullable
                             @Override
                             public Result<MemoizedFunctionToNotNull<JetElement, BindingContext>> compute() {
-                                ResolveSession resolveSession = ResolveElementCache.this.resolveSession;
+                                ResolveSession resolveSession = ResolveElementCache.this.getResolveSession();
                                 LazyResolveStorageManager manager = resolveSession.getStorageManager();
                                 MemoizedFunctionToNotNull<JetElement, BindingContext> elementsCacheFunction =
                                         manager.createSoftlyRetainedMemoizedFunction(new Function1<JetElement, BindingContext>() {
                                             @Override
                                             public BindingContext invoke(JetElement jetElement) {
-                                                return elementAdditionalResolve(jetElement, jetElement, BodyResolveMode.FULL);
+                                                return performElementAdditionalResolve(jetElement, jetElement, BodyResolveMode.FULL);
                                             }
                                         });
 
@@ -74,6 +74,12 @@ public class ResolveElementCache extends ElementResolver {
     @Override
     public BindingContext getElementAdditionalResolve(@NotNull JetElement jetElement) {
         return additionalResolveCache.getValue().invoke(jetElement);
+    }
+
+    @Override
+    public boolean hasElementAdditionalResolveCached(@NotNull JetElement jetElement) {
+        if (!additionalResolveCache.hasUpToDateValue()) return false;
+        return additionalResolveCache.getValue().isComputed(jetElement);
     }
 
     @NotNull

@@ -119,14 +119,15 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
 
         val reference = element.getReference() as? JetReference ?: return listOf()
 
-        val resolveMap = reference.resolveMap()
+        val descriptors = reference.resolveToDescriptors((element as JetElement).analyze()) //TODO: we could use partial body resolve for all references together
         //check whether this reference is unambiguous
-        if (reference !is JetMultiReference<*> && resolveMap.size() > 1) return listOf()
+        if (reference !is JetMultiReference<*> && descriptors.size() > 1) return listOf()
 
         val collectedData = ArrayList<KotlinReferenceData>()
-        for ((descriptor, declarations) in resolveMap) {
-            val declaration = declarations.singleOrNull() ?: continue
-            if (declaration.isInCopiedArea(file, startOffsets, endOffsets)) continue
+        for (descriptor in descriptors) {
+            val declarations = DescriptorToSourceUtilsIde.getAllDeclarations(file.getProject(), descriptor)
+            val declaration = declarations.singleOrNull()
+            if (declaration != null && declaration.isInCopiedArea(file, startOffsets, endOffsets)) continue
 
             if (!descriptor.isExtension) {
                 if (element !is JetNameReferenceExpression) continue
@@ -230,7 +231,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
     private fun createReferenceToRestoreData(element: JetElement, refData: KotlinReferenceData): ReferenceToRestoreData? {
         val reference = element.getReference() as? JetReference ?: return null
         val referencedDescriptors = try {
-            reference.resolveToDescriptors()
+            reference.resolveToDescriptors(element.analyze()) //TODO: we could use partial body resolve for all references together
         }
         catch (e: Throwable) {
             LOG.error("Failed to analyze reference (${element.getText()}) after copy paste", e)

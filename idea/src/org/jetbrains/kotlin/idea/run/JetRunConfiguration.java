@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetDeclaration;
 import org.jetbrains.kotlin.psi.JetNamedFunction;
 import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 
 import java.util.*;
 
@@ -310,7 +311,7 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
         @Nullable
         private JetNamedFunction findMainFun(@NotNull Module module, @NotNull PsiClass psiClass) throws CantRunException {
             for (JetNamedFunction function : getMainFunCandidates(module, psiClass)) {
-                BindingContext bindingContext = ResolvePackage.analyze(function);
+                BindingContext bindingContext = ResolvePackage.analyze(function, BodyResolveMode.FULL);
                 MainFunctionDetector mainFunctionDetector = new MainFunctionDetector(bindingContext);
                 if (mainFunctionDetector.isMain(function)) return function;
             }

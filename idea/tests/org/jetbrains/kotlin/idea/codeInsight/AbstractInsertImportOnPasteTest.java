@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetReferenceExpression;
 import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 
 import java.io.File;
@@ -111,7 +112,7 @@ public abstract class AbstractInsertImportOnPasteTest extends JetLightCodeInsigh
         DebugInfoUtil.markDebugAnnotations(file, bindingContext, new DebugInfoUtil.DebugInfoReporter() {
             @Override
             public void preProcessReference(@NotNull JetReferenceExpression expression) {
-                ResolvePackage.analyze(expression);
+                ResolvePackage.analyze(expression, BodyResolveMode.FULL);
             }
 
             @Override

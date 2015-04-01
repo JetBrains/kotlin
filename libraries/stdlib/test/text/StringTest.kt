@@ -39,6 +39,7 @@ class StringTest {
         assertTrue("some".startsWith(""))
         assertTrue("".startsWith(""))
 
+        assertFalse("abcd".startsWith("aB", ignoreCase = false))
         assertTrue("abcd".startsWith("aB", ignoreCase = true))
     }
 
@@ -46,6 +47,7 @@ class StringTest {
         assertTrue("abcd".endsWith("d"))
         assertTrue("abcd".endsWith("abcd"))
         assertFalse("abcd".endsWith("b"))
+        assertFalse("strö".endsWith("RÖ", ignoreCase = false))
         assertTrue("strö".endsWith("RÖ", ignoreCase = true))
         assertFalse("".endsWith("a"))
         assertTrue("some".endsWith(""))
@@ -55,6 +57,7 @@ class StringTest {
     test fun startsWithChar() {
         assertTrue("abcd".startsWith('a'))
         assertFalse("abcd".startsWith('b'))
+        assertFalse("abcd".startsWith('A', ignoreCase = false))
         assertTrue("abcd".startsWith('A', ignoreCase = true))
         assertFalse("".startsWith('a'))
     }
@@ -62,6 +65,7 @@ class StringTest {
     test fun endsWithChar() {
         assertTrue("abcd".endsWith('d'))
         assertFalse("abcd".endsWith('b'))
+        assertFalse("strö".endsWith('Ö', ignoreCase = false))
         assertTrue("strö".endsWith('Ö', ignoreCase = true))
         assertFalse("".endsWith('a'))
     }

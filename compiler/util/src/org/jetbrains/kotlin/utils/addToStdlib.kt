@@ -54,3 +54,5 @@ public inline fun <reified T> Array<*>.firstIsInstance(): T {
 }
 
 public fun <T> streamOfLazyValues(vararg elements: () -> T): Stream<T> = elements.stream().map { it() }
+
+public fun <T1, T2> Pair<T1, T2>.swap(): Pair<T2, T1> = Pair(second, first)

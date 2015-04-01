@@ -26,28 +26,28 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.PsiShortNamesCache
+import com.intellij.psi.util.PsiModificationTracker
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetPsiUtil
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
-import org.jetbrains.kotlin.psi.psiUtil.*
-import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.actions.JetAddImportAction
 import org.jetbrains.kotlin.idea.caches.JetShortNamesCache
 import org.jetbrains.kotlin.idea.caches.KotlinIndicesHelper
-import org.jetbrains.kotlin.idea.caches.resolve.*
-import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
-import java.util.ArrayList
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
-import org.jetbrains.kotlin.diagnostics.Errors
-import com.intellij.psi.util.PsiModificationTracker
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.completion.isVisible
-import org.jetbrains.kotlin.utils.CachedValueProperty
+import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.idea.util.psiClassToDescriptor.psiClassToDescriptor
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.JetPsiUtil
+import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.psiUtil.isImportDirectiveExpression
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.utils.CachedValueProperty
+import java.util.ArrayList
 
 /**
  * Check possibility and perform fix for unresolved references.
@@ -119,7 +119,7 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
 
         val searchScope = file.getResolveScope()
 
-        val bindingContext = resolutionFacade.analyze(element)
+        val bindingContext = resolutionFacade.analyze(element, BodyResolveMode.PARTIAL)
 
         val diagnostics = bindingContext.getDiagnostics().forElement(element)
         if (!diagnostics.any { it.getFactory() in ERRORS }) return listOf()

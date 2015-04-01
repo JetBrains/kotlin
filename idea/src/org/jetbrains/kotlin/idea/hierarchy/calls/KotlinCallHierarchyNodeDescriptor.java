@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 
 import javax.swing.*;
 import java.awt.*;
@@ -161,7 +162,7 @@ public class KotlinCallHierarchyNodeDescriptor extends HierarchyNodeDescriptor i
             elementText = ((JetFile) element).getName();
         }
         else if (element instanceof JetNamedDeclaration) {
-            BindingContext bindingContext = ResolvePackage.analyze((JetElement) element);
+            BindingContext bindingContext = ResolvePackage.analyze((JetElement) element, BodyResolveMode.FULL);
 
             DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
             if (descriptor == null) return null;

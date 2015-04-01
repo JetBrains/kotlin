@@ -411,6 +411,12 @@ public class LockBasedStorageManager implements StorageManager {
                 lock.unlock();
             }
         }
+
+        @Override
+        public boolean isComputed(K key) {
+            Object value = cache.get(key);
+            return value != null && value != NotValue.COMPUTING;
+        }
     }
 
     private class MapBasedMemoizedFunctionToNotNull<K, V> extends MapBasedMemoizedFunction<K, V> implements MemoizedFunctionToNotNull<K, V> {

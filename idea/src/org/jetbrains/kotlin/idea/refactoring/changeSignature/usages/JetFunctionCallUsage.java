@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.idea.util.psiModificationUtil.PsiModificationUtilPac
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver;
@@ -48,7 +49,7 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
     public JetFunctionCallUsage(@NotNull JetCallElement element, JetFunctionDefinitionUsage callee) {
         super(element);
         this.callee = callee;
-        this.resolvedCall = CallUtilPackage.getResolvedCall(element, ResolvePackage.analyze(element));
+        this.resolvedCall = CallUtilPackage.getResolvedCall(element, ResolvePackage.analyze(element, BodyResolveMode.FULL));
     }
 
     @Override

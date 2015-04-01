@@ -16,31 +16,32 @@
 
 package org.jetbrains.kotlin.idea.debugger
 
-import com.intellij.debugger.engine.SourcePositionProvider
-import com.intellij.debugger.ui.tree.NodeDescriptor
-import com.intellij.openapi.project.Project
-import com.intellij.debugger.impl.DebuggerContextImpl
 import com.intellij.debugger.SourcePosition
-import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.psi.JetClassOrObject
+import com.intellij.debugger.engine.SourcePositionProvider
+import com.intellij.debugger.impl.DebuggerContextImpl
 import com.intellij.debugger.impl.DebuggerContextUtil
-import com.sun.jdi.ReferenceType
-import com.intellij.psi.PsiElement
-import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import com.intellij.psi.JavaPsiFacade
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import com.sun.jdi.AbsentInformationException
-import com.sun.jdi.ClassNotPreparedException
+import com.intellij.debugger.impl.PositionUtil
 import com.intellij.debugger.ui.tree.FieldDescriptor
 import com.intellij.debugger.ui.tree.LocalVariableDescriptor
-import com.intellij.debugger.impl.PositionUtil
-import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.psi.JetPsiFactory
+import com.intellij.debugger.ui.tree.NodeDescriptor
+import com.intellij.openapi.project.Project
+import com.intellij.psi.JavaPsiFacade
+import com.intellij.psi.PsiElement
+import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
+import com.sun.jdi.AbsentInformationException
+import com.sun.jdi.ClassNotPreparedException
+import com.sun.jdi.ReferenceType
+import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.psi.JetClassOrObject
+import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContextUtils
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.resolve.source.getPsi
 
@@ -59,28 +60,18 @@ public class KotlinSourcePositionProvider: SourcePositionProvider() {
         return null
     }
 
-    fun computeSourcePosition(descriptor: LocalVariableDescriptor, project: Project, context: DebuggerContextImpl, nearest: Boolean): SourcePosition? {
-        val place = PositionUtil.getContextElement(context)
-        if (place == null) {
-            return null
-        }
-
-        val contextElement = PsiTreeUtil.getParentOfType(place, javaClass<JetElement>())
-        if (contextElement == null) {
-            return null
-        }
+    private fun computeSourcePosition(descriptor: LocalVariableDescriptor, project: Project, context: DebuggerContextImpl, nearest: Boolean): SourcePosition? {
+        val place = PositionUtil.getContextElement(context) ?: return null
+        val contextElement = PsiTreeUtil.getParentOfType(place, javaClass<JetElement>()) ?: return null
 
         val codeFragment = JetPsiFactory(project).createExpressionCodeFragment(descriptor.getName(), contextElement)
         val expression = codeFragment.getContentElement()
         if (expression is JetSimpleNameExpression) {
-            val bindingContext = expression.analyze()
+            val bindingContext = expression.analyze(BodyResolveMode.PARTIAL)
             val declarationDescriptor = BindingContextUtils.extractVariableDescriptorIfAny(bindingContext, expression, false)
             val sourceElement = declarationDescriptor?.getSource()
             if (sourceElement is KotlinSourceElement) {
-                val element = sourceElement.getPsi()
-                if (element == null) {
-                    return null
-                }
+                val element = sourceElement.getPsi() ?: return null
                 if (nearest) {
                     return DebuggerContextUtil.findNearest(context, element, element.getContainingFile())
                 }
@@ -91,20 +82,16 @@ public class KotlinSourcePositionProvider: SourcePositionProvider() {
         return null
     }
 
-    fun computeSourcePosition(descriptor: FieldDescriptor, project: Project, context: DebuggerContextImpl, nearest: Boolean): SourcePosition? {
+    private fun computeSourcePosition(descriptor: FieldDescriptor, project: Project, context: DebuggerContextImpl, nearest: Boolean): SourcePosition? {
         val fieldName = descriptor.getField().name()
         if (fieldName == AsmUtil.CAPTURED_THIS_FIELD || fieldName == AsmUtil.CAPTURED_RECEIVER_FIELD) {
             return null
         }
 
         val type = descriptor.getField().declaringType()
-        val myClass = findClassByType(project, type, context)?.getNavigationElement()
-        if (myClass !is JetClassOrObject) {
-            return null
-        }
+        val myClass = findClassByType(project, type, context)?.getNavigationElement() as? JetClassOrObject ?: return null
 
-        val field = myClass.getDeclarations().firstOrNull { fieldName == it.getName() }
-        if (field == null) return null
+        val field = myClass.getDeclarations().firstOrNull { fieldName == it.getName() } ?: return null
 
         if (nearest) {
             return DebuggerContextUtil.findNearest(context, field, myClass.getContainingFile())

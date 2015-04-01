@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver;
@@ -183,12 +184,12 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         JetFunction jetFunction = (JetFunction) functionUsageInfo.getDeclaration();
         JetExpression body = jetFunction.getBodyExpression();
         if (body != null) {
-            body.accept(visitor, ResolvePackage.analyze(body));
+            body.accept(visitor, ResolvePackage.analyze(body, BodyResolveMode.FULL));
         }
         for (JetParameter parameter : jetFunction.getValueParameters()) {
             JetExpression defaultValue = parameter.getDefaultValue();
             if (defaultValue != null) {
-                defaultValue.accept(visitor, ResolvePackage.analyze(defaultValue));
+                defaultValue.accept(visitor, ResolvePackage.analyze(defaultValue, BodyResolveMode.FULL));
             }
         }
     }
@@ -287,7 +288,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
             JetExpression argExpression = arguments.get(0).getArgumentExpression();
             if (!(argExpression instanceof JetFunctionLiteralExpression)) continue;
 
-            BindingContext context = ResolvePackage.analyze(callExpression);
+            BindingContext context = ResolvePackage.analyze(callExpression, BodyResolveMode.FULL);
 
             JetFunctionLiteral functionLiteral = ((JetFunctionLiteralExpression) argExpression).getFunctionLiteral();
             FunctionDescriptor functionDescriptor = context.get(BindingContext.FUNCTION, functionLiteral);
@@ -332,7 +333,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         JetChangeInfo changeInfo = (JetChangeInfo) info;
         PsiElement function = info.getMethod();
         PsiElement element = function != null ? function : changeInfo.getContext();
-        BindingContext bindingContext = ResolvePackage.analyze((JetElement) element);
+        BindingContext bindingContext = ResolvePackage.analyze((JetElement) element, BodyResolveMode.FULL);
         FunctionDescriptor oldDescriptor = ChangeSignaturePackage.getOriginalBaseFunctionDescriptor(changeInfo);
         DeclarationDescriptor containingDeclaration = oldDescriptor.getContainingDeclaration();
 
@@ -455,7 +456,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
             JetTypeReference receiverTypeRef = psiFactory.createType(newReceiverInfo.getCurrentTypeText());
             TypeRefHelpersPackage.setReceiverTypeReference(functionWithReceiver, receiverTypeRef);
             //noinspection ConstantConditions
-            BindingContext newContext = ResolvePackage.analyze(functionWithReceiver.getBodyExpression());
+            BindingContext newContext = ResolvePackage.analyze(functionWithReceiver.getBodyExpression(), BodyResolveMode.FULL);
 
             //noinspection ConstantConditions
             int originalOffset = ((JetNamedFunction) callable).getBodyExpression().getTextOffset();

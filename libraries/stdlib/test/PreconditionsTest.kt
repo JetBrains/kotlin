@@ -84,6 +84,21 @@ class PreconditionsTest() {
         }
     }
 
+    test fun requireNotNullWithLazyMessage() {
+        val error = failsWith(javaClass<IllegalArgumentException>()) {
+            val obj: Any? = null
+            requireNotNull(obj) { "Message" }
+        }
+        assertEquals("Message", error.getMessage())
+
+        var lazyCalled: Boolean = false
+        requireNotNull("not null") {
+            lazyCalled = true
+            "Message"
+        }
+        assertFalse(lazyCalled, "Message is not evaluated if the condition is met")
+    }
+
     test fun checkNotNull() {
         val s1: String? = "S1"
         val r1: String = checkNotNull(s1)

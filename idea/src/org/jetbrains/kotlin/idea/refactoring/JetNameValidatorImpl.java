@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.psi.JetElement;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetVisitorVoid;
 import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.resolve.scopes.JetScopeUtils;
 
@@ -73,7 +74,7 @@ public class JetNameValidatorImpl extends JetNameValidator {
     private boolean checkElement(String name, PsiElement sibling, final Set<JetScope> visitedScopes) {
         if (!(sibling instanceof JetElement)) return true;
 
-        final BindingContext context = ResolvePackage.analyze((JetElement) sibling);
+        final BindingContext context = ResolvePackage.analyze((JetElement) sibling, BodyResolveMode.FULL);
         final Name identifier = Name.identifier(name);
 
         final Ref<Boolean> result = new Ref<Boolean>(true);

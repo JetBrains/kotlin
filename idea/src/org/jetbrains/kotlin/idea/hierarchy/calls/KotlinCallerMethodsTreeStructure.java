@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.idea.references.JetReference;
 import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchPackage;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -68,7 +69,7 @@ public class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStructure {
 
         JetElement codeBlockForLocalDeclaration = getEnclosingElementForLocalDeclaration(element);
         if (codeBlockForLocalDeclaration != null) {
-            BindingContext bindingContext = ResolvePackage.analyze((JetElement) element);
+            BindingContext bindingContext = ResolvePackage.analyze((JetElement) element, BodyResolveMode.FULL);
 
             final Map<PsiReference, PsiElement> referencesToElements = new HashMap<PsiReference, PsiElement>();
             codeBlockForLocalDeclaration.accept(new CalleeReferenceVisitorBase(bindingContext, true) {

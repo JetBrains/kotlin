@@ -182,19 +182,15 @@ public class KotlinImportOptimizer() : ImportOptimizer {
                 override fun visitPackageDirective(directive: JetPackageDirective) {
                 }
 
-
-                private fun JetElement.classForCompanionObjectReference(): ClassDescriptor? {
-                    return analyze()[BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, this as? JetReferenceExpression]
-                }
-
                 override fun visitJetElement(element: JetElement) {
                     val reference = element.getReference()
                     if (reference is JetReference) {
                         val referencedName = (element as? JetNameReferenceExpression)?.getReferencedNameAsName() //TODO: other types of references
 
+                        val bindingContext = element.analyze()
                         //class qualifiers that refer to companion objects should be considered (containing) class references
-                        val targets = element.classForCompanionObjectReference()?.let { listOf(it) }
-                                      ?: reference.resolveToDescriptors()
+                        val targets = bindingContext[BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, element as? JetReferenceExpression]?.let { listOf(it) }
+                                      ?: reference.resolveToDescriptors(bindingContext)
                         for (target in targets) {
                             if (!target.canBeReferencedViaImport()) continue
                             if (target is PackageViewDescriptor && target.getFqName().parent() == FqName.ROOT) continue // no need to import top-level packages

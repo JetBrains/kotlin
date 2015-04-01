@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.types.JetType;
 
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
@@ -81,6 +82,6 @@ public class ReconstructTypeInCastOrIsAction extends PsiElementBaseIntentionActi
     }
 
     private static JetType getReconstructedType(JetTypeReference typeRef) {
-        return ResolvePackage.analyze(typeRef).get(BindingContext.TYPE, typeRef);
+        return ResolvePackage.analyze(typeRef, BodyResolveMode.FULL).get(BindingContext.TYPE, typeRef);
     }
 }

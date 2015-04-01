@@ -16,13 +16,14 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
-import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.analyzer.AnalysisResult
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 public fun JetElement.getResolutionFacade(): ResolutionFacade {
     return KotlinCacheService.getInstance(getProject()).getResolutionFacade(listOf(this))
@@ -37,8 +38,8 @@ public fun JetDeclaration.resolveToDescriptor(): DeclarationDescriptor {
 // analyze - see ResolveSessionForBodies, ResolveElementCache
 // analyzeFully - see KotlinResolveCache, KotlinResolveDataProvider
 // In the future these two approaches should be unified
-public fun JetElement.analyze(): BindingContext {
-    return getResolutionFacade().analyze(this)
+public fun JetElement.analyze(bodyResolveMode: BodyResolveMode = BodyResolveMode.FULL): BindingContext {
+    return getResolutionFacade().analyze(this, bodyResolveMode)
 }
 
 public fun JetElement.analyzeAndGetResult(): AnalysisResult {

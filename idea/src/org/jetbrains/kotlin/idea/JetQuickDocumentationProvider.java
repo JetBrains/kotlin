@@ -73,7 +73,7 @@ public class JetQuickDocumentationProvider extends AbstractDocumentationProvider
         if (quickNavigation) {
             JetReferenceExpression referenceExpression = PsiTreeUtil.getParentOfType(originalElement, JetReferenceExpression.class, false);
             if (referenceExpression != null) {
-                BindingContext context = ResolvePackage.analyze(referenceExpression);
+                BindingContext context = ResolvePackage.analyze(referenceExpression, BodyResolveMode.PARTIAL);
                 DeclarationDescriptor declarationDescriptor = context.get(BindingContext.REFERENCE_TARGET, referenceExpression);
                 if (declarationDescriptor != null) {
                     return mixKotlinToJava(declarationDescriptor, element, originalElement);
@@ -88,7 +88,7 @@ public class JetQuickDocumentationProvider extends AbstractDocumentationProvider
     }
 
     private static String renderKotlinDeclaration(JetDeclaration declaration, boolean quickNavigation) {
-        BindingContext context = ResolvePackage.analyze(declaration);
+        BindingContext context = ResolvePackage.analyze(declaration, BodyResolveMode.PARTIAL);
         DeclarationDescriptor declarationDescriptor = context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
 
         if (declarationDescriptor == null) {
@@ -132,7 +132,7 @@ public class JetQuickDocumentationProvider extends AbstractDocumentationProvider
         KotlinCacheService cacheService = KotlinCacheService.getInstance(project);
         ResolveSessionForBodies session = cacheService.getLazyResolveSession(jetElement);
         ResolutionFacade facade = cacheService.getResolutionFacade(Collections.singletonList(jetElement));
-        BindingContext bindingContext = facade.analyze(jetElement, BodyResolveMode.FULL);
+        BindingContext bindingContext = facade.analyze(jetElement, BodyResolveMode.PARTIAL);
         DeclarationDescriptor contextDescriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, context);
         if (contextDescriptor == null) {
             return null;

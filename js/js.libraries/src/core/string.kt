@@ -4,11 +4,20 @@ native public fun String.toUpperCase() : String = noImpl
 
 native public fun String.toLowerCase() : String = noImpl
 
+// TODO: make internal
 native("indexOf")
 public fun String.nativeIndexOf(str : String, fromIndex : Int) : Int = noImpl
 
+// TODO: make internal
 native("lastIndexOf")
 public fun String.nativeLastIndexOf(str : String, fromIndex : Int) : Int = noImpl
+
+// TODO: make internal
+native("startsWith")
+public fun String.nativeStartsWith(s: String, position: Int): Boolean = noImpl
+// TODO: make internal
+native("endsWith")
+public fun String.nativeEndsWith(s: String): Boolean = noImpl
 
 library("splitString")
 public fun String.splitWithRegex(regex: String): Array<String> = noImpl

@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.typeRefHelpers.TypeRefHelpersPackage;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -92,7 +93,7 @@ public class JetFunctionDefinitionUsage<T extends PsiElement> extends JetUsageIn
         if (!(parent instanceof JetFunctionLiteralExpression)) return false;
 
         JetFunctionLiteralExpression expression = (JetFunctionLiteralExpression) parent;
-        return ResolvePackage.analyze(expression).get(BindingContext.EXPECTED_EXPRESSION_TYPE, expression) != null;
+        return ResolvePackage.analyze(expression, BodyResolveMode.PARTIAL).get(BindingContext.EXPECTED_EXPRESSION_TYPE, expression) != null;
     }
 
     @NotNull

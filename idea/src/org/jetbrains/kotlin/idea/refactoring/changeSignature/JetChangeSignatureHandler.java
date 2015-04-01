@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.calls.tasks.TasksPackage;
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 
 import java.util.Collection;
 
@@ -90,7 +91,7 @@ public class JetChangeSignatureHandler implements ChangeSignatureHandler {
             JetElement jetElement = PsiTreeUtil.getParentOfType(element, JetElement.class);
             if (jetElement == null) return null;
 
-            BindingContext bindingContext = ResolvePackage.analyze(jetElement);
+            BindingContext bindingContext = ResolvePackage.analyze(jetElement, BodyResolveMode.FULL);
             DeclarationDescriptor descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, (JetReferenceExpression) receiverExpr);
 
             if (descriptor instanceof ClassDescriptor || descriptor instanceof FunctionDescriptor) return receiverExpr;
@@ -105,7 +106,7 @@ public class JetChangeSignatureHandler implements ChangeSignatureHandler {
             @NotNull Project project,
             @Nullable Editor editor
     ) {
-        BindingContext bindingContext = ResolvePackage.analyze(element);
+        BindingContext bindingContext = ResolvePackage.analyze(element, BodyResolveMode.FULL);
         
         FunctionDescriptor functionDescriptor = findDescriptor(element, project, editor, bindingContext);
         if (functionDescriptor == null) {
