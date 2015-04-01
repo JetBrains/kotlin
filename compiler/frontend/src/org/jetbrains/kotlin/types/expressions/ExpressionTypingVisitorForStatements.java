@@ -269,7 +269,8 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         JetType binaryOperationType;
         TemporaryTraceAndCache temporaryForBinaryOperation = TemporaryTraceAndCache.create(
                 context, "trace to check binary operation like '+' for", expression);
-        boolean lhsAssignable = BasicExpressionTypingVisitor.checkLValue(TemporaryBindingTrace.create(context.trace, "Trace for checking assignability"), left);
+        TemporaryBindingTrace ignoreReportsTrace = TemporaryBindingTrace.create(context.trace, "Trace for checking assignability");
+        boolean lhsAssignable = basic.checkLValue(ignoreReportsTrace, context, left, right);
         if (assignmentOperationType == null || lhsAssignable) {
             // Check for '+'
             Name counterpartName = OperatorConventions.BINARY_OPERATION_NAMES.get(OperatorConventions.ASSIGNMENT_OPERATION_COUNTERPARTS.get(operationType));
@@ -314,7 +315,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             }
             dataFlowInfo = facade.getTypeInfo(right, context.replaceDataFlowInfo(dataFlowInfo)).getDataFlowInfo();
             DataFlowUtils.checkType(binaryOperationType, expression, context.replaceExpectedType(leftType).replaceDataFlowInfo(dataFlowInfo));
-            BasicExpressionTypingVisitor.checkLValue(context.trace, leftOperand);
+            basic.checkLValue(context.trace, context, leftOperand, right);
         }
         temporary.commit();
         return JetTypeInfo.create(checkAssignmentType(type, expression, contextWithExpectedType), dataFlowInfo);
@@ -331,7 +332,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             JetArrayAccessExpression arrayAccessExpression = (JetArrayAccessExpression) left;
             if (right == null) return JetTypeInfo.create(null, context.dataFlowInfo);
             JetTypeInfo typeInfo = basic.resolveArrayAccessSetMethod(arrayAccessExpression, right, context, context.trace);
-            BasicExpressionTypingVisitor.checkLValue(context.trace, arrayAccessExpression);
+            basic.checkLValue(context.trace, context, arrayAccessExpression, right);
             return JetTypeInfo.create(checkAssignmentType(typeInfo.getType(), expression, contextWithExpectedType),
                                       typeInfo.getDataFlowInfo());
         }
@@ -349,7 +350,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             }
         }
         if (leftType != null && leftOperand != null) { //if leftType == null, some other error has been generated
-            BasicExpressionTypingVisitor.checkLValue(context.trace, leftOperand);
+            basic.checkLValue(context.trace, context, leftOperand, right);
         }
         return DataFlowUtils.checkStatementType(expression, contextWithExpectedType, dataFlowInfo);
     }
