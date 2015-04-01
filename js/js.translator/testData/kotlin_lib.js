@@ -17,6 +17,29 @@
 (function (Kotlin) {
     "use strict";
 
+    // Shims for String
+    if (typeof String.prototype.startsWith === "undefined") {
+        String.prototype.startsWith = function(searchString, position) {
+            position = position || 0;
+            return this.lastIndexOf(searchString, position) === position;
+        };
+    }
+    if (typeof String.prototype.endsWith === "undefined") {
+        String.prototype.endsWith = function(searchString, position) {
+            var subjectString = this.toString();
+            if (position === undefined || position > subjectString.length) {
+                position = subjectString.length;
+            }
+            position -= searchString.length;
+            var lastIndex = subjectString.indexOf(searchString, position);
+            return lastIndex !== -1 && lastIndex === position;
+        };
+    }
+
+    String.prototype.contains = function (s) {
+        return this.indexOf(s) !== -1;
+    };
+
     // Kotlin stdlib
 
     Kotlin.equals = function (obj1, obj2) {
