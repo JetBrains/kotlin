@@ -32,6 +32,7 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @InnerTestClasses({
         LineMarkersTestGenerated.OverrideImplement.class,
+        LineMarkersTestGenerated.RecursiveCall.class,
 })
 @RunWith(JUnit3RunnerWithInners.class)
 public class LineMarkersTestGenerated extends AbstractLineMarkersTest {
@@ -176,6 +177,93 @@ public class LineMarkersTestGenerated extends AbstractLineMarkersTest {
         @TestMetadata("Trait.kt")
         public void testTrait() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/overrideImplement/Trait.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/codeInsight/lineMarker/recursiveCall")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RecursiveCall extends AbstractLineMarkersTest {
+        public void testAllFilesPresentInRecursiveCall() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/lineMarker/recursiveCall"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("conventionCall.kt")
+        public void testConventionCall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/recursiveCall/conventionCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("extension.kt")
+        public void testExtension() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/recursiveCall/extension.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("generic.kt")
+        public void testGeneric() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/recursiveCall/generic.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inInlinedLambda.kt")
+        public void testInInlinedLambda() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/recursiveCall/inInlinedLambda.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inLambda.kt")
+        public void testInLambda() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/recursiveCall/inLambda.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("localClass.kt")
+        public void testLocalClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/recursiveCall/localClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("methodReference.kt")
+        public void testMethodReference() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/recursiveCall/methodReference.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nested.kt")
+        public void testNested() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/recursiveCall/nested.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("otherQualifier.kt")
+        public void testOtherQualifier() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/recursiveCall/otherQualifier.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("severalCallsInOneLine.kt")
+        public void testSeveralCallsInOneLine() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/recursiveCall/severalCallsInOneLine.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/recursiveCall/simple.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("superQualifier.kt")
+        public void testSuperQualifier() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/recursiveCall/superQualifier.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("thisQualifier.kt")
+        public void testThisQualifier() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/recursiveCall/thisQualifier.kt");
             doTest(fileName);
         }
     }
