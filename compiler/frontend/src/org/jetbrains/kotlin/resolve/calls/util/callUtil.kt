@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.resolve.BindingContext.RESOLVED_CALL
 import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.kotlin.psi.psiUtil.getTextWithLocation
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 
 // resolved call
@@ -177,4 +178,14 @@ public fun JetExpression.getFunctionResolvedCallWithAssert(context: BindingConte
     }
     [suppress("UNCHECKED_CAST")]
     return resolvedCall as ResolvedCall<out FunctionDescriptor>
+}
+
+public fun JetFunctionLiteral.isInlined(bindingContext: BindingContext): Boolean {
+    val parent = this.getParent()
+    assert(parent is JetFunctionLiteralExpression) { "parent of JetFunctionLiteral is " + parent }
+    val resolvedCall = (parent as JetFunctionLiteralExpression).getParentResolvedCall(bindingContext, true)
+    if (resolvedCall == null) return false
+
+    val callable = resolvedCall.getResultingDescriptor()
+    return callable is SimpleFunctionDescriptor && callable.getInlineStrategy().isInline()
 }
