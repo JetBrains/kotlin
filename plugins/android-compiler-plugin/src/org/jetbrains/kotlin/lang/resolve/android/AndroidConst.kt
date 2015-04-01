@@ -49,7 +49,7 @@ public fun idToName(id: String): String? {
             if (isResourceIdDeclaration(id)) id.replace(AndroidConst.ID_DECLARATION_PREFIX, "")
             else if (isResourceIdUsage(id)) id.replace(AndroidConst.ID_USAGE_PREFIX, "")
             else null
-    return if (unescaped != null) escapeWidgetId(unescaped) else null
+    return if (unescaped != null) escapeAndroidIdentifier(unescaped) else null
 }
 
 public fun isResourceIdDeclaration(str: String?): Boolean = str?.startsWith(AndroidConst.ID_DECLARATION_PREFIX) ?: false
@@ -67,6 +67,6 @@ public fun getRealWidgetType(xmlType: String): String = when (xmlType) {
     else -> xmlType
 }
 
-public fun escapeWidgetId(id: String): String {
+fun escapeAndroidIdentifier(id: String): String {
     return if (id in AndroidConst.ESCAPED_IDENTIFIERS) "`$id`" else id
 }

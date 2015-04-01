@@ -42,6 +42,12 @@ public class AndroidXml2KConversionTestGenerated extends AbstractAndroidXml2KCon
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/android-compiler-plugin/testData/android/converter/simple"), Pattern.compile("^([^\\.]+)$"), false);
         }
 
+        @TestMetadata("escapedLayoutName")
+        public void testEscapedLayoutName() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/android/converter/simple/escapedLayoutName/");
+            doTest(fileName);
+        }
+
         @TestMetadata("fqNameInAttr")
         public void testFqNameInAttr() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/android/converter/simple/fqNameInAttr/");

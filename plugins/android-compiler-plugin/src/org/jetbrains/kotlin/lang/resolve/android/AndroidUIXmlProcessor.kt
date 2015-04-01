@@ -136,7 +136,7 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
     }
 
     private fun PsiFile.genSyntheticPackageName(): String {
-        return AndroidConst.SYNTHETIC_PACKAGE + "." + getName().substringBefore('.')
+        return AndroidConst.SYNTHETIC_PACKAGE + "." + escapeAndroidIdentifier(getName().substringBefore('.'))
     }
 
     private fun KotlinStringWriter.writeSyntheticProperty(receiver: String, widget: AndroidWidget, stubCall: String) {
