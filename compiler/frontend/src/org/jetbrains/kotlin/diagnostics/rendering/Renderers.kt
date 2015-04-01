@@ -49,7 +49,7 @@ public object Renderers {
     private val LOG = Logger.getInstance(javaClass<Renderers>())
 
     public val TO_STRING: Renderer<Any> = Renderer {
-        (element) ->
+        element ->
         if (element is DeclarationDescriptor) {
             LOG.warn("Diagnostic renderer TO_STRING was used to render an instance of DeclarationDescriptor.\n"
                      + "This is usually a bad idea, because descriptors' toString() includes some debug information, "
@@ -67,7 +67,7 @@ public object Renderers {
     public val DECLARATION_NAME: Renderer<JetNamedDeclaration> = Renderer { it.getNameAsSafeName().asString() }
 
     public val RENDER_CLASS_OR_OBJECT: Renderer<JetClassOrObject> = Renderer {
-        (classOrObject: JetClassOrObject) ->
+        classOrObject: JetClassOrObject ->
         val name = if (classOrObject.getName() != null) " '" + classOrObject.getName() + "'" else ""
         if (classOrObject is JetClass) "Class" + name else "Object" + name
     }
@@ -77,7 +77,7 @@ public object Renderers {
     public val RENDER_TYPE: Renderer<JetType> = Renderer { DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(it) }
 
     public val RENDER_POSITION_VARIANCE: Renderer<Variance> = Renderer {
-        (variance: Variance) ->
+        variance: Variance ->
         when (variance) {
             Variance.INVARIANT -> "invariant"
             Variance.IN_VARIANCE -> "in"
@@ -86,7 +86,7 @@ public object Renderers {
     }
 
     public val AMBIGUOUS_CALLS: Renderer<Collection<ResolvedCall<*>>> = Renderer {
-        (argument: Collection<ResolvedCall<*>>) ->
+        argument: Collection<ResolvedCall<*>> ->
         val stringBuilder = StringBuilder("\n")
         for (call in argument) {
             stringBuilder.append(DescriptorRenderer.FQ_NAMES_IN_TYPES.render(call.getResultingDescriptor())).append("\n")
@@ -356,7 +356,7 @@ public object Renderers {
     public val RENDER_CONSTRAINT_SYSTEM: Renderer<ConstraintSystem> = Renderer { renderConstraintSystem(it) }
 
     private fun renderTypeBounds(typeBounds: TypeBounds): String {
-        val renderBound = { (bound: Bound) ->
+        val renderBound = { bound: Bound ->
             val arrow = if (bound.kind == LOWER_BOUND) ">: " else if (bound.kind == UPPER_BOUND) "<: " else ":= "
             arrow + RENDER_TYPE.render(bound.constrainingType) + '(' + bound.position + ')'
         }

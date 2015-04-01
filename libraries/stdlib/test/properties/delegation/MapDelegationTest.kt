@@ -115,8 +115,8 @@ class TestMapPropertyString(): WithBox {
 class TestMapValWithDefault(): WithBox {
     val map = hashMapOf<String, String>()
     val a: String by Delegates.mapVal(map, default = { ref, desc -> "aDefault" })
-    val b: String by FixedMapVal(map, default = { (ref: TestMapValWithDefault, desc: String) -> "bDefault" }, key = {"b"})
-    val c: String by FixedMapVal(map, default = { (ref: TestMapValWithDefault, desc: String) -> "cDefault" }, key = { desc -> desc.name })
+    val b: String by FixedMapVal(map, default = { ref: TestMapValWithDefault, desc: String -> "bDefault" }, key = {"b"})
+    val c: String by FixedMapVal(map, default = { ref: TestMapValWithDefault, desc: String -> "cDefault" }, key = { desc -> desc.name })
 
     override fun box(): String {
         if (a != "aDefault") return "fail at 'a'"
@@ -129,8 +129,8 @@ class TestMapValWithDefault(): WithBox {
 class TestMapVarWithDefault(): WithBox {
     val map = hashMapOf<String, Any?>()
     var a: String by Delegates.mapVar(map, default = {ref, desc -> "aDefault" })
-    var b: String by FixedMapVar(map, default = {(ref: Any?, desc: String) -> "bDefault" }, key = {"b"})
-    var c: String by FixedMapVar(map, default = {(ref: Any?, desc: String) -> "cDefault" }, key = { desc -> desc.name })
+    var b: String by FixedMapVar(map, default = {ref: Any?, desc: String -> "bDefault" }, key = {"b"})
+    var c: String by FixedMapVar(map, default = {ref: Any?, desc: String -> "cDefault" }, key = { desc -> desc.name })
 
     override fun box(): String {
         if (a != "aDefault") return "fail at 'a'"

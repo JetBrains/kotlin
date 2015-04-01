@@ -84,7 +84,7 @@ public class SequenceTest {
     }
 
     test fun foldReducesTheFirstNElements() {
-        val sum = {(a: Int, b: Int) -> a + b }
+        val sum = { a: Int, b: Int -> a + b }
         assertEquals(listOf(13, 21, 34, 55, 89).fold(0, sum), fibonacci().filter { it > 10 }.take(5).fold(0, sum))
     }
 
@@ -93,7 +93,7 @@ public class SequenceTest {
     }
 
     test fun mapAndTakeWhileExtractTheTransformedElements() {
-        assertEquals(listOf(0, 3, 3, 6, 9, 15), fibonacci().map { it * 3 }.takeWhile {(i: Int) -> i < 20 }.toList())
+        assertEquals(listOf(0, 3, 3, 6, 9, 15), fibonacci().map { it * 3 }.takeWhile { i: Int -> i < 20 }.toList())
     }
 
     test fun joinConcatenatesTheFirstNElementsAboveAThreshold() {

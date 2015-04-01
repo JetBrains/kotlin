@@ -40,7 +40,7 @@ class ModuleTypeCacheManager private (project: Project) {
 
     private val cachedValue = CachedValuesManager.getManager(project).createParameterizedCachedValue(
             {
-                (module: Module?) ->
+                module: Module? ->
                 val moduleType = if (module != null) computeType(module) else null
                 CachedValueProvider.Result.create<ModuleType>(moduleType, vfsModificationTracker)
             }, false)

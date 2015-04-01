@@ -69,7 +69,6 @@ private fun defineClasses(
 
 private object FunctionImplBytes {
     val bytes: ByteArray by Delegates.lazy {
-        (): ByteArray ->
         val inputStream = this.javaClass.getClassLoader().getResourceAsStream("kotlin/jvm/internal/FunctionImpl.class")
         if (inputStream != null) {
             try {

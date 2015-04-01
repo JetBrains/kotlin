@@ -81,7 +81,7 @@ private class ExplicitTypeBinding(
             jetType.isError() || !sizeIsEqual
         }
 
-        return psiTypeArguments.indices.map { (index: Int): TypeArgumentBinding<JetTypeElement>? ->
+        return psiTypeArguments.indices.map { index: Int ->
             // todo fix for List<*>
             val jetTypeReference = psiTypeArguments[index]
             val jetTypeElement = jetTypeReference?.getTypeElement()

@@ -76,14 +76,14 @@ public class ExtractKotlinFunctionHandler(
                 EXTRACT_FUNCTION,
                 editor,
                 file,
-                {(elements, parent) -> parent.getExtractionContainers(elements.size() == 1, allContainersEnabled) },
+                { elements, parent -> parent.getExtractionContainers(elements.size() == 1, allContainersEnabled) },
                 continuation
         )
     }
 
     override fun invoke(project: Project, editor: Editor, file: PsiFile, dataContext: DataContext?) {
         if (file !is JetFile) return
-        selectElements(editor, file) { (elements, targetSibling) -> doInvoke(editor, file, elements, targetSibling) }
+        selectElements(editor, file) { elements, targetSibling -> doInvoke(editor, file, elements, targetSibling) }
     }
 
     override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext?) {

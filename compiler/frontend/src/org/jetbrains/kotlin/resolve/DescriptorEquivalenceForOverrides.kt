@@ -72,7 +72,7 @@ object DescriptorEquivalenceForOverrides {
         if (!ownersEquivalent(a, b, {x, y -> false})) return false
 
         val overridingUtil = OverridingUtil.createWithEqualityAxioms @eq {
-            (c1, c2): Boolean ->
+            c1, c2 ->
             if (c1 == c2) return@eq true
 
             val d1 = c1.getDeclarationDescriptor()

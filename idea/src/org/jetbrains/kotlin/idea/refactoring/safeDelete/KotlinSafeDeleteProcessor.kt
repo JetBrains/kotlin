@@ -112,7 +112,7 @@ public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
                 elements
                         .map { element -> findUsagesByJavaProcessor(element, true)?.getInsideDeletedCondition() }
                         .filterNotNull()
-                        .fold(insideDeleted) {(condition1, condition2) -> Conditions.or(condition1, condition2) }
+                        .fold(insideDeleted) { condition1, condition2 -> Conditions.or(condition1, condition2) }
 
         fun findUsagesByJavaProcessor(jetDeclaration: JetDeclaration): NonCodeUsageSearchInfo {
             return NonCodeUsageSearchInfo(

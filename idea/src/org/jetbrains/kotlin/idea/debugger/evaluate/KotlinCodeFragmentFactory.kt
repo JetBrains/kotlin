@@ -47,7 +47,7 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
         }
 
         codeFragment.putCopyableUserData(JetCodeFragment.RUNTIME_TYPE_EVALUATOR, {
-            (expression: JetExpression): JetType? ->
+            expression: JetExpression ->
 
             val debuggerContext = DebuggerManagerEx.getInstanceEx(project).getContext()
             val debuggerSession = debuggerContext.getDebuggerSession()

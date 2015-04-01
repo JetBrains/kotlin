@@ -39,12 +39,12 @@ abstract class DescriptorBasedProperty(computeDescriptor: () -> PropertyDescript
     protected val descriptor: PropertyDescriptor by ReflectProperties.lazySoft(computeDescriptor)
 
     // null if this is a property declared in a foreign (Java) class
-    private val protoData: PropertyProtoData? by ReflectProperties.lazyWeak @p {(): PropertyProtoData? ->
+    private val protoData: PropertyProtoData? by ReflectProperties.lazyWeak {
         val property = DescriptorUtils.unwrapFakeOverride(descriptor) as? DeserializedPropertyDescriptor
         if (property != null) {
             val proto = property.proto
             if (proto.hasExtension(JvmProtoBuf.propertySignature)) {
-                return@p PropertyProtoData(proto, property.nameResolver, proto.getExtension(JvmProtoBuf.propertySignature))
+                return@lazyWeak PropertyProtoData(proto, property.nameResolver, proto.getExtension(JvmProtoBuf.propertySignature))
             }
         }
         null

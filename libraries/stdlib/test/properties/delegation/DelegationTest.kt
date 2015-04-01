@@ -72,7 +72,7 @@ class TestObservablePropertyInChangeSupport: WithBox, ChangeSupport() {
 class TestObservableProperty: WithBox {
     var result = false
 
-    var b by Delegates.observable(1, {(pd, o, n) -> result = true})
+    var b by Delegates.observable(1, { pd, o, n -> result = true})
 
     override fun box(): String {
         b = 4
@@ -86,7 +86,7 @@ class A(val p: Boolean)
 
 class TestVetoableProperty: WithBox {
     var result = false
-    var b by Delegates.vetoable(A(true), {(pd, o, n) -> result = n.p == true; result})
+    var b by Delegates.vetoable(A(true), { pd, o, n -> result = n.p == true; result})
 
     override fun box(): String {
         val firstValue = A(true)

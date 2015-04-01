@@ -110,7 +110,7 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
     }
 
     protected fun SuspendContextImpl.printContext() {
-        runReadAction {(): Unit ->
+        runReadAction {
             if (this.getFrameProxy() == null) {
                 return@runReadAction println("Context thread is null", ProcessOutputTypes.SYSTEM)
             }

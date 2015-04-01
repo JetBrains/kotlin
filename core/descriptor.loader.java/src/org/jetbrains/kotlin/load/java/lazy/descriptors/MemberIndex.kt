@@ -40,7 +40,7 @@ object EMPTY_MEMBER_INDEX : MemberIndex {
 
 open class ClassMemberIndex(val jClass: JavaClass, val memberFilter: (JavaMember) -> Boolean) : MemberIndex {
     private val methodFilter = {
-        (m: JavaMethod) ->
+        m: JavaMethod ->
         memberFilter(m) && !DescriptorResolverUtils.isObjectMethodInInterface(m)
     }
 

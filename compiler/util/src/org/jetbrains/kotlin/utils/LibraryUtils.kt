@@ -119,11 +119,11 @@ public object LibraryUtils {
         for (lib in libs) {
             when {
                 lib.isDirectory() ->
-                    traverseDirectory(lib) { (file, path) ->
+                    traverseDirectory(lib) { file, path ->
                         files.add(FileUtil.loadFile(file))
                     }
                 FileUtil.isJarOrZip(lib) ->
-                    traverseArchive(lib) { (content, path) ->
+                    traverseArchive(lib) { content, path ->
                         files.add(content)
                     }
                 lib.getName().endsWith(KotlinJavascriptMetadataUtils.JS_EXT) ->

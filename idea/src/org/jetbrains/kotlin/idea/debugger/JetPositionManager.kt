@@ -214,7 +214,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
         var value: CachedValue<JetTypeMapper>? = myTypeMappers.get(key)
         if (value == null) {
             value = CachedValuesManager.getManager(file.getProject()).createCachedValue<JetTypeMapper>(
-                    {() ->
+                    {
                         val typeMapper = createTypeMapper(file)
                         CachedValueProvider.Result<JetTypeMapper>(typeMapper, PsiModificationTracker.MODIFICATION_COUNT)
                     }, false)
@@ -268,7 +268,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
     TestOnly
     public fun addTypeMapper(file: JetFile, typeMapper: JetTypeMapper) {
         val value = CachedValuesManager.getManager(file.getProject()).createCachedValue<JetTypeMapper>(
-                { () -> CachedValueProvider.Result<JetTypeMapper>(typeMapper, PsiModificationTracker.MODIFICATION_COUNT) }, false)
+                { CachedValueProvider.Result<JetTypeMapper>(typeMapper, PsiModificationTracker.MODIFICATION_COUNT) }, false)
         val key = createKeyForTypeMapper(file)
         myTypeMappers.put(key, value)
     }

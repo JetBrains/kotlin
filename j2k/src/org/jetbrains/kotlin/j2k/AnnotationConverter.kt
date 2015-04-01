@@ -130,7 +130,7 @@ class AnnotationConverter(private val converter: Converter) {
                     return componentsConverted
                 }
                 else {
-                    val expressionGenerator = { (codeConverter: CodeConverter) ->
+                    val expressionGenerator = { codeConverter: CodeConverter ->
                         val expectedTypeConverted = converter.typeConverter.convertType(expectedType)
                         if (expectedTypeConverted is ArrayType) {
                             val array = createArrayInitializerExpression(expectedTypeConverted, componentsConverted.map { it(codeConverter) }, needExplicitType = false)

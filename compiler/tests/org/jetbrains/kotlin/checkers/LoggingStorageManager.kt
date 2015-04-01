@@ -79,7 +79,7 @@ public class LoggingStorageManager(
         }
         val containingField = if (outerInstance == null) null
                               else outerClass?.getAllDeclaredFields()?.firstOrNull {
-                                  (field): Boolean ->
+                                  field ->
                                   field.setAccessible(true)
                                   val value = field.get(outerInstance)
                                   if (value == null) return@firstOrNull false

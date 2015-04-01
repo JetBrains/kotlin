@@ -36,7 +36,7 @@ class SerializableTest() : TestCase() {
 
     fun testComplexClosure() {
         val y = 12
-        val fn1 = {(x: Int) -> (x + y).toString() }
+        val fn1 = { x: Int -> (x + y).toString() }
         val fn2: Int.(Int) -> String = { fn1(this + it) }
 
         val byteOutputStream = ByteArrayOutputStream()

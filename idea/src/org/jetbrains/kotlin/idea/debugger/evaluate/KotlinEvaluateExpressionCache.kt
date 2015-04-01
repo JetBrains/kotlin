@@ -53,8 +53,7 @@ class KotlinEvaluateExpressionCache(val project: Project) {
         ): CompiledDataDescriptor {
             val evaluateExpressionCache = getInstance(codeFragment.getProject())
 
-            return synchronized(evaluateExpressionCache.cachedCompiledData) {
-                (): CompiledDataDescriptor ->
+            return synchronized<CompiledDataDescriptor>(evaluateExpressionCache.cachedCompiledData) {
                 val cache = evaluateExpressionCache.cachedCompiledData.getValue()!!
                 val text = "${codeFragment.importsToString()}\n${codeFragment.getText()}"
 
@@ -73,7 +72,7 @@ class KotlinEvaluateExpressionCache(val project: Project) {
     }
 
     private fun canBeEvaluatedInThisContext(compiledData: CompiledDataDescriptor, context: EvaluationContextImpl): Boolean {
-        return compiledData.parameters.all { (p): Boolean ->
+        return compiledData.parameters.all { p ->
             val (name, jetType) = p
             val value = context.findLocalVariable(name, asmType = null, checkType = false, failIfNotFound = false)
             if (value == null) return@all false

@@ -76,7 +76,7 @@ public object Delegates {
      * @param onChange the callback which is called when the property value is changed.
      */
     public fun observable<T>(initial: T, onChange: (desc: PropertyMetadata, oldValue: T, newValue: T) -> Unit): ReadWriteProperty<Any?, T> {
-        return ObservableProperty<T>(initial) { (desc, old, new) ->
+        return ObservableProperty<T>(initial) { desc, old, new ->
             onChange(desc, old, new)
             true
         }
@@ -257,7 +257,7 @@ public abstract class MapVar<T, K, V>() : MapVal<T, K, V>(), ReadWriteProperty<T
 }
 
 private val defaultKeyProvider:(PropertyMetadata) -> String = {it.name}
-private val defaultValueProvider:(Any?, Any?) -> Nothing = {(thisRef, key) -> throw KeyMissingException("$key is missing from $thisRef")}
+private val defaultValueProvider:(Any?, Any?) -> Nothing = {thisRef, key -> throw KeyMissingException("$key is missing from $thisRef")}
 
 /**
  * Implements a read-only property delegate that stores the property values in a given map instance and uses the given

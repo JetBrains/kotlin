@@ -390,7 +390,7 @@ public fun <T> Iterator<T>.reverse() : List<T> {
 deprecated("Replace Iterator<T> with Sequence<T> by using sequence() function instead of iterator()")
 public inline fun <T, R: Comparable<R>> Iterator<T>.sortBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) f: (T) -> R) : List<T> {
     val sortedList = toCollection(ArrayList<T>())
-    val sortBy: Comparator<T> = comparator<T> {(x: T, y: T) ->
+    val sortBy: Comparator<T> = comparator<T> {x: T, y: T ->
         val xr = f(x)
         val yr = f(y)
         xr.compareTo(yr)

@@ -219,7 +219,7 @@ fun generators(): List<GenericFunction> {
         returns("List<Pair<T, R>>")
         body {
             """
-            return merge(other) { (t1, t2) -> t1 to t2 }
+            return merge(other) { t1, t2 -> t1 to t2 }
             """
         }
     }
@@ -256,7 +256,7 @@ fun generators(): List<GenericFunction> {
         returns("List<Pair<T, R>>")
         body {
             """
-            return merge(array) { (t1, t2) -> t1 to t2 }
+            return merge(array) { t1, t2 -> t1 to t2 }
             """
         }
     }
@@ -273,7 +273,7 @@ fun generators(): List<GenericFunction> {
         returns("Sequence<Pair<T, R>>")
         body {
             """
-            return MergingSequence(this, sequence) { (t1, t2) -> t1 to t2 }
+            return MergingSequence(this, sequence) { t1, t2 -> t1 to t2 }
             """
         }
     }

@@ -158,7 +158,7 @@ class TypeInstantiationItems(
             itemText = "object: " + itemText + "{...}"
             lookupString = "object"
             allLookupStrings = setOf(lookupString, lookupElement.getLookupString())
-            insertHandler = InsertHandler<LookupElement> {(context, item) ->
+            insertHandler = InsertHandler<LookupElement> { context, item ->
                 val editor = context.getEditor()
                 val startOffset = context.getStartOffset()
                 val text = "object: $typeText$constructorParenthesis {}"

@@ -18,7 +18,7 @@ class IteratorsTest {
     }
 
     test fun foldReducesTheFirstNElements() {
-        val sum = { (a: Int, b: Int) -> a + b }
+        val sum = { a: Int, b: Int -> a + b }
         assertEquals(arrayListOf(13, 21, 34, 55, 89).fold(0, sum), fibonacci().filter { it > 10 }.take(5).fold(0, sum))
     }
 
@@ -27,11 +27,11 @@ class IteratorsTest {
     }
 
     test fun mapAndTakeWhileExtractTheTransformedElements() {
-        assertEquals(arrayListOf(0, 3, 3, 6, 9, 15), fibonacci().map { it * 3 }.takeWhile { (i: Int) -> i < 20 }.toList())
+        assertEquals(arrayListOf(0, 3, 3, 6, 9, 15), fibonacci().map { it * 3 }.takeWhile { i: Int -> i < 20 }.toList())
     }
 
     test fun mapIndexed() {
-        assertEquals(arrayListOf(0, 1, 2, 6, 12), fibonacci().mapIndexed { index, value -> index * value }.takeWhile {(i: Int) -> i < 20 }.toList())
+        assertEquals(arrayListOf(0, 1, 2, 6, 12), fibonacci().mapIndexed { index, value -> index * value }.takeWhile { i: Int -> i < 20 }.toList())
     }
 
     test fun joinConcatenatesTheFirstNElementsAboveAThreshold() {

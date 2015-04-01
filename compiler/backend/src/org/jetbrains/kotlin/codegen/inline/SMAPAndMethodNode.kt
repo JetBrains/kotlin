@@ -31,7 +31,7 @@ class SMAPAndMethodNode(val node: MethodNode, val classSMAP: SMAP) {
     val lineNumbers =
         InsnStream(node.instructions.getFirst(), null).stream().filterIsInstance<LineNumberNode>().map {
             val index = Collections.binarySearch(classSMAP.intervals, RangeMapping(it.line, it.line, 1)) {
-                (value, key) ->
+                value, key ->
                 if (value.contains(key.dest)) 0 else RangeMapping.Comparator.compare(value, key)
             }
             if (index < 0)

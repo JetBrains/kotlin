@@ -8,7 +8,7 @@ class IteratorsJVMTest {
 
 
     test fun flatMapAndTakeExtractTheTransformedElements() {
-        fun intToBinaryDigits() = { (i: Int) ->
+        fun intToBinaryDigits() = { i: Int ->
             val binary = Integer.toBinaryString(i)!!
             var index = 0
             sequence<Char> { if (index < binary.length()) binary.get(index++) else null }

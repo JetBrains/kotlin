@@ -368,13 +368,13 @@ public fun JetExpression.isFunctionLiteralOutsideParentheses(): Boolean {
 }
 
 public fun PsiElement.siblings(forward: Boolean = true, withItself: Boolean = true): Stream<PsiElement> {
-    val stepFun = if (forward) { (e: PsiElement) -> e.getNextSibling() } else { (e: PsiElement) -> e.getPrevSibling() }
+    val stepFun = if (forward) { e: PsiElement -> e.getNextSibling() } else { e: PsiElement -> e.getPrevSibling() }
     val stream = stream(this, stepFun)
     return if (withItself) stream else stream.drop(1)
 }
 
 public fun ASTNode.siblings(forward: Boolean = true, withItself: Boolean = true): Stream<ASTNode> {
-    val stepFun = if (forward) { (node: ASTNode) -> node.getTreeNext() } else { (e: ASTNode) -> e.getTreeNext() }
+    val stepFun = if (forward) { node: ASTNode -> node.getTreeNext() } else { e: ASTNode -> e.getTreeNext() }
     val stream = stream(this, stepFun)
     return if (withItself) stream else stream.drop(1)
 }

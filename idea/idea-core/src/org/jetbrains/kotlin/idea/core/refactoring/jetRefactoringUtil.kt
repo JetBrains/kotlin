@@ -499,7 +499,7 @@ public fun createJavaMethod(template: PsiMethod, targetClass: PsiClass): PsiMeth
 
     copyModifierListItems(template.getModifierList(), method.getModifierList())
 
-    copyTypeParameters(template, method) { (method, typeParameterList) ->
+    copyTypeParameters(template, method) { method, typeParameterList ->
         method.addAfter(typeParameterList, method.getModifierList())
     }
 
@@ -566,7 +566,7 @@ fun createJavaClass(klass: JetClass, targetClass: PsiClass): PsiMember {
         javaClass.getModifierList().setModifierProperty(PsiModifier.ABSTRACT, false)
     }
 
-    copyTypeParameters(template, javaClass) { (klass, typeParameterList) ->
+    copyTypeParameters(template, javaClass) { klass, typeParameterList ->
         klass.addAfter(typeParameterList, klass.getNameIdentifier())
     }
 

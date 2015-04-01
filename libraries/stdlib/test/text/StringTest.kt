@@ -285,7 +285,7 @@ class StringTest {
         )
 
         val trimChars = charArray('-','=')
-        val trimPredicate = { (it: Char) -> it < '0' || it > '9' } // TODO: Use !it.isDigit when available in JS
+        val trimPredicate = { it: Char -> it < '0' || it > '9' } // TODO: Use !it.isDigit when available in JS
         for (example in examplesForPredicate) {
             assertEquals(example.trimStart(*trimChars).trimEnd(*trimChars), example.trim(*trimChars))
             assertEquals(example.trimStart(trimPredicate).trimEnd(trimPredicate), example.trim(trimPredicate))

@@ -208,7 +208,7 @@ public class LazyJavaClassMemberScope(
     }
 
     private val nestedClasses = c.storageManager.createMemoizedFunctionWithNullableValues {
-        (name: Name) ->
+        name: Name ->
         val jNestedClass = nestedClassIndex()[name]
         if (jNestedClass == null) {
             val field = enumEntryIndex()[name]

@@ -44,7 +44,7 @@ public class SMAPBuilder(val source: String,
             return null;
         }
 
-        val fileIds = "*F" + realMappings.mapIndexed {(id, file) -> "\n${file.toSMAPFile(id + 1)}" }.join("")
+        val fileIds = "*F" + realMappings.mapIndexed { id, file -> "\n${file.toSMAPFile(id + 1)}" }.join("")
         val lineMappings = "*L" + realMappings.map { it.toSMAPMapping() }.join("")
 
         return "$header\n$fileIds\n$lineMappings\n*E\n"
@@ -72,7 +72,7 @@ public open class NestedSourceMapper(parent: SourceMapper, val ranges: List<Rang
 
     override fun visitLineNumber(iv: MethodVisitor, lineNumber: Int, start: Label) {
         val index = Collections.binarySearch(ranges, RangeMapping(lineNumber, lineNumber, 1)) {
-            (value, key) ->
+            value, key ->
             if (value.contains(key.dest)) 0 else RangeMapping.Comparator.compare(value, key)
         }
         if (index < 0) {
@@ -107,7 +107,7 @@ public open class InlineLambdaSourceMapper(parent: SourceMapper, smap: SMAPAndMe
 
     override fun visitLineNumber(iv: MethodVisitor, lineNumber: Int, start: Label) {
         val index = Collections.binarySearch(ranges, RangeMapping(lineNumber, lineNumber, 1)) {
-            (value, key) ->
+            value, key ->
             if (value.contains(key.dest)) 0 else RangeMapping.Comparator.compare(value, key)
         }
         if (index >= 0) {

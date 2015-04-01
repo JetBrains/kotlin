@@ -65,7 +65,7 @@ class LazyJavaTypeResolver(
     }
 
     public fun transformArrayType(arrayType: JavaArrayType, attr: JavaTypeAttributes, isVararg: Boolean = false): JetType {
-        return run { (): JetType ->
+        return run {
             val javaComponentType = arrayType.getComponentType()
             if (javaComponentType is JavaPrimitiveType) {
                 val jetType = JavaToKotlinClassMap.INSTANCE.mapPrimitiveKotlinClass("[" + javaComponentType.getCanonicalText())
@@ -248,7 +248,6 @@ class LazyJavaTypeResolver(
         }
 
         private val nullable = c.storageManager.createLazyValue @l {
-            (): Boolean ->
             when (attr.flexibility) {
                 FLEXIBLE_LOWER_BOUND -> return@l false
                 FLEXIBLE_UPPER_BOUND -> return@l true

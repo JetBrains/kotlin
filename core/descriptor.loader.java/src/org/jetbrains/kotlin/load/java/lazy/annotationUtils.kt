@@ -30,7 +30,7 @@ class LazyJavaAnnotations(
         private val extraLookup: (FqName) -> JavaAnnotation? = { null }
 ) : Annotations {
     private val annotationDescriptors = c.storageManager.createMemoizedFunctionWithNullableValues {
-        (annotation: JavaAnnotation) ->
+        annotation: JavaAnnotation ->
         c.resolveAnnotation(annotation)
     }
 
