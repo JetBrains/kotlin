@@ -24,6 +24,7 @@ import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.core.CoreJavaFileManager
 import com.intellij.core.JavaCoreApplicationEnvironment
 import com.intellij.core.JavaCoreProjectEnvironment
+import com.intellij.ide.plugins.PluginManagerCoreProxy
 import com.intellij.lang.java.JavaParserDefinition
 import com.intellij.mock.MockApplication
 import com.intellij.openapi.Disposable
@@ -86,11 +87,7 @@ public class KotlinCoreEnvironment private(
         configuration: CompilerConfiguration
 ) {
 
-    private val projectEnvironment: JavaCoreProjectEnvironment = object : JavaCoreProjectEnvironment(parentDisposable, applicationEnvironment) {
-        override fun preregisterServices() {
-            registerProjectExtensionPoints(Extensions.getArea(getProject()))
-        }
-    }
+    private val projectEnvironment: JavaCoreProjectEnvironment = JavaCoreProjectEnvironment(parentDisposable, applicationEnvironment)
     private val sourceFiles = ArrayList<JetFile>()
     private val classPath = ClassPath()
 
@@ -259,8 +256,6 @@ public class KotlinCoreEnvironment private(
         }
 
         private fun createApplicationEnvironment(parentDisposable: Disposable, configuration: CompilerConfiguration, configFilePaths: List<String>): JavaCoreApplicationEnvironment {
-            Extensions.cleanRootArea(parentDisposable)
-            registerAppExtensionPoints()
             val applicationEnvironment = JavaCoreApplicationEnvironment(parentDisposable)
 
             for (configPath in configFilePaths) {
@@ -273,36 +268,23 @@ public class KotlinCoreEnvironment private(
             return applicationEnvironment
         }
 
-        private fun registerAppExtensionPoints() {
-            CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), ContentBasedFileSubstitutor.EP_NAME, javaClass<ContentBasedFileSubstitutor>())
-            CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), BinaryFileStubBuilders.EP_NAME, javaClass<FileTypeExtensionPoint<Any>>())
-            CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), FileContextProvider.EP_NAME, javaClass<FileContextProvider>())
-            //
-            CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), MetaDataContributor.EP_NAME, javaClass<MetaDataContributor>())
-            CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), ClsStubBuilderFactory.EP_NAME, javaClass<ClsStubBuilderFactory<*>>())
-            CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), PsiAugmentProvider.EP_NAME, javaClass<PsiAugmentProvider>())
-            CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), JavaMainMethodProvider.EP_NAME, javaClass<JavaMainMethodProvider>())
-            //
-            CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), ContainerProvider.EP_NAME, javaClass<ContainerProvider>())
-            CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), ClsCustomNavigationPolicy.EP_NAME, javaClass<ClsCustomNavigationPolicy>())
-            CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), ClassFileDecompilers.EP_NAME, javaClass<ClassFileDecompilers.Decompiler>())
-        }
-
         private fun registerApplicationExtensionPointsAndExtensionsFrom(configuration: CompilerConfiguration, configFilePath: String) {
-            val locator = configuration.get(JVMConfigurationKeys.COMPILER_JAR_LOCATOR)
-            var pluginRoot = if (locator == null) PathUtil.getPathUtilJar() else locator.getCompilerJar()
+            val locator = configuration.get(JVMConfigurationKeys.COMPILER_JAR_LOCATOR);
+            val jar = if (locator == null) PathUtil.getPathUtilJar() else locator.getCompilerJar();
 
-            val app = ApplicationManager.getApplication()
-            val parentFile = pluginRoot.getParentFile()
-
-            if (pluginRoot.isDirectory() && app != null && app.isUnitTestMode()
-                && FileUtil.toCanonicalPath(parentFile.getPath()).endsWith("out/production")) {
+            val descriptor = if (jar.isFile()) {
+                PluginManagerCoreProxy.loadDescriptorFromJar(jar, configFilePath);
+            }
+            else {
                 // hack for load extensions when compiler run directly from out directory(e.g. in tests)
-                val srcDir = parentFile.getParentFile().getParentFile()
-                pluginRoot = File(srcDir, "idea/src")
+                val srcDir = jar.getParentFile().getParentFile().getParentFile();
+                val pluginDir = File(srcDir, "idea/src");
+                PluginManagerCoreProxy.loadDescriptorFromDir(pluginDir, configFilePath);
             }
 
-            CoreApplicationEnvironment.registerExtensionPointAndExtensions(pluginRoot, configFilePath, Extensions.getRootArea())
+            assert(descriptor != null, "Can not load descriptor from " + configFilePath + " relative to " + jar)
+
+            PluginManagerCoreProxy.registerExtensionPointsAndExtensions(Extensions.getRootArea(), listOf(descriptor));
         }
 
         private fun registerApplicationServicesForCLI(applicationEnvironment: JavaCoreApplicationEnvironment) {
@@ -320,11 +302,6 @@ public class KotlinCoreEnvironment private(
                 registerParserDefinition(JetParserDefinition())
                 getApplication().registerService(javaClass<KotlinBinaryClassCache>(), KotlinBinaryClassCache())
             }
-        }
-
-        private fun registerProjectExtensionPoints(area: ExtensionsArea) {
-            CoreApplicationEnvironment.registerExtensionPoint(area, PsiTreeChangePreprocessor.EP_NAME, javaClass<PsiTreeChangePreprocessor>())
-            CoreApplicationEnvironment.registerExtensionPoint(area, PsiElementFinder.EP_NAME, javaClass<PsiElementFinder>())
         }
 
         // made public for Upsource
