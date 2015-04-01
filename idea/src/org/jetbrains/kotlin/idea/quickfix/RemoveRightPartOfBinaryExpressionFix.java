@@ -45,20 +45,27 @@ public class RemoveRightPartOfBinaryExpressionFix<T extends JetExpression> exten
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        PsiElement newElement = null;
+        invoke();
+    }
+
+    @NotNull
+    public JetExpression invoke() throws IncorrectOperationException {
+        JetExpression newExpression = null;
 
         if (element instanceof JetBinaryExpression) {
             //noinspection ConstantConditions
-            newElement = element.replace(((JetBinaryExpression) element.copy()).getLeft());
+            newExpression = (JetExpression) element.replace(((JetBinaryExpression) element.copy()).getLeft());
         }
         else if (element instanceof JetBinaryExpressionWithTypeRHS) {
-            newElement = element.replace(((JetBinaryExpressionWithTypeRHS) element.copy()).getLeft());
+            newExpression = (JetExpression) element.replace(((JetBinaryExpressionWithTypeRHS) element.copy()).getLeft());
         }
 
-        PsiElement parent = newElement != null ? newElement.getParent() : null;
+        PsiElement parent = newExpression != null ? newExpression.getParent() : null;
         if (parent instanceof JetParenthesizedExpression && JetPsiUtil.areParenthesesUseless((JetParenthesizedExpression) parent)) {
-            parent.replace(newElement);
+            newExpression = (JetExpression) parent.replace(newExpression);
         }
+
+        return newExpression;
     }
 
     public static JetSingleIntentionActionFactory createRemoveCastFactory() {

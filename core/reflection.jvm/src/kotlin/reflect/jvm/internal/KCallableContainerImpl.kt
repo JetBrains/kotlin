@@ -33,6 +33,11 @@ import java.lang.reflect.Method
 import kotlin.reflect.KotlinReflectionInternalError
 
 abstract class KCallableContainerImpl {
+    // Note: this is stored here on a soft reference to prevent GC from destroying the weak reference to it in the moduleByClassLoader cache
+    val moduleData by ReflectProperties.lazySoft {
+        jClass.getOrCreateModule()
+    }
+
     abstract val jClass: Class<*>
 
     abstract val scope: JetScope

@@ -16,33 +16,32 @@
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable
 
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.CreateFromUsageFixBase
-import org.jetbrains.kotlin.psi.JetFile
-import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.idea.JetBundle
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.command.CommandProcessor
-import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.psi.JetClassOrObject
-import org.jetbrains.kotlin.idea.refactoring.chooseContainerElementIfNecessary
-import org.jetbrains.kotlin.psi.JetClassBody
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
-import org.jetbrains.kotlin.psi.JetExpression
-import java.util.HashSet
-import org.jetbrains.kotlin.psi.JetElement
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
-import java.util.Collections
-import org.jetbrains.kotlin.psi.JetPsiUtil
-import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.idea.JetBundle
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.CreateFromUsageFixBase
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
+import org.jetbrains.kotlin.idea.refactoring.canRefactor
+import org.jetbrains.kotlin.idea.refactoring.chooseContainerElementIfNecessary
+import org.jetbrains.kotlin.psi.*
+import java.util.Collections
+import java.util.HashSet
 
 public class CreateCallableFromUsageFix(
-        originalExpression: JetExpression,
+        originalElement: JetElement,
         val callableInfos: List<CallableInfo>,
         val isExtension: Boolean
-) : CreateFromUsageFixBase(originalExpression) {
-    {
-        assert (callableInfos.isNotEmpty(), "No CallableInfos: ${JetPsiUtil.getElementTextWithContext(originalExpression)}")
+) : CreateFromUsageFixBase(originalElement) {
+    constructor(originalExpression: JetElement,
+                callableInfo: CallableInfo,
+                isExtension: Boolean) : this(originalExpression, Collections.singletonList(callableInfo), isExtension) { }
+
+    init {
+        assert (callableInfos.isNotEmpty(), "No CallableInfos: ${JetPsiUtil.getElementTextWithContext(originalElement)}")
         if (callableInfos.size > 1) {
             val receiverSet = callableInfos.mapTo(HashSet<TypeInfo>()) { it.receiverTypeInfo }
             if (receiverSet.size > 1) throw AssertionError("All functions must have common receiver: $receiverSet")
@@ -64,9 +63,10 @@ public class CreateCallableFromUsageFix(
             val kind = when (it.kind) {
                 CallableKind.FUNCTION -> "function"
                 CallableKind.PROPERTY -> "property"
+                CallableKind.SECONDARY_CONSTRUCTOR -> "secondary constructor"
                 else -> throw AssertionError("Unexpected callable info: $it")
             }
-            "$kind '${it.name}'"
+            if (it.name.isNotEmpty()) "$kind '${it.name}'" else kind
         }
         return JetBundle.message(
                 "create.0.from.usage",
@@ -107,11 +107,16 @@ public class CreateCallableFromUsageFix(
         val callableInfo = callableInfos.first()
 
         val callableBuilder =
-                CallableBuilderConfiguration(callableInfos, element as JetExpression, file!!, editor!!, isExtension).createBuilder()
+                CallableBuilderConfiguration(callableInfos, element as JetElement, file!!, editor!!, isExtension).createBuilder()
 
         fun runBuilder(placement: CallablePlacement) {
             callableBuilder.placement = placement
             CommandProcessor.getInstance().executeCommand(project, { callableBuilder.build() }, getText(), null)
+        }
+
+        if (callableInfo is SecondaryConstructorInfo) {
+            runBuilder(CallablePlacement.NoReceiver(callableInfo.targetClass))
+            return
         }
 
         val popupTitle = JetBundle.message("choose.target.class.or.trait.title")

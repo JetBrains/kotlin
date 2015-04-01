@@ -21,7 +21,7 @@ import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor;
@@ -61,7 +61,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     }
 
     @Override
-    protected JetCoreEnvironment createEnvironment() {
+    protected KotlinCoreEnvironment createEnvironment() {
         return createEnvironmentWithMockJdk(ConfigurationKind.ALL);
     }
 

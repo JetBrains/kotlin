@@ -119,7 +119,7 @@ public abstract class AbstractJavaToKotlinConverterSingleFileTest : AbstractJava
     }
 
     private fun methodToKotlin(text: String, settings: ConverterSettings, project: Project): String {
-        val result = fileToKotlin("final class C {" + text + "}", settings, project).replaceAll("class C \\{", "")
+        val result = fileToKotlin("final class C {" + text + "}", settings, project).replaceAll("class C \\{", "").replaceAll("object C \\{", "")
         return result.substring(0, (result.lastIndexOf("}"))).trim()
     }
 

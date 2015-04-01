@@ -3,7 +3,7 @@ import java.util.*
 class A {
     private val collection: MutableCollection<String>
 
-    {
+    init {
         collection = createCollection()
     }
 

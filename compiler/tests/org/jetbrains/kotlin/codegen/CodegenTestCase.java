@@ -23,7 +23,7 @@ import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.cli.jvm.JVMConfigurationKeys;
-import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.name.FqName;
@@ -53,7 +53,7 @@ import static org.jetbrains.kotlin.codegen.CodegenTestUtil.*;
 import static org.jetbrains.kotlin.load.kotlin.PackageClassUtils.getPackageClassFqName;
 
 public abstract class CodegenTestCase extends UsefulTestCase {
-    protected JetCoreEnvironment myEnvironment;
+    protected KotlinCoreEnvironment myEnvironment;
     protected CodegenTestFiles myFiles;
     protected ClassFileFactory classFileFactory;
     protected GeneratedClassLoader initializedClassLoader;

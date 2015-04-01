@@ -698,6 +698,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @InnerTestClasses({
             CreateFromUsage.CreateClass.class,
             CreateFromUsage.CreateFunction.class,
+            CreateFromUsage.CreateSecondaryConstructor.class,
             CreateFromUsage.CreateVariable.class,
     })
     @RunWith(JUnit3RunnerWithInners.class)
@@ -2263,6 +2264,75 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/unaryOperations/beforeMinusOnUserTypeWithTypeParams.kt");
                     doTest(fileName);
                 }
+            }
+        }
+
+        @TestMetadata("idea/testData/quickfix/createFromUsage/createSecondaryConstructor")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class CreateSecondaryConstructor extends AbstractQuickFixTest {
+            public void testAllFilesPresentInCreateSecondaryConstructor() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createSecondaryConstructor"), Pattern.compile("^before(\\w+)\\.kt$"), true);
+            }
+
+            @TestMetadata("beforeCallWithExpectedType.kt")
+            public void testCallWithExpectedType() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createSecondaryConstructor/beforeCallWithExpectedType.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("beforeCallWithTypeArguments.kt")
+            public void testCallWithTypeArguments() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createSecondaryConstructor/beforeCallWithTypeArguments.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("beforeClassWithBody.kt")
+            public void testClassWithBody() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createSecondaryConstructor/beforeClassWithBody.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("beforeClassWithoutBody.kt")
+            public void testClassWithoutBody() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createSecondaryConstructor/beforeClassWithoutBody.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("beforeDelegatorToSuperCall.kt")
+            public void testDelegatorToSuperCall() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createSecondaryConstructor/beforeDelegatorToSuperCall.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("beforeDelegatorToSuperCallNoClass.kt")
+            public void testDelegatorToSuperCallNoClass() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createSecondaryConstructor/beforeDelegatorToSuperCallNoClass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("beforeSuperCall.kt")
+            public void testSuperCall() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createSecondaryConstructor/beforeSuperCall.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("beforeSuperCallNoClass.kt")
+            public void testSuperCallNoClass() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createSecondaryConstructor/beforeSuperCallNoClass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("beforeThisCall.kt")
+            public void testThisCall() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createSecondaryConstructor/beforeThisCall.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("beforeWrongExpectedType.kt")
+            public void testWrongExpectedType() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createSecondaryConstructor/beforeWrongExpectedType.kt");
+                doTest(fileName);
             }
         }
 

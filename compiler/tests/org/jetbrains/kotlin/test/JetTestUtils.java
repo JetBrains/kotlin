@@ -47,7 +47,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
-import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
@@ -247,28 +247,28 @@ public class JetTestUtils {
     }
 
     @NotNull
-    public static JetCoreEnvironment createEnvironmentWithFullJdk(Disposable disposable) {
+    public static KotlinCoreEnvironment createEnvironmentWithFullJdk(Disposable disposable) {
         return createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(disposable,
                                                                          ConfigurationKind.ALL, TestJdkKind.FULL_JDK);
     }
 
     @NotNull
-    public static JetCoreEnvironment createEnvironmentWithMockJdkAndIdeaAnnotations(Disposable disposable) {
+    public static KotlinCoreEnvironment createEnvironmentWithMockJdkAndIdeaAnnotations(Disposable disposable) {
         return createEnvironmentWithMockJdkAndIdeaAnnotations(disposable, ConfigurationKind.ALL);
     }
 
     @NotNull
-    public static JetCoreEnvironment createEnvironmentWithMockJdkAndIdeaAnnotations(Disposable disposable, @NotNull ConfigurationKind configurationKind) {
+    public static KotlinCoreEnvironment createEnvironmentWithMockJdkAndIdeaAnnotations(Disposable disposable, @NotNull ConfigurationKind configurationKind) {
         return createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(disposable, configurationKind, TestJdkKind.MOCK_JDK);
     }
 
     @NotNull
-    public static JetCoreEnvironment createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
+    public static KotlinCoreEnvironment createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
             @NotNull Disposable disposable,
             @NotNull ConfigurationKind configurationKind,
             @NotNull TestJdkKind jdkKind
     ) {
-        return JetCoreEnvironment.createForTests(
+        return KotlinCoreEnvironment.createForTests(
                 disposable,
                 compilerConfigurationForTests(configurationKind, jdkKind, getAnnotationsJar()),
                 EnvironmentConfigFiles.JVM_CONFIG_FILES);
@@ -439,7 +439,7 @@ public class JetTestUtils {
         return configuration;
     }
 
-    public static void resolveAllKotlinFiles(JetCoreEnvironment environment) throws IOException {
+    public static void resolveAllKotlinFiles(KotlinCoreEnvironment environment) throws IOException {
         List<String> paths = environment.getConfiguration().get(CommonConfigurationKeys.SOURCE_ROOTS_KEY);
         if (paths == null) return;
         List<JetFile> jetFiles = Lists.newArrayList();
@@ -870,7 +870,7 @@ public class JetTestUtils {
     }
 
     @NotNull
-    public static List<JetFile> loadToJetFiles(@NotNull JetCoreEnvironment environment, @NotNull List<File> files) throws IOException {
+    public static List<JetFile> loadToJetFiles(@NotNull KotlinCoreEnvironment environment, @NotNull List<File> files) throws IOException {
         List<JetFile> jetFiles = Lists.newArrayList();
         for (File file : files) {
             jetFiles.add(loadJetFile(environment.getProject(), file));

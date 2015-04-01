@@ -6,6 +6,6 @@ public class AAA {
     }
 
     public fun bar(b: B) {
-        System.out.println(b.YY)
+        println(b.YY)
     }
 }

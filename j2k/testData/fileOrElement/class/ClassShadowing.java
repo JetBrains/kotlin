@@ -1,7 +1,10 @@
 package test;
 
+import java.lang.String;
+
 public class Short {
-	public static Short valueOf(String value) {return new Short();}
+        public Short(String s){}
+	public static Short valueOf(String value) {return new Short(value);}
 }
 
 class Test {

@@ -94,6 +94,10 @@ public class RemoveModifierFix extends JetIntentionAction<JetModifierListOwner> 
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
+        invoke();
+    }
+
+    public void invoke() throws IncorrectOperationException {
         JetModifierListOwner newElement = (JetModifierListOwner) element.copy();
         element.replace(removeModifier(newElement, modifier));
     }

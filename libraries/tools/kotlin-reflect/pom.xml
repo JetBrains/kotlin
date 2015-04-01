@@ -54,9 +54,8 @@
                                     <fileset dir="${basedir}/../../../core/descriptor.loader.java/src"/>
                                     <fileset dir="${basedir}/../../../core/descriptors/src"/>
                                     <fileset dir="${basedir}/../../../core/descriptors.runtime/src"/>
+                                    <fileset dir="${basedir}/../../../core/deserialization/src"/>
                                     <fileset dir="${basedir}/../../../core/reflection.jvm/src"/>
-                                    <fileset dir="${basedir}/../../../core/serialization/src"/>
-                                    <fileset dir="${basedir}/../../../core/serialization.jvm/src"/>
                                     <fileset dir="${basedir}/../../../core/util.runtime/src"/>
                                 </copy>
                             </target>

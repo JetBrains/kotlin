@@ -2,11 +2,11 @@
 class C(arg1: Int, arg2: Int = 0, arg3: Int = 0) {
     private val field: Int
 
-    {
+    init {
         var arg1 = arg1
         var arg3 = arg3
         arg1++
-        System.out.print(arg1 + arg2)
+        print(arg1 + arg2)
         field = arg3
         arg3++
     }
@@ -17,12 +17,10 @@ class C(arg1: Int, arg2: Int = 0, arg3: Int = 0) {
     }
 }
 
-public class User {
-    companion object {
-        public fun main() {
-            val c1 = C(100, 100, 100)
-            val c2 = C(100, 100)
-            val c3 = C(100)
-        }
+public object User {
+    public fun main() {
+        val c1 = C(100, 100, 100)
+        val c2 = C(100, 100)
+        val c3 = C(100)
     }
 }

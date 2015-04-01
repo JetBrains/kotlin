@@ -9,7 +9,7 @@ public class C {
                 return c
             }
         } catch (e: IOException) {
-            System.out.println(e)
+            println(e)
             return -1
         }
 

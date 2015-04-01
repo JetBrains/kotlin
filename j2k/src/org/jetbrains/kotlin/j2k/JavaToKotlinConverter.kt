@@ -16,16 +16,18 @@
 
 package org.jetbrains.kotlin.j2k
 
-import com.intellij.psi.PsiElement
-import com.intellij.openapi.progress.ProcessCanceledException
-import org.jetbrains.kotlin.j2k.ast.Element
-import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiJavaFile
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.resolve.BindingContext
 import com.intellij.openapi.diagnostic.Logger
-import java.util.ArrayList
+import com.intellij.openapi.progress.ProcessCanceledException
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiJavaFile
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.j2k.ast.Element
 import org.jetbrains.kotlin.j2k.usageProcessing.UsageProcessing
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
+import java.util.ArrayList
 import java.util.HashMap
 
 public trait ConversionScope {
@@ -39,6 +41,28 @@ public class FilesConversionScope(val files: Collection<PsiJavaFile>) : Conversi
 public trait PostProcessor {
     public val contextToAnalyzeIn: PsiElement
     public fun analyzeFile(file: JetFile): BindingContext
+
+    public open fun fixForProblem(problem: Diagnostic): (() -> Unit)? {
+        val psiElement = problem.getPsiElement()
+        return when (problem.getFactory()) {
+            Errors.UNNECESSARY_NOT_NULL_ASSERTION -> { ->
+                val exclExclOp = psiElement as JetSimpleNameExpression
+                val exclExclExpr = exclExclOp.getParent() as JetUnaryExpression
+                exclExclExpr.replace(exclExclExpr.getBaseExpression()!!)
+            }
+
+            Errors.VAL_REASSIGNMENT -> { ->
+                val property = (psiElement as? JetSimpleNameExpression)?.getReference()?.resolve() as? JetProperty
+                if (property != null && !property.isVar()) {
+                    val factory = JetPsiFactory(contextToAnalyzeIn.getProject())
+                    property.getValOrVarNode().getPsi()!!.replace(factory.createVarNode().getPsi()!!)
+                }
+            }
+
+            else -> null
+        }
+    }
+
     public fun doAdditionalProcessing(file: JetFile)
 }
 

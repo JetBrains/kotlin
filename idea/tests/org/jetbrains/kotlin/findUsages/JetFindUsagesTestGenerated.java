@@ -527,6 +527,12 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findClassUsages/kotlinTraitDerivedTraits.0.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("primaryConstructorWithDefaultParams.0.kt")
+            public void testPrimaryConstructorWithDefaultParams() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findClassUsages/primaryConstructorWithDefaultParams.0.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("idea/testData/findUsages/kotlin/findFunctionUsages")

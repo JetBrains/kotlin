@@ -31,7 +31,7 @@ private class WeakClassLoaderBox(classLoader: ClassLoader) {
     // Identity hash code is saved because otherwise once the weak reference is GC'd we cannot compute it anymore
     val identityHashCode: Int = System.identityHashCode(classLoader)
 
-    // Temporary strong reference to the class loader to ensure it won't get GC'd when we're inserting this box into the map
+    // Temporary strong reference to the class loader to ensure it won't get GC'd while we're inserting this box into the map
     var temporaryStrongRef: ClassLoader? = classLoader
 
     override fun equals(other: Any?) =
@@ -39,6 +39,9 @@ private class WeakClassLoaderBox(classLoader: ClassLoader) {
 
     override fun hashCode() =
             identityHashCode
+
+    override fun toString() =
+            ref.get()?.let { it.toString() } ?: "<null>"
 }
 
 private fun Class<*>.getOrCreateModule(): RuntimeModuleData {

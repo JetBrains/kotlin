@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.resolve.calls
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.JetLiteFixture
 import org.jetbrains.kotlin.test.JetTestUtils
-import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.psi.JetFile
 import com.intellij.psi.PsiElement
 
 public abstract class AbstractResolvedCallsTest : JetLiteFixture() {
-    override fun createEnvironment(): JetCoreEnvironment = createEnvironmentWithMockJdk(ConfigurationKind.ALL)
+    override fun createEnvironment(): KotlinCoreEnvironment = createEnvironmentWithMockJdk(ConfigurationKind.ALL)
 
     public fun doTest(filePath: String) {
         val text = JetTestUtils.doLoadFile(File(filePath))!!

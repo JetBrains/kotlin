@@ -9,7 +9,7 @@ class A(private val field6: Int, private val field8: Int, a: A) {
     private var field10: Int = 0
     private var field11: Int = 0
 
-    {
+    init {
         field7 = 10
         this.field9 = 10
         if (field6 > 0) {

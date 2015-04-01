@@ -37,3 +37,7 @@ fun generateCollectionsAPI(outDir: File) {
     }
 
 }
+
+fun generateCollectionsJsAPI(outDir: File) {
+    specialJS().writeTo(File(outDir, "kotlin_special.kt")) { build() }
+}

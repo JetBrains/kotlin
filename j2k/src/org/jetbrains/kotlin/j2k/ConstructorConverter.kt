@@ -145,7 +145,7 @@ class ConstructorConverter(
         }
     }
 
-    public var baseClassParams: List<DeferredElement<Expression>> = listOf()
+    public var baseClassParams: List<DeferredElement<Expression>>? = if (constructors.isEmpty()) emptyList() else null
         private set
 
     public fun convertConstructor(constructor: PsiMethod,
@@ -262,6 +262,9 @@ class ConstructorConverter(
             baseClassParams = methodCall.getArgumentList().getExpressions().map {
                 correctedConverter.deferredElement { codeConverter -> codeConverter.correct().convertExpression(it) }
             }
+        }
+        else {
+            baseClassParams = emptyList()
         }
 
         val parameterList = ParameterList(params.indices.map { i ->

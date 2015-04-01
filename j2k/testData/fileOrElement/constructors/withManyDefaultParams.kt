@@ -24,10 +24,8 @@ public class Test {
     }
 }
 
-public class User {
-    companion object {
-        public fun main() {
-            val t = Test("name")
-        }
+public object User {
+    public fun main() {
+        val t = Test("name")
     }
 }

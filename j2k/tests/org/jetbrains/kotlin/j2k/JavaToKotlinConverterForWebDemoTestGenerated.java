@@ -45,6 +45,7 @@ import java.util.regex.Pattern;
         JavaToKotlinConverterForWebDemoTestGenerated.CallChainExpression.class,
         JavaToKotlinConverterForWebDemoTestGenerated.Class.class,
         JavaToKotlinConverterForWebDemoTestGenerated.ClassExpression.class,
+        JavaToKotlinConverterForWebDemoTestGenerated.CodeSimplifications.class,
         JavaToKotlinConverterForWebDemoTestGenerated.Comments.class,
         JavaToKotlinConverterForWebDemoTestGenerated.ConditionalExpression.class,
         JavaToKotlinConverterForWebDemoTestGenerated.Constructors.class,
@@ -63,7 +64,6 @@ import java.util.regex.Pattern;
         JavaToKotlinConverterForWebDemoTestGenerated.Identifier.class,
         JavaToKotlinConverterForWebDemoTestGenerated.IfStatement.class,
         JavaToKotlinConverterForWebDemoTestGenerated.ImportStatement.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.InProjectionType.class,
         JavaToKotlinConverterForWebDemoTestGenerated.Inheritance.class,
         JavaToKotlinConverterForWebDemoTestGenerated.IsOperator.class,
         JavaToKotlinConverterForWebDemoTestGenerated.Issues.class,
@@ -78,16 +78,15 @@ import java.util.regex.Pattern;
         JavaToKotlinConverterForWebDemoTestGenerated.NewClassExpression.class,
         JavaToKotlinConverterForWebDemoTestGenerated.Nullability.class,
         JavaToKotlinConverterForWebDemoTestGenerated.ObjectLiteral.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.OutProjectionType.class,
         JavaToKotlinConverterForWebDemoTestGenerated.PackageStatement.class,
         JavaToKotlinConverterForWebDemoTestGenerated.ParenthesizedExpression.class,
         JavaToKotlinConverterForWebDemoTestGenerated.PolyadicExpression.class,
         JavaToKotlinConverterForWebDemoTestGenerated.PostfixOperator.class,
         JavaToKotlinConverterForWebDemoTestGenerated.PrefixOperator.class,
+        JavaToKotlinConverterForWebDemoTestGenerated.Projections.class,
         JavaToKotlinConverterForWebDemoTestGenerated.RawGenerics.class,
         JavaToKotlinConverterForWebDemoTestGenerated.ReturnStatement.class,
         JavaToKotlinConverterForWebDemoTestGenerated.Settings.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.StarProjectionType.class,
         JavaToKotlinConverterForWebDemoTestGenerated.StaticMembers.class,
         JavaToKotlinConverterForWebDemoTestGenerated.SuperExpression.class,
         JavaToKotlinConverterForWebDemoTestGenerated.Switch.class,
@@ -885,6 +884,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("notUtilityClass.java")
+        public void testNotUtilityClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/notUtilityClass.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("oneStaticFieldOneNonStatic.java")
         public void testOneStaticFieldOneNonStatic() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/oneStaticFieldOneNonStatic.java");
@@ -938,6 +943,24 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/twoStaticMethod.java");
             doTest(fileName);
         }
+
+        @TestMetadata("utilityClass1.java")
+        public void testUtilityClass1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/utilityClass1.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("utilityClass2.java")
+        public void testUtilityClass2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/utilityClass2.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("utilityClass3.java")
+        public void testUtilityClass3() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/utilityClass3.java");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("j2k/testData/fileOrElement/classExpression")
@@ -969,6 +992,45 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
         @TestMetadata("stringClass.java")
         public void testStringClass() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/classExpression/stringClass.java");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("j2k/testData/fileOrElement/codeSimplifications")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class CodeSimplifications extends AbstractJavaToKotlinConverterForWebDemoTest {
+        public void testAllFilesPresentInCodeSimplifications() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/codeSimplifications"), Pattern.compile("^(.+)\\.java$"), true);
+        }
+
+        @TestMetadata("IfToElvis.java")
+        public void testIfToElvis() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/codeSimplifications/IfToElvis.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("IfToSafeCall.java")
+        public void testIfToSafeCall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/codeSimplifications/IfToSafeCall.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NotIs.java")
+        public void testNotIs() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/codeSimplifications/NotIs.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("RedundantTypeCast.java")
+        public void testRedundantTypeCast() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/codeSimplifications/RedundantTypeCast.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("RedundantTypeCastAndInline.java")
+        public void testRedundantTypeCastAndInline() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/codeSimplifications/RedundantTypeCastAndInline.java");
             doTest(fileName);
         }
     }
@@ -1581,6 +1643,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("companionObject.java")
+        public void testCompanionObject() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/enum/companionObject.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("emptyEnum.java")
         public void testEmptyEnum() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/enum/emptyEnum.java");
@@ -1794,15 +1862,63 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/for"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
+        @TestMetadata("arrayIndicesReversed.java")
+        public void testArrayIndicesReversed() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/arrayIndicesReversed.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("commonCaseForTest.java")
         public void testCommonCaseForTest() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/commonCaseForTest.java");
             doTest(fileName);
         }
 
+        @TestMetadata("downTo1.java")
+        public void testDownTo1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/downTo1.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("downTo2.java")
+        public void testDownTo2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/downTo2.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("downTo3.java")
+        public void testDownTo3() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/downTo3.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("downTo4.java")
+        public void testDownTo4() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/downTo4.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("falseArrayIndicesReversed.java")
+        public void testFalseArrayIndicesReversed() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/falseArrayIndicesReversed.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("falseArrayIndicesReversed2.java")
+        public void testFalseArrayIndicesReversed2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/falseArrayIndicesReversed2.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("falseForRange.java")
         public void testFalseForRange() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/falseForRange.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("falseIndicesReversed.java")
+        public void testFalseIndicesReversed() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/falseIndicesReversed.java");
             doTest(fileName);
         }
 
@@ -1824,15 +1940,39 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("forRangeWithLT2.java")
+        public void testForRangeWithLT2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forRangeWithLT2.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("forRangeWithNE.java")
+        public void testForRangeWithNE() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forRangeWithNE.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("forThroughArrayIndices.java")
         public void testForThroughArrayIndices() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forThroughArrayIndices.java");
             doTest(fileName);
         }
 
+        @TestMetadata("forThroughCollectionIndices.java")
+        public void testForThroughCollectionIndices() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forThroughCollectionIndices.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("forThroughListIndices.java")
         public void testForThroughListIndices() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forThroughListIndices.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("forThroughListIndicesNE.java")
+        public void testForThroughListIndicesNE() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forThroughListIndicesNE.java");
             doTest(fileName);
         }
 
@@ -1896,9 +2036,75 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("indicesReversed.java")
+        public void testIndicesReversed() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/indicesReversed.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("infiniteFor.java")
         public void testInfiniteFor() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/infiniteFor.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nameConflict1.java")
+        public void testNameConflict1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/nameConflict1.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nameConflict2.java")
+        public void testNameConflict2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/nameConflict2.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nameConflict3.java")
+        public void testNameConflict3() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/nameConflict3.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nameConflict4.java")
+        public void testNameConflict4() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/nameConflict4.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nameConflict5.java")
+        public void testNameConflict5() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/nameConflict5.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notInBlock.java")
+        public void testNotInBlock() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/notInBlock.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withContinue1.java")
+        public void testWithContinue1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/withContinue1.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withContinue2.java")
+        public void testWithContinue2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/withContinue2.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withContinue3.java")
+        public void testWithContinue3() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/withContinue3.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withContinueAndLabels.java")
+        public void testWithContinueAndLabels() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/withContinueAndLabels.java");
             doTest(fileName);
         }
     }
@@ -2265,21 +2471,6 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
         @TestMetadata("simpleImport.java")
         public void testSimpleImport() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/importStatement/simpleImport.java");
-            doTest(fileName);
-        }
-    }
-
-    @TestMetadata("j2k/testData/fileOrElement/inProjectionType")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class InProjectionType extends AbstractJavaToKotlinConverterForWebDemoTest {
-        public void testAllFilesPresentInInProjectionType() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/inProjectionType"), Pattern.compile("^(.+)\\.java$"), true);
-        }
-
-        @TestMetadata("methodParams.java")
-        public void testMethodParams() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/inProjectionType/methodParams.java");
             doTest(fileName);
         }
     }
@@ -2718,15 +2909,33 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("double.java")
+        public void testDouble() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/literalExpression/double.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("endsWithDFL.java")
         public void testEndsWithDFL() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/literalExpression/endsWithDFL.java");
             doTest(fileName);
         }
 
+        @TestMetadata("float.java")
+        public void testFloat() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/literalExpression/float.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("hex.java")
         public void testHex() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/literalExpression/hex.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("long.java")
+        public void testLong() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/literalExpression/long.java");
             doTest(fileName);
         }
 
@@ -2853,6 +3062,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
         @TestMetadata("simpleCall.java")
         public void testSimpleCall() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/methodCallExpression/simpleCall.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("systemOut.java")
+        public void testSystemOut() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/methodCallExpression/systemOut.java");
             doTest(fileName);
         }
 
@@ -3250,21 +3465,6 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
         }
     }
 
-    @TestMetadata("j2k/testData/fileOrElement/outProjectionType")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class OutProjectionType extends AbstractJavaToKotlinConverterForWebDemoTest {
-        public void testAllFilesPresentInOutProjectionType() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/outProjectionType"), Pattern.compile("^(.+)\\.java$"), true);
-        }
-
-        @TestMetadata("methodParams.java")
-        public void testMethodParams() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/outProjectionType/methodParams.java");
-            doTest(fileName);
-        }
-    }
-
     @TestMetadata("j2k/testData/fileOrElement/packageStatement")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -3412,6 +3612,21 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
         }
     }
 
+    @TestMetadata("j2k/testData/fileOrElement/projections")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Projections extends AbstractJavaToKotlinConverterForWebDemoTest {
+        public void testAllFilesPresentInProjections() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/projections"), Pattern.compile("^(.+)\\.java$"), true);
+        }
+
+        @TestMetadata("projections.java")
+        public void testProjections() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/projections/projections.java");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("j2k/testData/fileOrElement/rawGenerics")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -3513,21 +3728,6 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
         @TestMetadata("specifyLocalVariableTypeByDefaultInFor.java")
         public void testSpecifyLocalVariableTypeByDefaultInFor() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/settings/specifyLocalVariableTypeByDefaultInFor.java");
-            doTest(fileName);
-        }
-    }
-
-    @TestMetadata("j2k/testData/fileOrElement/starProjectionType")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class StarProjectionType extends AbstractJavaToKotlinConverterForWebDemoTest {
-        public void testAllFilesPresentInStarProjectionType() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/starProjectionType"), Pattern.compile("^(.+)\\.java$"), true);
-        }
-
-        @TestMetadata("methodParams.java")
-        public void testMethodParams() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/starProjectionType/methodParams.java");
             doTest(fileName);
         }
     }

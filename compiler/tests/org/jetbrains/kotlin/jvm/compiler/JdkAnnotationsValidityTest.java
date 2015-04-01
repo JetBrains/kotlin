@@ -29,7 +29,7 @@ import com.intellij.openapi.vfs.VirtualFileVisitor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
-import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.test.ConfigurationKind;
@@ -67,15 +67,15 @@ public class JdkAnnotationsValidityTest extends AbstractSdkAnnotationsValidityTe
     // [Incompatible types in superclasses: [Any?, Any, Any], Incompatible projection kinds in type arguments of super methods' return types: [out Any?, Any, Any]]
     private static final Set<String> classesToIgnore = new HashSet<String>(Arrays.asList("javax.management.openmbean.TabularDataSupport"));
 
-    private static JetCoreEnvironment createFullJdkEnvironment(Disposable parentDisposable) {
+    private static KotlinCoreEnvironment createFullJdkEnvironment(Disposable parentDisposable) {
         CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(
                 ConfigurationKind.JDK_AND_ANNOTATIONS, TestJdkKind.FULL_JDK, JetTestUtils.getAnnotationsJar());
         configuration.add(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, new File("ideaSDK/lib/jdkAnnotations.jar"));
-        return JetCoreEnvironment.createForTests(parentDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
+        return KotlinCoreEnvironment.createForTests(parentDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
     }
 
     @Override
-    protected JetCoreEnvironment createEnvironment(Disposable parentDisposable) {
+    protected KotlinCoreEnvironment createEnvironment(Disposable parentDisposable) {
         return createFullJdkEnvironment(parentDisposable);
     }
 

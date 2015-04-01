@@ -1,7 +1,5 @@
-class S {
-    companion object {
-        fun staticF(): Boolean {
-            return true
-        }
+object S {
+    fun staticF(): Boolean {
+        return true
     }
 }

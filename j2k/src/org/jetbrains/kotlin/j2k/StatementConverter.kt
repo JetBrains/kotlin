@@ -24,6 +24,17 @@ trait StatementConverter {
     fun convertStatement(statement: PsiStatement, codeConverter: CodeConverter): Statement
 }
 
+trait SpecialStatementConverter {
+    fun convertStatement(statement: PsiStatement, codeConverter: CodeConverter): Statement?
+}
+
+fun StatementConverter.withSpecialConverter(specialConverter: SpecialStatementConverter): StatementConverter {
+    return object: StatementConverter {
+        override fun convertStatement(statement: PsiStatement, codeConverter: CodeConverter): Statement
+                = specialConverter.convertStatement(statement, codeConverter) ?: this@withSpecialConverter.convertStatement(statement, codeConverter)
+    }
+}
+
 class DefaultStatementConverter : JavaElementVisitor(), StatementConverter {
     private var _codeConverter: CodeConverter? = null
     private var result: Statement = Statement.Empty
@@ -114,7 +125,7 @@ class DefaultStatementConverter : JavaElementVisitor(), StatementConverter {
 
     override fun visitForeachStatement(statement: PsiForeachStatement) {
         val iteratorExpr = codeConverter.convertExpression(statement.getIteratedValue())
-        val iterator = if (iteratorExpr.isNullable) BangBangExpression(iteratorExpr).assignNoPrototype() else iteratorExpr
+        val iterator = BangBangExpression.surroundIfNullable(iteratorExpr)
         val iterationParameter = statement.getIterationParameter()
         result = ForeachStatement(iterationParameter.declarationIdentifier(),
                                   if (codeConverter.settings.specifyLocalVariableTypeByDefault) codeConverter.typeConverter.convertVariableType(iterationParameter) else null,
@@ -133,8 +144,15 @@ class DefaultStatementConverter : JavaElementVisitor(), StatementConverter {
     }
 
     override fun visitLabeledStatement(statement: PsiLabeledStatement) {
-        result = LabelStatement(converter.convertIdentifier(statement.getLabelIdentifier()),
-                                codeConverter.convertStatement(statement.getStatement()))
+        val statementConverted = codeConverter.convertStatement(statement.getStatement())
+        val identifier = converter.convertIdentifier(statement.getLabelIdentifier())
+        if (statementConverted is ForConverter.WhileWithInitializationPseudoStatement) { // special case - if our loop gets converted to while with initialization we should move the label to the loop
+            val labeledLoop = LabeledStatement(identifier, statementConverted.loop).assignPrototype(statement)
+            result = ForConverter.WhileWithInitializationPseudoStatement(statementConverted.initialization, labeledLoop, statementConverted.kind)
+        }
+        else {
+            result = LabeledStatement(identifier, statementConverted)
+        }
     }
 
     override fun visitSwitchLabelStatement(statement: PsiSwitchLabelStatement) {

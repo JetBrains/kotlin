@@ -20,7 +20,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.Disposable;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
-import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.test.ConfigurationKind;
@@ -37,10 +37,10 @@ import java.util.jar.JarFile;
 public class AndroidSdkAnnotationsValidityTest extends AbstractSdkAnnotationsValidityTest {
 
     @Override
-    protected JetCoreEnvironment createEnvironment(Disposable parentDisposable) {
+    protected KotlinCoreEnvironment createEnvironment(Disposable parentDisposable) {
         CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(
                 ConfigurationKind.JDK_AND_ANNOTATIONS, TestJdkKind.ANDROID_API, JetTestUtils.getAnnotationsJar());
-        return JetCoreEnvironment.createForTests(parentDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
+        return KotlinCoreEnvironment.createForTests(parentDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
     }
 
     @Override

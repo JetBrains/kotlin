@@ -21,10 +21,9 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
 import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsPackage;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
-import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.ClassFileFactory;
 import org.jetbrains.kotlin.codegen.GenerationUtils;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
@@ -84,7 +83,7 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends TestCaseWit
     }
 
     protected ClassFileFactory compileA(@NotNull File ktAFile) throws IOException {
-        JetCoreEnvironment jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(getTestRootDisposable(),
+        KotlinCoreEnvironment jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(getTestRootDisposable(),
                                                                                                             ConfigurationKind.ALL);
         return compileKotlin(ktAFile, aDir, jetCoreEnvironment, getTestRootDisposable());
     }
@@ -93,14 +92,14 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends TestCaseWit
         CompilerConfiguration configurationWithADirInClasspath = JetTestUtils
                 .compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(), aDir);
 
-        JetCoreEnvironment environment =
-                JetCoreEnvironment.createForTests(getTestRootDisposable(), configurationWithADirInClasspath, EnvironmentConfigFiles.JVM_CONFIG_FILES);
+        KotlinCoreEnvironment environment =
+                KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configurationWithADirInClasspath, EnvironmentConfigFiles.JVM_CONFIG_FILES);
 
         return compileKotlin(ktBFile, bDir, environment, getTestRootDisposable());
     }
 
     private static ClassFileFactory compileKotlin(
-            @NotNull File file, @NotNull File outputDir, @NotNull JetCoreEnvironment jetCoreEnvironment,
+            @NotNull File file, @NotNull File outputDir, @NotNull KotlinCoreEnvironment jetCoreEnvironment,
             @NotNull Disposable disposable
     ) throws IOException {
 

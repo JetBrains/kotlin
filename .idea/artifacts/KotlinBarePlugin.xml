@@ -16,7 +16,6 @@
           <element id="module-output" name="bare-plugin" />
           <element id="module-output" name="descriptor.loader.java" />
           <element id="module-output" name="frontend.java" />
-          <element id="module-output" name="serialization.jvm" />
           <element id="module-output" name="descriptors" />
         </element>
         <element id="directory" name="jps">

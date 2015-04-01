@@ -17,7 +17,7 @@
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -122,14 +122,14 @@ class NoInternalVisibilityInStdLibTest {
             configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, "../src/generated")
             configuration.addAll(JVMConfigurationKeys.CLASSPATH_KEY, PathUtil.getJdkClassesRoots())
 
-            val environment = JetCoreEnvironment.createForProduction(disposable!!, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+            val environment = KotlinCoreEnvironment.createForProduction(disposable!!, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
             val module = TopDownAnalyzerFacadeForJVM.createJavaModule("<module for validating std lib>")
             module.addDependencyOnModule(module)
             module.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule())
 
             TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(
-                    environment.getProject(),
+                    environment.project,
                     GlobalContext(),
                     environment.getSourceFiles(),
                     CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(),
@@ -143,8 +143,8 @@ class NoInternalVisibilityInStdLibTest {
     Test fun testJsStdlibJar() {
         doTest(ANALYZE_PACKAGE_ROOTS_FOR_JS, ADDITIONALLY_REQUIRED_PACKAGES_FOR_JS) {
             val configuration = CompilerConfiguration()
-            val environment = JetCoreEnvironment.createForProduction(disposable!!, configuration, EnvironmentConfigFiles.JS_CONFIG_FILES)
-            val project = environment.getProject()
+            val environment = KotlinCoreEnvironment.createForProduction(disposable!!, configuration, EnvironmentConfigFiles.JS_CONFIG_FILES)
+            val project = environment.project
             val pathToJsStdlibJar = KOTLIN_ROOT_PATH + PathUtil.getKotlinPathsForDistDirectory().getJsStdLibJarPath().path
             val config = LibrarySourcesConfig(project, "testModule", listOf(pathToJsStdlibJar), EcmaVersion.defaultVersion(), false, false)
 

@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.test;
 
 import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 
 public abstract class KotlinTestWithEnvironmentManagement extends UsefulTestCase {
     static {
@@ -26,12 +26,12 @@ public abstract class KotlinTestWithEnvironmentManagement extends UsefulTestCase
     }
 
     @NotNull
-    protected JetCoreEnvironment createEnvironmentWithMockJdk(@NotNull ConfigurationKind configurationKind) {
+    protected KotlinCoreEnvironment createEnvironmentWithMockJdk(@NotNull ConfigurationKind configurationKind) {
         return createEnvironmentWithJdk(configurationKind, TestJdkKind.MOCK_JDK);
     }
 
     @NotNull
-    protected JetCoreEnvironment createEnvironmentWithJdk(@NotNull ConfigurationKind configurationKind, @NotNull TestJdkKind jdkKind) {
+    protected KotlinCoreEnvironment createEnvironmentWithJdk(@NotNull ConfigurationKind configurationKind, @NotNull TestJdkKind jdkKind) {
         return JetTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(getTestRootDisposable(), configurationKind, jdkKind);
     }
 }

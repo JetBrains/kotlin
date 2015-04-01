@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.codegen;
 
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
-import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
@@ -37,7 +37,7 @@ public class JUnitUsageGenTest extends CodegenTestCase {
             throw new AssertionError("JUnit jar wasn't found");
         }
 
-        myEnvironment = JetCoreEnvironment.createForTests(
+        myEnvironment = KotlinCoreEnvironment.createForTests(
                 getTestRootDisposable(),
                 JetTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, junitJar),
                 EnvironmentConfigFiles.JVM_CONFIG_FILES);

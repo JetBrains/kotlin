@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.asJava;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
-import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.resolve.lazy.KotlinTestWithEnvironment;
@@ -30,7 +30,7 @@ public abstract class KotlinAsJavaTestBase extends KotlinTestWithEnvironment {
     protected JavaElementFinder finder;
 
     @Override
-    protected JetCoreEnvironment createEnvironment() {
+    protected KotlinCoreEnvironment createEnvironment() {
         CompilerConfiguration configuration = new CompilerConfiguration();
 
         for (File root : getKotlinSourceRoots()) {
@@ -39,7 +39,7 @@ public abstract class KotlinAsJavaTestBase extends KotlinTestWithEnvironment {
 
         extraConfiguration(configuration);
 
-        return JetCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
+        return KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
     }
 
     protected void extraConfiguration(@NotNull CompilerConfiguration configuration) {

@@ -1,1 +1,1 @@
-val a = floatArray(1.0, 2.0, 3.0)
+val a = floatArray(1f, 2f, 3.0f)

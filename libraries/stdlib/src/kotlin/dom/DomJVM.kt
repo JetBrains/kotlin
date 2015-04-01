@@ -121,7 +121,7 @@ public fun Node.previousElements(): List<Element> = previousSiblings().filterIsI
 public var Element.classSet: MutableSet<String>
     get() {
         val answer = LinkedHashSet<String>()
-        val array = this.classes.split("""\s""")
+        val array = this.classes.split("""\s""".toRegex())
         for (s in array) {
             if (s.length() > 0) {
                 answer.add(s)

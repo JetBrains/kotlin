@@ -118,9 +118,9 @@ public class KotlinToJVMBytecodeCompiler {
         CompilerConfiguration compilerConfiguration = createCompilerConfiguration(configuration, chunk, directory);
 
         Disposable parentDisposable = Disposer.newDisposable();
-        JetCoreEnvironment environment = null;
+        KotlinCoreEnvironment environment = null;
         try {
-            environment = JetCoreEnvironment
+            environment = KotlinCoreEnvironment
                     .createForProduction(parentDisposable, compilerConfiguration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
 
             AnalysisResult result = analyze(environment);
@@ -199,7 +199,7 @@ public class KotlinToJVMBytecodeCompiler {
     }
 
     public static boolean compileBunchOfSources(
-            @NotNull JetCoreEnvironment environment,
+            @NotNull KotlinCoreEnvironment environment,
             @Nullable File jar,
             @Nullable File outputDir,
             boolean includeRuntime
@@ -224,7 +224,7 @@ public class KotlinToJVMBytecodeCompiler {
     public static void compileAndExecuteScript(
             @NotNull CompilerConfiguration configuration,
             @NotNull KotlinPaths paths,
-            @NotNull JetCoreEnvironment environment,
+            @NotNull KotlinCoreEnvironment environment,
             @NotNull List<String> scriptArgs
     ) {
         Class<?> scriptClass = compileScript(configuration, paths, environment);
@@ -245,7 +245,7 @@ public class KotlinToJVMBytecodeCompiler {
     public static Class<?> compileScript(
             @NotNull CompilerConfiguration configuration,
             @NotNull KotlinPaths paths,
-            @NotNull JetCoreEnvironment environment
+            @NotNull KotlinCoreEnvironment environment
     ) {
         List<AnalyzerScriptParameter> scriptParameters = environment.getConfiguration().getList(JVMConfigurationKeys.SCRIPT_PARAMETERS);
         if (!scriptParameters.isEmpty()) {
@@ -278,7 +278,7 @@ public class KotlinToJVMBytecodeCompiler {
     }
 
     @Nullable
-    public static GenerationState analyzeAndGenerate(@NotNull JetCoreEnvironment environment) {
+    public static GenerationState analyzeAndGenerate(@NotNull KotlinCoreEnvironment environment) {
         AnalysisResult result = analyze(environment);
 
         if (result == null) {
@@ -291,7 +291,7 @@ public class KotlinToJVMBytecodeCompiler {
     }
 
     @Nullable
-    private static AnalysisResult analyze(@NotNull final JetCoreEnvironment environment) {
+    private static AnalysisResult analyze(@NotNull final KotlinCoreEnvironment environment) {
         MessageCollector collector = environment.getConfiguration().get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY);
         assert collector != null;
 
@@ -331,7 +331,7 @@ public class KotlinToJVMBytecodeCompiler {
 
     @NotNull
     private static GenerationState generate(
-            @NotNull JetCoreEnvironment environment,
+            @NotNull KotlinCoreEnvironment environment,
             @NotNull AnalysisResult result,
             @NotNull List<JetFile> sourceFiles,
             @Nullable String moduleId,

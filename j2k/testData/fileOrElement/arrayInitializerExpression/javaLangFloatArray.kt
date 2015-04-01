@@ -1,1 +1,1 @@
-val a = array<Float>(1.0, 2.0, 3.0)
+val a = array(1.0f, 2f, 3f)

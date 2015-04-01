@@ -481,7 +481,7 @@ private fun copyTypeParameters<T: PsiTypeParameterListOwner>(
     }
 }
 
-public fun createJavaMethod(function: JetNamedFunction, targetClass: PsiClass): PsiMethod {
+public fun createJavaMethod(function: JetFunction, targetClass: PsiClass): PsiMethod {
     val template = LightClassUtil.getLightClassMethod(function)
                    ?: throw AssertionError("Can't generate light method: ${JetPsiUtil.getElementTextWithContext(function)}")
     return createJavaMethod(template, targetClass)

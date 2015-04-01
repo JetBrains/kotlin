@@ -16,7 +16,8 @@
 
 package org.jetbrains.kotlin.j2k.ast
 
-import org.jetbrains.kotlin.j2k.*
+import org.jetbrains.kotlin.j2k.CodeBuilder
+import org.jetbrains.kotlin.j2k.append
 
 open class Class(
         val name: Identifier,
@@ -24,7 +25,7 @@ open class Class(
         modifiers: Modifiers,
         val typeParameterList: TypeParameterList,
         val extendsTypes: List<Type>,
-        val baseClassParams: List<DeferredElement<Expression>>,
+        val baseClassParams: List<DeferredElement<Expression>>?,
         val implementsTypes: List<Type>,
         val body: ClassBody
 ) : Member(annotations, modifiers) {
@@ -55,7 +56,7 @@ open class Class(
     }
 
     private fun baseClassSignatureWithParams(builder: CodeBuilder): List<() -> CodeBuilder> {
-        if (keyword.equals("class") && extendsTypes.size() == 1) {
+        if (keyword.equals("class") && extendsTypes.size() == 1 && baseClassParams != null) {
             return listOf({
                               builder append extendsTypes[0] append "("
                               builder.append(baseClassParams, ", ")
@@ -67,4 +68,15 @@ open class Class(
 
     protected open fun presentationModifiers(): Modifiers
             = if (modifiers.contains(Modifier.ABSTRACT)) modifiers.without(Modifier.OPEN) else modifiers
+}
+
+class Object(
+        name: Identifier,
+        annotations: Annotations,
+        modifiers: Modifiers,
+        body: ClassBody
+) : Class(name, annotations, modifiers, TypeParameterList.Empty, emptyList(), null, emptyList(), body) {
+
+    override val keyword: String
+        get() = "object"
 }

@@ -25,8 +25,7 @@
           <element id="module-output" name="cli-common" />
           <element id="module-output" name="idea-jps-common" />
           <element id="module-output" name="preloader" />
-          <element id="module-output" name="serialization" />
-          <element id="module-output" name="serialization.jvm" />
+          <element id="module-output" name="deserialization" />
           <element id="module-output" name="backend-common" />
           <element id="library" level="project" name="builtins" />
           <element id="module-output" name="js.dart-ast" />
@@ -40,6 +39,7 @@
           <element id="file-copy" path="$PROJECT_DIR$/resources/kotlinManifest.properties" />
           <element id="module-output" name="kotlin-android-plugin" />
           <element id="module-output" name="js.serializer" />
+          <element id="module-output" name="serialization" />
         </element>
         <element id="library" level="project" name="javax.inject" />
         <element id="directory" name="jps">

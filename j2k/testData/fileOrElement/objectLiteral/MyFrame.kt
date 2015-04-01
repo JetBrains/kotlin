@@ -15,7 +15,7 @@ open class Frame {
 }
 
 public class Client : Frame() {
-    {
+    init {
         val a = object : WindowAdapter() {
             override fun windowClosing() {
             }

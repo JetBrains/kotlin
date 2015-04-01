@@ -3,15 +3,15 @@ public open class AAA {
         protected set
 
     public fun foo(other: AAA) {
-        System.out.println(x)
-        System.out.println(other.x)
+        println(x)
+        println(other.x)
         x = 10
     }
 }
 
 class BBB : AAA() {
     fun bar() {
-        System.out.println(x)
+        println(x)
         x = 10
     }
 }

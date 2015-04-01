@@ -21,7 +21,7 @@ import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
-import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.GenerationUtils;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.test.ConfigurationKind;
@@ -55,7 +55,7 @@ import static org.jetbrains.kotlin.test.InTextDirectivesUtils.findStringWithPref
  */
 public abstract class AbstractWriteFlagsTest extends UsefulTestCase {
 
-    private JetCoreEnvironment jetCoreEnvironment;
+    private KotlinCoreEnvironment jetCoreEnvironment;
 
     @Override
     public void setUp() throws Exception {

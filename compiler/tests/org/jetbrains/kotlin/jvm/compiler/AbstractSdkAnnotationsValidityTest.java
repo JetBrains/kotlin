@@ -22,7 +22,7 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
-import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies;
 import org.jetbrains.kotlin.load.java.JavaBindingContext;
@@ -48,7 +48,7 @@ public abstract class AbstractSdkAnnotationsValidityTest extends UsefulTestCase 
 
     private static final int CLASSES_IN_CHUNK = 100;
 
-    protected abstract JetCoreEnvironment createEnvironment(Disposable parentDisposable);
+    protected abstract KotlinCoreEnvironment createEnvironment(Disposable parentDisposable);
 
     protected abstract List<FqName> getClassesToValidate() throws IOException;
 
@@ -73,7 +73,7 @@ public abstract class AbstractSdkAnnotationsValidityTest extends UsefulTestCase 
             Disposable parentDisposable = Disposer.newDisposable();
 
             try {
-                JetCoreEnvironment commonEnvironment = createEnvironment(parentDisposable);
+                KotlinCoreEnvironment commonEnvironment = createEnvironment(parentDisposable);
 
                 BindingTrace trace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
                 ModuleDescriptor module = LazyResolveTestUtil.resolve(

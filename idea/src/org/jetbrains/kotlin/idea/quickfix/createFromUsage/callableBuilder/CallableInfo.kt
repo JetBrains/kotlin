@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder
 
+import com.intellij.psi.PsiElement
 import java.util.Collections
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.types.Variance
@@ -119,7 +120,8 @@ class ParameterInfo(
 
 enum class CallableKind {
     FUNCTION
-    CONSTRUCTOR
+    CLASS_WITH_PRIMARY_CONSTRUCTOR
+    SECONDARY_CONSTRUCTOR
     PROPERTY
 }
 
@@ -144,11 +146,18 @@ class FunctionInfo(name: String,
     override val kind: CallableKind get() = CallableKind.FUNCTION
 }
 
-class ConstructorInfo(val classInfo: ClassInfo, expectedTypeInfo: TypeInfo): CallableInfo(
+class PrimaryConstructorInfo(val classInfo: ClassInfo, expectedTypeInfo: TypeInfo): CallableInfo(
         classInfo.name, TypeInfo.Empty, expectedTypeInfo.forceNotNull(), Collections.emptyList(), classInfo.typeArguments
 ) {
-    override val kind: CallableKind get() = CallableKind.CONSTRUCTOR
+    override val kind: CallableKind get() = CallableKind.CLASS_WITH_PRIMARY_CONSTRUCTOR
     override val parameterInfos: List<ParameterInfo> get() = classInfo.parameterInfos
+}
+
+class SecondaryConstructorInfo(
+        override val parameterInfos: List<ParameterInfo>,
+        val targetClass: PsiElement
+): CallableInfo("", TypeInfo.Empty, TypeInfo.Empty, Collections.emptyList(), Collections.emptyList()) {
+    override val kind: CallableKind get() = CallableKind.SECONDARY_CONSTRUCTOR
 }
 
 class PropertyInfo(name: String,

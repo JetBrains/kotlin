@@ -37,6 +37,15 @@ class BangBangExpression(val expr: Expression) : Expression() {
     override fun generateCode(builder: CodeBuilder) {
         builder.appendOperand(this, expr).append("!!")
     }
+
+    companion object {
+        fun surroundIfNullable(expression: Expression): Expression {
+            return if (expression.isNullable)
+                BangBangExpression(expression).assignNoPrototype()
+            else
+                expression
+        }
+    }
 }
 
 class BinaryExpression(val left: Expression, val right: Expression, val op: String) : Expression() {
@@ -69,7 +78,7 @@ class ParenthesizedExpression(val expression: Expression) : Expression() {
     }
 }
 
-class PrefixOperator(val op: String, val expression: Expression) : Expression() {
+class PrefixExpression(val op: String, val expression: Expression) : Expression() {
     override fun generateCode(builder: CodeBuilder){
         builder.append(op).appendOperand(this, expression)
     }
@@ -78,7 +87,7 @@ class PrefixOperator(val op: String, val expression: Expression) : Expression() 
         get() = expression.isNullable
 }
 
-class PostfixOperator(val op: String, val expression: Expression) : Expression() {
+class PostfixExpression(val op: String, val expression: Expression) : Expression() {
     override fun generateCode(builder: CodeBuilder) {
         builder.appendOperand(this, expression) append op
     }
@@ -149,7 +158,13 @@ class RangeExpression(val start: Expression, val end: Expression): Expression() 
     }
 }
 
-fun createArrayInitializerExpression(arrayType: ArrayType, initializers: List<Expression>, needExplicitType: Boolean) : MethodCallExpression {
+class DownToExpression(val start: Expression, val end: Expression): Expression() {
+    override fun generateCode(builder: CodeBuilder) {
+        builder.appendOperand(this, start).append(" downTo ").appendOperand(this, end)
+    }
+}
+
+fun createArrayInitializerExpression(arrayType: ArrayType, initializers: List<Expression>, needExplicitType: Boolean = true) : MethodCallExpression {
     val elementType = arrayType.elementType
     val createArrayFunction = if (elementType is PrimitiveType)
             (elementType.toNotNullType().canonicalCode() + "Array").decapitalize()
@@ -157,31 +172,5 @@ fun createArrayInitializerExpression(arrayType: ArrayType, initializers: List<Ex
             arrayType.toNotNullType().canonicalCode().decapitalize()
         else
             "array"
-
-    val doubleOrFloatTypes = setOf("double", "float", "java.lang.double", "java.lang.float")
-    val afterReplace = arrayType.toNotNullType().canonicalCode().replace("Array", "").toLowerCase().replace(">", "").replace("<", "").replace("?", "")
-
-    fun explicitConvertIfNeeded(initializer: Expression): Expression {
-        if (doubleOrFloatTypes.contains(afterReplace)) {
-            if (initializer is LiteralExpression) {
-                if (!initializer.canonicalCode().contains(".")) {
-                    return LiteralExpression(initializer.literalText + ".0").assignPrototypesFrom(initializer)
-                }
-            }
-            else {
-                val conversionFunction = when {
-                    afterReplace.contains("double") -> OperatorConventions.DOUBLE.getIdentifier()
-                    afterReplace.contains("float") -> OperatorConventions.FLOAT.getIdentifier()
-                    else -> null
-                }
-                if (conversionFunction != null) {
-                    return MethodCallExpression.buildNotNull(initializer, conversionFunction).assignNoPrototype()
-                }
-            }
-        }
-
-        return initializer
-    }
-
-    return MethodCallExpression.buildNotNull(null, createArrayFunction, initializers.map { explicitConvertIfNeeded(it) })
+    return MethodCallExpression.buildNotNull(null, createArrayFunction, initializers)
 }

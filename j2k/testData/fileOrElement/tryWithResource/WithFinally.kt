@@ -7,7 +7,7 @@ public class C {
             ByteArrayInputStream(ByteArray(10)).use { stream ->
                 // reading something
                 val c = stream.read()
-                System.out.println(c)
+                println(c)
             }
         } finally {
             // dispose something else
