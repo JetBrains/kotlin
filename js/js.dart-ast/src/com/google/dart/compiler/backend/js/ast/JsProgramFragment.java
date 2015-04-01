@@ -33,7 +33,7 @@ public class JsProgramFragment extends SourceInfoAwareJsNode {
     @Override
     public void traverse(JsVisitorWithContext v, JsContext ctx) {
         if (v.visit(this, ctx)) {
-            v.accept(globalBlock);
+            v.acceptStatement(globalBlock);
         }
         v.endVisit(this, ctx);
     }

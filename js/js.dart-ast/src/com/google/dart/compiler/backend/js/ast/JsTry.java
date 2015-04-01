@@ -74,10 +74,10 @@ public class JsTry extends SourceInfoAwareJsNode implements JsStatement {
     @Override
     public void traverse(JsVisitorWithContext v, JsContext ctx) {
         if (v.visit(this, ctx)) {
-            tryBlock = v.accept(tryBlock);
+            tryBlock = v.acceptStatement(tryBlock);
             v.acceptList(catches);
             if (finallyBlock != null) {
-                finallyBlock = v.accept(finallyBlock);
+                finallyBlock = v.acceptStatement(finallyBlock);
             }
         }
         v.endVisit(this, ctx);

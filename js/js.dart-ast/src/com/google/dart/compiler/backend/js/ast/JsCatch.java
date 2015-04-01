@@ -80,7 +80,7 @@ public class JsCatch extends SourceInfoAwareJsNode implements HasCondition {
             if (condition != null) {
                 condition = v.accept(condition);
             }
-            body = v.accept(body);
+            body = v.acceptStatement(body);
         }
         v.endVisit(this, ctx);
     }
