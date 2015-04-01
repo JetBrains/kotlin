@@ -129,7 +129,6 @@ abstract class KCallableContainerImpl {
             arrayDimension: Int = type.getArrayDimension()
     ): Class<*> {
         if (arrayDimension > 0) {
-            // TODO: test multi-dimensional arrays
             return loadJvmType(type, nameResolver, classLoader, arrayDimension - 1).createArrayType()
         }
 

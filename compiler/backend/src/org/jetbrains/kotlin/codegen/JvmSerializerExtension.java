@@ -257,14 +257,10 @@ public class JvmSerializerExtension extends SerializerExtension {
         public JvmProtoBuf.JvmType type(@NotNull Type givenType) {
             JvmProtoBuf.JvmType.Builder builder = JvmProtoBuf.JvmType.newBuilder();
 
-            int arrayDimension = 0;
             Type type = givenType;
-            while (type.getSort() == Type.ARRAY) {
-                arrayDimension++;
+            if (type.getSort() == Type.ARRAY) {
+                builder.setArrayDimension(type.getDimensions());
                 type = type.getElementType();
-            }
-            if (arrayDimension != 0) {
-                builder.setArrayDimension(arrayDimension);
             }
 
             if (type.getSort() == Type.OBJECT) {

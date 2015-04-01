@@ -46,7 +46,6 @@ public val Class<*>.desc: String
         if (this == Void.TYPE) return "V"
         // This is a clever exploitation of a format returned by Class.getName(): for arrays, it's almost an internal name,
         // but with '.' instead of '/'
-        // TODO: ensure there are tests on arrays of nested classes, multi-dimensional arrays, etc.
         return createArrayType().getName().substring(1).replace('.', '/')
     }
 
