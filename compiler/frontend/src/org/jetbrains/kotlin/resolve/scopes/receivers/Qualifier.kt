@@ -17,23 +17,32 @@
 package org.jetbrains.kotlin.resolve.scopes.receivers
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.diagnostics.Errors.EXPRESSION_EXPECTED_PACKAGE_FOUND
+import org.jetbrains.kotlin.diagnostics.Errors.NO_COMPANION_OBJECT
+import org.jetbrains.kotlin.diagnostics.Errors.TYPE_PARAMETER_IS_NOT_AN_EXPRESSION
+import org.jetbrains.kotlin.diagnostics.Errors.TYPE_PARAMETER_ON_LHS_OF_DOT
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.psiUtil.getTopmostParentQualifiedExpressionForSelector
+import org.jetbrains.kotlin.resolve.BindingContext.EXPRESSION_TYPE
+import org.jetbrains.kotlin.resolve.BindingContext.QUALIFIER
+import org.jetbrains.kotlin.resolve.BindingContext.REFERENCE_TARGET
+import org.jetbrains.kotlin.resolve.BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName
-import org.jetbrains.kotlin.name.Name
-import java.util.ArrayList
-import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.resolve.BindingContext.*
-import org.jetbrains.kotlin.diagnostics.Errors.*
-import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
-import org.jetbrains.kotlin.psi.psiUtil.getTopmostParentQualifiedExpressionForSelector
-import org.jetbrains.kotlin.resolve.descriptorUtil.getClassObjectReferenceTarget
-import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.resolve.bindingContextUtil.recordScopeAndDataFlowInfo
+import org.jetbrains.kotlin.resolve.descriptorUtil.classObjectType
+import org.jetbrains.kotlin.resolve.descriptorUtil.getClassObjectReferenceTarget
+import org.jetbrains.kotlin.resolve.descriptorUtil.hasClassObjectType
+import org.jetbrains.kotlin.resolve.scopes.ChainedScope
+import org.jetbrains.kotlin.resolve.scopes.FilteringScope
+import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
+import org.jetbrains.kotlin.utils.addIfNotNull
+import java.util.ArrayList
 import kotlin.properties.Delegates
-import org.jetbrains.kotlin.resolve.descriptorUtil.classObjectDescriptor
-import org.jetbrains.kotlin.resolve.scopes.*
 
 public trait Qualifier: ReceiverValue {
 
@@ -66,7 +75,7 @@ class QualifierReceiver (
     override var resultingDescriptor: DeclarationDescriptor by Delegates.notNull()
 
     override val scope: JetScope get() {
-        val classObjectTypeScope = classifier?.getClassObjectType()?.getMemberScope()?.let {
+        val classObjectTypeScope = (classifier as? ClassDescriptor)?.classObjectType?.getMemberScope()?.let {
             FilteringScope(it) { it !is ClassDescriptor }
         }
         val scopes = listOf(classObjectTypeScope, getNestedClassesAndPackageMembersScope()).filterNotNull().copyToArray()
@@ -74,7 +83,8 @@ class QualifierReceiver (
     }
 
     fun getClassObjectReceiver(): ReceiverValue =
-            classifier?.getClassObjectType()?.let { ExpressionReceiver(referenceExpression, it) } ?: ReceiverValue.NO_RECEIVER
+            (classifier as? ClassDescriptor)?.classObjectType?.let { ExpressionReceiver(referenceExpression, it) }
+            ?: ReceiverValue.NO_RECEIVER
 
     fun getNestedClassesAndPackageMembersScope(): JetScope {
         val scopes = ArrayList<JetScope>(4)
@@ -128,7 +138,7 @@ private fun QualifierReceiver.resolveAsStandaloneExpression(context: ExpressionT
     if (classifier is TypeParameterDescriptor) {
         context.trace.report(TYPE_PARAMETER_IS_NOT_AN_EXPRESSION.on(referenceExpression, classifier))
     }
-    else if (classifier is ClassDescriptor && classifier.getClassObjectType() == null) {
+    else if (classifier is ClassDescriptor && !classifier.hasClassObjectType) {
         context.trace.report(NO_COMPANION_OBJECT.on(referenceExpression, classifier))
     }
     else if (packageView != null) {
@@ -140,10 +150,10 @@ private fun QualifierReceiver.resolveAsStandaloneExpression(context: ExpressionT
 private fun QualifierReceiver.resolveAsReceiverInQualifiedExpression(context: ExpressionTypingContext, selector: DeclarationDescriptor?) {
     resolveAndRecordReferenceTarget(context, selector)
     if (classifier is TypeParameterDescriptor) {
-        context.trace.report(TYPE_PARAMETER_ON_LHS_OF_DOT.on(referenceExpression, classifier as TypeParameterDescriptor))
+        context.trace.report(TYPE_PARAMETER_ON_LHS_OF_DOT.on(referenceExpression, classifier))
     }
-    else if (classifier is ClassDescriptor && classifier.classObjectDescriptor != null) {
-        context.trace.record(EXPRESSION_TYPE, expression, classifier.getClassObjectType())
+    else if (classifier is ClassDescriptor && classifier.hasClassObjectType) {
+        context.trace.record(EXPRESSION_TYPE, expression, classifier.classObjectType)
     }
 }
 
@@ -173,7 +183,7 @@ private fun QualifierReceiver.resolveReferenceTarget(
     val isCallableWithReceiver = selector is CallableDescriptor &&
                                  (selector.getDispatchReceiverParameter() != null || selector.getExtensionReceiverParameter() != null)
 
-    if (classifier is ClassDescriptor && classifier.classObjectDescriptor != null && isCallableWithReceiver) {
+    if (classifier is ClassDescriptor && classifier.hasClassObjectType && isCallableWithReceiver) {
         if (classifier.getCompanionObjectDescriptor() != null) {
             context.trace.record(SHORT_REFERENCE_TO_COMPANION_OBJECT, referenceExpression, classifier)
         }

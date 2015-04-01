@@ -150,12 +150,6 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
         return defaultType.invoke();
     }
 
-    @Override
-    public JetType getClassObjectType() {
-        // TODO: companion object bounds
-        return null;
-    }
-
     @NotNull
     @Override
     public Set<JetType> getLowerBounds() {

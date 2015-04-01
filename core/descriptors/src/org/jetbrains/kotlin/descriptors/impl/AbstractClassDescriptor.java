@@ -18,10 +18,8 @@ package org.jetbrains.kotlin.descriptors.impl;
 
 import kotlin.Function0;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
 import org.jetbrains.kotlin.resolve.scopes.InnerClassesScopeWrapper;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.resolve.scopes.SubstitutingScope;
@@ -74,13 +72,6 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor {
 
     @NotNull
     protected abstract JetScope getScopeForMemberLookup();
-
-    @Nullable
-    @Override
-    public JetType getClassObjectType() {
-        ClassDescriptor classObject = DescriptorUtilPackage.getClassObjectDescriptor(this);
-        return classObject == null ? null : classObject.getDefaultType();
-    }
 
     @NotNull
     @Override

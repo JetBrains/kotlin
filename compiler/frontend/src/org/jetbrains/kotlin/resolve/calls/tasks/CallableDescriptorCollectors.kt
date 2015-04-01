@@ -17,14 +17,15 @@
 package org.jetbrains.kotlin.resolve.calls.tasks.collectors
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.DescriptorUtils.isStaticNestedClass
+import org.jetbrains.kotlin.resolve.LibrarySourceHacks
+import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
+import org.jetbrains.kotlin.resolve.descriptorUtil.hasClassObjectType
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.JetType
-
-import org.jetbrains.kotlin.resolve.DescriptorUtils.isStaticNestedClass
-import org.jetbrains.kotlin.resolve.*
 
 public trait CallableDescriptorCollector<D : CallableDescriptor> {
 
@@ -102,9 +103,9 @@ private object VariableCollector : CallableDescriptorCollector<VariableDescripto
 
     private fun getFakeDescriptorForObject(scope: JetScope, name: Name): VariableDescriptor? {
         val classifier = scope.getClassifier(name)
-        if (classifier !is ClassDescriptor || classifier.getClassObjectType() == null) return null
+        if (classifier !is ClassDescriptor || !classifier.hasClassObjectType) return null
 
-        return FakeCallableDescriptorForObject(classifier as ClassDescriptor)
+        return FakeCallableDescriptorForObject(classifier)
     }
 
     override fun getNonExtensionsByName(scope: JetScope, name: Name, bindingTrace: BindingTrace): Collection<VariableDescriptor> {

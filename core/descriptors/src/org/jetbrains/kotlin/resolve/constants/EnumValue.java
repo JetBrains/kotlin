@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor;
 import org.jetbrains.kotlin.types.JetType;
 
+import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getClassObjectType;
+
 public class EnumValue extends CompileTimeConstant<ClassDescriptor> {
 
     public EnumValue(@NotNull ClassDescriptor value, boolean usesVariableAsConstant) {
@@ -31,8 +33,8 @@ public class EnumValue extends CompileTimeConstant<ClassDescriptor> {
     @NotNull
     @Override
     public JetType getType(@NotNull KotlinBuiltIns kotlinBuiltIns) {
-        JetType type = value.getClassObjectType();
-        assert type != null : "Enum entry should have a companion object: " + value;
+        JetType type = getClassObjectType(value);
+        assert type != null : "Enum entry must have a class object type: " + value;
         return type;
     }
 

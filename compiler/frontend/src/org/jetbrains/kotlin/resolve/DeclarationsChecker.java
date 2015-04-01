@@ -158,12 +158,12 @@ public class DeclarationsChecker {
 
         for (JetTypeParameter jetTypeParameter : jetClass.getTypeParameters()) {
             checkBoundsForTypeInClassHeader(jetTypeParameter.getExtendsBound());
-            checkFinalUpperBounds(jetTypeParameter.getExtendsBound(), false);
+            checkFinalUpperBounds(jetTypeParameter.getExtendsBound());
         }
 
         for (JetTypeConstraint constraint : jetClass.getTypeConstraints()) {
             checkBoundsForTypeInClassHeader(constraint.getBoundTypeReference());
-            checkFinalUpperBounds(constraint.getBoundTypeReference(), constraint.isCompanionObjectConstraint());
+            checkFinalUpperBounds(constraint.getBoundTypeReference());
         }
     }
 
@@ -176,11 +176,11 @@ public class DeclarationsChecker {
         }
     }
 
-    private void checkFinalUpperBounds(@Nullable JetTypeReference typeReference, boolean isCompanionObjectConstraint) {
+    private void checkFinalUpperBounds(@Nullable JetTypeReference typeReference) {
         if (typeReference != null) {
             JetType type = trace.getBindingContext().get(TYPE, typeReference);
             if (type != null) {
-                DescriptorResolver.checkUpperBoundType(typeReference, type, isCompanionObjectConstraint, trace);
+                DescriptorResolver.checkUpperBoundType(typeReference, type, trace);
             }
         }
     }

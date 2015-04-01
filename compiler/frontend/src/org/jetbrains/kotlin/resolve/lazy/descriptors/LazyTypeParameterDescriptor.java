@@ -18,13 +18,13 @@ package org.jetbrains.kotlin.resolve.lazy.descriptors;
 
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.resolve.lazy.LazyClassContext;
 import org.jetbrains.kotlin.descriptors.impl.AbstractLazyTypeParameterDescriptor;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorResolver;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
+import org.jetbrains.kotlin.resolve.lazy.LazyClassContext;
 import org.jetbrains.kotlin.resolve.lazy.LazyEntity;
 import org.jetbrains.kotlin.types.JetType;
 
@@ -83,8 +83,6 @@ public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescri
         if (classOrObject instanceof JetClass) {
             JetClass jetClass = (JetClass) classOrObject;
             for (JetTypeConstraint jetTypeConstraint : jetClass.getTypeConstraints()) {
-                DescriptorResolver.reportUnsupportedCompanionObjectConstraint(c.getTrace(), jetTypeConstraint);
-
                 JetSimpleNameExpression constrainedParameterName = jetTypeConstraint.getSubjectTypeParameterName();
                 if (constrainedParameterName != null) {
                     if (getName().equals(constrainedParameterName.getReferencedNameAsName())) {
@@ -93,9 +91,7 @@ public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescri
                         JetTypeReference boundTypeReference = jetTypeConstraint.getBoundTypeReference();
                         if (boundTypeReference != null) {
                             JetType boundType = resolveBoundType(boundTypeReference);
-                            if (!jetTypeConstraint.isCompanionObjectConstraint()) {
-                                upperBounds.add(boundType);
-                            }
+                            upperBounds.add(boundType);
                         }
                     }
                 }
@@ -119,7 +115,6 @@ public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescri
     @Override
     public void forceResolveAllContents() {
         ForceResolveUtil.forceResolveAllContents(getAnnotations());
-        ForceResolveUtil.forceResolveAllContents(getClassObjectType());
         getContainingDeclaration();
         getDefaultType();
         getIndex();

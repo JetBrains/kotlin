@@ -56,10 +56,6 @@ public interface ClassDescriptor extends ClassifierDescriptor, MemberDescriptor,
     @Override
     ClassDescriptor substitute(@NotNull TypeSubstitutor substitutor);
 
-    @Nullable
-    @Override
-    JetType getClassObjectType();
-
     /**
      * @return nested object declared as 'companion' if one is present.
      */

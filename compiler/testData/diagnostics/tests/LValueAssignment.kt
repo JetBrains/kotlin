@@ -127,12 +127,12 @@ class Test() {
         a[4]++
         a[6] += 43
 
-        <!VARIABLE_EXPECTED!>ab.getArray()<!>[54] = 23
-        <!VARIABLE_EXPECTED!>ab.getArray()<!>[54]++
+        ab.getArray()[54] = 23
+        ab.getArray()[54]++
 
         (@f a)[3] = 4
         (a : Array<Int>)[4]++
-        (<!VARIABLE_EXPECTED!>ab.getArray()<!> : Array<Int>)[54] += 43
+        (ab.getArray() : Array<Int>)[54] += 43
 
         this<!NO_SET_METHOD!><!UNRESOLVED_REFERENCE!>[<!>54<!UNRESOLVED_REFERENCE!>]<!><!> = 34
     }

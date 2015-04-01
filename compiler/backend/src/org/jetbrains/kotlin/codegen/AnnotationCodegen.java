@@ -38,6 +38,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.*;
 
+import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getClassObjectType;
+
 public abstract class AnnotationCodegen {
 
     public static final class JvmFlagAnnotation {
@@ -325,7 +327,7 @@ public abstract class AnnotationCodegen {
                 CompileTimeConstant<?> compileTimeConstant = valueArguments.iterator().next();
                 if (compileTimeConstant instanceof EnumValue) {
                     ClassDescriptor enumEntry = ((EnumValue) compileTimeConstant).getValue();
-                    JetType classObjectType = enumEntry.getClassObjectType();
+                    JetType classObjectType = getClassObjectType(enumEntry);
                     if (classObjectType != null) {
                         if ("java/lang/annotation/RetentionPolicy".equals(typeMapper.mapType(classObjectType).getInternalName())) {
                             return RetentionPolicy.valueOf(enumEntry.getName().asString());

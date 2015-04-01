@@ -1550,20 +1550,12 @@ public class JetParsing extends AbstractJetParsing {
     /*
      * typeConstraint
      *   : annotations SimpleName ":" type
-     *   : annotations "class" "object" SimpleName ":" type
      *   ;
      */
     private void parseTypeConstraint() {
         PsiBuilder.Marker constraint = mark();
 
         parseAnnotations(REGULAR_ANNOTATIONS_ONLY_WITH_BRACKETS);
-
-        if (at(CLASS_KEYWORD)) {
-            advance(); // CLASS_KEYWORD
-
-            expect(OBJECT_KEYWORD, "Expecting 'object'", TYPE_REF_FIRST);
-
-        }
 
         PsiBuilder.Marker reference = mark();
         if (expect(IDENTIFIER, "Expecting type parameter name", TokenSet.orSet(TokenSet.create(COLON, COMMA), TYPE_REF_FIRST))) {

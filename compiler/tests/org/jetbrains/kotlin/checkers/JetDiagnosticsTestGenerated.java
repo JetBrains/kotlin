@@ -144,6 +144,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("AssignToArrayElement.kt")
+        public void testAssignToArrayElement() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/AssignToArrayElement.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("AutoCreatedIt.kt")
         public void testAutoCreatedIt() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/AutoCreatedIt.kt");
@@ -267,12 +273,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
         @TestMetadata("fileDependencyRecursion.kt")
         public void testFileDependencyRecursion() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/fileDependencyRecursion.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("FinalClassObjectBound.kt")
-        public void testFinalClassObjectBound() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/FinalClassObjectBound.kt");
             doTest(fileName);
         }
 
@@ -5035,21 +5035,9 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("ClassObjectBoundsAreNotSupported.kt")
-            public void testClassObjectBoundsAreNotSupported() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/ClassObjectBoundsAreNotSupported.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("kt1575-Class.kt")
             public void testKt1575_Class() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/kt1575-Class.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("kt1575-ClassObject.kt")
-            public void testKt1575_ClassObject() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/kt1575-ClassObject.kt");
                 doTest(fileName);
             }
 

@@ -16,25 +16,20 @@
 
 package org.jetbrains.kotlin.resolve.calls.util
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import java.util.Collections
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
-import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.resolve.descriptorUtil.classObjectType
 import org.jetbrains.kotlin.resolve.descriptorUtil.getClassObjectReferenceTarget
+import org.jetbrains.kotlin.resolve.descriptorUtil.hasClassObjectType
+import org.jetbrains.kotlin.types.JetType
+import java.util.Collections
 
 public class FakeCallableDescriptorForObject(
         public val classDescriptor: ClassDescriptor
 ) : DeclarationDescriptorWithVisibility by classDescriptor.getClassObjectReferenceTarget(), VariableDescriptor {
 
     init {
-        assert(classDescriptor.getClassObjectType() != null) {
+        assert(classDescriptor.hasClassObjectType) {
             "FakeCallableDescriptorForObject can be created only for objects, classes with companion object or enum entries: $classDescriptor"
         }
 
@@ -58,7 +53,7 @@ public class FakeCallableDescriptorForObject(
 
     override fun getOverriddenDescriptors(): Set<CallableDescriptor> = Collections.emptySet()
 
-    override fun getType(): JetType = classDescriptor.getClassObjectType()!!
+    override fun getType(): JetType = classDescriptor.classObjectType!!
 
     override fun isVar() = false
 

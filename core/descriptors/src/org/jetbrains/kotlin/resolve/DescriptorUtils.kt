@@ -16,12 +16,15 @@
 
 package org.jetbrains.kotlin.resolve.descriptorUtil
 
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.descriptors.ClassKind.*
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassKind.ENUM_CLASS
+import org.jetbrains.kotlin.descriptors.ClassKind.ENUM_ENTRY
+import org.jetbrains.kotlin.descriptors.ClassKind.OBJECT
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.types.JetType
 
 public fun ClassDescriptor.getClassObjectReferenceTarget(): ClassDescriptor = getCompanionObjectDescriptor() ?: this
 
@@ -57,11 +60,14 @@ public val ClassDescriptor.classId: ClassId
         throw IllegalStateException("Illegal container: $owner")
     }
 
-/** If a literal of this class can be used as a value returns the class which represents the type of this value */
-public val ClassDescriptor.classObjectDescriptor: ClassDescriptor?
+public val ClassDescriptor.hasClassObjectType: Boolean get() = classObjectType != null
+
+/** If a literal of this class can be used as a value, returns the type of this value */
+public val ClassDescriptor.classObjectType: JetType?
     get() {
-        return when (this.getKind()) {
+        val correspondingDescriptor = when (this.getKind()) {
             OBJECT -> this
+            // enum entry has the type of enum class
             ENUM_ENTRY -> {
                 val container = this.getContainingDeclaration()
                 assert(container is ClassDescriptor && container.getKind() == ENUM_CLASS)
@@ -69,6 +75,7 @@ public val ClassDescriptor.classObjectDescriptor: ClassDescriptor?
             }
             else -> getCompanionObjectDescriptor()
         }
+        return correspondingDescriptor?.getDefaultType()
     }
 
 public val DeclarationDescriptorWithVisibility.isEffectivelyPublicApi: Boolean

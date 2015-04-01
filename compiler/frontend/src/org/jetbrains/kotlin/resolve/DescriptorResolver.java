@@ -59,7 +59,8 @@ import static org.jetbrains.kotlin.lexer.JetTokens.OVERRIDE_KEYWORD;
 import static org.jetbrains.kotlin.lexer.JetTokens.VARARG_KEYWORD;
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
-import static org.jetbrains.kotlin.resolve.ModifiersChecker.*;
+import static org.jetbrains.kotlin.resolve.ModifiersChecker.resolveModalityFromModifiers;
+import static org.jetbrains.kotlin.resolve.ModifiersChecker.resolveVisibilityFromModifiers;
 import static org.jetbrains.kotlin.resolve.source.SourcePackage.toSourceElement;
 
 public class DescriptorResolver {
@@ -455,12 +456,10 @@ public class DescriptorResolver {
     static final class UpperBoundCheckerTask {
         JetTypeReference upperBound;
         JetType upperBoundType;
-        boolean isCompanionObjectConstraint;
 
-        private UpperBoundCheckerTask(JetTypeReference upperBound, JetType upperBoundType, boolean companionObjectConstraint) {
+        private UpperBoundCheckerTask(JetTypeReference upperBound, JetType upperBoundType) {
             this.upperBound = upperBound;
             this.upperBoundType = upperBoundType;
-            isCompanionObjectConstraint = companionObjectConstraint;
         }
     }
 
@@ -485,12 +484,10 @@ public class DescriptorResolver {
             if (extendsBound != null) {
                 JetType type = typeResolver.resolveType(scope, extendsBound, trace, false);
                 typeParameterDescriptor.addUpperBound(type);
-                deferredUpperBoundCheckerTasks.add(new UpperBoundCheckerTask(extendsBound, type, false));
+                deferredUpperBoundCheckerTasks.add(new UpperBoundCheckerTask(extendsBound, type));
             }
         }
         for (JetTypeConstraint constraint : declaration.getTypeConstraints()) {
-            reportUnsupportedCompanionObjectConstraint(trace, constraint);
-
             JetSimpleNameExpression subjectTypeParameterName = constraint.getSubjectTypeParameterName();
             if (subjectTypeParameterName == null) {
                 continue;
@@ -501,19 +498,13 @@ public class DescriptorResolver {
             JetType bound = null;
             if (boundTypeReference != null) {
                 bound = typeResolver.resolveType(scope, boundTypeReference, trace, false);
-                deferredUpperBoundCheckerTasks
-                        .add(new UpperBoundCheckerTask(boundTypeReference, bound, constraint.isCompanionObjectConstraint()));
+                deferredUpperBoundCheckerTasks.add(new UpperBoundCheckerTask(boundTypeReference, bound));
             }
 
             if (typeParameterDescriptor != null) {
                 trace.record(BindingContext.REFERENCE_TARGET, subjectTypeParameterName, typeParameterDescriptor);
                 if (bound != null) {
-                    if (constraint.isCompanionObjectConstraint()) {
-                        // Companion object bounds are not supported
-                    }
-                    else {
-                        typeParameterDescriptor.addUpperBound(bound);
-                    }
+                    typeParameterDescriptor.addUpperBound(bound);
                 }
             }
         }
@@ -528,7 +519,7 @@ public class DescriptorResolver {
 
         if (!(declaration instanceof JetClass)) {
             for (UpperBoundCheckerTask checkerTask : deferredUpperBoundCheckerTasks) {
-                checkUpperBoundType(checkerTask.upperBound, checkerTask.upperBoundType, checkerTask.isCompanionObjectConstraint, trace);
+                checkUpperBoundType(checkerTask.upperBound, checkerTask.upperBoundType, trace);
             }
 
             checkNamesInConstraints(declaration, descriptor, scope, trace);
@@ -542,11 +533,6 @@ public class DescriptorResolver {
     ) {
         if (KotlinBuiltIns.isNothing(parameter.getUpperBoundsAsType())) {
             trace.report(CONFLICTING_UPPER_BOUNDS.on(typeParameter, parameter));
-        }
-
-        JetType classObjectType = parameter.getClassObjectType();
-        if (classObjectType != null && KotlinBuiltIns.isNothing(classObjectType)) {
-            trace.report(CONFLICTING_COMPANION_OBJECT_UPPER_BOUNDS.on(typeParameter, parameter));
         }
     }
 
@@ -581,25 +567,13 @@ public class DescriptorResolver {
         }
     }
 
-    public static void reportUnsupportedCompanionObjectConstraint(BindingTrace trace, JetTypeConstraint constraint) {
-        if (constraint.isCompanionObjectConstraint()) {
-            trace.report(UNSUPPORTED.on(constraint, "Companion objects constraints are not supported yet"));
-        }
-    }
-
     public static void checkUpperBoundType(
             JetTypeReference upperBound,
             @NotNull JetType upperBoundType,
-            boolean isCompanionObjectConstraint,
             BindingTrace trace
     ) {
         if (!TypeUtils.canHaveSubtypes(JetTypeChecker.DEFAULT, upperBoundType)) {
-            if (isCompanionObjectConstraint) {
-                trace.report(FINAL_COMPANION_OBJECT_UPPER_BOUND.on(upperBound, upperBoundType));
-            }
-            else {
-                trace.report(FINAL_UPPER_BOUND.on(upperBound, upperBoundType));
-            }
+            trace.report(FINAL_UPPER_BOUND.on(upperBound, upperBoundType));
         }
         if (TypesPackage.isDynamic(upperBoundType)) {
             trace.report(DYNAMIC_UPPER_BOUND.on(upperBound));
