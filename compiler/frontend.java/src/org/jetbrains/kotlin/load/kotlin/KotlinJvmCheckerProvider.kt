@@ -16,50 +16,42 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
-import org.jetbrains.kotlin.resolve.AdditionalCheckerProvider
-import org.jetbrains.kotlin.resolve.DeclarationChecker
-import org.jetbrains.kotlin.resolve.annotations.hasPlatformStaticAnnotation
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.resolve.annotations.hasInlineAnnotation
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.resolve.annotations.hasIntrinsicAnnotation
-import org.jetbrains.kotlin.load.kotlin.nativeDeclarations.NativeFunChecker
-import org.jetbrains.kotlin.descriptors.MemberDescriptor
-import org.jetbrains.kotlin.resolve.jvm.calls.checkers.NeedSyntheticChecker
-import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker
-import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
-import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.load.java.lazy.types.isMarkedNullable
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.load.java.lazy.types.isMarkedNotNull
-import org.jetbrains.kotlin.types.isFlexible
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.NullabilityInformationSource
-import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
-import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
+import org.jetbrains.kotlin.load.java.lazy.types.isMarkedNullable
+import org.jetbrains.kotlin.load.kotlin.nativeDeclarations.NativeFunChecker
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
-import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.annotations.hasInlineAnnotation
+import org.jetbrains.kotlin.resolve.annotations.hasIntrinsicAnnotation
+import org.jetbrains.kotlin.resolve.annotations.hasPlatformStaticAnnotation
+import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker
 import org.jetbrains.kotlin.resolve.calls.context.CallResolutionContext
+import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability
-import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.jvm.calls.checkers.NeedSyntheticChecker
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.NullabilityInformationSource
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.SenselessComparisonChecker
+import org.jetbrains.kotlin.types.isFlexible
 
 public object KotlinJvmCheckerProvider : AdditionalCheckerProvider(
-        additionalDeclarationCheckers = listOf(PlatformStaticAnnotationChecker(), LocalFunInlineChecker(), ReifiedTypeParameterAnnotationChecker(), NativeFunChecker()),
+        additionalDeclarationCheckers = listOf(PlatformStaticAnnotationChecker(),
+                                               LocalFunInlineChecker(),
+                                               ReifiedTypeParameterAnnotationChecker(),
+                                               NativeFunChecker(),
+                                               OverloadsAnnotationChecker()),
         additionalCallCheckers = listOf(NeedSyntheticChecker()),
         additionalTypeCheckers = listOf(JavaNullabilityWarningsChecker())
 )
@@ -112,6 +104,30 @@ public class PlatformStaticAnnotationChecker : DeclarationChecker {
 
         if (insideObject && checkDeclaration.getModifierList()?.hasModifier(JetTokens.OVERRIDE_KEYWORD) == true) {
             diagnosticHolder.report(ErrorsJvm.OVERRIDE_CANNOT_BE_STATIC.on(declaration));
+        }
+    }
+}
+
+public class OverloadsAnnotationChecker: DeclarationChecker {
+    override fun check(declaration: JetDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink) {
+        if (descriptor.getAnnotations().findAnnotation(FqName("kotlin.jvm.overloads")) != null) {
+            checkDeclaration(declaration, descriptor, diagnosticHolder)
+        }
+    }
+
+    private fun checkDeclaration(declaration: JetDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink) {
+        if (descriptor !is CallableDescriptor) {
+            return
+        }
+        if (descriptor is FunctionDescriptor && descriptor.getModality() == Modality.ABSTRACT) {
+            diagnosticHolder.report(ErrorsJvm.OVERLOADS_ABSTRACT.on(declaration))
+        }
+        else if ((!descriptor.getVisibility().isPublicAPI() && descriptor.getVisibility() != Visibilities.INTERNAL) ||
+            DescriptorUtils.isLocal(descriptor)) {
+            diagnosticHolder.report(ErrorsJvm.OVERLOADS_PRIVATE.on(declaration))
+        }
+        else if (descriptor.getValueParameters().none { it.declaresDefaultValue() }) {
+            diagnosticHolder.report(ErrorsJvm.OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS.on(declaration))
         }
     }
 }
