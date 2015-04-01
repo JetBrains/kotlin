@@ -22,7 +22,6 @@ import com.intellij.openapi.util.Key
 import com.intellij.psi.stubs.IndexSink
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.KotlinCallableStubBase
-import org.jetbrains.kotlin.psi.stubs.getContainingFileStub
 import org.jetbrains.kotlin.util.aliasImportMap
 
 fun indexTopLevelExtension<TDeclaration : JetCallableDeclaration>(stub: KotlinCallableStubBase<TDeclaration>, sink: IndexSink) {
@@ -32,7 +31,7 @@ fun indexTopLevelExtension<TDeclaration : JetCallableDeclaration>(stub: KotlinCa
     }
 }
 
-private fun <TDeclaration : JetCallableDeclaration> JetTypeElement.index(declaration: TDeclaration, sink: IndexSink) {
+private fun JetTypeElement.index<TDeclaration : JetCallableDeclaration>(declaration: TDeclaration, sink: IndexSink) {
     fun occurrence(typeName: String) {
         val name = declaration.getName() ?: return
         sink.occurrence(JetTopLevelExtensionsByReceiverTypeIndex.INSTANCE.getKey(),
@@ -43,17 +42,16 @@ private fun <TDeclaration : JetCallableDeclaration> JetTypeElement.index(declara
         is JetUserType -> {
             var referenceName = getReferencedName() ?: return
 
-            if (declaration is JetNamedFunction) {
-                val typeParameter = declaration.getTypeParameters().firstOrNull { it.getName() == referenceName }
-                if (typeParameter != null) {
-                    val bound = typeParameter.getExtendsBound()
-                    if (bound != null) {
-                        bound.getTypeElement()?.index(declaration, sink)
-                        return
-                    }
-                    occurrence("Any")
-                    return
+            val typeParameter = declaration.getTypeParameters().firstOrNull { it.getName() == referenceName }
+            if (typeParameter != null) {
+                val bound = typeParameter.getExtendsBound()
+                if (bound != null) {
+                    bound.getTypeElement()?.index(declaration, sink)
                 }
+                else {
+                    occurrence("Any")
+                }
+                return
             }
 
             occurrence(referenceName)
@@ -68,7 +66,9 @@ private fun <TDeclaration : JetCallableDeclaration> JetTypeElement.index(declara
             occurrence(typeName)
         }
 
-        else -> occurrence("Any")
+        is JetDynamicType -> occurrence("Any")
+
+        else -> error("Unsupported type: $this")
     }
 }
 

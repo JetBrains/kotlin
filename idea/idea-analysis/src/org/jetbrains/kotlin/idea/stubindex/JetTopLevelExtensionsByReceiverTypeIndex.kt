@@ -31,13 +31,14 @@ public class JetTopLevelExtensionsByReceiverTypeIndex private() : StringStubInde
 
     companion object {
         private val KEY = KotlinIndexUtil.createIndexKey<String, JetCallableDeclaration>(javaClass<JetTopLevelExtensionsByReceiverTypeIndex>())
+        private val SEPARATOR = '\n'
 
         public val INSTANCE: JetTopLevelExtensionsByReceiverTypeIndex = JetTopLevelExtensionsByReceiverTypeIndex()
 
-        public fun buildKey(receiverTypeName: String, callableName: String): String = receiverTypeName + "\n" + callableName
+        public fun buildKey(receiverTypeName: String, callableName: String): String = receiverTypeName + SEPARATOR + callableName
 
-        public fun receiverTypeNameFromKey(key: String): String = key.substringBefore('\n', "")
+        public fun receiverTypeNameFromKey(key: String): String = key.substringBefore(SEPARATOR, "")
 
-        public fun callableNameFromKey(key: String): String = key.substringAfter('\n', "")
+        public fun callableNameFromKey(key: String): String = key.substringAfter(SEPARATOR, "")
     }
 }

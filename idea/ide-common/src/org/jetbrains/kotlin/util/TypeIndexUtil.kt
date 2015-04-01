@@ -18,12 +18,12 @@ package org.jetbrains.kotlin.util
 
 import com.google.common.collect.HashMultimap
 import com.google.common.collect.Multimap
-import com.google.common.collect.Multimaps
 import com.intellij.openapi.util.Key
+import com.intellij.psi.stubs.PsiFileStub
+import com.intellij.psi.stubs.StubElement
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetTypeReference
 import org.jetbrains.kotlin.psi.JetUserType
-import org.jetbrains.kotlin.psi.stubs.getContainingFileStub
 
 public fun JetUserType.aliasImportMap(): Multimap<String, String> {
     // we need to access containing file via stub because getPsi() may return null when indexing and getContainingFile() will crash
@@ -69,3 +69,9 @@ public fun JetUserType?.isProbablyNothing(): Boolean {
     return referencedName == "Nothing" || aliasImportMap()[referencedName].contains("Nothing")
 }
 
+private fun StubElement<*>.getContainingFileStub(): PsiFileStub<*> {
+    return if (this is PsiFileStub)
+        this
+    else
+        getParentStub().getContainingFileStub()
+}

@@ -6,8 +6,7 @@ fun firstFun() {
 }
 
 // EXIST: helloFun
-// EXIST: helloFunPreventAutoInsert
 // EXIST: helloWithParams
 // EXIST: helloFunGeneric
+// EXIST: helloDynamic
 // ABSENT: helloFake
-// NUMBER: 4

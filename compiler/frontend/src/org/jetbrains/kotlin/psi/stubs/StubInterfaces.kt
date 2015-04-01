@@ -114,10 +114,3 @@ public trait KotlinTypeProjectionStub : StubElement<JetTypeProjection> {
 public trait KotlinUserTypeStub : StubElement<JetUserType> {
     public fun isAbsoluteInRootPackage(): Boolean
 }
-
-public fun StubElement<*>.getContainingFileStub(): PsiFileStub<*> {
-    return if (this is PsiFileStub)
-        this
-    else
-        getParentStub().getContainingFileStub()
-}

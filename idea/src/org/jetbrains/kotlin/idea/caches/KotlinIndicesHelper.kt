@@ -102,13 +102,19 @@ public class KotlinIndicesHelper(
     }
 
     private fun possibleReceiverTypeNames(receiverValues: Collection<ReceiverValue>, dataFlowInfo: DataFlowInfo): Set<String> {
-        val result = LinkedHashSet<String>()
+        val result = HashSet<String>()
         for (receiverValue in receiverValues) {
             for (type in SmartCastUtils.getSmartCastVariants(receiverValue, bindingContext, dataFlowInfo)) {
                 result.addTypeNames(type)
             }
         }
         return result
+    }
+
+    private fun MutableCollection<String>.addTypeNames(type: JetType) {
+        val constructor = type.getConstructor()
+        addIfNotNull(constructor.getDeclarationDescriptor()?.getName()?.asString())
+        constructor.getSupertypes().forEach { addTypeNames(it) }
     }
 
     private fun receiverValues(expression: JetSimpleNameExpression): Collection<Pair<ReceiverValue, CallType>> {
@@ -125,15 +131,8 @@ public class KotlinIndicesHelper(
         }
         else {
             val resolutionScope = bindingContext[BindingContext.RESOLUTION_SCOPE, expression] ?: return emptyList()
-
             return resolutionScope.getImplicitReceiversWithInstance().map { it.getValue() to CallType.NORMAL }
         }
-    }
-
-    private fun MutableCollection<String>.addTypeNames(type: JetType) {
-        val constructor = type.getConstructor()
-        addIfNotNull(constructor.getDeclarationDescriptor()?.getName()?.asString())
-        constructor.getSupertypes().forEach { addTypeNames(it) }
     }
 
     /**
