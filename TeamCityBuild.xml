@@ -136,7 +136,24 @@
         <delete dir="${artifact.output.path}/KotlinAndroidExtensions" quiet="true"/>
     </target>
 
-    <target name="post_build" depends="zipArtifacts, revertTemplateFiles"/>
+    <macrodef name="print-statistic">
+        <attribute name="key"/>
+        <attribute name="value"/>
+
+        <sequential>
+            <echo message="##teamcity[buildStatisticValue key='@{key}' value='@{value}']"/>
+        </sequential>
+    </macrodef>
+
+    <target name="printStatistics">
+        <length file="${kotlin-home}/lib/kotlin-runtime.jar" property="runtime.jar.size"/>
+        <print-statistic key="kotlin-runtime.jar size" value="${runtime.jar.size}"/>
+
+        <length file="${kotlin-home}/lib/kotlin-reflect.jar" property="reflect.jar.size"/>
+        <print-statistic key="kotlin-reflect.jar size" value="${reflect.jar.size}"/>
+    </target>
+
+    <target name="post_build" depends="zipArtifacts, revertTemplateFiles, printStatistics"/>
 
     <target name="none">
         <fail message="Either specify pre_build or post_build"/>
