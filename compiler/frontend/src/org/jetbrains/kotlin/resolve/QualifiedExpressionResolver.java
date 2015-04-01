@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.scopes.AbstractScopeAdapter;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.WritableScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 
 import java.util.Collection;
@@ -79,7 +80,7 @@ public class QualifiedExpressionResolver {
             @NotNull JetImportDirective importDirective,
             @NotNull JetScope scope,
             @NotNull JetScope scopeToCheckVisibility,
-            @Nullable Importer importer,
+            @Nullable WritableScope importIntoScope,
             @NotNull BindingTrace trace,
             @NotNull LookupMode lookupMode
     ) {
@@ -117,26 +118,29 @@ public class QualifiedExpressionResolver {
                 return Collections.emptyList();
             }
 
-            if (importer != null) {
+            if (importIntoScope != null) {
+                AllUnderImportsScope importsScope = new AllUnderImportsScope();
                 for (DeclarationDescriptor descriptor : descriptors) {
-                    importer.addAllUnderImport(descriptor);
+                    importsScope.addAllUnderImport(descriptor);
+                }
+                importIntoScope.importScope(importsScope);
+            }
+            return Collections.emptyList();
+        }
+        else {
+            Name aliasName = JetPsiUtil.getAliasName(importDirective);
+            if (aliasName == null) {
+                return Collections.emptyList();
+            }
+
+            if (importIntoScope != null) {
+                for (DeclarationDescriptor descriptor : descriptors) {
+                    importIntoScope.importAlias(aliasName, descriptor);
                 }
             }
-            return Collections.emptyList();
-        }
 
-        Name aliasName = JetPsiUtil.getAliasName(importDirective);
-        if (aliasName == null) {
-            return Collections.emptyList();
+            return descriptors;
         }
-
-        if (importer != null) {
-            for (DeclarationDescriptor descriptor : descriptors) {
-                importer.addAliasImport(descriptor, aliasName);
-            }
-        }
-
-        return descriptors;
     }
 
     private static boolean canImportMembersFrom(

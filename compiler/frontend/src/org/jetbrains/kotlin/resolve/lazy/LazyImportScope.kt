@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.psi.JetImportDirective
 import org.jetbrains.kotlin.psi.debugText.*
 import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.Importer
 import org.jetbrains.kotlin.resolve.JetModuleUtil
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.*
@@ -100,15 +99,13 @@ class LazyImportResolver(
                     val directiveImportScope = WritableScopeImpl(JetScope.Empty, packageView, RedeclarationHandler.DO_NOTHING, "Scope for import '" + directive.getDebugText() + "' resolve in " + toString())
                     directiveImportScope.changeLockLevel(WritableScope.LockLevel.BOTH)
 
-                    val importer = Importer()
                     directiveUnderResolve = directive
 
                     val descriptors: Collection<DeclarationDescriptor>
                     try {
                         val resolver = resolveSession.getQualifiedExpressionResolver()
                         descriptors = resolver.processImportReference(directive, rootScope, packageView.getMemberScope(),
-                                                                      importer, traceForImportResolve, mode)
-                        importer.doImport(directiveImportScope)
+                                                                      directiveImportScope, traceForImportResolve, mode)
                         if (mode == LookupMode.EVERYTHING) {
                             org.jetbrains.kotlin.resolve.PlatformTypesMappedToKotlinChecker.checkPlatformTypesMappedToKotlin(packageView.getModule(), traceForImportResolve, directive, descriptors)
                         }

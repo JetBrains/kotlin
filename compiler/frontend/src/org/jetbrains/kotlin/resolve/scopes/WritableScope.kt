@@ -64,4 +64,15 @@ public trait WritableScope : JetScope {
     public fun importVariableAlias(aliasName: Name, variableDescriptor: VariableDescriptor)
 
     public fun clearImports()
+
+    public fun importAlias(aliasName: Name, descriptor: DeclarationDescriptor) {
+        when (descriptor) {
+            is ClassifierDescriptor -> importClassifierAlias(aliasName, descriptor)
+            is PackageViewDescriptor -> importPackageAlias(aliasName, descriptor)
+            is FunctionDescriptor -> importFunctionAlias(aliasName, descriptor)
+            is VariableDescriptor -> importVariableAlias(aliasName, descriptor)
+            else -> error("Unknown descriptor")
+        }
+    }
 }
+
