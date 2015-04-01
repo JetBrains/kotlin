@@ -889,6 +889,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             doTest(fileName);
         }
 
+        @TestMetadata("PrivatesInSecondPressCompletion.kt")
+        public void testPrivatesInSecondPressCompletion() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/PrivatesInSecondPressCompletion.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("RecieverMembersFromExtAccessor.kt")
         public void testRecieverMembersFromExtAccessor() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/RecieverMembersFromExtAccessor.kt");

@@ -23,6 +23,7 @@ import com.intellij.patterns.CharPattern
 import com.intellij.patterns.ElementPattern
 import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.StandardPatterns
+import com.intellij.psi.PsiCompiledElement
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.KotlinIndicesHelper
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
 import org.jetbrains.kotlin.idea.completion.smart.SmartCompletion
 import org.jetbrains.kotlin.idea.refactoring.comparePossiblyOverridingDescriptors
@@ -166,10 +168,11 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
         get() = KotlinIndicesHelper(project, resolutionFacade, bindingContext!!, searchScope, moduleDescriptor) { isVisibleDescriptor(it) }
 
     protected fun isVisibleDescriptor(descriptor: DeclarationDescriptor): Boolean {
-        if (configuration.completeNonAccessibleDeclarations) return true
-
         if (descriptor is DeclarationDescriptorWithVisibility && inDescriptor != null) {
-            return descriptor.isVisible(inDescriptor, bindingContext, reference?.expression)
+            val visible = descriptor.isVisible(inDescriptor, bindingContext, reference?.expression)
+            if (visible) return true
+            if (!configuration.completeNonAccessibleDeclarations) return false
+            return DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor) !is PsiCompiledElement
         }
 
         return true
