@@ -1,0 +1,7 @@
+// IMPORT: dependency.util
+import dependency.*
+import java.util.*
+
+fun foo() {
+    "".util()
+}

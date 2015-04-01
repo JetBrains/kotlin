@@ -27,14 +27,14 @@ import java.util.LinkedHashMap
 public abstract class MultipleModulesTranslationTest(main: String) : BasicTest(main) {
 
     private val MAIN_MODULE_NAME: String = "main"
-    private var dependencies: Map<String, Array<String>>? = null
+    private var dependencies: Map<String, List<String>>? = null
 
     override fun checkFooBoxIsOkByPath(filePath: String) {
         val dirName = getTestName(true)
         dependencies = readModuleDependencies(filePath)
 
         for ((moduleName, dependencies) in dependencies) {
-            translateModule(dirName, filePath, moduleName, *dependencies)
+            translateModule(dirName, filePath, moduleName, dependencies)
         }
 
         val filename = getInputFilePath(getModuleDirectoryName(dirName, MAIN_MODULE_NAME) + File.separator + MAIN_MODULE_NAME + ".kt")
@@ -47,7 +47,7 @@ public abstract class MultipleModulesTranslationTest(main: String) : BasicTest(m
         runRhinoTests(moduleDirectoryName, BasicTest.DEFAULT_ECMA_VERSIONS, RhinoFunctionResultChecker(MAIN_MODULE_NAME, packageName, functionName, expectedResult))
     }
 
-    private fun translateModule(dirName: String, pathToDir: String, moduleName: String, vararg dependencies: String) {
+    private fun translateModule(dirName: String, pathToDir: String, moduleName: String, dependencies: List<String>) {
         val moduleDirectoryName = getModuleDirectoryName(dirName, moduleName)
         val fullFilePaths = getAllFilesInDir(pathToDir + File.separator + moduleName)
         val libraries = ArrayList<String>()
@@ -72,17 +72,18 @@ public abstract class MultipleModulesTranslationTest(main: String) : BasicTest(m
         return result
     }
 
-    private fun readModuleDependencies(testDataDir: String): Map<String, Array<String>> {
+    private fun readModuleDependencies(testDataDir: String): Map<String, List<String>> {
         val dependenciesTxt = File(testDataDir, "dependencies.txt")
         assert(dependenciesTxt.exists(), "moduleDependencies should not be null")
 
-        val result = LinkedHashMap<String, Array<String>>()
+        val result = LinkedHashMap<String, List<String>>()
         for (line in dependenciesTxt.readLines()) {
-            val split = line.split("->")
+            val split = line.splitBy("->")
             val module = split[0]
-            val dependencies = if (split.size() > 1) split[1].split(",") else array()
+            val dependencies = if (split.size() > 1) split[1] else ""
+            val dependencyList = dependencies.splitBy(",").filterNot { it.isEmpty() }
 
-            result[module] = dependencies//.toList()
+            result[module] = dependencyList
         }
 
         return result

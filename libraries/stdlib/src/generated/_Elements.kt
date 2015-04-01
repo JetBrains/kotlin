@@ -1788,16 +1788,11 @@ public fun String.last(): Char {
  * @throws NoSuchElementException if no such element is found.
  */
 public inline fun <T> Array<out T>.last(predicate: (T) -> Boolean): T {
-    var last: T? = null
-    var found = false
-    for (element in this) {
-        if (predicate(element)) {
-            last = element
-            found = true
-        }
+    for (index in this.indices.reversed()) {
+        val element = this[index]
+        if (predicate(element)) return element
     }
-    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching predicate")
-    return last as T
+    throw NoSuchElementException("Collection doesn't contain any element matching the predicate.")
 }
 
 /**
@@ -1805,16 +1800,11 @@ public inline fun <T> Array<out T>.last(predicate: (T) -> Boolean): T {
  * @throws NoSuchElementException if no such element is found.
  */
 public inline fun BooleanArray.last(predicate: (Boolean) -> Boolean): Boolean {
-    var last: Boolean? = null
-    var found = false
-    for (element in this) {
-        if (predicate(element)) {
-            last = element
-            found = true
-        }
+    for (index in this.indices.reversed()) {
+        val element = this[index]
+        if (predicate(element)) return element
     }
-    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching predicate")
-    return last as Boolean
+    throw NoSuchElementException("Collection doesn't contain any element matching the predicate.")
 }
 
 /**
@@ -1822,16 +1812,11 @@ public inline fun BooleanArray.last(predicate: (Boolean) -> Boolean): Boolean {
  * @throws NoSuchElementException if no such element is found.
  */
 public inline fun ByteArray.last(predicate: (Byte) -> Boolean): Byte {
-    var last: Byte? = null
-    var found = false
-    for (element in this) {
-        if (predicate(element)) {
-            last = element
-            found = true
-        }
+    for (index in this.indices.reversed()) {
+        val element = this[index]
+        if (predicate(element)) return element
     }
-    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching predicate")
-    return last as Byte
+    throw NoSuchElementException("Collection doesn't contain any element matching the predicate.")
 }
 
 /**
@@ -1839,16 +1824,11 @@ public inline fun ByteArray.last(predicate: (Byte) -> Boolean): Byte {
  * @throws NoSuchElementException if no such element is found.
  */
 public inline fun CharArray.last(predicate: (Char) -> Boolean): Char {
-    var last: Char? = null
-    var found = false
-    for (element in this) {
-        if (predicate(element)) {
-            last = element
-            found = true
-        }
+    for (index in this.indices.reversed()) {
+        val element = this[index]
+        if (predicate(element)) return element
     }
-    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching predicate")
-    return last as Char
+    throw NoSuchElementException("Collection doesn't contain any element matching the predicate.")
 }
 
 /**
@@ -1856,16 +1836,11 @@ public inline fun CharArray.last(predicate: (Char) -> Boolean): Char {
  * @throws NoSuchElementException if no such element is found.
  */
 public inline fun DoubleArray.last(predicate: (Double) -> Boolean): Double {
-    var last: Double? = null
-    var found = false
-    for (element in this) {
-        if (predicate(element)) {
-            last = element
-            found = true
-        }
+    for (index in this.indices.reversed()) {
+        val element = this[index]
+        if (predicate(element)) return element
     }
-    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching predicate")
-    return last as Double
+    throw NoSuchElementException("Collection doesn't contain any element matching the predicate.")
 }
 
 /**
@@ -1873,16 +1848,11 @@ public inline fun DoubleArray.last(predicate: (Double) -> Boolean): Double {
  * @throws NoSuchElementException if no such element is found.
  */
 public inline fun FloatArray.last(predicate: (Float) -> Boolean): Float {
-    var last: Float? = null
-    var found = false
-    for (element in this) {
-        if (predicate(element)) {
-            last = element
-            found = true
-        }
+    for (index in this.indices.reversed()) {
+        val element = this[index]
+        if (predicate(element)) return element
     }
-    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching predicate")
-    return last as Float
+    throw NoSuchElementException("Collection doesn't contain any element matching the predicate.")
 }
 
 /**
@@ -1890,16 +1860,11 @@ public inline fun FloatArray.last(predicate: (Float) -> Boolean): Float {
  * @throws NoSuchElementException if no such element is found.
  */
 public inline fun IntArray.last(predicate: (Int) -> Boolean): Int {
-    var last: Int? = null
-    var found = false
-    for (element in this) {
-        if (predicate(element)) {
-            last = element
-            found = true
-        }
+    for (index in this.indices.reversed()) {
+        val element = this[index]
+        if (predicate(element)) return element
     }
-    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching predicate")
-    return last as Int
+    throw NoSuchElementException("Collection doesn't contain any element matching the predicate.")
 }
 
 /**
@@ -1907,16 +1872,11 @@ public inline fun IntArray.last(predicate: (Int) -> Boolean): Int {
  * @throws NoSuchElementException if no such element is found.
  */
 public inline fun LongArray.last(predicate: (Long) -> Boolean): Long {
-    var last: Long? = null
-    var found = false
-    for (element in this) {
-        if (predicate(element)) {
-            last = element
-            found = true
-        }
+    for (index in this.indices.reversed()) {
+        val element = this[index]
+        if (predicate(element)) return element
     }
-    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching predicate")
-    return last as Long
+    throw NoSuchElementException("Collection doesn't contain any element matching the predicate.")
 }
 
 /**
@@ -1924,16 +1884,11 @@ public inline fun LongArray.last(predicate: (Long) -> Boolean): Long {
  * @throws NoSuchElementException if no such element is found.
  */
 public inline fun ShortArray.last(predicate: (Short) -> Boolean): Short {
-    var last: Short? = null
-    var found = false
-    for (element in this) {
-        if (predicate(element)) {
-            last = element
-            found = true
-        }
+    for (index in this.indices.reversed()) {
+        val element = this[index]
+        if (predicate(element)) return element
     }
-    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching predicate")
-    return last as Short
+    throw NoSuchElementException("Collection doesn't contain any element matching the predicate.")
 }
 
 /**
@@ -1941,6 +1896,8 @@ public inline fun ShortArray.last(predicate: (Short) -> Boolean): Short {
  * @throws NoSuchElementException if no such element is found.
  */
 public inline fun <T> Iterable<T>.last(predicate: (T) -> Boolean): T {
+    if (this is List<T>)
+        return this.last(predicate)
     var last: T? = null
     var found = false
     for (element in this) {
@@ -1949,8 +1906,20 @@ public inline fun <T> Iterable<T>.last(predicate: (T) -> Boolean): T {
             found = true
         }
     }
-    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching predicate")
+    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching the predicate.")
     return last as T
+}
+
+/**
+ * Returns the last element matching the given [predicate].
+ * @throws NoSuchElementException if no such element is found.
+ */
+public inline fun <T> List<T>.last(predicate: (T) -> Boolean): T {
+    for (index in this.indices.reversed()) {
+        val element = this[index]
+        if (predicate(element)) return element
+    }
+    throw NoSuchElementException("Collection doesn't contain any element matching the predicate.")
 }
 
 /**
@@ -1966,7 +1935,7 @@ public inline fun <T> Sequence<T>.last(predicate: (T) -> Boolean): T {
             found = true
         }
     }
-    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching predicate")
+    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching the predicate.")
     return last as T
 }
 
@@ -1985,7 +1954,7 @@ public inline fun <T> Stream<T>.last(predicate: (T) -> Boolean): T {
             found = true
         }
     }
-    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching predicate")
+    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching the predicate.")
     return last as T
 }
 
@@ -2002,7 +1971,7 @@ public inline fun String.last(predicate: (Char) -> Boolean): Char {
             found = true
         }
     }
-    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching predicate")
+    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching the predicate.")
     return last as Char
 }
 
@@ -2293,123 +2262,107 @@ public fun String.lastOrNull(): Char? {
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  */
 public inline fun <T> Array<out T>.lastOrNull(predicate: (T) -> Boolean): T? {
-    var last: T? = null
-    for (element in this) {
-        if (predicate(element)) {
-            last = element
-        }
+    for (index in this.indices.reversed()) {
+        val element = this[index]
+        if (predicate(element)) return element
     }
-    return last
+    return null
 }
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  */
 public inline fun BooleanArray.lastOrNull(predicate: (Boolean) -> Boolean): Boolean? {
-    var last: Boolean? = null
-    for (element in this) {
-        if (predicate(element)) {
-            last = element
-        }
+    for (index in this.indices.reversed()) {
+        val element = this[index]
+        if (predicate(element)) return element
     }
-    return last
+    return null
 }
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  */
 public inline fun ByteArray.lastOrNull(predicate: (Byte) -> Boolean): Byte? {
-    var last: Byte? = null
-    for (element in this) {
-        if (predicate(element)) {
-            last = element
-        }
+    for (index in this.indices.reversed()) {
+        val element = this[index]
+        if (predicate(element)) return element
     }
-    return last
+    return null
 }
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  */
 public inline fun CharArray.lastOrNull(predicate: (Char) -> Boolean): Char? {
-    var last: Char? = null
-    for (element in this) {
-        if (predicate(element)) {
-            last = element
-        }
+    for (index in this.indices.reversed()) {
+        val element = this[index]
+        if (predicate(element)) return element
     }
-    return last
+    return null
 }
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  */
 public inline fun DoubleArray.lastOrNull(predicate: (Double) -> Boolean): Double? {
-    var last: Double? = null
-    for (element in this) {
-        if (predicate(element)) {
-            last = element
-        }
+    for (index in this.indices.reversed()) {
+        val element = this[index]
+        if (predicate(element)) return element
     }
-    return last
+    return null
 }
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  */
 public inline fun FloatArray.lastOrNull(predicate: (Float) -> Boolean): Float? {
-    var last: Float? = null
-    for (element in this) {
-        if (predicate(element)) {
-            last = element
-        }
+    for (index in this.indices.reversed()) {
+        val element = this[index]
+        if (predicate(element)) return element
     }
-    return last
+    return null
 }
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  */
 public inline fun IntArray.lastOrNull(predicate: (Int) -> Boolean): Int? {
-    var last: Int? = null
-    for (element in this) {
-        if (predicate(element)) {
-            last = element
-        }
+    for (index in this.indices.reversed()) {
+        val element = this[index]
+        if (predicate(element)) return element
     }
-    return last
+    return null
 }
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  */
 public inline fun LongArray.lastOrNull(predicate: (Long) -> Boolean): Long? {
-    var last: Long? = null
-    for (element in this) {
-        if (predicate(element)) {
-            last = element
-        }
+    for (index in this.indices.reversed()) {
+        val element = this[index]
+        if (predicate(element)) return element
     }
-    return last
+    return null
 }
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  */
 public inline fun ShortArray.lastOrNull(predicate: (Short) -> Boolean): Short? {
-    var last: Short? = null
-    for (element in this) {
-        if (predicate(element)) {
-            last = element
-        }
+    for (index in this.indices.reversed()) {
+        val element = this[index]
+        if (predicate(element)) return element
     }
-    return last
+    return null
 }
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  */
 public inline fun <T> Iterable<T>.lastOrNull(predicate: (T) -> Boolean): T? {
+    if (this is List<T>)
+        return this.lastOrNull(predicate)
     var last: T? = null
     for (element in this) {
         if (predicate(element)) {
@@ -2417,6 +2370,17 @@ public inline fun <T> Iterable<T>.lastOrNull(predicate: (T) -> Boolean): T? {
         }
     }
     return last
+}
+
+/**
+ * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ */
+public inline fun <T> List<T>.lastOrNull(predicate: (T) -> Boolean): T? {
+    for (index in this.indices.reversed()) {
+        val element = this[index]
+        if (predicate(element)) return element
+    }
+    return null
 }
 
 /**

@@ -681,6 +681,12 @@ public class JetPsiCheckerTestGenerated extends AbstractJetPsiCheckerTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/infos"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("CapturedConstructorParameter.kt")
+        public void testCapturedConstructorParameter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/infos/CapturedConstructorParameter.kt");
+            doTestWithInfos(fileName);
+        }
+
         @TestMetadata("CapturedInInlinedClosure.kt")
         public void testCapturedInInlinedClosure() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/infos/CapturedInInlinedClosure.kt");

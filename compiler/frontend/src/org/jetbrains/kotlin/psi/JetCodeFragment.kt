@@ -70,7 +70,7 @@ public abstract class JetCodeFragment(
 
     override fun getContext() = context
 
-    override fun getResolveScope() = resolveScope ?: super<JetFile>.getResolveScope()
+    override fun getResolveScope() = context?.getResolveScope() ?: super<JetFile>.getResolveScope()
 
     override fun clone(): JetCodeFragment {
         val clone = cloneImpl(calcTreeElement().clone() as FileElement) as JetCodeFragment

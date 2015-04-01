@@ -261,7 +261,8 @@ fun LookupElementFactory.createLookupElement(
 fun <T : Any> T?.toList(): List<T> = if (this != null) listOf(this) else listOf()
 fun <T : Any> T?.toSet(): Set<T> = if (this != null) setOf(this) else setOf()
 
-fun String?.isNullOrEmpty() = this == null || this.isEmpty()
+deprecated("Use String?.isNullOrEmpty() from stdlib when available")
+fun String?.isNullOrEmptyDeprecated() = this == null || this.isEmpty()
 
 enum class SmartCompletionItemPriority {
     IT

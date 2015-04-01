@@ -146,7 +146,26 @@ public fun String.padEnd(length: Int, padChar: Char = ' '): String {
 }
 
 /** Returns true if the string is not null and not empty */
+deprecated("Use !isNullOrEmpty() or isNullOrEmpty().not() for nullable strings.")
 public fun String?.isNotEmpty(): Boolean = this != null && this.length() > 0
+
+/**
+ * Return `true` if this nullable string is either null or empty.
+ */
+public fun String?.isNullOrEmpty(): Boolean = this == null || this.length() == 0
+
+/**
+ * Returns `true` if this string is empty (contains no characters).
+ */
+public fun String.isEmpty(): Boolean = length() == 0
+
+// implemented differently in JVM and JS
+//public fun String.isBlank(): Boolean = length() == 0 || all { it.isWhitespace() }
+
+/**
+ * Returns `true` if this nullable string is either null or empty or consists solely of whitespace characters.
+ */
+public fun String?.isNullOrBlank(): Boolean = this == null || this.isBlank()
 
 /**
  * Iterator for characters of given CharSequence

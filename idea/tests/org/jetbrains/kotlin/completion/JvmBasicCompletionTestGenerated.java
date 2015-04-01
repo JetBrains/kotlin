@@ -889,6 +889,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest(fileName);
         }
 
+        @TestMetadata("PrivatesInSecondPressCompletion.kt")
+        public void testPrivatesInSecondPressCompletion() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/PrivatesInSecondPressCompletion.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("RecieverMembersFromExtAccessor.kt")
         public void testRecieverMembersFromExtAccessor() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/RecieverMembersFromExtAccessor.kt");
@@ -1242,6 +1248,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
                 doTest(fileName);
             }
 
+            @TestMetadata("MemberExtensionsFromMemberExtension.kt")
+            public void testMemberExtensionsFromMemberExtension() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/extensions/MemberExtensionsFromMemberExtension.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("NoDuplicatedMethodForSmartCast.kt")
             public void testNoDuplicatedMethodForSmartCast() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/extensions/NoDuplicatedMethodForSmartCast.kt");
@@ -1251,6 +1263,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             @TestMetadata("NoExtensionFromOuter.kt")
             public void testNoExtensionFromOuter() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/extensions/NoExtensionFromOuter.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NoMemberExtensionsFromCompanionObject.kt")
+            public void testNoMemberExtensionsFromCompanionObject() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/extensions/NoMemberExtensionsFromCompanionObject.kt");
                 doTest(fileName);
             }
 

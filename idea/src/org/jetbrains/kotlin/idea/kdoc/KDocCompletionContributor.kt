@@ -16,31 +16,27 @@
 
 package org.jetbrains.kotlin.idea.kdoc
 
-import com.intellij.codeInsight.completion.CompletionContributor
-import com.intellij.codeInsight.completion.CompletionType
+import com.intellij.codeInsight.completion.*
+import com.intellij.codeInsight.lookup.LookupElement
+import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.patterns.PlatformPatterns.psiElement
-import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
-import com.intellij.codeInsight.completion.CompletionProvider
-import com.intellij.codeInsight.completion.CompletionParameters
+import com.intellij.patterns.StandardPatterns
 import com.intellij.util.ProcessingContext
-import com.intellij.codeInsight.completion.CompletionResultSet
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.KotlinCacheService
-import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
-import org.jetbrains.kotlin.idea.completion.LookupElementFactory
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import com.intellij.codeInsight.lookup.LookupElementDecorator
-import com.intellij.codeInsight.lookup.LookupElement
-import com.intellij.codeInsight.completion.InsertionContext
+import org.jetbrains.kotlin.idea.completion.KotlinCompletionContributor
+import org.jetbrains.kotlin.idea.completion.LookupElementFactory
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
-import com.intellij.codeInsight.lookup.LookupElementBuilder
-import com.intellij.patterns.StandardPatterns
+import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 
 class KDocCompletionContributor(): CompletionContributor() {
     init {
@@ -51,6 +47,9 @@ class KDocCompletionContributor(): CompletionContributor() {
                psiElement().afterLeaf(
                    StandardPatterns.or(psiElement(KDocTokens.LEADING_ASTERISK), psiElement(KDocTokens.START))),
                KDocTagCompletionProvider)
+
+        extend(CompletionType.BASIC,
+               psiElement(KDocTokens.TAG_NAME), KDocTagCompletionProvider)
     }
 }
 
@@ -103,9 +102,14 @@ object KDocNameCompletionProvider: CompletionProvider<CompletionParameters>() {
 }
 
 object KDocTagCompletionProvider: CompletionProvider<CompletionParameters>() {
-    override fun addCompletions(parameters: CompletionParameters?, context: ProcessingContext, result: CompletionResultSet) {
+    override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
+        val prefix = if (parameters.getPosition().getNode().getElementType() == KDocTokens.TAG_NAME)
+            parameters.getPosition().getText().removeSuffix(KotlinCompletionContributor.DEFAULT_DUMMY_IDENTIFIER)
+        else
+            null
+        val resultWithPrefix = if (prefix != null) result.withPrefixMatcher(prefix) else result
         KDocKnownTag.values().forEach {
-            result.addElement(LookupElementBuilder.create("@" + it.name().toLowerCase()))
+            resultWithPrefix.addElement(LookupElementBuilder.create("@" + it.name().toLowerCase()))
         }
     }
 }
