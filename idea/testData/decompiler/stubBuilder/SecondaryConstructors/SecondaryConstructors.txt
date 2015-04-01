@@ -54,7 +54,7 @@ PsiJetFileStubImpl[package=test]
                   REFERENCE_EXPRESSION:[referencedName=kotlin]
                 REFERENCE_EXPRESSION:[referencedName=Int]
         TYPE_CONSTRAINT_LIST:
-          TYPE_CONSTRAINT:[isCompanionObjectConstraint=false]
+          TYPE_CONSTRAINT:
             REFERENCE_EXPRESSION:[referencedName=G]
             TYPE_REFERENCE:
               USER_TYPE:[isAbsoluteInRootPackage=false]

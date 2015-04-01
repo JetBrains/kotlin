@@ -808,12 +808,6 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
                 doParsingTest(fileName);
             }
 
-            @TestMetadata("PolymorphicClassObjects.kt")
-            public void testPolymorphicClassObjects() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/examples/PolymorphicClassObjects.kt");
-                doParsingTest(fileName);
-            }
-
             @TestMetadata("Queue.kt")
             public void testQueue() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/examples/Queue.kt");

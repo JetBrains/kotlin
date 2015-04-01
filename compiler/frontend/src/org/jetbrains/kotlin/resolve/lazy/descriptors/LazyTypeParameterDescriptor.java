@@ -83,8 +83,6 @@ public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescri
         if (classOrObject instanceof JetClass) {
             JetClass jetClass = (JetClass) classOrObject;
             for (JetTypeConstraint jetTypeConstraint : jetClass.getTypeConstraints()) {
-                DescriptorResolver.reportUnsupportedCompanionObjectConstraint(c.getTrace(), jetTypeConstraint);
-
                 JetSimpleNameExpression constrainedParameterName = jetTypeConstraint.getSubjectTypeParameterName();
                 if (constrainedParameterName != null) {
                     if (getName().equals(constrainedParameterName.getReferencedNameAsName())) {
@@ -93,9 +91,7 @@ public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescri
                         JetTypeReference boundTypeReference = jetTypeConstraint.getBoundTypeReference();
                         if (boundTypeReference != null) {
                             JetType boundType = resolveBoundType(boundTypeReference);
-                            if (!jetTypeConstraint.isCompanionObjectConstraint()) {
-                                upperBounds.add(boundType);
-                            }
+                            upperBounds.add(boundType);
                         }
                     }
                 }

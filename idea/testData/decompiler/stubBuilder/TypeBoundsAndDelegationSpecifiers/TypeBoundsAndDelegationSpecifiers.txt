@@ -34,7 +34,7 @@ PsiJetFileStubImpl[package=test]
               REFERENCE_EXPRESSION:[referencedName=test]
             REFERENCE_EXPRESSION:[referencedName=T]
     TYPE_CONSTRAINT_LIST:
-      TYPE_CONSTRAINT:[isCompanionObjectConstraint=false]
+      TYPE_CONSTRAINT:
         REFERENCE_EXPRESSION:[referencedName=H]
         TYPE_REFERENCE:
           USER_TYPE:[isAbsoluteInRootPackage=false]
@@ -48,14 +48,14 @@ PsiJetFileStubImpl[package=test]
                     USER_TYPE:[isAbsoluteInRootPackage=false]
                       REFERENCE_EXPRESSION:[referencedName=kotlin]
                     REFERENCE_EXPRESSION:[referencedName=String]
-      TYPE_CONSTRAINT:[isCompanionObjectConstraint=false]
+      TYPE_CONSTRAINT:
         REFERENCE_EXPRESSION:[referencedName=G]
         TYPE_REFERENCE:
           USER_TYPE:[isAbsoluteInRootPackage=false]
             USER_TYPE:[isAbsoluteInRootPackage=false]
               REFERENCE_EXPRESSION:[referencedName=kotlin]
             REFERENCE_EXPRESSION:[referencedName=CharSequence]
-      TYPE_CONSTRAINT:[isCompanionObjectConstraint=false]
+      TYPE_CONSTRAINT:
         REFERENCE_EXPRESSION:[referencedName=C]
         TYPE_REFERENCE:
           NULLABLE_TYPE:

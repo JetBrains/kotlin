@@ -270,12 +270,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             doTest(fileName);
         }
 
-        @TestMetadata("FinalClassObjectBound.kt")
-        public void testFinalClassObjectBound() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/FinalClassObjectBound.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("ForRangeConventions.kt")
         public void testForRangeConventions() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/ForRangeConventions.kt");
@@ -5035,21 +5029,9 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("ClassObjectBoundsAreNotSupported.kt")
-            public void testClassObjectBoundsAreNotSupported() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/ClassObjectBoundsAreNotSupported.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("kt1575-Class.kt")
             public void testKt1575_Class() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/kt1575-Class.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("kt1575-ClassObject.kt")
-            public void testKt1575_ClassObject() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/kt1575-ClassObject.kt");
                 doTest(fileName);
             }
 

@@ -220,7 +220,6 @@ public interface Errors {
     // Type parameter declarations
 
     DiagnosticFactory1<JetTypeReference, JetType> FINAL_UPPER_BOUND = DiagnosticFactory1.create(WARNING);
-    DiagnosticFactory1<JetTypeReference, JetType> FINAL_COMPANION_OBJECT_UPPER_BOUND = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<JetTypeReference> DYNAMIC_UPPER_BOUND = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory1<JetNamedDeclaration, TypeParameterDescriptor> CONFLICTING_UPPER_BOUNDS =

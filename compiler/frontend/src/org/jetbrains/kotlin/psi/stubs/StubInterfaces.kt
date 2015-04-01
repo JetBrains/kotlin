@@ -103,10 +103,6 @@ public trait KotlinPropertyStub : KotlinStubWithFqName<JetProperty> {
     public fun isProbablyNothingType(): Boolean
 }
 
-public trait KotlinTypeConstraintStub : StubElement<JetTypeConstraint> {
-    public fun isCompanionObjectConstraint(): Boolean
-}
-
 public trait KotlinTypeParameterStub : KotlinStubWithFqName<JetTypeParameter> {
     public fun isInVariance(): Boolean
     public fun isOutVariance(): Boolean

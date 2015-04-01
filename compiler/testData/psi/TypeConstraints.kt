@@ -1,3 +1,3 @@
-class foo<T> where T : T, class object T : T {
+class foo<T> where T : T {
 
 }

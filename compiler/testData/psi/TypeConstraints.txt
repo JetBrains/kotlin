@@ -24,22 +24,6 @@ JetFile: TypeConstraints.kt
           USER_TYPE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('T')
-      PsiElement(COMMA)(',')
-      PsiWhiteSpace(' ')
-      TYPE_CONSTRAINT
-        PsiElement(class)('class')
-        PsiWhiteSpace(' ')
-        PsiElement(object)('object')
-        PsiWhiteSpace(' ')
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('T')
-        PsiWhiteSpace(' ')
-        PsiElement(COLON)(':')
-        PsiWhiteSpace(' ')
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('T')
     PsiWhiteSpace(' ')
     CLASS_BODY
       PsiElement(LBRACE)('{')

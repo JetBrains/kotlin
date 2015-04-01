@@ -19,31 +19,21 @@ package org.jetbrains.kotlin.psi;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.lexer.JetTokens;
-import org.jetbrains.kotlin.psi.stubs.KotlinTypeConstraintStub;
+import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
 
-public class JetTypeConstraint extends JetElementImplStub<KotlinTypeConstraintStub> {
+public class JetTypeConstraint extends JetElementImplStub<KotlinPlaceHolderStub<JetTypeConstraint>> {
     public JetTypeConstraint(@NotNull ASTNode node) {
         super(node);
     }
 
-    public JetTypeConstraint(@NotNull KotlinTypeConstraintStub stub) {
+    public JetTypeConstraint(@NotNull KotlinPlaceHolderStub<JetTypeConstraint> stub) {
         super(stub, JetStubElementTypes.TYPE_CONSTRAINT);
     }
 
     @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitTypeConstraint(this, data);
-    }
-
-    public boolean isCompanionObjectConstraint() {
-        KotlinTypeConstraintStub stub = getStub();
-        if (stub != null) {
-            return stub.isCompanionObjectConstraint();
-        }
-        return findChildByType(JetTokens.CLASS_KEYWORD) != null &&
-                findChildByType(JetTokens.OBJECT_KEYWORD) != null;
     }
 
     @Nullable @IfNotParsed
