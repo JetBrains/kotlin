@@ -82,18 +82,4 @@ class C {
         }
         a<!UNSAFE_CALL!>.<!>compareTo("2")
     }
-
-    fun breakContinueInWhen(i: Int) {
-        for (y in 0..10) {
-            when(i) {
-                0 -> <!BREAK_OR_CONTINUE_IN_WHEN!>continue<!>
-                1 -> <!BREAK_OR_CONTINUE_IN_WHEN!>break<!>
-                2 -> {
-                    for(z in 0..10) {
-                        break
-                    }
-                }
-            }
-        }
-    }
 }
