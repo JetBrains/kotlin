@@ -27,9 +27,9 @@ public val Class<*>.classLoader: ClassLoader
 public fun Class<*>.isEnumClassOrSpecializedEnumEntryClass(): Boolean =
         javaClass<Enum<*>>().isAssignableFrom(this)
 
-public val Class<*>.fqName: FqName
-    get() = classId.asSingleFqName()
-
+/**
+ * NOTE: does not perform a Java -> Kotlin mapping. If this is not expected, consider using KClassImpl#classId instead
+ */
 public val Class<*>.classId: ClassId
     get() = when {
         isPrimitive() -> throw IllegalArgumentException("Can't compute ClassId for primitive type: $this")

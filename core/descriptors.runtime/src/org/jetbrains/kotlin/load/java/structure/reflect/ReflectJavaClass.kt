@@ -44,7 +44,7 @@ public class ReflectJavaClass(
             .map(::ReflectJavaClass)
             .toList()
 
-    override fun getFqName() = klass.fqName
+    override fun getFqName() = klass.classId.asSingleFqName()
 
     override fun getOuterClass() = klass.getDeclaringClass()?.let(::ReflectJavaClass)
 

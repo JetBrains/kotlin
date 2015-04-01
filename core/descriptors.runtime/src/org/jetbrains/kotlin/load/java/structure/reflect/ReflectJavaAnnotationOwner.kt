@@ -33,5 +33,5 @@ fun getAnnotations(annotations: Array<Annotation>): List<ReflectJavaAnnotation> 
 }
 
 fun findAnnotation(annotations: Array<Annotation>, fqName: FqName): ReflectJavaAnnotation? {
-    return annotations.firstOrNull { it.annotationType().fqName == fqName }?.let { ReflectJavaAnnotation(it) }
+    return annotations.firstOrNull { it.annotationType().classId.asSingleFqName() == fqName }?.let { ReflectJavaAnnotation(it) }
 }
