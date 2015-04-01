@@ -1,4 +1,4 @@
-package kotlinx.android.synthetic.layout.view
+package kotlinx.android.synthetic.test.view
 
 import android.app.*
 import android.view.*

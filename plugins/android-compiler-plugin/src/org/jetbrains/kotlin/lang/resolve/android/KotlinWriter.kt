@@ -69,6 +69,10 @@ class KotlinStringWriter : KotlinWriter {
         body.newLine()
     }
 
+    fun writeText(text: String) {
+        body.writeln(text)
+    }
+
     override fun toStringBuffer(): StringBuffer {
         ctx.absorbChildren()
         return ctx.buffer

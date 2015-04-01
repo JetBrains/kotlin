@@ -1,4 +1,4 @@
-package kotlinx.android.synthetic.layout
+package kotlinx.android.synthetic.test1
 
 import android.app.*
 import android.view.*
@@ -12,27 +12,27 @@ import android.support.v4.view.*
 import android.support.v4.widget.*
 import kotlin.internal.flexible.ft
 
-val android.app.Activity.item_detail_container: ft<FrameLayout, FrameLayout?>
+val android.app.Activity.frameLayout: ft<FrameLayout, FrameLayout?>
     get() = findViewById(0) as? FrameLayout
 
-val android.app.Fragment.item_detail_container: ft<FrameLayout, FrameLayout?>
+val android.app.Fragment.frameLayout: ft<FrameLayout, FrameLayout?>
     get() = getView().findViewById(0) as? FrameLayout
 
-val android.app.Activity.textView1: ft<TextView, TextView?>
+val android.app.Activity.passwordField: ft<TextView, TextView?>
     get() = findViewById(0) as? TextView
 
-val android.app.Fragment.textView1: ft<TextView, TextView?>
+val android.app.Fragment.passwordField: ft<TextView, TextView?>
     get() = getView().findViewById(0) as? TextView
 
-val android.app.Activity.password: ft<EditText, EditText?>
+val android.app.Activity.passwordCaption: ft<EditText, EditText?>
     get() = findViewById(0) as? EditText
 
-val android.app.Fragment.password: ft<EditText, EditText?>
+val android.app.Fragment.passwordCaption: ft<EditText, EditText?>
     get() = getView().findViewById(0) as? EditText
 
-val android.app.Activity.login: ft<Button, Button?>
+val android.app.Activity.loginButton: ft<Button, Button?>
     get() = findViewById(0) as? Button
 
-val android.app.Fragment.login: ft<Button, Button?>
+val android.app.Fragment.loginButton: ft<Button, Button?>
     get() = getView().findViewById(0) as? Button
 

@@ -1,4 +1,4 @@
-package kotlinx.android.synthetic.layout
+package kotlinx.android.synthetic.test.view
 
 import android.app.*
 import android.view.*
@@ -12,9 +12,6 @@ import android.support.v4.view.*
 import android.support.v4.widget.*
 import kotlin.internal.flexible.ft
 
-val android.app.Activity.button: ft<View, View?>
+val android.view.View.button: ft<View, View?>
     get() = findViewById(0)
-
-val android.app.Fragment.button: ft<View, View?>
-    get() = getView().findViewById(0)
 

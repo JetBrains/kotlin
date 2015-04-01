@@ -22,7 +22,9 @@ import org.jetbrains.kotlin.lexer.JetTokens
 
 public object AndroidConst {
     val ANDROID_USER_PACKAGE: Key<String> = Key.create<String>("ANDROID_USER_PACKAGE")
-    val SYNTHETIC_FILENAME: String = "ANDROIDXML"
+    val SYNTHETIC_FILENAME_PREFIX: String = "ANDROIDXML_"
+    val LAYOUT_POSTFIX: String = "_LAYOUT"
+    val VIEW_LAYOUT_POSTFIX: String = "_VIEW"
     val SYNTHETIC_PACKAGE: String = "kotlinx.android.synthetic"
     val SYNTHETIC_PACKAGE_PATH_LENGTH = SYNTHETIC_PACKAGE.count { it == '.' } + 1
 

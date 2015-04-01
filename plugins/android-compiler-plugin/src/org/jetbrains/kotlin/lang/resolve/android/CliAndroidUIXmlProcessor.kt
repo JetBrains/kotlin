@@ -37,7 +37,7 @@ public class CliAndroidUIXmlProcessor(
         CliAndroidResourceManager(project, manifestPath, mainResDirectory)
     }
 
-    override val cachedSources: CachedValue<List<String>> by Delegates.lazy {
+    override val cachedSources: CachedValue<List<AndroidSyntheticFile>> by Delegates.lazy {
         cachedValue {
             Result.create(parse(), ModificationTracker.NEVER_CHANGED)
         }

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.test.JetTestUtils
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.lang.resolve.android.AndroidConst
 import org.jetbrains.kotlin.lang.resolve.android.CliAndroidUIXmlProcessor
 import org.jetbrains.kotlin.lang.resolve.android.AndroidUIXmlProcessor
 import kotlin.test.*
@@ -30,19 +31,21 @@ import kotlin.test.*
 public abstract class AbstractAndroidXml2KConversionTest : UsefulTestCase() {
 
     public fun doTest(path: String) {
-        val jetCoreEnvironment = getEnvironment(path)
+        val jetCoreEnvironment = getEnvironment()
         val parser = CliAndroidUIXmlProcessor(jetCoreEnvironment.project, path + "AndroidManifest.xml", path + "/res")
 
-        val actual = parser.parse(false)
+        val actual = parser.parse(false).toMap { it.name }
 
-        val layoutFiles = File(path).listFiles {
-            it.isFile() && it.name.startsWith("layout") && it.name.endsWith(".kt")
-        }?.sortBy { it.name } ?: listOf()
+        val expectedLayoutFiles = File(path).listFiles {
+            it.isFile() && it.name.endsWith(".kt")
+        }?.toMap { it.name.substringBefore(".kt") } ?: mapOf()
 
-        assertEquals(layoutFiles.size(), actual.size())
+        assertEquals(expectedLayoutFiles.size(), actual.size())
 
-        for ((index, file) in layoutFiles.withIndex()) {
-            JetTestUtils.assertEqualsToFile(file, actual[index])
+        for ((name, file) in expectedLayoutFiles) {
+            val actualContents = actual[name]
+            assertNotNull(actualContents, "File $name was not generated")
+            JetTestUtils.assertEqualsToFile(file, actualContents!!.contents)
         }
     }
 
@@ -55,7 +58,7 @@ public abstract class AbstractAndroidXml2KConversionTest : UsefulTestCase() {
         }
     }
 
-    private fun getEnvironment(testPath: String): KotlinCoreEnvironment {
+    private fun getEnvironment(): KotlinCoreEnvironment {
         val configuration = JetTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK)
         return KotlinCoreEnvironment.createForTests(getTestRootDisposable()!!, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
     }

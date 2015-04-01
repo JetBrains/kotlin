@@ -35,7 +35,7 @@ class IDEAndroidUIXmlProcessor(val module: Module) : AndroidUIXmlProcessor(modul
         module.getProject().getExtensions(PsiTreeChangePreprocessor.EP_NAME).first { it is AndroidPsiTreeChangePreprocessor }
     }
 
-    override val cachedSources: CachedValue<List<String>> by Delegates.lazy {
+    override val cachedSources: CachedValue<List<AndroidSyntheticFile>> by Delegates.lazy {
         cachedValue {
             Result.create(parse(), psiTreeChangePreprocessor)
         }
