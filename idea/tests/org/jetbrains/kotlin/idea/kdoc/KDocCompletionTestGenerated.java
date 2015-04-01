@@ -66,6 +66,12 @@ public class KDocCompletionTestGenerated extends AbstractJvmBasicCompletionTest 
         doTest(fileName);
     }
 
+    @TestMetadata("TagNameMiddle.kt")
+    public void testTagNameMiddle() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/kdoc/completion/TagNameMiddle.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("TagNameStart.kt")
     public void testTagNameStart() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/kdoc/completion/TagNameStart.kt");

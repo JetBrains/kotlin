@@ -104,7 +104,7 @@ object KDocNameCompletionProvider: CompletionProvider<CompletionParameters>() {
 object KDocTagCompletionProvider: CompletionProvider<CompletionParameters>() {
     override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
         val prefix = if (parameters.getPosition().getNode().getElementType() == KDocTokens.TAG_NAME)
-            parameters.getPosition().getText().trimTrailing(KotlinCompletionContributor.DEFAULT_DUMMY_IDENTIFIER)
+            parameters.getPosition().getText().removeSuffix(KotlinCompletionContributor.DEFAULT_DUMMY_IDENTIFIER)
         else
             null
         val resultWithPrefix = if (prefix != null) result.withPrefixMatcher(prefix) else result
