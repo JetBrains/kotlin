@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.load.java.structure.reflect.classId
 import org.jetbrains.kotlin.load.java.structure.reflect.classLoader
 import org.jetbrains.kotlin.load.java.structure.reflect.createArrayType
-import org.jetbrains.kotlin.load.java.structure.reflect.desc
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.JetScope
@@ -42,9 +41,7 @@ abstract class KCallableContainerImpl {
 
     abstract val scope: JetScope
 
-    protected fun findPropertyDescriptor(name: String, receiverParameterClass: Class<*>? = null): () -> PropertyDescriptor = {
-        val receiverDesc = receiverParameterClass?.desc
-
+    fun findPropertyDescriptor(name: String, receiverDesc: String? = null): PropertyDescriptor {
         val properties = scope
                 .getProperties(Name.identifier(name))
                 .filter { descriptor ->
@@ -57,14 +54,14 @@ abstract class KCallableContainerImpl {
                 }
 
         if (properties.size() != 1) {
-            val debugText = if (receiverParameterClass == null) name else "${receiverParameterClass.getSimpleName()}.$name"
+            val debugText = if (receiverDesc == null) name else "$receiverDesc.$name"
             throw KotlinReflectionInternalError(
                     if (properties.isEmpty()) "Property '$debugText' not resolved in $this"
                     else "${properties.size()} properties '$debugText' resolved in $this"
             )
         }
 
-        properties.single() as PropertyDescriptor
+        return properties.single() as PropertyDescriptor
     }
 
     // TODO: check resulting method's return type

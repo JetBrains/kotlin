@@ -18,6 +18,7 @@ package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.load.java.structure.reflect.desc
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
@@ -26,10 +27,22 @@ import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import java.lang.reflect.Field
 import java.lang.reflect.Method
 
-abstract class DescriptorBasedProperty(computeDescriptor: () -> PropertyDescriptor) {
-    protected abstract val container: KCallableContainerImpl
+abstract class DescriptorBasedProperty private(
+        container: KCallableContainerImpl,
+        name: String,
+        receiverParameterDesc: String?,
+        descriptorInitialValue: PropertyDescriptor?
+) {
+    constructor(container: KCallableContainerImpl, name: String, receiverParameterClass: Class<*>?) : this(
+            container, name, receiverParameterClass?.desc, null
+    )
 
-    protected abstract val name: String
+    constructor(container: KCallableContainerImpl, descriptor: PropertyDescriptor) : this(
+            container,
+            descriptor.getName().asString(),
+            descriptor.getExtensionReceiverParameter()?.getType()?.let { type -> RuntimeTypeMapper.mapTypeToJvmDesc(type) },
+            descriptor
+    )
 
     private data class PropertyProtoData(
             val proto: ProtoBuf.Callable,
@@ -37,7 +50,9 @@ abstract class DescriptorBasedProperty(computeDescriptor: () -> PropertyDescript
             val signature: JvmProtoBuf.JvmPropertySignature
     )
 
-    protected val descriptor: PropertyDescriptor by ReflectProperties.lazySoft(computeDescriptor)
+    protected val descriptor: PropertyDescriptor by ReflectProperties.lazySoft<PropertyDescriptor>(descriptorInitialValue) {
+        container.findPropertyDescriptor(name, receiverParameterDesc)
+    }
 
     // null if this is a property declared in a foreign (Java) class
     private val protoData: PropertyProtoData? by ReflectProperties.lazyWeak {

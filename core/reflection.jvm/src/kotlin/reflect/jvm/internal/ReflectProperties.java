@@ -18,6 +18,7 @@ package kotlin.reflect.jvm.internal;
 
 import kotlin.Function0;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
@@ -67,8 +68,11 @@ import java.lang.ref.WeakReference;
         private final Function0<T> initializer;
         private SoftReference<Object> value = null;
 
-        public LazySoftVal(@NotNull Function0<T> initializer) {
+        public LazySoftVal(@Nullable T initialValue, @NotNull Function0<T> initializer) {
             this.initializer = initializer;
+            if (initialValue != null) {
+                this.value = new SoftReference<Object>(escape(initialValue));
+            }
         }
 
         @Override
@@ -121,8 +125,13 @@ import java.lang.ref.WeakReference;
     }
 
     @NotNull
+    public static <T> LazySoftVal<T> lazySoft(@Nullable T initialValue, @NotNull Function0<T> initializer) {
+        return new LazySoftVal<T>(initialValue, initializer);
+    }
+
+    @NotNull
     public static <T> LazySoftVal<T> lazySoft(@NotNull Function0<T> initializer) {
-        return new LazySoftVal<T>(initializer);
+        return lazySoft(null, initializer);
     }
 
     @NotNull

@@ -23,10 +23,11 @@ import kotlin.reflect.IllegalPropertyAccessException
 import kotlin.reflect.KMemberExtensionProperty
 import kotlin.reflect.KMutableMemberExtensionProperty
 
-open class KMemberExtensionPropertyImpl<D : Any, E, out R>(
-        override val container: KClassImpl<D>,
-        computeDescriptor: () -> PropertyDescriptor
-) : DescriptorBasedProperty(computeDescriptor), KMemberExtensionProperty<D, E, R>, KPropertyImpl<R> {
+open class KMemberExtensionPropertyImpl<D : Any, E, out R> : DescriptorBasedProperty, KMemberExtensionProperty<D, E, R>, KPropertyImpl<R> {
+    constructor(container: KClassImpl<D>, name: String, receiverParameterClass: Class<E>) : super(container, name, receiverParameterClass)
+
+    constructor(container: KClassImpl<D>, descriptor: PropertyDescriptor) : super(container, descriptor)
+
     override val name: String get() = descriptor.getName().asString()
 
     override val getter: Method get() = super<DescriptorBasedProperty>.getter!!
@@ -45,10 +46,14 @@ open class KMemberExtensionPropertyImpl<D : Any, E, out R>(
 }
 
 
-class KMutableMemberExtensionPropertyImpl<D : Any, E, R>(
-        container: KClassImpl<D>,
-        computeDescriptor: () -> PropertyDescriptor
-) : KMemberExtensionPropertyImpl<D, E, R>(container, computeDescriptor), KMutableMemberExtensionProperty<D, E, R>, KMutablePropertyImpl<R> {
+class KMutableMemberExtensionPropertyImpl<D : Any, E, R> :
+        KMemberExtensionPropertyImpl<D, E, R>,
+        KMutableMemberExtensionProperty<D, E, R>,
+        KMutablePropertyImpl<R> {
+    constructor(container: KClassImpl<D>, name: String, receiverParameterClass: Class<E>) : super(container, name, receiverParameterClass)
+
+    constructor(container: KClassImpl<D>, descriptor: PropertyDescriptor) : super(container, descriptor)
+
     override val setter: Method get() = super<KMemberExtensionPropertyImpl>.setter!!
 
     override fun set(instance: D, extensionReceiver: E, value: R) {
