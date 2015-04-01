@@ -102,6 +102,12 @@ class KClassImpl<T>(override val jClass: Class<T>) : KCallableContainerImpl(), K
     override fun hashCode(): Int =
             jClass.hashCode()
 
-    override fun toString(): String =
-            jClass.toString()
+    override fun toString(): String {
+        return "class " + classId.let { classId ->
+            val packageFqName = classId.getPackageFqName()
+            val packagePrefix = if (packageFqName.isRoot()) "" else packageFqName.asString() + "."
+            val classSuffix = classId.getRelativeClassName().asString().replace('.', '$')
+            packagePrefix + classSuffix
+        }
+    }
 }

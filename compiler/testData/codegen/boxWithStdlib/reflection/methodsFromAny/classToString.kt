@@ -1,14 +1,26 @@
 import kotlin.test.*
-import kotlin.reflect.jvm.kotlin
 
-class A
+class A {
+    class Nested
+
+    companion object
+}
 
 fun box(): String {
-    val p = javaClass<A>().kotlin
-    if ("$p" != "class A") return "Fail: $p"
+    assertEquals("class A", "${A::class}")
+    assertEquals("class A\$Nested", "${A.Nested::class}")
+    assertEquals("class A\$Companion", "${A.Companion::class}")
 
-    val s = javaClass<String>().kotlin
-    if ("$s" != "class java.lang.String") return "Fail: $s"
+    assertEquals("class kotlin.Any", "${Any::class}")
+    assertEquals("class kotlin.Int", "${Int::class}")
+    assertEquals("class kotlin.Int\$Companion", "${Int.Companion::class}")
+    assertEquals("class kotlin.IntArray", "${IntArray::class}")
+    // TODO
+    // assertEquals("class kotlin.Array", "${Array<Any>::class}")
+    assertEquals("class kotlin.String", "${String::class}")
+    assertEquals("class kotlin.String", "${java.lang.String::class}")
+
+    assertEquals("class java.lang.Runnable", "${Runnable::class}")
 
     return "OK"
 }
