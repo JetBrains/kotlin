@@ -4,7 +4,7 @@ fun box(): String {
     class L : C() {
         val a: Any
 
-        {
+        init {
             a = {}
         }
     }

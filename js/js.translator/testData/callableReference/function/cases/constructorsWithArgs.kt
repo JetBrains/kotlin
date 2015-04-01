@@ -2,14 +2,14 @@ package foo
 
 class A(val x:Int) {
     var s = "sA"
-    {
+    init {
         s += ":init:" + x
     }
 }
 
 class B(val arg1:String, val arg2:String) {
     var msg = ""
-    {
+    init {
         msg = arg1 + arg2
     }
 }

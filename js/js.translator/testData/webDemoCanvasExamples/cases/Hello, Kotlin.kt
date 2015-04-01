@@ -45,7 +45,7 @@ class HelloKotlin() {
 
     val message = "Hello, Kotlin!"
     val textHeightInPixels = 20
-    {
+    init {
         context.font = "bold ${textHeightInPixels}px Georgia, serif"
     }
     val textWidthInPixels = context.measureText(message)!!.width

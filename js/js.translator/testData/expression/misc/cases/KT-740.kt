@@ -4,7 +4,7 @@ var c = 0
 
 class A() {
     var  p = 0;
-    {
+    init {
         c++;
     }
 }

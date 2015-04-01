@@ -142,7 +142,7 @@ fun box(): String {
         suite("dataClass",
 """
 data class DataClass($DEFINITION_MARKER: String) {
-    {
+    init {
         $TEST_BLOCK_MARKER
     }
 }

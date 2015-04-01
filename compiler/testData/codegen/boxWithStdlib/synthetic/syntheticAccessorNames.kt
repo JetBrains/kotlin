@@ -15,7 +15,7 @@ class PrivatePropertyGet {
 class PrivatePropertySet {
     private var x = "a"
 
-    inner class Inner { { x = "b" } }
+    inner class Inner { init { x = "b" } }
 }
 
 class PrivateMethod {

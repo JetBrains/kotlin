@@ -9,7 +9,7 @@ class A {
 
     var aR = 0
     var aaR = 0
-    {
+    init {
         a = 1
         $aa = 2
 
@@ -27,7 +27,7 @@ class B {
 
     var aR = 0
     var aaR = 0
-    {
+    init {
         a = 3
         $aa = 4
 

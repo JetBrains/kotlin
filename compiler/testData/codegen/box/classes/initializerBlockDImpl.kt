@@ -5,7 +5,7 @@ class World() {
   public val items: ArrayList<Item> = ArrayList<Item>()
 
   inner class Item() {
-    {
+    init {
       items.add(this)
     }
   }

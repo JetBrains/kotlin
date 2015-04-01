@@ -3,7 +3,7 @@ package foo
 var a = 0
 
 class A() {
-    {
+    init {
         a++
     }
 

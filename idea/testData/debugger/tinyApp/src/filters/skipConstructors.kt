@@ -7,7 +7,7 @@ fun main(args: Array<String>) {
 }
 
 class A {
-    {
+    init {
         val a = 1
     }
 }

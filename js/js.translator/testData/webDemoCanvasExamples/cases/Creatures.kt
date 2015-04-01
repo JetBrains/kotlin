@@ -210,7 +210,7 @@ class CanvasState(val canvas: HTMLCanvasElement) {
     var dragOff = Vector()
     val interval = 1000 / 30
 
-    {
+    init {
         jq(canvas).mousedown {
             valid = false
             selection = null
@@ -295,7 +295,7 @@ class RadialGradientGenerator(val context: CanvasContext) {
         gradients.add(colorStops)
     }
 
-    {
+    init {
         newColorStops(Pair(0.0, "#F59898"), Pair(0.5, "#F57373"), Pair(1.0, "#DB6B6B"))
         newColorStops(Pair(0.39, "rgb(140,167,209)"), Pair(0.7, "rgb(104,139,209)"), Pair(0.85, "rgb(67,122,217)"))
         newColorStops(Pair(0.0, "rgb(255,222,255)"), Pair(0.5, "rgb(255,185,222)"), Pair(1.0, "rgb(230,154,185)"))

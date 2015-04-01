@@ -3,7 +3,7 @@ class A {
         val b = 0
         val c = b
         
-        {
+        init {
             val d = b
         }
     }

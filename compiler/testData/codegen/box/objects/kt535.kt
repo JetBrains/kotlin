@@ -9,7 +9,7 @@ class Identifier<T>(t : T?, myHasDollar : Boolean) {
             return __
         }
     }
-    {
+    init {
         $myT = t
     }
 }

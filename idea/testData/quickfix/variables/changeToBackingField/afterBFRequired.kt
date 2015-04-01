@@ -2,7 +2,7 @@
 class A() {
     var a : Int
     set(v) {}
-    {
+    init {
         <caret>$a = 1
     }
 }

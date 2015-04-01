@@ -5,7 +5,7 @@ enum class B(open val bar: Int) {
     var y = 12;
     a : B(0) {
         override val bar = 3
-        {
+        init {
             y = 0
         }
     }

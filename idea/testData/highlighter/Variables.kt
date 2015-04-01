@@ -11,7 +11,7 @@ val <info textAttributesKey="KOTLIN_PACKAGE_PROPERTY"><info textAttributesKey="K
 }
 
 class <info textAttributesKey="KOTLIN_CLASS">Foo</info>(val <info textAttributesKey="KOTLIN_PARAMETER"><info textAttributesKey="KOTLIN_INSTANCE_PROPERTY"><info textAttributesKey="KOTLIN_PROPERTY_WITH_BACKING_FIELD">a</info></info></info> : <info textAttributesKey="KOTLIN_CLASS">Int</info>, <info textAttributesKey="KOTLIN_PARAMETER">b</info> : <info textAttributesKey="KOTLIN_CLASS">String</info>) {
-  {
+  <info>init</info> {
     <info textAttributesKey="KOTLIN_PARAMETER">b</info>
   }
 

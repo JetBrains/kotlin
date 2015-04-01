@@ -1,7 +1,7 @@
 class A {
     companion object {
 
-        {
+        init {
             1 + 1 // A
             val a = 1 // A
             fun foo() {

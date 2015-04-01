@@ -9,7 +9,7 @@ trait Holder {
 class BasicHolder : Holder {
     override var element: String = "not ok"
 
-    {
+    init {
         element = "ok"
     }
 }

@@ -18,7 +18,7 @@ var aDelegate: Int by Delegates.notNull()
 val aLambda = { 1 + 1 }
 
 class A {
-    {
+    init {
         // EXPRESSION: i
         // RESULT: 1: I
 

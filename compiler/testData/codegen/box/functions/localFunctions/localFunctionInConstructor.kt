@@ -1,7 +1,7 @@
 class Test {
 
     val property:Int
-    ;{
+    init {
         fun local():Int {
             return 10;
         }

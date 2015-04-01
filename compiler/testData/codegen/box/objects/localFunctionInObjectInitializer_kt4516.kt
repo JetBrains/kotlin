@@ -3,7 +3,7 @@ import java.util.HashMap
 object O {
     val mmmap = HashMap<String, Int>();
 
-    {
+    init {
         fun doStuff() {
             mmmap.put("two", 2)
         }

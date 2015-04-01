@@ -17,7 +17,7 @@ class Field(
         init: (Int, Int) -> Boolean
 ) {
     private val live: Array<Array<Boolean>>
-    {
+    init {
         live = Array(height) { i -> Array(width) { j -> init(i, j) } }
     }
 
