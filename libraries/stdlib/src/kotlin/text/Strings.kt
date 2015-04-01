@@ -3,11 +3,11 @@ package kotlin
 import java.util.NoSuchElementException
 
 /** Returns the string with leading and trailing text matching the given string removed */
-deprecated("Use removeEnclosing(text, text) or removePrefix(text).removeSuffix(text)")
+deprecated("Use removeSurrounding(text, text) or removePrefix(text).removeSuffix(text)")
 public fun String.trim(text: String): String = removePrefix(text).removeSuffix(text)
 
 /** Returns the string with the prefix and postfix text trimmed */
-deprecated("Use removeEnclosing(prefix, suffix) or removePrefix(prefix).removeSuffix(suffix)")
+deprecated("Use removeSurrounding(prefix, suffix) or removePrefix(prefix).removeSuffix(suffix)")
 public fun String.trim(prefix: String, postfix: String): String = removePrefix(prefix).removeSuffix(postfix)
 
 /**
@@ -150,7 +150,7 @@ deprecated("Use !isNullOrEmpty() or isNullOrEmpty().not() for nullable strings."
 public fun String?.isNotEmpty(): Boolean = this != null && this.length() > 0
 
 /**
- * Return `true` if this nullable string is either null or empty.
+ * Returns `true` if this nullable string is either null or empty.
  */
 public fun String?.isNullOrEmpty(): Boolean = this == null || this.length() == 0
 
