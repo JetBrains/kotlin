@@ -279,7 +279,7 @@ public class TakeStream<T>(stream: Stream<T>, count: Int)
 public class TakeSequence<T>(private val sequence: Sequence<T>,
                              private val count: Int
                             ) : Sequence<T> {
-    {
+    init {
         if (count < 0)
             throw IllegalArgumentException("count should be non-negative, but is $count")
     }
@@ -360,7 +360,7 @@ public class DropStream<T>(stream: Stream<T>, count: Int)
 public class DropSequence<T>(private val sequence: Sequence<T>,
                              private val count: Int
                             ) : Sequence<T> {
-    {
+    init {
         if (count < 0)
             throw IllegalArgumentException("count should be non-negative, but is $count")
     }

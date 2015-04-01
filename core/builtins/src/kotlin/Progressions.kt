@@ -26,7 +26,7 @@ public class ByteProgression(
         override val end: Byte,
         override val increment: Int
 ) : Progression<Byte> {
-    {
+    init {
         if (increment == 0) throw IllegalArgumentException("Increment must be non-zero")
     }
 
@@ -53,7 +53,7 @@ public class CharProgression(
         override val end: Char,
         override val increment: Int
 ) : Progression<Char> {
-    {
+    init {
         if (increment == 0) throw IllegalArgumentException("Increment must be non-zero")
     }
 
@@ -80,7 +80,7 @@ public class ShortProgression(
         override val end: Short,
         override val increment: Int
 ) : Progression<Short> {
-    {
+    init {
         if (increment == 0) throw IllegalArgumentException("Increment must be non-zero")
     }
 
@@ -107,7 +107,7 @@ public class IntProgression(
         override val end: Int,
         override val increment: Int
 ) : Progression<Int> {
-    {
+    init {
         if (increment == 0) throw IllegalArgumentException("Increment must be non-zero")
     }
 
@@ -134,7 +134,7 @@ public class LongProgression(
         override val end: Long,
         override val increment: Long
 ) : Progression<Long> {
-    {
+    init {
         if (increment == 0L) throw IllegalArgumentException("Increment must be non-zero")
     }
 
@@ -161,7 +161,7 @@ public class FloatProgression(
         override val end: Float,
         override val increment: Float
 ) : Progression<Float> {
-    {
+    init {
         if (java.lang.Float.isNaN(increment)) throw IllegalArgumentException("Increment must be not NaN")
         if (increment == 0.0f) throw IllegalArgumentException("Increment must be non-zero")
     }
@@ -189,7 +189,7 @@ public class DoubleProgression(
         override val end: Double,
         override val increment: Double
 ) : Progression<Double> {
-    {
+    init {
         if (java.lang.Double.isNaN(increment)) throw IllegalArgumentException("Increment must be not NaN")
         if (increment == 0.0) throw IllegalArgumentException("Increment must be non-zero")
     }

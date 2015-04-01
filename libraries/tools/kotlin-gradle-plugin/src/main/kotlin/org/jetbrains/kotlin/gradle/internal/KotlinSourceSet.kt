@@ -16,8 +16,9 @@ trait KotlinSourceSet {
 
 open class KotlinSourceSetImpl(displayName: String?, resolver: FileResolver?): KotlinSourceSet {
 
-    private val kotlin: DefaultSourceDirectorySet = DefaultSourceDirectorySet(displayName + " Kotlin source", resolver);
-    {
+    private val kotlin: DefaultSourceDirectorySet = DefaultSourceDirectorySet(displayName + " Kotlin source", resolver)
+
+    init {
         kotlin.getFilter()?.include("**/*.java", "**/*.kt")
     }
 

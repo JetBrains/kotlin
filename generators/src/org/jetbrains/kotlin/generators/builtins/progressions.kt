@@ -73,7 +73,7 @@ public class $progression(
         override val end: $t,
         override val increment: $incrementType
 ) : Progression<$t> {
-    {
+    init {
         $constructor
     }
 

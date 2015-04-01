@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.template.escapeHtml
 class Html2CompilerPlugin(private val compilerArguments: KDocArguments) : Doclet {
 
     private val docOutputRoot: File
-    {
+    init {
         val docOutputDir = compilerArguments.docConfig.docOutputDir
         if (docOutputDir.isEmpty()) {
             throw IllegalArgumentException("empty doc output dir")
