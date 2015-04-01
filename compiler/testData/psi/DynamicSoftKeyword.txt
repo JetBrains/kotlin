@@ -18,16 +18,17 @@ JetFile: DynamicSoftKeyword.kt
       TYPE_PARAMETER
         PsiElement(IDENTIFIER)('dynamic')
       PsiElement(GT)('>')
-    VALUE_PARAMETER_LIST
-      PsiElement(LPAR)('(')
-      VALUE_PARAMETER
-        PsiElement(IDENTIFIER)('dynamic')
-        PsiElement(COLON)(':')
-        PsiWhiteSpace(' ')
-        TYPE_REFERENCE
-          DYNAMIC_TYPE
-            PsiElement(dynamic)('dynamic')
-      PsiElement(RPAR)(')')
+    PRIMARY_CONSTRUCTOR
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          PsiElement(IDENTIFIER)('dynamic')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            DYNAMIC_TYPE
+              PsiElement(dynamic)('dynamic')
+        PsiElement(RPAR)(')')
     PsiWhiteSpace(' ')
     PsiElement(COLON)(':')
     PsiWhiteSpace(' ')

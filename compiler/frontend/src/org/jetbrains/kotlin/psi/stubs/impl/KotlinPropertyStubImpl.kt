@@ -38,7 +38,7 @@ public class KotlinPropertyStubImpl(
         private val fqName: FqName?
 ) : KotlinStubBaseImpl<JetProperty>(parent, JetStubElementTypes.PROPERTY), KotlinPropertyStub {
 
-    {
+    init {
         if (isTopLevel && fqName == null) {
             throw IllegalArgumentException("fqName shouldn't be null for top level properties")
         }

@@ -3,7 +3,9 @@ PsiJetFileStubImpl[package=test]
     REFERENCE_EXPRESSION:[referencedName=test]
   CLASS:[fqName=test.Types, isEnumEntry=false, isLocal=false, isTopLevel=true, isTrait=false, name=Types, superNames=[]]
     MODIFIER_LIST:[abstract internal]
-    VALUE_PARAMETER_LIST:
+    PRIMARY_CONSTRUCTOR:
+      MODIFIER_LIST:[public]
+      VALUE_PARAMETER_LIST:
     CLASS_BODY:
       PROPERTY:[fqName=test.Types.deepExtFunctionType, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=deepExtFunctionType]
         MODIFIER_LIST:[abstract internal]

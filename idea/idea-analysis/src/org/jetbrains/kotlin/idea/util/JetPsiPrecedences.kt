@@ -28,7 +28,7 @@ public object JetPsiPrecedences {
     private val LOG = Logger.getInstance(javaClass<JetPsiPrecedences>())
 
     private val precedence: Map<IElementType, Int>
-    {
+    init {
         val builder = HashMap<IElementType, Int>()
         for ((i, record) in JetExpressionParsing.Precedence.values().withIndices()) {
             for (elementType in record.getOperations().getTypes()) {

@@ -10,20 +10,21 @@ JetFile: Graph.kt
       TYPE_PARAMETER
         PsiElement(IDENTIFIER)('V')
       PsiElement(GT)('>')
-    VALUE_PARAMETER_LIST
-      PsiElement(LPAR)('(')
-      VALUE_PARAMETER
-        PsiElement(val)('val')
-        PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('data')
-        PsiWhiteSpace(' ')
-        PsiElement(COLON)(':')
-        PsiWhiteSpace(' ')
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('V')
-      PsiElement(RPAR)(')')
+    PRIMARY_CONSTRUCTOR
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('data')
+          PsiWhiteSpace(' ')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('V')
+        PsiElement(RPAR)(')')
   PsiWhiteSpace('\n\n')
   CLASS
     PsiElement(class)('class')
@@ -38,46 +39,47 @@ JetFile: Graph.kt
       TYPE_PARAMETER
         PsiElement(IDENTIFIER)('E')
       PsiElement(GT)('>')
-    VALUE_PARAMETER_LIST
-      PsiElement(LPAR)('(')
-      VALUE_PARAMETER
-        PsiElement(val)('val')
+    PRIMARY_CONSTRUCTOR
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('from')
+          PsiWhiteSpace(' ')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('V')
+        PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('from')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('data')
+          PsiWhiteSpace(' ')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('E')
+        PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
-        PsiElement(COLON)(':')
-        PsiWhiteSpace(' ')
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('V')
-      PsiElement(COMMA)(',')
-      PsiWhiteSpace(' ')
-      VALUE_PARAMETER
-        PsiElement(val)('val')
-        PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('data')
-        PsiWhiteSpace(' ')
-        PsiElement(COLON)(':')
-        PsiWhiteSpace(' ')
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('E')
-      PsiElement(COMMA)(',')
-      PsiWhiteSpace(' ')
-      VALUE_PARAMETER
-        PsiElement(val)('val')
-        PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('to')
-        PsiWhiteSpace(' ')
-        PsiElement(COLON)(':')
-        PsiWhiteSpace(' ')
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('V')
-      PsiElement(RPAR)(')')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('to')
+          PsiWhiteSpace(' ')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('V')
+        PsiElement(RPAR)(')')
   PsiWhiteSpace('\n\n')
   CLASS
     PsiElement(class)('class')

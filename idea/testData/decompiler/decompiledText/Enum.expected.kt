@@ -3,7 +3,7 @@
 
 package test
 
-public final enum class Enum() : kotlin.Enum<test.Enum>, dependency.Tr {
+public final enum class Enum private () : kotlin.Enum<test.Enum>, dependency.Tr {
     ONE
 
     TWO

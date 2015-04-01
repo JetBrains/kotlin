@@ -100,7 +100,10 @@ public class ReferenceVariantsHelper(
                 val receiverValue = ExpressionReceiver(receiverExpression, expressionType)
                 val dataFlowInfo = context.getDataFlowInfo(expression)
 
-                for (variant in SmartCastUtils.getSmartCastVariantsWithLessSpecificExcluded(receiverValue, context, dataFlowInfo)) {
+                for (variant in SmartCastUtils.getSmartCastVariantsWithLessSpecificExcluded(receiverValue,
+                                                                                            context,
+                                                                                            resolutionScope.getContainingDeclaration(),
+                                                                                            dataFlowInfo)) {
                     descriptors.addMembersFromReceiver(variant, callType, kindFilter, nameFilter)
                 }
 

@@ -101,7 +101,7 @@ class DeferredElement<TResult : Element>(
 
     private var result: TResult? = null
 
-    {
+    init {
         assignNoPrototype()
     }
 

@@ -21,7 +21,7 @@ import com.intellij.psi.*
 import org.jetbrains.kotlin.psi.*
 
 public abstract class AbstractIntroduceAction : BasePlatformRefactoringAction() {
-    {
+    init {
         setInjectedContext(true)
     }
 

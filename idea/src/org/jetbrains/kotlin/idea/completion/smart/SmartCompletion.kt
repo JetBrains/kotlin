@@ -131,7 +131,8 @@ class SmartCompletion(
         else
             filteredExpectedInfos
 
-        val smartCastTypes: (VariableDescriptor) -> Collection<JetType> = SmartCastCalculator(bindingContext).calculate(expressionWithType, receiver)
+        val smartCastTypes: (VariableDescriptor) -> Collection<JetType> = SmartCastCalculator(
+                bindingContext, moduleDescriptor).calculate(expressionWithType, receiver)
 
         val itemsToSkip = calcItemsToSkip(expressionWithType)
 
@@ -419,7 +420,8 @@ class SmartCompletion(
             tail: Tail?,
             typeFilter: (FuzzyType) -> Boolean
     ): Result {
-        val smartCastTypes: (VariableDescriptor) -> Collection<JetType> = SmartCastCalculator(bindingContext).calculate(position, receiver)
+        val smartCastTypes: (VariableDescriptor) -> Collection<JetType> = SmartCastCalculator(
+                bindingContext, moduleDescriptor).calculate(position, receiver)
 
         fun filterDeclaration(descriptor: DeclarationDescriptor): Collection<LookupElement> {
             val types = descriptor.fuzzyTypes(smartCastTypes)

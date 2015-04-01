@@ -40,7 +40,7 @@ public trait SearchRequestWithElement<T : PsiElement> : DeclarationSearchRequest
 }
 
 abstract class DeclarationsSearch<T: PsiElement, R: DeclarationSearchRequest<T>>: QueryFactory<T, R>() {
-    {
+    init {
         registerExecutor(
                 object : QueryExecutorBase<T, R>(true) {
                     override fun processQuery(queryParameters: R, consumer: Processor<T>) {

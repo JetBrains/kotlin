@@ -44,8 +44,7 @@ public class TypeApproximator : AdditionalTypeChecker {
                     override val presentableText: String
                         get() = StringUtil.trimMiddle(expression.getText(), 50)
 
-                    private val dataFlowValue =
-                        DataFlowValueFactory.createDataFlowValue(expression, expressionType, c.trace.getBindingContext())
+                    private val dataFlowValue = DataFlowValueFactory.createDataFlowValue(expression, expressionType, c)
                 }
         )
         if (approximationInfo != null) {

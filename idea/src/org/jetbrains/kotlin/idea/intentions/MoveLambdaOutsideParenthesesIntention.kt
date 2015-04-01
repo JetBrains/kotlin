@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.idea.util.psiModificationUtil.moveLambdaOutsideParentheses
 import org.jetbrains.kotlin.psi.JetCallExpression
 import org.jetbrains.kotlin.psi.JetFunctionLiteralExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
@@ -37,19 +38,6 @@ public class MoveLambdaOutsideParenthesesIntention : JetSelfTargetingIntention<J
     }
 
     override fun applyTo(element: JetCallExpression, editor: Editor) {
-        val args = element.getValueArgumentsInParentheses()
-        val functionLiteral = args.last!!.getArgumentExpression()?.getText()
-        val calleeText = element.getCalleeExpression()?.getText()
-        if (calleeText == null || functionLiteral == null) return
-
-        val params = args.subList(0, args.size - 1).map { it.asElement().getText() ?: "" }.joinToString(", ", "(", ")")
-
-        val newCall =
-            if (params == "()") {
-                "$calleeText $functionLiteral"
-            } else {
-                "$calleeText$params $functionLiteral"
-            }
-        element.replace(JetPsiFactory(element).createExpression(newCall))
+        element.moveLambdaOutsideParentheses()
     }
 }

@@ -37,7 +37,7 @@ public class ConstraintSystemTestData(
     private val functionFoo: FunctionDescriptor
     private val scopeToResolveTypeParameters: JetScope
 
-    {
+    init {
         val functions = context.getSliceContents(BindingContext.FUNCTION)
         functionFoo = findFunctionByName(functions.values(), "foo")
         val function = DescriptorToSourceUtils.descriptorToDeclaration(functionFoo) as JetFunction

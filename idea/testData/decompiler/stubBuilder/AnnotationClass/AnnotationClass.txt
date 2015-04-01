@@ -5,19 +5,21 @@ PsiJetFileStubImpl[package=test.a]
       REFERENCE_EXPRESSION:[referencedName=a]
   CLASS:[fqName=test.a.AnnotationClass, isEnumEntry=false, isLocal=false, isTopLevel=true, isTrait=false, name=AnnotationClass, superNames=[Annotation]]
     MODIFIER_LIST:[annotation public final]
-    VALUE_PARAMETER_LIST:
-      VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=i]
-        TYPE_REFERENCE:
-          USER_TYPE:[isAbsoluteInRootPackage=false]
+    PRIMARY_CONSTRUCTOR:
+      MODIFIER_LIST:[public]
+      VALUE_PARAMETER_LIST:
+        VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=i]
+          TYPE_REFERENCE:
             USER_TYPE:[isAbsoluteInRootPackage=false]
-              REFERENCE_EXPRESSION:[referencedName=kotlin]
-            REFERENCE_EXPRESSION:[referencedName=Int]
-      VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=j]
-        TYPE_REFERENCE:
-          USER_TYPE:[isAbsoluteInRootPackage=false]
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                REFERENCE_EXPRESSION:[referencedName=kotlin]
+              REFERENCE_EXPRESSION:[referencedName=Int]
+        VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=j]
+          TYPE_REFERENCE:
             USER_TYPE:[isAbsoluteInRootPackage=false]
-              REFERENCE_EXPRESSION:[referencedName=kotlin]
-            REFERENCE_EXPRESSION:[referencedName=String]
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                REFERENCE_EXPRESSION:[referencedName=kotlin]
+              REFERENCE_EXPRESSION:[referencedName=String]
     DELEGATION_SPECIFIER_LIST:
       DELEGATOR_SUPER_CLASS:
         TYPE_REFERENCE:

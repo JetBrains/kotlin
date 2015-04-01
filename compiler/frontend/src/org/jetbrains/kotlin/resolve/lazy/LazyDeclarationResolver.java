@@ -141,8 +141,8 @@ public class LazyDeclarationResolver {
             @Override
             public DeclarationDescriptor visitParameter(@NotNull JetParameter parameter, Void data) {
                 PsiElement grandFather = parameter.getParent().getParent();
-                if (grandFather instanceof JetClass) {
-                    JetClass jetClass = (JetClass) grandFather;
+                if (grandFather instanceof JetPrimaryConstructor) {
+                    JetClass jetClass = ((JetPrimaryConstructor) grandFather).getContainingClass();
                     // This is a primary constructor parameter
                     ClassDescriptor classDescriptor = getClassDescriptor(jetClass);
                     if (parameter.hasValOrVarNode()) {

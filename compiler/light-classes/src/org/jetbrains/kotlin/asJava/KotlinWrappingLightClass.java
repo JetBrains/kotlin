@@ -22,8 +22,6 @@ import com.intellij.navigation.ItemPresentationProviders;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.PsiClassImplUtil;
 import com.intellij.psi.impl.light.AbstractLightClass;
-import com.intellij.psi.impl.light.LightField;
-import com.intellij.psi.impl.light.LightMethod;
 import com.intellij.psi.impl.source.ClassInnerStuffCache;
 import com.intellij.psi.impl.source.PsiExtensibleClass;
 import com.intellij.psi.scope.PsiScopeProcessor;
@@ -138,7 +136,7 @@ public abstract class KotlinWrappingLightClass extends AbstractLightClass implem
                 if (declaration != null) {
                     return new KotlinLightFieldForDeclaration(myManager, declaration, field, KotlinWrappingLightClass.this);
                 }
-                return new LightField(myManager, field, KotlinWrappingLightClass.this);
+                return new KotlinNoOriginLightField(myManager, field, KotlinWrappingLightClass.this);
             }
         });
     }
@@ -157,7 +155,7 @@ public abstract class KotlinWrappingLightClass extends AbstractLightClass implem
                            new KotlinLightMethodForTraitFakeOverride(myManager, method, declaration, KotlinWrappingLightClass.this);
                 }
 
-                return new LightMethod(myManager, method, KotlinWrappingLightClass.this);
+                return new KotlinNoOriginLightMethod(myManager, method, KotlinWrappingLightClass.this);
             }
         });
     }

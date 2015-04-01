@@ -87,7 +87,7 @@ object KeywordCompletion {
     }
 
     private class ParentFilter(filter : ElementFilter) : PositionElementFilter() {
-        {
+        init {
             setFilter(filter)
         }
 

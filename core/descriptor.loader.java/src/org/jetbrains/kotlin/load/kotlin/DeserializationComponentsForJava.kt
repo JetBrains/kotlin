@@ -31,9 +31,9 @@ public class DeserializationComponentsForJava(
         annotationAndConstantLoader: BinaryClassAnnotationAndConstantLoaderImpl,
         packageFragmentProvider: LazyJavaPackageFragmentProvider
 ) {
-    val components: DeserializationComponents;
+    val components: DeserializationComponents
 
-    {
+    init {
         val localClassResolver = LocalClassResolverImpl()
         components = DeserializationComponents(
                 storageManager, moduleDescriptor, classDataFinder, annotationAndConstantLoader, packageFragmentProvider,

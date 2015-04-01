@@ -68,7 +68,7 @@ private class MissingDependencyErrorClassDescriptor(
 
     private val scope = ScopeWithMissingDependencies(fullFqName, this)
 
-    ;{
+    init {
         val emptyConstructor = ConstructorDescriptorImpl.create(this, Annotations.EMPTY, true, SourceElement.NO_SOURCE)
         emptyConstructor.initialize(listOf(), listOf(), Visibilities.INTERNAL)
         emptyConstructor.setReturnType(createErrorType("<ERROR RETURN TYPE>"))

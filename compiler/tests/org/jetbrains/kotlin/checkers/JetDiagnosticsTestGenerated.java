@@ -8443,6 +8443,18 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("kt7068.kt")
+            public void testKt7068() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/overload/kt7068.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt7068_2.kt")
+            public void testKt7068_2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/overload/kt7068_2.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("OverloadFunRegularAndExt.kt")
             public void testOverloadFunRegularAndExt() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/overload/OverloadFunRegularAndExt.kt");
@@ -11018,6 +11030,7 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
         @TestDataPath("$PROJECT_ROOT")
         @InnerTestClasses({
                 SmartCasts.Inference.class,
+                SmartCasts.Varnotnull.class,
         })
         @RunWith(JUnit3RunnerWithInners.class)
         public static class SmartCasts extends AbstractJetDiagnosticsTest {
@@ -11174,6 +11187,69 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 @TestMetadata("smartCastOnReceiver.kt")
                 public void testSmartCastOnReceiver() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/inference/smartCastOnReceiver.kt");
+                    doTest(fileName);
+                }
+            }
+
+            @TestMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Varnotnull extends AbstractJetDiagnosticsTest {
+                public void testAllFilesPresentInVarnotnull() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/smartCasts/varnotnull"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("kt3993.kt")
+                public void testKt3993() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/kt3993.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt4409.kt")
+                public void testKt4409() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/kt4409.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt5427.kt")
+                public void testKt5427() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/kt5427.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt5907.kt")
+                public void testKt5907() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/kt5907.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt5907customGetter.kt")
+                public void testKt5907customGetter() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/kt5907customGetter.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt5907delegate.kt")
+                public void testKt5907delegate() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/kt5907delegate.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt5907otherModule.kt")
+                public void testKt5907otherModule() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/kt5907otherModule.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt5907protected.kt")
+                public void testKt5907protected() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/kt5907protected.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt5907var.kt")
+                public void testKt5907var() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/kt5907var.kt");
                     doTest(fileName);
                 }
             }

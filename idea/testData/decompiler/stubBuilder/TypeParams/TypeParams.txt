@@ -45,7 +45,9 @@ PsiJetFileStubImpl[package=test]
             USER_TYPE:[isAbsoluteInRootPackage=false]
               REFERENCE_EXPRESSION:[referencedName=kotlin]
             REFERENCE_EXPRESSION:[referencedName=Any]
-    VALUE_PARAMETER_LIST:
+    PRIMARY_CONSTRUCTOR:
+      MODIFIER_LIST:[public]
+      VALUE_PARAMETER_LIST:
     TYPE_CONSTRAINT_LIST:
       TYPE_CONSTRAINT:[isCompanionObjectConstraint=false]
         REFERENCE_EXPRESSION:[referencedName=T1]

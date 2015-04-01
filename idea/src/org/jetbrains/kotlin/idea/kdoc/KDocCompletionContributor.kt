@@ -43,7 +43,7 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.patterns.StandardPatterns
 
 class KDocCompletionContributor(): CompletionContributor() {
-    {
+    init {
         extend(CompletionType.BASIC, psiElement().inside(javaClass<KDocName>()),
                 KDocNameCompletionProvider)
 

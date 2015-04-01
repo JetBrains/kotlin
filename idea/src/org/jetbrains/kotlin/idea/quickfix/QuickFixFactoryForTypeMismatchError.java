@@ -20,21 +20,15 @@ import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import kotlin.Function1;
-import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.analyzer.AnalysisResult;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters1;
 import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters2;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
-import org.jetbrains.kotlin.idea.imports.ImportsPackage;
 import org.jetbrains.kotlin.idea.util.UtilPackage;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -44,7 +38,6 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.resolve.scopes.JetScopeUtils;
 import org.jetbrains.kotlin.types.JetType;
-import org.jetbrains.kotlin.types.TypeUtils;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -54,36 +47,12 @@ import java.util.List;
 public class QuickFixFactoryForTypeMismatchError extends JetIntentionActionsFactory {
     private final static Logger LOG = Logger.getInstance(QuickFixFactoryForTypeMismatchError.class);
 
-    private static boolean isResolvableType(@NotNull JetType type, @Nullable JetScope scope) {
-        if (ImportsPackage.canBeReferencedViaImport(type)) return true;
-
-        ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
-        if (descriptor == null || descriptor.getName().isSpecial()) return false;
-
-        return scope != null && scope.getClassifier(descriptor.getName()) == descriptor;
-    }
-
-    private static JetType approximateWithResolvableType(@NotNull JetType type, @Nullable final JetScope scope) {
-        if (isResolvableType(type, scope)) return type;
-        JetType superType = KotlinPackage.firstOrNull(
-                TypeUtils.getAllSupertypes(type),
-                new Function1<JetType, Boolean>() {
-                    @Override
-                    public Boolean invoke(JetType type) {
-                        return isResolvableType(type, scope);
-                    }
-                }
-        );
-        return superType != null ? superType : KotlinBuiltIns.getInstance().getAnyType();
-    }
-
     @NotNull
     @Override
     protected List<IntentionAction> doCreateActions(@NotNull Diagnostic diagnostic) {
         List<IntentionAction> actions = new LinkedList<IntentionAction>();
 
-        AnalysisResult analysisResult = ResolvePackage.analyzeFullyAndGetResult((JetFile) diagnostic.getPsiFile());
-        BindingContext context = analysisResult.getBindingContext();
+        BindingContext context = ResolvePackage.analyzeFully((JetFile) diagnostic.getPsiFile());
 
         PsiElement diagnosticElement = diagnostic.getPsiElement();
         if (!(diagnosticElement instanceof JetExpression)) {
@@ -133,8 +102,8 @@ public class QuickFixFactoryForTypeMismatchError extends JetIntentionActionsFact
             JetExpression initializer = property.getInitializer();
             if (QuickFixUtil.canEvaluateTo(initializer, expression) ||
                 (getter != null && QuickFixUtil.canFunctionOrGetterReturnExpression(property.getGetter(), expression))) {
-                JetScope scope = JetScopeUtils.getResolutionScope(property, analysisResult);
-                JetType typeToInsert = approximateWithResolvableType(expressionType, scope);
+                JetScope scope = JetScopeUtils.getResolutionScope(property, context);
+                JetType typeToInsert = UtilPackage.approximateWithResolvableType(expressionType, scope, false);
                 actions.add(new ChangeVariableTypeFix(property, typeToInsert));
             }
         }
@@ -147,8 +116,8 @@ public class QuickFixFactoryForTypeMismatchError extends JetIntentionActionsFact
                                ? BindingContextUtilPackage.getTargetFunction((JetReturnExpression) expressionParent, context)
                                : PsiTreeUtil.getParentOfType(expression, JetFunction.class, true);
         if (function instanceof JetFunction && QuickFixUtil.canFunctionOrGetterReturnExpression(function, expression)) {
-            JetScope scope = JetScopeUtils.getResolutionScope(function, analysisResult);
-            JetType typeToInsert = approximateWithResolvableType(expressionType, scope);
+            JetScope scope = JetScopeUtils.getResolutionScope(function, context);
+            JetType typeToInsert = UtilPackage.approximateWithResolvableType(expressionType, scope, false);
             actions.add(new ChangeFunctionReturnTypeFix((JetFunction) function, typeToInsert));
         }
 
@@ -187,8 +156,9 @@ public class QuickFixFactoryForTypeMismatchError extends JetIntentionActionsFact
                                             ? expressionType
                                             : context.get(BindingContext.EXPRESSION_TYPE, valueArgument.getArgumentExpression());
                 if (correspondingParameter != null && valueArgumentType != null) {
-                    JetScope scope = JetScopeUtils.getResolutionScope(valueArgument.getArgumentExpression(), analysisResult);
-                    JetType typeToInsert = approximateWithResolvableType(valueArgumentType, scope);
+                    JetCallableDeclaration callable = PsiTreeUtil.getParentOfType(correspondingParameter, JetCallableDeclaration.class, true);
+                    JetScope scope = callable != null ? JetScopeUtils.getResolutionScope(callable, context) : null;
+                    JetType typeToInsert = UtilPackage.approximateWithResolvableType(valueArgumentType, scope, true);
                     actions.add(new ChangeParameterTypeFix(correspondingParameter, typeToInsert));
                 }
             }

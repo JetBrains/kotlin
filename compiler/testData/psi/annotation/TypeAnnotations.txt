@@ -5,38 +5,39 @@ JetFile: TypeAnnotations.kt
     PsiElement(class)('class')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('F')
-    VALUE_PARAMETER_LIST
-      PsiElement(LPAR)('(')
-      VALUE_PARAMETER
-        PsiElement(IDENTIFIER)('a')
-        PsiWhiteSpace(' ')
-        PsiElement(COLON)(':')
-        PsiWhiteSpace(' ')
-        TYPE_REFERENCE
-          ANNOTATION
-            PsiElement(LBRACKET)('[')
-            ANNOTATION_ENTRY
-              CONSTRUCTOR_CALLEE
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('a')
-            PsiElement(RBRACKET)(']')
+    PRIMARY_CONSTRUCTOR
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          PsiElement(IDENTIFIER)('a')
           PsiWhiteSpace(' ')
-          ANNOTATION
-            PsiElement(LBRACKET)('[')
-            ANNOTATION_ENTRY
-              CONSTRUCTOR_CALLEE
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('b')
-            PsiElement(RBRACKET)(']')
+          PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
-          USER_TYPE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('B')
-      PsiElement(RPAR)(')')
+          TYPE_REFERENCE
+            ANNOTATION
+              PsiElement(LBRACKET)('[')
+              ANNOTATION_ENTRY
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('a')
+              PsiElement(RBRACKET)(']')
+            PsiWhiteSpace(' ')
+            ANNOTATION
+              PsiElement(LBRACKET)('[')
+              ANNOTATION_ENTRY
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('b')
+              PsiElement(RBRACKET)(']')
+            PsiWhiteSpace(' ')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('B')
+        PsiElement(RPAR)(')')
   PsiWhiteSpace('\n\n')
   TYPEDEF
     PsiElement(typealias)('typealias')

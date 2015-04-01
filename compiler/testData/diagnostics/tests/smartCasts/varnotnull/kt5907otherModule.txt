@@ -1,0 +1,29 @@
+// -- Module: <m1> --
+package
+
+package a {
+
+    public final class X {
+        public constructor X()
+        public final val x: kotlin.String? = null
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+
+// -- Module: <m2> --
+package
+
+package a {
+    public fun a.X.gav(): kotlin.Int
+
+    public final class X {
+        // -- Module: <m1> --
+    }
+}
+
+package b {
+    public fun a.X.gav(): kotlin.Int
+}

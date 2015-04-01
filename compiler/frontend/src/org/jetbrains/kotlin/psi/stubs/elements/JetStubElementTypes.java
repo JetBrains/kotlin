@@ -35,6 +35,8 @@ public interface JetStubElementTypes {
             new JetPlaceHolderStubElementType<JetClassInitializer>("ANONYMOUS_INITIALIZER", JetClassInitializer.class);
     JetPlaceHolderStubElementType<JetSecondaryConstructor> SECONDARY_CONSTRUCTOR =
             new JetPlaceHolderStubElementType<JetSecondaryConstructor>("SECONDARY_CONSTRUCTOR", JetSecondaryConstructor.class);
+    JetPlaceHolderStubElementType<JetPrimaryConstructor> PRIMARY_CONSTRUCTOR =
+            new JetPlaceHolderStubElementType<JetPrimaryConstructor>("PRIMARY_CONSTRUCTOR", JetPrimaryConstructor.class);
 
     JetParameterElementType VALUE_PARAMETER = new JetParameterElementType("VALUE_PARAMETER");
     JetPlaceHolderStubElementType<JetParameterList> VALUE_PARAMETER_LIST =
@@ -64,9 +66,6 @@ public interface JetStubElementTypes {
 
     JetModifierListElementType<JetDeclarationModifierList> MODIFIER_LIST =
             new JetModifierListElementType<JetDeclarationModifierList>("MODIFIER_LIST", JetDeclarationModifierList.class);
-
-    JetModifierListElementType<JetPrimaryConstructorModifierList> PRIMARY_CONSTRUCTOR_MODIFIER_LIST =
-            new JetModifierListElementType<JetPrimaryConstructorModifierList>("PRIMARY_CONSTRUCTOR_MODIFIER_LIST", JetPrimaryConstructorModifierList.class);
 
     JetPlaceHolderStubElementType<JetTypeConstraintList> TYPE_CONSTRAINT_LIST =
             new JetPlaceHolderStubElementType<JetTypeConstraintList>("TYPE_CONSTRAINT_LIST", JetTypeConstraintList.class);

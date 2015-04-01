@@ -2,17 +2,19 @@ PsiJetFileStubImpl[package=]
   PACKAGE_DIRECTIVE:
   CLASS:[fqName=Delegation, isEnumEntry=false, isLocal=false, isTopLevel=true, isTrait=false, name=Delegation, superNames=[T]]
     MODIFIER_LIST:[internal final]
-    VALUE_PARAMETER_LIST:
-      VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=c]
-        TYPE_REFERENCE:
-          USER_TYPE:[isAbsoluteInRootPackage=false]
+    PRIMARY_CONSTRUCTOR:
+      MODIFIER_LIST:[public]
+      VALUE_PARAMETER_LIST:
+        VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=c]
+          TYPE_REFERENCE:
             USER_TYPE:[isAbsoluteInRootPackage=false]
-              REFERENCE_EXPRESSION:[referencedName=kotlin]
-            REFERENCE_EXPRESSION:[referencedName=Int]
-      VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=a]
-        TYPE_REFERENCE:
-          USER_TYPE:[isAbsoluteInRootPackage=false]
-            REFERENCE_EXPRESSION:[referencedName=A]
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                REFERENCE_EXPRESSION:[referencedName=kotlin]
+              REFERENCE_EXPRESSION:[referencedName=Int]
+        VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=a]
+          TYPE_REFERENCE:
+            USER_TYPE:[isAbsoluteInRootPackage=false]
+              REFERENCE_EXPRESSION:[referencedName=A]
     DELEGATION_SPECIFIER_LIST:
       DELEGATOR_SUPER_CLASS:
         TYPE_REFERENCE:

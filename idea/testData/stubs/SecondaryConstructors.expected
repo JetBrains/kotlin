@@ -2,11 +2,12 @@ PsiJetFileStubImpl[package=test]
   PACKAGE_DIRECTIVE:
     REFERENCE_EXPRESSION:[referencedName=test]
   CLASS:[fqName=test.SecondaryConstructors, isEnumEntry=false, isLocal=false, isTopLevel=true, isTrait=false, name=SecondaryConstructors, superNames=[]]
-    VALUE_PARAMETER_LIST:
-      VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=x]
-        TYPE_REFERENCE:
-          USER_TYPE:[isAbsoluteInRootPackage=false]
-            REFERENCE_EXPRESSION:[referencedName=Boolean]
+    PRIMARY_CONSTRUCTOR:
+      VALUE_PARAMETER_LIST:
+        VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=x]
+          TYPE_REFERENCE:
+            USER_TYPE:[isAbsoluteInRootPackage=false]
+              REFERENCE_EXPRESSION:[referencedName=Boolean]
     CLASS_BODY:
       ANONYMOUS_INITIALIZER:
       SECONDARY_CONSTRUCTOR:

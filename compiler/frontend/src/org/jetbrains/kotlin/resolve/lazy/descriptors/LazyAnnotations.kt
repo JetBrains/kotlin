@@ -90,7 +90,7 @@ public class LazyAnnotationDescriptor(
         val annotationEntry: JetAnnotationEntry
 ) : AnnotationDescriptor, LazyEntity {
 
-    {
+    init {
         c.trace.record(BindingContext.ANNOTATION, annotationEntry, this)
     }
 

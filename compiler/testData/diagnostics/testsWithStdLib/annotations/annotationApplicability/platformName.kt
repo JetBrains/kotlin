@@ -32,7 +32,7 @@ var vardef: Int = 1
     set
 
 [<!INAPPLICABLE_ANNOTATION!>platformName("C")<!>]
-class C [platformName("primary")]() { // TODO: modifiers check on primary constructor KT-7057
+class C [<!INAPPLICABLE_ANNOTATION!>platformName("primary")<!>]() {
     <!INAPPLICABLE_ANNOTATION!>platformName("ctr")<!> constructor(x: Int): this() {}
     [<!INAPPLICABLE_ANNOTATION!>platformName("a")<!>]
     fun foo() {}

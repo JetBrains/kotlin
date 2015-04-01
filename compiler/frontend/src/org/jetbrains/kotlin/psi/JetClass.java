@@ -63,8 +63,14 @@ public class JetClass extends JetTypeParameterListOwnerStub<KotlinClassStub> imp
     }
 
     @Nullable
+    public JetPrimaryConstructor getPrimaryConstructor() {
+        return getStubOrPsiChild(JetStubElementTypes.PRIMARY_CONSTRUCTOR);
+    }
+
+    @Nullable
     public JetParameterList getPrimaryConstructorParameterList() {
-        return getStubOrPsiChild(JetStubElementTypes.VALUE_PARAMETER_LIST);
+        JetPrimaryConstructor primaryConstructor = getPrimaryConstructor();
+        return primaryConstructor != null ? primaryConstructor.getValueParameterList() : null;
     }
 
     @NotNull
@@ -89,22 +95,8 @@ public class JetClass extends JetTypeParameterListOwnerStub<KotlinClassStub> imp
 
     @Nullable
     public JetModifierList getPrimaryConstructorModifierList() {
-        return getStubOrPsiChild(JetStubElementTypes.PRIMARY_CONSTRUCTOR_MODIFIER_LIST);
-    }
-
-    public void addPrimaryConstructorModifier(@NotNull JetModifierKeywordToken modifier) {
-        JetModifierList modifierList = getPrimaryConstructorModifierList();
-        if (modifierList != null) {
-            AddRemoveModifierPackage.addModifier(modifierList, modifier, JetTokens.PUBLIC_KEYWORD);
-        }
-        else {
-            if (modifier == JetTokens.PUBLIC_KEYWORD) return;
-
-            JetParameterList parameterList = getPrimaryConstructorParameterList();
-            assert parameterList != null;
-            JetModifierList newModifierList = new JetPsiFactory(getProject()).createModifierList(modifier);
-            addBefore(newModifierList, parameterList);
-        }
+        JetPrimaryConstructor primaryConstructor = getPrimaryConstructor();
+        return primaryConstructor != null ? primaryConstructor.getModifierList() : null;
     }
 
     @Override
@@ -128,6 +120,11 @@ public class JetClass extends JetTypeParameterListOwnerStub<KotlinClassStub> imp
     @Override
     public JetClassBody getBody() {
         return getStubOrPsiChild(JetStubElementTypes.CLASS_BODY);
+    }
+
+    @Nullable
+    public PsiElement getColon() {
+        return findChildByType(JetTokens.COLON);
     }
 
     public List<JetProperty> getProperties() {

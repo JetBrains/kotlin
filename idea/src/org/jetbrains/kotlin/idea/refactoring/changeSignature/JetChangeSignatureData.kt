@@ -46,7 +46,7 @@ public class JetChangeSignatureData(
     private val parameters: List<JetParameterInfo>
     override val receiver: JetParameterInfo?
 
-    ;{
+    init {
         $receiver = createReceiverInfoIfNeeded()
 
         val valueParameters = when {

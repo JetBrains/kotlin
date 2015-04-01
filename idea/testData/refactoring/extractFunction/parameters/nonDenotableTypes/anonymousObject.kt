@@ -1,15 +1,5 @@
-trait Callable<T> {
-    fun call(): T
-}
+trait T
 
-fun foo(a: Int): Int {
-    // SIBLING:
-    val o = object: Callable<Int> {
-        val b: Int = 1
-
-        override fun call(): Int {
-            return <selection>a + b</selection>
-        }
-    }
-    return o.call()
+fun foo(): T {
+    return <selection>object: T() {}</selection>
 }

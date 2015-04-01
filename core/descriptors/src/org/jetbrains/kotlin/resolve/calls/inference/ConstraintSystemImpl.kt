@@ -270,10 +270,8 @@ public class ConstraintSystemImpl : ConstraintSystem {
         // function literal without declaring receiver type { x -> ... }
         // can be considered as extension function if one is expected
         // (special type constructor for function/ extension function should be introduced like PLACEHOLDER_FUNCTION_TYPE)
-        val newSubType = if (constraintKind == SUB_TYPE
-                && KotlinBuiltIns.isFunctionType(subType)
-                && KotlinBuiltIns.isExtensionFunctionType(superType)) {
-            createCorrespondingExtensionFunctionType(subType, DONT_CARE)
+        val newSubType = if (constraintKind == SUB_TYPE) {
+            createCorrespondingExtensionFunctionTypeIfNecessary(subType, superType)
         }
         else {
             subType : JetType
@@ -422,26 +420,33 @@ public class ConstraintSystemImpl : ConstraintSystem {
     override fun getResultingSubstitutor() = replaceUninferredBySpecialErrorType().setApproximateCapturedTypes()
 
     override fun getCurrentSubstitutor() = replaceUninferredBy(TypeUtils.DONT_CARE).setApproximateCapturedTypes()
+}
 
-    private fun createCorrespondingExtensionFunctionType(functionType: JetType, receiverType: JetType): JetType {
-        assert(KotlinBuiltIns.isFunctionType(functionType))
-
-        val typeArguments = functionType.getArguments()
-        assert(!typeArguments.isEmpty())
-
-        val arguments = ArrayList<JetType>()
-        // excluding the last type argument of the function type, which is the return type
-        var index = 0
-        val lastIndex = typeArguments.size() - 1
-        for (typeArgument in typeArguments) {
-            if (index < lastIndex) {
-                arguments.add(typeArgument.getType())
-            }
-            index++
-        }
-        val returnType = typeArguments.get(lastIndex).getType()
-        return KotlinBuiltIns.getInstance().getFunctionType(functionType.getAnnotations(), receiverType, arguments, returnType)
+fun createCorrespondingExtensionFunctionTypeIfNecessary(functionType: JetType, expectedType: JetType): JetType {
+    if (KotlinBuiltIns.isFunctionType(functionType) && KotlinBuiltIns.isExtensionFunctionType(expectedType)) {
+        return createCorrespondingExtensionFunctionType(functionType, DONT_CARE)
     }
+    return functionType
+}
+
+private fun createCorrespondingExtensionFunctionType(functionType: JetType, receiverType: JetType): JetType {
+    assert(KotlinBuiltIns.isFunctionType(functionType))
+
+    val typeArguments = functionType.getArguments()
+    assert(!typeArguments.isEmpty())
+
+    val arguments = ArrayList<JetType>()
+    // excluding the last type argument of the function type, which is the return type
+    var index = 0
+    val lastIndex = typeArguments.size() - 1
+    for (typeArgument in typeArguments) {
+        if (index < lastIndex) {
+            arguments.add(typeArgument.getType())
+        }
+        index++
+    }
+    val returnType = typeArguments.get(lastIndex).getType()
+    return KotlinBuiltIns.getInstance().getFunctionType(functionType.getAnnotations(), receiverType, arguments, returnType)
 }
 
 private fun TypeSubstitutor.setApproximateCapturedTypes(): TypeSubstitutor {

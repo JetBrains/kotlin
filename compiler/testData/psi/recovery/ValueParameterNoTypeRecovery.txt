@@ -5,35 +5,36 @@ JetFile: ValueParameterNoTypeRecovery.kt
     PsiElement(class)('class')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('Test')
-    VALUE_PARAMETER_LIST
-      PsiElement(LPAR)('(')
-      VALUE_PARAMETER
-        PsiElement(val)('val')
+    PRIMARY_CONSTRUCTOR
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('a')
+          PsiErrorElement:Parameters must have type annotation
+            <empty list>
+          PsiWhiteSpace(' ')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('12')
+        PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('a')
-        PsiErrorElement:Parameters must have type annotation
-          <empty list>
-        PsiWhiteSpace(' ')
-        PsiElement(EQ)('=')
-        PsiWhiteSpace(' ')
-        INTEGER_CONSTANT
-          PsiElement(INTEGER_LITERAL)('12')
-      PsiElement(COMMA)(',')
-      PsiWhiteSpace(' ')
-      VALUE_PARAMETER
-        PsiElement(val)('val')
-        PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('b')
-        PsiWhiteSpace(' ')
-        PsiElement(COLON)(':')
-        PsiWhiteSpace(' ')
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('Int')
-        PsiWhiteSpace(' ')
-        PsiElement(EQ)('=')
-        PsiWhiteSpace(' ')
-        INTEGER_CONSTANT
-          PsiElement(INTEGER_LITERAL)('13')
-      PsiElement(RPAR)(')')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('b')
+          PsiWhiteSpace(' ')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
+          PsiWhiteSpace(' ')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('13')
+        PsiElement(RPAR)(')')

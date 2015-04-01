@@ -90,7 +90,7 @@ class TypeCandidate(val theType: JetType, scope: JetScope? = null) {
         }
     }
 
-    {
+    init {
         val typeParametersInType = theType.getTypeParameters()
         if (scope == null) {
             typeParameters = typeParametersInType.copyToArray()
@@ -133,9 +133,9 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
     val currentFileContext: BindingContext
     val currentFileModule: ModuleDescriptor
 
-    private val typeCandidates = HashMap<TypeInfo, List<TypeCandidate>>();
+    private val typeCandidates = HashMap<TypeInfo, List<TypeCandidate>>()
 
-    {
+    init {
         val result = config.currentFile.analyzeFullyAndGetResult()
         currentFileContext = result.bindingContext
         currentFileModule = result.moduleDescriptor
@@ -217,7 +217,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
         val substitutions: List<JetTypeSubstitution>
         var released: Boolean = false
 
-        {
+        init {
             // gather relevant information
 
             val placement = placement

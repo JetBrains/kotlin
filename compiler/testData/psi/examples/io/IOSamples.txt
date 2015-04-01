@@ -74,26 +74,27 @@ JetFile: IOSamples.kt
     PsiElement(class)('class')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('JavaCloseableWrapper')
-    VALUE_PARAMETER_LIST
-      PsiElement(LPAR)('(')
-      VALUE_PARAMETER
-        PsiElement(IDENTIFIER)('closeable')
-        PsiWhiteSpace(' ')
-        PsiElement(COLON)(':')
-        PsiWhiteSpace(' ')
-        TYPE_REFERENCE
-          USER_TYPE
+    PRIMARY_CONSTRUCTOR
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          PsiElement(IDENTIFIER)('closeable')
+          PsiWhiteSpace(' ')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('java')
+                PsiElement(DOT)('.')
                 REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('java')
+                  PsiElement(IDENTIFIER)('io')
               PsiElement(DOT)('.')
               REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('io')
-            PsiElement(DOT)('.')
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('Closeable')
-      PsiElement(RPAR)(')')
+                PsiElement(IDENTIFIER)('Closeable')
+        PsiElement(RPAR)(')')
     PsiWhiteSpace(' ')
     PsiElement(COLON)(':')
     PsiWhiteSpace(' ')

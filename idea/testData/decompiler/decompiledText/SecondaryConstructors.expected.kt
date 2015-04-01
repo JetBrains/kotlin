@@ -3,7 +3,7 @@
 
 package test
 
-internal final class SecondaryConstructors(x: kotlin.Boolean) {
+internal final class SecondaryConstructors public (x: kotlin.Boolean) {
     test.anno public constructor(x: kotlin.String) { /* compiled code */ }
 
     private constructor(x: kotlin.Int) { /* compiled code */ }

@@ -37,7 +37,7 @@ public open class DialogWithEditor(
 ) : DialogWrapper(project, true) {
     val editor: Editor = createEditor()
 
-    ;{
+    init {
         init()
         setTitle(title)
     }

@@ -3,7 +3,7 @@
 
 package testData.libraries
 
-[[public final enum class Color(rgb: kotlin.Int) : kotlin.Enum<testData.libraries.Color> {
+[[public final enum class Color private (rgb: kotlin.Int) : kotlin.Enum<testData.libraries.Color> {
     [[RED]]
 
     [[GREEN]]

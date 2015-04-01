@@ -3,7 +3,9 @@ PsiJetFileStubImpl[package=test]
     REFERENCE_EXPRESSION:[referencedName=test]
   CLASS:[fqName=test.DependencyOnNestedClasses, isEnumEntry=false, isLocal=false, isTopLevel=true, isTrait=false, name=DependencyOnNestedClasses, superNames=[Nested]]
     MODIFIER_LIST:[public final]
-    VALUE_PARAMETER_LIST:
+    PRIMARY_CONSTRUCTOR:
+      MODIFIER_LIST:[public]
+      VALUE_PARAMETER_LIST:
     DELEGATION_SPECIFIER_LIST:
       DELEGATOR_SUPER_CLASS:
         TYPE_REFERENCE:

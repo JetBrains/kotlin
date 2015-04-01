@@ -178,7 +178,7 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
     private class SyntheticPackageViewForTest(private val module: ModuleDescriptor) : PackageViewDescriptor {
         private val scope = WritableScopeImpl(JetScope.Empty, this, RedeclarationHandler.THROW_EXCEPTION, "runtime descriptor loader test")
 
-        ;{
+        init {
             scope.changeLockLevel(WritableScope.LockLevel.BOTH)
         }
 

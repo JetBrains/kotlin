@@ -45,7 +45,7 @@ fun updateHighlightingResult(file: JetFile, hasErrors: Boolean) {
 
 public class ErrorDuringFileAnalyzeNotificationProvider(val project: Project) : EditorNotifications.Provider<EditorNotificationPanel>() {
     private class HighlightingErrorNotificationPanel : EditorNotificationPanel() {
-        {
+        init {
             setText("Kotlin internal error occurred in this file. Highlighting may be inadequate.")
             myLabel.setIcon(AllIcons.General.Error)
             createActionLabel("Open Event Log", ActivateToolWindowAction.getActionIdForToolWindow(EventLog.LOG_TOOL_WINDOW_ID))

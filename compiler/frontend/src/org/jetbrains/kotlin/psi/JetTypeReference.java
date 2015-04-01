@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.psi;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
 
@@ -64,5 +65,9 @@ public class JetTypeReference extends JetElementImplStub<KotlinPlaceHolderStub<J
             answer.addAll(annotation.getEntries());
         }
         return answer != null ? answer : Collections.<JetAnnotationEntry>emptyList();
+    }
+
+    public boolean hasParentheses() {
+        return findChildByType(JetTokens.LPAR) != null && findChildByType(JetTokens.LPAR) != null;
     }
 }

@@ -1,4 +1,3 @@
-//TODO: constructor modifiers are lost
 a public class Annotations private [a] (private [a] val c1: Int, [a] val c2: Int) {
 
     protected a fun f() {
@@ -20,6 +19,8 @@ a public class Annotations private [a] (private [a] val c1: Int, [a] val c2: Int
     private b(E.E2) companion object {
 
     }
+
+    class Nested [a] private [b(E.E1) b(E.E2)] ()
 }
 
 annotation class a

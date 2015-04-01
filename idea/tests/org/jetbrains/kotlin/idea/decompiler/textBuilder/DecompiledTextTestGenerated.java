@@ -44,6 +44,12 @@ public class DecompiledTextTestGenerated extends AbstractDecompiledTextTest {
         doTest(fileName);
     }
 
+    @TestMetadata("AnnotationsOnPrimaryCtr")
+    public void testAnnotationsOnPrimaryCtr() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/AnnotationsOnPrimaryCtr/");
+        doTest(fileName);
+    }
+
     @TestMetadata("ClassWithClassObject")
     public void testClassWithClassObject() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/ClassWithClassObject/");

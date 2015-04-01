@@ -538,14 +538,32 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     }
 
     private void renderAnnotations(@NotNull Annotated annotated, @NotNull StringBuilder builder) {
+        renderAnnotations(annotated, builder, false);
+    }
+
+    private void renderAnnotations(@NotNull Annotated annotated, @NotNull StringBuilder builder, boolean needBrackets) {
         if (!modifiers.contains(Modifier.ANNOTATIONS)) return;
+
+        StringBuilder annotationsBuilder = new StringBuilder();
         for (AnnotationDescriptor annotation : annotated.getAnnotations()) {
             ClassDescriptor annotationClass = (ClassDescriptor) annotation.getType().getConstructor().getDeclarationDescriptor();
             assert annotationClass != null;
 
             if (!excludedAnnotationClasses.contains(DescriptorUtils.getFqNameSafe(annotationClass))) {
-                builder.append(renderAnnotation(annotation)).append(" ");
+                annotationsBuilder.append(renderAnnotation(annotation)).append(" ");
             }
+        }
+
+        if (!needBrackets) {
+            builder.append(annotationsBuilder);
+        }
+        else if (annotationsBuilder.length() > 0) {
+            // remove last whitespace
+            annotationsBuilder.setLength(annotationsBuilder.length() - 1);
+
+            builder.append("[");
+            builder.append(annotationsBuilder);
+            builder.append("] ");
         }
     }
 
@@ -972,6 +990,9 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         if (!klass.getKind().isSingleton() && classWithPrimaryConstructor) {
             ConstructorDescriptor primaryConstructor = klass.getUnsubstitutedPrimaryConstructor();
             if (primaryConstructor != null) {
+                builder.append(" ");
+                renderAnnotations(primaryConstructor, builder, true);
+                renderVisibility(primaryConstructor.getVisibility(), builder);
                 renderValueParameters(primaryConstructor, builder);
             }
         }

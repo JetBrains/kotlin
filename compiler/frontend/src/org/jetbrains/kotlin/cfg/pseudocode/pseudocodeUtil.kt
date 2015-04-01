@@ -16,21 +16,25 @@
 
 package org.jetbrains.kotlin.cfg.pseudocode
 
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.*
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.*
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.resolve.bindingContextUtil.*
-import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.resolve.BindingContext
-import java.util.*
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.resolve.OverridingUtil
-import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.ConditionalJumpInstruction
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.ReturnValueInstruction
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.ThrowExceptionInstruction
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.OverridingUtil
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getTargetFunctionDescriptor
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.TypeUtils
+import java.util.ArrayList
+import java.util.LinkedHashSet
 
 fun getReceiverTypePredicate(resolvedCall: ResolvedCall<*>, receiverValue: ReceiverValue): TypePredicate? {
     val callableDescriptor = resolvedCall.getResultingDescriptor()
@@ -175,4 +179,11 @@ fun Pseudocode.getElementValuesRecursively(element: JetElement): List<PseudoValu
 
     collectValues()
     return results
+}
+
+public fun Pseudocode.getPseudocodeByElement(element: JetElement): Pseudocode? {
+    if (getCorrespondingElement() == element) return this
+
+    getLocalDeclarations().forEach { decl -> decl.body.getPseudocodeByElement(element)?.let { return it } }
+    return null
 }

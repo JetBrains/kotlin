@@ -145,6 +145,15 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
             // before LPAR in constructor(): this() {}
             after(CONSTRUCTOR_DELEGATION_REFERENCE).spacing(0, 0, 0, false, 0)
 
+            // class A() - no space before LPAR of PRIMARY_CONSTRUCTOR
+            // class A private() - one space before modifier
+            custom {
+                inPosition(right = PRIMARY_CONSTRUCTOR).customRule { p, l, r ->
+                    val spacesCount = if (r.getNode().findLeafElementAt(0)?.getElementType() != LPAR) 1 else 0
+                    Spacing.createSpacing(spacesCount, spacesCount, 0, true, 0)
+                }
+            }
+
             aroundInside(DOT, DOT_QUALIFIED_EXPRESSION).spaces(0)
             aroundInside(SAFE_ACCESS, SAFE_ACCESS_EXPRESSION).spaces(0)
 
@@ -183,8 +192,6 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
             aroundInside(ARROW, FUNCTION_TYPE).spaceIf(jetSettings.SPACE_AROUND_FUNCTION_TYPE_ARROW)
 
             betweenInside(REFERENCE_EXPRESSION, FUNCTION_LITERAL_ARGUMENT, CALL_EXPRESSION).spaces(1)
-
-            betweenInside(IDENTIFIER, MODIFIER_LIST, CLASS).spaces(1)
         }
         custom {
 

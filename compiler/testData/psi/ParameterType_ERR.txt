@@ -200,24 +200,26 @@ JetFile: ParameterType_ERR.kt
     PsiElement(class)('class')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('A')
-    VALUE_PARAMETER_LIST
-      PsiElement(LPAR)('(')
-      VALUE_PARAMETER
-        PsiElement(IDENTIFIER)('a')
-        PsiErrorElement:Parameters must have type annotation
-          <empty list>
-      PsiElement(RPAR)(')')
+    PRIMARY_CONSTRUCTOR
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          PsiElement(IDENTIFIER)('a')
+          PsiErrorElement:Parameters must have type annotation
+            <empty list>
+        PsiElement(RPAR)(')')
   PsiWhiteSpace('\n')
   CLASS
     PsiElement(class)('class')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('A')
-    VALUE_PARAMETER_LIST
-      PsiElement(LPAR)('(')
-      VALUE_PARAMETER
-        PsiElement(IDENTIFIER)('a')
-        PsiElement(COLON)(':')
-        TYPE_REFERENCE
-          PsiErrorElement:Type expected
-            <empty list>
-      PsiElement(RPAR)(')')
+    PRIMARY_CONSTRUCTOR
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          PsiElement(IDENTIFIER)('a')
+          PsiElement(COLON)(':')
+          TYPE_REFERENCE
+            PsiErrorElement:Type expected
+              <empty list>
+        PsiElement(RPAR)(')')

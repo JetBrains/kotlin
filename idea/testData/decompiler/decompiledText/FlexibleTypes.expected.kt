@@ -3,7 +3,7 @@
 
 package test
 
-internal abstract class FlexibleTypes() {
+internal abstract class FlexibleTypes public () {
     internal abstract val p: kotlin.Int /* platform type */
 
     internal abstract fun collection(): kotlin.List<kotlin.Int> /* platform type */

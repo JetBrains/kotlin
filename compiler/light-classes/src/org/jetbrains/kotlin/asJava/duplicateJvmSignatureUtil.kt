@@ -18,20 +18,15 @@ package org.jetbrains.kotlin.asJava
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetClassBody
-import org.jetbrains.kotlin.psi.JetClassOrObject
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.psi.JetPropertyAccessor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.*
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ConflictingJvmDeclarationsData
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind.*
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory.*
-import org.jetbrains.kotlin.psi.JetParameter
-import org.jetbrains.kotlin.psi.JetClass
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
+import org.jetbrains.kotlin.psi.*
 
 public fun getJvmSignatureDiagnostics(element: PsiElement, otherDiagnostics: Diagnostics, moduleScope: GlobalSearchScope): Diagnostics? {
     fun getDiagnosticsForPackage(file: JetFile): Diagnostics? {
@@ -51,7 +46,7 @@ public fun getJvmSignatureDiagnostics(element: PsiElement, otherDiagnostics: Dia
         }
         if (element is JetParameter && element.getValOrVarNode() != null) {
             // property declared in constructor
-            val parentClass = parent?.getParent() as? JetClass
+            val parentClass = (parent?.getParent()?.getParent() as? JetClass)
             if (parentClass != null) {
                 return getDiagnosticsForClass(parentClass)
             }

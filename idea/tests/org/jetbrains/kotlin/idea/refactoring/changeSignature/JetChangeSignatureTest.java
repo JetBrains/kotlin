@@ -800,6 +800,46 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         doTest(changeInfo);
     }
 
+    public void testRemoveParameterBeforeLambda() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        changeInfo.removeParameter(1);
+        doTest(changeInfo);
+    }
+
+    public void testMoveLambdaParameter() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        JetParameterInfo[] newParameters = changeInfo.getNewParameters();
+        changeInfo.setNewParameter(1, newParameters[2]);
+        changeInfo.setNewParameter(2, newParameters[1]);
+        doTest(changeInfo);
+    }
+
+    public void testConvertLambdaParameterToReceiver() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        changeInfo.setReceiverParameterInfo(changeInfo.getNewParameters()[2]);
+        doTest(changeInfo);
+    }
+
+    public void testRemoveLambdaParameter() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        changeInfo.removeParameter(2);
+        doTest(changeInfo);
+    }
+
+    public void testRemoveEnumConstructorParameter() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        changeInfo.removeParameter(1);
+        doTest(changeInfo);
+    }
+
+    public void testRemoveAllEnumConstructorParameters() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        for (int i = changeInfo.getNewParametersCount() - 1; i >= 0; i--) {
+            changeInfo.removeParameter(i);
+        }
+        doTest(changeInfo);
+    }
+
     @NotNull
     @Override
     protected String getTestDataPath() {

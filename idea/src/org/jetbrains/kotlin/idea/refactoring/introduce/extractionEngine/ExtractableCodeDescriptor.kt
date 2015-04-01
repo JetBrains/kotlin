@@ -179,7 +179,7 @@ abstract class OutputValueBoxer(val outputValues: List<OutputValue>) {
             outputValues: List<OutputValue>,
             val module: ModuleDescriptor
     ) : OutputValueBoxer(outputValues) {
-        {
+        init {
             assert(outputValues.size() <= 3, "At most 3 output values are supported")
         }
 

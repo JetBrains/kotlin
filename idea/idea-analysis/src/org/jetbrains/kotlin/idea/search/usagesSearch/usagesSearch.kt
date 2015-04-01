@@ -161,7 +161,7 @@ public class KotlinPsiSearchHelper(private val project: Project): PsiSearchHelpe
 }
 
 public object UsagesSearch: QueryFactory<PsiReference, UsagesSearchRequest>() {
-    {
+    init {
         val executorImpl = object : QueryExecutorBase<PsiReference, UsagesSearchRequest>() {
             override fun processQuery(request: UsagesSearchRequest, consumer: Processor<PsiReference>) {
                 val searchHelper = KotlinPsiSearchHelper(request.project)

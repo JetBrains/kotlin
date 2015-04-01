@@ -3,7 +3,7 @@
 
 package test
 
-internal final class FunctionTypes() {
+internal final class FunctionTypes public () {
     public final fun <A> (A.(A) -> A)?.bar(): kotlin.Unit { /* compiled code */ }
 
     public final fun <IP, R, P1> ((IP) -> R).compose(f: (P1) -> IP): (P1) -> R { /* compiled code */ }

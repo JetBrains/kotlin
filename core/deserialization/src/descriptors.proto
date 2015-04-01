@@ -196,6 +196,7 @@ message Class {
   message PrimaryConstructor {
     // If this field is present, it contains serialized data for the primary constructor.
     // Otherwise it's default and can be created manually upon deserialization
+    // Note: currently only objects have default primary constructor
     optional Callable data = 1;
   }
 

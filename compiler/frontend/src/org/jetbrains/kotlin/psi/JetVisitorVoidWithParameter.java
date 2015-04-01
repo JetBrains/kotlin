@@ -38,6 +38,10 @@ public class JetVisitorVoidWithParameter<P> extends JetVisitor<Void, P> {
         super.visitSecondaryConstructor(constructor, data);
     }
 
+    public void visitPrimaryConstructorVoid(@NotNull JetPrimaryConstructor constructor, P data) {
+        super.visitPrimaryConstructor(constructor, data);
+    }
+
     public void visitNamedFunctionVoid(@NotNull JetNamedFunction function, P data) {
         super.visitNamedFunction(function, data);
     }
@@ -439,6 +443,12 @@ public class JetVisitorVoidWithParameter<P> extends JetVisitor<Void, P> {
     public final Void visitClass(@NotNull JetClass klass, P data) {
         visitClassVoid(klass, data);
     	return null;
+    }
+
+    @Override
+    public Void visitPrimaryConstructor(@NotNull JetPrimaryConstructor constructor, P data) {
+        visitPrimaryConstructorVoid(constructor, data);
+        return null;
     }
 
     @Override

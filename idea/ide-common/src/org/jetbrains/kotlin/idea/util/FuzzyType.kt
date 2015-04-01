@@ -50,7 +50,7 @@ class FuzzyType(
     private val usedTypeParameters: HashSet<TypeParameterDescriptor>?
     public val freeParameters: Set<TypeParameterDescriptor>
 
-    ;{
+    init {
         if (freeParameters.isNotEmpty()) {
             usedTypeParameters = HashSet()
             usedTypeParameters!!.addUsedTypeParameters(type)

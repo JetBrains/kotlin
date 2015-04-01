@@ -115,7 +115,7 @@ public abstract class CoveringTryCatchNodeProcessor<T: IntervalWithHandler>() {
 
 public class DefaultProcessor(val node: MethodNode) : CoveringTryCatchNodeProcessor<TryCatchBlockNodeWrapper>() {
 
-    {
+    init {
         node.tryCatchBlocks.forEach { addNode(it) }
     }
 

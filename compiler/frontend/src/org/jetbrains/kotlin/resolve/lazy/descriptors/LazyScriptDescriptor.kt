@@ -56,7 +56,7 @@ public class LazyScriptDescriptor(
         ScriptDescriptor.NAME,
         jetScript.toSourceElement()
  ) {
-    {
+    init {
         resolveSession.getTrace().record(BindingContext.SCRIPT, jetScript, this)
     }
 

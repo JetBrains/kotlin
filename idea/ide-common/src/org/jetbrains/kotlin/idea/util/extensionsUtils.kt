@@ -48,12 +48,12 @@ public fun CallableDescriptor.substituteExtensionIfCallable(
         dataFlowInfo: DataFlowInfo,
         callType: CallType
 ): Collection<CallableDescriptor> {
-    val stream = receivers.stream().flatMap { substituteExtensionIfCallable(it, callType, context, dataFlowInfo).stream() }
+    val sequence = receivers.sequence().flatMap { substituteExtensionIfCallable(it, callType, context, dataFlowInfo).sequence() }
     if (getTypeParameters().isEmpty()) { // optimization for non-generic callables
-        return stream.firstOrNull()?.let { listOf(it) } ?: listOf()
+        return sequence.firstOrNull()?.let { listOf(it) } ?: listOf()
     }
     else {
-        return stream.toList()
+        return sequence.toList()
     }
 }
 
@@ -69,7 +69,7 @@ public fun CallableDescriptor.substituteExtensionIfCallable(
     if (!receiver.exists()) return listOf()
     if (!callType.canCall(this)) return listOf()
 
-    var types = SmartCastUtils.getSmartCastVariants(receiver, bindingContext, dataFlowInfo).stream()
+    var types = SmartCastUtils.getSmartCastVariants(receiver, bindingContext, getContainingDeclaration(), dataFlowInfo).sequence()
 
     if (callType == CallType.SAFE) {
         types = types.map { it.makeNotNullable() }

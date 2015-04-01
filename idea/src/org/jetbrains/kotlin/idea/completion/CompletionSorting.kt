@@ -174,7 +174,7 @@ private class JetDeclarationRemotenessWeigher(private val file: JetFile) : Looku
         private val preciseImportPackages = HashSet<FqName>()
         private val allUnderImports = HashSet<FqName>()
 
-        ;{
+        init {
             for (import in file.getImportDirectives()) {
                 val importPath = import.getImportPath() ?: continue
                 val fqName = importPath.fqnPart()

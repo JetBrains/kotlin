@@ -6,7 +6,9 @@ PsiJetFileStubImpl[package=p]
     TYPE_PARAMETER_LIST:
       TYPE_PARAMETER:[fqName=null, isInVariance=true, isOutVariance=false, name=I]
         MODIFIER_LIST:[in]
-    VALUE_PARAMETER_LIST:
+    PRIMARY_CONSTRUCTOR:
+      MODIFIER_LIST:[public]
+      VALUE_PARAMETER_LIST:
     CLASS_BODY:
       PROPERTY:[fqName=p.PrivateToThis.bar, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=true, name=bar]
         MODIFIER_LIST:[private final]

@@ -33,6 +33,7 @@ import com.intellij.codeInsight.TargetElementUtilBase
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.Document
+import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.test.JetTestUtils
 import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesProcessor
@@ -46,6 +47,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesProcessor
 import com.intellij.refactoring.move.MoveHandler
+import com.intellij.util.ActionRunner
 import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.MoveKotlinTopLevelDeclarationsProcessor
 import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.MoveDestinationKotlinMoveTarget
@@ -233,6 +235,7 @@ enum class MoveAction {
 
             val targetPackage = config.getNullableString("targetPackage")
             if (targetPackage != null) {
+                ActionRunner.runInsideWriteAction { VfsUtil.createDirectoryIfMissing(rootDir, targetPackage.replace('.', '/')) }
                 MoveFilesOrDirectoriesProcessor(
                         project,
                         array(mainFile),

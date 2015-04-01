@@ -32,8 +32,10 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import java.util.HashMap
 import java.util.HashSet
 import com.intellij.openapi.util.Pair
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 
-class SmartCastCalculator(val bindingContext: BindingContext) {
+class SmartCastCalculator(val bindingContext: BindingContext, val containingDeclaration: DeclarationDescriptor) {
     public fun calculate(position: JetExpression, receiver: JetExpression?): (VariableDescriptor) -> Collection<JetType> {
         val dataFlowInfo = bindingContext.getDataFlowInfo(position)
         val (variableToTypes, notNullVariables) = processDataFlowInfo(dataFlowInfo, receiver)
@@ -63,14 +65,14 @@ class SmartCastCalculator(val bindingContext: BindingContext) {
         val dataFlowValueToVariable: (DataFlowValue) -> VariableDescriptor?
         if (receiver != null) {
             val receiverType = bindingContext[BindingContext.EXPRESSION_TYPE, receiver] ?: return ProcessDataFlowInfoResult()
-            val receiverId = DataFlowValueFactory.createDataFlowValue(receiver, receiverType, bindingContext).getId()
-            dataFlowValueToVariable = {(value) ->
+            val receiverId = DataFlowValueFactory.createDataFlowValue(receiver, receiverType, bindingContext, containingDeclaration).getId()
+            dataFlowValueToVariable = { value ->
                 val id = value.getId()
                 if (id is Pair<*, *> && id.first == receiverId) id.second as? VariableDescriptor else null
             }
         }
         else {
-            dataFlowValueToVariable = {(value) ->
+            dataFlowValueToVariable = { value ->
                 val id = value.getId()
                 when {
                     id is VariableDescriptor -> id

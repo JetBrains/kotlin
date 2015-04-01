@@ -70,9 +70,9 @@ public class FunctionReader(private val context: TranslationContext) {
      * Maps moduleName to kotlin object variable.
      * The default variable is Kotlin, but it can be renamed by minifier.
      */
-    private val moduleKotlinVariable = hashMapOf<String, String>();
+    private val moduleKotlinVariable = hashMapOf<String, String>()
 
-    {
+    init {
         val config = context.getConfig() as LibrarySourcesConfig
         val libs = config.getLibraries().map { File(it) }
         val files = LibraryUtils.readJsFiles(libs.map { it.getPath() }.toList())

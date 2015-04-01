@@ -135,3 +135,20 @@ class IllegalModifiers9 {
     <!INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>protected<!> constructor() {}
     <!INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>internal<!> constructor(<!UNUSED_PARAMETER!>x<!>: Int) {}
 }
+
+// Illegal modifiers on primary constructor
+
+class IllegalModifiers10
+<!ILLEGAL_MODIFIER, INCOMPATIBLE_MODIFIERS!>abstract<!>
+<!ILLEGAL_ENUM_ANNOTATION!>enum<!>
+<!ILLEGAL_MODIFIER, REDUNDANT_MODIFIER, REDUNDANT_MODIFIER, INCOMPATIBLE_MODIFIERS!>open<!>
+<!ILLEGAL_MODIFIER!>inner<!>
+<!ILLEGAL_ANNOTATION_KEYWORD!>annotation<!>
+<!ILLEGAL_MODIFIER!>override<!>
+<!ILLEGAL_MODIFIER!>out<!>
+<!ILLEGAL_MODIFIER!>in<!>
+<!ILLEGAL_MODIFIER, INCOMPATIBLE_MODIFIERS!>final<!>
+<!ILLEGAL_MODIFIER!>vararg<!>
+<!ILLEGAL_MODIFIER!>reified<!> ()
+
+class IllegalModifiers11 <!INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>protected<!> ()

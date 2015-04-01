@@ -186,7 +186,7 @@ class KModel(val context: BindingContext, val config: KDocConfig, val sourceDirs
 
 
     val sourcesInfo: List<SourceInfo>
-    ;{
+    init {
 
         val normalizedSourceDirs: List<String> =
         sourceDirs.map { file -> file.getCanonicalPath() }
@@ -214,7 +214,7 @@ class KModel(val context: BindingContext, val config: KDocConfig, val sourceDirs
     fun sourceInfoByFile(file: JetFile) = sourceInfoByFile.get(file)!!
 
 
-    ;{
+    init {
         /** Loads the model from the given set of source files */
         val allPackageFragments = HashSet<PackageFragmentDescriptor>()
         for (source in sources) {

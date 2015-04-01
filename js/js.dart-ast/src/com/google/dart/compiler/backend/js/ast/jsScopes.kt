@@ -55,7 +55,7 @@ public open class JsFunctionScope(parent: JsScope, description: String) : JsScop
     private inner class LabelScope(parent: LabelScope?, val ident: String) : JsScope(parent, "Label scope for $ident", null) {
         val labelName: JsName
 
-        {
+        init {
             val freshIdent = when {
                 ident in RESERVED_WORDS -> getFreshIdent(ident)
                 parent != null -> parent.getFreshIdent(ident)

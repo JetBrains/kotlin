@@ -16,31 +16,32 @@ JetFile: DocCommentsBinding.kt
     PsiElement(class)('class')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('A')
-    VALUE_PARAMETER_LIST
-      PsiElement(LPAR)('(')
-      PsiWhiteSpace('\n        ')
-      VALUE_PARAMETER
-        KDoc
-          PsiElement(KDOC_START)('/**')
-          PsiWhiteSpace('\n         ')
-          KDOC_SECTION
-            PsiElement(KDOC_LEADING_ASTERISK)('*')
-            PsiElement(KDOC_TEXT)(' Doc comment for val-parameter')
-          PsiWhiteSpace('\n         ')
-          PsiElement(KDOC_END)('*/')
+    PRIMARY_CONSTRUCTOR
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
         PsiWhiteSpace('\n        ')
-        PsiComment(BLOCK_COMMENT)('/*var*/')
-        PsiElement(val)('val')
-        PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('p')
-        PsiElement(COLON)(':')
-        PsiWhiteSpace(' ')
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('Int')
-      PsiWhiteSpace('\n')
-      PsiElement(RPAR)(')')
+        VALUE_PARAMETER
+          KDoc
+            PsiElement(KDOC_START)('/**')
+            PsiWhiteSpace('\n         ')
+            KDOC_SECTION
+              PsiElement(KDOC_LEADING_ASTERISK)('*')
+              PsiElement(KDOC_TEXT)(' Doc comment for val-parameter')
+            PsiWhiteSpace('\n         ')
+            PsiElement(KDOC_END)('*/')
+          PsiWhiteSpace('\n        ')
+          PsiComment(BLOCK_COMMENT)('/*var*/')
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('p')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
+        PsiWhiteSpace('\n')
+        PsiElement(RPAR)(')')
     PsiWhiteSpace(' ')
     CLASS_BODY
       PsiElement(LBRACE)('{')

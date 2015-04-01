@@ -87,8 +87,9 @@ public class LibraryDependenciesCache(private val project: Project) {
     }
 
     private inner class LibraryUsageIndex {
-        val modulesLibraryIsUsedIn: MultiMap<Library, Module> = MultiMap.createSet();
-        {
+        val modulesLibraryIsUsedIn: MultiMap<Library, Module> = MultiMap.createSet()
+
+        init {
             ModuleManager.getInstance(project).getModules().forEach {
                 module ->
                 ModuleRootManager.getInstance(module).getOrderEntries().forEach {

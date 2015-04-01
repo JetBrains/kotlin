@@ -5,46 +5,48 @@ JetFile: TraitConstructor.kt
     PsiElement(trait)('trait')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('TestTrait')
-    VALUE_PARAMETER_LIST
-      PsiElement(LPAR)('(')
-      VALUE_PARAMETER
-        PsiElement(val)('val')
+    PRIMARY_CONSTRUCTOR
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('a')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
+        PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('a')
-        PsiElement(COLON)(':')
+        VALUE_PARAMETER
+          PsiElement(var)('var')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('b')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('String')
+        PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('Int')
-      PsiElement(COMMA)(',')
-      PsiWhiteSpace(' ')
-      VALUE_PARAMETER
-        PsiElement(var)('var')
-        PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('b')
-        PsiElement(COLON)(':')
-        PsiWhiteSpace(' ')
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('String')
-      PsiElement(COMMA)(',')
-      PsiWhiteSpace(' ')
-      VALUE_PARAMETER
-        PsiElement(IDENTIFIER)('c')
-        PsiElement(COLON)(':')
-        PsiWhiteSpace(' ')
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('Double')
-      PsiElement(RPAR)(')')
+        VALUE_PARAMETER
+          PsiElement(IDENTIFIER)('c')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Double')
+        PsiElement(RPAR)(')')
   PsiWhiteSpace('\n')
   CLASS
     PsiElement(trait)('trait')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('TestTrait')
-    VALUE_PARAMETER_LIST
-      PsiElement(LPAR)('(')
-      PsiElement(RPAR)(')')
+    PRIMARY_CONSTRUCTOR
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')

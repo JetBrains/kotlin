@@ -94,7 +94,7 @@ fun JetType.getTypeParameters(): Set<TypeParameterDescriptor> {
 
 fun JetExpression.guessTypes(
         context: BindingContext,
-        module: ModuleDescriptor?,
+        module: ModuleDescriptor,
         coerceUnusedToUnit: Boolean = true
 ): Array<JetType> {
     val builtIns = KotlinBuiltIns.getInstance()
@@ -108,7 +108,7 @@ fun JetExpression.guessTypes(
     val theType1 = context[BindingContext.EXPRESSION_TYPE, this]
     if (theType1 != null) {
         val dataFlowInfo = context[BindingContext.EXPRESSION_DATA_FLOW_INFO, this]
-        val possibleTypes = dataFlowInfo?.getPossibleTypes(DataFlowValueFactory.createDataFlowValue(this, theType1, context))
+        val possibleTypes = dataFlowInfo?.getPossibleTypes(DataFlowValueFactory.createDataFlowValue(this, theType1, context, module))
         return if (possibleTypes != null && possibleTypes.isNotEmpty()) possibleTypes.copyToArray() else array(theType1)
     }
 

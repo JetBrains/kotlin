@@ -668,6 +668,36 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                     doExtractFunctionTest(fileName);
                 }
 
+                @TestMetadata("labeledAndUnlabeledReturn1.kt")
+                public void testLabeledAndUnlabeledReturn1() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/definiteReturns/labeledAndUnlabeledReturn1.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
+                @TestMetadata("labeledAndUnlabeledReturn2.kt")
+                public void testLabeledAndUnlabeledReturn2() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/definiteReturns/labeledAndUnlabeledReturn2.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
+                @TestMetadata("nonLocalReturn.kt")
+                public void testNonLocalReturn() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/definiteReturns/nonLocalReturn.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
+                @TestMetadata("nonLocalReturnWithLabel.kt")
+                public void testNonLocalReturnWithLabel() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/definiteReturns/nonLocalReturnWithLabel.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
+                @TestMetadata("returnWithLabel.kt")
+                public void testReturnWithLabel() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/definiteReturns/returnWithLabel.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
                 @TestMetadata("singleDefiniteReturn.kt")
                 public void testSingleDefiniteReturn() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/definiteReturns/singleDefiniteReturn.kt");
@@ -1115,6 +1145,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 @TestMetadata("multipleReturnsWithDefault.kt")
                 public void testMultipleReturnsWithDefault() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/unextractable/multipleReturnsWithDefault.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
+                @TestMetadata("unmatchedReturnTargets.kt")
+                public void testUnmatchedReturnTargets() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/unextractable/unmatchedReturnTargets.kt");
                     doExtractFunctionTest(fileName);
                 }
 
@@ -1861,9 +1897,39 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                     doExtractFunctionTest(fileName);
                 }
 
+                @TestMetadata("anonymousObjectWithCall.kt")
+                public void testAnonymousObjectWithCall() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/nonDenotableTypes/anonymousObjectWithCall.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
                 @TestMetadata("localClass.kt")
                 public void testLocalClass() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/nonDenotableTypes/localClass.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
+                @TestMetadata("localClassWithSuperclass.kt")
+                public void testLocalClassWithSuperclass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/nonDenotableTypes/localClassWithSuperclass.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
+                @TestMetadata("localClassWithSuperclassParameter.kt")
+                public void testLocalClassWithSuperclassParameter() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/nonDenotableTypes/localClassWithSuperclassParameter.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
+                @TestMetadata("localClassWithSuperclassParameterInLocalFun.kt")
+                public void testLocalClassWithSuperclassParameterInLocalFun() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/nonDenotableTypes/localClassWithSuperclassParameterInLocalFun.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
+                @TestMetadata("localClassWithSuperclassParameterNoApproximation.kt")
+                public void testLocalClassWithSuperclassParameterNoApproximation() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/nonDenotableTypes/localClassWithSuperclassParameterNoApproximation.kt");
                     doExtractFunctionTest(fileName);
                 }
             }

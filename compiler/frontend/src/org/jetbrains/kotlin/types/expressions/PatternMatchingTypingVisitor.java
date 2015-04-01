@@ -56,8 +56,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         JetType knownType = typeInfo.getType();
         DataFlowInfo dataFlowInfo = typeInfo.getDataFlowInfo();
         if (expression.getTypeReference() != null) {
-            DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(leftHandSide, knownType,
-                                                                                   context.trace.getBindingContext());
+            DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(leftHandSide, knownType, context);
             DataFlowInfo conditionInfo = checkTypeForIs(context, knownType, expression.getTypeReference(), dataFlowValue).thenInfo;
             DataFlowInfo newDataFlowInfo = conditionInfo.and(dataFlowInfo);
             context.trace.record(BindingContext.DATAFLOW_INFO_AFTER_CONDITION, expression, newDataFlowInfo);
@@ -87,7 +86,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             context = context.replaceDataFlowInfo(typeInfo.getDataFlowInfo());
         }
         DataFlowValue subjectDataFlowValue = subjectExpression != null
-                ? DataFlowValueFactory.createDataFlowValue(subjectExpression, subjectType, context.trace.getBindingContext())
+                ? DataFlowValueFactory.createDataFlowValue(subjectExpression, subjectType, context)
                 : DataFlowValue.NULL;
 
         // TODO : exhaustive patterns
@@ -263,7 +262,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         }
         checkTypeCompatibility(context, type, subjectType, expression);
         DataFlowValue expressionDataFlowValue =
-                DataFlowValueFactory.createDataFlowValue(expression, type, context.trace.getBindingContext());
+                DataFlowValueFactory.createDataFlowValue(expression, type, context);
         DataFlowInfos result = noChange(context);
         result = new DataFlowInfos(
                 result.thenInfo.equate(subjectDataFlowValue, expressionDataFlowValue),

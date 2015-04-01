@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 public class KotlinSmartEnterHandler: SmartEnterProcessorWithFixers() {
-    {
+    init {
         addFixers(
                 KotlinIfConditionFixer(),
                 KotlinMissingIfBranchFixer(),

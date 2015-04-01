@@ -116,7 +116,7 @@ public class KotlinFindClassUsagesHandler(
         // todo: Use JavaFindUsagesHelper.getElementNames() when it becomes public in IDEA
         var stringsToSearch: Collection<String>
         object: JavaFindUsagesHandler(psiClass, JavaFindUsagesHandlerFactory.getInstance(element.getProject())) {
-            {
+            init {
                 stringsToSearch = getStringsToSearch(psiClass)
             }
         }

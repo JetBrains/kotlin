@@ -3,17 +3,21 @@ PsiJetFileStubImpl[package=a]
     REFERENCE_EXPRESSION:[referencedName=a]
   CLASS:[fqName=a.InheritingClasses, isEnumEntry=false, isLocal=false, isTopLevel=true, isTrait=false, name=InheritingClasses, superNames=[]]
     MODIFIER_LIST:[internal final]
-    VALUE_PARAMETER_LIST:
+    PRIMARY_CONSTRUCTOR:
+      MODIFIER_LIST:[public]
+      VALUE_PARAMETER_LIST:
     CLASS_BODY:
       CLASS:[fqName=a.InheritingClasses.A, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=A, superNames=[C]]
         MODIFIER_LIST:[abstract internal]
-        VALUE_PARAMETER_LIST:
-          VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=c]
-            TYPE_REFERENCE:
-              USER_TYPE:[isAbsoluteInRootPackage=false]
+        PRIMARY_CONSTRUCTOR:
+          MODIFIER_LIST:[public]
+          VALUE_PARAMETER_LIST:
+            VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=c]
+              TYPE_REFERENCE:
                 USER_TYPE:[isAbsoluteInRootPackage=false]
-                  REFERENCE_EXPRESSION:[referencedName=kotlin]
-                REFERENCE_EXPRESSION:[referencedName=Int]
+                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                    REFERENCE_EXPRESSION:[referencedName=kotlin]
+                  REFERENCE_EXPRESSION:[referencedName=Int]
         DELEGATION_SPECIFIER_LIST:
           DELEGATOR_SUPER_CLASS:
             TYPE_REFERENCE:
@@ -63,7 +67,9 @@ PsiJetFileStubImpl[package=a]
                 REFERENCE_EXPRESSION:[referencedName=Int]
       CLASS:[fqName=a.InheritingClasses.B, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=B, superNames=[A]]
         MODIFIER_LIST:[open internal]
-        VALUE_PARAMETER_LIST:
+        PRIMARY_CONSTRUCTOR:
+          MODIFIER_LIST:[public]
+          VALUE_PARAMETER_LIST:
         DELEGATION_SPECIFIER_LIST:
           DELEGATOR_SUPER_CLASS:
             TYPE_REFERENCE:
@@ -140,7 +146,9 @@ PsiJetFileStubImpl[package=a]
         CLASS_BODY:
       CLASS:[fqName=a.InheritingClasses.G, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=G, superNames=[B, C, D, E]]
         MODIFIER_LIST:[internal final]
-        VALUE_PARAMETER_LIST:
+        PRIMARY_CONSTRUCTOR:
+          MODIFIER_LIST:[public]
+          VALUE_PARAMETER_LIST:
         DELEGATION_SPECIFIER_LIST:
           DELEGATOR_SUPER_CLASS:
             TYPE_REFERENCE:
@@ -184,19 +192,27 @@ PsiJetFileStubImpl[package=a]
         CLASS_BODY:
       CLASS:[fqName=a.InheritingClasses.InheritAny, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=InheritAny, superNames=[]]
         MODIFIER_LIST:[internal final]
-        VALUE_PARAMETER_LIST:
+        PRIMARY_CONSTRUCTOR:
+          MODIFIER_LIST:[public]
+          VALUE_PARAMETER_LIST:
         CLASS_BODY:
           CLASS:[fqName=a.InheritingClasses.InheritAny.ExplicitAny, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=ExplicitAny, superNames=[]]
             MODIFIER_LIST:[internal final]
-            VALUE_PARAMETER_LIST:
+            PRIMARY_CONSTRUCTOR:
+              MODIFIER_LIST:[public]
+              VALUE_PARAMETER_LIST:
             CLASS_BODY:
           CLASS:[fqName=a.InheritingClasses.InheritAny.ImplicitAny, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=ImplicitAny, superNames=[]]
             MODIFIER_LIST:[internal final]
-            VALUE_PARAMETER_LIST:
+            PRIMARY_CONSTRUCTOR:
+              MODIFIER_LIST:[public]
+              VALUE_PARAMETER_LIST:
             CLASS_BODY:
           CLASS:[fqName=a.InheritingClasses.InheritAny.OnlyTrait, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=OnlyTrait, superNames=[SomeTrait]]
             MODIFIER_LIST:[internal final]
-            VALUE_PARAMETER_LIST:
+            PRIMARY_CONSTRUCTOR:
+              MODIFIER_LIST:[public]
+              VALUE_PARAMETER_LIST:
             DELEGATION_SPECIFIER_LIST:
               DELEGATOR_SUPER_CLASS:
                 TYPE_REFERENCE:
@@ -211,7 +227,9 @@ PsiJetFileStubImpl[package=a]
             CLASS_BODY:
           CLASS:[fqName=a.InheritingClasses.InheritAny.OnlyTraits, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=OnlyTraits, superNames=[SomeTrait, SomeTrait2]]
             MODIFIER_LIST:[internal final]
-            VALUE_PARAMETER_LIST:
+            PRIMARY_CONSTRUCTOR:
+              MODIFIER_LIST:[public]
+              VALUE_PARAMETER_LIST:
             DELEGATION_SPECIFIER_LIST:
               DELEGATOR_SUPER_CLASS:
                 TYPE_REFERENCE:
@@ -242,7 +260,9 @@ PsiJetFileStubImpl[package=a]
             CLASS_BODY:
           CLASS:[fqName=a.InheritingClasses.InheritAny.TraitWithExplicitAny, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=TraitWithExplicitAny, superNames=[Any, SomeTrait]]
             MODIFIER_LIST:[internal final]
-            VALUE_PARAMETER_LIST:
+            PRIMARY_CONSTRUCTOR:
+              MODIFIER_LIST:[public]
+              VALUE_PARAMETER_LIST:
             DELEGATION_SPECIFIER_LIST:
               DELEGATOR_SUPER_CLASS:
                 TYPE_REFERENCE:
@@ -263,7 +283,9 @@ PsiJetFileStubImpl[package=a]
             CLASS_BODY:
           CLASS:[fqName=a.InheritingClasses.InheritAny.TraitsWithExplicitAny, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=TraitsWithExplicitAny, superNames=[SomeTrait2, Any, SomeTrait]]
             MODIFIER_LIST:[internal final]
-            VALUE_PARAMETER_LIST:
+            PRIMARY_CONSTRUCTOR:
+              MODIFIER_LIST:[public]
+              VALUE_PARAMETER_LIST:
             DELEGATION_SPECIFIER_LIST:
               DELEGATOR_SUPER_CLASS:
                 TYPE_REFERENCE:
@@ -294,7 +316,9 @@ PsiJetFileStubImpl[package=a]
             CLASS_BODY:
       CLASS:[fqName=a.InheritingClasses.InheritExtensionFunctionType, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=InheritExtensionFunctionType, superNames=[]]
         MODIFIER_LIST:[abstract internal]
-        VALUE_PARAMETER_LIST:
+        PRIMARY_CONSTRUCTOR:
+          MODIFIER_LIST:[public]
+          VALUE_PARAMETER_LIST:
         DELEGATION_SPECIFIER_LIST:
           DELEGATOR_SUPER_CLASS:
             TYPE_REFERENCE:
@@ -328,7 +352,9 @@ PsiJetFileStubImpl[package=a]
         CLASS_BODY:
       CLASS:[fqName=a.InheritingClasses.InheritFunctionType, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=InheritFunctionType, superNames=[]]
         MODIFIER_LIST:[abstract internal]
-        VALUE_PARAMETER_LIST:
+        PRIMARY_CONSTRUCTOR:
+          MODIFIER_LIST:[public]
+          VALUE_PARAMETER_LIST:
         DELEGATION_SPECIFIER_LIST:
           DELEGATOR_SUPER_CLASS:
             TYPE_REFERENCE:

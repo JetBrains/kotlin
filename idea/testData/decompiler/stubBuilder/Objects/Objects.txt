@@ -43,7 +43,9 @@ PsiJetFileStubImpl[package=]
                 REFERENCE_EXPRESSION:[referencedName=Unit]
       CLASS:[fqName=Objects.NestedClass, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=NestedClass, superNames=[]]
         MODIFIER_LIST:[open internal]
-        VALUE_PARAMETER_LIST:
+        PRIMARY_CONSTRUCTOR:
+          MODIFIER_LIST:[public]
+          VALUE_PARAMETER_LIST:
         CLASS_BODY:
       OBJECT_DECLARATION:[fqName=Objects.OtherObject, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=OtherObject, superNames=[NestedClass]]
         MODIFIER_LIST:[public]

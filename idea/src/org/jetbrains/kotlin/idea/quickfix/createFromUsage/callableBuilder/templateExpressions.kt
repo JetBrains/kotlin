@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 private class ParameterNameExpression(
         private val names: Array<String>,
         private val parameterTypeToNamesMap: Map<String, Array<String>>) : Expression() {
-    {
+    init {
         assert(names all { it.isNotEmpty() })
     }
 

@@ -5,7 +5,9 @@ PsiJetFileStubImpl[package=test]
     MODIFIER_LIST:[internal final]
     TYPE_PARAMETER_LIST:
       TYPE_PARAMETER:[fqName=null, isInVariance=false, isOutVariance=false, name=TOuter]
-    VALUE_PARAMETER_LIST:
+    PRIMARY_CONSTRUCTOR:
+      MODIFIER_LIST:[public]
+      VALUE_PARAMETER_LIST:
     CLASS_BODY:
       PROPERTY:[fqName=test.NestedClasses.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=c]
         MODIFIER_LIST:[internal final]
@@ -29,7 +31,9 @@ PsiJetFileStubImpl[package=test]
             TYPE_REFERENCE:
               USER_TYPE:[isAbsoluteInRootPackage=false]
                 REFERENCE_EXPRESSION:[referencedName=TOuter]
-        VALUE_PARAMETER_LIST:
+        PRIMARY_CONSTRUCTOR:
+          MODIFIER_LIST:[public]
+          VALUE_PARAMETER_LIST:
         CLASS_BODY:
           FUN:[fqName=test.NestedClasses.Inner.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isProbablyNothingType=false, isTopLevel=false, name=f]
             MODIFIER_LIST:[internal final]
@@ -47,7 +51,9 @@ PsiJetFileStubImpl[package=test]
             MODIFIER_LIST:[inner private final]
             TYPE_PARAMETER_LIST:
               TYPE_PARAMETER:[fqName=null, isInVariance=false, isOutVariance=false, name=TII]
-            VALUE_PARAMETER_LIST:
+            PRIMARY_CONSTRUCTOR:
+              MODIFIER_LIST:[public]
+              VALUE_PARAMETER_LIST:
             CLASS_BODY:
               FUN:[fqName=test.NestedClasses.Inner.II.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isProbablyNothingType=false, isTopLevel=false, name=f]
                 MODIFIER_LIST:[internal final]
@@ -91,7 +97,9 @@ PsiJetFileStubImpl[package=test]
         MODIFIER_LIST:[private final]
         TYPE_PARAMETER_LIST:
           TYPE_PARAMETER:[fqName=null, isInVariance=false, isOutVariance=false, name=TN]
-        VALUE_PARAMETER_LIST:
+        PRIMARY_CONSTRUCTOR:
+          MODIFIER_LIST:[public]
+          VALUE_PARAMETER_LIST:
         CLASS_BODY:
           PROPERTY:[fqName=test.NestedClasses.Nested.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=c]
             MODIFIER_LIST:[internal final]
@@ -119,7 +127,9 @@ PsiJetFileStubImpl[package=test]
                 TYPE_REFERENCE:
                   USER_TYPE:[isAbsoluteInRootPackage=false]
                     REFERENCE_EXPRESSION:[referencedName=TN]
-            VALUE_PARAMETER_LIST:
+            PRIMARY_CONSTRUCTOR:
+              MODIFIER_LIST:[public]
+              VALUE_PARAMETER_LIST:
             CLASS_BODY:
               FUN:[fqName=test.NestedClasses.Nested.NI.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isProbablyNothingType=false, isTopLevel=false, name=f]
                 MODIFIER_LIST:[internal final]
@@ -141,7 +151,9 @@ PsiJetFileStubImpl[package=test]
             MODIFIER_LIST:[public final]
             TYPE_PARAMETER_LIST:
               TYPE_PARAMETER:[fqName=null, isInVariance=false, isOutVariance=false, name=TNN]
-            VALUE_PARAMETER_LIST:
+            PRIMARY_CONSTRUCTOR:
+              MODIFIER_LIST:[public]
+              VALUE_PARAMETER_LIST:
             CLASS_BODY:
               PROPERTY:[fqName=test.NestedClasses.Nested.NN.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=c]
                 MODIFIER_LIST:[internal final]

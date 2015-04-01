@@ -3,6 +3,6 @@
 
 package testData.libraries
 
-[[public final class ClassWithConstructor(a: kotlin.String, b: kotlin.Any) {
+[[public final class ClassWithConstructor public (a: kotlin.String, b: kotlin.Any) {
     [internal final val a: kotlin.String /* compiled code */]
 }]]

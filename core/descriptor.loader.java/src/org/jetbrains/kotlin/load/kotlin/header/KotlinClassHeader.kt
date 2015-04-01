@@ -27,9 +27,9 @@ public class KotlinClassHeader(
         public val classKind: KotlinClass.Kind?,
         public val syntheticClassKind: KotlinSyntheticClass.Kind?
 ) {
-    public val isCompatibleAbiVersion: Boolean get() = AbiVersionUtil.isAbiVersionCompatible(version);
+    public val isCompatibleAbiVersion: Boolean get() = AbiVersionUtil.isAbiVersionCompatible(version)
 
-    {
+    init {
         if (isCompatibleAbiVersion) {
             assert((annotationData == null) == (kind != Kind.CLASS && kind != Kind.PACKAGE_FACADE)) {
                 "Annotation data should be not null only for CLASS and PACKAGE_FACADE (kind=$kind)"

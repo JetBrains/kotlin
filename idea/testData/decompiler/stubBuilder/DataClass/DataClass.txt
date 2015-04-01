@@ -14,19 +14,21 @@ PsiJetFileStubImpl[package=a.b.c]
               USER_TYPE:[isAbsoluteInRootPackage=false]
                 REFERENCE_EXPRESSION:[referencedName=kotlin]
               REFERENCE_EXPRESSION:[referencedName=data]
-    VALUE_PARAMETER_LIST:
-      VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=i]
-        TYPE_REFERENCE:
-          USER_TYPE:[isAbsoluteInRootPackage=false]
+    PRIMARY_CONSTRUCTOR:
+      MODIFIER_LIST:[public]
+      VALUE_PARAMETER_LIST:
+        VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=i]
+          TYPE_REFERENCE:
             USER_TYPE:[isAbsoluteInRootPackage=false]
-              REFERENCE_EXPRESSION:[referencedName=kotlin]
-            REFERENCE_EXPRESSION:[referencedName=Int]
-      VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=j]
-        TYPE_REFERENCE:
-          USER_TYPE:[isAbsoluteInRootPackage=false]
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                REFERENCE_EXPRESSION:[referencedName=kotlin]
+              REFERENCE_EXPRESSION:[referencedName=Int]
+        VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=j]
+          TYPE_REFERENCE:
             USER_TYPE:[isAbsoluteInRootPackage=false]
-              REFERENCE_EXPRESSION:[referencedName=kotlin]
-            REFERENCE_EXPRESSION:[referencedName=String]
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                REFERENCE_EXPRESSION:[referencedName=kotlin]
+              REFERENCE_EXPRESSION:[referencedName=String]
     CLASS_BODY:
       PROPERTY:[fqName=a.b.c.DataClass.i, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=i]
         MODIFIER_LIST:[internal final]

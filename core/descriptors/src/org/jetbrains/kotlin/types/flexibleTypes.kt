@@ -152,7 +152,7 @@ public open class DelegatingFlexibleType protected (
         }
     }
 
-    {
+    init {
         assert (!lowerBound.isFlexible()) { "Lower bound of a flexible type can not be flexible: $lowerBound" }
         assert (!upperBound.isFlexible()) { "Upper bound of a flexible type can not be flexible: $upperBound" }
         assert (lowerBound != upperBound) { "Lower and upper bounds are equal: $lowerBound == $upperBound" }

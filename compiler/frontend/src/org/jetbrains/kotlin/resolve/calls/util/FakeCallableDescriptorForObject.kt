@@ -33,7 +33,7 @@ public class FakeCallableDescriptorForObject(
         public val classDescriptor: ClassDescriptor
 ) : DeclarationDescriptorWithVisibility by classDescriptor.getClassObjectReferenceTarget(), VariableDescriptor {
 
-    {
+    init {
         assert(classDescriptor.getClassObjectType() != null) {
             "FakeCallableDescriptorForObject can be created only for objects, classes with companion object or enum entries: $classDescriptor"
         }

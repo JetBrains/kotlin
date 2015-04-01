@@ -170,7 +170,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             checkBinaryWithTypeRHS(expression, contextWithNoExpectedType, targetType, subjectType);
             dataFlowInfo = typeInfo.getDataFlowInfo();
             if (operationType == AS_KEYWORD) {
-                DataFlowValue value = createDataFlowValue(left, subjectType, context.trace.getBindingContext());
+                DataFlowValue value = createDataFlowValue(left, subjectType, context);
                 dataFlowInfo = dataFlowInfo.establishSubtyping(value, targetType);
             }
         }
@@ -224,7 +224,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             return;
         }
         Collection<JetType> possibleTypes = DataFlowUtils.getAllPossibleTypes(
-                expression.getLeft(), context.dataFlowInfo, actualType, context.trace.getBindingContext());
+                expression.getLeft(), context.dataFlowInfo, actualType, context);
         for (JetType possibleType : possibleTypes) {
             if (typeChecker.isSubtypeOf(possibleType, targetType)) {
                 context.trace.report(USELESS_CAST_STATIC_ASSERT_IS_FINE.on(expression));
@@ -890,7 +890,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             context.trace.report(UNNECESSARY_NOT_NULL_ASSERTION.on(operationSign, baseType));
         }
         else {
-            DataFlowValue value = createDataFlowValue(baseExpression, baseType, context.trace.getBindingContext());
+            DataFlowValue value = createDataFlowValue(baseExpression, baseType, context);
             dataFlowInfo = dataFlowInfo.disequate(value, DataFlowValue.NULL);
         }
         // The call to checkType() is only needed here to execute additionalTypeCheckers, hence the NO_EXPECTED_TYPE
@@ -932,7 +932,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     private static boolean isKnownToBeNotNull(JetExpression expression, JetType jetType, ExpressionTypingContext context) {
-        DataFlowValue dataFlowValue = createDataFlowValue(expression, jetType, context.trace.getBindingContext());
+        DataFlowValue dataFlowValue = createDataFlowValue(expression, jetType, context);
         return !context.dataFlowInfo.getNullability(dataFlowValue).canBeNull();
     }
 
@@ -1194,7 +1194,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         DataFlowInfo dataFlowInfo = resolvedCall.getDataFlowInfoForArguments().getResultInfo();
         if (leftType != null && rightType != null && KotlinBuiltIns.isNothingOrNullableNothing(rightType) && !rightType.isMarkedNullable()) {
-            DataFlowValue value = createDataFlowValue(left, leftType, context.trace.getBindingContext());
+            DataFlowValue value = createDataFlowValue(left, leftType, context);
             dataFlowInfo = dataFlowInfo.disequate(value, DataFlowValue.NULL);
         }
         JetType type = resolvedCall.getResultingDescriptor().getReturnType();
@@ -1262,7 +1262,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                     context.trace.report(EQUALITY_NOT_APPLICABLE.on(expression, expression.getOperationReference(), leftType, rightType));
                 }
                 SenselessComparisonChecker.checkSenselessComparisonWithNull(
-                        expression, left, right, context.trace,
+                        expression, left, right, context,
                         new Function1<JetExpression, JetType>() {
                             @Override
                             public JetType invoke(JetExpression expression) {

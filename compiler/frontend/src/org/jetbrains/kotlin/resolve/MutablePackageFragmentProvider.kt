@@ -31,7 +31,7 @@ public class MutablePackageFragmentProvider(public val module: ModuleDescriptor)
     private val fqNameToPackage = HashMap<FqName, MutablePackageFragmentDescriptor>()
     private val subPackages = MultiMap.create<FqName, FqName>()
 
-    ;{
+    init {
         fqNameToPackage.put(FqName.ROOT, MutablePackageFragmentDescriptor(module, FqName.ROOT))
     }
 

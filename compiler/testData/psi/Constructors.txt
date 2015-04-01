@@ -18,9 +18,10 @@ JetFile: Constructors.kt
     PsiElement(class)('class')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')
-    VALUE_PARAMETER_LIST
-      PsiElement(LPAR)('(')
-      PsiElement(RPAR)(')')
+    PRIMARY_CONSTRUCTOR
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
     PsiWhiteSpace(' ')
     PsiElement(COLON)(':')
     PsiWhiteSpace(' ')
@@ -39,12 +40,13 @@ JetFile: Constructors.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')
     PsiWhiteSpace(' ')
-    PRIMARY_CONSTRUCTOR_MODIFIER_LIST
-      PsiElement(private)('private')
-    PsiWhiteSpace(' ')
-    VALUE_PARAMETER_LIST
-      PsiElement(LPAR)('(')
-      PsiElement(RPAR)(')')
+    PRIMARY_CONSTRUCTOR
+      MODIFIER_LIST
+        PsiElement(private)('private')
+      PsiWhiteSpace(' ')
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
     PsiWhiteSpace(' ')
     PsiElement(COLON)(':')
     PsiWhiteSpace(' ')
@@ -67,9 +69,10 @@ JetFile: Constructors.kt
       TYPE_PARAMETER
         PsiElement(IDENTIFIER)('T')
       PsiElement(GT)('>')
-    VALUE_PARAMETER_LIST
-      PsiElement(LPAR)('(')
-      PsiElement(RPAR)(')')
+    PRIMARY_CONSTRUCTOR
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
     PsiWhiteSpace(' ')
     PsiElement(COLON)(':')
     PsiWhiteSpace(' ')
@@ -93,12 +96,13 @@ JetFile: Constructors.kt
         PsiElement(IDENTIFIER)('T')
       PsiElement(GT)('>')
     PsiWhiteSpace(' ')
-    PRIMARY_CONSTRUCTOR_MODIFIER_LIST
-      PsiElement(private)('private')
-    PsiWhiteSpace(' ')
-    VALUE_PARAMETER_LIST
-      PsiElement(LPAR)('(')
-      PsiElement(RPAR)(')')
+    PRIMARY_CONSTRUCTOR
+      MODIFIER_LIST
+        PsiElement(private)('private')
+      PsiWhiteSpace(' ')
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
     PsiWhiteSpace(' ')
     PsiElement(COLON)(':')
     PsiWhiteSpace(' ')

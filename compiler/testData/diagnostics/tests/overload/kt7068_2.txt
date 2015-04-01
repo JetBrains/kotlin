@@ -1,0 +1,5 @@
+package
+
+internal fun test(): kotlin.Unit
+internal fun withLambda(/*0*/ block: kotlin.Int.(kotlin.String) -> kotlin.Unit): kotlin.Unit
+internal fun withLambda(/*0*/ block: kotlin.Int.(kotlin.String, kotlin.String) -> kotlin.Unit): kotlin.Unit

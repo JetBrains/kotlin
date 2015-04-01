@@ -16,7 +16,5 @@
 
 package org.jetbrains.kotlin.asJava;
 
-import com.intellij.psi.PsiClass;
-
-public interface JetJavaMirrorMarker extends PsiClass {
+public interface JetJavaMirrorMarker {
 }

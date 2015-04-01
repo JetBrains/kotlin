@@ -30,7 +30,7 @@ import com.intellij.codeInsight.template.TemplateManager
 import com.intellij.openapi.command.WriteCommandAction
 
 public class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
-    {
+    init {
         System.setProperty("idea.platform.prefix", "Idea")
     }
 

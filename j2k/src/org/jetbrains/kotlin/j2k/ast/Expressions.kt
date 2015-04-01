@@ -125,7 +125,7 @@ class PolyadicExpression(val expressions: List<Expression>, val token: String) :
 }
 
 class LambdaExpression(val arguments: String?, val block: Block) : Expression() {
-    {
+    init {
         assignPrototypesFrom(block)
     }
 

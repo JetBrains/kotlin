@@ -31,7 +31,8 @@ class ToFromOriginalFileMapper(
     private val shift: Int
 
     //TODO: lazy initialization?
-    ;{
+
+    init {
         val originalText = originalFile.getText()
         val syntheticText = syntheticFile.getText()
         assert(originalText.subSequence(0, completionOffset) == syntheticText.subSequence(0, completionOffset)) //TODO: drop it

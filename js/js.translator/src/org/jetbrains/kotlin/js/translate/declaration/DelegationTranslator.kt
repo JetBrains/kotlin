@@ -50,9 +50,9 @@ public class DelegationTranslator(
             classDeclaration.getDelegationSpecifiers().filterIsInstance<JetDelegatorByExpressionSpecifier>();
 
     private class Field (val name: String, val generateField: Boolean)
-    private val fields = HashMap<JetDelegatorByExpressionSpecifier, Field>();
+    private val fields = HashMap<JetDelegatorByExpressionSpecifier, Field>()
 
-    {
+    init {
         for (specifier in delegationBySpecifiers) {
             val expression = specifier.getDelegateExpression() ?:
                     throw IllegalArgumentException("delegate expression should not be null: ${specifier.getText()}")

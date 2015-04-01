@@ -52,7 +52,7 @@ public class IncrementalPackageFragmentProvider(
     val fqNameToPackageFragment = HashMap<FqName, PackageFragmentDescriptor>()
     val fqNamesToLoad: Set<FqName>
 
-    ;{
+    init {
         fun createPackageFragment(fqName: FqName) {
             if (fqNameToPackageFragment.containsKey(fqName)) {
                 return

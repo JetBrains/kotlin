@@ -194,8 +194,9 @@ public open class DefaultSourceMapper(val sourceInfo: SourceInfo, override val p
 
     var fileMappings: LinkedHashMap<String, RawFileMapping> = linkedMapOf()
 
-    protected var origin: RawFileMapping by Delegates.notNull();
-    {
+    protected var origin: RawFileMapping by Delegates.notNull()
+
+    init {
         visitSource(sourceInfo.source, sourceInfo.pathOrCleanFQN)
         //map interval
         (1..maxUsedValue).forEach {origin.mapLine(it, it - 1, true) }

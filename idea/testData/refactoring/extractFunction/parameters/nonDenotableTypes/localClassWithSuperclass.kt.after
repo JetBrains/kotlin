@@ -1,0 +1,12 @@
+trait T
+
+fun foo(): T {
+    class A: T
+
+    fun a() = A()
+
+    // SIBLING:
+    fun bar(): T {
+        return a()
+    }
+}

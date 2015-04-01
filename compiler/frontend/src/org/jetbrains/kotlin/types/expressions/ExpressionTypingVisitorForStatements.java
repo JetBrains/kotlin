@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.AnnotationResolver;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.ModifiersChecker;
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace;
 import org.jetbrains.kotlin.resolve.calls.context.TemporaryTraceAndCache;
@@ -141,8 +142,9 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             dataFlowInfo = typeInfo.getDataFlowInfo();
             JetType type = typeInfo.getType();
             if (property.getTypeReference() == null && type != null) {
-                DataFlowValue variableDataFlowValue = DataFlowValueFactory.createDataFlowValue(propertyDescriptor);
-                DataFlowValue initializerDataFlowValue = DataFlowValueFactory.createDataFlowValue(initializer, type, context.trace.getBindingContext());
+                DataFlowValue variableDataFlowValue = DataFlowValueFactory.createDataFlowValue(
+                        propertyDescriptor, DescriptorUtils.getContainingModuleOrNull(scope.getContainingDeclaration()));
+                DataFlowValue initializerDataFlowValue = DataFlowValueFactory.createDataFlowValue(initializer, type, context);
                 dataFlowInfo = dataFlowInfo.equate(variableDataFlowValue, initializerDataFlowValue);
             }
         }
@@ -341,8 +343,8 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             dataFlowInfo = rightInfo.getDataFlowInfo();
             JetType rightType = rightInfo.getType();
             if (left != null && leftType != null && rightType != null) {
-                DataFlowValue leftValue = DataFlowValueFactory.createDataFlowValue(left, leftType, context.trace.getBindingContext());
-                DataFlowValue rightValue = DataFlowValueFactory.createDataFlowValue(right, rightType, context.trace.getBindingContext());
+                DataFlowValue leftValue = DataFlowValueFactory.createDataFlowValue(left, leftType, context);
+                DataFlowValue rightValue = DataFlowValueFactory.createDataFlowValue(right, rightType, context);
                 dataFlowInfo = dataFlowInfo.equate(leftValue, rightValue);
             }
         }

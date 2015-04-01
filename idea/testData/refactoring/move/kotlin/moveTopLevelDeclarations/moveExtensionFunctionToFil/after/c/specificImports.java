@@ -1,9 +1,10 @@
 package c;
 
 import a.Test;
+import b.BPackage;
 
 class J {
     void bar() {
-        b.BPackage.test(new Test());
+        BPackage.test(new Test());
     }
 }
