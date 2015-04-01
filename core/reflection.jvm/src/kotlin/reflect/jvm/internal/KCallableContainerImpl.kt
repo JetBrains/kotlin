@@ -68,14 +68,16 @@ abstract class KCallableContainerImpl {
     }
 
     // TODO: check resulting method's return type
-    fun findMethodBySignature(signature: JvmProtoBuf.JvmMethodSignature, nameResolver: NameResolver): Method? {
+    fun findMethodBySignature(signature: JvmProtoBuf.JvmMethodSignature, nameResolver: NameResolver, declared: Boolean): Method? {
         val name = nameResolver.getString(signature.getName())
         val classLoader = jClass.classLoader
         val parameterTypes = signature.getParameterTypeList().map { jvmType ->
             loadJvmType(jvmType, nameResolver, classLoader)
         }.copyToArray()
+
         return try {
-            jClass.getMaybeDeclaredMethod(name, *parameterTypes)
+            if (declared) jClass.getDeclaredMethod(name, *parameterTypes)
+            else jClass.getMethod(name, *parameterTypes)
         }
         catch (e: NoSuchMethodException) {
             null
@@ -109,16 +111,6 @@ abstract class KCallableContainerImpl {
         }
         catch (e: NoSuchFieldException) {
             null
-        }
-    }
-
-    private fun Class<*>.getMaybeDeclaredMethod(name: String, vararg parameterTypes: Class<*>): Method {
-        try {
-            return getMethod(name, *parameterTypes)
-        }
-        catch (e: NoSuchMethodException) {
-            // This is needed to support private methods
-            return getDeclaredMethod(name, *parameterTypes)
         }
     }
 

@@ -17,6 +17,7 @@
 package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
@@ -60,13 +61,15 @@ abstract class DescriptorBasedProperty(computeDescriptor: () -> PropertyDescript
     open val getter: Method? by ReflectProperties.lazySoft {
         val proto = protoData
         if (proto == null || !proto.signature.hasGetter()) null
-        else container.findMethodBySignature(proto.signature.getGetter(), proto.nameResolver)
+        else container.findMethodBySignature(proto.signature.getGetter(), proto.nameResolver,
+                                             descriptor.getGetter()?.getVisibility()?.let { Visibilities.isPrivate(it) } ?: false)
     }
 
     open val setter: Method? by ReflectProperties.lazySoft {
         val proto = protoData
         if (proto == null || !proto.signature.hasSetter()) null
-        else container.findMethodBySignature(proto.signature.getSetter(), proto.nameResolver)
+        else container.findMethodBySignature(proto.signature.getSetter(), proto.nameResolver,
+                                             descriptor.getSetter()?.getVisibility()?.let { Visibilities.isPrivate(it) } ?: false)
     }
 
     override fun equals(other: Any?): Boolean =
