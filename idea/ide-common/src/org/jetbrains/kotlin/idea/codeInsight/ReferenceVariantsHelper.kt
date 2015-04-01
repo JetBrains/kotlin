@@ -126,12 +126,14 @@ public class ReferenceVariantsHelper(
 
             // process extensions and non-instance members
             for (descriptor in resolutionScope.getDescriptorsFiltered(kindFilter, nameFilter)) {
-                if (descriptor is CallableDescriptor && descriptor.getDispatchReceiverParameter() != null) continue // should already be processed via implicit receivers
-
                 if (descriptor is CallableDescriptor && descriptor.getExtensionReceiverParameter() != null) {
-                    descriptorsSet.addAll(descriptor.substituteExtensionIfCallable(receiverValues, context, dataFlowInfo, CallType.NORMAL))
+                    val dispatchReceiver = descriptor.getDispatchReceiverParameter()
+                    if (dispatchReceiver == null || dispatchReceiver in receivers) {
+                        descriptorsSet.addAll(descriptor.substituteExtensionIfCallable(receiverValues, context, dataFlowInfo, CallType.NORMAL))
+                    }
                 }
                 else {
+                    if (descriptor is CallableDescriptor && descriptor.getDispatchReceiverParameter() != null) continue // should already be processed via implicit receivers
                     descriptorsSet.add(descriptor)
                 }
             }
