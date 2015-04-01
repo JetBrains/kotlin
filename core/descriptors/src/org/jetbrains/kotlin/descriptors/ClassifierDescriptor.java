@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.descriptors;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeConstructor;
 
@@ -27,7 +26,4 @@ public interface ClassifierDescriptor extends DeclarationDescriptorNonRoot {
 
     @NotNull
     JetType getDefaultType();
-
-    @Nullable
-    JetType getClassObjectType();
 }

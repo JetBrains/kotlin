@@ -495,7 +495,6 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
         getDescriptorsForExtraCompanionObjects();
 
-        getClassObjectType();
         getConstructors();
         getContainingDeclaration();
         getThisAsReceiverParameter();

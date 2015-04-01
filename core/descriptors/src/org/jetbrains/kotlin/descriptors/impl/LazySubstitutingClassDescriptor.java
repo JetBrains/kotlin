@@ -164,11 +164,6 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
     }
 
     @Override
-    public JetType getClassObjectType() {
-        return original.getClassObjectType();
-    }
-
-    @Override
     public ClassDescriptor getCompanionObjectDescriptor() {
         return original.getCompanionObjectDescriptor();
     }

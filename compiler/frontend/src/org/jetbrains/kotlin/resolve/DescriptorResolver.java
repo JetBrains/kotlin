@@ -59,7 +59,8 @@ import static org.jetbrains.kotlin.lexer.JetTokens.OVERRIDE_KEYWORD;
 import static org.jetbrains.kotlin.lexer.JetTokens.VARARG_KEYWORD;
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
-import static org.jetbrains.kotlin.resolve.ModifiersChecker.*;
+import static org.jetbrains.kotlin.resolve.ModifiersChecker.resolveModalityFromModifiers;
+import static org.jetbrains.kotlin.resolve.ModifiersChecker.resolveVisibilityFromModifiers;
 import static org.jetbrains.kotlin.resolve.source.SourcePackage.toSourceElement;
 
 public class DescriptorResolver {
@@ -542,11 +543,6 @@ public class DescriptorResolver {
     ) {
         if (KotlinBuiltIns.isNothing(parameter.getUpperBoundsAsType())) {
             trace.report(CONFLICTING_UPPER_BOUNDS.on(typeParameter, parameter));
-        }
-
-        JetType classObjectType = parameter.getClassObjectType();
-        if (classObjectType != null && KotlinBuiltIns.isNothing(classObjectType)) {
-            trace.report(CONFLICTING_COMPANION_OBJECT_UPPER_BOUNDS.on(typeParameter, parameter));
         }
     }
 
