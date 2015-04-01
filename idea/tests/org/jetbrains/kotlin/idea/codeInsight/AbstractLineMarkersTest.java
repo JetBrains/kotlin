@@ -27,9 +27,11 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
 import com.intellij.testFramework.ExpectedHighlightingData;
+import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase;
+import org.jetbrains.kotlin.idea.JetWithJdkAndRuntimeLightProjectDescriptor;
 import org.jetbrains.kotlin.idea.PluginTestCaseBase;
 import org.jetbrains.kotlin.idea.highlighter.markers.SuperDeclarationMarkerNavigationHandler;
 import org.jetbrains.kotlin.idea.navigation.NavigationTestUtils;
@@ -54,6 +56,12 @@ public abstract class AbstractLineMarkersTest extends JetLightCodeInsightFixture
         return PluginTestCaseBase.TEST_DATA_PROJECT_RELATIVE + "/codeInsight/lineMarker";
     }
 
+    @NotNull
+    @Override
+    protected LightProjectDescriptor getProjectDescriptor() {
+        return JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE;
+    }
+
     public void doTest(String path) {
         try {
             myFixture.configureByFile(path);
@@ -76,7 +84,7 @@ public abstract class AbstractLineMarkersTest extends JetLightCodeInsightFixture
             catch (AssertionError error) {
                 try {
                     String actualTextWithTestData = TagsTestDataUtil.insertInfoTags(markers, true, myFixture.getFile().getText());
-                    JetTestUtils.assertEqualsToFile(new File(getTestDataPath(), fileName()), actualTextWithTestData);
+                    JetTestUtils.assertEqualsToFile(new File(path), actualTextWithTestData);
                 }
                 catch (FileComparisonFailure failure) {
                     throw new FileComparisonFailure(error.getMessage() + "\n" + failure.getMessage(),
