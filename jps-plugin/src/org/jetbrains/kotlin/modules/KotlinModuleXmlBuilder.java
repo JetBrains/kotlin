@@ -67,23 +67,19 @@ public class KotlinModuleXmlBuilder {
             p.println("<", SOURCES, " ", PATH, "=\"", getEscapedPath(sourceFile), "\"/>");
         }
 
-        if (!javaSourceRoots.isEmpty()) {
-            processClassPathSection("Java source roots", javaSourceRoots, directoriesToFilterOut);
-        }
-
-        processClassPathSection("Classpath", classpathRoots, directoriesToFilterOut);
+        processJavaSourceRoots(javaSourceRoots);
+        processClasspath(classpathRoots, directoriesToFilterOut);
         processAnnotationRoots(annotationRoots);
 
         closeTag(p, MODULE);
         return this;
     }
 
-    private void processClassPathSection(
-            @NotNull String sectionDescription,
+    private void processClasspath(
             @NotNull Collection<File> files,
             @NotNull Set<File> directoriesToFilterOut
     ) {
-        p.println("<!-- ", sectionDescription, " -->");
+        p.println("<!-- Classpath -->");
         for (File file : files) {
             boolean isOutput = directoriesToFilterOut.contains(file) && !IncrementalCompilation.ENABLED;
             if (isOutput) {
@@ -108,6 +104,13 @@ public class KotlinModuleXmlBuilder {
         p.println("<!-- External annotations -->");
         for (File file : files) {
             p.println("<", EXTERNAL_ANNOTATIONS, " ", PATH, "=\"", getEscapedPath(file), "\"/>");
+        }
+    }
+
+    private void processJavaSourceRoots(@NotNull List<File> files) {
+        p.println("<!-- Java source roots -->");
+        for (File file : files) {
+            p.println("<", JAVA_SOURCE_ROOTS, " ", PATH, "=\"", getEscapedPath(file), "\"/>");
         }
     }
 

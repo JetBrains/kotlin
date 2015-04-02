@@ -18,12 +18,12 @@ package org.jetbrains.kotlin.modules.xml;
 
 import com.intellij.openapi.util.io.FileUtil;
 import junit.framework.TestCase;
-import kotlin.modules.Module;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer;
+import org.jetbrains.kotlin.cli.common.modules.Module;
 import org.jetbrains.kotlin.cli.common.modules.ModuleScriptData;
 import org.jetbrains.kotlin.cli.common.modules.ModuleXmlParser;
 import org.jetbrains.kotlin.test.JetTestUtils;

@@ -35,43 +35,6 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
 public class CompileEnvironmentTest extends TestCase {
-    public void testSmokeWithCompilerJar() throws IOException {
-        File tempDir = FileUtil.createTempDirectory("compilerTest", "compilerTest");
-
-        try {
-            File stdlib = ForTestCompileRuntime.runtimeJarForTests();
-            File jdkAnnotations = JetTestUtils.getJdkAnnotationsJar();
-            File resultJar = new File(tempDir, "result.jar");
-            ExitCode rv = new K2JVMCompiler().exec(
-                    System.out,
-                    "-module", JetTestUtils.getTestDataPathBase() + "/compiler/smoke/Smoke.ktm",
-                    "-d", resultJar.getAbsolutePath(),
-                    "-no-stdlib",
-                    "-classpath", stdlib.getAbsolutePath(),
-                    "-no-jdk-annotations",
-                    "-annotations", jdkAnnotations.getAbsolutePath()
-            );
-            Assert.assertEquals("compilation completed with non-zero code", ExitCode.OK, rv);
-            FileInputStream fileInputStream = new FileInputStream(resultJar);
-            try {
-                JarInputStream is = new JarInputStream(fileInputStream);
-                try {
-                    List<String> entries = listEntries(is);
-                    assertTrue(entries.contains("Smoke/" + PackageClassUtils.getPackageClassName(new FqName("Smoke")) + ".class"));
-                    assertEquals(2, entries.size());
-                }
-                finally {
-                    is.close();
-                }
-            }
-            finally {
-                fileInputStream.close();
-            }
-        }
-        finally {
-            FileUtil.delete(tempDir);
-        }
-    }
 
     public void testSmokeWithCompilerOutput() throws IOException {
         File tempDir = FileUtil.createTempDirectory("compilerTest", "compilerTest");
@@ -95,17 +58,5 @@ public class CompileEnvironmentTest extends TestCase {
         finally {
             FileUtil.delete(tempDir);
         }
-    }
-
-    private static List<String> listEntries(JarInputStream is) throws IOException {
-        List<String> entries = new ArrayList<String>();
-        while (true) {
-            JarEntry jarEntry = is.getNextJarEntry();
-            if (jarEntry == null) {
-                break;
-            }
-            entries.add(jarEntry.getName());
-        }
-        return entries;
     }
 }

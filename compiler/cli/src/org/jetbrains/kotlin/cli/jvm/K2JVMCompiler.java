@@ -166,8 +166,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
 
             if (arguments.module != null) {
                 MessageCollector sanitizedCollector = new FilteringMessageCollector(messageCollector, in(CompilerMessageSeverity.VERBOSE));
-                ModuleScriptData moduleScript = CompileEnvironmentUtil.loadModuleDescriptions(
-                        paths, arguments.module, sanitizedCollector);
+                ModuleScriptData moduleScript = CompileEnvironmentUtil.loadModuleDescriptions(arguments.module, sanitizedCollector);
 
                 if (outputDir != null) {
                     messageCollector.report(CompilerMessageSeverity.WARNING,

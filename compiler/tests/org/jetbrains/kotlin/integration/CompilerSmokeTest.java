@@ -83,15 +83,6 @@ public class CompilerSmokeTest extends KotlinIntegrationTestBase {
     }
 
     @Test
-    public void compileAndRunModule() throws Exception {
-        String jar = tmpdir.getTmpDir().getAbsolutePath() + File.separator + "smoke.jar";
-
-        assertEquals("compilation failed", 0, runCompiler("Smoke.compile", "-module", "Smoke.ktm", "-d", jar));
-        String classpath = jar + File.pathSeparator + ForTestCompileRuntime.runtimeJarForTests().getAbsolutePath();
-        runJava("Smoke.run", "-cp", classpath, "Smoke.SmokePackage", "1", "2", "3");
-    }
-
-    @Test
     public void compilationFailed() throws Exception {
         String jar = tmpdir.getTmpDir().getAbsolutePath() + File.separator + "smoke.jar";
 

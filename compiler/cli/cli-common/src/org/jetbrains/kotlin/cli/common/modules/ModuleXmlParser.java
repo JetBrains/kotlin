@@ -18,8 +18,6 @@ package org.jetbrains.kotlin.cli.common.modules;
 
 import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.util.SmartList;
-import kotlin.modules.Module;
-import kotlin.modules.ModuleBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil;
@@ -44,6 +42,7 @@ public class ModuleXmlParser {
     public static final String NAME = "name";
     public static final String OUTPUT_DIR = "outputDir";
     public static final String SOURCES = "sources";
+    public static final String JAVA_SOURCE_ROOTS = "javaSourceRoots";
     public static final String PATH = "path";
     public static final String CLASSPATH = "classpath";
     public static final String EXTERNAL_ANNOTATIONS = "externalAnnotations";
@@ -161,6 +160,10 @@ public class ModuleXmlParser {
             else if (EXTERNAL_ANNOTATIONS.equalsIgnoreCase(qName)) {
                 String path = getAttribute(attributes, PATH, qName);
                 moduleBuilder.addAnnotationsPathEntry(path);
+            }
+            else if (JAVA_SOURCE_ROOTS.equalsIgnoreCase(qName)) {
+                String path = getAttribute(attributes, PATH, qName);
+                moduleBuilder.addJavaSourceRoot(path);
             }
             else {
                 throw createError(qName);

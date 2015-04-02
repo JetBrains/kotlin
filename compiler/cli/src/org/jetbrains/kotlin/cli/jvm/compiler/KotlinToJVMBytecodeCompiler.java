@@ -24,8 +24,6 @@ import com.intellij.util.ArrayUtil;
 import kotlin.Function0;
 import kotlin.Function1;
 import kotlin.Unit;
-import kotlin.modules.AllModules;
-import kotlin.modules.Module;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
@@ -35,6 +33,7 @@ import org.jetbrains.kotlin.cli.common.CompilerPlugin;
 import org.jetbrains.kotlin.cli.common.CompilerPluginContext;
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
+import org.jetbrains.kotlin.cli.common.modules.Module;
 import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsPackage;
 import org.jetbrains.kotlin.cli.jvm.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.codegen.*;
@@ -67,8 +66,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.addJvmClasspathRoot;
-import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.getJvmClasspathRoots;
+import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.*;
 import static org.jetbrains.kotlin.config.ConfigPackage.addKotlinSourceRoots;
 
 public class KotlinToJVMBytecodeCompiler {
@@ -173,6 +171,10 @@ public class KotlinToJVMBytecodeCompiler {
         for (Module module : chunk) {
             addKotlinSourceRoots(configuration, getAbsolutePaths(directory, module));
 
+            for (String javaSourceRoot : module.getJavaSourceRoots()) {
+                addJavaSourceRoot(configuration, new File(javaSourceRoot));
+            }
+
             for (String classpathRoot : module.getClasspathRoots()) {
                 addJvmClasspathRoot(configuration, new File(classpathRoot));
             }
@@ -270,9 +272,10 @@ public class KotlinToJVMBytecodeCompiler {
             for (File file : getJvmClasspathRoots(configuration)) {
                 classPaths.add(file.toURI().toURL());
             }
+            //noinspection UnnecessaryFullyQualifiedName
             classLoader = new GeneratedClassLoader(state.getFactory(),
                                                    new URLClassLoader(classPaths.toArray(new URL[classPaths.size()]),
-                                                                      AllModules.class.getClassLoader())
+                                                                      kotlin.KotlinPackage.class.getClassLoader())
             );
 
             FqName nameForScript = ScriptNameUtil.classNameForScript(environment.getSourceFiles().get(0).getScript());

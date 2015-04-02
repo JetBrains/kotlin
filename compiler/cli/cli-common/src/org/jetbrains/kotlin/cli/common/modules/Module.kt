@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea;
+package org.jetbrains.kotlin.cli.common.modules
 
-import com.intellij.openapi.fileTypes.FileTypeConsumer;
-import com.intellij.openapi.fileTypes.FileTypeFactory;
-import org.jetbrains.annotations.NotNull;
+public trait Module {
+    public fun getModuleName(): String
 
+    public fun getOutputDirectory(): String
 
-public class JetFileFactory extends FileTypeFactory {
-    @Override
-    public void createFileTypes(@NotNull FileTypeConsumer consumer) {
-        consumer.consume(JetFileType.INSTANCE, "kt;kts");
-    }
+    public fun getSourceFiles(): List<String>
+
+    public fun getClasspathRoots(): List<String>
+
+    public fun getAnnotationsRoots(): List<String>
+
+    public fun getJavaSourceRoots(): List<String>
 }
