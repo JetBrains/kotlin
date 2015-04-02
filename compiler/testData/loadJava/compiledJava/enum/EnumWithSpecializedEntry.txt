@@ -1,0 +1,30 @@
+package test
+
+public open enum class EnumWithSpecializedEntry : kotlin.Enum<test.EnumWithSpecializedEntry!> {
+    public enum entry E1 : test.EnumWithSpecializedEntry {
+        private constructor E1()
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.EnumWithSpecializedEntry!): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+    }
+
+    public enum entry E2 : test.EnumWithSpecializedEntry {
+        private constructor E2()
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.EnumWithSpecializedEntry!): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+    }
+
+    private constructor EnumWithSpecializedEntry()
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.EnumWithSpecializedEntry!): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+    public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+
+    public/*package*/ open class Nested {
+        public/*package*/ constructor Nested()
+    }
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.EnumWithSpecializedEntry
+    public final /*synthesized*/ fun values(): kotlin.Array<test.EnumWithSpecializedEntry>
+}
