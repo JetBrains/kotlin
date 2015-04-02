@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.test.JetTestUtils;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -75,7 +74,7 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
 
         boolean withRuntime = InTextDirectivesUtils.isDirectiveDefined(originalFileText, "// WITH_RUNTIME");
         if (withRuntime) {
-            ConfigLibraryUtil.configureKotlinRuntime(myModule, PluginTestCaseBase.fullJdk());
+            ConfigLibraryUtil.configureKotlinRuntime(myModule, PluginTestCaseBase.jdkFromIdeaHome());
         }
 
         try {
@@ -143,7 +142,7 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
         }
         finally {
             if (withRuntime) {
-                ConfigLibraryUtil.unConfigureKotlinRuntime(myModule, PluginTestCaseBase.fullJdk());
+                ConfigLibraryUtil.unConfigureKotlinRuntime(myModule, PluginTestCaseBase.jdkFromIdeaHome());
             }
         }
     }

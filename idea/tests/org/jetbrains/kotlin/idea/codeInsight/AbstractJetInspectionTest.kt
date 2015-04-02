@@ -16,25 +16,23 @@
 
 package org.jetbrains.kotlin.idea.codeInsight
 
-import java.io.File
-import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import com.intellij.openapi.util.io.FileUtil
-import com.intellij.codeInspection.LocalInspectionTool
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
-import com.intellij.testFramework.LightProjectDescriptor
-import org.jetbrains.kotlin.idea.JetLightProjectDescriptor
-import com.intellij.codeInspection.ex.LocalInspectionToolWrapper
 import com.intellij.analysis.AnalysisScope
-import com.intellij.codeInspection.ex.InspectionManagerEx
-import com.intellij.testFramework.InspectionTestUtil
 import com.intellij.codeInspection.InspectionManager
-import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
-import org.jetbrains.kotlin.test.ConfigLibraryUtil
+import com.intellij.codeInspection.LocalInspectionTool
+import com.intellij.codeInspection.ex.InspectionManagerEx
+import com.intellij.codeInspection.ex.LocalInspectionToolWrapper
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.IdeaTestUtil
-import com.intellij.openapi.projectRoots.JavaSdk
-import com.intellij.openapi.projectRoots.Sdk
-import org.apache.commons.lang.SystemUtils;
+import com.intellij.testFramework.InspectionTestUtil
+import com.intellij.testFramework.LightProjectDescriptor
+import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
+import org.jetbrains.kotlin.idea.JetLightProjectDescriptor
+import org.jetbrains.kotlin.idea.PluginTestCaseBase
+import org.jetbrains.kotlin.test.ConfigLibraryUtil
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.JetTestUtils
+import java.io.File
 
 public abstract class AbstractJetInspectionTest: LightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor(): LightProjectDescriptor = JetLightProjectDescriptor.INSTANCE
@@ -65,13 +63,15 @@ public abstract class AbstractJetInspectionTest: LightCodeInsightFixtureTestCase
                         configureByText(file.getName(), fileText)!!
                     }
 
-            val isWithRuntime = psiFiles.any({ file ->
-                InTextDirectivesUtils.findStringWithPrefixes(file.getText(), "// WITH_RUNTIME") != null
-             })
+            val isWithRuntime = psiFiles.any { InTextDirectivesUtils.findStringWithPrefixes(it.getText(), "// WITH_RUNTIME") != null }
+            val fullJdk = psiFiles.any { InTextDirectivesUtils.findStringWithPrefixes(it.getText(), "// FULL_JDK") != null }
 
             try {
                 if (isWithRuntime) {
-                    ConfigLibraryUtil.configureKotlinRuntime(myFixture.getModule(), getFullJavaJDK());
+                    ConfigLibraryUtil.configureKotlinRuntime(
+                            myFixture.getModule(),
+                            if (fullJdk) PluginTestCaseBase.fullJdk() else PluginTestCaseBase.jdkFromIdeaHome()
+                    )
                 }
 
                 val scope = AnalysisScope(getProject(), psiFiles.map { it.getVirtualFile()!! })
@@ -85,15 +85,9 @@ public abstract class AbstractJetInspectionTest: LightCodeInsightFixtureTestCase
             }
             finally {
                 if (isWithRuntime) {
-                    ConfigLibraryUtil.unConfigureKotlinRuntime(myFixture.getModule(), IdeaTestUtil.getMockJdk17());
+                    ConfigLibraryUtil.unConfigureKotlinRuntime(myFixture.getModule(), IdeaTestUtil.getMockJdk17())
                 }
             }
         }
-    }
-
-    protected fun getFullJavaJDK(): Sdk {
-        val javaPath = checkNotNull(SystemUtils.getJavaHome()?.getAbsolutePath(), "JDK Path must not be null")
-        val jdk = JavaSdk.getInstance()?.createJdk("JDK", javaPath);
-        return checkNotNull(jdk, "Could not obtain JDK instance")
     }
 }
