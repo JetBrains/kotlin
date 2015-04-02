@@ -243,7 +243,7 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
         }
         this.typeParameters = new ArrayList<TypeParameterDescriptor>(typeParameters);
         for (TypeParameterDescriptor typeParameterDescriptor : typeParameters) {
-            scopeForSupertypeResolution.addTypeParameterDescriptor(typeParameterDescriptor);
+            scopeForSupertypeResolution.addClassifierDescriptor(typeParameterDescriptor);
         }
         scopeForSupertypeResolution.changeLockLevel(WritableScope.LockLevel.READING);
     }

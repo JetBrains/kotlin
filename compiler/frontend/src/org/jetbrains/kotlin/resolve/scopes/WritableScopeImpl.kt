@@ -193,12 +193,6 @@ public class WritableScopeImpl(scope: JetScope,
         return result
     }
 
-    override fun addTypeParameterDescriptor(typeParameterDescriptor: TypeParameterDescriptor) {
-        checkMayWrite()
-
-        addClassifierAlias(typeParameterDescriptor.getName(), typeParameterDescriptor)
-    }
-
     override fun addClassifierDescriptor(classDescriptor: ClassifierDescriptor) {
         checkMayWrite()
 

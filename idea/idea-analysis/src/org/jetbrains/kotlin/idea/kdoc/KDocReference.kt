@@ -137,7 +137,7 @@ private fun getClassInnerScope(outerScope: JetScope, descriptor: ClassDescriptor
 
     val headerScope = WritableScopeImpl(outerScope, descriptor, redeclarationHandler, "Class ${descriptor.getName()} header scope")
     for (typeParameter in descriptor.getTypeConstructor().getParameters()) {
-        headerScope.addTypeParameterDescriptor(typeParameter)
+        headerScope.addClassifierDescriptor(typeParameter)
     }
     for (constructor in descriptor.getConstructors()) {
         headerScope.addFunctionDescriptor(constructor)
