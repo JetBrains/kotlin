@@ -15,9 +15,6 @@ import kotlin.internal.flexible.ft
 val android.view.View.includeTag: ft<View, View?>
     get() = findViewById(0)
 
-val android.view.View.fragmentTag: ft<View, View?>
-    get() = findViewById(0)
-
 val android.view.View.`fun`: ft<TextView, TextView?>
     get() = findViewById(0) as? TextView
 

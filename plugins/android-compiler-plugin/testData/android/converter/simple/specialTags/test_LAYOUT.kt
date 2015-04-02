@@ -18,12 +18,6 @@ val android.app.Activity.includeTag: ft<View, View?>
 val android.app.Fragment.includeTag: ft<View, View?>
     get() = getView().findViewById(0)
 
-val android.app.Activity.fragmentTag: ft<View, View?>
-    get() = findViewById(0)
-
-val android.app.Fragment.fragmentTag: ft<View, View?>
-    get() = getView().findViewById(0)
-
 val android.app.Activity.`fun`: ft<TextView, TextView?>
     get() = findViewById(0) as? TextView
 

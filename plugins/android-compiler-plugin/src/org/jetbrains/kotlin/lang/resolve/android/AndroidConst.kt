@@ -38,7 +38,7 @@ public object AndroidConst {
 
     val CLEAR_FUNCTION_NAME = "clearFindViewByIdCache"
 
-    val IGNORED_XML_WIDGET_TYPES = setOf("requestFocus", "merge", "tag", "check")
+    val IGNORED_XML_WIDGET_TYPES = setOf("requestFocus", "merge", "tag", "check", "fragment")
 
     val ESCAPED_IDENTIFIERS = (JetTokens.KEYWORDS.getTypes() + JetTokens.SOFT_KEYWORDS.getTypes())
             .map { it as? JetKeywordToken }.filterNotNull().map { it.getValue() }.toSet()
@@ -64,10 +64,7 @@ public fun isWidgetTypeIgnored(xmlType: String): Boolean {
     return (xmlType.isEmpty() || xmlType in AndroidConst.IGNORED_XML_WIDGET_TYPES)
 }
 
-public fun getRealWidgetType(xmlType: String): String = when (xmlType) {
-    "fragment", "include" -> "View"
-    else -> xmlType
-}
+public fun getRealWidgetType(xmlType: String): String = if (xmlType == "include") "View" else xmlType
 
 fun escapeAndroidIdentifier(id: String): String {
     return if (id in AndroidConst.ESCAPED_IDENTIFIERS) "`$id`" else id
