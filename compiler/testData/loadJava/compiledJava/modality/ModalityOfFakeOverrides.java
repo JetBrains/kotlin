@@ -1,3 +1,4 @@
+// FULL_JDK
 package test;
 
 import org.jetbrains.annotations.NotNull;

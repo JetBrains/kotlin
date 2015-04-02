@@ -81,14 +81,18 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
 
         if (InTextDirectivesUtils.isDirectiveDefined(text, "SKIP_IN_RUNTIME_TEST")) return
 
-        compileFile(file, text)
+        val jdkKind =
+                if (InTextDirectivesUtils.isDirectiveDefined(text, "FULL_JDK")) TestJdkKind.FULL_JDK
+                else TestJdkKind.MOCK_JDK
+
+        compileFile(file, text, jdkKind)
 
         val classLoader = URLClassLoader(array(tmpdir.toURI().toURL()), ForTestCompileRuntime.runtimeJarClassLoader())
 
         val actual = createReflectedPackageView(classLoader)
 
         val expected = LoadDescriptorUtil.loadTestPackageAndBindingContextFromJavaRoot(
-                tmpdir, getTestRootDisposable(), TestJdkKind.FULL_JDK, ConfigurationKind.ALL
+                tmpdir, getTestRootDisposable(), jdkKind, ConfigurationKind.ALL
         ).first
 
         val comparatorConfiguration = Configuration(
@@ -104,7 +108,7 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
         RecursiveDescriptorComparator.validateAndCompareDescriptors(expected, actual, comparatorConfiguration, null)
     }
 
-    private fun compileFile(file: File, text: String) {
+    private fun compileFile(file: File, text: String, jdkKind: TestJdkKind) {
         val fileName = file.getName()
         when {
             fileName.endsWith(".java") -> {
@@ -118,7 +122,9 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
                 LoadDescriptorUtil.compileJavaWithAnnotationsJar(sources, tmpdir)
             }
             fileName.endsWith(".kt") -> {
-                val environment = JetTestUtils.createEnvironmentWithFullJdk(myTestRootDisposable)
+                val environment = JetTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
+                        myTestRootDisposable, ConfigurationKind.ALL, jdkKind
+                )
                 val jetFile = JetTestUtils.createFile(file.getPath(), addRuntimeRetentionToKotlinSource(text), environment.project)
                 GenerationUtils.compileFileGetClassFileFactoryForTest(jetFile).writeAllTo(tmpdir)
             }

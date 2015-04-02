@@ -41,7 +41,7 @@ import java.util.regex.Pattern;
 public class LoadBuiltinsTest extends KotlinTestWithEnvironment {
     @Override
     protected KotlinCoreEnvironment createEnvironment() {
-        return createEnvironmentWithJdk(ConfigurationKind.JDK_AND_ANNOTATIONS, TestJdkKind.FULL_JDK);
+        return createEnvironmentWithJdk(ConfigurationKind.JDK_AND_ANNOTATIONS, TestJdkKind.MOCK_JDK);
     }
 
     public void testBuiltIns() throws Exception {

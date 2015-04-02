@@ -19,7 +19,9 @@ package org.jetbrains.kotlin.codegen.generated;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Processor;
+import kotlin.Charsets;
 import kotlin.KotlinPackage;
+import kotlin.io.IoPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsPackage;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
@@ -29,6 +31,7 @@ import org.jetbrains.kotlin.codegen.GenerationUtils;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.test.ConfigurationKind;
+import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
 import org.jetbrains.kotlin.utils.UtilsPackage;
@@ -63,7 +66,9 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
     }
 
     public void doTestWithStdlib(@NotNull String filename) {
-        myEnvironment = JetTestUtils.createEnvironmentWithFullJdk(getTestRootDisposable());
+        myEnvironment = JetTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
+                getTestRootDisposable(), ConfigurationKind.ALL, getTestJdkKind(filename)
+        );
         blackBoxFileByFullPath(filename);
     }
 
@@ -89,16 +94,29 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         blackBox();
     }
 
+    // NOTE: tests under fullJdk/ are run with FULL_JDK instead of MOCK_JDK
+    @NotNull
+    private static TestJdkKind getTestJdkKind(@NotNull String sourcePath) {
+        if (sourcePath.contains("compiler/testData/codegen/boxWithStdlib/fullJdk")) {
+            return TestJdkKind.FULL_JDK;
+        }
+
+        return InTextDirectivesUtils.isDirectiveDefined(
+                IoPackage.readText(new File(sourcePath), Charsets.UTF_8), "FULL_JDK"
+        ) ? TestJdkKind.FULL_JDK : TestJdkKind.MOCK_JDK;
+    }
+
     private void blackBoxFileAgainstJavaByFullPath(@NotNull String ktFileFullPath) {
         String ktFile = relativePath(new File(ktFileFullPath));
         File javaClassesTempDirectory = compileJava(ktFile.replaceFirst("\\.kt$", ".java"));
 
-        myEnvironment =
-                KotlinCoreEnvironment.createForTests(getTestRootDisposable(),
-                                                  JetTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.FULL_JDK,
-                                                                                             JetTestUtils.getAnnotationsJar(),
-                                                                                             javaClassesTempDirectory),
-                                                  EnvironmentConfigFiles.JVM_CONFIG_FILES);
+        myEnvironment = KotlinCoreEnvironment.createForTests(
+                getTestRootDisposable(),
+                JetTestUtils.compilerConfigurationForTests(
+                        ConfigurationKind.ALL, getTestJdkKind(ktFileFullPath), JetTestUtils.getAnnotationsJar(), javaClassesTempDirectory
+                ),
+                EnvironmentConfigFiles.JVM_CONFIG_FILES
+        );
 
         loadFile(ktFile);
         blackBox();
@@ -124,7 +142,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         });
 
         CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(
-                ConfigurationKind.ALL, TestJdkKind.FULL_JDK, JetTestUtils.getAnnotationsJar()
+                ConfigurationKind.ALL, getTestJdkKind(directory), JetTestUtils.getAnnotationsJar()
         );
         addJvmClasspathRoot(configuration, dirFile);
         myEnvironment = KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
