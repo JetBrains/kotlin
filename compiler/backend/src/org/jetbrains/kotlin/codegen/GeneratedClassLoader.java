@@ -25,11 +25,11 @@ import java.util.List;
 import java.util.jar.Manifest;
 
 public class GeneratedClassLoader extends URLClassLoader {
-    private ClassFileFactory state;
+    private ClassFileFactory factory;
 
-    public GeneratedClassLoader(@NotNull ClassFileFactory state, ClassLoader parentClassLoader, URL...urls) {
+    public GeneratedClassLoader(@NotNull ClassFileFactory factory, ClassLoader parentClassLoader, URL... urls) {
         super(urls, parentClassLoader);
-        this.state = state;
+        this.factory = factory;
     }
 
     @NotNull
@@ -37,7 +37,7 @@ public class GeneratedClassLoader extends URLClassLoader {
     protected Class<?> findClass(@NotNull String name) throws ClassNotFoundException {
         String classFilePath = name.replace('.', '/') + ".class";
 
-        OutputFile outputFile = state.get(classFilePath);
+        OutputFile outputFile = factory.get(classFilePath);
         if (outputFile != null) {
             byte[] bytes = outputFile.asByteArray();
             int lastDot = name.lastIndexOf('.');
@@ -54,11 +54,11 @@ public class GeneratedClassLoader extends URLClassLoader {
     }
 
     public void dispose() {
-        state = null;
+        factory = null;
     }
 
     @NotNull
     public List<OutputFile> getAllGeneratedFiles() {
-        return state.asList();
+        return factory.asList();
     }
 }
