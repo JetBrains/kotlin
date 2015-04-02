@@ -42,7 +42,7 @@ public class KotlinInplacePropertyIntroducer(
         exprType: JetType?,
         extractionResult: ExtractionResult,
         private val availableTargets: List<ExtractionTarget>
-): KotlinInplaceVariableIntroducer(
+): KotlinInplaceVariableIntroducer<JetProperty>(
         property, editor, project, title, JetExpression.EMPTY_ARRAY, null, false, property, false, doNotChangeVar, exprType, false
 ) {
     init {
@@ -58,15 +58,21 @@ public class KotlinInplacePropertyIntroducer(
             $currentTarget = value
             runWriteActionAndRestartRefactoring {
                 with (extractionResult.config) {
-                    extractionResult = copy(generatorOptions = generatorOptions.copy(target = currentTarget)).generateDeclaration(myProperty)
-                    myProperty = extractionResult.declaration as JetProperty
-                    myElementToRename = myProperty
+                    extractionResult = copy(generatorOptions = generatorOptions.copy(target = currentTarget)).generateDeclaration(property)
+                    property = extractionResult.declaration as JetProperty
+                    myElementToRename = property
                 }
             }
             updatePanelControls()
         }
 
     private var replaceAll: Boolean = true
+
+    protected var property: JetProperty
+        get() = myDeclaration
+        set(value: JetProperty) {
+            myDeclaration = value
+        }
 
     private fun isInitializer(): Boolean = currentTarget == ExtractionTarget.PROPERTY_WITH_INITIALIZER
 
@@ -109,7 +115,7 @@ public class KotlinInplacePropertyIntroducer(
             getCreateVarCheckBox()?.let {
                 val initializer = object: Pass<JComponent>() {
                     override fun pass(t: JComponent) {
-                        (t as JCheckBox).setSelected(myProperty.isVar())
+                        (t as JCheckBox).setSelected(property.isVar())
                     }
                 }
                 addPanelControl(ControlWrapper(it, condition, initializer))
@@ -117,7 +123,7 @@ public class KotlinInplacePropertyIntroducer(
             getCreateExplicitTypeCheckBox()?.let {
                 val initializer = object: Pass<JComponent>() {
                     override fun pass(t: JComponent) {
-                        (t as JCheckBox).setSelected(myProperty.getTypeReference() != null)
+                        (t as JCheckBox).setSelected(property.getTypeReference() != null)
                     }
                 }
                 addPanelControl(ControlWrapper(it, condition, initializer))

@@ -218,8 +218,8 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                                 PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
                                 PsiDocumentManager.getInstance(project).
                                     doPostponedOperationsAndUnblockDocument(editor.getDocument());
-                                KotlinInplaceVariableIntroducer variableIntroducer =
-                                    new KotlinInplaceVariableIntroducer(property, editor, project, INTRODUCE_VARIABLE,
+                                KotlinInplaceVariableIntroducer<JetProperty> variableIntroducer =
+                                    new KotlinInplaceVariableIntroducer<JetProperty>(property, editor, project, INTRODUCE_VARIABLE,
                                                                      references.toArray(new JetExpression[references.size()]),
                                                                      reference.get(), finalReplaceOccurrence,
                                                                      property, /*todo*/false, /*todo*/false,
