@@ -43,7 +43,7 @@ public abstract class JetCallableParameterTableModel extends ParameterTableModel
     @Override
     protected ParameterTableModelItemBase<JetParameterInfo> createRowItem(@Nullable JetParameterInfo parameterInfo) {
         if (parameterInfo == null) {
-            parameterInfo = new JetParameterInfo(-1, "", null, null, "", null, null);
+            parameterInfo = new JetParameterInfo(-1, "", null, null, "", JetValVar.None, null);
         }
         JetPsiFactory psiFactory = JetPsiFactory(project);
         PsiCodeFragment paramTypeCodeFragment = psiFactory.createTypeCodeFragment(parameterInfo.getTypeText(), myTypeContext);

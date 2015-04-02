@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.idea.core.refactoring.JetNameSuggester;
 import org.jetbrains.kotlin.idea.core.refactoring.JetNameValidator;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo;
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetValVar;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -119,7 +120,7 @@ public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiE
         JetExpression expression = argument.getArgumentExpression();
         JetType type = expression != null ? bindingContext.get(BindingContext.EXPRESSION_TYPE, expression) : null;
         type = type != null ? type : KotlinBuiltIns.getInstance().getNullableAnyType();
-        JetParameterInfo parameterInfo = new JetParameterInfo(-1, name, type, null, "", null, null);
+        JetParameterInfo parameterInfo = new JetParameterInfo(-1, name, type, null, "", JetValVar.None, null);
         parameterInfo.setCurrentTypeText(IdeDescriptorRenderers.SOURCE_CODE.renderType(type));
 
         return parameterInfo;

@@ -72,7 +72,7 @@ public class ChangeFunctionLiteralSignatureFix extends ChangeFunctionSignatureFi
                                 descriptor.clearNonReceiverParameters();
                                 for (JetType type : parameterTypes) {
                                     String name = JetNameSuggester.suggestNames(type, validator, "param")[0];
-                                    descriptor.addParameter(new JetParameterInfo(-1, name, type, null, "", null, null));
+                                    descriptor.addParameter(new JetParameterInfo(-1, name, type, null, "", JetValVar.None, null));
                                 }
                                 return null;
                             }

@@ -34,12 +34,11 @@ public class JetParameterInfo(
         type: JetType? = null,
         var defaultValueForParameter: JetExpression? = null,
         var defaultValueForCall: String = "",
-        valOrVarNode: ASTNode? = null,
+        var valOrVar: JetValVar = JetValVar.None,
         val modifierList: JetModifierList? = null
 ): ParameterInfo {
     val originalType: JetType? = type
     var currentTypeText: String = getOldTypeText()
-    var valOrVar: JetValVar = valOrVarNode.toValVar()
 
     private fun getOldTypeText() = originalType?.let { IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(it) } ?: ""
 

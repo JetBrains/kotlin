@@ -64,7 +64,7 @@ public class JetChangeSignatureData(
                             name = parameterDescriptor.getName().asString(),
                             type = parameterDescriptor.getType(),
                             defaultValueForParameter = jetParameter?.getDefaultValue(),
-                            valOrVarNode = jetParameter?.getValOrVarNode(),
+                            valOrVar = jetParameter?.getValOrVarNode().toValVar(),
                             modifierList = jetParameter?.getModifierList()
                     )
                 }
