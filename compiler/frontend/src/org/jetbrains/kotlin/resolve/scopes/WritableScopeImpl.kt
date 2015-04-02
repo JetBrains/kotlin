@@ -120,10 +120,6 @@ public class WritableScopeImpl(scope: JetScope,
         addVariableDescriptor(variableDescriptor, false)
     }
 
-    override fun addPropertyDescriptor(propertyDescriptor: VariableDescriptor) {
-        addVariableDescriptor(propertyDescriptor, true)
-    }
-
     private fun addVariableDescriptor(variableDescriptor: VariableDescriptor, isProperty: Boolean) {
         checkMayWrite()
 
@@ -273,9 +269,6 @@ public class WritableScopeImpl(scope: JetScope,
     private fun addToDeclared(descriptor: DeclarationDescriptor) {
         declaredDescriptorsAccessibleBySimpleName.put(descriptor.getName(), descriptor)
     }
-
-    override fun getDeclaredDescriptorsAccessibleBySimpleName(): Multimap<Name, DeclarationDescriptor>
-            = declaredDescriptorsAccessibleBySimpleName
 
     override fun getOwnDeclaredDescriptors(): Collection<DeclarationDescriptor>
             = declaredDescriptorsAccessibleBySimpleName.values()

@@ -33,8 +33,6 @@ public trait WritableScope : JetScope {
 
     public fun addVariableDescriptor(variableDescriptor: VariableDescriptor)
 
-    public fun addPropertyDescriptor(propertyDescriptor: VariableDescriptor)
-
     public fun addFunctionDescriptor(functionDescriptor: FunctionDescriptor)
 
     public fun addTypeParameterDescriptor(typeParameterDescriptor: TypeParameterDescriptor)
@@ -42,8 +40,6 @@ public trait WritableScope : JetScope {
     public fun addClassifierDescriptor(classDescriptor: ClassifierDescriptor)
 
     public fun addClassifierAlias(name: Name, classifierDescriptor: ClassifierDescriptor)
-
-    public fun getDeclaredDescriptorsAccessibleBySimpleName(): Multimap<Name, DeclarationDescriptor>
 
     public fun importScope(imported: JetScope)
 
