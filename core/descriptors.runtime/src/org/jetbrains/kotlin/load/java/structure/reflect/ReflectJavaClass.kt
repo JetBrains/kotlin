@@ -24,11 +24,14 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.emptyOrSingletonList
 import java.lang.reflect.AnnotatedElement
 import java.lang.reflect.Method
-import java.lang.reflect.Modifier
 import java.util.Arrays
 
-public class ReflectJavaClass(private val klass: Class<*>) : ReflectJavaElement(), ReflectJavaAnnotationOwner, JavaClass {
+public class ReflectJavaClass(
+        private val klass: Class<*>
+) : ReflectJavaElement(), ReflectJavaAnnotationOwner, ReflectJavaModifierListOwner, JavaClass {
     override val element: AnnotatedElement get() = klass
+
+    override val modifiers: Int get() = klass.getModifiers()
 
     override fun getInnerClasses() = klass.getDeclaredClasses()
             .stream()
@@ -41,7 +44,7 @@ public class ReflectJavaClass(private val klass: Class<*>) : ReflectJavaElement(
             .map(::ReflectJavaClass)
             .toList()
 
-    override fun getFqName() = klass.fqName
+    override fun getFqName() = klass.classId.asSingleFqName()
 
     override fun getOuterClass() = klass.getDeclaringClass()?.let(::ReflectJavaClass)
 
@@ -100,12 +103,6 @@ public class ReflectJavaClass(private val klass: Class<*>) : ReflectJavaElement(
     override fun isInterface() = klass.isInterface()
     override fun isAnnotationType() = klass.isAnnotation()
     override fun isEnum() = klass.isEnum()
-
-    override fun isAbstract() = Modifier.isAbstract(klass.getModifiers())
-    override fun isStatic() = Modifier.isStatic(klass.getModifiers())
-    override fun isFinal() = Modifier.isFinal(klass.getModifiers())
-
-    override fun getVisibility() = calculateVisibility(klass.getModifiers())
 
     override fun equals(other: Any?) = other is ReflectJavaClass && klass == other.klass
 

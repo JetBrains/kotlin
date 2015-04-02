@@ -16,24 +16,10 @@
 
 package org.jetbrains.kotlin.load.java.structure.reflect
 
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import java.lang.reflect.Array
-import java.lang.reflect.Modifier
-
-private fun calculateVisibility(modifiers: Int): Visibility {
-    return when {
-        Modifier.isPublic(modifiers) -> Visibilities.PUBLIC
-        Modifier.isPrivate(modifiers) -> Visibilities.PRIVATE
-        Modifier.isProtected(modifiers) ->
-            if (Modifier.isStatic(modifiers)) JavaVisibilities.PROTECTED_STATIC_VISIBILITY else JavaVisibilities.PROTECTED_AND_PACKAGE
-        else -> JavaVisibilities.PACKAGE_VISIBILITY
-    }
-}
 
 public val Class<*>.classLoader: ClassLoader
     get() = getClassLoader() ?: ClassLoader.getSystemClassLoader()
@@ -41,9 +27,9 @@ public val Class<*>.classLoader: ClassLoader
 public fun Class<*>.isEnumClassOrSpecializedEnumEntryClass(): Boolean =
         javaClass<Enum<*>>().isAssignableFrom(this)
 
-public val Class<*>.fqName: FqName
-    get() = classId.asSingleFqName()
-
+/**
+ * NOTE: does not perform a Java -> Kotlin mapping. If this is not expected, consider using KClassImpl#classId instead
+ */
 public val Class<*>.classId: ClassId
     get() = when {
         isPrimitive() -> throw IllegalArgumentException("Can't compute ClassId for primitive type: $this")

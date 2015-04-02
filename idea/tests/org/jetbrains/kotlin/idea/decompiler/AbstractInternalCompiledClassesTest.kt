@@ -16,25 +16,32 @@
 
 package org.jetbrains.kotlin.idea.decompiler
 
-
-import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.load.java.JvmAbi
-import com.intellij.psi.PsiManager
-import org.junit.Assert
-import com.intellij.psi.impl.compiled.ClsFileImpl
 import com.intellij.psi.PsiCompiledFile
 import com.intellij.psi.PsiJavaFile
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass.Kind.*
-import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
+import com.intellij.psi.PsiManager
+import com.intellij.psi.impl.compiled.ClsFileImpl
+import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.decompiler.navigation.NavigateToDecompiledLibraryTest
+import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinClass
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass.Kind.TRAIT_IMPL
+import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
+import org.junit.Assert
 
 public abstract class AbstractInternalCompiledClassesTest : JetLightCodeInsightFixtureTestCase() {
-    private fun isSyntheticClassOfKind(kind: KotlinSyntheticClass.Kind) : VirtualFile.() -> Boolean = {
+    private fun isFileWithHeader(predicate: (KotlinClassHeader) -> Boolean) : VirtualFile.() -> Boolean = {
         val header = KotlinBinaryClassCache.getKotlinBinaryClass(this)?.getClassHeader()
-        header?.syntheticClassKind == kind
+        header != null && predicate(header)
     }
+
+    private fun isSyntheticClassOfKind(kind: KotlinSyntheticClass.Kind) : VirtualFile.() -> Boolean =
+            isFileWithHeader { it.syntheticClassKind == kind }
+
+    private fun isClassOfKind(kind: KotlinClass.Kind) : VirtualFile.() -> Boolean =
+            isFileWithHeader { it.classKind == kind }
 
     protected fun doTestTraitImplClassIsVisibleAsJavaClass() {
         val project = getProject()
@@ -53,6 +60,9 @@ public abstract class AbstractInternalCompiledClassesTest : JetLightCodeInsightF
                               classes.size() == 1 && classes[0].getName()!!.endsWith(JvmAbi.TRAIT_IMPL_SUFFIX))
         }
     }
+
+    protected fun doTestNoPsiFilesAreBuiltForLocalClass(kind: KotlinClass.Kind): Unit =
+            doTestNoPsiFilesAreBuiltFor(kind.toString(), isClassOfKind(kind))
 
     protected fun doTestNoPsiFilesAreBuiltForSyntheticClass(kind: KotlinSyntheticClass.Kind): Unit =
             doTestNoPsiFilesAreBuiltFor(kind.toString(), isSyntheticClassOfKind(kind))

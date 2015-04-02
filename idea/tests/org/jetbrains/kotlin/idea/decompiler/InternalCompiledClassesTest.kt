@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.idea.decompiler
 
+import com.intellij.psi.ClassFileViewProvider
 import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.idea.JdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.PluginTestCaseBase
-import com.intellij.psi.ClassFileViewProvider
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinClass.Kind.ANONYMOUS_OBJECT
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinClass.Kind.LOCAL_CLASS
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass.Kind.*
 
 public class InternalCompiledClassesTest : AbstractInternalCompiledClassesTest() {
@@ -36,6 +38,10 @@ public class InternalCompiledClassesTest : AbstractInternalCompiledClassesTest()
     fun testLocalFunctionIsInvisible() = doTestNoPsiFilesAreBuiltForSyntheticClass(LOCAL_FUNCTION)
 
     fun testAnonymousFunctionIsInvisible() = doTestNoPsiFilesAreBuiltForSyntheticClass(ANONYMOUS_FUNCTION)
+
+    fun testLocalClassIsInvisible() = doTestNoPsiFilesAreBuiltForLocalClass(LOCAL_CLASS)
+
+    fun testAnonymousObjectIsInvisible() = doTestNoPsiFilesAreBuiltForLocalClass(ANONYMOUS_OBJECT)
 
     fun testInnerClassIsInvisible() = doTestNoPsiFilesAreBuiltFor("inner or nested class") {
         ClassFileViewProvider.isInnerClass(this)
