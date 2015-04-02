@@ -4,6 +4,7 @@ Goals:
 * Spare `[...]` in expression position for future use
 * Support targeting for annotations (`field`, `getter` etc)
 * Preserve affected/clashing functionality (`@labels`)
+* Support `open` and other modifiers on local classes
 
 ## Examples
 
@@ -114,3 +115,17 @@ Then definitions are as follows:
 annotation class at(val target: AnnotationTarget, vararg val annotations: Annotation)
 annotation class atMany(val target: Array<AnnotationTarget>, vararg val annotations: Annotation)
 ```
+
+## Escaping For Modifiers
+
+Since modifiers (being soft-keywords) are not parseable in local declarations (despite the present erroneous behaviuor in our parser), we need to be able to escape modifier names by prefixing them with `@`:
+
+``` kotlin
+fun example() {
+    @open class Local { ... }
+}
+```
+
+The same syntax is allowed on all modifier everywhere in Kotlin.
+
+As a consequence, it must be prohibited to name annotation classes `public`, `open` etc, i.e. like modifiers.
