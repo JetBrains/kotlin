@@ -7,7 +7,7 @@ Goals:
 
 ## Examples
 
-Annotations:
+Annotation:
 ``` kotlin
 @AnnotationName(args)
 class Foo
@@ -16,6 +16,11 @@ class Foo
 Targeted annotation:
 ``` kotlin
 class C(@field:Foo val x: Int, @field,parameter:Bar val y: Int)
+```
+
+another option (like in Scala):
+``` kotlin
+class C(@(Foo@field) val x: Int, @(Bar@(field,parameter)) val y: Int)
 ```
 
 Labels:
