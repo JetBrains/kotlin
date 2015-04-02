@@ -22,8 +22,8 @@ import com.intellij.testFramework.TestDataFile;
 import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
-import org.jetbrains.kotlin.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
+import org.jetbrains.kotlin.cli.jvm.config.ConfigPackage;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.name.FqName;
@@ -49,6 +49,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
+import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.getJvmClasspathRoots;
 import static org.jetbrains.kotlin.codegen.CodegenTestUtil.*;
 import static org.jetbrains.kotlin.load.kotlin.PackageClassUtils.getPackageClassFqName;
 
@@ -145,7 +146,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     @NotNull
     protected URL[] getClassPathURLs() {
         List<URL> urls = Lists.newArrayList();
-        for (File file : myEnvironment.getConfiguration().getList(JVMConfigurationKeys.CLASSPATH_KEY)) {
+        for (File file : getJvmClasspathRoots(myEnvironment.getConfiguration())) {
             try {
                 urls.add(file.toURI().toURL());
             }

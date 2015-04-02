@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.jetbrains.kotlin.asJava.KotlinLightClassStructureTest.ClassProperty.*;
-import static org.jetbrains.kotlin.cli.jvm.JVMConfigurationKeys.CLASSPATH_KEY;
+import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.addJvmClasspathRoot;
 
 @SuppressWarnings("JUnitTestClassNamingConvention")
 public abstract class KotlinLightClassStructureTest extends KotlinAsJavaTestBase {
@@ -149,7 +149,7 @@ public abstract class KotlinLightClassStructureTest extends KotlinAsJavaTestBase
 
         @Override
         protected void extraConfiguration(@NotNull CompilerConfiguration configuration) {
-            configuration.add(CLASSPATH_KEY, ForTestCompileRuntime.runtimeJarForTests());
+            addJvmClasspathRoot(configuration, ForTestCompileRuntime.runtimeJarForTests());
         }
     }
 

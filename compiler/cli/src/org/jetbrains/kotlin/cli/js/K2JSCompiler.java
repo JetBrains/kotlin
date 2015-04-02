@@ -29,7 +29,6 @@ import kotlin.Function1;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.utils.serializer.KotlinJavaScriptSerializer;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
 import org.jetbrains.kotlin.cli.common.CLICompiler;
@@ -42,11 +41,10 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsPackage;
-import org.jetbrains.kotlin.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.kotlin.cli.jvm.compiler.CompilerJarLocator;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
-import org.jetbrains.kotlin.config.CommonConfigurationKeys;
+import org.jetbrains.kotlin.cli.jvm.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.Services;
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
@@ -59,6 +57,7 @@ import org.jetbrains.kotlin.js.facade.MainCallParameters;
 import org.jetbrains.kotlin.js.facade.TranslationResult;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.utils.PathUtil;
+import org.jetbrains.kotlin.utils.serializer.KotlinJavaScriptSerializer;
 
 import java.io.File;
 import java.util.List;
@@ -66,6 +65,7 @@ import java.util.List;
 import static org.jetbrains.kotlin.cli.common.ExitCode.COMPILATION_ERROR;
 import static org.jetbrains.kotlin.cli.common.ExitCode.OK;
 import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation.NO_LOCATION;
+import static org.jetbrains.kotlin.config.ConfigPackage.addKotlinSourceRoots;
 
 public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 
@@ -101,7 +101,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             configuration.put(JVMConfigurationKeys.COMPILER_JAR_LOCATOR, locator);
         }
 
-        configuration.addAll(CommonConfigurationKeys.SOURCE_ROOTS_KEY, arguments.freeArgs);
+        addKotlinSourceRoots(configuration, arguments.freeArgs);
         KotlinCoreEnvironment environmentForJS =
                 KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JS_CONFIG_FILES);
 

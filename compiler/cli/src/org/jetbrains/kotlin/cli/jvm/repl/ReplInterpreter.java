@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorToString;
-import org.jetbrains.kotlin.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
@@ -80,6 +79,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.getJvmClasspathRoots;
 import static org.jetbrains.kotlin.codegen.AsmUtil.asmTypeByFqNameWithoutInnerClasses;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.registerClassNameForScript;
 import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
@@ -154,7 +154,7 @@ public class ReplInterpreter {
         module.seal();
 
         List<URL> classpath = Lists.newArrayList();
-        for (File file : configuration.getList(JVMConfigurationKeys.CLASSPATH_KEY)) {
+        for (File file : getJvmClasspathRoots(configuration)) {
             try {
                 classpath.add(file.toURI().toURL());
             }

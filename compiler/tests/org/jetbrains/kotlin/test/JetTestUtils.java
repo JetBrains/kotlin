@@ -51,6 +51,8 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
+import org.jetbrains.kotlin.config.ContentRoot;
+import org.jetbrains.kotlin.config.KotlinSourceRoot;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.Errors;
@@ -85,8 +87,10 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.jetbrains.kotlin.cli.jvm.JVMConfigurationKeys.ANNOTATIONS_PATH_KEY;
-import static org.jetbrains.kotlin.cli.jvm.JVMConfigurationKeys.CLASSPATH_KEY;
+import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.addJavaSourceRoots;
+import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.addJvmClasspathRoot;
+import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.addJvmClasspathRoots;
+import static org.jetbrains.kotlin.cli.jvm.config.JVMConfigurationKeys.ANNOTATIONS_PATH_KEY;
 import static org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil.compileKotlinToDirAndGetAnalysisResult;
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 import static org.jetbrains.kotlin.test.ConfigurationKind.ALL;
@@ -407,25 +411,25 @@ public class JetTestUtils {
     public static CompilerConfiguration compilerConfigurationForTests(
             @NotNull ConfigurationKind configurationKind,
             @NotNull TestJdkKind jdkKind,
-            @NotNull Collection<File> extraClasspath,
-            @NotNull Collection<File> priorityClasspath
+            @NotNull List<File> classpath,
+            @NotNull List<File> javaSource
     ) {
         CompilerConfiguration configuration = new CompilerConfiguration();
-        configuration.addAll(CLASSPATH_KEY, priorityClasspath);
+        addJavaSourceRoots(configuration, javaSource);
         if (jdkKind == TestJdkKind.MOCK_JDK) {
-            configuration.add(CLASSPATH_KEY, findMockJdkRtJar());
+            addJvmClasspathRoot(configuration, findMockJdkRtJar());
         }
         else if (jdkKind == TestJdkKind.ANDROID_API) {
-            configuration.add(CLASSPATH_KEY, findAndroidApiJar());
+            addJvmClasspathRoot(configuration, findAndroidApiJar());
         }
         else {
-            configuration.addAll(CLASSPATH_KEY, PathUtil.getJdkClassesRoots());
+            addJvmClasspathRoots(configuration, PathUtil.getJdkClassesRoots());
         }
         if (configurationKind == ALL) {
-            configuration.add(CLASSPATH_KEY, ForTestCompileRuntime.runtimeJarForTests());
-            configuration.add(CLASSPATH_KEY, ForTestCompileRuntime.reflectJarForTests());
+            addJvmClasspathRoot(configuration, ForTestCompileRuntime.runtimeJarForTests());
+            addJvmClasspathRoot(configuration, ForTestCompileRuntime.reflectJarForTests());
         }
-        configuration.addAll(CLASSPATH_KEY, extraClasspath);
+        addJvmClasspathRoots(configuration, classpath);
 
         if (configurationKind == ALL || configurationKind == JDK_AND_ANNOTATIONS) {
             if (jdkKind == TestJdkKind.ANDROID_API) {
@@ -440,10 +444,13 @@ public class JetTestUtils {
     }
 
     public static void resolveAllKotlinFiles(KotlinCoreEnvironment environment) throws IOException {
-        List<String> paths = environment.getConfiguration().get(CommonConfigurationKeys.SOURCE_ROOTS_KEY);
+        List<ContentRoot> paths = environment.getConfiguration().get(CommonConfigurationKeys.CONTENT_ROOTS);
         if (paths == null) return;
         List<JetFile> jetFiles = Lists.newArrayList();
-        for (String path : paths) {
+        for (ContentRoot root : paths) {
+            if (!(root instanceof KotlinSourceRoot)) continue;
+
+            String path = ((KotlinSourceRoot) root).getPath();
             File file = new File(path);
             if (file.isFile()) {
                 jetFiles.add(loadJetFile(environment.getProject(), file));

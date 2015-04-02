@@ -20,7 +20,7 @@ import org.junit.Test
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import com.intellij.openapi.util.Disposer
-import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import java.util.HashSet
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.cli.jvm.JVMConfigurationKeys
+import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.resolve.BindingTraceContext
@@ -118,9 +118,9 @@ class NoInternalVisibilityInStdLibTest {
     Test fun testJvmStdlib() {
         doTest(ANALYZE_PACKAGE_ROOTS_FOR_JVM, ADDITIONALLY_REQUIRED_PACKAGES_FOR_JVM) {
             val configuration = CompilerConfiguration()
-            configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, "../src/kotlin")
-            configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, "../src/generated")
-            configuration.addAll(JVMConfigurationKeys.CLASSPATH_KEY, PathUtil.getJdkClassesRoots())
+            configuration.addKotlinSourceRoot("../src/kotlin")
+            configuration.addKotlinSourceRoot("../src/generated")
+            configuration.addJvmClasspathRoots(PathUtil.getJdkClassesRoots())
 
             val environment = KotlinCoreEnvironment.createForProduction(disposable!!, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 

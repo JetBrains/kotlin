@@ -23,7 +23,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
-import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.JetLiteFixture;
@@ -38,6 +37,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static org.jetbrains.kotlin.config.ConfigPackage.addKotlinSourceRoot;
 
 public abstract class KotlinMultiFileTestWithWithJava<M, F> extends JetLiteFixture {
     protected class ModuleAndDependencies {
@@ -73,7 +74,7 @@ public abstract class KotlinMultiFileTestWithWithJava<M, F> extends JetLiteFixtu
         );
         File kotlinSourceRoot = getKotlinSourceRoot();
         if (kotlinSourceRoot != null) {
-            configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, kotlinSourceRoot.getPath());
+            addKotlinSourceRoot(configuration, kotlinSourceRoot.getPath());
         }
         return createEnvironment(getTestRootDisposable(), configuration);
     }

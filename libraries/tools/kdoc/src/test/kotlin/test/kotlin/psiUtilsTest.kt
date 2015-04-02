@@ -1,6 +1,6 @@
 package test.kotlin
 
-import org.jetbrains.kotlin.cli.jvm.JVMConfigurationKeys
+import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -33,7 +33,7 @@ class PsiUtilsTest {
         System.setProperty("java.awt.headless", "true")
 
         val configuration = CompilerConfiguration()
-        configuration.addAll(JVMConfigurationKeys.CLASSPATH_KEY, PathUtil.getJdkClassesRoots())
+        configuration.addJvmClasspathRoots(PathUtil.getJdkClassesRoots())
         environment = KotlinCoreEnvironment.createForTests(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
     }
 

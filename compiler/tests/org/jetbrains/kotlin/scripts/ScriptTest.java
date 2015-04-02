@@ -23,10 +23,10 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys;
 import org.jetbrains.kotlin.cli.common.messages.*;
-import org.jetbrains.kotlin.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler;
+import org.jetbrains.kotlin.cli.jvm.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.codegen.CompilationException;
 import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
@@ -44,6 +44,8 @@ import org.junit.Test;
 
 import java.util.Collections;
 import java.util.List;
+
+import static org.jetbrains.kotlin.config.ConfigPackage.addKotlinSourceRoot;
 
 public class ScriptTest {
     @Test
@@ -82,7 +84,7 @@ public class ScriptTest {
             CompilerConfiguration configuration =
                     JetTestUtils.compilerConfigurationForTests(ConfigurationKind.JDK_AND_ANNOTATIONS, TestJdkKind.FULL_JDK);
             configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector);
-            configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, "compiler/testData/script/" + scriptPath);
+            addKotlinSourceRoot(configuration, "compiler/testData/script/" + scriptPath);
             configuration.addAll(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY, scriptDefinitions);
             configuration.put(JVMConfigurationKeys.SCRIPT_PARAMETERS, scriptParameters);
 

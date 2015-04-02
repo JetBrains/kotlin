@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.addKotlinSourceRoots
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
@@ -52,8 +52,7 @@ public class KotlinJavascriptSerializerTest : TestCaseWithTmpdir() {
         val configuration = CompilerConfiguration()
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
 
-        val sourceRoots = srcDirs map { it.path }
-        configuration.put(CommonConfigurationKeys.SOURCE_ROOTS_KEY, sourceRoots)
+        configuration.addKotlinSourceRoots(srcDirs map { it.path })
 
         serialize(configuration, metaFile)
         val module = deserialize(metaFile)

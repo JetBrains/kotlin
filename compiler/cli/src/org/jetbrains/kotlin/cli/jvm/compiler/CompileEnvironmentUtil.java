@@ -42,11 +42,10 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil;
 import org.jetbrains.kotlin.cli.common.modules.ModuleScriptData;
 import org.jetbrains.kotlin.cli.common.modules.ModuleXmlParser;
-import org.jetbrains.kotlin.cli.jvm.JVMConfigurationKeys;
+import org.jetbrains.kotlin.cli.jvm.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.codegen.ClassFileFactory;
 import org.jetbrains.kotlin.codegen.GeneratedClassLoader;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.idea.JetFileType;
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
@@ -69,6 +68,9 @@ import java.util.jar.*;
 
 import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation.NO_LOCATION;
 import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR;
+import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.addJvmClasspathRoot;
+import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.addJvmClasspathRoots;
+import static org.jetbrains.kotlin.config.ConfigPackage.addKotlinSourceRoot;
 
 public class CompileEnvironmentUtil {
 
@@ -95,14 +97,15 @@ public class CompileEnvironmentUtil {
         CompilerConfiguration configuration = new CompilerConfiguration();
         File runtimePath = paths.getRuntimePath();
         if (runtimePath.exists()) {
-            configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, runtimePath);
+            addJvmClasspathRoot(configuration, runtimePath);
         }
-        configuration.addAll(JVMConfigurationKeys.CLASSPATH_KEY, PathUtil.getJdkClassesRoots());
+        addJvmClasspathRoots(configuration, PathUtil.getJdkClassesRoots());
+
         File jdkAnnotationsPath = paths.getJdkAnnotationsPath();
         if (jdkAnnotationsPath.exists()) {
             configuration.add(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, jdkAnnotationsPath);
         }
-        configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, moduleScriptFile);
+        addKotlinSourceRoot(configuration, moduleScriptFile);
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector);
 
         List<Module> modules;

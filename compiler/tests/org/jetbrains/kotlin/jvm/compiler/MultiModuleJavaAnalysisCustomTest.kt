@@ -16,32 +16,32 @@
 
 package org.jetbrains.kotlin.jvm.compiler
 
-import org.jetbrains.kotlin.resolve.jvm.JvmAnalyzerFacade
-import org.jetbrains.kotlin.context.GlobalContext
-import org.jetbrains.kotlin.test.JetTestUtils
-import com.intellij.testFramework.UsefulTestCase
-import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
-import org.jetbrains.kotlin.psi.JetFile
-import java.io.File
-import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.descriptors.*
-import org.junit.Assert
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.cli.jvm.JVMConfigurationKeys
-import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.resolve.jvm.JvmResolverForModule
-import org.jetbrains.kotlin.analyzer.ResolverForProject
-import org.jetbrains.kotlin.analyzer.ModuleInfo
-import java.util.HashMap
+import com.intellij.psi.search.DelegatingGlobalSearchScope
+import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.analyzer.ModuleContent
-import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.analyzer.ResolverForProject
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoots
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.context.GlobalContext
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.jvm.JvmAnalyzerFacade
+import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
+import org.jetbrains.kotlin.resolve.jvm.JvmResolverForModule
+import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.types.ErrorUtils
+import org.junit.Assert
+import java.io.File
+import java.util.HashMap
 
 public class MultiModuleJavaAnalysisCustomTest : UsefulTestCase() {
 
@@ -71,7 +71,7 @@ public class MultiModuleJavaAnalysisCustomTest : UsefulTestCase() {
 
     private fun createEnvironment(moduleDirs: Array<File>): KotlinCoreEnvironment {
         val configuration = CompilerConfiguration()
-        configuration.addAll(JVMConfigurationKeys.CLASSPATH_KEY, moduleDirs.toList())
+        configuration.addJavaSourceRoots(moduleDirs.toList())
         return KotlinCoreEnvironment.createForTests(getTestRootDisposable()!!, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
     }
 

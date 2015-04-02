@@ -36,11 +36,10 @@ import org.jetbrains.kotlin.cli.common.CompilerPluginContext;
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsPackage;
-import org.jetbrains.kotlin.cli.jvm.JVMConfigurationKeys;
+import org.jetbrains.kotlin.cli.jvm.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.codegen.*;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.Progress;
-import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.context.ContextPackage;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
@@ -63,7 +62,14 @@ import org.jetbrains.kotlin.utils.KotlinPaths;
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+
+import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.addJvmClasspathRoot;
+import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.getJvmClasspathRoots;
+import static org.jetbrains.kotlin.config.ConfigPackage.addKotlinSourceRoots;
 
 public class KotlinToJVMBytecodeCompiler {
 
@@ -165,10 +171,10 @@ public class KotlinToJVMBytecodeCompiler {
         CompilerConfiguration configuration = base.copy();
 
         for (Module module : chunk) {
-            configuration.addAll(CommonConfigurationKeys.SOURCE_ROOTS_KEY, getAbsolutePaths(directory, module));
+            addKotlinSourceRoots(configuration, getAbsolutePaths(directory, module));
 
             for (String classpathRoot : module.getClasspathRoots()) {
-                configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, new File(classpathRoot));
+                addJvmClasspathRoot(configuration, new File(classpathRoot));
             }
 
             for (String annotationsRoot : module.getAnnotationsRoots()) {
@@ -261,7 +267,7 @@ public class KotlinToJVMBytecodeCompiler {
         GeneratedClassLoader classLoader;
         try {
             List<URL> classPaths = Lists.newArrayList(paths.getRuntimePath().toURI().toURL());
-            for (File file : configuration.get(JVMConfigurationKeys.CLASSPATH_KEY, Collections.<File>emptyList())) {
+            for (File file : getJvmClasspathRoots(configuration)) {
                 classPaths.add(file.toURI().toURL());
             }
             classLoader = new GeneratedClassLoader(state.getFactory(),
