@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl;
 import org.jetbrains.kotlin.di.InjectorForTests;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.resolve.BindingTraceContext;
 import org.jetbrains.kotlin.resolve.ImportPath;
@@ -614,8 +615,9 @@ public class JetTypeCheckerTest extends JetLiteFixture {
                 writableScope.importScope(module.getPackage(fqName).getMemberScope());
             }
             else {
-                writableScope.addClassifierAlias(defaultImport.getImportedName(),
-                                                 module.getPackage(fqName.parent()).getMemberScope().getClassifier(fqName.shortName()));
+                Name shortName = fqName.shortName();
+                assert shortName.equals(defaultImport.getImportedName());
+                writableScope.addClassifierDescriptor(module.getPackage(fqName.parent()).getMemberScope().getClassifier(shortName));
             }
         }
         writableScope.importScope(module.getPackage(FqName.ROOT).getMemberScope());

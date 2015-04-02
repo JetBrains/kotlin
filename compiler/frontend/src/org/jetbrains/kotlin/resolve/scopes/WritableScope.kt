@@ -35,9 +35,7 @@ public trait WritableScope : JetScope {
 
     public fun addFunctionDescriptor(functionDescriptor: FunctionDescriptor)
 
-    public fun addClassifierDescriptor(classDescriptor: ClassifierDescriptor)
-
-    public fun addClassifierAlias(name: Name, classifierDescriptor: ClassifierDescriptor)
+    public fun addClassifierDescriptor(classifierDescriptor: ClassifierDescriptor)
 
     public fun importScope(imported: JetScope)
 

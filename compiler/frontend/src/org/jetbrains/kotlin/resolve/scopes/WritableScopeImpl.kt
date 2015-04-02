@@ -193,15 +193,10 @@ public class WritableScopeImpl(scope: JetScope,
         return result
     }
 
-    override fun addClassifierDescriptor(classDescriptor: ClassifierDescriptor) {
+    override fun addClassifierDescriptor(classifierDescriptor: ClassifierDescriptor) {
         checkMayWrite()
 
-        addClassifierAlias(classDescriptor.getName(), classDescriptor)
-    }
-
-    override fun addClassifierAlias(name: Name, classifierDescriptor: ClassifierDescriptor) {
-        checkMayWrite()
-
+        val name = classifierDescriptor.getName()
         checkForRedeclaration(name, classifierDescriptor)
         getVariableOrClassDescriptors().put(name, classifierDescriptor)
         explicitlyAddedDescriptors.add(classifierDescriptor)
