@@ -56,13 +56,10 @@ public trait KotlinAnnotationEntryStub : StubElement<JetAnnotationEntry> {
     public fun hasValueArguments(): Boolean
 }
 
-public trait KotlinFunctionStub : KotlinStubWithFqName<JetNamedFunction> {
-    public fun isTopLevel(): Boolean
-    public fun isExtension(): Boolean
+public trait KotlinFunctionStub : KotlinCallableStubBase<JetNamedFunction> {
     public fun hasBlockBody(): Boolean
     public fun hasBody(): Boolean
     public fun hasTypeParameterListBeforeFunctionName(): Boolean
-    public fun isProbablyNothingType(): Boolean
 }
 
 public trait KotlinImportDirectiveStub : StubElement<JetImportDirective> {
@@ -92,15 +89,17 @@ public trait KotlinPropertyAccessorStub : StubElement<JetPropertyAccessor> {
     public fun hasBlockBody(): Boolean
 }
 
-public trait KotlinPropertyStub : KotlinStubWithFqName<JetProperty> {
+public trait KotlinPropertyStub : KotlinCallableStubBase<JetProperty> {
     public fun isVar(): Boolean
-    public fun isTopLevel(): Boolean
     public fun hasDelegate(): Boolean
     public fun hasDelegateExpression(): Boolean
     public fun hasInitializer(): Boolean
-    public fun hasReceiverTypeRef(): Boolean
     public fun hasReturnTypeRef(): Boolean
-    public fun isProbablyNothingType(): Boolean
+}
+
+public trait KotlinCallableStubBase<TDeclaration: JetCallableDeclaration> : KotlinStubWithFqName<TDeclaration> {
+    public fun isTopLevel(): Boolean
+    public fun isExtension(): Boolean
 }
 
 public trait KotlinTypeParameterStub : KotlinStubWithFqName<JetTypeParameter> {

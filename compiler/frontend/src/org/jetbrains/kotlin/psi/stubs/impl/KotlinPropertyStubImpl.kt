@@ -32,9 +32,8 @@ public class KotlinPropertyStubImpl(
         private val hasDelegate: Boolean,
         private val hasDelegateExpression: Boolean,
         private val hasInitializer: Boolean,
-        private val hasReceiverTypeRef: Boolean,
+        private val isExtension: Boolean,
         private val hasReturnTypeRef: Boolean,
-        private val isProbablyNothingType: Boolean,
         private val fqName: FqName?
 ) : KotlinStubBaseImpl<JetProperty>(parent, JetStubElementTypes.PROPERTY), KotlinPropertyStub {
 
@@ -53,8 +52,7 @@ public class KotlinPropertyStubImpl(
     override fun hasDelegate() = hasDelegate
     override fun hasDelegateExpression() = hasDelegateExpression
     override fun hasInitializer() = hasInitializer
-    override fun hasReceiverTypeRef() = hasReceiverTypeRef
+    override fun isExtension() = isExtension
     override fun hasReturnTypeRef() = hasReturnTypeRef
     override fun getName() = StringRef.toString(name)
-    override fun isProbablyNothingType() = isProbablyNothingType
 }

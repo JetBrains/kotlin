@@ -120,8 +120,7 @@ private class CallableClsStubBuilder(
                         isExtension = callableProto.hasReceiverType(),
                         hasBlockBody = true,
                         hasBody = Flags.MODALITY[callableProto.getFlags()] != Modality.ABSTRACT,
-                        hasTypeParameterListBeforeFunctionName = callableProto.getTypeParameterList().isNotEmpty(),
-                        isProbablyNothingType = isProbablyNothing(callableProto)
+                        hasTypeParameterListBeforeFunctionName = callableProto.getTypeParameterList().isNotEmpty()
                 )
             }
             ProtoBuf.Callable.CallableKind.VAL, ProtoBuf.Callable.CallableKind.VAR -> {
@@ -133,10 +132,9 @@ private class CallableClsStubBuilder(
                         hasDelegate = false,
                         hasDelegateExpression = false,
                         hasInitializer = false,
-                        hasReceiverTypeRef = callableProto.hasReceiverType(),
+                        isExtension = callableProto.hasReceiverType(),
                         hasReturnTypeRef = true,
-                        fqName = c.containerFqName.child(callableName),
-                        isProbablyNothingType = isProbablyNothing(callableProto)
+                        fqName = c.containerFqName.child(callableName)
                 )
             }
             ProtoBuf.Callable.CallableKind.CONSTRUCTOR -> {
@@ -147,12 +145,5 @@ private class CallableClsStubBuilder(
             }
             else -> throw IllegalStateException("Unknown callable kind $callableKind")
         }
-    }
-
-    //TODO: remove isProbablyNothing from stubs
-    private fun isProbablyNothing(callableProto: ProtoBuf.Callable): Boolean {
-        val constructor = callableProto.getReturnType().getConstructor()
-        return constructor.getKind() == ProtoBuf.Type.Constructor.Kind.CLASS &&
-               c.nameResolver.getClassId(constructor.getId()).getShortClassName().asString() == "Nothing"
     }
 }

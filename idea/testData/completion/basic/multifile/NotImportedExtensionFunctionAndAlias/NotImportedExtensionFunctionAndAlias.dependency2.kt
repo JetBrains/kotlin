@@ -1,0 +1,3 @@
+package third
+
+class Dependency

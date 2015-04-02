@@ -28,14 +28,14 @@ PsiJetFileStubImpl[package=test.a]
               REFERENCE_EXPRESSION:[referencedName=kotlin]
             REFERENCE_EXPRESSION:[referencedName=Annotation]
     CLASS_BODY:
-      PROPERTY:[fqName=test.a.AnnotationClass.i, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=i]
+      PROPERTY:[fqName=test.a.AnnotationClass.i, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=i]
         MODIFIER_LIST:[internal final]
         TYPE_REFERENCE:
           USER_TYPE:[isAbsoluteInRootPackage=false]
             USER_TYPE:[isAbsoluteInRootPackage=false]
               REFERENCE_EXPRESSION:[referencedName=kotlin]
             REFERENCE_EXPRESSION:[referencedName=Int]
-      PROPERTY:[fqName=test.a.AnnotationClass.j, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=j]
+      PROPERTY:[fqName=test.a.AnnotationClass.j, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=j]
         MODIFIER_LIST:[internal final]
         TYPE_REFERENCE:
           USER_TYPE:[isAbsoluteInRootPackage=false]

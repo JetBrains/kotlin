@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.JetNodeTypes
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.resolve.StatementFilter
-import org.jetbrains.kotlin.psi.psiUtil.isProbablyNothing
 import org.jetbrains.kotlin.utils.addToStdlib.swap
+import org.jetbrains.kotlin.util.isProbablyNothing
 
 //TODO: do resolve anonymous object's body
 

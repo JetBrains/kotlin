@@ -1,11 +1,11 @@
 PsiJetFileStubImpl[package=]
   PACKAGE_DIRECTIVE:
-  PROPERTY:[fqName=p, hasDelegate=true, hasDelegateExpression=true, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=false, isProbablyNothingType=false, isTopLevel=true, isVar=false, name=p]
+  PROPERTY:[fqName=p, hasDelegate=true, hasDelegateExpression=true, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=p]
     OBJECT_DECLARATION:[fqName=null, isCompanion=false, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[]]
       CLASS_BODY:
-        FUN:[fqName=null, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isProbablyNothingType=false, isTopLevel=false, name=f]
+        FUN:[fqName=null, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=f]
           VALUE_PARAMETER_LIST:
-        PROPERTY:[fqName=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=p]
+        PROPERTY:[fqName=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=p]
           TYPE_REFERENCE:
             USER_TYPE:[isAbsoluteInRootPackage=false]
               REFERENCE_EXPRESSION:[referencedName=Int]

@@ -7,14 +7,14 @@ PsiJetFileStubImpl[package=test]
       MODIFIER_LIST:[public]
       VALUE_PARAMETER_LIST:
     CLASS_BODY:
-      PROPERTY:[fqName=test.FlexibleTypes.p, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=p]
+      PROPERTY:[fqName=test.FlexibleTypes.p, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=p]
         MODIFIER_LIST:[abstract internal]
         TYPE_REFERENCE:
           USER_TYPE:[isAbsoluteInRootPackage=false]
             USER_TYPE:[isAbsoluteInRootPackage=false]
               REFERENCE_EXPRESSION:[referencedName=kotlin]
             REFERENCE_EXPRESSION:[referencedName=Int]
-      FUN:[fqName=test.FlexibleTypes.collection, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isProbablyNothingType=false, isTopLevel=false, name=collection]
+      FUN:[fqName=test.FlexibleTypes.collection, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=collection]
         MODIFIER_LIST:[abstract internal]
         VALUE_PARAMETER_LIST:
         TYPE_REFERENCE:
@@ -29,7 +29,7 @@ PsiJetFileStubImpl[package=test]
                     USER_TYPE:[isAbsoluteInRootPackage=false]
                       REFERENCE_EXPRESSION:[referencedName=kotlin]
                     REFERENCE_EXPRESSION:[referencedName=Int]
-      FUN:[fqName=test.FlexibleTypes.withBody, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isProbablyNothingType=false, isTopLevel=false, name=withBody]
+      FUN:[fqName=test.FlexibleTypes.withBody, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=withBody]
         MODIFIER_LIST:[internal final]
         VALUE_PARAMETER_LIST:
         TYPE_REFERENCE:

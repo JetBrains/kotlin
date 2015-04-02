@@ -40,7 +40,7 @@ PsiJetFileStubImpl[package=a.b.c.test.enum]
       OBJECT_DECLARATION:[fqName=a.b.c.test.enum.Enum.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST:[internal companion]
         CLASS_BODY:
-          PROPERTY:[fqName=a.b.c.test.enum.Enum.Companion.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=c]
+          PROPERTY:[fqName=a.b.c.test.enum.Enum.Companion.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
             MODIFIER_LIST:[internal final]
             TYPE_REFERENCE:
               USER_TYPE:[isAbsoluteInRootPackage=false]
@@ -53,7 +53,7 @@ PsiJetFileStubImpl[package=a.b.c.test.enum]
       ENUM_ENTRY:[fqName=a.b.c.test.enum.Enum.D, isEnumEntry=true, isLocal=false, isTopLevel=false, isTrait=false, name=D, superNames=[]]
       ENUM_ENTRY:[fqName=a.b.c.test.enum.Enum.E, isEnumEntry=true, isLocal=false, isTopLevel=false, isTrait=false, name=E, superNames=[]]
       ENUM_ENTRY:[fqName=a.b.c.test.enum.Enum.F, isEnumEntry=true, isLocal=false, isTopLevel=false, isTrait=false, name=F, superNames=[]]
-      FUN:[fqName=a.b.c.test.enum.Enum.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isProbablyNothingType=false, isTopLevel=false, name=f]
+      FUN:[fqName=a.b.c.test.enum.Enum.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=f]
         MODIFIER_LIST:[open internal]
         VALUE_PARAMETER_LIST:
         TYPE_REFERENCE:

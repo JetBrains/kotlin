@@ -2,11 +2,11 @@ package first
 
 fun firstFun() {
     val a = ""
-    a.hello<caret>
+    a.<caret>
 }
 
 // EXIST: helloFun
-// EXIST: helloFunPreventAutoInsert
 // EXIST: helloWithParams
+// EXIST: helloFunGeneric
+// EXIST: helloDynamic
 // ABSENT: helloFake
-// NUMBER: 3

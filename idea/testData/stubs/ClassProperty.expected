@@ -2,7 +2,7 @@ PsiJetFileStubImpl[package=]
   PACKAGE_DIRECTIVE:
   CLASS:[fqName=More, isEnumEntry=false, isLocal=false, isTopLevel=true, isTrait=false, name=More, superNames=[]]
     CLASS_BODY:
-      PROPERTY:[fqName=More.test, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=test]
+      PROPERTY:[fqName=More.test, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=test]
         MODIFIER_LIST:[private]
         TYPE_REFERENCE:
           USER_TYPE:[isAbsoluteInRootPackage=false]

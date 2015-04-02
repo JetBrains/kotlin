@@ -30,13 +30,14 @@ import org.jetbrains.kotlin.psi.JetElement;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.AdditionalCheckerProvider;
 import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.lazy.*;
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
+import org.jetbrains.kotlin.resolve.lazy.ElementResolver;
+import org.jetbrains.kotlin.resolve.lazy.ProbablyNothingCallableNames;
+import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
 import org.jetbrains.kotlin.storage.LazyResolveStorageManager;
 import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull;
 
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 public class ResolveElementCache extends ElementResolver {
     private final Project project;
@@ -94,20 +95,15 @@ public class ResolveElementCache extends ElementResolver {
         return new ProbablyNothingCallableNames() {
             @NotNull
             @Override
-            public Set<String> functionNames() {
+            public Collection<String> functionNames() {
                 // we have to add hardcoded-names until we have Kotlin compiled classes in caches
-                Set<String> hardcodedNames = DefaultNothingCallableNames.INSTANCE$.functionNames();
-                Collection<String> indexedNames = JetProbablyNothingFunctionShortNameIndex.getInstance().getAllKeys(project);
-                Set<String> set = new HashSet<String>(hardcodedNames.size() + indexedNames.size());
-                set.addAll(hardcodedNames);
-                set.addAll(indexedNames);
-                return set;
+                return JetProbablyNothingFunctionShortNameIndex.getInstance().getAllKeys(project);
             }
 
             @NotNull
             @Override
-            public Set<String> propertyNames() {
-                return new HashSet<String>(JetProbablyNothingPropertyShortNameIndex.getInstance().getAllKeys(project));
+            public Collection<String> propertyNames() {
+                return JetProbablyNothingPropertyShortNameIndex.getInstance().getAllKeys(project);
             }
         };
     }

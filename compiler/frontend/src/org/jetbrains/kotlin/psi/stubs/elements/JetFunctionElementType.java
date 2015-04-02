@@ -26,7 +26,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetNamedFunction;
-import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.psi.stubs.KotlinFunctionStub;
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFunctionStubImpl;
 import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils;
@@ -47,8 +46,7 @@ public class JetFunctionElementType extends JetStubElementType<KotlinFunctionStu
         boolean hasBlockBody = psi.hasBlockBody();
         boolean hasBody = psi.hasBody();
         return new KotlinFunctionStubImpl(parentStub, StringRef.fromString(psi.getName()), isTopLevel, fqName,
-                                          isExtension, hasBlockBody, hasBody, psi.hasTypeParameterListBeforeFunctionName(),
-                                          PsiUtilPackage.isProbablyNothing(psi.getTypeReference()));
+                                          isExtension, hasBlockBody, hasBody, psi.hasTypeParameterListBeforeFunctionName());
     }
 
     @Override
@@ -63,7 +61,6 @@ public class JetFunctionElementType extends JetStubElementType<KotlinFunctionStu
         dataStream.writeBoolean(stub.hasBlockBody());
         dataStream.writeBoolean(stub.hasBody());
         dataStream.writeBoolean(stub.hasTypeParameterListBeforeFunctionName());
-        dataStream.writeBoolean(stub.isProbablyNothingType());
     }
 
     @NotNull
@@ -79,10 +76,9 @@ public class JetFunctionElementType extends JetStubElementType<KotlinFunctionStu
         boolean hasBlockBody = dataStream.readBoolean();
         boolean hasBody = dataStream.readBoolean();
         boolean hasTypeParameterListBeforeFunctionName = dataStream.readBoolean();
-        boolean probablyNothingType = dataStream.readBoolean();
 
         return new KotlinFunctionStubImpl(parentStub, name, isTopLevel, fqName, isExtension, hasBlockBody, hasBody,
-                                          hasTypeParameterListBeforeFunctionName, probablyNothingType);
+                                          hasTypeParameterListBeforeFunctionName);
     }
 
     @Override

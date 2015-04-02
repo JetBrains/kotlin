@@ -10,27 +10,27 @@ PsiJetFileStubImpl[package=p]
       MODIFIER_LIST:[public]
       VALUE_PARAMETER_LIST:
     CLASS_BODY:
-      PROPERTY:[fqName=p.PrivateToThis.bar, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=true, name=bar]
+      PROPERTY:[fqName=p.PrivateToThis.bar, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=bar]
         MODIFIER_LIST:[private final]
         TYPE_REFERENCE:
           USER_TYPE:[isAbsoluteInRootPackage=false]
             REFERENCE_EXPRESSION:[referencedName=I]
-      PROPERTY:[fqName=p.PrivateToThis.foo, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=foo]
+      PROPERTY:[fqName=p.PrivateToThis.foo, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=foo]
         MODIFIER_LIST:[private final]
         TYPE_REFERENCE:
           USER_TYPE:[isAbsoluteInRootPackage=false]
             REFERENCE_EXPRESSION:[referencedName=I]
-      PROPERTY:[fqName=p.PrivateToThis.val_with_accessors, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=val_with_accessors]
+      PROPERTY:[fqName=p.PrivateToThis.val_with_accessors, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=val_with_accessors]
         MODIFIER_LIST:[private final]
         TYPE_REFERENCE:
           USER_TYPE:[isAbsoluteInRootPackage=false]
             REFERENCE_EXPRESSION:[referencedName=I]
-      PROPERTY:[fqName=p.PrivateToThis.var_with_accessors, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=true, name=var_with_accessors]
+      PROPERTY:[fqName=p.PrivateToThis.var_with_accessors, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=var_with_accessors]
         MODIFIER_LIST:[private final]
         TYPE_REFERENCE:
           USER_TYPE:[isAbsoluteInRootPackage=false]
             REFERENCE_EXPRESSION:[referencedName=I]
-      FUN:[fqName=p.PrivateToThis.bas, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isProbablyNothingType=false, isTopLevel=false, name=bas]
+      FUN:[fqName=p.PrivateToThis.bas, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=bas]
         MODIFIER_LIST:[private final]
         VALUE_PARAMETER_LIST:
         TYPE_REFERENCE:

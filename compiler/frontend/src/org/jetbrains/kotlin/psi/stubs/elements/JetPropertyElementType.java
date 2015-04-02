@@ -48,7 +48,6 @@ public class JetPropertyElementType extends JetStubElementType<KotlinPropertyStu
                 psi.isVar(), psi.isTopLevel(), psi.hasDelegate(),
                 psi.hasDelegateExpression(), psi.hasInitializer(),
                 psi.getReceiverTypeReference() != null, psi.getTypeReference() != null,
-                PsiUtilPackage.isProbablyNothing(psi.getTypeReference()),
                 ResolveSessionUtils.safeFqNameForLazyResolve(psi)
         );
     }
@@ -61,9 +60,8 @@ public class JetPropertyElementType extends JetStubElementType<KotlinPropertyStu
         dataStream.writeBoolean(stub.hasDelegate());
         dataStream.writeBoolean(stub.hasDelegateExpression());
         dataStream.writeBoolean(stub.hasInitializer());
-        dataStream.writeBoolean(stub.hasReceiverTypeRef());
+        dataStream.writeBoolean(stub.isExtension());
         dataStream.writeBoolean(stub.hasReturnTypeRef());
-        dataStream.writeBoolean(stub.isProbablyNothingType());
 
         FqName fqName = stub.getFqName();
         dataStream.writeName(fqName != null ? fqName.asString() : null);
@@ -80,13 +78,12 @@ public class JetPropertyElementType extends JetStubElementType<KotlinPropertyStu
         boolean hasInitializer = dataStream.readBoolean();
         boolean hasReceiverTypeRef = dataStream.readBoolean();
         boolean hasReturnTypeRef = dataStream.readBoolean();
-        boolean probablyNothing = dataStream.readBoolean();
 
         StringRef fqNameAsString = dataStream.readName();
         FqName fqName = fqNameAsString != null ? new FqName(fqNameAsString.toString()) : null;
 
         return new KotlinPropertyStubImpl(parentStub, name, isVar, isTopLevel, hasDelegate,
-                                          hasDelegateExpression, hasInitializer, hasReceiverTypeRef, hasReturnTypeRef, probablyNothing,
+                                          hasDelegateExpression, hasInitializer, hasReceiverTypeRef, hasReturnTypeRef,
                                           fqName);
     }
 

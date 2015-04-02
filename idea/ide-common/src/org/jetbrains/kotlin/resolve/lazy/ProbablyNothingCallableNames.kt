@@ -17,13 +17,6 @@
 package org.jetbrains.kotlin.resolve.lazy
 
 public trait ProbablyNothingCallableNames {
-    public fun functionNames(): Set<String>
-    public fun propertyNames(): Set<String>
-}
-
-public object DefaultNothingCallableNames : ProbablyNothingCallableNames {
-    private val hardcodedNames = setOf("error")
-
-    override fun functionNames() = hardcodedNames
-    override fun propertyNames(): Set<String> = setOf()
+    public fun functionNames(): Collection<String>
+    public fun propertyNames(): Collection<String>
 }
