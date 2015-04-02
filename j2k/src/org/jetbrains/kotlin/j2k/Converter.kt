@@ -35,7 +35,7 @@ import java.util.ArrayList
 class Converter private(
         private val elementToConvert: PsiElement,
         val settings: ConverterSettings,
-        val conversionScope: ConversionScope,
+        val inConversionScope: (PsiElement) -> Boolean,
         val referenceSearcher: ReferenceSearcher,
         val resolverForConverter: ResolverForConverter,
         private val postProcessor: PostProcessor?,
@@ -59,17 +59,17 @@ class Converter private(
     public val specialContext: PsiElement? = personalState.specialContext
 
     companion object {
-        public fun create(elementToConvert: PsiElement, settings: ConverterSettings, conversionScope: ConversionScope,
+        public fun create(elementToConvert: PsiElement, settings: ConverterSettings, inConversionScope: (PsiElement) -> Boolean,
                           referenceSearcher: ReferenceSearcher, resolverForConverter: ResolverForConverter, postProcessor: PostProcessor?,
                           usageProcessingsCollector: (UsageProcessing) -> Unit): Converter {
-            return Converter(elementToConvert, settings, conversionScope, referenceSearcher, resolverForConverter, postProcessor, CommonState(usageProcessingsCollector), PersonalState(null))
+            return Converter(elementToConvert, settings, inConversionScope, referenceSearcher, resolverForConverter, postProcessor, CommonState(usageProcessingsCollector), PersonalState(null))
         }
     }
 
     public fun withSpecialContext(context: PsiElement): Converter = withState(PersonalState(context))
 
     private fun withState(state: PersonalState): Converter
-            = Converter(elementToConvert, settings, conversionScope, referenceSearcher, resolverForConverter, postProcessor, commonState, state)
+            = Converter(elementToConvert, settings, inConversionScope, referenceSearcher, resolverForConverter, postProcessor, commonState, state)
 
     private fun createDefaultCodeConverter() = CodeConverter(this, DefaultExpressionConverter(), DefaultStatementConverter(), null)
 
@@ -227,7 +227,7 @@ class Converter private(
         val parameters = annotationMethods
                 .map { method ->
                     val returnType = method.getReturnType()
-                    val typeConverted = if (method == annotationMethods.last && returnType is PsiArrayType)
+                    val typeConverted = if (method == annotationMethods.last() && returnType is PsiArrayType)
                         VarArgType(typeConverter.convertType(returnType.getComponentType(), Nullability.NotNull))
                     else
                         typeConverter.convertType(returnType, Nullability.NotNull)
@@ -377,7 +377,7 @@ class Converter private(
 
             var params = convertParameterList(method.getParameterList())
             val typeParameterList = convertTypeParameterList(method.getTypeParameterList())
-            var body = deferredElement { (codeConverter: CodeConverter) ->
+            var body = deferredElement { codeConverter: CodeConverter ->
                 val body = codeConverter.withMethodReturnType(method.getReturnType()).convertBlock(method.getBody())
                 postProcessBody(body)
             }
@@ -410,8 +410,8 @@ class Converter private(
                     if (containing != null) {
                         val hasOtherJavaSuperclasses = containing.getSuperTypes().any {
                             //TODO: correctly check for kotlin class
-                            val `class` = it.resolve()
-                            `class` != null && `class`.getQualifiedName() != JAVA_LANG_OBJECT && !conversionScope.contains(`class`)
+                            val klass = it.resolve()
+                            klass != null && klass.getQualifiedName() != JAVA_LANG_OBJECT && !inConversionScope(klass)
                         }
                         if (hasOtherJavaSuperclasses) return true
                     }

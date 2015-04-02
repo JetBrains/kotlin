@@ -36,7 +36,6 @@ import com.intellij.psi.codeStyle.CodeStyleManager
 import org.jetbrains.kotlin.idea.j2k.IdeaResolverForConverter
 import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
 import org.jetbrains.kotlin.j2k.ConverterSettings
-import org.jetbrains.kotlin.j2k.FilesConversionScope
 import org.jetbrains.kotlin.j2k.IdeaReferenceSearcher
 import org.jetbrains.kotlin.j2k.JavaToKotlinConverter
 import org.jetbrains.kotlin.psi.JetFile
@@ -51,7 +50,7 @@ public class JavaToKotlinAction : AnAction() {
 
         var convertedTexts: List<String>? = null
         fun convert() {
-            val converter = JavaToKotlinConverter(project, ConverterSettings.defaultSettings, FilesConversionScope(javaFiles), IdeaReferenceSearcher, IdeaResolverForConverter)
+            val converter = JavaToKotlinConverter(project, ConverterSettings.defaultSettings, IdeaReferenceSearcher, IdeaResolverForConverter)
             convertedTexts = converter.elementsToKotlin(javaFiles.map { it to J2kPostProcessor(it, formatCode = true) },
                                                         ProgressManager.getInstance().getProgressIndicator())
         }

@@ -18,25 +18,28 @@ package org.jetbrains.kotlin.idea.conversion.copy
 
 import com.intellij.codeInsight.editorActions.CopyPastePostProcessor
 import com.intellij.codeInsight.editorActions.TextBlockTransferableData
+import com.intellij.lang.java.JavaLanguage
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.RangeMarker
+import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Ref
+import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.*
-import org.jetbrains.kotlin.j2k.*
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.idea.editor.JetEditorOptions
-import java.awt.datatransfer.Transferable
-import com.intellij.openapi.util.TextRange
 import com.intellij.psi.codeStyle.CodeStyleManager
-import com.intellij.lang.java.JavaLanguage
-import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
+import org.jetbrains.kotlin.idea.editor.JetEditorOptions
 import org.jetbrains.kotlin.idea.j2k.IdeaResolverForConverter
-import com.intellij.openapi.project.DumbService
+import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
+import org.jetbrains.kotlin.j2k.ConverterSettings
+import org.jetbrains.kotlin.j2k.IdeaReferenceSearcher
+import org.jetbrains.kotlin.j2k.JavaToKotlinConverter
+import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.psiUtil.parents
+import java.awt.datatransfer.Transferable
+import java.util.ArrayList
 
 public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBlockTransferableData>() {
     private val LOG = Logger.getInstance("#org.jetbrains.kotlin.idea.conversion.copy.ConvertJavaCopyPastePostProcessor")
@@ -90,34 +93,55 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
     }
 
     private fun convertCopiedCodeToKotlin(code: CopiedCode, sourceFile: PsiJavaFile, sourceFileText: String, targetFile: JetFile): String {
+        assert(code.startOffsets.size() == code.endOffsets.size(), "Must have the same size")
+
+        val list = ArrayList<Any>()
+        for (i in code.startOffsets.indices) {
+            list.collectElementsToConvert(sourceFile, sourceFileText, TextRange(code.startOffsets[i], code.endOffsets[i]))
+        }
+
         val converter = JavaToKotlinConverter(
                 sourceFile.getProject(),
                 ConverterSettings.defaultSettings,
-                FilesConversionScope(listOf(sourceFile)),
                 IdeaReferenceSearcher,
                 IdeaResolverForConverter
         )
-        assert(code.startOffsets.size() == code.endOffsets.size(), "Must have the same size")
-        val builder = StringBuilder()
-        for (i in code.startOffsets.indices) {
-            val textRange = TextRange(code.startOffsets[i], code.endOffsets[i])
-            builder.append(convertRangeToKotlin(sourceFile, sourceFileText, targetFile, textRange, converter))
-        }
-        return StringUtil.convertLineSeparators(builder.toString())
+
+        val results = converter.elementsToKotlin(list.filterIsInstance<PsiElement>().map { it to J2kPostProcessor(targetFile, formatCode = false) })
+
+        var resultIndex = 0
+        val text = StringBuilder {
+            for (o in list) {
+                if (o is PsiElement) {
+                    val result = results[resultIndex++]
+                    if (!result.isEmpty()) {
+                        append(result)
+                    }
+                    else { // failed to convert element to Kotlin, insert "as is"
+                        append(o.getText())
+                    }
+                }
+                else {
+                    append(o as String)
+                }
+            }
+        }.toString()
+
+        return StringUtil.convertLineSeparators(text)
     }
 
-    private fun convertRangeToKotlin(file: PsiJavaFile,
-                                     fileText: String,
-                                     targetFile: JetFile,
-                                     range: TextRange,
-                                     converter: JavaToKotlinConverter): String {
-        val builder = StringBuilder()
+    // builds list consisting of PsiElement's to convert and plain String's
+    private fun MutableList<Any>.collectElementsToConvert(
+            file: PsiJavaFile,
+            fileText: String,
+            range: TextRange
+    ) {
         var currentRange = range
         while (!currentRange.isEmpty()) {
             val leaf = findFirstLeafWhollyInRange(file, currentRange)
             if (leaf == null) {
                 val unconvertedSuffix = fileText.substring(currentRange.start, currentRange.end)
-                builder.append(unconvertedSuffix)
+                add(unconvertedSuffix)
                 break
             }
 
@@ -130,19 +154,12 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
             val elementToConvertRange = elementToConvert.range
 
             val unconvertedPrefix = fileText.substring(currentRange.start, elementToConvertRange.start)
-            builder.append(unconvertedPrefix)
+            add(unconvertedPrefix)
 
-            val converted = converter.elementsToKotlin(listOf(elementToConvert to J2kPostProcessor(targetFile, formatCode = false))).single()
-            if (!converted.isEmpty()) {
-                builder.append(converted)
-            }
-            else {
-                builder.append(fileText.substring(elementToConvertRange.start, elementToConvertRange.end))
-            }
+            add(elementToConvert)
 
             currentRange = TextRange(elementToConvertRange.end, currentRange.end)
         }
-        return builder.toString()
     }
 
     private fun findFirstLeafWhollyInRange(file: PsiJavaFile, range: TextRange): PsiElement? {

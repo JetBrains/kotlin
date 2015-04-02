@@ -151,7 +151,7 @@ class TypeConverter(val converter: Converter) {
             value = fromTypeHeuristics(variableType)
             if (value != default) return value
 
-            if (!converter.conversionScope.contains(variable)) return default // do not analyze usages of variables not in our conversion scope
+            if (!converter.inConversionScope(variable)) return default // do not analyze usages of variables not in our conversion scope
 
             val scope = searchScope(variable)
             if (scope != null) {
@@ -189,7 +189,7 @@ class TypeConverter(val converter: Converter) {
             value = fromTypeHeuristics(returnType)
             if (value != default) return value
 
-            if (!converter.conversionScope.contains(method)) return default // do not analyze body and usages of methods out of our conversion scope
+            if (!converter.inConversionScope(method)) return default // do not analyze body and usages of methods out of our conversion scope
 
             val body = method.getBody()
             if (body != null) {
@@ -262,7 +262,7 @@ class TypeConverter(val converter: Converter) {
 
             if (variable is PsiField
                     && variable.hasModifierProperty(PsiModifier.PRIVATE)
-                    && converter.conversionScope.contains(variable)
+                    && converter.inConversionScope(variable)
                     && shouldGenerateDefaultInitializer(converter.referenceSearcher, variable)) {
                 return Nullability.Nullable
             }

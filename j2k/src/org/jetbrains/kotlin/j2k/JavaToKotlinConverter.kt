@@ -30,17 +30,10 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.j2k.ast.Element
 import org.jetbrains.kotlin.j2k.usageProcessing.UsageProcessing
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.resolve.BindingContext
 import java.util.ArrayList
 import java.util.HashMap
-
-public trait ConversionScope {
-    public fun contains(element: PsiElement): Boolean
-}
-
-public class FilesConversionScope(val files: Collection<PsiJavaFile>) : ConversionScope {
-    override fun contains(element: PsiElement) = files.any { element.getContainingFile() == it }
-}
 
 public trait PostProcessor {
     public val contextToAnalyzeIn: PsiElement
@@ -72,7 +65,6 @@ public trait PostProcessor {
 
 public class JavaToKotlinConverter(private val project: Project,
                                    private val settings: ConverterSettings,
-                                   private val conversionScope: ConversionScope /*TODO: drop this parameter*/,
                                    private val referenceSearcher: ReferenceSearcher,
                                    private val resolverForConverter: ResolverForConverter) {
     private val LOG = Logger.getInstance("#org.jetbrains.kotlin.j2k.JavaToKotlinConverter")
@@ -124,7 +116,11 @@ public class JavaToKotlinConverter(private val project: Project,
             processFilesWithProgress(0.25) { i ->
                 val psiElement = psiElementsAndProcessors[i].first
                 val postProcessor = psiElementsAndProcessors[i].second
-                val converter = Converter.create(psiElement, settings, conversionScope, referenceSearcher, resolverForConverter, postProcessor, usageProcessingCollector)
+
+                fun inConversionScope(element: PsiElement)
+                        = psiElementsAndProcessors.any { it.first.isAncestor(element, strict = false) }
+
+                val converter = Converter.create(psiElement, settings, ::inConversionScope, referenceSearcher, resolverForConverter, postProcessor, usageProcessingCollector)
                 val result = converter.convert()
                 intermediateResults.add(result)
             }
