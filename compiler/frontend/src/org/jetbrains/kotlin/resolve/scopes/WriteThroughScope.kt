@@ -130,24 +130,6 @@ public class WriteThroughScope(outerScope: JetScope, private val writableWorker:
         writableWorker.addClassifierAlias(name, classifierDescriptor)
     }
 
-    override fun addPackageAlias(name: Name, packageView: PackageViewDescriptor) {
-        checkMayWrite()
-
-        writableWorker.addPackageAlias(name, packageView)
-    }
-
-    override fun addVariableAlias(name: Name, variableDescriptor: VariableDescriptor) {
-        checkMayWrite()
-
-        writableWorker.addVariableAlias(name, variableDescriptor)
-    }
-
-    override fun addFunctionAlias(name: Name, functionDescriptor: FunctionDescriptor) {
-        checkMayWrite()
-
-        writableWorker.addFunctionAlias(name, functionDescriptor)
-    }
-
     override fun getDeclaredDescriptorsAccessibleBySimpleName(): Multimap<Name, DeclarationDescriptor> {
         return writableWorker.getDeclaredDescriptorsAccessibleBySimpleName()
     }

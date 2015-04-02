@@ -202,6 +202,6 @@ public class KotlinIndicesHelper(
     private fun analyzeImportReference(fqName: FqName): Collection<DeclarationDescriptor> {
         val importDirective = JetPsiFactory(project).createImportDirective(ImportPath(fqName, false))
         val scope = JetModuleUtil.getSubpackagesOfRootScope(moduleDescriptor)
-        return QualifiedExpressionResolver().processImportReference(importDirective, scope, scope, null, BindingTraceContext(), LookupMode.EVERYTHING)
+        return QualifiedExpressionResolver().processImportReference(importDirective, scope, scope, BindingTraceContext(), LookupMode.EVERYTHING).getAllDescriptors()
     }
 }

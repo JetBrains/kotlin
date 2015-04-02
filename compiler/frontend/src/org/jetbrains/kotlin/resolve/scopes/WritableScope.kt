@@ -43,36 +43,10 @@ public trait WritableScope : JetScope {
 
     public fun addClassifierAlias(name: Name, classifierDescriptor: ClassifierDescriptor)
 
-    public fun addPackageAlias(name: Name, packageView: PackageViewDescriptor)
-
-    public fun addFunctionAlias(name: Name, functionDescriptor: FunctionDescriptor)
-
-    public fun addVariableAlias(name: Name, variableDescriptor: VariableDescriptor)
-
     public fun getDeclaredDescriptorsAccessibleBySimpleName(): Multimap<Name, DeclarationDescriptor>
 
     public fun importScope(imported: JetScope)
 
     public fun setImplicitReceiver(implicitReceiver: ReceiverParameterDescriptor)
-
-    public fun importClassifierAlias(importedClassifierName: Name, classifierDescriptor: ClassifierDescriptor)
-
-    public fun importPackageAlias(aliasName: Name, packageView: PackageViewDescriptor)
-
-    public fun importFunctionAlias(aliasName: Name, functionDescriptor: FunctionDescriptor)
-
-    public fun importVariableAlias(aliasName: Name, variableDescriptor: VariableDescriptor)
-
-    public fun clearImports()
-
-    public fun importAlias(aliasName: Name, descriptor: DeclarationDescriptor) {
-        when (descriptor) {
-            is ClassifierDescriptor -> importClassifierAlias(aliasName, descriptor)
-            is PackageViewDescriptor -> importPackageAlias(aliasName, descriptor)
-            is FunctionDescriptor -> importFunctionAlias(aliasName, descriptor)
-            is VariableDescriptor -> importVariableAlias(aliasName, descriptor)
-            else -> error("Unknown descriptor")
-        }
-    }
 }
 

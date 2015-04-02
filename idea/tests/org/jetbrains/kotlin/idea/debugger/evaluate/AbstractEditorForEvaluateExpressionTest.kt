@@ -63,7 +63,8 @@ public abstract class AbstractCodeFragmentHighlightingTest : AbstractJetPsiCheck
                 val moduleDescriptor = file.getResolutionFacade().findModuleDescriptor(file)
                 val scope = JetModuleUtil.getSubpackagesOfRootScope(moduleDescriptor)
                 val descriptor = QualifiedExpressionResolver()
-                                         .processImportReference(importDirective, scope, scope, null, BindingTraceContext(), LookupMode.EVERYTHING)
+                                         .processImportReference(importDirective, scope, scope, BindingTraceContext(), LookupMode.EVERYTHING)
+                                         .getAllDescriptors()
                                          .singleOrNull() ?: error("Could not resolve descriptor to import: $it")
                 ImportInsertHelper.getInstance(getProject()).importDescriptor(file, descriptor)
             }

@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.scopes.AbstractScopeAdapter;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
-import org.jetbrains.kotlin.resolve.scopes.WritableScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 
 import java.util.Collection;
@@ -76,21 +75,20 @@ public class QualifiedExpressionResolver {
     }
 
     @NotNull
-    public Collection<DeclarationDescriptor> processImportReference(
+    public JetScope processImportReference(
             @NotNull JetImportDirective importDirective,
             @NotNull JetScope scope,
             @NotNull JetScope scopeToCheckVisibility,
-            @Nullable WritableScope importIntoScope,
             @NotNull BindingTrace trace,
             @NotNull LookupMode lookupMode
     ) {
         if (importDirective.isAbsoluteInRootPackage()) {
             trace.report(UNSUPPORTED.on(importDirective, "TypeHierarchyResolver")); // TODO
-            return Collections.emptyList();
+            return JetScope.Empty.INSTANCE$;
         }
         JetExpression importedReference = importDirective.getImportedReference();
         if (importedReference == null) {
-            return Collections.emptyList();
+            return JetScope.Empty.INSTANCE$;
         }
 
         Collection<DeclarationDescriptor> descriptors;
@@ -115,31 +113,19 @@ public class QualifiedExpressionResolver {
             }
 
             if (referenceExpression == null || !canImportMembersFrom(descriptors, referenceExpression, trace, lookupMode)) {
-                return Collections.emptyList();
+                return JetScope.Empty.INSTANCE$;
             }
 
-            if (importIntoScope != null) {
-                AllUnderImportsScope importsScope = new AllUnderImportsScope();
-                for (DeclarationDescriptor descriptor : descriptors) {
-                    importsScope.addAllUnderImport(descriptor);
-                }
-                importIntoScope.importScope(importsScope);
+            AllUnderImportsScope importsScope = new AllUnderImportsScope();
+            for (DeclarationDescriptor descriptor : descriptors) {
+                importsScope.addAllUnderImport(descriptor);
             }
-            return Collections.emptyList();
+            return importsScope;
         }
         else {
             Name aliasName = JetPsiUtil.getAliasName(importDirective);
-            if (aliasName == null) {
-                return Collections.emptyList();
-            }
-
-            if (importIntoScope != null) {
-                for (DeclarationDescriptor descriptor : descriptors) {
-                    importIntoScope.importAlias(aliasName, descriptor);
-                }
-            }
-
-            return descriptors;
+            if (aliasName == null) return JetScope.Empty.INSTANCE$;
+            return new SingleAliasScope(aliasName, descriptors);
         }
     }
 

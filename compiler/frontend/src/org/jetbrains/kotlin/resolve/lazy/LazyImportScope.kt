@@ -16,26 +16,27 @@
 
 package org.jetbrains.kotlin.resolve.lazy
 
+import com.google.common.collect.ImmutableListMultimap
+import com.google.common.collect.ListMultimap
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetImportDirective
-import org.jetbrains.kotlin.psi.debugText.*
+import org.jetbrains.kotlin.psi.JetPsiUtil
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.JetModuleUtil
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.scopes.*
-import org.jetbrains.kotlin.utils.Printer
-
+import org.jetbrains.kotlin.resolve.PlatformTypesMappedToKotlinChecker
 import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver.LookupMode
-import java.util.LinkedHashSet
-import java.util.HashSet
-import com.google.common.collect.ListMultimap
-import kotlin.properties.Delegates
-import com.google.common.collect.ImmutableListMultimap
-import org.jetbrains.kotlin.resolve.scopes.JetScopeSelectorUtil.ScopeByNameSelector
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.JetScopeSelectorUtil
 import org.jetbrains.kotlin.resolve.scopes.JetScopeSelectorUtil.ScopeByNameMultiSelector
-import org.jetbrains.kotlin.psi.JetPsiUtil
-import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.resolve.scopes.JetScopeSelectorUtil.ScopeByNameSelector
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.utils.Printer
+import java.util.HashSet
+import java.util.LinkedHashSet
+import kotlin.properties.Delegates
 
 trait IndexedImports {
     val imports: List<JetImportDirective>
@@ -72,7 +73,7 @@ class LazyImportResolver(
         includeRootPackageClasses: Boolean
 ) {
     private val importedScopesProvider = resolveSession.getStorageManager().createMemoizedFunction {
-        (directive: JetImportDirective) -> ImportDirectiveResolveCache(directive)
+        directive: JetImportDirective -> ImportDirectiveResolveCache(directive)
     }
     private val rootScope = JetModuleUtil.getImportsResolutionScope(resolveSession.getModuleDescriptor(), includeRootPackageClasses)
 
@@ -96,23 +97,21 @@ class LazyImportResolver(
                     cachedStatus.scope
                 }
                 else {
-                    val directiveImportScope = WritableScopeImpl(JetScope.Empty, packageView, RedeclarationHandler.DO_NOTHING, "Scope for import '" + directive.getDebugText() + "' resolve in " + toString())
-                    directiveImportScope.changeLockLevel(WritableScope.LockLevel.BOTH)
-
                     directiveUnderResolve = directive
 
+                    val directiveImportScope: JetScope
                     val descriptors: Collection<DeclarationDescriptor>
                     try {
                         val resolver = resolveSession.getQualifiedExpressionResolver()
-                        descriptors = resolver.processImportReference(directive, rootScope, packageView.getMemberScope(),
-                                                                      directiveImportScope, traceForImportResolve, mode)
+                        directiveImportScope = resolver.processImportReference(
+                                directive, rootScope, packageView.getMemberScope(), traceForImportResolve, mode)
+                        descriptors = if (directive.isAllUnder()) emptyList() else directiveImportScope.getAllDescriptors()
                         if (mode == LookupMode.EVERYTHING) {
-                            org.jetbrains.kotlin.resolve.PlatformTypesMappedToKotlinChecker.checkPlatformTypesMappedToKotlin(packageView.getModule(), traceForImportResolve, directive, descriptors)
+                            PlatformTypesMappedToKotlinChecker.checkPlatformTypesMappedToKotlin(packageView.getModule(), traceForImportResolve, directive, descriptors)
                         }
                     }
                     finally {
                         directiveUnderResolve = null
-                        directiveImportScope.changeLockLevel(WritableScope.LockLevel.READING)
                     }
 
                     importResolveStatus = ImportResolveStatus(mode, directiveImportScope, descriptors)

@@ -55,12 +55,6 @@ public abstract class WritableScopeWithImports(override val workerScope: JetScop
         }
     }
 
-    protected fun checkMayNotWrite() {
-        if (lockLevel == WritableScope.LockLevel.WRITING || lockLevel == WritableScope.LockLevel.BOTH) {
-            throw IllegalStateException("cannot write with lock level " + lockLevel + " at " + toString())
-        }
-    }
-
     protected fun getImports(): MutableList<JetScope> {
         if (imports == null) {
             imports = ArrayList<JetScope>()
@@ -158,45 +152,6 @@ public abstract class WritableScopeWithImports(override val workerScope: JetScop
             }
         }
         return null
-    }
-
-    private fun getCurrentIndividualImportScope(): WritableScope {
-        if (currentIndividualImportScope == null) {
-            val writableScope = WritableScopeImpl(JetScope.Empty, getContainingDeclaration(), RedeclarationHandler.DO_NOTHING, "Individual import scope")
-            writableScope.changeLockLevel(WritableScope.LockLevel.BOTH)
-            importScope(writableScope)
-            currentIndividualImportScope = writableScope
-        }
-        return currentIndividualImportScope!!
-    }
-
-    override fun importClassifierAlias(importedClassifierName: Name, classifierDescriptor: ClassifierDescriptor) {
-        checkMayWrite()
-
-        getCurrentIndividualImportScope().addClassifierAlias(importedClassifierName, classifierDescriptor)
-    }
-
-    override fun importPackageAlias(aliasName: Name, packageView: PackageViewDescriptor) {
-        checkMayWrite()
-
-        getCurrentIndividualImportScope().addPackageAlias(aliasName, packageView)
-    }
-
-    override fun importFunctionAlias(aliasName: Name, functionDescriptor: FunctionDescriptor) {
-        checkMayWrite()
-
-        getCurrentIndividualImportScope().addFunctionAlias(aliasName, functionDescriptor)
-    }
-
-    override fun importVariableAlias(aliasName: Name, variableDescriptor: VariableDescriptor) {
-        checkMayWrite()
-
-        getCurrentIndividualImportScope().addVariableAlias(aliasName, variableDescriptor)
-    }
-
-    override fun clearImports() {
-        currentIndividualImportScope = null
-        getImports().clear()
     }
 
     override fun toString(): String {
