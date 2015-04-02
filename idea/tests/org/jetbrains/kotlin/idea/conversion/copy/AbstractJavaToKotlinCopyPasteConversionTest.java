@@ -17,8 +17,10 @@
 package org.jetbrains.kotlin.idea.conversion.copy;
 
 import com.intellij.openapi.actionSystem.IdeActions;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.command.CommandProcessor;
+import com.intellij.openapi.editor.Document;
 import com.intellij.testFramework.LightProjectDescriptor;
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.idea.JetWithJdkAndRuntimeLightProjectDescriptor;
@@ -55,8 +57,28 @@ public abstract class AbstractJavaToKotlinCopyPasteConversionTest extends JetLig
         String testName = getTestName(false);
         myFixture.configureByFile(testName + ".java");
         myFixture.performEditorAction(IdeActions.ACTION_COPY);
+
+        //noinspection AssignmentToStaticFieldFromInstanceMethod
+        ConvertJavaCopyPastePostProcessor.conversionPerformed = false;
+
         myFixture.configureByFile(testName + ".to.kt");
         myFixture.performEditorAction(IdeActions.ACTION_PASTE);
+
+        if (!ConvertJavaCopyPastePostProcessor.conversionPerformed) {
+            CommandProcessor.getInstance().executeCommand(getProject(), new Runnable() {
+                @Override
+                public void run() {
+                    ApplicationManager.getApplication().runWriteAction(new Runnable() {
+                        @Override
+                        public void run() {
+                            Document document = myFixture.getEditor().getDocument();
+                            document.replaceString(0, document.getTextLength(), "No conversion performed");
+                        }
+                    });
+                }
+            }, "", null);
+        }
+
         myFixture.checkResultByFile(testName + ".expected.kt");
     }
 }

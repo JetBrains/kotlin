@@ -66,39 +66,53 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
         if (DumbService.getInstance(project).isDumb()) return
 
         val data = values.single()
-
         if (data !is CopiedCode) return
 
-        val sourceFile = PsiFileFactory.getInstance(project).
-                createFileFromText(data.fileName, JavaLanguage.INSTANCE, data.fileText) as? PsiJavaFile ?: return
-
         val targetFile = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument()) as? JetFile ?: return
+
+        fun doConversion(): String? {
+            val sourceFile = PsiFileFactory.getInstance(project).
+                    createFileFromText(data.fileName, JavaLanguage.INSTANCE, data.fileText) as PsiJavaFile
+            return convertCopiedCodeToKotlin(data, sourceFile, targetFile)
+        }
+
+        var conversionResult: String? = null
+
+        val textLength = data.startOffsets.indices.sumBy { data.endOffsets[it] - data.startOffsets[it] }
+        if (textLength < 1000) { // if the text to convert is short enough, try to do conversion without permission from user and skip the dialog if nothing converted
+            conversionResult = doConversion() ?: return
+        }
 
         val jetEditorOptions = JetEditorOptions.getInstance()!!
         val needConvert = jetEditorOptions.isEnableJavaToKotlinConversion() && (jetEditorOptions.isDonTShowConversionDialog() || okFromDialog(project))
         if (needConvert) {
-            val text = convertCopiedCodeToKotlin(data, sourceFile, data.fileText, targetFile)
-            if (!text.isEmpty()) {
-                ApplicationManager.getApplication()!!.runWriteAction {
-                    val startOffset = bounds.getStartOffset()
-                    editor.getDocument().replaceString(startOffset, bounds.getEndOffset(), text)
+            if (conversionResult == null) {
+                conversionResult = doConversion() ?: return
+            }
+            ApplicationManager.getApplication()!!.runWriteAction {
+                val startOffset = bounds.getStartOffset()
+                editor.getDocument().replaceString(startOffset, bounds.getEndOffset(), conversionResult!!)
 
-                    val endOffsetAfterCopy = startOffset + text.length()
-                    editor.getCaretModel().moveToOffset(endOffsetAfterCopy)
+                val endOffsetAfterCopy = startOffset + conversionResult!!.length()
+                editor.getCaretModel().moveToOffset(endOffsetAfterCopy)
 
-                    CodeStyleManager.getInstance(project)!!.reformatText(targetFile, startOffset, endOffsetAfterCopy)
-                }
+                CodeStyleManager.getInstance(project)!!.reformatText(targetFile, startOffset, endOffsetAfterCopy)
+
+                conversionPerformed = true
             }
         }
     }
 
-    private fun convertCopiedCodeToKotlin(code: CopiedCode, sourceFile: PsiJavaFile, sourceFileText: String, targetFile: JetFile): String {
+    private fun convertCopiedCodeToKotlin(code: CopiedCode, sourceFile: PsiJavaFile, targetFile: JetFile): String? {
         assert(code.startOffsets.size() == code.endOffsets.size(), "Must have the same size")
+        val sourceFileText = code.fileText
 
         val list = ArrayList<Any>()
         for (i in code.startOffsets.indices) {
             list.collectElementsToConvert(sourceFile, sourceFileText, TextRange(code.startOffsets[i], code.endOffsets[i]))
         }
+
+        if (list.all { it is String }) return null // nothing to convert
 
         val converter = JavaToKotlinConverter(
                 sourceFile.getProject(),
@@ -110,24 +124,31 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
         val results = converter.elementsToKotlin(list.filterIsInstance<PsiElement>().map { it to J2kPostProcessor(targetFile, formatCode = false) })
 
         var resultIndex = 0
-        val text = StringBuilder {
-            for (o in list) {
-                if (o is PsiElement) {
-                    val result = results[resultIndex++]
-                    if (!result.isEmpty()) {
-                        append(result)
-                    }
-                    else { // failed to convert element to Kotlin, insert "as is"
-                        append(o.getText())
-                    }
+        val convertedCodeBuilder = StringBuilder()
+        val originalCodeBuilder = StringBuilder()
+        for (o in list) {
+            if (o is PsiElement) {
+                val originalText = o.getText()
+                val result = results[resultIndex++]
+                if (!result.isEmpty()) {
+                    convertedCodeBuilder.append(result)
                 }
-                else {
-                    append(o as String)
+                else { // failed to convert element to Kotlin, insert "as is"
+                    convertedCodeBuilder.append(originalText)
                 }
+                originalCodeBuilder.append(originalText)
             }
-        }.toString()
+            else {
+                convertedCodeBuilder.append(o as String)
+                originalCodeBuilder.append(o)
+            }
+        }
 
-        return StringUtil.convertLineSeparators(text)
+        val convertedCode = convertedCodeBuilder.toString()
+        val originalCode = originalCodeBuilder.toString()
+        if (convertedCode == originalCode) return null
+
+        return convertedCode
     }
 
     // builds list consisting of PsiElement's to convert and plain String's
@@ -177,5 +198,10 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
         val dialog = KotlinPasteFromJavaDialog(project)
         dialog.show()
         return dialog.isOK()
+    }
+
+    companion object {
+        // used for testing
+        public var conversionPerformed: Boolean = false
     }
 }

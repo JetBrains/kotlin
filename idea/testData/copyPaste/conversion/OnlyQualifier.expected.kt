@@ -1,4 +1,1 @@
-fun main(args: Array<String>) {
-    qualifier
-    somethingElse()
-}
+No conversion performed

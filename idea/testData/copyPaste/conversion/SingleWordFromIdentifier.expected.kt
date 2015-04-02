@@ -1,1 +1,1 @@
-class Some
+No conversion performed
