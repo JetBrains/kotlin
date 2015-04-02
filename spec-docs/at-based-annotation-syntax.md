@@ -23,6 +23,12 @@ another option (like in Scala):
 class C(@(Foo@field) val x: Int, @(Bar@(field,parameter)) val y: Int)
 ```
 
+yet another option (requires allowing annotation arrays at least in source-retained annotations):
+
+``` kotlin
+class C(@field(@Foo) val x: Int, @field(@Bar) @parameter(@Bar) val y: Int)
+```
+
 Labels:
 ``` kotlin
 loop@ // declaring a label
