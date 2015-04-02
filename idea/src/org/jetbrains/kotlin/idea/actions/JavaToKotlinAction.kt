@@ -16,45 +16,64 @@
 
 package org.jetbrains.kotlin.idea.actions
 
+import com.intellij.codeInsight.actions.ReformatCodeProcessor
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.ex.MessagesEx
+import com.intellij.openapi.vfs.CharsetToolkit
+import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileVisitor
+import com.intellij.psi.PsiJavaFile
+import com.intellij.psi.PsiManager
+import com.intellij.psi.codeStyle.CodeStyleManager
+import org.jetbrains.kotlin.idea.j2k.IdeaResolverForConverter
+import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
 import org.jetbrains.kotlin.j2k.ConverterSettings
 import org.jetbrains.kotlin.j2k.FilesConversionScope
 import org.jetbrains.kotlin.j2k.IdeaReferenceSearcher
 import org.jetbrains.kotlin.j2k.JavaToKotlinConverter
-import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiJavaFile
-import com.intellij.psi.PsiManager
-import java.util.ArrayList
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.psi.codeStyle.CodeStyleManager
-import java.io.IOException
-import com.intellij.openapi.ui.ex.MessagesEx
-import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
-import com.intellij.openapi.vfs.CharsetToolkit
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.utils.addIfNotNull
-import com.intellij.openapi.vfs.VfsUtilCore
-import com.intellij.openapi.vfs.VirtualFileVisitor
-import org.jetbrains.kotlin.idea.j2k.IdeaResolverForConverter
+import java.io.IOException
+import java.util.ArrayList
 
 public class JavaToKotlinAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
-        val selectedJavaFiles = selectedJavaFiles(e).toList()
+        val javaFiles = selectedJavaFiles(e).toList()
         val project = CommonDataKeys.PROJECT.getData(e.getDataContext())!!
+
+        var convertedTexts: List<String>? = null
+        fun convert() {
+            val converter = JavaToKotlinConverter(project, ConverterSettings.defaultSettings, FilesConversionScope(javaFiles), IdeaReferenceSearcher, IdeaResolverForConverter)
+            convertedTexts = converter.elementsToKotlin(javaFiles.map { it to J2kPostProcessor(it, formatCode = true) },
+                                                        ProgressManager.getInstance().getProgressIndicator())
+        }
+
+        if (!ProgressManager.getInstance().runProcessWithProgressSynchronously(
+                {
+                    ApplicationManager.getApplication().runReadAction(::convert)
+                },
+                "Converting Java to Kotlin",
+                true,
+                project)) return
+
 
         CommandProcessor.getInstance().executeCommand(project, object : Runnable {
             override fun run() {
-                val newFiles = convertFiles(selectedJavaFiles, project)
-                deleteFiles(selectedJavaFiles)
-                reformatFiles(newFiles, project)
+                CommandProcessor.getInstance().markCurrentCommandAsGlobal(project)
 
-                if (newFiles.size() == 1) {
-                    FileEditorManager.getInstance(project).openFile(newFiles.single(), true)
+                val newFiles = saveResults(javaFiles, convertedTexts!!, project)
+                deleteFiles(javaFiles)
+
+                newFiles.singleOrNull()?.let {
+                    FileEditorManager.getInstance(project).openFile(it, true)
                 }
             }
         }, "Convert files from Java to Kotlin", null)
@@ -65,16 +84,16 @@ public class JavaToKotlinAction : AnAction() {
         e.getPresentation().setEnabled(enabled)
     }
 
-    private fun selectedJavaFiles(e: AnActionEvent): Stream<PsiJavaFile> {
-        val virtualFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY) ?: return streamOf()
-        val project = CommonDataKeys.PROJECT.getData(e.getDataContext()) ?: return streamOf()
+    private fun selectedJavaFiles(e: AnActionEvent): Sequence<PsiJavaFile> {
+        val virtualFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY) ?: return sequenceOf()
+        val project = CommonDataKeys.PROJECT.getData(e.getDataContext()) ?: return sequenceOf()
         return allJavaFiles(virtualFiles, project)
     }
 
-    private fun allJavaFiles(filesOrDirs: Array<VirtualFile>, project: Project): Stream<PsiJavaFile> {
+    private fun allJavaFiles(filesOrDirs: Array<VirtualFile>, project: Project): Sequence<PsiJavaFile> {
         val manager = PsiManager.getInstance(project)
         return allFiles(filesOrDirs)
-                .stream()
+                .sequence()
                 .map { manager.findFile(it) as? PsiJavaFile }
                 .filterNotNull()
     }
@@ -92,22 +111,7 @@ public class JavaToKotlinAction : AnAction() {
         return result
     }
 
-    private fun reformatFiles(kotlinFiles: List<VirtualFile>, project: Project) {
-        for (file in kotlinFiles) {
-            ApplicationManager.getApplication().runWriteAction {
-                val jetFile = PsiManager.getInstance(project).findFile(file) as? JetFile
-                if (jetFile != null) {
-                    CodeStyleManager.getInstance(project).reformat(jetFile)
-                }
-            }
-        }
-    }
-
-    private fun convertFiles(javaFiles: List<PsiJavaFile>, project: Project): List<VirtualFile> {
-        val converter = JavaToKotlinConverter(project, ConverterSettings.defaultSettings, FilesConversionScope(javaFiles), IdeaReferenceSearcher, IdeaResolverForConverter)
-
-        val convertedTexts = converter.elementsToKotlin(javaFiles.map { it to J2kPostProcessor(it) })
-
+    private fun saveResults(javaFiles: List<PsiJavaFile>, convertedTexts: List<String>, project: Project): List<VirtualFile> {
         val result = ArrayList<VirtualFile>()
         for ((i, psiFile) in javaFiles.withIndex()) {
             ApplicationManager.getApplication().runWriteAction {

@@ -35,7 +35,7 @@ public abstract class AbstractJavaToKotlinConverterMultiFileTest : AbstractJavaT
         val project = LightPlatformTestCase.getProject()!!
         val psiManager = PsiManager.getInstance(project)
 
-        val javaFiles = File(dirPath).listFiles {(file, name): Boolean -> name.endsWith(".java") }
+        val javaFiles = File(dirPath).listFiles { file, name -> name.endsWith(".java") }
         val psiFiles = ArrayList<PsiJavaFile>()
         for (javaFile: File in javaFiles) {
             val virtualFile = addFile(javaFile, "test")
@@ -44,8 +44,7 @@ public abstract class AbstractJavaToKotlinConverterMultiFileTest : AbstractJavaT
         }
 
         val converter = JavaToKotlinConverter(project, ConverterSettings.defaultSettings, FilesConversionScope(psiFiles), IdeaReferenceSearcher, IdeaResolverForConverter)
-        val results: List<String> = converter.elementsToKotlin(psiFiles.map { it to J2kPostProcessor(it) })
-                .map { reformat(it, project) }
+        val results: List<String> = converter.elementsToKotlin(psiFiles.map { it to J2kPostProcessor(it, formatCode = true) })
 
         fun expectedFile(i: Int) = File(javaFiles[i].getPath().replace(".java", ".kt"))
 
@@ -59,14 +58,6 @@ public abstract class AbstractJavaToKotlinConverterMultiFileTest : AbstractJavaT
         for ((i, jetFile) in jetFiles.withIndex()) {
             JetTestUtils.assertEqualsToFile(expectedFile(i), addErrorsDump(jetFile))
         }
-    }
-
-    private fun reformat(text: String, project: Project): String {
-        val convertedFile = JetTestUtils.createFile("converted", text, project)
-        WriteCommandAction.runWriteCommandAction(project) {
-            CodeStyleManager.getInstance(project)!!.reformat(convertedFile)
-        }
-        return convertedFile.getText()!!
     }
 
     override fun getProjectDescriptor()

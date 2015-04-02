@@ -21,10 +21,13 @@ import com.intellij.formatting.FormattingModelBuilder;
 import com.intellij.formatting.FormattingModelProvider;
 import com.intellij.formatting.Indent;
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.editor.impl.DocumentImpl;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
+import com.intellij.psi.formatter.FormattingDocumentModelImpl;
+import com.intellij.psi.formatter.PsiBasedFormattingModel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.JetLanguage;
 
@@ -37,8 +40,15 @@ public class JetFormattingModelBuilder implements FormattingModelBuilder {
                 containingFile.getNode(), NodeAlignmentStrategy.getNullStrategy(), Indent.getNoneIndent(), null, settings,
                 FormatterPackage.createSpacingBuilder(settings));
 
-        return FormattingModelProvider.createFormattingModelForPsiFile(
-                element.getContainingFile(), block, settings);
+        //TODO: this is temporary code to allow formatting non-physical files in non-UI thread (used by conversion from Java to Kotlin)
+        // it's needed until IDEA's issue with this document being created with wrong threading policy is fixed
+        if (!element.isPhysical()) {
+            FormattingDocumentModelImpl formattingDocumentModel =
+                    new FormattingDocumentModelImpl(new DocumentImpl(containingFile.getViewProvider().getContents(), true), containingFile);
+            return new PsiBasedFormattingModel(containingFile, block, formattingDocumentModel);
+        }
+
+        return FormattingModelProvider.createFormattingModelForPsiFile(element.getContainingFile(), block, settings);
     }
 
     @Override

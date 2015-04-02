@@ -16,7 +16,10 @@
 
 package org.jetbrains.kotlin.idea.j2k
 
+import com.intellij.openapi.editor.impl.DocumentImpl
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.psi.PsiElement
+import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.diagnostics.Diagnostic
@@ -31,9 +34,11 @@ import org.jetbrains.kotlin.idea.quickfix.RemoveRightPartOfBinaryExpressionFix
 import org.jetbrains.kotlin.j2k.PostProcessor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import java.lang.reflect.Field
+import java.lang.reflect.Modifier
 import java.util.ArrayList
 
-public class J2kPostProcessor(override val contextToAnalyzeIn: PsiElement) : PostProcessor {
+public class J2kPostProcessor(override val contextToAnalyzeIn: PsiElement, private val formatCode: Boolean) : PostProcessor {
     override fun analyzeFile(file: JetFile): BindingContext {
         return file.analyzeFullyAndGetResult().bindingContext
     }
@@ -108,6 +113,10 @@ public class J2kPostProcessor(override val contextToAnalyzeIn: PsiElement) : Pos
 
         for (typeArgs in redundantTypeArgs) {
             typeArgs.delete()
+        }
+
+        if (formatCode) {
+            CodeStyleManager.getInstance(contextToAnalyzeIn.getProject()).reformat(file)
         }
     }
 }

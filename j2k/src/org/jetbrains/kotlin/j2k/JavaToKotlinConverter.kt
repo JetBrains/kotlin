@@ -17,9 +17,13 @@
 package org.jetbrains.kotlin.j2k
 
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.progress.EmptyProgressIndicator
 import com.intellij.openapi.progress.ProcessCanceledException
+import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiJavaFile
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -73,29 +77,68 @@ public class JavaToKotlinConverter(private val project: Project,
                                    private val resolverForConverter: ResolverForConverter) {
     private val LOG = Logger.getInstance("#org.jetbrains.kotlin.j2k.JavaToKotlinConverter")
 
-    public fun elementsToKotlin(psiElementsAndProcessors: List<Pair<PsiElement, PostProcessor?>>): List<String> {
+    public fun elementsToKotlin(
+            psiElementsAndProcessors: List<Pair<PsiElement, PostProcessor?>>,
+            progress: ProgressIndicator = EmptyProgressIndicator()
+    ): List<String> {
         try {
-            val intermediateResults = ArrayList<((Map<PsiElement, UsageProcessing>) -> String)?>(psiElementsAndProcessors.size())
+            val elementCount = psiElementsAndProcessors.size()
+            val intermediateResults = ArrayList<((Map<PsiElement, UsageProcessing>) -> String)?>(elementCount)
             val usageProcessings = HashMap<PsiElement, UsageProcessing>()
             val usageProcessingCollector: (UsageProcessing) -> Unit = { usageProcessing ->
                 assert(!usageProcessings.containsKey(usageProcessing.targetElement))
                     { "Duplicated UsageProcessing for target element ${usageProcessing.targetElement}" }
                 usageProcessings.put(usageProcessing.targetElement, usageProcessing)
             }
-            for ((psiElement, postProcessor) in psiElementsAndProcessors) {
+
+            val progressText = "Converting Java to Kotlin"
+            val fileCountText = elementCount.toString() + " " + if (elementCount > 1) "files" else "file"
+            var fraction = 0.0
+            var pass = 1
+
+            fun processFilesWithProgress(passFraction: Double, processFile: (Int) -> Unit) {
+                // we use special process with EmptyProgressIndicator to avoid changing text in our progress by inheritors search inside etc
+                ProgressManager.getInstance().runProcess(
+                        {
+                            progress.setText("$progressText ($fileCountText) - pass $pass of 3")
+
+                            val filesCount = psiElementsAndProcessors.indices
+                            for (i in filesCount) {
+                                progress.checkCanceled()
+                                progress.setFraction(fraction + passFraction * i / elementCount)
+
+                                val psiFile = psiElementsAndProcessors[i].first as? PsiFile
+                                if (psiFile != null) {
+                                    progress.setText2(psiFile.getVirtualFile().getPresentableUrl())
+                                }
+
+                                processFile(i)
+                            }
+
+                            pass++
+                            fraction += passFraction
+                        },
+                        EmptyProgressIndicator())
+            }
+
+            processFilesWithProgress(0.25) { i ->
+                val psiElement = psiElementsAndProcessors[i].first
+                val postProcessor = psiElementsAndProcessors[i].second
                 val converter = Converter.create(psiElement, settings, conversionScope, referenceSearcher, resolverForConverter, postProcessor, usageProcessingCollector)
                 val result = converter.convert()
                 intermediateResults.add(result)
             }
 
-            val results = ArrayList<String>(psiElementsAndProcessors.size())
-            for ((i, result) in intermediateResults.withIndex()) {
+            val results = ArrayList<String>(elementCount)
+            processFilesWithProgress(0.25) { i ->
+                val result = intermediateResults[i]
                 results.add(if (result != null) result(usageProcessings) else "")
                 intermediateResults[i] = null // to not hold unused objects in the heap
             }
 
-            val finalResults = ArrayList<String>(psiElementsAndProcessors.size())
-            for ((i, result) in results.withIndex()) {
+            val finalResults = ArrayList<String>(elementCount)
+            processFilesWithProgress(0.5) { i ->
+                val result = results[i]
                 val postProcessor = psiElementsAndProcessors[i].second
                 if (postProcessor != null) {
                     try {
@@ -113,6 +156,7 @@ public class JavaToKotlinConverter(private val project: Project,
                     finalResults.add(result)
                 }
             }
+
             return finalResults
         }
         catch(e: ElementCreationStackTraceRequiredException) {

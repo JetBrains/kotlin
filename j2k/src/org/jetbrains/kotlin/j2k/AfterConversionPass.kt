@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.psi.JetProperty
 
 class AfterConversionPass(val project: Project, val postProcessor: PostProcessor) {
     public fun run(kotlinCode: String): String {
+        //TODO: it's more correct to analyze all converted files together
         val kotlinFile = JetPsiFactory(project).createAnalyzableFile(
                 "fileForAfterConversionPass.kt", kotlinCode, postProcessor.contextToAnalyzeIn
         )

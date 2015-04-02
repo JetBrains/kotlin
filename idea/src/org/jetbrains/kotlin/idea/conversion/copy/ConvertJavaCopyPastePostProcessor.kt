@@ -127,7 +127,7 @@ public class ConvertJavaCopyPastePostProcessor() : CopyPastePostProcessor<TextBl
             val elementToConvert = findTopMostParentWhollyInRange(currentRange, leafElement)
             val unconvertedPrefix = fileText.substring(currentRange.start, elementToConvert.range.start)
             result.append(unconvertedPrefix)
-            val converted = converter.elementsToKotlin(listOf(elementToConvert to J2kPostProcessor(fileCopiedTo)))[0]
+            val converted = converter.elementsToKotlin(listOf(elementToConvert to J2kPostProcessor(fileCopiedTo, formatCode = false)))[0]
             if (converted.isNotEmpty()) {
                 result.append(converted)
             }
