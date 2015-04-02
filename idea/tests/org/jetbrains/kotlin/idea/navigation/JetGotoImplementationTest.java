@@ -70,7 +70,7 @@ public class JetGotoImplementationTest extends LightCodeInsightTestCase {
 
     @Override
     protected Sdk getProjectJDK() {
-        return PluginTestCaseBase.jdkFromIdeaHome();
+        return PluginTestCaseBase.mockJdk();
     }
 
     protected void doTest() {

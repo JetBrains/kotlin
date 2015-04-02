@@ -102,7 +102,7 @@ class RunConfigurationTest: CodeInsightTestCase() {
         val createModuleResult = configureModule(moduleDirPath("module"), baseDir)
         val srcDir = createModuleResult.srcDir
 
-        configureRuntime(createModuleResult.module, PluginTestCaseBase.jdkFromIdeaHome())
+        configureRuntime(createModuleResult.module, PluginTestCaseBase.mockJdk())
 
         try {
             val expectedClasses = ArrayList<String>()
@@ -132,7 +132,7 @@ class RunConfigurationTest: CodeInsightTestCase() {
             Assert.assertEquals(expectedClasses, actualClasses)
         }
         finally {
-            ConfigLibraryUtil.unConfigureKotlinRuntime(createModuleResult.module, PluginTestCaseBase.jdkFromIdeaHome())
+            ConfigLibraryUtil.unConfigureKotlinRuntime(createModuleResult.module, PluginTestCaseBase.mockJdk())
         }
     }
 
@@ -184,7 +184,7 @@ class RunConfigurationTest: CodeInsightTestCase() {
     }
 
     override fun getTestDataPath() = PluginTestCaseBase.getTestDataPathBase() + "/run/"
-    override fun getTestProjectJdk() = PluginTestCaseBase.jdkFromIdeaHome()
+    override fun getTestProjectJdk() = PluginTestCaseBase.mockJdk()
 
     private class CreateModuleResult(
             val module: Module,

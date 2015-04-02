@@ -81,7 +81,7 @@ public class KotlinAndJavaCheckerTest extends KotlinDaemonAnalyzerTestCase {
 
     @Override
     protected Sdk getTestProjectJdk() {
-        return PluginTestCaseBase.jdkFromIdeaHome();
+        return PluginTestCaseBase.mockJdk();
     }
 
     @Override

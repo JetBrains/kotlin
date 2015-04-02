@@ -976,6 +976,6 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
 
     @Override
     protected Sdk getTestProjectJdk() {
-        return PluginTestCaseBase.jdkFromIdeaHome();
+        return PluginTestCaseBase.mockJdk();
     }
 }

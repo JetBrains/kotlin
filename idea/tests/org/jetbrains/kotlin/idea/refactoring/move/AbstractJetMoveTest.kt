@@ -80,7 +80,7 @@ public abstract class AbstractJetMoveTest : KotlinMultiFileTestCase() {
 
         val withRuntime = config["withRuntime"]?.getAsBoolean() ?: false
         if (withRuntime) {
-            ConfigLibraryUtil.configureKotlinRuntime(myModule, PluginTestCaseBase.jdkFromIdeaHome())
+            ConfigLibraryUtil.configureKotlinRuntime(myModule, PluginTestCaseBase.mockJdk())
         }
 
         doTest({ rootDir, rootAfter ->
@@ -114,7 +114,7 @@ public abstract class AbstractJetMoveTest : KotlinMultiFileTestCase() {
                 EditorFactory.getInstance()!!.releaseEditor(editor)
 
                 if (withRuntime) {
-                    ConfigLibraryUtil.unConfigureKotlinRuntime(myModule, PluginTestCaseBase.jdkFromIdeaHome())
+                    ConfigLibraryUtil.unConfigureKotlinRuntime(myModule, PluginTestCaseBase.mockJdk())
                 }
             }
         },

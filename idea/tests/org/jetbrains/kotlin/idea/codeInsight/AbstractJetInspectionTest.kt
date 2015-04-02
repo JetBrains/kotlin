@@ -70,7 +70,7 @@ public abstract class AbstractJetInspectionTest: LightCodeInsightFixtureTestCase
                 if (isWithRuntime) {
                     ConfigLibraryUtil.configureKotlinRuntime(
                             myFixture.getModule(),
-                            if (fullJdk) PluginTestCaseBase.fullJdk() else PluginTestCaseBase.jdkFromIdeaHome()
+                            if (fullJdk) PluginTestCaseBase.fullJdk() else PluginTestCaseBase.mockJdk()
                     )
                 }
 
