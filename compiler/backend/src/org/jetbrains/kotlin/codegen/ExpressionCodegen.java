@@ -2363,7 +2363,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 //justCoerce
                 receiver.put(receiver.type, v);
                 callableMethod.beforeParameterGeneration(v, StackValue.onStack(receiver.type));
-            } else {
+            }
+            else {
                 callableMethod.beforeParameterGeneration(v, null);
                 receiver.put(receiver.type, v);
             }
@@ -3259,18 +3260,17 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     private StackValue generateComparison(JetBinaryExpression expression, StackValue receiver) {
         ResolvedCall<?> resolvedCall = getResolvedCallWithAssert(expression, bindingContext);
-        FunctionDescriptor descriptor = (FunctionDescriptor) resolvedCall.getResultingDescriptor();
 
         JetExpression left = expression.getLeft();
         JetExpression right = expression.getRight();
-        Callable callable = resolveToCallable(descriptor, false, resolvedCall);
 
         Type type;
         StackValue leftValue;
         StackValue rightValue;
-        if (callable instanceof IntrinsicMethod) {
-            // Compare two primitive values
-            type = comparisonOperandType(expressionType(left), expressionType(right));
+        Type leftType = expressionType(left);
+        Type rightType = expressionType(right);
+        if (isPrimitive(leftType) && isPrimitive(rightType)) {
+            type = comparisonOperandType(leftType, rightType);
             leftValue = gen(left);
             rightValue = gen(right);
         }

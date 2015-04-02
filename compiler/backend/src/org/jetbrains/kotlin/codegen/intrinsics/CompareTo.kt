@@ -71,7 +71,7 @@ public class CompareTo : IntrinsicMethod() {
 
     //TODO seems we need to different CompareTo
     override fun supportCallable(): Boolean {
-        return false
+        return true
     }
 
     override fun toCallable(method: CallableMethod): ExtendedCallable {
