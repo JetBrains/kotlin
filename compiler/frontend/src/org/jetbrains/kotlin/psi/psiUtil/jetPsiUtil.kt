@@ -379,9 +379,9 @@ public fun ASTNode.siblings(forward: Boolean = true, withItself: Boolean = true)
     return if (withItself) stream else stream.drop(1)
 }
 
-public fun PsiElement.parents(withItself: Boolean = true): Stream<PsiElement> {
-    val stream = stream(this) { if (it is PsiFile) null else it.getParent() }
-    return if (withItself) stream else stream.drop(1)
+public fun PsiElement.parents(withItself: Boolean = true): Sequence<PsiElement> {
+    val sequence = sequence(this) { if (it is PsiFile) null else it.getParent() }
+    return if (withItself) sequence else sequence.drop(1)
 }
 
 public fun ASTNode.parents(withItself: Boolean = true): Stream<ASTNode> {
