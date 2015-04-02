@@ -11211,6 +11211,24 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("kt5840chain.kt")
+                public void testKt5840chain() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/kt5840chain.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt5840chainAndUse.kt")
+                public void testKt5840chainAndUse() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/kt5840chainAndUse.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt5840chainInChain.kt")
+                public void testKt5840chainInChain() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/kt5840chainInChain.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("kt5840doubleCall.kt")
                 public void testKt5840doubleCall() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/kt5840doubleCall.kt");
@@ -11226,6 +11244,18 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 @TestMetadata("kt5840insideCall.kt")
                 public void testKt5840insideCall() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/kt5840insideCall.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt5840longChain.kt")
+                public void testKt5840longChain() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/kt5840longChain.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt5840twoArgs.kt")
+                public void testKt5840twoArgs() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/kt5840twoArgs.kt");
                     doTest(fileName);
                 }
 
@@ -11280,6 +11310,42 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 @TestMetadata("kt7204false.kt")
                 public void testKt7204false() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/kt7204false.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt7204falseChain.kt")
+                public void testKt7204falseChain() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/kt7204falseChain.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt7204falseExtension.kt")
+                public void testKt7204falseExtension() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/kt7204falseExtension.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt7204falseInArgument.kt")
+                public void testKt7204falseInArgument() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/kt7204falseInArgument.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt7204receiver.kt")
+                public void testKt7204receiver() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/kt7204receiver.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt7204receiverAndChain.kt")
+                public void testKt7204receiverAndChain() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/kt7204receiverAndChain.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt7204receiverAndChainFalse.kt")
+                public void testKt7204receiverAndChainFalse() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/kt7204receiverAndChainFalse.kt");
                     doTest(fileName);
                 }
             }

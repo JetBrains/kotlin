@@ -267,20 +267,21 @@ public class ArgumentTypeResolver {
         Call call = context.call;
         ReceiverValue receiver = call.getExplicitReceiver();
         DataFlowInfo initialDataFlowInfo = context.dataFlowInfo;
+        // QualifierReceiver is a thing like Collections. which has no type or value
         if (receiver.exists() && !(receiver instanceof QualifierReceiver)) {
             DataFlowValue receiverDataFlowValue = DataFlowValueFactory.createDataFlowValue(receiver, context);
             // Additional "receiver != null" information for KT-5840
             // Should be applied if we consider a safe call
             // For an unsafe call, we should not do it,
-            // otherwise not-null will propagate to successor statements
-            DataFlowInfo receiverNotNullInfo = initialDataFlowInfo.disequate(receiverDataFlowValue, DataFlowValue.NULL);
+            // otherwise not-null will propagate to successive statements
+            // Sample: x?.foo(x.bar()) // Inside foo call, x is not-nullable
             if (PsiUtilPackage.isSafeCall(call)) {
-                initialDataFlowInfo = receiverNotNullInfo;
+                initialDataFlowInfo = initialDataFlowInfo.disequate(receiverDataFlowValue, DataFlowValue.NULL);
             }
         }
         infoForArguments.setInitialDataFlowInfo(initialDataFlowInfo);
 
-        for (ValueArgument argument : context.call.getValueArguments()) {
+        for (ValueArgument argument : call.getValueArguments()) {
             JetExpression expression = argument.getArgumentExpression();
             if (expression == null) continue;
 

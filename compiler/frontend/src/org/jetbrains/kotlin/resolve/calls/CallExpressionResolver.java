@@ -33,9 +33,9 @@ import org.jetbrains.kotlin.resolve.calls.context.CheckValueArgumentsMode;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.context.TemporaryTraceAndCache;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
+import org.jetbrains.kotlin.resolve.calls.model.SafeCallDataFlowStorage;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsUtil;
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
@@ -63,6 +63,13 @@ import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 public class CallExpressionResolver {
     @NotNull
     private ExpressionTypingServices expressionTypingServices;
+
+    // This field stores data flow information of x?.f1()?.f2()?.f3()?.f4() safe call chains
+    // Each chain inside a selector call is stored as a separate chain,
+    // so inside h1() in x?.f1(y?.g1()?.g2(z?.h1()))?.f2() we will have data flow information
+    // at z, y?.g1(), y, and x
+    @NotNull
+    private final SafeCallDataFlowStorage safeCallStorage = new SafeCallDataFlowStorage();
 
     @Inject
     public void setExpressionTypingServices(@NotNull ExpressionTypingServices expressionTypingServices) {
@@ -183,9 +190,12 @@ public class CallExpressionResolver {
 
         TemporaryTraceAndCache temporaryForFunction = TemporaryTraceAndCache.create(
                 context, "trace to resolve as function call", callExpression);
+        // A new call is going to be made, new safe call chain should be created
+        safeCallStorage.beginChain();
         ResolvedCall<FunctionDescriptor> resolvedCall = getResolvedCallForFunction(
                 call, callExpression, context.replaceTraceAndCache(temporaryForFunction),
                 CheckValueArgumentsMode.ENABLED, result);
+        safeCallStorage.endChain();
         if (result[0]) {
             FunctionDescriptor functionDescriptor = resolvedCall != null ? resolvedCall.getResultingDescriptor() : null;
             temporaryForFunction.commit();
@@ -205,14 +215,7 @@ public class CallExpressionResolver {
 
             JetType type = functionDescriptor.getReturnType();
 
-
-            if (resolvedCall.isSafeCall()) {
-                // For safe call, we should not take arguments into account because it's only one branch, see KT-7204
-                return JetTypeInfo.create(type, context.dataFlowInfo);
-            } else {
-                // For simple call, we take data flow info for arguments as the result
-                return JetTypeInfo.create(type, resolvedCall.getDataFlowInfoForArguments().getResultInfo());
-            }
+            return JetTypeInfo.create(type, resolvedCall.getDataFlowInfoForArguments().getResultInfo());
         }
 
         JetExpression calleeExpression = callExpression.getCalleeExpression();
@@ -280,15 +283,24 @@ public class CallExpressionResolver {
         JetExpression selectorExpression = expression.getSelectorExpression();
         JetExpression receiverExpression = expression.getReceiverExpression();
         ResolutionContext contextForReceiver = context.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT);
+        if (expression.getOperationSign() == JetTokens.SAFE_ACCESS) {
+            safeCallStorage.beginReceiverAnalysis();
+        }
+        // Visit receiver (x in x.y or x?.z) here
         JetTypeInfo receiverTypeInfo = expressionTypingServices.getTypeInfo(receiverExpression, contextForReceiver);
+        if (expression.getOperationSign() == JetTokens.SAFE_ACCESS) {
+            safeCallStorage.endReceiverAnalysis(receiverTypeInfo.getDataFlowInfo());
+        }
         JetType receiverType = receiverTypeInfo.getType();
         QualifierReceiver qualifierReceiver = (QualifierReceiver) context.trace.get(BindingContext.QUALIFIER, receiverExpression);
 
         if (receiverType == null) receiverType = ErrorUtils.createErrorType("Type for " + expression.getText());
 
+        // Receiver changes should be always applied, at least for argument analysis
         context = context.replaceDataFlowInfo(receiverTypeInfo.getDataFlowInfo());
 
         ReceiverValue receiver = qualifierReceiver == null ? new ExpressionReceiver(receiverExpression, receiverType) : qualifierReceiver;
+        // Visit selector (y in x.y) here
         JetTypeInfo selectorReturnTypeInfo = getSelectorReturnTypeInfo(
                 receiver, expression.getOperationTokenNode(), selectorExpression, context);
         JetType selectorReturnType = selectorReturnTypeInfo.getType();
@@ -314,7 +326,23 @@ public class CallExpressionResolver {
             return BasicExpressionTypingVisitor.createCompileTimeConstantTypeInfo(value, expression, context);
         }
 
-        JetTypeInfo typeInfo = JetTypeInfo.create(selectorReturnType, selectorReturnTypeInfo.getDataFlowInfo());
+        JetTypeInfo typeInfo;
+        // For safe call, we should not take selector data flow info into account because it's only one branch, see KT-7204
+        // x?.foo(y!!) // y becomes not-nullable during argument analysis
+        // y.bar()     // ERROR: y is nullable at this point
+        // But if we are inside safe call chain, we SHOULD take arguments into account, for example
+        // x?.foo(x.field)?.bar(x.field)?.gav(x.field) (like kt5840longChain)
+        if (expression.getOperationSign() == JetTokens.SAFE_ACCESS && safeCallStorage.chainOver()) {
+            // We should take into account only data flow information about first receiver in safe call chain
+            // Example
+            // foo(x!!)?.bar(x.gav(), y!!)  ?.  zue()        with the following x.gav() (like kt7204receiverAndChainFalse)
+            // x != null should be taken into account, but y != null should not
+            typeInfo = JetTypeInfo.create(selectorReturnType, safeCallStorage.getAndClearFirstReceiver());
+        }
+        else {
+            // Take selector info
+            typeInfo = JetTypeInfo.create(selectorReturnType, selectorReturnTypeInfo.getDataFlowInfo());
+        }
         if (context.contextDependency == INDEPENDENT) {
             DataFlowUtils.checkType(typeInfo, expression, context);
         }
