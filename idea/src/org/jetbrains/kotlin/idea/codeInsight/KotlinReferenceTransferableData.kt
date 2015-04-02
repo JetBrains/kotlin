@@ -16,10 +16,11 @@
 
 package org.jetbrains.kotlin.idea.codeInsight
 
-import com.intellij.codeInsight.editorActions.*
-import java.io.*
-import java.awt.datatransfer.*
-import kotlin.properties.*
+import com.intellij.codeInsight.editorActions.ReferenceData
+import com.intellij.codeInsight.editorActions.TextBlockTransferableData
+import java.awt.datatransfer.DataFlavor
+import java.io.Serializable
+import kotlin.properties.Delegates
 
 public class KotlinReferenceTransferableData(
         val data: Array<KotlinReferenceData>
@@ -76,7 +77,10 @@ public class KotlinReferenceData(
     companion object {
         public val dataFlavor: DataFlavor? by Delegates.lazy {
             try {
-                DataFlavor(DataFlavor.javaJVMLocalObjectMimeType + ";class=" + javaClass<KotlinReferenceData>().getName(), "KotlinReferenceData")
+                val dataClass = javaClass<KotlinReferenceData>()
+                DataFlavor(DataFlavor.javaJVMLocalObjectMimeType + ";class=" + dataClass.getName(),
+                           "KotlinReferenceData",
+                           dataClass.getClassLoader())
             }
             catch (e: NoClassDefFoundError) {
                 null
