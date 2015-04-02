@@ -50,9 +50,10 @@ public class JavaToKotlinAction : AnAction() {
 
         var convertedTexts: List<String>? = null
         fun convert() {
-            val converter = JavaToKotlinConverter(project, ConverterSettings.defaultSettings, IdeaReferenceSearcher, IdeaResolverForConverter)
-            convertedTexts = converter.elementsToKotlin(javaFiles.map { it to J2kPostProcessor(it, formatCode = true) },
-                                                        ProgressManager.getInstance().getProgressIndicator())
+            val converter = JavaToKotlinConverter(project, ConverterSettings.defaultSettings,
+                                                  IdeaReferenceSearcher, IdeaResolverForConverter, J2kPostProcessor(formatCode = true))
+            val inputElements = javaFiles.map { JavaToKotlinConverter.InputElement(it, it) }
+            convertedTexts = converter.elementsToKotlin(inputElements, ProgressManager.getInstance().getProgressIndicator())
         }
 
         if (!ProgressManager.getInstance().runProcessWithProgressSynchronously(

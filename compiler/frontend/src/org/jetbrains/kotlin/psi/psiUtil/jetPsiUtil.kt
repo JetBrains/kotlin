@@ -448,3 +448,34 @@ public fun JetStringTemplateExpression.getContentRange(): TextRange {
 
 public fun JetStringTemplateExpression.isSingleQuoted(): Boolean
         = getNode().getFirstChildNode().getTextLength() == 1
+
+public fun PsiFile.elementsInRange(range: TextRange): List<PsiElement> {
+    var offset = range.getStartOffset()
+    val result = ArrayList<PsiElement>()
+    while (offset < range.getEndOffset()) {
+        val currentRange = TextRange(offset, range.getEndOffset())
+        val leaf = findFirstLeafWhollyInRange(this, currentRange) ?: break
+
+        val element = leaf
+                .parents(withItself = true)
+                .first {
+                    val parent = it.getParent()
+                    parent == null || parent.getTextRange() !in currentRange
+                }
+        result.add(element)
+
+        offset = element.getTextRange().getEndOffset()
+    }
+    return result
+}
+
+private fun findFirstLeafWhollyInRange(file: PsiFile, range: TextRange): PsiElement? {
+    var element = file.findElementAt(range.getStartOffset()) ?: return null
+    var elementRange = element.getTextRange()
+    if (elementRange.getStartOffset() < range.getStartOffset()) {
+        element = file.findElementAt(elementRange.getEndOffset()) ?: return null
+        elementRange = element.getTextRange()
+    }
+    assert(elementRange.getStartOffset() >= range.getStartOffset())
+    return if (elementRange.getEndOffset() <= range.getEndOffset()) element else null
+}

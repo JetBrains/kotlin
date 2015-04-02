@@ -17,14 +17,15 @@
 package org.jetbrains.kotlin.j2k
 
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.editor.RangeMarker
 import com.intellij.openapi.progress.EmptyProgressIndicator
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiJavaFile
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.j2k.ast.Element
@@ -36,8 +37,7 @@ import java.util.ArrayList
 import java.util.HashMap
 
 public trait PostProcessor {
-    public val contextToAnalyzeIn: PsiElement
-    public fun analyzeFile(file: JetFile): BindingContext
+    public fun analyzeFile(file: JetFile, range: TextRange?): BindingContext
 
     public open fun fixForProblem(problem: Diagnostic): (() -> Unit)? {
         val psiElement = problem.getPsiElement()
@@ -51,7 +51,7 @@ public trait PostProcessor {
             Errors.VAL_REASSIGNMENT -> { ->
                 val property = (psiElement as? JetSimpleNameExpression)?.getReference()?.resolve() as? JetProperty
                 if (property != null && !property.isVar()) {
-                    val factory = JetPsiFactory(contextToAnalyzeIn.getProject())
+                    val factory = JetPsiFactory(psiElement.getProject())
                     property.getValOrVarNode().getPsi()!!.replace(factory.createVarNode().getPsi()!!)
                 }
             }
@@ -60,21 +60,27 @@ public trait PostProcessor {
         }
     }
 
-    public fun doAdditionalProcessing(file: JetFile)
+    public fun doAdditionalProcessing(file: JetFile, rangeMarker: RangeMarker?)
 }
 
 public class JavaToKotlinConverter(private val project: Project,
                                    private val settings: ConverterSettings,
                                    private val referenceSearcher: ReferenceSearcher,
-                                   private val resolverForConverter: ResolverForConverter) {
+                                   private val resolverForConverter: ResolverForConverter,
+                                   private val postProcessor: PostProcessor?) {
     private val LOG = Logger.getInstance("#org.jetbrains.kotlin.j2k.JavaToKotlinConverter")
 
+    public data class InputElement(
+            val element: PsiElement,
+            val postProcessingContext: PsiElement?
+    )
+
     public fun elementsToKotlin(
-            psiElementsAndProcessors: List<Pair<PsiElement, PostProcessor?>>,
+            inputElements: List<InputElement>,
             progress: ProgressIndicator = EmptyProgressIndicator()
     ): List<String> {
         try {
-            val elementCount = psiElementsAndProcessors.size()
+            val elementCount = inputElements.size()
             val intermediateResults = ArrayList<((Map<PsiElement, UsageProcessing>) -> String)?>(elementCount)
             val usageProcessings = HashMap<PsiElement, UsageProcessing>()
             val usageProcessingCollector: (UsageProcessing) -> Unit = { usageProcessing ->
@@ -94,12 +100,12 @@ public class JavaToKotlinConverter(private val project: Project,
                         {
                             progress.setText("$progressText ($fileCountText) - pass $pass of 3")
 
-                            val filesCount = psiElementsAndProcessors.indices
+                            val filesCount = inputElements.indices
                             for (i in filesCount) {
                                 progress.checkCanceled()
                                 progress.setFraction(fraction + passFraction * i / elementCount)
 
-                                val psiFile = psiElementsAndProcessors[i].first as? PsiFile
+                                val psiFile = inputElements[i].element as? PsiFile
                                 if (psiFile != null) {
                                     progress.setText2(psiFile.getVirtualFile().getPresentableUrl())
                                 }
@@ -114,13 +120,12 @@ public class JavaToKotlinConverter(private val project: Project,
             }
 
             processFilesWithProgress(0.25) { i ->
-                val psiElement = psiElementsAndProcessors[i].first
-                val postProcessor = psiElementsAndProcessors[i].second
+                val psiElement = inputElements[i].element
 
                 fun inConversionScope(element: PsiElement)
-                        = psiElementsAndProcessors.any { it.first.isAncestor(element, strict = false) }
+                        = inputElements.any { it.element.isAncestor(element, strict = false) }
 
-                val converter = Converter.create(psiElement, settings, ::inConversionScope, referenceSearcher, resolverForConverter, postProcessor, usageProcessingCollector)
+                val converter = Converter.create(psiElement, settings, ::inConversionScope, referenceSearcher, resolverForConverter, usageProcessingCollector)
                 val result = converter.convert()
                 intermediateResults.add(result)
             }
@@ -135,10 +140,11 @@ public class JavaToKotlinConverter(private val project: Project,
             val finalResults = ArrayList<String>(elementCount)
             processFilesWithProgress(0.5) { i ->
                 val result = results[i]
-                val postProcessor = psiElementsAndProcessors[i].second
                 if (postProcessor != null) {
                     try {
-                        finalResults.add(AfterConversionPass(project, postProcessor).run(result))
+                        val kotlinFile = JetPsiFactory(project).createAnalyzableFile("dummy.kt", result, inputElements[i].postProcessingContext!!)
+                        AfterConversionPass(project, postProcessor).run(kotlinFile, null)
+                        finalResults.add(kotlinFile.getText())
                     }
                     catch(e: ProcessCanceledException) {
                         throw e
@@ -159,7 +165,7 @@ public class JavaToKotlinConverter(private val project: Project,
             // if we got this exception then we need to turn element creation stack traces on to get better diagnostic
             Element.saveCreationStacktraces = true
             try {
-                return elementsToKotlin(psiElementsAndProcessors)
+                return elementsToKotlin(inputElements)
             }
             finally {
                 Element.saveCreationStacktraces = false

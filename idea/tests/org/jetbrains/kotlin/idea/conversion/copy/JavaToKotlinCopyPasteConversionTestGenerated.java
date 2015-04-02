@@ -102,6 +102,18 @@ public class JavaToKotlinCopyPasteConversionTestGenerated extends AbstractJavaTo
         doTest(fileName);
     }
 
+    @TestMetadata("RedundantTypeCast.java")
+    public void testRedundantTypeCast() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/conversion/RedundantTypeCast.java");
+        doTest(fileName);
+    }
+
+    @TestMetadata("RedundantTypeCast2.java")
+    public void testRedundantTypeCast2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/conversion/RedundantTypeCast2.java");
+        doTest(fileName);
+    }
+
     @TestMetadata("SampleBlock.java")
     public void testSampleBlock() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/conversion/SampleBlock.java");

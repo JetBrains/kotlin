@@ -27,16 +27,17 @@ import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.TextRange
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.*
 import com.intellij.psi.codeStyle.CodeStyleManager
 import org.jetbrains.kotlin.idea.editor.JetEditorOptions
 import org.jetbrains.kotlin.idea.j2k.IdeaResolverForConverter
 import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
+import org.jetbrains.kotlin.j2k.AfterConversionPass
 import org.jetbrains.kotlin.j2k.ConverterSettings
 import org.jetbrains.kotlin.j2k.IdeaReferenceSearcher
 import org.jetbrains.kotlin.j2k.JavaToKotlinConverter
 import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import java.awt.datatransfer.Transferable
 import java.util.ArrayList
@@ -73,7 +74,7 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
         fun doConversion(): String? {
             val sourceFile = PsiFileFactory.getInstance(project).
                     createFileFromText(data.fileName, JavaLanguage.INSTANCE, data.fileText) as PsiJavaFile
-            return convertCopiedCodeToKotlin(data, sourceFile, targetFile)
+            return convertCopiedCodeToKotlin(data, sourceFile)
         }
 
         var conversionResult: String? = null
@@ -96,14 +97,15 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
                 val endOffsetAfterCopy = startOffset + conversionResult!!.length()
                 editor.getCaretModel().moveToOffset(endOffsetAfterCopy)
 
-                CodeStyleManager.getInstance(project)!!.reformatText(targetFile, startOffset, endOffsetAfterCopy)
+                PsiDocumentManager.getInstance(project).commitAllDocuments()
+                AfterConversionPass(project, J2kPostProcessor(formatCode = true)).run(targetFile, TextRange(startOffset, endOffsetAfterCopy))
 
                 conversionPerformed = true
             }
         }
     }
 
-    private fun convertCopiedCodeToKotlin(code: CopiedCode, sourceFile: PsiJavaFile, targetFile: JetFile): String? {
+    private fun convertCopiedCodeToKotlin(code: CopiedCode, sourceFile: PsiJavaFile): String? {
         assert(code.startOffsets.size() == code.endOffsets.size(), "Must have the same size")
         val sourceFileText = code.fileText
 
@@ -118,10 +120,12 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
                 sourceFile.getProject(),
                 ConverterSettings.defaultSettings,
                 IdeaReferenceSearcher,
-                IdeaResolverForConverter
+                IdeaResolverForConverter,
+                null
         )
 
-        val results = converter.elementsToKotlin(list.filterIsInstance<PsiElement>().map { it to J2kPostProcessor(targetFile, formatCode = false) })
+        val inputElements = list.filterIsInstance<PsiElement>().map { JavaToKotlinConverter.InputElement(it, null) }
+        val results = converter.elementsToKotlin(inputElements)
 
         var resultIndex = 0
         val convertedCodeBuilder = StringBuilder()
@@ -157,41 +161,15 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
             fileText: String,
             range: TextRange
     ) {
-        var currentRange = range
-        while (!currentRange.isEmpty()) {
-            val leaf = findFirstLeafWhollyInRange(file, currentRange)
-            if (leaf == null) {
-                val unconvertedSuffix = fileText.substring(currentRange.start, currentRange.end)
-                add(unconvertedSuffix)
-                break
-            }
-
-            val elementToConvert = leaf
-                    .parents(withItself = true)
-                    .first {
-                        val parent = it.getParent()
-                        parent == null || parent.range !in currentRange
-                    }
-            val elementToConvertRange = elementToConvert.range
-
-            val unconvertedPrefix = fileText.substring(currentRange.start, elementToConvertRange.start)
-            add(unconvertedPrefix)
-
-            add(elementToConvert)
-
-            currentRange = TextRange(elementToConvertRange.end, currentRange.end)
+        val elements = file.elementsInRange(range)
+        if (elements.isEmpty()) {
+            add(fileText.substring(range.getStartOffset(), range.getEndOffset()))
         }
-    }
-
-    private fun findFirstLeafWhollyInRange(file: PsiJavaFile, range: TextRange): PsiElement? {
-        var element = file.findElementAt(range.start) ?: return null
-        var elementRange = element.range
-        if (elementRange.start < range.start) {
-            element = file.findElementAt(elementRange.end) ?: return null
-            elementRange = element.range
+        else {
+            add(fileText.substring(range.getStartOffset(), elements.first().getTextRange().getStartOffset()))
+            addAll(elements)
+            add(fileText.substring(elements.last().getTextRange().getEndOffset(), range.getEndOffset()))
         }
-        assert(elementRange.start >= range.start)
-        return if (elementRange.end <= range.end) element else null
     }
 
     private fun okFromDialog(project: Project): Boolean {

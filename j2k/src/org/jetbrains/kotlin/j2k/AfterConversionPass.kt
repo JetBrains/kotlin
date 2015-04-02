@@ -16,26 +16,33 @@
 
 package org.jetbrains.kotlin.j2k
 
-import org.jetbrains.kotlin.psi.JetPsiFactory
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
-import org.jetbrains.kotlin.psi.JetUnaryExpression
-import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.psi.JetFile
 
-class AfterConversionPass(val project: Project, val postProcessor: PostProcessor) {
-    public fun run(kotlinCode: String): String {
-        //TODO: it's more correct to analyze all converted files together
-        val kotlinFile = JetPsiFactory(project).createAnalyzableFile(
-                "fileForAfterConversionPass.kt", kotlinCode, postProcessor.contextToAnalyzeIn
-        )
-        val bindingContext = postProcessor.analyzeFile(kotlinFile)
+public class AfterConversionPass(val project: Project, val postProcessor: PostProcessor) {
+    public fun run(kotlinFile: JetFile, range: TextRange?) {
+        val bindingContext = postProcessor.analyzeFile(kotlinFile, range)
 
-        val fixes = bindingContext.getDiagnostics().map {
-            val fix = postProcessor.fixForProblem(it)
-            if (fix != null) it.getPsiElement() to fix else null
-        }.filterNotNull()
+        fun fixForProblem(diagnostic: Diagnostic): (() -> Unit)? {
+            val psiElement = diagnostic.getPsiElement()
+            if (range != null && psiElement.getTextRange() !in range) return null
+            return postProcessor.fixForProblem(diagnostic)
+        }
+
+        val fixes = bindingContext.getDiagnostics()
+                .map {
+                    val fix = fixForProblem(it)
+                    if (fix != null) Pair(it.getPsiElement(), fix) else null
+                }
+                .filterNotNull()
+
+        val document = kotlinFile.getViewProvider().getDocument()!!
+        val rangeMarker = if (range != null) document.createRangeMarker(range.getStartOffset(), range.getEndOffset()) else null
+        rangeMarker?.setGreedyToLeft(true)
+        rangeMarker?.setGreedyToRight(true)
 
         for ((psiElement, fix) in fixes) {
             if (psiElement.isValid()) {
@@ -43,8 +50,6 @@ class AfterConversionPass(val project: Project, val postProcessor: PostProcessor
             }
         }
 
-        postProcessor.doAdditionalProcessing(kotlinFile)
-
-        return kotlinFile.getText()!!
+        postProcessor.doAdditionalProcessing(kotlinFile, rangeMarker)
     }
 }

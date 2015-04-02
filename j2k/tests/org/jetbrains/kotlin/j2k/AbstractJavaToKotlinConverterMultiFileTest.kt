@@ -43,8 +43,10 @@ public abstract class AbstractJavaToKotlinConverterMultiFileTest : AbstractJavaT
             psiFiles.add(psiFile)
         }
 
-        val converter = JavaToKotlinConverter(project, ConverterSettings.defaultSettings, IdeaReferenceSearcher, IdeaResolverForConverter)
-        val results: List<String> = converter.elementsToKotlin(psiFiles.map { it to J2kPostProcessor(it, formatCode = true) })
+        val converter = JavaToKotlinConverter(project, ConverterSettings.defaultSettings,
+                                              IdeaReferenceSearcher, IdeaResolverForConverter, J2kPostProcessor(formatCode = true))
+        val inputElements = psiFiles.map { JavaToKotlinConverter.InputElement(it, it) }
+        val results: List<String> = converter.elementsToKotlin(inputElements)
 
         fun expectedFile(i: Int) = File(javaFiles[i].getPath().replace(".java", ".kt"))
 

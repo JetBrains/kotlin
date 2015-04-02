@@ -38,7 +38,6 @@ class Converter private(
         val inConversionScope: (PsiElement) -> Boolean,
         val referenceSearcher: ReferenceSearcher,
         val resolverForConverter: ResolverForConverter,
-        private val postProcessor: PostProcessor?,
         private val commonState: Converter.CommonState,
         private val personalState: Converter.PersonalState
 ) {
@@ -60,16 +59,16 @@ class Converter private(
 
     companion object {
         public fun create(elementToConvert: PsiElement, settings: ConverterSettings, inConversionScope: (PsiElement) -> Boolean,
-                          referenceSearcher: ReferenceSearcher, resolverForConverter: ResolverForConverter, postProcessor: PostProcessor?,
+                          referenceSearcher: ReferenceSearcher, resolverForConverter: ResolverForConverter,
                           usageProcessingsCollector: (UsageProcessing) -> Unit): Converter {
-            return Converter(elementToConvert, settings, inConversionScope, referenceSearcher, resolverForConverter, postProcessor, CommonState(usageProcessingsCollector), PersonalState(null))
+            return Converter(elementToConvert, settings, inConversionScope, referenceSearcher, resolverForConverter, CommonState(usageProcessingsCollector), PersonalState(null))
         }
     }
 
     public fun withSpecialContext(context: PsiElement): Converter = withState(PersonalState(context))
 
     private fun withState(state: PersonalState): Converter
-            = Converter(elementToConvert, settings, inConversionScope, referenceSearcher, resolverForConverter, postProcessor, commonState, state)
+            = Converter(elementToConvert, settings, inConversionScope, referenceSearcher, resolverForConverter, commonState, state)
 
     private fun createDefaultCodeConverter() = CodeConverter(this, DefaultExpressionConverter(), DefaultStatementConverter(), null)
 
