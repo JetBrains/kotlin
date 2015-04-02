@@ -67,3 +67,50 @@ Reasonable defaults would probably be:
 * `get` otherwise
 
 Otherwise, determined by the settings of the annotation itself (applicable to fields only -> goes to a field)
+
+### Possible Syntax for Targeting
+
+Special syntax:
+
+``` kotlin
+class C(@field:Ann("arg") var foo: Int)
+```
+
+This is a rather limited dedicated solution: it is unclear, for example, how you define a new target, also this syntax can not be used for anything else but targeting.
+
+Scala-like syntax:
+
+``` kotlin
+class C(@(Ann@field)("arg") var foo: Int)
+```
+
+Too many parentheses, but the mechanism is generic.
+
+Annotation-array-based syntax:
+
+``` kotlin
+class C(@field(@Ann1("arg"), @Ann2) var foo: Int)
+```
+
+Downside: to put the same annotation on two targets, we'd need to duplicate it.
+
+For this, we need to allow annotation attributes of type `Array<Annotation>`:
+
+``` kotlin
+annotation class field(vararg val annotations: Annotation)
+```
+**NOTE**: This is only relatively easilty achievable for source-retained annotations, for class- or runtime-retained it's a lot more involved and relies on an undocumented features of JVM.
+
+Another approach:
+
+``` kotlin
+class C(@at(FIELD, @Ann1("arg"), @Ann2) var foo: Int)
+class C(@atMany(array(FIELD, PROPERTY), @Ann1("arg"), @Ann2) var foo: Int)
+```
+
+Then definitions are as follows:
+
+``` kotlin
+annotation class at(val target: AnnotationTarget, vararg val annotations: Annotation)
+annotation class atMany(val target: Array<AnnotationTarget>, vararg val annotations: Annotation)
+```
