@@ -480,7 +480,7 @@ class KModel(val context: BindingContext, val config: KDocConfig, val sourceDirs
             if (node?.getElementType() != JetTokens.DOC_COMMENT) return ""
             var nodeText = node?.getText() ?: ""
             // lets remove the comment tokens
-            val lines = nodeText.trim().split("\\n")
+            val lines = nodeText.trim().split('\n')
             // lets remove the /** ... * ... */ tokens
             val buffer = StringBuilder()
             val last = lines.size - 1
@@ -514,7 +514,7 @@ class KModel(val context: BindingContext, val config: KDocConfig, val sourceDirs
             val macro = "includeFunctionBody"
             if (remaining.startsWith(macro)) {
                 val next = remaining.substring(macro.length()).trim()
-                val words = next.split("\\s")
+                val words = next.split("\\s".toRegex())
                 // TODO we could default the test function name to match that of the
                 // source code function if folks adopted a convention of naming the test method after the
                 // method its acting as a demo/test for
@@ -618,7 +618,7 @@ $highlight"""
         var dir: PsiDirectory? = directory
 
         // lets try resolve the include name relative to this file
-        val paths = relativeName.split("/")
+        val paths = relativeName.split('/')
         val size = paths.size
         for (i in 0.rangeTo(size - 2)) {
             val path = paths[i]
@@ -941,7 +941,7 @@ class KPackage(
     val namePaths: List<String>
     get() {
         val answer = ArrayList<String>()
-        for (n in name.split("\\.")) {
+        for (n in name.split('.')) {
             answer.add(n)
         }
         return answer;
