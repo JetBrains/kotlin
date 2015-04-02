@@ -136,15 +136,14 @@ public class CallableMethod implements Callable {
         }
 
         Method method = getAsmMethod();
-        String desc = JetTypeMapper.getDefaultDescriptor(method, receiverParameterType != null);
+        String desc = JetTypeMapper.getDefaultDescriptor(method,
+                                                         getInvokeOpcode() == INVOKESTATIC ? null : defaultImplParam.getDescriptor(),
+                                                         receiverParameterType != null);
         if ("<init>".equals(method.getName())) {
             v.aconst(null);
             v.visitMethodInsn(INVOKESPECIAL, defaultImplOwner.getInternalName(), "<init>", desc, false);
         }
         else {
-            if (getInvokeOpcode() != INVOKESTATIC) {
-                desc = desc.replace("(", "(" + defaultImplParam.getDescriptor());
-            }
             v.visitMethodInsn(INVOKESTATIC, defaultImplOwner.getInternalName(),
                               method.getName() + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, desc, false);
         }

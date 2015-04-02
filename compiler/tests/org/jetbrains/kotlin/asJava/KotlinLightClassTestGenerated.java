@@ -117,6 +117,12 @@ public class KotlinLightClassTestGenerated extends AbstractKotlinLightClassTest 
             doTest(fileName);
         }
 
+        @TestMetadata("JvmOverloads.kt")
+        public void testJvmOverloads() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/nullabilityAnnotations/JvmOverloads.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("NullableUnitReturn.kt")
         public void testNullableUnitReturn() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/nullabilityAnnotations/NullableUnitReturn.kt");

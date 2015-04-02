@@ -46,6 +46,7 @@ import java.util.regex.Pattern;
         BlackBoxWithStdlibCodegenTestGenerated.HashPMap.class,
         BlackBoxWithStdlibCodegenTestGenerated.Intrinsics.class,
         BlackBoxWithStdlibCodegenTestGenerated.JdkAnnotations.class,
+        BlackBoxWithStdlibCodegenTestGenerated.JvmOverloads.class,
         BlackBoxWithStdlibCodegenTestGenerated.LazyCodegen.class,
         BlackBoxWithStdlibCodegenTestGenerated.LocalFunInLambda.class,
         BlackBoxWithStdlibCodegenTestGenerated.MultiDeclForArray.class,
@@ -1636,6 +1637,69 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
         @TestMetadata("kt1397.kt")
         public void testKt1397() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jdkAnnotations/kt1397.kt");
+            doTestWithStdlib(fileName);
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/boxWithStdlib/jvmOverloads")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class JvmOverloads extends AbstractBlackBoxCodegenTest {
+        public void testAllFilesPresentInJvmOverloads() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/jvmOverloads"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("companionObject.kt")
+        public void testCompanionObject() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmOverloads/companionObject.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("defaultsNotAtEnd.kt")
+        public void testDefaultsNotAtEnd() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmOverloads/defaultsNotAtEnd.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("doubleParameters.kt")
+        public void testDoubleParameters() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmOverloads/doubleParameters.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("extensionMethod.kt")
+        public void testExtensionMethod() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmOverloads/extensionMethod.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("multipleDefaultParameters.kt")
+        public void testMultipleDefaultParameters() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmOverloads/multipleDefaultParameters.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("nonDefaultParameter.kt")
+        public void testNonDefaultParameter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmOverloads/nonDefaultParameter.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("primaryConstructor.kt")
+        public void testPrimaryConstructor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmOverloads/primaryConstructor.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("secondaryConstructor.kt")
+        public void testSecondaryConstructor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmOverloads/secondaryConstructor.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmOverloads/simple.kt");
             doTestWithStdlib(fileName);
         }
     }
