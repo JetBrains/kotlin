@@ -32,9 +32,12 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
+import com.intellij.psi.search.SearchScope;
 import com.intellij.refactoring.introduce.inplace.InplaceVariableIntroducer;
 import com.intellij.ui.NonFocusableCheckBox;
 import kotlin.Function0;
+import kotlin.Function1;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyAction;
@@ -356,6 +359,19 @@ public class KotlinInplaceVariableIntroducer extends InplaceVariableIntroducer<J
         }
 
         return result;
+    }
+
+    @Override
+    protected Collection<PsiReference> collectRefs(SearchScope referencesSearchScope) {
+        return KotlinPackage.map(
+                KotlinPackage.filterIsInstance(getOccurrences(), JetSimpleNameExpression.class),
+                new Function1<JetSimpleNameExpression, PsiReference>() {
+                    @Override
+                    public PsiReference invoke(JetSimpleNameExpression expression) {
+                        return expression.getReference();
+                    }
+                }
+        );
     }
 
     @Override
