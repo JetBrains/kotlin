@@ -55,6 +55,7 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
             Annotations.AnnotationApplicability.class,
             Annotations.AnnotationParameterMustBeConstant.class,
             Annotations.AnnotationWithVarargParameter.class,
+            Annotations.JvmOverloads.class,
             Annotations.PlatformStatic.class,
     })
     @RunWith(JUnit3RunnerWithInners.class)
@@ -146,6 +147,33 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
             @TestMetadata("kotlinAnnotationWithVarargArgument.kt")
             public void testKotlinAnnotationWithVarargArgument() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationWithVarargParameter/kotlinAnnotationWithVarargArgument.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmOverloads")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class JvmOverloads extends AbstractJetDiagnosticsTestWithStdLib {
+            public void testAllFilesPresentInJvmOverloads() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmOverloads"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("JvmOverloadWithNoDefaults.kt")
+            public void testJvmOverloadWithNoDefaults() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmOverloads/JvmOverloadWithNoDefaults.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("jvmOverloadsOnAbstractMethods.kt")
+            public void testJvmOverloadsOnAbstractMethods() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmOverloads/jvmOverloadsOnAbstractMethods.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("jvmOverloadsOnPrivate.kt")
+            public void testJvmOverloadsOnPrivate() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmOverloads/jvmOverloadsOnPrivate.kt");
                 doTest(fileName);
             }
         }
@@ -655,6 +683,12 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
         @TestMetadata("delegatedProperty.kt")
         public void testDelegatedProperty() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/duplicateJvmSignature/delegatedProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("jvmOverloads.kt")
+        public void testJvmOverloads() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/duplicateJvmSignature/jvmOverloads.kt");
             doTest(fileName);
         }
 

@@ -27,7 +27,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.bridges.Bridge;
 import org.jetbrains.kotlin.backend.common.bridges.BridgesPackage;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.context.MethodContext;
 import org.jetbrains.kotlin.codegen.context.PackageContext;
@@ -39,10 +38,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.load.kotlin.nativeDeclarations.NativeDeclarationsPackage;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.psi.JetClass;
-import org.jetbrains.kotlin.psi.JetClassOrObject;
 import org.jetbrains.kotlin.psi.JetNamedFunction;
-import org.jetbrains.kotlin.psi.JetSecondaryConstructor;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -68,7 +64,10 @@ import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
 import static org.jetbrains.kotlin.codegen.JvmSerializationBindings.*;
@@ -114,6 +113,16 @@ public class FunctionCodegen {
 
         generateDefaultIfNeeded(owner.intoFunction(functionDescriptor), functionDescriptor, owner.getContextKind(),
                                 DefaultParameterValueLoader.DEFAULT, function);
+
+        generateOverloadsWithDefaultValues(function, functionDescriptor, functionDescriptor);
+    }
+
+    public void generateOverloadsWithDefaultValues(@NotNull JetNamedFunction function,
+            FunctionDescriptor functionDescriptor, FunctionDescriptor delegateFunctionDescriptor) {
+        new DefaultParameterValueSubstitutor(state).generateOverloadsIfNeeded(function,
+                                                                              functionDescriptor,
+                                                                              delegateFunctionDescriptor,
+                                                                              owner, v);
     }
 
     public void generateMethod(
@@ -548,54 +557,6 @@ public class FunctionCodegen {
         return ArrayUtil.toStringArray(strings);
     }
 
-    static void generateConstructorWithoutParametersIfNeeded(
-            @NotNull GenerationState state,
-            @NotNull CallableMethod method,
-            @NotNull ConstructorDescriptor constructorDescriptor,
-            @NotNull ClassBuilder classBuilder,
-            @NotNull JetClassOrObject classOrObject
-    ) {
-        if (!isEmptyConstructorNeeded(state.getBindingContext(), constructorDescriptor, classOrObject)) {
-            return;
-        }
-        int flags = getVisibilityAccessFlag(constructorDescriptor);
-        MethodVisitor mv = classBuilder.newMethod(OtherOrigin(constructorDescriptor), flags, "<init>", "()V", null,
-                                                  getThrownExceptions(constructorDescriptor, state.getTypeMapper()));
-
-        if (state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES) return;
-
-        InstructionAdapter v = new InstructionAdapter(mv);
-        mv.visitCode();
-
-        Type methodOwner = method.getOwner();
-        v.load(0, methodOwner); // Load this on stack
-
-        int mask = 0;
-        List<Integer> masks = new ArrayList<Integer>(1);
-        for (ValueParameterDescriptor parameterDescriptor : constructorDescriptor.getValueParameters()) {
-            Type paramType = state.getTypeMapper().mapType(parameterDescriptor.getType());
-            pushDefaultValueOnStack(paramType, v);
-            int i = parameterDescriptor.getIndex();
-            if (i != 0 && i % Integer.SIZE == 0) {
-                masks.add(mask);
-                mask = 0;
-            }
-            mask |= (1 << (i % Integer.SIZE));
-        }
-        masks.add(mask);
-        for (int m : masks) {
-            v.iconst(m);
-        }
-
-        // constructors with default arguments has last synthetic argument of specific type
-        v.aconst(null);
-
-        String desc = JetTypeMapper.getDefaultDescriptor(method.getAsmMethod(), false);
-        v.invokespecial(methodOwner.getInternalName(), "<init>", desc, false);
-        v.areturn(Type.VOID_TYPE);
-        endVisit(mv, "default constructor for " + methodOwner.getInternalName(), classOrObject);
-    }
-
     void generateDefaultIfNeeded(
             @NotNull MethodContext owner,
             @NotNull FunctionDescriptor functionDescriptor,
@@ -773,38 +734,6 @@ public class FunctionCodegen {
             }
         }
         return needed;
-    }
-
-    private static boolean isEmptyConstructorNeeded(
-            @NotNull BindingContext context,
-            @NotNull ConstructorDescriptor constructorDescriptor,
-            @NotNull JetClassOrObject classOrObject
-    ) {
-        ClassDescriptor classDescriptor = constructorDescriptor.getContainingDeclaration();
-
-        if (classOrObject.isLocal()) return false;
-
-        if (CodegenBinding.canHaveOuter(context, classDescriptor)) return false;
-
-        if (Visibilities.isPrivate(classDescriptor.getVisibility()) ||
-            Visibilities.isPrivate(constructorDescriptor.getVisibility())) return false;
-
-        if (constructorDescriptor.getValueParameters().isEmpty()) return false;
-        if (classOrObject instanceof JetClass && hasSecondaryConstructorsWithNoParameters((JetClass) classOrObject)) return false;
-
-        for (ValueParameterDescriptor parameterDescriptor : constructorDescriptor.getValueParameters()) {
-            if (!parameterDescriptor.declaresDefaultValue()) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private static boolean hasSecondaryConstructorsWithNoParameters(@NotNull JetClass klass) {
-        for (JetSecondaryConstructor constructor : klass.getSecondaryConstructors()) {
-            if (constructor.getValueParameters().isEmpty()) return true;
-        }
-        return false;
     }
 
     private void generateBridge(

@@ -18,32 +18,31 @@ package org.jetbrains.kotlin.idea.refactoring.introduce
 
 import com.intellij.ide.DataManager
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ExtractKotlinFunctionHandler
-import java.io.File
-import org.jetbrains.kotlin.psi.JetTreeVisitorVoid
 import com.intellij.psi.PsiComment
-import com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsException
-import org.jetbrains.kotlin.test.JetTestUtils
-import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
-import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import kotlin.test.assertEquals
-import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.test.ConfigLibraryUtil
-import org.jetbrains.kotlin.idea.PluginTestCaseBase
-import org.jetbrains.kotlin.psi.JetDeclaration
-import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
-import org.jetbrains.kotlin.psi.JetPackageDirective
-import org.jetbrains.kotlin.utils.emptyOrSingletonList
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsException
+import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
+import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ExtractKotlinFunctionHandler
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
-import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceProperty.KotlinIntroducePropertyHandler
-import java.util.*
-import kotlin.test.assertTrue
+import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler
+import org.jetbrains.kotlin.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.JetPackageDirective
+import org.jetbrains.kotlin.psi.JetTreeVisitorVoid
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.test.ConfigLibraryUtil
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.utils.emptyOrSingletonList
+import java.io.File
+import java.util.Collections
+import kotlin.test.assertEquals
 
 public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor() = LightCodeInsightFixtureTestCase.JAVA_LATEST
@@ -186,7 +185,7 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
 
         val addKotlinRuntime = InTextDirectivesUtils.findStringWithPrefixes(file.getText(), "// WITH_RUNTIME") != null
         if (addKotlinRuntime) {
-            ConfigLibraryUtil.configureKotlinRuntime(myModule, PluginTestCaseBase.fullJdk())
+            ConfigLibraryUtil.configureKotlinRuntime(myModule, PluginTestCaseBase.mockJdk())
         }
 
         try {
@@ -201,7 +200,7 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
         }
         finally {
             if (addKotlinRuntime) {
-                ConfigLibraryUtil.unConfigureKotlinRuntime(myModule, PluginTestCaseBase.fullJdk())
+                ConfigLibraryUtil.unConfigureKotlinRuntime(myModule, PluginTestCaseBase.mockJdk())
             }
         }
     }

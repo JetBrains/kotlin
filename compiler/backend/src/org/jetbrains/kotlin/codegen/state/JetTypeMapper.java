@@ -663,13 +663,22 @@ public class JetTypeMapper {
 
     @NotNull
     public JvmMethodSignature mapSignature(@NotNull FunctionDescriptor f, @NotNull OwnerKind kind) {
+        if (f instanceof ConstructorDescriptor) {
+            return mapSignature(f, kind, f.getOriginal().getValueParameters());
+        }
+        return mapSignature(f, kind, f.getValueParameters());
+    }
+
+    @NotNull
+    public JvmMethodSignature mapSignature(@NotNull FunctionDescriptor f, @NotNull OwnerKind kind,
+            List<ValueParameterDescriptor> valueParameters) {
         BothSignatureWriter sw = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD);
 
         if (f instanceof ConstructorDescriptor) {
             sw.writeParametersStart();
             writeAdditionalConstructorParameters((ConstructorDescriptor) f, sw);
 
-            for (ValueParameterDescriptor parameter : f.getOriginal().getValueParameters()) {
+            for (ValueParameterDescriptor parameter : valueParameters) {
                 writeParameter(sw, parameter.getType());
             }
 
@@ -686,7 +695,7 @@ public class JetTypeMapper {
                 writeParameter(sw, JvmMethodParameterKind.RECEIVER, receiverParameter.getType());
             }
 
-            for (ValueParameterDescriptor parameter : f.getValueParameters()) {
+            for (ValueParameterDescriptor parameter : valueParameters) {
                 writeParameter(sw, parameter.getType());
             }
 
@@ -706,7 +715,7 @@ public class JetTypeMapper {
     }
 
     @NotNull
-    public static String getDefaultDescriptor(@NotNull Method method, boolean isExtension) {
+    public static String getDefaultDescriptor(@NotNull Method method, @Nullable String dispatchReceiverDescriptor, boolean isExtension) {
         String descriptor = method.getDescriptor();
         int argumentsCount = Type.getArgumentTypes(descriptor).length;
         if (isExtension) {
@@ -717,7 +726,11 @@ public class JetTypeMapper {
         if (isConstructor(method)) {
             additionalArgs += Type.getObjectType(DEFAULT_CONSTRUCTOR_MARKER_INTERNAL_CLASS_NAME).getDescriptor();
         }
-        return descriptor.replace(")", additionalArgs + ")");
+        String result = descriptor.replace(")", additionalArgs + ")");
+        if (dispatchReceiverDescriptor != null && !isConstructor(method)) {
+            return result.replace("(", "(" + dispatchReceiverDescriptor);
+        }
+        return result;
     }
 
     private static boolean isConstructor(@NotNull Method method) {
@@ -728,11 +741,10 @@ public class JetTypeMapper {
     public Method mapDefaultMethod(@NotNull FunctionDescriptor functionDescriptor, @NotNull OwnerKind kind, @NotNull CodegenContext<?> context) {
         Method jvmSignature = mapSignature(functionDescriptor, kind).getAsmMethod();
         Type ownerType = mapOwner(functionDescriptor, isCallInsideSameModuleAsDeclared(functionDescriptor, context, getOutDirectory()));
-        String descriptor = getDefaultDescriptor(jvmSignature, functionDescriptor.getExtensionReceiverParameter() != null);
         boolean isConstructor = isConstructor(jvmSignature);
-        if (!isStaticMethod(kind, functionDescriptor) && !isConstructor) {
-            descriptor = descriptor.replace("(", "(" + ownerType.getDescriptor());
-        }
+        String descriptor = getDefaultDescriptor(jvmSignature,
+                                                 isStaticMethod(kind, functionDescriptor) || isConstructor ? null : ownerType.getDescriptor(),
+                                                 functionDescriptor.getExtensionReceiverParameter() != null);
 
         return new Method(isConstructor ? "<init>" : jvmSignature.getName() + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, descriptor);
     }

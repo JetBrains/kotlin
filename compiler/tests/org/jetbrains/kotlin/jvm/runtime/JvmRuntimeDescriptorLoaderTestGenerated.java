@@ -3094,6 +3094,7 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
     @InnerTestClasses({
             CompiledJava.Annotations.class,
             CompiledJava.Constructor.class,
+            CompiledJava.Enum.class,
             CompiledJava.JavaBean.class,
             CompiledJava.KotlinSignature.class,
             CompiledJava.Library.class,
@@ -3167,12 +3168,6 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
             doTest(fileName);
         }
 
-        @TestMetadata("EnumMembers.java")
-        public void testEnumMembers() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/EnumMembers.java");
-            doTest(fileName);
-        }
-
         @TestMetadata("FieldAsVar.java")
         public void testFieldAsVar() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/FieldAsVar.java");
@@ -3224,12 +3219,6 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
         @TestMetadata("InnerOfGeneric.java")
         public void testInnerOfGeneric() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/InnerOfGeneric.java");
-            doTest(fileName);
-        }
-
-        @TestMetadata("JavaEnum.java")
-        public void testJavaEnum() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/JavaEnum.java");
             doTest(fileName);
         }
 
@@ -3547,6 +3536,33 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
             @TestMetadata("ConstructorGenericUpperBound.java")
             public void testConstructorGenericUpperBound() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/constructor/ConstructorGenericUpperBound.java");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("compiler/testData/loadJava/compiledJava/enum")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Enum extends AbstractJvmRuntimeDescriptorLoaderTest {
+            public void testAllFilesPresentInEnum() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledJava/enum"), Pattern.compile("^(.+)\\.java$"), true);
+            }
+
+            @TestMetadata("EnumMembers.java")
+            public void testEnumMembers() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/enum/EnumMembers.java");
+                doTest(fileName);
+            }
+
+            @TestMetadata("EnumWithSpecializedEntry.java")
+            public void testEnumWithSpecializedEntry() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/enum/EnumWithSpecializedEntry.java");
+                doTest(fileName);
+            }
+
+            @TestMetadata("JavaEnum.java")
+            public void testJavaEnum() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/enum/JavaEnum.java");
                 doTest(fileName);
             }
         }

@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.idea.JetFileType;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.TestJdkKind;
 import org.jetbrains.kotlin.utils.Printer;
 import org.junit.Assert;
 
@@ -137,9 +138,13 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
         }
 
         private KotlinCoreEnvironment createEnvironment(boolean isFullJdk) {
-            return isFullJdk
-                    ? JetTestUtils.createEnvironmentWithFullJdk(myTestRootDisposable)
-                    : JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable, ConfigurationKind.JDK_AND_ANNOTATIONS);
+            return isFullJdk ?
+                   JetTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
+                           myTestRootDisposable, ConfigurationKind.ALL, TestJdkKind.FULL_JDK
+                   ) :
+                   JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(
+                           myTestRootDisposable, ConfigurationKind.JDK_AND_ANNOTATIONS
+                   );
         }
 
         public boolean shouldWriteFilesOnDisk() {

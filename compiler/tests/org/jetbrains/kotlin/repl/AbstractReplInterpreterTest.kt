@@ -18,15 +18,15 @@ package org.jetbrains.kotlin.repl
 
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.testFramework.UsefulTestCase
+import org.jetbrains.kotlin.cli.jvm.repl.ReplInterpreter
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.JetTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
-import org.jetbrains.kotlin.cli.jvm.repl.ReplInterpreter
+import org.junit.Assert
 import java.io.File
 import java.util.ArrayDeque
 import java.util.ArrayList
 import java.util.regex.Pattern
-import org.junit.Assert
 
 private val START_PATTERN = Pattern.compile(">>>( *)(.*)$")
 private val INCOMPLETE_PATTERN = Pattern.compile("\\.\\.\\.( *)(.*)$")
@@ -76,7 +76,7 @@ public abstract class AbstractReplInterpreterTest : UsefulTestCase() {
     }
 
     protected fun doTest(path: String) {
-        val configuration = JetTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.FULL_JDK)
+        val configuration = JetTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK)
         val repl = ReplInterpreter(getTestRootDisposable()!!, configuration)
 
         for ((code, expected) in loadLines(File(path))) {

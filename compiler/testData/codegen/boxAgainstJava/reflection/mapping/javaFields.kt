@@ -1,3 +1,4 @@
+// FULL_JDK
 import javaFields as J
 
 import java.lang.reflect.*

@@ -49,7 +49,7 @@ public class JetJdkAndLibraryProjectDescriptor implements LightProjectDescriptor
 
     @Override
     public Sdk getSdk() {
-        return PluginTestCaseBase.jdkFromIdeaHome();
+        return PluginTestCaseBase.mockJdk();
     }
 
     @Override

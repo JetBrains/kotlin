@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.intentions;
 import com.google.common.collect.Lists;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.ide.startup.impl.StartupManagerImpl;
-import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
@@ -118,7 +117,7 @@ public abstract class AbstractIntentionTest extends KotlinCodeInsightTestCase {
 
         try {
             if (isWithRuntime) {
-                ConfigLibraryUtil.configureKotlinRuntime(getModule(), getFullJavaJDK());
+                ConfigLibraryUtil.configureKotlinRuntime(getModule(), PluginTestCaseBase.mockJdk());
             }
 
             DirectiveBasedActionUtils.checkForUnexpectedErrors((JetFile) getFile());
@@ -192,9 +191,5 @@ public abstract class AbstractIntentionTest extends KotlinCodeInsightTestCase {
     @Override
     protected String getTestDataPath() {
         return "";
-    }
-
-    protected static Sdk getFullJavaJDK() {
-        return PluginTestCaseBase.fullJdk();
     }
 }

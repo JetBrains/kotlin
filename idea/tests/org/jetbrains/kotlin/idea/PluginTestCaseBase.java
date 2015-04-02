@@ -50,7 +50,7 @@ public class PluginTestCaseBase {
         return sdk;
     }
 
-    public static Sdk jdkFromIdeaHome() {
+    public static Sdk mockJdk() {
         return getSdk("compiler/testData/mockJDK/jre");
     }
 

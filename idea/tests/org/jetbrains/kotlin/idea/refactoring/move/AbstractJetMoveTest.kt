@@ -16,48 +16,41 @@
 
 package org.jetbrains.kotlin.idea.refactoring.move
 
-import com.intellij.openapi.util.io.FileUtil
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.idea.PluginTestCaseBase
-import java.io.File
-import com.intellij.refactoring.move.moveMembers.MoveMembersProcessor
-import com.intellij.refactoring.move.moveMembers.MockMoveMembersOptions
-import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import com.intellij.psi.PsiMember
-import com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsException
 import com.google.gson.JsonObject
-import com.intellij.refactoring.MultiFileTestCase
-import com.intellij.openapi.vfs.VirtualFile
 import com.google.gson.JsonParser
 import com.intellij.codeInsight.TargetElementUtilBase
-import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.Document
+import com.intellij.openapi.editor.EditorFactory
+import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
-import com.intellij.psi.PsiDocumentManager
-import org.jetbrains.kotlin.test.JetTestUtils
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.*
+import com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsException
+import com.intellij.refactoring.PackageWrapper
+import com.intellij.refactoring.move.MoveHandler
+import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassToInnerProcessor
 import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesProcessor
 import com.intellij.refactoring.move.moveClassesOrPackages.MultipleRootsMoveDestination
-import com.intellij.refactoring.PackageWrapper
-import com.intellij.psi.JavaPsiFacade
-import com.intellij.psi.PsiClass
-import com.intellij.refactoring.move.moveInner.MoveInnerProcessor
-import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassToInnerProcessor
-import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiManager
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesProcessor
-import com.intellij.refactoring.move.MoveHandler
+import com.intellij.refactoring.move.moveInner.MoveInnerProcessor
+import com.intellij.refactoring.move.moveMembers.MockMoveMembersOptions
+import com.intellij.refactoring.move.moveMembers.MoveMembersProcessor
 import com.intellij.util.ActionRunner
-import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.MoveKotlinTopLevelDeclarationsProcessor
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
+import org.jetbrains.kotlin.idea.KotlinMultiFileTestCase
+import org.jetbrains.kotlin.idea.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.JetFileKotlinMoveTarget
 import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.MoveDestinationKotlinMoveTarget
 import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.MoveKotlinTopLevelDeclarationsOptions
-import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.JetFileKotlinMoveTarget
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.MoveKotlinTopLevelDeclarationsProcessor
 import org.jetbrains.kotlin.idea.search.allScope
-import org.jetbrains.kotlin.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.idea.KotlinMultiFileTestCase
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.JetNamedDeclaration
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.test.ConfigLibraryUtil
+import org.jetbrains.kotlin.test.JetTestUtils
+import java.io.File
 
 public abstract class AbstractJetMoveTest : KotlinMultiFileTestCase() {
     protected fun doTest(path: String) {
@@ -87,7 +80,7 @@ public abstract class AbstractJetMoveTest : KotlinMultiFileTestCase() {
 
         val withRuntime = config["withRuntime"]?.getAsBoolean() ?: false
         if (withRuntime) {
-            ConfigLibraryUtil.configureKotlinRuntime(myModule, PluginTestCaseBase.fullJdk())
+            ConfigLibraryUtil.configureKotlinRuntime(myModule, PluginTestCaseBase.mockJdk())
         }
 
         doTest({ rootDir, rootAfter ->
@@ -121,7 +114,7 @@ public abstract class AbstractJetMoveTest : KotlinMultiFileTestCase() {
                 EditorFactory.getInstance()!!.releaseEditor(editor)
 
                 if (withRuntime) {
-                    ConfigLibraryUtil.unConfigureKotlinRuntime(myModule, PluginTestCaseBase.fullJdk())
+                    ConfigLibraryUtil.unConfigureKotlinRuntime(myModule, PluginTestCaseBase.mockJdk())
                 }
             }
         },

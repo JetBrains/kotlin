@@ -167,7 +167,7 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
 
     @Override
     protected Sdk getProjectJDK() {
-        return PluginTestCaseBase.jdkFromIdeaHome();
+        return PluginTestCaseBase.mockJdk();
     }
 
     protected static Sdk getFullJavaJDK() {

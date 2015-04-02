@@ -16,38 +16,40 @@
 
 package org.jetbrains.kotlin.idea.run
 
-import com.intellij.testFramework.PlatformTestCase
 import com.intellij.codeInsight.CodeInsightTestCase
-import com.intellij.testFramework.PsiTestUtil
-import com.intellij.psi.PsiDocumentManager
-import org.jetbrains.kotlin.idea.PluginTestCaseBase
-import com.intellij.testFramework.MapDataContext
-import com.intellij.execution.actions.ConfigurationContext
-import com.intellij.execution.PsiLocation
-import com.intellij.execution.Location
-import com.intellij.execution.configurations.RunConfiguration
-import com.intellij.execution.executors.DefaultRunExecutor
 import com.intellij.execution.Executor
-import com.intellij.execution.configurations.RunProfile
-import com.intellij.execution.runners.ExecutionEnvironment
-import com.intellij.execution.configurations.JavaParameters
-import org.junit.Assert
+import com.intellij.execution.Location
+import com.intellij.execution.PsiLocation
+import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.configurations.JavaCommandLine
-import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.execution.configurations.JavaParameters
+import com.intellij.execution.configurations.RunConfiguration
+import com.intellij.execution.configurations.RunProfile
+import com.intellij.execution.executors.DefaultRunExecutor
+import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.openapi.module.Module
-import java.io.File
-import com.intellij.openapi.roots.ModuleRootModificationUtil
-import org.jetbrains.kotlin.idea.search.allScope
-import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.idea.stubindex.JetTopLevelFunctionFqnNameIndex
-import org.jetbrains.kotlin.psi.JetTreeVisitorVoid
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
-import java.util.ArrayList
-import com.intellij.psi.PsiComment
-import com.intellij.psi.PsiManager
-import org.jetbrains.kotlin.test.ConfigLibraryUtil
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import com.intellij.openapi.projectRoots.Sdk
+import com.intellij.openapi.roots.ModuleRootModificationUtil
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiComment
+import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.PsiManager
+import com.intellij.testFramework.MapDataContext
+import com.intellij.testFramework.PlatformTestCase
+import com.intellij.testFramework.PsiTestUtil
+import org.jetbrains.kotlin.idea.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.search.allScope
+import org.jetbrains.kotlin.idea.stubindex.JetTopLevelFunctionFqnNameIndex
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.psi.JetNamedDeclaration
+import org.jetbrains.kotlin.psi.JetTreeVisitorVoid
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.test.ConfigLibraryUtil
+import org.jetbrains.kotlin.test.ConfigLibraryUtil.configureKotlinJsRuntime
+import org.jetbrains.kotlin.test.ConfigLibraryUtil.configureKotlinRuntime
+import org.junit.Assert
+import java.io.File
+import java.util.ArrayList
 
 private val RUN_PREFIX = "// RUN:"
 
@@ -100,13 +102,13 @@ class RunConfigurationTest: CodeInsightTestCase() {
         val createModuleResult = configureModule(moduleDirPath("module"), baseDir)
         val srcDir = createModuleResult.srcDir
 
-        configureRuntime(createModuleResult.module, PluginTestCaseBase.fullJdk())
+        configureRuntime(createModuleResult.module, PluginTestCaseBase.mockJdk())
 
         try {
             val expectedClasses = ArrayList<String>()
             val actualClasses = ArrayList<String>()
 
-            val testFile = PsiManager.getInstance(getTestProject()).findFile(srcDir.findFileByRelativePath("test.kt"))
+            val testFile = PsiManager.getInstance(getTestProject()).findFile(srcDir.findFileByRelativePath("test.kt")!!)!!
             testFile.accept(
                     object : JetTreeVisitorVoid() {
                         override fun visitComment(comment: PsiComment) {
@@ -130,7 +132,7 @@ class RunConfigurationTest: CodeInsightTestCase() {
             Assert.assertEquals(expectedClasses, actualClasses)
         }
         finally {
-            ConfigLibraryUtil.unConfigureKotlinRuntime(createModuleResult.module, PluginTestCaseBase.fullJdk())
+            ConfigLibraryUtil.unConfigureKotlinRuntime(createModuleResult.module, PluginTestCaseBase.mockJdk())
         }
     }
 
@@ -182,7 +184,7 @@ class RunConfigurationTest: CodeInsightTestCase() {
     }
 
     override fun getTestDataPath() = PluginTestCaseBase.getTestDataPathBase() + "/run/"
-    override fun getTestProjectJdk() = PluginTestCaseBase.jdkFromIdeaHome()
+    override fun getTestProjectJdk() = PluginTestCaseBase.mockJdk()
 
     private class CreateModuleResult(
             val module: Module,

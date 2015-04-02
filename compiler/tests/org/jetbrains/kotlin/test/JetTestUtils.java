@@ -251,12 +251,6 @@ public class JetTestUtils {
     }
 
     @NotNull
-    public static KotlinCoreEnvironment createEnvironmentWithFullJdk(Disposable disposable) {
-        return createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(disposable,
-                                                                         ConfigurationKind.ALL, TestJdkKind.FULL_JDK);
-    }
-
-    @NotNull
     public static KotlinCoreEnvironment createEnvironmentWithMockJdkAndIdeaAnnotations(Disposable disposable) {
         return createEnvironmentWithMockJdkAndIdeaAnnotations(disposable, ConfigurationKind.ALL);
     }

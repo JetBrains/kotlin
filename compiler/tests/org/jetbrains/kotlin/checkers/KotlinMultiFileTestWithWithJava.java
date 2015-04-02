@@ -66,17 +66,22 @@ public abstract class KotlinMultiFileTestWithWithJava<M, F> extends JetLiteFixtu
     @Override
     protected KotlinCoreEnvironment createEnvironment() {
         File javaFilesDir = createJavaFilesDir();
-        CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(
-                ConfigurationKind.JDK_AND_ANNOTATIONS,
-                TestJdkKind.MOCK_JDK,
-                Arrays.asList(JetTestUtils.getAnnotationsJar()),
-                Arrays.asList(javaFilesDir)
-        );
+        CompilerConfiguration configuration = createCompilerConfiguration(javaFilesDir);
         File kotlinSourceRoot = getKotlinSourceRoot();
         if (kotlinSourceRoot != null) {
             addKotlinSourceRoot(configuration, kotlinSourceRoot.getPath());
         }
         return createEnvironment(getTestRootDisposable(), configuration);
+    }
+
+    @NotNull
+    protected CompilerConfiguration createCompilerConfiguration(File javaFilesDir) {
+        return JetTestUtils.compilerConfigurationForTests(
+                ConfigurationKind.JDK_AND_ANNOTATIONS,
+                TestJdkKind.MOCK_JDK,
+                Arrays.asList(JetTestUtils.getAnnotationsJar()),
+                Arrays.asList(javaFilesDir)
+        );
     }
 
     @NotNull

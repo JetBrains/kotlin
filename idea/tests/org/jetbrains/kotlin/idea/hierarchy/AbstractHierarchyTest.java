@@ -219,6 +219,6 @@ public abstract class AbstractHierarchyTest extends KotlinHierarchyViewTestBase 
 
     @Override
     protected Sdk getTestProjectJdk() {
-        return PluginTestCaseBase.jdkFromIdeaHome();
+        return PluginTestCaseBase.mockJdk();
     }
 }
