@@ -370,6 +370,7 @@
     <gotoTargetRendererProvider id="JetGotoTargetRenderProvider" implementation="org.jetbrains.kotlin.idea.JetGotoTargetRenderProvider"
                                 order="first"/>
     <elementDescriptionProvider implementation="org.jetbrains.kotlin.idea.findUsages.JetElementDescriptionProvider" order="first"/>
+    <highlightUsagesHandlerFactory implementation="org.jetbrains.kotlin.idea.highlighter.KotlinHighlightExitPointsHandlerFactory"/>
     <findUsagesHandlerFactory implementation="org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory"/>
     <usageTypeProvider implementation="org.jetbrains.kotlin.idea.findUsages.JetUsageTypeProvider"/>
     <refactoring.safeDeleteProcessor

@@ -67,6 +67,7 @@ import org.jetbrains.kotlin.idea.folding.AbstractKotlinFoldingTest
 import org.jetbrains.kotlin.idea.hierarchy.AbstractHierarchyTest
 import org.jetbrains.kotlin.idea.highlighter.AbstractDiagnosticMessageJsTest
 import org.jetbrains.kotlin.idea.highlighter.AbstractDiagnosticMessageTest
+import org.jetbrains.kotlin.idea.highlighter.AbstractHighlightExitPointsTest
 import org.jetbrains.kotlin.idea.highlighter.AbstractHighlightingTest
 import org.jetbrains.kotlin.idea.imports.AbstractOptimizeImportsTest
 import org.jetbrains.kotlin.idea.intentions.AbstractIntentionTest
@@ -593,6 +594,10 @@ fun main(args: Array<String>) {
         testClass(javaClass<AbstractInsertImportOnPasteTest>()) {
             model("copyPaste/imports", pattern = """^([^\.]+)\.kt$""", testMethod = "doTestCopy", testClassName = "Copy", recursive = false)
             model("copyPaste/imports", pattern = """^([^\.]+)\.kt$""", testMethod = "doTestCut", testClassName = "Cut", recursive = false)
+        }
+
+        testClass(javaClass<AbstractHighlightExitPointsTest>()) {
+            model("exitPoints")
         }
 
         testClass(javaClass<AbstractLineMarkersTest>()) {
