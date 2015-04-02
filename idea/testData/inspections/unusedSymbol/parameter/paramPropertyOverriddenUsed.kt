@@ -2,7 +2,7 @@ open class Klass {
     open val used = ":)"
 }
 
-class Subklass: Klass(override val used: String)
+class Subklass(override val used: String): Klass
 
 fun main(args: Array<String>) {
     Subklass().used
