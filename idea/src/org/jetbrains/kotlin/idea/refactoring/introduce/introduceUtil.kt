@@ -33,18 +33,17 @@ fun showErrorHintByKey(project: Project, editor: Editor, messageKey: String, tit
     showErrorHint(project, editor, JetRefactoringBundle.message(messageKey), title)
 }
 
-fun selectElements(
+fun selectElementsWithTargetSibling(
         operationName: String,
         editor: Editor,
         file: PsiFile,
         getContainers: (elements: List<PsiElement>, commonParent: PsiElement) -> List<PsiElement>,
         continuation: (elements: List<PsiElement>, targetSibling: PsiElement) -> Unit
 ) {
-    fun showErrorHintByKey(key: String) {
-        showErrorHintByKey(file.getProject(), editor, key, operationName)
-    }
+    fun onSelectionComplete(elements: List<PsiElement>, targetContainer: PsiElement) {
+        val parent = PsiTreeUtil.findCommonParent(elements)
+                     ?: throw AssertionError("Should have at least one parent: ${elements.joinToString("\n")}")
 
-    fun onSelectionComplete(parent: PsiElement, elements: List<PsiElement>, targetContainer: PsiElement) {
         if (parent == targetContainer) {
             continuation(elements, elements.first())
             return
@@ -52,11 +51,25 @@ fun selectElements(
 
         val outermostParent = parent.getOutermostParentContainedIn(targetContainer)
         if (outermostParent == null) {
-            showErrorHintByKey("cannot.refactor.no.container")
+            showErrorHintByKey(file.getProject(), editor, "cannot.refactor.no.container", operationName)
             return
         }
 
         continuation(elements, outermostParent)
+    }
+
+    selectElementsWithTargetParent(operationName, editor, file, getContainers, ::onSelectionComplete)
+}
+
+fun selectElementsWithTargetParent(
+        operationName: String,
+        editor: Editor,
+        file: PsiFile,
+        getContainers: (elements: List<PsiElement>, commonParent: PsiElement) -> List<PsiElement>,
+        continuation: (elements: List<PsiElement>, targetParent: PsiElement) -> Unit
+) {
+    fun showErrorHintByKey(key: String) {
+        showErrorHintByKey(file.getProject(), editor, key, operationName)
     }
 
     fun selectTargetContainer(elements: List<PsiElement>) {
@@ -75,7 +88,7 @@ fun selectElements(
                 "Select target code block",
                 true,
                 { it },
-                { onSelectionComplete(parent, elements, it) }
+                { continuation(elements, it) }
         )
     }
 

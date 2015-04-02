@@ -54,7 +54,7 @@ public class KotlinIntroducePropertyHandler(
 
     override fun invoke(project: Project, editor: Editor, file: PsiFile, dataContext: DataContext?) {
         if (file !is JetFile) return
-        selectElements(
+        selectElementsWithTargetSibling(
                 operationName = INTRODUCE_PROPERTY,
                 editor = editor,
                 file = file,

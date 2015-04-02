@@ -72,7 +72,7 @@ public class ExtractKotlinFunctionHandler(
     }
 
     fun selectElements(editor: Editor, file: PsiFile, continuation: (elements: List<PsiElement>, targetSibling: PsiElement) -> Unit) {
-        selectElements(
+        selectElementsWithTargetSibling(
                 EXTRACT_FUNCTION,
                 editor,
                 file,
