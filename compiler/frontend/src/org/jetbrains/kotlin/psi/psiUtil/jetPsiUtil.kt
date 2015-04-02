@@ -479,3 +479,15 @@ private fun findFirstLeafWhollyInRange(file: PsiFile, range: TextRange): PsiElem
     assert(elementRange.getStartOffset() >= range.getStartOffset())
     return if (elementRange.getEndOffset() <= range.getEndOffset()) element else null
 }
+
+fun JetNamedDeclaration.getValueParameters(): List<JetParameter> {
+    return getValueParameterList()?.getParameters() ?: Collections.emptyList()
+}
+
+fun JetNamedDeclaration.getValueParameterList(): JetParameterList? {
+    return when (this) {
+        is JetCallableDeclaration -> getValueParameterList()
+        is JetClass -> getPrimaryConstructorParameterList()
+        else -> null
+    }
+}

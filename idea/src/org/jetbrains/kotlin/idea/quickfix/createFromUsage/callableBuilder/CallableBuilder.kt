@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getValueParameters
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.psi.psiUtil.siblings
@@ -1070,15 +1071,6 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             }
         }
     }
-}
-
-private fun JetNamedDeclaration.getValueParameters(): List<JetParameter> {
-    return when (this) {
-               is JetCallableDeclaration -> getValueParameterList()
-               is JetClass -> getPrimaryConstructorParameterList()
-               is JetObjectDeclaration -> null
-               else -> throw AssertionError("Unexpected declaration kind: ${getText()}")
-           }?.getParameters() ?: Collections.emptyList()
 }
 
 private fun JetNamedDeclaration.getReturnTypeReference(): JetTypeReference? {
