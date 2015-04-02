@@ -43,11 +43,16 @@ Now, it's both source- and binary- compatible to reorder methods in a Java inter
 
 But the code above will break.
 
-Also, we now load array arguments as varargs, which may break for the same reason.
+Also, we now load all array arguments as varargs, which may break for the same reason.
 
-## Introducing Named-only Arguments
+## Loading Java Annotations
 
-
+Fictitious constructors for Java annotations sould be built as follows:
+* if there is an element named `value`, it is put first on the parameter list
+* if all other elements have default values, and `value` has an array type, it is marked `vararg` and has the type of the elements of the array
+* all other elements are added in alphabetical order (to have it deterministic)
+* parameters corresponding to all elements but `value` can not be used positionally, only named arguments are allowed for them (this requires adding a platform-specific check to `frontend.java`)
+* note that elements with default values should be transformed to parameters with default values
 
 ## \[TBD later] Array Syntax Examples
 
