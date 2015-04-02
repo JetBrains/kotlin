@@ -29,5 +29,6 @@ Since it is likely to be rather common that the value of an annotation property 
 
 ## Constant Expressions
 
-Usage of `javaClass<T>()` in constant expressions other than annotation arguments are still supported in Kotlin for JVM.
+Class literals become constant expressions (only in annotations).
 
+Usage of `javaClass<T>()` in constant expressions is deprecated.
