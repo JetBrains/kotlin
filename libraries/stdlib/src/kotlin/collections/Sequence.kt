@@ -280,8 +280,7 @@ public class TakeSequence<T>(private val sequence: Sequence<T>,
                              private val count: Int
                             ) : Sequence<T> {
     init {
-        if (count < 0)
-            throw IllegalArgumentException("count should be non-negative, but is $count")
+        require (count >= 0) { throw IllegalArgumentException("count should be non-negative, but is $count") }
     }
 
     override fun iterator(): Iterator<T> = object : Iterator<T> {
@@ -361,8 +360,7 @@ public class DropSequence<T>(private val sequence: Sequence<T>,
                              private val count: Int
                             ) : Sequence<T> {
     init {
-        if (count < 0)
-            throw IllegalArgumentException("count should be non-negative, but is $count")
+        require (count >= 0) { throw IllegalArgumentException("count should be non-negative, but is $count") }
     }
 
     override fun iterator(): Iterator<T> = object : Iterator<T> {
@@ -511,10 +509,25 @@ private class GeneratorSequence<T: Any>(private val getInitialValue: () -> T?, p
 }
 
 /**
+ * Returns a wrapper sequence that provides values of this sequence, but ensures it can be iterated only one time.
+ *
+ * [IllegalStateException] is thrown on iterating the returned sequence from the second time.
+ */
+public fun <T> Sequence<T>.constrainOnce(): Sequence<T> {
+    // as? does not work in js
+    //return this as? ConstrainedOnceSequence<T> ?: ConstrainedOnceSequence(this)
+    return if (this is ConstrainedOnceSequence<T>) this else ConstrainedOnceSequence(this)
+}
+
+/**
  * Returns a sequence which invokes the function to calculate the next value on each iteration until the function returns `null`.
+ *
+ * Returned sequence is constrained to be iterated only once.
+ *
+ * @see constrainOnce
  */
 public fun <T : Any> sequence(nextFunction: () -> T?): Sequence<T> {
-    return GeneratorSequence(nextFunction, { nextFunction() })
+    return GeneratorSequence(nextFunction, { nextFunction() }).constrainOnce()
 }
 
 deprecated("Use sequence() instead")
