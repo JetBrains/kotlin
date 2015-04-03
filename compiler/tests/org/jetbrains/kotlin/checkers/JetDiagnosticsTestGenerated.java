@@ -11248,6 +11248,18 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("fromJava.kt")
+                public void testFromJava() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/safecalls/fromJava.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("fromJavaNullable.kt")
+                public void testFromJavaNullable() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/safecalls/fromJavaNullable.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("innerReceiver.kt")
                 public void testInnerReceiver() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/safecalls/innerReceiver.kt");
@@ -11281,6 +11293,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 @TestMetadata("receiverAndChainFalse.kt")
                 public void testReceiverAndChainFalse() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/safecalls/receiverAndChainFalse.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("shortChain.kt")
+                public void testShortChain() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/safecalls/shortChain.kt");
                     doTest(fileName);
                 }
 
