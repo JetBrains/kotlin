@@ -42,6 +42,7 @@ import java.util.regex.Pattern;
         BytecodeTextTestGenerated.Statements.class,
         BytecodeTextTestGenerated.StaticFields.class,
         BytecodeTextTestGenerated.StoreStackBeforeInline.class,
+        BytecodeTextTestGenerated.StringOperations.class,
         BytecodeTextTestGenerated.When.class,
         BytecodeTextTestGenerated.WhenEnumOptimization.class,
         BytecodeTextTestGenerated.WhenStringOptimization.class,
@@ -205,12 +206,6 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
     @TestMetadata("redundantInitializerNumber.kt")
     public void testRedundantInitializerNumber() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/redundantInitializerNumber.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("stringBuilderAppend.kt")
-    public void testStringBuilderAppend() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/stringBuilderAppend.kt");
         doTest(fileName);
     }
 
@@ -657,6 +652,39 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("withLambda.kt")
         public void testWithLambda() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/storeStackBeforeInline/withLambda.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/bytecodeText/stringOperations")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class StringOperations extends AbstractBytecodeTextTest {
+        public void testAllFilesPresentInStringOperations() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/stringOperations"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("concat.kt")
+        public void testConcat() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/stringOperations/concat.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("infixPlus.kt")
+        public void testInfixPlus() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/stringOperations/infixPlus.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("interpolation.kt")
+        public void testInterpolation() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/stringOperations/interpolation.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("plusAssign.kt")
+        public void testPlusAssign() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/stringOperations/plusAssign.kt");
             doTest(fileName);
         }
     }
