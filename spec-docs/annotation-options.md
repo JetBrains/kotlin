@@ -154,7 +154,7 @@ If a repeatable annotation is used multiple times on the same element, but the t
 
 ## Inherited and Documented
 
-These two options have ratehr unclear value, and we do not supprt them in Kotlin. One can use platform-specific annotations to express them.
+These two are of rather unclear value, and we do not support them in Kotlin. One can use platform-specific annotations to express them.
 
 ## Appendix. Definition of kotlin.annotation
 
