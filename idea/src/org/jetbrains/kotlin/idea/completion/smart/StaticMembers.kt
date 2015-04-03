@@ -122,7 +122,7 @@ class StaticMembers(
                     presentation.setTailText(tailText, true)
                 }
 
-                if (presentation.getTypeText().isNullOrEmptyDeprecated()) {
+                if (presentation.getTypeText().isNullOrEmpty()) {
                     presentation.setTypeText(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(classDescriptor.getDefaultType()))
                 }
             }
