@@ -59,7 +59,7 @@ public abstract class KotlinCallableInsertHandler : BaseDeclarationInsertHandler
     private fun addImport(context : InsertionContext, item : LookupElement) {
         PsiDocumentManager.getInstance(context.getProject()).commitAllDocuments()
 
-        ApplicationManager.getApplication()?.runReadAction { () : Unit ->
+        ApplicationManager.getApplication()?.runReadAction {
             val startOffset = context.getStartOffset()
             val element = context.getFile().findElementAt(startOffset)
 
@@ -156,8 +156,7 @@ public class KotlinFunctionInsertHandler(val caretPosition : CaretPosition, val 
             if (offset < document.getTextLength()) {
                 if (chars[offset] == '<') {
                     PsiDocumentManager.getInstance(context.getProject()).commitDocument(document)
-                    val psiFile = context.getFile()
-                    val token = psiFile.findElementAt(offset)
+                    val token = context.getFile().findElementAt(offset)!!
                     if (token.getNode().getElementType() == JetTokens.LT) {
                         val parent = token.getParent()
                         if (parent is JetTypeArgumentList && parent.getText().indexOf('\n') < 0/* if type argument list is on multiple lines this is more likely wrong parsing*/) {
@@ -220,10 +219,6 @@ public class KotlinFunctionInsertHandler(val caretPosition : CaretPosition, val 
     companion object {
         public val NO_PARAMETERS_HANDLER: KotlinFunctionInsertHandler = KotlinFunctionInsertHandler(CaretPosition.AFTER_BRACKETS, null)
         public val WITH_PARAMETERS_HANDLER: KotlinFunctionInsertHandler = KotlinFunctionInsertHandler(CaretPosition.IN_BRACKETS, null)
-
-        private fun shouldAddBrackets(element : PsiElement) : Boolean {
-            return element.getStrictParentOfType<JetImportDirective>() == null
-        }
 
         private fun indexOfSkippingSpace(document: Document, ch : Char, startIndex : Int) : Int {
             val text = document.getCharsSequence()
