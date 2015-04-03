@@ -63,6 +63,12 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("GenericFunctionWithTab2.kt")
+    public void testGenericFunctionWithTab2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/basic/GenericFunctionWithTab2.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("NestedTypeArg.kt")
     public void testNestedTypeArg() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/basic/NestedTypeArg.kt");
@@ -72,6 +78,12 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
     @TestMetadata("SecondTypeArg.kt")
     public void testSecondTypeArg() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/basic/SecondTypeArg.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("SpaceAfterParenthesisBug.kt")
+    public void testSpaceAfterParenthesisBug() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/basic/SpaceAfterParenthesisBug.kt");
         doTest(fileName);
     }
 

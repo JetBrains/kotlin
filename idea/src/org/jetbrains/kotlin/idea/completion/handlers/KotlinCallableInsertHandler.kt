@@ -152,11 +152,11 @@ public class KotlinFunctionInsertHandler(val caretPosition : CaretPosition, val 
         val closingBracket = if (braces) '}' else ')'
 
         if (completionChar == Lookup.REPLACE_SELECT_CHAR) {
-            offset = skipSpaces(chars, offset)
-            if (offset < document.getTextLength()) {
-                if (chars[offset] == '<') {
+            val offset1 = skipSpaces(chars, offset)
+            if (offset1 < document.getTextLength()) {
+                if (chars[offset1] == '<') {
                     PsiDocumentManager.getInstance(context.getProject()).commitDocument(document)
-                    val token = context.getFile().findElementAt(offset)!!
+                    val token = context.getFile().findElementAt(offset1)!!
                     if (token.getNode().getElementType() == JetTokens.LT) {
                         val parent = token.getParent()
                         if (parent is JetTypeArgumentList && parent.getText().indexOf('\n') < 0/* if type argument list is on multiple lines this is more likely wrong parsing*/) {
