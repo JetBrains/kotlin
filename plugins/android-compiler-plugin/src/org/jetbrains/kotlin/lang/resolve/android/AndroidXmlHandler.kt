@@ -20,7 +20,7 @@ import org.xml.sax.helpers.DefaultHandler
 import org.xml.sax.Attributes
 import java.util.HashMap
 
-class AndroidXmlHandler(private val elementCallback: (String, String) -> Unit) : DefaultHandler() {
+class AndroidXmlHandler(private val elementCallback: (String, HashMap<String, String>) -> Unit) : DefaultHandler() {
 
     override fun startDocument() {
         super<DefaultHandler>.startDocument()
@@ -32,18 +32,12 @@ class AndroidXmlHandler(private val elementCallback: (String, String) -> Unit) :
 
     override fun startElement(uri: String, localName: String, qName: String, attributes: Attributes) {
         val attributesMap = attributes.toMap()
-        val idAttr = attributesMap[AndroidConst.ID_ATTRIBUTE_NO_NAMESPACE]
-        val classNameAttr = attributesMap[AndroidConst.CLASS_ATTRIBUTE_NO_NAMESPACE] ?: localName
-        if (isResourceDeclarationOrUsage(idAttr)) {
-            val name = idToName(idAttr)
-            if (name != null) elementCallback(name, classNameAttr)
-        }
+        elementCallback(localName, attributesMap)
     }
 
     override fun endElement(uri: String?, localName: String, qName: String) {
 
     }
-
 }
 
 public fun Attributes.toMap(): HashMap<String, String> {
@@ -55,5 +49,3 @@ public fun Attributes.toMap(): HashMap<String, String> {
     }
     return res
 }
-
-

@@ -20,6 +20,7 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.module.Module
 import org.jetbrains.kotlin.plugin.android.IDEAndroidResourceManager
 import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.plugin.android.AndroidXmlVisitor
 import com.intellij.psi.impl.*
 import kotlin.properties.*
@@ -42,12 +43,16 @@ class IDEAndroidUIXmlProcessor(val module: Module) : AndroidUIXmlProcessor(modul
     }
 
     override fun parseSingleFile(file: PsiFile): List<AndroidWidget> {
-        val widgets = arrayListOf<AndroidWidget>()
-        file.accept(AndroidXmlVisitor({ id, wClass, valueElement ->
-            widgets.add(AndroidWidget(id, wClass))
-        }))
+        val parser = LayoutParser(resourceManager, PsiManager.getInstance(project), { file ->
+            val xmlElements = arrayListOf<LayoutParser.UIXmlElement>()
+            file.accept(AndroidUIXmlVisitor(
+                    elementCallback({ id, clazz, layoutName ->
+                                        xmlElements.add(LayoutParser.UIXmlElement(id, clazz, layoutName))
+                                    })))
 
-        return widgets
+            xmlElements
+        })
+        return parser.parse(file)
     }
 
 }

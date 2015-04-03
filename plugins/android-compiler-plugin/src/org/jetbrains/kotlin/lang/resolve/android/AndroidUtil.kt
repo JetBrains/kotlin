@@ -25,6 +25,7 @@ import com.intellij.psi.PsiClass
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.module.ModuleServiceManager
+import java.util.HashMap
 
 fun isAndroidSyntheticFile(f: PsiFile?): Boolean {
     return f?.getUserData(AndroidConst.ANDROID_USER_PACKAGE) != null
@@ -34,4 +35,20 @@ public fun isAndroidSyntheticElement(element: PsiElement?): Boolean {
     return isAndroidSyntheticFile(ApplicationManager.getApplication().runReadAction(Computable {
         element?.getContainingFile()
     }))
+}
+
+public fun elementCallback(attributesCallback: (String?, String, String?) -> Unit): (String, HashMap<String, String>) -> Unit {
+
+    return { localName, attributesMap ->
+
+        val idAttr = attributesMap[AndroidConst.ID_ATTRIBUTE_NO_NAMESPACE]
+        val classNameAttr = attributesMap[AndroidConst.CLASS_ATTRIBUTE_NO_NAMESPACE]
+        val layoutNameAttr = attributesMap[AndroidConst.LAYOUT_ATTRIBUTE_NO_NAMESPACE]
+
+        val name = if (isResourceDeclarationOrUsage(idAttr)) idToName(idAttr) else null
+        val clazz = classNameAttr ?: localName
+        val layout = layoutToName(layoutNameAttr)
+
+        attributesCallback(name, clazz, layout)
+    }
 }
