@@ -1,0 +1,33 @@
+JetFile: firstInSetter.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('Int')
+    PsiWhiteSpace('\n    ')
+    PROPERTY_ACCESSOR
+      PsiElement(set)('set')
+      PsiElement(LPAR)('(')
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER
+          PsiErrorElement:Expecting parameter name
+            <empty list>
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
+      PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      BLOCK
+        PsiElement(LBRACE)('{')
+        PsiWhiteSpace('\n\n    ')
+        PsiElement(RBRACE)('}')

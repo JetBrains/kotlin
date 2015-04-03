@@ -1450,6 +1450,7 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
         @InnerTestClasses({
                 Recovery.Objects.class,
                 Recovery.QualifiedExpression.class,
+                Recovery.UnnamedParameter.class,
         })
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Recovery extends AbstractJetParsingTest {
@@ -1835,6 +1836,81 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
                 @TestMetadata("safeQualifiedExpressionWithoutSelector.kt")
                 public void testSafeQualifiedExpressionWithoutSelector() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/qualifiedExpression/safeQualifiedExpressionWithoutSelector.kt");
+                    doParsingTest(fileName);
+                }
+            }
+
+            @TestMetadata("compiler/testData/psi/recovery/unnamedParameter")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class UnnamedParameter extends AbstractJetParsingTest {
+                public void testAllFilesPresentInUnnamedParameter() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/psi/recovery/unnamedParameter"), Pattern.compile("^(.*)\\.kts?$"), true);
+                }
+
+                @TestMetadata("firstInFunction.kt")
+                public void testFirstInFunction() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/unnamedParameter/firstInFunction.kt");
+                    doParsingTest(fileName);
+                }
+
+                @TestMetadata("firstInFunctionalType.kt")
+                public void testFirstInFunctionalType() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/unnamedParameter/firstInFunctionalType.kt");
+                    doParsingTest(fileName);
+                }
+
+                @TestMetadata("firstInLambda.kt")
+                public void testFirstInLambda() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/unnamedParameter/firstInLambda.kt");
+                    doParsingTest(fileName);
+                }
+
+                @TestMetadata("firstInPrimaryConstructor.kt")
+                public void testFirstInPrimaryConstructor() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/unnamedParameter/firstInPrimaryConstructor.kt");
+                    doParsingTest(fileName);
+                }
+
+                @TestMetadata("firstInSecondaryConstructor.kt")
+                public void testFirstInSecondaryConstructor() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/unnamedParameter/firstInSecondaryConstructor.kt");
+                    doParsingTest(fileName);
+                }
+
+                @TestMetadata("firstInSetter.kt")
+                public void testFirstInSetter() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/unnamedParameter/firstInSetter.kt");
+                    doParsingTest(fileName);
+                }
+
+                @TestMetadata("secondInFunction.kt")
+                public void testSecondInFunction() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/unnamedParameter/secondInFunction.kt");
+                    doParsingTest(fileName);
+                }
+
+                @TestMetadata("secondInFunctionalType.kt")
+                public void testSecondInFunctionalType() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/unnamedParameter/secondInFunctionalType.kt");
+                    doParsingTest(fileName);
+                }
+
+                @TestMetadata("secondInLambda.kt")
+                public void testSecondInLambda() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/unnamedParameter/secondInLambda.kt");
+                    doParsingTest(fileName);
+                }
+
+                @TestMetadata("secondInPrimaryConstructor.kt")
+                public void testSecondInPrimaryConstructor() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/unnamedParameter/secondInPrimaryConstructor.kt");
+                    doParsingTest(fileName);
+                }
+
+                @TestMetadata("secondInSecondaryConstructor.kt")
+                public void testSecondInSecondaryConstructor() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/unnamedParameter/secondInSecondaryConstructor.kt");
                     doParsingTest(fileName);
                 }
             }

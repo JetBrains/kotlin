@@ -1040,7 +1040,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             }
         }
         else {
-            if (at(IDENTIFIER)) {
+            if (at(IDENTIFIER) || at(COLON)) {
                 // Try to parse a simple name list followed by an ARROW
                 //   {a -> ...}
                 //   {a, b -> ...}
@@ -1123,7 +1123,12 @@ public class JetExpressionParsing extends AbstractJetParsing {
             //            int parameterNamePos = matchTokenStreamPredicate(new LastBefore(new At(IDENTIFIER), new AtOffset(doubleArrowPos)));
             //            createTruncatedBuilder(parameterNamePos).parseModifierList(MODIFIER_LIST, false);
 
-            expect(IDENTIFIER, "Expecting parameter name", TokenSet.create(ARROW));
+            if (at(COLON)) {
+                error("Expecting parameter name");
+            }
+            else {
+                expect(IDENTIFIER, "Expecting parameter name", TokenSet.create(ARROW));
+            }
 
             if (at(COLON)) {
                 advance(); // COLON

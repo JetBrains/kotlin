@@ -1,0 +1,32 @@
+JetFile: firstInLambda.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    FUNCTION_LITERAL_EXPRESSION
+      FUNCTION_LITERAL
+        PsiElement(LBRACE)('{')
+        PsiWhiteSpace(' ')
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER
+            PsiErrorElement:Expecting parameter name
+              <empty list>
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Int')
+        PsiWhiteSpace(' ')
+        PsiElement(ARROW)('->')
+        PsiWhiteSpace(' ')
+        BLOCK
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('0')
+        PsiWhiteSpace(' ')
+        PsiElement(RBRACE)('}')

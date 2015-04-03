@@ -1,0 +1,1 @@
+val foo: (: Int) -> Int

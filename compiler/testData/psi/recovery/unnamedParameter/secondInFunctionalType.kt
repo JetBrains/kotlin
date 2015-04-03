@@ -1,0 +1,1 @@
+val foo: (s: String, : Int) -> Int

@@ -638,7 +638,7 @@ public class JetParsing extends AbstractJetParsing {
         beforeConstructorModifiers.drop();
 
         if (at(LPAR)) {
-            parseValueParameterList(false, /* typeRequired  = */ true, TokenSet.create(COLON, LBRACE));
+            parseValueParameterList(false, /* typeRequired  = */ true, TokenSet.create(LBRACE));
             primaryConstructorMarker.done(PRIMARY_CONSTRUCTOR);
         }
         else if (hasConstructorModifiers) {
@@ -877,12 +877,12 @@ public class JetParsing extends AbstractJetParsing {
 
         advance(); // CONSTRUCTOR_KEYWORD
 
-        TokenSet valueArgsRecoverySet = TokenSet.create(COLON, LBRACE, SEMICOLON, RPAR, EOL_OR_SEMICOLON, RBRACE);
+        TokenSet valueArgsRecoverySet = TokenSet.create(LBRACE, SEMICOLON, RPAR, EOL_OR_SEMICOLON, RBRACE);
         if (at(LPAR)) {
             parseValueParameterList(false, /*typeRequired = */ true, valueArgsRecoverySet);
         }
         else {
-            errorWithRecovery("Expecting '('", valueArgsRecoverySet);
+            errorWithRecovery("Expecting '('", TokenSet.orSet(valueArgsRecoverySet, TokenSet.create(COLON)));
         }
 
         if (at(COLON)) {
@@ -1264,7 +1264,7 @@ public class JetParsing extends AbstractJetParsing {
 
         myBuilder.restoreJoiningComplexTokensState();
 
-        TokenSet valueParametersFollow = TokenSet.create(COLON, EQ, LBRACE, SEMICOLON, RPAR);
+        TokenSet valueParametersFollow = TokenSet.create(EQ, LBRACE, SEMICOLON, RPAR);
 
         if (at(LT)) {
             PsiBuilder.Marker error = mark();
@@ -2056,10 +2056,17 @@ public class JetParsing extends AbstractJetParsing {
         boolean noErrors = true;
 
         // Recovery for the case 'fun foo(Array<String>) {}'
-        if (at(IDENTIFIER) && lookahead(1) == LT) {
+        // Recovery for the case 'fun foo(: Int) {}'
+        if ((at(IDENTIFIER) && lookahead(1) == LT) || at(COLON)) {
             error("Parameter name expected");
+            if (at(COLON)) {
+                // We keep noErrors == true so that unnamed parameters starting with ":" are not rolled back during parsing of functional types
+                advance(); // COLON
+            }
+            else {
+                noErrors = false;
+            }
             parseTypeRef();
-            noErrors = false;
         }
         else {
             expect(IDENTIFIER, "Parameter name expected", PARAMETER_NAME_RECOVERY_SET);
