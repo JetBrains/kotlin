@@ -26,6 +26,10 @@ public final class JsNew extends JsExpressionImpl.JsExpressionHasArguments {
         return constructorExpression;
     }
 
+    public void setConstructorExpression(JsExpression constructorExpression) {
+        this.constructorExpression = constructorExpression;
+    }
+
     @Override
     public void accept(JsVisitor v) {
         v.visitNew(this);
