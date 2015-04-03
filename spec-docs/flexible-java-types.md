@@ -155,7 +155,7 @@ Goals:
 - `org.jetbrains.annotations.Nullable` - value may be null/accepts nulls
 - `org.jetbrains.annotations.NotNull` - value can not be null/passing null leads to an exception
 - `org.jetbrains.annotations.ReadOnly` - only non-mutating methods can be used on this collection/iterable/iterator
-- `org.jetbrains.annotations.Mutable` - only non-mutating methods can be used on this collection/iterable/iterator
+- `org.jetbrains.annotations.Mutable` - mutating methods can be used on this collection/iterable/iterator
 - `kotlin.jvm.KotlinSignature(str)` - `str` is a string representation of a more precise signature
 
 ### Enhancing signatures with annotated declarations
