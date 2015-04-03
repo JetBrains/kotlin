@@ -211,7 +211,7 @@ Nullability annotations are applied after mutability annotations.
 Examples:
 
 | Java | Kotlin|
---------
+|------|-------|
 | `Foo` | `Foo!` |
 | `@Nullable Foo` | `Foo?` |
 | `@NotNull Foo` | `Foo` |
