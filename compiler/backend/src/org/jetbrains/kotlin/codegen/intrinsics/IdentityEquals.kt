@@ -18,10 +18,12 @@ package org.jetbrains.kotlin.codegen.intrinsics
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.JetBinaryExpression
 import org.jetbrains.kotlin.psi.JetCallExpression
 import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.org.objectweb.asm.Type
 
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
@@ -45,14 +47,27 @@ public class IdentityEquals : LazyIntrinsicMethod() {
 
 
     override fun supportCallable(): Boolean {
-        return false
+        return true
     }
 
-    override fun toCallable(method: CallableMethod): ExtendedCallable {
-        return IntrinsicCallable.binaryIntrinsic(method.getReturnType(), OBJECT_TYPE, nullOrObject(method.getThisType()), nullOrObject(method.getReceiverClass())) {
-            v -> v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "areEqual", "(Ljava/lang/Object;Ljava/lang/Object;)Z", false)
-            AsmUtil.genAreEqualCall(v)
+    override fun toCallable(fd: FunctionDescriptor, isSuper: Boolean, resolvedCall: ResolvedCall<*>, codegen: ExpressionCodegen): ExtendedCallable {
+        val callable = codegen.getState().getTypeMapper().mapToCallableMethod(fd, false, codegen.getContext())
+        return object : MappedCallable(callable)  {
+            override fun invokeMethodWithArguments(resolvedCall: ResolvedCall<*>, receiver: StackValue, returnType: Type, codegen: ExpressionCodegen): StackValue {
+                val element = resolvedCall.getCall().getCallElement()
+                val left: StackValue
+                val right: StackValue
+                if (element is JetCallExpression) {
+                    left = StackValue.receiver(resolvedCall, receiver, codegen, this)
+                    right = codegen.gen(resolvedCall.getValueArgumentsByIndex()!!.single().getArguments().single().getArgumentExpression())
+                }
+                else {
+                    val e = element as JetBinaryExpression
+                    left = codegen.gen(e.getLeft())
+                    right = codegen.gen(e.getRight())
+                }
+                return StackValue.cmp(JetTokens.EQEQEQ, OBJECT_TYPE, left, right)
+            }
         }
     }
-
 }
