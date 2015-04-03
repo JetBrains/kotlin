@@ -25,16 +25,18 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsException
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ExtractKotlinFunctionHandler
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
+import org.jetbrains.kotlin.idea.refactoring.introduce.introduceParameter.KotlinIntroduceParameterHandler
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceProperty.KotlinIntroducePropertyHandler
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler
-import org.jetbrains.kotlin.psi.JetDeclaration
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetPackageDirective
-import org.jetbrains.kotlin.psi.JetTreeVisitorVoid
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -58,6 +60,22 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
                     file,
                     DataManager.getInstance().getDataContext(fixture.getEditor().getComponent())
             )
+        }
+    }
+
+    protected fun doIntroduceParameterTest(path: String) {
+        doTest(path) { file ->
+            with (KotlinIntroduceParameterHandler()) {
+                val target = file.findElementByComment("// TARGET:") as? JetNamedDeclaration
+                if (target != null) {
+                    JetRefactoringUtil.selectExpression(fixture.getEditor(), file, true) { expression ->
+                        invoke(fixture.getProject(), fixture.getEditor(), expression!!, target)
+                    }
+                }
+                else {
+                    invoke(fixture.getProject(), fixture.getEditor(), file, null)
+                }
+            }
         }
     }
 

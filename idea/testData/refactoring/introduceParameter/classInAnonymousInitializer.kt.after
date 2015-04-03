@@ -1,0 +1,9 @@
+class A(a: Int, i: Int = 1 + 2) {
+    init {
+        val t = i
+    }
+}
+
+fun test() {
+    A(1)
+}

@@ -32,6 +32,7 @@ import java.util.regex.Pattern;
         JetExtractionTestGenerated.IntroduceVariable.class,
         JetExtractionTestGenerated.ExtractFunction.class,
         JetExtractionTestGenerated.IntroduceProperty.class,
+        JetExtractionTestGenerated.IntroduceParameter.class,
 })
 @RunWith(JUnit3RunnerWithInners.class)
 public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
@@ -2179,6 +2180,69 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
         public void testReplaceDuplicates() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceProperty/replaceDuplicates.kt");
             doIntroducePropertyTest(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/refactoring/introduceParameter")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class IntroduceParameter extends AbstractJetExtractionTest {
+        public void testAllFilesPresentInIntroduceParameter() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/introduceParameter"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("classInAnonymousInitializer.kt")
+        public void testClassInAnonymousInitializer() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/classInAnonymousInitializer.kt");
+            doIntroduceParameterTest(fileName);
+        }
+
+        @TestMetadata("classInPropertyInitializer.kt")
+        public void testClassInPropertyInitializer() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/classInPropertyInitializer.kt");
+            doIntroduceParameterTest(fileName);
+        }
+
+        @TestMetadata("classNoParams.kt")
+        public void testClassNoParams() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/classNoParams.kt");
+            doIntroduceParameterTest(fileName);
+        }
+
+        @TestMetadata("classParameterInFunctionBody.kt")
+        public void testClassParameterInFunctionBody() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/classParameterInFunctionBody.kt");
+            doIntroduceParameterTest(fileName);
+        }
+
+        @TestMetadata("defaultValueInParens.kt")
+        public void testDefaultValueInParens() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/defaultValueInParens.kt");
+            doIntroduceParameterTest(fileName);
+        }
+
+        @TestMetadata("functionWithApproximatedType.kt")
+        public void testFunctionWithApproximatedType() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/functionWithApproximatedType.kt");
+            doIntroduceParameterTest(fileName);
+        }
+
+        @TestMetadata("functionWithDefaultValue.kt")
+        public void testFunctionWithDefaultValue() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/functionWithDefaultValue.kt");
+            doIntroduceParameterTest(fileName);
+        }
+
+        @TestMetadata("propertyAccessor.kt")
+        public void testPropertyAccessor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/propertyAccessor.kt");
+            doIntroduceParameterTest(fileName);
+        }
+
+        @TestMetadata("secondaryConstructorWithDefaultValue.kt")
+        public void testSecondaryConstructorWithDefaultValue() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/secondaryConstructorWithDefaultValue.kt");
+            doIntroduceParameterTest(fileName);
         }
     }
 }

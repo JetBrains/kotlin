@@ -33,6 +33,10 @@ public class JetMutableMethodDescriptor(val original: JetMethodDescriptor): JetM
         parameters.add(parameter)
     }
 
+    public fun setParameter(index: Int, parameter: JetParameterInfo) {
+        parameters[index] = parameter
+    }
+
     public fun removeParameter(index: Int) {
         parameters.remove(index)
     }

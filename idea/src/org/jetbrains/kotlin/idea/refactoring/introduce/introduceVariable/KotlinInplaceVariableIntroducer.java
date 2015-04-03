@@ -26,6 +26,7 @@ import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.markup.RangeHighlighter;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Pass;
 import com.intellij.openapi.util.Ref;
@@ -35,6 +36,7 @@ import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.refactoring.introduce.inplace.InplaceVariableIntroducer;
 import com.intellij.ui.NonFocusableCheckBox;
+import com.intellij.util.ui.PositionTracker;
 import kotlin.Function0;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
@@ -56,6 +58,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 
 public class KotlinInplaceVariableIntroducer<D extends JetCallableDeclaration> extends InplaceVariableIntroducer<JetExpression> {
+    public static final String TYPE_REFERENCE_VARIABLE_NAME = "TypeReferenceVariable";
+    public static final String PRIMARY_VARIABLE_NAME = "PrimaryVariable";
+    
     private static final Function0<Boolean> TRUE = new Function0<Boolean>() {
         @Override
         public Boolean invoke() {
@@ -329,10 +334,20 @@ public class KotlinInplaceVariableIntroducer<D extends JetCallableDeclaration> e
         return nameSuggestions;
     }
 
+    protected void revalidate() {
+        getContentPanel().revalidate();
+        if (myTarget != null) {
+            myBalloon.revalidate(new PositionTracker.Static<Balloon>(myTarget));
+        }
+    }
+
     protected void addTypeReferenceVariable(TemplateBuilderImpl builder) {
         JetTypeReference typeReference = myDeclaration.getTypeReference();
         if (typeReference != null) {
-            builder.replaceElement(typeReference, SpecifyTypeExplicitlyAction.createTypeExpressionForTemplate(myExprType));
+            builder.replaceElement(typeReference,
+                                   TYPE_REFERENCE_VARIABLE_NAME,
+                                   SpecifyTypeExplicitlyAction.createTypeExpressionForTemplate(myExprType),
+                                   false);
         }
     }
 

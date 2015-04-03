@@ -56,8 +56,8 @@ public fun runChangeSignature(project: Project,
                               configuration: JetChangeSignatureConfiguration,
                               bindingContext: BindingContext,
                               defaultValueContext: PsiElement,
-                              commandName: String? = null) {
-    JetChangeSignature(project, functionDescriptor, configuration, bindingContext, defaultValueContext, commandName).run()
+                              commandName: String? = null): Boolean {
+    return JetChangeSignature(project, functionDescriptor, configuration, bindingContext, defaultValueContext, commandName).run()
 }
 
 public class JetChangeSignature(project: Project,

@@ -156,8 +156,15 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
                                     ? psiFactory.createArgument(oldArgument.getArgumentExpression())
                                     : oldArgument.asElement());
             }
-            else if (parameterInfo.getDefaultValueForCall().isEmpty())
-                newArgument.delete();
+            // TODO: process default arguments in the middle
+            else if (parameterInfo.getDefaultValueForCall().isEmpty()) {
+                if (parameterInfo.getDefaultValueForParameter() != null) {
+                    JetPsiUtil.deleteElementWithDelimiters(newArgument);
+                }
+                else {
+                    newArgument.delete();
+                }
+            }
         }
 
         List<JetFunctionLiteralArgument> lambdaArguments = element.getFunctionLiteralArguments();

@@ -1,0 +1,5 @@
+trait T
+
+fun foo(t: T = object : T {}) {
+    val a = t
+}

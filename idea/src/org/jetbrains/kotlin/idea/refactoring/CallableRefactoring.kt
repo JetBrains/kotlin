@@ -110,7 +110,7 @@ public abstract class CallableRefactoring<T: CallableDescriptor>(
 
     protected abstract fun performRefactoring(descriptorsForChange: Collection<CallableDescriptor>)
 
-    public fun run() {
+    public fun run(): Boolean {
         fun buttonPressed(code: Int, dialogButtons: List<String>, button: String): Boolean {
             return code == dialogButtons indexOf button && button in dialogButtons
         }
@@ -134,7 +134,7 @@ public abstract class CallableRefactoring<T: CallableDescriptor>(
 
         if (kind == SYNTHESIZED) {
             LOG.error("Change signature refactoring should not be called for synthesized member " + callableDescriptor)
-            return
+            return false
         }
 
         val closestModifiableDescriptors = getClosestModifiableDescriptors()
@@ -144,12 +144,12 @@ public abstract class CallableRefactoring<T: CallableDescriptor>(
                 ?: Collections.singletonList(callableDescriptor)
         if (ApplicationManager.getApplication()!!.isUnitTestMode()) {
             performRefactoring(deepestSuperDeclarations)
-            return
+            return true
         }
 
         if (closestModifiableDescriptors.size() == 1 && deepestSuperDeclarations == closestModifiableDescriptors) {
             performRefactoring(closestModifiableDescriptors)
-            return
+            return true
         }
 
         val isSingleFunctionSelected = closestModifiableDescriptors.size() == 1
@@ -165,8 +165,10 @@ public abstract class CallableRefactoring<T: CallableDescriptor>(
             }
             else -> {
                 //do nothing
+                return false
             }
         }
+        return true
     }
 }
 
