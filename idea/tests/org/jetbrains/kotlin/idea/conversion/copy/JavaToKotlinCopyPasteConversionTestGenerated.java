@@ -78,6 +78,12 @@ public class JavaToKotlinCopyPasteConversionTestGenerated extends AbstractJavaTo
         doTest(fileName);
     }
 
+    @TestMetadata("ConversionInCorrectContext.java")
+    public void testConversionInCorrectContext() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/conversion/ConversionInCorrectContext.java");
+        doTest(fileName);
+    }
+
     @TestMetadata("HalfTheWhiteSpace.java")
     public void testHalfTheWhiteSpace() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/conversion/HalfTheWhiteSpace.java");
