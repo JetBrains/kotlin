@@ -57,7 +57,6 @@ import org.jetbrains.kotlin.js.facade.MainCallParameters;
 import org.jetbrains.kotlin.js.facade.TranslationResult;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.utils.PathUtil;
-import org.jetbrains.kotlin.utils.serializer.KotlinJavaScriptSerializer;
 
 import java.io.File;
 import java.util.List;
@@ -192,10 +191,6 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         }
         OutputUtilsPackage.writeAll(outputFiles, outputDir, messageCollector);
 
-        if (arguments.metaInfo != null) {
-            new KotlinJavaScriptSerializer().serialize(config.getModuleId(), analysisResult.getModuleDescriptor(), new File(arguments.metaInfo));
-        }
-
         return OK;
     }
 
@@ -245,7 +240,12 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             ContainerUtil.addAllNotNull(libraryFiles, arguments.libraryFiles);
         }
 
-        return new LibrarySourcesConfig(project, moduleId, libraryFiles, ecmaVersion, arguments.sourceMap, inlineEnabled);
+        return new LibrarySourcesConfig.Builder(project, moduleId, libraryFiles)
+                .ecmaVersion(ecmaVersion)
+                .sourceMap(arguments.sourceMap)
+                .inlineEnabled(inlineEnabled)
+                .metaFileOutputPath(arguments.metaInfo)
+                .build();
     }
 
     public static MainCallParameters createMainCallParameters(String main) {

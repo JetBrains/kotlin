@@ -508,7 +508,9 @@ public class DescriptorUtils {
     }
 
     public static Set<FqName> getPackagesFqNames(ModuleDescriptor module) {
-        return getSubPackagesFqNames(module.getPackage(FqName.ROOT));
+        Set<FqName> result = getSubPackagesFqNames(module.getPackage(FqName.ROOT));
+        result.add(FqName.ROOT);
+        return result;
     }
 
     public static Set<FqName> getSubPackagesFqNames(PackageViewDescriptor packageView) {

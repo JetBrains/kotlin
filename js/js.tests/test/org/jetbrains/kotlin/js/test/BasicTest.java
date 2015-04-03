@@ -33,18 +33,17 @@ import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsPackage;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
+import org.jetbrains.kotlin.idea.JetFileType;
 import org.jetbrains.kotlin.js.JavaScript;
 import org.jetbrains.kotlin.js.config.Config;
 import org.jetbrains.kotlin.js.config.EcmaVersion;
 import org.jetbrains.kotlin.js.config.LibrarySourcesConfig;
-import org.jetbrains.kotlin.js.config.LibrarySourcesConfigWithCaching;
 import org.jetbrains.kotlin.js.facade.K2JSTranslator;
 import org.jetbrains.kotlin.js.facade.MainCallParameters;
 import org.jetbrains.kotlin.js.facade.TranslationResult;
 import org.jetbrains.kotlin.js.test.rhino.RhinoResultChecker;
 import org.jetbrains.kotlin.js.test.utils.JsTestUtils;
 import org.jetbrains.kotlin.js.translate.context.Namer;
-import org.jetbrains.kotlin.idea.JetFileType;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetPsiFactory;
 import org.jetbrains.kotlin.resolve.lazy.KotlinTestWithEnvironment;
@@ -204,6 +203,11 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
         return false;
     }
 
+    @Nullable
+    protected String getMetaFileOutputPath(@NotNull String moduleId) {
+        return null;
+    }
+
     protected void processJsProgram(@NotNull JsProgram program) throws Exception { }
 
     protected void runRhinoTests(
@@ -278,23 +282,22 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
 
     @NotNull
     private Config createConfig(@NotNull Project project, @NotNull String moduleId, @NotNull EcmaVersion ecmaVersion, @Nullable List<String> libraries) {
-        if (libraries == null) {
-            return new LibrarySourcesConfigWithCaching(project, moduleId, ecmaVersion, shouldGenerateSourceMap(), IS_INLINE_ENABLED, shouldBeTranslateAsUnitTestClass());
+        List<String> librariesWithStdlib = new ArrayList<String>(LibrarySourcesConfig.JS_STDLIB);
+        if (libraries != null) {
+            librariesWithStdlib.addAll(libraries);
         }
-        else {
-            return new LibrarySourcesConfig(project, moduleId, librariesWithJsStdlib(libraries), ecmaVersion, shouldGenerateSourceMap(), IS_INLINE_ENABLED);
-        }
+
+        return new LibrarySourcesConfig.Builder(project, moduleId, librariesWithStdlib)
+                .ecmaVersion(ecmaVersion)
+                .sourceMap(shouldGenerateSourceMap())
+                .inlineEnabled(IS_INLINE_ENABLED)
+                .isUnitTestConfig(shouldBeTranslateAsUnitTestClass())
+                .metaFileOutputPath(getMetaFileOutputPath(moduleId))
+                .build();
     }
 
     @NotNull
-    private static List<String> librariesWithJsStdlib(@NotNull List<String> libraries) {
-        List<String> result = new ArrayList<String>(libraries);
-        result.addAll(0, LibrarySourcesConfigWithCaching.JS_STDLIB);
-        return result;
-    }
-
-    @NotNull
-    private String getOutputPath() {
+    protected String getOutputPath() {
         return pathToTestDir() + OUT;
     }
 

@@ -146,7 +146,11 @@ class NoInternalVisibilityInStdLibTest {
             val environment = KotlinCoreEnvironment.createForProduction(disposable!!, configuration, EnvironmentConfigFiles.JS_CONFIG_FILES)
             val project = environment.project
             val pathToJsStdlibJar = KOTLIN_ROOT_PATH + PathUtil.getKotlinPathsForDistDirectory().getJsStdLibJarPath().path
-            val config = LibrarySourcesConfig(project, "testModule", listOf(pathToJsStdlibJar), EcmaVersion.defaultVersion(), false, false)
+            val config = LibrarySourcesConfig.Builder(project, "testModule", listOf(pathToJsStdlibJar))
+                    .ecmaVersion(EcmaVersion.defaultVersion())
+                    .sourceMap(false)
+                    .inlineEnabled(false)
+                    .build()
 
             TopDownAnalyzerFacadeForJS.analyzeFiles(listOf(), config).moduleDescriptor
         }

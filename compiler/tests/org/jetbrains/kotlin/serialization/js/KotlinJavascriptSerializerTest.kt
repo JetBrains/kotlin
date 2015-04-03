@@ -28,15 +28,13 @@ import org.jetbrains.kotlin.config.addKotlinSourceRoots
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
-import org.jetbrains.kotlin.js.config.EcmaVersion
-import org.jetbrains.kotlin.js.config.LibrarySourcesConfigWithCaching
+import org.jetbrains.kotlin.js.config.LibrarySourcesConfig
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil.TEST_PACKAGE_FQNAME
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.test.JetTestUtils
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
-import org.jetbrains.kotlin.utils.serializer.KotlinJavaScriptSerializer
 import java.io.File
 
 public class KotlinJavascriptSerializerTest : TestCaseWithTmpdir() {
@@ -69,9 +67,9 @@ public class KotlinJavascriptSerializerTest : TestCaseWithTmpdir() {
         try {
             val environment = KotlinCoreEnvironment.createForTests(rootDisposable, configuration, EnvironmentConfigFiles.JS_CONFIG_FILES)
             val files = environment.getSourceFiles()
-            val config = LibrarySourcesConfigWithCaching(environment.project, MODULE_NAME, EcmaVersion.defaultVersion(), false, true, false)
+            val config = LibrarySourcesConfig.Builder(environment.project, MODULE_NAME, LibrarySourcesConfig.JS_STDLIB).build()
             val analysisResult = TopDownAnalyzerFacadeForJS.analyzeFiles(files, config)
-            KotlinJavaScriptSerializer().serialize(MODULE_NAME, analysisResult.moduleDescriptor, metaFile)
+            FileUtil.writeToFile(metaFile, KotlinJavascriptSerializationUtil.metadataAsString(MODULE_NAME, analysisResult.moduleDescriptor))
         }
         finally {
             Disposer.dispose(rootDisposable)

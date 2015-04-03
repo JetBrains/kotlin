@@ -37,11 +37,17 @@ import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils;
 import org.jetbrains.kotlin.utils.LibraryUtils;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.kotlin.utils.LibraryUtils.*;
+import static org.jetbrains.kotlin.utils.LibraryUtils.isKotlinJavascriptLibraryWithMetadata;
+import static org.jetbrains.kotlin.utils.LibraryUtils.isOldKotlinJavascriptLibrary;
+import static org.jetbrains.kotlin.utils.PathUtil.getKotlinPathsForDistDirectory;
 
 public class LibrarySourcesConfig extends Config {
+    public static final List<String> JS_STDLIB =
+            Collections.singletonList(getKotlinPathsForDistDirectory().getJsStdLibJarPath().getAbsolutePath());
+
     @NotNull
     public static final Key<String> EXTERNAL_MODULE_NAME = Key.create("externalModule");
     @NotNull
@@ -52,19 +58,29 @@ public class LibrarySourcesConfig extends Config {
     public static final String BUILTINS_JS_FILE_NAME = BUILTINS_JS_MODULE_NAME + JavaScript.DOT_EXTENSION;
     public static final String STDLIB_JS_FILE_NAME = STDLIB_JS_MODULE_NAME + JavaScript.DOT_EXTENSION;
 
+    private final boolean isUnitTestConfig;
+
     @NotNull
     private final List<String> files;
 
-    public LibrarySourcesConfig(
+    private LibrarySourcesConfig(
             @NotNull Project project,
             @NotNull String moduleId,
             @NotNull List<String> files,
             @NotNull EcmaVersion ecmaVersion,
             boolean sourcemap,
-            boolean inlineEnabled
+            boolean inlineEnabled,
+            boolean isUnitTestConfig,
+            @Nullable String metaFileOutputPath
     ) {
-        super(project, moduleId, ecmaVersion, sourcemap, inlineEnabled);
+        super(project, moduleId, ecmaVersion, sourcemap, inlineEnabled, metaFileOutputPath);
         this.files = files;
+        this.isUnitTestConfig = isUnitTestConfig;
+    }
+
+    @Override
+    public boolean isTestConfig() {
+        return isUnitTestConfig;
     }
 
     @NotNull
@@ -119,14 +135,8 @@ public class LibrarySourcesConfig extends Config {
         VirtualFileSystem fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL);
         VirtualFileSystem jarFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.JAR_PROTOCOL);
 
-        String moduleName = null;
-
         for (String path : files) {
             VirtualFile file;
-            if (path.charAt(0) == '@') {
-                moduleName = path.substring(1);
-                continue;
-            }
 
             File filePath = new File(path);
             if (!filePath.exists()) {
@@ -146,16 +156,13 @@ public class LibrarySourcesConfig extends Config {
                 return true;
             }
             else {
-                String actualModuleName;
+                String moduleName;
 
-                if (moduleName != null) {
-                    actualModuleName = moduleName;
-                }
-                else if (isOldKotlinJavascriptLibrary(filePath)) {
-                    actualModuleName = LibraryUtils.getKotlinJsModuleName(filePath);
+                if (isOldKotlinJavascriptLibrary(filePath)) {
+                    moduleName = LibraryUtils.getKotlinJsModuleName(filePath);
                 }
                 else if (isKotlinJavascriptLibraryWithMetadata(filePath)) {
-                    actualModuleName = null;
+                    moduleName = null;
                 }
                 else {
                     report.invoke("'" + path + "' is not a valid Kotlin Javascript library");
@@ -163,13 +170,59 @@ public class LibrarySourcesConfig extends Config {
                 }
 
                 if (action != null) {
-                    action.invoke(actualModuleName, file);
+                    action.invoke(moduleName, file);
                 }
             }
-            moduleName = null;
         }
 
         return false;
+    }
+
+    public static class Builder {
+        Project project;
+        String moduleId;
+        List<String> files;
+        @NotNull
+        EcmaVersion ecmaVersion = EcmaVersion.defaultVersion();
+        boolean sourcemap = false;
+        boolean inlineEnabled = true;
+        boolean isUnitTestConfig = false;
+        String metaFileOutputPath;
+
+        public Builder(@NotNull Project project, @NotNull String moduleId, @NotNull List<String> files) {
+            this.project = project;
+            this.moduleId = moduleId;
+            this.files = files;
+        }
+
+        public Builder ecmaVersion(@NotNull EcmaVersion ecmaVersion) {
+            this.ecmaVersion = ecmaVersion;
+            return this;
+        }
+
+        public Builder sourceMap(boolean sourcemap) {
+            this.sourcemap = sourcemap;
+            return this;
+        }
+
+        public Builder inlineEnabled(boolean inlineEnabled) {
+            this.inlineEnabled = inlineEnabled;
+            return this;
+        }
+
+        public Builder isUnitTestConfig(boolean isUnitTestConfig) {
+            this.isUnitTestConfig = isUnitTestConfig;
+            return this;
+        }
+
+        public Builder metaFileOutputPath(@Nullable String metaFileOutputPath) {
+            this.metaFileOutputPath = metaFileOutputPath;
+            return this;
+        }
+
+        public Config build() {
+            return new LibrarySourcesConfig(project, moduleId, files, ecmaVersion, sourcemap, inlineEnabled, isUnitTestConfig, metaFileOutputPath);
+        }
     }
 
     protected static JetFile getJetFileByVirtualFile(VirtualFile file, String moduleName, PsiManager psiManager) {

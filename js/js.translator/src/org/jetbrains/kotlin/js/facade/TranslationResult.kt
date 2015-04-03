@@ -16,26 +16,25 @@
 
 package org.jetbrains.kotlin.js.facade
 
-import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import com.google.dart.compiler.backend.js.ast.JsProgram
-import kotlin.properties.Delegates
-import org.jetbrains.kotlin.js.sourceMap.SourceMapBuilder
+import com.google.dart.compiler.util.TextOutput
 import com.google.dart.compiler.util.TextOutputImpl
-import org.jetbrains.kotlin.js.config.Config
-import org.jetbrains.kotlin.backend.common.output.OutputFile
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.openapi.vfs.VfsUtilCore
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
+import org.jetbrains.kotlin.backend.common.output.SimpleOutputFile
+import org.jetbrains.kotlin.backend.common.output.SimpleOutputFileCollection
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.js.config.Config
 import org.jetbrains.kotlin.js.sourceMap.JsSourceGenerationVisitor
 import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder
-import com.google.dart.compiler.util.TextOutput
-import java.io.File
-import org.jetbrains.kotlin.utils.fileUtils.readTextOrEmpty
-import com.intellij.util.containers.ContainerUtil
+import org.jetbrains.kotlin.js.sourceMap.SourceMapBuilder
 import org.jetbrains.kotlin.psi.JetFile
-import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.VfsUtilCore
-import org.jetbrains.kotlin.backend.common.output.SimpleOutputFile
-import com.intellij.openapi.util.text.StringUtil
-import org.jetbrains.kotlin.backend.common.output.SimpleOutputFileCollection
+import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
+import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
+import org.jetbrains.kotlin.utils.fileUtils.readTextOrEmpty
+import java.io.File
+import java.util.ArrayList
 
 public abstract class TranslationResult protected (public val diagnostics: Diagnostics) {
 
@@ -45,7 +44,8 @@ public abstract class TranslationResult protected (public val diagnostics: Diagn
             private val config: Config,
             private val files: List<JetFile>,
             public val program: JsProgram,
-            diagnostics: Diagnostics
+            diagnostics: Diagnostics,
+            private val moduleDescriptor: ModuleDescriptor
     ) : TranslationResult(diagnostics) {
         public fun getCode(): String = getCode(TextOutputImpl(), sourceMapBuilder = null)
 
@@ -70,6 +70,14 @@ public abstract class TranslationResult protected (public val diagnostics: Diagn
 
             val jsFile = SimpleOutputFile(sourceFiles, outputFile.getName(), prefix + code + postfix)
             val outputFiles = arrayListOf(jsFile)
+
+            config.getMetaInfo()?.let {
+                val metaFile = File(it)
+                val metaFileContent = KotlinJavascriptSerializationUtil.metadataAsString(config.getModuleId(), moduleDescriptor)
+                val sourceFilesForMetaFile = ArrayList<File>(sourceFiles)
+                val jsMetaFile = SimpleOutputFile(sourceFilesForMetaFile, metaFile.getName(), metaFileContent)
+                outputFiles.add(jsMetaFile)
+            }
 
             if (sourceMapBuilder != null) {
                 sourceMapBuilder.skipLinesAtBeginning(StringUtil.getLineBreakCount(prefix))
