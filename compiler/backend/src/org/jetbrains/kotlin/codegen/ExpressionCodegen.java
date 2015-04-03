@@ -38,6 +38,8 @@ import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension;
 import org.jetbrains.kotlin.codegen.inline.*;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethod;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
+import org.jetbrains.kotlin.codegen.intrinsics.JavaClassProperty;
+import org.jetbrains.kotlin.codegen.intrinsics.Not;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.codegen.stackvalue.BranchedValue;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
@@ -1901,7 +1903,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             CallableMemberDescriptor memberDescriptor = DescriptorUtils.unwrapFakeOverride((CallableMemberDescriptor) descriptor);
 
             IntrinsicMethod intrinsic = state.getIntrinsics().getIntrinsic(memberDescriptor);
-            if (intrinsic != null) {
+            if (intrinsic instanceof JavaClassProperty) {
+                //TODO: intrinsic properties (see intermediateValueForProperty)
                 Type returnType = typeMapper.mapType(memberDescriptor);
                 return intrinsic.generate(this, returnType, expression, Collections.<JetExpression>emptyList(), receiver);
             }
@@ -3388,13 +3391,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         assert op instanceof FunctionDescriptor || originalOperation == null : String.valueOf(op);
         Callable callable = resolveToCallable((FunctionDescriptor) op, false, resolvedCall);
-        if (callable instanceof IntrinsicMethod) {
+        String operationName = originalOperation == null ? "" : originalOperation.getName().asString();
+        if (callable instanceof Not) {
             Type returnType = typeMapper.mapType(op);
-            return ((IntrinsicMethod) callable).generate(this, returnType, expression,
+            return ((Not) callable).generate(this, returnType, expression,
                                                          Collections.singletonList(expression.getBaseExpression()), receiver);
         }
 
-        String operationName = originalOperation == null ? "" : originalOperation.getName().asString();
+
         if (!(operationName.equals("inc") || operationName.equals("dec"))) {
             return invokeFunction(resolvedCall, receiver);
         }
