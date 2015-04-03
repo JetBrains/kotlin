@@ -1,6 +1,5 @@
 // FILE: Bar.java
 public class Bar {
-    @Nullable
     public String find() { return "abc"; }
 }
 
