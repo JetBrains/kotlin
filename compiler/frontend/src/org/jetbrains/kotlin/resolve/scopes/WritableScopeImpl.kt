@@ -60,41 +60,6 @@ public class WritableScopeImpl(scope: JetScope,
         super.importScope(imported)
     }
 
-    override fun importClassifierAlias(importedClassifierName: Name, classifierDescriptor: ClassifierDescriptor) {
-        checkMayWrite()
-
-        explicitlyAddedDescriptors.add(classifierDescriptor)
-        super.importClassifierAlias(importedClassifierName, classifierDescriptor)
-    }
-
-    override fun importPackageAlias(aliasName: Name, packageView: PackageViewDescriptor) {
-        checkMayWrite()
-
-        explicitlyAddedDescriptors.add(packageView)
-        super.importPackageAlias(aliasName, packageView)
-    }
-
-    override fun importFunctionAlias(aliasName: Name, functionDescriptor: FunctionDescriptor) {
-        checkMayWrite()
-
-        addFunctionDescriptor(functionDescriptor)
-        super.importFunctionAlias(aliasName, functionDescriptor)
-
-    }
-
-    override fun importVariableAlias(aliasName: Name, variableDescriptor: VariableDescriptor) {
-        checkMayWrite()
-
-        addPropertyDescriptor(variableDescriptor)
-        super.importVariableAlias(aliasName, variableDescriptor)
-    }
-
-    override fun clearImports() {
-        checkMayWrite()
-
-        super.clearImports()
-    }
-
     override fun getDescriptors(kindFilter: DescriptorKindFilter,
                                 nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
         checkMayRead()
@@ -153,10 +118,6 @@ public class WritableScopeImpl(scope: JetScope,
 
     override fun addVariableDescriptor(variableDescriptor: VariableDescriptor) {
         addVariableDescriptor(variableDescriptor, false)
-    }
-
-    override fun addPropertyDescriptor(propertyDescriptor: VariableDescriptor) {
-        addVariableDescriptor(propertyDescriptor, true)
     }
 
     private fun addVariableDescriptor(variableDescriptor: VariableDescriptor, isProperty: Boolean) {
@@ -232,54 +193,14 @@ public class WritableScopeImpl(scope: JetScope,
         return result
     }
 
-    override fun addTypeParameterDescriptor(typeParameterDescriptor: TypeParameterDescriptor) {
+    override fun addClassifierDescriptor(classifierDescriptor: ClassifierDescriptor) {
         checkMayWrite()
 
-        addClassifierAlias(typeParameterDescriptor.getName(), typeParameterDescriptor)
-    }
-
-    override fun addClassifierDescriptor(classDescriptor: ClassifierDescriptor) {
-        checkMayWrite()
-
-        addClassifierAlias(classDescriptor.getName(), classDescriptor)
-    }
-
-    override fun addClassifierAlias(name: Name, classifierDescriptor: ClassifierDescriptor) {
-        checkMayWrite()
-
+        val name = classifierDescriptor.getName()
         checkForRedeclaration(name, classifierDescriptor)
         getVariableOrClassDescriptors().put(name, classifierDescriptor)
         explicitlyAddedDescriptors.add(classifierDescriptor)
         addToDeclared(classifierDescriptor)
-    }
-
-    override fun addPackageAlias(name: Name, packageView: PackageViewDescriptor) {
-        checkMayWrite()
-
-        checkForRedeclaration(name, packageView)
-        getPackageAliases().put(name, packageView)
-        explicitlyAddedDescriptors.add(packageView)
-        addToDeclared(packageView)
-    }
-
-    override fun addFunctionAlias(name: Name, functionDescriptor: FunctionDescriptor) {
-        checkMayWrite()
-
-        checkForRedeclaration(name, functionDescriptor)
-        getFunctionGroups().put(name, functionDescriptor)
-        explicitlyAddedDescriptors.add(functionDescriptor)
-    }
-
-    override fun addVariableAlias(name: Name, variableDescriptor: VariableDescriptor) {
-        checkMayWrite()
-
-        checkForRedeclaration(name, variableDescriptor)
-
-        getVariableOrClassDescriptors().put(name, variableDescriptor)
-        getPropertyGroups().put(name, variableDescriptor)
-
-        explicitlyAddedDescriptors.add(variableDescriptor)
-        addToDeclared(variableDescriptor)
     }
 
     private fun checkForPropertyRedeclaration(name: Name, variableDescriptor: VariableDescriptor) {
@@ -337,9 +258,6 @@ public class WritableScopeImpl(scope: JetScope,
     private fun addToDeclared(descriptor: DeclarationDescriptor) {
         declaredDescriptorsAccessibleBySimpleName.put(descriptor.getName(), descriptor)
     }
-
-    override fun getDeclaredDescriptorsAccessibleBySimpleName(): Multimap<Name, DeclarationDescriptor>
-            = declaredDescriptorsAccessibleBySimpleName
 
     override fun getOwnDeclaredDescriptors(): Collection<DeclarationDescriptor>
             = declaredDescriptorsAccessibleBySimpleName.values()

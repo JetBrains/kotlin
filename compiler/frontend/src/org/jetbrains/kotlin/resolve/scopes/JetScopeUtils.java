@@ -131,7 +131,7 @@ public final class JetScopeUtils {
             result.addLabeledDeclaration(propertyDescriptor);
         }
         for (TypeParameterDescriptor typeParameterDescriptor : typeParameters) {
-            result.addTypeParameterDescriptor(typeParameterDescriptor);
+            result.addClassifierDescriptor(typeParameterDescriptor);
         }
         if (receiver != null) {
             result.setImplicitReceiver(receiver);

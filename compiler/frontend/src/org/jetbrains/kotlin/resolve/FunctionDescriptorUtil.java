@@ -86,7 +86,7 @@ public class FunctionDescriptorUtil {
             parameterScope.setImplicitReceiver(receiver);
         }
         for (TypeParameterDescriptor typeParameter : descriptor.getTypeParameters()) {
-            parameterScope.addTypeParameterDescriptor(typeParameter);
+            parameterScope.addClassifierDescriptor(typeParameter);
         }
         for (ValueParameterDescriptor valueParameterDescriptor : descriptor.getValueParameters()) {
             parameterScope.addVariableDescriptor(valueParameterDescriptor);

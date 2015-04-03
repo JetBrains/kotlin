@@ -435,7 +435,7 @@ public class DescriptorResolver {
                 toSourceElement(typeParameter)
         );
         trace.record(BindingContext.TYPE_PARAMETER, typeParameter, typeParameterDescriptor);
-        extensibleScope.addTypeParameterDescriptor(typeParameterDescriptor);
+        extensibleScope.addClassifierDescriptor(typeParameterDescriptor);
         return typeParameterDescriptor;
     }
 

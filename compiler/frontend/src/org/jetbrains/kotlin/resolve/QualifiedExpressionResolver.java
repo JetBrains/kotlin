@@ -75,21 +75,20 @@ public class QualifiedExpressionResolver {
     }
 
     @NotNull
-    public Collection<DeclarationDescriptor> processImportReference(
+    public JetScope processImportReference(
             @NotNull JetImportDirective importDirective,
             @NotNull JetScope scope,
             @NotNull JetScope scopeToCheckVisibility,
-            @Nullable Importer importer,
             @NotNull BindingTrace trace,
             @NotNull LookupMode lookupMode
     ) {
         if (importDirective.isAbsoluteInRootPackage()) {
             trace.report(UNSUPPORTED.on(importDirective, "TypeHierarchyResolver")); // TODO
-            return Collections.emptyList();
+            return JetScope.Empty.INSTANCE$;
         }
         JetExpression importedReference = importDirective.getImportedReference();
         if (importedReference == null) {
-            return Collections.emptyList();
+            return JetScope.Empty.INSTANCE$;
         }
 
         Collection<DeclarationDescriptor> descriptors;
@@ -114,29 +113,20 @@ public class QualifiedExpressionResolver {
             }
 
             if (referenceExpression == null || !canImportMembersFrom(descriptors, referenceExpression, trace, lookupMode)) {
-                return Collections.emptyList();
+                return JetScope.Empty.INSTANCE$;
             }
 
-            if (importer != null) {
-                for (DeclarationDescriptor descriptor : descriptors) {
-                    importer.addAllUnderImport(descriptor);
-                }
-            }
-            return Collections.emptyList();
-        }
-
-        Name aliasName = JetPsiUtil.getAliasName(importDirective);
-        if (aliasName == null) {
-            return Collections.emptyList();
-        }
-
-        if (importer != null) {
+            AllUnderImportsScope importsScope = new AllUnderImportsScope();
             for (DeclarationDescriptor descriptor : descriptors) {
-                importer.addAliasImport(descriptor, aliasName);
+                importsScope.addAllUnderImport(descriptor);
             }
+            return importsScope;
         }
-
-        return descriptors;
+        else {
+            Name aliasName = JetPsiUtil.getAliasName(importDirective);
+            if (aliasName == null) return JetScope.Empty.INSTANCE$;
+            return new SingleImportScope(aliasName, descriptors);
+        }
     }
 
     private static boolean canImportMembersFrom(

@@ -287,7 +287,8 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
         val moduleDescriptor = file.getResolutionFacade().findModuleDescriptor(file)
         val scope = JetModuleUtil.getSubpackagesOfRootScope(moduleDescriptor)
         val descriptors = QualifiedExpressionResolver()
-                .processImportReference(importDirective, scope, scope, null, BindingTraceContext(), LookupMode.EVERYTHING)
+                .processImportReference(importDirective, scope, scope, BindingTraceContext(), LookupMode.EVERYTHING)
+                .getAllDescriptors()
                 .filterIsInstance<CallableDescriptor>()
         return descriptors.singleOrNull()
     }
