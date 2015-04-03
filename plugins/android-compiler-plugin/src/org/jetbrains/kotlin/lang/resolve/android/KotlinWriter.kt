@@ -26,28 +26,6 @@ class KotlinStringWriter : KotlinWriter {
     private val imports = ctx.fork()
     private val body = ctx.fork()
 
-    fun writeFunction(name: String,
-                      args: Collection<String>?,
-                      retType: String,
-                      statements: Collection<String>) {
-        val returnTerm = if (retType == "" || retType == "Unit") "" else ": $retType"
-        val argStr = if (args != null) args.join(", ") else ""
-        body.writeln("fun $name($argStr)$returnTerm {")
-        body.incIndent()
-        for (stmt in statements)
-            body.writeln(stmt)
-        body.decIndent()
-        body.writeln("}")
-    }
-
-    fun writeExtensionFunction(receiver: String,
-                               name: String,
-                               args: Collection<String>?,
-                               retType: String,
-                               body: Collection<String>) {
-        writeFunction("$receiver.$name", args, retType, body)
-    }
-
     fun writeImmutableProperty(name: String,
                                retType: String,
                                getterBody: Collection<String>) {
@@ -89,6 +67,10 @@ class KotlinStringWriter : KotlinWriter {
 
     fun writeEmptyLine() {
         body.newLine()
+    }
+
+    fun writeText(text: String) {
+        body.writeln(text)
     }
 
     override fun toStringBuffer(): StringBuffer {

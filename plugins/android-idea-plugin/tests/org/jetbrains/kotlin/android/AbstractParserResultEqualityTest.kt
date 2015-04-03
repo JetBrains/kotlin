@@ -40,14 +40,7 @@ public abstract class AbstractParserResultEqualityTest : KotlinAndroidTestCase()
 
         assertEquals(cliResult, ideResult)
     }
-
-    private fun getEnvironment(testPath: String): KotlinCoreEnvironment {
-        val configuration = JetTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK)
-                configuration.put<String>(AndroidConfigurationKeys.ANDROID_RES_PATH, testPath + "/layout")
-                configuration.put<String>(AndroidConfigurationKeys.ANDROID_MANIFEST, testPath + "/AndroidManifest.xml")
-        return KotlinCoreEnvironment.createForTests(getTestRootDisposable()!!, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
-    }
-
+    
     override fun getTestDataPath(): String? {
         return KotlinAndroidTestCaseBase.getPluginTestDataPathBase() + "/parserResultEquality/" + getTestName(true) + "/"
     }

@@ -42,6 +42,12 @@ public class AndroidXml2KConversionTestGenerated extends AbstractAndroidXml2KCon
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/android-compiler-plugin/testData/android/converter/simple"), Pattern.compile("^([^\\.]+)$"), false);
         }
 
+        @TestMetadata("escapedLayoutName")
+        public void testEscapedLayoutName() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/android/converter/simple/escapedLayoutName/");
+            doTest(fileName);
+        }
+
         @TestMetadata("fqNameInAttr")
         public void testFqNameInAttr() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/android/converter/simple/fqNameInAttr/");
@@ -51,6 +57,12 @@ public class AndroidXml2KConversionTestGenerated extends AbstractAndroidXml2KCon
         @TestMetadata("fqNameInTag")
         public void testFqNameInTag() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/android/converter/simple/fqNameInTag/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("layoutVariants")
+        public void testLayoutVariants() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/android/converter/simple/layoutVariants/");
             doTest(fileName);
         }
 
@@ -66,9 +78,21 @@ public class AndroidXml2KConversionTestGenerated extends AbstractAndroidXml2KCon
             doTest(fileName);
         }
 
+        @TestMetadata("sameIds")
+        public void testSameIds() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/android/converter/simple/sameIds/");
+            doTest(fileName);
+        }
+
         @TestMetadata("singleFile")
         public void testSingleFile() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/android/converter/simple/singleFile/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("specialTags")
+        public void testSpecialTags() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/android/converter/simple/specialTags/");
             doTest(fileName);
         }
     }

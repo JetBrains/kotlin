@@ -17,11 +17,16 @@
 package org.jetbrains.kotlin.lang.resolve.android
 
 import com.intellij.openapi.util.Key
+import org.jetbrains.kotlin.lexer.JetKeywordToken
+import org.jetbrains.kotlin.lexer.JetTokens
 
 public object AndroidConst {
     val ANDROID_USER_PACKAGE: Key<String> = Key.create<String>("ANDROID_USER_PACKAGE")
-    val SYNTHETIC_FILENAME: String = "ANDROIDXML"
-    val SYNTHETIC_PACKAGE: String = "kotlinx.android.synthetic."
+    val SYNTHETIC_FILENAME_PREFIX: String = "ANDROIDXML_"
+    val LAYOUT_POSTFIX: String = "_LAYOUT"
+    val VIEW_LAYOUT_POSTFIX: String = "_VIEW"
+    val SYNTHETIC_PACKAGE: String = "kotlinx.android.synthetic"
+    val SYNTHETIC_PACKAGE_PATH_LENGTH = SYNTHETIC_PACKAGE.count { it == '.' } + 1
 
     val ANDROID_NAMESPACE: String = "android"
     val ID_ATTRIBUTE_NO_NAMESPACE: String = "id"
@@ -32,14 +37,21 @@ public object AndroidConst {
     val ID_USAGE_PREFIX = "@id/"
 
     val CLEAR_FUNCTION_NAME = "clearFindViewByIdCache"
+
+    val IGNORED_XML_WIDGET_TYPES = setOf("requestFocus", "merge", "tag", "check", "fragment")
+
+    val ESCAPED_IDENTIFIERS = (JetTokens.KEYWORDS.getTypes() + JetTokens.SOFT_KEYWORDS.getTypes())
+            .map { it as? JetKeywordToken }.filterNotNull().map { it.getValue() }.toSet()
 }
 
 public fun nameToIdDeclaration(name: String): String = AndroidConst.ID_DECLARATION_PREFIX + name
 
 public fun idToName(id: String): String? {
-    return if (isResourceIdDeclaration(id)) id.replace(AndroidConst.ID_DECLARATION_PREFIX, "")
-    else if (isResourceIdUsage(id)) id.replace(AndroidConst.ID_USAGE_PREFIX, "")
-    else null
+    val unescaped =
+            if (isResourceIdDeclaration(id)) id.replace(AndroidConst.ID_DECLARATION_PREFIX, "")
+            else if (isResourceIdUsage(id)) id.replace(AndroidConst.ID_USAGE_PREFIX, "")
+            else null
+    return if (unescaped != null) escapeAndroidIdentifier(unescaped) else null
 }
 
 public fun isResourceIdDeclaration(str: String?): Boolean = str?.startsWith(AndroidConst.ID_DECLARATION_PREFIX) ?: false
@@ -47,3 +59,13 @@ public fun isResourceIdDeclaration(str: String?): Boolean = str?.startsWith(Andr
 public fun isResourceIdUsage(str: String?): Boolean = str?.startsWith(AndroidConst.ID_USAGE_PREFIX) ?: false
 
 public fun isResourceDeclarationOrUsage(id: String?): Boolean = isResourceIdDeclaration(id) || isResourceIdUsage(id)
+
+public fun isWidgetTypeIgnored(xmlType: String): Boolean {
+    return (xmlType.isEmpty() || xmlType in AndroidConst.IGNORED_XML_WIDGET_TYPES)
+}
+
+public fun getRealWidgetType(xmlType: String): String = if (xmlType == "include") "View" else xmlType
+
+fun escapeAndroidIdentifier(id: String): String {
+    return if (id in AndroidConst.ESCAPED_IDENTIFIERS) "`$id`" else id
+}

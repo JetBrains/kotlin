@@ -10,3 +10,7 @@ $TESTDATA_DIR$/pluginSimple.kt
 $TESTDATA_DIR$/androidPlugin/androidApp.kt
 $TESTDATA_DIR$/androidPlugin/androidView.kt
 $TESTDATA_DIR$/androidPlugin/androidWidget.kt
+$TESTDATA_DIR$/androidPlugin/fakeAppwidgetPackage.kt
+$TESTDATA_DIR$/androidPlugin/fakeInputMethodServicePackage.kt
+$TESTDATA_DIR$/androidPlugin/fakeOpenglPackage.kt
+$TESTDATA_DIR$/androidPlugin/fakeWebkitPackage.kt

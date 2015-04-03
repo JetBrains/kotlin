@@ -1914,8 +1914,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 ExpressionCodegenExtension.Context context = new ExpressionCodegenExtension.Context(typeMapper, v);
                 JetType returnType = propertyDescriptor.getReturnType();
                 for (ExpressionCodegenExtension extension : codegenExtensions) {
-                    if (returnType != null && extension.apply(receiver, resolvedCall, context)) {
-                        return StackValue.onStack(typeMapper.mapType(returnType));
+                    if (returnType != null) {
+                        StackValue value = extension.applyProperty(receiver, resolvedCall, context);
+                        if (value != null) return value;
                     }
                 }
             }
@@ -2352,7 +2353,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             if (!codegenExtensions.isEmpty()) {
                 ExpressionCodegenExtension.Context context = new ExpressionCodegenExtension.Context(typeMapper, v);
                 for (ExpressionCodegenExtension extension : codegenExtensions) {
-                    if (extension.apply(receiver, resolvedCall, context)) return;
+                    if (extension.applyFunction(receiver, resolvedCall, context)) return;
                 }
             }
 

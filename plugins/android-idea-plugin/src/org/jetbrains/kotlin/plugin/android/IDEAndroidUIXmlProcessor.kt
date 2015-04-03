@@ -35,19 +35,20 @@ class IDEAndroidUIXmlProcessor(val module: Module) : AndroidUIXmlProcessor(modul
         module.getProject().getExtensions(PsiTreeChangePreprocessor.EP_NAME).first { it is AndroidPsiTreeChangePreprocessor }
     }
 
-    override val cachedSources: CachedValue<List<String>> by Delegates.lazy {
+    override val cachedSources: CachedValue<List<AndroidSyntheticFile>> by Delegates.lazy {
         cachedValue {
             Result.create(parse(), psiTreeChangePreprocessor)
         }
     }
 
-    override fun parseSingleFile(file: PsiFile): List<AndroidWidget> {
+    override fun parseLayout(files: List<PsiFile>): List<AndroidWidget> {
         val widgets = arrayListOf<AndroidWidget>()
-        file.accept(AndroidXmlVisitor({ id, wClass, valueElement ->
-            widgets.add(AndroidWidget(id, wClass))
-        }))
+        val visitor = AndroidXmlVisitor { id, widgetType, attribute ->
+            widgets.add(AndroidWidget(id, widgetType))
+        }
 
-        return widgets
+        files.forEach { it.accept(visitor) }
+        return removeDuplicates(widgets)
     }
 
 }

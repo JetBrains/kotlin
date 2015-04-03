@@ -26,16 +26,17 @@ import com.intellij.openapi.vfs.*
 import com.intellij.openapi.components.*
 import com.intellij.openapi.extensions.*
 import com.intellij.openapi.module.*
+import org.jetbrains.kotlin.psi.JetProperty
 
 public abstract class AndroidResourceManager(val project: Project) {
 
     public abstract val androidModuleInfo: AndroidModuleInfo?
 
-    public open fun idToXmlAttribute(id: String): PsiElement? = null
+    public open fun propertyToXmlAttributes(property: JetProperty): List<PsiElement> = listOf()
 
-    open fun getLayoutXmlFiles(): List<PsiFile> {
+    public fun getLayoutXmlFiles(): Map<String, List<PsiFile>> {
         val info = androidModuleInfo
-        if (info == null) return listOf()
+        if (info == null) return mapOf()
 
         val psiManager = PsiManager.getInstance(project)
         val fileManager = VirtualFileManager.getInstance()
@@ -61,7 +62,8 @@ public abstract class AndroidResourceManager(val project: Project) {
                 .filter { it.getParent().getName().startsWith("layout") && it.getName().toLowerCase().endsWith(".xml") }
                 .map { psiManager.findFile(it) }
                 .filterNotNull()
-                .sortBy { it.getName() }
+                .groupBy { it.getName().substringBeforeLast('.') }
+                .mapValues { it.getValue().sortBy { it.getParent().getName().length() } }
     }
 
     fun getMainResDirectory(): VirtualFile? {
