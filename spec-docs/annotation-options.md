@@ -3,6 +3,10 @@
 Goals:
 * Support annotation options, such as retention policy and trageting
 
+TODO
+* Should we support `@Inherited`?
+* Should we support `@Documented`?
+
 ## Examples
 
 Option 0:
@@ -35,4 +39,8 @@ annotation(retention = SOURCE, targets = array(CLASSIFIER)) class annotation(
 )
 ```
 
-Option 
+## Discussion
+
+Having option as separate annotation is what Java has and seems more extensible, although it actually isn't (adding new parameters to one annotation is no better or worse than adding new annotation recognized by the compiler).
+
+Having those as parameters is more discoverable, but has some syntactic shortcomings: no varargs can be used.
