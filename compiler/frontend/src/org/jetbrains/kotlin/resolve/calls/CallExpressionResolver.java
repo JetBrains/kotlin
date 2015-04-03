@@ -190,12 +190,9 @@ public class CallExpressionResolver {
 
         TemporaryTraceAndCache temporaryForFunction = TemporaryTraceAndCache.create(
                 context, "trace to resolve as function call", callExpression);
-        // A new call is going to be made, new safe call chain should be created
-        safeCallStorage.beginChain();
         ResolvedCall<FunctionDescriptor> resolvedCall = getResolvedCallForFunction(
                 call, callExpression, context.replaceTraceAndCache(temporaryForFunction),
                 CheckValueArgumentsMode.ENABLED, result);
-        safeCallStorage.endChain();
         if (result[0]) {
             FunctionDescriptor functionDescriptor = resolvedCall != null ? resolvedCall.getResultingDescriptor() : null;
             temporaryForFunction.commit();
@@ -283,12 +280,13 @@ public class CallExpressionResolver {
         JetExpression selectorExpression = expression.getSelectorExpression();
         JetExpression receiverExpression = expression.getReceiverExpression();
         ResolutionContext contextForReceiver = context.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT);
-        if (expression.getOperationSign() == JetTokens.SAFE_ACCESS) {
+        boolean safeCall = (expression.getOperationSign() == JetTokens.SAFE_ACCESS);
+        if (safeCall) {
             safeCallStorage.beginReceiverAnalysis();
         }
         // Visit receiver (x in x.y or x?.z) here
         JetTypeInfo receiverTypeInfo = expressionTypingServices.getTypeInfo(receiverExpression, contextForReceiver);
-        if (expression.getOperationSign() == JetTokens.SAFE_ACCESS) {
+        if (safeCall) {
             safeCallStorage.endReceiverAnalysis(receiverTypeInfo.getDataFlowInfo());
         }
         JetType receiverType = receiverTypeInfo.getType();
@@ -300,16 +298,19 @@ public class CallExpressionResolver {
         context = context.replaceDataFlowInfo(receiverTypeInfo.getDataFlowInfo());
 
         ReceiverValue receiver = qualifierReceiver == null ? new ExpressionReceiver(receiverExpression, receiverType) : qualifierReceiver;
+        // A new call is going to be made, new safe call chain should be created
+        safeCallStorage.beginChain();
         // Visit selector (y in x.y) here
         JetTypeInfo selectorReturnTypeInfo = getSelectorReturnTypeInfo(
                 receiver, expression.getOperationTokenNode(), selectorExpression, context);
+        safeCallStorage.endChain();
         JetType selectorReturnType = selectorReturnTypeInfo.getType();
 
         resolveDeferredReceiverInQualifiedExpression(qualifierReceiver, expression, context);
         checkNestedClassAccess(expression, context);
 
         //TODO move further
-        if (expression.getOperationSign() == JetTokens.SAFE_ACCESS) {
+        if (safeCall) {
             if (selectorReturnType != null && !KotlinBuiltIns.isUnit(selectorReturnType)) {
                 if (TypeUtils.isNullableType(receiverType)) {
                     selectorReturnType = TypeUtils.makeNullable(selectorReturnType);
@@ -332,7 +333,7 @@ public class CallExpressionResolver {
         // y.bar()     // ERROR: y is nullable at this point
         // But if we are inside safe call chain, we SHOULD take arguments into account, for example
         // x?.foo(x.field)?.bar(x.field)?.gav(x.field) (like kt5840longChain)
-        if (expression.getOperationSign() == JetTokens.SAFE_ACCESS && safeCallStorage.chainOver()) {
+        if (safeCall && safeCallStorage.chainOver()) {
             // We should take into account only data flow information about first receiver in safe call chain
             // Example
             // foo(x!!)?.bar(x.gav(), y!!)  ?.  zue()        with the following x.gav() (like kt7204receiverAndChainFalse)
