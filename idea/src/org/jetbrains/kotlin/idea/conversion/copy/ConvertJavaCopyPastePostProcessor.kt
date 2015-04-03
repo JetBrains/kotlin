@@ -48,8 +48,8 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
 
     override fun extractTransferableData(content: Transferable): List<TextBlockTransferableData> {
         try {
-            if (content.isDataFlavorSupported(CopiedCode.DATA_FLAVOR)) {
-                return listOf(content.getTransferData(CopiedCode.DATA_FLAVOR) as TextBlockTransferableData)
+            if (content.isDataFlavorSupported(CopiedJavaCode.DATA_FLAVOR)) {
+                return listOf(content.getTransferData(CopiedJavaCode.DATA_FLAVOR) as TextBlockTransferableData)
             }
         }
         catch (e: Throwable) {
@@ -61,22 +61,20 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
     public override fun collectTransferableData(file: PsiFile, editor: Editor, startOffsets: IntArray, endOffsets: IntArray): List<TextBlockTransferableData> {
         if (file !is PsiJavaFile) return listOf()
 
-        return listOf(CopiedCode(file.getName(), file.getText()!!, startOffsets, endOffsets))
+        return listOf(CopiedJavaCode(file.getText()!!, startOffsets, endOffsets))
     }
 
     public override fun processTransferableData(project: Project, editor: Editor, bounds: RangeMarker, caretOffset: Int, indented: Ref<Boolean>, values: List<TextBlockTransferableData>) {
         if (DumbService.getInstance(project).isDumb()) return
 
         val data = values.single()
-        if (data !is CopiedCode) return
+        if (data !is CopiedJavaCode) return
 
         val document = editor.getDocument()
         val targetFile = PsiDocumentManager.getInstance(project).getPsiFile(document) as? JetFile ?: return
 
         fun doConversion(): Pair<String?, Collection<KotlinReferenceData>> {
-            //TODO: create it in correct context!
-            val sourceFile = PsiFileFactory.getInstance(project).
-                    createFileFromText(data.fileName, JavaLanguage.INSTANCE, data.fileText) as PsiJavaFile
+            val sourceFile = PsiFileFactory.getInstance(project).createFileFromText(JavaLanguage.INSTANCE, data.fileText) as PsiJavaFile
             val result = convertCopiedCodeToKotlin(data, sourceFile)
             val referenceData = buildReferenceData(result.text, result.parseContext, sourceFile, targetFile)
             return (if (result.textChanged) result.text else null) to referenceData
@@ -143,7 +141,7 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
             val textChanged: Boolean
     )
 
-    private fun convertCopiedCodeToKotlin(code: CopiedCode, sourceFile: PsiJavaFile): ConversionResult {
+    private fun convertCopiedCodeToKotlin(code: CopiedJavaCode, sourceFile: PsiJavaFile): ConversionResult {
         assert(code.startOffsets.size() == code.endOffsets.size(), "Must have the same size")
         val sourceFileText = code.fileText
 

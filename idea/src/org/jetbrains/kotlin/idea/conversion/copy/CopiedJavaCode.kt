@@ -20,7 +20,7 @@ import com.intellij.codeInsight.editorActions.TextBlockTransferableData
 
 import java.awt.datatransfer.DataFlavor
 
-class CopiedCode(val fileName: String, val fileText: String, val startOffsets: IntArray, val endOffsets: IntArray) : TextBlockTransferableData {
+class CopiedJavaCode(val fileText: String, val startOffsets: IntArray, val endOffsets: IntArray) : TextBlockTransferableData {
 
     override fun getFlavor() = DATA_FLAVOR
     override fun getOffsetCount() = 0
