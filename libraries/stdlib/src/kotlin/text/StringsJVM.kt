@@ -40,11 +40,12 @@ public fun String.equalsIgnoreCase(anotherString: String): Boolean = equals(anot
  *
  * @param ignoreCase `true` to ignore character case when comparing strings. By default `false`.
  */
-public fun String.equals(anotherString: String, ignoreCase: Boolean = false): Boolean =
-    if (!ignoreCase)
+public fun String.equals(anotherString: String, ignoreCase: Boolean = false): Boolean {
+    return if (!ignoreCase)
         (this as java.lang.String).equals(anotherString)
     else
         (this as java.lang.String).equalsIgnoreCase(anotherString)
+}
 
 /**
  * Returns a copy of this string with all occurrences of [oldChar] replaced with [newChar].
