@@ -27,16 +27,13 @@ annotation(
 class example
 ```
 
-I.e.
+A variation of this is
 
 ``` kotlin
-package kotlin
-
-annotation(retention = SOURCE, targets = array(CLASSIFIER)) class annotation(
-    val targets: Array<AnnotationTarget>,
-    val retention: AnnotationRetention
-)
+annotation(target(CLASSIFIER, FIELD), retention = SOURCE) class example
 ```
+
+Annotations can be parameters to other annotations.
 
 Having option as separate annotation is what Java has and seems more extensible, although it actually isn't (adding new parameters to one annotation is no better or worse than adding new annotation recognized by the compiler).
 
@@ -96,9 +93,8 @@ enum class AnnotationTarget {
     ...
 }
 
-// retention: RUNTIME
 target(ANNOTATION_CLASS)
-annotation class target(vararg targets: AnnotationTarget)
+annotation(RUNTIME) class target(vararg targets: AnnotationTarget)
 ```
 
 When loading an annotation, we only read `kotlin.target`. When `kotlin.target` is missing, on the JVM, we read `j.l.a.Target` and map its values to Kotlin ones according to the table above. This implies that we can load pure Java annotations that know nothing about Kotlin, and that an annotation written in Java can be targeted, e.g. for Kotlin expressions, because one can simply manually specify `kotlin.target` for it.
@@ -122,9 +118,52 @@ annotation class MyAnn
 
 It makes a lot of sense to make `RUNTIME` the default retention.
 
-Since `RetentionPolicy.CLASS` is not a good fit for Kotlin that has functions outside any class, it's better to have `BINARY` instead. 
+Since `RetentionPolicy.CLASS` is not a good fit for Kotlin that has functions outside any class, it's better to have `BINARY` instead. Also, we could have use `java.lang.annotation.RetentionPolicy` anyways, since it's platform-specific. Thus, we need to have our own enum:
+
+``` kotlin
+package kotlin
+
+enum class AnnotationRetention {
+    SOURCE
+    BINARY
+    RUNTIME
+}
+```
+
+> Now, we could map `java.lang.annotation.Retention` and `RetentionPolicy` to `kotlin.retention` and `kotlin.AnnotationRetention`, and then map `CLASS` to `BINARY`, but that is a little too much
+
+Then, it makes sense to make `retention` a property of `kotlin.annotation`:
+
+``` kotlin
+target(TYPE)
+annotation(SOURCE) class MyAnn
+```
+
+The following checks must be performed at compile time:
+* `EXPRESSION`-targeted annotations can only have retention `SOURCE`
 
 ## Repeatable
 
+> Java has `Repeatable` as an annotation, but we cannot map a Kotlin type to it, because it is only present since JDK 8, and cannot be written to class files with version lower than 8.
+
+We make `repeatable` a boolean property of `kotlin.annotation`, with default value `false` (as in Java and C#).
+
+If a non-repeatable annotation is used multiple times on the same element, it is a compile-time error.
+
+If a repeatable annotation is used multiple times on the same element, but the target byte code version is lower than Java 8, it is a compile-time error.
+
 ## Inherited and Documented
 
+These two options have ratehr unclear value, and we do not supprt them in Kotlin. One can use platform-specific annotations to express them.
+
+## Appendix. Definition of kotlin.annotation
+
+``` kotlin
+package kotlin
+
+target(CLASSIFIER)
+annotation(SOURCE) class annotation(
+    val retention: AnnotationRetention = RUNTIME,
+    val repeatable: Boolean = false
+)
+```
