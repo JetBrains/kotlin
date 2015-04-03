@@ -103,19 +103,12 @@ public class KotlinCompletionContributor : CompletionContributor() {
                         parent = expression.getParent()
                     }
 
-                    val expressionEnd = expression.getTextRange()!!.getEndOffset()
-                    val suggestedReplacementOffset = if (expression is JetCallExpression) {
-                        val calleeExpression = (expression as JetCallExpression).getCalleeExpression()
-                        if (calleeExpression != null) calleeExpression.getTextRange()!!.getEndOffset() else expressionEnd
-                    }
-                    else {
-                        expressionEnd
-                    }
+                    val suggestedReplacementOffset = replacementOffsetByExpression(expression)
                     if (suggestedReplacementOffset > context.getReplacementOffset()) {
                         context.setReplacementOffset(suggestedReplacementOffset)
                     }
 
-                    context.getOffsetMap().addOffset(SmartCompletion.OLD_ARGUMENTS_REPLACEMENT_OFFSET, expressionEnd)
+                    context.getOffsetMap().addOffset(SmartCompletion.OLD_ARGUMENTS_REPLACEMENT_OFFSET, expression.getTextRange().getEndOffset())
 
                     val argumentList = (expression.getParent() as? JetValueArgument)?.getParent() as? JetValueArgumentList
                     if (argumentList != null) {
@@ -125,6 +118,25 @@ public class KotlinCompletionContributor : CompletionContributor() {
                 }
             }
         }
+    }
+
+    private fun replacementOffsetByExpression(expression: JetExpression): Int {
+        when (expression) {
+            is JetCallExpression -> {
+                val calleeExpression = expression.getCalleeExpression()
+                if (calleeExpression != null) {
+                    return calleeExpression.getTextRange()!!.getEndOffset()
+                }
+            }
+
+            is JetQualifiedExpression -> {
+                val selector = expression.getSelectorExpression()
+                if (selector != null) {
+                    return replacementOffsetByExpression(selector)
+                }
+            }
+        }
+        return expression.getTextRange()!!.getEndOffset()
     }
 
     private fun isInFunctionLiteralParameterList(tokenBefore: PsiElement?): Boolean {
