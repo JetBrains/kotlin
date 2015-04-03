@@ -47,12 +47,6 @@ public fun String.equals(anotherString: String, ignoreCase: Boolean = false): Bo
         (this as java.lang.String).equalsIgnoreCase(anotherString)
 
 /**
- * Returns the hash code of this string.
- */
-public fun String.hashCode(): Int = (this as java.lang.String).hashCode()
-
-
-/**
  * Returns a copy of this string with all occurrences of [oldChar] replaced with [newChar].
  */
 public fun String.replace(oldChar: Char, newChar: Char): String = (this as java.lang.String).replace(oldChar, newChar)
