@@ -9,6 +9,7 @@ fun box(): String {
         val l = Long
         val sh = Short
         val b = Byte
+        val ch = Char
         val st = String
 
         test(Int)
@@ -18,6 +19,7 @@ fun box(): String {
         test(Short)
         test(Byte)
         test(String)
+        test(Char)
 
         // Common Double
         Double.POSITIVE_INFINITY

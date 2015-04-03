@@ -32,6 +32,7 @@ private object IntCompanionObject {}
 private object LongCompanionObject {}
 private object ShortCompanionObject {}
 private object ByteCompanionObject {}
+private object CharCompanionObject {}
 
 private object StringCompanionObject {}
 private object EnumCompanionObject {}

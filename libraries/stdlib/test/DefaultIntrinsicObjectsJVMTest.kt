@@ -73,6 +73,12 @@ class CompanionObjectsExtensionsTest {
         assertEquals(java.lang.Byte.MIN_VALUE, Byte.MIN_VALUE)
     }
 
+    test fun charTest() {
+        val ch = Char
+
+        assertEquals(ch, Char)
+    }
+
     test fun stringTest() {
         val s = String
 
