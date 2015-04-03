@@ -16,39 +16,52 @@
 
 package org.jetbrains.kotlin.idea.codeInsight
 
-import com.intellij.openapi.editor.RangeMarker
-import com.intellij.openapi.editor.Editor
-import com.intellij.codeInsight.daemon.impl.CollectHighlightsUtil
-import org.jetbrains.kotlin.name.FqName
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Ref
-import com.intellij.openapi.project.DumbService
-import com.intellij.openapi.application.ApplicationManager
-import java.awt.datatransfer.Transferable
 import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.codeInsight.editorActions.CopyPastePostProcessor
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.editor.RangeMarker
+import com.intellij.openapi.progress.ProcessCanceledException
+import com.intellij.openapi.project.DumbService
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.codeInsight.shorten.performDelayedShortening
+import org.jetbrains.kotlin.idea.conversion.copy.end
+import org.jetbrains.kotlin.idea.conversion.copy.range
+import org.jetbrains.kotlin.idea.conversion.copy.start
+import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
+import org.jetbrains.kotlin.idea.imports.importableFqName
+import org.jetbrains.kotlin.idea.references.JetMultiReference
+import org.jetbrains.kotlin.idea.references.JetReference
+import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
+import org.jetbrains.kotlin.idea.util.ImportInsertHelper
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
+import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
+import org.jetbrains.kotlin.resolve.BindingTraceContext
+import org.jetbrains.kotlin.resolve.ImportPath
+import org.jetbrains.kotlin.resolve.JetModuleUtil
+import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver
+import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver.LookupMode
+import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
+import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.idea.conversion.copy.*
+import org.jetbrains.kotlin.utils.addIfNotNull
+import java.awt.datatransfer.Transferable
 import java.awt.datatransfer.UnsupportedFlavorException
 import java.io.IOException
-import com.intellij.openapi.diagnostic.Logger
-import org.jetbrains.kotlin.idea.imports.*
-import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
-import com.intellij.openapi.progress.ProcessCanceledException
-import org.jetbrains.kotlin.idea.references.*
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver.LookupMode
-import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.idea.caches.resolve.*
-import org.jetbrains.kotlin.idea.util.*
-import org.jetbrains.kotlin.utils.*
-import org.jetbrains.kotlin.idea.codeInsight.shorten.performDelayedShortening
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.descriptorUtil.*
-import com.intellij.psi.*
-import java.util.*
+import java.util.ArrayList
 
 //NOTE: this class is based on CopyPasteReferenceProcessor and JavaCopyPasteReferenceProcessor
 public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<KotlinReferenceTransferableData>() {
@@ -110,46 +123,51 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
     ): List<KotlinReferenceData> {
         val result = ArrayList<KotlinReferenceData>()
         for (range in toTextRanges(startOffsets, endOffsets)) {
-            for (element in CollectHighlightsUtil.getElementsInRange(file, range.start, range.end)) {
-                result.addReferenceDataFromElement(element, file, range.start, startOffsets, endOffsets)
+            for (element in file.elementsInRange(range)) {
+                result.addReferenceDataInsideElement(element, file, range.start, startOffsets, endOffsets)
             }
         }
         return result
     }
 
-    private fun MutableCollection<KotlinReferenceData>.addReferenceDataFromElement(
+    private fun MutableCollection<KotlinReferenceData>.addReferenceDataInsideElement(
             element: PsiElement,
             file: JetFile,
             startOffset: Int,
             startOffsets: IntArray,
             endOffsets: IntArray
     ) {
-
         if (PsiTreeUtil.getParentOfType(element, *IGNORE_REFERENCES_INSIDE) != null) return
 
-        val reference = element.getReference() as? JetReference ?: return
+        element.accept(object : PsiElementVisitor() {
+            override fun visitElement(element: PsiElement) {
+                element.acceptChildren(this)
 
-        val descriptors = reference.resolveToDescriptors((element as JetElement).analyze()) //TODO: we could use partial body resolve for all references together
-        //check whether this reference is unambiguous
-        if (reference !is JetMultiReference<*> && descriptors.size() > 1) return
+                val reference = element.getReference() as? JetReference ?: return
 
-        for (descriptor in descriptors) {
-            val declarations = DescriptorToSourceUtilsIde.getAllDeclarations(file.getProject(), descriptor)
-            val declaration = declarations.singleOrNull()
-            if (declaration != null && declaration.isInCopiedArea(file, startOffsets, endOffsets)) continue
+                val descriptors = reference.resolveToDescriptors((element as JetElement).analyze()) //TODO: we could use partial body resolve for all references together
+                //check whether this reference is unambiguous
+                if (reference !is JetMultiReference<*> && descriptors.size() > 1) return
 
-            if (!descriptor.isExtension) {
-                if (element !is JetNameReferenceExpression) continue
-                if (element.getIdentifier() == null) continue // skip 'this' etc
-                if (element.getReceiverExpression() != null) continue
+                for (descriptor in descriptors) {
+                    val declarations = DescriptorToSourceUtilsIde.getAllDeclarations(file.getProject(), descriptor)
+                    val declaration = declarations.singleOrNull()
+                    if (declaration != null && declaration.isInCopiedArea(file, startOffsets, endOffsets)) continue
+
+                    if (!descriptor.isExtension) {
+                        if (element !is JetNameReferenceExpression) continue
+                        if (element.getIdentifier() == null) continue // skip 'this' etc
+                        if (element.getReceiverExpression() != null) continue
+                    }
+
+                    val fqName = descriptor.importableFqName ?: continue
+                    if (!descriptor.canBeReferencedViaImport()) continue
+
+                    val kind = referenceDataKind(descriptor) ?: continue
+                    add(KotlinReferenceData(element.range.start - startOffset, element.range.end - startOffset, fqName.asString(), kind))
+                }
             }
-
-            val fqName = descriptor.importableFqName ?: continue
-            if (!descriptor.canBeReferencedViaImport()) continue
-
-            val kind = referenceDataKind(descriptor) ?: continue
-            add(KotlinReferenceData(element.range.start - startOffset, element.range.end - startOffset, fqName.asString(), kind))
-        }
+        })
     }
 
     private fun referenceDataKind(descriptor: DeclarationDescriptor): KotlinReferenceData.Kind? {
