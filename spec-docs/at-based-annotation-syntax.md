@@ -116,6 +116,20 @@ annotation class at(val target: AnnotationTarget, vararg val annotations: Annota
 annotation class atMany(val target: Array<AnnotationTarget>, vararg val annotations: Annotation)
 ```
 
+Yet another approach involves adding an explicit syntax for declaring fields:
+
+``` kotlin
+@Ann1("arg") @Ann2
+val foo: Int = 1
+    @Ann1("arg") @Ann2
+    field _foo
+    @GetterAnnotation
+    get
+```
+
+* There's no way to mitigate duplication here
+* It is likely to be come an obscure piece of syntax (like `$backingField`) which is used rarely and supported poorly by tools
+
 ## Escaping For Modifiers
 
 Since modifiers (being soft-keywords) are not parseable in local declarations (despite the present erroneous behaviuor in our parser), we need to be able to escape modifier names by prefixing them with `@`:
@@ -129,3 +143,34 @@ fun example() {
 The same syntax is allowed on all modifier everywhere in Kotlin.
 
 As a consequence, it must be prohibited to name annotation classes `public`, `open` etc, i.e. like modifiers.
+
+> Alternative: do not prohibit this, but prefer modifiers to annotations, one can use a qalified name to refer to an annotation then: `@my.package.open`
+
+Further development of this direction may involve complete unification of modifiers and annotations.
+
+### Reserving space for future syntactic changes
+
+In the future we might want to support escape-free syntax for common cases like:
+
+``` kotlin
+fun example() {
+    open class LocalOpen
+    abstract class LocalAbstract
+    enum class LocalEnum
+    inline fun local() {}
+    volatile var local = ...
+}
+```
+
+I.e. annotations on the same line are allowed.
+
+Consider the following case:
+
+``` kotlin
+list map fun mapping(x: Item) = NewItem(x)
+```
+
+This looks both like an annotated local function and a binary expression (infix call). 
+
+To make escapless annotation for local function possible in the future (effectively, to postpone the decision), we need to prohibit using *named function expressions* as right-hand arguments to infix calls.
+
