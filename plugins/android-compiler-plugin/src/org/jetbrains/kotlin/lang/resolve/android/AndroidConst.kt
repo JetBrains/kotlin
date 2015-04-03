@@ -64,8 +64,14 @@ public fun isWidgetTypeIgnored(xmlType: String): Boolean {
     return (xmlType.isEmpty() || xmlType in AndroidConst.IGNORED_XML_WIDGET_TYPES)
 }
 
-public fun getRealWidgetType(xmlType: String): String = if (xmlType == "include") "View" else xmlType
-
 fun escapeAndroidIdentifier(id: String): String {
     return if (id in AndroidConst.ESCAPED_IDENTIFIERS) "`$id`" else id
+}
+
+public fun parseAndroidResource(id: String, type: String): AndroidResource {
+   return  when (type) {
+        "fragment" -> AndroidFragment(id)
+        "include" -> AndroidWidget(id, "View")
+        else -> AndroidWidget(id, type)
+   }
 }

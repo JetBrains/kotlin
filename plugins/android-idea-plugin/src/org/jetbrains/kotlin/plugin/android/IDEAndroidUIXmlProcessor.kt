@@ -41,10 +41,10 @@ class IDEAndroidUIXmlProcessor(val module: Module) : AndroidUIXmlProcessor(modul
         }
     }
 
-    override fun parseLayout(files: List<PsiFile>): List<AndroidWidget> {
-        val widgets = arrayListOf<AndroidWidget>()
+    override fun parseLayout(files: List<PsiFile>): List<AndroidResource> {
+        val widgets = arrayListOf<AndroidResource>()
         val visitor = AndroidXmlVisitor { id, widgetType, attribute ->
-            widgets.add(AndroidWidget(id, widgetType))
+            widgets.add(parseAndroidResource(id, widgetType))
         }
 
         files.forEach { it.accept(visitor) }

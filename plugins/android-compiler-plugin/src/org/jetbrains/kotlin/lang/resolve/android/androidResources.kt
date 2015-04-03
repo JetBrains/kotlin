@@ -18,6 +18,32 @@ package org.jetbrains.kotlin.lang.resolve.android
 
 public data class AndroidModuleInfo(val applicationPackage: String, val mainResDirectory: String?)
 
-trait AndroidResource
+public abstract class AndroidResource(val id: String) {
+    public abstract val className: String
 
-public data class AndroidWidget(val id: String, val className: String) : AndroidResource
+    public abstract val mainProperties: List<Pair<String, String>>
+
+    public open val viewProperties: List<Pair<String, String>> = listOf()
+
+    public open fun sameClass(other: AndroidResource): Boolean = false
+}
+
+public class AndroidWidget(id: String, override val className: String) : AndroidResource(id) {
+    override val mainProperties = listOf(
+            "android.app.Activity" to "findViewById(0)",
+            "android.app.Fragment" to "getView().findViewById(0)")
+
+    override val viewProperties = listOf("android.view.View" to "findViewById(0)")
+
+    override fun sameClass(other: AndroidResource) = other is AndroidWidget
+}
+
+public class AndroidFragment(id: String) : AndroidResource(id) {
+    override val className = "Fragment"
+
+    override val mainProperties = listOf(
+            "android.app.Activity" to "getFragmentManager().findFragmentById(0)",
+            "android.app.Fragment" to "getActivity().getFragmentManager().findFragmentById(0)")
+
+    override fun sameClass(other: AndroidResource) = other is AndroidFragment
+}
