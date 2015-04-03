@@ -124,13 +124,6 @@ public fun String.format(locale: Locale, vararg args : Any?) : String = java.lan
 public fun String.split(regex: Pattern, limit: Int = 0): List<String> = regex.split(this, limit).asList()
 
 /**
- * Splits this string around matches of the given regular expression.
- */
-deprecated("Convert an argument to regex with toRegex or use splitBy instead.")
-public fun String.split(regex: String): Array<String> = split(regex.toRegex()).toTypedArray()
-
-
-/**
  * Returns a substring of this string starting with the specified index.
  */
 public fun String.substring(beginIndex: Int): String = (this as java.lang.String).substring(beginIndex)

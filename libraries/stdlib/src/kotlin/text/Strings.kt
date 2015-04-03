@@ -532,26 +532,15 @@ public fun String.matches(regex: Regex): Boolean = regex.matches(this)
 /**
  * Returns `true` if this string starts with the specified character.
  */
-public fun String.startsWith(char: Char, ignoreCase: Boolean): Boolean =
+public fun String.startsWith(char: Char, ignoreCase: Boolean = false): Boolean =
         this.length() > 0 && this[0].equals(char, ignoreCase)
 
 /**
- * Returns `true` if this string starts with the specified character.
- */
-// TODO: temporary overload to keep binary compatibility, remove after fixing markdown parser
-public fun String.startsWith(char: Char): Boolean = startsWith(char, ignoreCase = false)
-
-/**
  * Returns `true` if this string ends with the specified character.
  */
-public fun String.endsWith(char: Char, ignoreCase: Boolean): Boolean =
+public fun String.endsWith(char: Char, ignoreCase: Boolean = false): Boolean =
         this.length() > 0 && this[lastIndex].equals(char, ignoreCase)
 
-/**
- * Returns `true` if this string ends with the specified character.
- */
-// TODO: temporary overload to keep binary compatibility, remove after fixing markdown parser
-public fun String.endsWith(char: Char): Boolean = endsWith(char, ignoreCase = false)
 
 
 // common prefix and suffix
@@ -920,7 +909,10 @@ public fun String.splitToSequence(vararg delimiters: String, ignoreCase: Boolean
  * the beginning to the end of this string, and matches at each position the first element in [delimiters]
  * that is equal to a delimiter in this instance at that position.
  */
-deprecated("Temporary name 'splitBy' shall be replaced soon with 'split'.")
+public fun String.split(vararg delimiters: String, ignoreCase: Boolean = false, limit: Int = 0): List<String> =
+        splitToSequence(*delimiters, ignoreCase = ignoreCase, limit = limit).toList()
+
+deprecated("Use split(delimiters) instead.")
 public fun String.splitBy(vararg delimiters: String, ignoreCase: Boolean = false, limit: Int = 0): List<String> =
         splitToSequence(*delimiters, ignoreCase = ignoreCase, limit = limit).toList()
 
