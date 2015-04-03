@@ -478,12 +478,16 @@ class StringTest {
 
 
     test fun contains() {
-        assertTrue("sample".contains("pl"))
-        assertFalse("sample".contains("PL"))
+        assertTrue("pl" in "sample")
+        assertFalse("PL" in "sample")
         assertTrue("sömple".contains("Ö", ignoreCase = true))
 
-        assertTrue("sample".contains(""))
-        assertTrue("".contains(""))
+        assertTrue("" in "sample")
+        assertTrue("" in "")
+
+        assertTrue('ö' in "sömple")
+        assertFalse('Ö' in "sömple")
+        assertTrue("sömple".contains('Ö', ignoreCase = true))
     }
 
     test fun equalsIgnoreCase() {

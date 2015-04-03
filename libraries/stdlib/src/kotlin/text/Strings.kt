@@ -694,6 +694,15 @@ public fun String.contains(seq: CharSequence, ignoreCase: Boolean = false): Bool
         indexOf(seq.toString(), ignoreCase = ignoreCase) >= 0
 
 
+/**
+ * Returns `true` if this string contains the specified character.
+ *
+ * @param ignoreCase `true` to ignore character case when comparing characters. By default `false`.
+ */
+public fun String.contains(char: Char, ignoreCase: Boolean = false): Boolean =
+        indexOf(char, ignoreCase = ignoreCase) >= 0
+
+
 // rangesDelimitedBy
 
 
