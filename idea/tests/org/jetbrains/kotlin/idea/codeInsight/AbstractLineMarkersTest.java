@@ -22,6 +22,7 @@ import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerImpl;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
@@ -80,6 +81,12 @@ public abstract class AbstractLineMarkersTest extends JetLightCodeInsightFixture
 
             try {
                 data.checkLineMarkers(markers, document.getText());
+
+                // This is a workaround for sad bug in ExpectedHighlightingData:
+                // the latter doesn't throw assertion error when some line markers are expected, but none are present.
+                if (FileUtil.loadFile(new File(path)).contains("<lineMarker") && markers.isEmpty()) {
+                    throw new AssertionError("Some line markers are expected, but nothing is present at all");
+                }
             }
             catch (AssertionError error) {
                 try {
