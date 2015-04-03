@@ -128,7 +128,7 @@ val foo: Int = 1
 ```
 
 * There's no way to mitigate duplication here
-* It is likely to be come an obscure piece of syntax (like `$backingField`) which is used rarely and supported poorly by tools
+* It is likely to become an obscure piece of syntax (like `$backingField`) which is used rarely and supported poorly by tools
 
 ## Escaping For Modifiers
 
