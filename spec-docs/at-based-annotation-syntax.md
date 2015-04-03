@@ -130,28 +130,21 @@ val foo: Int = 1
 * There's no way to mitigate duplication here
 * It is likely to become an obscure piece of syntax (like `$backingField`) which is used rarely and supported poorly by tools
 
-## Escaping For Modifiers
+## Modifiers and Annotations on Local Declarations
 
-Since modifiers (being soft-keywords) are not parseable in local declarations (despite the present erroneous behaviuor in our parser), we need to be able to escape modifier names by prefixing them with `@`:
-
+Current state is as follows:
 ``` kotlin
 fun example() {
-    @open class Local { ... }
+    open abstract final; // binary expression
+    class Foo
+    
+    open class Bar // modifier list
+    
+    data class Bar // syntax error: add ";" between expression and declaration
 }
 ```
 
-The same syntax is allowed on all modifier everywhere in Kotlin.
-
-As a consequence, it must be prohibited to name annotation classes `public`, `open` etc, i.e. like modifiers.
-
-> Alternative: do not prohibit this, but prefer modifiers to annotations, one can use a qalified name to refer to an annotation then: `@my.package.open`
-
-Further development of this direction may involve complete unification of modifiers and annotations.
-
-### Reserving space for future syntactic changes
-
-In the future we might want to support escape-free syntax for common cases like:
-
+Typical useful cases:
 ``` kotlin
 fun example() {
     open class LocalOpen
@@ -162,15 +155,46 @@ fun example() {
 }
 ```
 
-I.e. annotations on the same line are allowed.
-
-Consider the following case:
-
+Our goals/constraints:
+* We don't want to make users remember that `open` is a modifier, but `data` is an annotation => we need to treat both in a **uniform** way (both escaped or both unescaped)
+* REPL kind requires a possiblity of writing `open class Foo` in a local context (or we need a special parser tweak for REPL), same for scripts (parser tweak won't work here)
+* Allowing annotations on the previous line may reqult in quadratic parsing:
 ``` kotlin
-list map fun mapping(x: Item) = NewItem(x)
+fun example() {
+    foo() // maybe this starts a modifier list?
+    bar() // or this?
+    baz() // or this?
+    goo() // or this?
+    // no
+}
 ```
 
-This looks both like an annotated local function and a binary expression (infix call). 
+Our options:
+* **Leave it as is**: `open` works without escaping, but `data` doesn't (we can add recovery in the parser, so that the error message is comprehensible).
 
-To make escapless annotation for local function possible in the future (effectively, to postpone the decision), we need to prohibit using *named function expressions* as right-hand arguments to infix calls.
+* **Require escaping** for both modifiers and annotations in a local scope:
+``` kotlin
+fun example() {
+    @open @data class Local { ... }
+}
+```
+The same syntax is allowed on all modifier everywhere in Kotlin. 
 
+Downside: **REPL/scripts** won't forgive us.
+
+Then, it makes sense to prohibit naming annotation classes `public`, `open` etc, i.e. like modifiers.
+
+> Alternative: do not prohibit this, but prefer modifiers to annotations, one can use a qalified name to refer to an annotation then: `@my.package.open`
+
+Further development of this direction may involve complete unification of modifiers and annotations.
+
+* **Allow unescaped annotations** *on the same line*:
+``` kotlin
+fun example() {
+    open data class Local { ... } // OK
+    open data // syntax error
+    class Local2 { ... }
+}
+```
+
+Downside: This won't so easilty work for functions (which are also valid expressions), so we'd have to either **prohibit annotating local functions**, or **forbid using *named* functions** as rhs arguments of infix calls (`list map fun mapper() { ... }` <- this is an error)
