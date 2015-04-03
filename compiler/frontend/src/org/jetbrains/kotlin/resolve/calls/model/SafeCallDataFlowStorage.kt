@@ -45,10 +45,10 @@ public class SafeCallDataFlowStorage {
     private val lengthStack: Deque<Int> = ArrayDeque()
 
     private var firstReceiverInfo: DataFlowInfo?
-    get() = storage.peek()[0]
-    set(info: DataFlowInfo?) {
-        storage.peek()[0] = info
-    }
+        get() = storage.peek()[0]
+        set(info: DataFlowInfo?) {
+            storage.peek()[0] = info
+        }
 
     init {
         beginChain()
