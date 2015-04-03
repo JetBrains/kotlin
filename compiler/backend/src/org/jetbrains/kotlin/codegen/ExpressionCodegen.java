@@ -36,10 +36,7 @@ import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
 import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension;
 import org.jetbrains.kotlin.codegen.inline.*;
-import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethod;
-import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
-import org.jetbrains.kotlin.codegen.intrinsics.JavaClassProperty;
-import org.jetbrains.kotlin.codegen.intrinsics.Not;
+import org.jetbrains.kotlin.codegen.intrinsics.*;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.codegen.stackvalue.BranchedValue;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
@@ -2255,20 +2252,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         FunctionDescriptor accessibleFunctionDescriptor = accessibleFunctionDescriptor(fd);
-        final Callable callable = resolveToCallable(accessibleFunctionDescriptor, superCall, resolvedCall);
-        final Type returnType = typeMapper.mapReturnType(accessibleFunctionDescriptor);
+        Callable callable = resolveToCallable(accessibleFunctionDescriptor, superCall, resolvedCall);
+        Type returnType = typeMapper.mapReturnType(accessibleFunctionDescriptor);
 
         if (callable instanceof ExtendedCallable) {
-            return StackValue.functionCall(returnType, new Function1<InstructionAdapter, Unit>() {
-                @Override
-                public Unit invoke(InstructionAdapter v) {
-                    ExtendedCallable callableMethod = (ExtendedCallable) callable;
-                    invokeMethodWithArguments(callableMethod, resolvedCall, receiver);
-
-                    StackValue.coerce(callableMethod.getReturnType(), returnType, v);
-                    return Unit.INSTANCE$;
-                }
-            });
+            return ((ExtendedCallable) callable).invokeMethodWithArguments(resolvedCall, receiver, returnType, this);
         }
         else {
             StackValue newReceiver = StackValue.receiver(resolvedCall, receiver, this, null);
@@ -2280,6 +2268,16 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
             return ((IntrinsicMethod) callable).generate(this, returnType, call.getCallElement(), args, newReceiver);
         }
+    }
+
+    public void invokeMethodWithArguments(
+            @NotNull ExtendedCallable callable,
+            @NotNull ResolvedCall resolvedCall,
+            @NotNull StackValue receiver,
+            @NotNull Type returnType
+    ) {
+        invokeMethodWithArguments(callable, resolvedCall, receiver);
+        StackValue.coerce(callable.getReturnType(), returnType, v);
     }
 
     @Nullable
@@ -3390,15 +3388,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         CallableDescriptor op = resolvedCall.getResultingDescriptor();
 
         assert op instanceof FunctionDescriptor || originalOperation == null : String.valueOf(op);
-        Callable callable = resolveToCallable((FunctionDescriptor) op, false, resolvedCall);
         String operationName = originalOperation == null ? "" : originalOperation.getName().asString();
-        if (callable instanceof Not) {
-            Type returnType = typeMapper.mapType(op);
-            return ((Not) callable).generate(this, returnType, expression,
-                                                         Collections.singletonList(expression.getBaseExpression()), receiver);
-        }
-
-
         if (!(operationName.equals("inc") || operationName.equals("dec"))) {
             return invokeFunction(resolvedCall, receiver);
         }
@@ -3406,6 +3396,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         int increment = operationName.equals("inc") ? 1 : -1;
         Type type = expressionType(expression.getBaseExpression());
         StackValue value = gen(expression.getBaseExpression());
+        Callable callable = resolveToCallable((FunctionDescriptor) op, false, resolvedCall);
         return StackValue.preIncrement(type, value, increment, callable, resolvedCall, this);
     }
 

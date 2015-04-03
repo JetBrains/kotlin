@@ -21,7 +21,11 @@ import org.jetbrains.kotlin.codegen.CallableMethod
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.ExtendedCallable
 import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.psi.JetCallExpression
 import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.psi.JetPrefixExpression
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.org.objectweb.asm.Type
 
 public class Not : LazyIntrinsicMethod() {
@@ -37,6 +41,23 @@ public class Not : LazyIntrinsicMethod() {
     }
 
     override fun supportCallable(): Boolean {
-        return false
+        return true
+    }
+
+    override fun toCallable(fd: FunctionDescriptor, isSuper: Boolean, resolvedCall: ResolvedCall<*>, codegen: ExpressionCodegen): ExtendedCallable {
+        val callable = codegen.getState().getTypeMapper().mapToCallableMethod(fd, false, codegen.getContext())
+        return object : MappedCallable(callable, {}) {
+            override fun invokeMethodWithArguments(resolvedCall: ResolvedCall<*>, receiver: StackValue, returnType: Type, codegen: ExpressionCodegen): StackValue {
+                val element = resolvedCall.getCall().getCallElement()
+                val stackValue =
+                        if (element is JetPrefixExpression) {
+                            codegen.gen(element.getBaseExpression())
+                        }
+                        else {
+                            StackValue.receiver(resolvedCall, receiver, codegen, this)
+                        }
+                return StackValue.not(StackValue.coercion(stackValue, Type.BOOLEAN_TYPE))
+            }
+        }
     }
 }

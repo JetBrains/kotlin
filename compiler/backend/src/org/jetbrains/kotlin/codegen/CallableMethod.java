@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.codegen;
 
+import kotlin.Function1;
+import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
@@ -185,5 +187,20 @@ public class CallableMethod implements ExtendedCallable {
     @Override
     public void beforeParameterGeneration(@NotNull InstructionAdapter v, @Nullable StackValue value) {
 
+    }
+
+    @NotNull
+    @Override
+    public StackValue invokeMethodWithArguments(
+            @NotNull final ResolvedCall resolvedCall, @NotNull final StackValue receiver, @NotNull final Type returnType,
+            @NotNull final ExpressionCodegen codegen
+    ) {
+        return StackValue.functionCall(returnType, new Function1<InstructionAdapter, Unit>() {
+            @Override
+            public Unit invoke(InstructionAdapter v) {
+                codegen.invokeMethodWithArguments(CallableMethod.this, resolvedCall, receiver, returnType);
+                return Unit.INSTANCE$;
+            }
+        });
     }
 }

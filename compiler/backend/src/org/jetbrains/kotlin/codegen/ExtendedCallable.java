@@ -59,4 +59,12 @@ public interface ExtendedCallable extends Callable {
 
     void beforeParameterGeneration(@NotNull InstructionAdapter v, @Nullable StackValue value);
 
+    @NotNull
+    StackValue invokeMethodWithArguments(
+            @NotNull ResolvedCall resolvedCall,
+            @NotNull StackValue receiver,
+            @NotNull Type returnType,
+            @NotNull ExpressionCodegen codegen
+    );
+
 }

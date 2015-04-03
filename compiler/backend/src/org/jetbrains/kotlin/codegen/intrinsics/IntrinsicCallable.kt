@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.codegen.intrinsics
 
-import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.CallableMethod
-import org.jetbrains.kotlin.codegen.ExtendedCallable
-import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.context.CodegenContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
@@ -116,6 +113,12 @@ public abstract class IntrinsicCallable(val returnType1: Type,
 
     override fun beforeParameterGeneration(v: InstructionAdapter, value: StackValue?) {
 
+    }
+
+    override fun invokeMethodWithArguments(resolvedCall: ResolvedCall<*>, receiver: StackValue, returnType: Type, codegen: ExpressionCodegen): StackValue {
+        return StackValue.functionCall(returnType) {
+            codegen.invokeMethodWithArguments(this, resolvedCall, receiver, returnType)
+        }
     }
 }
 
