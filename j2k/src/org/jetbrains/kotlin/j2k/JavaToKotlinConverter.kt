@@ -63,6 +63,11 @@ public trait PostProcessor {
     public fun doAdditionalProcessing(file: JetFile, rangeMarker: RangeMarker?)
 }
 
+public enum class ParseContext {
+    TOP_LEVEL
+    CODE_BLOCK
+}
+
 public class JavaToKotlinConverter(private val project: Project,
                                    private val settings: ConverterSettings,
                                    private val referenceSearcher: ReferenceSearcher,
@@ -75,13 +80,15 @@ public class JavaToKotlinConverter(private val project: Project,
             val postProcessingContext: PsiElement?
     )
 
+    public data class Result(val text: String,  val parseContext: ParseContext)
+
     public fun elementsToKotlin(
             inputElements: List<InputElement>,
             progress: ProgressIndicator = EmptyProgressIndicator()
-    ): List<String> {
+    ): List<Result?> {
         try {
             val elementCount = inputElements.size()
-            val intermediateResults = ArrayList<((Map<PsiElement, UsageProcessing>) -> String)?>(elementCount)
+            val intermediateResults = ArrayList<(Converter.IntermediateResult)?>(elementCount)
             val usageProcessings = HashMap<PsiElement, UsageProcessing>()
             val usageProcessingCollector: (UsageProcessing) -> Unit = { usageProcessing ->
                 assert(!usageProcessings.containsKey(usageProcessing.targetElement))
@@ -130,21 +137,27 @@ public class JavaToKotlinConverter(private val project: Project,
                 intermediateResults.add(result)
             }
 
-            val results = ArrayList<String>(elementCount)
+            val results = ArrayList<Result?>(elementCount)
             processFilesWithProgress(0.25) { i ->
                 val result = intermediateResults[i]
-                results.add(if (result != null) result(usageProcessings) else "")
+                results.add(if (result != null)
+                                Result(result.codeGenerator(usageProcessings), result.parseContext)
+                            else
+                                null)
                 intermediateResults[i] = null // to not hold unused objects in the heap
             }
 
-            val finalResults = ArrayList<String>(elementCount)
+            if (postProcessor == null) return results
+
+            val finalResults = ArrayList<Result?>(elementCount)
             processFilesWithProgress(0.5) { i ->
                 val result = results[i]
-                if (postProcessor != null) {
+                if (result != null) {
                     try {
-                        val kotlinFile = JetPsiFactory(project).createAnalyzableFile("dummy.kt", result, inputElements[i].postProcessingContext!!)
+                        //TODO: post processing does not work correctly for ParseContext different from TOP_LEVEL
+                        val kotlinFile = JetPsiFactory(project).createAnalyzableFile("dummy.kt", result.text, inputElements[i].postProcessingContext!!)
                         AfterConversionPass(project, postProcessor).run(kotlinFile, null)
-                        finalResults.add(kotlinFile.getText())
+                        finalResults.add(Result(kotlinFile.getText(), result.parseContext))
                     }
                     catch(e: ProcessCanceledException) {
                         throw e
@@ -155,7 +168,7 @@ public class JavaToKotlinConverter(private val project: Project,
                     }
                 }
                 else {
-                    finalResults.add(result)
+                    finalResults.add(null)
                 }
             }
 

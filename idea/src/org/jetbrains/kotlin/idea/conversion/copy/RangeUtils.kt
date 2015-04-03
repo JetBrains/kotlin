@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.conversion.copy
 
+import com.intellij.openapi.editor.RangeMarker
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 
@@ -29,3 +30,6 @@ public val TextRange.end: Int
 
 public val PsiElement.range: TextRange
     get() = getTextRange()!!
+
+public val RangeMarker.range: TextRange?
+    get() = if (isValid()) TextRange(getStartOffset(), getEndOffset()) else null

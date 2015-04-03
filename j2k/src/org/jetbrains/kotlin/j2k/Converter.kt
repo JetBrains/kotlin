@@ -72,15 +72,26 @@ class Converter private(
 
     private fun createDefaultCodeConverter() = CodeConverter(this, DefaultExpressionConverter(), DefaultStatementConverter(), null)
 
-    public fun convert(): ((Map<PsiElement, UsageProcessing>) -> String)? {
-        val element = convertTopElement(elementToConvert) ?: return null
-        return { usageProcessings ->
-            unfoldDeferredElements(usageProcessings)
+    public data class IntermediateResult(
+            val codeGenerator: (Map<PsiElement, UsageProcessing>) -> String,
+            val parseContext: ParseContext
+    )
 
-            val builder = CodeBuilder(elementToConvert)
-            builder.append(element)
-            builder.result
+    public fun convert(): IntermediateResult? {
+        val element = convertTopElement(elementToConvert) ?: return null
+        val parseContext = when (elementToConvert) {
+            is PsiStatement, is PsiExpression -> ParseContext.CODE_BLOCK
+            else -> ParseContext.TOP_LEVEL
         }
+        return IntermediateResult(
+                { usageProcessings ->
+                    unfoldDeferredElements(usageProcessings)
+
+                    val builder = CodeBuilder(elementToConvert)
+                    builder.append(element)
+                    builder.result
+                },
+                parseContext)
     }
 
     private fun convertTopElement(element: PsiElement): Element? = when (element) {

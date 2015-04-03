@@ -54,6 +54,7 @@ public class JavaToKotlinAction : AnAction() {
                                                   IdeaReferenceSearcher, IdeaResolverForConverter, J2kPostProcessor(formatCode = true))
             val inputElements = javaFiles.map { JavaToKotlinConverter.InputElement(it, it) }
             convertedTexts = converter.elementsToKotlin(inputElements, ProgressManager.getInstance().getProgressIndicator())
+                    .map { it!!.text /*conversion of a file always succeeds*/ }
         }
 
         if (!ProgressManager.getInstance().runProcessWithProgressSynchronously(

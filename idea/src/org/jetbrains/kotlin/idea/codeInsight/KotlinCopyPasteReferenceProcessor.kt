@@ -85,11 +85,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
         if (file !is JetFile || DumbService.getInstance(file.getProject()).isDumb()) return listOf()
 
         val collectedData = try {
-            toTextRanges(startOffsets, endOffsets).flatMap {
-                CollectHighlightsUtil.getElementsInRange(file, it.start, it.end).flatMap { element ->
-                    collectReferenceDataFromElement(element, file, it.start, startOffsets, endOffsets)
-                }
-            }
+            collectReferenceData(file, startOffsets, endOffsets)
         }
         catch (e: ProcessCanceledException) {
             // supposedly analysis can only be canceled from another thread
@@ -107,23 +103,36 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
         return listOf(KotlinReferenceTransferableData(collectedData.copyToArray()))
     }
 
-    private fun collectReferenceDataFromElement(
+    public fun collectReferenceData(
+            file: JetFile,
+            startOffsets: IntArray,
+            endOffsets: IntArray
+    ): List<KotlinReferenceData> {
+        val result = ArrayList<KotlinReferenceData>()
+        for (range in toTextRanges(startOffsets, endOffsets)) {
+            for (element in CollectHighlightsUtil.getElementsInRange(file, range.start, range.end)) {
+                result.addReferenceDataFromElement(element, file, range.start, startOffsets, endOffsets)
+            }
+        }
+        return result
+    }
+
+    private fun MutableCollection<KotlinReferenceData>.addReferenceDataFromElement(
             element: PsiElement,
             file: JetFile,
             startOffset: Int,
             startOffsets: IntArray,
             endOffsets: IntArray
-    ): Collection<KotlinReferenceData> {
+    ) {
 
-        if (PsiTreeUtil.getParentOfType(element, *IGNORE_REFERENCES_INSIDE) != null) return listOf()
+        if (PsiTreeUtil.getParentOfType(element, *IGNORE_REFERENCES_INSIDE) != null) return
 
-        val reference = element.getReference() as? JetReference ?: return listOf()
+        val reference = element.getReference() as? JetReference ?: return
 
         val descriptors = reference.resolveToDescriptors((element as JetElement).analyze()) //TODO: we could use partial body resolve for all references together
         //check whether this reference is unambiguous
-        if (reference !is JetMultiReference<*> && descriptors.size() > 1) return listOf()
+        if (reference !is JetMultiReference<*> && descriptors.size() > 1) return
 
-        val collectedData = ArrayList<KotlinReferenceData>()
         for (descriptor in descriptors) {
             val declarations = DescriptorToSourceUtilsIde.getAllDeclarations(file.getProject(), descriptor)
             val declaration = declarations.singleOrNull()
@@ -139,9 +148,8 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
             if (!descriptor.canBeReferencedViaImport()) continue
 
             val kind = referenceDataKind(descriptor) ?: continue
-            collectedData.add(KotlinReferenceData(element.range.start - startOffset, element.range.end - startOffset, fqName.asString(), kind))
+            add(KotlinReferenceData(element.range.start - startOffset, element.range.end - startOffset, fqName.asString(), kind))
         }
-        return collectedData
     }
 
     private fun referenceDataKind(descriptor: DeclarationDescriptor): KotlinReferenceData.Kind? {
@@ -179,12 +187,16 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
         val file = PsiDocumentManager.getInstance(project).getPsiFile(document)
         if (file !is JetFile) return
 
+        assert(values.size() == 1)
+        val referenceData = values.single().data
+
+        processReferenceData(project, file, bounds.getStartOffset(), referenceData)
+    }
+
+    public fun processReferenceData(project: Project, file: JetFile, boundStart: Int, referenceData: Array<KotlinReferenceData>) {
         PsiDocumentManager.getInstance(project).commitAllDocuments()
 
-        assert(values.size() == 1)
-
-        val referenceData = values.single().data
-        val referencesPossibleToRestore = findReferencesToRestore(file, bounds, referenceData)
+        val referencesPossibleToRestore = findReferencesToRestore(file, boundStart, referenceData)
 
         val selectedReferencesToRestore = showRestoreReferencesDialog(project, referencesPossibleToRestore)
         if (selectedReferencesToRestore.isEmpty()) return
@@ -192,14 +204,13 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
         ApplicationManager.getApplication()!!.runWriteAction(Runnable {
             restoreReferences(selectedReferencesToRestore, file)
         })
-        PsiDocumentManager.getInstance(project).commitAllDocuments()
     }
 
-    private fun findReferencesToRestore(file: PsiFile, bounds: RangeMarker, referenceData: Array<out KotlinReferenceData>): List<ReferenceToRestoreData> {
+    private fun findReferencesToRestore(file: PsiFile, boundStart: Int, referenceData: Array<out KotlinReferenceData>): List<ReferenceToRestoreData> {
         if (file !is JetFile) return listOf()
 
         return referenceData.map {
-            val referenceElement = findReference(it, file, bounds)
+            val referenceElement = findReference(it, file, boundStart)
             if (referenceElement != null)
                 createReferenceToRestoreData(referenceElement, it)
             else
@@ -207,9 +218,9 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
         }.filterNotNull()
     }
 
-    private fun findReference(data: KotlinReferenceData, file: JetFile, bounds: RangeMarker): JetElement? {
-        val startOffset = data.startOffset + bounds.getStartOffset()
-        val endOffset = data.endOffset + bounds.getStartOffset()
+    private fun findReference(data: KotlinReferenceData, file: JetFile, boundStart: Int): JetElement? {
+        val startOffset = data.startOffset + boundStart
+        val endOffset = data.endOffset + boundStart
         val element = file.findElementAt(startOffset)
         val desiredRange = TextRange(startOffset, endOffset)
         var expression = element

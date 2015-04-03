@@ -1,1 +1,4 @@
-No conversion performed
+fun main(args: Array<String>) {
+    qualifier
+    somethingElse()
+}
