@@ -11,5 +11,5 @@ fun bar() {
 }
 
 // ORDER: it
-// ORDER: create
 // ORDER: Name
+// ORDER: create

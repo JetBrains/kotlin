@@ -203,4 +203,10 @@ public class SmartCompletionWeigherTestGenerated extends AbstractSmartCompletion
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/weighers/smart/SmartPriority2.kt");
         doTest(fileName);
     }
+
+    @TestMetadata("SmartPriority3.kt")
+    public void testSmartPriority3() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/weighers/smart/SmartPriority3.kt");
+        doTest(fileName);
+    }
 }
