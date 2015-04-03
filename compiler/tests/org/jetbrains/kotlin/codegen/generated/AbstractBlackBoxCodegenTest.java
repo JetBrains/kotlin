@@ -142,7 +142,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         });
 
         CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(
-                ConfigurationKind.ALL, getTestJdkKind(directory), JetTestUtils.getAnnotationsJar()
+                ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar()
         );
         addJvmClasspathRoot(configuration, dirFile);
         myEnvironment = KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
