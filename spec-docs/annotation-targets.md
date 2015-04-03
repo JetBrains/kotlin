@@ -10,26 +10,27 @@ Goals:
 * [ ] Naming conventions
 * [ ] How to annotate anonymous classes generated for `object`-expressions?
 
+
+
 ## Allowed Targets
 
 To check applicability, we can use the following constants:
 
-
 | Kotlin constant | Java constant | 
 |-----------------|---------------|
+| PACKAGE | \<same> |
+| CLASSIFIER | TYPE |
 | ANNOTATION_CLASS | ANNOTATION_TYPE |
-| CONSTRUCTOR | \<same> |
+| TYPE_PARAMETER | \<same>
+| PROPERTY | \<no analog> |
 | FIELD | \<same>
 | LOCAL_VARIABLE | \<same> |
+| VALUE_PARAMETER | PARAMETER |
+| CONSTRUCTOR | \<same> |
 | FUNCITON | METHOD |
 | PROPERTY_GETTER | METHOD |
 | PROPERTY_SETTER | METHOD |
-| PACKAGE | \<same> |
-| VALUE_PARAMETER | PARAMETER |
-| CLASSIFIER | TYPE |
-| TYPE_PARAMETER | \<same>
 | TYPE | TYPE_USE |
-| PROPERTY | \<no analog> |
 | EXPRESSION | \<no analog> |
 
 **TODO** Open question: what about traits/classes/objects?  
