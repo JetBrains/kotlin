@@ -22,9 +22,11 @@ import org.jetbrains.kotlin.lexer.JetTokens
 
 public object AndroidConst {
     val ANDROID_USER_PACKAGE: Key<String> = Key.create<String>("ANDROID_USER_PACKAGE")
+
     val SYNTHETIC_FILENAME_PREFIX: String = "ANDROIDXML_"
     val LAYOUT_POSTFIX: String = "_LAYOUT"
     val VIEW_LAYOUT_POSTFIX: String = "_VIEW"
+
     val SYNTHETIC_PACKAGE: String = "kotlinx.android.synthetic"
     val SYNTHETIC_PACKAGE_PATH_LENGTH = SYNTHETIC_PACKAGE.count { it == '.' } + 1
 
@@ -35,6 +37,7 @@ public object AndroidConst {
 
     val ID_DECLARATION_PREFIX = "@+id/"
     val ID_USAGE_PREFIX = "@id/"
+    val XML_ID_PREFIXES = array(ID_DECLARATION_PREFIX, ID_USAGE_PREFIX)
 
     val CLEAR_FUNCTION_NAME = "clearFindViewByIdCache"
 
@@ -47,18 +50,11 @@ public object AndroidConst {
 public fun nameToIdDeclaration(name: String): String = AndroidConst.ID_DECLARATION_PREFIX + name
 
 public fun idToName(id: String): String? {
-    val unescaped =
-            if (isResourceIdDeclaration(id)) id.replace(AndroidConst.ID_DECLARATION_PREFIX, "")
-            else if (isResourceIdUsage(id)) id.replace(AndroidConst.ID_USAGE_PREFIX, "")
-            else null
-    return if (unescaped != null) escapeAndroidIdentifier(unescaped) else null
+    for (prefix in AndroidConst.XML_ID_PREFIXES) {
+        if (id.startsWith(prefix)) return escapeAndroidIdentifier(id.replace(prefix, ""))
+    }
+    return null
 }
-
-public fun isResourceIdDeclaration(str: String?): Boolean = str?.startsWith(AndroidConst.ID_DECLARATION_PREFIX) ?: false
-
-public fun isResourceIdUsage(str: String?): Boolean = str?.startsWith(AndroidConst.ID_USAGE_PREFIX) ?: false
-
-public fun isResourceDeclarationOrUsage(id: String?): Boolean = isResourceIdDeclaration(id) || isResourceIdUsage(id)
 
 public fun isWidgetTypeIgnored(xmlType: String): Boolean {
     return (xmlType.isEmpty() || xmlType in AndroidConst.IGNORED_XML_WIDGET_TYPES)

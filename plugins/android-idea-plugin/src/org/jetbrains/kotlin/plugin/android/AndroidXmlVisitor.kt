@@ -42,12 +42,9 @@ class AndroidXmlVisitor(val elementCallback: (String, String, XmlAttribute) -> U
         if (idAttribute != null) {
             val idAttributeValue = idAttribute.getValue()
             if (idAttributeValue != null) {
-                val classAttributeValue = tag?.getAttribute(AndroidConst.CLASS_ATTRIBUTE_NO_NAMESPACE)?.getValue()
-                val xmlType = classAttributeValue ?: localName
-                if (isResourceDeclarationOrUsage(idAttributeValue)) {
-                    val name = idToName(idAttributeValue)
-                    if (name != null) elementCallback(name, xmlType, idAttribute)
-                }
+                val xmlType = tag?.getAttribute(AndroidConst.CLASS_ATTRIBUTE_NO_NAMESPACE)?.getValue() ?: localName
+                val name = idToName(idAttributeValue)
+                if (name != null) elementCallback(name, xmlType, idAttribute)
             }
         }
         tag?.acceptChildren(this)
