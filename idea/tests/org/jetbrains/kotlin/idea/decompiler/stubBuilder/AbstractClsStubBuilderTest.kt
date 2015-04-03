@@ -60,7 +60,7 @@ public abstract class AbstractClsStubBuilderTest : LightCodeInsightFixtureTestCa
     }
 
     private fun lastSegment(sourcePath: String): String {
-        return Files.getNameWithoutExtension(sourcePath.split("/").last())!!
+        return Files.getNameWithoutExtension(sourcePath.split('/').last { !it.isEmpty() })!!
     }
 }
 
