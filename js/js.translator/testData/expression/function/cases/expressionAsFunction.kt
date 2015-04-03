@@ -2,8 +2,8 @@ package foo
 
 import java.util.*;
 
-val d = {(a: Int) -> a + 1 }
-val p = {(a: Int) -> a * 3 }
+val d = { a: Int -> a + 1 }
+val p = { a: Int -> a * 3 }
 
 val list = ArrayList<Function1<Int, Int>>();
 
@@ -35,7 +35,7 @@ fun box(): Boolean {
     if (chain(2) != -19) {
         return false;
     }
-    if (({(a: Int) -> a * a }(3)) != 9) {
+    if (({ a: Int -> a * a }(3)) != 9) {
         return false;
     }
     return true;

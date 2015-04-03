@@ -1,5 +1,5 @@
 fun foo(f: (Int) -> Unit) {
-    <selection>{ (n: Int) ->
+    <selection>{ n: Int ->
         val a = n + 1
         f(a)
     }</selection>
@@ -9,7 +9,7 @@ fun foo(f: (Int) -> Unit) {
         f(a)
     }
 
-    { (m: Int) ->
+    { m: Int ->
         val b = m + 1
         f(b)
     }

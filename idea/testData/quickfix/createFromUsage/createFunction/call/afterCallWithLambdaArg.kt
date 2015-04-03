@@ -8,5 +8,5 @@ class A<T>(val n: T) {
 }
 
 fun test() {
-    val a: A<Int> = A(1).foo(2, "2") { (p: Int) -> p + 1 }
+    val a: A<Int> = A(1).foo(2, "2") { p: Int -> p + 1 }
 }

@@ -1,13 +1,13 @@
 fun test1(): String {
     val inlineX = My()
     var d = "";
-    inlineX.doWork({(z: String) -> d = z; z})
+    inlineX.doWork({ z: String -> d = z; z})
     return d
 }
 
 fun test2(): Int {
     val inlineX = My()
-    return inlineX.perform({(z: My) -> 11})
+    return inlineX.perform({ z: My -> 11})
 }
 
 fun box(): String {

@@ -1,7 +1,7 @@
 package foo
 
 fun box(): String {
-    return apply("OK", {(arg: String) -> arg })
+    return apply("OK", { arg: String -> arg })
 }
 
 fun apply(arg: String, f: (p: String) -> String): String {

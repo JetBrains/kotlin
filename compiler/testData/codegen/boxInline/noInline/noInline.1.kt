@@ -1,5 +1,5 @@
 fun test1(): Int {
-    return calc( {(l : Int) -> 2*l},  {(l : Int) -> 4*l})
+    return calc( { l: Int -> 2*l},  { l: Int -> 4*l})
 }
 
 

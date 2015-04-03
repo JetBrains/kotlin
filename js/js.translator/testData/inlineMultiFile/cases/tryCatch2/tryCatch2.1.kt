@@ -24,7 +24,7 @@ fun test11(): Int {
                     throw RuntimeExceptionWithValue("2")
                 }
             },
-            {(ex, thizz) ->
+            { ex, thizz ->
                 if (ex.value == "2") {
                     thizz.value
                 } else {
@@ -55,7 +55,7 @@ fun test22(): Int {
                     111
                 }
             },
-            {(ex, thizz) ->
+            { ex, thizz ->
                 -11111
             })
 
@@ -87,7 +87,7 @@ fun test33(): Int {
                         throw RuntimeExceptionWithValue("-2")
                     }
                 },
-                {(ex, thizz) ->
+                { ex, thizz ->
                     if (ex.value == "-2") {
                         throw RuntimeExceptionWithValue("-3")
                     } else {

@@ -8,10 +8,10 @@ fun testExtensionInClass() : String {
     res = with(Z(1)) { "1".run() }
     if (res != "1null") return "failed in class 2: $res"
 
-    res = with(Z(2)) { "3".run("OK", {(a, b) -> a + b + value }, 1) }
+    res = with(Z(2)) { "3".run("OK", { a, b -> a + b + value }, 1) }
     if (res != "OK123") return "failed in class 3: $res"
 
-    res = with(Z(3)) { "4".run(lambda = {(a, b) -> a + b + value }) }
+    res = with(Z(3)) { "4".run(lambda = { a, b -> a + b + value }) }
     if (res != "034") return "failed in class 4: $res"
 
     return "OK"
@@ -25,10 +25,10 @@ fun box(): String {
     res = "1".run()
     if (res != "1null") return "failed 2: $res"
 
-    res = "3".run("OK", {(a, b) -> a + b}, 1)
+    res = "3".run("OK", { a, b -> a + b}, 1)
     if (res != "OK13") return "failed 3: $res"
 
-    res = "4".run(lambda = {(a, b) -> a + b})
+    res = "4".run(lambda = { a, b -> a + b})
     if (res != "04") return "failed 4: $res"
 
     return testExtensionInClass()

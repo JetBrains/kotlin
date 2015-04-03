@@ -3,5 +3,5 @@ class Mocha() {
 }
 fun main() {
     val mocha = Mocha()
-    val testing = mocha<caret>{ (x: Int) -> "hello world" }
+    val testing = mocha<caret>{ x: Int -> "hello world" }
 }

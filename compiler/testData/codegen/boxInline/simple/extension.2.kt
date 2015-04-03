@@ -19,11 +19,11 @@ class Inline(val res: Int) {
     }
 
     fun doWork(l : InlineX) : Int {
-        return l.calcInt({(a: Int, b: Int) -> a + b})
+        return l.calcInt({ a: Int, b: Int -> a + b})
     }
 
     fun doWorkWithDouble(s : Double) : Double {
-        return s.calcDouble({(a: Int, b: Double) -> a + b})
+        return s.calcDouble({ a: Int, b: Double -> a + b})
     }
 
 }

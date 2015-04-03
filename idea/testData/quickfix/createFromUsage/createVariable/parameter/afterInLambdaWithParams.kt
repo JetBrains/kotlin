@@ -2,5 +2,5 @@
 // ACTION: Create local variable 'foo'
 
 fun test(n: Int, foo: Int) {
-    val f: (Int, Int) -> Int = { (a, b) -> foo }
+    val f: (Int, Int) -> Int = { a, b -> foo }
 }

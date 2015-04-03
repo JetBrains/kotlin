@@ -22,7 +22,7 @@ inline fun maxBy(a: Array<Int>, inline keyFun: (Int) -> Int): Int {
 
 fun maxBySquare(a: Array<Int>, r: Result): Result {
     var invocationCount = 0
-    val maxVal = maxBy(a, {(x) -> invocationCount++; x * x;})
+    val maxVal = maxBy(a, { x -> invocationCount++; x * x;})
 
     r.value = maxVal
     r.invocationCount = invocationCount

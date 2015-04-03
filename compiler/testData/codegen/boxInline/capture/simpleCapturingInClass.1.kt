@@ -1,7 +1,7 @@
 fun testAll(): String {
     val inlineX = InlineAll()
 
-    return inlineX.inline({(a1: Int, a2: Double, a3: Double, a4: String, a5: Long) ->
+    return inlineX.inline({ a1: Int, a2: Double, a3: Double, a4: String, a5: Long ->
                               "" + a1 + a2 + a3 + a4 + a5},
                           1, 12.0, 13.0, "14", 15)
 }
@@ -19,7 +19,7 @@ fun testAllWithCapturedVal(): String {
     val c8 = 27.toShort()
     val c9 = 28.toFloat()
 
-    return inlineX.inline({(a1: Int, a2: Double, a3: Double, a4: String, a5: Long) ->
+    return inlineX.inline({ a1: Int, a2: Double, a3: Double, a4: String, a5: Long ->
                               "" + a1 + a2 + a3 + a4 + a5 + c1 + c2 + c3 + c4 + c5 + c6 + c7 + c8 + c9},
                           1, 12.0, 13.0, "14", 15)
 }
@@ -37,7 +37,7 @@ fun testAllWithCapturedVar(): String {
     var c8 = 27.toShort()
     val c9 = 28.toFloat()
 
-    return inlineX.inline({(a1: Int, a2: Double, a3: Double, a4: String, a5: Long) ->
+    return inlineX.inline({ a1: Int, a2: Double, a3: Double, a4: String, a5: Long ->
                               "" + a1 + a2 + a3 + a4 + a5 + c1 + c2 + c3 + c4 + c5 + c6 + c7 + c8 + c9},
                           1, 12.0, 13.0, "14", 15)
 }
@@ -55,7 +55,7 @@ fun testAllWithCapturedValAndVar(): String {
     var c8 = 27.toShort()
     val c9 = 28.toFloat()
 
-    return inlineX.inline({(a1: Int, a2: Double, a3: Double, a4: String, a5: Long) ->
+    return inlineX.inline({ a1: Int, a2: Double, a3: Double, a4: String, a5: Long ->
                               "" + a1 + a2 + a3 + a4 + a5 + c1 + c2 + c3 + c4 + c5 + c6 + c7 + c8 + c9},
                           1, 12.0, 13.0, "14", 15)
 }

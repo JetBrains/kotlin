@@ -1,1 +1,1 @@
-val x<caret> = { (a: Int) -> ""}
+val x<caret> = { a: Int -> ""}

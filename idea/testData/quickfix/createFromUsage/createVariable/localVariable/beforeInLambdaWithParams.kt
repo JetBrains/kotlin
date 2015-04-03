@@ -2,5 +2,5 @@
 // ACTION: Create parameter 'foo'
 
 fun test(n: Int) {
-    val f: (Int, Int) -> Int = { (a, b) -> <caret>foo }
+    val f: (Int, Int) -> Int = { a, b -> <caret>foo }
 }

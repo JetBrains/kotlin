@@ -7,7 +7,7 @@ class A(val value: Int) : Comparable<A> {
 class B(val value: Int)
 
 fun testExtensionFunctionAsCompareTo() {
-    val compareTo: B.( B ) -> Int = { (other) -> other.value compareTo this.value }
+    val compareTo: B.( B ) -> Int = { other -> other.value compareTo this.value }
 
     val x: B = B(100)
     val y: B = B(200)

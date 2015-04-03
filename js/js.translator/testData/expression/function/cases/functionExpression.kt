@@ -10,7 +10,7 @@ fun Int.foo2(): (i: Int) -> Int {
 
 fun fooT1<T>(t: T) = { t.toString() }
 
-fun fooT2<T>(t: T) = {(x: T) -> t.toString() + x.toString() }
+fun fooT2<T>(t: T) = { x: T -> t.toString() + x.toString() }
 
 fun box(): Any? {
     if ( (10.foo1())() != "23910") return "foo1 fail"
@@ -18,7 +18,7 @@ fun box(): Any? {
 
     if (1.{ Int.() -> this + 1 }() != 2) return "test 3 failed";
     if (  { 1 }() != 1) return "test 4 failed";
-    if (  {(x: Int) -> x }(1) != 1) return "test 5 failed";
+    if (  { x: Int -> x }(1) != 1) return "test 5 failed";
     if (  1.{ Int.(x: Int) -> x + this }(1) != 2) return "test 6 failed";
     val tmp = 1.({ Int.() -> this })()
     if (+tmp != 1) return "test 7 failed, res: $tmp ${tmp is Int}";

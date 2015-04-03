@@ -4,5 +4,5 @@ package bar
 import kotlin.modules.Module
 
 fun foo(w: Int = 0, x: (Module) -> Int, y: Int = 0, z: (Int) -> Int = {42}) {
-    foo(1, {(a: kotlin.modules.Module) -> 42}<caret>, 1)
+    foo(1, { a: kotlin.modules.Module -> 42}<caret>, 1)
 }

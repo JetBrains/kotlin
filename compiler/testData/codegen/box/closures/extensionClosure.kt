@@ -1,7 +1,7 @@
 class Point(val x : Int, val y : Int)
 
 fun box() : String {
-    val answer = apply(Point(3, 5), { Point.(scalar : Int) : Point ->
+    val answer = apply(Point(3, 5), { scalar : Int ->
         Point(x * scalar, y * scalar)
     })
 
