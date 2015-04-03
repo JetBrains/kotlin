@@ -3394,15 +3394,15 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                                                          Collections.singletonList(expression.getBaseExpression()), receiver);
         }
 
-        DeclarationDescriptor cls = op.getContainingDeclaration();
-
-        if (isPrimitiveNumberClassDescriptor(cls) || !(originalOperation.getName().asString().equals("inc") || originalOperation.getName().asString().equals("dec"))) {
+        String operationName = originalOperation == null ? "" : originalOperation.getName().asString();
+        if (!(operationName.equals("inc") || operationName.equals("dec"))) {
             return invokeFunction(resolvedCall, receiver);
         }
 
+        int increment = operationName.equals("inc") ? 1 : -1;
         Type type = expressionType(expression.getBaseExpression());
         StackValue value = gen(expression.getBaseExpression());
-        return StackValue.preIncrement(type, value, -1, callable, resolvedCall, this);
+        return StackValue.preIncrement(type, value, increment, callable, resolvedCall, this);
     }
 
     @Override

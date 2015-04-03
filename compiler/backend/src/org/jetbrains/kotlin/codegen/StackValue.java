@@ -420,6 +420,9 @@ public abstract class StackValue {
             ResolvedCall resolvedCall,
             @NotNull ExpressionCodegen codegen
     ) {
+        if (stackValue instanceof StackValue.Local && Type.INT_TYPE == stackValue.type) {
+            return preIncrementForLocalVar(((StackValue.Local) stackValue).index, delta);
+        }
         return new PrefixIncrement(type, stackValue, delta, method, resolvedCall, codegen);
     }
 

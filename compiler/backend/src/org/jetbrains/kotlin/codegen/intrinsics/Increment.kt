@@ -25,6 +25,9 @@ import org.jetbrains.kotlin.codegen.AsmUtil.genIncrement
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
 import org.jetbrains.kotlin.codegen.CallableMethod
 import org.jetbrains.kotlin.codegen.ExtendedCallable
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.psi.JetPrefixExpression
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 
 public class Increment(private val myDelta: Int) : LazyIntrinsicMethod() {
 
@@ -32,14 +35,15 @@ public class Increment(private val myDelta: Int) : LazyIntrinsicMethod() {
         assert(isPrimitive(returnType)) { "Return type of Increment intrinsic should be of primitive type : " + returnType }
 
         if (arguments.size() > 0) {
-            val operand = arguments.get(0)
-            val stackValue = codegen.genQualified(receiver, operand)
-            if (stackValue is StackValue.Local && Type.INT_TYPE == stackValue.type) {
-                return StackValue.preIncrementForLocalVar(stackValue.index, myDelta)
-            }
-            else {
-                return StackValue.preIncrement(returnType, stackValue, myDelta, this, null, codegen)
-            }
+            throw UnsupportedOperationException("fail");
+//            val operand = arguments.get(0)
+//            val stackValue = codegen.genQualified(receiver, operand)
+//            if (stackValue is StackValue.Local && Type.INT_TYPE == stackValue.type) {
+//                return StackValue.preIncrementForLocalVar(stackValue.index, myDelta)
+//            }
+//            else {
+//                return StackValue.preIncrement(returnType, stackValue, myDelta, this, null, codegen)
+//            }
         }
         else {
             return StackValue.operation(returnType) {
@@ -50,6 +54,15 @@ public class Increment(private val myDelta: Int) : LazyIntrinsicMethod() {
     }
 
     override fun supportCallable(): Boolean {
-        return false
+        return true
+    }
+
+    override fun toCallable(fd: FunctionDescriptor, isSuper: Boolean, resolvedCall: ResolvedCall<*>, codegen: ExpressionCodegen): ExtendedCallable {
+        val method = codegen.getState().getTypeMapper().mapToCallableMethod(fd, false, codegen.getContext())
+        return MappedCallable(method) {
+            val jetExpression = resolvedCall.getCall().getCalleeExpression()
+            assert(jetExpression !is JetPrefixExpression) { "There should be postfix increment ${jetExpression!!.getText()}" }
+            genIncrement(getReturnType(), myDelta, it)
+        }
     }
 }
