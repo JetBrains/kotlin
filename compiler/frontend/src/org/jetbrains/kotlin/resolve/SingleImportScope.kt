@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.utils.Printer
 
-class SingleAliasScope(private val aliasName: Name, private val descriptors: Collection<DeclarationDescriptor>) : JetScope {
+class SingleImportScope(private val aliasName: Name, private val descriptors: Collection<DeclarationDescriptor>) : JetScope {
     override fun getClassifier(name: Name)
             = if (name == aliasName) descriptors.filterIsInstance<ClassifierDescriptor>().singleOrNull() else null
 
@@ -48,6 +48,6 @@ class SingleAliasScope(private val aliasName: Name, private val descriptors: Col
     override fun getOwnDeclaredDescriptors(): Collection<DeclarationDescriptor> = emptyList()
 
     override fun printScopeStructure(p: Printer) {
-        p.println(javaClass.getSimpleName())
+        p.println(javaClass.getSimpleName(), ": ", aliasName)
     }
 }

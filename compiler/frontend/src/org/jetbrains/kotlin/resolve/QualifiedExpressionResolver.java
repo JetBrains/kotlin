@@ -125,7 +125,7 @@ public class QualifiedExpressionResolver {
         else {
             Name aliasName = JetPsiUtil.getAliasName(importDirective);
             if (aliasName == null) return JetScope.Empty.INSTANCE$;
-            return new SingleAliasScope(aliasName, descriptors);
+            return new SingleImportScope(aliasName, descriptors);
         }
     }
 

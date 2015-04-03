@@ -99,23 +99,22 @@ class LazyImportResolver(
                 else {
                     directiveUnderResolve = directive
 
-                    val directiveImportScope: JetScope
-                    val descriptors: Collection<DeclarationDescriptor>
                     try {
                         val resolver = resolveSession.getQualifiedExpressionResolver()
-                        directiveImportScope = resolver.processImportReference(
+                        val directiveImportScope = resolver.processImportReference(
                                 directive, rootScope, packageView.getMemberScope(), traceForImportResolve, mode)
-                        descriptors = if (directive.isAllUnder()) emptyList() else directiveImportScope.getAllDescriptors()
+                        val descriptors = if (directive.isAllUnder()) emptyList() else directiveImportScope.getAllDescriptors()
+
                         if (mode == LookupMode.EVERYTHING) {
                             PlatformTypesMappedToKotlinChecker.checkPlatformTypesMappedToKotlin(packageView.getModule(), traceForImportResolve, directive, descriptors)
                         }
+
+                        importResolveStatus = ImportResolveStatus(mode, directiveImportScope, descriptors)
+                        directiveImportScope
                     }
                     finally {
                         directiveUnderResolve = null
                     }
-
-                    importResolveStatus = ImportResolveStatus(mode, directiveImportScope, descriptors)
-                    directiveImportScope
                 }
             }
         }
