@@ -198,3 +198,5 @@ fun example() {
 ```
 
 Downside: This won't so easilty work for functions (which are also valid expressions), so we'd have to either **prohibit annotating local functions**, or **forbid using *named* functions** as rhs arguments of infix calls (`list map fun mapper() { ... }` <- this is an error)
+
+This may be allowed *together* with escaping for modifiers.
