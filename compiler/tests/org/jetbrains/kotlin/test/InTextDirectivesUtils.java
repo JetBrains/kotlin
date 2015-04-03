@@ -117,6 +117,9 @@ public final class InTextDirectivesUtils {
                             Character.isWhitespace(prefix.charAt(prefix.length() - 1))) {
                         result.add(noPrefixLine.trim());
                         break;
+                    } else {
+                        throw new AssertionError(
+                                "Line starts with prefix \"" + prefix + "\", but doesn't have space symbol after it: " + line);
                     }
                 }
             }
