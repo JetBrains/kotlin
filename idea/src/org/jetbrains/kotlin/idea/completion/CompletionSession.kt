@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptorKindEx
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
+import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
@@ -52,6 +53,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastUtils
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import kotlin.properties.Delegates
 
@@ -92,7 +94,7 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
         }
     }
 
-    protected val bindingContext: BindingContext = resolutionFacade.analyze(position.getParent() as JetElement, BodyResolveMode.PARTIAL_FOR_COMPLETION)
+    protected val bindingContext: BindingContext = resolutionFacade.analyze(position.parents().firstIsInstance<JetElement>(), BodyResolveMode.PARTIAL_FOR_COMPLETION)
     protected val inDescriptor: DeclarationDescriptor? = expression?.let { bindingContext.get(BindingContext.RESOLUTION_SCOPE, it)?.getContainingDeclaration() }
 
     private fun singleCharPattern(char: Char): CharPattern {
