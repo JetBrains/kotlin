@@ -460,7 +460,7 @@ public fun PsiFile.elementsInRange(range: TextRange): List<PsiElement> {
                 .parents(withItself = true)
                 .first {
                     val parent = it.getParent()
-                    parent == null || parent.getTextRange() !in currentRange
+                    it is PsiFile || parent.getTextRange() !in currentRange
                 }
         result.add(element)
 
