@@ -181,4 +181,9 @@ public class CallableMethod implements ExtendedCallable {
     public boolean isStaticCall() {
         return invokeOpcode == Opcodes.INVOKESTATIC;
     }
+
+    @Override
+    public void beforeParameterGeneration(@NotNull InstructionAdapter v, @Nullable StackValue value) {
+
+    }
 }

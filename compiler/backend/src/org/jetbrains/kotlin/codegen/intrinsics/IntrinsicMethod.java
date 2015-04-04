@@ -104,7 +104,13 @@ public abstract class IntrinsicMethod implements Callable {
             }
         });
     }
+
     public Type nullOrObject(Type type) {
-        return type == null ? null : AsmTypes.OBJECT_TYPE;
+        return nullOr(type, AsmTypes.OBJECT_TYPE);
     }
+
+    public Type nullOr(Type type, Type newType) {
+        return type == null ? null : newType;
+    }
+
 }

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.codegen.intrinsics
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.CallableMethod
 import org.jetbrains.kotlin.codegen.ExtendedCallable
+import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.context.CodegenContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
@@ -111,6 +112,10 @@ public abstract class IntrinsicCallable(val returnType1: Type,
 
     public fun calcReceiverType(): Type? {
         return getReceiverClass() ?: getThisType()
+    }
+
+    override fun beforeParameterGeneration(v: InstructionAdapter, value: StackValue?) {
+
     }
 }
 

@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 
@@ -55,4 +56,7 @@ public interface ExtendedCallable extends Callable {
 
     @Nullable
     Type getReceiverClass();
+
+    void beforeParameterGeneration(@NotNull InstructionAdapter v, @Nullable StackValue value);
+
 }

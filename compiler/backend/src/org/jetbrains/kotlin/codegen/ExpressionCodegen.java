@@ -2347,6 +2347,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             @NotNull CallGenerator callGenerator,
             @NotNull ArgumentGenerator argumentGenerator
     ) {
+        StackValue.SafeCall safeCallReceiver = receiver instanceof StackValue.SafeCall ? (StackValue.SafeCall) receiver : null;
         if (!(resolvedCall.getResultingDescriptor() instanceof ConstructorDescriptor)) { // otherwise already
             receiver = StackValue.receiver(resolvedCall, receiver, this, callableMethod);
 
@@ -2358,7 +2359,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 }
             }
 
-            receiver.put(receiver.type, v);
+            if (safeCallReceiver != null) {
+                //justCoerce
+                receiver.put(receiver.type, v);
+                callableMethod.beforeParameterGeneration(v, StackValue.onStack(receiver.type));
+            } else {
+                callableMethod.beforeParameterGeneration(v, null);
+                receiver.put(receiver.type, v);
+            }
         }
 
         callGenerator.putHiddenParams();
