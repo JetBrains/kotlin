@@ -14,48 +14,60 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen.intrinsics;
+package org.jetbrains.kotlin.codegen.intrinsics
 
-import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.codegen.AsmUtil;
-import org.jetbrains.kotlin.codegen.ExpressionCodegen;
-import org.jetbrains.kotlin.codegen.StackValue;
-import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.org.objectweb.asm.Type;
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.codegen.ExpressionCodegen
+import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-import java.util.List;
+import org.jetbrains.kotlin.codegen.AsmUtil.boxType
+import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
+import org.jetbrains.kotlin.codegen.ExtendedCallable
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes.getType
 
-import static org.jetbrains.kotlin.codegen.AsmUtil.boxType;
-import static org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive;
-import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.getType;
-
-public class JavaClassProperty extends IntrinsicMethod {
-    @NotNull
-    @Override
-    public Type generateImpl(
-            @NotNull ExpressionCodegen codegen,
-            @NotNull InstructionAdapter v,
-            @NotNull Type returnType,
-            @Nullable PsiElement element,
-            @NotNull List<JetExpression> arguments,
-            @NotNull StackValue receiver
-    ) {
-        Type type = receiver.type;
+public class JavaClassProperty : IntrinsicMethod() {
+    override fun generateImpl(codegen: ExpressionCodegen, v: InstructionAdapter, returnType: Type, element: PsiElement?, arguments: List<JetExpression>, receiver: StackValue): Type {
+        val type = receiver.type
         if (isPrimitive(type)) {
             if (!StackValue.couldSkipReceiverOnStaticCall(receiver)) {
-                receiver.put(type, v);
-                AsmUtil.pop(v, type);
+                receiver.put(type, v)
+                AsmUtil.pop(v, type)
             }
-            v.getstatic(boxType(type).getInternalName(), "TYPE", "Ljava/lang/Class;");
+            v.getstatic(boxType(type).getInternalName(), "TYPE", "Ljava/lang/Class;")
         }
         else {
-            receiver.put(type, v);
-            v.invokevirtual("java/lang/Object", "getClass", "()Ljava/lang/Class;", false);
+            receiver.put(type, v)
+            v.invokevirtual("java/lang/Object", "getClass", "()Ljava/lang/Class;", false)
         }
 
-        return getType(Class.class);
+        return getType(javaClass<Class<Any>>())
+    }
+
+    override fun supportCallable(): Boolean {
+        return true
+    }
+
+    override fun toCallable(fd: FunctionDescriptor, isSuper: Boolean, resolvedCall: ResolvedCall<*>, codegen: ExpressionCodegen): ExtendedCallable {
+        val classType = codegen.getState().getTypeMapper().mapType(resolvedCall.getCall().getDispatchReceiver().getType())
+        return object : IntrinsicCallable(getType(javaClass<Class<Any>>()), listOf(), classType, null) {
+            override fun invokeIntrinsic(v: InstructionAdapter) {
+                if (isPrimitive(classType)) {
+                    v.getstatic(boxType(classType).getInternalName(), "TYPE", "Ljava/lang/Class;")
+                }
+                else {
+                    v.invokevirtual("java/lang/Object", "getClass", "()Ljava/lang/Class;", false)
+                }
+            }
+
+            override fun isStaticCall(): Boolean {
+                return isPrimitive(classType)
+            }
+        }
     }
 }

@@ -49,7 +49,7 @@ public class Concat extends IntrinsicMethod {
             codegen.invokeAppend(arguments.get(1));
         }
         else {
-            // LHS.plus(RHS)
+            // LHS?.plus(RHS)
             receiver.put(AsmTypes.OBJECT_TYPE, v);
             genStringBuilderConstructor(v);
             v.swap();

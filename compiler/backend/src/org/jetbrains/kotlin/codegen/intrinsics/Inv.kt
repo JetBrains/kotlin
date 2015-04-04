@@ -14,42 +14,49 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen.intrinsics;
+package org.jetbrains.kotlin.codegen.intrinsics
 
-import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.codegen.ExpressionCodegen;
-import org.jetbrains.kotlin.codegen.StackValue;
-import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.org.objectweb.asm.Type;
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.codegen.CallableMethod
+import org.jetbrains.kotlin.codegen.ExpressionCodegen
+import org.jetbrains.kotlin.codegen.ExtendedCallable
+import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-import java.util.List;
+import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
+import org.jetbrains.kotlin.codegen.AsmUtil.numberFunctionOperandType
 
-import static org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive;
-import static org.jetbrains.kotlin.codegen.AsmUtil.numberFunctionOperandType;
+public class Inv : IntrinsicMethod() {
+    override fun generateImpl(codegen: ExpressionCodegen, v: InstructionAdapter, returnType: Type, element: PsiElement?, arguments: List<JetExpression>, receiver: StackValue): Type {
+        assert(isPrimitive(returnType)) { "Return type of Inv intrinsic should be of primitive type : " + returnType }
 
-public class Inv extends IntrinsicMethod {
-    @NotNull
-    @Override
-    public Type generateImpl(
-            @NotNull ExpressionCodegen codegen,
-            @NotNull InstructionAdapter v,
-            @NotNull Type returnType,
-            PsiElement element,
-            @NotNull List<JetExpression> arguments,
-            @NotNull StackValue receiver
-    ) {
-        assert isPrimitive(returnType) : "Return type of Inv intrinsic should be of primitive type : " + returnType;
-
-        receiver.put(numberFunctionOperandType(returnType), v);
+        receiver.put(numberFunctionOperandType(returnType), v)
         if (returnType == Type.LONG_TYPE) {
-            v.lconst(-1L);
+            v.lconst(-1)
         }
         else {
-            v.iconst(-1);
+            v.iconst(-1)
         }
-        v.xor(returnType);
-        return returnType;
+        v.xor(returnType)
+        return returnType
+    }
+
+    override fun supportCallable(): Boolean {
+        return true
+    }
+
+    override fun toCallable(method: CallableMethod): ExtendedCallable {
+        val type = numberFunctionOperandType(method.getReturnType())
+        return UnaryIntrinsic(method, method.getReturnType(), newThisType = type) {
+            if (getReturnType() == Type.LONG_TYPE) {
+                it.lconst(-1)
+            }
+            else {
+                it.iconst(-1)
+            }
+            it.xor(getReturnType())
+        }
     }
 }

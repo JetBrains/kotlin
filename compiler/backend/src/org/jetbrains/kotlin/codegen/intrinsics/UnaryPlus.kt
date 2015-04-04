@@ -14,38 +14,34 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen.intrinsics;
+package org.jetbrains.kotlin.codegen.intrinsics
 
-import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.codegen.ExpressionCodegen;
-import org.jetbrains.kotlin.codegen.StackValue;
-import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.org.objectweb.asm.Type;
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.codegen.ExpressionCodegen
+import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.org.objectweb.asm.Type
 
-import java.util.List;
+import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
+import org.jetbrains.kotlin.codegen.CallableMethod
+import org.jetbrains.kotlin.codegen.ExtendedCallable
 
-import static org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive;
-
-public class UnaryPlus extends LazyIntrinsicMethod {
-    @NotNull
-    @Override
-    public StackValue generateImpl(
-            @NotNull ExpressionCodegen codegen,
-            @NotNull Type returnType,
-            @Nullable PsiElement element,
-            @NotNull List<JetExpression> arguments,
-            @NotNull StackValue receiver
-    ) {
-        assert isPrimitive(returnType) : "Return type of UnaryPlus intrinsic should be of primitive type : " + returnType;
+public class UnaryPlus : LazyIntrinsicMethod() {
+    override fun generateImpl(codegen: ExpressionCodegen, returnType: Type, element: PsiElement?, arguments: List<JetExpression>, receiver: StackValue): StackValue {
+        assert(isPrimitive(returnType)) { "Return type of UnaryPlus intrinsic should be of primitive type : " + returnType }
 
         if (receiver != StackValue.none()) {
-            return receiver;
+            return receiver
         }
         else {
-            assert !arguments.isEmpty();
-            return codegen.gen(arguments.get(0));
+            assert(!arguments.isEmpty())
+            return codegen.gen(arguments.get(0))
+        }
+    }
+
+    override fun toCallable(method: CallableMethod): ExtendedCallable {
+        return UnaryIntrinsic(method, needPrimitiveCheck = true) {
+            //nothing
         }
     }
 }

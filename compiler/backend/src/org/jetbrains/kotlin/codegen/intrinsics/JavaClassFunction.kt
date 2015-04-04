@@ -14,49 +14,52 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen.intrinsics;
+package org.jetbrains.kotlin.codegen.intrinsics
 
-import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.codegen.ExpressionCodegen;
-import org.jetbrains.kotlin.codegen.StackValue;
-import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner;
-import org.jetbrains.kotlin.psi.JetElement;
-import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.types.JetType;
-import org.jetbrains.org.objectweb.asm.Type;
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.codegen.ExpressionCodegen
+import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
+import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.resolve.calls.callUtil.*
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-import java.util.List;
+import org.jetbrains.kotlin.codegen.AsmUtil.putJavaLangClassInstance
+import org.jetbrains.kotlin.codegen.ExtendedCallable
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes.getType
 
-import static org.jetbrains.kotlin.codegen.AsmUtil.putJavaLangClassInstance;
-import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.getType;
+public class JavaClassFunction : IntrinsicMethod() {
+    override fun generateImpl(codegen: ExpressionCodegen, v: InstructionAdapter, expectedType: Type, element: PsiElement?, arguments: List<JetExpression>, receiver: StackValue): Type {
+        val resolvedCall = (element as JetElement).getResolvedCallWithAssert(codegen.getBindingContext())
+        val returnType = resolvedCall.getResultingDescriptor().getReturnType()
+        assert(returnType != null)
 
-public class JavaClassFunction extends IntrinsicMethod {
-    @NotNull
-    @Override
-    public Type generateImpl(
-            @NotNull ExpressionCodegen codegen,
-            @NotNull InstructionAdapter v,
-            @NotNull Type expectedType,
-            @Nullable PsiElement element,
-            @NotNull List<JetExpression> arguments,
-            @NotNull StackValue receiver
-    ) {
-        ResolvedCall<?> resolvedCall = CallUtilPackage.getResolvedCallWithAssert(
-                (JetElement) element, codegen.getBindingContext());
-        JetType returnType = resolvedCall.getResultingDescriptor().getReturnType();
-        assert returnType != null;
+        val type = returnType!!.getArguments().get(0).getType()
 
-        JetType type = returnType.getArguments().get(0).getType();
+        codegen.putReifierMarkerIfTypeIsReifiedParameter(type, ReifiedTypeInliner.JAVA_CLASS_MARKER_METHOD_NAME)
 
-        codegen.putReifierMarkerIfTypeIsReifiedParameter(type, ReifiedTypeInliner.JAVA_CLASS_MARKER_METHOD_NAME);
+        putJavaLangClassInstance(v, codegen.getState().getTypeMapper().mapType(type))
 
-        putJavaLangClassInstance(v, codegen.getState().getTypeMapper().mapType(type));
+        return getType(javaClass<Class<Any>>())
+    }
 
-        return getType(Class.class);
+    override fun supportCallable(): Boolean {
+        return true
+    }
+
+    override fun toCallable(fd: FunctionDescriptor, isSuper: Boolean, resolvedCall: ResolvedCall<*>, codegen: ExpressionCodegen): ExtendedCallable {
+        val javaClass = resolvedCall.getResultingDescriptor().getReturnType()!!.getArguments().get(0).getType()
+        return object: IntrinsicCallable(getType(javaClass<Class<Any>>()), listOf(), null, null) {
+            override fun invokeIntrinsic(v: InstructionAdapter) {
+                codegen.putReifierMarkerIfTypeIsReifiedParameter(javaClass, ReifiedTypeInliner.JAVA_CLASS_MARKER_METHOD_NAME)
+                putJavaLangClassInstance(v, codegen.getState().getTypeMapper().mapType(javaClass))
+            }
+        }
+
     }
 }

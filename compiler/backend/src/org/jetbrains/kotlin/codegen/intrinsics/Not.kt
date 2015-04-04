@@ -14,34 +14,29 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen.intrinsics;
+package org.jetbrains.kotlin.codegen.intrinsics
 
-import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.codegen.ExpressionCodegen;
-import org.jetbrains.kotlin.codegen.StackValue;
-import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.org.objectweb.asm.Type;
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.codegen.CallableMethod
+import org.jetbrains.kotlin.codegen.ExpressionCodegen
+import org.jetbrains.kotlin.codegen.ExtendedCallable
+import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.org.objectweb.asm.Type
 
-import java.util.List;
-
-public class Not extends LazyIntrinsicMethod {
-    @NotNull
-    @Override
-    public StackValue generateImpl(
-            @NotNull ExpressionCodegen codegen,
-            @NotNull Type returnType,
-            PsiElement element,
-            @NotNull List<JetExpression> arguments,
-            @NotNull StackValue receiver
-    ) {
-        StackValue stackValue;
+public class Not : LazyIntrinsicMethod() {
+    override fun generateImpl(codegen: ExpressionCodegen, returnType: Type, element: PsiElement?, arguments: List<JetExpression>, receiver: StackValue): StackValue {
+        val stackValue: StackValue
         if (arguments.size() == 1) {
-            stackValue = codegen.gen(arguments.get(0));
+            stackValue = codegen.gen(arguments.get(0))
         }
         else {
-            stackValue = receiver;
+            stackValue = receiver
         }
-        return StackValue.not(StackValue.coercion(stackValue, Type.BOOLEAN_TYPE));
+        return StackValue.not(StackValue.coercion(stackValue, Type.BOOLEAN_TYPE))
+    }
+
+    override fun supportCallable(): Boolean {
+        return false
     }
 }

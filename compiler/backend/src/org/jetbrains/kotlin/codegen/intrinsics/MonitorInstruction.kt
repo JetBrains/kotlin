@@ -14,66 +14,62 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen.intrinsics;
+package org.jetbrains.kotlin.codegen.intrinsics
 
-import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.codegen.ExpressionCodegen;
-import org.jetbrains.kotlin.codegen.StackValue;
-import org.jetbrains.kotlin.psi.JetElement;
-import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.kotlin.psi.ValueArgument;
-import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument;
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
-import org.jetbrains.org.objectweb.asm.Opcodes;
-import org.jetbrains.org.objectweb.asm.Type;
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.codegen.ExpressionCodegen
+import org.jetbrains.kotlin.codegen.ExtendedCallable
+import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.codegen.context.CodegenContext
+import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.psi.ValueArgument
+import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
+import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-import java.util.List;
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCallWithAssert
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 
-import static org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage.getResolvedCallWithAssert;
-import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
-
-public class MonitorInstruction extends IntrinsicMethod {
-
-    public static final MonitorInstruction MONITOR_ENTER = new MonitorInstruction(Opcodes.MONITORENTER);
-    public static final MonitorInstruction MONITOR_EXIT = new MonitorInstruction(Opcodes.MONITOREXIT);
-
-    private final int opcode;
-
-    private MonitorInstruction(int opcode) {
-        this.opcode = opcode;
+public class MonitorInstruction private(private val opcode: Int) : IntrinsicMethod() {
+    companion object {
+        public val MONITOR_ENTER: MonitorInstruction = MonitorInstruction(Opcodes.MONITORENTER)
+        public val MONITOR_EXIT: MonitorInstruction = MonitorInstruction(Opcodes.MONITOREXIT)
     }
 
-    @NotNull
-    @Override
-    protected Type generateImpl(
-            @NotNull ExpressionCodegen codegen,
-            @NotNull InstructionAdapter v,
-            @NotNull Type returnType,
-            @Nullable PsiElement element,
-            @NotNull List<JetExpression> arguments,
-            @NotNull StackValue receiver
-    ) {
-        assert element != null : "Element should not be null";
+    override fun generateImpl(codegen: ExpressionCodegen, v: InstructionAdapter, returnType: Type, element: PsiElement?, arguments: List<JetExpression>, receiver: StackValue): Type {
+        assert(element != null, "Element should not be null")
 
-        ResolvedCall<?> resolvedCall = getResolvedCallWithAssert((JetElement) element, codegen.getBindingContext());
+        val resolvedCall = (element as JetElement).getResolvedCallWithAssert(codegen.getBindingContext())
 
-        List<ResolvedValueArgument> resolvedArguments = resolvedCall.getValueArgumentsByIndex();
-        assert resolvedArguments != null && resolvedArguments.size() == 1 :
-                "Monitor instruction (" + opcode + ") should have exactly 1 argument: " + resolvedArguments;
+        val resolvedArguments = resolvedCall.getValueArgumentsByIndex()
+        assert(resolvedArguments != null && resolvedArguments.size() == 1) { "Monitor instruction (" + opcode + ") should have exactly 1 argument: " + resolvedArguments }
 
-        ResolvedValueArgument argument = resolvedArguments.get(0);
-        assert argument instanceof ExpressionValueArgument :
-                "Monitor instruction (" + opcode + ") should have expression value argument: " + argument;
+        val argument = resolvedArguments!!.get(0)
+        assert(argument is ExpressionValueArgument) { "Monitor instruction (" + opcode + ") should have expression value argument: " + argument }
 
-        ValueArgument valueArgument = ((ExpressionValueArgument) argument).getValueArgument();
-        assert valueArgument != null : "Unresolved value argument: " + argument;
-        codegen.gen(valueArgument.getArgumentExpression(), OBJECT_TYPE);
+        val valueArgument = (argument as ExpressionValueArgument).getValueArgument()
+        assert(valueArgument != null) { "Unresolved value argument: " + argument }
+        codegen.gen(valueArgument!!.getArgumentExpression(), OBJECT_TYPE)
 
-        v.visitInsn(opcode);
-        return Type.VOID_TYPE;
+        v.visitInsn(opcode)
+        return Type.VOID_TYPE
+    }
+
+    override fun supportCallable(): Boolean {
+        return true
+    }
+
+    override fun toCallable(state: GenerationState, fd: FunctionDescriptor, context: CodegenContext<*>, isSuper: Boolean, resolvedCall: ResolvedCall<*>): ExtendedCallable {
+        return object : IntrinsicCallable(Type.VOID_TYPE, listOf(OBJECT_TYPE), null, null) {
+            override fun invokeIntrinsic(v: InstructionAdapter) {
+                v.visitInsn(opcode)
+            }
+        }
     }
 }

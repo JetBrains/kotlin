@@ -14,44 +14,45 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen.intrinsics;
+package org.jetbrains.kotlin.codegen.intrinsics
 
-import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.codegen.ExpressionCodegen;
-import org.jetbrains.kotlin.codegen.StackValue;
-import org.jetbrains.kotlin.lexer.JetTokens;
-import org.jetbrains.kotlin.psi.JetBinaryExpression;
-import org.jetbrains.kotlin.psi.JetCallExpression;
-import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.org.objectweb.asm.Type;
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.psi.JetBinaryExpression
+import org.jetbrains.kotlin.psi.JetCallExpression
+import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.org.objectweb.asm.Type
 
-import java.util.List;
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 
-import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
-
-public class IdentityEquals extends LazyIntrinsicMethod {
-    @NotNull
-    @Override
-    public StackValue generateImpl(
-            @NotNull ExpressionCodegen codegen,
-            @NotNull Type returnType,
-            PsiElement element,
-            @NotNull List<JetExpression> arguments,
-            @NotNull StackValue receiver
-    ) {
-        StackValue left;
-        StackValue right;
-        if (element instanceof JetCallExpression) {
-            left = receiver;
-            right = codegen.gen(arguments.get(0));
+public class IdentityEquals : LazyIntrinsicMethod() {
+    override fun generateImpl(codegen: ExpressionCodegen, returnType: Type, element: PsiElement?, arguments: List<JetExpression>, receiver: StackValue): StackValue {
+        val left: StackValue
+        val right: StackValue
+        if (element is JetCallExpression) {
+            left = receiver
+            right = codegen.gen(arguments.get(0))
         }
         else {
-            assert element instanceof JetBinaryExpression;
-            JetBinaryExpression e = (JetBinaryExpression) element;
-            left = codegen.gen(e.getLeft());
-            right = codegen.gen(e.getRight());
+            assert(element is JetBinaryExpression)
+            val e = element as JetBinaryExpression
+            left = codegen.gen(e.getLeft())
+            right = codegen.gen(e.getRight())
         }
-        return StackValue.cmp(JetTokens.EQEQEQ, OBJECT_TYPE, left, right);
+        return StackValue.cmp(JetTokens.EQEQEQ, OBJECT_TYPE, left, right)
     }
+
+
+    override fun supportCallable(): Boolean {
+        return false
+    }
+
+    override fun toCallable(method: CallableMethod): ExtendedCallable {
+        return IntrinsicCallable.binaryIntrinsic(method.getReturnType(), OBJECT_TYPE, nullOrObject(method.getThisType()), nullOrObject(method.getReceiverClass())) {
+            v -> v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "areEqual", "(Ljava/lang/Object;Ljava/lang/Object;)Z", false)
+            AsmUtil.genAreEqualCall(v)
+        }
+    }
+
 }

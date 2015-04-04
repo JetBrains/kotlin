@@ -14,38 +14,42 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen.intrinsics;
+package org.jetbrains.kotlin.codegen.intrinsics
 
-import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.codegen.ExpressionCodegen;
-import org.jetbrains.kotlin.codegen.StackValue;
-import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.org.objectweb.asm.Type;
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.codegen.CallableMethod
+import org.jetbrains.kotlin.codegen.ExpressionCodegen
+import org.jetbrains.kotlin.codegen.ExtendedCallable
+import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-import java.util.List;
+import org.jetbrains.kotlin.codegen.AsmUtil.correctElementType
 
-import static org.jetbrains.kotlin.codegen.AsmUtil.correctElementType;
+public class ArraySet : IntrinsicMethod() {
+    override fun generateImpl(codegen: ExpressionCodegen, v: InstructionAdapter, returnType: Type, element: PsiElement?, arguments: List<JetExpression>, receiver: StackValue): Type {
+        receiver.put(receiver.type, v)
+        val type = correctElementType(receiver.type)
 
-public class ArraySet extends IntrinsicMethod {
-    @NotNull
-    @Override
-    public Type generateImpl(
-            @NotNull ExpressionCodegen codegen,
-            @NotNull InstructionAdapter v,
-            @NotNull Type returnType,
-            PsiElement element,
-            @NotNull List<JetExpression> arguments,
-            @NotNull StackValue receiver
-    ) {
-        receiver.put(receiver.type, v);
-        Type type = correctElementType(receiver.type);
+        codegen.gen(arguments.get(0), Type.INT_TYPE)
+        codegen.gen(arguments.get(1), type)
 
-        codegen.gen(arguments.get(0), Type.INT_TYPE);
-        codegen.gen(arguments.get(1), type);
+        v.astore(type)
+        return Type.VOID_TYPE
+    }
 
-        v.astore(type);
-        return Type.VOID_TYPE;
+    override fun supportCallable(): Boolean {
+        return true
+    }
+
+    override fun toCallable(method: CallableMethod): ExtendedCallable {
+        val type = correctElementType(method.getThisType())
+        return object: IntrinsicCallable(Type.VOID_TYPE, listOf(Type.INT_TYPE, type), method.getThisType(), method.getReceiverClass()) {
+            override fun invokeIntrinsic(v: InstructionAdapter) {
+                v.astore(type)
+            }
+
+        }
     }
 }

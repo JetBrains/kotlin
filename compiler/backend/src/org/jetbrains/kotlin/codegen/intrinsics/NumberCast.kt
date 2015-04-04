@@ -14,27 +14,25 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen.intrinsics;
+package org.jetbrains.kotlin.codegen.intrinsics
 
-import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.codegen.ExpressionCodegen;
-import org.jetbrains.kotlin.codegen.StackValue;
-import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.org.objectweb.asm.Type;
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.codegen.CallableMethod
+import org.jetbrains.kotlin.codegen.ExpressionCodegen
+import org.jetbrains.kotlin.codegen.ExtendedCallable
+import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.org.objectweb.asm.Type
 
-import java.util.List;
+public class NumberCast : LazyIntrinsicMethod() {
 
-public class NumberCast extends LazyIntrinsicMethod {
-    @NotNull
-    @Override
-    public StackValue generateImpl(
-            @NotNull ExpressionCodegen codegen,
-            @NotNull Type returnType,
-            PsiElement element,
-            @NotNull List<JetExpression> arguments,
-            @NotNull StackValue receiver
-    ) {
-        return StackValue.coercion(receiver, returnType);        
+    override fun generateImpl(codegen: ExpressionCodegen, returnType: Type, element: PsiElement?, arguments: List<JetExpression>, receiver: StackValue): StackValue {
+        return StackValue.coercion(receiver, returnType)
+    }
+
+    override fun toCallable(method: CallableMethod): ExtendedCallable {
+        return UnaryIntrinsic(method) {
+            StackValue.coerce(calcReceiverType()!!, getReturnType(), it)
+        }
     }
 }
