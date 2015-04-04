@@ -26,25 +26,25 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 
 
 public trait Callable {
-    public fun getOwner(): Type
+    public val owner: Type
+
+    public val thisType: Type?
+
+    public val receiverType: Type?
+
+    public val generateCalleeType: Type?
+
+    public val valueParameterTypes: List<Type>
+
+    public val argumentTypes: Array<Type>
+
+    public val returnType: Type
 
     public fun invokeWithNotNullAssertion(v: InstructionAdapter, state: GenerationState, resolvedCall: ResolvedCall<*>)
 
     public fun invokeWithoutAssertions(v: InstructionAdapter)
 
-    public fun getGenerateCalleeType(): Type?
-
-    public fun getValueParameterTypes(): List<Type>
-
-    public fun getArgumentTypes(): Array<Type>
-
-    public fun getReturnType(): Type
-
     public fun isStaticCall(): Boolean
-
-    public fun getThisType(): Type?
-
-    public fun getReceiverClass(): Type?
 
     public fun beforeParameterGeneration(v: InstructionAdapter, value: StackValue?)
 

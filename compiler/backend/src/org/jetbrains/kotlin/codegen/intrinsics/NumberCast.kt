@@ -24,7 +24,7 @@ public class NumberCast : IntrinsicMethod() {
 
     override fun toCallable(method: CallableMethod): Callable {
         return UnaryIntrinsic(method) {
-            StackValue.coerce(calcReceiverType()!!, getReturnType(), it)
+            StackValue.coerce(calcReceiverType()!!, returnType, it)
         }
     }
 }

@@ -24,15 +24,15 @@ import org.jetbrains.org.objectweb.asm.Type
 public class Inv : IntrinsicMethod() {
 
     override fun toCallable(method: CallableMethod): Callable {
-        val type = numberFunctionOperandType(method.getReturnType())
-        return UnaryIntrinsic(method, method.getReturnType(), newThisType = type) {
-            if (getReturnType() == Type.LONG_TYPE) {
+        val type = numberFunctionOperandType(method.returnType)
+        return UnaryIntrinsic(method, method.returnType, newThisType = type) {
+            if (returnType == Type.LONG_TYPE) {
                 it.lconst(-1)
             }
             else {
                 it.iconst(-1)
             }
-            it.xor(getReturnType())
+            it.xor(returnType)
         }
     }
 }

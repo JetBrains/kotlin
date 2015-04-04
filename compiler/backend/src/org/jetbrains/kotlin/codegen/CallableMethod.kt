@@ -38,42 +38,31 @@ import org.jetbrains.org.objectweb.asm.util.Printer;
 
 import java.util.ArrayList;
 
-public class CallableMethod(private val owner: Type, private val defaultImplOwner: Type?, private val defaultImplParam: Type?, private val signature: JvmMethodSignature, private val invokeOpcode: Int, private val thisClass: Type?, private val receiverParameterType: Type?, private val generateCalleeType: Type?) : Callable {
+public class CallableMethod(override val owner: Type, private val defaultImplOwner: Type?, private val defaultImplParam: Type?, private val signature: JvmMethodSignature, private val invokeOpcode: Int, override val thisType: Type?, override val receiverType: Type?, override val generateCalleeType: Type?) : Callable {
 
-    override fun getOwner(): Type {
-        return owner
-    }
 
     public fun getValueParameters(): List<JvmMethodParameterSignature> {
         return signature.getValueParameters()
     }
 
-    override fun getValueParameterTypes(): List<Type> {
-        val valueParameters = signature.getValueParameters()
-        val result = ArrayList<Type>(valueParameters.size())
-        for (parameter in valueParameters) {
-            if (parameter.getKind() == JvmMethodParameterKind.VALUE) {
-                result.add(parameter.getAsmType())
+    override val valueParameterTypes: List<Type>
+        get() {
+            val valueParameters = signature.getValueParameters()
+            val result = ArrayList<Type>(valueParameters.size())
+            for (parameter in valueParameters) {
+                if (parameter.getKind() == JvmMethodParameterKind.VALUE) {
+                    result.add(parameter.getAsmType())
+                }
             }
+            return result
         }
-        return result
-    }
 
     public fun getAsmMethod(): Method {
         return signature.getAsmMethod()
     }
 
-    override fun getArgumentTypes(): Array<Type> {
-        return signature.getAsmMethod().getArgumentTypes()
-    }
-
-    override fun getThisType(): Type? {
-        return thisClass
-    }
-
-    override fun getReceiverClass(): Type? {
-        return receiverParameterType
-    }
+    override val argumentTypes: Array<Type>
+        get() =signature.getAsmMethod().getArgumentTypes()
 
     private fun invoke(v: InstructionAdapter) {
         v.visitMethodInsn(invokeOpcode, owner.getInternalName(), getAsmMethod().getName(), getAsmMethod().getDescriptor())
@@ -89,10 +78,6 @@ public class CallableMethod(private val owner: Type, private val defaultImplOwne
         invoke(v)
     }
 
-    override fun getGenerateCalleeType(): Type? {
-        return generateCalleeType
-    }
-
     private fun invokeDefault(v: InstructionAdapter) {
         if (defaultImplOwner == null || defaultImplParam == null) {
             throw IllegalStateException()
@@ -100,8 +85,8 @@ public class CallableMethod(private val owner: Type, private val defaultImplOwne
 
         val method = getAsmMethod();
         val desc = JetTypeMapper.getDefaultDescriptor(method,
-                                                         if (invokeOpcode == INVOKESTATIC) null else defaultImplParam.getDescriptor(),
-                                                         receiverParameterType != null);
+                                                      if (invokeOpcode == INVOKESTATIC) null else defaultImplParam.getDescriptor(),
+                                                      receiverType != null);
 
         if ("<init>".equals(method.getName())) {
             v.aconst(null)
@@ -118,9 +103,10 @@ public class CallableMethod(private val owner: Type, private val defaultImplOwne
         AsmUtil.genNotNullAssertionForMethod(v, state, resolvedCall)
     }
 
-    override fun getReturnType(): Type {
-        return signature.getReturnType()
-    }
+    override val returnType: Type
+        get() {
+            return signature.getReturnType()
+        }
 
     override fun toString(): String {
         return Printer.OPCODES[invokeOpcode] + " " + owner.getInternalName() + "." + signature
@@ -129,7 +115,6 @@ public class CallableMethod(private val owner: Type, private val defaultImplOwne
     override fun isStaticCall(): Boolean {
         return invokeOpcode == INVOKESTATIC
     }
-
 
     public override fun beforeParameterGeneration(v: InstructionAdapter, value: StackValue?) {
 

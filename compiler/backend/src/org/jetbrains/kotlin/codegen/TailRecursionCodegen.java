@@ -74,13 +74,13 @@ public class TailRecursionCodegen {
             throw new IllegalStateException("Failed to arrange value arguments by index: " + fd);
         }
         assignParameterValues(fd, callable, arguments);
-        if (callable.getReceiverClass() != null) {
+        if (callable.getReceiverType() != null) {
             if (resolvedCall.getExtensionReceiver() != fd.getExtensionReceiverParameter().getValue()) {
                 StackValue expression = context.getReceiverExpression(codegen.typeMapper);
-                expression.store(StackValue.onStack(callable.getReceiverClass()), v, true);
+                expression.store(StackValue.onStack(callable.getReceiverType()), v, true);
             }
             else {
-                AsmUtil.pop(v, callable.getReceiverClass());
+                AsmUtil.pop(v, callable.getReceiverType());
             }
         }
 

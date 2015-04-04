@@ -25,7 +25,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 public class HashCode : IntrinsicMethod() {
 
     override fun toCallable(method: CallableMethod): Callable {
-        return object: IntrinsicCallable(Type.INT_TYPE, emptyList(), nullOrObject(method.getThisType()), nullOrObject(method.getReceiverClass())) {
+        return object: IntrinsicCallable(Type.INT_TYPE, emptyList(), nullOrObject(method.thisType), nullOrObject(method.receiverType)) {
             override fun invokeIntrinsic(v: InstructionAdapter) {
                 v.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Object", "hashCode", "()I", false)
             }

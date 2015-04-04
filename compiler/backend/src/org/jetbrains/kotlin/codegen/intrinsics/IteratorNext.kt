@@ -63,7 +63,7 @@ public class IteratorNext : IntrinsicMethod() {
         val type = state.getTypeMapper().mapReturnType(fd)
         return object: IntrinsicCallable(type, listOf(), AsmTypes.OBJECT_TYPE, null) {
             override fun invokeIntrinsic(v: InstructionAdapter) {
-                val returnType = getReturnType()
+                val returnType = returnType
                 val name = getIteratorName(returnType)
                 v.invokevirtual(BUILT_INS_PACKAGE_FQ_NAME.toString() + "/" + name + "Iterator", "next" + name, "()" + returnType.getDescriptor(), false)
             }

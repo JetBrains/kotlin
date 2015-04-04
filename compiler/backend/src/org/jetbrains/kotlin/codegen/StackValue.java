@@ -1275,7 +1275,7 @@ public abstract class StackValue {
             ReceiverParameterDescriptor extensionReceiver = descriptor.getExtensionReceiverParameter();
 
             if (extensionReceiver != null) {
-                return callableMethod != null ? callableMethod.getReceiverClass() : typeMapper.mapType(extensionReceiver.getType());
+                return callableMethod != null ? callableMethod.getReceiverType() : typeMapper.mapType(extensionReceiver.getType());
             }
             else if (dispatchReceiver != null) {
                 if (AnnotationsPackage.isPlatformStaticInObjectOrClass(descriptor)) {

@@ -31,13 +31,13 @@ public class BinaryOp(private val opcode: Int) : IntrinsicMethod() {
     }
 
     override fun toCallable(method: CallableMethod): Callable {
-        val returnType = method.getReturnType()
+        val returnType = method.returnType
         assert(method.getValueParameters().size() == 1)
         val operandType = numberFunctionOperandType(returnType)
         val paramType = if (shift()) Type.INT_TYPE else operandType
 
         return IntrinsicCallable.binaryIntrinsic(operandType, paramType, operandType) {
-            v -> v.visitInsn(getReturnType().getOpcode(opcode))
+            v -> v.visitInsn(returnType.getOpcode(opcode))
         }
     }
 }

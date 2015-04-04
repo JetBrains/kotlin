@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 public class Equals : IntrinsicMethod() {
 
     override fun toCallable(method: CallableMethod): Callable {
-        return IntrinsicCallable.binaryIntrinsic(method.getReturnType(), OBJECT_TYPE, nullOrObject(method.getThisType()), nullOrObject(method.getReceiverClass())) {
+        return IntrinsicCallable.binaryIntrinsic(method.returnType, OBJECT_TYPE, nullOrObject(method.thisType), nullOrObject(method.receiverType)) {
             AsmUtil.genAreEqualCall(it)
         }
     }

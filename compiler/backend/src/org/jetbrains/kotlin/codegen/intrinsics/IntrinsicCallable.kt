@@ -25,10 +25,10 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-public abstract class IntrinsicCallable(val returnType1: Type,
-                                        val valueParametersTypes: List<Type>,
-                                        val thisType1: Type?,
-                                        val receiverType1: Type?) : Callable {
+public abstract class IntrinsicCallable(override val returnType: Type,
+                                        override val valueParameterTypes: List<Type>,
+                                        override val thisType: Type?,
+                                        override val receiverType: Type?) : Callable {
 
     companion object {
         fun create(descriptor: FunctionDescriptor, context: CodegenContext<*>, state: GenerationState, lambda: IntrinsicCallable.(i: InstructionAdapter) -> Unit): IntrinsicCallable {
@@ -36,7 +36,7 @@ public abstract class IntrinsicCallable(val returnType1: Type,
         }
 
         fun create(callableMethod: CallableMethod, lambda: IntrinsicCallable.(i: InstructionAdapter) -> Unit): IntrinsicCallable {
-            return object : IntrinsicCallable(callableMethod.getReturnType(), callableMethod.getValueParameterTypes(), callableMethod.getThisType(), callableMethod.getReceiverClass()) {
+            return object : IntrinsicCallable(callableMethod.returnType, callableMethod.valueParameterTypes, callableMethod.thisType, callableMethod.receiverType) {
                 override fun invokeIntrinsic(v: InstructionAdapter) {
                     lambda(v)
                 }
@@ -56,18 +56,13 @@ public abstract class IntrinsicCallable(val returnType1: Type,
         fun create(descriptor: FunctionDescriptor, context: CodegenContext<*>, state: GenerationState, receiverTransformer: Type.() -> Type, lambda: IntrinsicCallable.(i: InstructionAdapter) -> Unit): IntrinsicCallable {
             val callableMethod = state.getTypeMapper().mapToCallableMethod(descriptor, false, context)
 
-            return object : IntrinsicCallable(callableMethod.getReturnType(), callableMethod.getValueParameterTypes(), callableMethod.getThisType()?.receiverTransformer(), callableMethod.getReceiverClass()?.receiverTransformer()) {
+            return object : IntrinsicCallable(callableMethod.returnType, callableMethod.valueParameterTypes, callableMethod.thisType?.receiverTransformer(), callableMethod.receiverType?.receiverTransformer()) {
                 override fun invokeIntrinsic(v: InstructionAdapter) {
                     lambda(v)
                 }
             }
         }
     }
-
-    override fun getValueParameterTypes(): List<Type> {
-        return valueParametersTypes
-    }
-
 
     override fun invokeWithoutAssertions(v: InstructionAdapter) {
         invokeIntrinsic(v)
@@ -79,36 +74,27 @@ public abstract class IntrinsicCallable(val returnType1: Type,
 
     public abstract fun invokeIntrinsic(v: InstructionAdapter);
 
-    override fun getArgumentTypes(): Array<Type> {
-        throw UnsupportedOperationException()
-    }
+    override val argumentTypes: Array<Type>
+        get() {
+            throw UnsupportedOperationException()
+        }
 
     override fun isStaticCall(): Boolean {
         return false
     }
 
-    override fun getGenerateCalleeType(): Type? {
-        return null
-    }
+    override val generateCalleeType: Type?
+        get() {
+            return null
+        }
 
-    override fun getReturnType(): Type {
-        return returnType1
-    }
-
-    override fun getThisType(): Type? {
-        return thisType1
-    }
-
-    override fun getReceiverClass(): Type? {
-        return receiverType1
-    }
-
-    override fun getOwner(): Type {
-        throw UnsupportedOperationException()
-    }
+    override val owner: Type
+        get() {
+            throw UnsupportedOperationException()
+        }
 
     public fun calcReceiverType(): Type? {
-        return getReceiverClass() ?: getThisType()
+        return receiverType ?: thisType
     }
 
     override fun beforeParameterGeneration(v: InstructionAdapter, value: StackValue?) {
@@ -124,13 +110,13 @@ public abstract class IntrinsicCallable(val returnType1: Type,
 
 
 public class UnaryIntrinsic(val callable: CallableMethod, val newReturnType: Type? = null, needPrimitiveCheck: Boolean = false, val newThisType: Type? = null, val invoke: UnaryIntrinsic.(v: InstructionAdapter) -> Unit) :
-        IntrinsicCallable(newReturnType ?: callable.getReturnType(), callable.getValueParameterTypes(), newThisType ?: callable.getThisType(), callable.getReceiverClass()) {
+        IntrinsicCallable(newReturnType ?: callable.returnType, callable.valueParameterTypes, newThisType ?: callable.thisType, callable.receiverType) {
 
     {
         if (needPrimitiveCheck) {
-            assert(AsmUtil.isPrimitive(getReturnType())) { "Return type of UnaryPlus intrinsic should be of primitive type : " + getReturnType() }
+            assert(AsmUtil.isPrimitive(returnType)) { "Return type of UnaryPlus intrinsic should be of primitive type : " + returnType }
         }
-        assert(getValueParameterTypes().size == 0, "Unary operation should not have any parameters")
+        assert(valueParameterTypes.size == 0, "Unary operation should not have any parameters")
     }
 
     override fun invokeIntrinsic(v: InstructionAdapter) {
@@ -140,7 +126,7 @@ public class UnaryIntrinsic(val callable: CallableMethod, val newReturnType: Typ
 }
 
 public open class MappedCallable(val callable: CallableMethod, val invoke: MappedCallable.(v: InstructionAdapter) -> Unit = {}) :
-        IntrinsicCallable(callable.getReturnType(), callable.getValueParameterTypes(), callable.getThisType(), callable.getReceiverClass()) {
+        IntrinsicCallable(callable.returnType, callable.valueParameterTypes, callable.thisType, callable.receiverType) {
 
 
     override fun invokeIntrinsic(v: InstructionAdapter) {

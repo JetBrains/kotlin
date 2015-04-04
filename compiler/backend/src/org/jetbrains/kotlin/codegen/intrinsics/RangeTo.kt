@@ -42,16 +42,16 @@ public class RangeTo : IntrinsicMethod() {
 
     override fun toCallable(fd: FunctionDescriptor, isSuper: Boolean, resolvedCall: ResolvedCall<*>, codegen: ExpressionCodegen): Callable {
         val method = codegen.getState().getTypeMapper().mapToCallableMethod(fd, false, codegen.getContext())
-        val argType = nameToPrimitive(method.getReturnType().getInternalName().substringAfter("kotlin/").substringBefore("Range"))
-        return object : IntrinsicCallable(method.getReturnType(), method.getValueParameterTypes().map { argType }, nullOr(method.getThisType(), argType), nullOr(method.getReceiverClass(), argType)) {
+        val argType = nameToPrimitive(method.returnType.getInternalName().substringAfter("kotlin/").substringBefore("Range"))
+        return object : IntrinsicCallable(method.returnType, method.valueParameterTypes.map { argType }, nullOr(method.thisType, argType), nullOr(method.receiverType, argType)) {
             override fun beforeParameterGeneration(v: InstructionAdapter, value: StackValue?) {
-                v.anew(getReturnType())
+                v.anew(returnType)
                 v.dup()
                 value?.moveToTopOfStack(value!!.type, v, 2)
             }
 
             override fun invokeIntrinsic(v: InstructionAdapter) {
-                v.invokespecial(getReturnType().getInternalName(), "<init>", Type.getMethodDescriptor(Type.VOID_TYPE, argType, argType), false)
+                v.invokespecial(returnType.getInternalName(), "<init>", Type.getMethodDescriptor(Type.VOID_TYPE, argType, argType), false)
             }
         }
     }
