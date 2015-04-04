@@ -687,6 +687,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/stringOperations/plusAssign.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("primitiveToString.kt")
+        public void testPrimitiveToString() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/stringOperations/primitiveToString.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/bytecodeText/when")
