@@ -282,7 +282,7 @@
                             order="first"
                             implementationClass="org.jetbrains.kotlin.idea.completion.KotlinCompletionContributor"/>
     <completion.contributor language="jet"
-                            implementationClass="org.jetbrains.kotlin.idea.kdoc.KDocCompletionContributor"/>
+                            implementationClass="org.jetbrains.kotlin.idea.completion.KDocCompletionContributor"/>
 
     <completion.confidence language="jet" implementationClass="com.intellij.codeInsight.completion.UnfocusedNameIdentifier"/>
     <completion.confidence language="jet"
@@ -390,7 +390,7 @@
     <debugger.extraSteppingFilter implementation="org.jetbrains.kotlin.idea.ExtraSteppingFilter"/>
     <xdebugger.settings implementation="org.jetbrains.kotlin.idea.debugger.KotlinDebuggerSettings"/>
 
-    <codeInsight.implementMethod language="jet" implementationClass="org.jetbrains.kotlin.idea.codeInsight.ImplementMethodsHandler"/>
+    <codeInsight.implementMethod language="jet" implementationClass="org.jetbrains.kotlin.idea.core.codeInsight.ImplementMethodsHandler"/>
     <codeInsight.overrideMethod language="jet" implementationClass="org.jetbrains.kotlin.idea.codeInsight.OverrideMethodsHandler"/>
 
     <framework.type implementation="org.jetbrains.kotlin.idea.framework.JavaFrameworkType"/>

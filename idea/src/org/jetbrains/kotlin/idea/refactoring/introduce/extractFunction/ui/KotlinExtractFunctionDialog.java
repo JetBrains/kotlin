@@ -29,9 +29,9 @@ import kotlin.Function1;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.JetFileType;
-import org.jetbrains.kotlin.idea.refactoring.JetNameSuggester;
+import org.jetbrains.kotlin.idea.core.refactoring.JetNameSuggester;
+import org.jetbrains.kotlin.idea.core.refactoring.RefactoringPackage;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle;
-import org.jetbrains.kotlin.idea.refactoring.RefactoringPackage;
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 

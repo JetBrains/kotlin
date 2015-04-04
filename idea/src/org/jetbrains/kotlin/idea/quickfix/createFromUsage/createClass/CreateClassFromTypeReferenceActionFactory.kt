@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass
 import org.jetbrains.kotlin.idea.quickfix.JetIntentionActionsFactory
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import com.intellij.codeInsight.intention.IntentionAction
-import org.jetbrains.kotlin.idea.quickfix.QuickFixUtil
+import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import java.util.Collections
 import org.jetbrains.kotlin.psi.JetUserType
 import org.jetbrains.kotlin.psi.JetFile

@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import com.intellij.codeInsight.intention.IntentionAction
 import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.idea.quickfix.QuickFixUtil
+import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.psi.JetForExpression
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.types.Variance

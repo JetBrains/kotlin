@@ -30,6 +30,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.JetLanguage;
+import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings;
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens;
 import org.jetbrains.kotlin.kdoc.parser.KDocElementTypes;
 import org.jetbrains.kotlin.lexer.JetTokens;

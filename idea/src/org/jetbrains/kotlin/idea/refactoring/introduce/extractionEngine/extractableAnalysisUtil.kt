@@ -41,8 +41,13 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
+import org.jetbrains.kotlin.idea.core.refactoring.JetNameSuggester
+import org.jetbrains.kotlin.idea.core.refactoring.comparePossiblyOverridingDescriptors
+import org.jetbrains.kotlin.idea.core.refactoring.createTempCopy
+import org.jetbrains.kotlin.idea.core.refactoring.getContextForContainingDeclarationBody
 import org.jetbrains.kotlin.idea.imports.importableFqNameSafe
-import org.jetbrains.kotlin.idea.refactoring.*
+import org.jetbrains.kotlin.idea.refactoring.JetNameValidatorImpl
+import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AnalysisResult.ErrorMessage
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AnalysisResult.Status
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.ExpressionValue

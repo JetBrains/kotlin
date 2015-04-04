@@ -37,6 +37,7 @@
     <orderEntry type="library" scope="PROVIDED" name="gradle-and-groovy-plugin" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="maven" level="project" />
     <orderEntry type="module" module-name="eval4j" />
+    <orderEntry type="module" module-name="idea-core" />
     <orderEntry type="module" module-name="idea-analysis" exported="" />
     <orderEntry type="module" module-name="kotlin-android-plugin" />
     <orderEntry type="module" module-name="js.frontend" />
@@ -45,5 +46,6 @@
     <orderEntry type="module" module-name="android-compiler-plugin" scope="TEST" />
     <orderEntry type="module" module-name="android-idea-plugin" scope="TEST" />
     <orderEntry type="library" name="markdown" level="project" />
+    <orderEntry type="module" module-name="idea-completion" scope="TEST" />
   </component>
 </module>

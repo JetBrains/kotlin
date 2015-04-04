@@ -23,7 +23,10 @@ import com.intellij.psi.*;
 import com.intellij.psi.codeStyle.JavaCodeStyleManager;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.refactoring.changeSignature.*;
+import com.intellij.refactoring.changeSignature.ChangeInfo;
+import com.intellij.refactoring.changeSignature.ChangeSignatureUsageProcessor;
+import com.intellij.refactoring.changeSignature.JavaChangeInfo;
+import com.intellij.refactoring.changeSignature.OverriderUsageInfo;
 import com.intellij.refactoring.rename.ResolveSnapshotProvider;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.refactoring.util.MoveRenameUsageInfo;
@@ -43,7 +46,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde;
 import org.jetbrains.kotlin.idea.codeInsight.JetFileReferencesResolver;
-import org.jetbrains.kotlin.idea.refactoring.RefactoringPackage;
+import org.jetbrains.kotlin.idea.core.refactoring.RefactoringPackage;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.*;
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference;
 import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchPackage;
@@ -62,7 +65,10 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver;
 import org.jetbrains.kotlin.types.JetType;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsageProcessor {
     @Override
@@ -341,9 +347,9 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         if (oldDescriptor instanceof ConstructorDescriptor && containingDeclaration instanceof ClassDescriptorWithResolutionScopes)
             parametersScope = ((ClassDescriptorWithResolutionScopes) containingDeclaration).getScopeForInitializerResolution();
         else if (function instanceof JetFunction)
-            parametersScope = RefactoringPackage.getBodyScope((JetFunction) function, bindingContext);
+            parametersScope = org.jetbrains.kotlin.idea.refactoring.RefactoringPackage.getBodyScope((JetFunction) function, bindingContext);
 
-        JetScope functionScope = RefactoringPackage.getContainingScope(oldDescriptor, bindingContext);
+        JetScope functionScope = org.jetbrains.kotlin.idea.refactoring.RefactoringPackage.getContainingScope(oldDescriptor, bindingContext);
 
         JetMethodDescriptor.Kind kind = ChangeSignaturePackage.getKind(changeInfo);
         if (!kind.getIsConstructor() && functionScope != null && !info.getNewName().isEmpty()) {

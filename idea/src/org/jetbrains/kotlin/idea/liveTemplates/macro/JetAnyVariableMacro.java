@@ -20,7 +20,7 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.VariableDescriptor;
 import org.jetbrains.kotlin.idea.JetBundle;
-import org.jetbrains.kotlin.idea.util.IterableTypesDetector;
+import org.jetbrains.kotlin.idea.core.IterableTypesDetector;
 
 public class JetAnyVariableMacro extends BaseJetVariableMacro {
     @Override

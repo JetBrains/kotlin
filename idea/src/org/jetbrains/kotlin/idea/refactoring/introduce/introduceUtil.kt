@@ -23,6 +23,7 @@ import com.intellij.psi.*
 import com.intellij.psi.util.*
 import org.jetbrains.kotlin.idea.codeInsight.*
 import com.intellij.openapi.project.*
+import org.jetbrains.kotlin.idea.core.refactoring.chooseContainerElementIfNecessary
 
 fun showErrorHint(project: Project, editor: Editor, message: String, title: String) {
     CodeInsightUtils.showErrorHint(project, editor, message, title, null)

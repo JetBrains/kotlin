@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATIO
 import java.util.Collections
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.FAKE_OVERRIDE
-import org.jetbrains.kotlin.idea.quickfix.QuickFixUtil
+import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.ide.IdeBundle
 import com.intellij.openapi.ui.Messages

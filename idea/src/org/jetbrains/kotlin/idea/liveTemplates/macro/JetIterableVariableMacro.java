@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.VariableDescriptor;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.util.FuzzyType;
-import org.jetbrains.kotlin.idea.util.IterableTypesDetector;
+import org.jetbrains.kotlin.idea.core.IterableTypesDetector;
 
 import java.util.Collections;
 

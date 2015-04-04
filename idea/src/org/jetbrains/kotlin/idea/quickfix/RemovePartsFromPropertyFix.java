@@ -25,6 +25,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.JetBundle;
+import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyAction;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.types.JetType;

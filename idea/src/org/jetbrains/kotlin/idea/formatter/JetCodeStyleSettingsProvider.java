@@ -26,6 +26,7 @@ import com.intellij.psi.codeStyle.CodeStyleSettingsProvider;
 import com.intellij.psi.codeStyle.CustomCodeStyleSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.JetLanguage;
+import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings;
 
 public class JetCodeStyleSettingsProvider extends CodeStyleSettingsProvider {
 

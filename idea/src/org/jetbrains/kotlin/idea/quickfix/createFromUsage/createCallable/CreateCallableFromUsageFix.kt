@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.CreateFromUsageFixBase
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
-import org.jetbrains.kotlin.idea.refactoring.canRefactor
-import org.jetbrains.kotlin.idea.refactoring.chooseContainerElementIfNecessary
+import org.jetbrains.kotlin.idea.core.refactoring.canRefactor
+import org.jetbrains.kotlin.idea.core.refactoring.chooseContainerElementIfNecessary
 import org.jetbrains.kotlin.psi.*
 import java.util.Collections
 import java.util.HashSet

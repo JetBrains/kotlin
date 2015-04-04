@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import com.intellij.codeInsight.intention.IntentionAction
 import org.jetbrains.kotlin.resolve.dataClassUtils.*
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.idea.quickfix.QuickFixUtil
+import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.psi.JetMultiDeclaration
 import org.jetbrains.kotlin.psi.JetForExpression
 import org.jetbrains.kotlin.types.Variance

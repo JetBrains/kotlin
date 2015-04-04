@@ -40,6 +40,8 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
+import org.jetbrains.kotlin.idea.core.refactoring.canRefactor
+import org.jetbrains.kotlin.idea.core.refactoring.getExtractionContainers
 import org.jetbrains.kotlin.idea.refactoring.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall

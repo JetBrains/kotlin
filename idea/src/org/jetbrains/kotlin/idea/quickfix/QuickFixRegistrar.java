@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.idea.quickfix;
 
-import org.jetbrains.kotlin.idea.codeInsight.ImplementMethodsHandler;
+import org.jetbrains.kotlin.idea.core.codeInsight.ImplementMethodsHandler;
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromCallWithConstructorCalleeActionFactory;
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromConstructorCallActionFactory;
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromReferenceExpressionActionFactory;

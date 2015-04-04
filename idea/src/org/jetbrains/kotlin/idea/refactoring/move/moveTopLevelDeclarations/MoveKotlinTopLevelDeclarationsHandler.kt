@@ -24,7 +24,7 @@ import com.intellij.refactoring.move.MoveCallback
 import com.intellij.psi.PsiReference
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.idea.refactoring.isInJavaSourceRoot
+import org.jetbrains.kotlin.idea.core.refactoring.isInJavaSourceRoot
 import org.jetbrains.kotlin.psi.JetObjectDeclaration
 import org.jetbrains.kotlin.psi.JetClass
 import com.intellij.psi.PsiPackage

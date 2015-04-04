@@ -37,7 +37,7 @@ import com.intellij.psi.PsiDirectory
 import org.jetbrains.kotlin.psi.psiUtil.getPackage
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.idea.refactoring.move.PackageNameInfo
-import org.jetbrains.kotlin.idea.refactoring.createKotlinFile
+import org.jetbrains.kotlin.idea.core.refactoring.createKotlinFile
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.refactoring.move.getFileNameAfterMove
 import org.jetbrains.kotlin.psi.JetNamedDeclaration
@@ -53,7 +53,7 @@ import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassHandler
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.psi.psiUtil.isPrivate
-import org.jetbrains.kotlin.idea.refactoring.getUsageContext
+import org.jetbrains.kotlin.idea.core.refactoring.getUsageContext
 import org.jetbrains.kotlin.psi.psiUtil.isInsideOf
 import org.jetbrains.kotlin.idea.codeInsight.JetFileReferencesResolver
 import org.jetbrains.kotlin.resolve.BindingContext
