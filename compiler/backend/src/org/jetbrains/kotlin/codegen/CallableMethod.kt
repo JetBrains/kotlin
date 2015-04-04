@@ -16,142 +16,96 @@
 
 package org.jetbrains.kotlin.codegen;
 
+import com.sun.org.apache.bcel.internal.generic.INVOKESPECIAL
+import com.sun.org.apache.bcel.internal.generic.INVOKESTATIC
 import kotlin.Function1;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
-import org.jetbrains.org.objectweb.asm.Opcodes;
+import org.jetbrains.org.objectweb.asm.Opcodes.*;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 import org.jetbrains.org.objectweb.asm.util.Printer;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import static org.jetbrains.org.objectweb.asm.Opcodes.INVOKESPECIAL;
-import static org.jetbrains.org.objectweb.asm.Opcodes.INVOKESTATIC;
+public class CallableMethod(private val owner: Type, private val defaultImplOwner: Type?, private val defaultImplParam: Type?, private val signature: JvmMethodSignature, private val invokeOpcode: Int, private val thisClass: Type?, private val receiverParameterType: Type?, private val generateCalleeType: Type?) : ExtendedCallable {
 
-public class CallableMethod implements ExtendedCallable {
-    private final Type owner;
-    private final Type defaultImplOwner;
-    private final Type defaultImplParam;
-    private final JvmMethodSignature signature;
-    private final int invokeOpcode;
-    private final Type thisClass;
-    private final Type receiverParameterType;
-    private final Type generateCalleeType;
-
-    public CallableMethod(
-            @NotNull Type owner,
-            @Nullable Type defaultImplOwner,
-            @Nullable Type defaultImplParam,
-            @NotNull JvmMethodSignature signature,
-            int invokeOpcode,
-            @Nullable Type thisClass,
-            @Nullable Type receiverParameterType,
-            @Nullable Type generateCalleeType
-    ) {
-        this.owner = owner;
-        this.defaultImplOwner = defaultImplOwner;
-        this.defaultImplParam = defaultImplParam;
-        this.signature = signature;
-        this.invokeOpcode = invokeOpcode;
-        this.thisClass = thisClass;
-        this.receiverParameterType = receiverParameterType;
-        this.generateCalleeType = generateCalleeType;
+    override fun getOwner(): Type {
+        return owner
     }
 
-    @Override
-    @NotNull
-    public Type getOwner() {
-        return owner;
+    public fun getValueParameters(): List<JvmMethodParameterSignature> {
+        return signature.getValueParameters()
     }
 
-    @NotNull
-    public List<JvmMethodParameterSignature> getValueParameters() {
-        return signature.getValueParameters();
-    }
-
-    @Override
-    @NotNull
-    public List<Type> getValueParameterTypes() {
-        List<JvmMethodParameterSignature> valueParameters = signature.getValueParameters();
-        List<Type> result = new ArrayList<Type>(valueParameters.size());
-        for (JvmMethodParameterSignature parameter : valueParameters) {
+    override fun getValueParameterTypes(): List<Type> {
+        val valueParameters = signature.getValueParameters()
+        val result = ArrayList<Type>(valueParameters.size())
+        for (parameter in valueParameters) {
             if (parameter.getKind() == JvmMethodParameterKind.VALUE) {
-                result.add(parameter.getAsmType());
+                result.add(parameter.getAsmType())
             }
         }
-        return result;
+        return result
     }
 
-    @NotNull
-    public Method getAsmMethod() {
-        return signature.getAsmMethod();
+    public fun getAsmMethod(): Method {
+        return signature.getAsmMethod()
     }
 
-    @Override
-    public Type[] getArgumentTypes() {
-        return signature.getAsmMethod().getArgumentTypes();
+    override fun getArgumentTypes(): Array<Type> {
+        return signature.getAsmMethod().getArgumentTypes()
     }
 
-    @Override
-    @Nullable
-    public Type getThisType() {
-        return thisClass;
+    override fun getThisType(): Type? {
+        return thisClass
     }
 
-    @Override
-    @Nullable
-    public Type getReceiverClass() {
-        return receiverParameterType;
+    override fun getReceiverClass(): Type? {
+        return receiverParameterType
     }
 
-    private void invoke(InstructionAdapter v) {
-        v.visitMethodInsn(invokeOpcode, owner.getInternalName(), getAsmMethod().getName(), getAsmMethod().getDescriptor());
+    private fun invoke(v: InstructionAdapter) {
+        v.visitMethodInsn(invokeOpcode, owner.getInternalName(), getAsmMethod().getName(), getAsmMethod().getDescriptor())
     }
 
-    @Override
-    public void invokeWithNotNullAssertion(
-            @NotNull InstructionAdapter v,
-            @NotNull GenerationState state,
-            @NotNull ResolvedCall resolvedCall
-    ) {
-        invokeWithoutAssertions(v);
-        AsmUtil.genNotNullAssertionForMethod(v, state, resolvedCall);
+
+    public override fun invokeWithNotNullAssertion(v: InstructionAdapter, state: GenerationState, resolvedCall: ResolvedCall<*>) {
+        invokeWithoutAssertions(v)
+        AsmUtil.genNotNullAssertionForMethod(v, state, resolvedCall)
     }
 
-    @Override
-    public void invokeWithoutAssertions(@NotNull InstructionAdapter v) {
-        invoke(v);
+    public override fun invokeWithoutAssertions(v: InstructionAdapter) {
+        invoke(v)
     }
 
-    @Override
-    @Nullable
-    public Type getGenerateCalleeType() {
-        return generateCalleeType;
+    override fun getGenerateCalleeType(): Type? {
+        return generateCalleeType
     }
 
-    private void invokeDefault(InstructionAdapter v) {
+    private fun invokeDefault(v: InstructionAdapter) {
         if (defaultImplOwner == null || defaultImplParam == null) {
-            throw new IllegalStateException();
+            throw IllegalStateException()
         }
 
-        Method method = getAsmMethod();
-        String desc = JetTypeMapper.getDefaultDescriptor(method,
-                                                         invokeOpcode == INVOKESTATIC ? null : defaultImplParam.getDescriptor(),
+        val method = getAsmMethod();
+        val desc = JetTypeMapper.getDefaultDescriptor(method,
+                                                         if (invokeOpcode == INVOKESTATIC) null else defaultImplParam.getDescriptor(),
                                                          receiverParameterType != null);
+
         if ("<init>".equals(method.getName())) {
-            v.aconst(null);
-            v.visitMethodInsn(INVOKESPECIAL, defaultImplOwner.getInternalName(), "<init>", desc, false);
+            v.aconst(null)
+            v.visitMethodInsn(INVOKESPECIAL, defaultImplOwner!!.getInternalName(), "<init>", desc, false)
         }
         else {
             v.visitMethodInsn(INVOKESTATIC, defaultImplOwner.getInternalName(),
@@ -159,48 +113,31 @@ public class CallableMethod implements ExtendedCallable {
         }
     }
 
-    public void invokeDefaultWithNotNullAssertion(
-            @NotNull InstructionAdapter v,
-            @NotNull GenerationState state,
-            @NotNull ResolvedCall resolvedCall
-    ) {
-        invokeDefault(v);
-        AsmUtil.genNotNullAssertionForMethod(v, state, resolvedCall);
+    public fun invokeDefaultWithNotNullAssertion(v: InstructionAdapter, state: GenerationState, resolvedCall: ResolvedCall<*>) {
+        invokeDefault(v)
+        AsmUtil.genNotNullAssertionForMethod(v, state, resolvedCall)
     }
 
-    @Override
-    @NotNull
-    public Type getReturnType() {
-        return signature.getReturnType();
+    override fun getReturnType(): Type {
+        return signature.getReturnType()
     }
 
-    @Override
-    public String toString() {
-        return Printer.OPCODES[invokeOpcode] + " " + owner.getInternalName() + "." + signature;
+    override fun toString(): String {
+        return Printer.OPCODES[invokeOpcode] + " " + owner.getInternalName() + "." + signature
     }
 
-    @Override
-    public boolean isStaticCall() {
-        return invokeOpcode == Opcodes.INVOKESTATIC;
+    override fun isStaticCall(): Boolean {
+        return invokeOpcode == INVOKESTATIC
     }
 
-    @Override
-    public void beforeParameterGeneration(@NotNull InstructionAdapter v, @Nullable StackValue value) {
+
+    public override fun beforeParameterGeneration(v: InstructionAdapter, value: StackValue?) {
 
     }
 
-    @NotNull
-    @Override
-    public StackValue invokeMethodWithArguments(
-            @NotNull final ResolvedCall resolvedCall, @NotNull final StackValue receiver, @NotNull final Type returnType,
-            @NotNull final ExpressionCodegen codegen
-    ) {
-        return StackValue.functionCall(returnType, new Function1<InstructionAdapter, Unit>() {
-            @Override
-            public Unit invoke(InstructionAdapter v) {
-                codegen.invokeMethodWithArguments(CallableMethod.this, resolvedCall, receiver, returnType);
-                return Unit.INSTANCE$;
-            }
-        });
+    override fun invokeMethodWithArguments(resolvedCall: ResolvedCall<*>, receiver: StackValue, returnType: Type, codegen: ExpressionCodegen): StackValue {
+        return StackValue.functionCall(returnType) {
+            codegen.invokeMethodWithArguments(this@CallableMethod, resolvedCall, receiver, returnType)
+        }
     }
 }
