@@ -24,7 +24,7 @@ import org.jetbrains.org.objectweb.asm.Type
 
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
 import org.jetbrains.kotlin.codegen.CallableMethod
-import org.jetbrains.kotlin.codegen.ExtendedCallable
+import org.jetbrains.kotlin.codegen.Callable
 
 public class UnaryPlus : LazyIntrinsicMethod() {
     override fun generateImpl(codegen: ExpressionCodegen, returnType: Type, element: PsiElement?, arguments: List<JetExpression>, receiver: StackValue): StackValue {
@@ -39,7 +39,7 @@ public class UnaryPlus : LazyIntrinsicMethod() {
         }
     }
 
-    override fun toCallable(method: CallableMethod): ExtendedCallable {
+    override fun toCallable(method: CallableMethod): Callable {
         return UnaryIntrinsic(method, needPrimitiveCheck = true) {
             //nothing
         }

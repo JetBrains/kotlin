@@ -38,7 +38,7 @@ import org.jetbrains.org.objectweb.asm.util.Printer;
 
 import java.util.ArrayList;
 
-public class CallableMethod(private val owner: Type, private val defaultImplOwner: Type?, private val defaultImplParam: Type?, private val signature: JvmMethodSignature, private val invokeOpcode: Int, private val thisClass: Type?, private val receiverParameterType: Type?, private val generateCalleeType: Type?) : ExtendedCallable {
+public class CallableMethod(private val owner: Type, private val defaultImplOwner: Type?, private val defaultImplParam: Type?, private val signature: JvmMethodSignature, private val invokeOpcode: Int, private val thisClass: Type?, private val receiverParameterType: Type?, private val generateCalleeType: Type?) : Callable {
 
     override fun getOwner(): Type {
         return owner

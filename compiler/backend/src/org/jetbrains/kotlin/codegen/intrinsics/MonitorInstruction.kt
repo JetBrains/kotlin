@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.codegen.intrinsics
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
-import org.jetbrains.kotlin.codegen.ExtendedCallable
+import org.jetbrains.kotlin.codegen.Callable
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.context.CodegenContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -65,7 +65,7 @@ public class MonitorInstruction private(private val opcode: Int) : IntrinsicMeth
         return true
     }
 
-    override fun toCallable(state: GenerationState, fd: FunctionDescriptor, context: CodegenContext<*>, isSuper: Boolean, resolvedCall: ResolvedCall<*>): ExtendedCallable {
+    override fun toCallable(state: GenerationState, fd: FunctionDescriptor, context: CodegenContext<*>, isSuper: Boolean, resolvedCall: ResolvedCall<*>): Callable {
         return object : IntrinsicCallable(Type.VOID_TYPE, listOf(OBJECT_TYPE), null, null) {
             override fun invokeIntrinsic(v: InstructionAdapter) {
                 v.visitInsn(opcode)

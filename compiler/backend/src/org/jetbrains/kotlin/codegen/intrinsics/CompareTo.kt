@@ -25,7 +25,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 import org.jetbrains.kotlin.codegen.AsmUtil.comparisonOperandType
 import org.jetbrains.kotlin.codegen.CallableMethod
-import org.jetbrains.kotlin.codegen.ExtendedCallable
+import org.jetbrains.kotlin.codegen.Callable
 
 public class CompareTo : IntrinsicMethod() {
     override fun generateImpl(codegen: ExpressionCodegen, v: InstructionAdapter, returnType: Type, element: PsiElement?, arguments: List<JetExpression>, receiver: StackValue): Type {
@@ -74,7 +74,7 @@ public class CompareTo : IntrinsicMethod() {
         return true
     }
 
-    override fun toCallable(method: CallableMethod): ExtendedCallable {
+    override fun toCallable(method: CallableMethod): Callable {
         val argumentType = comparisonOperandType(method.getThisType() ?: method.getReceiverClass(), method.getArgumentTypes().first())
         return IntrinsicCallable.binaryIntrinsic(method.getReturnType(), argumentType, argumentType, null) {
             genInvoke(argumentType, it)

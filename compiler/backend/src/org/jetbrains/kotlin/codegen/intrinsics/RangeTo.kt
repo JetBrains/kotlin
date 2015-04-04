@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.codegen.intrinsics
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
-import org.jetbrains.kotlin.codegen.ExtendedCallable
+import org.jetbrains.kotlin.codegen.Callable
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.psi.JetBinaryExpression
@@ -99,7 +99,7 @@ public class RangeTo : IntrinsicMethod() {
         return true
     }
 
-    override fun toCallable(fd: FunctionDescriptor, isSuper: Boolean, resolvedCall: ResolvedCall<*>, codegen: ExpressionCodegen): ExtendedCallable {
+    override fun toCallable(fd: FunctionDescriptor, isSuper: Boolean, resolvedCall: ResolvedCall<*>, codegen: ExpressionCodegen): Callable {
         val method = codegen.getState().getTypeMapper().mapToCallableMethod(fd, false, codegen.getContext())
         val argType = nameToPrimitive(method.getReturnType().getInternalName().substringAfter("kotlin/").substringBefore("Range"))
         return object : IntrinsicCallable(method.getReturnType(), method.getValueParameterTypes().map { argType }, nullOr(method.getThisType(), argType), nullOr(method.getReceiverClass(), argType)) {

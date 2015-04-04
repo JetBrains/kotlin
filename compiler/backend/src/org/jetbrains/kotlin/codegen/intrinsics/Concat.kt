@@ -27,7 +27,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 import org.jetbrains.kotlin.codegen.AsmUtil.genInvokeAppendMethod
 import org.jetbrains.kotlin.codegen.AsmUtil.genStringBuilderConstructor
-import org.jetbrains.kotlin.codegen.ExtendedCallable
+import org.jetbrains.kotlin.codegen.Callable
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.JetBinaryExpression
@@ -63,7 +63,7 @@ public class Concat : IntrinsicMethod() {
         return true
     }
 
-    override fun toCallable(fd: FunctionDescriptor, isSuper: Boolean, resolvedCall: ResolvedCall<*>, codegen: ExpressionCodegen): ExtendedCallable {
+    override fun toCallable(fd: FunctionDescriptor, isSuper: Boolean, resolvedCall: ResolvedCall<*>, codegen: ExpressionCodegen): Callable {
         val callable = codegen.getState().getTypeMapper().mapToCallableMethod(fd, false, codegen.getContext())
         return object : MappedCallable(callable, {}) {
             override fun invokeMethodWithArguments(resolvedCall: ResolvedCall<*>, receiver: StackValue, returnType: Type, codegen: ExpressionCodegen): StackValue {

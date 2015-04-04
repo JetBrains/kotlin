@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.codegen.intrinsics
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.codegen.CallableMethod
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
-import org.jetbrains.kotlin.codegen.ExtendedCallable
+import org.jetbrains.kotlin.codegen.Callable
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.JetExpression
@@ -56,7 +56,7 @@ public class Clone : IntrinsicMethod() {
         return true
     }
 
-    override fun toCallable(method: CallableMethod, isSuperCall: Boolean): ExtendedCallable {
+    override fun toCallable(method: CallableMethod, isSuperCall: Boolean): Callable {
         return UnaryIntrinsic(method, OBJECT_TYPE) {
             val opcodes: Int = if (isSuperCall) Opcodes.INVOKESPECIAL else Opcodes.INVOKEVIRTUAL
             it.visitMethodInsn(opcodes, "java/lang/Object", "clone", "()Ljava/lang/Object;", false)

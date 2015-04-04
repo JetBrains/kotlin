@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.codegen.intrinsics
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.codegen.CallableMethod
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
-import org.jetbrains.kotlin.codegen.ExtendedCallable
+import org.jetbrains.kotlin.codegen.Callable
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.context.CodegenContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -52,7 +52,7 @@ public class CopyToArray : IntrinsicMethod() {
         return true
     }
 
-    override fun toCallable(fd: FunctionDescriptor, isSuper: Boolean, resolvedCall: ResolvedCall<*>, codegen: ExpressionCodegen): ExtendedCallable {
+    override fun toCallable(fd: FunctionDescriptor, isSuper: Boolean, resolvedCall: ResolvedCall<*>, codegen: ExpressionCodegen): Callable {
         return object : IntrinsicCallable(getType(javaClass<Array<Any>>()), listOf(), null, Type.getType(javaClass<Collection<*>>())) {
             override fun invokeIntrinsic(v: InstructionAdapter) {
                 v.dup()

@@ -20,7 +20,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.codegen.CallableMethod
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
-import org.jetbrains.kotlin.codegen.ExtendedCallable
+import org.jetbrains.kotlin.codegen.Callable
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.context.CodegenContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -46,7 +46,7 @@ public class StringGetChar : LazyIntrinsicMethod() {
         }
     }
 
-    override fun toCallable(method: CallableMethod): ExtendedCallable {
+    override fun toCallable(method: CallableMethod): Callable {
         return IntrinsicCallable.create(method) {
             it.invokevirtual("java/lang/String", "charAt", "(I)C", false)
         }

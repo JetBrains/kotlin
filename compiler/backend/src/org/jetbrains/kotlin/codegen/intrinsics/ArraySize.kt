@@ -20,7 +20,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.codegen.CallableMethod
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
-import org.jetbrains.kotlin.codegen.ExtendedCallable
+import org.jetbrains.kotlin.codegen.Callable
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.psi.JetExpression
 
@@ -38,7 +38,7 @@ public class ArraySize : LazyIntrinsicMethod() {
         }
     }
 
-    public override fun toCallable(method: CallableMethod): ExtendedCallable {
+    public override fun toCallable(method: CallableMethod): Callable {
         return UnaryIntrinsic(method, null, false) { adapter ->
             adapter.arraylength()
         }

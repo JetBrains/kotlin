@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.codegen.intrinsics
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.codegen.CallableMethod
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
-import org.jetbrains.kotlin.codegen.ExtendedCallable
+import org.jetbrains.kotlin.codegen.Callable
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
@@ -76,7 +76,7 @@ public class IteratorNext : IntrinsicMethod() {
     }
 
 
-    override fun toCallable(state: GenerationState, fd: FunctionDescriptor, context: CodegenContext<*>, isSuper: Boolean): ExtendedCallable {
+    override fun toCallable(state: GenerationState, fd: FunctionDescriptor, context: CodegenContext<*>, isSuper: Boolean): Callable {
         val type = state.getTypeMapper().mapReturnType(fd)
         return object: IntrinsicCallable(type, listOf(), AsmTypes.OBJECT_TYPE, null) {
             override fun invokeIntrinsic(v: InstructionAdapter) {

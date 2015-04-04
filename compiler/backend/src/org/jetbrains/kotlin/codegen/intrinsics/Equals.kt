@@ -48,7 +48,7 @@ public class Equals : LazyIntrinsicMethod() {
         return genEqualsForExpressionsOnStack(JetTokens.EQEQ, leftExpr, codegen.genLazy(rightExpr, OBJECT_TYPE))
     }
 
-    override fun toCallable(method: CallableMethod): ExtendedCallable {
+    override fun toCallable(method: CallableMethod): Callable {
         return IntrinsicCallable.binaryIntrinsic(method.getReturnType(), OBJECT_TYPE, nullOrObject(method.getThisType()), nullOrObject(method.getReceiverClass())) {
             AsmUtil.genAreEqualCall(it)
         }

@@ -35,7 +35,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.codegen.AsmUtil.asmDescByFqNameWithoutInnerClasses
 import org.jetbrains.kotlin.codegen.CallableMethod
-import org.jetbrains.kotlin.codegen.ExtendedCallable
+import org.jetbrains.kotlin.codegen.Callable
 import org.jetbrains.kotlin.codegen.context.CodegenContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.getType
@@ -71,7 +71,7 @@ public class ArrayIterator : IntrinsicMethod() {
     }
 
     //TODO refactor
-    override fun toCallable(state: GenerationState, fd: FunctionDescriptor, context: CodegenContext<*>, isSuper: Boolean): ExtendedCallable {
+    override fun toCallable(state: GenerationState, fd: FunctionDescriptor, context: CodegenContext<*>, isSuper: Boolean): Callable {
         val callableMethod = state.getTypeMapper().mapToCallableMethod(fd, false, context)
 
         val containingDeclaration = fd.getContainingDeclaration().getOriginal() as ClassDescriptor

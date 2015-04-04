@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.AsmUtil.*
 import org.jetbrains.kotlin.codegen.CallableMethod
-import org.jetbrains.kotlin.codegen.ExtendedCallable
+import org.jetbrains.kotlin.codegen.Callable
 import org.jetbrains.kotlin.psi.JetExpression
 
 public class UnaryMinus : LazyIntrinsicMethod() {
@@ -46,7 +46,7 @@ public class UnaryMinus : LazyIntrinsicMethod() {
         }
     }
 
-    override fun toCallable(method: CallableMethod): ExtendedCallable {
+    override fun toCallable(method: CallableMethod): Callable {
         return UnaryIntrinsic(method, numberFunctionOperandType(method.getReturnType()), needPrimitiveCheck = true) {
             it.neg(getReturnType())
         }

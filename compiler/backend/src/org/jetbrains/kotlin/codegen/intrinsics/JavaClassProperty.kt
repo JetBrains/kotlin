@@ -26,7 +26,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 import org.jetbrains.kotlin.codegen.AsmUtil.boxType
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
-import org.jetbrains.kotlin.codegen.ExtendedCallable
+import org.jetbrains.kotlin.codegen.Callable
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.getType
@@ -53,7 +53,7 @@ public class JavaClassProperty : IntrinsicMethod() {
         return true
     }
 
-    override fun toCallable(fd: FunctionDescriptor, isSuper: Boolean, resolvedCall: ResolvedCall<*>, codegen: ExpressionCodegen): ExtendedCallable {
+    override fun toCallable(fd: FunctionDescriptor, isSuper: Boolean, resolvedCall: ResolvedCall<*>, codegen: ExpressionCodegen): Callable {
         val classType = codegen.getState().getTypeMapper().mapType(resolvedCall.getCall().getDispatchReceiver().getType())
         return object : IntrinsicCallable(getType(javaClass<Class<Any>>()), listOf(), classType, null) {
             override fun invokeIntrinsic(v: InstructionAdapter) {

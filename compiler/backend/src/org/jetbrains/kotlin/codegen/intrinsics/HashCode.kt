@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.codegen.CallableMethod
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
-import org.jetbrains.kotlin.codegen.ExtendedCallable
+import org.jetbrains.kotlin.codegen.Callable
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
@@ -41,7 +41,7 @@ public class HashCode : LazyIntrinsicMethod() {
         }
     }
 
-    override fun toCallable(method: CallableMethod): ExtendedCallable {
+    override fun toCallable(method: CallableMethod): Callable {
         return object: IntrinsicCallable(Type.INT_TYPE, emptyList(), nullOrObject(method.getThisType()), nullOrObject(method.getReceiverClass())) {
             override fun invokeIntrinsic(v: InstructionAdapter) {
                 v.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Object", "hashCode", "()I", false)

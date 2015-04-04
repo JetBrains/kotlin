@@ -36,7 +36,7 @@ public class ToString : LazyIntrinsicMethod() {
         return genToString(receiver, receiver.type)
     }
 
-    override fun toCallable(method: CallableMethod): ExtendedCallable {
+    override fun toCallable(method: CallableMethod): Callable {
         val type = AsmUtil.stringValueOfType(method.getThisType() ?: method.getReceiverClass())
         return UnaryIntrinsic(method, newThisType = type) {
             it.invokestatic("java/lang/String", "valueOf", "(" + type.getDescriptor() + ")Ljava/lang/String;", false)

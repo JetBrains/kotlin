@@ -27,7 +27,7 @@ import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
 import org.jetbrains.kotlin.codegen.AsmUtil.numberFunctionOperandType
 import org.jetbrains.kotlin.codegen.CallableMethod
-import org.jetbrains.kotlin.codegen.ExtendedCallable
+import org.jetbrains.kotlin.codegen.Callable
 import org.jetbrains.kotlin.codegen.context.CodegenContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -62,7 +62,7 @@ public class BinaryOp(private val opcode: Int) : IntrinsicMethod() {
         return true
     }
 
-    override fun toCallable(method: CallableMethod): ExtendedCallable {
+    override fun toCallable(method: CallableMethod): Callable {
         val returnType = method.getReturnType()
         assert(method.getValueParameters().size() == 1)
         val operandType = numberFunctionOperandType(returnType)

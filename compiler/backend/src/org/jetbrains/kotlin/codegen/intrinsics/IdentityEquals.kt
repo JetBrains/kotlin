@@ -50,7 +50,7 @@ public class IdentityEquals : LazyIntrinsicMethod() {
         return true
     }
 
-    override fun toCallable(fd: FunctionDescriptor, isSuper: Boolean, resolvedCall: ResolvedCall<*>, codegen: ExpressionCodegen): ExtendedCallable {
+    override fun toCallable(fd: FunctionDescriptor, isSuper: Boolean, resolvedCall: ResolvedCall<*>, codegen: ExpressionCodegen): Callable {
         val callable = codegen.getState().getTypeMapper().mapToCallableMethod(fd, false, codegen.getContext())
         return object : MappedCallable(callable)  {
             override fun invokeMethodWithArguments(resolvedCall: ResolvedCall<*>, receiver: StackValue, returnType: Type, codegen: ExpressionCodegen): StackValue {

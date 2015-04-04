@@ -35,7 +35,7 @@ public abstract class CallGenerator {
 
         @Override
         public void genCallInner(
-                @NotNull ExtendedCallable callableMethod,
+                @NotNull Callable callableMethod,
                 ResolvedCall<?> resolvedCall,
                 boolean callDefault,
                 @NotNull ExpressionCodegen codegen
@@ -90,7 +90,7 @@ public abstract class CallGenerator {
         }
     }
 
-    public void genCall(@NotNull ExtendedCallable callableMethod, @Nullable ResolvedCall<?> resolvedCall, boolean callDefault, @NotNull ExpressionCodegen codegen) {
+    public void genCall(@NotNull Callable callableMethod, @Nullable ResolvedCall<?> resolvedCall, boolean callDefault, @NotNull ExpressionCodegen codegen) {
         if (resolvedCall != null) {
             JetExpression calleeExpression = resolvedCall.getCall().getCalleeExpression();
             if (calleeExpression != null) {
@@ -101,7 +101,7 @@ public abstract class CallGenerator {
         genCallInner(callableMethod, resolvedCall, callDefault, codegen);
     }
 
-    public abstract void genCallInner(@NotNull ExtendedCallable callableMethod, @Nullable ResolvedCall<?> resolvedCall, boolean callDefault, @NotNull ExpressionCodegen codegen);
+    public abstract void genCallInner(@NotNull Callable callableMethod, @Nullable ResolvedCall<?> resolvedCall, boolean callDefault, @NotNull ExpressionCodegen codegen);
 
     public abstract void genCallWithoutAssertions(@NotNull CallableMethod callableMethod, @NotNull ExpressionCodegen codegen);
 

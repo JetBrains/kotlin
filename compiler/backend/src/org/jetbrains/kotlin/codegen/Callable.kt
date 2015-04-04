@@ -16,10 +16,38 @@
 
 package org.jetbrains.kotlin.codegen;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.codegen.state.GenerationState;
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.org.objectweb.asm.Type;
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
+
 
 public trait Callable {
+    public fun getOwner(): Type
 
+    public fun invokeWithNotNullAssertion(v: InstructionAdapter, state: GenerationState, resolvedCall: ResolvedCall<*>)
+
+    public fun invokeWithoutAssertions(v: InstructionAdapter)
+
+    public fun getGenerateCalleeType(): Type?
+
+    public fun getValueParameterTypes(): List<Type>
+
+    public fun getArgumentTypes(): Array<Type>
+
+    public fun getReturnType(): Type
+
+    public fun isStaticCall(): Boolean
+
+    public fun getThisType(): Type?
+
+    public fun getReceiverClass(): Type?
+
+    public fun beforeParameterGeneration(v: InstructionAdapter, value: StackValue?)
+
+    public fun invokeMethodWithArguments(resolvedCall: ResolvedCall<*>, receiver: StackValue, returnType: Type, codegen: ExpressionCodegen): StackValue
 
 }

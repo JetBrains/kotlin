@@ -28,7 +28,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 public abstract class IntrinsicCallable(val returnType1: Type,
                                         val valueParametersTypes: List<Type>,
                                         val thisType1: Type?,
-                                        val receiverType1: Type?) : ExtendedCallable {
+                                        val receiverType1: Type?) : Callable {
 
     companion object {
         fun create(descriptor: FunctionDescriptor, context: CodegenContext<*>, state: GenerationState, lambda: IntrinsicCallable.(i: InstructionAdapter) -> Unit): IntrinsicCallable {
@@ -79,7 +79,7 @@ public abstract class IntrinsicCallable(val returnType1: Type,
 
     public abstract fun invokeIntrinsic(v: InstructionAdapter);
 
-    override fun getArgumentTypes(): Array<out Type>? {
+    override fun getArgumentTypes(): Array<Type> {
         throw UnsupportedOperationException()
     }
 

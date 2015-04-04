@@ -37,7 +37,7 @@ import java.util.List;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.numberFunctionOperandType;
 
-public abstract class IntrinsicMethod implements Callable {
+public abstract class IntrinsicMethod {
     public StackValue generate(
             @NotNull final ExpressionCodegen codegen,
             @NotNull final Type returnType,
@@ -70,29 +70,29 @@ public abstract class IntrinsicMethod implements Callable {
     }
 
     @NotNull
-    public ExtendedCallable toCallable(@NotNull FunctionDescriptor fd, boolean isSuper, @NotNull ResolvedCall resolvedCall, @NotNull ExpressionCodegen codegen) {
+    public Callable toCallable(@NotNull FunctionDescriptor fd, boolean isSuper, @NotNull ResolvedCall resolvedCall, @NotNull ExpressionCodegen codegen) {
         return toCallable(codegen.getState(), fd, codegen.getContext(), isSuper, resolvedCall);
     }
 
     @NotNull
-    public ExtendedCallable toCallable(@NotNull GenerationState state, @NotNull FunctionDescriptor fd, @NotNull CodegenContext<?> context, boolean isSuper, @NotNull
+    public Callable toCallable(@NotNull GenerationState state, @NotNull FunctionDescriptor fd, @NotNull CodegenContext<?> context, boolean isSuper, @NotNull
             ResolvedCall resolvedCall) {
         return toCallable(state, fd, context, isSuper);
     }
 
     @NotNull
-    public ExtendedCallable toCallable(@NotNull GenerationState state, @NotNull FunctionDescriptor fd, @NotNull CodegenContext<?> context, boolean isSuper) {
+    public Callable toCallable(@NotNull GenerationState state, @NotNull FunctionDescriptor fd, @NotNull CodegenContext<?> context, boolean isSuper) {
         return toCallable(state.getTypeMapper().mapToCallableMethod(fd, false, context), isSuper);
     }
 
     @NotNull
-    public ExtendedCallable toCallable(@NotNull CallableMethod method, boolean isSuperCall) {
+    public Callable toCallable(@NotNull CallableMethod method, boolean isSuperCall) {
         //assert !isSuper;
         return toCallable(method);
     }
 
     @NotNull
-    public ExtendedCallable toCallable(@NotNull CallableMethod method) {
+    public Callable toCallable(@NotNull CallableMethod method) {
         throw new UnsupportedOperationException("Not implemented");
     }
 

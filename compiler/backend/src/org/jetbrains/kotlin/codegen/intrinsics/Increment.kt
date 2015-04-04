@@ -24,7 +24,7 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.kotlin.codegen.AsmUtil.genIncrement
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
 import org.jetbrains.kotlin.codegen.CallableMethod
-import org.jetbrains.kotlin.codegen.ExtendedCallable
+import org.jetbrains.kotlin.codegen.Callable
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.psi.JetPrefixExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -57,7 +57,7 @@ public class Increment(private val myDelta: Int) : LazyIntrinsicMethod() {
         return true
     }
 
-    override fun toCallable(fd: FunctionDescriptor, isSuper: Boolean, resolvedCall: ResolvedCall<*>, codegen: ExpressionCodegen): ExtendedCallable {
+    override fun toCallable(fd: FunctionDescriptor, isSuper: Boolean, resolvedCall: ResolvedCall<*>, codegen: ExpressionCodegen): Callable {
         val method = codegen.getState().getTypeMapper().mapToCallableMethod(fd, false, codegen.getContext())
         return MappedCallable(method) {
             val jetExpression = resolvedCall.getCall().getCalleeExpression()

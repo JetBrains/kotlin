@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.codegen.intrinsics
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
-import org.jetbrains.kotlin.codegen.ExtendedCallable
+import org.jetbrains.kotlin.codegen.Callable
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -33,7 +33,7 @@ public class NewArray : LazyIntrinsicMethod() {
         return codegen.generateNewArray(element as JetCallExpression)
     }
 
-    override fun toCallable(fd: FunctionDescriptor, isSuper: Boolean, resolvedCall: ResolvedCall<*>, codegen: ExpressionCodegen): ExtendedCallable {
+    override fun toCallable(fd: FunctionDescriptor, isSuper: Boolean, resolvedCall: ResolvedCall<*>, codegen: ExpressionCodegen): Callable {
         val jetType = resolvedCall.getResultingDescriptor().getReturnType()!!
         val type = codegen.getState().getTypeMapper().mapType(jetType)
         return object : IntrinsicCallable(type, listOf(Type.INT_TYPE), null, null) {

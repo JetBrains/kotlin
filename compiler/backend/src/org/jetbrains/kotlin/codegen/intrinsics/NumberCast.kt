@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.codegen.intrinsics
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.codegen.CallableMethod
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
-import org.jetbrains.kotlin.codegen.ExtendedCallable
+import org.jetbrains.kotlin.codegen.Callable
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.org.objectweb.asm.Type
@@ -30,7 +30,7 @@ public class NumberCast : LazyIntrinsicMethod() {
         return StackValue.coercion(receiver, returnType)
     }
 
-    override fun toCallable(method: CallableMethod): ExtendedCallable {
+    override fun toCallable(method: CallableMethod): Callable {
         return UnaryIntrinsic(method) {
             StackValue.coerce(calcReceiverType()!!, getReturnType(), it)
         }

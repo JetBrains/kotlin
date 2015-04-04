@@ -22,7 +22,7 @@ import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.CallableMethod;
 import org.jetbrains.kotlin.codegen.ExpressionCodegen;
-import org.jetbrains.kotlin.codegen.ExtendedCallable;
+import org.jetbrains.kotlin.codegen.Callable;
 import org.jetbrains.kotlin.codegen.StackValue;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -56,7 +56,7 @@ public class ArrayGet extends LazyIntrinsicMethod {
 
     @NotNull
     @Override
-    public ExtendedCallable toCallable(@NotNull CallableMethod method) {
+    public Callable toCallable(@NotNull CallableMethod method) {
         return new MappedCallable(method, new ExtensionFunction1<MappedCallable, InstructionAdapter, Unit>() {
             @Override
             public Unit invoke(

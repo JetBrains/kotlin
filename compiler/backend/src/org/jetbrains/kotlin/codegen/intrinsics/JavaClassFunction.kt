@@ -29,7 +29,7 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 import org.jetbrains.kotlin.codegen.AsmUtil.putJavaLangClassInstance
-import org.jetbrains.kotlin.codegen.ExtendedCallable
+import org.jetbrains.kotlin.codegen.Callable
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.getType
 
@@ -52,7 +52,7 @@ public class JavaClassFunction : IntrinsicMethod() {
         return true
     }
 
-    override fun toCallable(fd: FunctionDescriptor, isSuper: Boolean, resolvedCall: ResolvedCall<*>, codegen: ExpressionCodegen): ExtendedCallable {
+    override fun toCallable(fd: FunctionDescriptor, isSuper: Boolean, resolvedCall: ResolvedCall<*>, codegen: ExpressionCodegen): Callable {
         val javaClass = resolvedCall.getResultingDescriptor().getReturnType()!!.getArguments().get(0).getType()
         return object: IntrinsicCallable(getType(javaClass<Class<Any>>()), listOf(), null, null) {
             override fun invokeIntrinsic(v: InstructionAdapter) {
