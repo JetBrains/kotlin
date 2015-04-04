@@ -23,7 +23,6 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
-import org.jetbrains.kotlin.codegen.stackvalue.BranchedValue;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
@@ -169,6 +168,14 @@ public abstract class StackValue {
     @NotNull
     public static StackValue not(@NotNull StackValue stackValue) {
         return BranchedValue.Companion.createInvertValue(stackValue);
+    }
+
+    public static StackValue or(@NotNull StackValue left, @NotNull StackValue right) {
+        return new Or(left, right);
+    }
+
+    public static StackValue and(@NotNull StackValue left, @NotNull StackValue right) {
+        return new And(left, right);
     }
 
     @NotNull

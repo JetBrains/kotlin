@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension;
 import org.jetbrains.kotlin.codegen.inline.*;
 import org.jetbrains.kotlin.codegen.intrinsics.*;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
-import org.jetbrains.kotlin.codegen.stackvalue.BranchedValue;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegen;
@@ -3059,40 +3058,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         v.and(Type.INT_TYPE);
     }
 
-    private StackValue generateBooleanAnd(final JetBinaryExpression expression) {
-        return StackValue.operation(Type.BOOLEAN_TYPE, new Function1<InstructionAdapter, Unit>() {
-            @Override
-            public Unit invoke(InstructionAdapter v) {
-                gen(expression.getLeft(), Type.BOOLEAN_TYPE);
-                Label ifFalse = new Label();
-                v.ifeq(ifFalse);
-                gen(expression.getRight(), Type.BOOLEAN_TYPE);
-                Label end = new Label();
-                v.goTo(end);
-                v.mark(ifFalse);
-                v.iconst(0);
-                v.mark(end);
-                return Unit.INSTANCE$;
-            }
-        });
+    private StackValue generateBooleanAnd(JetBinaryExpression expression) {
+        return StackValue.and(genLazy(expression.getLeft(), Type.BOOLEAN_TYPE), genLazy(expression.getRight(), Type.BOOLEAN_TYPE));
     }
 
-    private StackValue generateBooleanOr(final JetBinaryExpression expression) {
-        return StackValue.operation(Type.BOOLEAN_TYPE, new Function1<InstructionAdapter, Unit>() {
-            @Override
-            public Unit invoke(InstructionAdapter v) {
-                gen(expression.getLeft(), Type.BOOLEAN_TYPE);
-                Label ifTrue = new Label();
-                v.ifne(ifTrue);
-                gen(expression.getRight(), Type.BOOLEAN_TYPE);
-                Label end = new Label();
-                v.goTo(end);
-                v.mark(ifTrue);
-                v.iconst(1);
-                v.mark(end);
-                return Unit.INSTANCE$;
-            }
-        });
+    private StackValue generateBooleanOr(JetBinaryExpression expression) {
+        return StackValue.or(genLazy(expression.getLeft(), Type.BOOLEAN_TYPE), genLazy(expression.getRight(), Type.BOOLEAN_TYPE));
     }
 
     private StackValue generateEquals(JetExpression left, JetExpression right, IElementType opToken) {

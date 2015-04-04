@@ -32,6 +32,7 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @InnerTestClasses({
         BytecodeTextTestGenerated.BoxingOptimization.class,
+        BytecodeTextTestGenerated.Conditions.class,
         BytecodeTextTestGenerated.Constants.class,
         BytecodeTextTestGenerated.DeadCodeElimination.class,
         BytecodeTextTestGenerated.DirectInvoke.class,
@@ -292,6 +293,39 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("variables.kt")
         public void testVariables() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/boxingOptimization/variables.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/bytecodeText/conditions")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Conditions extends AbstractBytecodeTextTest {
+        public void testAllFilesPresentInConditions() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/conditions"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("conjuction.kt")
+        public void testConjuction() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/conditions/conjuction.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("disjunction.kt")
+        public void testDisjunction() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/conditions/disjunction.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("negatedConjuction.kt")
+        public void testNegatedConjuction() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/conditions/negatedConjuction.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("negatedDisjunction.kt")
+        public void testNegatedDisjunction() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/conditions/negatedDisjunction.kt");
             doTest(fileName);
         }
     }
