@@ -17,11 +17,16 @@
 package org.jetbrains.kotlin.codegen.intrinsics;
 
 import com.intellij.psi.PsiElement;
+import kotlin.ExtensionFunction1;
+import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.codegen.CallableMethod;
 import org.jetbrains.kotlin.codegen.ExpressionCodegen;
+import org.jetbrains.kotlin.codegen.ExtendedCallable;
 import org.jetbrains.kotlin.codegen.StackValue;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.org.objectweb.asm.Type;
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 
 import java.util.List;
 
@@ -47,5 +52,21 @@ public class ArrayGet extends LazyIntrinsicMethod {
 
         Type type = correctElementType(receiver.type);
         return StackValue.arrayElement(type, receiver, StackValue.coercion(codegen.gen(arguments.get(argumentIndex)), Type.INT_TYPE));
+    }
+
+    @NotNull
+    @Override
+    public ExtendedCallable toCallable(@NotNull CallableMethod method) {
+        return new MappedCallable(method, new ExtensionFunction1<MappedCallable, InstructionAdapter, Unit>() {
+            @Override
+            public Unit invoke(
+                    MappedCallable callable,
+                    InstructionAdapter adapter
+            ) {
+                Type type = correctElementType(callable.calcReceiverType());
+                adapter.aload(type);
+                return Unit.INSTANCE$;
+            }
+        });
     }
 }

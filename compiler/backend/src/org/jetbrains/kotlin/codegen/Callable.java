@@ -16,5 +16,10 @@
 
 package org.jetbrains.kotlin.codegen;
 
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.org.objectweb.asm.Type;
+
 public interface Callable {
+
+
 }

@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 
+import java.util.List;
+
 public interface ExtendedCallable extends Callable {
     @NotNull
     Type getOwner();
@@ -39,8 +41,18 @@ public interface ExtendedCallable extends Callable {
     Type getGenerateCalleeType();
 
     @NotNull
+    List<Type> getValueParameterTypes();
+
+    Type[] getArgumentTypes();
+
+    @NotNull
     Type getReturnType();
 
     boolean isStaticCall();
 
+    @Nullable
+    Type getThisType();
+
+    @Nullable
+    Type getReceiverClass();
 }

@@ -60,4 +60,9 @@ public abstract class LazyIntrinsicMethod extends IntrinsicMethod {
             @NotNull List<JetExpression> arguments,
             @NotNull StackValue receiver
     );
+
+    @Override
+    public boolean supportCallable() {
+        return true;
+    }
 }

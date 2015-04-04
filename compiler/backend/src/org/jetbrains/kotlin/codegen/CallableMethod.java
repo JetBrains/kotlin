@@ -78,6 +78,7 @@ public class CallableMethod implements ExtendedCallable {
         return signature.getValueParameters();
     }
 
+    @Override
     @NotNull
     public List<Type> getValueParameterTypes() {
         List<JvmMethodParameterSignature> valueParameters = signature.getValueParameters();
@@ -95,15 +96,18 @@ public class CallableMethod implements ExtendedCallable {
         return signature.getAsmMethod();
     }
 
+    @Override
     public Type[] getArgumentTypes() {
         return signature.getAsmMethod().getArgumentTypes();
     }
 
+    @Override
     @Nullable
     public Type getThisType() {
         return thisClass;
     }
 
+    @Override
     @Nullable
     public Type getReceiverClass() {
         return receiverParameterType;

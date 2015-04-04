@@ -67,7 +67,7 @@ public class TailRecursionCodegen {
     public void generateTailRecursion(ResolvedCall<?> resolvedCall) {
         CallableDescriptor fd = resolvedCall.getResultingDescriptor();
         assert fd instanceof FunctionDescriptor : "Resolved call doesn't refer to the function descriptor: " + fd;
-        CallableMethod callable = (CallableMethod) codegen.resolveToCallable((FunctionDescriptor) fd, false);
+        CallableMethod callable = (CallableMethod) codegen.resolveToCallable((FunctionDescriptor) fd, false, resolvedCall);
 
         List<ResolvedValueArgument> arguments = resolvedCall.getValueArgumentsByIndex();
         if (arguments == null) {

@@ -17,12 +17,15 @@
 package org.jetbrains.kotlin.codegen.intrinsics
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.codegen.CallableMethod
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
+import org.jetbrains.kotlin.codegen.ExtendedCallable
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 public class HashCode : LazyIntrinsicMethod() {
     override fun generateImpl(
@@ -35,6 +38,14 @@ public class HashCode : LazyIntrinsicMethod() {
         return StackValue.operation(Type.INT_TYPE) {
             receiver.put(AsmTypes.OBJECT_TYPE, it)
             it.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Object", "hashCode", "()I", false)
+        }
+    }
+
+    override fun toCallable(method: CallableMethod): ExtendedCallable {
+        return object: IntrinsicCallable(Type.INT_TYPE, emptyList(), nullOrObject(method.getThisType()), nullOrObject(method.getReceiverClass())) {
+            override fun invokeIntrinsic(v: InstructionAdapter) {
+                v.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Object", "hashCode", "()I", false)
+            }
         }
     }
 }

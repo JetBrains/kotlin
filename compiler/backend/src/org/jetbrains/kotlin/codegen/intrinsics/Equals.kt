@@ -17,9 +17,8 @@
 package org.jetbrains.kotlin.codegen.intrinsics
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.kotlin.codegen.ExpressionCodegen
-import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.psi.JetCallExpression
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.lexer.JetTokens
@@ -48,4 +47,11 @@ public class Equals : LazyIntrinsicMethod() {
 
         return genEqualsForExpressionsOnStack(JetTokens.EQEQ, leftExpr, codegen.genLazy(rightExpr, OBJECT_TYPE))
     }
+
+    override fun toCallable(method: CallableMethod): ExtendedCallable {
+        return IntrinsicCallable.binaryIntrinsic(method.getReturnType(), OBJECT_TYPE, nullOrObject(method.getThisType()), nullOrObject(method.getReceiverClass())) {
+            AsmUtil.genAreEqualCall(it)
+        }
+    }
+
 }

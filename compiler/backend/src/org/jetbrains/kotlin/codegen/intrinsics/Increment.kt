@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.kotlin.codegen.AsmUtil.genIncrement
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
+import org.jetbrains.kotlin.codegen.CallableMethod
+import org.jetbrains.kotlin.codegen.ExtendedCallable
 
 public class Increment(private val myDelta: Int) : LazyIntrinsicMethod() {
 
@@ -45,5 +47,9 @@ public class Increment(private val myDelta: Int) : LazyIntrinsicMethod() {
                 genIncrement(returnType, myDelta, it)
             }
         }
+    }
+
+    override fun supportCallable(): Boolean {
+        return false
     }
 }

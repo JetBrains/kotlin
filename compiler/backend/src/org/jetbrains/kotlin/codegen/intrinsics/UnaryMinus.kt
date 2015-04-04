@@ -17,10 +17,13 @@
 package org.jetbrains.kotlin.codegen.intrinsics
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.codegen
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.AsmUtil.*
+import org.jetbrains.kotlin.codegen.CallableMethod
+import org.jetbrains.kotlin.codegen.ExtendedCallable
 import org.jetbrains.kotlin.psi.JetExpression
 
 public class UnaryMinus : LazyIntrinsicMethod() {
@@ -40,6 +43,12 @@ public class UnaryMinus : LazyIntrinsicMethod() {
         return StackValue.operation(operandType) {
             newReceiver.put(operandType, it)
             it.neg(operandType)
+        }
+    }
+
+    override fun toCallable(method: CallableMethod): ExtendedCallable {
+        return UnaryIntrinsic(method, numberFunctionOperandType(method.getReturnType()), needPrimitiveCheck = true) {
+            it.neg(getReturnType())
         }
     }
 }

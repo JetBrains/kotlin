@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.codegen.intrinsics
 
+import com.google.common.collect.Lists
 import com.intellij.psi.PsiElement
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
@@ -25,6 +26,11 @@ import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
 import org.jetbrains.kotlin.codegen.AsmUtil.numberFunctionOperandType
+import org.jetbrains.kotlin.codegen.CallableMethod
+import org.jetbrains.kotlin.codegen.ExtendedCallable
+import org.jetbrains.kotlin.codegen.context.CodegenContext
+import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 
 public class BinaryOp(private val opcode: Int) : IntrinsicMethod() {
 
@@ -50,5 +56,20 @@ public class BinaryOp(private val opcode: Int) : IntrinsicMethod() {
 
     private fun shift(): Boolean {
         return opcode == ISHL || opcode == ISHR || opcode == IUSHR
+    }
+
+    public override fun supportCallable(): Boolean {
+        return true
+    }
+
+    override fun toCallable(method: CallableMethod): ExtendedCallable {
+        val returnType = method.getReturnType()
+        assert(method.getValueParameters().size() == 1)
+        val operandType = numberFunctionOperandType(returnType)
+        val paramType = if (shift()) Type.INT_TYPE else operandType
+
+        return IntrinsicCallable.binaryIntrinsic(operandType, paramType, operandType) {
+            v -> v.visitInsn(getReturnType().getOpcode(opcode))
+        }
     }
 }
