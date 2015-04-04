@@ -534,6 +534,12 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("QualifiedCallReplacementBug.kt")
+    public void testQualifiedCallReplacementBug() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/smart/QualifiedCallReplacementBug.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("QualifiedThisKeywordName1.kt")
     public void testQualifiedThisKeywordName1() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/smart/QualifiedThisKeywordName1.kt");

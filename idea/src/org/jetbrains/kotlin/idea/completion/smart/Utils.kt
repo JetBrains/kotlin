@@ -268,8 +268,8 @@ enum class SmartCompletionItemPriority {
     THIS
     DEFAULT
     NULLABLE
-    STATIC_MEMBER
     INSTANTIATION
+    STATIC_MEMBER
     ANONYMOUS_OBJECT
     LAMBDA_NO_PARAMS
     LAMBDA
