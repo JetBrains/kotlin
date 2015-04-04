@@ -16,35 +16,11 @@
 
 package org.jetbrains.kotlin.codegen.intrinsics
 
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.codegen
-import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.kotlin.codegen.ExpressionCodegen
-import org.jetbrains.kotlin.codegen.StackValue
-import org.jetbrains.kotlin.codegen.AsmUtil.*
-import org.jetbrains.kotlin.codegen.CallableMethod
+import org.jetbrains.kotlin.codegen.AsmUtil.numberFunctionOperandType
 import org.jetbrains.kotlin.codegen.Callable
-import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.codegen.CallableMethod
 
-public class UnaryMinus : LazyIntrinsicMethod() {
-    override fun generateImpl(
-            codegen: ExpressionCodegen,
-            returnType: Type,
-            element: PsiElement?,
-            arguments: List<JetExpression>,
-            receiver: StackValue
-    ): StackValue {
-        assert(isPrimitive(returnType)) { "Return type of UnaryMinus intrinsic should be of primitive type: " + returnType }
-
-        val operandType = numberFunctionOperandType(returnType)
-
-        val newReceiver = if (arguments.size() == 1) codegen.gen(arguments.get(0)) else receiver
-
-        return StackValue.operation(operandType) {
-            newReceiver.put(operandType, it)
-            it.neg(operandType)
-        }
-    }
+public class UnaryMinus : IntrinsicMethod() {
 
     override fun toCallable(method: CallableMethod): Callable {
         return UnaryIntrinsic(method, numberFunctionOperandType(method.getReturnType()), needPrimitiveCheck = true) {

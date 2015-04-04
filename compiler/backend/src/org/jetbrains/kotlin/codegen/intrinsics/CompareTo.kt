@@ -16,40 +16,13 @@
 
 package org.jetbrains.kotlin.codegen.intrinsics
 
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.codegen.ExpressionCodegen
-import org.jetbrains.kotlin.codegen.StackValue
-import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.codegen.AsmUtil.comparisonOperandType
+import org.jetbrains.kotlin.codegen.Callable
+import org.jetbrains.kotlin.codegen.CallableMethod
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-import org.jetbrains.kotlin.codegen.AsmUtil.comparisonOperandType
-import org.jetbrains.kotlin.codegen.CallableMethod
-import org.jetbrains.kotlin.codegen.Callable
-
 public class CompareTo : IntrinsicMethod() {
-    override fun generateImpl(codegen: ExpressionCodegen, v: InstructionAdapter, returnType: Type, element: PsiElement?, arguments: List<JetExpression>, receiver: StackValue): Type {
-        var receiver = receiver
-        val argument: JetExpression
-        if (arguments.size() == 1) {
-            argument = arguments.get(0)
-        }
-        else if (arguments.size() == 2) {
-            receiver = codegen.gen(arguments.get(0))
-            argument = arguments.get(1)
-        }
-        else {
-            throw IllegalStateException("Invalid arguments to compareTo: " + arguments)
-        }
-        val type = comparisonOperandType(receiver.type, codegen.expressionType(argument))
-
-        receiver.put(type, v)
-        codegen.gen(argument, type)
-
-        genInvoke(type, v)
-
-        return Type.INT_TYPE
-    }
 
     private fun genInvoke(type: Type?, v: InstructionAdapter) {
         if (type == Type.INT_TYPE) {
@@ -67,11 +40,6 @@ public class CompareTo : IntrinsicMethod() {
         else {
             throw UnsupportedOperationException()
         }
-    }
-
-    //TODO seems we need to different CompareTo
-    override fun supportCallable(): Boolean {
-        return true
     }
 
     override fun toCallable(method: CallableMethod): Callable {

@@ -16,36 +16,10 @@
 
 package org.jetbrains.kotlin.codegen.intrinsics
 
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.codegen.CallableMethod
-import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.Callable
-import org.jetbrains.kotlin.codegen.StackValue
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
-import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument
-import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
-
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCallWithAssert
+import org.jetbrains.kotlin.codegen.CallableMethod
 
 public class JavaClassArray : IntrinsicMethod() {
-    override fun generateImpl(codegen: ExpressionCodegen, v: InstructionAdapter, returnType: Type, element: PsiElement?, arguments: List<JetExpression>, receiver: StackValue): Type {
-        assert(element != null, "Element should not be null")
-        val resolvedCall = (element as JetElement).getResolvedCallWithAssert(codegen.getBindingContext())
-        val argument = resolvedCall.getValueArguments().entrySet().iterator().next()
-        codegen.genVarargs(argument.getValue() as VarargValueArgument, argument.getKey().getType())
-        return returnType
-    }
-
-    override fun supportCallable(): Boolean {
-        return true
-    }
-
     override fun toCallable(method: CallableMethod): Callable {
         return MappedCallable(method) {
             //do nothing all generated as vararg

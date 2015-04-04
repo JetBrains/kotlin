@@ -16,36 +16,12 @@
 
 package org.jetbrains.kotlin.codegen.intrinsics
 
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.codegen.CallableMethod
-import org.jetbrains.kotlin.codegen.ExpressionCodegen
-import org.jetbrains.kotlin.codegen.Callable
-import org.jetbrains.kotlin.codegen.StackValue
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
-
-import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
 import org.jetbrains.kotlin.codegen.AsmUtil.numberFunctionOperandType
+import org.jetbrains.kotlin.codegen.Callable
+import org.jetbrains.kotlin.codegen.CallableMethod
+import org.jetbrains.org.objectweb.asm.Type
 
 public class Inv : IntrinsicMethod() {
-    override fun generateImpl(codegen: ExpressionCodegen, v: InstructionAdapter, returnType: Type, element: PsiElement?, arguments: List<JetExpression>, receiver: StackValue): Type {
-        assert(isPrimitive(returnType)) { "Return type of Inv intrinsic should be of primitive type : " + returnType }
-
-        receiver.put(numberFunctionOperandType(returnType), v)
-        if (returnType == Type.LONG_TYPE) {
-            v.lconst(-1)
-        }
-        else {
-            v.iconst(-1)
-        }
-        v.xor(returnType)
-        return returnType
-    }
-
-    override fun supportCallable(): Boolean {
-        return true
-    }
 
     override fun toCallable(method: CallableMethod): Callable {
         val type = numberFunctionOperandType(method.getReturnType())

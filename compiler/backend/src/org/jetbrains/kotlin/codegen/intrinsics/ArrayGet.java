@@ -16,43 +16,17 @@
 
 package org.jetbrains.kotlin.codegen.intrinsics;
 
-import com.intellij.psi.PsiElement;
 import kotlin.ExtensionFunction1;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.codegen.CallableMethod;
-import org.jetbrains.kotlin.codegen.ExpressionCodegen;
 import org.jetbrains.kotlin.codegen.Callable;
-import org.jetbrains.kotlin.codegen.StackValue;
-import org.jetbrains.kotlin.psi.JetExpression;
+import org.jetbrains.kotlin.codegen.CallableMethod;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 
-import java.util.List;
-
 import static org.jetbrains.kotlin.codegen.AsmUtil.correctElementType;
 
-public class ArrayGet extends LazyIntrinsicMethod {
-    @NotNull
-    @Override
-    public StackValue generateImpl(
-            @NotNull ExpressionCodegen codegen,
-            @NotNull Type returnType,
-            PsiElement element,
-            @NotNull List<JetExpression> arguments,
-            @NotNull StackValue receiver
-    ) {
-        int argumentIndex;
-        if (receiver == StackValue.none()) {
-            receiver = codegen.gen(arguments.get(0));
-            argumentIndex = 1;
-        } else {
-            argumentIndex = 0;
-        }
-
-        Type type = correctElementType(receiver.type);
-        return StackValue.arrayElement(type, receiver, StackValue.coercion(codegen.gen(arguments.get(argumentIndex)), Type.INT_TYPE));
-    }
+public class ArrayGet extends IntrinsicMethod {
 
     @NotNull
     @Override

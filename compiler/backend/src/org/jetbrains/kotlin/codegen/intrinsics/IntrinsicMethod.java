@@ -18,56 +18,22 @@ package org.jetbrains.kotlin.codegen.intrinsics;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
-import com.intellij.psi.PsiElement;
-import kotlin.Function1;
-import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.codegen.*;
+import org.jetbrains.kotlin.codegen.Callable;
+import org.jetbrains.kotlin.codegen.CallableMethod;
+import org.jetbrains.kotlin.codegen.ExpressionCodegen;
 import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
-import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.org.objectweb.asm.Type;
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 
 import java.util.List;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.numberFunctionOperandType;
 
 public abstract class IntrinsicMethod {
-    public StackValue generate(
-            @NotNull final ExpressionCodegen codegen,
-            @NotNull final Type returnType,
-            @Nullable final PsiElement element,
-            @NotNull final List<JetExpression> arguments,
-            @NotNull final StackValue receiver
-    ) {
-        return StackValue.operation(returnType, new Function1<InstructionAdapter, Unit>() {
-            @Override
-            public Unit invoke(InstructionAdapter v) {
-                Type actualType = generateImpl(codegen, v, returnType, element, arguments, receiver);
-                StackValue.coerce(actualType, returnType, v);
-                return Unit.INSTANCE$;
-            }
-        });
-    }
-
-    @NotNull
-    protected abstract Type generateImpl(
-            @NotNull ExpressionCodegen codegen,
-            @NotNull InstructionAdapter v,
-            @NotNull Type returnType,
-            @Nullable PsiElement element,
-            @NotNull List<JetExpression> arguments,
-            @NotNull StackValue receiver
-    );
-
-    public boolean supportCallable() {
-        return false;
-    }
 
     @NotNull
     public Callable toCallable(@NotNull FunctionDescriptor fd, boolean isSuper, @NotNull ResolvedCall resolvedCall, @NotNull ExpressionCodegen codegen) {

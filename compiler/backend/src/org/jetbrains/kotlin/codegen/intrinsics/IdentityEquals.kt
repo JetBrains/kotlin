@@ -16,39 +16,18 @@
 
 package org.jetbrains.kotlin.codegen.intrinsics
 
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.Callable
+import org.jetbrains.kotlin.codegen.ExpressionCodegen
+import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.JetBinaryExpression
 import org.jetbrains.kotlin.psi.JetCallExpression
-import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.org.objectweb.asm.Type
 
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
-
-public class IdentityEquals : LazyIntrinsicMethod() {
-    override fun generateImpl(codegen: ExpressionCodegen, returnType: Type, element: PsiElement?, arguments: List<JetExpression>, receiver: StackValue): StackValue {
-        val left: StackValue
-        val right: StackValue
-        if (element is JetCallExpression) {
-            left = receiver
-            right = codegen.gen(arguments.get(0))
-        }
-        else {
-            assert(element is JetBinaryExpression)
-            val e = element as JetBinaryExpression
-            left = codegen.gen(e.getLeft())
-            right = codegen.gen(e.getRight())
-        }
-        return StackValue.cmp(JetTokens.EQEQEQ, OBJECT_TYPE, left, right)
-    }
-
-
-    override fun supportCallable(): Boolean {
-        return true
-    }
+public class IdentityEquals : IntrinsicMethod() {
 
     override fun toCallable(fd: FunctionDescriptor, isSuper: Boolean, resolvedCall: ResolvedCall<*>, codegen: ExpressionCodegen): Callable {
         val callable = codegen.getState().getTypeMapper().mapToCallableMethod(fd, false, codegen.getContext())

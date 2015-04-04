@@ -16,53 +16,20 @@
 
 package org.jetbrains.kotlin.codegen.intrinsics
 
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.Callable
-import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.context.CodegenContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.psi.ValueArgument
-import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
-
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCallWithAssert
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 
 public class MonitorInstruction private(private val opcode: Int) : IntrinsicMethod() {
     companion object {
         public val MONITOR_ENTER: MonitorInstruction = MonitorInstruction(Opcodes.MONITORENTER)
         public val MONITOR_EXIT: MonitorInstruction = MonitorInstruction(Opcodes.MONITOREXIT)
-    }
-
-    override fun generateImpl(codegen: ExpressionCodegen, v: InstructionAdapter, returnType: Type, element: PsiElement?, arguments: List<JetExpression>, receiver: StackValue): Type {
-        assert(element != null, "Element should not be null")
-
-        val resolvedCall = (element as JetElement).getResolvedCallWithAssert(codegen.getBindingContext())
-
-        val resolvedArguments = resolvedCall.getValueArgumentsByIndex()
-        assert(resolvedArguments != null && resolvedArguments.size() == 1) { "Monitor instruction (" + opcode + ") should have exactly 1 argument: " + resolvedArguments }
-
-        val argument = resolvedArguments!!.get(0)
-        assert(argument is ExpressionValueArgument) { "Monitor instruction (" + opcode + ") should have expression value argument: " + argument }
-
-        val valueArgument = (argument as ExpressionValueArgument).getValueArgument()
-        assert(valueArgument != null) { "Unresolved value argument: " + argument }
-        codegen.gen(valueArgument!!.getArgumentExpression(), OBJECT_TYPE)
-
-        v.visitInsn(opcode)
-        return Type.VOID_TYPE
-    }
-
-    override fun supportCallable(): Boolean {
-        return true
     }
 
     override fun toCallable(state: GenerationState, fd: FunctionDescriptor, context: CodegenContext<*>, isSuper: Boolean, resolvedCall: ResolvedCall<*>): Callable {

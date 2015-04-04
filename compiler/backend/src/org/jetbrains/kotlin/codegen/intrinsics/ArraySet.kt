@@ -16,32 +16,13 @@
 
 package org.jetbrains.kotlin.codegen.intrinsics
 
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.codegen.CallableMethod
-import org.jetbrains.kotlin.codegen.ExpressionCodegen
+import org.jetbrains.kotlin.codegen.AsmUtil.correctElementType
 import org.jetbrains.kotlin.codegen.Callable
-import org.jetbrains.kotlin.codegen.StackValue
-import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.codegen.CallableMethod
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-import org.jetbrains.kotlin.codegen.AsmUtil.correctElementType
-
 public class ArraySet : IntrinsicMethod() {
-    override fun generateImpl(codegen: ExpressionCodegen, v: InstructionAdapter, returnType: Type, element: PsiElement?, arguments: List<JetExpression>, receiver: StackValue): Type {
-        receiver.put(receiver.type, v)
-        val type = correctElementType(receiver.type)
-
-        codegen.gen(arguments.get(0), Type.INT_TYPE)
-        codegen.gen(arguments.get(1), type)
-
-        v.astore(type)
-        return Type.VOID_TYPE
-    }
-
-    override fun supportCallable(): Boolean {
-        return true
-    }
 
     override fun toCallable(method: CallableMethod): Callable {
         val type = correctElementType(method.getThisType())

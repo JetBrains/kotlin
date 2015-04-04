@@ -16,28 +16,10 @@
 
 package org.jetbrains.kotlin.codegen.intrinsics
 
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.codegen.ExpressionCodegen
-import org.jetbrains.kotlin.codegen.StackValue
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.org.objectweb.asm.Type
-
-import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
-import org.jetbrains.kotlin.codegen.CallableMethod
 import org.jetbrains.kotlin.codegen.Callable
+import org.jetbrains.kotlin.codegen.CallableMethod
 
-public class UnaryPlus : LazyIntrinsicMethod() {
-    override fun generateImpl(codegen: ExpressionCodegen, returnType: Type, element: PsiElement?, arguments: List<JetExpression>, receiver: StackValue): StackValue {
-        assert(isPrimitive(returnType)) { "Return type of UnaryPlus intrinsic should be of primitive type : " + returnType }
-
-        if (receiver != StackValue.none()) {
-            return receiver
-        }
-        else {
-            assert(!arguments.isEmpty())
-            return codegen.gen(arguments.get(0))
-        }
-    }
+public class UnaryPlus : IntrinsicMethod() {
 
     override fun toCallable(method: CallableMethod): Callable {
         return UnaryIntrinsic(method, needPrimitiveCheck = true) {

@@ -16,27 +16,10 @@
 
 package org.jetbrains.kotlin.codegen.intrinsics
 
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.codegen.CallableMethod
-import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.Callable
-import org.jetbrains.kotlin.codegen.StackValue
-import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.codegen.CallableMethod
 
-public class ArraySize : LazyIntrinsicMethod() {
-    override fun generateImpl(
-            codegen: ExpressionCodegen,
-            returnType: Type,
-            element: PsiElement?,
-            arguments: List<JetExpression>,
-            receiver: StackValue
-    ): StackValue {
-        return StackValue.operation(Type.INT_TYPE) {
-            receiver.put(receiver.type, it)
-            it.arraylength()
-        }
-    }
+public class ArraySize : IntrinsicMethod() {
 
     public override fun toCallable(method: CallableMethod): Callable {
         return UnaryIntrinsic(method, null, false) { adapter ->

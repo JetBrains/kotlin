@@ -16,37 +16,12 @@
 
 package org.jetbrains.kotlin.codegen.intrinsics
 
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.codegen.*
-import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.kotlin.psi.JetCallExpression
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.lexer.JetTokens
-
-import org.jetbrains.kotlin.codegen.AsmUtil.genEqualsForExpressionsOnStack
+import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.codegen.Callable
+import org.jetbrains.kotlin.codegen.CallableMethod
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 
-public class Equals : LazyIntrinsicMethod() {
-    override fun generateImpl(
-            codegen: ExpressionCodegen,
-            returnType: Type,
-            element: PsiElement?,
-            arguments: List<JetExpression>,
-            receiver: StackValue
-    ): StackValue {
-        val leftExpr: StackValue
-        val rightExpr: JetExpression
-        if (element is JetCallExpression) {
-            leftExpr = StackValue.coercion(receiver, OBJECT_TYPE)
-            rightExpr = arguments.get(0)
-        }
-        else {
-            leftExpr = codegen.genLazy(arguments.get(0), OBJECT_TYPE)
-            rightExpr = arguments.get(1)
-        }
-
-        return genEqualsForExpressionsOnStack(JetTokens.EQEQ, leftExpr, codegen.genLazy(rightExpr, OBJECT_TYPE))
-    }
+public class Equals : IntrinsicMethod() {
 
     override fun toCallable(method: CallableMethod): Callable {
         return IntrinsicCallable.binaryIntrinsic(method.getReturnType(), OBJECT_TYPE, nullOrObject(method.getThisType()), nullOrObject(method.getReceiverClass())) {

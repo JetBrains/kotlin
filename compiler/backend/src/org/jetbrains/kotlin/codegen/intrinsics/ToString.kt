@@ -16,25 +16,11 @@
 
 package org.jetbrains.kotlin.codegen.intrinsics
 
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.codegen.*
-import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.kotlin.codegen.AsmUtil.genToString
-import org.jetbrains.kotlin.codegen.context.CodegenContext
-import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.codegen.Callable
+import org.jetbrains.kotlin.codegen.CallableMethod
 
-public class ToString : LazyIntrinsicMethod() {
-    override fun generateImpl(
-            codegen: ExpressionCodegen,
-            returnType: Type,
-            element: PsiElement?,
-            arguments: List<JetExpression>,
-            receiver: StackValue
-    ): StackValue {
-        return genToString(receiver, receiver.type)
-    }
+public class ToString : IntrinsicMethod() {
 
     override fun toCallable(method: CallableMethod): Callable {
         val type = AsmUtil.stringValueOfType(method.getThisType() ?: method.getReceiverClass())
