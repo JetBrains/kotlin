@@ -14,50 +14,70 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen.intrinsics;
+package org.jetbrains.kotlin.codegen.intrinsics
 
-import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.codegen.ExpressionCodegen;
-import org.jetbrains.kotlin.codegen.StackValue;
-import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
-import org.jetbrains.org.objectweb.asm.Type;
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
+import com.intellij.openapi.util.Key
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.codegen.ExpressionCodegen
+import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes
+import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-import java.util.List;
+import org.jetbrains.kotlin.codegen.AsmUtil.genInvokeAppendMethod
+import org.jetbrains.kotlin.codegen.AsmUtil.genStringBuilderConstructor
+import org.jetbrains.kotlin.codegen.ExtendedCallable
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.psi.JetBinaryExpression
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.UserDataProperty
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_STRING_TYPE
+import kotlin.properties.Delegates
 
-import static org.jetbrains.kotlin.codegen.AsmUtil.genInvokeAppendMethod;
-import static org.jetbrains.kotlin.codegen.AsmUtil.genStringBuilderConstructor;
-import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_STRING_TYPE;
+public class Concat : IntrinsicMethod() {
+    override fun generateImpl(codegen: ExpressionCodegen, v: InstructionAdapter, returnType: Type, element: PsiElement?, arguments: List<JetExpression>, receiver: StackValue): Type {
 
-public class Concat extends IntrinsicMethod {
-    @NotNull
-    @Override
-    public Type generateImpl(
-            @NotNull ExpressionCodegen codegen,
-            @NotNull InstructionAdapter v,
-            @NotNull Type returnType,
-            PsiElement element,
-            @NotNull List<JetExpression> arguments,
-            @NotNull StackValue receiver
-    ) {
-        if (receiver == StackValue.none()) {
+        if (element is JetBinaryExpression && element.getOperationReference().getReferencedNameElementType() == JetTokens.PLUS) {
             // LHS + RHS
-            genStringBuilderConstructor(v);
-            codegen.invokeAppend(arguments.get(0));
-            codegen.invokeAppend(arguments.get(1));
+            genStringBuilderConstructor(v)
+            codegen.invokeAppend(element.getLeft())
+            codegen.invokeAppend(element.getRight())
         }
         else {
             // LHS?.plus(RHS)
-            receiver.put(AsmTypes.OBJECT_TYPE, v);
-            genStringBuilderConstructor(v);
-            v.swap();
-            genInvokeAppendMethod(v, returnType);
-            codegen.invokeAppend(arguments.get(0));
+            receiver.put(AsmTypes.OBJECT_TYPE, v)
+            genStringBuilderConstructor(v)
+            v.swap()
+            genInvokeAppendMethod(v, returnType)
+            codegen.invokeAppend(arguments.get(0))
         }
 
-        v.invokevirtual("java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false);
-        return JAVA_STRING_TYPE;
+        v.invokevirtual("java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false)
+        return JAVA_STRING_TYPE
+    }
+
+    override fun supportCallable(): Boolean {
+        return true
+    }
+
+    override fun toCallable(fd: FunctionDescriptor, isSuper: Boolean, resolvedCall: ResolvedCall<*>, codegen: ExpressionCodegen): ExtendedCallable {
+        val callable = codegen.getState().getTypeMapper().mapToCallableMethod(fd, false, codegen.getContext())
+        return object : MappedCallable(callable, {}) {
+            override fun invokeMethodWithArguments(resolvedCall: ResolvedCall<*>, receiver: StackValue, returnType: Type, codegen: ExpressionCodegen): StackValue {
+                return StackValue.operation(returnType) {
+                    val arguments = resolvedCall.getCall().getValueArguments().map { it.getArgumentExpression() }
+                    val actualType = generateImpl(
+                            codegen, it, returnType,
+                            resolvedCall.getCall().getCallElement(),
+                            arguments,
+                            StackValue.receiver(resolvedCall, receiver, codegen, this)
+                    )
+                    StackValue.coerce(actualType, returnType, it)
+                }
+            }
+        }
     }
 }

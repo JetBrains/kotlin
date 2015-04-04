@@ -2255,19 +2255,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         Callable callable = resolveToCallable(accessibleFunctionDescriptor, superCall, resolvedCall);
         Type returnType = typeMapper.mapReturnType(accessibleFunctionDescriptor);
 
-        if (callable instanceof ExtendedCallable) {
-            return ((ExtendedCallable) callable).invokeMethodWithArguments(resolvedCall, receiver, returnType, this);
-        }
-        else {
-            StackValue newReceiver = StackValue.receiver(resolvedCall, receiver, this, null);
-
-            List<JetExpression> args = new ArrayList<JetExpression>();
-            for (ValueArgument argument : call.getValueArguments()) {
-                args.add(argument.getArgumentExpression());
-            }
-
-            return ((IntrinsicMethod) callable).generate(this, returnType, call.getCallElement(), args, newReceiver);
-        }
+        return ((ExtendedCallable) callable).invokeMethodWithArguments(resolvedCall, receiver, returnType, this);
     }
 
     public void invokeMethodWithArguments(
@@ -3020,13 +3008,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 return generateConstructorCall(resolvedCall, expressionType(expression));
             }
 
-            Callable callable = resolveToCallable(descriptor, false, resolvedCall);
-            if (callable instanceof IntrinsicMethod) {
-                Type returnType = typeMapper.mapType(descriptor);
-                return ((IntrinsicMethod) callable).generate(this, returnType, expression,
-                                                             Arrays.asList(expression.getLeft(), expression.getRight()), receiver);
-            }
-
             return invokeFunction(resolvedCall, receiver);
         }
     }
@@ -3298,26 +3279,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         JetExpression lhs = expression.getLeft();
         Type lhsType = expressionType(lhs);
 
-        boolean keepReturnValue;
-        if (Boolean.TRUE.equals(bindingContext.get(VARIABLE_REASSIGNMENT, expression))) {
-            if (callable instanceof IntrinsicMethod) {
-                StackValue value = gen(lhs);              // receiver
-                value = StackValue.complexWriteReadReceiver(value);
-
-                value.put(lhsType, v);                    // receiver lhs
-                Type returnType = typeMapper.mapType(descriptor);
-                StackValue rightSide = ((IntrinsicMethod) callable).generate(this, returnType, expression,
-                                                      Collections.singletonList(expression.getRight()), StackValue.onStack(lhsType));
-                value.store(rightSide, v, true);
-                return StackValue.none();
-            }
-            else {
-                keepReturnValue = true;
-            }
-        }
-        else {
-            keepReturnValue = !KotlinBuiltIns.getInstance().getUnitType().equals(descriptor.getReturnType());
-        }
+        boolean keepReturnValue = Boolean.TRUE.equals(bindingContext.get(VARIABLE_REASSIGNMENT, expression))
+                || !KotlinBuiltIns.getInstance().getUnitType().equals(descriptor.getReturnType());
 
         callAugAssignMethod(expression, resolvedCall, (ExtendedCallable) callable, lhsType, keepReturnValue);
 
@@ -3339,7 +3302,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         value.put(lhsType, v);
         StackValue receiver = StackValue.onStack(lhsType);
 
-        invokeMethodWithArguments(callable, resolvedCall, receiver);
+        //invokeMethodWithArguments(callable, resolvedCall, receiver);
+
+        callable.invokeMethodWithArguments(resolvedCall, receiver, callable.getReturnType(), this).put(callable.getReturnType(), v);
 
         if (keepReturnValue) {
             value.store(StackValue.onStack(callable.getReturnType()), v, true);
