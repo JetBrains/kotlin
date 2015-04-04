@@ -40,33 +40,19 @@ import java.util.ArrayList;
 
 public class CallableMethod(override val owner: Type, private val defaultImplOwner: Type?, private val defaultImplParam: Type?, private val signature: JvmMethodSignature, private val invokeOpcode: Int, override val thisType: Type?, override val receiverType: Type?, override val generateCalleeType: Type?) : Callable {
 
-
     public fun getValueParameters(): List<JvmMethodParameterSignature> {
         return signature.getValueParameters()
     }
 
     override val valueParameterTypes: List<Type>
-        get() {
-            val valueParameters = signature.getValueParameters()
-            val result = ArrayList<Type>(valueParameters.size())
-            for (parameter in valueParameters) {
-                if (parameter.getKind() == JvmMethodParameterKind.VALUE) {
-                    result.add(parameter.getAsmType())
-                }
-            }
-            return result
-        }
+        get() = signature.getValueParameters().filter { it.getKind() == JvmMethodParameterKind.VALUE }.map { it.getAsmType() }
 
     public fun getAsmMethod(): Method {
         return signature.getAsmMethod()
     }
 
     override val argumentTypes: Array<Type>
-        get() =signature.getAsmMethod().getArgumentTypes()
-
-    private fun invoke(v: InstructionAdapter) {
-        v.visitMethodInsn(invokeOpcode, owner.getInternalName(), getAsmMethod().getName(), getAsmMethod().getDescriptor())
-    }
+        get() = getAsmMethod().getArgumentTypes()
 
 
     public override fun invokeWithNotNullAssertion(v: InstructionAdapter, state: GenerationState, resolvedCall: ResolvedCall<*>) {
@@ -75,7 +61,7 @@ public class CallableMethod(override val owner: Type, private val defaultImplOwn
     }
 
     public override fun invokeWithoutAssertions(v: InstructionAdapter) {
-        invoke(v)
+        v.visitMethodInsn(invokeOpcode, owner.getInternalName(), getAsmMethod().getName(), getAsmMethod().getDescriptor())
     }
 
     private fun invokeDefault(v: InstructionAdapter) {
@@ -104,25 +90,13 @@ public class CallableMethod(override val owner: Type, private val defaultImplOwn
     }
 
     override val returnType: Type
-        get() {
-            return signature.getReturnType()
-        }
-
-    override fun toString(): String {
-        return Printer.OPCODES[invokeOpcode] + " " + owner.getInternalName() + "." + signature
-    }
+        get() = signature.getReturnType()
 
     override fun isStaticCall(): Boolean {
         return invokeOpcode == INVOKESTATIC
     }
 
-    public override fun beforeParameterGeneration(v: InstructionAdapter, value: StackValue?) {
-
-    }
-
-    override fun invokeMethodWithArguments(resolvedCall: ResolvedCall<*>, receiver: StackValue, returnType: Type, codegen: ExpressionCodegen): StackValue {
-        return StackValue.functionCall(returnType) {
-            codegen.invokeMethodWithArguments(this@CallableMethod, resolvedCall, receiver, returnType)
-        }
+    override fun toString(): String {
+        return "${Printer.OPCODES[invokeOpcode]} ${owner.getInternalName()}.$signature"
     }
 }

@@ -97,26 +97,17 @@ public abstract class IntrinsicCallable(override val returnType: Type,
         return receiverType ?: thisType
     }
 
-    override fun beforeParameterGeneration(v: InstructionAdapter, value: StackValue?) {
-
-    }
-
-    override fun invokeMethodWithArguments(resolvedCall: ResolvedCall<*>, receiver: StackValue, returnType: Type, codegen: ExpressionCodegen): StackValue {
-        return StackValue.functionCall(returnType) {
-            codegen.invokeMethodWithArguments(this, resolvedCall, receiver, returnType)
-        }
-    }
 }
 
 
 public class UnaryIntrinsic(val callable: CallableMethod, val newReturnType: Type? = null, needPrimitiveCheck: Boolean = false, val newThisType: Type? = null, val invoke: UnaryIntrinsic.(v: InstructionAdapter) -> Unit) :
         IntrinsicCallable(newReturnType ?: callable.returnType, callable.valueParameterTypes, newThisType ?: callable.thisType, callable.receiverType) {
 
-    {
+    init {
         if (needPrimitiveCheck) {
             assert(AsmUtil.isPrimitive(returnType)) { "Return type of UnaryPlus intrinsic should be of primitive type : " + returnType }
         }
-        assert(valueParameterTypes.size == 0, "Unary operation should not have any parameters")
+        assert(valueParameterTypes.isEmpty(), "Unary operation should not have any parameters")
     }
 
     override fun invokeIntrinsic(v: InstructionAdapter) {

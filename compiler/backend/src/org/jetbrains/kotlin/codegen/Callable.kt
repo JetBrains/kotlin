@@ -46,8 +46,15 @@ public trait Callable {
 
     public fun isStaticCall(): Boolean
 
-    public fun beforeParameterGeneration(v: InstructionAdapter, value: StackValue?)
+    public fun beforeParameterGeneration(v: InstructionAdapter, value: StackValue?) {
 
-    public fun invokeMethodWithArguments(resolvedCall: ResolvedCall<*>, receiver: StackValue, returnType: Type, codegen: ExpressionCodegen): StackValue
+    }
+
+    public fun invokeMethodWithArguments(resolvedCall: ResolvedCall<*>, receiver: StackValue, returnType: Type, codegen: ExpressionCodegen): StackValue {
+        return StackValue.functionCall(returnType) {
+            codegen.invokeMethodWithArguments(this, resolvedCall, receiver)
+            StackValue.coerce(this.returnType, returnType, it)
+        }
+    }
 
 }
