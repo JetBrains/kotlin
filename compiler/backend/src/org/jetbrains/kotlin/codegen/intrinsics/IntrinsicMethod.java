@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.codegen.intrinsics;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.Callable;
 import org.jetbrains.kotlin.codegen.CallableMethod;
@@ -29,46 +27,26 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.org.objectweb.asm.Type;
 
-import java.util.List;
-
-import static org.jetbrains.kotlin.codegen.AsmUtil.numberFunctionOperandType;
-
 public abstract class IntrinsicMethod {
 
     @NotNull
     public Callable toCallable(@NotNull FunctionDescriptor fd, boolean isSuper, @NotNull ResolvedCall resolvedCall, @NotNull ExpressionCodegen codegen) {
-        return toCallable(codegen.getState(), fd, codegen.getContext(), isSuper, resolvedCall);
+        return toCallable(codegen.getState().getTypeMapper().mapToCallableMethod(fd, false, codegen.getContext()), isSuper, resolvedCall);
     }
 
     @NotNull
-    public Callable toCallable(@NotNull GenerationState state, @NotNull FunctionDescriptor fd, @NotNull CodegenContext<?> context, boolean isSuper, @NotNull
-            ResolvedCall resolvedCall) {
-        return toCallable(state, fd, context, isSuper);
-    }
-
-    @NotNull
-    public Callable toCallable(@NotNull GenerationState state, @NotNull FunctionDescriptor fd, @NotNull CodegenContext<?> context, boolean isSuper) {
-        return toCallable(state.getTypeMapper().mapToCallableMethod(fd, false, context), isSuper);
+    public Callable toCallable(@NotNull CallableMethod method, boolean isSuper, @NotNull ResolvedCall resolvedCall) {
+        return toCallable(method, isSuper);
     }
 
     @NotNull
     public Callable toCallable(@NotNull CallableMethod method, boolean isSuperCall) {
-        //assert !isSuper;
         return toCallable(method);
     }
 
     @NotNull
     public Callable toCallable(@NotNull CallableMethod method) {
         throw new UnsupportedOperationException("Not implemented");
-    }
-
-    public List<Type> transformTypes(List<Type> types) {
-        return Lists.transform(types, new Function<Type, Type>() {
-            @Override
-            public Type apply(Type input) {
-                return numberFunctionOperandType(input);
-            }
-        });
     }
 
     public Type nullOrObject(Type type) {

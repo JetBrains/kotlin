@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.codegen.intrinsics
 
 import org.jetbrains.kotlin.codegen.Callable
+import org.jetbrains.kotlin.codegen.CallableMethod
 import org.jetbrains.kotlin.codegen.context.CodegenContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -32,7 +33,7 @@ public class MonitorInstruction private(private val opcode: Int) : IntrinsicMeth
         public val MONITOR_EXIT: MonitorInstruction = MonitorInstruction(Opcodes.MONITOREXIT)
     }
 
-    override fun toCallable(state: GenerationState, fd: FunctionDescriptor, context: CodegenContext<*>, isSuper: Boolean, resolvedCall: ResolvedCall<*>): Callable {
+    override fun toCallable(method: CallableMethod): Callable {
         return object : IntrinsicCallable(Type.VOID_TYPE, listOf(OBJECT_TYPE), null, null) {
             override fun invokeIntrinsic(v: InstructionAdapter) {
                 v.visitInsn(opcode)

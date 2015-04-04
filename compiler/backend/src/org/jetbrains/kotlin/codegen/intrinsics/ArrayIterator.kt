@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.codegen.AsmUtil.asmDescByFqNameWithoutInnerClasses
 import org.jetbrains.kotlin.codegen.Callable
+import org.jetbrains.kotlin.codegen.CallableMethod
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.context.CodegenContext
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.psi.JetCallExpression
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.getType
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.org.objectweb.asm.Type
@@ -63,9 +65,8 @@ public class ArrayIterator : IntrinsicMethod() {
         throw UnsupportedOperationException(containingDeclaration.toString())
     }
 
-    //TODO refactor
-    override fun toCallable(state: GenerationState, fd: FunctionDescriptor, context: CodegenContext<*>, isSuper: Boolean): Callable {
-        val callableMethod = state.getTypeMapper().mapToCallableMethod(fd, false, context)
+    override fun toCallable(fd: FunctionDescriptor, isSuper: Boolean, resolvedCall: ResolvedCall<*>, codegen: ExpressionCodegen): Callable {
+        val method = codegen.getState().getTypeMapper().mapToCallableMethod(fd, false, codegen.getContext())
 
         val containingDeclaration = fd.getContainingDeclaration().getOriginal() as ClassDescriptor
         var type: Type? = null;
@@ -89,8 +90,7 @@ public class ArrayIterator : IntrinsicMethod() {
             throw UnsupportedOperationException(containingDeclaration.toString())
         }
 
-
-        return UnaryIntrinsic(callableMethod, type) {
+        return createUnaryCallable(method, type) {
             val containingDeclaration = fd.getContainingDeclaration().getOriginal() as ClassDescriptor
             if (containingDeclaration == KotlinBuiltIns.getInstance().getArray()) {
                 it.invokestatic("kotlin/jvm/internal/InternalPackage", "iterator", "([Ljava/lang/Object;)Ljava/util/Iterator;", false)

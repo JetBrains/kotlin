@@ -30,40 +30,6 @@ public abstract class IntrinsicCallable(override val returnType: Type,
                                         override val thisType: Type?,
                                         override val receiverType: Type?) : Callable {
 
-    companion object {
-        fun create(descriptor: FunctionDescriptor, context: CodegenContext<*>, state: GenerationState, lambda: IntrinsicCallable.(i: InstructionAdapter) -> Unit): IntrinsicCallable {
-            return create(state.getTypeMapper().mapToCallableMethod(descriptor, false, context), lambda)
-        }
-
-        fun create(callableMethod: CallableMethod, lambda: IntrinsicCallable.(i: InstructionAdapter) -> Unit): IntrinsicCallable {
-            return object : IntrinsicCallable(callableMethod.returnType, callableMethod.valueParameterTypes, callableMethod.thisType, callableMethod.receiverType) {
-                override fun invokeIntrinsic(v: InstructionAdapter) {
-                    lambda(v)
-                }
-            }
-        }
-
-        fun binaryIntrinsic(returnType: Type, valueParameterType: Type, thisType: Type? = null, receiverType: Type? = null, lambda: IntrinsicCallable.(i: InstructionAdapter) -> Unit): IntrinsicCallable {
-            assert(AsmUtil.isPrimitive(returnType)) { "Return type of BinaryOp intrinsic should be of primitive type : " + returnType }
-
-            return object : IntrinsicCallable(returnType, listOf(valueParameterType), thisType, receiverType) {
-                override fun invokeIntrinsic(v: InstructionAdapter) {
-                    lambda(v)
-                }
-            }
-        }
-
-        fun create(descriptor: FunctionDescriptor, context: CodegenContext<*>, state: GenerationState, receiverTransformer: Type.() -> Type, lambda: IntrinsicCallable.(i: InstructionAdapter) -> Unit): IntrinsicCallable {
-            val callableMethod = state.getTypeMapper().mapToCallableMethod(descriptor, false, context)
-
-            return object : IntrinsicCallable(callableMethod.returnType, callableMethod.valueParameterTypes, callableMethod.thisType?.receiverTransformer(), callableMethod.receiverType?.receiverTransformer()) {
-                override fun invokeIntrinsic(v: InstructionAdapter) {
-                    lambda(v)
-                }
-            }
-        }
-    }
-
     override fun invokeWithoutAssertions(v: InstructionAdapter) {
         invokeIntrinsic(v)
     }
@@ -96,9 +62,17 @@ public abstract class IntrinsicCallable(override val returnType: Type,
     public fun calcReceiverType(): Type? {
         return receiverType ?: thisType
     }
-
 }
 
+fun binaryIntrinsic(returnType: Type, valueParameterType: Type, thisType: Type? = null, receiverType: Type? = null, lambda: IntrinsicCallable.(i: InstructionAdapter) -> Unit): IntrinsicCallable {
+    assert(AsmUtil.isPrimitive(returnType)) { "Return type of BinaryOp intrinsic should be of primitive type : " + returnType }
+
+    return object : IntrinsicCallable(returnType, listOf(valueParameterType), thisType, receiverType) {
+        override fun invokeIntrinsic(v: InstructionAdapter) {
+            lambda(v)
+        }
+    }
+}
 
 public class UnaryIntrinsic(val callable: CallableMethod, val newReturnType: Type? = null, needPrimitiveCheck: Boolean = false, val newThisType: Type? = null, val invoke: UnaryIntrinsic.(v: InstructionAdapter) -> Unit) :
         IntrinsicCallable(newReturnType ?: callable.returnType, callable.valueParameterTypes, newThisType ?: callable.thisType, callable.receiverType) {
@@ -113,14 +87,20 @@ public class UnaryIntrinsic(val callable: CallableMethod, val newReturnType: Typ
     override fun invokeIntrinsic(v: InstructionAdapter) {
         invoke(v)
     }
-
 }
 
-public open class MappedCallable(val callable: CallableMethod, val invoke: MappedCallable.(v: InstructionAdapter) -> Unit = {}) :
-        IntrinsicCallable(callable.returnType, callable.valueParameterTypes, callable.thisType, callable.receiverType) {
+public fun createUnaryCallable(callable: CallableMethod, newReturnType: Type? = null, needPrimitiveCheck: Boolean = false, invoke: IntrinsicCallable.(v: InstructionAdapter) -> Unit) : IntrinsicCallable {
+    return UnaryIntrinsic(callable, newReturnType, needPrimitiveCheck, invoke = invoke)
+}
 
+public open class MappedCallable(val callable: CallableMethod, val invoke: IntrinsicCallable.(v: InstructionAdapter) -> Unit = {}) :
+        IntrinsicCallable(callable.returnType, callable.valueParameterTypes, callable.thisType, callable.receiverType) {
 
     override fun invokeIntrinsic(v: InstructionAdapter) {
         invoke(v)
     }
+}
+
+public fun createMappedCallable(callable: CallableMethod, invoke: IntrinsicCallable.(v: InstructionAdapter) -> Unit) : IntrinsicCallable {
+    return MappedCallable(callable, invoke)
 }

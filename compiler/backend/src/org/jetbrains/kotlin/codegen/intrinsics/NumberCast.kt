@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.codegen.StackValue
 public class NumberCast : IntrinsicMethod() {
 
     override fun toCallable(method: CallableMethod): Callable {
-        return UnaryIntrinsic(method) {
+        return createUnaryCallable(method) {
             StackValue.coerce(calcReceiverType()!!, returnType, it)
         }
     }

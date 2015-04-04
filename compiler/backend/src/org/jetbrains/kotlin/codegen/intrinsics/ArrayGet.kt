@@ -23,10 +23,9 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 public class ArrayGet : IntrinsicMethod() {
 
-    override fun toCallable(method: CallableMethod): Callable {
-        return MappedCallable(method) {
-            val type = correctElementType(calcReceiverType())
-            it.aload(type)
-        }
-    }
+    override fun toCallable(method: CallableMethod): Callable =
+            createMappedCallable(method) {
+                val type = correctElementType(calcReceiverType())
+                it.aload(type)
+            }
 }

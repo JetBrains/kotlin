@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.codegen.intrinsics
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.codegen.Callable
+import org.jetbrains.kotlin.codegen.CallableMethod
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -38,10 +39,8 @@ public class Not : IntrinsicMethod() {
         return StackValue.not(StackValue.coercion(stackValue, Type.BOOLEAN_TYPE))
     }
 
-
-    override fun toCallable(fd: FunctionDescriptor, isSuper: Boolean, resolvedCall: ResolvedCall<*>, codegen: ExpressionCodegen): Callable {
-        val callable = codegen.getState().getTypeMapper().mapToCallableMethod(fd, false, codegen.getContext())
-        return object : MappedCallable(callable, {}) {
+    override fun toCallable(method: CallableMethod): Callable {
+        return object : MappedCallable(method) {
             override fun invokeMethodWithArguments(resolvedCall: ResolvedCall<*>, receiver: StackValue, returnType: Type, codegen: ExpressionCodegen): StackValue {
                 val element = resolvedCall.getCall().getCallElement()
                 val stackValue =

@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.codegen.CallableMethod
 public class ArraySize : IntrinsicMethod() {
 
     public override fun toCallable(method: CallableMethod): Callable {
-        return UnaryIntrinsic(method, null, false) { adapter ->
+        return createUnaryCallable(method) { adapter ->
             adapter.arraylength()
         }
     }

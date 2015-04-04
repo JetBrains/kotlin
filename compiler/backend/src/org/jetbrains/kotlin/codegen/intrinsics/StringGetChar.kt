@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.codegen.CallableMethod
 public class StringGetChar : IntrinsicMethod() {
 
     override fun toCallable(method: CallableMethod): Callable {
-        return IntrinsicCallable.create(method) {
+        return createMappedCallable(method) {
             it.invokevirtual("java/lang/String", "charAt", "(I)C", false)
         }
     }

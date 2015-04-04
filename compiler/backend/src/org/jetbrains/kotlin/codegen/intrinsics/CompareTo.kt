@@ -44,7 +44,7 @@ public class CompareTo : IntrinsicMethod() {
 
     override fun toCallable(method: CallableMethod): Callable {
         val argumentType = comparisonOperandType(method.thisType ?: method.receiverType, method.argumentTypes.first())
-        return IntrinsicCallable.binaryIntrinsic(method.returnType, argumentType, argumentType, null) {
+        return binaryIntrinsic(method.returnType, argumentType, argumentType, null) {
             genInvoke(argumentType, it)
         }
     }

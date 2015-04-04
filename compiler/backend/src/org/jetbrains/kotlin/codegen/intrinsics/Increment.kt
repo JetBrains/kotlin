@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.codegen.intrinsics
 
 import org.jetbrains.kotlin.codegen.AsmUtil.genIncrement
 import org.jetbrains.kotlin.codegen.Callable
+import org.jetbrains.kotlin.codegen.CallableMethod
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.psi.JetPrefixExpression
@@ -25,9 +26,8 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 
 public class Increment(private val myDelta: Int) : IntrinsicMethod() {
 
-    override fun toCallable(fd: FunctionDescriptor, isSuper: Boolean, resolvedCall: ResolvedCall<*>, codegen: ExpressionCodegen): Callable {
-        val method = codegen.getState().getTypeMapper().mapToCallableMethod(fd, false, codegen.getContext())
-        return MappedCallable(method) {
+    override fun toCallable(method: CallableMethod, isSuper: Boolean, resolvedCall: ResolvedCall<*>): Callable {
+        return createMappedCallable(method) {
             val jetExpression = resolvedCall.getCall().getCalleeExpression()
             assert(jetExpression !is JetPrefixExpression) { "There should be postfix increment ${jetExpression!!.getText()}" }
             genIncrement(returnType, myDelta, it)
