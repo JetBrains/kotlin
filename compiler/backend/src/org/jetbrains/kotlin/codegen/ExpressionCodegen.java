@@ -1931,11 +1931,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             if (directToField) {
                 receiver = StackValue.receiverWithoutReceiverArgument(receiver);
             }
-            StackValue.Property iValue =
-                intermediateValueForProperty(propertyDescriptor, directToField, isSuper ? (JetSuperExpression) r : null, receiver);
 
-
-            return iValue;
+            return intermediateValueForProperty(propertyDescriptor, directToField, isSuper ? (JetSuperExpression) r : null, receiver);
         }
 
         if (descriptor instanceof ClassDescriptor) {
@@ -2233,7 +2230,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @NotNull
-    public StackValue invokeFunction(@NotNull Call call, @NotNull final ResolvedCall<?> resolvedCall, @NotNull final StackValue receiver) {
+    public StackValue invokeFunction(@NotNull Call call, @NotNull ResolvedCall<?> resolvedCall, @NotNull StackValue receiver) {
         if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
             return invokeFunction(call, ((VariableAsFunctionResolvedCall) resolvedCall).getFunctionCall(), receiver);
         }
@@ -3272,7 +3269,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         boolean keepReturnValue = Boolean.TRUE.equals(bindingContext.get(VARIABLE_REASSIGNMENT, expression))
                 || !KotlinBuiltIns.getInstance().getUnitType().equals(descriptor.getReturnType());
 
-        callAugAssignMethod(expression, resolvedCall, (Callable) callable, lhsType, keepReturnValue);
+        callAugAssignMethod(expression, resolvedCall, callable, lhsType, keepReturnValue);
 
         return StackValue.none();
     }
@@ -3632,7 +3629,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             boolean isGetter = "get".equals(operationDescriptor.getName().asString());
 
 
-            Callable callable = resolveToCallable(operationDescriptor, false, isGetter ? resolvedGetCall : resolvedSetCall  );
+            Callable callable = resolveToCallable(operationDescriptor, false, isGetter ? resolvedGetCall : resolvedSetCall);
             Callable callableMethod = resolveToCallableMethod(operationDescriptor, false, context);
             Type[] argumentTypes = callableMethod.getArgumentTypes();
 
@@ -3662,29 +3659,23 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         ResolvedCall<FunctionDescriptor> resolvedCall = isGetter ? resolvedGetCall : resolvedSetCall;
         assert resolvedCall != null : "couldn't find resolved call: " + expression.getText();
 
-        if (callable instanceof Callable) {
-            Callable callableMethod = (Callable) callable;
-            ArgumentGenerator argumentGenerator =
-                    new CallBasedArgumentGenerator(this, defaultCallGenerator,
-                                                   resolvedCall.getResultingDescriptor().getValueParameters(),
-                                                   callableMethod.getValueParameterTypes());
+        ArgumentGenerator argumentGenerator =
+                new CallBasedArgumentGenerator(this, defaultCallGenerator,
+                                               resolvedCall.getResultingDescriptor().getValueParameters(),
+                                               callable.getValueParameterTypes());
 
-            List<ResolvedValueArgument> valueArguments = resolvedCall.getValueArgumentsByIndex();
-            assert valueArguments != null : "Failed to arrange value arguments by index: " + operationDescriptor;
+        List<ResolvedValueArgument> valueArguments = resolvedCall.getValueArgumentsByIndex();
+        assert valueArguments != null : "Failed to arrange value arguments by index: " + operationDescriptor;
 
-            if (!isGetter) {
-                assert valueArguments.size() >= 2 : "Setter call should have at least 2 arguments: " + operationDescriptor;
-                // Skip generation of the right hand side of an indexed assignment, which is the last value argument
-                valueArguments.remove(valueArguments.size() - 1);
-            }
-
-            return new StackValue.CollectionElementReceiver(callable, receiver, resolvedGetCall, resolvedSetCall, isGetter, this,
-                                                            argumentGenerator, valueArguments, array, arrayType, expression, argumentTypes);
+        if (!isGetter) {
+            assert valueArguments.size() >= 2 : "Setter call should have at least 2 arguments: " + operationDescriptor;
+            // Skip generation of the right hand side of an indexed assignment, which is the last value argument
+            valueArguments.remove(valueArguments.size() - 1);
         }
-        else {
-            return new StackValue.CollectionElementReceiver(callable, receiver, resolvedGetCall, resolvedSetCall, isGetter, this,
-                                                            null, null, array, arrayType, expression, argumentTypes);
-        }
+
+        return new StackValue.CollectionElementReceiver(callable, receiver, resolvedGetCall, resolvedSetCall, isGetter, this,
+                                                        argumentGenerator, valueArguments, array, arrayType, expression, argumentTypes);
+
     }
 
     @Override
@@ -3866,7 +3857,7 @@ The "returned" value of try expression with no finally is either the last expres
             final JetType rightType = bindingContext.get(TYPE, typeReference);
             assert rightType != null;
 
-            final Type rightTypeAsm = boxType(asmType(rightType));
+            Type rightTypeAsm = boxType(asmType(rightType));
             final JetExpression left = expression.getLeft();
 
             DeclarationDescriptor descriptor = rightType.getConstructor().getDeclarationDescriptor();
