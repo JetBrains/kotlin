@@ -16,31 +16,17 @@
 
 package org.jetbrains.kotlin.codegen.intrinsics;
 
-import kotlin.ExtensionFunction1;
-import kotlin.Unit;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.codegen.Callable;
-import org.jetbrains.kotlin.codegen.CallableMethod;
-import org.jetbrains.org.objectweb.asm.Type;
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
+import org.jetbrains.kotlin.codegen.AsmUtil.correctElementType
+import org.jetbrains.kotlin.codegen.Callable
+import org.jetbrains.kotlin.codegen.CallableMethod
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-import static org.jetbrains.kotlin.codegen.AsmUtil.correctElementType;
+public class ArrayGet : IntrinsicMethod() {
 
-public class ArrayGet extends IntrinsicMethod {
-
-    @NotNull
-    @Override
-    public Callable toCallable(@NotNull CallableMethod method) {
-        return new MappedCallable(method, new ExtensionFunction1<MappedCallable, InstructionAdapter, Unit>() {
-            @Override
-            public Unit invoke(
-                    MappedCallable callable,
-                    InstructionAdapter adapter
-            ) {
-                Type type = correctElementType(callable.calcReceiverType());
-                adapter.aload(type);
-                return Unit.INSTANCE$;
-            }
-        });
+    override fun toCallable(method: CallableMethod): Callable {
+        return MappedCallable(method) {
+            val type = correctElementType(calcReceiverType())
+            it.aload(type)
+        }
     }
 }
