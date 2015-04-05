@@ -19,12 +19,8 @@ package org.jetbrains.kotlin.idea.completion
 import com.intellij.codeInsight.completion.AllClassesGetter
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.PrefixMatcher
-import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.util.CachedValueProvider
-import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.asJava.KotlinLightClass
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -34,7 +30,6 @@ import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 class AllClassesCompletion(val parameters: CompletionParameters,
                            val lookupElementFactory: LookupElementFactory,
@@ -58,22 +53,7 @@ class AllClassesCompletion(val parameters: CompletionParameters,
         if (!ProjectStructureUtil.isJsKotlinModule(parameters.getOriginalFile() as JetFile)) {
             addAdaptedJavaCompletion(result)
         }
-        else {
-            //TODO: this is a temporary solution for Kotlin/Javascript library until we have virtual file system based on serialized descriptors
-            addKotlinJavascriptCompletion(result)
-        }
     }
-
-    private fun addKotlinJavascriptCompletion(collector: LookupElementsCollector) {
-        val classDescriptors = allClassDescriptors.getValue().filter { prefixMatcher.prefixMatches(it.getName().asString()) && kindFilter(it.getKind()) }
-        collector.addDescriptorElements(classDescriptors, suppressAutoInsertion = true)
-    }
-
-    private val allClassDescriptors = CachedValuesManager.getManager(scope.getProject()).createCachedValue( {
-        val packages = DescriptorUtils.getPackagesFqNames(moduleDescriptor).map { moduleDescriptor.getPackage(it) }.filterNotNull()
-        val classDescriptors = packages.flatMap { it.getMemberScope().getAllDescriptors().filterIsInstance<ClassDescriptor>() }
-        CachedValueProvider.Result(classDescriptors, ProjectRootModificationTracker.getInstance(scope.getProject()))
-    }, false)
 
     private fun addAdaptedJavaCompletion(collector: LookupElementsCollector) {
         AllClassesGetter.processJavaClasses(parameters, prefixMatcher, true, { psiClass ->
