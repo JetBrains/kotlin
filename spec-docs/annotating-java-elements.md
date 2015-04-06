@@ -12,18 +12,21 @@ Annotations on Kotlin elements that are mapped to Java one-to-one:
 Package | Facade class
 || Part classes
 Class | Class
+|| $kotlinClass field for reflection
+|| mutable collection stub methods
 Trait | Interface
 || $Impl Class
-Object | Class
-|| INSTANCE$ field
-Companion object | see object
+Object | INSTANCE$ field
+|| see Class
+Companion object | see Object
 || static field in outer class 
 Enum class | Enum
+|| see Class
 Annotation class | @interface
-Data class | Class
-|| component functions
+Data class | component functions
 || equals / hashCode / toString
 || copy
+|| see Class
 Type parameter | Type parameter
 Constructor | Constructor
 || $default constructor (?)
