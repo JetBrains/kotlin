@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.codegen.CallableMethod
 public class UnaryPlus : IntrinsicMethod() {
 
     override fun toCallable(method: CallableMethod): Callable {
-        return createUnaryIntrinsicCallable(method, needPrimitiveCheck = true) {
+        return createUnaryIntrinsicCallable(method) {
             //nothing
         }
     }

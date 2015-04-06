@@ -44,7 +44,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 public class ArrayIterator : IntrinsicMethod() {
     override fun toCallable(method: CallableMethod): Callable {
-        return createUnaryIntrinsicCallable(method, needPrimitiveCheck = false) {
+        return createUnaryIntrinsicCallable(method) {
             val methodSignature = "(${method.owner.getDescriptor()})${returnType.getDescriptor()}"
             it.invokestatic("kotlin/jvm/internal/InternalPackage", "iterator", methodSignature, false)
         }

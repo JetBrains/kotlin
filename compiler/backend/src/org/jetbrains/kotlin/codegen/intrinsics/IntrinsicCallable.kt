@@ -25,10 +25,16 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-public abstract class IntrinsicCallable(override val returnType: Type,
-                                        override val valueParameterTypes: List<Type>,
-                                        override val dispatchReceiverType: Type?,
-                                        override val extensionReceiverType: Type?) : Callable {
+public open class IntrinsicCallable(override val returnType: Type,
+                                    override val valueParameterTypes: List<Type>,
+                                    override val dispatchReceiverType: Type?,
+                                    override val extensionReceiverType: Type?,
+                                    private val invoke: IntrinsicCallable.(v: InstructionAdapter) -> Unit = { throw UnsupportedOperationException() }) : Callable {
+
+    constructor(callable: CallableMethod, invoke: IntrinsicCallable.(v: InstructionAdapter) -> Unit = {}) :
+        this(callable.returnType, callable.valueParameterTypes, callable.dispatchReceiverType, callable.extensionReceiverType, invoke) {
+
+    }
 
     override fun invokeWithoutAssertions(v: InstructionAdapter) {
         invokeIntrinsic(v)
@@ -38,7 +44,9 @@ public abstract class IntrinsicCallable(override val returnType: Type,
         invokeWithoutAssertions(v)
     }
 
-    public abstract fun invokeIntrinsic(v: InstructionAdapter);
+    public open fun invokeIntrinsic(v: InstructionAdapter) {
+        invoke(v)
+    }
 
     override val parameterTypes: Array<Type>
         get() {
@@ -74,44 +82,29 @@ fun createBinaryIntrinsicCallable(returnType: Type, valueParameterType: Type, th
     }
 }
 
-public class UnaryIntrinsic(
-        callable: CallableMethod,
-        newReturnType: Type? = null,
-        needPrimitiveCheck: Boolean = true,
-        newThisType: Type? = null,
-        private val invoke: UnaryIntrinsic.(v: InstructionAdapter) -> Unit
-) : IntrinsicCallable(newReturnType ?: callable.returnType, callable.valueParameterTypes, newThisType ?: callable.dispatchReceiverType, callable.extensionReceiverType) {
-
-    init {
-        if (needPrimitiveCheck) {
-            assert(AsmUtil.isPrimitive(returnType)) { "Return type of UnaryPlus intrinsic should be of primitive type: $returnType" }
-        }
-        assert(valueParameterTypes.isEmpty()) { "Unary operation should not have any parameters" }
-    }
-
-    override fun invokeIntrinsic(v: InstructionAdapter) {
-        invoke(v)
-    }
-}
-
 public fun createUnaryIntrinsicCallable(
         callable: CallableMethod,
         newReturnType: Type? = null,
-        needPrimitiveCheck: Boolean = true,
+        needPrimitiveCheck: Boolean = false,
         newThisType: Type? = null,
         invoke: IntrinsicCallable.(v: InstructionAdapter) -> Unit
-) : IntrinsicCallable {
-    return UnaryIntrinsic(callable, newReturnType, needPrimitiveCheck, newThisType, invoke = invoke)
-}
-
-public open class MappedCallable(val callable: CallableMethod, val invoke: IntrinsicCallable.(v: InstructionAdapter) -> Unit = {}) :
-        IntrinsicCallable(callable.returnType, callable.valueParameterTypes, callable.dispatchReceiverType, callable.extensionReceiverType) {
-
-    override fun invokeIntrinsic(v: InstructionAdapter) {
-        invoke(v)
+): IntrinsicCallable {
+    val intrinsic = IntrinsicCallable(
+            newReturnType ?: callable.returnType,
+            callable.valueParameterTypes,
+            newThisType ?: callable.dispatchReceiverType,
+            callable.extensionReceiverType,
+            invoke
+    )
+    assert(intrinsic.valueParameterTypes.isEmpty()) { "Unary operation should not have any parameters" }
+    if (needPrimitiveCheck) {
+        assert(AsmUtil.isPrimitive(intrinsic.returnType)) {
+            "Return type of UnaryPlus intrinsic should be of primitive type: ${intrinsic.returnType}"
+        }
     }
+    return intrinsic
 }
 
-public fun createIntrinsicCallable(callable: CallableMethod, invoke: IntrinsicCallable.(v: InstructionAdapter) -> Unit) : IntrinsicCallable {
-    return MappedCallable(callable, invoke)
+public fun createIntrinsicCallable(callable: CallableMethod, invoke: IntrinsicCallable.(v: InstructionAdapter) -> Unit): IntrinsicCallable {
+    return IntrinsicCallable(callable, invoke)
 }
