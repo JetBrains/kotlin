@@ -100,7 +100,7 @@ For this, we need to allow annotation attributes of type `Array<Annotation>`:
 ``` kotlin
 annotation class field(vararg val annotations: Annotation)
 ```
-**NOTE**: This is only relatively easilty achievable for source-retained annotations, for class- or runtime-retained it's a lot more involved and relies on an undocumented features of JVM.
+**NOTE**: This is only relatively easily achievable for source-retained annotations, for class- or runtime-retained it's a lot more involved and relies on an undocumented features of JVM.
 
 Another approach:
 
