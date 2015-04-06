@@ -50,6 +50,16 @@ public val CharSequence.size: Int get() = noImpl
 library
 public fun CharSequence.isEmpty(): Boolean = noImpl
 
+
+
+// native because we need to escape newValue
+native("replace")
+private fun String.nativeReplace(oldValue: String, newValue: String): String = noImpl
+
+native("replace")
+private fun String.nativeReplace(pattern: RegExp, replacement: String): String = noImpl
+
+
 /*
 
 native public fun String.equalsIgnoreCase(anotherString: String) : Boolean = (this as java.lang.String).equalsIgnoreCase(anotherString)

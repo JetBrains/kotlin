@@ -78,3 +78,7 @@ public inline fun String.capitalize(): String {
 public inline fun String.decapitalize(): String {
     return if (isNotEmpty()) substring(0, 1).toLowerCase() + substring(1) else this
 }
+
+
+public fun String.replace(oldValue: String, newValue: String): String = nativeReplace(oldValue, newValue.nativeReplace("$", "$$"))
+
