@@ -3581,7 +3581,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             else {
                 elementType = correctElementType(arrayType);
             }
-            StackValue arrayValue = gen(array);
+            StackValue arrayValue = genLazy(array, arrayType);
             StackValue index = genLazy(indices.get(0), Type.INT_TYPE);
 
             return StackValue.arrayElement(elementType, arrayValue, index);
