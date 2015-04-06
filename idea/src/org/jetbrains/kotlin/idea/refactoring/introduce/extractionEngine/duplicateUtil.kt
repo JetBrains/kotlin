@@ -90,6 +90,8 @@ public fun processDuplicates(
     if (answer != Messages.YES) return
 
     var showAll = false
+
+    @duplicateReplacersLoop
     for ((i, entry) in duplicateReplacers.entrySet().withIndex()) {
         val (pattern, replacer) = entry
         if (!pattern.isValid()) continue
@@ -101,7 +103,7 @@ public fun processDuplicates(
                 promptDialog.show()
                 when(promptDialog.getExitCode()) {
                     FindManager.PromptResult.ALL -> showAll = true
-                    FindManager.PromptResult.SKIP -> continue
+                    FindManager.PromptResult.SKIP -> continue@duplicateReplacersLoop
                     FindManager.PromptResult.CANCEL -> return
                 }
             }

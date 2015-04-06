@@ -300,6 +300,8 @@ private fun createKeywordWithLabelElement(keyword: String, label: String?): Look
 
 fun breakOrContinueExpressionItems(position: JetElement, breakOrContinue: String): Collection<LookupElement> {
     val result = ArrayList<LookupElement>()
+
+    @parentsLoop
     for (parent in position.parents()) {
         when (parent) {
             is JetLoopExpression -> {
@@ -313,7 +315,7 @@ fun breakOrContinueExpressionItems(position: JetElement, breakOrContinue: String
                 }
             }
 
-            is JetDeclarationWithBody -> break //TODO: support non-local break's&continue's when they are supported by compiler
+            is JetDeclarationWithBody -> break@parentsLoop //TODO: support non-local break's&continue's when they are supported by compiler
         }
     }
     return result

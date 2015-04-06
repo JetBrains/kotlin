@@ -506,12 +506,14 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 fun calcNecessaryEmptyLines(decl: JetDeclaration, after: Boolean): Int {
                     var lineBreaksPresent: Int = 0
                     var neighbor: PsiElement? = null
+
+                    @siblingsLoop
                     for (sibling in decl.siblings(forward = after, withItself = false)) {
                         when (sibling) {
                             is PsiWhiteSpace -> lineBreaksPresent += (sibling.getText() ?: "").count { it == '\n' }
                             else -> {
                                 neighbor = sibling
-                                break
+                                break@siblingsLoop
                             }
                         }
                     }
