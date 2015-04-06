@@ -29,84 +29,24 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetCallExpression
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.getType
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
+import org.jetbrains.kotlin.utils.join
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 public class ArrayIterator : IntrinsicMethod() {
-    fun generateImpl(codegen: ExpressionCodegen, v: InstructionAdapter, returnType: Type, element: PsiElement?, arguments: List<JetExpression>, receiver: StackValue): Type {
-        receiver.put(receiver.type, v)
-        val call = element as JetCallExpression
-        val funDescriptor = codegen.getBindingContext().get(BindingContext.REFERENCE_TARGET, call.getCalleeExpression() as JetSimpleNameExpression) as FunctionDescriptor
-        val containingDeclaration = funDescriptor.getContainingDeclaration().getOriginal() as ClassDescriptor
-        if (containingDeclaration == KotlinBuiltIns.getInstance().getArray()) {
-            v.invokestatic("kotlin/jvm/internal/InternalPackage", "iterator", "([Ljava/lang/Object;)Ljava/util/Iterator;", false)
-            return getType(javaClass<Iterator<Any>>())
-        }
-
-        for (jvmPrimitiveType in JvmPrimitiveType.values()) {
-            val primitiveType = jvmPrimitiveType.getPrimitiveType()
-            val arrayClass = KotlinBuiltIns.getInstance().getPrimitiveArrayClassDescriptor(primitiveType)
-            if (containingDeclaration == arrayClass) {
-                val fqName = FqName(BUILT_INS_PACKAGE_FQ_NAME.toString() + "." + primitiveType.getTypeName() + "Iterator")
-                val iteratorDesc = asmDescByFqNameWithoutInnerClasses(fqName)
-                val methodSignature = "([" + jvmPrimitiveType.getDesc() + ")" + iteratorDesc
-                v.invokestatic("kotlin/jvm/internal/InternalPackage", "iterator", methodSignature, false)
-                return Type.getType(iteratorDesc)
-            }
-        }
-
-        throw UnsupportedOperationException(containingDeclaration.toString())
-    }
-
-    override fun toCallable(fd: FunctionDescriptor, isSuper: Boolean, resolvedCall: ResolvedCall<*>, codegen: ExpressionCodegen): Callable {
-        val method = codegen.getState().getTypeMapper().mapToCallableMethod(fd, false, codegen.getContext())
-
-        val containingDeclaration = fd.getContainingDeclaration().getOriginal() as ClassDescriptor
-        var type: Type? = null;
-        if (containingDeclaration == KotlinBuiltIns.getInstance().getArray()) {
-            type = getType(javaClass<Iterator<Any>>())
-        } else {
-
-            for (jvmPrimitiveType in JvmPrimitiveType.values()) {
-                val primitiveType = jvmPrimitiveType.getPrimitiveType()
-                val arrayClass = KotlinBuiltIns.getInstance().getPrimitiveArrayClassDescriptor(primitiveType)
-                if (containingDeclaration == arrayClass) {
-                    val fqName = FqName(BUILT_INS_PACKAGE_FQ_NAME.toString() + "." + primitiveType.getTypeName() + "Iterator")
-                    val iteratorDesc = asmDescByFqNameWithoutInnerClasses(fqName)
-                    type = Type.getType(iteratorDesc)
-                    break
-                }
-            }
-        }
-
-        if (type == null) {
-            throw UnsupportedOperationException(containingDeclaration.toString())
-        }
-
-        return createUnaryCallable(method, type) {
-            val containingDeclaration = fd.getContainingDeclaration().getOriginal() as ClassDescriptor
-            if (containingDeclaration == KotlinBuiltIns.getInstance().getArray()) {
-                it.invokestatic("kotlin/jvm/internal/InternalPackage", "iterator", "([Ljava/lang/Object;)Ljava/util/Iterator;", false)
-            } else {
-                for (jvmPrimitiveType in JvmPrimitiveType.values()) {
-                    val primitiveType = jvmPrimitiveType.getPrimitiveType()
-                    val arrayClass = KotlinBuiltIns.getInstance().getPrimitiveArrayClassDescriptor(primitiveType)
-                    if (containingDeclaration == arrayClass) {
-                        val fqName = FqName(BUILT_INS_PACKAGE_FQ_NAME.toString() + "." + primitiveType.getTypeName() + "Iterator")
-                        val iteratorDesc = asmDescByFqNameWithoutInnerClasses(fqName)
-                        val methodSignature = "([" + jvmPrimitiveType.getDesc() + ")" + iteratorDesc
-                        it.invokestatic("kotlin/jvm/internal/InternalPackage", "iterator", methodSignature, false)
-                        break;
-                    }
-                }
-            }
+    override fun toCallable(method: CallableMethod): Callable {
+        return createUnaryCallable(method) {
+            val methodSignature = "(${method.owner.getDescriptor()})${returnType.getDescriptor()}"
+            it.invokestatic("kotlin/jvm/internal/InternalPackage", "iterator", methodSignature, false)
         }
     }
 }
