@@ -58,7 +58,7 @@ public class Concat : IntrinsicMethod() {
 
     override fun toCallable(method: CallableMethod): Callable {
         return object : IntrinsicCallable(method) {
-            override fun invokeMethodWithArguments(resolvedCall: ResolvedCall<*>, receiver: StackValue, returnType: Type, codegen: ExpressionCodegen): StackValue {
+            override fun invokeMethodWithArguments(resolvedCall: ResolvedCall<*>, receiver: StackValue, codegen: ExpressionCodegen): StackValue {
                 return StackValue.operation(returnType) {
                     val arguments = resolvedCall.getCall().getValueArguments().map { it.getArgumentExpression() }
                     val actualType = generateImpl(

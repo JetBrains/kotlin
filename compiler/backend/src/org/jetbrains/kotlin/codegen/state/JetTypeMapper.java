@@ -181,6 +181,11 @@ public class JetTypeMapper {
             }
             return Type.VOID_TYPE;
         }
+        else if (descriptor instanceof FunctionDescriptor && forceBoxedReturnType((FunctionDescriptor) descriptor)) {
+            // TYPE_PARAMETER is a hack to automatically box the return type
+            //noinspection ConstantConditions
+            return mapType(descriptor.getReturnType(), sw, JetTypeMapperMode.TYPE_PARAMETER);
+        }
         else {
             return mapType(returnType, sw, JetTypeMapperMode.VALUE, Variance.OUT_VARIANCE, false);
         }
@@ -700,14 +705,7 @@ public class JetTypeMapper {
             }
 
             sw.writeReturnType();
-            if (forceBoxedReturnType(f)) {
-                // TYPE_PARAMETER is a hack to automatically box the return type
-                //noinspection ConstantConditions
-                mapType(f.getReturnType(), sw, JetTypeMapperMode.TYPE_PARAMETER);
-            }
-            else {
-                mapReturnType(f, sw);
-            }
+            mapReturnType(f, sw);
             sw.writeReturnTypeEnd();
         }
 

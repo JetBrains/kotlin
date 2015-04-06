@@ -33,7 +33,7 @@ public class IdentityEquals : IntrinsicMethod() {
 
     override fun toCallable(method: CallableMethod): Callable {
         return object : IntrinsicCallable(method)  {
-            override fun invokeMethodWithArguments(resolvedCall: ResolvedCall<*>, receiver: StackValue, returnType: Type, codegen: ExpressionCodegen): StackValue {
+            override fun invokeMethodWithArguments(resolvedCall: ResolvedCall<*>, receiver: StackValue, codegen: ExpressionCodegen): StackValue {
                 val element = resolvedCall.getCall().getCallElement()
                 val left: StackValue
                 val right: StackValue

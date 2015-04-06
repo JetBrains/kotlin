@@ -2249,9 +2249,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         FunctionDescriptor accessibleFunctionDescriptor = accessibleFunctionDescriptor(fd);
         Callable callable = resolveToCallable(accessibleFunctionDescriptor, superCall, resolvedCall);
-        Type returnType = typeMapper.mapReturnType(accessibleFunctionDescriptor);
 
-        return callable.invokeMethodWithArguments(resolvedCall, receiver, returnType, this);
+        return callable.invokeMethodWithArguments(resolvedCall, receiver, this);
     }
 
     @Nullable
@@ -3255,7 +3254,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         //invokeMethodWithArguments(callable, resolvedCall, receiver);
 
-        callable.invokeMethodWithArguments(resolvedCall, receiver, callable.getReturnType(), this).put(callable.getReturnType(), v);
+        callable.invokeMethodWithArguments(resolvedCall, receiver, this).put(callable.getReturnType(), v);
 
         if (keepReturnValue) {
             value.store(StackValue.onStack(callable.getReturnType()), v, true);
