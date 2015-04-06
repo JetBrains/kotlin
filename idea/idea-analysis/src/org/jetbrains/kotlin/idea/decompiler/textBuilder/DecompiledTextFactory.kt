@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.decompiler.textBuilder
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.decompiler.navigation.JsMetaFileVirtualFileHolder
+import org.jetbrains.kotlin.idea.decompiler.navigation.JsMetaFileUtils
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.kotlin.load.kotlin.header.isCompatibleClassKind
@@ -74,16 +74,19 @@ public fun buildDecompiledText(
 }
 
 public fun buildDecompiledTextFromJsMetadata(
-        classFile: VirtualFile
+        classFile: VirtualFile,
+        resolver: ResolverForDecompiler = KotlinJavaScriptDeserializerForDecompiler(classFile)
 ): DecompiledText {
-    val module = classFile.getUserData(JsMetaFileVirtualFileHolder.MODULE_DESCRIPTOR_KEY)
-    assert(module != null)
+    val packageFqName = JsMetaFileUtils.getPackageFqName(classFile)
+    val isPackageHeader = JsMetaFileUtils.isPackageHeader(classFile)
 
-    val packageFqName = classFile.getUserData(JsMetaFileVirtualFileHolder.PACKAGE_FQNAME_KEY)
-    assert (packageFqName != null)
-
-    val descriptors = module.getPackage(packageFqName)?.getMemberScope()?.getAllDescriptors()?.toList().orEmpty()
-    return buildDecompiledText(packageFqName, descriptors)
+    if (isPackageHeader) {
+        return buildDecompiledText(packageFqName, ArrayList(resolver.resolveDeclarationsInPackage(packageFqName)), descriptorRendererForKotlinJavascriptDecompiler)
+    }
+    else {
+        val classId = JsMetaFileUtils.getClassId(classFile)
+        return buildDecompiledText(packageFqName, listOf(resolver.resolveTopLevelClass(classId)).filterNotNull(), descriptorRendererForKotlinJavascriptDecompiler)
+    }
 }
 
 private val DECOMPILED_CODE_COMMENT = "/* compiled code */"
@@ -104,6 +107,13 @@ private val descriptorRendererForDecompiler = DescriptorRendererBuilder()
         .setSecondaryConstructorsAsPrimary(false)
         .build()
 
+private val descriptorRendererForKotlinJavascriptDecompiler = DescriptorRendererBuilder()
+        .setWithDefinedIn(false)
+        .setClassWithPrimaryConstructor(true)
+        .setSecondaryConstructorsAsPrimary(false)
+        .build()
+
+
 private val descriptorRendererForKeys = DescriptorRenderer.COMPACT_WITH_MODIFIERS
 
 public fun descriptorToKey(descriptor: DeclarationDescriptor): String {
@@ -112,7 +122,11 @@ public fun descriptorToKey(descriptor: DeclarationDescriptor): String {
 
 public data class DecompiledText(public val text: String, public val renderedDescriptorsToRange: Map<String, TextRange>)
 
-private fun buildDecompiledText(packageFqName: FqName, descriptors: List<DeclarationDescriptor>): DecompiledText {
+public fun buildDecompiledText(
+        packageFqName: FqName,
+        descriptors: List<DeclarationDescriptor>,
+        descriptorRenderer: DescriptorRenderer = descriptorRendererForDecompiler
+): DecompiledText {
     val builder = StringBuilder()
     val renderedDescriptorsToRange = HashMap<String, TextRange>()
 
@@ -136,7 +150,7 @@ private fun buildDecompiledText(packageFqName: FqName, descriptors: List<Declara
         val header = if (isEnumEntry(descriptor))
             descriptor.getName().asString()
         else
-            descriptorRendererForDecompiler.render(descriptor).replace("= ...", DECOMPILED_COMMENT_FOR_PARAMETER)
+            descriptorRenderer.render(descriptor).replace("= ...", DECOMPILED_COMMENT_FOR_PARAMETER)
         builder.append(header)
         var endOffset = builder.length()
 
