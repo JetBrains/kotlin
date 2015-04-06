@@ -30,36 +30,18 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 public class IteratorNext : IntrinsicMethod() {
 
-    protected fun getIteratorName(returnType: Type): String {
-        val name: String
-        if (returnType == Type.CHAR_TYPE) {
-            name = "Char"
+    private fun getIteratorName(returnType: Type): String {
+        return when (returnType) {
+            Type.CHAR_TYPE -> "Char"
+            Type.BOOLEAN_TYPE -> "Boolean"
+            Type.BYTE_TYPE -> "Byte"
+            Type.SHORT_TYPE -> "Short"
+            Type.INT_TYPE -> "Int"
+            Type.LONG_TYPE -> "Long"
+            Type.FLOAT_TYPE -> "Float"
+            Type.DOUBLE_TYPE -> "Double"
+            else -> throw UnsupportedOperationException("Can't get correct name for iterator from type: " + returnType)
         }
-        else if (returnType == Type.BOOLEAN_TYPE) {
-            name = "Boolean"
-        }
-        else if (returnType == Type.BYTE_TYPE) {
-            name = "Byte"
-        }
-        else if (returnType == Type.SHORT_TYPE) {
-            name = "Short"
-        }
-        else if (returnType == Type.INT_TYPE) {
-            name = "Int"
-        }
-        else if (returnType == Type.LONG_TYPE) {
-            name = "Long"
-        }
-        else if (returnType == Type.FLOAT_TYPE) {
-            name = "Float"
-        }
-        else if (returnType == Type.DOUBLE_TYPE) {
-            name = "Double"
-        }
-        else {
-            throw UnsupportedOperationException("Can't get correct name for iterator from type: " + returnType)
-        }
-        return name
     }
 
 

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.codegen.intrinsics
 
 import org.jetbrains.kotlin.codegen.Callable
+import org.jetbrains.kotlin.codegen.CallableMethod
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -40,8 +41,7 @@ public class RangeTo : IntrinsicMethod() {
         }
     }
 
-    override fun toCallable(fd: FunctionDescriptor, isSuper: Boolean, resolvedCall: ResolvedCall<*>, codegen: ExpressionCodegen): Callable {
-        val method = codegen.getState().getTypeMapper().mapToCallableMethod(fd, false, codegen.getContext())
+    override fun toCallable(method: CallableMethod): Callable {
         val argType = nameToPrimitive(method.returnType.getInternalName().substringAfter("kotlin/").substringBefore("Range"))
         return object : IntrinsicCallable(method.returnType, method.valueParameterTypes.map { argType }, nullOr(method.thisType, argType), nullOr(method.receiverType, argType)) {
             override fun beforeParameterGeneration(v: InstructionAdapter, value: StackValue?) {
