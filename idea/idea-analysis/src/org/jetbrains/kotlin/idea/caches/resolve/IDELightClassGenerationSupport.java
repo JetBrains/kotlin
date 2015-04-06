@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve;
 
+import com.intellij.ide.highlighter.JavaClassFileType;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.libraries.LibraryUtil;
@@ -409,6 +410,8 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
 
     @Nullable
     private static PsiJavaFileStub createStub(@NotNull VirtualFile file) {
+        if (file.getFileType() != JavaClassFileType.INSTANCE) return null;
+
         try {
             return ClsFileImpl.buildFileStub(file, file.contentsToByteArray());
         }
