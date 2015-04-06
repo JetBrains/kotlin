@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.load.java.lazy.resolveAnnotations
 import org.jetbrains.kotlin.load.java.JavaVisibilities
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.descriptors.JavaConstructorDescriptor
 import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils
 import org.jetbrains.kotlin.types.JetType
@@ -167,36 +168,59 @@ public class LazyJavaClassMemberScope(
         val methods = jClass.getMethods()
         val result = ArrayList<ValueParameterDescriptor>(methods.size())
 
-        for ((index, method) in methods.withIndices()) {
-            assert(method.getValueParameters().isEmpty(), "Annotation method can't have parameters: " + method)
+        val attr = TypeUsage.MEMBER_SIGNATURE_INVARIANT.toAttributes(allowFlexible = false)
 
-            val jReturnType = method.getReturnType() ?: throw AssertionError("Annotation method has no return type: " + method)
+        val (methodsNamedValue, otherMethods) = methods.
+                partition { it.getName() == JvmAnnotationNames.DEFAULT_ANNOTATION_MEMBER_NAME }
 
-            val attr = TypeUsage.MEMBER_SIGNATURE_INVARIANT.toAttributes(allowFlexible = false)
-
-            val (returnType, varargElementType) =
-                    if (index == methods.size() - 1 && jReturnType is JavaArrayType)
-                        Pair(c.typeResolver.transformArrayType(jReturnType, attr, isVararg = true),
-                             c.typeResolver.transformJavaType(jReturnType.getComponentType(), attr))
+        assert(methodsNamedValue.size() <= 1, "There can't be to methods named 'value' in annotation class: " + jClass)
+        val methodNamedValue = methodsNamedValue.firstOrNull()
+        if (methodNamedValue != null) {
+            val parameterNamedValueJavaType = methodNamedValue.getAnnotationMethodReturnJavaType()
+            val (parameterType, varargType) =
+                    if (parameterNamedValueJavaType is JavaArrayType)
+                        Pair(c.typeResolver.transformArrayType(parameterNamedValueJavaType, attr, isVararg = true),
+                             c.typeResolver.transformJavaType(parameterNamedValueJavaType.getComponentType(), attr))
                     else
-                        Pair(c.typeResolver.transformJavaType(jReturnType, attr), null)
+                        Pair(c.typeResolver.transformJavaType(parameterNamedValueJavaType, attr), null)
 
-            result.add(ValueParameterDescriptorImpl(
-                    constructor,
-                    null,
-                    index,
-                    Annotations.EMPTY,
-                    method.getName(),
-                    // Parameters of annotation constructors in Java are never nullable
-                    TypeUtils.makeNotNullable(returnType),
-                    method.hasAnnotationParameterDefaultValue(),
-                    // Nulls are not allowed in annotation arguments in Java
-                    varargElementType?.let { TypeUtils.makeNotNullable(it) },
-                    c.sourceElementFactory.source(method)
-            ))
+            result.addAnnotationValueParameter(constructor, 0, methodNamedValue, parameterType, varargType)
+        }
+
+        val startIndex = if (methodNamedValue != null) 1 else 0
+        for ((index, method) in otherMethods.withIndex()) {
+            val parameterType = c.typeResolver.transformJavaType(method.getAnnotationMethodReturnJavaType(), attr)
+            result.addAnnotationValueParameter(constructor, index + startIndex, method, parameterType, null)
         }
 
         return result
+    }
+
+    private fun JavaMethod.getAnnotationMethodReturnJavaType(): JavaType {
+        assert(getValueParameters().isEmpty(), "Annotation method can't have parameters: " + this)
+        return getReturnType() ?: throw AssertionError("Annotation method has no return type: " + this)
+    }
+
+    private fun MutableList<ValueParameterDescriptor>.addAnnotationValueParameter(
+            constructor: ConstructorDescriptor,
+            index: Int,
+            method: JavaMethod,
+            returnType: JetType,
+            varargElementType: JetType?
+    ) {
+        add(ValueParameterDescriptorImpl(
+                constructor,
+                null,
+                index,
+                Annotations.EMPTY,
+                method.getName(),
+                // Parameters of annotation constructors in Java are never nullable
+                TypeUtils.makeNotNullable(returnType),
+                method.hasAnnotationParameterDefaultValue(),
+                // Nulls are not allowed in annotation arguments in Java
+                varargElementType?.let { TypeUtils.makeNotNullable(it) },
+                c.sourceElementFactory.source(method)
+        ))
     }
 
     private val nestedClassIndex = c.storageManager.createLazyValue {

@@ -54,6 +54,7 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
     @InnerTestClasses({
             Annotations.AnnotationApplicability.class,
             Annotations.AnnotationParameterMustBeConstant.class,
+            Annotations.AnnotationParameters.class,
             Annotations.AnnotationWithVarargParameter.class,
             Annotations.JvmOverloads.class,
             Annotations.PlatformStatic.class,
@@ -126,6 +127,45 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
             @TestMetadata("vararg.kt")
             public void testVararg() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationParameterMustBeConstant/vararg.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationParameters")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class AnnotationParameters extends AbstractJetDiagnosticsTestWithStdLib {
+            public void testAllFilesPresentInAnnotationParameters() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationParameters"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("orderWithValue.kt")
+            public void testOrderWithValue() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationParameters/orderWithValue.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("orderWithoutValue.kt")
+            public void testOrderWithoutValue() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationParameters/orderWithoutValue.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("valueArray.kt")
+            public void testValueArray() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationParameters/valueArray.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("valueArrayAndOtherDefault.kt")
+            public void testValueArrayAndOtherDefault() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationParameters/valueArrayAndOtherDefault.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("valueArrayOnly.kt")
+            public void testValueArrayOnly() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationParameters/valueArrayOnly.kt");
                 doTest(fileName);
             }
         }

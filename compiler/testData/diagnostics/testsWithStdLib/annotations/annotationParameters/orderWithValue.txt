@@ -1,0 +1,14 @@
+package
+
+public final annotation class A : kotlin.Annotation {
+    public constructor A(/*0*/ value: kotlin.String, /*1*/ b: kotlin.Double, /*2*/ x1: java.lang.Class<*>, /*3*/ a: kotlin.Int, /*4*/ x: java.lang.Class<*>, /*5*/ x2: java.lang.Class<*>)
+    public abstract fun a(): kotlin.Int
+    public abstract fun b(): kotlin.Double
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public abstract fun value(): kotlin.String
+    public abstract fun x(): java.lang.Class<*>
+    public abstract fun x1(): java.lang.Class<*>
+    public abstract fun x2(): java.lang.Class<*>
+}
