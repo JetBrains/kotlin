@@ -147,7 +147,10 @@ public class JavaToKotlinConverter(private val project: Project,
                 intermediateResults[i] = null // to not hold unused objects in the heap
             }
 
-            if (postProcessor == null) return results
+            if (postProcessor == null) {
+                assert(progress is EmptyProgressIndicator, "Progress indicator not supported for postProcessor == null")
+                return results
+            }
 
             val finalResults = ArrayList<Result?>(elementCount)
             processFilesWithProgress(0.5) { i ->
@@ -156,7 +159,7 @@ public class JavaToKotlinConverter(private val project: Project,
                     try {
                         //TODO: post processing does not work correctly for ParseContext different from TOP_LEVEL
                         val kotlinFile = JetPsiFactory(project).createAnalyzableFile("dummy.kt", result.text, inputElements[i].postProcessingContext!!)
-                        AfterConversionPass(project, postProcessor).run(kotlinFile, null)
+                        AfterConversionPass(project, postProcessor).run(kotlinFile, range = null)
                         finalResults.add(Result(kotlinFile.getText(), result.parseContext))
                     }
                     catch(e: ProcessCanceledException) {

@@ -473,7 +473,7 @@ private fun findFirstLeafWhollyInRange(file: PsiFile, range: TextRange): PsiElem
     var element = file.findElementAt(range.getStartOffset()) ?: return null
     var elementRange = element.getTextRange()
     if (elementRange.getStartOffset() < range.getStartOffset()) {
-        element = file.findElementAt(elementRange.getEndOffset()) ?: return null
+        element = element.nextLeaf(skipEmptyElements = true) ?: return null
         elementRange = element.getTextRange()
     }
     assert(elementRange.getStartOffset() >= range.getStartOffset())

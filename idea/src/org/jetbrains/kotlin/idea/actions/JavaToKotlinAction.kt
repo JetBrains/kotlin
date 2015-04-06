@@ -35,6 +35,7 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.codeStyle.CodeStyleManager
 import org.jetbrains.kotlin.idea.j2k.IdeaResolverForConverter
 import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.j2k.ConverterSettings
 import org.jetbrains.kotlin.j2k.IdeaReferenceSearcher
 import org.jetbrains.kotlin.j2k.JavaToKotlinConverter
@@ -59,7 +60,7 @@ public class JavaToKotlinAction : AnAction() {
 
         if (!ProgressManager.getInstance().runProcessWithProgressSynchronously(
                 {
-                    ApplicationManager.getApplication().runReadAction(::convert)
+                    runReadAction(::convert)
                 },
                 "Converting Java to Kotlin",
                 true,
@@ -70,7 +71,7 @@ public class JavaToKotlinAction : AnAction() {
             override fun run() {
                 CommandProcessor.getInstance().markCurrentCommandAsGlobal(project)
 
-                val newFiles = saveResults(javaFiles, convertedTexts!!, project)
+                val newFiles = saveResults(javaFiles, convertedTexts!!)
                 deleteFiles(javaFiles)
 
                 newFiles.singleOrNull()?.let {
@@ -87,7 +88,7 @@ public class JavaToKotlinAction : AnAction() {
 
     private fun selectedJavaFiles(e: AnActionEvent): Sequence<PsiJavaFile> {
         val virtualFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY) ?: return sequenceOf()
-        val project = CommonDataKeys.PROJECT.getData(e.getDataContext()) ?: return sequenceOf()
+        val project = e.getProject() ?: return sequenceOf()
         return allJavaFiles(virtualFiles, project)
     }
 
@@ -112,11 +113,11 @@ public class JavaToKotlinAction : AnAction() {
         return result
     }
 
-    private fun saveResults(javaFiles: List<PsiJavaFile>, convertedTexts: List<String>, project: Project): List<VirtualFile> {
+    private fun saveResults(javaFiles: List<PsiJavaFile>, convertedTexts: List<String>): List<VirtualFile> {
         val result = ArrayList<VirtualFile>()
-        for ((i, psiFile) in javaFiles.withIndex()) {
+        for ((psiFile, text) in javaFiles.zip(convertedTexts)) {
             ApplicationManager.getApplication().runWriteAction {
-                result.addIfNotNull(saveConversionResult(psiFile.getVirtualFile(), convertedTexts[i], project))
+                result.addIfNotNull(saveConversionResult(psiFile.getVirtualFile(), text, psiFile.getProject()))
             }
         }
         return result

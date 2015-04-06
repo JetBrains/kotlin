@@ -205,16 +205,15 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
         val file = PsiDocumentManager.getInstance(project).getPsiFile(document)
         if (file !is JetFile) return
 
-        assert(values.size() == 1)
         val referenceData = values.single().data
 
         processReferenceData(project, file, bounds.getStartOffset(), referenceData)
     }
 
-    public fun processReferenceData(project: Project, file: JetFile, boundStart: Int, referenceData: Array<KotlinReferenceData>) {
+    public fun processReferenceData(project: Project, file: JetFile, blockStart: Int, referenceData: Array<KotlinReferenceData>) {
         PsiDocumentManager.getInstance(project).commitAllDocuments()
 
-        val referencesPossibleToRestore = findReferencesToRestore(file, boundStart, referenceData)
+        val referencesPossibleToRestore = findReferencesToRestore(file, blockStart, referenceData)
 
         val selectedReferencesToRestore = showRestoreReferencesDialog(project, referencesPossibleToRestore)
         if (selectedReferencesToRestore.isEmpty()) return
@@ -224,11 +223,11 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
         })
     }
 
-    private fun findReferencesToRestore(file: PsiFile, boundStart: Int, referenceData: Array<out KotlinReferenceData>): List<ReferenceToRestoreData> {
+    private fun findReferencesToRestore(file: PsiFile, blockStart: Int, referenceData: Array<out KotlinReferenceData>): List<ReferenceToRestoreData> {
         if (file !is JetFile) return listOf()
 
         return referenceData.map {
-            val referenceElement = findReference(it, file, boundStart)
+            val referenceElement = findReference(it, file, blockStart)
             if (referenceElement != null)
                 createReferenceToRestoreData(referenceElement, it)
             else
@@ -236,9 +235,9 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
         }.filterNotNull()
     }
 
-    private fun findReference(data: KotlinReferenceData, file: JetFile, boundStart: Int): JetElement? {
-        val startOffset = data.startOffset + boundStart
-        val endOffset = data.endOffset + boundStart
+    private fun findReference(data: KotlinReferenceData, file: JetFile, blockStart: Int): JetElement? {
+        val startOffset = data.startOffset + blockStart
+        val endOffset = data.endOffset + blockStart
         val element = file.findElementAt(startOffset)
         val desiredRange = TextRange(startOffset, endOffset)
         var expression = element

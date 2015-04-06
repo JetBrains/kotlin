@@ -88,7 +88,7 @@ public class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
             if (rangeMarker == null) return RangeFilterResult.PROCESS
             if (!rangeMarker.isValid()) return RangeFilterResult.SKIP
             val range = TextRange(rangeMarker.getStartOffset(), rangeMarker.getEndOffset())
-            val elementRange = element.getTextRange()!!
+            val elementRange = element.getTextRange()
             return when {
                 range.contains(elementRange) -> RangeFilterResult.PROCESS
                 range.intersects(elementRange) -> RangeFilterResult.GO_INSIDE

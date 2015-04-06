@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.idea.codeInsight.KotlinReferenceData
 import org.jetbrains.kotlin.idea.editor.JetEditorOptions
 import org.jetbrains.kotlin.idea.j2k.IdeaResolverForConverter
 import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.j2k.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
@@ -66,6 +67,8 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
 
     public override fun processTransferableData(project: Project, editor: Editor, bounds: RangeMarker, caretOffset: Int, indented: Ref<Boolean>, values: List<TextBlockTransferableData>) {
         if (DumbService.getInstance(project).isDumb()) return
+        val jetEditorOptions = JetEditorOptions.getInstance()
+        if (!jetEditorOptions.isEnableJavaToKotlinConversion()) return
 
         val data = values.single()
         if (data !is CopiedJavaCode) return
@@ -94,7 +97,7 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
 
         var conversionResult: Pair<String?, Collection<KotlinReferenceData>>? = null
 
-        fun doConversionAndInsertImportsIfNoConversion(): Boolean {
+        fun doConversionAndInsertImportsIfUnchanged(): Boolean {
             conversionResult = doConversion()
 
             val text = conversionResult!!.first
@@ -106,19 +109,18 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
 
         val textLength = data.startOffsets.indices.sumBy { data.endOffsets[it] - data.startOffsets[it] }
         if (textLength < 1000) { // if the text to convert is short enough, try to do conversion without permission from user and skip the dialog if nothing converted
-            if (doConversionAndInsertImportsIfNoConversion()) return
+            if (doConversionAndInsertImportsIfUnchanged()) return
         }
 
-        val jetEditorOptions = JetEditorOptions.getInstance()!!
-        val needConvert = jetEditorOptions.isEnableJavaToKotlinConversion() && (jetEditorOptions.isDonTShowConversionDialog() || okFromDialog(project))
+        val needConvert = jetEditorOptions.isDonTShowConversionDialog() || okFromDialog(project)
         if (needConvert) {
             if (conversionResult == null) {
-                if (doConversionAndInsertImportsIfNoConversion()) return
+                if (doConversionAndInsertImportsIfUnchanged()) return
             }
             val (text, referenceData) = conversionResult!!
-            text!! // otherwise we should get true from doConversionAndInsertImportsIfNoConversion and return above
+            text!! // otherwise we should get true from doConversionAndInsertImportsIfUnchanged and return above
 
-            ApplicationManager.getApplication()!!.runWriteAction {
+            runWriteAction {
                 val startOffset = bounds.getStartOffset()
                 document.replaceString(startOffset, bounds.getEndOffset(), text)
 
@@ -168,6 +170,8 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
         for (o in list) {
             if (o is PsiElement) {
                 val originalText = o.getText()
+                originalCodeBuilder.append(originalText)
+
                 val result = results[resultIndex++]
                 if (result != null) {
                     convertedCodeBuilder.append(result.text)
@@ -178,11 +182,10 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
                 else { // failed to convert element to Kotlin, insert "as is"
                     convertedCodeBuilder.append(originalText)
                 }
-                originalCodeBuilder.append(originalText)
             }
             else {
-                convertedCodeBuilder.append(o as String)
                 originalCodeBuilder.append(o)
+                convertedCodeBuilder.append(o as String)
             }
         }
 
@@ -214,7 +217,7 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
         val fileText = StringBuilder {
             val packageName = sourceFile.getPackageName()
             if (!packageName.isEmpty()) {
-                append("package ").append(packageName).append("\n")
+                append("package $packageName\n")
             }
 
             val importList = sourceFile.getImportList()
@@ -222,37 +225,22 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
                 for (import in importList.getImportStatements()) {
                     val qualifiedName = import.getQualifiedName() ?: continue
                     if (import.isOnDemand()) {
-                        append("import ").append(qualifiedName).append(".*\n")
+                        append("import $qualifiedName.*\n")
                     }
                     else {
                         val fqName = FqNameUnsafe(qualifiedName)
                         // skip explicit imports of platform classes mapped into Kotlin classes
                         if (fqName.isSafe() && JavaToKotlinClassMap.INSTANCE.mapPlatformClass(fqName.toSafe()).isNotEmpty()) continue
-                        append("import ").append(qualifiedName).append("\n")
+                        append("import $qualifiedName\n")
                     }
                 }
                 //TODO: static imports
             }
 
 
-            val contextPrefix: String
-            val contextSuffix: String
-            when (parseContext) {
-                ParseContext.CODE_BLOCK -> {
-                    contextPrefix = "fun ${generateDummyFunctionName(text)}() {\n"
-                    contextSuffix = "\n}"
-                }
-
-                ParseContext.TOP_LEVEL -> {
-                    contextPrefix = ""
-                    contextSuffix = ""
-                }
-
-                //TODO: see KT-7264
-                else -> {
-                    contextPrefix = ""
-                    contextSuffix = ""
-                }
+            val (contextPrefix, contextSuffix) = when (parseContext) {
+                ParseContext.CODE_BLOCK -> "fun ${generateDummyFunctionName(text)}() {\n" to "\n}"
+                ParseContext.TOP_LEVEL -> "" to ""
             }
 
             append(contextPrefix)
