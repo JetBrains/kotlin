@@ -50,9 +50,16 @@ Also, we now load all array arguments as varargs, which may break for the same r
 Fictitious constructors for Java annotations sould be built as follows:
 * if there is an element named `value`, it is put first on the parameter list
 * if all other elements have default values, and `value` has an array type, it is marked `vararg` and has the type of the elements of the array
-* all other elements are added in alphabetical order (to have it deterministic)
 * parameters corresponding to all elements but `value` can not be used positionally, only named arguments are allowed for them (this requires adding a platform-specific check to `frontend.java`)
 * note that elements with default values should be transformed to parameters with default values
+
+There should be some notes about case when `value` parameter is marked `vararg` and no arguments are passed.
+Behavior will depend on presence of parameter's default value:
+* if it has no default value, then empty array is emitted in bytecode
+* if it has default value, then no value is emitted in bytecode, so default will be used
+
+**NOTE**: Behavior of the same code can change after adding default value to parameter and recompiling kotlin
+sources
 
 ## \[TBD later] Array Syntax Examples
 
