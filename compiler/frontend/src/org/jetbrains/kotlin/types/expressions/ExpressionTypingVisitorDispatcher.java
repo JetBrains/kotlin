@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.scopes.WritableScope;
 import org.jetbrains.kotlin.types.DeferredType;
 import org.jetbrains.kotlin.types.ErrorUtils;
+import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.JetTypeInfo;
 import org.jetbrains.kotlin.util.ReenteringLazyValueComputationException;
 import org.jetbrains.kotlin.utils.KotlinFrontEndException;
@@ -140,8 +141,16 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, E
                 result = expression.accept(visitor, context);
                 // Some recursive definitions (object expressions) must put their types in the cache manually:
                 if (context.trace.get(BindingContext.PROCESSED, expression)) {
-                    return JetTypeInfo.create(context.trace.getBindingContext().get(BindingContext.EXPRESSION_TYPE, expression),
-                                              result.getDataFlowInfo());
+                    JetType type = context.trace.getBindingContext().get(BindingContext.EXPRESSION_TYPE, expression);
+                    if (result instanceof LoopTypeInfo) {
+                        LoopTypeInfo loopTypeInfo = (LoopTypeInfo)result;
+                        return new LoopTypeInfo(type,
+                                                loopTypeInfo.getDataFlowInfo(),
+                                                loopTypeInfo.isJumpOutPossible(),
+                                                loopTypeInfo.getJumpFlowInfo());
+                    } else {
+                        return JetTypeInfo.create(type, result.getDataFlowInfo());
+                    }
                 }
 
                 if (result.getType() instanceof DeferredType) {
@@ -149,6 +158,12 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, E
                 }
                 if (result.getType() != null) {
                     context.trace.record(BindingContext.EXPRESSION_TYPE, expression, result.getType());
+                }
+                if (result instanceof LoopTypeInfo) {
+                    LoopTypeInfo loopTypeInfo = (LoopTypeInfo)result;
+                    if (loopTypeInfo.isJumpOutPossible()) {
+                        context.trace.record(BindingContext.EXPRESSION_JUMP_OUT_POSSIBLE, expression, true);
+                    }
                 }
 
             }

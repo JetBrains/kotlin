@@ -1,4 +1,4 @@
-Resolve target: value-parameter val p: kotlin.Any?
+Resolve target: value-parameter val p: kotlin.Any? smart-cast to kotlin.Any
 ----------------------------------------------
 fun x(): Boolean{}
 

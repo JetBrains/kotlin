@@ -305,22 +305,26 @@ public class ExpressionTypingServices {
 
     /**
      * Visits block statements propagating data flow information from the first to the last.
-     * Determines block returned type and data flow information at the end of the block.
+     * Determines block returned type and data flow information at the end of the block AND
+     * at the nearest jump point from the block beginning.
      */
-    /*package*/ JetTypeInfo getBlockReturnedTypeWithWritableScope(
+    /*package*/ LoopTypeInfo getBlockReturnedTypeWithWritableScope(
             @NotNull WritableScope scope,
             @NotNull List<? extends JetElement> block,
             @NotNull CoercionStrategy coercionStrategyForLastExpression,
             @NotNull ExpressionTypingContext context
     ) {
         if (block.isEmpty()) {
-            return JetTypeInfo.create(builtIns.getUnitType(), context.dataFlowInfo);
+            return new LoopTypeInfo(builtIns.getUnitType(), context.dataFlowInfo);
         }
 
         ExpressionTypingInternals blockLevelVisitor = ExpressionTypingVisitorDispatcher.createForBlock(expressionTypingComponents, scope);
         ExpressionTypingContext newContext = context.replaceScope(scope).replaceExpectedType(NO_EXPECTED_TYPE);
 
         JetTypeInfo result = JetTypeInfo.create(null, context.dataFlowInfo);
+        // Jump point data flow info
+        DataFlowInfo beforeJumpInfo = newContext.dataFlowInfo;
+        boolean jumpOutPossible = false;
         for (Iterator<? extends JetElement> iterator = block.iterator(); iterator.hasNext(); ) {
             JetElement statement = iterator.next();
             if (!(statement instanceof JetExpression)) {
@@ -338,12 +342,24 @@ public class ExpressionTypingServices {
             }
 
             DataFlowInfo newDataFlowInfo = result.getDataFlowInfo();
+            // If jump is not possible, we take new data flow info before jump
+            if (!jumpOutPossible) {
+                if (result instanceof LoopTypeInfo) {
+                    LoopTypeInfo loopTypeInfo = (LoopTypeInfo) result;
+                    beforeJumpInfo = loopTypeInfo.getJumpFlowInfo();
+                    jumpOutPossible = loopTypeInfo.isJumpOutPossible();
+                }
+                else {
+                    beforeJumpInfo = newDataFlowInfo;
+                }
+            }
             if (newDataFlowInfo != context.dataFlowInfo) {
                 newContext = newContext.replaceDataFlowInfo(newDataFlowInfo);
+                // We take current data flow info if jump there is not possible
             }
             blockLevelVisitor = ExpressionTypingVisitorDispatcher.createForBlock(expressionTypingComponents, scope);
         }
-        return result;
+        return new LoopTypeInfo(result.getType(), result.getDataFlowInfo(), jumpOutPossible, beforeJumpInfo);
     }
 
     private JetTypeInfo getTypeOfLastExpressionInBlock(

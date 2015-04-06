@@ -83,6 +83,7 @@ public interface BindingContext {
 
     WritableSlice<JetTypeReference, JetType> TYPE = Slices.createSimpleSlice();
     WritableSlice<JetExpression, JetType> EXPRESSION_TYPE = new BasicWritableSlice<JetExpression, JetType>(DO_NOTHING);
+    WritableSlice<JetExpression, Boolean> EXPRESSION_JUMP_OUT_POSSIBLE = new BasicWritableSlice<JetExpression, Boolean>(DO_NOTHING);
     WritableSlice<JetExpression, JetType> EXPECTED_EXPRESSION_TYPE = new BasicWritableSlice<JetExpression, JetType>(DO_NOTHING);
     WritableSlice<JetFunction, JetType> EXPECTED_RETURN_TYPE = new BasicWritableSlice<JetFunction, JetType>(DO_NOTHING);
     WritableSlice<JetExpression, DataFlowInfo> EXPRESSION_DATA_FLOW_INFO = new BasicWritableSlice<JetExpression, DataFlowInfo>(DO_NOTHING);

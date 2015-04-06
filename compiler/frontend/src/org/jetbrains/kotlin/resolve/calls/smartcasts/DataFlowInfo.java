@@ -25,8 +25,7 @@ import java.util.Map;
 import java.util.Set;
 
 public interface DataFlowInfo {
-    DataFlowInfo EMPTY = new DelegatingDataFlowInfo(null, ImmutableMap.<DataFlowValue, Nullability>of(),
-                                                    DelegatingDataFlowInfo.newTypeInfo());
+    DataFlowInfo EMPTY = new DelegatingDataFlowInfo(null, ImmutableMap.<DataFlowValue, Nullability>of(), DelegatingDataFlowInfo.newTypeInfo());
 
     @NotNull
     Map<DataFlowValue, Nullability> getCompleteNullabilityInfo();

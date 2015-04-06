@@ -22,9 +22,11 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.JetNodeTypes;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.Errors;
+import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
@@ -100,8 +102,11 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
         if (elseBranch == null) {
             if (thenBranch != null) {
-                return getTypeInfoWhenOnlyOneBranchIsPresent(
+                LoopTypeInfo result = getTypeInfoWhenOnlyOneBranchIsPresent(
                         thenBranch, thenScope, thenInfo, elseInfo, contextWithExpectedType, ifExpression, isStatement);
+                // If jump was possible, take condition check info as the jump info
+                return result.isJumpOutPossible() ?
+                       new LoopTypeInfo(result.getType(), result.getDataFlowInfo(), true, conditionDataFlowInfo) : result;
             }
             return DataFlowUtils.checkImplicitCast(components.builtIns.getUnitType(), ifExpression, contextWithExpectedType,
                                                    isStatement, thenInfo.or(elseInfo));
@@ -121,8 +126,12 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 Lists.newArrayList(false, false),
                 contextWithExpectedType, dataFlowInfoForArguments);
 
-        JetTypeInfo thenTypeInfo = BindingContextUtils.getRecordedTypeInfo(thenBranch, context.trace.getBindingContext());
-        JetTypeInfo elseTypeInfo = BindingContextUtils.getRecordedTypeInfo(elseBranch, context.trace.getBindingContext());
+        BindingContext bindingContext = context.trace.getBindingContext();
+        JetTypeInfo thenTypeInfo = BindingContextUtils.getRecordedTypeInfo(thenBranch, bindingContext);
+        JetTypeInfo elseTypeInfo = BindingContextUtils.getRecordedTypeInfo(elseBranch, bindingContext);
+        Boolean thenLoopBreakContinuePossible = bindingContext.get(BindingContext.EXPRESSION_JUMP_OUT_POSSIBLE, thenBranch);
+        Boolean elseLoopBreakContinuePossible = bindingContext.get(BindingContext.EXPRESSION_JUMP_OUT_POSSIBLE, elseBranch);
+        boolean loopBreakContinuePossible = (thenLoopBreakContinuePossible == Boolean.TRUE || elseLoopBreakContinuePossible == Boolean.TRUE);
         assert thenTypeInfo != null : "'Then' branch of if expression  was not processed: " + ifExpression;
         assert elseTypeInfo != null : "'Else' branch of if expression  was not processed: " + ifExpression;
 
@@ -149,11 +158,13 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         }
 
         JetType resultType = resolvedCall.getResultingDescriptor().getReturnType();
-        return DataFlowUtils.checkImplicitCast(resultType, ifExpression, contextWithExpectedType, isStatement, resultDataFlowInfo);
+        JetTypeInfo result = DataFlowUtils.checkImplicitCast(resultType, ifExpression, contextWithExpectedType, isStatement, resultDataFlowInfo);
+        // If break or continue was possible, take condition check info as the jump info
+        return new LoopTypeInfo(result.getType(), result.getDataFlowInfo(), loopBreakContinuePossible, conditionDataFlowInfo);
     }
 
     @NotNull
-    private JetTypeInfo getTypeInfoWhenOnlyOneBranchIsPresent(
+    private LoopTypeInfo getTypeInfoWhenOnlyOneBranchIsPresent(
             @NotNull JetExpression presentBranch,
             @NotNull WritableScopeImpl presentScope,
             @NotNull DataFlowInfo presentInfo,
@@ -164,7 +175,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
     ) {
         ExpressionTypingContext newContext = context.replaceDataFlowInfo(presentInfo).replaceExpectedType(NO_EXPECTED_TYPE)
                 .replaceContextDependency(INDEPENDENT);
-        JetTypeInfo typeInfo = components.expressionTypingServices.getBlockReturnedTypeWithWritableScope(
+        LoopTypeInfo typeInfo = components.expressionTypingServices.getBlockReturnedTypeWithWritableScope(
                 presentScope, Collections.singletonList(presentBranch), CoercionStrategy.NO_COERCION, newContext);
         JetType type = typeInfo.getType();
         DataFlowInfo dataFlowInfo;
@@ -174,12 +185,18 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             dataFlowInfo = typeInfo.getDataFlowInfo().or(otherInfo);
         }
         JetType typeForIfExpression = DataFlowUtils.checkType(components.builtIns.getUnitType(), ifExpression, context);
-        return DataFlowUtils.checkImplicitCast(typeForIfExpression, ifExpression, context, isStatement, dataFlowInfo);
+        JetTypeInfo result = DataFlowUtils.checkImplicitCast(typeForIfExpression, ifExpression, context, isStatement, dataFlowInfo);
+        return new LoopTypeInfo(result.getType(), result.getDataFlowInfo(), typeInfo.isJumpOutPossible(), typeInfo.getJumpFlowInfo());
     }
 
     @Override
     public JetTypeInfo visitWhileExpression(@NotNull JetWhileExpression expression, ExpressionTypingContext context) {
         return visitWhileExpression(expression, context, false);
+    }
+
+    private static boolean isTrueConstant(JetExpression condition) {
+        return (condition != null && condition.getNode().getElementType() == JetNodeTypes.BOOLEAN_CONSTANT &&
+                condition.getNode().findChildByType(JetTokens.TRUE_KEYWORD) != null);
     }
 
     public JetTypeInfo visitWhileExpression(JetWhileExpression expression, ExpressionTypingContext contextWithExpectedType, boolean isStatement) {
@@ -188,19 +205,30 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(
                 INDEPENDENT);
         JetExpression condition = expression.getCondition();
+        // Extract data flow info from condition itself without taking value into account
         DataFlowInfo dataFlowInfo = checkCondition(context.scope, condition, context);
 
         JetExpression body = expression.getBody();
+        LoopTypeInfo bodyTypeInfo = null;
         if (body != null) {
             WritableScopeImpl scopeToExtend = newWritableScopeImpl(context, "Scope extended in while's condition");
             DataFlowInfo conditionInfo = DataFlowUtils.extractDataFlowInfoFromCondition(condition, true, context).and(dataFlowInfo);
-            components.expressionTypingServices.getBlockReturnedTypeWithWritableScope(
+            bodyTypeInfo = components.expressionTypingServices.getBlockReturnedTypeWithWritableScope(
                     scopeToExtend, Collections.singletonList(body),
                     CoercionStrategy.NO_COERCION, context.replaceDataFlowInfo(conditionInfo));
         }
 
+        // Condition is false at this point only if there is no jumps outside
         if (!containsJumpOutOfLoop(expression, context)) {
             dataFlowInfo = DataFlowUtils.extractDataFlowInfoFromCondition(condition, false, context).and(dataFlowInfo);
+        }
+
+        // Special case: while (true)
+        // In this case we must record data flow information at the nearest break / continue and
+        // .and it with entrance data flow information, because while body until break is executed at least once in this case
+        // See KT-6284
+        if (bodyTypeInfo != null && isTrueConstant(condition)) {
+            dataFlowInfo = dataFlowInfo.and(bodyTypeInfo.getJumpFlowInfo());
         }
         return DataFlowUtils.checkType(components.builtIns.getUnitType(), expression, contextWithExpectedType, dataFlowInfo);
     }
@@ -248,6 +276,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
     public JetTypeInfo visitDoWhileExpression(@NotNull JetDoWhileExpression expression, ExpressionTypingContext context) {
         return visitDoWhileExpression(expression, context, false);
     }
+
     public JetTypeInfo visitDoWhileExpression(JetDoWhileExpression expression, ExpressionTypingContext contextWithExpectedType, boolean isStatement) {
         if (!isStatement) return DataFlowUtils.illegalStatementType(expression, contextWithExpectedType, facade);
 
@@ -255,13 +284,14 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT);
         JetExpression body = expression.getBody();
         JetScope conditionScope = context.scope;
+        LoopTypeInfo bodyTypeInfo = null;
         if (body instanceof JetFunctionLiteralExpression) {
             JetFunctionLiteralExpression function = (JetFunctionLiteralExpression) body;
             JetFunctionLiteral functionLiteral = function.getFunctionLiteral();
             if (!functionLiteral.hasParameterSpecification()) {
                 WritableScope writableScope = newWritableScopeImpl(context, "do..while body scope");
                 conditionScope = writableScope;
-                components.expressionTypingServices.getBlockReturnedTypeWithWritableScope(
+                bodyTypeInfo = components.expressionTypingServices.getBlockReturnedTypeWithWritableScope(
                         writableScope, functionLiteral.getBodyExpression().getStatements(), CoercionStrategy.NO_COERCION, context);
                 context.trace.record(BindingContext.BLOCK, function);
             }
@@ -279,17 +309,24 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             else {
                 block = Collections.<JetElement>singletonList(body);
             }
-            components.expressionTypingServices.getBlockReturnedTypeWithWritableScope(
+            bodyTypeInfo = components.expressionTypingServices.getBlockReturnedTypeWithWritableScope(
                     writableScope, block, CoercionStrategy.NO_COERCION, context);
         }
         JetExpression condition = expression.getCondition();
         DataFlowInfo conditionDataFlowInfo = checkCondition(conditionScope, condition, context);
         DataFlowInfo dataFlowInfo;
+        // Without jumps out, condition is entered and false, with jumps out, we know nothing about it
         if (!containsJumpOutOfLoop(expression, context)) {
             dataFlowInfo = DataFlowUtils.extractDataFlowInfoFromCondition(condition, false, context).and(conditionDataFlowInfo);
         }
         else {
             dataFlowInfo = context.dataFlowInfo;
+        }
+        // Here we must record data flow information at the end of the body (or at the first jump, to be precise) and
+        // .and it with entrance data flow information, because do-while body is executed at least once
+        // See KT-6283
+        if (bodyTypeInfo != null) {
+            dataFlowInfo = dataFlowInfo.and(bodyTypeInfo.getJumpFlowInfo());
         }
         return DataFlowUtils.checkType(components.builtIns.getUnitType(), expression, contextWithExpectedType, dataFlowInfo);
     }
@@ -510,15 +547,17 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetTypeInfo visitBreakExpression(@NotNull JetBreakExpression expression, ExpressionTypingContext context) {
+    public LoopTypeInfo visitBreakExpression(@NotNull JetBreakExpression expression, ExpressionTypingContext context) {
         LabelResolver.INSTANCE.resolveControlLabel(expression, context);
-        return DataFlowUtils.checkType(components.builtIns.getNothingType(), expression, context, context.dataFlowInfo);
+        JetTypeInfo result = DataFlowUtils.checkType(components.builtIns.getNothingType(), expression, context, context.dataFlowInfo);
+        return new LoopTypeInfo(result.getType(), result.getDataFlowInfo(), true, result.getDataFlowInfo());
     }
 
     @Override
-    public JetTypeInfo visitContinueExpression(@NotNull JetContinueExpression expression, ExpressionTypingContext context) {
+    public LoopTypeInfo visitContinueExpression(@NotNull JetContinueExpression expression, ExpressionTypingContext context) {
         LabelResolver.INSTANCE.resolveControlLabel(expression, context);
-        return DataFlowUtils.checkType(components.builtIns.getNothingType(), expression, context, context.dataFlowInfo);
+        JetTypeInfo result = DataFlowUtils.checkType(components.builtIns.getNothingType(), expression, context, context.dataFlowInfo);
+        return new LoopTypeInfo(result.getType(), result.getDataFlowInfo(), true, result.getDataFlowInfo());
     }
 
     @NotNull

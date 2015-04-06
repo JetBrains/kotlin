@@ -1,0 +1,5 @@
+package
+
+public fun foo(/*0*/ p: kotlin.String?): kotlin.Int
+internal fun x(): kotlin.Boolean
+internal fun y(): kotlin.Boolean
