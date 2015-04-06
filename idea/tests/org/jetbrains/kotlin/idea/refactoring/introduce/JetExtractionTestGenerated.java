@@ -2322,5 +2322,17 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/secondaryConstructorWithDefaultValue.kt");
             doIntroduceParameterTest(fileName);
         }
+
+        @TestMetadata("valueAtCallSite.kt")
+        public void testValueAtCallSite() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/valueAtCallSite.kt");
+            doIntroduceParameterTest(fileName);
+        }
+
+        @TestMetadata("valueAtCallSiteMultipleUsages.kt")
+        public void testValueAtCallSiteMultipleUsages() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/valueAtCallSiteMultipleUsages.kt");
+            doIntroduceParameterTest(fileName);
+        }
     }
 }

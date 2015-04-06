@@ -135,8 +135,9 @@ public class KotlinInplaceParameterIntroducer(
                     val parameterName = currentName ?: parameter.getName()
                     val parameterType = currentType ?: parameter.getTypeReference()!!.getText()
                     val modifier = if (valVar != JetValVar.None) "${valVar.name} " else ""
+                    val defaultValue = if (withDefaultValue) " = ${originalExpression.getText()}" else ""
 
-                    "$modifier$parameterName: $parameterType"
+                    "$modifier$parameterName: $parameterType$defaultValue"
                 }
                 else parameter.getText()
 
@@ -208,6 +209,17 @@ public class KotlinInplaceParameterIntroducer(
             previewerPanel.setBorder(EmptyBorder(2, 2, 6, 2))
 
             previewerPanel
+        }
+
+        addPanelControl {
+            val defaultValueCheckBox = NonFocusableCheckBox("Introduce default value")
+            defaultValueCheckBox.setSelected(descriptor.withDefaultValue)
+            defaultValueCheckBox.setMnemonic('d')
+            defaultValueCheckBox.addActionListener {
+                descriptor = descriptor.copy(withDefaultValue = defaultValueCheckBox.isSelected())
+                updatePreview(null, null)
+            }
+            defaultValueCheckBox
         }
 
         val occurrenceCount = descriptor.occurrencesToReplace.size()

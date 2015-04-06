@@ -65,6 +65,7 @@ public data class IntroduceParameterDescriptor(
         val callableDescriptor: FunctionDescriptor,
         val addedParameter: JetParameter,
         val parameterType: JetType,
+        val withDefaultValue: Boolean,
         val parametersUsages: Map<JetParameter, List<PsiReference>>,
         val occurrencesToReplace: List<JetExpression>
 ) {
@@ -114,7 +115,8 @@ fun IntroduceParameterDescriptor.performRefactoring() {
                     
                     val parameterInfo = JetParameterInfo(name = addedParameter.getName()!!,
                                                          type = parameterType,
-                                                         defaultValueForParameter = JetPsiUtil.deparenthesize(originalExpression),
+                                                         defaultValueForCall = if (withDefaultValue) "" else originalExpression.getText(),
+                                                         defaultValueForParameter = if (withDefaultValue) originalExpression else null,
                                                          valOrVar = valVar)
                     parameterInfo.currentTypeText = addedParameter.getTypeReference()?.getText() ?: "Any"
                     addParameter(parameterInfo)
@@ -209,12 +211,13 @@ public open class KotlinIntroduceParameterHandler: KotlinIntroduceHandlerBase() 
 
             val introduceParameterDescriptor =
                     configure(IntroduceParameterDescriptor(JetPsiUtil.deparenthesize(expression)!!,
-                                                           targetParent,
-                                                           functionDescriptor,
-                                                           addedParameter,
-                                                           parameterType,
-                                                           parametersUsages,
-                                                           occurrencesToReplace))
+                                                 targetParent,
+                                                 functionDescriptor,
+                                                 addedParameter,
+                                                 parameterType,
+                                                 false,
+                                                 parametersUsages,
+                                                 occurrencesToReplace))
             if (editor.getSettings().isVariableInplaceRenameEnabled() && !ApplicationManager.getApplication().isUnitTestMode()) {
                 with(PsiDocumentManager.getInstance(project)) {
                     commitDocument(editor.getDocument())

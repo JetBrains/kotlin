@@ -70,8 +70,10 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
                 override fun configure(descriptor: IntroduceParameterDescriptor): IntroduceParameterDescriptor {
                     val fileText = file.getText()
                     val singleReplace = InTextDirectivesUtils.isDirectiveDefined(fileText, "// SINGLE_REPLACE")
+                    val withDefaultValue = InTextDirectivesUtils.getPrefixedBoolean(fileText, "// WITH_DEFAULT_VALUE:") ?: true
                     return with (descriptor) {
-                        copy(occurrencesToReplace = if (singleReplace) Collections.singletonList(originalOccurrence) else occurrencesToReplace)
+                        copy(occurrencesToReplace = if (singleReplace) Collections.singletonList(originalOccurrence) else occurrencesToReplace,
+                             withDefaultValue = withDefaultValue)
                     }
                 }
             }
