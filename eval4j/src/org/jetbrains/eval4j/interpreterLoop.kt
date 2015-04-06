@@ -140,7 +140,7 @@ public fun interpreterLoop(
     }
 
     try {
-        while (true) {
+        @loop while (true) {
             val insnOpcode = currentInsn.getOpcode()
             val insnType = currentInsn.getType()
 
@@ -155,14 +155,14 @@ public fun interpreterLoop(
                     when (insnOpcode) {
                         GOTO -> {
                             goto((currentInsn as JumpInsnNode).label)
-                            continue
+                            continue@loop
                         }
 
                         RET -> {
                             val varNode = currentInsn as VarInsnNode
                             val address = frame.getLocal(varNode.`var`)
                             goto((address as LabelValue).value)
-                            continue
+                            continue@loop
                         }
 
                         // TODO: switch
@@ -197,14 +197,14 @@ public fun interpreterLoop(
                             if (interpreter.checkUnaryCondition(frame.getStackTop(), insnOpcode)) {
                                 frame.execute(currentInsn, interpreter)
                                 goto((currentInsn as JumpInsnNode).label)
-                                continue
+                                continue@loop
                             }
                         }
                         IF_ICMPEQ, IF_ICMPNE, IF_ICMPLT, IF_ICMPGE, IF_ICMPGT, IF_ICMPLE, IF_ACMPEQ, IF_ACMPNE -> {
                             if (interpreter.checkBinaryCondition(frame.getStackTop(1), frame.getStackTop(0), insnOpcode)) {
                                 frame.execute(currentInsn, interpreter)
                                 goto((currentInsn as JumpInsnNode).label)
-                                continue
+                                continue@loop
                             }
                         }
 
@@ -212,7 +212,7 @@ public fun interpreterLoop(
                             val exceptionValue = frame.getStackTop() as ObjectValue
                             val handled = handler.exceptionThrown(frame, currentInsn, exceptionValue)
                             if (handled != null) return handled
-                            if (exceptionCaught(exceptionValue)) continue
+                            if (exceptionCaught(exceptionValue)) continue@loop
                             return ExceptionThrown(exceptionValue, ExceptionKind.FROM_EVALUATED_CODE)
                         }
 
@@ -229,7 +229,7 @@ public fun interpreterLoop(
                         val handled = handler.exceptionThrown(frame, currentInsn,
                                 exceptionValue)
                         if (handled != null) return handled
-                        if (exceptionFromEvalCaught(exception, exceptionValue)) continue
+                        if (exceptionFromEvalCaught(exception, exceptionValue)) continue@loop
 
                         val exceptionType = if (e is BrokenCode) ExceptionKind.BROKEN_CODE else ExceptionKind.FROM_EVALUATOR
                         return ExceptionThrown(exceptionValue, exceptionType)
@@ -237,7 +237,7 @@ public fun interpreterLoop(
                     catch (e: ThrownFromEvaluatedCodeException) {
                         val handled = handler.exceptionThrown(frame, currentInsn, e.exception)
                         if (handled != null) return handled
-                        if (exceptionCaught(e.exception)) continue
+                        if (exceptionCaught(e.exception)) continue@loop
                         return ExceptionThrown(e.exception, ExceptionKind.FROM_EVALUATED_CODE)
                     }
                 }
