@@ -381,7 +381,7 @@ class CanvasState(val canvas: HTMLCanvasElement) {
     {
         jq(canvas).click {
             val mousePos = mousePos(it)
-            for (shape in shapes) {
+            @shapeLoop for (shape in shapes) {
                 if (shape is Button && mousePos in shape) {
                     val name = shape.src
                     shape.mouseClick()
@@ -401,7 +401,7 @@ class CanvasState(val canvas: HTMLCanvasElement) {
                             trafficLightDown.setGreen()
 
                         }
-                        else -> continue
+                        else -> continue@shapeLoop
                     }
 
                 }
