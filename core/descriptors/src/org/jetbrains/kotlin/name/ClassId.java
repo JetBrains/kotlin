@@ -113,15 +113,4 @@ public final class ClassId {
         if (packageFqName.isRoot()) return "/" + relativeClassName;
         return packageFqName.toString().replace('.', '/') + "/" + relativeClassName;
     }
-
-    @NotNull
-    public static ClassId fromString(@NotNull String string) {
-        int lastSlash = string.lastIndexOf("/");
-        if (lastSlash == -1) {
-            throw new IllegalArgumentException("Class id should contain slash: " + string);
-        }
-        FqName relativeClassName = new FqName(string.substring(lastSlash + 1));
-        FqName packageFqName = new FqName(string.substring(0, lastSlash).replace('/', '.'));
-        return new ClassId(packageFqName, relativeClassName, false);
-    }
 }
