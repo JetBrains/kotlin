@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 /**
  * Checks if this file is a compiled Kotlin class file (not necessarily ABI-compatible with the current plugin)
  */
-public fun isKotlinCompiledFile(file: VirtualFile): Boolean {
+public fun isKotlinJvmCompiledFile(file: VirtualFile): Boolean {
     if (file.getExtension() != JavaClassFileType.INSTANCE!!.getDefaultExtension()) {
         return false
     }
@@ -38,11 +38,13 @@ public fun isKotlinCompiledFile(file: VirtualFile): Boolean {
            header.syntheticClassKind != KotlinSyntheticClass.Kind.LOCAL_TRAIT_IMPL
 }
 
+public fun isKotlinJsMetaFile(file: VirtualFile): Boolean = file.getFileType() == KotlinJavaScriptMetaFileType
+
 /**
  * Checks if this file is a compiled Kotlin class file ABI-compatible with the current plugin
  */
 public fun isKotlinWithCompatibleAbiVersion(file: VirtualFile): Boolean {
-    if (!isKotlinCompiledFile(file)) return false
+    if (!isKotlinJvmCompiledFile(file)) return false
 
     val header = KotlinBinaryClassCache.getKotlinBinaryClass(file)?.getClassHeader()
     return header != null && header.isCompatibleAbiVersion
@@ -53,7 +55,7 @@ public fun isKotlinWithCompatibleAbiVersion(file: VirtualFile): Boolean {
  * which should NOT be decompiled (and, as a result, shown under the library in the Project view, be searchable via Find class, etc.)
  */
 public fun isKotlinInternalCompiledFile(file: VirtualFile): Boolean {
-    if (!isKotlinCompiledFile(file)) {
+    if (!isKotlinJvmCompiledFile(file)) {
         return false
     }
 
@@ -64,3 +66,6 @@ public fun isKotlinInternalCompiledFile(file: VirtualFile): Boolean {
     return header.kind == KotlinClassHeader.Kind.SYNTHETIC_CLASS ||
            (header.kind == KotlinClassHeader.Kind.CLASS && header.classKind != null && header.classKind != KotlinClass.Kind.CLASS)
 }
+
+public fun isKotlinJavaScriptInternalCompiledFile(file: VirtualFile): Boolean =
+        isKotlinJsMetaFile(file) && file.getNameWithoutExtension().contains('.')

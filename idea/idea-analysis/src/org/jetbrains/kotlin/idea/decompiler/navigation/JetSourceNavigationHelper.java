@@ -21,7 +21,6 @@ import com.google.common.collect.Sets;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
-import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.JavaPsiFacade;
@@ -44,7 +43,6 @@ import org.jetbrains.kotlin.context.MutableModuleContext;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.di.InjectorForLazyResolve;
-import org.jetbrains.kotlin.idea.caches.resolve.JsProjectDetector;
 import org.jetbrains.kotlin.idea.stubindex.JetFullClassNameIndex;
 import org.jetbrains.kotlin.idea.stubindex.JetTopLevelFunctionFqnNameIndex;
 import org.jetbrains.kotlin.idea.stubindex.JetTopLevelPropertyFqnNameIndex;
@@ -95,9 +93,7 @@ public class JetSourceNavigationHelper {
         Project project = decompiledDeclaration.getProject();
         ProjectFileIndex projectFileIndex = ProjectFileIndex.SERVICE.getInstance(project);
 
-        boolean isJsProject = JsProjectDetector.isJsProject(project);
-
-        if (!isJsProject && !projectFileIndex.isInLibraryClasses(libraryFile)) {
+        if (!projectFileIndex.isInLibraryClasses(libraryFile)) {
             return GlobalSearchScope.EMPTY_SCOPE;
         }
 
@@ -105,13 +101,6 @@ public class JetSourceNavigationHelper {
         for (OrderEntry entry : projectFileIndex.getOrderEntriesForFile(libraryFile)) {
             if (entry instanceof LibraryOrSdkOrderEntry) {
                 KotlinPackage.addAll(sourceRootSet, entry.getFiles(OrderRootType.SOURCES));
-            }
-        }
-
-        if (isJsProject) {
-            Library library = NavigationPackage.getKotlinJavascriptLibrary(libraryFile, project);
-            if (library != null) {
-                KotlinPackage.addAll(sourceRootSet, library.getFiles(OrderRootType.SOURCES));
             }
         }
 

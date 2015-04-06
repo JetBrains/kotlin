@@ -29,7 +29,7 @@ public class JetClassFileDecompiler extends ClassFileDecompilers.Full {
 
     @Override
     public boolean accepts(@NotNull VirtualFile file) {
-        return DecompilerPackage.isKotlinCompiledFile(file);
+        return DecompilerPackage.isKotlinJvmCompiledFile(file);
     }
 
     @NotNull
