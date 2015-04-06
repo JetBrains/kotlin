@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.util.findElementByComment
 import org.jetbrains.kotlin.utils.emptyOrSingletonList
 import java.io.File
 import java.util.Collections
@@ -87,28 +88,7 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
 
     protected fun doExtractFunctionTest(path: String) {
         doTest(path) { file ->
-            var explicitPreviousSibling: PsiElement? = null
-            file.accept(
-                    object: JetTreeVisitorVoid() {
-                        override fun visitComment(comment: PsiComment) {
-                            if (comment.getText() == "// SIBLING:") {
-                                val parent = comment.getParent()
-                                if (parent is JetDeclaration) {
-                                    explicitPreviousSibling = parent
-                                }
-                                else {
-                                    explicitPreviousSibling = PsiTreeUtil.skipSiblingsForward(
-                                            comment,
-                                            javaClass<PsiWhiteSpace>(),
-                                            javaClass<PsiComment>(),
-                                            javaClass<JetPackageDirective>()
-                                    )
-                                }
-                            }
-                        }
-                    }
-            )
-
+            val explicitPreviousSibling = file.findElementByComment("// SIBLING:")
             val fileText = file.getText() ?: ""
             val expectedNames = InTextDirectivesUtils.findListWithPrefixes(fileText, "// SUGGESTED_NAMES: ")
             val expectedDescriptors =

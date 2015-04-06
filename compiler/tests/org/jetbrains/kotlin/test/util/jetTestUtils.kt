@@ -18,6 +18,11 @@ package org.jetbrains.kotlin.test.util
 
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.psi.PsiComment
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.psi.*
 import java.io.File
 
 public fun String.trimTrailingWhitespacesAndAddNewlineAtEOF(): String =
@@ -61,4 +66,30 @@ public fun String.trimIndent(): String {
             line.substring(trimmedPrefix.length)
         }
     }.joinToString(separator = "\n")
+}
+
+public fun JetFile.findElementByComment(commentText: String): JetElement? {
+    var result: JetElement? = null
+    accept(
+            object : JetTreeVisitorVoid() {
+                override fun visitComment(comment: PsiComment) {
+                    if (comment.getText() == commentText) {
+                        val parent = comment.getParent()
+                        if (parent is JetDeclaration) {
+                            result = parent
+                        }
+                        else {
+                            result = PsiTreeUtil.skipSiblingsForward(
+                                    comment,
+                                    javaClass<PsiWhiteSpace>(),
+                                    javaClass<PsiComment>(),
+                                    javaClass<JetPackageDirective>()
+                            ) as? JetElement
+                        }
+                    }
+                }
+            }
+    )
+
+    return result
 }
