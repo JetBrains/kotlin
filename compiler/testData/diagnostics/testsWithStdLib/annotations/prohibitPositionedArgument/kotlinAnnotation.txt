@@ -1,0 +1,15 @@
+package
+
+Ann(value = "a": kotlin.String, x = IntegerValueType(1): IntegerValueType(1), y = 1.0.toDouble(): kotlin.Double) internal fun foo1(): kotlin.Unit
+Ann(value = "b": kotlin.String, x = IntegerValueType(2): IntegerValueType(2), y = 2.0.toDouble(): kotlin.Double) internal fun foo2(): kotlin.Unit
+Ann(value = "c": kotlin.String, x = IntegerValueType(3): IntegerValueType(3), y = 2.0.toDouble(): kotlin.Double) internal fun foo3(): kotlin.Unit
+
+internal final annotation class Ann : kotlin.Annotation {
+    public constructor Ann(/*0*/ x: kotlin.Int, /*1*/ value: kotlin.String, /*2*/ y: kotlin.Double)
+    internal final val value: kotlin.String
+    internal final val x: kotlin.Int
+    internal final val y: kotlin.Double
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

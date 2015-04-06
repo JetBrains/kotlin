@@ -58,6 +58,7 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
             Annotations.AnnotationWithVarargParameter.class,
             Annotations.JvmOverloads.class,
             Annotations.PlatformStatic.class,
+            Annotations.ProhibitPositionedArgument.class,
     })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Annotations extends AbstractJetDiagnosticsTestWithStdLib {
@@ -259,6 +260,45 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
             @TestMetadata("property.kt")
             public void testProperty() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/platformStatic/property.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/prohibitPositionedArgument")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ProhibitPositionedArgument extends AbstractJetDiagnosticsTestWithStdLib {
+            public void testAllFilesPresentInProhibitPositionedArgument() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/prohibitPositionedArgument"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("kotlinAnnotation.kt")
+            public void testKotlinAnnotation() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/prohibitPositionedArgument/kotlinAnnotation.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("tooManyArgs.kt")
+            public void testTooManyArgs() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/prohibitPositionedArgument/tooManyArgs.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("typeMismatch.kt")
+            public void testTypeMismatch() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/prohibitPositionedArgument/typeMismatch.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("withValue.kt")
+            public void testWithValue() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/prohibitPositionedArgument/withValue.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("withoutValue.kt")
+            public void testWithoutValue() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/prohibitPositionedArgument/withoutValue.kt");
                 doTest(fileName);
             }
         }
