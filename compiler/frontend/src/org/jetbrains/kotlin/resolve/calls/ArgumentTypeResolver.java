@@ -28,14 +28,20 @@ import org.jetbrains.kotlin.resolve.calls.context.CallResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.context.CheckValueArgumentsMode;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue;
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory;
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.receivers.QualifierReceiver;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.JetTypeInfo;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 
 import javax.inject.Inject;
 import java.util.Collections;
@@ -251,17 +257,36 @@ public class ArgumentTypeResolver {
         return defaultValue;
     }
 
+    /**
+     * Visits function call arguments and determines data flow information changes
+     */
     public void analyzeArgumentsAndRecordTypes(
             @NotNull CallResolutionContext<?> context
     ) {
         MutableDataFlowInfoForArguments infoForArguments = context.dataFlowInfoForArguments;
-        infoForArguments.setInitialDataFlowInfo(context.dataFlowInfo);
+        Call call = context.call;
+        ReceiverValue receiver = call.getExplicitReceiver();
+        DataFlowInfo initialDataFlowInfo = context.dataFlowInfo;
+        // QualifierReceiver is a thing like Collections. which has no type or value
+        if (receiver.exists() && !(receiver instanceof QualifierReceiver)) {
+            DataFlowValue receiverDataFlowValue = DataFlowValueFactory.createDataFlowValue(receiver, context);
+            // Additional "receiver != null" information for KT-5840
+            // Should be applied if we consider a safe call
+            // For an unsafe call, we should not do it,
+            // otherwise not-null will propagate to successive statements
+            // Sample: x?.foo(x.bar()) // Inside foo call, x is not-nullable
+            if (PsiUtilPackage.isSafeCall(call)) {
+                initialDataFlowInfo = initialDataFlowInfo.disequate(receiverDataFlowValue, DataFlowValue.NULL);
+            }
+        }
+        infoForArguments.setInitialDataFlowInfo(initialDataFlowInfo);
 
-        for (ValueArgument argument : context.call.getValueArguments()) {
+        for (ValueArgument argument : call.getValueArguments()) {
             JetExpression expression = argument.getArgumentExpression();
             if (expression == null) continue;
 
             CallResolutionContext<?> newContext = context.replaceDataFlowInfo(infoForArguments.getInfo(argument));
+            // Here we go inside arguments and determine additional data flow information for them
             JetTypeInfo typeInfoForCall = getArgumentTypeInfo(expression, newContext, SHAPE_FUNCTION_ARGUMENTS);
             infoForArguments.updateInfo(argument, typeInfoForCall.getDataFlowInfo());
         }

@@ -66,7 +66,7 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
                 context.trace, context.scope, context.dataFlowInfo, context.expectedType,
                 context.contextDependency, context.resolutionResultsCache, context.callChecker, context.additionalTypeChecker,
                 context.statementFilter,
-                context.isAnnotationContext, context.collectAllCandidates
+                context.isAnnotationContext, context.collectAllCandidates, context.insideCallChain
         );
     }
 
@@ -85,7 +85,7 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
     ) {
         return new ExpressionTypingContext(
                 trace, scope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache, callChecker, additionalTypeChecker,
-                statementFilter, isAnnotationContext, false);
+                statementFilter, isAnnotationContext, false, false);
     }
 
     private CompileTimeConstantChecker compileTimeConstantChecker;
@@ -101,10 +101,11 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull AdditionalTypeChecker additionalTypeChecker,
             @NotNull StatementFilter statementFilter,
             boolean isAnnotationContext,
-            boolean collectAllCandidates
+            boolean collectAllCandidates,
+            boolean insideSafeCallChain
     ) {
         super(trace, scope, expectedType, dataFlowInfo, contextDependency, resolutionResultsCache, callChecker, additionalTypeChecker,
-              statementFilter, isAnnotationContext, collectAllCandidates);
+              statementFilter, isAnnotationContext, collectAllCandidates, insideSafeCallChain);
     }
 
     @Override
@@ -116,11 +117,12 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull ContextDependency contextDependency,
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @NotNull StatementFilter statementFilter,
-            boolean collectAllCandidates
+            boolean collectAllCandidates,
+            boolean insideSafeCallChain
     ) {
         return new ExpressionTypingContext(trace, scope, dataFlowInfo,
                                            expectedType, contextDependency, resolutionResultsCache, callChecker, additionalTypeChecker,
-                                           statementFilter, isAnnotationContext, collectAllCandidates);
+                                           statementFilter, isAnnotationContext, collectAllCandidates, insideSafeCallChain);
     }
 
 ///////////// LAZY ACCESSORS

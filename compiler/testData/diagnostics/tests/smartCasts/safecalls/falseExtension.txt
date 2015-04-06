@@ -1,0 +1,4 @@
+package
+
+internal fun calc(/*0*/ x: kotlin.List<kotlin.String>?): kotlin.Int
+internal fun kotlin.String.foo(/*0*/ y: kotlin.Int): kotlin.Int

@@ -1,0 +1,13 @@
+package
+
+internal fun foo(/*0*/ y: MyClass): kotlin.Int
+
+kotlin.data() internal final class MyClass {
+    public constructor MyClass(/*0*/ x: kotlin.String?)
+    internal final val x: kotlin.String?
+    internal final /*synthesized*/ fun component1(): kotlin.String?
+    public final /*synthesized*/ fun copy(/*0*/ x: kotlin.String? = ...): MyClass
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

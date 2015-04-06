@@ -876,6 +876,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         JetSimpleNameExpression operationSign = expression.getOperationReference();
         assert operationSign.getReferencedNameElementType() == JetTokens.EXCLEXCL;
 
+        // TODO: something must be done for not to lose safe call chain information here
+        // See also CallExpressionResolver.getSimpleNameExpressionTypeInfo, .getQualifiedExpressionTypeInfo
         Call call = createCallForSpecialConstruction(expression, expression.getOperationReference(), Collections.singletonList(baseExpression));
         components.controlStructureTypingUtils.resolveSpecialConstructionAsCall(
                 call, "ExclExcl", Collections.singletonList("baseExpr"), Collections.singletonList(true), context, null);

@@ -52,10 +52,11 @@ public abstract class CallResolutionContext<Context extends CallResolutionContex
             @NotNull AdditionalTypeChecker additionalTypeChecker,
             @NotNull StatementFilter statementFilter,
             boolean isAnnotationContext,
-            boolean collectAllCandidates
+            boolean collectAllCandidates,
+            boolean insideSafeCallChain
     ) {
         super(trace, scope, expectedType, dataFlowInfo, contextDependency, resolutionResultsCache, callChecker, additionalTypeChecker,
-              statementFilter, isAnnotationContext, collectAllCandidates);
+              statementFilter, isAnnotationContext, collectAllCandidates, insideSafeCallChain);
         this.call = call;
         this.checkArguments = checkArguments;
         if (dataFlowInfoForArguments != null) {

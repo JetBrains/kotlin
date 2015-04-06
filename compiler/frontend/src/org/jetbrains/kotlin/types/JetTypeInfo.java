@@ -20,16 +20,23 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 
+/**
+ * This class is intended to transfer data flow analysis information in bottom-up direction,
+ * from AST children to parents. It stores a type of expression under analysis,
+ * current information about types and nullabilities.
+ *
+ * NB: it must be immutable together with all its descendants!
+ */
 public class JetTypeInfo {
     @NotNull
     public static JetTypeInfo create(@Nullable JetType type, @NotNull DataFlowInfo dataFlowInfo) {
         return new JetTypeInfo(type, dataFlowInfo);
     }
-    
+
     private final JetType type;
     private final DataFlowInfo dataFlowInfo;
 
-    private JetTypeInfo(@Nullable JetType type, @NotNull DataFlowInfo dataFlowInfo) {
+    protected JetTypeInfo(@Nullable JetType type, @NotNull DataFlowInfo dataFlowInfo) {
         this.type = type;
         this.dataFlowInfo = dataFlowInfo;
     }
