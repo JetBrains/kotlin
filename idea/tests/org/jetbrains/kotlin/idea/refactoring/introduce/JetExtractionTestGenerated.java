@@ -2215,9 +2215,45 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             doIntroduceParameterTest(fileName);
         }
 
+        @TestMetadata("classParameterUsedOutside.kt")
+        public void testClassParameterUsedOutside() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/classParameterUsedOutside.kt");
+            doIntroduceParameterTest(fileName);
+        }
+
+        @TestMetadata("classUnusedParameter.kt")
+        public void testClassUnusedParameter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/classUnusedParameter.kt");
+            doIntroduceParameterTest(fileName);
+        }
+
+        @TestMetadata("classUsedParameter.kt")
+        public void testClassUsedParameter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/classUsedParameter.kt");
+            doIntroduceParameterTest(fileName);
+        }
+
         @TestMetadata("defaultValueInParens.kt")
         public void testDefaultValueInParens() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/defaultValueInParens.kt");
+            doIntroduceParameterTest(fileName);
+        }
+
+        @TestMetadata("functionMultipleUnusedParameters.kt")
+        public void testFunctionMultipleUnusedParameters() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/functionMultipleUnusedParameters.kt");
+            doIntroduceParameterTest(fileName);
+        }
+
+        @TestMetadata("functionUnusedParameter.kt")
+        public void testFunctionUnusedParameter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/functionUnusedParameter.kt");
+            doIntroduceParameterTest(fileName);
+        }
+
+        @TestMetadata("functionUsedParameter.kt")
+        public void testFunctionUsedParameter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/functionUsedParameter.kt");
             doIntroduceParameterTest(fileName);
         }
 

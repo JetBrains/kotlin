@@ -24,6 +24,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.search.LocalSearchScope
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -35,18 +36,26 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.KotlinIntroduceHandlerBase
 import org.jetbrains.kotlin.idea.refactoring.introduce.selectElementsWithTargetParent
 import org.jetbrains.kotlin.idea.refactoring.introduce.showErrorHintByKey
+import org.jetbrains.kotlin.idea.search.usagesSearch.DefaultSearchHelper
+import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchTarget
+import org.jetbrains.kotlin.idea.search.usagesSearch.search
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.approximateWithResolvableType
+import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiUnifier
+import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getValueParameterList
+import org.jetbrains.kotlin.psi.psiUtil.getValueParameters
+import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.JetScopeUtils
 import org.jetbrains.kotlin.types.JetType
+import java.util.Collections
 import kotlin.test.fail
 
 public data class IntroduceParameterDescriptor(
@@ -54,7 +63,8 @@ public data class IntroduceParameterDescriptor(
         val callable: JetNamedDeclaration,
         val callableDescriptor: FunctionDescriptor,
         val addedParameter: JetParameter,
-        val parameterType: JetType
+        val parameterType: JetType,
+        val parametersToRemove: List<JetParameter>
 ) {
     val valVar: JetValVar
 
@@ -81,10 +91,13 @@ public data class IntroduceParameterDescriptor(
 fun IntroduceParameterDescriptor.performRefactoring() {
     runWriteAction {
         JetPsiUtil.deleteElementWithDelimiters(addedParameter)
-
+        
         val config = object: JetChangeSignatureConfiguration {
             override fun configure(originalDescriptor: JetMethodDescriptor, bindingContext: BindingContext): JetMethodDescriptor {
                 return originalDescriptor.modify {
+                    val parameters = callable.getValueParameters()
+                    parametersToRemove.map { parameters.indexOf(it) }.sortDescending().forEach { removeParameter(it) }
+                    
                     val parameterInfo = JetParameterInfo(name = addedParameter.getName()!!,
                                                          type = parameterType,
                                                          defaultValueForParameter = JetPsiUtil.deparenthesize(originalExpression),
@@ -103,7 +116,7 @@ fun IntroduceParameterDescriptor.performRefactoring() {
 }
 
 public class KotlinIntroduceParameterHandler: KotlinIntroduceHandlerBase() {
-    public fun invoke(project: Project, editor: Editor, expression: JetExpression, targetParent: JetNamedDeclaration) {
+    fun invoke(project: Project, editor: Editor, expression: JetExpression, targetParent: JetNamedDeclaration) {
         val psiFactory = JetPsiFactory(project)
 
         val parameterList = targetParent.getValueParameterList()
@@ -119,14 +132,24 @@ public class KotlinIntroduceParameterHandler: KotlinIntroduceHandlerBase() {
         val expressionType = context[BindingContext.EXPRESSION_TYPE, expression] ?: KotlinBuiltIns.getInstance().getAnyType()
         val parameterType = expressionType.approximateWithResolvableType(JetScopeUtils.getResolutionScope(targetParent, context), false)
 
-        val validatorContainer =
-                when (targetParent) {
-                    is JetFunction -> targetParent.getBodyExpression()
-                    is JetClass -> targetParent.getBody()
-                    else -> null
-                } ?: throw AssertionError("Body element is not found: ${JetPsiUtil.getElementTextWithContext(targetParent)}")
-        val nameValidator = JetNameValidatorImpl(validatorContainer, null, JetNameValidatorImpl.Target.PROPERTIES)
+        val body = when (targetParent) {
+                       is JetFunction -> targetParent.getBodyExpression()
+                       is JetClass -> targetParent.getBody()
+                       else -> null
+                   } ?: throw AssertionError("Body element is not found: ${JetPsiUtil.getElementTextWithContext(targetParent)}")
+        val nameValidator = JetNameValidatorImpl(body, null, JetNameValidatorImpl.Target.PROPERTIES)
         val suggestedNames = linkedSetOf(*JetNameSuggester.suggestNames(parameterType, nameValidator, "p"))
+
+        val parametersToRemove = (parameterList?.getParameters() ?: Collections.emptyList()).filter {
+            if (!it.hasValOrVarNode()) {
+                val usages = DefaultSearchHelper<JetParameter>()
+                        .newRequest(UsagesSearchTarget(element = it))
+                        .search()
+                        .toList()
+                usages.isNotEmpty() && usages.all { expression.isAncestor(it.getElement()) }
+            }
+            else false
+        }
 
         project.executeCommand(INTRODUCE_PARAMETER) {
             val renderedType = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(parameterType)
@@ -160,7 +183,8 @@ public class KotlinIntroduceParameterHandler: KotlinIntroduceHandlerBase() {
                                                  targetParent,
                                                  functionDescriptor,
                                                  addedParameter,
-                                                 parameterType)
+                                                 parameterType,
+                                                 parametersToRemove)
             if (editor.getSettings().isVariableInplaceRenameEnabled() && !ApplicationManager.getApplication().isUnitTestMode()) {
                 with(PsiDocumentManager.getInstance(project)) {
                     commitDocument(editor.getDocument())

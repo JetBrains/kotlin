@@ -83,12 +83,24 @@ public class KotlinInplaceParameterIntroducer(
         private val LOG = Logger.getInstance(javaClass<KotlinInplaceParameterIntroducer>())
     }
 
-    object PreviewDecorator {
-        protected val textAttributes: TextAttributes = with(TextAttributes()) {
-            setEffectType(EffectType.ROUNDED_BOX)
-            setEffectColor(JBColor.RED)
-            this
+    enum class PreviewDecorator {
+        FOR_ADD: PreviewDecorator() {
+            override val textAttributes: TextAttributes = with(TextAttributes()) {
+                setEffectType(EffectType.ROUNDED_BOX)
+                setEffectColor(JBColor.RED)
+                this
+            }
         }
+
+        FOR_REMOVAL: PreviewDecorator() {
+            override val textAttributes: TextAttributes = with(TextAttributes()) {
+                setEffectType(EffectType.STRIKEOUT)
+                setEffectColor(Color.BLACK)
+                this
+            }
+        }
+
+        protected abstract val textAttributes: TextAttributes
 
         fun applyToRange(range: TextRange, markupModel: MarkupModel) {
             markupModel.addRangeHighlighter(range.getStartOffset(),
@@ -104,6 +116,7 @@ public class KotlinInplaceParameterIntroducer(
 
     private fun updatePreview(currentName: String?, currentType: String?) {
         with (descriptor) {
+            val rangesToRemove = ArrayList<TextRange>()
             var addedRange: TextRange? = null
             val builder = StringBuilder()
 
@@ -129,6 +142,9 @@ public class KotlinInplaceParameterIntroducer(
                 if (parameter == addedParameter) {
                     addedRange = range
                 }
+                else if (parameter in parametersToRemove) {
+                    rangesToRemove.add(range)
+                }
 
                 if (i < parameters.lastIndex) {
                     builder.append(", ")
@@ -145,7 +161,8 @@ public class KotlinInplaceParameterIntroducer(
 
             val markupModel = DocumentMarkupModel.forDocument(document, myProject, true)
             markupModel.removeAllHighlighters()
-            addedRange?.let { PreviewDecorator.applyToRange(it, markupModel) }
+            rangesToRemove.forEach { PreviewDecorator.FOR_REMOVAL.applyToRange(it, markupModel) }
+            addedRange?.let { PreviewDecorator.FOR_ADD.applyToRange(it, markupModel) }
         }
         revalidate()
     }
