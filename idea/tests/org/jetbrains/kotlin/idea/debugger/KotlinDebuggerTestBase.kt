@@ -38,6 +38,7 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
     private var oldSettings: DebuggerSettings by Delegates.notNull()
     private var oldIsFilterForStdlibAlreadyAdded: Boolean by Delegates.notNull()
     private var oldDisableKotlinInternalClasses: Boolean by Delegates.notNull()
+    private var oldRenderDelegatedProperties: Boolean by Delegates.notNull()
 
     override fun initApplication() {
         super.initApplication()
@@ -53,6 +54,7 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
         val kotlinSettings = KotlinDebuggerSettings.getInstance()
         kotlinSettings.DEBUG_IS_FILTER_FOR_STDLIB_ALREADY_ADDED = false
         kotlinSettings.DEBUG_DISABLE_KOTLIN_INTERNAL_CLASSES = fileText.getValueForSetting("DISABLE_KOTLIN_INTERNAL_CLASSES", oldDisableKotlinInternalClasses)
+        kotlinSettings.DEBUG_RENDER_DELEGATED_PROPERTIES = fileText.getValueForSetting("RENDER_DELEGATED_PROPERTIES", oldRenderDelegatedProperties)
 
         val debuggerSettings = DebuggerSettings.getInstance()!!
         debuggerSettings.SKIP_SYNTHETIC_METHODS = fileText.getValueForSetting("SKIP_SYNTHETIC_METHODS", oldSettings.SKIP_SYNTHETIC_METHODS)
@@ -68,12 +70,14 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
     private fun saveDefaultSettings() {
         oldIsFilterForStdlibAlreadyAdded = KotlinDebuggerSettings.getInstance().DEBUG_IS_FILTER_FOR_STDLIB_ALREADY_ADDED
         oldDisableKotlinInternalClasses = KotlinDebuggerSettings.getInstance().DEBUG_DISABLE_KOTLIN_INTERNAL_CLASSES
+        oldRenderDelegatedProperties = KotlinDebuggerSettings.getInstance().DEBUG_RENDER_DELEGATED_PROPERTIES
         oldSettings = DebuggerSettings.getInstance()!!.clone()
     }
 
     private fun restoreDefaultSettings() {
         KotlinDebuggerSettings.getInstance().DEBUG_IS_FILTER_FOR_STDLIB_ALREADY_ADDED = oldIsFilterForStdlibAlreadyAdded
         KotlinDebuggerSettings.getInstance().DEBUG_DISABLE_KOTLIN_INTERNAL_CLASSES = oldDisableKotlinInternalClasses
+        KotlinDebuggerSettings.getInstance().DEBUG_RENDER_DELEGATED_PROPERTIES = oldRenderDelegatedProperties
 
         val debuggerSettings = DebuggerSettings.getInstance()!!
         debuggerSettings.SKIP_SYNTHETIC_METHODS = oldSettings.SKIP_SYNTHETIC_METHODS

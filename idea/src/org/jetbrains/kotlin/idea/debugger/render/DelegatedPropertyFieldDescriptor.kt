@@ -16,29 +16,50 @@
 
 package org.jetbrains.kotlin.idea.debugger.render
 
-import com.intellij.openapi.project.Project
-import com.sun.jdi.Field
-import org.jetbrains.kotlin.load.java.JvmAbi
-import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
-import com.sun.jdi.Value
-import com.intellij.debugger.ui.impl.watch.ValueDescriptorImpl
 import com.intellij.debugger.DebuggerContext
-import com.intellij.psi.PsiExpression
+import com.intellij.debugger.engine.evaluation.EvaluateException
+import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
 import com.intellij.debugger.settings.NodeRendererSettings
-import com.intellij.debugger.ui.tree.FieldDescriptor
+import com.intellij.debugger.ui.impl.watch.FieldDescriptorImpl
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiExpression
+import com.sun.jdi.Field
+import com.sun.jdi.Method
 import com.sun.jdi.ObjectReference
+import com.sun.jdi.Value
+import org.jetbrains.kotlin.codegen.PropertyCodegen
+import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.name.Name
 
 class DelegatedPropertyFieldDescriptor(
         project: Project,
-        val computedValueFromGetter: Value,
         val objectRef: ObjectReference,
-        val delegate: Field
-): ValueDescriptorImpl(project, computedValueFromGetter), FieldDescriptor {
-    override fun getField() = delegate
-    override fun getObject() = objectRef
+        val delegate: Field,
+        val renderDelegatedProperty: Boolean
+) : FieldDescriptorImpl(project, objectRef, delegate) {
 
     override fun calcValue(evaluationContext: EvaluationContextImpl?): Value? {
-        return computedValueFromGetter
+        if (evaluationContext == null) return null
+        if (!renderDelegatedProperty) return super.calcValue(evaluationContext)
+
+        val method = findGetterForDelegatedProperty()
+        val threadReference = evaluationContext.getSuspendContext().getThread()?.getThreadReference()
+        if (method == null || threadReference == null) {
+            return super.calcValue(evaluationContext)
+        }
+
+        try {
+            return evaluationContext.getDebugProcess().invokeInstanceMethod(
+                    evaluationContext,
+                    getObject(),
+                    method,
+                    listOf<Nothing>(),
+                    evaluationContext.getSuspendContext().getSuspendPolicy()
+            )
+        }
+        catch(e: EvaluateException) {
+            return e.getExceptionFromTargetVM()
+        }
     }
 
     override fun calcValueName(): String? {
@@ -54,12 +75,17 @@ class DelegatedPropertyFieldDescriptor(
     }
 
     override fun getName(): String {
-        return delegate.name().trimTrailing(JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX)
+        return delegate.name().removeSuffix(JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX)
     }
 
     override fun getDescriptorEvaluation(context: DebuggerContext?): PsiExpression? {
         return null
     }
 
+    private fun findGetterForDelegatedProperty(): Method? {
+        val fieldName = getName()
+        val getterName = PropertyCodegen.getterName(Name.identifier(fieldName))
+        return getObject().referenceType().methodsByName(getterName)?.firstOrNull()
+    }
 }
 
