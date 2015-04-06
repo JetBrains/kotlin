@@ -21,24 +21,16 @@ import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.compiled.ClassFileDecompilers;
 import com.intellij.psi.compiled.ClsStubBuilder;
-import com.intellij.psi.stubs.PsiFileStub;
-import com.intellij.util.indexing.FileContent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.decompiler.stubBuilder.KotlinClsStubBuilder;
+import org.jetbrains.kotlin.idea.decompiler.stubBuilder.KotlinJavascriptStubBuilder;
+import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil;
 
 public class KotlinJavascriptMetaFileDecompiler extends ClassFileDecompilers.Full {
-    private final ClsStubBuilder stubBuilder = new KotlinClsStubBuilder() {
-        @Nullable
-        @Override
-        public PsiFileStub<?> buildFileStub(@NotNull FileContent fileContent) {
-            return null;
-        }
-    };
+    private final ClsStubBuilder stubBuilder = new KotlinJavascriptStubBuilder();
 
     @Override
     public boolean accepts(@NotNull VirtualFile file) {
-        return file.getName().endsWith(".meta");
+        return file.getName().endsWith("." + KotlinJavascriptSerializationUtil.CLASS_METADATA_FILE_EXTENSION);
     }
 
     @NotNull
@@ -50,6 +42,7 @@ public class KotlinJavascriptMetaFileDecompiler extends ClassFileDecompilers.Ful
     @NotNull
     @Override
     public FileViewProvider createFileViewProvider(@NotNull VirtualFile file, @NotNull PsiManager manager, boolean physical) {
-        return new KotlinJavascriptMetaFileViewProvider(manager, file, physical, DecompilerPackage.isKotlinInternalCompiledFile(file));
+        return new KotlinJavascriptMetaFileViewProvider(manager, file, physical, DecompilerPackage.isKotlinJavaScriptInternalCompiledFile(
+                file));
     }
 }

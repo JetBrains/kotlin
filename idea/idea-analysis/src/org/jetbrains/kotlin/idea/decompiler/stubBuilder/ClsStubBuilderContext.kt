@@ -27,10 +27,12 @@ import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
 import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
+import org.jetbrains.kotlin.serialization.deserialization.AnnotationAndConstantLoader
 
 class ClsStubBuilderComponents(
         val classDataFinder: ClassDataFinder,
-        val annotationLoader: AnnotationLoaderForStubBuilder
+        val annotationLoader: AnnotationAndConstantLoader<ClassId, Unit>
 ) {
     fun createContext(
             nameResolver: NameResolver,

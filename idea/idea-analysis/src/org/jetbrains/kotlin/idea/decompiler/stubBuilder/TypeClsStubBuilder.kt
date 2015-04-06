@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.serialization.ProtoBuf.Type
 import org.jetbrains.kotlin.serialization.ProtoBuf.Type.Argument.Projection
 import org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameter.Variance
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
+import org.jetbrains.kotlin.types.DynamicTypeCapabilities
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.ArrayList
 
@@ -70,6 +71,15 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
     }
 
     private fun createClassReferenceTypeStub(parent: StubElement<out PsiElement>, type: Type) {
+        if (type.hasFlexibleTypeCapabilitiesId()) {
+            val id = c.nameResolver.getString(type.getFlexibleTypeCapabilitiesId())
+
+            if (id == DynamicTypeCapabilities.id) {
+                KotlinPlaceHolderStubImpl<JetDynamicType>(parent, JetStubElementTypes.DYNAMIC_TYPE)
+                return
+            }
+        }
+
         val classId = c.nameResolver.getClassId(type.getConstructor().getId())
         val fqName = classId.asSingleFqName().toUnsafe()
         val isFunctionType = KotlinBuiltIns.isExactFunctionType(fqName)
