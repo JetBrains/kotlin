@@ -186,6 +186,16 @@ public class SequenceTest {
     }
 
 
+    test fun sequenceFromIterator() {
+        val list = listOf(3, 2, 1, 0)
+        val iterator = list.iterator()
+        val sequence = iterator.sequence()
+        assertEquals(list, sequence.toList())
+        fails {
+            sequence.toList()
+        }
+    }
+
     test fun makeSequenceOneTimeConstrained() {
         val sequence = sequenceOf(1, 2, 3, 4)
         sequence.toList()
