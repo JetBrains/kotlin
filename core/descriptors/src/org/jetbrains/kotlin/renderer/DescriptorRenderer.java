@@ -39,7 +39,7 @@ public interface DescriptorRenderer extends Renderer<DeclarationDescriptor> {
     DescriptorRenderer COMPACT_WITH_SHORT_TYPES = new DescriptorRendererBuilder()
             .setModifiers()
             .setNameShortness(NameShortness.SHORT)
-            .setIncludeSynthesizedParameterNames(false).build();
+            .setParameterNameRenderingPolicy(ParameterNameRenderingPolicy.ONLY_NON_SYNTHESIZED).build();
 
     DescriptorRenderer STARTS_FROM_NAME = new DescriptorRendererBuilder()
             .setWithDefinedIn(false)
@@ -51,7 +51,7 @@ public interface DescriptorRenderer extends Renderer<DeclarationDescriptor> {
             .setModifiers()
             .setNameShortness(NameShortness.SHORT)
             .setWithoutTypeParameters(true)
-            .setWithoutFunctionParameterNames(true)
+            .setParameterNameRenderingPolicy(ParameterNameRenderingPolicy.NONE)
             .setReceiverAfterName(true)
             .setRenderCompanionObjectName(true)
             .setWithoutSuperTypes(true)
@@ -59,8 +59,10 @@ public interface DescriptorRenderer extends Renderer<DeclarationDescriptor> {
 
     DescriptorRenderer FQ_NAMES_IN_TYPES = new DescriptorRendererBuilder().build();
 
-    DescriptorRenderer SHORT_NAMES_IN_TYPES = new DescriptorRendererBuilder().setNameShortness(
-            NameShortness.SHORT).setIncludeSynthesizedParameterNames(false).build();
+    DescriptorRenderer SHORT_NAMES_IN_TYPES = new DescriptorRendererBuilder()
+            .setNameShortness(NameShortness.SHORT)
+            .setParameterNameRenderingPolicy(ParameterNameRenderingPolicy.ONLY_NON_SYNTHESIZED)
+            .build();
 
     DescriptorRenderer DEBUG_TEXT = new DescriptorRendererBuilder()
             .setDebugMode(true)
@@ -120,6 +122,10 @@ public interface DescriptorRenderer extends Renderer<DeclarationDescriptor> {
 
     enum OverrideRenderingPolicy {
         RENDER_OVERRIDE, RENDER_OPEN, RENDER_OPEN_OVERRIDE
+    }
+
+    enum ParameterNameRenderingPolicy {
+        ALL, ONLY_NON_SYNTHESIZED, NONE
     }
 
     enum Modifier {

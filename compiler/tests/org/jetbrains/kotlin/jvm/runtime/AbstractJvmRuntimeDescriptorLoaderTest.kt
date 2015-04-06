@@ -65,7 +65,7 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
                         "org.jetbrains.annotations.ReadOnly"
                 ).map { FqName(it) })
                 .setOverrideRenderingPolicy(DescriptorRenderer.OverrideRenderingPolicy.RENDER_OPEN_OVERRIDE)
-                .setIncludeSynthesizedParameterNames(false)
+                .setParameterNameRenderingPolicy(DescriptorRenderer.ParameterNameRenderingPolicy.NONE)
                 .setIncludePropertyConstant(false)
                 .setVerbose(true)
                 .build()
