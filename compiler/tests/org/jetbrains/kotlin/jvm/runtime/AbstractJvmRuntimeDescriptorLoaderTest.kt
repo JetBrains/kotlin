@@ -90,7 +90,7 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
         val actual = createReflectedPackageView(classLoader)
 
         val expected = LoadDescriptorUtil.loadTestPackageAndBindingContextFromJavaRoot(
-                tmpdir, getTestRootDisposable(), jdkKind, ConfigurationKind.ALL
+                tmpdir, getTestRootDisposable(), jdkKind, ConfigurationKind.ALL, true
         ).first
 
         val comparatorConfiguration = Configuration(

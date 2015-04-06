@@ -3,6 +3,7 @@
     <module name="name" outputDir="output">
         <sources path="s1"/>
         <sources path="s2"/>
+        <!-- Java source roots -->
         <!-- Classpath -->
         <!-- Output directory, commented out -->
         <!-- 
@@ -17,6 +18,7 @@
     <module name="name2" outputDir="output2">
         <sources path="s12"/>
         <sources path="s22"/>
+        <!-- Java source roots -->
         <!-- Classpath -->
         <!-- Output directory, commented out -->
         <!-- 

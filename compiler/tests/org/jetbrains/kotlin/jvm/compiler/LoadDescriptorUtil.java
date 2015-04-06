@@ -46,10 +46,7 @@ import org.jetbrains.kotlin.test.TestJdkKind;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static org.jetbrains.kotlin.test.JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations;
 
@@ -81,14 +78,25 @@ public final class LoadDescriptorUtil {
             @NotNull File javaRoot,
             @NotNull Disposable disposable,
             @NotNull TestJdkKind testJdkKind,
-            @NotNull ConfigurationKind configurationKind
+            @NotNull ConfigurationKind configurationKind,
+            boolean isBinaryRoot
     ) {
+        List<File> javaBinaryRoots = new ArrayList<File>();
+        javaBinaryRoots.add(JetTestUtils.getAnnotationsJar());
+
+        List<File> javaSourceRoots = new ArrayList<File>();
+        javaSourceRoots.add(new File("compiler/testData/loadJava/include"));
+        if (isBinaryRoot) {
+            javaBinaryRoots.add(javaRoot);
+        }
+        else {
+            javaSourceRoots.add(javaRoot);
+        }
         CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(
                 configurationKind,
                 testJdkKind,
-                JetTestUtils.getAnnotationsJar(),
-                javaRoot,
-                new File("compiler/testData/loadJava/include")
+                javaBinaryRoots,
+                javaSourceRoots
         );
         KotlinCoreEnvironment environment =
                 KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);

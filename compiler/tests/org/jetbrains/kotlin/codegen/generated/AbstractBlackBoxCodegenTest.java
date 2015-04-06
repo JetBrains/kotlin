@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.addJavaSourceRoot;
 import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.addJvmClasspathRoot;
 import static org.jetbrains.kotlin.codegen.CodegenTestUtil.compileJava;
 import static org.jetbrains.kotlin.load.kotlin.PackageClassUtils.getPackageClassFqName;
@@ -144,7 +145,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(
                 ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar()
         );
-        addJvmClasspathRoot(configuration, dirFile);
+        addJavaSourceRoot(configuration, dirFile);
         myEnvironment = KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
         loadFiles(ArrayUtil.toStringArray(ktFilePaths));
         classFileFactory =
