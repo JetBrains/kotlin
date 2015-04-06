@@ -59,6 +59,17 @@ class StringJVMTest {
         assertEquals(s, list[0])
     }
 
+    test fun testSplitByPattern() {
+        val s = "ab1cd2def3"
+        val isDigit = "\\d".toRegex()
+        assertEquals(listOf("ab", "cd", "def", ""), s.split(isDigit))
+        assertEquals(listOf("ab", "cd", "def3"), s.split(isDigit, 3))
+
+        fails {
+            s.split(isDigit, -1)
+        }
+    }
+
     test fun repeat() {
         fails{ "foo".repeat(-1) }
         assertEquals("", "foo".repeat(0))
