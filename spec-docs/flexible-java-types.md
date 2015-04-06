@@ -158,6 +158,8 @@ Goals:
 - `org.jetbrains.annotations.Mutable` - mutating methods can be used on this collection/iterable/iterator
 - `kotlin.jvm.KotlinSignature(str)` - `str` is a string representation of a more precise signature
 
+See [appendix](#appendix) for more details
+
 ### Enhancing signatures with annotated declarations
 
 NOTE: the intention is that if the enhanced signature is not compatible with the overridden signatures from superclasses,
@@ -350,3 +352,19 @@ the enhanced signature must be discarded and a warning issued.
 
 Checklist:
    - any platform signature should override any enhanced/propagated signature created for the same member or one of its overridden.
+
+### Appendix
+
+We can also support teh following annotations out-of-the-box:
+* [`android.support.annotation`](https://developer.android.com/reference/android/support/annotation/package-summary.html)
+ * [`android.support.annotation.Nullable`](https://developer.android.com/reference/android/support/annotation/Nullable.html)
+ * [`android.support.annotation.NonNull`](https://developer.android.com/reference/android/support/annotation/NonNull.html)
+* From [FindBugs](http://findbugs.sourceforge.net/manual/annotations.html) and [`javax.annotation`](https://code.google.com/p/jsr-305/source/browse/trunk/ri/src/main/java/javax/annotation/)
+ * `*.annotations.CheckForNull`
+ * `*.NonNull`
+ * `*.Nullable`
+* [`javax.validation.constraints`](http://docs.oracle.com/javaee/6/api/javax/validation/constraints/package-summary.html)
+ * `NotNull` and `NotNull.List`
+* [Project Lombok](http://projectlombok.org/features/NonNull.html)
+* [`org.eclipse.jdt.annotation`](https://wiki.eclipse.org/JDT_Core/Null_Analysis)
+* [`org.checkerframework.checker.nullness.qual`](http://types.cs.washington.edu/checker-framework/current/checker-framework-manual.html#nullness-checker)
