@@ -20,6 +20,10 @@ Companion object | see object
 || static field in outer class 
 Enum class | Enum
 Annotation class | @interface
+Data class | Class
+|| component functions
+|| equals / hashCode / toString
+|| copy
 Type parameter | Type parameter
 Constructor | Constructor
 || $default constructor (?)
@@ -32,6 +36,8 @@ Function | Method
 || generated overloads
 || delegation to trait's $Impl
 || static method in outer class (for companion objects)
+|| method in the package part
+|| synthetic accessors
 Receiver parameter | Parameter
 Property (delegating included) | special fake element
 || Field
@@ -44,6 +50,10 @@ Property setter | see Function
 Type | Type
 Local function | Class
 || Method
-Lambda / Function expression | Class
+Lambda, function expression, function reference, SAM adapter | Class
 || Method
+Property reference | Class
+|| Getter
+|| Setter
 Anonymous object | Class
+`when`-expression (over enums, strings) | Class
