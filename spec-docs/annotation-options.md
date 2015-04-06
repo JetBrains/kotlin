@@ -1,7 +1,7 @@
 # Annotation Options
 
 Goals:
-* Support annotation options, such as retention policy and trageting
+* Support annotation options, such as retention policy and targeting
 
 See [related discussion about Scala](http://lampwww.epfl.ch/~mihaylov/attributes.html).
 
@@ -69,7 +69,7 @@ No targets specified means that all targets are accepted.
 **TODO** Open question: what about traits/classes/objects?  
 **TODO** local variables are just like properties, but local  
 
-> Possbile platform-specific targets
+> Possible platform-specific targets
 * SINGLETON_FIELD for objects
 * PROPERTY_FIELD
 * (?) DEFAULT_FUNCTION
@@ -79,7 +79,7 @@ No targets specified means that all targets are accepted.
 
 ### Mapping onto Java
 
-Kotlin has more possible targets than Java, so there's an issue of mapping back and forth. The table above give a correspondence.
+Kotlin has more possible targets than Java, so there's an issue of mapping back and forth. The table above gives a correspondence.
 
 When we compile a Kotlin class to Java, we write a `@java.lang.annotation.Target` annotation that reflects the targets. For targets having no correspondent ones in Java (e.g. `EXPRESSION`) nothing is written to `j.l.a.Target`. If the set of Java targets is empy, `j.l.a.Target` is not written to the class file. 
 
@@ -108,7 +108,7 @@ target(EXPRESSION, TYPE)
 annotation class MyAnn
 ```
 
-> An alternative would be to make target a aproperty of `kotlin.annotation`, but then we'd
+> An alternative would be to make target a property of `kotlin.annotation`, but then we'd
 * lose the advantage of varargs, because there are more optional parameters
 * be non-uniform with Java, thus making it harder to figure how to make a Java annotation Kotlin-friendly
 
@@ -118,7 +118,7 @@ annotation class MyAnn
 
 It makes a lot of sense to make `RUNTIME` the default retention.
 
-Since `RetentionPolicy.CLASS` is not a good fit for Kotlin that has functions outside any class, it's better to have `BINARY` instead. Also, we could have use `java.lang.annotation.RetentionPolicy` anyways, since it's platform-specific. Thus, we need to have our own enum:
+Since `RetentionPolicy.CLASS` is not a good fit for Kotlin that has functions outside any class, it's better to have `BINARY` instead. Also, we could not use `java.lang.annotation.RetentionPolicy` anyways, since it's platform-specific. Thus, we need to have our own enum:
 
 ``` kotlin
 package kotlin
