@@ -43,7 +43,7 @@ public class RangeTo : IntrinsicMethod() {
 
     override fun toCallable(method: CallableMethod): Callable {
         val argType = nameToPrimitive(method.returnType.getInternalName().substringAfter("kotlin/").substringBefore("Range"))
-        return object : IntrinsicCallable(method.returnType, method.valueParameterTypes.map { argType }, nullOr(method.thisType, argType), nullOr(method.receiverType, argType)) {
+        return object : IntrinsicCallable(method.returnType, method.valueParameterTypes.map { argType }, nullOr(method.dispatchReceiverType, argType), nullOr(method.extensionReceiverType, argType)) {
             override fun beforeParameterGeneration(v: InstructionAdapter, value: StackValue?) {
                 v.anew(returnType)
                 v.dup()

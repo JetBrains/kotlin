@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.codegen.CallableMethod
 public class ToString : IntrinsicMethod() {
 
     override fun toCallable(method: CallableMethod): Callable {
-        val type = AsmUtil.stringValueOfType(method.thisType ?: method.receiverType)
+        val type = AsmUtil.stringValueOfType(method.dispatchReceiverType ?: method.extensionReceiverType)
         return createUnaryIntrinsicCallable(method, newThisType = type) {
             it.invokestatic("java/lang/String", "valueOf", "(" + type.getDescriptor() + ")Ljava/lang/String;", false)
         }

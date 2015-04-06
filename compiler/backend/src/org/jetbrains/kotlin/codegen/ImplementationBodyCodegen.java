@@ -954,7 +954,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             }
         }
 
-        for (Type argType : callableMethod.getArgumentTypes()) {
+        for (Type argType : callableMethod.getParameterTypes()) {
             iv.load(reg, argType);
             reg += argType.getSize();
         }

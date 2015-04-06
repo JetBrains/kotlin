@@ -952,7 +952,7 @@ public abstract class StackValue {
                 throw new UnsupportedOperationException("no setter specified");
             }
 
-            Type[] argumentTypes = setter.getArgumentTypes();
+            Type[] argumentTypes = setter.getParameterTypes();
             coerce(topOfStackType, argumentTypes[argumentTypes.length - 1], v);
             setter.invokeWithNotNullAssertion(v, state, resolvedSetCall);
             Type returnType = setter.getReturnType();
@@ -1282,14 +1282,14 @@ public abstract class StackValue {
             ReceiverParameterDescriptor extensionReceiver = descriptor.getExtensionReceiverParameter();
 
             if (extensionReceiver != null) {
-                return callableMethod != null ? callableMethod.getReceiverType() : typeMapper.mapType(extensionReceiver.getType());
+                return callableMethod != null ? callableMethod.getExtensionReceiverType() : typeMapper.mapType(extensionReceiver.getType());
             }
             else if (dispatchReceiver != null) {
                 if (AnnotationsPackage.isPlatformStaticInObjectOrClass(descriptor)) {
                     return Type.VOID_TYPE;
                 }
                 else {
-                    return callableMethod != null ? callableMethod.getThisType() : typeMapper.mapType(dispatchReceiver.getType());
+                    return callableMethod != null ? callableMethod.getDispatchReceiverType() : typeMapper.mapType(dispatchReceiver.getType());
                 }
             }
             else if (isLocalFunCall(callableMethod)) {

@@ -3595,7 +3595,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
             Callable callable = resolveToCallable(operationDescriptor, false, isGetter ? resolvedGetCall : resolvedSetCall);
             Callable callableMethod = resolveToCallableMethod(operationDescriptor, false, context);
-            Type[] argumentTypes = callableMethod.getArgumentTypes();
+            Type[] argumentTypes = callableMethod.getParameterTypes();
 
             StackValue collectionElementReceiver =
                     createCollectionElementReceiver(expression, receiver, array, arrayType, operationDescriptor, isGetter, resolvedGetCall, resolvedSetCall,

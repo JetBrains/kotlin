@@ -38,7 +38,7 @@ import org.jetbrains.org.objectweb.asm.util.Printer;
 
 import java.util.ArrayList;
 
-public class CallableMethod(override val owner: Type, private val defaultImplOwner: Type?, private val defaultImplParam: Type?, private val signature: JvmMethodSignature, private val invokeOpcode: Int, override val thisType: Type?, override val receiverType: Type?, override val generateCalleeType: Type?) : Callable {
+public class CallableMethod(override val owner: Type, private val defaultImplOwner: Type?, private val defaultImplParam: Type?, private val signature: JvmMethodSignature, private val invokeOpcode: Int, override val dispatchReceiverType: Type?, override val extensionReceiverType: Type?, override val generateCalleeType: Type?) : Callable {
 
     public fun getValueParameters(): List<JvmMethodParameterSignature> {
         return signature.getValueParameters()
@@ -51,7 +51,7 @@ public class CallableMethod(override val owner: Type, private val defaultImplOwn
         return signature.getAsmMethod()
     }
 
-    override val argumentTypes: Array<Type>
+    override val parameterTypes: Array<Type>
         get() = getAsmMethod().getArgumentTypes()
 
 
@@ -72,7 +72,7 @@ public class CallableMethod(override val owner: Type, private val defaultImplOwn
         val method = getAsmMethod();
         val desc = JetTypeMapper.getDefaultDescriptor(method,
                                                       if (invokeOpcode == INVOKESTATIC) null else defaultImplParam.getDescriptor(),
-                                                      receiverType != null);
+                                                      extensionReceiverType != null);
 
         if ("<init>".equals(method.getName())) {
             v.aconst(null)

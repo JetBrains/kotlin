@@ -28,15 +28,15 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 public trait Callable {
     public val owner: Type
 
-    public val thisType: Type?
+    public val dispatchReceiverType: Type?
 
-    public val receiverType: Type?
+    public val extensionReceiverType: Type?
 
     public val generateCalleeType: Type?
 
     public val valueParameterTypes: List<Type>
 
-    public val argumentTypes: Array<Type>
+    public val parameterTypes: Array<Type>
 
     public val returnType: Type
 
