@@ -59,4 +59,4 @@ Property reference | Class
 || Getter
 || Setter
 Anonymous object | Class
-`when`-expression (over enums, strings) | Class
+`when`-expression over enums | Class
