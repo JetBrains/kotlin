@@ -50,11 +50,11 @@ import kotlin.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle;
-import org.jetbrains.kotlin.idea.refactoring.RefactoringPackage;
 import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.*;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetNamedDeclaration;
+import org.jetbrains.kotlin.idea.core.refactoring.RefactoringPackage;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

@@ -28,17 +28,17 @@ import org.jetbrains.kotlin.idea.JetFileType
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import java.util.Collections
 import com.intellij.openapi.command.CommandProcessor
-import org.jetbrains.kotlin.idea.refactoring.getOrCreateKotlinFile
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.ClassKind.*
 import com.intellij.psi.PsiPackage
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.ide.util.DirectoryChooserUtil
 import java.util.HashMap
 import com.intellij.openapi.application.ApplicationManager
-import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.idea.core.refactoring.canRefactor
+import org.jetbrains.kotlin.idea.core.refactoring.getOrCreateKotlinFile
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
 
 enum class ClassKind(val keyword: String, val description: String) {

@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable
 
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import com.intellij.codeInsight.intention.IntentionAction
-import org.jetbrains.kotlin.idea.quickfix.QuickFixUtil
+import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.psi.JetArrayAccessExpression
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*

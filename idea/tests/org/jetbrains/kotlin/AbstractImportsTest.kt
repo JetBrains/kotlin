@@ -16,17 +16,16 @@
 
 package org.jetbrains.kotlin
 
-import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.test.JetTestUtils
-import org.jetbrains.kotlin.idea.JetWithJdkAndRuntimeLightProjectDescriptor
 import com.intellij.codeInsight.CodeInsightSettings
-import org.jetbrains.kotlin.idea.formatter.JetCodeStyleSettings
-import java.io.File
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.command.CommandProcessor
+import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.JetWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import com.intellij.openapi.command.CommandProcessor
-import com.intellij.openapi.application.ApplicationManager
-import org.jetbrains.kotlin.idea.util.ShortenReferences
+import org.jetbrains.kotlin.test.JetTestUtils
+import java.io.File
 
 public abstract class AbstractImportsTest : JetLightCodeInsightFixtureTestCase() {
     override fun getTestDataPath() = JetTestUtils.getHomeDirectory()

@@ -30,6 +30,7 @@ import com.intellij.openapi.ui.popup.*
 import com.intellij.openapi.ui.*
 import javax.swing.event.*
 import com.intellij.openapi.project.*
+import org.jetbrains.kotlin.idea.core.refactoring.checkConflictsInteractively
 
 public open class ExtractionEngineHelper {
     open fun adjustExtractionData(data: ExtractionData): ExtractionData = data

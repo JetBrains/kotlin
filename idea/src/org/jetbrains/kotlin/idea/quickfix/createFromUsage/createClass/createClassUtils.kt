@@ -44,7 +44,7 @@ import com.intellij.codeInsight.daemon.quickFix.CreateClassOrPackageFix
 import org.jetbrains.kotlin.idea.quickfix.DelegatingIntentionAction
 import org.jetbrains.kotlin.idea.JetBundle
 import com.intellij.psi.PsiPackage
-import org.jetbrains.kotlin.idea.refactoring.canRefactor
+import org.jetbrains.kotlin.idea.core.refactoring.canRefactor
 import com.intellij.psi.PsiClass
 import org.jetbrains.kotlin.descriptors.ClassKind as ClassDescriptorKind
 

@@ -34,11 +34,11 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.actions.JetAddImportAction
 import org.jetbrains.kotlin.idea.caches.JetShortNamesCache
-import org.jetbrains.kotlin.idea.caches.KotlinIndicesHelper
+import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.completion.isVisible
+import org.jetbrains.kotlin.idea.core.isVisible
+import org.jetbrains.kotlin.idea.core.psiClassToDescriptor
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
-import org.jetbrains.kotlin.idea.util.psiClassToDescriptor.psiClassToDescriptor
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetPsiUtil
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression

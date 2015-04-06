@@ -25,18 +25,20 @@ import org.jetbrains.kotlin.asJava.KotlinLightMethod
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.idea.caches.resolve.*
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
+import org.jetbrains.kotlin.idea.core.refactoring.CollectingValidator
+import org.jetbrains.kotlin.idea.core.refactoring.JetNameSuggester
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.JetFunctionDefinitionUsage
-
-import java.util.*
-import kotlin.properties.Delegates
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.idea.refactoring.CollectingValidator
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.idea.refactoring.JetNameSuggester
+import org.jetbrains.kotlin.psi.JetClass
+import org.jetbrains.kotlin.psi.JetFunction
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import java.util.Collections
+import java.util.HashSet
+import kotlin.properties.Delegates
 
 public class JetChangeSignatureData(
         override val baseDescriptor: FunctionDescriptor,

@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.refactoring.CallableRefactoring
 import org.jetbrains.kotlin.idea.refactoring.getAffectedCallables
 import com.intellij.util.containers.MultiMap
-import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
 import org.jetbrains.kotlin.idea.search.usagesSearch.DefaultSearchHelper
 import com.intellij.psi.PsiNamedElement
 import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchTarget
@@ -56,9 +55,10 @@ import org.jetbrains.kotlin.idea.util.supertypes
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
-import org.jetbrains.kotlin.idea.refactoring.reportDeclarationConflict
 import org.jetbrains.kotlin.idea.refactoring.getContainingScope
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
+import org.jetbrains.kotlin.idea.core.refactoring.checkConflictsInteractively
+import org.jetbrains.kotlin.idea.core.refactoring.reportDeclarationConflict
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 
 public class ConvertFunctionToPropertyIntention : JetSelfTargetingIntention<JetNamedFunction>(

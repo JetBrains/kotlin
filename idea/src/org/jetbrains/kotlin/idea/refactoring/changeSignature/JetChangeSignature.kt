@@ -31,7 +31,7 @@ import java.util.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.*
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.quickfix.QuickFixUtil
+import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import com.intellij.CommonBundle
 import com.intellij.refactoring.RefactoringBundle
 import org.jetbrains.kotlin.resolve.OverrideResolver

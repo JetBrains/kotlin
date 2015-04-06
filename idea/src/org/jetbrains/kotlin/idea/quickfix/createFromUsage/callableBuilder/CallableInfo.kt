@@ -17,22 +17,22 @@
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder
 
 import com.intellij.psi.PsiElement
-import java.util.Collections
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.JetType
-import kotlin.properties.Delegates
 import com.intellij.util.ArrayUtil
-import org.jetbrains.kotlin.idea.refactoring.JetNameSuggester
-import org.jetbrains.kotlin.idea.refactoring.EmptyValidator
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.idea.util.supertypes
-import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.kotlin.psi.JetTypeReference
+import org.jetbrains.kotlin.idea.core.refactoring.EmptyValidator
+import org.jetbrains.kotlin.idea.core.refactoring.JetNameSuggester
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.ClassInfo
 import org.jetbrains.kotlin.idea.util.makeNotNullable
+import org.jetbrains.kotlin.idea.util.supertypes
+import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.psi.JetTypeReference
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.Variance
+import java.util.Collections
+import kotlin.properties.Delegates
 
 /**
  * Represents a concrete type or a set of types yet to be inferred from an expression.

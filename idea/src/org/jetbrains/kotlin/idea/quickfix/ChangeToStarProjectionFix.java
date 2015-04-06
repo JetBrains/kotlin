@@ -23,6 +23,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.JetBundle;
+import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.psi.JetBinaryExpressionWithTypeRHS;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetTypeElement;
@@ -62,7 +63,8 @@ public class ChangeToStarProjectionFix extends JetIntentionAction<JetTypeElement
         return new JetSingleIntentionActionFactory() {
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
-                JetBinaryExpressionWithTypeRHS expression = QuickFixUtil.getParentElementOfType(diagnostic, JetBinaryExpressionWithTypeRHS.class);
+                JetBinaryExpressionWithTypeRHS expression = QuickFixUtil
+                        .getParentElementOfType(diagnostic, JetBinaryExpressionWithTypeRHS.class);
                 JetTypeReference typeReference;
                 if (expression == null) {
                     typeReference = QuickFixUtil.getParentElementOfType(diagnostic, JetTypeReference.class);

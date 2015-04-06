@@ -16,20 +16,21 @@
 
 package org.jetbrains.kotlin.idea.formatter
 
-import org.jetbrains.kotlin.JetNodeTypes.*
-import org.jetbrains.kotlin.lexer.JetTokens.*
-import com.intellij.psi.tree.TokenSet
-import com.intellij.psi.formatter.FormatterUtil
-import com.intellij.psi.tree.IElementType
-import com.intellij.psi.codeStyle.CodeStyleSettings
-import org.jetbrains.kotlin.idea.JetLanguage
-import com.intellij.formatting.Spacing
-import com.intellij.lang.ASTNode
 import com.intellij.formatting.ASTBlock
-import org.jetbrains.kotlin.idea.formatter.KotlinSpacingBuilder.CustomSpacingBuilder
+import com.intellij.formatting.Spacing
 import com.intellij.formatting.SpacingBuilder
 import com.intellij.formatting.SpacingBuilder.RuleBuilder
+import com.intellij.lang.ASTNode
+import com.intellij.psi.codeStyle.CodeStyleSettings
+import com.intellij.psi.formatter.FormatterUtil
+import com.intellij.psi.tree.IElementType
+import com.intellij.psi.tree.TokenSet
+import org.jetbrains.kotlin.JetNodeTypes.*
+import org.jetbrains.kotlin.idea.JetLanguage
+import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
+import org.jetbrains.kotlin.idea.formatter.KotlinSpacingBuilder.CustomSpacingBuilder
 import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.JetTokens.*
 
 val MODIFIERS_LIST_ENTRIES = TokenSet.orSet(TokenSet.create(ANNOTATION_ENTRY, ANNOTATION), MODIFIER_KEYWORDS)
 

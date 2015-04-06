@@ -16,27 +16,23 @@
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder
 
+import com.intellij.codeInsight.lookup.LookupElement
+import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.codeInsight.template.Expression
 import com.intellij.codeInsight.template.ExpressionContext
 import com.intellij.codeInsight.template.Result
 import com.intellij.codeInsight.template.TextResult
-import com.intellij.codeInsight.lookup.LookupElement
-import java.util.LinkedHashSet
 import com.intellij.psi.PsiDocumentManager
-import org.jetbrains.kotlin.psi.JetFile
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.psi.JetFunction
-import org.jetbrains.kotlin.psi.JetParameter
-import java.util.HashSet
-import org.jetbrains.kotlin.idea.refactoring.CollectingValidator
-import com.intellij.codeInsight.lookup.LookupElementBuilder
-import java.util.Collections
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.psi.JetClass
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.idea.core.refactoring.CollectingValidator
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import java.util.Collections
+import java.util.HashSet
+import java.util.LinkedHashSet
 
 /**
  * Special <code>Expression</code> for parameter names based on its type.

@@ -45,7 +45,6 @@ import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiField
 import com.intellij.psi.PsiReferenceExpression
 import com.intellij.psi.PsiElementFactory
-import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.psi.JetCallableReferenceExpression
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -54,9 +53,10 @@ import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.psi.JetExpressionImpl
 import org.jetbrains.kotlin.codegen.PropertyCodegen
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
-import org.jetbrains.kotlin.idea.refactoring.reportDeclarationConflict
 import org.jetbrains.kotlin.idea.refactoring.getContainingScope
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
+import org.jetbrains.kotlin.idea.core.refactoring.checkConflictsInteractively
+import org.jetbrains.kotlin.idea.core.refactoring.reportDeclarationConflict
 
 public class ConvertPropertyToFunctionIntention : JetSelfTargetingIntention<JetProperty>(
         "convert.property.to.function.intention", javaClass()

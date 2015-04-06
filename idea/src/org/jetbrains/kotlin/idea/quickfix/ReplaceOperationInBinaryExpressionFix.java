@@ -22,6 +22,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.JetBundle;
+import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.psi.JetBinaryExpressionWithTypeRHS;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetFile;
@@ -59,7 +60,8 @@ public abstract class ReplaceOperationInBinaryExpressionFix<T extends JetExpress
         return new JetSingleIntentionActionFactory() {
             @Override
             public JetIntentionAction<JetBinaryExpressionWithTypeRHS> createAction(Diagnostic diagnostic) {
-                JetBinaryExpressionWithTypeRHS expression = QuickFixUtil.getParentElementOfType(diagnostic, JetBinaryExpressionWithTypeRHS.class);
+                JetBinaryExpressionWithTypeRHS expression = QuickFixUtil
+                        .getParentElementOfType(diagnostic, JetBinaryExpressionWithTypeRHS.class);
                 if (expression == null) return null;
                 return new ReplaceOperationInBinaryExpressionFix<JetBinaryExpressionWithTypeRHS>(expression, " : ") {
                     @NotNull

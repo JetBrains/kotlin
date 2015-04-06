@@ -86,7 +86,7 @@ import org.jetbrains.kotlin.psi.JetReturnExpression
 import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.kotlin.psi.JetDelegatorToSuperClass
 import org.jetbrains.kotlin.psi.JetDelegationSpecifier
-import org.jetbrains.kotlin.idea.refactoring.getContextForContainingDeclarationBody
+import org.jetbrains.kotlin.idea.core.refactoring.getContextForContainingDeclarationBody
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.JetOperationReferenceExpression
 
