@@ -56,6 +56,8 @@ public class SyntheticKotlinBlock(
     override fun toString(): String {
         var child = subBlocks.first()
         var treeNode: ASTNode? = null
+
+        @loop
         while (treeNode == null) when (child) {
             is AbstractBlock -> {
                 treeNode = (child as AbstractBlock).getNode()
@@ -63,7 +65,7 @@ public class SyntheticKotlinBlock(
             is SyntheticKotlinBlock -> {
                 child = (child as SyntheticKotlinBlock).getSubBlocks().first()
             }
-            else -> break
+            else -> break@loop
         }
 
         val textRange = getTextRange()

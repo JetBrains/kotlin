@@ -34,9 +34,10 @@ object DocCommentConverter {
         val html = StringBuilder {
             appendJavadocElements(docComment.getDescriptionElements())
 
+            @tagsLoop
             for (tag in docComment.getTags()) {
                 when (tag.getName()) {
-                    "deprecated" -> continue
+                    "deprecated" -> continue@tagsLoop
                     "see" -> append("@see ${convertJavadocLink(tag.content())}\n")
                     else -> appendJavadocElements(tag.getChildren()).append("\n")
                 }
