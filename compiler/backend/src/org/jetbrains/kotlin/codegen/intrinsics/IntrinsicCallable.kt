@@ -64,7 +64,7 @@ public abstract class IntrinsicCallable(override val returnType: Type,
     }
 }
 
-fun binaryIntrinsic(returnType: Type, valueParameterType: Type, thisType: Type? = null, receiverType: Type? = null, lambda: IntrinsicCallable.(i: InstructionAdapter) -> Unit): IntrinsicCallable {
+fun createBinaryIntrinsicCallable(returnType: Type, valueParameterType: Type, thisType: Type? = null, receiverType: Type? = null, lambda: IntrinsicCallable.(i: InstructionAdapter) -> Unit): IntrinsicCallable {
     assert(AsmUtil.isPrimitive(returnType)) { "Return type of BinaryOp intrinsic should be of primitive type : " + returnType }
 
     return object : IntrinsicCallable(returnType, listOf(valueParameterType), thisType, receiverType) {
@@ -74,14 +74,19 @@ fun binaryIntrinsic(returnType: Type, valueParameterType: Type, thisType: Type? 
     }
 }
 
-public class UnaryIntrinsic(val callable: CallableMethod, val newReturnType: Type? = null, needPrimitiveCheck: Boolean = false, val newThisType: Type? = null, val invoke: UnaryIntrinsic.(v: InstructionAdapter) -> Unit) :
-        IntrinsicCallable(newReturnType ?: callable.returnType, callable.valueParameterTypes, newThisType ?: callable.thisType, callable.receiverType) {
+public class UnaryIntrinsic(
+        callable: CallableMethod,
+        newReturnType: Type? = null,
+        needPrimitiveCheck: Boolean = true,
+        newThisType: Type? = null,
+        private val invoke: UnaryIntrinsic.(v: InstructionAdapter) -> Unit
+) : IntrinsicCallable(newReturnType ?: callable.returnType, callable.valueParameterTypes, newThisType ?: callable.thisType, callable.receiverType) {
 
     init {
         if (needPrimitiveCheck) {
-            assert(AsmUtil.isPrimitive(returnType)) { "Return type of UnaryPlus intrinsic should be of primitive type : " + returnType }
+            assert(AsmUtil.isPrimitive(returnType)) { "Return type of UnaryPlus intrinsic should be of primitive type: $returnType" }
         }
-        assert(valueParameterTypes.isEmpty(), "Unary operation should not have any parameters")
+        assert(valueParameterTypes.isEmpty()) { "Unary operation should not have any parameters" }
     }
 
     override fun invokeIntrinsic(v: InstructionAdapter) {
@@ -89,8 +94,14 @@ public class UnaryIntrinsic(val callable: CallableMethod, val newReturnType: Typ
     }
 }
 
-public fun createUnaryCallable(callable: CallableMethod, newReturnType: Type? = null, needPrimitiveCheck: Boolean = false, invoke: IntrinsicCallable.(v: InstructionAdapter) -> Unit) : IntrinsicCallable {
-    return UnaryIntrinsic(callable, newReturnType, needPrimitiveCheck, invoke = invoke)
+public fun createUnaryIntrinsicCallable(
+        callable: CallableMethod,
+        newReturnType: Type? = null,
+        needPrimitiveCheck: Boolean = true,
+        newThisType: Type? = null,
+        invoke: IntrinsicCallable.(v: InstructionAdapter) -> Unit
+) : IntrinsicCallable {
+    return UnaryIntrinsic(callable, newReturnType, needPrimitiveCheck, newThisType, invoke = invoke)
 }
 
 public open class MappedCallable(val callable: CallableMethod, val invoke: IntrinsicCallable.(v: InstructionAdapter) -> Unit = {}) :
@@ -101,6 +112,6 @@ public open class MappedCallable(val callable: CallableMethod, val invoke: Intri
     }
 }
 
-public fun createMappedCallable(callable: CallableMethod, invoke: IntrinsicCallable.(v: InstructionAdapter) -> Unit) : IntrinsicCallable {
+public fun createIntrinsicCallable(callable: CallableMethod, invoke: IntrinsicCallable.(v: InstructionAdapter) -> Unit) : IntrinsicCallable {
     return MappedCallable(callable, invoke)
 }

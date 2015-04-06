@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.codegen.CallableMethod
 public class UnaryMinus : IntrinsicMethod() {
 
     override fun toCallable(method: CallableMethod): Callable {
-        return createUnaryCallable(method, numberFunctionOperandType(method.returnType), needPrimitiveCheck = true) {
+        return createUnaryIntrinsicCallable(method, numberFunctionOperandType(method.returnType), needPrimitiveCheck = true) {
             it.neg(returnType)
         }
     }

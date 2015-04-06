@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.codegen.CallableMethod
 
 public class JavaClassArray : IntrinsicMethod() {
     override fun toCallable(method: CallableMethod): Callable {
-        return createMappedCallable(method) {
+        return createIntrinsicCallable(method) {
             //do nothing all generated as vararg
         }
     }

@@ -25,7 +25,7 @@ public class Inv : IntrinsicMethod() {
 
     override fun toCallable(method: CallableMethod): Callable {
         val type = numberFunctionOperandType(method.returnType)
-        return UnaryIntrinsic(method, newThisType = type) {
+        return createUnaryIntrinsicCallable(method, newThisType = type) {
             if (returnType == Type.LONG_TYPE) {
                 it.lconst(-1)
             }

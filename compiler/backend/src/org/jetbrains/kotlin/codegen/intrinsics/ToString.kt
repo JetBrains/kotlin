@@ -24,7 +24,7 @@ public class ToString : IntrinsicMethod() {
 
     override fun toCallable(method: CallableMethod): Callable {
         val type = AsmUtil.stringValueOfType(method.thisType ?: method.receiverType)
-        return UnaryIntrinsic(method, newThisType = type) {
+        return createUnaryIntrinsicCallable(method, newThisType = type) {
             it.invokestatic("java/lang/String", "valueOf", "(" + type.getDescriptor() + ")Ljava/lang/String;", false)
         }
     }
