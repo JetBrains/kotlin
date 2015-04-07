@@ -3,5 +3,6 @@ ERROR: Required plugin option not present: org.jetbrains.kotlin.android:androidR
 Plugin "org.jetbrains.kotlin.android" usage:
   androidRes <path>          Android resources path (required)
   androidManifest <path>     Android manifest file (required)
+  supportV4 <path>           Support android-v4 library
 
 COMPILATION_ERROR

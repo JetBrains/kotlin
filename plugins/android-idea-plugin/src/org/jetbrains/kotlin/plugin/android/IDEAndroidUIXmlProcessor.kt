@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.plugin.android
 
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.module.Module
+import com.intellij.psi.JavaPsiFacade
 import org.jetbrains.kotlin.plugin.android.IDEAndroidResourceManager
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.plugin.android.AndroidXmlVisitor
@@ -28,6 +29,12 @@ import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider.Result
 
 class IDEAndroidUIXmlProcessor(val module: Module) : AndroidUIXmlProcessor(module.getProject()) {
+
+    init {
+        val scope = module.getModuleWithDependenciesAndLibrariesScope(false)
+        supportV4 = JavaPsiFacade.getInstance(module.getProject())
+                .findClasses(AndroidConst.SUPPORT_FRAGMENT_FQNAME, scope).isNotEmpty()
+    }
 
     override val resourceManager: IDEAndroidResourceManager = IDEAndroidResourceManager(module)
 

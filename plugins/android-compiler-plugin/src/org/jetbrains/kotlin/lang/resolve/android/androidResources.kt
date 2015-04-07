@@ -31,7 +31,8 @@ public abstract class AndroidResource(val id: String) {
 public class AndroidWidget(id: String, override val className: String) : AndroidResource(id) {
     override val mainProperties = listOf(
             "android.app.Activity" to "findViewById(0)",
-            "android.app.Fragment" to "getView().findViewById(0)")
+            "android.app.Fragment" to "getView().findViewById(0)",
+            "android.support.v4.app.Fragment" to "getView().findViewById(0)")
 
     override val viewProperties = listOf("android.view.View" to "findViewById(0)")
 

@@ -38,6 +38,8 @@ public object AndroidConfigurationKeys {
     public val ANDROID_RES_PATH: CompilerConfigurationKey<String> = CompilerConfigurationKey.create<String>("android resources search path")
 
     public val ANDROID_MANIFEST: CompilerConfigurationKey<String> = CompilerConfigurationKey.create<String>("android manifest file")
+
+    public val SUPPORT_V4: CompilerConfigurationKey<String> = CompilerConfigurationKey.create<String>("'true' if compiled with support-v4 library")
 }
 
 public class AndroidCommandLineProcessor : CommandLineProcessor {
@@ -46,16 +48,18 @@ public class AndroidCommandLineProcessor : CommandLineProcessor {
 
         public val RESOURCE_PATH_OPTION: CliOption = CliOption("androidRes", "<path>", "Android resources path")
         public val MANIFEST_FILE_OPTION: CliOption = CliOption("androidManifest", "<path>", "Android manifest file")
+        public val SUPPORT_V4_OPTION: CliOption = CliOption("supportV4", "<path>", "Support android-v4 library", required = false)
     }
 
     override val pluginId: String = ANDROID_COMPILER_PLUGIN_ID
 
-    override val pluginOptions: Collection<CliOption> = listOf(RESOURCE_PATH_OPTION, MANIFEST_FILE_OPTION)
+    override val pluginOptions: Collection<CliOption> = listOf(RESOURCE_PATH_OPTION, MANIFEST_FILE_OPTION, SUPPORT_V4_OPTION)
 
     override fun processOption(option: CliOption, value: String, configuration: CompilerConfiguration) {
         when (option) {
             RESOURCE_PATH_OPTION -> configuration.put(AndroidConfigurationKeys.ANDROID_RES_PATH, value)
             MANIFEST_FILE_OPTION -> configuration.put(AndroidConfigurationKeys.ANDROID_MANIFEST, value)
+            SUPPORT_V4_OPTION -> configuration.put(AndroidConfigurationKeys.SUPPORT_V4, value)
             else -> throw CliOptionProcessingException("Unknown option: ${option.name}")
         }
     }
@@ -73,9 +77,13 @@ public class AndroidComponentRegistrar : ComponentRegistrar {
     public override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
         val androidResPath = configuration.get(AndroidConfigurationKeys.ANDROID_RES_PATH)
         val androidManifest = configuration.get(AndroidConfigurationKeys.ANDROID_MANIFEST)
+        val supportV4 = configuration.get(AndroidConfigurationKeys.SUPPORT_V4) ?: "false"
 
         if (androidResPath != null && androidManifest != null) {
-            project.registerService(javaClass<AndroidUIXmlProcessor>(), CliAndroidUIXmlProcessor(project, androidManifest, androidResPath))
+            val xmlProcessor = CliAndroidUIXmlProcessor(project, androidManifest, androidResPath)
+            if (supportV4 == "true") xmlProcessor.supportV4 = true
+
+            project.registerService(javaClass<AndroidUIXmlProcessor>(), xmlProcessor)
             project.registerService(javaClass<AndroidResourceManager>(), CliAndroidResourceManager(project, androidManifest, androidResPath))
 
             ExternalDeclarationsProvider.registerExtension(project, CliAndroidDeclarationsProvider(project))

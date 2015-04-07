@@ -41,6 +41,12 @@ public object AndroidConst {
 
     val CLEAR_FUNCTION_NAME = "clearFindViewByIdCache"
 
+    val VIEW_FQNAME = "android.view.View"
+    val ACTIVITY_FQNAME = "android.app.Activity"
+    val FRAGMENT_FQNAME = "android.app.Fragment"
+    val SUPPORT_V4_PACKAGE = "android.support.v4"
+    val SUPPORT_FRAGMENT_FQNAME = "$SUPPORT_V4_PACKAGE.app.Fragment"
+
     val IGNORED_XML_WIDGET_TYPES = setOf("requestFocus", "merge", "tag", "check", "fragment")
 
     val ESCAPED_IDENTIFIERS = (JetTokens.KEYWORDS.getTypes() + JetTokens.SOFT_KEYWORDS.getTypes())

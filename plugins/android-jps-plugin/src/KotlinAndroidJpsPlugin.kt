@@ -23,6 +23,9 @@ import org.jetbrains.jps.model.module.JpsModule
 import java.io.File
 import org.jetbrains.jps.android.AndroidJpsUtil
 import com.intellij.util.PathUtil
+import org.jetbrains.jps.model.library.JpsOrderRootType
+import org.jetbrains.jps.model.module.JpsLibraryDependency
+import org.jetbrains.jps.model.module.JpsModuleDependency
 
 public class KotlinAndroidJpsPlugin : KotlinJpsCompilerArgumentsProvider {
     override fun getExtraArguments(moduleBuildTarget: ModuleBuildTarget, context: CompileContext): List<String> {
@@ -30,10 +33,25 @@ public class KotlinAndroidJpsPlugin : KotlinJpsCompilerArgumentsProvider {
         val pluginId = ANDROID_COMPILER_PLUGIN_ID
         val resPath = getAndroidResPath(module)
         val manifestFile = getAndroidManifest(module)
+        val supportV4 = if (isSupportV4LibraryAttached(module)) "true" else "false"
+
         return if (resPath != null && manifestFile != null) listOf(
                 getPluginOptionString(pluginId, RESOURCE_PATH_OPTION_NAME, resPath),
-                getPluginOptionString(pluginId, MANIFEST_FILE_OPTION_NAME, manifestFile))
+                getPluginOptionString(pluginId, MANIFEST_FILE_OPTION_NAME, manifestFile),
+                getPluginOptionString(pluginId, SUPPORT_V4_OPTION_NAME, supportV4))
         else listOf()
+    }
+
+    private fun isSupportV4LibraryAttached(module: JpsModule): Boolean {
+        return module.getDependenciesList().getDependencies().any { dep ->
+            when (dep) {
+                is JpsLibraryDependency ->
+                    dep.getLibrary()?.getFiles(JpsOrderRootType.COMPILED)?.any {
+                        it.name.startsWith("support-v4") && it.extension.toUpperCase() == "JAR"
+                    } ?: false
+                else -> false
+            }
+        }
     }
 
     override fun getClasspath(moduleBuildTarget: ModuleBuildTarget, context: CompileContext): List<String> {
@@ -72,6 +90,7 @@ public class KotlinAndroidJpsPlugin : KotlinJpsCompilerArgumentsProvider {
 
         private val RESOURCE_PATH_OPTION_NAME = "androidRes"
         private val MANIFEST_FILE_OPTION_NAME = "androidManifest"
+        private val SUPPORT_V4_OPTION_NAME = "supportV4"
 
         private fun getPluginOptionString(pluginId: String, key: String, value: String): String {
             return "plugin:$pluginId:$key=$value"

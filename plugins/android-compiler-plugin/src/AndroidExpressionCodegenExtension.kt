@@ -44,11 +44,15 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 private enum class AndroidClassType(val internalClassName: String, val supportsCache: Boolean = false) {
-    ACTIVITY : AndroidClassType("android/app/Activity", true)
-    FRAGMENT : AndroidClassType("android/app/Fragment", true)
-    VIEW : AndroidClassType("android/view/View")
+    ACTIVITY : AndroidClassType(AndroidConst.ACTIVITY_FQNAME.innerName, true)
+    FRAGMENT : AndroidClassType(AndroidConst.FRAGMENT_FQNAME.innerName, true)
+    SUPPORT_FRAGMENT : AndroidClassType(AndroidConst.SUPPORT_FRAGMENT_FQNAME.innerName, true)
+    VIEW : AndroidClassType(AndroidConst.VIEW_FQNAME.innerName)
     UNKNOWN : AndroidClassType("")
 }
+
+private val String.innerName: String
+    get() = replace('.', '/')
 
 public class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
     companion object {
@@ -145,7 +149,7 @@ public class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
                         v.getstatic(androidPackage.replace(".", "/") + "/R\$id", descriptor.getName().asString(), "I")
                         v.invokevirtual(androidClassType.internalClassName, "findViewById", "(I)Landroid/view/View;", false)
                     }
-                    AndroidClassType.FRAGMENT -> {
+                    AndroidClassType.FRAGMENT, AndroidClassType.SUPPORT_FRAGMENT -> {
                         receiver.put(Type.getType("L${androidClassType.internalClassName};"), v)
                         v.invokevirtual(androidClassType.internalClassName, "getView", "()Landroid/view/View;", false)
                         v.getstatic(androidPackage.replace(".", "/") + "/R\$id", descriptor.getName().asString(), "I")
@@ -169,9 +173,10 @@ public class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
 
     private fun getClassType(descriptor: ClassifierDescriptor): AndroidClassType {
         fun getClassTypeInternal(name: String): AndroidClassType? = when (name) {
-            "android.app.Activity" -> AndroidClassType.ACTIVITY
-            "android.app.Fragment" -> AndroidClassType.FRAGMENT
-            "android.view.View" -> AndroidClassType.VIEW
+            AndroidConst.ACTIVITY_FQNAME -> AndroidClassType.ACTIVITY
+            AndroidConst.FRAGMENT_FQNAME -> AndroidClassType.FRAGMENT
+            AndroidConst.SUPPORT_FRAGMENT_FQNAME -> AndroidClassType.SUPPORT_FRAGMENT
+            AndroidConst.VIEW_FQNAME -> AndroidClassType.VIEW
             else -> null
         }
 
@@ -291,7 +296,7 @@ public class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
                 loadId()
                 iv.invokevirtual(className, "findViewById", "(I)Landroid/view/View;", false)
             }
-            AndroidClassType.FRAGMENT -> {
+            AndroidClassType.FRAGMENT, AndroidClassType.SUPPORT_FRAGMENT -> {
                 iv.invokevirtual(className, "getView", "()Landroid/view/View;", false)
                 loadId()
                 iv.invokevirtual("android/view/View", "findViewById", "(I)Landroid/view/View;", false)

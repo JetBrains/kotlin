@@ -36,11 +36,16 @@ public class AndroidSubplugin : KotlinGradleSubplugin {
         val resourceDir = mainSourceSet.getRes().getSrcDirs().firstOrNull()
         val manifestFile = mainSourceSet.getManifest().getSrcFile()
 
+        val compileDependencies = project.getConfigurations().getByName("compile").getFiles()
+        val supportV4 = compileDependencies?.filter { it.name.startsWith("support-v4-") }?.isNotEmpty() ?: false
+        val supportV4Property = if (supportV4) "true" else "false"
+
         if (resourceDir != null) {
             resourceDir.listFiles { it.isDirectory() && it.name.startsWith("layout") }?.forEach { task.source(it) }
             return listOf(
                 SubpluginOption("androidRes", resourceDir.getAbsolutePath()),
-                SubpluginOption("androidManifest", manifestFile.getAbsolutePath())
+                SubpluginOption("androidManifest", manifestFile.getAbsolutePath()),
+                SubpluginOption("supportV4", supportV4Property)
             )
         }
 

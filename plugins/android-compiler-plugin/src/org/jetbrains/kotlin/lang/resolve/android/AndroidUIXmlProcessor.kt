@@ -66,6 +66,8 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
 
     protected abstract val cachedSources: CachedValue<List<AndroidSyntheticFile>>
 
+    var supportV4 = false
+
     private val cachedJetFiles: CachedValue<List<JetFile>> by Delegates.lazy {
         cachedValue {
             val psiManager = PsiManager.getInstance(project)
@@ -90,8 +92,9 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
             val clearCacheFile = renderSyntheticFile("clearCache") {
                 writePackage(AndroidConst.SYNTHETIC_PACKAGE)
                 writeAndroidImports()
-                writeClearCacheFunction("android.app.Activity")
-                writeClearCacheFunction("android.app.Fragment")
+                writeClearCacheFunction(AndroidConst.ACTIVITY_FQNAME)
+                writeClearCacheFunction(AndroidConst.FRAGMENT_FQNAME)
+                if (supportV4) writeClearCacheFunction(AndroidConst.SUPPORT_FRAGMENT_FQNAME)
             }
 
             listOf(clearCacheFile,
@@ -109,6 +112,7 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
 
             val mainLayoutFile = renderMainLayoutFile(layoutName, resources)
             val viewLayoutFile = renderViewLayoutFile(layoutName, resources)
+
             listOf(mainLayoutFile, viewLayoutFile)
         }.filterNotNull() + commonFiles
     }
@@ -138,7 +142,9 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
 
             for (res in resources) {
                 properties(res).forEach {
-                    writeSyntheticProperty(it.first, res, it.second)
+                    if (supportV4 || !it.first.startsWith(AndroidConst.SUPPORT_V4_PACKAGE)) {
+                        writeSyntheticProperty(it.first, res, it.second)
+                    }
                 }
             }
         }
