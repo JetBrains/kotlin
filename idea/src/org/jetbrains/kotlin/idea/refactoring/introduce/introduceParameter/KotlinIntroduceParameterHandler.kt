@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiUnifier
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
+import org.jetbrains.kotlin.idea.util.supertypes
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -103,7 +104,7 @@ public data class IntroduceParameterDescriptor(
     }
 }
 
-fun IntroduceParameterDescriptor.performRefactoring() {
+fun IntroduceParameterDescriptor.performRefactoring(parametersToRemove: List<JetParameter> = this.parametersToRemove) {
     runWriteAction {
         JetPsiUtil.deleteElementWithDelimiters(addedParameter)
         
@@ -204,58 +205,74 @@ public open class KotlinIntroduceParameterHandler: KotlinIntroduceHandlerBase() 
                 }
                 .filterNotNull()
 
-        project.executeCommand(INTRODUCE_PARAMETER) {
-            val psiFactory = JetPsiFactory(project)
-            
-            val renderedType = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(parameterType)
-            val newParameter = psiFactory.createParameter("${suggestedNames.first()}: $renderedType")
+        project.executeCommand(
+                INTRODUCE_PARAMETER,
+                null,
+                fun() {
+                    val psiFactory = JetPsiFactory(project)
+                    
+                    val renderedType = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(parameterType)
+                    val newParameter = psiFactory.createParameter("${suggestedNames.first()}: $renderedType")
 
-            val addedParameter = runWriteAction {
-                val newParameterList =
-                        if (parameterList == null) {
-                            val klass = targetParent as? JetClass
-                            val anchor = klass?.getTypeParameterList() ?: klass?.getNameIdentifier()
-                            assert(anchor != null, "Invalid declaration: ${JetPsiUtil.getElementTextWithContext(targetParent)}")
+                    val isTestMode = ApplicationManager.getApplication().isUnitTestMode()
+                    val inplaceIsAvailable = editor.getSettings().isVariableInplaceRenameEnabled() && !isTestMode
 
-                            val constructor = targetParent.addAfter(psiFactory.createPrimaryConstructor(), anchor) as JetPrimaryConstructor
-                            constructor.getValueParameterList()!!
+                    val addedParameter = if (inplaceIsAvailable) {
+                        runWriteAction {
+                            val newParameterList =
+                                    if (parameterList == null) {
+                                        val klass = targetParent as? JetClass
+                                        val anchor = klass?.getTypeParameterList() ?: klass?.getNameIdentifier()
+                                        assert(anchor != null, "Invalid declaration: ${JetPsiUtil.getElementTextWithContext(targetParent)}")
+
+                                        val constructor = targetParent.addAfter(psiFactory.createPrimaryConstructor(), anchor) as JetPrimaryConstructor
+                                        constructor.getValueParameterList()!!
+                                    }
+                                    else parameterList
+
+                            val lastParameter = newParameterList.getChildren().lastOrNull { it is JetParameter } as? JetParameter
+                            if (lastParameter != null) {
+                                val comma = newParameterList.addAfter(psiFactory.createComma(), lastParameter)
+                                newParameterList.addAfter(newParameter, comma) as JetParameter
+                            }
+                            else {
+                                val singleParameterList = psiFactory.createParameterList("(${newParameter.getText()})")
+                                (newParameterList.replace(singleParameterList) as JetParameterList).getParameters().first()
+                            }
                         }
-                        else parameterList
+                    }
+                    else newParameter
 
-                val lastParameter = newParameterList.getChildren().lastOrNull { it is JetParameter } as? JetParameter
-                if (lastParameter != null) {
-                    val comma = newParameterList.addAfter(psiFactory.createComma(), lastParameter)
-                    newParameterList.addAfter(newParameter, comma) as JetParameter
-                }
-                else {
-                    val singleParameterList = psiFactory.createParameterList("(${newParameter.getText()})")
-                    (newParameterList.replace(singleParameterList) as JetParameterList).getParameters().first()
-                }
-            }
+                    val introduceParameterDescriptor =
+                            configure(IntroduceParameterDescriptor(JetPsiUtil.deparenthesize(expression)!!,
+                                                                   targetParent,
+                                                                   functionDescriptor,
+                                                                   addedParameter,
+                                                                   parameterType,
+                                                                   false,
+                                                                   parametersUsages,
+                                                                   occurrencesToReplace))
+                    if (isTestMode) {
+                        introduceParameterDescriptor.performRefactoring()
+                        return
+                    }
 
-            val introduceParameterDescriptor =
-                    configure(IntroduceParameterDescriptor(JetPsiUtil.deparenthesize(expression)!!,
-                                                 targetParent,
-                                                 functionDescriptor,
-                                                 addedParameter,
-                                                 parameterType,
-                                                 false,
-                                                 parametersUsages,
-                                                 occurrencesToReplace))
-            if (editor.getSettings().isVariableInplaceRenameEnabled() && !ApplicationManager.getApplication().isUnitTestMode()) {
-                with(PsiDocumentManager.getInstance(project)) {
-                    commitDocument(editor.getDocument())
-                    doPostponedOperationsAndUnblockDocument(editor.getDocument())
-                }
+                    if (inplaceIsAvailable) {
+                        with(PsiDocumentManager.getInstance(project)) {
+                            commitDocument(editor.getDocument())
+                            doPostponedOperationsAndUnblockDocument(editor.getDocument())
+                        }
 
-                if (!KotlinInplaceParameterIntroducer(introduceParameterDescriptor, editor, project).startRefactoring(suggestedNames)) {
-                    introduceParameterDescriptor.performRefactoring()
+                        if (KotlinInplaceParameterIntroducer(introduceParameterDescriptor, editor, project)
+                                .startRefactoring(suggestedNames)) return
+                    }
+
+                    KotlinIntroduceParameterDialog(project,
+                                                   introduceParameterDescriptor,
+                                                   suggestedNames.copyToArray(),
+                                                   listOf(parameterType) + parameterType.supertypes()).show()
                 }
-            }
-            else {
-                introduceParameterDescriptor.performRefactoring()
-            }
-        }
+        )
     }
 
     override fun invoke(project: Project, editor: Editor, file: PsiFile, dataContext: DataContext?) {
