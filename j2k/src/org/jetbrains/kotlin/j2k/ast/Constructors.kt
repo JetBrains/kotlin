@@ -19,12 +19,19 @@ package org.jetbrains.kotlin.j2k.ast
 import org.jetbrains.kotlin.j2k.*
 import com.intellij.util.IncorrectOperationException
 
+abstract class Constructor(
+        annotations: Annotations,
+        modifiers: Modifiers,
+        public val parameterList: ParameterList,
+        protected val body: DeferredElement<Block>
+) : Member(annotations, modifiers)
+
 class PrimaryConstructor(
         annotations: Annotations,
         modifiers: Modifiers,
-        val parameterList: ParameterList,
-        val body: DeferredElement<Block>
-) : Member(annotations, modifiers) {
+        parameterList: ParameterList,
+        body: DeferredElement<Block>
+) : Constructor(annotations, modifiers, parameterList, body) {
 
     override fun generateCode(builder: CodeBuilder) { throw IncorrectOperationException() }
 
@@ -66,10 +73,10 @@ class PrimaryConstructorSignature(val annotations: Annotations, private val modi
 class SecondaryConstructor(
         annotations: Annotations,
         modifiers: Modifiers,
-        private val parameterList: ParameterList,
-        private val body: DeferredElement<Block>,
+        parameterList: ParameterList,
+        body: DeferredElement<Block>,
         private val thisOrSuperCall: DeferredElement<Expression>?
-) : Member(annotations, modifiers) {
+) : Constructor(annotations, modifiers, parameterList, body) {
 
     override fun generateCode(builder: CodeBuilder) {
         builder.append(annotations)

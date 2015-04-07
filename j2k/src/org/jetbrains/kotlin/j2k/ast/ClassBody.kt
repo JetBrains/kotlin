@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.j2k.ast
 
 import org.jetbrains.kotlin.j2k.*
 
-abstract class Member(val annotations: Annotations, val modifiers: Modifiers) : Element()
+abstract class Member(var annotations: Annotations, val modifiers: Modifiers) : Element()
 
 class ClassBody (
         val primaryConstructorSignature: PrimaryConstructorSignature?,

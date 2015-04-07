@@ -17,10 +17,11 @@
 package org.jetbrains.kotlin.j2k
 
 import com.intellij.psi.*
-import org.jetbrains.kotlin.j2k.ast.*
 import com.intellij.psi.util.PsiUtil
-import java.util.HashMap
+import org.jetbrains.kotlin.j2k.ast.*
+import org.jetbrains.kotlin.j2k.ast.Annotation
 import java.util.ArrayList
+import java.util.HashMap
 import java.util.HashSet
 
 class ConstructorConverter(
@@ -152,9 +153,9 @@ class ConstructorConverter(
                                   annotations: Annotations,
                                   modifiers: Modifiers,
                                   membersToRemove: MutableSet<PsiMember>,
-                                  postProcessBody: (Block) -> Block): Member? {
-        if (constructor == primaryConstructor) {
-            return convertPrimaryConstructor(annotations, modifiers, membersToRemove, postProcessBody)
+                                  postProcessBody: (Block) -> Block): Constructor? {
+        val result = if (constructor == primaryConstructor) {
+            convertPrimaryConstructor(annotations, modifiers, membersToRemove, postProcessBody)
         }
         else {
             if (constructor in constructorsToDrop) return null
@@ -178,9 +179,17 @@ class ConstructorConverter(
                 }).convertBlock(constructor.getBody()))
             }
 
-            return SecondaryConstructor(annotations, modifiers, params,
-                                        converter.deferredElement(::convertBody), thisOrSuperDeferred)
+            SecondaryConstructor(annotations, modifiers, params, converter.deferredElement(::convertBody), thisOrSuperDeferred)
         }
+
+        if (result.parameterList.parameters.any { it.defaultValue != null }) {
+            result.annotations += Annotations(listOf(Annotation(Identifier("overloads").assignNoPrototype(),
+                                                                listOf(),
+                                                                brackets = result is PrimaryConstructor,
+                                                                newLineAfter = false).assignNoPrototype())).assignNoPrototype()
+        }
+
+        return result
     }
 
     private fun findThisOrSuperCall(constructor: PsiMethod): PsiExpressionStatement? {
