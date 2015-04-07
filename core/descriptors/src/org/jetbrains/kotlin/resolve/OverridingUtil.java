@@ -230,7 +230,7 @@ public class OverridingUtil {
         }
     }
 
-    public static void bindOverride(CallableMemberDescriptor fromCurrent, CallableMemberDescriptor fromSupertype) {
+    public static void bindOverride(@NotNull CallableMemberDescriptor fromCurrent, @NotNull CallableMemberDescriptor fromSupertype) {
         fromCurrent.addOverriddenDescriptor(fromSupertype);
 
         for (ValueParameterDescriptor parameterFromCurrent : fromCurrent.getValueParameters()) {
@@ -274,7 +274,7 @@ public class OverridingUtil {
             switch (result) {
                 case OVERRIDABLE:
                     if (isVisible) {
-                        bindOverride(fromCurrent, fromSupertype);
+                        sink.bindOverride(fromCurrent, fromSupertype);
                     }
                     bound.add(fromSupertype);
                     break;
@@ -354,7 +354,7 @@ public class OverridingUtil {
         CallableMemberDescriptor fakeOverride =
                 mostSpecific.copy(current, modality, visibility, CallableMemberDescriptor.Kind.FAKE_OVERRIDE, false);
         for (CallableMemberDescriptor descriptor : effectiveOverridden) {
-            bindOverride(fakeOverride, descriptor);
+            sink.bindOverride(fakeOverride, descriptor);
         }
         sink.addFakeOverride(fakeOverride);
     }
@@ -568,10 +568,14 @@ public class OverridingUtil {
         );
     }
 
-    public interface DescriptorSink {
-        void addFakeOverride(@NotNull CallableMemberDescriptor fakeOverride);
+    public static abstract class DescriptorSink {
+        public void bindOverride(@NotNull CallableMemberDescriptor fromCurrent, @NotNull CallableMemberDescriptor fromSupertype) {
+            OverridingUtil.bindOverride(fromCurrent, fromSupertype);
+        }
 
-        void conflict(@NotNull CallableMemberDescriptor fromSuper, @NotNull CallableMemberDescriptor fromCurrent);
+        public abstract void addFakeOverride(@NotNull CallableMemberDescriptor fakeOverride);
+
+        public abstract void conflict(@NotNull CallableMemberDescriptor fromSuper, @NotNull CallableMemberDescriptor fromCurrent);
     }
 
     public static class OverrideCompatibilityInfo {
