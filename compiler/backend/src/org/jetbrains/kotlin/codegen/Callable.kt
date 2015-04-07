@@ -40,7 +40,7 @@ public trait Callable {
 
     public val returnType: Type
 
-    public fun invokeWithoutAssertions(v: InstructionAdapter)
+    public fun genInvokeInstruction(v: InstructionAdapter)
 
     public fun isStaticCall(): Boolean
 

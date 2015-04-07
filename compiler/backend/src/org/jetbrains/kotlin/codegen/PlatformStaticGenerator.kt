@@ -71,7 +71,7 @@ class PlatformStaticGenerator(
                                 false,
                                 codegen.getContext()
                         )
-                        syntheticOrOriginalMethod.invokeWithoutAssertions(iv)
+                        syntheticOrOriginalMethod.genInvokeInstruction(iv)
                         iv.areturn(asmMethod.getReturnType());
                     }
                 }

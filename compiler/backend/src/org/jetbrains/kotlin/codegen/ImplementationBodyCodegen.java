@@ -958,7 +958,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             iv.load(reg, argType);
             reg += argType.getSize();
         }
-        callableMethod.invokeWithoutAssertions(iv);
+        callableMethod.genInvokeInstruction(iv);
     }
 
     private void generateFieldForSingleton() {

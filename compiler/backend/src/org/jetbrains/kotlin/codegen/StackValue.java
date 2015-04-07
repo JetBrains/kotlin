@@ -910,7 +910,7 @@ public abstract class StackValue {
                 throw new UnsupportedOperationException("no getter specified");
             }
 
-            getter.invokeWithoutAssertions(v);
+            getter.genInvokeInstruction(v);
             coerceTo(type, v);
         }
 
@@ -963,7 +963,7 @@ public abstract class StackValue {
 
             Type[] argumentTypes = setter.getParameterTypes();
             coerce(topOfStackType, argumentTypes[argumentTypes.length - 1], v);
-            setter.invokeWithoutAssertions(v);
+            setter.genInvokeInstruction(v);
             Type returnType = setter.getReturnType();
             if (returnType != Type.VOID_TYPE) {
                 pop(v, returnType);
@@ -1029,7 +1029,7 @@ public abstract class StackValue {
                 coerceTo(type, v);
             }
             else {
-                getter.invokeWithoutAssertions(v);
+                getter.genInvokeInstruction(v);
                 coerce(getter.getReturnType(), type, v);
             }
         }
@@ -1042,7 +1042,7 @@ public abstract class StackValue {
                 v.visitFieldInsn(isStaticStore ? PUTSTATIC : PUTFIELD, backingFieldOwner.getInternalName(), fieldName, this.type.getDescriptor());
             }
             else {
-                setter.invokeWithoutAssertions(v);
+                setter.genInvokeInstruction(v);
             }
         }
 

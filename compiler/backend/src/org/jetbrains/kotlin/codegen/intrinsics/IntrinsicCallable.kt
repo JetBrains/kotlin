@@ -36,7 +36,7 @@ public open class IntrinsicCallable(override val returnType: Type,
 
     }
 
-    override fun invokeWithoutAssertions(v: InstructionAdapter) {
+    override fun genInvokeInstruction(v: InstructionAdapter) {
         invokeIntrinsic(v)
     }
 

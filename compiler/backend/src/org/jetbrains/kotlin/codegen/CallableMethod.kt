@@ -55,11 +55,11 @@ public class CallableMethod(override val owner: Type, private val defaultImplOwn
         get() = getAsmMethod().getArgumentTypes()
 
 
-    public override fun invokeWithoutAssertions(v: InstructionAdapter) {
+    public override fun genInvokeInstruction(v: InstructionAdapter) {
         v.visitMethodInsn(invokeOpcode, owner.getInternalName(), getAsmMethod().getName(), getAsmMethod().getDescriptor())
     }
 
-    private fun invokeDefault(v: InstructionAdapter) {
+    public fun genInvokeDefaultInstruction(v: InstructionAdapter) {
         if (defaultImplOwner == null || defaultImplParam == null) {
             throw IllegalStateException()
         }
@@ -77,11 +77,6 @@ public class CallableMethod(override val owner: Type, private val defaultImplOwn
             v.visitMethodInsn(INVOKESTATIC, defaultImplOwner.getInternalName(),
                               method.getName() + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, desc, false);
         }
-    }
-
-    public fun invokeDefaultWithNotNullAssertion(v: InstructionAdapter, state: GenerationState, resolvedCall: ResolvedCall<*>) {
-        invokeDefault(v)
-        AsmUtil.genNotNullAssertionForMethod(v, state, resolvedCall)
     }
 
     override val returnType: Type

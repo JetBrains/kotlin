@@ -41,10 +41,10 @@ public abstract class CallGenerator {
                 @NotNull ExpressionCodegen codegen
         ) {
             if (!callDefault) {
-                callableMethod.invokeWithoutAssertions(codegen.v);
+                callableMethod.genInvokeInstruction(codegen.v);
             }
             else {
-                ((CallableMethod)callableMethod).invokeDefaultWithNotNullAssertion(codegen.v, codegen.getState(), resolvedCall);
+                ((CallableMethod)callableMethod).genInvokeDefaultInstruction(codegen.v);
             }
         }
 
@@ -52,7 +52,7 @@ public abstract class CallGenerator {
         public void genCallWithoutAssertions(
                 @NotNull CallableMethod method, @NotNull ExpressionCodegen codegen
         ) {
-            method.invokeWithoutAssertions(codegen.v);
+            method.genInvokeInstruction(codegen.v);
         }
 
         @Override

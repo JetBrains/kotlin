@@ -628,17 +628,6 @@ public class AsmUtil {
         genNotNullAssertion(v, state, descriptor, "checkFieldIsNotNull");
     }
 
-    public static void genNotNullAssertionForMethod(
-            @NotNull InstructionAdapter v,
-            @NotNull GenerationState state,
-            @NotNull ResolvedCall resolvedCall
-    ) {
-        CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
-        if (descriptor instanceof ConstructorDescriptor) return;
-
-        genNotNullAssertion(v, state, descriptor, "checkReturnedValueIsNotNull");
-    }
-
     private static void genNotNullAssertion(
             @NotNull InstructionAdapter v,
             @NotNull GenerationState state,
