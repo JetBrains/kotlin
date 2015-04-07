@@ -203,7 +203,7 @@ public class DeserializedClassDescriptor(
         private fun <D : CallableMemberDescriptor> generateFakeOverrides(name: Name, fromSupertypes: Collection<D>, result: MutableCollection<D>) {
             val fromCurrent = ArrayList<CallableMemberDescriptor>(result)
             OverridingUtil.generateOverridesInFunctionGroup(name, fromSupertypes, fromCurrent, classDescriptor, object : OverridingUtil.DescriptorSink {
-                override fun addToScope(fakeOverride: CallableMemberDescriptor) {
+                override fun addFakeOverride(fakeOverride: CallableMemberDescriptor) {
                     // TODO: report "cannot infer visibility"
                     OverridingUtil.resolveUnknownVisibilityForMember(fakeOverride, null)
                     @suppress("UNCHECKED_CAST")

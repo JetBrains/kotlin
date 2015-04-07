@@ -64,7 +64,7 @@ class FunctionClassScope(
                     /* membersFromCurrent = */ if (name == invoke?.getName()) listOf(invoke) else listOf(),
                     functionClass,
                     object : OverridingUtil.DescriptorSink {
-                        override fun addToScope(fakeOverride: CallableMemberDescriptor) {
+                        override fun addFakeOverride(fakeOverride: CallableMemberDescriptor) {
                             OverridingUtil.resolveUnknownVisibilityForMember(fakeOverride, null)
                             result.add(fakeOverride as FunctionDescriptor)
                         }
