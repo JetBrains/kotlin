@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.idea.util.makeNotNullable
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
-class SmartCastCalculator(val bindingContext: BindingContext, val containingDeclaration: DeclarationDescriptor) {
+class SmartCastCalculator(val bindingContext: BindingContext, val containingDeclarationOrModule: DeclarationDescriptor) {
     public fun calculate(position: JetExpression, receiver: JetExpression?): (VariableDescriptor) -> Collection<JetType> {
         val dataFlowInfo = bindingContext.getDataFlowInfo(position)
         val (variableToTypes, notNullVariables) = processDataFlowInfo(dataFlowInfo, receiver)
@@ -66,7 +66,7 @@ class SmartCastCalculator(val bindingContext: BindingContext, val containingDecl
         val dataFlowValueToVariable: (DataFlowValue) -> VariableDescriptor?
         if (receiver != null) {
             val receiverType = bindingContext[BindingContext.EXPRESSION_TYPE, receiver] ?: return ProcessDataFlowInfoResult()
-            val receiverId = DataFlowValueFactory.createDataFlowValue(receiver, receiverType, bindingContext, containingDeclaration).getId()
+            val receiverId = DataFlowValueFactory.createDataFlowValue(receiver, receiverType, bindingContext, containingDeclarationOrModule).getId()
             dataFlowValueToVariable = { value ->
                 val id = value.getId()
                 if (id is Pair<*, *> && id.first == receiverId) id.second as? VariableDescriptor else null

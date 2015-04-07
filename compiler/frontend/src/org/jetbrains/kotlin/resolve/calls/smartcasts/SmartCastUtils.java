@@ -61,12 +61,12 @@ public class SmartCastUtils {
     public static List<JetType> getSmartCastVariants(
             @NotNull ReceiverValue receiverToCast,
             @NotNull BindingContext bindingContext,
-            @NotNull DeclarationDescriptor containingDeclaration,
+            @NotNull DeclarationDescriptor containingDeclarationOrModule,
             @NotNull DataFlowInfo dataFlowInfo
     ) {
         List<JetType> variants = Lists.newArrayList();
         variants.add(receiverToCast.getType());
-        variants.addAll(getSmartCastVariantsExcludingReceiver(bindingContext, containingDeclaration, dataFlowInfo, receiverToCast));
+        variants.addAll(getSmartCastVariantsExcludingReceiver(bindingContext, containingDeclarationOrModule, dataFlowInfo, receiverToCast));
         return variants;
     }
 
@@ -74,11 +74,11 @@ public class SmartCastUtils {
     public static List<JetType> getSmartCastVariantsWithLessSpecificExcluded(
             @NotNull ReceiverValue receiverToCast,
             @NotNull BindingContext bindingContext,
-            @NotNull DeclarationDescriptor containingDeclaration,
+            @NotNull DeclarationDescriptor containingDeclarationOrModule,
             @NotNull DataFlowInfo dataFlowInfo
     ) {
         final List<JetType> variants = getSmartCastVariants(receiverToCast, bindingContext,
-                                                            containingDeclaration, dataFlowInfo);
+                                                            containingDeclarationOrModule, dataFlowInfo);
         return KotlinPackage.filter(variants, new Function1<JetType, Boolean>() {
             @Override
             public Boolean invoke(final JetType type) {
@@ -112,7 +112,7 @@ public class SmartCastUtils {
     @NotNull
     public static Collection<JetType> getSmartCastVariantsExcludingReceiver(
             @NotNull BindingContext bindingContext,
-            @NotNull DeclarationDescriptor containingDeclaration,
+            @NotNull DeclarationDescriptor containingDeclarationOrModule,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull ReceiverValue receiverToCast
     ) {
@@ -124,7 +124,7 @@ public class SmartCastUtils {
         }
         else if (receiverToCast instanceof ExpressionReceiver) {
             DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(
-                    receiverToCast, bindingContext, containingDeclaration);
+                    receiverToCast, bindingContext, containingDeclarationOrModule);
             return dataFlowInfo.getPossibleTypes(dataFlowValue);
         }
         return Collections.emptyList();
