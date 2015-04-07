@@ -85,6 +85,9 @@
                                         <exclude name="Test.kt"/>
                                         <exclude name="TestDslExample.kt"/>
                                     </fileset>
+                                    <fileset dir="${basedir}/../../../js/js.libraries/test">
+                                        <include name="**/*.kt" />
+                                    </fileset>
                                 </copy>
                             </target>
                         </configuration>
