@@ -53,13 +53,12 @@ Fictitious constructors for Java annotations sould be built as follows:
 * parameters corresponding to all elements but `value` can not be used positionally, only named arguments are allowed for them (this requires adding a platform-specific check to `frontend.java`)
 * note that elements with default values should be transformed to parameters with default values
 
-There should be some notes about case when `value` parameter is marked `vararg` and no arguments are passed.
-Behavior will depend on presence of parameter's default value:
-* if it has no default value, then empty array is emitted in bytecode
-* if it has default value, then no value is emitted in bytecode, so default will be used
+>**NOTE**: when `value` parameter is marked `vararg` and no arguments are passed, behavior will depend on presence of parameter's default value:
+* if it has no default value, an empty array is emitted in the byte code
+* if it has a default value, then no value is emitted in the byte code, so the default value will be used
 
-**NOTE**: Behavior of the same code can change after adding default value to parameter and recompiling kotlin
-sources
+> Thus, **behavior of the same code can change after adding a default value to parameter and recompiling kotlin
+sources**
 
 ## \[TBD later] Array Syntax Examples
 
