@@ -1307,6 +1307,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("secondaryConstructorWithDefaultValues.java")
+        public void testSecondaryConstructorWithDefaultValues() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/secondaryConstructorWithDefaultValues.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("secondaryConstructorsInInnerClass.java")
         public void testSecondaryConstructorsInInnerClass() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/secondaryConstructorsInInnerClass.java");

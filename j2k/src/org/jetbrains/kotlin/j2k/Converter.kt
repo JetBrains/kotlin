@@ -507,7 +507,7 @@ class Converter private(
     private fun convertToNotNullableTypes(types: Array<out PsiType?>): List<Type>
             = types.map { typeConverter.convertType(it, Nullability.NotNull) }
 
-    public fun convertParameterList(parameterList: PsiParameterList): ParameterList
+    private fun convertParameterList(parameterList: PsiParameterList): ParameterList
             = ParameterList(parameterList.getParameters().map { convertParameter(it) }).assignPrototype(parameterList)
 
     public fun convertParameter(parameter: PsiParameter,
