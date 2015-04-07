@@ -166,7 +166,7 @@ public class PropertyCodegen {
     }
 
     public void generateConstructorPropertyAsMethodForAnnotationClass(JetParameter p, PropertyDescriptor descriptor) {
-        Type type = typeMapper.mapType(descriptor);
+        Type type = typeMapper.mapAnnotationParameterType(descriptor);
         String name = p.getName();
         assert name != null : "Annotation parameter has no name: " + p.getText();
         MethodVisitor mv = v.newMethod(OtherOrigin(p, descriptor), ACC_PUBLIC | ACC_ABSTRACT, name, "()" + type.getDescriptor(), null, null);

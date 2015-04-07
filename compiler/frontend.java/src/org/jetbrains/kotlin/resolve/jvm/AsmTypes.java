@@ -28,12 +28,14 @@ public class AsmTypes {
     public static final Type OBJECT_TYPE = getType(Object.class);
     public static final Type JAVA_STRING_TYPE = getType(String.class);
     public static final Type JAVA_THROWABLE_TYPE = getType(Throwable.class);
+    public static final Type JAVA_CLASS_TYPE = getType(Class.class);
 
     public static final Type UNIT_TYPE = Type.getObjectType("kotlin/Unit");
     public static final Type PROPERTY_METADATA_TYPE = Type.getObjectType("kotlin/PropertyMetadata");
     public static final Type PROPERTY_METADATA_IMPL_TYPE = Type.getObjectType("kotlin/PropertyMetadataImpl");
 
     public static final Type K_CLASS_TYPE = reflect("KClass");
+    public static final Type K_CLASS_ARRAY_TYPE = Type.getObjectType("[" + K_CLASS_TYPE.getDescriptor());
     public static final Type K_PACKAGE_TYPE = reflect("KPackage");
 
     public static final Type K_MEMBER_PROPERTY_TYPE = reflect("KMemberProperty");

@@ -2782,7 +2782,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 ModuleDescriptor module = DescriptorUtils.getContainingModule(descriptor);
                 if (descriptor instanceof JavaClassDescriptor || module == module.getBuiltIns().getBuiltInsModule()) {
                     putJavaLangClassInstance(v, classAsmType);
-                    v.invokestatic(REFLECTION, "foreignKotlinClass", Type.getMethodDescriptor(K_CLASS_TYPE, getType(Class.class)), false);
+                    wrapJavaClassIntoKClass(v);
                 }
                 else {
                     v.getstatic(classAsmType.getInternalName(), JvmAbi.KOTLIN_CLASS_FIELD_NAME, K_CLASS_TYPE.getDescriptor());

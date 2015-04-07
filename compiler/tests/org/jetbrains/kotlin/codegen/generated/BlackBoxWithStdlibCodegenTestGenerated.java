@@ -2878,6 +2878,39 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             }
         }
 
+        @TestMetadata("compiler/testData/codegen/boxWithStdlib/reflection/kClassInAnnotation")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class KClassInAnnotation extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInKClassInAnnotation() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/reflection/kClassInAnnotation"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("array.kt")
+            public void testArray() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/kClassInAnnotation/array.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("basic.kt")
+            public void testBasic() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/kClassInAnnotation/basic.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("checkcast.kt")
+            public void testCheckcast() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/kClassInAnnotation/checkcast.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("vararg.kt")
+            public void testVararg() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/kClassInAnnotation/vararg.kt");
+                doTestWithStdlib(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/boxWithStdlib/reflection/mapping")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

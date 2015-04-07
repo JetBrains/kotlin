@@ -107,7 +107,21 @@ public class JetTypeMapper {
          * kotlin.Int is mapped to Ljava/lang/Integer;
          * No projections allowed in immediate arguments
          */
-        SUPER_TYPE
+        SUPER_TYPE,
+        /**
+         * kotlin.reflect.KClass mapped to java.lang.Class
+         * Other types mapped as VALUE
+         */
+        VALUE_FOR_ANNOTATION,
+        /**
+         * kotlin.reflect.KClass mapped to java.lang.Class
+         * Other types mapped as TYPE_PARAMETER
+         */
+        TYPE_PARAMETER_FOR_ANNOTATION;
+
+        boolean isForAnnotation() {
+            return this == VALUE_FOR_ANNOTATION || this == TYPE_PARAMETER_FOR_ANNOTATION;
+        }
     }
 
     @NotNull
@@ -186,6 +200,10 @@ public class JetTypeMapper {
             //noinspection ConstantConditions
             return mapType(descriptor.getReturnType(), sw, JetTypeMapperMode.TYPE_PARAMETER);
         }
+        else if (DescriptorUtils.isAnnotationClass(descriptor.getContainingDeclaration())) {
+            //noinspection ConstantConditions
+            return mapType(descriptor.getReturnType(), sw, JetTypeMapperMode.VALUE_FOR_ANNOTATION);
+        }
         else {
             return mapType(returnType, sw, JetTypeMapperMode.VALUE, Variance.OUT_VARIANCE);
         }
@@ -223,6 +241,11 @@ public class JetTypeMapper {
     }
 
     @NotNull
+    public Type mapAnnotationParameterType(@NotNull PropertyDescriptor descriptor) {
+        return mapType(descriptor.getType(), null, JetTypeMapperMode.VALUE_FOR_ANNOTATION);
+    }
+
+    @NotNull
     public Type mapType(@NotNull ClassifierDescriptor descriptor) {
         return mapType(descriptor.getDefaultType());
     }
@@ -251,10 +274,11 @@ public class JetTypeMapper {
 
         boolean projectionsAllowed = kind != JetTypeMapperMode.SUPER_TYPE;
         if (known != null) {
-            if (kind == JetTypeMapperMode.VALUE) {
+            if (kind == JetTypeMapperMode.VALUE || kind == JetTypeMapperMode.VALUE_FOR_ANNOTATION) {
                 return mapKnownAsmType(jetType, known, signatureVisitor, howThisTypeIsUsed);
             }
-            else if (kind == JetTypeMapperMode.TYPE_PARAMETER || kind == JetTypeMapperMode.SUPER_TYPE) {
+            else if (kind == JetTypeMapperMode.TYPE_PARAMETER || kind == JetTypeMapperMode.SUPER_TYPE ||
+                     kind == JetTypeMapperMode.TYPE_PARAMETER_FOR_ANNOTATION) {
                 return mapKnownAsmType(jetType, boxType(known), signatureVisitor, howThisTypeIsUsed, projectionsAllowed);
             }
             else if (kind == JetTypeMapperMode.IMPL) {
@@ -307,7 +331,10 @@ public class JetTypeMapper {
                 arrayElementType = boxType(mapType(memberType, kind));
                 if (signatureVisitor != null) {
                     signatureVisitor.writeArrayType();
-                    mapType(memberType, signatureVisitor, JetTypeMapperMode.TYPE_PARAMETER, memberProjection.getProjectionKind());
+                    JetTypeMapperMode newMode = kind.isForAnnotation() ?
+                                                JetTypeMapperMode.TYPE_PARAMETER_FOR_ANNOTATION :
+                                                JetTypeMapperMode.TYPE_PARAMETER;
+                    mapType(memberType, signatureVisitor, newMode, memberProjection.getProjectionKind());
                     signatureVisitor.writeArrayEnd();
                 }
             }
@@ -325,9 +352,14 @@ public class JetTypeMapper {
 
                 return asmType;
             }
-        }
 
-        if (descriptor instanceof ClassDescriptor) {
+            if (kind.isForAnnotation() && KotlinBuiltIns.isKClass((ClassDescriptor) descriptor)) {
+                if (signatureVisitor != null) {
+                    signatureVisitor.writeAsmType(AsmTypes.JAVA_CLASS_TYPE);
+                }
+                return AsmTypes.JAVA_CLASS_TYPE;
+            }
+
             Type asmType = computeAsmType((ClassDescriptor) descriptor.getOriginal());
             writeGenericType(signatureVisitor, asmType, jetType, howThisTypeIsUsed, projectionsAllowed);
             return asmType;

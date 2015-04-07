@@ -347,12 +347,23 @@ public abstract class StackValue {
             }
         }
         else if (toType.getSort() == Type.ARRAY) {
-            v.checkcast(toType);
+            if (fromType.getSort() == Type.ARRAY &&
+                fromType.getElementType().equals(AsmTypes.JAVA_CLASS_TYPE) && toType.equals(K_CLASS_ARRAY_TYPE)) {
+                wrapJavaClassesIntoKClasses(v);
+            }
+            else {
+                v.checkcast(toType);
+            }
         }
         else if (toType.getSort() == Type.OBJECT) {
             if (fromType.getSort() == Type.OBJECT || fromType.getSort() == Type.ARRAY) {
                 if (!toType.equals(OBJECT_TYPE)) {
-                    v.checkcast(toType);
+                    if (fromType.equals(AsmTypes.JAVA_CLASS_TYPE) && toType.equals(AsmTypes.K_CLASS_TYPE)) {
+                        wrapJavaClassIntoKClass(v);
+                    }
+                    else {
+                        v.checkcast(toType);
+                    }
                 }
             }
             else {
