@@ -29,8 +29,8 @@ object LambdaItems {
     public fun addToCollection(collection: MutableCollection<LookupElement>, functionExpectedInfos: Collection<ExpectedInfo>) {
         val distinctTypes = functionExpectedInfos.map { it.type }.toSet()
 
-        val singleType = if (distinctTypes.size == 1) distinctTypes.single() else null
-        val singleSignatureLength = singleType?.let { KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(it).size }
+        val singleType = if (distinctTypes.size() == 1) distinctTypes.single() else null
+        val singleSignatureLength = singleType?.let { KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(it).size() }
         val offerNoParametersLambda = singleSignatureLength == 0 || singleSignatureLength == 1
         if (offerNoParametersLambda) {
             val lookupElement = LookupElementBuilder.create("{...}")
@@ -49,7 +49,7 @@ object LambdaItems {
                                                val offset = context.getStartOffset()
                                                val placeholder = "{}"
                                                context.getDocument().replaceString(offset, context.getTailOffset(), placeholder)
-                                               insertLambdaTemplate(context, TextRange(offset, offset + placeholder.length), functionType)
+                                               insertLambdaTemplate(context, TextRange(offset, offset + placeholder.length()), functionType)
                                            })
                         .suppressAutoInsertion()
                         .assignSmartCompletionPriority(SmartCompletionItemPriority.LAMBDA)

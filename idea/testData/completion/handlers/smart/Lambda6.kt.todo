@@ -4,4 +4,4 @@ fun bar() {
     foo(<caret>)
 }
 
-// ELEMENT: "{ (String, String, String) -> ... }"
+// ELEMENT: "{ String, String, String -> ... }"

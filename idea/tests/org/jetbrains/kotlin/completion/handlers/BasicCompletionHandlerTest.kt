@@ -91,11 +91,11 @@ public class BasicCompletionHandlerTest : CompletionHandlerTestBase(){
 
     fun testHigherOrderFunctionWithArg() = doTest(2, "filterNot", null, '\n')
 
-    fun testHigherOrderFunctionWithArgs1() = doTest(1, "foo", "foo", " { (String, Char) -> ... }", '\n')
+    fun testHigherOrderFunctionWithArgs1() = doTest(1, "foo", "foo", " { String, Char -> ... }", '\n')
 
     fun testHigherOrderFunctionWithArgs2() = doTest(1, "foo", "foo", "(p: (String, Char) -> Boolean)", '\n')
 
-    fun testHigherOrderFunctionWithArgs3() = doTest(1, "foo", "foo", " { (String, Char) -> ... }", '\n')
+    fun testHigherOrderFunctionWithArgs3() = doTest(1, "foo", "foo", " { String, Char -> ... }", '\n')
 
     fun testForceParenthesisForTabChar() = doTest(0, "some", null, '\t')
 

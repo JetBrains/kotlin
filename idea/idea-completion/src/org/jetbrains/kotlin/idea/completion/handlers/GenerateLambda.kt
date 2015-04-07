@@ -69,8 +69,7 @@ fun insertLambdaTemplate(context: InsertionContext, placeholderRange: TextRange,
 fun buildLambdaPresentation(lambdaType: JetType): String {
     val parameterTypes = functionParameterTypes(lambdaType)
     val parametersPresentation = parameterTypes.map { IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(it) }.joinToString(", ")
-    fun wrap(s: String) = if (parameterTypes.size() != 1) "($s)" else s
-    return "{ ${wrap(parametersPresentation)} -> ... }"
+    return "{ $parametersPresentation -> ... }"
 }
 
 private fun needExplicitParameterTypes(context: InsertionContext, placeholderRange: TextRange, lambdaType: JetType): Boolean {
@@ -92,17 +91,12 @@ private fun needExplicitParameterTypes(context: InsertionContext, placeholderRan
 private fun buildTemplate(lambdaType: JetType, explicitParameterTypes: Boolean, project: Project): Template {
     val parameterTypes = functionParameterTypes(lambdaType)
 
-    val useParenthesis = explicitParameterTypes || parameterTypes.size() != 1
-
     val manager = TemplateManager.getInstance(project)
 
     val template = manager.createTemplate("", "")
     template.setToShortenLongNames(true)
     //template.setToReformat(true) //TODO
     template.addTextSegment("{ ")
-    if (useParenthesis) {
-        template.addTextSegment("(")
-    }
 
     for ((i, parameterType) in parameterTypes.withIndex()) {
         if (i > 0) {
@@ -115,9 +109,6 @@ private fun buildTemplate(lambdaType: JetType, explicitParameterTypes: Boolean, 
         }
     }
 
-    if (useParenthesis) {
-        template.addTextSegment(")")
-    }
     template.addTextSegment(" -> ")
     template.addEndVariable()
     template.addTextSegment(" }")

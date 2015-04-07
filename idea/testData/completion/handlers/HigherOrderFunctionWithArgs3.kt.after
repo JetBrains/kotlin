@@ -2,5 +2,5 @@ fun foo(p : (String, Char) -> Boolean){}
 fun foo(p : (String, Boolean) -> Boolean){}
 
 fun main(args: Array<String>) {
-    foo { (s: String, c: Char) -> <caret> }
+    foo { s: String, c: Char -> <caret> }
 }

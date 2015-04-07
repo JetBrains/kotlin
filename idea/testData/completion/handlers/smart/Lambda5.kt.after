@@ -2,7 +2,7 @@ fun foo(p: (String, StringBuilder) -> Unit){}
 fun foo(p: (Int, Char) -> Unit){}
 
 fun bar() {
-    foo({ (s: String, stringBuilder: StringBuilder) -> <caret> })
+    foo({ s: String, stringBuilder: StringBuilder -> <caret> })
 }
 
-// ELEMENT: "{ (String, StringBuilder) -> ... }"
+// ELEMENT: "{ String, StringBuilder -> ... }"
