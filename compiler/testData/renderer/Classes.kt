@@ -14,6 +14,8 @@ public open class TheClass<out T : Int, X> [AnotherAnnotation] () {
 
   protected abstract fun foo() {}
 
+  [TheAnnotation] private constructor()
+
   private class Inner {}
 }
 
@@ -38,9 +40,9 @@ public trait TwoUpperBounds<T> where T : Number, T : Any
 //internal final annotation class AnotherAnnotation : kotlin.Annotation defined in rendererTest
 //public constructor AnotherAnnotation() defined in rendererTest.AnotherAnnotation
 //rendererTest.TheAnnotation public open class TheClass<out T : kotlin.Int, X> defined in rendererTest
-//rendererTest.AnotherAnnotation public constructor TheClass<out T : kotlin.Int, X>() defined in rendererTest.TheClass
 //<out T : kotlin.Int> defined in rendererTest.TheClass
 //<X> defined in rendererTest.TheClass
+//rendererTest.AnotherAnnotation public constructor TheClass<out T : kotlin.Int, X>() defined in rendererTest.TheClass
 //private final val privateVal: kotlin.Int defined in rendererTest.TheClass
 //internal final val shouldBeFinal: kotlin.Int defined in rendererTest.TheClass
 //internal final val <T> T.checkTypeParameterScope: kotlin.Int defined in rendererTest.TheClass
@@ -49,6 +51,7 @@ public trait TwoUpperBounds<T> where T : Number, T : Any
 //internal final val <T> checkTypeParameterScope2: kotlin.Int defined in rendererTest.TheClass
 //<T> defined in rendererTest.TheClass.checkTypeParameterScope2
 //protected abstract fun foo(): kotlin.Unit defined in rendererTest.TheClass
+//rendererTest.TheAnnotation private constructor TheClass<out T : kotlin.Int, X>() defined in rendererTest.TheClass
 //private final class Inner defined in rendererTest.TheClass
 //public constructor Inner() defined in rendererTest.TheClass.Inner
 //internal final class InternalClass defined in rendererTest

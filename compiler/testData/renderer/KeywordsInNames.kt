@@ -22,8 +22,8 @@ val NOT_IS = 3
 //internal val `val`: kotlin.Int defined in root package
 //`true` internal trait `trait` defined in root package
 //internal final class `class`<`in`> defined in root package
-//public constructor `class`<`in`>(p: `in`?) defined in `class`
 //<`in`> defined in `class`
+//public constructor `class`<`in`>(p: `in`?) defined in `class`
 //value-parameter val p: `in`? defined in `class`.<init>
 //internal final inner class `class` defined in `class`
 //public constructor `class`() defined in `class`.`class`
