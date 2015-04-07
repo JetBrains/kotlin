@@ -30,12 +30,16 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("j2k/testData/multiFile")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({
-})
 @RunWith(JUnit3RunnerWithInners.class)
 public class JavaToKotlinConverterMultiFileTestGenerated extends AbstractJavaToKotlinConverterMultiFileTest {
     public void testAllFilesPresentInMultiFile() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/multiFile"), Pattern.compile("^([^\\.]+)$"), true);
+        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/multiFile"), Pattern.compile("^([^\\.]+)$"), false);
+    }
+
+    @TestMetadata("FieldToProperty")
+    public void testFieldToProperty() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("j2k/testData/multiFile/FieldToProperty/");
+        doTest(fileName);
     }
 
     @TestMetadata("GetterAndSetterUsages")
@@ -44,4 +48,15 @@ public class JavaToKotlinConverterMultiFileTestGenerated extends AbstractJavaToK
         doTest(fileName);
     }
 
+    @TestMetadata("ToCompanionObject")
+    public void testToCompanionObject() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("j2k/testData/multiFile/ToCompanionObject/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ToObject")
+    public void testToObject() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("j2k/testData/multiFile/ToObject/");
+        doTest(fileName);
+    }
 }

@@ -1616,6 +1616,18 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("InCompanionObject.java")
+        public void testInCompanionObject() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/dropAccessors/InCompanionObject.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("InObject.java")
+        public void testInObject() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/dropAccessors/InObject.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("JavaKeywordPropertyName.java")
         public void testJavaKeywordPropertyName() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/dropAccessors/JavaKeywordPropertyName.java");

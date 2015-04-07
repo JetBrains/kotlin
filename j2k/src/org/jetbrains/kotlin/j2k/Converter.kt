@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.j2k
 
+import com.google.common.collect.Multimap
 import com.intellij.openapi.project.Project
 import com.intellij.psi.*
 import com.intellij.psi.CommonClassNames.*
@@ -73,7 +74,7 @@ class Converter private(
     private fun createDefaultCodeConverter() = CodeConverter(this, DefaultExpressionConverter(), DefaultStatementConverter(), null)
 
     public data class IntermediateResult(
-            val codeGenerator: (Map<PsiElement, UsageProcessing>) -> String,
+            val codeGenerator: (Map<PsiElement, Collection<UsageProcessing>>) -> String,
             val parseContext: ParseContext
     )
 
@@ -108,7 +109,7 @@ class Converter private(
         else -> null
     }
 
-    private fun unfoldDeferredElements(usageProcessings: Map<PsiElement, UsageProcessing>) {
+    private fun unfoldDeferredElements(usageProcessings: Map<PsiElement, Collection<UsageProcessing>>) {
         val codeConverter = createDefaultCodeConverter().withSpecialExpressionConverter(UsageProcessingExpressionConverter(usageProcessings))
 
         // we use loop with index because new deferred elements can be added during unfolding

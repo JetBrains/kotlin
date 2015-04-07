@@ -1,0 +1,10 @@
+package test
+
+class C : JavaClass() {
+    public fun foo(javaClass: JavaClass) {
+        javaClass.field++
+        property = javaClass.field
+        field = property
+        field *= 2
+    }
+}

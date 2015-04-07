@@ -45,8 +45,8 @@ public abstract class AbstractJavaToKotlinConverterTest : LightCodeInsightFixtur
         super.tearDown()
     }
     
-    private fun addFile(fileName: String, packageName: String) {
-        addFile(File("j2k/testData/$fileName"), packageName)
+    private fun addFile(fileName: String, dirName: String) {
+        addFile(File("j2k/testData/$fileName"), dirName)
     }
 
     protected fun addFile(file: File, dirName: String): VirtualFile {
@@ -58,7 +58,7 @@ public abstract class AbstractJavaToKotlinConverterTest : LightCodeInsightFixtur
             override fun compute(): VirtualFile? {
                 val root = LightPlatformTestCase.getSourceRoot()!!
                 val virtualDir = root.findChild(dirName) ?: root.createChildDirectory(null, dirName)
-                val virtualFile = virtualDir.createChildData(null, fileName)!!
+                val virtualFile = virtualDir.createChildData(null, fileName)
                 virtualFile.getOutputStream(null)!!.writer().use { it.write(text) }
                 return virtualFile
             }

@@ -16,49 +16,74 @@
 
 package org.jetbrains.kotlin.j2k
 
-import java.io.File
-import com.intellij.testFramework.LightPlatformTestCase
-import com.intellij.psi.codeStyle.CodeStyleManager
-import org.jetbrains.kotlin.test.JetTestUtils
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.command.WriteCommandAction
-import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
-import org.jetbrains.kotlin.idea.JetWithJdkAndRuntimeLightProjectDescriptor
+import com.intellij.openapi.progress.EmptyProgressIndicator
+import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiJavaFile
 import com.intellij.psi.PsiManager
-import java.util.ArrayList
-import org.jetbrains.kotlin.psi.JetFile
+import com.intellij.testFramework.LightPlatformTestCase
+import org.jetbrains.kotlin.idea.JetWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.j2k.IdeaResolverForConverter
+import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
+import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.test.JetTestUtils
+import java.io.File
+import java.util.ArrayList
 
 public abstract class AbstractJavaToKotlinConverterMultiFileTest : AbstractJavaToKotlinConverterTest() {
     public fun doTest(dirPath: String) {
         val project = LightPlatformTestCase.getProject()!!
         val psiManager = PsiManager.getInstance(project)
 
-        val javaFiles = File(dirPath).listFiles { file, name -> name.endsWith(".java") }
-        val psiFiles = ArrayList<PsiJavaFile>()
-        for (javaFile: File in javaFiles) {
+        val filesToConvert = File(dirPath).listFiles { file, name -> name.endsWith(".java") }
+        val psiFilesToConvert = ArrayList<PsiJavaFile>()
+        for (javaFile in filesToConvert) {
             val virtualFile = addFile(javaFile, "test")
             val psiFile = psiManager.findFile(virtualFile) as PsiJavaFile
-            psiFiles.add(psiFile)
+            psiFilesToConvert.add(psiFile)
+        }
+
+        val externalFiles = File(dirPath + File.separator + "external").listFiles { file, name -> name.endsWith(".java") || name.endsWith(".kt") }
+        val externalPsiFiles = ArrayList<PsiFile>()
+        for (file in externalFiles) {
+            val virtualFile = addFile(file, "test")
+            val psiFile = psiManager.findFile(virtualFile)!!
+            externalPsiFiles.add(psiFile)
+            assert(psiFile is PsiJavaFile || psiFile is JetFile)
         }
 
         val converter = JavaToKotlinConverter(project, ConverterSettings.defaultSettings,
                                               IdeaReferenceSearcher, IdeaResolverForConverter, J2kPostProcessor(formatCode = true))
-        val inputElements = psiFiles.map { JavaToKotlinConverter.InputElement(it, it) }
-        val results: List<String> = converter.elementsToKotlin(inputElements).map { it!!.text }
+        val inputElements = psiFilesToConvert.map { JavaToKotlinConverter.InputElement(it, it) }
+        val (results, externalCodeProcessor) = converter.elementsToKotlin(inputElements)
 
-        fun expectedFile(i: Int) = File(javaFiles[i].getPath().replace(".java", ".kt"))
+        val process = externalCodeProcessor?.invoke(EmptyProgressIndicator())
+        project.executeWriteCommand("") { process?.invoke() }
 
-        val jetFiles = ArrayList<JetFile>()
-        for (i in javaFiles.indices) {
-            deleteFile(psiFiles[i].getVirtualFile())
-            val virtualFile = addFile(results[i], expectedFile(i).getName(), "test")
-            jetFiles.add(psiManager.findFile(virtualFile) as JetFile)
+        fun expectedResultFile(i: Int) = File(filesToConvert[i].getPath().replace(".java", ".kt"))
+
+        val resultFiles = ArrayList<JetFile>()
+        for ((i, javaFile) in psiFilesToConvert.withIndex()) {
+            deleteFile(javaFile.getVirtualFile())
+            val virtualFile = addFile(results.map { it!!.text }[i], expectedResultFile(i).getName(), "test")
+            resultFiles.add(psiManager.findFile(virtualFile) as JetFile)
         }
 
-        for ((i, jetFile) in jetFiles.withIndex()) {
-            JetTestUtils.assertEqualsToFile(expectedFile(i), addErrorsDump(jetFile))
+        for ((i, kotlinFile) in resultFiles.withIndex()) {
+            JetTestUtils.assertEqualsToFile(expectedResultFile(i), addErrorsDump(kotlinFile))
+        }
+
+        for ((externalFile, externalPsiFile) in externalFiles.zip(externalPsiFiles)) {
+            val expectedFile = File(externalFile.getPath() + ".expected")
+            var resultText = if (externalPsiFile is JetFile) {
+                addErrorsDump(externalPsiFile)
+            }
+            else {
+                //TODO: errors dump for java files too
+                externalPsiFile.getText()
+            }
+            JetTestUtils.assertEqualsToFile(expectedFile, resultText)
         }
     }
 

@@ -21,6 +21,10 @@ import com.intellij.psi.*
 import org.jetbrains.kotlin.j2k.ast.*
 import org.jetbrains.kotlin.j2k.ast.Class
 import org.jetbrains.kotlin.j2k.usageProcessing.AccessorToPropertyProcessing
+import org.jetbrains.kotlin.j2k.usageProcessing.MethodIntoObjectProcessing
+import org.jetbrains.kotlin.j2k.usageProcessing.ToObjectWithOnlyMethodsProcessing
+import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.name.SpecialNames
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.HashSet
@@ -71,6 +75,19 @@ class ClassBodyConverter(private val psiClass: PsiClass,
         val rBrace = RBrace().assignPrototype(psiClass.getRBrace())
 
         if (isObject) {
+            val psiMembers = convertedMembers.keySet()
+            if (psiMembers.all { it is PsiMethod }) { // for object with no fields we can use faster external usage processing
+                converter.addUsageProcessing(ToObjectWithOnlyMethodsProcessing(psiClass))
+            }
+            else {
+                for (psiMember in psiMembers) {
+                    if (psiMember is PsiMethod /* fields in object can be accessed as fields from java */
+                        && !psiMember.hasModifierProperty(PsiModifier.PRIVATE)) {
+                        converter.addUsageProcessing(MethodIntoObjectProcessing(psiMember, JvmAbi.INSTANCE_FIELD))
+                    }
+                }
+            }
+
             return ClassBody(null, null, convertedMembers.values().toList(), emptyList(), lBrace, rBrace)
         }
 
@@ -87,6 +104,10 @@ class ClassBodyConverter(private val psiClass: PsiClass,
             }
             else if (useCompanionObject && member !is Class && psiMember !is PsiEnumConstant && psiMember.hasModifierProperty(PsiModifier.STATIC)) {
                 companionObjectMembers.add(member)
+                if (psiMember is PsiMethod /* fields in companion object can be accessed as fields from java */
+                        && !psiMember.hasModifierProperty(PsiModifier.PRIVATE)) {
+                    converter.addUsageProcessing(MethodIntoObjectProcessing(psiMember, SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT.getIdentifier()))
+                }
             }
             else {
                 members.add(member)
@@ -179,10 +200,11 @@ class ClassBodyConverter(private val psiClass: PsiClass,
 
     private fun getAccessorInfo(method: PsiMethod): AccessorInfo? {
         val name = method.getName()
+        val static = method.hasModifierProperty(PsiModifier.STATIC)
         if (name.startsWith("get") && method.getParameterList().getParametersCount() == 0) {
             val body = method.getBody() ?: return null
             val returnStatement = (body.getStatements().singleOrNull() as? PsiReturnStatement) ?: return null
-            val field = fieldByExpression(returnStatement.getReturnValue()) ?: return null
+            val field = fieldByExpression(returnStatement.getReturnValue(), static) ?: return null
             if (field.getType() != method.getReturnType()) return null
             if (converter.typeConverter.variableMutability(field) != converter.typeConverter.methodMutability(method)) return null
             val propertyName = StringUtil.decapitalize(name.substring("get".length()))
@@ -193,7 +215,7 @@ class ClassBodyConverter(private val psiClass: PsiClass,
             val statement = (body.getStatements().singleOrNull() as? PsiExpressionStatement) ?: return null
             val assignment = statement.getExpression() as? PsiAssignmentExpression ?: return null
             if (assignment.getOperationTokenType() != JavaTokenType.EQ) return null
-            val field = fieldByExpression(assignment.getLExpression()) ?: return null
+            val field = fieldByExpression(assignment.getLExpression(), static) ?: return null
             val parameter = method.getParameterList().getParameters().single()
             if ((assignment.getRExpression() as? PsiReferenceExpression)?.resolve() != parameter) return null
             if (field.getType() != parameter.getType()) return null
@@ -205,11 +227,16 @@ class ClassBodyConverter(private val psiClass: PsiClass,
         }
     }
 
-    private fun fieldByExpression(expression: PsiExpression?): PsiField? {
+    private fun fieldByExpression(expression: PsiExpression?, static: Boolean): PsiField? {
         val refExpr = expression as? PsiReferenceExpression ?: return null
-        if (!refExpr.isQualifierEmptyOrThis()) return null
+        if (static) {
+            if (!refExpr.isQualifierEmptyOrClass(psiClass)) return null
+        }
+        else {
+            if (!refExpr.isQualifierEmptyOrThis()) return null
+        }
         val field = refExpr.resolve() as? PsiField ?: return null
-        if (field.getContainingClass() != psiClass || field.hasModifierProperty(PsiModifier.STATIC)) return null
+        if (field.getContainingClass() != psiClass || field.hasModifierProperty(PsiModifier.STATIC) != static) return null
         return field
     }
 }

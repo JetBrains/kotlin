@@ -79,6 +79,11 @@ fun PsiReferenceExpression.isQualifierEmptyOrThis(): Boolean {
     return qualifier == null || (qualifier is PsiThisExpression && qualifier.getQualifier() == null)
 }
 
+fun PsiReferenceExpression.isQualifierEmptyOrClass(psiClass: PsiClass): Boolean {
+    val qualifier = getQualifierExpression()
+    return qualifier == null || (qualifier is PsiReferenceExpression && qualifier.isReferenceTo(psiClass))
+}
+
 fun PsiElement.isInSingleLine(): Boolean {
     if (this is PsiWhiteSpace) {
         val text = getText()!!

@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.actions
 
-import com.intellij.codeInsight.actions.ReformatCodeProcessor
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
@@ -25,6 +24,7 @@ import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.ex.MessagesEx
 import com.intellij.openapi.vfs.CharsetToolkit
 import com.intellij.openapi.vfs.VfsUtilCore
@@ -32,14 +32,14 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.intellij.psi.PsiJavaFile
 import com.intellij.psi.PsiManager
-import com.intellij.psi.codeStyle.CodeStyleManager
 import org.jetbrains.kotlin.idea.j2k.IdeaResolverForConverter
 import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
+import org.jetbrains.kotlin.idea.util.application.executeCommand
+import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.j2k.ConverterSettings
 import org.jetbrains.kotlin.j2k.IdeaReferenceSearcher
 import org.jetbrains.kotlin.j2k.JavaToKotlinConverter
-import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.IOException
 import java.util.ArrayList
@@ -49,36 +49,53 @@ public class JavaToKotlinAction : AnAction() {
         val javaFiles = selectedJavaFiles(e).toList()
         val project = CommonDataKeys.PROJECT.getData(e.getDataContext())!!
 
-        var convertedTexts: List<String>? = null
+        var converterResult: JavaToKotlinConverter.Result? = null
         fun convert() {
             val converter = JavaToKotlinConverter(project, ConverterSettings.defaultSettings,
                                                   IdeaReferenceSearcher, IdeaResolverForConverter, J2kPostProcessor(formatCode = true))
             val inputElements = javaFiles.map { JavaToKotlinConverter.InputElement(it, it) }
-            convertedTexts = converter.elementsToKotlin(inputElements, ProgressManager.getInstance().getProgressIndicator())
-                    .map { it!!.text /*conversion of a file always succeeds*/ }
+            converterResult = converter.elementsToKotlin(inputElements, ProgressManager.getInstance().getProgressIndicator())
         }
 
+        val title = "Convert Java to Kotlin"
         if (!ProgressManager.getInstance().runProcessWithProgressSynchronously(
                 {
                     runReadAction(::convert)
                 },
-                "Converting Java to Kotlin",
+                title,
                 true,
                 project)) return
 
 
-        CommandProcessor.getInstance().executeCommand(project, object : Runnable {
-            override fun run() {
-                CommandProcessor.getInstance().markCurrentCommandAsGlobal(project)
+        var externalCodeUpdate: (() -> Unit)? = null
 
-                val newFiles = saveResults(javaFiles, convertedTexts!!)
-                deleteFiles(javaFiles)
-
-                newFiles.singleOrNull()?.let {
-                    FileEditorManager.getInstance(project).openFile(it, true)
-                }
+        if (converterResult!!.externalCodeProcessing != null) {
+            val question = "Some code in the rest of your project may require corrections after performing this conversion. Do you want to find such code and correct it too?"
+            if (Messages.showOkCancelDialog(project, question, title, Messages.getQuestionIcon()) == Messages.OK) {
+                ProgressManager.getInstance().runProcessWithProgressSynchronously(
+                        {
+                            runReadAction {
+                                externalCodeUpdate = converterResult!!.externalCodeProcessing(ProgressManager.getInstance().getProgressIndicator())
+                            }
+                        },
+                        title,
+                        true,
+                        project)
             }
-        }, "Convert files from Java to Kotlin", null)
+        }
+
+        project.executeWriteCommand("Convert files from Java to Kotlin") {
+            CommandProcessor.getInstance().markCurrentCommandAsGlobal(project)
+
+            val newFiles = saveResults(javaFiles, converterResult!!.results.map { it!!.text /*conversion of a file always succeeds*/ })
+            deleteFiles(javaFiles)
+
+            externalCodeUpdate?.invoke()
+
+            newFiles.singleOrNull()?.let {
+                FileEditorManager.getInstance(project).openFile(it, true)
+            }
+        }
     }
 
     override fun update(e: AnActionEvent) {
@@ -116,9 +133,7 @@ public class JavaToKotlinAction : AnAction() {
     private fun saveResults(javaFiles: List<PsiJavaFile>, convertedTexts: List<String>): List<VirtualFile> {
         val result = ArrayList<VirtualFile>()
         for ((psiFile, text) in javaFiles.zip(convertedTexts)) {
-            ApplicationManager.getApplication().runWriteAction {
-                result.addIfNotNull(saveConversionResult(psiFile.getVirtualFile(), text, psiFile.getProject()))
-            }
+            result.addIfNotNull(saveConversionResult(psiFile.getVirtualFile(), text, psiFile.getProject()))
         }
         return result
     }
@@ -137,13 +152,11 @@ public class JavaToKotlinAction : AnAction() {
 
     private fun deleteFiles(javaFiles: List<PsiJavaFile>) {
         for (psiFile in javaFiles) {
-            ApplicationManager.getApplication().runWriteAction {
-                try {
-                    psiFile.getVirtualFile()?.delete(this)
-                }
-                catch (e: IOException) {
-                    MessagesEx.error(psiFile.getProject(), e.getMessage()).showLater()
-                }
+            try {
+                psiFile.getVirtualFile()?.delete(this)
+            }
+            catch (e: IOException) {
+                MessagesEx.error(psiFile.getProject(), e.getMessage()).showLater()
             }
         }
     }

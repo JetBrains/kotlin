@@ -126,7 +126,8 @@ public class JetSimpleNameReference(
             )
         }
 
-        return nameElement.replace(element)
+        nameElement.replace(element)
+        return expression
     }
 
     public enum class ShorteningMode {

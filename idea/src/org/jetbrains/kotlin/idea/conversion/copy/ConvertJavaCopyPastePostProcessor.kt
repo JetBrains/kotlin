@@ -161,7 +161,7 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
         )
 
         val inputElements = list.filterIsInstance<PsiElement>().map { JavaToKotlinConverter.InputElement(it, null) }
-        val results = converter.elementsToKotlin(inputElements)
+        val results = converter.elementsToKotlin(inputElements).results
 
         var resultIndex = 0
         val convertedCodeBuilder = StringBuilder()

@@ -16,49 +16,67 @@
 
 package org.jetbrains.kotlin.j2k
 
-import com.intellij.psi.PsiVariable
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiReferenceExpression
-import com.intellij.psi.search.searches.ReferencesSearch
+import com.intellij.lang.java.JavaLanguage
+import com.intellij.openapi.fileTypes.FileTypeManager
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.*
+import com.intellij.psi.search.DelegatingGlobalSearchScope
+import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.LocalSearchScope
-import com.intellij.psi.PsiMethod
-import com.intellij.psi.PsiMethodCallExpression
-import com.intellij.psi.PsiClass
 import com.intellij.psi.search.searches.ClassInheritorsSearch
 import com.intellij.psi.search.searches.OverridingMethodsSearch
+import com.intellij.psi.search.searches.ReferencesSearch
+import org.jetbrains.kotlin.idea.JetLanguage
 
 public trait ReferenceSearcher {
-    fun findVariableUsages(variable: PsiVariable, scope: PsiElement): Collection<PsiReferenceExpression>
-    fun findMethodCalls(method: PsiMethod, scope: PsiElement): Collection<PsiMethodCallExpression>
+    fun findLocalUsages(element: PsiElement, scope: PsiElement): Collection<PsiReference>
     fun hasInheritors(`class`: PsiClass): Boolean
     fun hasOverrides(method: PsiMethod): Boolean
+
+    fun findExternalCodeProcessingUsages(element: PsiElement, searchJava: Boolean, searchKotlin: Boolean): Collection<PsiReference>
+}
+
+public fun ReferenceSearcher.findVariableUsages(variable: PsiVariable, scope: PsiElement): Collection<PsiReferenceExpression>
+        = findLocalUsages(variable, scope).filterIsInstance<PsiReferenceExpression>()
+
+public fun ReferenceSearcher.findMethodCalls(method: PsiMethod, scope: PsiElement): Collection<PsiMethodCallExpression> {
+    return findLocalUsages(method, scope).map {
+        if (it is PsiReferenceExpression) {
+            val methodCall = it.getParent() as? PsiMethodCallExpression
+            if (methodCall?.getMethodExpression() == it) methodCall else null
+        }
+        else {
+            null
+        }
+    }.filterNotNull()
 }
 
 public object EmptyReferenceSearcher: ReferenceSearcher {
-    override fun findVariableUsages(variable: PsiVariable, scope: PsiElement) = listOf<PsiReferenceExpression>()
-    override fun findMethodCalls(method: PsiMethod, scope: PsiElement) = listOf<PsiMethodCallExpression>()
+    override fun findLocalUsages(element: PsiElement, scope: PsiElement): Collection<PsiReference> = emptyList()
     override fun hasInheritors(`class`: PsiClass) = false
     override fun hasOverrides(method: PsiMethod) = false
+    override fun findExternalCodeProcessingUsages(element: PsiElement, searchJava: Boolean, searchKotlin: Boolean): Collection<PsiReference>
+            = throw UnsupportedOperationException()
 }
 
-public object IdeaReferenceSearcher : ReferenceSearcher {
-    override fun findVariableUsages(variable: PsiVariable, scope: PsiElement): Collection<PsiReferenceExpression> {
-        return ReferencesSearch.search(variable, LocalSearchScope(scope)).findAll().filterIsInstance<PsiReferenceExpression>()
-    }
-
-    override fun findMethodCalls(method: PsiMethod, scope: PsiElement): Collection<PsiMethodCallExpression> {
-        return ReferencesSearch.search(method, LocalSearchScope(scope)).findAll().map {
-            if (it is PsiReferenceExpression) {
-                val methodCall = it.getParent() as? PsiMethodCallExpression
-                if (methodCall?.getMethodExpression() == it) methodCall else null
-            }
-            else {
-                null
-            }
-        }.filterNotNull()
-    }
+public object IdeaReferenceSearcher: ReferenceSearcher {
+    override fun findLocalUsages(element: PsiElement, scope: PsiElement) = ReferencesSearch.search(element, LocalSearchScope(scope)).findAll()
 
     override fun hasInheritors(`class`: PsiClass) = ClassInheritorsSearch.search(`class`, false).any()
 
     override fun hasOverrides(method: PsiMethod) = OverridingMethodsSearch.search(method, false).any()
+
+    override fun findExternalCodeProcessingUsages(element: PsiElement, searchJava: Boolean, searchKotlin: Boolean): Collection<PsiReference> {
+        val searchScope = object : DelegatingGlobalSearchScope(GlobalSearchScope.projectScope(element.getProject())) {
+            override fun contains(file: VirtualFile): Boolean {
+                if (!super.contains(file)) return false
+                return when (FileTypeManager.getInstance().getFileTypeByFile(file)) {
+                    JavaLanguage.INSTANCE.getAssociatedFileType() -> searchJava
+                    JetLanguage.INSTANCE.getAssociatedFileType() -> searchKotlin
+                    else -> false
+                }
+            }
+        }
+        return ReferencesSearch.search(element, searchScope).findAll()
+    }
 }

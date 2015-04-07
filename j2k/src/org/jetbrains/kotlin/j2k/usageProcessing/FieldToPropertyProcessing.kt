@@ -17,44 +17,135 @@
 package org.jetbrains.kotlin.j2k.usageProcessing
 
 import com.intellij.psi.*
+import com.intellij.util.IncorrectOperationException
+import org.jetbrains.kotlin.j2k.AccessorKind
 import org.jetbrains.kotlin.j2k.CodeConverter
 import org.jetbrains.kotlin.j2k.ast.*
-import com.intellij.util.IncorrectOperationException
+import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 
 class FieldToPropertyProcessing(val field: PsiField, val propertyName: String, val isNullable: Boolean) : UsageProcessing {
     override val targetElement: PsiElement get() = field
 
-    override val convertedCodeProcessor = if (field.getName() != propertyName) {
-        object: ConvertedCodeProcessor {
-            override fun convertVariableUsage(expression: PsiReferenceExpression, codeConverter: CodeConverter): Expression? {
-                val identifier = Identifier(propertyName, isNullable).assignNoPrototype()
+    override val convertedCodeProcessor = if (field.getName() != propertyName) MyConvertedCodeProcessor() else null
 
-                val qualifier = expression.getQualifierExpression()
-                if (qualifier != null) {
-                    return QualifiedExpression(codeConverter.convertExpression(qualifier), identifier)
+    override var javaCodeProcessor = if (field.hasModifierProperty(PsiModifier.PRIVATE))
+        null
+     else if (!field.hasModifierProperty(PsiModifier.STATIC))
+        UseAccessorsJavaCodeProcessor()
+    else if (field.getName() != propertyName)
+        ElementRenamedCodeProcessor(propertyName)
+    else
+        null
+
+    override val kotlinCodeProcessor = if (field.getName() != propertyName) ElementRenamedCodeProcessor(propertyName) else null
+
+    private inner class MyConvertedCodeProcessor : ConvertedCodeProcessor {
+        override fun convertVariableUsage(expression: PsiReferenceExpression, codeConverter: CodeConverter): Expression? {
+            val identifier = Identifier(propertyName, isNullable).assignNoPrototype()
+
+            val qualifier = expression.getQualifierExpression()
+            if (qualifier != null) {
+                return QualifiedExpression(codeConverter.convertExpression(qualifier), identifier)
+            }
+            else {
+                // check if field name is shadowed
+                val elementFactory = PsiElementFactory.SERVICE.getInstance(expression.getProject())
+                val refExpr = try {
+                    elementFactory.createExpressionFromText(propertyName, expression) as? PsiReferenceExpression ?: return identifier
                 }
-                else {
-                    // check if field name is shadowed
-                    val elementFactory = PsiElementFactory.SERVICE.getInstance(expression.getProject())
-                    val refExpr = try {
-                        elementFactory.createExpressionFromText(propertyName, expression) as? PsiReferenceExpression ?: return identifier
-                    }
-                    catch(e: IncorrectOperationException) {
-                        return identifier
-                    }
-                    return if (refExpr.resolve() == null)
-                        identifier
-                    else
-                        QualifiedExpression(ThisExpression(Identifier.Empty).assignNoPrototype(), identifier) //TODO: this is not correct in case of nested/anonymous classes
+                catch(e: IncorrectOperationException) {
+                    return identifier
                 }
+                return if (refExpr.resolve() == null)
+                    identifier
+                else
+                    QualifiedExpression(ThisExpression(Identifier.Empty).assignNoPrototype(), identifier) //TODO: this is not correct in case of nested/anonymous classes
             }
         }
     }
-    else {
-        null
+
+    private inner class UseAccessorsJavaCodeProcessor : ExternalCodeProcessor {
+        private val factory = PsiElementFactory.SERVICE.getInstance(field.getProject())
+
+        override fun processUsage(reference: PsiReference): Collection<PsiReference>? {
+            val refExpr = reference.getElement() as? PsiReferenceExpression ?: return null
+            val qualifier = refExpr.getQualifierExpression()
+
+            val parent = refExpr.getParent()
+            when (parent) {
+                is PsiAssignmentExpression -> {
+                    if (refExpr == parent.getLExpression()) {
+                        if (parent.getOperationTokenType() == JavaTokenType.EQ) {
+                            val callExpr = parent.replace(generateSetterCall(qualifier, parent.getRExpression() ?: return null)) as PsiMethodCallExpression
+                            return listOf(callExpr.getMethodExpression())
+                        }
+                        else {
+                            val assignmentOpText = parent.getOperationSign().getText()
+                            assert(assignmentOpText.endsWith("="))
+                            val opText = assignmentOpText.substring(0, assignmentOpText.length() - 1)
+                            return parent.replaceWithModificationCalls(qualifier, opText, parent.getRExpression() ?: return null)
+                        }
+                    }
+                }
+
+                is PsiPrefixExpression, is PsiPostfixExpression -> {
+                    //TODO: what if it's used as value?
+                    val operationType = if (parent is PsiPrefixExpression)
+                        parent.getOperationTokenType()
+                    else
+                        (parent as PsiPostfixExpression).getOperationTokenType()
+                    val opText = when (operationType) {
+                        JavaTokenType.PLUSPLUS -> "+"
+                        JavaTokenType.MINUSMINUS -> "-"
+                        else -> null
+                    }
+                    if (opText != null) {
+                        return (parent as PsiExpression).replaceWithModificationCalls(qualifier, opText, factory.createExpressionFromText("1", null))
+                    }
+                }
+            }
+
+            val callExpr = refExpr.replace(generateGetterCall(qualifier)) as PsiMethodCallExpression
+            return listOf(callExpr.getMethodExpression())
+        }
+
+        //TODO: what if qualifier has side effects?
+        private fun PsiExpression.replaceWithModificationCalls(qualifier: PsiExpression?, op: String, value: PsiExpression): Collection<PsiReference> {
+            var getCall = generateGetterCall(qualifier)
+
+            var binary = factory.createExpressionFromText("x $op y", null) as PsiBinaryExpression
+            binary.getLOperand().replace(getCall)
+            binary.getROperand()!!.replace(value)
+
+            var setCall = generateSetterCall(qualifier, binary) as PsiMethodCallExpression
+            setCall = this.replace(setCall) as PsiMethodCallExpression
+
+            binary = setCall.getArgumentList().getExpressions().single() as PsiBinaryExpression
+            getCall = binary.getLOperand() as PsiMethodCallExpression
+
+            return listOf(getCall.getMethodExpression().getReference(), setCall.getMethodExpression().getReference())
+        }
+
+        private fun generateGetterCall(qualifier: PsiExpression?): PsiMethodCallExpression {
+            val text = accessorName(AccessorKind.GETTER) + "()"
+            val expressionText = if (qualifier != null)
+                "${qualifier.getText()}.$text"
+            else
+                text
+            return factory.createExpressionFromText(expressionText, null) as PsiMethodCallExpression
+        }
+
+        private fun generateSetterCall(qualifier: PsiExpression?, value: PsiExpression): PsiExpression {
+            val text = accessorName(AccessorKind.SETTER) + "(" + value.getText() + ")"
+            val expressionText = if (qualifier != null)
+                "${qualifier.getText()}.$text"
+            else
+                text
+            return factory.createExpressionFromText(expressionText, null)
+        }
     }
 
-    override val javaCodeProcessor: ExternalCodeProcessor? get() = null //TODO
-
-    override val kotlinCodeProcessor: ExternalCodeProcessor? get() = null //TODO
+    private fun accessorName(kind: AccessorKind)
+            = (if (kind == AccessorKind.GETTER) "get" else "set") + propertyName.capitalize()
 }

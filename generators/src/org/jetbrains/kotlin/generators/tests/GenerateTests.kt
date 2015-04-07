@@ -714,7 +714,7 @@ fun main(args: Array<String>) {
     }
     testGroup("j2k/tests", "j2k/testData") {
         testClass(javaClass<AbstractJavaToKotlinConverterMultiFileTest>()) {
-            model("multiFile", extension = null)
+            model("multiFile", extension = null, recursive = false)
         }
     }
     testGroup("j2k/tests", "j2k/testData") {

@@ -16,10 +16,11 @@
 
 package org.jetbrains.kotlin.j2k.usageProcessing
 
-import org.jetbrains.kotlin.j2k.ast.Expression
+import com.google.common.collect.Multimap
 import com.intellij.psi.*
 import org.jetbrains.kotlin.j2k.CodeConverter
 import org.jetbrains.kotlin.j2k.SpecialExpressionConverter
+import org.jetbrains.kotlin.j2k.ast.Expression
 
 trait UsageProcessing {
     val targetElement: PsiElement
@@ -35,24 +36,32 @@ trait ConvertedCodeProcessor {
 }
 
 trait ExternalCodeProcessor {
-    fun processUsage(reference: PsiReference)
+    fun processUsage(reference: PsiReference): Collection<PsiReference>?
 }
 
-class UsageProcessingExpressionConverter(val processings: Map<PsiElement, UsageProcessing>) : SpecialExpressionConverter {
+class UsageProcessingExpressionConverter(val processings: Map<PsiElement, Collection<UsageProcessing>>) : SpecialExpressionConverter {
     override fun convertExpression(expression: PsiExpression, codeConverter: CodeConverter): Expression? {
         if (processings.isEmpty()) return null
 
         when (expression) {
             is PsiReferenceExpression -> {
                 val target = expression.resolve() as? PsiVariable ?: return null
-                val processor = processings[target]?.convertedCodeProcessor ?: return null
-                return processor.convertVariableUsage(expression, codeConverter)
+                val forTarget = processings[target] ?: return null
+                for (processing in forTarget) {
+                    val converted = processing.convertedCodeProcessor?.convertVariableUsage(expression, codeConverter)
+                    if (converted != null) return converted
+                }
+                return null
             }
 
             is PsiMethodCallExpression -> {
                 val target = expression.getMethodExpression().resolve() as? PsiMethod ?: return null
-                val processor = processings[target]?.convertedCodeProcessor ?: return null
-                return processor.convertMethodUsage(expression, codeConverter)
+                val forTarget = processings[target] ?: return null
+                for (processing in forTarget) {
+                    val converted = processing.convertedCodeProcessor?.convertMethodUsage(expression, codeConverter)
+                    if (converted != null) return converted
+                }
+                return null
             }
 
             else -> return null
