@@ -1,5 +1,6 @@
 fun foo(s: String, i: Int = a + 1): Int {
-    return i * 2
+    val t = i * 2
+    return i - t
 }
 
 fun test() {

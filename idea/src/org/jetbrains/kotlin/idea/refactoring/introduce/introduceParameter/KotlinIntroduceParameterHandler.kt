@@ -24,6 +24,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiReference
 import com.intellij.psi.search.LocalSearchScope
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -64,9 +65,13 @@ public data class IntroduceParameterDescriptor(
         val callableDescriptor: FunctionDescriptor,
         val addedParameter: JetParameter,
         val parameterType: JetType,
-        val parametersToRemove: List<JetParameter>
+        val parametersUsages: Map<JetParameter, List<PsiReference>>,
+        val occurrencesToReplace: List<JetExpression>
 ) {
+    val originalOccurrence: JetExpression
+        get() = occurrencesToReplace.first { it.isAncestor(originalExpression) }
     val valVar: JetValVar
+    val parametersToRemove: List<JetParameter>
 
     init {
         valVar = if (callable is JetClass) {
@@ -82,9 +87,18 @@ public data class IntroduceParameterDescriptor(
                         false
                 }
             }
-            if (originalExpression.parents().any(modifierIsUnnecessary)) JetValVar.None else JetValVar.Val
+            if (occurrencesToReplace.all { it.parents().any(modifierIsUnnecessary) }) JetValVar.None else JetValVar.Val
         }
         else JetValVar.None
+        
+        val occurrenceRanges = occurrencesToReplace.map { it.getTextRange() }
+        parametersToRemove = parametersUsages.entrySet()
+                .filter {
+                    it.value.all { paramRef ->
+                        occurrenceRanges.any { occurrenceRange -> occurrenceRange.contains(paramRef.getElement().getTextRange()) }
+                    }
+                }
+                .map { it.key }
     }
 }
 
@@ -110,12 +124,15 @@ fun IntroduceParameterDescriptor.performRefactoring() {
             override fun performSilently(affectedFunctions: Collection<PsiElement>): Boolean = true
         }
         if (runChangeSignature(callable.getProject(), callableDescriptor, config, callable.analyze(), callable, INTRODUCE_PARAMETER)) {
-            originalExpression.replace(JetPsiFactory(callable).createSimpleName(addedParameter.getName()!!))
+            val paramRef = JetPsiFactory(callable).createSimpleName(addedParameter.getName()!!)
+            occurrencesToReplace.forEach { it.replace(paramRef) }
         }
     }
 }
 
-public class KotlinIntroduceParameterHandler: KotlinIntroduceHandlerBase() {
+public open class KotlinIntroduceParameterHandler: KotlinIntroduceHandlerBase() {
+    open fun configure(descriptor: IntroduceParameterDescriptor): IntroduceParameterDescriptor = descriptor
+
     fun invoke(project: Project, editor: Editor, expression: JetExpression, targetParent: JetNamedDeclaration) {
         val psiFactory = JetPsiFactory(project)
 
@@ -140,16 +157,28 @@ public class KotlinIntroduceParameterHandler: KotlinIntroduceHandlerBase() {
         val nameValidator = JetNameValidatorImpl(body, null, JetNameValidatorImpl.Target.PROPERTIES)
         val suggestedNames = linkedSetOf(*JetNameSuggester.suggestNames(parameterType, nameValidator, "p"))
 
-        val parametersToRemove = (parameterList?.getParameters() ?: Collections.emptyList()).filter {
-            if (!it.hasValOrVarNode()) {
-                val usages = DefaultSearchHelper<JetParameter>()
-                        .newRequest(UsagesSearchTarget(element = it))
-                        .search()
-                        .toList()
-                usages.isNotEmpty() && usages.all { expression.isAncestor(it.getElement()) }
-            }
-            else false
-        }
+        val parametersUsages = targetParent.getValueParameters()
+                .filter { !it.hasValOrVarNode() }
+                .map {
+                    it to DefaultSearchHelper<JetParameter>()
+                            .newRequest(UsagesSearchTarget(element = it))
+                            .search()
+                            .toList()
+                }
+                .filter { it.second.isNotEmpty() }
+                .toMap()
+
+        val occurrencesToReplace = expression.toRange()
+                .match(body, JetPsiUnifier.DEFAULT)
+                .map {
+                    val matchedElement = it.range.elements.singleOrNull()
+                    when (matchedElement) {
+                        is JetExpression -> matchedElement
+                        is JetStringTemplateEntryWithExpression -> matchedElement.getExpression()
+                        else -> null
+                    } as? JetExpression
+                }
+                .filterNotNull()
 
         project.executeCommand(INTRODUCE_PARAMETER) {
             val renderedType = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(parameterType)
@@ -179,12 +208,13 @@ public class KotlinIntroduceParameterHandler: KotlinIntroduceHandlerBase() {
             }
 
             val introduceParameterDescriptor =
-                    IntroduceParameterDescriptor(JetPsiUtil.deparenthesize(expression)!!,
-                                                 targetParent,
-                                                 functionDescriptor,
-                                                 addedParameter,
-                                                 parameterType,
-                                                 parametersToRemove)
+                    configure(IntroduceParameterDescriptor(JetPsiUtil.deparenthesize(expression)!!,
+                                                           targetParent,
+                                                           functionDescriptor,
+                                                           addedParameter,
+                                                           parameterType,
+                                                           parametersUsages,
+                                                           occurrencesToReplace))
             if (editor.getSettings().isVariableInplaceRenameEnabled() && !ApplicationManager.getApplication().isUnitTestMode()) {
                 with(PsiDocumentManager.getInstance(project)) {
                     commitDocument(editor.getDocument())

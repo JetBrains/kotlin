@@ -36,6 +36,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.refactoring.rename.inplace.InplaceRefactoring
 import com.intellij.ui.DottedBorder
 import com.intellij.ui.JBColor
+import com.intellij.ui.NonFocusableCheckBox
 import org.jetbrains.kotlin.idea.JetFileType
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
@@ -49,11 +50,13 @@ import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.JetPsiUtil
 import org.jetbrains.kotlin.psi.psiUtil.getValueParameterList
 import org.jetbrains.kotlin.psi.psiUtil.getValueParameters
+import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.JetType
 import java.awt.BorderLayout
 import java.awt.Color
 import java.util.ArrayList
+import java.util.Collections
 import java.util.LinkedHashSet
 import javax.swing.BorderFactory
 import javax.swing.JPanel
@@ -62,21 +65,21 @@ import javax.swing.border.LineBorder
 import kotlin.properties.Delegates
 
 public class KotlinInplaceParameterIntroducer(
-        val descriptor: IntroduceParameterDescriptor,
+        val originalDescriptor: IntroduceParameterDescriptor,
         editor: Editor,
         project: Project
 ): KotlinInplaceVariableIntroducer<JetParameter>(
-        descriptor.addedParameter,
+        originalDescriptor.addedParameter,
         editor,
         project,
         INTRODUCE_PARAMETER,
         JetExpression.EMPTY_ARRAY,
         null,
         false,
-        descriptor.addedParameter,
+        originalDescriptor.addedParameter,
         false,
         true,
-        descriptor.parameterType,
+        originalDescriptor.parameterType,
         false
 ) {
     companion object {
@@ -112,6 +115,7 @@ public class KotlinInplaceParameterIntroducer(
         }
     }
 
+    private var descriptor = originalDescriptor
     private var previewer: EditorEx? = null
 
     private fun updatePreview(currentName: String?, currentType: String?) {
@@ -204,6 +208,29 @@ public class KotlinInplaceParameterIntroducer(
             previewerPanel.setBorder(EmptyBorder(2, 2, 6, 2))
 
             previewerPanel
+        }
+
+        val occurrenceCount = descriptor.occurrencesToReplace.size()
+        if (occurrenceCount > 1) {
+            addPanelControl {
+                val replaceAllCheckBox = NonFocusableCheckBox("Replace all occurrences ($occurrenceCount)")
+                replaceAllCheckBox.setSelected(true)
+                replaceAllCheckBox.setMnemonic('R')
+                replaceAllCheckBox.addActionListener {
+                    descriptor = descriptor.copy(
+                            occurrencesToReplace = with(originalDescriptor) {
+                                if (replaceAllCheckBox.isSelected()) {
+                                    occurrencesToReplace
+                                }
+                                else {
+                                    Collections.singletonList(originalOccurrence)
+                                }
+                            }
+                    )
+                    updatePreview(null, null)
+                }
+                replaceAllCheckBox
+            }
         }
     }
 

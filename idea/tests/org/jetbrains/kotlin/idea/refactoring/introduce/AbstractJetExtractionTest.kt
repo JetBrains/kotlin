@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ExtractKotlinFunctionHandler
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
+import org.jetbrains.kotlin.idea.refactoring.introduce.introduceParameter.IntroduceParameterDescriptor
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceParameter.KotlinIntroduceParameterHandler
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceProperty.KotlinIntroducePropertyHandler
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler
@@ -65,7 +66,16 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
 
     protected fun doIntroduceParameterTest(path: String) {
         doTest(path) { file ->
-            with (KotlinIntroduceParameterHandler()) {
+            val handler = object: KotlinIntroduceParameterHandler() {
+                override fun configure(descriptor: IntroduceParameterDescriptor): IntroduceParameterDescriptor {
+                    val fileText = file.getText()
+                    val singleReplace = InTextDirectivesUtils.isDirectiveDefined(fileText, "// SINGLE_REPLACE")
+                    return with (descriptor) {
+                        copy(occurrencesToReplace = if (singleReplace) Collections.singletonList(originalOccurrence) else occurrencesToReplace)
+                    }
+                }
+            }
+            with (handler) {
                 val target = file.findElementByComment("// TARGET:") as? JetNamedDeclaration
                 if (target != null) {
                     JetRefactoringUtil.selectExpression(fixture.getEditor(), file, true) { expression ->

@@ -2203,6 +2203,36 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             doIntroduceParameterTest(fileName);
         }
 
+        @TestMetadata("classMultipleUsages1.kt")
+        public void testClassMultipleUsages1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/classMultipleUsages1.kt");
+            doIntroduceParameterTest(fileName);
+        }
+
+        @TestMetadata("classMultipleUsages2.kt")
+        public void testClassMultipleUsages2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/classMultipleUsages2.kt");
+            doIntroduceParameterTest(fileName);
+        }
+
+        @TestMetadata("classMultipleUsagesOutsideScope.kt")
+        public void testClassMultipleUsagesOutsideScope() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/classMultipleUsagesOutsideScope.kt");
+            doIntroduceParameterTest(fileName);
+        }
+
+        @TestMetadata("classMultipleUsagesSingleReplace1.kt")
+        public void testClassMultipleUsagesSingleReplace1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/classMultipleUsagesSingleReplace1.kt");
+            doIntroduceParameterTest(fileName);
+        }
+
+        @TestMetadata("classMultipleUsagesSingleReplace2.kt")
+        public void testClassMultipleUsagesSingleReplace2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/classMultipleUsagesSingleReplace2.kt");
+            doIntroduceParameterTest(fileName);
+        }
+
         @TestMetadata("classNoParams.kt")
         public void testClassNoParams() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/classNoParams.kt");
@@ -2242,6 +2272,18 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
         @TestMetadata("functionMultipleUnusedParameters.kt")
         public void testFunctionMultipleUnusedParameters() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/functionMultipleUnusedParameters.kt");
+            doIntroduceParameterTest(fileName);
+        }
+
+        @TestMetadata("functionMultipleUsages.kt")
+        public void testFunctionMultipleUsages() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/functionMultipleUsages.kt");
+            doIntroduceParameterTest(fileName);
+        }
+
+        @TestMetadata("functionMultipleUsagesSingleReplace.kt")
+        public void testFunctionMultipleUsagesSingleReplace() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/functionMultipleUsagesSingleReplace.kt");
             doIntroduceParameterTest(fileName);
         }
 
