@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.idea.quickfix.JetSingleIntentionActionFactory
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.CreateFromUsageFixBase
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
+import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElement
@@ -72,7 +73,7 @@ object CreateLocalVariableActionFactory: JetSingleIntentionActionFactory() {
 
                 with (CallableBuilderConfiguration(propertyInfo.singletonOrEmptyList(), originalElement, file, editor).createBuilder()) {
                     placement = CallablePlacement.NoReceiver(actualContainer)
-                    CommandProcessor.getInstance().executeCommand(project, { build() }, getText(), null)
+                    project.executeCommand(getText()) { build() }
                 }
             }
         }

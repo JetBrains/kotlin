@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.*
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.impl.PsiModificationTrackerImpl
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.test.JetTestUtils
 import kotlin.test.fail
 
@@ -55,7 +56,7 @@ public abstract class AbstractCodeFragmentHighlightingTest : AbstractJetPsiCheck
     fun doTestWithImport(filePath: String) {
         myFixture.configureByCodeFragment(filePath)
 
-        ApplicationManager.getApplication()?.runWriteAction {
+        runWriteAction {
             val fileText = FileUtil.loadFile(File(filePath), true)
             val file = myFixture.getFile() as JetFile
             InTextDirectivesUtils.findListWithPrefixes(fileText, "// IMPORT: ").forEach {

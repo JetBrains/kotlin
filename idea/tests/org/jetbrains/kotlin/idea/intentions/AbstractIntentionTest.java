@@ -152,6 +152,7 @@ public abstract class AbstractIntentionTest extends KotlinCodeInsightTestCase {
                 ApplicationPackage.executeWriteCommand(
                         getProject(),
                         intentionAction.getText(),
+                        null,
                         new Function0<Object>() {
                             @Override
                             public Object invoke() {

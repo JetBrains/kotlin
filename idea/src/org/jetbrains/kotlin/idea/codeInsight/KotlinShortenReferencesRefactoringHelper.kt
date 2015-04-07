@@ -22,6 +22,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.idea.codeInsight.shorten.*
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 
 public class KotlinShortenReferencesRefactoringHelper: RefactoringHelper<Any> {
     override fun prepareOperation(usages: Array<out UsageInfo>?): Any? {
@@ -33,8 +34,6 @@ public class KotlinShortenReferencesRefactoringHelper: RefactoringHelper<Any> {
     }
 
     override fun performOperation(project: Project, operationData: Any?) {
-        ApplicationManager.getApplication()!!.runWriteAction {
-            performDelayedShortening(project)
-        }
+        runWriteAction { performDelayedShortening(project) }
     }
 }

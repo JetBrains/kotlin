@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.idea.decompiler.navigation.JetSourceNavigationHelper
 import org.jetbrains.kotlin.idea.stubindex.JetSuperClassIndex
 import org.jetbrains.kotlin.idea.search.fileScope
 import org.jetbrains.kotlin.idea.stubindex.JetSourceFilterScope
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 
 public open class KotlinDirectInheritorsSearcher() : QueryExecutorBase<PsiClass, DirectClassInheritorsSearch.SearchParameters>(true) {
     public override fun processQuery(queryParameters: DirectClassInheritorsSearch.SearchParameters, consumer: Processor<PsiClass>) {
@@ -43,7 +44,7 @@ public open class KotlinDirectInheritorsSearcher() : QueryExecutorBase<PsiClass,
 
         if (scope == null) return
 
-        ApplicationManager.getApplication()?.runReadAction {
+        runReadAction {
             val noLibrarySourceScope = JetSourceFilterScope.kotlinSourceAndClassFiles(scope, baseClass.getProject())
             JetSuperClassIndex.getInstance().get(name, baseClass.getProject(), noLibrarySourceScope).stream()
                     .map { candidate -> JetSourceNavigationHelper.getOriginalPsiClassOrCreateLightClass(candidate)}

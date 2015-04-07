@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.idea.completion.ExpectedInfos
 import org.jetbrains.kotlin.idea.core.refactoring.EmptyValidator
 import org.jetbrains.kotlin.idea.core.refactoring.JetNameSuggester
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.application.executeCommand
+import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.psi.JetFile
@@ -42,27 +44,25 @@ fun insertLambdaTemplate(context: InsertionContext, placeholderRange: TextRange,
 
     // we start template later to not interfere with insertion of tail type
     val commandProcessor = CommandProcessor.getInstance()
-    val commandName = commandProcessor.getCurrentCommandName()
+    val commandName = commandProcessor.getCurrentCommandName()!!
     val commandGroupId = commandProcessor.getCurrentCommandGroupId()
 
     val rangeMarker = context.getDocument().createRangeMarker(placeholderRange)
 
     context.setLaterRunnable {
-        commandProcessor.executeCommand(context.getProject(), {
-            runWriteAction {
-                try {
-                    if (rangeMarker.isValid()) {
-                        context.getDocument().deleteString(rangeMarker.getStartOffset(), rangeMarker.getEndOffset())
-                        context.getEditor().getCaretModel().moveToOffset(rangeMarker.getStartOffset())
-                        val template = buildTemplate(lambdaType, explicitParameterTypes, context.getProject())
-                        TemplateManager.getInstance(context.getProject()).startTemplate(context.getEditor(), template)
-                    }
-                }
-                finally {
-                    rangeMarker.dispose()
+        context.getProject().executeWriteCommand(commandName, groupId = commandGroupId) {
+            try {
+                if (rangeMarker.isValid()) {
+                    context.getDocument().deleteString(rangeMarker.getStartOffset(), rangeMarker.getEndOffset())
+                    context.getEditor().getCaretModel().moveToOffset(rangeMarker.getStartOffset())
+                    val template = buildTemplate(lambdaType, explicitParameterTypes, context.getProject())
+                    TemplateManager.getInstance(context.getProject()).startTemplate(context.getEditor(), template)
                 }
             }
-        }, commandName, commandGroupId)
+            finally {
+                rangeMarker.dispose()
+            }
+        }
     }
 }
 

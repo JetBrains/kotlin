@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.idea.intentions.ReplaceItWithExplicitFunctionLiteral
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.refactoring.rename.inplace.VariableInplaceRenameHandler
+import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 
 public class RenameKotlinImplicitLambdaParameter: VariableInplaceRenameHandler() {
     override fun isAvailable(element: PsiElement?, editor: Editor, file: PsiFile): Boolean {
@@ -39,14 +40,9 @@ public class RenameKotlinImplicitLambdaParameter: VariableInplaceRenameHandler()
 
     override fun invoke(project: Project, editor: Editor, file: PsiFile, dataContext: DataContext?) {
         val intention = ReplaceItWithExplicitFunctionLiteralParamIntention()
-        CommandProcessor.getInstance().executeCommand(
-                project,
-                { ApplicationManager.getApplication()!!.runWriteAction(Runnable {
-                    intention.invoke(project, editor, file)
-                }) },
-                "Convert 'it' to explicit lambda parameter",
-                ""
-        )
+        project.executeWriteCommand("Convert 'it' to explicit lambda parameter") {
+            intention.invoke(project, editor, file)
+        }
     }
 
     override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext?) {

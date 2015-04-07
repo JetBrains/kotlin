@@ -40,6 +40,7 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.core.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.core.refactoring.getOrCreateKotlinFile
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
+import org.jetbrains.kotlin.idea.util.application.executeCommand
 
 enum class ClassKind(val keyword: String, val description: String) {
     PLAIN_CLASS: ClassKind("class", "class")
@@ -124,7 +125,7 @@ public class CreateClassFromUsageFix(
                     Collections.singletonList(constructorInfo), element as JetElement, file, editor, false, kind == PLAIN_CLASS || kind == TRAIT
             ).createBuilder()
             builder.placement = CallablePlacement.NoReceiver(targetParent)
-            CommandProcessor.getInstance().executeCommand(project, { builder.build() }, getText(), null)
+            project.executeCommand(getText()) { builder.build() }
         }
     }
 }

@@ -36,6 +36,7 @@ import com.intellij.CommonBundle
 import com.intellij.refactoring.RefactoringBundle
 import org.jetbrains.kotlin.resolve.OverrideResolver
 import org.jetbrains.kotlin.idea.refactoring.CallableRefactoring
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 
 public trait JetChangeSignatureConfiguration {
     fun configure(originalDescriptor: JetMethodDescriptor, bindingContext: BindingContext): JetMethodDescriptor
@@ -109,9 +110,9 @@ public class JetChangeSignature(project: Project,
     }
 
     private fun performRefactoringSilently(dialog: JetChangeSignatureDialog) {
-        ApplicationManager.getApplication()!!.runWriteAction {
+        runWriteAction {
             dialog.createRefactoringProcessor().run()
-            Disposer.dispose(dialog.getDisposable()!!)
+            Disposer.dispose(dialog.getDisposable())
         }
     }
 

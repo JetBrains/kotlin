@@ -88,7 +88,6 @@ public class JavaToKotlinAction : AnAction() {
             CommandProcessor.getInstance().markCurrentCommandAsGlobal(project)
 
             val newFiles = saveResults(javaFiles, converterResult!!.results.map { it!!.text /*conversion of a file always succeeds*/ })
-            deleteFiles(javaFiles)
 
             externalCodeUpdate?.invoke()
 
@@ -133,31 +132,16 @@ public class JavaToKotlinAction : AnAction() {
     private fun saveResults(javaFiles: List<PsiJavaFile>, convertedTexts: List<String>): List<VirtualFile> {
         val result = ArrayList<VirtualFile>()
         for ((psiFile, text) in javaFiles.zip(convertedTexts)) {
-            result.addIfNotNull(saveConversionResult(psiFile.getVirtualFile(), text, psiFile.getProject()))
-        }
-        return result
-    }
-
-    private fun saveConversionResult(javaFile: VirtualFile, text: String, project: Project): VirtualFile? {
-        try {
-            val kotlinFile = javaFile.copy(this, javaFile.getParent(), javaFile.getNameWithoutExtension() + ".kt")
-            kotlinFile.setBinaryContent(CharsetToolkit.getUtf8Bytes(text))
-            return kotlinFile
-        }
-        catch (e: IOException) {
-            MessagesEx.error(project, e.getMessage()).showLater()
-            return null
-        }
-    }
-
-    private fun deleteFiles(javaFiles: List<PsiJavaFile>) {
-        for (psiFile in javaFiles) {
+            val virtualFile = psiFile.getVirtualFile()
             try {
-                psiFile.getVirtualFile()?.delete(this)
+                virtualFile.rename(null, virtualFile.getNameWithoutExtension() + ".kt")
+                virtualFile.setBinaryContent(CharsetToolkit.getUtf8Bytes(text))
+                result.add(virtualFile)
             }
             catch (e: IOException) {
                 MessagesEx.error(psiFile.getProject(), e.getMessage()).showLater()
             }
         }
+        return result
     }
 }

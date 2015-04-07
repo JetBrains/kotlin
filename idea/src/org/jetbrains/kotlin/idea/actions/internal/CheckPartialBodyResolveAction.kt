@@ -37,6 +37,7 @@ import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
@@ -53,10 +54,8 @@ public class CheckPartialBodyResolveAction : AnAction() {
         val project = CommonDataKeys.PROJECT.getData(e.getDataContext())!!
 
         ProgressManager.getInstance().runProcessWithProgressSynchronously(
-                Runnable {
-                    ApplicationManager.getApplication().runReadAction {
-                        checkResolve(selectedFiles, project)
-                    }
+                {
+                    runReadAction { checkResolve(selectedFiles, project) }
                 },
                 "Checking Partial Body Resolve",
                 true,

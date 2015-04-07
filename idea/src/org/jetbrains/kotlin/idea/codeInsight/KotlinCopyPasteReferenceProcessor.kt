@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.idea.references.JetMultiReference
 import org.jetbrains.kotlin.idea.references.JetReference
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
@@ -218,9 +219,9 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
         val selectedReferencesToRestore = showRestoreReferencesDialog(project, referencesPossibleToRestore)
         if (selectedReferencesToRestore.isEmpty()) return
 
-        ApplicationManager.getApplication()!!.runWriteAction(Runnable {
+        runWriteAction {
             restoreReferences(selectedReferencesToRestore, file)
-        })
+        }
     }
 
     private fun findReferencesToRestore(file: PsiFile, blockStart: Int, referenceData: Array<out KotlinReferenceData>): List<ReferenceToRestoreData> {

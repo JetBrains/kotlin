@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
 import org.jetbrains.kotlin.idea.references.JetReference
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -156,7 +157,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
             // check if no changes to imports required
             if (oldImports.size() == sortedImportsToGenerate.size() && oldImports.map { it.getImportPath() } == sortedImportsToGenerate) return
 
-            ApplicationManager.getApplication()!!.runWriteAction(Runnable {
+            runWriteAction {
                 val importList = file.getImportList()!!
                 val psiFactory = JetPsiFactory(file.getProject())
                 for (importPath in sortedImportsToGenerate) {
@@ -167,7 +168,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
                 for (import in oldImports) {
                     import.delete()
                 }
-            })
+            }
         }
 
         private fun detectDescriptorsToImport(): Set<DeclarationDescriptor> {

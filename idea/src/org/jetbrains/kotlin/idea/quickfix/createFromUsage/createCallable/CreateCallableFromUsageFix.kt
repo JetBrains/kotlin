@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.CreateFromUsageFixBase
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
 import org.jetbrains.kotlin.idea.core.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.core.refactoring.chooseContainerElementIfNecessary
+import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.psi.*
 import java.util.Collections
 import java.util.HashSet
@@ -111,7 +112,7 @@ public class CreateCallableFromUsageFix(
 
         fun runBuilder(placement: CallablePlacement) {
             callableBuilder.placement = placement
-            CommandProcessor.getInstance().executeCommand(project, { callableBuilder.build() }, getText(), null)
+            project.executeCommand(getText()) { callableBuilder.build() }
         }
 
         if (callableInfo is SecondaryConstructorInfo) {

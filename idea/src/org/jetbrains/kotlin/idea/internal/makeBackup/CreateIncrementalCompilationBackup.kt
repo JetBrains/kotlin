@@ -38,6 +38,7 @@ import com.intellij.util.io.ZipUtil
 import com.intellij.ide.actions.ShowFilePathAction
 import com.intellij.util.WaitForProgressToShow
 import com.intellij.openapi.application.ApplicationManager
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 
 public class CreateIncrementalCompilationBackup: AnAction("Create backup for debugging Kotlin incremental compilation") {
     companion object {
@@ -71,7 +72,7 @@ public class CreateIncrementalCompilationBackup: AnAction("Create backup for deb
     }
 
     private fun createPatches(backupDir: File, project: Project, indicator: ProgressIndicator) {
-        ApplicationManager.getApplication()!!.runReadAction(Runnable {
+        runReadAction {
             val localHistoryImpl = LocalHistoryImpl.getInstanceImpl()!!
             val gateway = localHistoryImpl.getGateway()!!
             val localHistoryFacade = localHistoryImpl.getFacade()
@@ -105,7 +106,7 @@ public class CreateIncrementalCompilationBackup: AnAction("Create backup for deb
                     }
                 }
             }
-        })
+        }
     }
 
     private fun copyLogs(backupDir: File, indicator: ProgressIndicator) {

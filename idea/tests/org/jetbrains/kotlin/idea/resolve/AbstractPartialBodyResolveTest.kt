@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.idea.JetFileType
 import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 
 public abstract class AbstractPartialBodyResolveTest : JetLightCodeInsightFixtureTestCase() {
     override fun getTestDataPath() = JetTestUtils.getHomeDirectory()
@@ -106,17 +107,12 @@ public abstract class AbstractPartialBodyResolveTest : JetLightCodeInsightFixtur
                 .filter { !it.parents(withItself = false).any { it in set } } // do not include skipped statements which are inside other skipped statement
                 .sortBy { it.getTextOffset() }
 
-        CommandProcessor.getInstance().executeCommand(
-                {
-                    ApplicationManager.getApplication().runWriteAction {
-                        for (statement in skippedStatements) {
-                            statement.replace(JetPsiFactory(getProject()).createComment("/* STATEMENT DELETED: ${statement.compactPresentation()} */"))
-                        }
-                    }
-                },
-                "",
-                null
-        )
+        myFixture.getProject().executeWriteCommand("") {
+            for (statement in skippedStatements) {
+                statement.replace(JetPsiFactory(getProject()).createComment("/* STATEMENT DELETED: ${statement.compactPresentation()} */"))
+            }
+        }
+
         val fileText = file.getText()
         if (selectionModel.hasSelection()) {
             val start = selectionModel.getSelectionStart()

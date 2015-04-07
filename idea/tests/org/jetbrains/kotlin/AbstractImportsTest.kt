@@ -22,6 +22,7 @@ import com.intellij.openapi.command.CommandProcessor
 import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.JetWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
+import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.JetTestUtils
@@ -55,11 +56,9 @@ public abstract class AbstractImportsTest : JetLightCodeInsightFixtureTestCase()
             codeInsightSettings.OPTIMIZE_IMPORTS_ON_THE_FLY = InTextDirectivesUtils.getPrefixedBoolean(file.getText(), "// OPTIMIZE_IMPORTS:") ?: false
             codeStyleSettings.NAME_COUNT_TO_USE_STAR_IMPORT = InTextDirectivesUtils.getPrefixedInt(file.getText(), "// NAME_COUNT_TO_USE_STAR_IMPORT:") ?: nameCountToUseStarImportDefault
 
-            CommandProcessor.getInstance().executeCommand(getProject(), {
-                ApplicationManager.getApplication()!!.runWriteAction {
-                    doTest(file)
-                }
-            }, null, null)
+            getProject().executeWriteCommand("") {
+                doTest(file)
+            }
 
             fixture.checkResultByFile(testPath + ".after")
         }

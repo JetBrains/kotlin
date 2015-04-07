@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.test.JetTestUtils
 
 public abstract class AbstractJavaToKotlinConverterTest : LightCodeInsightFixtureTestCase() {
@@ -54,19 +55,17 @@ public abstract class AbstractJavaToKotlinConverterTest : LightCodeInsightFixtur
     }
 
     protected fun addFile(text: String, fileName: String, dirName: String): VirtualFile {
-        return ApplicationManager.getApplication()!!.runWriteAction(object: Computable<VirtualFile> {
-            override fun compute(): VirtualFile? {
-                val root = LightPlatformTestCase.getSourceRoot()!!
-                val virtualDir = root.findChild(dirName) ?: root.createChildDirectory(null, dirName)
-                val virtualFile = virtualDir.createChildData(null, fileName)
-                virtualFile.getOutputStream(null)!!.writer().use { it.write(text) }
-                return virtualFile
-            }
-        })
+        return runWriteAction {
+            val root = LightPlatformTestCase.getSourceRoot()!!
+            val virtualDir = root.findChild(dirName) ?: root.createChildDirectory(null, dirName)
+            val virtualFile = virtualDir.createChildData(null, fileName)
+            virtualFile.getOutputStream(null)!!.writer().use { it.write(text) }
+            virtualFile
+        }
     }
 
     protected fun deleteFile(virtualFile: VirtualFile) {
-        ApplicationManager.getApplication()!!.runWriteAction { virtualFile.delete(this) }
+        runWriteAction { virtualFile.delete(this) }
     }
 
     protected fun addErrorsDump(jetFile: JetFile): String {

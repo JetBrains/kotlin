@@ -32,13 +32,13 @@ public fun Project.executeWriteCommand(name: String, command: () -> Unit) {
     CommandProcessor.getInstance().executeCommand(this, { runWriteAction(command) }, name, null)
 }
 
-public fun Project.executeCommand(name: String, command: () -> Unit) {
-    CommandProcessor.getInstance().executeCommand(this, command, name, null)
+public fun Project.executeCommand(name: String, groupId: Any? = null, command: () -> Unit) {
+    CommandProcessor.getInstance().executeCommand(this, command, name, groupId)
 }
 
-public fun <T> Project.executeWriteCommand(name: String, command: () -> T): T {
+public fun <T> Project.executeWriteCommand(name: String, groupId: Any? = null, command: () -> T): T {
     var result: T = null as T
-    CommandProcessor.getInstance().executeCommand(this, { result = runWriteAction(command) }, name, null)
+    CommandProcessor.getInstance().executeCommand(this, { result = runWriteAction(command) }, name, groupId)
     [suppress("USELESS_CAST")]
     return result as T
 }

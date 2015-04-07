@@ -63,6 +63,7 @@ import com.intellij.debugger.SourcePosition
 import com.intellij.debugger.engine.SourcePositionProvider
 import com.intellij.debugger.engine.evaluation.TextWithImports
 import com.intellij.debugger.ui.impl.watch.WatchItemDescriptor
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -322,7 +323,7 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
     }
 
     private fun SuspendContextImpl.evaluate(text: String, codeFragmentKind: CodeFragmentKind, expectedResult: String) {
-        ApplicationManager.getApplication()?.runReadAction {
+        runReadAction {
             val sourcePosition = ContextUtil.getSourcePosition(this)
             val contextElement = ContextUtil.getContextElement(sourcePosition)!!
             Assert.assertTrue("KotlinCodeFragmentFactory should be accepted for context element otherwise default evaluator will be called. ContextElement = ${contextElement.getText()}",
