@@ -98,15 +98,15 @@ class AnnotationConverter(private val converter: Converter) {
         val nameRef = annotation.getNameReferenceElement()
         val name = Identifier((nameRef ?: return null).getText()!!).assignPrototype(nameRef)
         val annotationClass = nameRef.resolve() as? PsiClass
-        val lastMethod = annotationClass?.getMethods()?.lastOrNull()
         val arguments = annotation.getParameterList().getAttributes().flatMap {
-            val method = annotationClass?.findMethodsByName(it.getName() ?: "value", false)?.firstOrNull()
+            val parameterName = it.getName() ?: "value"
+            val method = annotationClass?.findMethodsByName(parameterName, false)?.firstOrNull()
             val expectedType = method?.getReturnType()
 
             val attrName = it.getName()?.let { Identifier(it).assignNoPrototype() }
             val value = it.getValue()
 
-            val isVarArg = method == lastMethod /* converted to vararg in Kotlin */
+            val isVarArg = parameterName == "value" /* converted to vararg in Kotlin */
             val attrValues = convertAttributeValue(value, expectedType, isVarArg, it.getName() == null)
 
             attrValues.map { attrName to converter.deferredElement(it) }

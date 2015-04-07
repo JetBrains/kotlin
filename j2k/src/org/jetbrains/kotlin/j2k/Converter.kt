@@ -234,21 +234,36 @@ class Converter private(
         val paramModifiers = Modifiers(listOf(Modifier.PUBLIC)).assignNoPrototype()
         val noBlankLinesInheritance = CommentsAndSpacesInheritance(blankLinesBefore = false)
         val annotationMethods = psiClass.getMethods().filterIsInstance<PsiAnnotationMethod>()
-        val parameters = annotationMethods
-                .map { method ->
+        val (methodsNamedValue, otherMethods) = annotationMethods.partition { it.getName() == "value" }
+
+        fun createParameter(type: Type, method: PsiAnnotationMethod): Parameter {
+            type.assignPrototype(method.getReturnTypeElement(), noBlankLinesInheritance)
+
+            return Parameter(method.declarationIdentifier(),
+                      type,
+                      Parameter.VarValModifier.Val,
+                      convertAnnotations(method),
+                      paramModifiers,
+                      annotationConverter.convertAnnotationMethodDefault(method)).assignPrototype(method, noBlankLinesInheritance)
+        }
+
+        val parameters =
+                // Argument named `value` comes first if it exists
+                // Convert it as vararg if it's array
+                methodsNamedValue.
+                map { method ->
                     val returnType = method.getReturnType()
-                    val typeConverted = if (method == annotationMethods.last() && returnType is PsiArrayType)
+                    val typeConverted = if (returnType is PsiArrayType)
                         VarArgType(typeConverter.convertType(returnType.getComponentType(), Nullability.NotNull))
                     else
                         typeConverter.convertType(returnType, Nullability.NotNull)
-                    typeConverted.assignPrototype(method.getReturnTypeElement(), noBlankLinesInheritance)
 
-                    Parameter(method.declarationIdentifier(),
-                              typeConverted,
-                              Parameter.VarValModifier.Val,
-                              convertAnnotations(method),
-                              paramModifiers,
-                              annotationConverter.convertAnnotationMethodDefault(method)).assignPrototype(method, noBlankLinesInheritance)
+                    createParameter(typeConverted, method)
+                } +
+                otherMethods
+                .map { method ->
+                    val typeConverted = typeConverter.convertType(method.getReturnType(), Nullability.NotNull)
+                    createParameter(typeConverted, method)
                 }
         val parameterList = ParameterList(parameters).assignNoPrototype()
         val constructorSignature = if (parameterList.parameters.isNotEmpty())
