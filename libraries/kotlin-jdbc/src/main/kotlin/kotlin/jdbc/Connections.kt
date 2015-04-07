@@ -37,7 +37,7 @@ fun <T> Connection.use(block : (Connection) -> T) : T {
 fun <T> Connection.statement(block: (Statement) -> T): T {
     val statement = createStatement()
     if (statement != null) {
-        return statement.useSql(block)
+        return statement.use(block)
     } else {
         throw IllegalStateException("No Statement returned from $this")
     }
