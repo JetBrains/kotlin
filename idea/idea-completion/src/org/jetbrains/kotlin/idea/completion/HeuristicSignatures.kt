@@ -73,8 +73,9 @@ public object HeuristicSignatures {
         }
         else {
             val ownerClass = ownerType.getConstructor().getDeclarationDescriptor() ?: return null
-            val classFqName = DescriptorUtils.getFqNameSafe(ownerClass)
-            val parameterTypes = signatures[classFqName to function.getName()] ?: return null
+            val classFqName = DescriptorUtils.getFqName(ownerClass)
+            if (!classFqName.isSafe()) return null
+            val parameterTypes = signatures[classFqName.toSafe() to function.getName()] ?: return null
             val typeStr = parameterTypes[parameterIndex]
             val typeParameters = ownerClass.getTypeConstructor().getParameters()
 
