@@ -135,6 +135,9 @@ fun IntroduceParameterDescriptor.performRefactoring() {
 public open class KotlinIntroduceParameterHandler: KotlinIntroduceHandlerBase() {
     open fun configure(descriptor: IntroduceParameterDescriptor): IntroduceParameterDescriptor = descriptor
 
+    private fun isObjectOrNonInnerClass(e: PsiElement): Boolean =
+            e is JetObjectDeclaration || (e is JetClass && !e.isInner())
+
     fun invoke(project: Project, editor: Editor, expression: JetExpression, targetParent: JetNamedDeclaration) {
         val psiFactory = JetPsiFactory(project)
 
@@ -170,8 +173,19 @@ public open class KotlinIntroduceParameterHandler: KotlinIntroduceHandlerBase() 
                 .filter { it.second.isNotEmpty() }
                 .toMap()
 
+        val forbiddenRanges =
+                if (targetParent is JetClass) {
+                    targetParent.getDeclarations().filter { isObjectOrNonInnerClass(it) }.map { it.getTextRange() }
+                }
+                else {
+                    Collections.emptyList()
+                }
         val occurrencesToReplace = expression.toRange()
                 .match(body, JetPsiUnifier.DEFAULT)
+                .filterNot {
+                    val textRange = it.range.getTextRange()
+                    forbiddenRanges.any { it.intersects(textRange) }
+                }
                 .map {
                     val matchedElement = it.range.elements.singleOrNull()
                     when (matchedElement) {
@@ -241,7 +255,12 @@ public open class KotlinIntroduceParameterHandler: KotlinIntroduceHandlerBase() 
                 editor = editor,
                 file = file,
                 getContainers = { elements, parent ->
-                    parent.parents(withItself = false)
+                    val parents = parent.parents(withItself = false)
+                    val stopAt = (parent.parents(withItself = false) zip parent.parents(withItself = false).drop(1))
+                            .firstOrNull { isObjectOrNonInnerClass(it.first) }
+                            ?.second
+
+                    (if (stopAt != null) parent.parents(withItself = false).takeWhile { it != stopAt } else parents)
                             .filter {
                                 ((it is JetClass && !it.isTrait() && it !is JetEnumEntry) || it is JetNamedFunction || it is JetSecondaryConstructor) &&
                                 ((it as JetNamedDeclaration).getValueParameterList() != null || it.getNameIdentifier() != null)

@@ -2269,6 +2269,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             doIntroduceParameterTest(fileName);
         }
 
+        @TestMetadata("forbiddenUsages.kt")
+        public void testForbiddenUsages() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/forbiddenUsages.kt");
+            doIntroduceParameterTest(fileName);
+        }
+
         @TestMetadata("functionMultipleUnusedParameters.kt")
         public void testFunctionMultipleUnusedParameters() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/functionMultipleUnusedParameters.kt");
