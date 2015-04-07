@@ -16,15 +16,17 @@
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable
 
-import org.jetbrains.kotlin.diagnostics.Diagnostic
 import com.intellij.codeInsight.intention.IntentionAction
-import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.psi.JetCallExpression
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
-import java.util.Collections
 import org.jetbrains.kotlin.idea.quickfix.JetIntentionActionsFactory
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.FunctionInfo
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.ParameterInfo
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
+import org.jetbrains.kotlin.psi.JetCallExpression
+import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 object CreateInvokeFunctionActionFactory : JetIntentionActionsFactory() {
     override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction>? {
@@ -44,6 +46,9 @@ object CreateInvokeFunctionActionFactory : JetIntentionActionsFactory() {
         }
 
         val returnType = TypeInfo(callExpr, Variance.OUT_VARIANCE)
-        return CreateCallableFromUsageFixes(callExpr, FunctionInfo("invoke", receiverType, returnType, Collections.emptyList(), parameters))
+        return CreateCallableFromUsageFixes(
+                callExpr,
+                FunctionInfo(OperatorConventions.INVOKE.asString(), receiverType, returnType, emptyList(), parameters)
+        )
     }
 }

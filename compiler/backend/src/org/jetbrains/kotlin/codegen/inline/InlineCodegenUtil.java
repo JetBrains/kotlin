@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.serialization.ProtoBuf;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor;
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf;
+import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 import org.jetbrains.org.objectweb.asm.*;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.tree.*;
@@ -67,7 +68,6 @@ import static org.jetbrains.kotlin.resolve.DescriptorUtils.isTrait;
 public class InlineCodegenUtil {
     public static final boolean GENERATE_SMAP = true;
     public static final int API = Opcodes.ASM5;
-    public static final String INVOKE = "invoke";
 
     public static final String CAPTURED_FIELD_PREFIX = "$";
 
@@ -115,9 +115,8 @@ public class InlineCodegenUtil {
             ) {
                 if (methodName.equals(name) && methodDescriptor.equals(desc)) {
                     node[0] = new MethodNode(API, access, name, desc, signature, exceptions) {
-
                         @Override
-                        public void visitLineNumber(int line, Label start) {
+                        public void visitLineNumber(int line, @NotNull Label start) {
                             super.visitLineNumber(line, start);
                             lines[0] = Math.min(lines[0], line);
                             lines[1] = Math.max(lines[1], line);
@@ -252,9 +251,8 @@ public class InlineCodegenUtil {
         return getInlineName(codegenContext, currentDescriptor.getContainingDeclaration(), typeMapper) + "$" + suffix;
     }
 
-
     public static boolean isInvokeOnLambda(String owner, String name) {
-        if (!INVOKE.equals(name)) {
+        if (!OperatorConventions.INVOKE.asString().equals(name)) {
             return false;
         }
 

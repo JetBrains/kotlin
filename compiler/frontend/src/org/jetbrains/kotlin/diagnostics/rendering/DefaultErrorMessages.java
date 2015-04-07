@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.renderer.MultiRenderer;
 import org.jetbrains.kotlin.renderer.Renderer;
 import org.jetbrains.kotlin.resolve.varianceChecker.VarianceChecker.VarianceConflictDiagnosticData;
 import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 import org.jetbrains.kotlin.util.MappedExtensionProvider;
 
 import java.lang.reflect.Field;
@@ -500,15 +501,17 @@ public class DefaultErrorMessages {
         MAP.put(CONFLICTING_OVERLOADS, "''{0}'' is already defined in {1}", COMPACT_WITH_MODIFIERS, STRING);
         MAP.put(ILLEGAL_PLATFORM_NAME, "Illegal platform name: ''{0}''", STRING);
 
-        MAP.put(FUNCTION_EXPECTED, "Expression ''{0}''{1} cannot be invoked as a function. The function 'invoke()' is not found", ELEMENT_TEXT, new Renderer<JetType>() {
-            @NotNull
-            @Override
-            public String render(@NotNull JetType type) {
-                if (type.isError()) return "";
-                return " of type '" + RENDER_TYPE.render(type) + "'";
-            }
-        });
-        MAP.put(FUNCTION_CALL_EXPECTED, "Function invocation ''{0}({1})'' expected", ELEMENT_TEXT,new Renderer<Boolean>() {
+        MAP.put(FUNCTION_EXPECTED, "Expression ''{0}''{1} cannot be invoked as a function. " +
+                                   "The function '" + OperatorConventions.INVOKE.asString() + "()' is not found",
+                ELEMENT_TEXT, new Renderer<JetType>() {
+                    @NotNull
+                    @Override
+                    public String render(@NotNull JetType type) {
+                        if (type.isError()) return "";
+                        return " of type '" + RENDER_TYPE.render(type) + "'";
+                    }
+                });
+        MAP.put(FUNCTION_CALL_EXPECTED, "Function invocation ''{0}({1})'' expected", ELEMENT_TEXT, new Renderer<Boolean>() {
             @NotNull
             @Override
             public String render(@NotNull Boolean hasValueParameters) {

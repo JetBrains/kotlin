@@ -18,11 +18,12 @@ package org.jetbrains.kotlin.idea.intentions.attributeCallReplacements
 
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 public open class ReplaceInvokeIntention : AttributeCallReplacementIntention("replace.invoke.with.call") {
 
     override fun isApplicableToCall(call: CallDescription): Boolean {
-        return call.functionName == "invoke"
+        return call.functionName == OperatorConventions.INVOKE.asString()
     }
 
     override fun replaceCall(call: CallDescription, editor: Editor) {

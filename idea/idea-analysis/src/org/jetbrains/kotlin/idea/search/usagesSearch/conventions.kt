@@ -16,14 +16,14 @@
 
 package org.jetbrains.kotlin.idea.search.usagesSearch
 
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.lexer.JetToken
-import org.jetbrains.kotlin.types.expressions.OperatorConventions.*
 import com.google.common.collect.ImmutableSet
-import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.lexer.JetSingleValueToken
+import org.jetbrains.kotlin.lexer.JetToken
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.DelegatedPropertyResolver
 import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
-import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.types.expressions.OperatorConventions.*
 
 public val ALL_SEARCHABLE_OPERATIONS: ImmutableSet<JetToken> = ImmutableSet
         .builder<JetToken>()
@@ -44,8 +44,6 @@ public val ALL_SEARCHABLE_OPERATION_PATTERNS: Set<String> =
 
 public val INDEXING_OPERATION_NAMES: ImmutableSet<Name> =
         ImmutableSet.of(Name.identifier("get"), Name.identifier("set"))
-
-public val INVOKE_OPERATION_NAME: Name = Name.identifier("invoke")
 
 public val ITERATOR_OPERATION_NAME: Name = Name.identifier("iterator")
 

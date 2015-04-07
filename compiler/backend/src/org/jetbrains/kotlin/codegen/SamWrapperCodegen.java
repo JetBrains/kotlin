@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
@@ -146,8 +147,8 @@ public class SamWrapperCodegen {
         FunctionCodegen codegen = new FunctionCodegen(CodegenContext.STATIC.intoClass(
                 (ClassDescriptor) erasedInterfaceFunction.getContainingDeclaration(), OwnerKind.IMPLEMENTATION, state), cv, state, parentCodegen);
 
-        FunctionDescriptor invokeFunction = functionJetType.getMemberScope()
-                .getFunctions(Name.identifier("invoke")).iterator().next().getOriginal();
+        FunctionDescriptor invokeFunction =
+                functionJetType.getMemberScope().getFunctions(OperatorConventions.INVOKE).iterator().next().getOriginal();
         StackValue functionField = StackValue.field(functionType, ownerType, FUNCTION_FIELD_NAME, false, StackValue.none());
         codegen.genDelegate(erasedInterfaceFunction, invokeFunction, functionField);
 

@@ -20,9 +20,9 @@ import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.lexer.JetToken;
 import org.jetbrains.kotlin.lexer.JetTokens;
+import org.jetbrains.kotlin.name.Name;
 
 public class OperatorConventions {
 
@@ -30,6 +30,7 @@ public class OperatorConventions {
     public static final Name IDENTITY_EQUALS = Name.identifier("identityEquals");
     public static final Name COMPARE_TO = Name.identifier("compareTo");
     public static final Name CONTAINS = Name.identifier("contains");
+    public static final Name INVOKE = Name.identifier("invoke");
 
     private OperatorConventions() {}
 

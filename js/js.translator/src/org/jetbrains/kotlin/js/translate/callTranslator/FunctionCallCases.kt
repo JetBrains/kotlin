@@ -16,37 +16,25 @@
 
 package org.jetbrains.kotlin.js.translate.callTranslator
 
-import com.google.dart.compiler.backend.js.ast.JsExpression
-import com.google.dart.compiler.backend.js.ast.JsNameRef
-import com.google.dart.compiler.backend.js.ast.JsInvocation
-import java.util.ArrayList
-import org.jetbrains.kotlin.js.translate.context.Namer
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import com.google.dart.compiler.backend.js.ast.JsNew
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import com.google.dart.compiler.backend.js.ast.JsLiteral
-import com.google.dart.compiler.backend.js.ast.JsName
-import org.jetbrains.kotlin.js.translate.context.TranslationContext
-import org.jetbrains.kotlin.js.translate.reference.CallArgumentTranslator
-import org.jetbrains.kotlin.descriptors.Visibilities
+import com.google.dart.compiler.backend.js.ast.*
 import com.intellij.util.SmartList
-import com.google.dart.compiler.backend.js.ast.JsArrayAccess
-import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
-import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.js.PredefinedAnnotation
-import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
-import org.jetbrains.kotlin.psi.Call
+import org.jetbrains.kotlin.js.translate.context.Namer
+import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.operation.OperatorTable
-import com.google.dart.compiler.backend.js.ast.JsBinaryOperation
-import org.jetbrains.kotlin.psi.JetPrefixExpression
-import com.google.dart.compiler.backend.js.ast.JsPrefixOperation
-import org.jetbrains.kotlin.psi.JetPostfixExpression
-import com.google.dart.compiler.backend.js.ast.JsPostfixOperation
-import org.jetbrains.kotlin.psi.JetBinaryExpression
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetOperationExpression
+import org.jetbrains.kotlin.js.translate.reference.CallArgumentTranslator
+import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.PsiUtils
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import java.util.ArrayList
 
 public fun addReceiverToArgs(receiver: JsExpression, arguments: List<JsExpression>): List<JsExpression> {
     if (arguments.isEmpty())
@@ -178,7 +166,7 @@ object NativeSetterCallCase : AnnotatedAsNativeXCallCase(PredefinedAnnotation.NA
 
 object InvokeIntrinsic : FunctionCallCase {
     fun canApply(callInfo: FunctionCallInfo): Boolean {
-        if (!callInfo.callableDescriptor.getName().asString().equals("invoke"))
+        if (callInfo.callableDescriptor.getName() != OperatorConventions.INVOKE)
             return false
         val parameterCount = callInfo.callableDescriptor.getValueParameters().size()
         val funDeclaration = callInfo.callableDescriptor.getContainingDeclaration()

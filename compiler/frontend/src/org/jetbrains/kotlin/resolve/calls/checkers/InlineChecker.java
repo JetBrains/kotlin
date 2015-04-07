@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -228,7 +229,7 @@ class InlineChecker implements CallChecker {
         }
 
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-        boolean isInvoke = descriptor.getName().asString().equals("invoke") &&
+        boolean isInvoke = descriptor.getName().equals(OperatorConventions.INVOKE) &&
                            containingDeclaration instanceof ClassDescriptor &&
                            KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(((ClassDescriptor) containingDeclaration).getDefaultType());
 

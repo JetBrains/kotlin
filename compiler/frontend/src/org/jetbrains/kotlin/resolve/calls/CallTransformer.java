@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -267,7 +268,8 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
             this.outerCall = call;
             this.explicitExtensionReceiver = explicitExtensionReceiver;
             this.calleeExpressionAsDispatchReceiver = calleeExpressionAsDispatchReceiver;
-            this.fakeInvokeExpression = (JetSimpleNameExpression) JetPsiFactory(call.getCallElement()).createExpression( "invoke");
+            this.fakeInvokeExpression =
+                    (JetSimpleNameExpression) JetPsiFactory(call.getCallElement()).createExpression(OperatorConventions.INVOKE.asString());
         }
 
         @Nullable
