@@ -161,6 +161,8 @@ public class KotlinBuiltIns {
         public final FqName tailRecursive = fqName("tailRecursive");
         public final FqName noinline = fqName("noinline");
 
+        public final FqNameUnsafe kClass = new FqName("kotlin.reflect.KClass").toUnsafe();
+
         public final Set<FqNameUnsafe> primitiveTypes;
         public final Set<FqNameUnsafe> primitiveArrays;
         {
@@ -851,6 +853,10 @@ public class KotlinBuiltIns {
 
     public static boolean isString(@Nullable JetType type) {
         return type != null && isNotNullConstructedFromGivenClass(type, FQ_NAMES.string);
+    }
+
+    public static boolean isKClass(@NotNull ClassDescriptor descriptor) {
+        return FQ_NAMES.kClass.equals(DescriptorUtils.getFqName(descriptor));
     }
 
     public static boolean isNonPrimitiveArray(@NotNull ClassDescriptor descriptor) {

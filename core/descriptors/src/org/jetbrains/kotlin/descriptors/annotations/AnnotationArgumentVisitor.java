@@ -51,5 +51,7 @@ public interface AnnotationArgumentVisitor<R, D> {
 
     R visitJavaClassValue(JavaClassValue value, D data);
 
+    R visitKClassValue(KClassValue value, D data);
+
     R visitNumberTypeValue(IntegerValueTypeConstant value, D data);
 }

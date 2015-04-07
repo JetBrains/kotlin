@@ -202,6 +202,57 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
             }
         }
 
+        @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/kClass")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class KClass extends AbstractJetDiagnosticsTestWithStdLib {
+            public void testAllFilesPresentInKClass() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/kClass"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("kClassArrayInAnnotationsInVariance.kt")
+            public void testKClassArrayInAnnotationsInVariance() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/kClass/kClassArrayInAnnotationsInVariance.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kClassArrayInAnnotationsOutVariance.kt")
+            public void testKClassArrayInAnnotationsOutVariance() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/kClass/kClassArrayInAnnotationsOutVariance.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kClassInAnnotation.kt")
+            public void testKClassInAnnotation() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/kClass/kClassInAnnotation.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kClassInAnnotationsInVariance.kt")
+            public void testKClassInAnnotationsInVariance() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/kClass/kClassInAnnotationsInVariance.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kClassInAnnotationsOutVariance.kt")
+            public void testKClassInAnnotationsOutVariance() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/kClass/kClassInAnnotationsOutVariance.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kClassInvariantTP.kt")
+            public void testKClassInvariantTP() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/kClass/kClassInvariantTP.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kClassOutArrayInAnnotationsOutVariance.kt")
+            public void testKClassOutArrayInAnnotationsOutVariance() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/kClass/kClassOutArrayInAnnotationsOutVariance.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/platformStatic")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

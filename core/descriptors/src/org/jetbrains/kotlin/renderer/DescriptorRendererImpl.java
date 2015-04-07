@@ -31,10 +31,7 @@ import org.jetbrains.kotlin.name.FqNameBase;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.constants.AnnotationValue;
-import org.jetbrains.kotlin.resolve.constants.ArrayValue;
-import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
-import org.jetbrains.kotlin.resolve.constants.JavaClassValue;
+import org.jetbrains.kotlin.resolve.constants.*;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.ErrorUtils.UninferredParameterTypeConstructor;
 import org.jetbrains.kotlin.types.error.MissingDependencyErrorClass;
@@ -613,6 +610,11 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
                     @Override
                     public String visitJavaClassValue(JavaClassValue value, Void data) {
                         return renderType(value.getValue()) + ".class";
+                    }
+
+                    @Override
+                    public String visitKClassValue(KClassValue value, Void data) {
+                         return renderType(value.getValue()) + "::class";
                     }
                 },
                 null

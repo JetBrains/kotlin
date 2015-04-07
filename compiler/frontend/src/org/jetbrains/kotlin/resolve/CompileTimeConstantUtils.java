@@ -79,6 +79,7 @@ public class CompileTimeConstantUtils {
         if (isEnumClass(typeDescriptor) ||
             isAnnotationClass(typeDescriptor) ||
             isJavaLangClass(typeDescriptor) ||
+            KotlinBuiltIns.isKClass(typeDescriptor) ||
             KotlinBuiltIns.isPrimitiveArray(parameterType) ||
             KotlinBuiltIns.isPrimitiveType(parameterType) ||
             builtIns.getStringType().equals(parameterType)) {
@@ -97,6 +98,7 @@ public class CompileTimeConstantUtils {
                     return isEnumClass(arrayTypeDescriptor) ||
                            isAnnotationClass(arrayTypeDescriptor) ||
                            isJavaLangClass(arrayTypeDescriptor) ||
+                           KotlinBuiltIns.isKClass(arrayTypeDescriptor) ||
                            builtIns.getStringType().equals(arrayType);
                 }
             }
