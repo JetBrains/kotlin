@@ -89,6 +89,7 @@ open class BranchedValue(val arg1: StackValue, val arg2: StackValue? = null, val
             registerOperations(IFGE, IFLT)
             registerOperations(IFGT, IFLE)
             registerOperations(IF_ACMPNE, IF_ACMPEQ)
+            registerOperations(IFNULL, IFNONNULL)
         }
 
         private fun registerOperations(op: Int, negatedOp: Int) {

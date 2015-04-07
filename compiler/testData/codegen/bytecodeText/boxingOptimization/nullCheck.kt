@@ -13,5 +13,6 @@ fun bar() {
 
 // 0 valueOf
 // 0 Value\s\(\)
-// 1 IFNULL
-// 0 IFNONNULL
+// 0 IFNULL
+// 1 IFNONNULL
+// 1 IF

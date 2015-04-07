@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationsPackage;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
@@ -176,6 +177,14 @@ public abstract class StackValue {
 
     public static StackValue and(@NotNull StackValue left, @NotNull StackValue right) {
         return new And(left, right);
+    }
+
+    public static StackValue compareIntWithZero(@NotNull StackValue argument, int operation) {
+        return new BranchedValue(argument, null, Type.INT_TYPE, operation);
+    }
+
+    public static StackValue compareWithNull(@NotNull StackValue argument, int operation) {
+        return new BranchedValue(argument, null, AsmTypes.OBJECT_TYPE, operation);
     }
 
     @NotNull

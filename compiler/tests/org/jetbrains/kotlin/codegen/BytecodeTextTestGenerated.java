@@ -328,6 +328,30 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/conditions/negatedDisjunction.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("negatedNullCompare.kt")
+        public void testNegatedNullCompare() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/conditions/negatedNullCompare.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("negatedZeroCompare.kt")
+        public void testNegatedZeroCompare() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/conditions/negatedZeroCompare.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nullCompare.kt")
+        public void testNullCompare() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/conditions/nullCompare.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("zeroCompare.kt")
+        public void testZeroCompare() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/conditions/zeroCompare.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/bytecodeText/constants")

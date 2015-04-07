@@ -98,7 +98,7 @@ import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.Ot
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.TraitImpl;
 import static org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
 import static org.jetbrains.kotlin.serialization.deserialization.DeserializationPackage.findClassAcrossModuleDependencies;
-import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_PRIVATE;
+import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implements LocalLookup {
     private static final Set<DeclarationDescriptor> INTEGRAL_RANGES = KotlinBuiltIns.getInstance().getIntegralRanges();
@@ -3063,19 +3063,19 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         Type rightType = expressionType(right);
 
         if (JetPsiUtil.isNullConstant(left)) {
-            return genCmpWithNull(right, rightType, opToken);
+            return genCmpWithNull(right, opToken);
         }
 
         if (JetPsiUtil.isNullConstant(right)) {
-            return genCmpWithNull(left, leftType, opToken);
+            return genCmpWithNull(left, opToken);
         }
 
         if (isIntZero(left, leftType) && isIntPrimitive(rightType)) {
-            return genCmpWithZero(right, rightType, opToken);
+            return genCmpWithZero(right, opToken);
         }
 
         if (isIntZero(right, rightType) && isIntPrimitive(leftType)) {
-            return genCmpWithZero(left, leftType, opToken);
+            return genCmpWithZero(left, opToken);
         }
 
         if (isPrimitive(leftType) != isPrimitive(rightType)) {
@@ -3100,57 +3100,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         return isIntPrimitive(exprType) && exprValue != null && Integer.valueOf(0).equals(exprValue.getValue());
     }
 
-    private StackValue genCmpWithZero(final JetExpression exp, final Type expType, final IElementType opToken) {
-        return StackValue.operation(Type.BOOLEAN_TYPE, new Function1<InstructionAdapter, Unit>() {
-            @Override
-            public Unit invoke(InstructionAdapter v) {
-                gen(exp, expType);
-                Label trueLabel = new Label();
-                Label afterLabel = new Label();
-                if (JetTokens.EQEQ == opToken || JetTokens.EQEQEQ == opToken) {
-                    v.ifeq(trueLabel);
-                }
-                else {
-                    v.ifne(trueLabel);
-                }
-
-                v.iconst(0);
-                v.goTo(afterLabel);
-
-                v.mark(trueLabel);
-                v.iconst(1);
-
-                v.mark(afterLabel);
-                return Unit.INSTANCE$;
-            }
-        });
+    private StackValue genCmpWithZero(JetExpression exp, IElementType opToken) {
+        return StackValue.compareIntWithZero(gen(exp), (JetTokens.EQEQ == opToken || JetTokens.EQEQEQ == opToken) ? IFNE : IFEQ);
     }
 
-    private StackValue genCmpWithNull(final JetExpression exp, final Type expType, final IElementType opToken) {
-        return StackValue.operation(Type.BOOLEAN_TYPE, new Function1<InstructionAdapter, Unit>() {
-            @Override
-            public Unit invoke(InstructionAdapter v) {
-                gen(exp, boxType(expType));
-                Label trueLabel = new Label();
-                Label afterLabel = new Label();
-                if (JetTokens.EQEQ == opToken || JetTokens.EQEQEQ == opToken) {
-                    v.ifnull(trueLabel);
-                }
-                else {
-                    v.ifnonnull(trueLabel);
-                }
-
-                v.iconst(0);
-                v.goTo(afterLabel);
-
-                v.mark(trueLabel);
-                v.iconst(1);
-
-                v.mark(afterLabel);
-
-                return Unit.INSTANCE$;
-            }
-        });
+    private StackValue genCmpWithNull(JetExpression exp, IElementType opToken) {
+        return StackValue.compareWithNull(gen(exp), (JetTokens.EQEQ == opToken || JetTokens.EQEQEQ == opToken) ? IFNONNULL : IFNULL);
     }
 
     private StackValue generateElvis(@NotNull final JetBinaryExpression expression) {
