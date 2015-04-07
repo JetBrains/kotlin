@@ -411,6 +411,7 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractNavigateToLibrarySourceTest>()) {
             model("decompiler/navigation/usercode")
+            model("decompiler/navigation/usercode", testClassName="UsercodeWithJSModule", testMethod = "doWithJSModuleTest")
         }
 
         testClass(javaClass<AbstractKotlinGotoImplementationTest>()) {

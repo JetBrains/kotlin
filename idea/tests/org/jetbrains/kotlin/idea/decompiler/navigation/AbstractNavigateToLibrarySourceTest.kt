@@ -22,14 +22,32 @@ import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.UsefulTestCase
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.JdkAndMockLibraryProjectDescriptor
+import org.jetbrains.kotlin.idea.KotlinCodeInsightTestCase
+import org.jetbrains.kotlin.idea.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.navigation.NavigationTestUtils
 import org.jetbrains.kotlin.idea.references.JetReference
+import org.jetbrains.kotlin.idea.testUtils.ModuleKind
+import org.jetbrains.kotlin.idea.testUtils.configureAs
 import org.jetbrains.kotlin.test.JetTestUtils
+import java.io.File
 import java.util.LinkedHashMap
 
-public abstract class AbstractNavigateToLibrarySourceTest : AbstractNavigateToLibraryTest() {
-    protected fun doTest(path: String) {
-        myFixture.configureByFile(path)
+public abstract class AbstractNavigateToLibrarySourceTest : KotlinCodeInsightTestCase() {
+
+    protected fun doTest(path: String): Unit = doTestEx(path)
+
+    protected fun doWithJSModuleTest(path: String): Unit = doTestEx(path) {
+        val jsModule = this.createModule("js-module")
+        jsModule.configureAs(ModuleKind.KOTLIN_JAVASCRIPT)
+    }
+
+    protected fun doTestEx(path: String, additionalConfig: (() -> Unit)? = null) {
+        configureByFile(path)
+        getModule().configureAs(getProjectDescriptor())
+
+        if (additionalConfig != null) {
+            additionalConfig()
+        }
 
         checkAnnotatedLibraryCode(false)
         checkAnnotatedLibraryCode(true)
@@ -40,15 +58,18 @@ public abstract class AbstractNavigateToLibrarySourceTest : AbstractNavigateToLi
         super.tearDown()
     }
 
+    override fun getTestDataPath(): String =
+            JetTestUtils.getHomeDirectory() + File.separator
+
     private fun checkAnnotatedLibraryCode(forceResolve: Boolean) {
         JetSourceNavigationHelper.setForceResolve(forceResolve)
-        val actualCode = NavigationTestUtils.getNavigateElementsText(myFixture.getProject(), collectInterestingNavigationElements())
+        val actualCode = NavigationTestUtils.getNavigateElementsText(getProject(), collectInterestingNavigationElements())
         val expectedCode = getExpectedAnnotatedLibraryCode()
         UsefulTestCase.assertSameLines(expectedCode, actualCode)
     }
 
     private fun collectInterestingReferences(): Collection<JetReference> {
-        val psiFile = myFixture.getFile()
+        val psiFile = getFile()
         val referenceContainersToReferences = LinkedHashMap<PsiElement, JetReference>()
         for (offset in 0..psiFile.getTextLength() - 1) {
             val ref = psiFile.findReferenceAt(offset)
@@ -71,18 +92,18 @@ public abstract class AbstractNavigateToLibrarySourceTest : AbstractNavigateToLi
     }
 
     private fun collectInterestingNavigationElements() =
-        collectInterestingReferences().map {
-            val target = it.resolve()
-            TestCase.assertNotNull(target)
-            target!!.getNavigationElement()
-        }
+            collectInterestingReferences().map {
+                val target = it.resolve()
+                TestCase.assertNotNull(target)
+                target!!.getNavigationElement()
+            }
 
     private fun getExpectedAnnotatedLibraryCode(): String {
-        val document = myFixture.getDocument(myFixture.getFile())
+        val document = getDocument(getFile())
         TestCase.assertNotNull(document)
         return JetTestUtils.getLastCommentedLines(document)
     }
 
-    override fun getProjectDescriptor(): LightProjectDescriptor =
-        JdkAndMockLibraryProjectDescriptor(AbstractNavigateToLibraryTest.TEST_DATA_PATH + "/library", true)
+    private fun getProjectDescriptor(): LightProjectDescriptor =
+            JdkAndMockLibraryProjectDescriptor(PluginTestCaseBase.getTestDataPathBase() + "/decompiler/navigation/library", true)
 }
