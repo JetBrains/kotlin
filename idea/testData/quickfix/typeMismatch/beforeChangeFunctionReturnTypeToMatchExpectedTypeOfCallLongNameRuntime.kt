@@ -1,4 +1,4 @@
-// "Change 'bar' function return type to 'Module'" "true"
+// "Change 'bar' function return type to 'HashSet<Int>'" "true"
 
-fun bar(): Any = kotlin.modules.ModuleBuilder("", "")
-fun foo(): kotlin.modules.Module = bar(<caret>)
+fun bar(): Any = java.util.LinkedHashSet<Int>()
+fun foo(): java.util.HashSet<Int> = bar(<caret>)

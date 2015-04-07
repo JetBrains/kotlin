@@ -1,8 +1,8 @@
-// "Change getter type to Module" "true"
+// "Change getter type to HashSet<Int>" "true"
 
-import kotlin.modules.Module
+import java.util.HashSet
 
 class A() {
-    val i: kotlin.modules.Module
-        get(): <caret>Module = kotlin.modules.ModuleBuilder("", "")
+    val i: java.util.HashSet<Int>
+        get(): HashSet<Int> = java.util.LinkedHashSet<Int>()
 }

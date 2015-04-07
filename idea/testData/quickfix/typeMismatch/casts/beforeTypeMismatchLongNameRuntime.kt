@@ -1,7 +1,7 @@
-// "Cast expression 'module' to 'ModuleBuilder'" "true"
+// "Cast expression 'module' to 'LinkedHashSet<Int>'" "true"
 // DISABLE-ERRORS
 
-fun foo(): kotlin.modules.ModuleBuilder {
-    val module: kotlin.modules.Module = kotlin.modules.ModuleBuilder("", "")
+fun foo(): java.util.LinkedHashSet<Int> {
+    val module: java.util.HashSet<Int> = java.util.LinkedHashSet<Int>()
     return module<caret>
 }

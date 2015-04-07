@@ -1,10 +1,10 @@
 // "Add parameter to function 'foo'" "true"
 // DISABLE-ERRORS
 
-import kotlin.modules.ModuleBuilder
+import java.util.LinkedHashSet
 
-fun foo(x: Int, moduleBuilder: ModuleBuilder) {
-    foo(, kotlin.modules.ModuleBuilder("", ""));
-    foo(1, kotlin.modules.ModuleBuilder("", ""));
-    foo(2, kotlin.modules.ModuleBuilder("", ""));
+fun foo(x: Int, linkedHashSet: LinkedHashSet<Int>) {
+    foo(, java.util.LinkedHashSet<Int>());
+    foo(1, java.util.LinkedHashSet<Int>());
+    foo(2, java.util.LinkedHashSet<Int>());
 }

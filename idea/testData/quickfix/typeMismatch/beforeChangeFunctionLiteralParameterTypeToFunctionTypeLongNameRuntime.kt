@@ -1,6 +1,6 @@
-// "Change type from 'String' to '(ModuleBuilder) -> Module'" "true"
+// "Change type from 'String' to '(LinkedHashSet<Int>) -> HashSet<Int>'" "true"
 
-fun foo(f: ((kotlin.modules.ModuleBuilder) -> kotlin.modules.Module) -> String) {
+fun foo(f: ((java.util.LinkedHashSet<Int>) -> java.util.HashSet<Int>) -> String) {
     foo {
         (f: String<caret>) -> "42"
     }

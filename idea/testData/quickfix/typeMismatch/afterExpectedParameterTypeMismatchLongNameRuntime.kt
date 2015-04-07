@@ -1,9 +1,9 @@
-// "Change type from 'String' to 'Module'" "true"
+// "Change type from 'String' to 'HashSet<Int>'" "true"
 
-import kotlin.modules.Module
+import java.util.HashSet
 
-fun foo(f: (kotlin.modules.Module) -> String) {
+fun foo(f: (java.util.HashSet<Int>) -> String) {
     foo {
-        (x: Module<caret>) -> ""
+        (x: HashSet<Int>) -> ""
     }
 }
