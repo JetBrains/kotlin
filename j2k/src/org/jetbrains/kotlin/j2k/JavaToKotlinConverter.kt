@@ -95,9 +95,6 @@ public class JavaToKotlinConverter(private val project: Project,
             progress: ProgressIndicator = EmptyProgressIndicator()
     ): Result {
         try {
-            val elementCount = inputElements.size()
-            val intermediateResults = ArrayList<(Converter.IntermediateResult)?>(elementCount)
-
             val usageProcessings = LinkedHashMap<PsiElement, MutableCollection<UsageProcessing>>()
             val usageProcessingCollector: (UsageProcessing) -> Unit = {
                 usageProcessings.getOrPut(it.targetElement, { ArrayList() }).add(it)
@@ -107,50 +104,52 @@ public class JavaToKotlinConverter(private val project: Project,
                     = inputElements.any { it.element.isAncestor(element, strict = false) }
 
             val progressText = "Converting Java to Kotlin"
+            val elementCount = inputElements.size()
             val fileCountText = elementCount.toString() + " " + if (elementCount > 1) "files" else "file"
             var fraction = 0.0
             var pass = 1
 
-            fun processFilesWithProgress(passFraction: Double, processFile: (Int) -> Unit) {
+            fun processFilesWithProgress<TInputItem, TOutputItem>(
+                    fractionPortion: Double,
+                    inputItems: Iterable<TInputItem>,
+                    processItem: (TInputItem) -> TOutputItem
+            ): List<TOutputItem> {
+                val outputItems = ArrayList<TOutputItem>(elementCount)
                 // we use special process with EmptyProgressIndicator to avoid changing text in our progress by inheritors search inside etc
                 ProgressManager.getInstance().runProcess(
                         {
                             progress.setText("$progressText ($fileCountText) - pass $pass of 3")
 
-                            val filesCount = inputElements.indices
-                            for (i in filesCount) {
+                            for ((i, item) in inputItems.withIndex()) {
                                 progress.checkCanceled()
-                                progress.setFraction(fraction + passFraction * i / elementCount)
+                                progress.setFraction(fraction + fractionPortion * i / elementCount)
 
                                 val psiFile = inputElements[i].element as? PsiFile
                                 if (psiFile != null) {
                                     progress.setText2(psiFile.getVirtualFile().getPresentableUrl())
                                 }
 
-                                processFile(i)
+                                outputItems.add(processItem(item))
                             }
 
                             pass++
-                            fraction += passFraction
+                            fraction += fractionPortion
                         },
                         EmptyProgressIndicator())
+                return outputItems
             }
 
-            processFilesWithProgress(0.25) { i ->
-                val psiElement = inputElements[i].element
-                val converter = Converter.create(psiElement, settings, ::inConversionScope, referenceSearcher, resolverForConverter, usageProcessingCollector)
-                val result = converter.convert()
-                intermediateResults.add(result)
-            }
+            val intermediateResults = processFilesWithProgress(0.25, inputElements) { inputElement ->
+                Converter.create(inputElement.element, settings, ::inConversionScope, referenceSearcher, resolverForConverter, usageProcessingCollector).convert()
+            }.toArrayList()
 
-            val results = ArrayList<ElementResult?>(elementCount)
-            processFilesWithProgress(0.25) { i ->
-                val result = intermediateResults[i]
-                results.add(if (result != null)
-                                ElementResult(result.codeGenerator(usageProcessings), result.parseContext)
-                            else
-                                null)
+            val results = processFilesWithProgress(0.25, intermediateResults.withIndex()) { pair ->
+                val (i, result) = pair
                 intermediateResults[i] = null // to not hold unused objects in the heap
+                if (result != null)
+                    ElementResult(result.codeGenerator(usageProcessings), result.parseContext)
+                else
+                    null
             }
 
             val externalCodeProcessing = buildExternalCodeProcessing(usageProcessings, ::inConversionScope)
@@ -160,26 +159,25 @@ public class JavaToKotlinConverter(private val project: Project,
                 return Result(results, externalCodeProcessing)
             }
 
-            val finalResults = ArrayList<ElementResult?>(elementCount)
-            processFilesWithProgress(0.5) { i ->
-                val result = results[i]
+            val finalResults = processFilesWithProgress(0.5, results.withIndex()) { pair ->
+                val (i, result) = pair
                 if (result != null) {
                     try {
                         //TODO: post processing does not work correctly for ParseContext different from TOP_LEVEL
                         val kotlinFile = JetPsiFactory(project).createAnalyzableFile("dummy.kt", result.text, inputElements[i].postProcessingContext!!)
                         AfterConversionPass(project, postProcessor).run(kotlinFile, range = null)
-                        finalResults.add(ElementResult(kotlinFile.getText(), result.parseContext))
+                        ElementResult(kotlinFile.getText(), result.parseContext)
                     }
                     catch(e: ProcessCanceledException) {
                         throw e
                     }
                     catch(t: Throwable) {
                         LOG.error(t)
-                        finalResults.add(result)
+                        result
                     }
                 }
                 else {
-                    finalResults.add(null)
+                    null
                 }
             }
 
@@ -209,7 +207,6 @@ public class JavaToKotlinConverter(private val project: Project,
             inConversionScope: (PsiElement) -> Boolean
     ): ((ProgressIndicator) -> (() -> Unit)?)? {
         if (usageProcessings.isEmpty()) return null
-
 
         val map: Map<PsiElement, Collection<UsageProcessing>> = usageProcessings.values()
                 .flatMap { it }
