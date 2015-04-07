@@ -101,9 +101,6 @@ open class BranchedValue(val arg1: StackValue, val arg2: StackValue? = null, val
         }
 
         fun createInvertValue(argument: StackValue): StackValue {
-            if (argument.type != Type.BOOLEAN_TYPE) {
-                throw UnsupportedOperationException("operand of ! must be boolean")
-            }
             return Invert(condJump(argument))
         }
 

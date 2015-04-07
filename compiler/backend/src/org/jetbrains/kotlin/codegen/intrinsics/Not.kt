@@ -28,17 +28,6 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.org.objectweb.asm.Type
 
 public class Not : IntrinsicMethod() {
-    fun generateImpl(codegen: ExpressionCodegen, returnType: Type, element: PsiElement?, arguments: List<JetExpression>, receiver: StackValue): StackValue {
-        val stackValue: StackValue
-        if (arguments.size() == 1) {
-            stackValue = codegen.gen(arguments.get(0))
-        }
-        else {
-            stackValue = receiver
-        }
-        return StackValue.not(StackValue.coercion(stackValue, Type.BOOLEAN_TYPE))
-    }
-
     override fun toCallable(method: CallableMethod): Callable {
         return object : IntrinsicCallable(method) {
             override fun invokeMethodWithArguments(resolvedCall: ResolvedCall<*>, receiver: StackValue, codegen: ExpressionCodegen): StackValue {
@@ -50,7 +39,7 @@ public class Not : IntrinsicMethod() {
                         else {
                             StackValue.receiver(resolvedCall, receiver, codegen, this)
                         }
-                return StackValue.not(StackValue.coercion(stackValue, Type.BOOLEAN_TYPE))
+                return StackValue.not(stackValue)
             }
         }
     }

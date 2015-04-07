@@ -3051,11 +3051,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     private StackValue generateBooleanAnd(JetBinaryExpression expression) {
-        return StackValue.and(genLazy(expression.getLeft(), Type.BOOLEAN_TYPE), genLazy(expression.getRight(), Type.BOOLEAN_TYPE));
+        return StackValue.and(gen(expression.getLeft()), gen(expression.getRight()));
     }
 
     private StackValue generateBooleanOr(JetBinaryExpression expression) {
-        return StackValue.or(genLazy(expression.getLeft(), Type.BOOLEAN_TYPE), genLazy(expression.getRight(), Type.BOOLEAN_TYPE));
+        return StackValue.or(gen(expression.getLeft()), gen(expression.getRight()));
     }
 
     private StackValue generateEquals(JetExpression left, JetExpression right, IElementType opToken) {
