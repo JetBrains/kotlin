@@ -20,7 +20,6 @@ import com.intellij.codeInsight.AutoPopupController
 import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.Lookup
 import com.intellij.codeInsight.lookup.LookupElement
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
@@ -35,6 +34,7 @@ import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.ShortenReferences
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -51,26 +51,24 @@ public abstract class KotlinCallableInsertHandler : BaseDeclarationInsertHandler
     private fun addImport(context : InsertionContext, item : LookupElement) {
         PsiDocumentManager.getInstance(context.getProject()).commitAllDocuments()
 
-        ApplicationManager.getApplication()?.runReadAction {
-            val startOffset = context.getStartOffset()
-            val element = context.getFile().findElementAt(startOffset)
+        val startOffset = context.getStartOffset()
+        val element = context.getFile().findElementAt(startOffset)
 
-            if (element == null) return@runReadAction
+        if (element == null) return
 
-            val file = context.getFile()
-            val o = item.getObject()
-            if (file is JetFile && o is DeclarationDescriptorLookupObject) {
-                val descriptor = o.descriptor as? CallableDescriptor
-                if (descriptor != null) {
-                    // for completion after dot, import insertion may be required only for extensions
-                    if (context.isAfterDot() && descriptor.getExtensionReceiverParameter() == null) {
-                        return@runReadAction
-                    }
+        val file = context.getFile()
+        val o = item.getObject()
+        if (file is JetFile && o is DeclarationDescriptorLookupObject) {
+            val descriptor = o.descriptor as? CallableDescriptor
+            if (descriptor != null) {
+                // for completion after dot, import insertion may be required only for extensions
+                if (context.isAfterDot() && descriptor.getExtensionReceiverParameter() == null) {
+                    return
+                }
 
-                    if (DescriptorUtils.isTopLevelDeclaration(descriptor)) {
-                        ApplicationManager.getApplication()?.runWriteAction {
-                            ImportInsertHelper.getInstance(context.getProject()).importDescriptor(file, descriptor)
-                        }
+                if (DescriptorUtils.isTopLevelDeclaration(descriptor)) {
+                    runWriteAction {
+                        ImportInsertHelper.getInstance(context.getProject()).importDescriptor(file, descriptor)
                     }
                 }
             }
