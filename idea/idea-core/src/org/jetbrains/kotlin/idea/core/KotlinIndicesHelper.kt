@@ -85,9 +85,8 @@ public class KotlinIndicesHelper(
         if (receiverValues.isEmpty()) return emptyList()
 
         val dataFlowInfo = bindingContext.getDataFlowInfo(expression)
-        val containingDeclaration = bindingContext[BindingContext.RESOLUTION_SCOPE, expression]?.getContainingDeclaration() ?: return emptyList()
 
-        val receiverTypeNames = possibleReceiverTypeNames(receiverValues.map { it.first }, containingDeclaration, dataFlowInfo)
+        val receiverTypeNames = possibleReceiverTypeNames(receiverValues.map { it.first }, dataFlowInfo)
 
         val index = JetTopLevelExtensionsByReceiverTypeIndex.INSTANCE
 
@@ -102,10 +101,10 @@ public class KotlinIndicesHelper(
         return findSuitableExtensions(declarations, receiverValues, dataFlowInfo, bindingContext)
     }
 
-    private fun possibleReceiverTypeNames(receiverValues: Collection<ReceiverValue>, containingDeclaration: DeclarationDescriptor, dataFlowInfo: DataFlowInfo): Set<String> {
+    private fun possibleReceiverTypeNames(receiverValues: Collection<ReceiverValue>, dataFlowInfo: DataFlowInfo): Set<String> {
         val result = HashSet<String>()
         for (receiverValue in receiverValues) {
-            for (type in SmartCastUtils.getSmartCastVariants(receiverValue, bindingContext, containingDeclaration, dataFlowInfo)) {
+            for (type in SmartCastUtils.getSmartCastVariants(receiverValue, bindingContext, moduleDescriptor, dataFlowInfo)) {
                 result.addTypeNames(type)
             }
         }
@@ -150,7 +149,7 @@ public class KotlinIndicesHelper(
         fun processDescriptor(descriptor: CallableDescriptor) {
             if (visibilityFilter(descriptor)) {
                 for ((receiverValue, callType) in receiverValues) {
-                    result.addAll(descriptor.substituteExtensionIfCallable(receiverValue, callType, bindingContext, dataFlowInfo))
+                    result.addAll(descriptor.substituteExtensionIfCallable(receiverValue, callType, bindingContext, dataFlowInfo, moduleDescriptor))
                 }
             }
         }

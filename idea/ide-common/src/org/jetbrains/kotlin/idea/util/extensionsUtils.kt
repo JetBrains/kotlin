@@ -46,9 +46,10 @@ public fun CallableDescriptor.substituteExtensionIfCallable(
         receivers: Collection<ReceiverValue>,
         context: BindingContext,
         dataFlowInfo: DataFlowInfo,
-        callType: CallType
+        callType: CallType,
+        containingDeclarationOrModule: DeclarationDescriptor
 ): Collection<CallableDescriptor> {
-    val sequence = receivers.sequence().flatMap { substituteExtensionIfCallable(it, callType, context, dataFlowInfo).sequence() }
+    val sequence = receivers.sequence().flatMap { substituteExtensionIfCallable(it, callType, context, dataFlowInfo, containingDeclarationOrModule).sequence() }
     if (getTypeParameters().isEmpty()) { // optimization for non-generic callables
         return sequence.firstOrNull()?.let { listOf(it) } ?: listOf()
     }
@@ -57,19 +58,26 @@ public fun CallableDescriptor.substituteExtensionIfCallable(
     }
 }
 
-public fun CallableDescriptor.substituteExtensionIfCallableWithImplicitReceiver(scope: JetScope, context: BindingContext, dataFlowInfo: DataFlowInfo): Collection<CallableDescriptor>
-        = substituteExtensionIfCallable(scope.getImplicitReceiversWithInstance().map { it.getValue() }, context, dataFlowInfo, CallType.NORMAL)
+public fun CallableDescriptor.substituteExtensionIfCallableWithImplicitReceiver(
+        scope: JetScope,
+        context: BindingContext,
+        dataFlowInfo: DataFlowInfo
+): Collection<CallableDescriptor> {
+    val receiverValues = scope.getImplicitReceiversWithInstance().map { it.getValue() }
+    return substituteExtensionIfCallable(receiverValues, context, dataFlowInfo, CallType.NORMAL, scope.getContainingDeclaration())
+}
 
 public fun CallableDescriptor.substituteExtensionIfCallable(
         receiver: ReceiverValue,
         callType: CallType,
         bindingContext: BindingContext,
-        dataFlowInfo: DataFlowInfo
+        dataFlowInfo: DataFlowInfo,
+        containingDeclarationOrModule: DeclarationDescriptor
 ): Collection<CallableDescriptor> {
     if (!receiver.exists()) return listOf()
     if (!callType.canCall(this)) return listOf()
 
-    var types = SmartCastUtils.getSmartCastVariants(receiver, bindingContext, getContainingDeclaration(), dataFlowInfo).sequence()
+    var types = SmartCastUtils.getSmartCastVariants(receiver, bindingContext, containingDeclarationOrModule, dataFlowInfo).sequence()
 
     if (callType == CallType.SAFE) {
         types = types.map { it.makeNotNullable() }

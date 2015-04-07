@@ -70,6 +70,7 @@ public class ReferenceVariantsHelper(
     ): Collection<DeclarationDescriptor> {
         val parent = expression.getParent()
         val resolutionScope = context[BindingContext.RESOLUTION_SCOPE, expression] ?: return listOf()
+        val containingDeclaration = resolutionScope.getContainingDeclaration()
 
         if (parent is JetImportDirective || parent is JetPackageDirective) {
             return resolutionScope.getDescriptorsFiltered(kindFilter.restrictedToKinds(DescriptorKindFilter.PACKAGES_MASK), nameFilter)
@@ -100,10 +101,7 @@ public class ReferenceVariantsHelper(
                 val receiverValue = ExpressionReceiver(receiverExpression, expressionType)
                 val dataFlowInfo = context.getDataFlowInfo(expression)
 
-                for (variant in SmartCastUtils.getSmartCastVariantsWithLessSpecificExcluded(receiverValue,
-                                                                                            context,
-                                                                                            resolutionScope.getContainingDeclaration(),
-                                                                                            dataFlowInfo)) {
+                for (variant in SmartCastUtils.getSmartCastVariantsWithLessSpecificExcluded(receiverValue, context, containingDeclaration, dataFlowInfo)) {
                     descriptors.addMembersFromReceiver(variant, callType, kindFilter, nameFilter)
                 }
 
@@ -129,7 +127,7 @@ public class ReferenceVariantsHelper(
                 if (descriptor is CallableDescriptor && descriptor.getExtensionReceiverParameter() != null) {
                     val dispatchReceiver = descriptor.getDispatchReceiverParameter()
                     if (dispatchReceiver == null || dispatchReceiver in receivers) {
-                        descriptorsSet.addAll(descriptor.substituteExtensionIfCallable(receiverValues, context, dataFlowInfo, CallType.NORMAL))
+                        descriptorsSet.addAll(descriptor.substituteExtensionIfCallable(receiverValues, context, dataFlowInfo, CallType.NORMAL, containingDeclaration))
                     }
                 }
                 else {
@@ -196,7 +194,7 @@ public class ReferenceVariantsHelper(
         val extensionsFilter = kindFilter.exclude(DescriptorKindExclude.NonExtensions)
 
         fun processExtension(descriptor: DeclarationDescriptor) {
-            addAll((descriptor as CallableDescriptor).substituteExtensionIfCallable(receiver, callType, context, dataFlowInfo))
+            addAll((descriptor as CallableDescriptor).substituteExtensionIfCallable(receiver, callType, context, dataFlowInfo, resolutionScope.getContainingDeclaration()))
         }
 
         // process member extensions from implicit receivers separately to filter out ones from implicit receivers with no instance
