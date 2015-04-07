@@ -40,8 +40,6 @@ public trait Callable {
 
     public val returnType: Type
 
-    public fun invokeWithNotNullAssertion(v: InstructionAdapter, state: GenerationState, resolvedCall: ResolvedCall<*>)
-
     public fun invokeWithoutAssertions(v: InstructionAdapter)
 
     public fun isStaticCall(): Boolean

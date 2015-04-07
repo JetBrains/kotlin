@@ -41,7 +41,7 @@ public abstract class CallGenerator {
                 @NotNull ExpressionCodegen codegen
         ) {
             if (!callDefault) {
-                callableMethod.invokeWithNotNullAssertion(codegen.v, codegen.getState(), resolvedCall);
+                callableMethod.invokeWithoutAssertions(codegen.v);
             }
             else {
                 ((CallableMethod)callableMethod).invokeDefaultWithNotNullAssertion(codegen.v, codegen.getState(), resolvedCall);

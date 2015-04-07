@@ -910,7 +910,7 @@ public abstract class StackValue {
                 throw new UnsupportedOperationException("no getter specified");
             }
 
-            getter.invokeWithNotNullAssertion(v, state, resolvedGetCall);
+            getter.invokeWithoutAssertions(v);
             coerceTo(type, v);
         }
 
@@ -963,7 +963,7 @@ public abstract class StackValue {
 
             Type[] argumentTypes = setter.getParameterTypes();
             coerce(topOfStackType, argumentTypes[argumentTypes.length - 1], v);
-            setter.invokeWithNotNullAssertion(v, state, resolvedSetCall);
+            setter.invokeWithoutAssertions(v);
             Type returnType = setter.getReturnType();
             if (returnType != Type.VOID_TYPE) {
                 pop(v, returnType);

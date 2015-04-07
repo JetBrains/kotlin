@@ -55,11 +55,6 @@ public class CallableMethod(override val owner: Type, private val defaultImplOwn
         get() = getAsmMethod().getArgumentTypes()
 
 
-    public override fun invokeWithNotNullAssertion(v: InstructionAdapter, state: GenerationState, resolvedCall: ResolvedCall<*>) {
-        invokeWithoutAssertions(v)
-        AsmUtil.genNotNullAssertionForMethod(v, state, resolvedCall)
-    }
-
     public override fun invokeWithoutAssertions(v: InstructionAdapter) {
         v.visitMethodInsn(invokeOpcode, owner.getInternalName(), getAsmMethod().getName(), getAsmMethod().getDescriptor())
     }

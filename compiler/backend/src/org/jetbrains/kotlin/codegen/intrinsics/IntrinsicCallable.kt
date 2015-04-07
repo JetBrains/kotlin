@@ -40,10 +40,6 @@ public open class IntrinsicCallable(override val returnType: Type,
         invokeIntrinsic(v)
     }
 
-    override fun invokeWithNotNullAssertion(v: InstructionAdapter, state: GenerationState, resolvedCall: ResolvedCall<out CallableDescriptor>) {
-        invokeWithoutAssertions(v)
-    }
-
     public open fun invokeIntrinsic(v: InstructionAdapter) {
         invoke(v)
     }
