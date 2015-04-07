@@ -235,7 +235,7 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
                     new OverridingUtil.DescriptorSink() {
                         @Override
                         @SuppressWarnings("unchecked")
-                        public void addToScope(@NotNull CallableMemberDescriptor fakeOverride) {
+                        public void addFakeOverride(@NotNull CallableMemberDescriptor fakeOverride) {
                             OverridingUtil.resolveUnknownVisibilityForMember(fakeOverride, null);
                             result.add((D) fakeOverride);
                         }
