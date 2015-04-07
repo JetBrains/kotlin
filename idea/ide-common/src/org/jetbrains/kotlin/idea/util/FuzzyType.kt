@@ -53,7 +53,7 @@ class FuzzyType(
     init {
         if (freeParameters.isNotEmpty()) {
             usedTypeParameters = HashSet()
-            usedTypeParameters!!.addUsedTypeParameters(type)
+            usedTypeParameters.addUsedTypeParameters(type)
             this.freeParameters = freeParameters.filter { it in usedTypeParameters }.toSet()
         }
         else {
