@@ -60,6 +60,12 @@ public class HighlightExitPointsTestGenerated extends AbstractHighlightExitPoint
         doTest(fileName);
     }
 
+    @TestMetadata("inlineWithNoInlineParam.kt")
+    public void testInlineWithNoInlineParam() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/exitPoints/inlineWithNoInlineParam.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("localFunction1.kt")
     public void testLocalFunction1() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/exitPoints/localFunction1.kt");
