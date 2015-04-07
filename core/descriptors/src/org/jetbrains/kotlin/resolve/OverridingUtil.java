@@ -260,7 +260,7 @@ public class OverridingUtil {
         createAndBindFakeOverrides(current, notOverridden, sink);
     }
 
-    private static Collection<CallableMemberDescriptor> extractAndBindOverridesForMember(
+    public static Collection<CallableMemberDescriptor> extractAndBindOverridesForMember(
             @NotNull CallableMemberDescriptor fromCurrent,
             @NotNull Collection<? extends CallableMemberDescriptor> descriptorsFromSuper,
             @NotNull ClassDescriptor current,
