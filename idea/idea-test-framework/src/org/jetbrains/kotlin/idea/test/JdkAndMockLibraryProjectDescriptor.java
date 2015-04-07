@@ -31,15 +31,21 @@ public class JdkAndMockLibraryProjectDescriptor extends JetLightProjectDescripto
 
     private final String sourcesPath;
     private final boolean withSources;
+    private final boolean isJsLibrary;
 
     public JdkAndMockLibraryProjectDescriptor(String sourcesPath, boolean withSources) {
+        this(sourcesPath, withSources, false);
+    }
+
+    public JdkAndMockLibraryProjectDescriptor(String sourcesPath, boolean withSources, boolean isJsLibrary) {
         this.sourcesPath = sourcesPath;
         this.withSources = withSources;
+        this.isJsLibrary = isJsLibrary;
     }
 
     @Override
     public void configureModule(Module module, ModifiableRootModel model, ContentEntry contentEntry) {
-        File libraryJar = MockLibraryUtil.compileLibraryToJar(sourcesPath, LIBRARY_NAME, withSources);
+        File libraryJar = MockLibraryUtil.compileLibraryToJar(sourcesPath, LIBRARY_NAME, withSources, isJsLibrary);
         String jarUrl = "jar://" + FileUtilRt.toSystemIndependentName(libraryJar.getAbsolutePath()) + "!/";
 
         Library.ModifiableModel libraryModel = model.getModuleLibraryTable().getModifiableModel().createLibrary(LIBRARY_NAME).getModifiableModel();
