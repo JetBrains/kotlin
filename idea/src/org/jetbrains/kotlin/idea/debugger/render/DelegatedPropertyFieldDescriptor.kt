@@ -84,6 +84,8 @@ class DelegatedPropertyFieldDescriptor(
 
     private fun findGetterForDelegatedProperty(): Method? {
         val fieldName = getName()
+        if (!Name.isValidIdentifier(fieldName)) return null
+
         val getterName = PropertyCodegen.getterName(Name.identifier(fieldName))
         return getObject().referenceType().methodsByName(getterName)?.firstOrNull()
     }
