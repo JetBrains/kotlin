@@ -3202,12 +3202,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         StackValue value = gen(expression.getLeft());
         if (keepReturnValue) {
             value = StackValue.complexWriteReadReceiver(value);
-            //value.putWriteReadReceiver(v);
         }
         value.put(lhsType, v);
         StackValue receiver = StackValue.onStack(lhsType);
-
-        //invokeMethodWithArguments(callable, resolvedCall, receiver);
 
         callable.invokeMethodWithArguments(resolvedCall, receiver, this).put(callable.getReturnType(), v);
 
