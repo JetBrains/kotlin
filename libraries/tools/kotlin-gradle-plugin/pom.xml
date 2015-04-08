@@ -72,9 +72,6 @@
                 <directory>${project.basedir}/src/main/resources</directory>
               <filtering>true</filtering>
             </resource>
-            <resource>
-                <directory>${project.build.outputDirectory}/../groovyOutput</directory>
-            </resource>
         </resources>
 
         <plugins>
@@ -96,7 +93,6 @@
                         <configuration>
                             <sourceDirs>
                                 <sourceDir>${project.basedir}/src/main/kotlin</sourceDir>
-                                <sourceDir>${project.build.outputDirectory}/../groovyOutput</sourceDir>
                             </sourceDirs>
                         </configuration>
                     </execution>
@@ -166,7 +162,6 @@
                                     </includes>
                                 </fileset>
                             </sources>
-                            <outputDirectory>${project.build.outputDirectory}/../groovyOutput</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>

@@ -57,8 +57,8 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
             return
         }
 
-        populateTargetSpecificArgs(args)
         populateCommonArgs(args, sources)
+        populateTargetSpecificArgs(args)
         callCompiler(args)
         afterCompileHook(args)
     }
@@ -104,11 +104,11 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
         val extraProperties = getExtensions().getExtraProperties()
         args.pluginClasspaths = extraProperties.get("compilerPluginClasspaths") as? Array<String>
         args.pluginOptions = extraProperties.get("compilerPluginArguments") as? Array<String>
+        // show kotlin compiler where to look for java source files
+        args.freeArgs = (args.freeArgs + getJavaSourceRoots().map { it.getAbsolutePath() }).toSet().toList()
 
         if (StringUtils.isEmpty(kotlinOptions.classpath)) {
-            val existingClasspathEntries = getClasspath().filter({ it != null && it.exists() })
-            val effectiveClassPath = (getJavaSourceRoots() + existingClasspathEntries).makeString(File.pathSeparator)
-            args.classpath = effectiveClassPath
+            args.classpath = getClasspath().filter({ it != null && it.exists() }).joinToString(File.pathSeparator)
         }
 
         args.destination = if (StringUtils.isEmpty(kotlinOptions.destination)) {

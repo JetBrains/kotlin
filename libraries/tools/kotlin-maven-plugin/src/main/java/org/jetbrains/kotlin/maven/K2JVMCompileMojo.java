@@ -104,9 +104,6 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
         }
 
         ArrayList<String> classpathList = new ArrayList<String>(classpath);
-        if (classpathList.remove(output)) {
-            LOG.debug("Removed target directory from compiler classpath (" + output + ")");
-        }
 
         if (!classpathList.isEmpty()) {
             String classPathString = join(classpathList, File.pathSeparator);

@@ -78,9 +78,6 @@
             <resource>
                 <directory>${project.basedir}/src/main/resources</directory>
             </resource>
-            <resource>
-                <directory>${project.build.outputDirectory}/../groovyOutput</directory>
-            </resource>
         </resources>
 
         <plugins>
