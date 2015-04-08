@@ -89,3 +89,14 @@ fun objectExpression() {
     object : Throwable(run { <info descr="Value captured in a closure">u3</info> }) {
     }
 }
+
+inline fun withNoInlineParam(noinline task1: () -> Unit, task2: () -> Unit) {
+    task1()
+    task2()
+}
+
+fun usage(<info descr="Value captured in a closure">param1</info>: Int, param2: Int) {
+    withNoInlineParam({ println(<info descr="Value captured in a closure">param1</info>) }, { println(param2) })
+}
+
+fun println(<warning>a</warning>: Any) {}

@@ -22,14 +22,17 @@ import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerImpl;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
 import com.intellij.testFramework.ExpectedHighlightingData;
+import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase;
+import org.jetbrains.kotlin.idea.JetWithJdkAndRuntimeLightProjectDescriptor;
 import org.jetbrains.kotlin.idea.PluginTestCaseBase;
 import org.jetbrains.kotlin.idea.highlighter.markers.SuperDeclarationMarkerNavigationHandler;
 import org.jetbrains.kotlin.idea.navigation.NavigationTestUtils;
@@ -54,6 +57,12 @@ public abstract class AbstractLineMarkersTest extends JetLightCodeInsightFixture
         return PluginTestCaseBase.TEST_DATA_PROJECT_RELATIVE + "/codeInsight/lineMarker";
     }
 
+    @NotNull
+    @Override
+    protected LightProjectDescriptor getProjectDescriptor() {
+        return JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE;
+    }
+
     public void doTest(String path) {
         try {
             myFixture.configureByFile(path);
@@ -72,11 +81,17 @@ public abstract class AbstractLineMarkersTest extends JetLightCodeInsightFixture
 
             try {
                 data.checkLineMarkers(markers, document.getText());
+
+                // This is a workaround for sad bug in ExpectedHighlightingData:
+                // the latter doesn't throw assertion error when some line markers are expected, but none are present.
+                if (FileUtil.loadFile(new File(path)).contains("<lineMarker") && markers.isEmpty()) {
+                    throw new AssertionError("Some line markers are expected, but nothing is present at all");
+                }
             }
             catch (AssertionError error) {
                 try {
                     String actualTextWithTestData = TagsTestDataUtil.insertInfoTags(markers, true, myFixture.getFile().getText());
-                    JetTestUtils.assertEqualsToFile(new File(getTestDataPath(), fileName()), actualTextWithTestData);
+                    JetTestUtils.assertEqualsToFile(new File(path), actualTextWithTestData);
                 }
                 catch (FileComparisonFailure failure) {
                     throw new FileComparisonFailure(error.getMessage() + "\n" + failure.getMessage(),

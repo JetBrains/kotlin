@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.resolve.BindingContext.CAPTURED_IN_CLOSURE
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getParentResolvedCall
+import org.jetbrains.kotlin.resolve.calls.callUtil.isInlined
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
@@ -68,13 +69,7 @@ class CapturingInClosureChecker : CallChecker {
         val scopeDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(scopeContainer)
         if (scopeDeclaration !is JetFunctionLiteral) return false
 
-        val parent = scopeDeclaration.getParent()
-        assert(parent is JetFunctionLiteralExpression) { "parent of JetFunctionLiteral is " + parent }
-        val resolvedCall = (parent as JetFunctionLiteralExpression).getParentResolvedCall(context, true)
-        if (resolvedCall == null) return false
-
-        val callable = resolvedCall.getResultingDescriptor()
-        if (callable is SimpleFunctionDescriptor && callable.getInlineStrategy().isInline()) {
+        if (scopeDeclaration.isInlined(context)) {
             val scopeContainerParent = scopeContainer.getContainingDeclaration()
             assert(scopeContainerParent != null) { "parent is null for " + scopeContainer }
             return !isCapturedVariable(variableParent, scopeContainerParent) || isCapturedInInline(context, scopeContainerParent, variableParent)

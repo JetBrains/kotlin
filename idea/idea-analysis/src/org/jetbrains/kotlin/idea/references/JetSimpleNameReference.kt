@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.psiUtil.*
 import com.intellij.psi.impl.light.LightElement
 import com.intellij.openapi.extensions.Extensions
+import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.plugin.references.SimpleNameReferenceExtension
 
 public class JetSimpleNameReference(
@@ -45,6 +46,8 @@ public class JetSimpleNameReference(
 
     override fun isReferenceTo(element: PsiElement?): Boolean {
         if (element != null) {
+            if (!canBeReferenceTo(element)) return false
+
             val extensions = Extensions.getArea(element.getProject()).getExtensionPoint(
                     SimpleNameReferenceExtension.EP_NAME).getExtensions()
             for (extension in extensions) {
