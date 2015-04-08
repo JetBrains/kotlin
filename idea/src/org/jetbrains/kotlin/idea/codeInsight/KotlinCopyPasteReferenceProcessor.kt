@@ -270,10 +270,9 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
                 .filterNot { ErrorUtils.isError(it) }
                 .map { it.importableFqName }
                 .filterNotNull()
+                .toSet()
         val originalFqName = FqName(refData.fqName)
-        val referencesSame = referencedFqNames.any { it == originalFqName }
-        val conflict = referencedFqNames.any { it != originalFqName }
-        if (referencesSame && !conflict) return null
+        if (referencedFqNames.singleOrNull() == originalFqName) return null
         return ReferenceToRestoreData(reference, refData)
     }
 
