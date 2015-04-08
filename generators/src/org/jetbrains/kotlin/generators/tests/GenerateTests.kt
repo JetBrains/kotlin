@@ -74,6 +74,7 @@ import org.jetbrains.kotlin.idea.imports.AbstractOptimizeImportsTest
 import org.jetbrains.kotlin.idea.intentions.AbstractIntentionTest
 import org.jetbrains.kotlin.idea.intentions.declarations.AbstractJoinLinesTest
 import org.jetbrains.kotlin.idea.kdoc.AbstractKDocHighlightingTest
+import org.jetbrains.kotlin.idea.kdoc.AbstractKDocTypingTest
 import org.jetbrains.kotlin.idea.navigation.AbstractGotoSuperTest
 import org.jetbrains.kotlin.idea.navigation.AbstractKotlinGotoImplementationTest
 import org.jetbrains.kotlin.idea.navigation.AbstractKotlinGotoTest
@@ -627,6 +628,10 @@ fun main(args: Array<String>) {
         
         testClass(javaClass<AbstractKDocHighlightingTest>()) {
             model("kdoc/highlighting")
+        }
+
+        testClass<AbstractKDocTypingTest>() {
+            model("kdoc/typing")
         }
     }
 
