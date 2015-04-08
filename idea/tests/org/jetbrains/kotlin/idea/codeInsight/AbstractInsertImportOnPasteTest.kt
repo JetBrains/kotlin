@@ -68,7 +68,7 @@ public abstract class AbstractInsertImportOnPasteTest : AbstractCopyPasteTest() 
         val namesToImportDump = KotlinCopyPasteReferenceProcessor.declarationsToImportSuggested.joinToString("\n")
         JetTestUtils.assertEqualsToFile(File(path.replace(".kt", ".expected.names")), namesToImportDump)
 
-        myFixture.checkResultByFile(testFileName.replace(".kt", ".expected.kt"))
+        JetTestUtils.assertEqualsToFile(File(path.replace(".kt", ".expected.kt")), myFixture.getEditor().getDocument().getText())
 
         if (!InTextDirectivesUtils.isDirectiveDefined(FileUtil.loadFile(testFile, true), ALLOW_UNRESOLVED_DIRECTIVE)) {
             checkNoUnresolvedReferences(toFile)
