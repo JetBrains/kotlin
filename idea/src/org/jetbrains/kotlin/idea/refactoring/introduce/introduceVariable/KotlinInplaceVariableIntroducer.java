@@ -27,10 +27,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.markup.RangeHighlighter;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.Balloon;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.Pass;
-import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.*;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.search.SearchScope;
@@ -58,6 +55,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 
 public class KotlinInplaceVariableIntroducer<D extends JetCallableDeclaration> extends InplaceVariableIntroducer<JetExpression> {
+    private static final Key<KotlinInplaceVariableIntroducer> ACTIVE_INTRODUCER = Key.create("ACTIVE_INTRODUCER");
+
     public static final String TYPE_REFERENCE_VARIABLE_NAME = "TypeReferenceVariable";
     public static final String PRIMARY_VARIABLE_NAME = "PrimaryVariable";
     
@@ -391,6 +390,21 @@ public class KotlinInplaceVariableIntroducer<D extends JetCallableDeclaration> e
     }
 
     @Override
+    public boolean performInplaceRefactoring(LinkedHashSet<String> nameSuggestions) {
+        if (super.performInplaceRefactoring(nameSuggestions)) {
+            myEditor.putUserData(ACTIVE_INTRODUCER, this);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void finish(boolean success) {
+        super.finish(success);
+        myEditor.putUserData(ACTIVE_INTRODUCER, null);
+    }
+
+    @Override
     protected void moveOffsetAfter(boolean success) {
         if (!myReplaceOccurrence || myExprMarker == null) {
             myEditor.getCaretModel().moveToOffset(myDeclaration.getTextRange().getEndOffset());
@@ -406,5 +420,10 @@ public class KotlinInplaceVariableIntroducer<D extends JetCallableDeclaration> e
                 myEditor.getCaretModel().moveToOffset(myExprMarker.getEndOffset());
             }
         }
+    }
+
+    @Nullable
+    public static KotlinInplaceVariableIntroducer getActiveInstance(@NotNull Editor editor) {
+        return editor.getUserData(ACTIVE_INTRODUCER);
     }
 }
