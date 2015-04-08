@@ -17,22 +17,20 @@
 package org.jetbrains.kotlin.idea.codeInsight
 
 import com.intellij.openapi.actionSystem.IdeActions
-import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.checkers.DebugInfoUtil
-import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.idea.AbstractCopyPasteTest
 import org.jetbrains.kotlin.idea.PluginTestCaseBase
-import org.jetbrains.kotlin.idea.caches.resolve.*
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetReferenceExpression
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-
+import org.jetbrains.kotlin.test.JetTestUtils
 import java.io.File
 import kotlin.test.fail
 
@@ -61,9 +59,14 @@ public abstract class AbstractInsertImportOnPasteTest : AbstractCopyPasteTest() 
         myFixture.configureByFile(testFileName)
         myFixture.performEditorAction(cutOrCopy)
 
+        KotlinCopyPasteReferenceProcessor.declarationsToImportSuggested = emptyList()
+
         val toFileName = testFileName.replace(".kt", ".to.kt")
         val toFile = configureToFile(toFileName)
         performNotWriteEditorAction(IdeActions.ACTION_PASTE)
+
+        val namesToImportDump = KotlinCopyPasteReferenceProcessor.declarationsToImportSuggested.joinToString("\n")
+        JetTestUtils.assertEqualsToFile(File(path.replace(".kt", ".expected.names")), namesToImportDump)
 
         myFixture.checkResultByFile(testFileName.replace(".kt", ".expected.kt"))
 

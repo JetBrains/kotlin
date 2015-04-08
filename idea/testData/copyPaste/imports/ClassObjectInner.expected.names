@@ -1,0 +1,5 @@
+a.Outer.Companion.Nested
+a.Outer.Companion.NestedAnnotation
+a.Outer.Companion.NestedEnum
+a.Outer.Companion.NestedObj
+a.Outer.Companion.NestedTrait

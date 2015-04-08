@@ -68,8 +68,8 @@ import java.util.ArrayList
 public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<KotlinReferenceTransferableData>() {
     private val LOG = Logger.getInstance(javaClass<KotlinCopyPasteReferenceProcessor>())
 
-    private val IGNORE_REFERENCES_INSIDE: Array<Class<out JetElement>?> = array(
-            javaClass<JetImportDirective>(),
+    private val IGNORE_REFERENCES_INSIDE: Array<Class<out JetElement>> = array(
+            javaClass<JetImportList>(),
             javaClass<JetPackageDirective>()
     )
 
@@ -138,10 +138,12 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
             startOffsets: IntArray,
             endOffsets: IntArray
     ) {
-        if (PsiTreeUtil.getParentOfType(element, *IGNORE_REFERENCES_INSIDE) != null) return
+        if (PsiTreeUtil.getNonStrictParentOfType(element, *IGNORE_REFERENCES_INSIDE) != null) return
 
         element.accept(object : PsiElementVisitor() {
             override fun visitElement(element: PsiElement) {
+                if (element.javaClass in IGNORE_REFERENCES_INSIDE) return
+
                 element.acceptChildren(this)
 
                 val reference = element.getReference() as? JetReference ?: return
@@ -322,12 +324,14 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
     }
 
     private fun showRestoreReferencesDialog(project: Project, referencesToRestore: List<ReferenceToRestoreData>): Collection<ReferenceToRestoreData> {
+        val fqNames = referencesToRestore.map { it.refData.fqName }.toSortedSet()
+
+        declarationsToImportSuggested = fqNames
+
         val shouldShowDialog = CodeInsightSettings.getInstance().ADD_IMPORTS_ON_PASTE == CodeInsightSettings.ASK
         if (!shouldShowDialog || referencesToRestore.isEmpty()) {
             return referencesToRestore
         }
-
-        val fqNames = referencesToRestore.map { it.refData.fqName }.toSortedSet()
 
         val dialog = RestoreReferencesDialog(project, fqNames.copyToArray())
         dialog.show()
@@ -344,5 +348,10 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
     private fun PsiElement.isInCopiedArea(fileCopiedFrom: JetFile, startOffsets: IntArray, endOffsets: IntArray): Boolean {
         if (getContainingFile() != fileCopiedFrom) return false
         return toTextRanges(startOffsets, endOffsets).any { this.range in it }
+    }
+
+    companion object {
+        // for tests
+        public var declarationsToImportSuggested: Collection<String> = emptyList()
     }
 }
