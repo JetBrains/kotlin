@@ -66,6 +66,7 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
 
     protected abstract val cachedSources: CachedValue<List<AndroidSyntheticFile>>
 
+    //MAKE CONSTANT (or abstract)
     var supportV4 = false
 
     private val cachedJetFiles: CachedValue<List<JetFile>> by Delegates.lazy {
@@ -141,9 +142,10 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
             writeAndroidImports()
 
             for (res in resources) {
-                properties(res).forEach {
-                    if (supportV4 || !it.first.startsWith(AndroidConst.SUPPORT_V4_PACKAGE)) {
-                        writeSyntheticProperty(it.first, res, it.second)
+                properties(res).forEach { property ->
+                    // Comment
+                    if (supportV4 || !isFromSupportV4Package(property.first)) {
+                        writeSyntheticProperty(property.first, res, property.second)
                     }
                 }
             }
@@ -162,12 +164,13 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
     }
 
     private fun KotlinStringWriter.writeSyntheticProperty(receiver: String, widget: AndroidResource, stubCall: String) {
-        val cast = if (widget.className != "View") " as? ${widget.className}" else ""
+        // extract startsWith() to fun
+        val className = if (isFromSupportV4Package(receiver)) widget.supportClassName() else widget.className
+        val cast = if (widget.className != "View") " as? $className" else ""
         val body = arrayListOf("return $stubCall$cast")
-        val type = widget.className
         writeImmutableExtensionProperty(receiver,
                                         name = widget.id,
-                                        retType = "$EXPLICIT_FLEXIBLE_CLASS_NAME<$type, $type?>",
+                                        retType = "$EXPLICIT_FLEXIBLE_CLASS_NAME<$className, $className?>",
                                         getterBody = body)
     }
 
@@ -177,6 +180,10 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
 
     protected fun <T> cachedValue(result: () -> CachedValueProvider.Result<T>): CachedValue<T> {
         return CachedValuesManager.getManager(project).createCachedValue(result, false)
+    }
+
+    private fun isFromSupportV4Package(fqName: String): Boolean {
+        return fqName.startsWith(AndroidConst.SUPPORT_V4_PACKAGE)
     }
 
     protected fun removeDuplicates(resources: List<AndroidResource>): List<AndroidResource> {

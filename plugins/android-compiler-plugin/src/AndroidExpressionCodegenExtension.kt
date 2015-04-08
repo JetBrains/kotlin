@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
 import org.jetbrains.kotlin.resolve.scopes.receivers.ClassReceiver
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.types.Flexibility
+import org.jetbrains.kotlin.types.lowerIfFlexible
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes.ACC_PRIVATE
 import org.jetbrains.org.objectweb.asm.Opcodes.ACC_PUBLIC
@@ -46,6 +47,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 private enum class AndroidClassType(val internalClassName: String, val supportsCache: Boolean = false) {
     ACTIVITY : AndroidClassType(AndroidConst.ACTIVITY_FQNAME.innerName, true)
     FRAGMENT : AndroidClassType(AndroidConst.FRAGMENT_FQNAME.innerName, true)
+    SUPPORT_FRAGMENT_ACTIVITY : AndroidClassType(AndroidConst.SUPPORT_FRAGMENT_ACTIVITY_FQNAME.innerName, true)
     SUPPORT_FRAGMENT : AndroidClassType(AndroidConst.SUPPORT_FRAGMENT_FQNAME.innerName, true)
     VIEW : AndroidClassType(AndroidConst.VIEW_FQNAME.innerName)
     UNKNOWN : AndroidClassType("")
@@ -135,8 +137,12 @@ public class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
     ) : StackValue(typeMapper.mapType(descriptor.getReturnType()!!)) {
 
         override fun putSelector(type: Type, v: InstructionAdapter) {
-            if (androidClassType.supportsCache && isCacheSupported(declarationDescriptor)) {
+            val returnTypeString = typeMapper.mapType(descriptor.getType().lowerIfFlexible()).getClassName()
+            if (AndroidConst.FRAGMENT_FQNAME == returnTypeString || AndroidConst.SUPPORT_FRAGMENT_FQNAME == returnTypeString) {
+                return putSelectorForFragment(v)
+            }
 
+            if (androidClassType.supportsCache && isCacheSupported(declarationDescriptor)) {
                 val declarationDescriptorType = typeMapper.mapType(declarationDescriptor)
                 receiver.put(declarationDescriptorType, v)
                 v.getstatic(androidPackage.replace(".", "/") + "/R\$id", descriptor.getName().asString(), "I")
@@ -144,15 +150,15 @@ public class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
             }
             else {
                 when (androidClassType) {
-                    AndroidClassType.ACTIVITY, AndroidClassType.VIEW -> {
+                    AndroidClassType.ACTIVITY, AndroidClassType.SUPPORT_FRAGMENT_ACTIVITY, AndroidClassType.VIEW -> {
                         receiver.put(Type.getType("L${androidClassType.internalClassName};"), v)
-                        v.getstatic(androidPackage.replace(".", "/") + "/R\$id", descriptor.getName().asString(), "I")
+                        getResourceId(v)
                         v.invokevirtual(androidClassType.internalClassName, "findViewById", "(I)Landroid/view/View;", false)
                     }
                     AndroidClassType.FRAGMENT, AndroidClassType.SUPPORT_FRAGMENT -> {
                         receiver.put(Type.getType("L${androidClassType.internalClassName};"), v)
                         v.invokevirtual(androidClassType.internalClassName, "getView", "()Landroid/view/View;", false)
-                        v.getstatic(androidPackage.replace(".", "/") + "/R\$id", descriptor.getName().asString(), "I")
+                        getResourceId(v)
                         v.invokevirtual("android/view/View", "findViewById", "(I)Landroid/view/View;", false)
                     }
                     else -> throw IllegalStateException("Invalid Android class type: $androidClassType") // Should never occur
@@ -160,6 +166,35 @@ public class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
             }
 
             v.checkcast(this.type)
+        }
+
+        private fun putSelectorForFragment(v: InstructionAdapter) {
+            receiver.put(Type.getType("L${androidClassType.internalClassName};"), v)
+
+            when (androidClassType) {
+                AndroidClassType.ACTIVITY, AndroidClassType.FRAGMENT -> {
+                    v.invokevirtual(androidClassType.internalClassName, "getFragmentManager", "()Landroid/app/FragmentManager;", false)
+                    getResourceId(v)
+                    v.invokevirtual("android/app/FragmentManager", "findFragmentById", "(I)Landroid/app/Fragment;", false)
+                }
+                AndroidClassType.SUPPORT_FRAGMENT -> {
+                    v.invokevirtual(androidClassType.internalClassName, "getFragmentManager", "()Landroid/support/v4/app/FragmentManager;", false)
+                    getResourceId(v)
+                    v.invokevirtual("android/support/v4/app/FragmentManager", "findFragmentById", "(I)Landroid/support/v4/app/Fragment;", false)
+                }
+                AndroidClassType.SUPPORT_FRAGMENT_ACTIVITY -> {
+                    v.invokevirtual(androidClassType.internalClassName, "getSupportFragmentManager", "()Landroid/support/v4/app/FragmentManager;", false)
+                    getResourceId(v)
+                    v.invokevirtual("android/support/v4/app/FragmentManager", "findFragmentById", "(I)Landroid/support/v4/app/Fragment;", false)
+                }
+                else -> throw IllegalStateException("Invalid Android class type: $androidClassType") // Should never occur
+            }
+
+            v.checkcast(this.type)
+        }
+
+        fun getResourceId(v: InstructionAdapter) {
+            v.getstatic(androidPackage.replace(".", "/") + "/R\$id", descriptor.getName().asString(), "I")
         }
     }
 
@@ -175,6 +210,7 @@ public class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
         fun getClassTypeInternal(name: String): AndroidClassType? = when (name) {
             AndroidConst.ACTIVITY_FQNAME -> AndroidClassType.ACTIVITY
             AndroidConst.FRAGMENT_FQNAME -> AndroidClassType.FRAGMENT
+            AndroidConst.SUPPORT_FRAGMENT_ACTIVITY_FQNAME -> AndroidClassType.SUPPORT_FRAGMENT_ACTIVITY
             AndroidConst.SUPPORT_FRAGMENT_FQNAME -> AndroidClassType.SUPPORT_FRAGMENT
             AndroidConst.VIEW_FQNAME -> AndroidClassType.VIEW
             else -> null
@@ -292,7 +328,7 @@ public class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
         // Resolve View via findViewById if not in cache
         iv.load(0, classType)
         when (androidClassType) {
-            AndroidClassType.ACTIVITY, AndroidClassType.VIEW -> {
+            AndroidClassType.ACTIVITY, AndroidClassType.SUPPORT_FRAGMENT_ACTIVITY, AndroidClassType.VIEW -> {
                 loadId()
                 iv.invokevirtual(className, "findViewById", "(I)Landroid/view/View;", false)
             }
