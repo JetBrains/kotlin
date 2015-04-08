@@ -306,6 +306,12 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
             doTestCopy(fileName);
         }
 
+        @TestMetadata("OverloadedExtensionFunction.kt")
+        public void testOverloadedExtensionFunction() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/OverloadedExtensionFunction.kt");
+            doTestCopy(fileName);
+        }
+
         @TestMetadata("PackageView.kt")
         public void testPackageView() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/PackageView.kt");
@@ -630,6 +636,12 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
         @TestMetadata("Object.kt")
         public void testObject() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/Object.kt");
+            doTestCut(fileName);
+        }
+
+        @TestMetadata("OverloadedExtensionFunction.kt")
+        public void testOverloadedExtensionFunction() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/OverloadedExtensionFunction.kt");
             doTestCut(fileName);
         }
 

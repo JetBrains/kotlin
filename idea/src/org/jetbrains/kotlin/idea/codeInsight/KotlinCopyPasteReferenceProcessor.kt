@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.awt.datatransfer.Transferable
 import java.awt.datatransfer.UnsupportedFlavorException
 import java.io.IOException
@@ -194,7 +195,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
             val refData: KotlinReferenceData
     )
 
-    override fun processTransferableData (
+    override fun processTransferableData(
             project: Project,
             editor: Editor,
             bounds: RangeMarker,
@@ -328,11 +329,10 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
         val importDirective = JetPsiFactory(file.getProject()).createImportDirective(ImportPath(fqName, false))
         val moduleDescriptor = file.getResolutionFacade().findModuleDescriptor(file)
         val scope = JetModuleUtil.getSubpackagesOfRootScope(moduleDescriptor)
-        val descriptors = QualifiedExpressionResolver()
+        return QualifiedExpressionResolver()
                 .processImportReference(importDirective, scope, scope, BindingTraceContext(), LookupMode.EVERYTHING)
                 .getAllDescriptors()
-                .filterIsInstance<CallableDescriptor>()
-        return descriptors.singleOrNull() //TODO: not correct
+                .firstIsInstanceOrNull<CallableDescriptor>()
     }
 
     private fun showRestoreReferencesDialog(project: Project, referencesToRestore: List<ReferenceToRestoreData>): Collection<ReferenceToRestoreData> {
