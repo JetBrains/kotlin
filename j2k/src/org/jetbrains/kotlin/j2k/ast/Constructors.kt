@@ -22,9 +22,9 @@ import com.intellij.util.IncorrectOperationException
 abstract class Constructor(
         annotations: Annotations,
         modifiers: Modifiers,
-        public val parameterList: ParameterList,
-        protected val body: DeferredElement<Block>
-) : Member(annotations, modifiers)
+        parameterList: ParameterList,
+        body: DeferredElement<Block>
+) : FunctionLike(annotations, modifiers, parameterList, body)
 
 class PrimaryConstructor(
         annotations: Annotations,
@@ -36,14 +36,14 @@ class PrimaryConstructor(
     override fun generateCode(builder: CodeBuilder) { throw IncorrectOperationException() }
 
     public fun initializer(): Initializer
-            = Initializer(body, Modifiers.Empty).assignPrototypesFrom(this, CommentsAndSpacesInheritance(commentsBefore = false))
+            = Initializer(body!!, Modifiers.Empty).assignPrototypesFrom(this, CommentsAndSpacesInheritance(commentsBefore = false))
 
     public fun createSignature(converter: Converter): PrimaryConstructorSignature {
         val signature = PrimaryConstructorSignature(annotations, modifiers, parameterList)
 
         // assign prototypes later because we don't know yet whether the body is empty or not
         converter.addPostUnfoldDeferredElementsAction {
-            val inheritance = CommentsAndSpacesInheritance(blankLinesBefore = false, commentsAfter = body.isEmpty, commentsInside = body.isEmpty)
+            val inheritance = CommentsAndSpacesInheritance(blankLinesBefore = false, commentsAfter = body!!.isEmpty, commentsInside = body.isEmpty)
             signature.assignPrototypesFrom(this, inheritance)
         }
 
@@ -89,7 +89,7 @@ class SecondaryConstructor(
             builder append " : " append thisOrSuperCall
         }
 
-        builder append " " append body
+        builder append " " append body!!
     }
 }
 

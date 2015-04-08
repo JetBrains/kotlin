@@ -18,16 +18,23 @@ package org.jetbrains.kotlin.j2k.ast
 
 import org.jetbrains.kotlin.j2k.*
 
+abstract class FunctionLike(
+        annotations: Annotations,
+        modifiers: Modifiers,
+        val parameterList: ParameterList,
+        val body: DeferredElement<Block>?
+) : Member(annotations, modifiers)
+
 class Function(
         val name: Identifier,
         annotations: Annotations,
         modifiers: Modifiers,
         val returnType: Type,
         val typeParameterList: TypeParameterList,
-        val parameterList: ParameterList,
-        val body: DeferredElement<Block>?,
+        parameterList: ParameterList,
+        body: DeferredElement<Block>?,
         val isInTrait: Boolean
-) : Member(annotations, modifiers) {
+) : FunctionLike(annotations, modifiers, parameterList, body) {
 
     private fun presentationModifiers(): Modifiers {
         var modifiers = this.modifiers

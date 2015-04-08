@@ -78,6 +78,7 @@ import java.util.regex.Pattern;
         JavaToKotlinConverterForWebDemoTestGenerated.NewClassExpression.class,
         JavaToKotlinConverterForWebDemoTestGenerated.Nullability.class,
         JavaToKotlinConverterForWebDemoTestGenerated.ObjectLiteral.class,
+        JavaToKotlinConverterForWebDemoTestGenerated.Overloads.class,
         JavaToKotlinConverterForWebDemoTestGenerated.PackageStatement.class,
         JavaToKotlinConverterForWebDemoTestGenerated.ParenthesizedExpression.class,
         JavaToKotlinConverterForWebDemoTestGenerated.PolyadicExpression.class,
@@ -1310,6 +1311,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
         @TestMetadata("secondaryConstructorWithDefaultValues.java")
         public void testSecondaryConstructorWithDefaultValues() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/secondaryConstructorWithDefaultValues.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("secondaryConstructorWithDefaultValues2.java")
+        public void testSecondaryConstructorWithDefaultValues2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/secondaryConstructorWithDefaultValues2.java");
             doTest(fileName);
         }
 
@@ -3485,6 +3492,51 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
         @TestMetadata("MyFrame.java")
         public void testMyFrame() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/objectLiteral/MyFrame.java");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("j2k/testData/fileOrElement/overloads")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Overloads extends AbstractJavaToKotlinConverterForWebDemoTest {
+        @TestMetadata("Abstract.java")
+        public void testAbstract() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/overloads/Abstract.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("AccessorToDrop.java")
+        public void testAccessorToDrop() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/overloads/AccessorToDrop.java");
+            doTest(fileName);
+        }
+
+        public void testAllFilesPresentInOverloads() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/overloads"), Pattern.compile("^(.+)\\.java$"), true);
+        }
+
+        @TestMetadata("Annotations.java")
+        public void testAnnotations() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/overloads/Annotations.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("Override.java")
+        public void testOverride() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/overloads/Override.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("Simple.java")
+        public void testSimple() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/overloads/Simple.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("Synchronized.java")
+        public void testSynchronized() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/overloads/Synchronized.java");
             doTest(fileName);
         }
     }

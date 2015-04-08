@@ -16,7 +16,11 @@
 
 package org.jetbrains.kotlin.j2k.ast
 
-import org.jetbrains.kotlin.j2k.*
+import com.intellij.psi.PsiExpression
+import com.intellij.psi.PsiMethod
+import org.jetbrains.kotlin.j2k.CodeBuilder
+import org.jetbrains.kotlin.j2k.OverloadReducer
+import org.jetbrains.kotlin.j2k.append
 
 abstract class Member(var annotations: Annotations, val modifiers: Modifiers) : Element()
 
@@ -26,7 +30,8 @@ class ClassBody (
         val members: List<Member>,
         val companionObjectMembers: List<Member>,
         val lBrace: LBrace,
-        val rBrace: RBrace) {
+        val rBrace: RBrace,
+        val overloadReducer: OverloadReducer) {
 
     fun append(builder: CodeBuilder) {
         val membersFiltered = members.filter { !it.isEmpty }

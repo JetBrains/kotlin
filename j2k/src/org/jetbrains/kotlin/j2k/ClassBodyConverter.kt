@@ -49,8 +49,12 @@ class ClassBodyConverter(private val psiClass: PsiClass,
     public fun convertBody(): ClassBody {
         processAccessorsToDrop()
 
+        val overloadReducer = OverloadReducer(psiClass.getMethods().filter { it !in membersToRemove } /* do not allow OverloadReducer to use accessors converted to properties */,
+                                              isOpenClass,
+                                              converter.referenceSearcher)
+
         val constructorConverter = if (psiClass.getName() != null && !isObject)
-            ConstructorConverter(psiClass, converter, fieldCorrections)
+            ConstructorConverter(psiClass, converter, fieldCorrections, overloadReducer)
         else
             null
 
@@ -59,8 +63,9 @@ class ClassBodyConverter(private val psiClass: PsiClass,
             if (element is PsiMember) {
                 if (element is PsiAnnotationMethod) continue // converted in convertAnnotationType()
                 if (isObject && element.isConstructor()) continue // no constructor in object
+                if (element is PsiMethod && overloadReducer.shouldDropMethod(element)) continue
 
-                val converted = converter.convertMember(element, membersToRemove, constructorConverter)
+                val converted = converter.convertMember(element, membersToRemove, constructorConverter, overloadReducer)
                 if (converted != null) {
                     convertedMembers.put(element, converted)
                 }
@@ -88,7 +93,7 @@ class ClassBodyConverter(private val psiClass: PsiClass,
                 }
             }
 
-            return ClassBody(null, null, convertedMembers.values().toList(), emptyList(), lBrace, rBrace)
+            return ClassBody(null, null, convertedMembers.values().toList(), emptyList(), lBrace, rBrace, overloadReducer)
         }
 
         val useCompanionObject = shouldGenerateCompanionObject(convertedMembers)
@@ -123,14 +128,15 @@ class ClassBodyConverter(private val psiClass: PsiClass,
             primaryConstructorSignature = null // no "()" after class name is needed in this case
         }
 
-        return ClassBody(primaryConstructorSignature, constructorConverter?.baseClassParams, members, companionObjectMembers, lBrace, rBrace)
+        return ClassBody(primaryConstructorSignature, constructorConverter?.baseClassParams, members, companionObjectMembers, lBrace, rBrace, overloadReducer)
     }
 
     private fun Converter.convertMember(member: PsiMember,
                                         membersToRemove: MutableSet<PsiMember>,
-                                        constructorConverter: ConstructorConverter?): Member? {
+                                        constructorConverter: ConstructorConverter?,
+                                        overloadReducer: OverloadReducer): Member? {
         return when (member) {
-            is PsiMethod -> convertMethod(member, membersToRemove, constructorConverter, isOpenClass)
+            is PsiMethod -> convertMethod(member, membersToRemove, constructorConverter, overloadReducer, isOpenClass)
             is PsiField -> convertField(member, fieldCorrections[member])
             is PsiClass -> convertClass(member)
             is PsiClassInitializer -> convertInitializer(member)
