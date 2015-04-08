@@ -169,9 +169,8 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
             if ((insn.getOpcode() == Opcodes.ASTORE || insn.getOpcode() == Opcodes.ALOAD) &&
                 ((VarInsnNode) insn).var == localVariableNode.index) {
 
-                // frames[i] can be null in case of exception handlers
                 if (frames[i] == null) {
-                    values.add(null);
+                    //unreachable code
                     continue;
                 }
 
