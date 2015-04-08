@@ -80,7 +80,8 @@ public class KotlinRecursiveCallLineMarkerProvider() : LineMarkerProvider {
             val receiverOwner =
                     when (receiver) {
                         is ExpressionReceiver -> {
-                            val thisRef = (receiver.getExpression() as? JetThisExpression)?.getInstanceReference() ?: return true
+                            val thisRef = (JetPsiUtil.deparenthesize(receiver.getExpression()) as?
+                                    JetThisExpression)?.getInstanceReference() ?: return true
                             bindingContext[BindingContext.REFERENCE_TARGET, thisRef] ?: return true
                         }
 
