@@ -60,7 +60,7 @@ class RegExpTest {
 
         val m2 = re.exec(string)!!
         assertEquals(array("A5D5", "A5", "D5"), m2)
-        assertEquals(string.indexOf(m2[0]), (m2 as RegExpMatch).index)
+        assertEquals(string.indexOf(m2[0]!!), (m2 as RegExpMatch).index)
 
         val noMatch = re.exec(string)
         assertEquals(null, noMatch)

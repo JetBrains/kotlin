@@ -16,6 +16,8 @@
 
 package kotlin.text
 
+private val TODO: Nothing get() = throw java.lang.UnsupportedOperationException()
+
 
 public enum class PatternOption(val value: String) {
     IGNORE_CASE : PatternOption("i")
@@ -25,24 +27,11 @@ public enum class PatternOption(val value: String) {
 
 public data class MatchGroup(val value: String)
 
-public trait MatchGroupCollection : Collection<MatchGroup?> {
-    public fun get(index: Int): MatchGroup?
-}
 
-public trait MatchResult {
-    public val range: IntRange
-    public val value: String
-    public val groups: MatchGroupCollection
+public class Pattern (pattern: String, options: Set<PatternOption>) {
 
-    public fun next(): MatchResult?
-}
-
-
-public class Pattern(public val pattern: String, options_: Set<PatternOption>) {
-
-    public constructor(pattern: String, vararg options: PatternOption) : this(pattern, options.toSet())
-
-    public val options: Set<PatternOption> = options_.toSet()
+    public val pattern: String = pattern
+    public val options: Set<PatternOption> = options.toSet()
     private val nativePattern: RegExp = RegExp(pattern, options.map { it.value }.joinToString() + "g")
 
 
@@ -60,7 +49,7 @@ public class Pattern(public val pattern: String, options_: Set<PatternOption>) {
 
     public fun split(input: CharSequence, limit: Int = 0): List<String> = TODO
 
-    public fun toString(): String = nativePattern.toString()
+    public override fun toString(): String = nativePattern.toString()
 
     companion object {
         public fun fromLiteral(literal: String): Pattern = Pattern(escape(literal))
@@ -68,6 +57,8 @@ public class Pattern(public val pattern: String, options_: Set<PatternOption>) {
         public fun escapeReplacement(literal: String): String = literal.nativeReplace(RegExp("\\$", "g"), "$$$$")
     }
 }
+
+public fun Pattern(pattern: String, vararg options: PatternOption): Pattern = Pattern(pattern, options.toSet())
 
 
 private fun RegExp.findNext(input: String, from: Int): MatchResult? {

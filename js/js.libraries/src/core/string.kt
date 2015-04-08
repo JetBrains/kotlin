@@ -19,17 +19,19 @@ public fun String.nativeStartsWith(s: String, position: Int): Boolean = noImpl
 native("endsWith")
 public fun String.nativeEndsWith(s: String): Boolean = noImpl
 
+deprecated("Use split(Pattern) instead.")
 library("splitString")
 public fun String.splitWithRegex(regex: String): Array<String> = noImpl
 
+deprecated("Use split(Pattern) instead.")
 library("splitString")
 public fun String.splitWithRegex(regex: String, limit: Int): Array<String> = noImpl
 
-deprecated("Use splitWithRegex (temporary)")
+deprecated("Use split(Pattern) instead.")
 library("splitString")
 public fun String.split(regex: String): Array<String> = noImpl
 
-deprecated("Use splitWithRegex (temporary)")
+deprecated("Use split(Pattern) instead.")
 library("splitString")
 public fun String.split(regex: String, limit: Int): Array<String> = noImpl
 
@@ -52,12 +54,13 @@ public fun CharSequence.isEmpty(): Boolean = noImpl
 
 
 
+// TODO: internal
 // native because we need to escape newValue
+//native("replace")
+//public fun String.nativeReplace(oldValue: String, newValue: String): String = noImpl
+// TODO: internal
 native("replace")
-private fun String.nativeReplace(oldValue: String, newValue: String): String = noImpl
-
-native("replace")
-private fun String.nativeReplace(pattern: RegExp, replacement: String): String = noImpl
+public fun String.nativeReplace(pattern: RegExp, replacement: String): String = noImpl
 
 
 /*
