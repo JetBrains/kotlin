@@ -1,3 +1,4 @@
+// ERROR: Nested class 'Nested' should be qualified as 'A.Nested'
 package to
 
 import a.ext

@@ -1,5 +1,4 @@
 //RUNTIME
-// ALLOW_UNRESOLVED
 
 package a
 

@@ -1,3 +1,6 @@
+// ERROR: Unresolved reference: T
+// ERROR: Unresolved reference: b
+// ERROR: Unresolved reference: c
 package to
 
 fun f() {

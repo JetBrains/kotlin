@@ -24,6 +24,7 @@ import com.intellij.testFramework.LightPlatformTestCase
 import org.jetbrains.kotlin.idea.JetWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.j2k.IdeaResolverForConverter
 import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
+import org.jetbrains.kotlin.idea.testUtils.dumpTextWithErrors
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.JetFile
@@ -71,13 +72,13 @@ public abstract class AbstractJavaToKotlinConverterMultiFileTest : AbstractJavaT
         }
 
         for ((i, kotlinFile) in resultFiles.withIndex()) {
-            JetTestUtils.assertEqualsToFile(expectedResultFile(i), addErrorsDump(kotlinFile))
+            JetTestUtils.assertEqualsToFile(expectedResultFile(i), kotlinFile.dumpTextWithErrors())
         }
 
         for ((externalFile, externalPsiFile) in externalFiles.zip(externalPsiFiles)) {
             val expectedFile = File(externalFile.getPath() + ".expected")
             var resultText = if (externalPsiFile is JetFile) {
-                addErrorsDump(externalPsiFile)
+                externalPsiFile.dumpTextWithErrors()
             }
             else {
                 //TODO: errors dump for java files too

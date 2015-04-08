@@ -1,3 +1,7 @@
+// ERROR: Unresolved reference: s
+// ERROR: Unresolved reference: s
+// ERROR: Unresolved reference: s
+// ERROR: Unresolved reference: s
 fun foo() {
     s.extensionFun()
     for (i in s.indices) {

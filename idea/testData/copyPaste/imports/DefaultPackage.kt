@@ -1,5 +1,3 @@
-// ALLOW_UNRESOLVED
-
 class A {
 }
 

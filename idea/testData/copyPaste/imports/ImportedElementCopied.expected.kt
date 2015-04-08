@@ -1,3 +1,9 @@
+// ERROR: Unresolved reference: Inner
+// ERROR: Unresolved reference: Nested
+// ERROR: Unresolved reference: NestedEnum
+// ERROR: Unresolved reference: NestedObj
+// ERROR: Unresolved reference: NestedTrait
+// ERROR: Unresolved reference: NestedAnnotation
 package to
 
 class Outer {

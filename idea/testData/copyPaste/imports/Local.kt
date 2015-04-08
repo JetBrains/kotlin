@@ -1,7 +1,5 @@
 package a
 
-// ALLOW_UNRESOLVED
-
 fun f() {
     fun g(): Int {
     }

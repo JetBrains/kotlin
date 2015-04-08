@@ -21,8 +21,12 @@ import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.roots.ModuleRootModificationUtil.updateModel
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.util.Consumer
+import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.idea.JetStdJSProjectDescriptor
 import org.jetbrains.kotlin.idea.ProjectDescriptorWithStdlibSources
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
+import org.jetbrains.kotlin.psi.JetFile
 
 public enum class ModuleKind {
     KOTLIN_JVM_WITH_STDLIB_SOURCES
@@ -51,5 +55,13 @@ public fun Module.configureAs(kind: ModuleKind) {
             this.configureAs(JetStdJSProjectDescriptor.INSTANCE)
         else -> throw IllegalArgumentException("Unknown kind=$kind")
     }
+}
+
+public fun JetFile.dumpTextWithErrors(): String {
+    val diagnostics = analyzeFullyAndGetResult().bindingContext.getDiagnostics()
+    val errors = diagnostics.filter { it.getSeverity() == Severity.ERROR }
+    if (errors.isEmpty()) return getText()
+    val header = errors.map { "// ERROR: " + DefaultErrorMessages.render(it).replace('\n', ' ') }.joinToString("\n", postfix = "\n")
+    return header + getText()
 }
 

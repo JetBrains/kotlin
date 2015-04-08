@@ -1,10 +1,10 @@
 package a;
 
-class JavaM {
-    static void staticMethod() {
+public class JavaM {
+    public static void staticMethod() {
     }
 }
 
-class JavaF {
-    static int staticField = 0;
+public class JavaF {
+    public static int staticField = 0;
 }

@@ -18,26 +18,18 @@ package org.jetbrains.kotlin.idea.codeInsight
 
 import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.checkers.DebugInfoUtil
-import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
-import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.idea.AbstractCopyPasteTest
 import org.jetbrains.kotlin.idea.PluginTestCaseBase
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
+import org.jetbrains.kotlin.idea.testUtils.dumpTextWithErrors
 import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetReferenceExpression
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.JetTestUtils
 import java.io.File
-import kotlin.test.fail
 
 public abstract class AbstractInsertImportOnPasteTest : AbstractCopyPasteTest() {
     private val BASE_PATH = PluginTestCaseBase.getTestDataPathBase() + "/copyPaste/imports"
     private val DEFAULT_TO_FILE_TEXT = "package to\n\n<caret>"
-    private val ALLOW_UNRESOLVED_DIRECTIVE = "// ALLOW_UNRESOLVED"
+    private val NO_ERRORS_DUMP_DIRECTIVE = "// NO_ERRORS_DUMP"
 
     override fun getTestDataPath() = BASE_PATH
 
@@ -61,18 +53,18 @@ public abstract class AbstractInsertImportOnPasteTest : AbstractCopyPasteTest() 
 
         KotlinCopyPasteReferenceProcessor.declarationsToImportSuggested = emptyList()
 
-        val toFileName = testFileName.replace(".kt", ".to.kt")
-        val toFile = configureToFile(toFileName)
+        configureToFile(testFileName.replace(".kt", ".to.kt"))
         performNotWriteEditorAction(IdeActions.ACTION_PASTE)
 
         val namesToImportDump = KotlinCopyPasteReferenceProcessor.declarationsToImportSuggested.joinToString("\n")
         JetTestUtils.assertEqualsToFile(File(path.replace(".kt", ".expected.names")), namesToImportDump)
 
-        JetTestUtils.assertEqualsToFile(File(path.replace(".kt", ".expected.kt")), myFixture.getEditor().getDocument().getText())
-
-        if (!InTextDirectivesUtils.isDirectiveDefined(FileUtil.loadFile(testFile, true), ALLOW_UNRESOLVED_DIRECTIVE)) {
-            checkNoUnresolvedReferences(toFile)
-        }
+        val resultFile = myFixture.getFile() as JetFile
+        val resultText = if (InTextDirectivesUtils.isDirectiveDefined(FileUtil.loadFile(testFile, true), NO_ERRORS_DUMP_DIRECTIVE))
+            resultFile.getText()
+        else
+            resultFile.dumpTextWithErrors()
+        JetTestUtils.assertEqualsToFile(File(path.replace(".kt", ".expected.kt")), resultText)
     }
 
     private fun configureToFile(toFileName: String): JetFile {
@@ -95,36 +87,5 @@ public abstract class AbstractInsertImportOnPasteTest : AbstractCopyPasteTest() 
                 myFixture.configureByFile(dependencyFileName)
             }
         }
-    }
-
-    private fun checkNoUnresolvedReferences(file: JetFile) {
-        val bindingContext = file.analyzeFully()
-        for (diagnostic in bindingContext.getDiagnostics()) {
-            if (Errors.UNRESOLVED_REFERENCE_DIAGNOSTICS.contains(diagnostic.getFactory())) {
-                val textRanges = diagnostic.getTextRanges()
-                val diagnosticText = DefaultErrorMessages.render(diagnostic)
-                if (diagnostic.getPsiFile() == file) {
-                    fail(diagnostic.getFactory().getName() + ": " + diagnosticText + " " + DiagnosticUtils.atLocation(file, textRanges.get(0)))
-                }
-            }
-        }
-        DebugInfoUtil.markDebugAnnotations(file, bindingContext, object : DebugInfoUtil.DebugInfoReporter() {
-            override fun preProcessReference(expression: JetReferenceExpression) {
-                expression.analyze(BodyResolveMode.FULL)
-            }
-
-            override fun reportElementWithErrorType(expression: JetReferenceExpression) {
-                //do nothing
-            }
-
-            override fun reportMissingUnresolved(expression: JetReferenceExpression) {
-                // this may happen if incorrect psi transformations are done
-                fail(expression.getText() + " is unresolved but not marked " + DiagnosticUtils.atLocation(file, expression.getTextRange()))
-            }
-
-            override fun reportUnresolvedWithTarget(expression: JetReferenceExpression, target: String) {
-                //do nothing
-            }
-        })
     }
 }

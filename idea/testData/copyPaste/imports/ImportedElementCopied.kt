@@ -1,6 +1,5 @@
 package a
 
-// ALLOW_UNRESOLVED
 //NOTE: This test shows a corner case which is not covered fully by current implementation
 // All we do now is avoid inserting wrong imports (we do not import anything for declaration from copied block)
 // To cover this case properly and insert good imports some other approach should be used (some sophisticated heuristic might do the job)

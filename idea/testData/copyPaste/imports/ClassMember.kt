@@ -1,7 +1,5 @@
 package a
 
-// ALLOW_UNRESOLVED
-
 class A(val c: Int = 1) {
     var d = 2
 

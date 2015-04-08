@@ -1,4 +1,4 @@
-// ALLOW_UNRESOLVED
+// NO_ERRORS_DUMP
 
 <selection>package a
 

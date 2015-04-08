@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.idea.JetWithJdkAndRuntimeLightProjectDescriptor
 import com.intellij.psi.PsiJavaFile
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.idea.j2k.IdeaResolverForConverter
+import org.jetbrains.kotlin.idea.testUtils.dumpTextWithErrors
 
 public abstract class AbstractJavaToKotlinConverterSingleFileTest : AbstractJavaToKotlinConverterTest() {
     val testHeaderPattern = Pattern.compile("//(element|expression|statement|method|class|file|comp)\n")
@@ -80,7 +81,7 @@ public abstract class AbstractJavaToKotlinConverterSingleFileTest : AbstractJava
         var actual = reformat(rawConverted, project, reformatInFun)
 
         if (prefix == "file") {
-            actual = addErrorsDump(createKotlinFile(actual))
+            actual = createKotlinFile(actual).dumpTextWithErrors()
         }
 
         val kotlinPath = javaPath.replace(".java", ".kt")

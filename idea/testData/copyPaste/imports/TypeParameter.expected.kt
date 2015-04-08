@@ -1,3 +1,4 @@
+// ERROR: Function 'f' must have a body
 package to
 
 import a.A

@@ -1,7 +1,5 @@
 package a
 
-// ALLOW_UNRESOLVED
-
 class C {
 }
 

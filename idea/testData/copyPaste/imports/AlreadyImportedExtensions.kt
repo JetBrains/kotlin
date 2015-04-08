@@ -1,5 +1,4 @@
 // RUNTIME
-// ALLOW_UNRESOLVED
 
 fun foo(s: String) {
 <selection>    s.extensionFun()

@@ -1,3 +1,4 @@
+// NO_ERRORS_DUMP
 package a
 
 trait T

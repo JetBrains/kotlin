@@ -1,3 +1,4 @@
+// ERROR: No value passed for parameter i
 package a
 
 fun f(p: A, t: T) {
