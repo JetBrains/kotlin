@@ -80,5 +80,8 @@ public inline fun String.decapitalize(): String {
 }
 
 
-public fun String.replace(oldValue: String, newValue: String): String = nativeReplace(oldValue, newValue.nativeReplace("$", "$$"))
+public fun String.replace(oldValue: String, newValue: String): String =
+        nativeReplace(new RegExp(Pattern.escape(oldValue),"g"), Pattern.escapeReplacement(newValue))
 
+public fun String.replace(oldChar: Char, newChar: Char): String =
+        nativeReplace(new RegExp(Pattern.escape(oldChar.toString()),"g"), newChar.toString())
