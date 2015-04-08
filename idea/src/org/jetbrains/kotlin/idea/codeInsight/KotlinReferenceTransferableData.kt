@@ -16,8 +16,10 @@
 
 package org.jetbrains.kotlin.idea.codeInsight
 
-import com.intellij.codeInsight.editorActions.ReferenceData
 import com.intellij.codeInsight.editorActions.TextBlockTransferableData
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
+import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import java.awt.datatransfer.DataFlavor
 import java.io.Serializable
 import kotlin.properties.Delegates
@@ -64,6 +66,27 @@ public class KotlinReferenceData(
         NON_EXTENSION_CALLABLE
         EXTENSION_FUNCTION
         EXTENSION_PROPERTY
+
+        companion object {
+            public fun fromDescriptor(descriptor: DeclarationDescriptor): KotlinReferenceData.Kind? {
+                return when (descriptor.getImportableDescriptor()) {
+                    is ClassDescriptor ->
+                        KotlinReferenceData.Kind.CLASS
+
+                    is PackageViewDescriptor ->
+                        KotlinReferenceData.Kind.PACKAGE
+
+                    is FunctionDescriptor ->
+                        if (descriptor.isExtension) KotlinReferenceData.Kind.EXTENSION_FUNCTION else KotlinReferenceData.Kind.NON_EXTENSION_CALLABLE
+
+                    is PropertyDescriptor ->
+                        if (descriptor.isExtension) KotlinReferenceData.Kind.EXTENSION_PROPERTY else KotlinReferenceData.Kind.NON_EXTENSION_CALLABLE
+
+                    else ->
+                        null
+                }
+            }
+        }
     }
 
     public override fun clone(): KotlinReferenceData {

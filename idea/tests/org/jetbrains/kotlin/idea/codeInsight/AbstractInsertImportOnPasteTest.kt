@@ -18,9 +18,11 @@ package org.jetbrains.kotlin.idea.codeInsight
 
 import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.AbstractCopyPasteTest
 import org.jetbrains.kotlin.idea.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.testUtils.dumpTextWithErrors
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.JetTestUtils
@@ -29,7 +31,9 @@ import java.io.File
 public abstract class AbstractInsertImportOnPasteTest : AbstractCopyPasteTest() {
     private val BASE_PATH = PluginTestCaseBase.getTestDataPathBase() + "/copyPaste/imports"
     private val DEFAULT_TO_FILE_TEXT = "package to\n\n<caret>"
+
     private val NO_ERRORS_DUMP_DIRECTIVE = "// NO_ERRORS_DUMP"
+    private val DELETE_DEPENDENCIES_BEFORE_PASTE_DIRECTIVE = "// DELETE_DEPENDENCIES_BEFORE_PASTE"
 
     override fun getTestDataPath() = BASE_PATH
 
@@ -44,12 +48,21 @@ public abstract class AbstractInsertImportOnPasteTest : AbstractCopyPasteTest() 
     private fun doTestAction(cutOrCopy: String, path: String) {
         myFixture.setTestDataPath(BASE_PATH)
         val testFile = File(path)
+        val testFileText = FileUtil.loadFile(testFile, true)
         val testFileName = testFile.getName()
 
-        configureByDependencyIfExists(testFileName.replace(".kt", ".dependency.kt"))
-        configureByDependencyIfExists(testFileName.replace(".kt", ".dependency.java"))
+        val dependencyPsiFile1 = configureByDependencyIfExists(testFileName.replace(".kt", ".dependency.kt"))
+        val dependencyPsiFile2 = configureByDependencyIfExists(testFileName.replace(".kt", ".dependency.java"))
         myFixture.configureByFile(testFileName)
         myFixture.performEditorAction(cutOrCopy)
+
+        if (InTextDirectivesUtils.isDirectiveDefined(testFileText, DELETE_DEPENDENCIES_BEFORE_PASTE_DIRECTIVE)) {
+            assert(dependencyPsiFile1 != null || dependencyPsiFile2 != null)
+            runWriteAction {
+                dependencyPsiFile1?.getVirtualFile()?.delete(null)
+                dependencyPsiFile2?.getVirtualFile()?.delete(null)
+            }
+        }
 
         KotlinCopyPasteReferenceProcessor.declarationsToImportSuggested = emptyList()
 
@@ -60,7 +73,7 @@ public abstract class AbstractInsertImportOnPasteTest : AbstractCopyPasteTest() 
         JetTestUtils.assertEqualsToFile(File(path.replace(".kt", ".expected.names")), namesToImportDump)
 
         val resultFile = myFixture.getFile() as JetFile
-        val resultText = if (InTextDirectivesUtils.isDirectiveDefined(FileUtil.loadFile(testFile, true), NO_ERRORS_DUMP_DIRECTIVE))
+        val resultText = if (InTextDirectivesUtils.isDirectiveDefined(testFileText, NO_ERRORS_DUMP_DIRECTIVE))
             resultFile.getText()
         else
             resultFile.dumpTextWithErrors()
@@ -76,16 +89,15 @@ public abstract class AbstractInsertImportOnPasteTest : AbstractCopyPasteTest() 
         }
     }
 
-    private fun configureByDependencyIfExists(dependencyFileName: String) {
+    private fun configureByDependencyIfExists(dependencyFileName: String): PsiFile? {
         val file = File(BASE_PATH + "/" + dependencyFileName)
-        if (file.exists()) {
-            if (dependencyFileName.endsWith(".java")) {
-                //allow test framework to put it under right directory
-                myFixture.addClass(FileUtil.loadFile(file, true))
-            }
-            else {
-                myFixture.configureByFile(dependencyFileName)
-            }
+        if (!file.exists()) return null
+        return if (dependencyFileName.endsWith(".java")) {
+            //allow test framework to put it under right directory
+            myFixture.addClass(FileUtil.loadFile(file, true)).getContainingFile()
+        }
+        else {
+            myFixture.configureByFile(dependencyFileName)
         }
     }
 }

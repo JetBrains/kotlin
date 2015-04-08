@@ -164,30 +164,11 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
                     val fqName = descriptor.importableFqName ?: continue
                     if (!descriptor.canBeReferencedViaImport()) continue
 
-                    val kind = referenceDataKind(descriptor) ?: continue
+                    val kind = KotlinReferenceData.Kind.fromDescriptor(descriptor) ?: continue
                     add(KotlinReferenceData(element.range.start - startOffset, element.range.end - startOffset, fqName.asString(), kind))
                 }
             }
         })
-    }
-
-    private fun referenceDataKind(descriptor: DeclarationDescriptor): KotlinReferenceData.Kind? {
-        return when (descriptor.getImportableDescriptor()) {
-            is ClassDescriptor ->
-                KotlinReferenceData.Kind.CLASS
-
-            is PackageViewDescriptor ->
-                KotlinReferenceData.Kind.PACKAGE
-
-            is FunctionDescriptor ->
-                if (descriptor.isExtension) KotlinReferenceData.Kind.EXTENSION_FUNCTION else KotlinReferenceData.Kind.NON_EXTENSION_CALLABLE
-
-            is PropertyDescriptor ->
-                if (descriptor.isExtension) KotlinReferenceData.Kind.EXTENSION_PROPERTY else KotlinReferenceData.Kind.NON_EXTENSION_CALLABLE
-
-            else ->
-                null
-        }
     }
 
     private data class ReferenceToRestoreData(
@@ -234,7 +215,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
         return referenceData.map {
             val referenceElement = findReference(it, file, blockStart)
             if (referenceElement != null)
-                createReferenceToRestoreData(referenceElement, it, fileResolutionScope)
+                createReferenceToRestoreData(referenceElement, it, file, fileResolutionScope)
             else
                 null
         }.filterNotNull()
@@ -261,7 +242,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
         return null
     }
 
-    private fun createReferenceToRestoreData(element: JetElement, refData: KotlinReferenceData, fileResolutionScope: JetScope): ReferenceToRestoreData? {
+    private fun createReferenceToRestoreData(element: JetElement, refData: KotlinReferenceData, file: JetFile, fileResolutionScope: JetScope): ReferenceToRestoreData? {
         val originalFqName = FqName(refData.fqName)
 
         if (refData.kind == KotlinReferenceData.Kind.EXTENSION_FUNCTION) {
@@ -285,6 +266,12 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
                 .filterNotNull()
                 .toSet()
         if (referencedFqNames.singleOrNull() == originalFqName) return null
+
+        // check that descriptor to import exists and is accessible from the current module
+        if (!findImportableDescriptors(originalFqName, file).any { KotlinReferenceData.Kind.fromDescriptor(it) == refData.kind }) {
+            return null
+        }
+
         return ReferenceToRestoreData(reference, refData)
     }
 
@@ -302,12 +289,12 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
         for ((reference, refData) in referencesToRestore) {
             val fqName = FqName(refData.fqName)
 
-            if (!refData.kind.isExtensionCallable() && reference is JetSimpleNameReference) {
+            if (!refData.kind.isExtension() && reference is JetSimpleNameReference) {
                 val pointer = smartPointerManager.createSmartPsiElementPointer(reference.getElement(), file)
                 bindingRequests.add(BindingRequest(pointer, fqName))
             }
 
-            if (refData.kind.isExtensionCallable()) {
+            if (refData.kind.isExtension()) {
                 extensionsToImport.addIfNotNull(findCallableToImport(fqName, file))
             }
         }
@@ -322,18 +309,20 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
         performDelayedShortening(file.getProject())
     }
 
-    private fun KotlinReferenceData.Kind.isExtensionCallable()
+    private fun KotlinReferenceData.Kind.isExtension()
             = this == KotlinReferenceData.Kind.EXTENSION_FUNCTION || this == KotlinReferenceData.Kind.EXTENSION_PROPERTY
 
-    private fun findCallableToImport(fqName: FqName, file: JetFile): CallableDescriptor? {
+    private fun findImportableDescriptors(fqName: FqName, file: JetFile): Collection<DeclarationDescriptor> {
         val importDirective = JetPsiFactory(file.getProject()).createImportDirective(ImportPath(fqName, false))
         val moduleDescriptor = file.getResolutionFacade().findModuleDescriptor(file)
         val scope = JetModuleUtil.getSubpackagesOfRootScope(moduleDescriptor)
         return QualifiedExpressionResolver()
                 .processImportReference(importDirective, scope, scope, BindingTraceContext(), LookupMode.EVERYTHING)
                 .getAllDescriptors()
-                .firstIsInstanceOrNull<CallableDescriptor>()
     }
+
+    private fun findCallableToImport(fqName: FqName, file: JetFile): CallableDescriptor?
+            = findImportableDescriptors(fqName, file).firstIsInstanceOrNull<CallableDescriptor>()
 
     private fun showRestoreReferencesDialog(project: Project, referencesToRestore: List<ReferenceToRestoreData>): Collection<ReferenceToRestoreData> {
         val fqNames = referencesToRestore.map { it.refData.fqName }.toSortedSet()

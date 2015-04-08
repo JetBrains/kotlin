@@ -132,6 +132,12 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
             doTestCopy(fileName);
         }
 
+        @TestMetadata("DependenciesNotAccessibleOnPaste.kt")
+        public void testDependenciesNotAccessibleOnPaste() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/DependenciesNotAccessibleOnPaste.kt");
+            doTestCopy(fileName);
+        }
+
         @TestMetadata("DependencyOnJava.kt")
         public void testDependencyOnJava() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/DependencyOnJava.kt");
@@ -462,6 +468,12 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
         @TestMetadata("DelegatedProperty.kt")
         public void testDelegatedProperty() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/DelegatedProperty.kt");
+            doTestCut(fileName);
+        }
+
+        @TestMetadata("DependenciesNotAccessibleOnPaste.kt")
+        public void testDependenciesNotAccessibleOnPaste() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/DependenciesNotAccessibleOnPaste.kt");
             doTestCut(fileName);
         }
 
