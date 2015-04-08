@@ -31,6 +31,7 @@ public fun JsExpression.canHaveOwnSideEffect(): Boolean =
         is JsArrayLiteral,
         is JsNameRef -> false
         is JsBinaryOperation -> getOperator().isAssignment()
+        is JsInvocation -> !isFunctionCreatorInvocation(this)
         else -> true
     }
 
@@ -43,6 +44,5 @@ public fun JsExpression.shouldHaveOwnAlias(): Boolean =
             is JsConditional,
             is JsBinaryOperation,
             is JsArrayLiteral -> true
-            is JsInvocation -> !isFunctionCreatorInvocation(this)
             else -> canHaveOwnSideEffect()
         }
