@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.kdoc.KDocFinder;
 import org.jetbrains.kotlin.idea.kdoc.KDocRenderer;
 import org.jetbrains.kotlin.idea.kdoc.KdocPackage;
-import org.jetbrains.kotlin.idea.project.ResolveSessionForBodies;
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag;
 import org.jetbrains.kotlin.psi.JetDeclaration;
 import org.jetbrains.kotlin.psi.JetElement;
@@ -130,7 +129,6 @@ public class JetQuickDocumentationProvider extends AbstractDocumentationProvider
         JetElement jetElement = (JetElement) context;
         Project project = psiManager.getProject();
         KotlinCacheService cacheService = KotlinCacheService.getInstance(project);
-        ResolveSessionForBodies session = cacheService.getLazyResolveSession(jetElement);
         ResolutionFacade facade = cacheService.getResolutionFacade(Collections.singletonList(jetElement));
         BindingContext bindingContext = facade.analyze(jetElement, BodyResolveMode.PARTIAL);
         DeclarationDescriptor contextDescriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, context);
@@ -138,7 +136,7 @@ public class JetQuickDocumentationProvider extends AbstractDocumentationProvider
             return null;
         }
         Collection<DeclarationDescriptor> descriptors =
-                KdocPackage.resolveKDocLink(session, contextDescriptor, null, StringUtil.split(link, ","));
+                KdocPackage.resolveKDocLink(facade, contextDescriptor, null, StringUtil.split(link, ","));
         if (!descriptors.isEmpty()) {
             DeclarationDescriptor target = descriptors.iterator().next();
             if (target instanceof DeclarationDescriptorWithSource) {

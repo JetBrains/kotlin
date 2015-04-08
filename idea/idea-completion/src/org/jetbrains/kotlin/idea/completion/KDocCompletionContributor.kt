@@ -57,46 +57,43 @@ class KDocCompletionContributor(): CompletionContributor() {
 
 object KDocNameCompletionProvider: CompletionProvider<CompletionParameters>() {
     override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
+        KDocNameCompletionSession(parameters, result).complete()
+    }
+}
+
+class KDocNameCompletionSession(parameters: CompletionParameters,
+                                resultSet: CompletionResultSet): CompletionSessionBase(CompletionSessionConfiguration(parameters), parameters, resultSet) {
+    override fun doComplete() {
         val position = parameters.getPosition().getParentOfType<KDocName>(false) ?: return
         val declaration = position.getContainingDoc().getOwner() ?: return
-        val bindingContext = declaration.analyze()
         val kdocLink = position.getStrictParentOfType<KDocLink>()!!
         val declarationDescriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration]
         if (kdocLink.getTagIfSubject()?.knownTag == KDocKnownTag.PARAM) {
-            addParamCompletions(position, declarationDescriptor, result)
+            addParamCompletions(position, declarationDescriptor)
         } else {
-            val session = KotlinCacheService.getInstance(parameters.getPosition().getProject()).getLazyResolveSession(position)
-            addLinkCompletions(session, position, declarationDescriptor, result)
+            addLinkCompletions(declarationDescriptor)
         }
     }
 
     private fun addParamCompletions(position: KDocName,
-                                    declarationDescriptor: DeclarationDescriptor,
-                                    result: CompletionResultSet) {
+                                    declarationDescriptor: DeclarationDescriptor) {
         val section = position.getContainingSection()
         val documentedParameters = section.findTagsByName("param").map { it.getSubjectName() }.toSet()
         val descriptors = getParamDescriptors(declarationDescriptor)
                 .filter { it.getName().asString() !in documentedParameters }
 
-        val resolutionFacade = position.getResolutionFacade()
-        val factory = LookupElementFactory(listOf())
         descriptors.forEach {
-            result.addElement(factory.createLookupElement(resolutionFacade, it, false))
+            resultSet.addElement(lookupElementFactory.createLookupElement(resolutionFacade, it, false))
         }
     }
 
-    private fun addLinkCompletions(session: KotlinCodeAnalyzer,
-                                   position: KDocName,
-                                   declarationDescriptor: DeclarationDescriptor,
-                                   result: CompletionResultSet) {
-        val scope = getResolutionScope(session, declarationDescriptor)
-        val resolutionFacade = position.getResolutionFacade()
-        val factory = LookupElementFactory(listOf())
-        scope.getAllDescriptors().forEach {
-            val element = factory.createLookupElement(resolutionFacade, it, false)
-            result.addElement(object: LookupElementDecorator<LookupElement>(element) {
+    private fun addLinkCompletions(declarationDescriptor: DeclarationDescriptor) {
+        val scope = getResolutionScope(resolutionFacade, declarationDescriptor)
+        scope.getDescriptors(nameFilter = {name -> prefixMatcher.prefixMatches(name.asString())}).forEach {
+            val element = lookupElementFactory.createLookupElement(resolutionFacade, it, false)
+            resultSet.addElement(object: LookupElementDecorator<LookupElement>(element) {
                 override fun handleInsert(context: InsertionContext?) {
-                    // don't insert any qualified name here
+                    // insert only plain name here, no qualifier/parentheses/etc.
                 }
             })
         }

@@ -20,12 +20,13 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.KotlinCacheService
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.references.JetMultiReference
 import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -33,12 +34,9 @@ import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
-import org.jetbrains.kotlin.utils.Printer
 
 public class KDocReference(element: KDocName): JetMultiReference<KDocName>(element) {
     override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
-        val cacheService = KotlinCacheService.getInstance(getElement().getProject())
-        val session = cacheService.getLazyResolveSession(getElement())
         val declaration = getElement().getContainingDoc().getOwner()
         if (declaration == null) {
             return arrayListOf()
@@ -48,7 +46,10 @@ public class KDocReference(element: KDocName): JetMultiReference<KDocName>(eleme
             return arrayListOf()
         }
         val kdocLink = getElement().getStrictParentOfType<KDocLink>()!!
-        return resolveKDocLink(session, declarationDescriptor, kdocLink.getTagIfSubject(), getElement().getQualifiedName())
+        return resolveKDocLink(getElement().getResolutionFacade(),
+                               declarationDescriptor,
+                               kdocLink.getTagIfSubject(),
+                               getElement().getQualifiedName())
     }
 
     override fun getRangeInElement(): TextRange = getElement().getNameTextRange()
@@ -65,7 +66,7 @@ public class KDocReference(element: KDocName): JetMultiReference<KDocName>(eleme
     override fun getCanonicalText(): String = getElement().getNameText()
 }
 
-public fun resolveKDocLink(session: KotlinCodeAnalyzer,
+public fun resolveKDocLink(resolutionFacade: ResolutionFacade,
                            fromDescriptor: DeclarationDescriptor,
                            fromSubjectOfTag: KDocTag?,
                            qualifiedName: List<String>): Collection<DeclarationDescriptor> {
@@ -75,7 +76,7 @@ public fun resolveKDocLink(session: KotlinCodeAnalyzer,
 
     // Try to find a matching local descriptor (parameter or type parameter) first.
     if (qualifiedName.size() == 1) {
-        val localResult = resolveInLocalScope(fromDescriptor, qualifiedName.single(), session)
+        val localResult = resolveInLocalScope(fromDescriptor, qualifiedName.single(), resolutionFacade)
         if (!localResult.isEmpty()) {
             return localResult
         }
@@ -84,7 +85,7 @@ public fun resolveKDocLink(session: KotlinCodeAnalyzer,
     var result: Collection<DeclarationDescriptor> = listOf(fromDescriptor)
     qualifiedName.forEach { nameComponent ->
         if (result.size() != 1) return listOf()
-        val scope = getResolutionScope(session, result.first())
+        val scope = getResolutionScope(resolutionFacade, result.first())
         result = scope.getDescriptors().filter { it.getName().asString() == nameComponent }
     }
 
@@ -93,8 +94,8 @@ public fun resolveKDocLink(session: KotlinCodeAnalyzer,
 
 private fun resolveInLocalScope(fromDescriptor: DeclarationDescriptor,
                                 name: String,
-                                session: KotlinCodeAnalyzer): List<DeclarationDescriptor> {
-    val scope = getResolutionScope(session, fromDescriptor)
+                                resolutionFacade: ResolutionFacade): List<DeclarationDescriptor> {
+    val scope = getResolutionScope(resolutionFacade, fromDescriptor)
     return scope.getDescriptors().filter {
         it.getName().asString() == name && it.getContainingDeclaration() == fromDescriptor
     }
@@ -148,7 +149,7 @@ private fun getClassInnerScope(outerScope: JetScope, descriptor: ClassDescriptor
     return classScope
 }
 
-public fun getResolutionScope(session: KotlinCodeAnalyzer, descriptor: DeclarationDescriptor): JetScope {
+public fun getResolutionScope(resolutionFacade: ResolutionFacade, descriptor: DeclarationDescriptor): JetScope {
     return when (descriptor) {
         is PackageFragmentDescriptor ->
             getPackageInnerScope(descriptor)
@@ -157,31 +158,31 @@ public fun getResolutionScope(session: KotlinCodeAnalyzer, descriptor: Declarati
             descriptor.getMemberScope()
 
         is ClassDescriptor ->
-            getClassInnerScope(getOuterScope(descriptor, session), descriptor)
+            getClassInnerScope(getOuterScope(descriptor, resolutionFacade), descriptor)
 
         is FunctionDescriptor ->
-            FunctionDescriptorUtil.getFunctionInnerScope(getOuterScope(descriptor, session),
+            FunctionDescriptorUtil.getFunctionInnerScope(getOuterScope(descriptor, resolutionFacade),
                                                          descriptor, RedeclarationHandler.DO_NOTHING)
 
         is PropertyDescriptor ->
             JetScopeUtils.getPropertyDeclarationInnerScope(descriptor,
-                                                           getOuterScope(descriptor, session),
+                                                           getOuterScope(descriptor, resolutionFacade),
                                                            RedeclarationHandler.DO_NOTHING)
 
         is DeclarationDescriptorNonRoot ->
-            getOuterScope(descriptor, session)
+            getOuterScope(descriptor, resolutionFacade)
 
         else -> throw IllegalArgumentException("Cannot find resolution scope for root $descriptor")
     }
 }
 
-private fun getOuterScope(descriptor: DeclarationDescriptorWithSource, session: KotlinCodeAnalyzer): JetScope {
+private fun getOuterScope(descriptor: DeclarationDescriptorWithSource, resolutionFacade: ResolutionFacade): JetScope {
     val parent = descriptor.getContainingDeclaration()
     if (parent is PackageFragmentDescriptor) {
         val containingFile = (descriptor.getSource() as? PsiSourceElement)?.psi?.getContainingFile() as? JetFile
         if (containingFile != null) {
-            return session.getScopeProvider().getFileScope(containingFile)
+            return resolutionFacade.getFileTopLevelScope(containingFile)
         }
     }
-    return getResolutionScope(session, parent)
+    return getResolutionScope(resolutionFacade, parent)
 }
