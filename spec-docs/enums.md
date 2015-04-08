@@ -57,7 +57,7 @@ enum class Foo(val s: String) {
 ```
 
 Notes:
-* No overhead in the most common case of no members at all: `enum class E {A B C}
+* No overhead in the most common case of no members at all: `enum class E {A B C}`
 * Clear error message: if the parser sees a member, but no semicolon before it:
     * it reports an error saying "There must be a semicolon separating enum entries from members", which is rather instructive
     * a quick fix can even guess the right position for the semicolon most of the time
