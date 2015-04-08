@@ -24,13 +24,16 @@ import com.intellij.openapi.editor.markup.GutterIconRenderer
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.isInlined
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
 import java.util.HashSet
 
 public class KotlinRecursiveCallLineMarkerProvider() : LineMarkerProvider {
@@ -73,22 +76,27 @@ public class KotlinRecursiveCallLineMarkerProvider() : LineMarkerProvider {
 
         if (resolvedCall.getCandidateDescriptor().getOriginal() != enclosingFunctionDescriptor) return false
 
-        val extensionReceiver = resolvedCall.getExtensionReceiver()
-        if (extensionReceiver is ExpressionReceiver) {
-            val thisTarget = (extensionReceiver.getExpression() as? JetThisExpression)?.getInstanceReference()?.getReference()?.resolve()
-            if (thisTarget != enclosingFunction) {
-                return false
+        fun isDifferentReceiver(receiver: ReceiverValue): Boolean {
+            val receiverOwner =
+                    when (receiver) {
+                        is ExpressionReceiver -> {
+                            val thisRef = (receiver.getExpression() as? JetThisExpression)?.getInstanceReference() ?: return true
+                            bindingContext[BindingContext.REFERENCE_TARGET, thisRef] ?: return true
+                        }
+
+                        is ThisReceiver -> receiver.getDeclarationDescriptor()
+                        else -> return false
+                    }
+
+            return when (receiverOwner) {
+                is SimpleFunctionDescriptor -> receiverOwner != enclosingFunctionDescriptor
+                is ClassDescriptor -> receiverOwner != enclosingFunctionDescriptor.getContainingDeclaration()
+                else -> throw IllegalStateException("Unexpected receiver owner: $receiverOwner")
             }
         }
 
-        val dispatchReceiver = resolvedCall.getDispatchReceiver()
-        if (dispatchReceiver is ExpressionReceiver) {
-            val thisTarget = (dispatchReceiver.getExpression() as? JetThisExpression)?.getInstanceReference()?.getReference()?.resolve()
-            if (thisTarget != enclosingFunction.getNonStrictParentOfType<JetClassOrObject>()) {
-                return false
-            }
-        }
-
+        if (isDifferentReceiver(resolvedCall.getExtensionReceiver())) return false
+        if (isDifferentReceiver(resolvedCall.getDispatchReceiver())) return false
         return true
     }
 

@@ -195,6 +195,12 @@ public class LineMarkersTestGenerated extends AbstractLineMarkersTest {
             doTest(fileName);
         }
 
+        @TestMetadata("differentImplicitReceiver.kt")
+        public void testDifferentImplicitReceiver() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/recursiveCall/differentImplicitReceiver.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("extension.kt")
         public void testExtension() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/recursiveCall/extension.kt");
