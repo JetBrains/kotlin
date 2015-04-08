@@ -23,11 +23,9 @@ fun test1(intKind: Kind, extKind: Kind, holder: Holder): Global {
     holder.value = ""
     try {
         var externalResult = doCall (@ext {
-            (): External ->
 
             try {
                 val internalResult = doCall (@int {
-                    (): Internal ->
                     try {
                         if (intKind == Kind.GLOBAL) {
                             return@test1 Global("internal -> global")

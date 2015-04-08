@@ -5,7 +5,7 @@ public object RefreshQueue {
         }
     });
 
-    {
+    init {
         workerThread.start()
     }
 }

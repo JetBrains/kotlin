@@ -843,140 +843,140 @@ public fun <T> Stream<T>.plus(stream: Stream<T>): Stream<T> {
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <T, R> Array<out T>.zip(array: Array<out R>): List<Pair<T, R>> {
-    return merge(array) { (t1, t2) -> t1 to t2 }
+    return merge(array) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <R> BooleanArray.zip(array: Array<out R>): List<Pair<Boolean, R>> {
-    return merge(array) { (t1, t2) -> t1 to t2 }
+    return merge(array) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <R> ByteArray.zip(array: Array<out R>): List<Pair<Byte, R>> {
-    return merge(array) { (t1, t2) -> t1 to t2 }
+    return merge(array) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <R> CharArray.zip(array: Array<out R>): List<Pair<Char, R>> {
-    return merge(array) { (t1, t2) -> t1 to t2 }
+    return merge(array) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <R> DoubleArray.zip(array: Array<out R>): List<Pair<Double, R>> {
-    return merge(array) { (t1, t2) -> t1 to t2 }
+    return merge(array) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <R> FloatArray.zip(array: Array<out R>): List<Pair<Float, R>> {
-    return merge(array) { (t1, t2) -> t1 to t2 }
+    return merge(array) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <R> IntArray.zip(array: Array<out R>): List<Pair<Int, R>> {
-    return merge(array) { (t1, t2) -> t1 to t2 }
+    return merge(array) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <R> LongArray.zip(array: Array<out R>): List<Pair<Long, R>> {
-    return merge(array) { (t1, t2) -> t1 to t2 }
+    return merge(array) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <R> ShortArray.zip(array: Array<out R>): List<Pair<Short, R>> {
-    return merge(array) { (t1, t2) -> t1 to t2 }
+    return merge(array) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <T, R> Iterable<T>.zip(array: Array<out R>): List<Pair<T, R>> {
-    return merge(array) { (t1, t2) -> t1 to t2 }
+    return merge(array) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <T, R> Array<out T>.zip(other: Iterable<R>): List<Pair<T, R>> {
-    return merge(other) { (t1, t2) -> t1 to t2 }
+    return merge(other) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <R> BooleanArray.zip(other: Iterable<R>): List<Pair<Boolean, R>> {
-    return merge(other) { (t1, t2) -> t1 to t2 }
+    return merge(other) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <R> ByteArray.zip(other: Iterable<R>): List<Pair<Byte, R>> {
-    return merge(other) { (t1, t2) -> t1 to t2 }
+    return merge(other) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <R> CharArray.zip(other: Iterable<R>): List<Pair<Char, R>> {
-    return merge(other) { (t1, t2) -> t1 to t2 }
+    return merge(other) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <R> DoubleArray.zip(other: Iterable<R>): List<Pair<Double, R>> {
-    return merge(other) { (t1, t2) -> t1 to t2 }
+    return merge(other) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <R> FloatArray.zip(other: Iterable<R>): List<Pair<Float, R>> {
-    return merge(other) { (t1, t2) -> t1 to t2 }
+    return merge(other) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <R> IntArray.zip(other: Iterable<R>): List<Pair<Int, R>> {
-    return merge(other) { (t1, t2) -> t1 to t2 }
+    return merge(other) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <R> LongArray.zip(other: Iterable<R>): List<Pair<Long, R>> {
-    return merge(other) { (t1, t2) -> t1 to t2 }
+    return merge(other) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <R> ShortArray.zip(other: Iterable<R>): List<Pair<Short, R>> {
-    return merge(other) { (t1, t2) -> t1 to t2 }
+    return merge(other) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <T, R> Iterable<T>.zip(other: Iterable<R>): List<Pair<T, R>> {
-    return merge(other) { (t1, t2) -> t1 to t2 }
+    return merge(other) { t1, t2 -> t1 to t2 }
 }
 
 /**
@@ -997,7 +997,7 @@ public fun String.zip(other: String): List<Pair<Char, Char>> {
  * Resulting sequence has length of shortest input sequences.
  */
 public fun <T, R> Sequence<T>.zip(sequence: Sequence<R>): Sequence<Pair<T, R>> {
-    return MergingSequence(this, sequence) { (t1, t2) -> t1 to t2 }
+    return MergingSequence(this, sequence) { t1, t2 -> t1 to t2 }
 }
 
 
@@ -1007,6 +1007,6 @@ deprecated("Migrate to using Sequence<T> and respective functions")
  * Resulting stream has length of shortest input streams.
  */
 public fun <T, R> Stream<T>.zip(stream: Stream<R>): Stream<Pair<T, R>> {
-    return MergingStream(this, stream) { (t1, t2) -> t1 to t2 }
+    return MergingStream(this, stream) { t1, t2 -> t1 to t2 }
 }
 

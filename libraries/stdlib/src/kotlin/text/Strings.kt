@@ -3,11 +3,11 @@ package kotlin
 import java.util.NoSuchElementException
 
 /** Returns the string with leading and trailing text matching the given string removed */
-deprecated("Use removeEnclosing(text, text) or removePrefix(text).removeSuffix(text)")
+deprecated("Use removeSurrounding(text, text) or removePrefix(text).removeSuffix(text)")
 public fun String.trim(text: String): String = removePrefix(text).removeSuffix(text)
 
 /** Returns the string with the prefix and postfix text trimmed */
-deprecated("Use removeEnclosing(prefix, suffix) or removePrefix(prefix).removeSuffix(suffix)")
+deprecated("Use removeSurrounding(prefix, suffix) or removePrefix(prefix).removeSuffix(suffix)")
 public fun String.trim(prefix: String, postfix: String): String = removePrefix(prefix).removeSuffix(postfix)
 
 /**
@@ -150,7 +150,7 @@ deprecated("Use !isNullOrEmpty() or isNullOrEmpty().not() for nullable strings."
 public fun String?.isNotEmpty(): Boolean = this != null && this.length() > 0
 
 /**
- * Return `true` if this nullable string is either null or empty.
+ * Returns `true` if this nullable string is either null or empty.
  */
 public fun String?.isNullOrEmpty(): Boolean = this == null || this.length() == 0
 
@@ -188,6 +188,12 @@ public val String.indices: IntRange
     get() = 0..length() - 1
 
 /**
+ * Returns the index of the last character in the String or -1 if the String is empty
+ */
+public val String.lastIndex: Int
+    get() = this.length() - 1
+
+/**
  * Returns a character at the given index in a [CharSequence]. Allows to use the
  * index operator for working with character sequences:
  * ```
@@ -197,10 +203,13 @@ public val String.indices: IntRange
 public fun CharSequence.get(index: Int): Char = this.charAt(index)
 
 /**
- * Returns the index of the last character in the String or -1 if the String is empty
+ * Returns `true` if this CharSequence has Unicode surrogate pair at the specified [index]
  */
-public val String.lastIndex: Int
-    get() = this.length() - 1
+public fun CharSequence.hasSurrogatePairAt(index: Int): Boolean {
+    return index in 0..length() - 2
+            && this[index].isHighSurrogate()
+            && this[index + 1].isLowSurrogate()
+}
 
 /**
  * Returns a subsequence obtained by taking the characters at the given [indices] in this sequence.
@@ -508,6 +517,52 @@ public fun String.endsWith(char: Char, ignoreCase: Boolean): Boolean =
 // TODO: temporary overload to keep binary compatibility, remove after fixing markdown parser
 public fun String.endsWith(char: Char): Boolean = endsWith(char, ignoreCase = false)
 
+
+// common prefix and suffix
+
+/**
+ * Returns the longest string `prefix` such that this string and [other] string both start with this prefix,
+ * taking care not to split surrogate pairs.
+ * If this and [other] have no common prefix, returns the empty string.
+
+ * @param ignoreCase `true` to ignore character case when matching a character. By default `false`.
+ */
+public fun CharSequence.commonPrefixWith(other: CharSequence, ignoreCase: Boolean = false): String {
+    val shortestLength = Math.min(this.length(), other.length())
+
+    var i = 0
+    while (i < shortestLength && this[i].equals(other[i], ignoreCase = ignoreCase)) {
+        i++
+    }
+    if (this.hasSurrogatePairAt(i - 1) || other.hasSurrogatePairAt(i - 1)) {
+        i--
+    }
+    return subSequence(0, i).toString()
+}
+
+/**
+ * Returns the longest string `suffix` such that this string and [other] string both end with this suffix,
+ * taking care not to split surrogate pairs.
+ * If this and [other] have no common suffix, returns the empty string.
+
+ * @param ignoreCase `true` to ignore character case when matching a character. By default `false`.
+ */
+public fun CharSequence.commonSuffixWith(other: CharSequence, ignoreCase: Boolean = false): String {
+    val thisLength = this.length()
+    val otherLength = other.length()
+    val shortestLength = Math.min(thisLength, otherLength)
+
+    var i = 0
+    while (i < shortestLength && this[thisLength - i - 1].equals(other[otherLength - i - 1], ignoreCase = ignoreCase)) {
+        i++
+    }
+    if (this.hasSurrogatePairAt(thisLength - i - 1) || other.hasSurrogatePairAt(otherLength - i - 1)) {
+        i--;
+    }
+    return subSequence(thisLength - i, thisLength).toString();
+}
+
+
 // indexOfAny()
 
 private fun String.findAnyOf(chars: CharArray, startIndex: Int, ignoreCase: Boolean, last: Boolean): Pair<Int, Char>? {
@@ -692,6 +747,15 @@ public fun String.lastIndexOf(string: String, startIndex: Int = lastIndex, ignor
  */
 public fun String.contains(seq: CharSequence, ignoreCase: Boolean = false): Boolean =
         indexOf(seq.toString(), ignoreCase = ignoreCase) >= 0
+
+
+/**
+ * Returns `true` if this string contains the specified character.
+ *
+ * @param ignoreCase `true` to ignore character case when comparing characters. By default `false`.
+ */
+public fun String.contains(char: Char, ignoreCase: Boolean = false): Boolean =
+        indexOf(char, ignoreCase = ignoreCase) >= 0
 
 
 // rangesDelimitedBy

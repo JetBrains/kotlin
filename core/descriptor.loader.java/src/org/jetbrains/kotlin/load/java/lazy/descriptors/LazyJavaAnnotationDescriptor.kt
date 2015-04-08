@@ -57,7 +57,7 @@ class LazyJavaAnnotationDescriptor(
         javaAnnotation.getClassId()?.asSingleFqName()
     }
 
-    private val type = c.storageManager.createLazyValue {(): JetType ->
+    private val type = c.storageManager.createLazyValue {
         val fqName = fqName()
         if (fqName == null) return@createLazyValue ErrorUtils.createErrorType("No fqName: $javaAnnotation")
         val annotationClass = JavaToKotlinClassMap.INSTANCE.mapKotlinClass(fqName, TypeUsage.MEMBER_SIGNATURE_INVARIANT)

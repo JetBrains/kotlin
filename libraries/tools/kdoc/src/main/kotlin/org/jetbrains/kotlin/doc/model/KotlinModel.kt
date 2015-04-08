@@ -992,7 +992,7 @@ class KPackage(
 
 class KType(val jetType: JetType, model: KModel, val klass: KClass?, val arguments: MutableList<KType> = ArrayList<KType>())
 : KNamed(klass?.name ?: jetType.toString()!!, model, jetType.getConstructor().getDeclarationDescriptor()!!) {
-    {
+    init {
         if (klass != null) {
             this.wikiDescription = klass.wikiDescription
         }

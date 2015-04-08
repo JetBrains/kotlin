@@ -51,6 +51,8 @@ public interface ErrorsJvm {
     DiagnosticFactory0<JetDeclaration> NATIVE_DECLARATION_IN_TRAIT = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
     DiagnosticFactory0<JetDeclaration> NATIVE_DECLARATION_CANNOT_BE_INLINED = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
 
+    DiagnosticFactory0<JetExpression> POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION = DiagnosticFactory0.create(ERROR);
+
     // TODO: make this a warning
     DiagnosticFactory1<JetExpression, JetExpression> NO_REFLECTION_IN_CLASS_PATH = DiagnosticFactory1.create(ERROR);
 

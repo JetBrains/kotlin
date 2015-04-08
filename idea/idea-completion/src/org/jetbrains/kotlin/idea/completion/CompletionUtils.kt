@@ -100,7 +100,7 @@ fun rethrowWithCancelIndicator(exception: ProcessCanceledException): ProcessCanc
     return exception
 }
 
-fun PrefixMatcher.asNameFilter() = { (name: Name) ->
+fun PrefixMatcher.asNameFilter() = { name: Name ->
     if (name.isSpecial()) {
         false
     }

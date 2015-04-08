@@ -2,7 +2,6 @@ import test.*
 
 fun test1(b: Boolean): String {
     val localResult = noInlineCall @local {
-        () : Int ->
         if (b) {
             return@local 1
         } else {

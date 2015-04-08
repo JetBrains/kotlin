@@ -20,13 +20,11 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.cli.common.output.outputUtils.writeAllTo
 import org.jetbrains.kotlin.codegen.GenerationUtils
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptorVisitor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.jvm.compiler.ExpectedLoadErrorsUtil
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.structure.reflect.classId
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.load.kotlin.reflect.ReflectKotlinClass
@@ -67,7 +65,7 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
                         "org.jetbrains.annotations.ReadOnly"
                 ).map { FqName(it) })
                 .setOverrideRenderingPolicy(DescriptorRenderer.OverrideRenderingPolicy.RENDER_OPEN_OVERRIDE)
-                .setIncludeSynthesizedParameterNames(false)
+                .setParameterNameRenderingPolicy(DescriptorRenderer.ParameterNameRenderingPolicy.NONE)
                 .setIncludePropertyConstant(false)
                 .setVerbose(true)
                 .build()
@@ -99,14 +97,19 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
                 /* checkPrimaryConstructors = */ fileName.endsWith(".kt"),
                 /* checkPropertyAccessors = */ true,
                 /* includeMethodsOfKotlinAny = */ false,
-                { descriptor ->
-                    // Skip annotation constructors because order of their parameters is not retained at runtime
-                    !(descriptor is ConstructorDescriptor && DescriptorUtils.isAnnotationClass(descriptor.getContainingDeclaration()))
-                },
+                // Skip Java annotation constructors because order of their parameters is not retained at runtime
+                { descriptor -> !descriptor.isJavaAnnotationConstructor() },
                 errorTypesForbidden(), renderer
         )
         RecursiveDescriptorComparator.validateAndCompareDescriptors(expected, actual, comparatorConfiguration, null)
     }
+
+    private fun DeclarationDescriptor.isJavaAnnotationConstructor() =
+            this is ConstructorDescriptor &&
+            getContainingDeclaration().let { container ->
+                container is JavaClassDescriptor &&
+                container.getKind() == ClassKind.ANNOTATION_CLASS
+            }
 
     private fun compileFile(file: File, text: String, jdkKind: TestJdkKind) {
         val fileName = file.getName()

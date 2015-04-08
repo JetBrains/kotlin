@@ -88,7 +88,7 @@ public class MethodOrderTest: CodegenTestCase() {
                         }
 
                         inner class Inner() {
-                            {
+                            init {
                                 b = b + a
                                 c()
                             }

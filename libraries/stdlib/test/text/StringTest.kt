@@ -70,6 +70,39 @@ class StringTest {
         assertFalse("".endsWith('a'))
     }
 
+    test fun commonPrefix() {
+        assertEquals("", "".commonPrefixWith(""))
+        assertEquals("", "any".commonPrefixWith(""))
+        assertEquals("", "".commonPrefixWith("any"))
+        assertEquals("", "some".commonPrefixWith("any"))
+
+        assertEquals("an", "annual".commonPrefixWith("any"))
+        assertEquals("an", "annual".commonPrefixWith("Any", ignoreCase = true))
+        assertEquals("", "annual".commonPrefixWith("Any", ignoreCase = false))
+        // surrogate pairs
+        val dth54 = "\uD83C\uDC58" // domino tile horizontal 5-4
+        val dth55 = "\uD83C\uDC59" // domino tile horizontal 5-5
+        assertEquals("", dth54.commonPrefixWith(dth55))
+        assertEquals(dth54, "$dth54$dth54".commonPrefixWith("$dth54$dth55"))
+
+    }
+
+    test fun commonSuffix() {
+        assertEquals("", "".commonSuffixWith(""))
+        assertEquals("", "any".commonSuffixWith(""))
+        assertEquals("", "".commonSuffixWith("any"))
+        assertEquals("", "some".commonSuffixWith("any"))
+
+        assertEquals("ly", "yearly".commonSuffixWith("monthly"))
+        assertEquals("strö", "strö".commonSuffixWith("BISTRÖ", ignoreCase = true))
+        assertEquals("", "yearly".commonSuffixWith("HARDLY", ignoreCase = false))
+        // surrogate pairs
+        val dth54  = "\uD83C\uDC58" // domino tile horizontal 5-4
+        val kimono = "\uD83D\uDC58" // kimono
+        assertEquals("", dth54.commonSuffixWith(kimono))
+        assertEquals("$dth54", "d$dth54".commonSuffixWith("s$dth54"))
+    }
+
     test fun capitalize() {
         assertEquals("A", "A".capitalize())
         assertEquals("A", "a".capitalize())
@@ -252,7 +285,7 @@ class StringTest {
         )
 
         val trimChars = charArray('-','=')
-        val trimPredicate = { (it: Char) -> it < '0' || it > '9' } // TODO: Use !it.isDigit when available in JS
+        val trimPredicate = { it: Char -> it < '0' || it > '9' } // TODO: Use !it.isDigit when available in JS
         for (example in examplesForPredicate) {
             assertEquals(example.trimStart(*trimChars).trimEnd(*trimChars), example.trim(*trimChars))
             assertEquals(example.trimStart(trimPredicate).trimEnd(trimPredicate), example.trim(trimPredicate))
@@ -478,12 +511,16 @@ class StringTest {
 
 
     test fun contains() {
-        assertTrue("sample".contains("pl"))
-        assertFalse("sample".contains("PL"))
+        assertTrue("pl" in "sample")
+        assertFalse("PL" in "sample")
         assertTrue("sömple".contains("Ö", ignoreCase = true))
 
-        assertTrue("sample".contains(""))
-        assertTrue("".contains(""))
+        assertTrue("" in "sample")
+        assertTrue("" in "")
+
+        assertTrue('ö' in "sömple")
+        assertFalse('Ö' in "sömple")
+        assertTrue("sömple".contains('Ö', ignoreCase = true))
     }
 
     test fun equalsIgnoreCase() {

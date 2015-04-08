@@ -23,7 +23,7 @@ public fun waitFor(maxMillis: Long, sleepMillis: Long = 100, predicate: () -> Bo
     return false
 }
 
-val TIMEOUT: Long = 5000
+val TIMEOUT: Long = 10000
 
 /**
  * Helper class to find QUnit tests using Selenium
@@ -59,7 +59,7 @@ public class SeleniumQUnit(val driver: WebDriver) {
 
     public fun runTest(element: WebElement): Unit {
         var result: String = ""
-        waitFor(5000) {
+        waitFor(TIMEOUT) {
             result = element.getAttribute("class") ?: "no result"
             !result.startsWith("run")
         }

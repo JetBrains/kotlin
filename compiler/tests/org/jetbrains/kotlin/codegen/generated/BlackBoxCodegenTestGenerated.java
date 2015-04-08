@@ -98,6 +98,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/arrays"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("arrayInstanceOf.kt")
+        public void testArrayInstanceOf() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/arrays/arrayInstanceOf.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("arrayPlusAssign.kt")
         public void testArrayPlusAssign() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/arrays/arrayPlusAssign.kt");
@@ -6522,6 +6528,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("ea35743.kt")
         public void testEa35743() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/strings/ea35743.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("interpolation.kt")
+        public void testInterpolation() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/strings/interpolation.kt");
             doTest(fileName);
         }
 

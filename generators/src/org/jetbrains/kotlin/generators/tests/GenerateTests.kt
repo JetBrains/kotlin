@@ -59,6 +59,7 @@ import org.jetbrains.kotlin.idea.debugger.AbstractJetPositionManagerTest
 import org.jetbrains.kotlin.idea.debugger.AbstractKotlinSteppingTest
 import org.jetbrains.kotlin.idea.debugger.AbstractSmartStepIntoTest
 import org.jetbrains.kotlin.idea.debugger.evaluate.*
+import org.jetbrains.kotlin.idea.decompiler.navigation.AbstractNavigateToLibrarySourceTest
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.AbstractClsStubBuilderTest
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.AbstractDecompiledTextTest
 import org.jetbrains.kotlin.idea.editor.quickDoc.AbstractJetQuickDocProviderTest
@@ -72,6 +73,7 @@ import org.jetbrains.kotlin.idea.intentions.AbstractIntentionTest
 import org.jetbrains.kotlin.idea.intentions.declarations.AbstractJoinLinesTest
 import org.jetbrains.kotlin.idea.kdoc.AbstractKDocHighlightingTest
 import org.jetbrains.kotlin.idea.navigation.AbstractGotoSuperTest
+import org.jetbrains.kotlin.idea.navigation.AbstractKotlinGotoImplementationTest
 import org.jetbrains.kotlin.idea.navigation.AbstractKotlinGotoTest
 import org.jetbrains.kotlin.idea.parameterInfo.AbstractFunctionParameterInfoTest
 import org.jetbrains.kotlin.idea.quickfix.AbstractQuickFixMultiFileTest
@@ -405,6 +407,15 @@ fun main(args: Array<String>) {
         testClass(javaClass<AbstractKotlinGotoTest>()) {
             model("navigation/gotoClass", testMethod = "doClassTest")
             model("navigation/gotoSymbol", testMethod = "doSymbolTest")
+        }
+
+        testClass(javaClass<AbstractNavigateToLibrarySourceTest>()) {
+            model("decompiler/navigation/usercode")
+            model("decompiler/navigation/usercode", testClassName="UsercodeWithJSModule", testMethod = "doWithJSModuleTest")
+        }
+
+        testClass(javaClass<AbstractKotlinGotoImplementationTest>()) {
+            model("navigation/implementations", recursive = false)
         }
 
         testClass(javaClass<AbstractQuickFixMultiFileTest>()) {

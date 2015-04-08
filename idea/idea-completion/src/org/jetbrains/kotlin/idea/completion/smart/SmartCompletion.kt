@@ -146,7 +146,7 @@ class SmartCompletion(
 
             val result = ArrayList<LookupElement>()
             val types = descriptor.fuzzyTypes(smartCastTypes)
-            val infoClassifier = { (expectedInfo: ExpectedInfo) -> types.classifyExpectedInfo(expectedInfo) }
+            val infoClassifier = { expectedInfo: ExpectedInfo -> types.classifyExpectedInfo(expectedInfo) }
 
             result.addLookupElements(descriptor, expectedInfos, infoClassifier) { descriptor ->
                 lookupElementFactory.createLookupElement(descriptor, resolutionFacade, bindingContext, true)
@@ -199,7 +199,7 @@ class SmartCompletion(
         if (shouldCompleteThisItems(prefixMatcher)) {
             val items = thisExpressionItems(bindingContext, place, prefixMatcher.getPrefix())
             for ((factory, type) in items) {
-                val classifier = { (expectedInfo: ExpectedInfo) -> type.classifyExpectedInfo(expectedInfo) }
+                val classifier = { expectedInfo: ExpectedInfo -> type.classifyExpectedInfo(expectedInfo) }
                 addLookupElements(null, expectedInfos, classifier) {
                     factory().assignSmartCompletionPriority(SmartCompletionItemPriority.THIS)
                 }

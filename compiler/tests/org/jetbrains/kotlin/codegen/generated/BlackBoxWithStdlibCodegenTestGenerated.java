@@ -3038,6 +3038,18 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 doTestWithStdlib(fileName);
             }
 
+            @TestMetadata("privateToThisAccessors.kt")
+            public void testPrivateToThisAccessors() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/properties/privateToThisAccessors.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("propertyOfNestedClassAndArrayType.kt")
+            public void testPropertyOfNestedClassAndArrayType() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/properties/propertyOfNestedClassAndArrayType.kt");
+                doTestWithStdlib(fileName);
+            }
+
             @TestMetadata("simpleGetProperties.kt")
             public void testSimpleGetProperties() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/properties/simpleGetProperties.kt");

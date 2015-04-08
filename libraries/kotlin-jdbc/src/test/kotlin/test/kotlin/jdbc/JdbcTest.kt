@@ -57,7 +57,7 @@ class JdbcTest {
     }
 
     test fun mapIterator() {
-        val mapper = { (rs : ResultSet) ->
+        val mapper = { rs: ResultSet ->
             "id: ${rs["id"]}"
         }
 

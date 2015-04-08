@@ -143,15 +143,17 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         }
 
         DataFlowInfos infos = null;
+        ExpressionTypingContext contextForCondition = context;
         for (JetWhenCondition condition : whenEntry.getConditions()) {
             DataFlowInfos conditionInfos = checkWhenCondition(subjectExpression, subjectType, condition,
-                                                              context, subjectDataFlowValue);
+                                                              contextForCondition, subjectDataFlowValue);
             if (infos != null) {
                 infos = new DataFlowInfos(infos.thenInfo.or(conditionInfos.thenInfo), infos.elseInfo.and(conditionInfos.elseInfo));
             }
             else {
                 infos = conditionInfos;
             }
+            contextForCondition = contextForCondition.replaceDataFlowInfo(conditionInfos.elseInfo);
         }
         return infos != null ? infos : new DataFlowInfos(context.dataFlowInfo);
     }

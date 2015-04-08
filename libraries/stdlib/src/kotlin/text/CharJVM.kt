@@ -26,10 +26,6 @@ public fun Char.isDefined(): Boolean = Character.isDefined(this)
  */
 public fun Char.isDigit(): Boolean = Character.isDigit(this)
 
-/**
- * Returns `true` if this character is a Unicode high-surrogate code unit (also known as leading-surrogate code unit).
- */
-public fun Char.isHighSurrogate(): Boolean = Character.isHighSurrogate(this)
 
 /**
  * Returns `true` if this character (Unicode code point) should be regarded as an ignorable

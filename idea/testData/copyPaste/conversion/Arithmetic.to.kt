@@ -1,1 +1,1 @@
-<caret>
+val v = <caret>

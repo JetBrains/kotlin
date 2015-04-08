@@ -1,39 +1,39 @@
 fun test0Param(): Int {
     val inlineX = Inline(10)
-    return inlineX.foo({() -> 1})
+    return inlineX.foo({ -> 1})
 }
 
 fun test1Param(): Int {
     val inlineX = Inline(10)
-    return inlineX.foo11({(z: Int) -> z})
+    return inlineX.foo11({ z: Int -> z})
 }
 
 fun test1ParamCaptured(): Int {
     val s = 100
     val inlineX = Inline(10)
-    return inlineX.foo11({(z: Int) -> s})
+    return inlineX.foo11({ z: Int -> s})
 }
 
 fun test1ParamMissed() : Int {
     val inlineX = Inline(10)
-    return inlineX.foo11({(z: Int) -> 111})
+    return inlineX.foo11({ z: Int -> 111})
 }
 
 fun test1ParamFromCallContext() : Int {
     val inlineX = Inline(1000)
-    return inlineX.fooRes({(z: Int) -> z})
+    return inlineX.fooRes({ z: Int -> z})
 }
 
 fun test2Params() : Int {
     val inlineX = Inline(1000)
-    return inlineX.fooRes2({(y: Int, z: Int) -> 2 * y + 3 * z})
+    return inlineX.fooRes2({ y: Int, z: Int -> 2 * y + 3 * z})
 }
 
 fun test2ParamsWithCaptured() : Int {
     val inlineX = Inline(1000)
     val s = 9
     var t = 1
-    return inlineX.fooRes2({(y: Int, z: Int) -> 2 * s + t})
+    return inlineX.fooRes2({ y: Int, z: Int -> 2 * s + t})
 }
 
 fun box(): String {

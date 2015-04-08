@@ -76,7 +76,7 @@ class MultipleArgumentsItemProvider(val bindingContext: BindingContext,
 
         return LookupElementBuilder
                 .create(variables.map { IdeDescriptorRenderers.SOURCE_CODE.renderName(it.getName()) }.joinToString(", "))
-                .withInsertHandler { (context, lookupElement) ->
+                .withInsertHandler { context, lookupElement ->
                     if (context.getCompletionChar() == Lookup.REPLACE_SELECT_CHAR) {
                         val offset = context.getOffsetMap().getOffset(SmartCompletion.MULTIPLE_ARGUMENTS_REPLACEMENT_OFFSET)
                         if (offset != -1) {

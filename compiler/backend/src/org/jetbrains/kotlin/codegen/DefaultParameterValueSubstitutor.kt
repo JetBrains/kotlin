@@ -136,7 +136,7 @@ public class DefaultParameterValueSubstitutor(val state: GenerationState) {
         val v = InstructionAdapter(mv)
         mv.visitCode()
 
-        val methodOwner = typeMapper.mapToCallableMethod(delegateFunctionDescriptor, false, context).getOwner()
+        val methodOwner = typeMapper.mapToCallableMethod(delegateFunctionDescriptor, false, context).owner
         if (!isStatic) {
             val thisIndex = frameMap.enterTemp(AsmTypes.OBJECT_TYPE)
             v.load(thisIndex, methodOwner) // Load this on stack

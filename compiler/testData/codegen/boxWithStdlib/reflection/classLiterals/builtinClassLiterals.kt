@@ -10,6 +10,7 @@ fun box(): String {
 
     assertEquals("Companion", Int.Companion::class.simpleName)
     assertEquals("Companion", Double.Companion::class.simpleName)
+    assertEquals("Companion", Char.Companion::class.simpleName)
 
     assertEquals("IntRange", IntRange::class.simpleName)
 

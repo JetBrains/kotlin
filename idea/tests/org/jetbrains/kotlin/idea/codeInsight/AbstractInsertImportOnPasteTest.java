@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.codeInsight;
 
-import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
@@ -26,7 +25,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages;
-import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase;
+import org.jetbrains.kotlin.idea.AbstractCopyPasteTest;
 import org.jetbrains.kotlin.idea.PluginTestCaseBase;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.psi.JetFile;
@@ -38,25 +37,10 @@ import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import java.io.File;
 import java.util.List;
 
-public abstract class AbstractInsertImportOnPasteTest extends JetLightCodeInsightFixtureTestCase {
+public abstract class AbstractInsertImportOnPasteTest extends AbstractCopyPasteTest {
     private static final String BASE_PATH = PluginTestCaseBase.getTestDataPathBase() + "/copyPaste/imports";
     private static final String DEFAULT_TO_FILE_TEXT = "package to\n\n<caret>";
     private static final String ALLOW_UNRESOLVED_DIRECTIVE = "// ALLOW_UNRESOLVED";
-
-    private int savedState;
-
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        savedState = CodeInsightSettings.getInstance().ADD_IMPORTS_ON_PASTE;
-        CodeInsightSettings.getInstance().ADD_IMPORTS_ON_PASTE = CodeInsightSettings.YES;
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        CodeInsightSettings.getInstance().ADD_IMPORTS_ON_PASTE = savedState;
-        super.tearDown();
-    }
 
     public void doTestCut(String path) throws Exception {
         doTestAction(IdeActions.ACTION_CUT, path);

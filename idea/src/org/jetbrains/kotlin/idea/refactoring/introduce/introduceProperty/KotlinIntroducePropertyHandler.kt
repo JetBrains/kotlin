@@ -58,10 +58,10 @@ public class KotlinIntroducePropertyHandler(
                 operationName = INTRODUCE_PROPERTY,
                 editor = editor,
                 file = file,
-                getContainers = {(elements, parent) ->
+                getContainers = { elements, parent ->
                     parent.getExtractionContainers(strict = true, includeAll = true).filter { it is JetClassBody || it is JetFile }
                 }
-        ) { (elements, targetSibling) ->
+        ) { elements, targetSibling ->
             val adjustedElements = (elements.singleOrNull() as? JetBlockExpression)?.getStatements() ?: elements
             if (adjustedElements.isNotEmpty()) {
                 val options = ExtractionOptions(extractAsProperty = true)

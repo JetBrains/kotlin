@@ -41,8 +41,6 @@ public class DescriptorRendererBuilder {
     private boolean prettyFunctionTypes = true;
     private boolean uninferredTypeParameterAsName = false;
     private boolean includePropertyConstant = false;
-    private boolean includeSynthesizedParameterNames = true;
-    private boolean withoutFunctionParameterNames = false;
     private boolean withoutTypeParameters = false;
     private boolean withoutSuperTypes = false;
     private Function1<JetType, JetType> typeNormalizer = new Function1<JetType, JetType>() {
@@ -54,14 +52,10 @@ public class DescriptorRendererBuilder {
     private boolean renderDefaultValues = true;
     private boolean flexibleTypesForCode = false;
     private boolean secondaryConstructorsAsPrimary = true;
-
-    @NotNull
     private DescriptorRenderer.OverrideRenderingPolicy overrideRenderingPolicy = DescriptorRenderer.OverrideRenderingPolicy.RENDER_OPEN;
-    @NotNull
     private DescriptorRenderer.ValueParametersHandler valueParametersHandler = new DescriptorRenderer.DefaultValueParameterHandler();
-    @NotNull
     private DescriptorRenderer.TextFormat textFormat = DescriptorRenderer.TextFormat.PLAIN;
-    @NotNull
+    private DescriptorRenderer.ParameterNameRenderingPolicy parameterNameRenderingPolicy = DescriptorRenderer.ParameterNameRenderingPolicy.ALL;
     private Collection<FqName> excludedAnnotationClasses = Collections.emptyList();
     private boolean receiverAfterName = false;
     private boolean renderCompanionObjectName = false;
@@ -177,20 +171,14 @@ public class DescriptorRendererBuilder {
     }
 
     @NotNull
-    public DescriptorRendererBuilder setIncludeSynthesizedParameterNames(boolean includeSynthesizedParameterNames) {
-        this.includeSynthesizedParameterNames = includeSynthesizedParameterNames;
+    public DescriptorRendererBuilder setParameterNameRenderingPolicy(@NotNull DescriptorRenderer.ParameterNameRenderingPolicy parameterNameRenderingPolicy) {
+        this.parameterNameRenderingPolicy = parameterNameRenderingPolicy;
         return this;
     }
 
     @NotNull
     public DescriptorRendererBuilder setWithoutTypeParameters(boolean withoutTypeParameters) {
         this.withoutTypeParameters = withoutTypeParameters;
-        return this;
-    }
-
-    @NotNull
-    public DescriptorRendererBuilder setWithoutFunctionParameterNames(boolean withoutFunctionParameterNames) {
-        this.withoutFunctionParameterNames = withoutFunctionParameterNames;
         return this;
     }
 
@@ -242,9 +230,9 @@ public class DescriptorRendererBuilder {
                 nameShortness, withDefinedIn, modifiers, startFromName, debugMode, classWithPrimaryConstructor, verbose, unitReturnType,
                 normalizedVisibilities, showInternalKeyword, prettyFunctionTypes, uninferredTypeParameterAsName,
                 overrideRenderingPolicy, valueParametersHandler, textFormat, excludedAnnotationClasses, includePropertyConstant,
-                includeSynthesizedParameterNames, withoutFunctionParameterNames, withoutTypeParameters, receiverAfterName,
-                renderCompanionObjectName, withoutSuperTypes, typeNormalizer, renderDefaultValues, flexibleTypesForCode,
-                secondaryConstructorsAsPrimary);
+                parameterNameRenderingPolicy, withoutTypeParameters, receiverAfterName, renderCompanionObjectName, withoutSuperTypes,
+                typeNormalizer, renderDefaultValues, flexibleTypesForCode, secondaryConstructorsAsPrimary
+        );
     }
 
 }

@@ -5,14 +5,14 @@ inline fun run(func: () -> Int): Int {
 }
 
 fun bar(): Int {
-    var f = { () -> 0 }
+    var f = { -> 0 }
     var get0 = f
 
-    f = { () -> 1 }
+    f = { -> 1 }
     var get1 = f
 
     var get2 = get1
-    f = { () -> 2 }
+    f = { -> 2 }
     get2 = f
 
     return run(get0) + run(get1) + run(get2)

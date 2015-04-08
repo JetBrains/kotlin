@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.load.java.structure.reflect.classId
 import org.jetbrains.kotlin.load.java.structure.reflect.classLoader
 import org.jetbrains.kotlin.load.java.structure.reflect.createArrayType
-import org.jetbrains.kotlin.load.java.structure.reflect.desc
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.JetScope
@@ -42,9 +41,7 @@ abstract class KCallableContainerImpl {
 
     abstract val scope: JetScope
 
-    protected fun findPropertyDescriptor(name: String, receiverParameterClass: Class<*>? = null): () -> PropertyDescriptor = {
-        val receiverDesc = receiverParameterClass?.desc
-
+    fun findPropertyDescriptor(name: String, receiverDesc: String? = null): PropertyDescriptor {
         val properties = scope
                 .getProperties(Name.identifier(name))
                 .filter { descriptor ->
@@ -57,25 +54,27 @@ abstract class KCallableContainerImpl {
                 }
 
         if (properties.size() != 1) {
-            val debugText = if (receiverParameterClass == null) name else "${receiverParameterClass.getSimpleName()}.$name"
+            val debugText = if (receiverDesc == null) name else "$receiverDesc.$name"
             throw KotlinReflectionInternalError(
                     if (properties.isEmpty()) "Property '$debugText' not resolved in $this"
                     else "${properties.size()} properties '$debugText' resolved in $this"
             )
         }
 
-        properties.single() as PropertyDescriptor
+        return properties.single() as PropertyDescriptor
     }
 
     // TODO: check resulting method's return type
-    fun findMethodBySignature(signature: JvmProtoBuf.JvmMethodSignature, nameResolver: NameResolver): Method? {
+    fun findMethodBySignature(signature: JvmProtoBuf.JvmMethodSignature, nameResolver: NameResolver, declared: Boolean): Method? {
         val name = nameResolver.getString(signature.getName())
         val classLoader = jClass.classLoader
         val parameterTypes = signature.getParameterTypeList().map { jvmType ->
             loadJvmType(jvmType, nameResolver, classLoader)
         }.copyToArray()
+
         return try {
-            jClass.getMaybeDeclaredMethod(name, *parameterTypes)
+            if (declared) jClass.getDeclaredMethod(name, *parameterTypes)
+            else jClass.getMethod(name, *parameterTypes)
         }
         catch (e: NoSuchMethodException) {
             null
@@ -112,16 +111,6 @@ abstract class KCallableContainerImpl {
         }
     }
 
-    private fun Class<*>.getMaybeDeclaredMethod(name: String, vararg parameterTypes: Class<*>): Method {
-        try {
-            return getMethod(name, *parameterTypes)
-        }
-        catch (e: NoSuchMethodException) {
-            // This is needed to support private methods
-            return getDeclaredMethod(name, *parameterTypes)
-        }
-    }
-
     /* private // KT-5786 */ fun loadJvmType(
             type: JvmProtoBuf.JvmType,
             nameResolver: NameResolver,
@@ -129,7 +118,6 @@ abstract class KCallableContainerImpl {
             arrayDimension: Int = type.getArrayDimension()
     ): Class<*> {
         if (arrayDimension > 0) {
-            // TODO: test multi-dimensional arrays
             return loadJvmType(type, nameResolver, classLoader, arrayDimension - 1).createArrayType()
         }
 

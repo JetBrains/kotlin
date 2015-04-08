@@ -19,7 +19,7 @@ fun test2() {
 }
 
 fun Int.foo(a: Int) = this * a
-val boo = {Int.(a: Int): Int -> this + a}
+val boo = fun Int.(a: Int): Int = this + a
 
 fun box(): String {
     test1()

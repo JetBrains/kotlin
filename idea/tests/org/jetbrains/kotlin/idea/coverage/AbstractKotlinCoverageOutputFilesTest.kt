@@ -54,7 +54,7 @@ public abstract class AbstractKotlinCoverageOutputFilesTest(): JetLightCodeInsig
 private fun createEmptyFile(dir: VirtualFile, relativePath: String) {
     var currentDir = dir
     val segments = relativePath.split('/')
-    segments.forEachIndexed {(i, s) ->
+    segments.forEachIndexed { i, s ->
         if (i < segments.size() - 1) {
             currentDir = currentDir.createChildDirectory(null, s)
         } else {

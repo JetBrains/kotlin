@@ -21,10 +21,11 @@ import kotlin.reflect.IllegalPropertyAccessException
 import kotlin.reflect.KMemberProperty
 import kotlin.reflect.KMutableMemberProperty
 
-open class KMemberPropertyImpl<T : Any, out R>(
-        override val container: KClassImpl<T>,
-        computeDescriptor: () -> PropertyDescriptor
-) : DescriptorBasedProperty(computeDescriptor), KMemberProperty<T, R>, KPropertyImpl<R> {
+open class KMemberPropertyImpl<T : Any, out R> : DescriptorBasedProperty, KMemberProperty<T, R>, KPropertyImpl<R> {
+    constructor(container: KClassImpl<T>, name: String) : super(container, name, null)
+
+    constructor(container: KClassImpl<T>, descriptor: PropertyDescriptor) : super(container, descriptor)
+
     override val name: String get() = descriptor.getName().asString()
 
     override fun get(instance: T): R {
@@ -40,10 +41,11 @@ open class KMemberPropertyImpl<T : Any, out R>(
 }
 
 
-class KMutableMemberPropertyImpl<T : Any, R>(
-        container: KClassImpl<T>,
-        computeDescriptor: () -> PropertyDescriptor
-) : KMemberPropertyImpl<T, R>(container, computeDescriptor), KMutableMemberProperty<T, R>, KMutablePropertyImpl<R> {
+class KMutableMemberPropertyImpl<T : Any, R> : KMemberPropertyImpl<T, R>, KMutableMemberProperty<T, R>, KMutablePropertyImpl<R> {
+    constructor(container: KClassImpl<T>, name: String) : super(container, name)
+
+    constructor(container: KClassImpl<T>, descriptor: PropertyDescriptor) : super(container, descriptor)
+
     override fun set(instance: T, value: R) {
         try {
             val setter = setter

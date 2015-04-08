@@ -134,8 +134,8 @@ trait TestPublicInTrait {
     public fun boo(): Int = 2
 }
 
-val public_in_trait_f = { (obj: TestPublicInTrait) -> obj.foo() + obj.foo }
-val public_in_trait_b = { (obj: TestPublicInTrait) -> obj.boo() + obj.boo }
+val public_in_trait_f = { obj: TestPublicInTrait -> obj.foo() + obj.foo }
+val public_in_trait_b = { obj: TestPublicInTrait -> obj.boo() + obj.boo }
 
 trait TestInternalInTrait {
     fun foo(): Int = 2
@@ -144,8 +144,8 @@ trait TestInternalInTrait {
     fun boo(): Int = 2
 }
 
-val internal_in_trait_f = { (obj: TestInternalInTrait) -> obj.foo() + obj.foo }
-val internal_in_trait_b = { (obj: TestInternalInTrait) -> obj.boo() + obj.boo }
+val internal_in_trait_f = { obj: TestInternalInTrait -> obj.foo() + obj.foo }
+val internal_in_trait_b = { obj: TestInternalInTrait -> obj.boo() + obj.boo }
 
 //Testing
 

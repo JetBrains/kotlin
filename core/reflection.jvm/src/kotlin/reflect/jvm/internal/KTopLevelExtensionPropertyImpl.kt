@@ -16,16 +16,14 @@
 
 package kotlin.reflect.jvm.internal
 
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import java.lang.reflect.Method
 import kotlin.reflect.IllegalPropertyAccessException
 import kotlin.reflect.KMutableTopLevelExtensionProperty
 import kotlin.reflect.KTopLevelExtensionProperty
 
-open class KTopLevelExtensionPropertyImpl<T, out R>(
-        override val container: KPackageImpl,
-        computeDescriptor: () -> PropertyDescriptor
-) : DescriptorBasedProperty(computeDescriptor), KTopLevelExtensionProperty<T, R>, KPropertyImpl<R> {
+open class KTopLevelExtensionPropertyImpl<T, out R> : DescriptorBasedProperty, KTopLevelExtensionProperty<T, R>, KPropertyImpl<R> {
+    constructor(container: KPackageImpl, name: String, receiverParameterClass: Class<T>) : super(container, name, receiverParameterClass)
+
     override val name: String get() = descriptor.getName().asString()
 
     override val getter: Method get() = super<DescriptorBasedProperty>.getter!!
@@ -41,10 +39,12 @@ open class KTopLevelExtensionPropertyImpl<T, out R>(
     }
 }
 
-class KMutableTopLevelExtensionPropertyImpl<T, R>(
-        container: KPackageImpl,
-        computeDescriptor: () -> PropertyDescriptor
-) : KTopLevelExtensionPropertyImpl<T, R>(container, computeDescriptor), KMutableTopLevelExtensionProperty<T, R>, KMutablePropertyImpl<R> {
+class KMutableTopLevelExtensionPropertyImpl<T, R> :
+        KTopLevelExtensionPropertyImpl<T, R>,
+        KMutableTopLevelExtensionProperty<T, R>,
+        KMutablePropertyImpl<R> {
+    constructor(container: KPackageImpl, name: String, receiverParameterClass: Class<T>) : super(container, name, receiverParameterClass)
+
     override val setter: Method get() = super<KTopLevelExtensionPropertyImpl>.setter!!
 
     override fun set(receiver: T, value: R) {

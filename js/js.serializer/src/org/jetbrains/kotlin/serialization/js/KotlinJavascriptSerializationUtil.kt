@@ -57,7 +57,7 @@ public object KotlinJavascriptSerializationUtil {
 
         val packages = getPackages(contentMap)
 
-        val load = { (path: String) -> if (!contentMap.containsKey(path)) null else ByteArrayInputStream(contentMap.get(path)) }
+        val load = { path: String -> if (!contentMap.containsKey(path)) null else ByteArrayInputStream(contentMap.get(path)) }
 
         val providers = arrayListOf<PackageFragmentProvider>()
         for (packageName in packages) {

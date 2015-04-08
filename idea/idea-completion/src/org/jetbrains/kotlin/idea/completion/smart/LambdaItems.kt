@@ -45,7 +45,7 @@ object LambdaItems {
             for (functionType in distinctTypes) {
                 val lookupString = buildLambdaPresentation(functionType)
                 val lookupElement = LookupElementBuilder.create(lookupString)
-                        .withInsertHandler({ (context, lookupElement) ->
+                        .withInsertHandler({ context, lookupElement ->
                                                val offset = context.getStartOffset()
                                                val placeholder = "{}"
                                                context.getDocument().replaceString(offset, context.getTailOffset(), placeholder)

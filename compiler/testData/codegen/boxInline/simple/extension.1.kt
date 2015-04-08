@@ -1,11 +1,11 @@
 fun test1(): Int {
     val inlineX = Inline(9)
-    return inlineX.calcExt({(z: Int) -> z}, 25)
+    return inlineX.calcExt({ z: Int -> z}, 25)
 }
 
 fun test2(): Int {
     val inlineX = Inline(9)
-    return inlineX.calcExt2({Int.() -> this}, 25)
+    return inlineX.calcExt2(fun Int.(): Int = this, 25)
 }
 
 fun test3(): Int {
@@ -21,7 +21,7 @@ fun test4(): Double {
 fun test5(): Double {
     val inlineX = Inline(9)
     with(inlineX) {
-        11.0.calcDouble{(a: Int, b: Double) -> a + b}
+        11.0.calcDouble{ a: Int, b: Double -> a + b}
     }
     return inlineX.doWorkWithDouble(11.0)
 }

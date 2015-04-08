@@ -10,13 +10,13 @@ fun assertGenericSuper(expected: String, function: Any?) {
 
 val unitFun = { }
 val intFun = { 42 }
-val stringParamFun = { (x: String) : Unit -> }
-val listFun = { (l: List<String>) : List<String> -> l }
-val mutableListFun = { (l: MutableList<Double>) : MutableList<Int> -> null!! }
-val funWithIn = { (x: Comparable<String>) : Unit -> }
+val stringParamFun = { x: String -> }
+val listFun = { l: List<String> -> l }
+val mutableListFun = fun (l: MutableList<Double>): MutableList<Int> = null!!
+val funWithIn = fun (x: Comparable<String>) {}
 
-val extensionFun = { Any.() : Unit -> }
-val extensionWithArgFun = { Long.(x: Any) : Date -> Date() }
+val extensionFun = fun Any.() {}
+val extensionWithArgFun = fun Long.(x: Any): Date = Date()
 
 fun box(): String {
     assertGenericSuper("kotlin.Function0<kotlin.Unit>", unitFun)

@@ -11,7 +11,7 @@ inline fun <T> doNothing2(a: T, inline f: (T) -> T): T {
 }
 
 fun doNothingNoInline(a: Int): Int {
-    return doNothing2(a, {(x) -> doNothing1(x)})
+    return doNothing2(a, { x -> doNothing1(x)})
 }
 
 fun box(): String {

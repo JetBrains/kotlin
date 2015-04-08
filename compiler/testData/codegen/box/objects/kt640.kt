@@ -5,7 +5,7 @@ public open class Identifier<T>(myName : T?, myHasDollar : Boolean) {
     private var myHasDollar : Boolean
     private var myNullable : Boolean = true
 
-    {
+    init {
         $myName = myName
         $myHasDollar = myHasDollar
     }

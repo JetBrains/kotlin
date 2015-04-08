@@ -25,7 +25,7 @@ class Foo() {
     val e: String
     val f: String
 
-    {
+    init {
         e = bar
         f = Foo.bar
         boo = "O"

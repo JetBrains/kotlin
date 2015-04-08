@@ -48,7 +48,7 @@ object KeywordValues {
         }
 
         if (!skipTrueFalse) {
-            val booleanInfoClassifier = { (info: ExpectedInfo) ->
+            val booleanInfoClassifier = { info: ExpectedInfo ->
                 if (info.type == KotlinBuiltIns.getInstance().getBooleanType()) ExpectedInfoClassification.matches(TypeSubstitutor.EMPTY) else ExpectedInfoClassification.notMatches
             }
             collection.addLookupElements(null, expectedInfos, booleanInfoClassifier, { LookupElementBuilder.create("true").bold().assignSmartCompletionPriority(SmartCompletionItemPriority.TRUE) })

@@ -56,7 +56,7 @@ public object ProjectRootsUtil {
             includeLibrarySource: Boolean,
             includeLibraryClasses: Boolean
     ): Boolean {
-        return runReadAction {(): Boolean ->
+        return runReadAction {
             val virtualFile = when (element) {
                                   is PsiDirectory -> element.getVirtualFile()
                                   else -> element.getContainingFile()?.getVirtualFile()

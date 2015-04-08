@@ -66,7 +66,6 @@ public abstract class AbstractJavaToKotlinConverterSingleFileTest : AbstractJava
         }
 
         val rawConverted = when (prefix) {
-            "element" -> elementToKotlin(javaCode, settings, project)
             "expression" -> expressionToKotlin(javaCode, settings, project)
             "statement" -> statementToKotlin(javaCode, settings, project)
             "method" -> methodToKotlin(javaCode, settings, project)
@@ -105,17 +104,12 @@ public abstract class AbstractJavaToKotlinConverterSingleFileTest : AbstractJava
             reformattedText
     }
 
-    private fun elementToKotlin(text: String, settings: ConverterSettings, project: Project): String {
-        val fileWithText = createJavaFile(text)
-        val converter = JavaToKotlinConverter(project, settings, FilesConversionScope(listOf(fileWithText)), IdeaReferenceSearcher, IdeaResolverForConverter)
-        val element = fileWithText.getFirstChild()!!
-        return converter.elementsToKotlin(listOf(element to J2kPostProcessor(fileWithText)))[0]
-    }
-
     private fun fileToKotlin(text: String, settings: ConverterSettings, project: Project): String {
         val file = createJavaFile(text)
-        val converter = JavaToKotlinConverter(project, settings, FilesConversionScope(listOf(file)), IdeaReferenceSearcher, IdeaResolverForConverter)
-        return converter.elementsToKotlin(listOf(file to J2kPostProcessor(file)))[0]
+        val converter = JavaToKotlinConverter(project, settings,
+                                              IdeaReferenceSearcher, IdeaResolverForConverter, J2kPostProcessor(formatCode = false))
+        val inputElements = listOf(JavaToKotlinConverter.InputElement(file, file))
+        return converter.elementsToKotlin(inputElements).single()!!.text
     }
 
     private fun methodToKotlin(text: String, settings: ConverterSettings, project: Project): String {

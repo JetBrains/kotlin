@@ -21,12 +21,12 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.builtins.jvm.IntrinsicObjects;
 import org.jetbrains.kotlin.codegen.*;
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.binding.MutableClosure;
 import org.jetbrains.kotlin.codegen.binding.PsiCodegenPredictor;
 import org.jetbrains.kotlin.codegen.context.CodegenContext;
-import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicObjects;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotated;
@@ -181,6 +181,11 @@ public class JetTypeMapper {
             }
             return Type.VOID_TYPE;
         }
+        else if (descriptor instanceof FunctionDescriptor && forceBoxedReturnType((FunctionDescriptor) descriptor)) {
+            // TYPE_PARAMETER is a hack to automatically box the return type
+            //noinspection ConstantConditions
+            return mapType(descriptor.getReturnType(), sw, JetTypeMapperMode.TYPE_PARAMETER);
+        }
         else {
             return mapType(returnType, sw, JetTypeMapperMode.VALUE, Variance.OUT_VARIANCE, false);
         }
@@ -300,7 +305,7 @@ public class JetTypeMapper {
         }
 
         if (descriptor instanceof ClassDescriptor) {
-            FqName companionObjectMappedFqName = IntrinsicObjects.INSTANCE$.mapType((ClassDescriptor) descriptor);
+            FqName companionObjectMappedFqName = IntrinsicObjects.mapType((ClassDescriptor) descriptor);
             if (companionObjectMappedFqName != null) {
                 Type asmType = AsmUtil.asmTypeByFqNameWithoutInnerClasses(companionObjectMappedFqName);
                 if (signatureVisitor != null) {
@@ -700,14 +705,7 @@ public class JetTypeMapper {
             }
 
             sw.writeReturnType();
-            if (forceBoxedReturnType(f)) {
-                // TYPE_PARAMETER is a hack to automatically box the return type
-                //noinspection ConstantConditions
-                mapType(f.getReturnType(), sw, JetTypeMapperMode.TYPE_PARAMETER);
-            }
-            else {
-                mapReturnType(f, sw);
-            }
+            mapReturnType(f, sw);
             sw.writeReturnTypeEnd();
         }
 

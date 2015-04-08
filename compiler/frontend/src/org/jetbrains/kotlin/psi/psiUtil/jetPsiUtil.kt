@@ -368,20 +368,20 @@ public fun JetExpression.isFunctionLiteralOutsideParentheses(): Boolean {
 }
 
 public fun PsiElement.siblings(forward: Boolean = true, withItself: Boolean = true): Stream<PsiElement> {
-    val stepFun = if (forward) { (e: PsiElement) -> e.getNextSibling() } else { (e: PsiElement) -> e.getPrevSibling() }
+    val stepFun = if (forward) { e: PsiElement -> e.getNextSibling() } else { e: PsiElement -> e.getPrevSibling() }
     val stream = stream(this, stepFun)
     return if (withItself) stream else stream.drop(1)
 }
 
 public fun ASTNode.siblings(forward: Boolean = true, withItself: Boolean = true): Stream<ASTNode> {
-    val stepFun = if (forward) { (node: ASTNode) -> node.getTreeNext() } else { (e: ASTNode) -> e.getTreeNext() }
+    val stepFun = if (forward) { node: ASTNode -> node.getTreeNext() } else { e: ASTNode -> e.getTreeNext() }
     val stream = stream(this, stepFun)
     return if (withItself) stream else stream.drop(1)
 }
 
-public fun PsiElement.parents(withItself: Boolean = true): Stream<PsiElement> {
-    val stream = stream(this) { if (it is PsiFile) null else it.getParent() }
-    return if (withItself) stream else stream.drop(1)
+public fun PsiElement.parents(withItself: Boolean = true): Sequence<PsiElement> {
+    val sequence = sequence(this) { if (it is PsiFile) null else it.getParent() }
+    return if (withItself) sequence else sequence.drop(1)
 }
 
 public fun ASTNode.parents(withItself: Boolean = true): Stream<ASTNode> {
@@ -448,3 +448,34 @@ public fun JetStringTemplateExpression.getContentRange(): TextRange {
 
 public fun JetStringTemplateExpression.isSingleQuoted(): Boolean
         = getNode().getFirstChildNode().getTextLength() == 1
+
+public fun PsiFile.elementsInRange(range: TextRange): List<PsiElement> {
+    var offset = range.getStartOffset()
+    val result = ArrayList<PsiElement>()
+    while (offset < range.getEndOffset()) {
+        val currentRange = TextRange(offset, range.getEndOffset())
+        val leaf = findFirstLeafWhollyInRange(this, currentRange) ?: break
+
+        val element = leaf
+                .parents(withItself = true)
+                .first {
+                    val parent = it.getParent()
+                    it is PsiFile || parent.getTextRange() !in currentRange
+                }
+        result.add(element)
+
+        offset = element.getTextRange().getEndOffset()
+    }
+    return result
+}
+
+private fun findFirstLeafWhollyInRange(file: PsiFile, range: TextRange): PsiElement? {
+    var element = file.findElementAt(range.getStartOffset()) ?: return null
+    var elementRange = element.getTextRange()
+    if (elementRange.getStartOffset() < range.getStartOffset()) {
+        element = element.nextLeaf(skipEmptyElements = true) ?: return null
+        elementRange = element.getTextRange()
+    }
+    assert(elementRange.getStartOffset() >= range.getStartOffset())
+    return if (elementRange.getEndOffset() <= range.getEndOffset()) element else null
+}

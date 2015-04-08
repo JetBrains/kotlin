@@ -52,7 +52,7 @@ public object KotlinJvmCheckerProvider : AdditionalCheckerProvider(
                                                ReifiedTypeParameterAnnotationChecker(),
                                                NativeFunChecker(),
                                                OverloadsAnnotationChecker()),
-        additionalCallCheckers = listOf(NeedSyntheticChecker()),
+        additionalCallCheckers = listOf(NeedSyntheticChecker(), JavaAnnotationCallChecker()),
         additionalTypeCheckers = listOf(JavaNullabilityWarningsChecker())
 )
 

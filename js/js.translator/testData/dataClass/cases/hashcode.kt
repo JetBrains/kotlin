@@ -32,7 +32,7 @@ fun assertAllEqual<T>(c: Iterable<out T>) {
 
 val hashCoder: (o: Any) -> Int = { o -> o.hashCode() }
 
-val <T> wrapInH = { (t: T) -> Holder(t) }
+val <T> wrapInH = { t: T -> Holder(t) }
 
 fun box(): String {
 

@@ -60,24 +60,18 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     private final boolean showInternalKeyword;
     private final boolean prettyFunctionTypes;
     private final boolean uninferredTypeParameterAsName;
-    private final boolean includeSynthesizedParameterNames;
-    private final boolean withoutFunctionParameterNames;
+    private final ParameterNameRenderingPolicy parameterNameRenderingPolicy;
     private final boolean withoutTypeParameters;
     private final boolean renderCompanionObjectName;
     private final boolean withoutSuperTypes;
     private final boolean receiverAfterName;
     private final boolean renderDefaultValues;
     private final boolean flexibleTypesForCode;
-
-    @NotNull
     private final OverrideRenderingPolicy overrideRenderingPolicy;
-    @NotNull
     private final ValueParametersHandler handler;
-    @NotNull
     private final TextFormat textFormat;
     private final boolean includePropertyConstant;
     private final boolean secondaryConstructorsAsPrimary;
-    @NotNull
     private final Set<FqName> excludedAnnotationClasses;
 
     /* package */ DescriptorRendererImpl(
@@ -98,8 +92,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             @NotNull TextFormat textFormat,
             @NotNull Collection<FqName> excludedAnnotationClasses,
             boolean includePropertyConstant,
-            boolean includeSynthesizedParameterNames,
-            boolean withoutFunctionParameterNames,
+            @NotNull ParameterNameRenderingPolicy parameterNameRenderingPolicy,
             boolean withoutTypeParameters,
             boolean receiverAfterName,
             boolean renderCompanionObjectName,
@@ -127,8 +120,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         this.excludedAnnotationClasses = new HashSet<FqName>(excludedAnnotationClasses);
         this.prettyFunctionTypes = prettyFunctionTypes;
         this.uninferredTypeParameterAsName = uninferredTypeParameterAsName;
-        this.includeSynthesizedParameterNames = includeSynthesizedParameterNames;
-        this.withoutFunctionParameterNames = withoutFunctionParameterNames;
+        this.parameterNameRenderingPolicy = parameterNameRenderingPolicy;
         this.withoutTypeParameters = withoutTypeParameters;
         this.receiverAfterName = receiverAfterName;
         this.renderCompanionObjectName = renderCompanionObjectName;
@@ -471,7 +463,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             return renderName(cd.getName());
         }
         else if (cd instanceof ClassDescriptor) {
-            return renderClassifierName((ClassDescriptor) cd);
+            return renderClassifierName(cd);
         }
         else {
             assert cd == null: "Unexpected classifier: " + cd.getClass();
@@ -870,8 +862,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     }
 
     private void renderValueParameters(@NotNull FunctionDescriptor function, @NotNull StringBuilder builder) {
-        boolean includeNames = !withoutFunctionParameterNames &&
-                               (includeSynthesizedParameterNames || !function.hasSynthesizedParameterNames());
+        boolean includeNames = shouldRenderParameterNames(function);
         handler.appendBeforeValueParameters(function, builder);
         for (ValueParameterDescriptor parameter : function.getValueParameters()) {
             handler.appendBeforeValueParameter(parameter, builder);
@@ -881,8 +872,26 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         handler.appendAfterValueParameters(function, builder);
     }
 
+    private boolean shouldRenderParameterNames(@NotNull FunctionDescriptor function) {
+        switch (parameterNameRenderingPolicy) {
+            case ALL:
+                return true;
+            case ONLY_NON_SYNTHESIZED:
+                return !function.hasSynthesizedParameterNames();
+            case NONE:
+                return false;
+            default:
+                throw new UnsupportedOperationException(parameterNameRenderingPolicy.toString());
+        }
+    }
+
     /* VARIABLES */
-    private void renderValueParameter(@NotNull ValueParameterDescriptor valueParameter, boolean includeName, @NotNull StringBuilder builder, boolean topLevel) {
+    private void renderValueParameter(
+            @NotNull ValueParameterDescriptor valueParameter,
+            boolean includeName,
+            @NotNull StringBuilder builder,
+            boolean topLevel
+    ) {
         if (topLevel) {
             builder.append(renderKeyword("value-parameter")).append(" ");
         }

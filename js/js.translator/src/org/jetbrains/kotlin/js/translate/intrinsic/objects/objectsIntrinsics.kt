@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.js.translate.intrinsic.objects
 
 import com.google.dart.compiler.backend.js.ast.JsArrayAccess
 import com.google.dart.compiler.backend.js.ast.JsExpression
-import org.jetbrains.kotlin.backend.common.builtins.CompanionObjectMapping
+import org.jetbrains.kotlin.builtins.CompanionObjectMapping
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.js.config.LibrarySourcesConfig
 import org.jetbrains.kotlin.js.translate.context.TranslationContext

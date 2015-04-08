@@ -32,6 +32,7 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @InnerTestClasses({
         BytecodeTextTestGenerated.BoxingOptimization.class,
+        BytecodeTextTestGenerated.Conditions.class,
         BytecodeTextTestGenerated.Constants.class,
         BytecodeTextTestGenerated.DeadCodeElimination.class,
         BytecodeTextTestGenerated.DirectInvoke.class,
@@ -42,6 +43,7 @@ import java.util.regex.Pattern;
         BytecodeTextTestGenerated.Statements.class,
         BytecodeTextTestGenerated.StaticFields.class,
         BytecodeTextTestGenerated.StoreStackBeforeInline.class,
+        BytecodeTextTestGenerated.StringOperations.class,
         BytecodeTextTestGenerated.When.class,
         BytecodeTextTestGenerated.WhenEnumOptimization.class,
         BytecodeTextTestGenerated.WhenStringOptimization.class,
@@ -208,12 +210,6 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         doTest(fileName);
     }
 
-    @TestMetadata("stringBuilderAppend.kt")
-    public void testStringBuilderAppend() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/stringBuilderAppend.kt");
-        doTest(fileName);
-    }
-
     @TestMetadata("topLevelFunWithDefaultArgs.kt")
     public void testTopLevelFunWithDefaultArgs() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/topLevelFunWithDefaultArgs.kt");
@@ -297,6 +293,63 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("variables.kt")
         public void testVariables() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/boxingOptimization/variables.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/bytecodeText/conditions")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Conditions extends AbstractBytecodeTextTest {
+        public void testAllFilesPresentInConditions() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/conditions"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("conjuction.kt")
+        public void testConjuction() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/conditions/conjuction.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("disjunction.kt")
+        public void testDisjunction() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/conditions/disjunction.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("negatedConjuction.kt")
+        public void testNegatedConjuction() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/conditions/negatedConjuction.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("negatedDisjunction.kt")
+        public void testNegatedDisjunction() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/conditions/negatedDisjunction.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("negatedNullCompare.kt")
+        public void testNegatedNullCompare() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/conditions/negatedNullCompare.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("negatedZeroCompare.kt")
+        public void testNegatedZeroCompare() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/conditions/negatedZeroCompare.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nullCompare.kt")
+        public void testNullCompare() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/conditions/nullCompare.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("zeroCompare.kt")
+        public void testZeroCompare() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/conditions/zeroCompare.kt");
             doTest(fileName);
         }
     }
@@ -657,6 +710,45 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("withLambda.kt")
         public void testWithLambda() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/storeStackBeforeInline/withLambda.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/bytecodeText/stringOperations")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class StringOperations extends AbstractBytecodeTextTest {
+        public void testAllFilesPresentInStringOperations() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/stringOperations"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("concat.kt")
+        public void testConcat() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/stringOperations/concat.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("infixPlus.kt")
+        public void testInfixPlus() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/stringOperations/infixPlus.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("interpolation.kt")
+        public void testInterpolation() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/stringOperations/interpolation.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("plusAssign.kt")
+        public void testPlusAssign() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/stringOperations/plusAssign.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("primitiveToString.kt")
+        public void testPrimitiveToString() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/stringOperations/primitiveToString.kt");
             doTest(fileName);
         }
     }

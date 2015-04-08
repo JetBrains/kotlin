@@ -69,14 +69,14 @@ class KClassImpl<T>(override val jClass: Class<T>) : KCallableContainerImpl(), K
 
     fun getProperties(declared: Boolean): Collection<KMemberProperty<T, *>> =
             getProperties(extension = false, declared = declared) { descriptor ->
-                if (descriptor.isVar()) KMutableMemberPropertyImpl<T, Any?>(this) { descriptor }
-                else KMemberPropertyImpl<T, Any?>(this) { descriptor }
+                if (descriptor.isVar()) KMutableMemberPropertyImpl<T, Any?>(this, descriptor)
+                else KMemberPropertyImpl<T, Any?>(this, descriptor)
             }
 
     fun getExtensionProperties(declared: Boolean): Collection<KMemberExtensionProperty<T, *, *>> =
             getProperties(extension = true, declared = declared) { descriptor ->
-                if (descriptor.isVar()) KMutableMemberExtensionPropertyImpl<T, Any?, Any?>(this) { descriptor }
-                else KMemberExtensionPropertyImpl<T, Any?, Any?>(this) { descriptor }
+                if (descriptor.isVar()) KMutableMemberExtensionPropertyImpl<T, Any?, Any?>(this, descriptor)
+                else KMemberExtensionPropertyImpl<T, Any?, Any?>(this, descriptor)
             }
 
     private fun <P : KProperty<*>> getProperties(extension: Boolean, declared: Boolean, create: (PropertyDescriptor) -> P): Collection<P> =
@@ -91,10 +91,10 @@ class KClassImpl<T>(override val jClass: Class<T>) : KCallableContainerImpl(), K
                     .toList()
 
     fun memberProperty(name: String): KMemberProperty<T, *> =
-            KMemberPropertyImpl<T, Any>(this, findPropertyDescriptor(name))
+            KMemberPropertyImpl<T, Any>(this, name)
 
     fun mutableMemberProperty(name: String): KMutableMemberProperty<T, *> =
-            KMutableMemberPropertyImpl<T, Any>(this, findPropertyDescriptor(name))
+            KMutableMemberPropertyImpl<T, Any>(this, name)
 
     override fun equals(other: Any?): Boolean =
             other is KClassImpl<*> && jClass == other.jClass
@@ -102,6 +102,12 @@ class KClassImpl<T>(override val jClass: Class<T>) : KCallableContainerImpl(), K
     override fun hashCode(): Int =
             jClass.hashCode()
 
-    override fun toString(): String =
-            jClass.toString()
+    override fun toString(): String {
+        return "class " + classId.let { classId ->
+            val packageFqName = classId.getPackageFqName()
+            val packagePrefix = if (packageFqName.isRoot()) "" else packageFqName.asString() + "."
+            val classSuffix = classId.getRelativeClassName().asString().replace('.', '$')
+            packagePrefix + classSuffix
+        }
+    }
 }

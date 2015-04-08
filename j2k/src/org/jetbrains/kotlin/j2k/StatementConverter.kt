@@ -236,20 +236,6 @@ class DefaultStatementConverter : JavaElementVisitor(), StatementConverter {
         return TryStatement(block.assignPrototype(tryBlock), catchesConverted, finallyConverted)
     }
 
-    private fun collectReturns(block: PsiCodeBlock?): Collection<PsiReturnStatement> {
-        val returns = ArrayList<PsiReturnStatement>()
-        block?.accept(object: JavaRecursiveElementVisitor() {
-            override fun visitReturnStatement(statement: PsiReturnStatement) {
-                returns.add(statement)
-            }
-
-            override fun visitMethod(method: PsiMethod) {
-                // do not go inside any other method (e.g. in anonymous class)
-            }
-        })
-        return returns
-    }
-
     override fun visitWhileStatement(statement: PsiWhileStatement) {
         val condition = statement.getCondition()
         val expression = if (condition?.getType() != null)

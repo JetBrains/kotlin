@@ -17,30 +17,27 @@
 package org.jetbrains.kotlin.j2k
 
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.editor.RangeMarker
+import com.intellij.openapi.progress.EmptyProgressIndicator
 import com.intellij.openapi.progress.ProcessCanceledException
+import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiJavaFile
+import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.j2k.ast.Element
 import org.jetbrains.kotlin.j2k.usageProcessing.UsageProcessing
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.resolve.BindingContext
 import java.util.ArrayList
 import java.util.HashMap
 
-public trait ConversionScope {
-    public fun contains(element: PsiElement): Boolean
-}
-
-public class FilesConversionScope(val files: Collection<PsiJavaFile>) : ConversionScope {
-    override fun contains(element: PsiElement) = files.any { element.getContainingFile() == it }
-}
-
 public trait PostProcessor {
-    public val contextToAnalyzeIn: PsiElement
-    public fun analyzeFile(file: JetFile): BindingContext
+    public fun analyzeFile(file: JetFile, range: TextRange?): BindingContext
 
     public open fun fixForProblem(problem: Diagnostic): (() -> Unit)? {
         val psiElement = problem.getPsiElement()
@@ -54,7 +51,7 @@ public trait PostProcessor {
             Errors.VAL_REASSIGNMENT -> { ->
                 val property = (psiElement as? JetSimpleNameExpression)?.getReference()?.resolve() as? JetProperty
                 if (property != null && !property.isVar()) {
-                    val factory = JetPsiFactory(contextToAnalyzeIn.getProject())
+                    val factory = JetPsiFactory(psiElement.getProject())
                     property.getValOrVarNode().getPsi()!!.replace(factory.createVarNode().getPsi()!!)
                 }
             }
@@ -63,43 +60,107 @@ public trait PostProcessor {
         }
     }
 
-    public fun doAdditionalProcessing(file: JetFile)
+    public fun doAdditionalProcessing(file: JetFile, rangeMarker: RangeMarker?)
+}
+
+public enum class ParseContext {
+    TOP_LEVEL
+    CODE_BLOCK
 }
 
 public class JavaToKotlinConverter(private val project: Project,
                                    private val settings: ConverterSettings,
-                                   private val conversionScope: ConversionScope /*TODO: drop this parameter*/,
                                    private val referenceSearcher: ReferenceSearcher,
-                                   private val resolverForConverter: ResolverForConverter) {
+                                   private val resolverForConverter: ResolverForConverter,
+                                   private val postProcessor: PostProcessor?) {
     private val LOG = Logger.getInstance("#org.jetbrains.kotlin.j2k.JavaToKotlinConverter")
 
-    public fun elementsToKotlin(psiElementsAndProcessors: List<Pair<PsiElement, PostProcessor?>>): List<String> {
+    public data class InputElement(
+            val element: PsiElement,
+            val postProcessingContext: PsiElement?
+    )
+
+    public data class Result(val text: String,  val parseContext: ParseContext)
+
+    public fun elementsToKotlin(
+            inputElements: List<InputElement>,
+            progress: ProgressIndicator = EmptyProgressIndicator()
+    ): List<Result?> {
         try {
-            val intermediateResults = ArrayList<((Map<PsiElement, UsageProcessing>) -> String)?>(psiElementsAndProcessors.size())
+            val elementCount = inputElements.size()
+            val intermediateResults = ArrayList<(Converter.IntermediateResult)?>(elementCount)
             val usageProcessings = HashMap<PsiElement, UsageProcessing>()
             val usageProcessingCollector: (UsageProcessing) -> Unit = { usageProcessing ->
                 assert(!usageProcessings.containsKey(usageProcessing.targetElement))
                     { "Duplicated UsageProcessing for target element ${usageProcessing.targetElement}" }
                 usageProcessings.put(usageProcessing.targetElement, usageProcessing)
             }
-            for ((psiElement, postProcessor) in psiElementsAndProcessors) {
-                val converter = Converter.create(psiElement, settings, conversionScope, referenceSearcher, resolverForConverter, postProcessor, usageProcessingCollector)
+
+            val progressText = "Converting Java to Kotlin"
+            val fileCountText = elementCount.toString() + " " + if (elementCount > 1) "files" else "file"
+            var fraction = 0.0
+            var pass = 1
+
+            fun processFilesWithProgress(passFraction: Double, processFile: (Int) -> Unit) {
+                // we use special process with EmptyProgressIndicator to avoid changing text in our progress by inheritors search inside etc
+                ProgressManager.getInstance().runProcess(
+                        {
+                            progress.setText("$progressText ($fileCountText) - pass $pass of 3")
+
+                            val filesCount = inputElements.indices
+                            for (i in filesCount) {
+                                progress.checkCanceled()
+                                progress.setFraction(fraction + passFraction * i / elementCount)
+
+                                val psiFile = inputElements[i].element as? PsiFile
+                                if (psiFile != null) {
+                                    progress.setText2(psiFile.getVirtualFile().getPresentableUrl())
+                                }
+
+                                processFile(i)
+                            }
+
+                            pass++
+                            fraction += passFraction
+                        },
+                        EmptyProgressIndicator())
+            }
+
+            processFilesWithProgress(0.25) { i ->
+                val psiElement = inputElements[i].element
+
+                fun inConversionScope(element: PsiElement)
+                        = inputElements.any { it.element.isAncestor(element, strict = false) }
+
+                val converter = Converter.create(psiElement, settings, ::inConversionScope, referenceSearcher, resolverForConverter, usageProcessingCollector)
                 val result = converter.convert()
                 intermediateResults.add(result)
             }
 
-            val results = ArrayList<String>(psiElementsAndProcessors.size())
-            for ((i, result) in intermediateResults.withIndex()) {
-                results.add(if (result != null) result(usageProcessings) else "")
+            val results = ArrayList<Result?>(elementCount)
+            processFilesWithProgress(0.25) { i ->
+                val result = intermediateResults[i]
+                results.add(if (result != null)
+                                Result(result.codeGenerator(usageProcessings), result.parseContext)
+                            else
+                                null)
                 intermediateResults[i] = null // to not hold unused objects in the heap
             }
 
-            val finalResults = ArrayList<String>(psiElementsAndProcessors.size())
-            for ((i, result) in results.withIndex()) {
-                val postProcessor = psiElementsAndProcessors[i].second
-                if (postProcessor != null) {
+            if (postProcessor == null) {
+                assert(progress is EmptyProgressIndicator, "Progress indicator not supported for postProcessor == null")
+                return results
+            }
+
+            val finalResults = ArrayList<Result?>(elementCount)
+            processFilesWithProgress(0.5) { i ->
+                val result = results[i]
+                if (result != null) {
                     try {
-                        finalResults.add(AfterConversionPass(project, postProcessor).run(result))
+                        //TODO: post processing does not work correctly for ParseContext different from TOP_LEVEL
+                        val kotlinFile = JetPsiFactory(project).createAnalyzableFile("dummy.kt", result.text, inputElements[i].postProcessingContext!!)
+                        AfterConversionPass(project, postProcessor).run(kotlinFile, range = null)
+                        finalResults.add(Result(kotlinFile.getText(), result.parseContext))
                     }
                     catch(e: ProcessCanceledException) {
                         throw e
@@ -110,16 +171,17 @@ public class JavaToKotlinConverter(private val project: Project,
                     }
                 }
                 else {
-                    finalResults.add(result)
+                    finalResults.add(null)
                 }
             }
+
             return finalResults
         }
         catch(e: ElementCreationStackTraceRequiredException) {
             // if we got this exception then we need to turn element creation stack traces on to get better diagnostic
             Element.saveCreationStacktraces = true
             try {
-                return elementsToKotlin(psiElementsAndProcessors)
+                return elementsToKotlin(inputElements)
             }
             finally {
                 Element.saveCreationStacktraces = false

@@ -264,6 +264,8 @@ public class AnnotationResolver {
                 }
             });
 
+            if (parameterDescriptor.declaresDefaultValue() && constants.isEmpty()) return null;
+
             return new ArrayValue(constants, parameterDescriptor.getType(), true, usesVariableAsConstant);
         }
         else {

@@ -1,7 +1,7 @@
 object Foo {
     val bar: String
 
-    {
+    init {
         bar = "OK"
     }
 }

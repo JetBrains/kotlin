@@ -4,7 +4,7 @@ class B(val name: String)
 
 class A(val a: Int, var b: B) {
     var copyB: B
-    {
+    init {
         copyB = b
     }
 }

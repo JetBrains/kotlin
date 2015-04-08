@@ -53,7 +53,7 @@ public class LazyAnnotations(
     override fun isEmpty() = annotationEntries.isEmpty()
 
     private val annotation = c.storageManager.createMemoizedFunction {
-        (entry: JetAnnotationEntry) ->
+        entry: JetAnnotationEntry ->
         LazyAnnotationDescriptor(c, entry)
     }
 

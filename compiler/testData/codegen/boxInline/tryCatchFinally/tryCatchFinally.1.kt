@@ -48,7 +48,7 @@ fun test3(): Int {
                     result = it.value;
                     throw RuntimeException("-1")
                 },
-                { (e, z)->
+                { e, z ->
                     ++result
                     throw RuntimeException("-2")
                 },

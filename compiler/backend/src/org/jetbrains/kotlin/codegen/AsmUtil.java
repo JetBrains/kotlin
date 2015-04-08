@@ -359,7 +359,7 @@ public class AsmUtil {
         return null;
     }
 
-    private static Type stringValueOfType(Type type) {
+    public static Type stringValueOfType(Type type) {
         int sort = type.getSort();
         return sort == Type.OBJECT || sort == Type.ARRAY
                ? OBJECT_TYPE
@@ -525,7 +525,7 @@ public class AsmUtil {
             public Unit invoke(InstructionAdapter v) {
                 left.put(leftType, v);
                 right.put(rightType, v);
-                v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "areEqual", "(Ljava/lang/Object;Ljava/lang/Object;)Z", false);
+                genAreEqualCall(v);
 
                 if (opToken == JetTokens.EXCLEQ || opToken == JetTokens.EXCLEQEQEQ) {
                     genInvertBoolean(v);
@@ -533,6 +533,10 @@ public class AsmUtil {
                 return Unit.INSTANCE$;
             }
         });
+    }
+
+    public static void genAreEqualCall(InstructionAdapter v) {
+        v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "areEqual", "(Ljava/lang/Object;Ljava/lang/Object;)Z");
     }
 
     public static void genIncrement(Type expectedType, int myDelta, InstructionAdapter v) {
@@ -622,17 +626,6 @@ public class AsmUtil {
             @NotNull PropertyDescriptor descriptor
     ) {
         genNotNullAssertion(v, state, descriptor, "checkFieldIsNotNull");
-    }
-
-    public static void genNotNullAssertionForMethod(
-            @NotNull InstructionAdapter v,
-            @NotNull GenerationState state,
-            @NotNull ResolvedCall resolvedCall
-    ) {
-        CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
-        if (descriptor instanceof ConstructorDescriptor) return;
-
-        genNotNullAssertion(v, state, descriptor, "checkReturnedValueIsNotNull");
     }
 
     private static void genNotNullAssertion(

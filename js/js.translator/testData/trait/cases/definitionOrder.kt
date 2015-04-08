@@ -1,25 +1,25 @@
 package foo
 
 class C() : B() {
-    {
+    init {
         order = order + "C"
     }
 }
 
 class D() : B() {
-    {
+    init {
         order = order + "D"
     }
 }
 
 class E() : A() {
-    {
+    init {
         order = order + "E"
     }
 }
 
 open class B() : A(), F {
-    {
+    init {
         order = order + "B"
     }
 }
@@ -27,7 +27,7 @@ open class B() : A(), F {
 open class A() : F {
 
     var order = ""
-    {
+    init {
         order = order + "A"
     }
 }

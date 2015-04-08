@@ -11323,6 +11323,36 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/smartCasts/varnotnull"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
 
+                @TestMetadata("kt2865.kt")
+                public void testKt2865() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/kt2865.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt3224.kt")
+                public void testKt3224() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/kt3224.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt3244.kt")
+                public void testKt3244() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/kt3244.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt3711.kt")
+                public void testKt3711() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/kt3711.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt3899.kt")
+                public void testKt3899() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/kt3899.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("kt3993.kt")
                 public void testKt3993() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/kt3993.kt");
@@ -11380,6 +11410,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 @TestMetadata("kt5907var.kt")
                 public void testKt5907var() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/kt5907var.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt6819.kt")
+                public void testKt6819() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/kt6819.kt");
                     doTest(fileName);
                 }
             }

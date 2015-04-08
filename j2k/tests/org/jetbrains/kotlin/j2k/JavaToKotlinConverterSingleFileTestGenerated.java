@@ -134,6 +134,12 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("annotationInterface4.java")
+        public void testAnnotationInterface4() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/annotations/annotationInterface4.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("annotationUsages.java")
         public void testAnnotationUsages() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/annotations/annotationUsages.java");

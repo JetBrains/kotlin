@@ -9,7 +9,7 @@ class Foo() {
     val c: String
     var d: String
 
-    {
+    init {
         c = bar
         d = Foo.bar
         boo = "O"

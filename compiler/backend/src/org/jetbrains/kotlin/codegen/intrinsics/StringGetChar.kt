@@ -16,27 +16,13 @@
 
 package org.jetbrains.kotlin.codegen.intrinsics
 
-import com.intellij.psi.PsiElement
-import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.kotlin.codegen.ExpressionCodegen
-import org.jetbrains.kotlin.codegen.StackValue
-import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.codegen.Callable
+import org.jetbrains.kotlin.codegen.CallableMethod
 
-public class StringGetChar : LazyIntrinsicMethod() {
-    override fun generateImpl(
-            codegen: ExpressionCodegen,
-            returnType: Type,
-            element: PsiElement?,
-            arguments: List<JetExpression>,
-            receiver: StackValue
-    ): StackValue {
-        return StackValue.operation(Type.CHAR_TYPE) {
-            if (receiver != StackValue.none()) {
-                receiver.put(receiver.type, it)
-            }
-            if (!arguments.isEmpty()) {
-                codegen.gen(arguments.first()).put(Type.INT_TYPE, it)
-            }
+public class StringGetChar : IntrinsicMethod() {
+
+    override fun toCallable(method: CallableMethod): Callable {
+        return createIntrinsicCallable(method) {
             it.invokevirtual("java/lang/String", "charAt", "(I)C", false)
         }
     }

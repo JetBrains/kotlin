@@ -43,7 +43,7 @@ public class PseudocodeVariableDataCollector(
                 //see KT-4605
                 instructionDataMergeStrategy as
                     (Instruction, Collection<Map<VariableDescriptor, D>>) -> Edges<Map<VariableDescriptor, D>>,
-                { (from, to, data) -> filterOutVariablesOutOfScope(from, to, data)},
+                { from, to, data -> filterOutVariablesOutOfScope(from, to, data)},
                 Collections.emptyMap<VariableDescriptor, D>())
         //see KT-4605
         return result as MutableMap<Instruction, Edges<MutableMap<VariableDescriptor, D>>>

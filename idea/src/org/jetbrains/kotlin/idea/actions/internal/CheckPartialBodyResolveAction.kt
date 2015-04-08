@@ -70,10 +70,10 @@ public class CheckPartialBodyResolveAction : AnAction() {
             progressIndicator?.setText("Checking resolve $i of ${files.size()}...")
             progressIndicator?.setText2(file.getVirtualFile().getPath())
 
-            val partialResolveDump = dumpResolve(file) {(element, resolutionFacade) ->
+            val partialResolveDump = dumpResolve(file) { element, resolutionFacade ->
                 resolutionFacade.analyze(element, BodyResolveMode.PARTIAL)
             }
-            val goldDump = dumpResolve(file) {(element, resolutionFacade) ->
+            val goldDump = dumpResolve(file) { element, resolutionFacade ->
                 resolutionFacade.analyze(element)
             }
             if (partialResolveDump != goldDump) {

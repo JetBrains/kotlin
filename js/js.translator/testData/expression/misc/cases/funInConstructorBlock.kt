@@ -3,7 +3,7 @@ package foo
 class A() {
     fun lold() = true
     val p: () -> Boolean
-    {
+    init {
         $p = { { lold() }() }
     }
 }

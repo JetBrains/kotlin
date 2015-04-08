@@ -16,7 +16,7 @@ inline fun filteredReduce(a: Array<Int>, inline predicate: (Int) -> Boolean, inl
 }
 
 fun sumEven(a: Array<Int>): Int {
-    return filteredReduce(a, {(x) -> x % 2 == 0}, {(x, y) -> x + y})
+    return filteredReduce(a, { x -> x % 2 == 0}, { x, y -> x + y})
 }
 
 fun box(): String {

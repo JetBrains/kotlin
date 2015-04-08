@@ -1,6 +1,6 @@
 fun test1(): Int {
     val inlineX = Inline()
-    var p = {(l : Int) -> l};
+    var p = { l : Int -> l};
     return inlineX.calc(p, 25)
 }
 

@@ -53,12 +53,12 @@ fun createModuleResolverProvider(
     val modulesToCreateResolversFor = allModuleInfos.filter(moduleFilter)
 
     fun createResolverForProject(): ResolverForProject<IdeaModuleInfo, ResolverForModule> {
-        val modulesContent = {(module: IdeaModuleInfo) ->
+        val modulesContent = { module: IdeaModuleInfo ->
             ModuleContent(syntheticFilesByModule[module] ?: listOf(), module.contentScope())
         }
 
         val jvmPlatformParameters = JvmPlatformParameters {
-            (javaClass: JavaClass) ->
+            javaClass: JavaClass ->
             val psiClass = (javaClass as JavaClassImpl).getPsi()
             psiClass.getModuleInfo()
         }

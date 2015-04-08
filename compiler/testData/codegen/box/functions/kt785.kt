@@ -1,7 +1,7 @@
 class A() {
     var x : Int = 0
 
-    var z = { () ->
+    var z = {
         x++
     }
 }

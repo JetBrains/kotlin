@@ -177,7 +177,7 @@ class TrafficLight(override var pos: Vector, val direction: String, val startCol
     var isForceColorChange = false
     var changeColorForward = (startColor == "red")
 
-    {
+    init {
         list.add(TrafficLightItem(v(pos.x, pos.y), PATH_TO_IMAGES + "red_color.png"))
         list.add(TrafficLightItem(v(pos.x, pos.y), PATH_TO_IMAGES + "yellow_color.png"))
         list.add(TrafficLightItem(v(pos.x, pos.y), PATH_TO_IMAGES + "green_color.png"))
@@ -378,7 +378,7 @@ class CanvasState(val canvas: HTMLCanvasElement) {
         shapes.add(shape)
     }
 
-    {
+    init {
         jq(canvas).click {
             val mousePos = mousePos(it)
             @shapeLoop for (shape in shapes) {

@@ -246,9 +246,9 @@ public inline fun <T> Reader.useLines(block: (Sequence<String>) -> T): T =
  *
  * We suggest you try the method [useLines] instead which closes the stream when the processing is complete.
  *
- * @return a sequence of corresponding file lines
+ * @return a sequence of corresponding file lines. The sequence returned can be iterated only once.
  */
-public fun BufferedReader.lines(): Sequence<String> = LinesSequence(this)
+public fun BufferedReader.lines(): Sequence<String> = LinesSequence(this).constrainOnce()
 
 deprecated("Use lines() function which returns Sequence<String>")
 public fun BufferedReader.lineIterator(): Iterator<String> = lines().iterator()

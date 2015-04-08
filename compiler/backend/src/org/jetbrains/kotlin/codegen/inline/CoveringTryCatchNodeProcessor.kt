@@ -96,7 +96,7 @@ public abstract class CoveringTryCatchNodeProcessor<T: IntervalWithHandler>() {
     }
 
     public fun sortTryCatchBlocks() {
-        val comp = Comparator {(t1: T, t2: T): Int ->
+        val comp = Comparator { t1: T, t2: T ->
             var result = instructionIndex(t1.handler) - instructionIndex(t2.handler)
             if (result == 0) {
                 result = instructionIndex(t1.startLabel) - instructionIndex(t2.startLabel)

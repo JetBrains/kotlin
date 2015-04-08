@@ -3,7 +3,7 @@ package foo
 var x = false
 
 open class A {
-    {
+    init {
         x = (this as B).a != 3
     }
 }

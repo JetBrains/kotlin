@@ -10,7 +10,7 @@ open class BasicHolder : Holder {
     override val element: String
         get() = $element + $element
 
-    {
+    init {
         element = "1"
     }
 }
@@ -18,7 +18,7 @@ open class BasicHolder : Holder {
 class AdvancedHolder : BasicHolder() {
     override val element: String
 
-    {
+    init {
         element = super.element + super.element
     }
 }

@@ -106,7 +106,12 @@ public abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment
                 val descriptor = getDescriptor(element, resolveSession)
                 descriptors.add(descriptor)
                 if (descriptor is ClassDescriptor) {
-                    descriptors.addAll(descriptor.getConstructors())
+                    // if class has primary constructor then we visit it later, otherwise add it artificially
+                    if (element !is JetClass || !element.hasExplicitPrimaryConstructor()) {
+                        if (descriptor.getUnsubstitutedPrimaryConstructor() != null) {
+                            descriptors.add(descriptor.getUnsubstitutedPrimaryConstructor())
+                        }
+                    }
                 }
                 element.acceptChildren(this)
             }

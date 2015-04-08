@@ -2,7 +2,6 @@ import test.*
 
 fun test1(b: Boolean): String {
     val localResult = doCall @local {
-        () : String ->
         if (b) {
             return@local "local"
         } else {

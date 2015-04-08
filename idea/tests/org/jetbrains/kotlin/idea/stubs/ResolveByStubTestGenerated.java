@@ -87,6 +87,12 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
             doTest(fileName);
         }
 
+        @TestMetadata("MultiDimensionalArrayMethod.kt")
+        public void testMultiDimensionalArrayMethod() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/MultiDimensionalArrayMethod.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("SimpleAnnotation.kt")
         public void testSimpleAnnotation() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/SimpleAnnotation.kt");

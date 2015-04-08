@@ -63,7 +63,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
                     emptyLines = 0, numSpacesOtherwise = 1, numberOfLineFeedsOtherwise = 0)
 
             val parameterWithDocCommentRule = {
-                (parent: ASTBlock, left: ASTBlock, right: ASTBlock) ->
+                parent: ASTBlock, left: ASTBlock, right: ASTBlock ->
                 if (right.getNode().getFirstChildNode().getElementType() == JetTokens.DOC_COMMENT) {
                     Spacing.createSpacing(0, 0, 1, true, settings.KEEP_BLANK_LINES_IN_DECLARATIONS)
                 }
@@ -248,12 +248,12 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
             }
 
             fun leftBraceRule(blockType: IElementType = BLOCK) = {
-                (parent: ASTBlock, left: ASTBlock, right: ASTBlock) ->
+                parent: ASTBlock, left: ASTBlock, right: ASTBlock ->
                 spacingForLeftBrace(right.getNode(), blockType)
             }
 
             val leftBraceRuleIfBlockIsWrapped = {
-                (parent: ASTBlock, left: ASTBlock, right: ASTBlock) ->
+                parent: ASTBlock, left: ASTBlock, right: ASTBlock ->
                 spacingForLeftBrace(right.getNode()!!.getFirstChildNode())
             }
 

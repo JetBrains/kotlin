@@ -218,7 +218,9 @@ public class JDIEval(
         if (_class !is jdi.ClassType) throwBrokenCodeException(NoSuchMethodError("Static method is a non-class type: $method"))
 
         val args = mapArguments(arguments, method.safeArgumentTypes())
+        args.disableCollection()
         val result = mayThrow { _class.invokeMethod(thread, method, args, invokePolicy) }
+        args.enableCollection()
         return result.asValue()
     }
 
@@ -243,14 +245,18 @@ public class JDIEval(
             val ctor = findMethod(methodDesc)
             val _class = (instance as NewObjectValue).asmType.asReferenceType() as jdi.ClassType
             val args = mapArguments(arguments, ctor.safeArgumentTypes())
+            args.disableCollection()
             val result = mayThrow { _class.newInstance(thread, ctor, args, invokePolicy) }
+            args.enableCollection()
             instance.value = result
             return result.asValue()
         }
 
         fun doInvokeMethod(obj: ObjectReference, method: Method, policy: Int): Value {
             val args = mapArguments(arguments, method.safeArgumentTypes())
+            args.disableCollection()
             val result = mayThrow { obj.invokeMethod(thread, method, args, policy) }
+            args.enableCollection()
             return result.asValue()
         }
 
@@ -264,6 +270,15 @@ public class JDIEval(
             return doInvokeMethod(obj, method, invokePolicy)
         }
     }
+
+    private fun List<jdi.Value?>.disableCollection() {
+        forEach { (it as? ObjectReference)?.disableCollection() }
+    }
+
+    private fun List<jdi.Value?>.enableCollection() {
+        forEach { (it as? ObjectReference)?.enableCollection() }
+    }
+
 
     private fun mapArguments(arguments: List<Value>, expecetedTypes: List<jdi.Type>): List<jdi.Value?> {
         return arguments.zip(expecetedTypes).map {

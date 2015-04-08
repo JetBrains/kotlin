@@ -20,24 +20,24 @@ fun fibonacci(): Sequence<Int> {
 public class SequenceTest {
 
     test fun filterEmptySequence() {
-        val stream = sequenceOf<String>()
-        assertEquals(0, stream.filter { false }.count())
-        assertEquals(0, stream.filter { true }.count())
+        val sequence = sequenceOf<String>()
+        assertEquals(0, sequence.filter { false }.count())
+        assertEquals(0, sequence.filter { true }.count())
     }
 
-    test fun mapEmptyStream() {
-        val stream = sequenceOf<String>()
-        assertEquals(0, stream.map { false }.count())
-        assertEquals(0, stream.map { true }.count())
+    test fun mapEmptySequence() {
+        val sequence = sequenceOf<String>()
+        assertEquals(0, sequence.map { false }.count())
+        assertEquals(0, sequence.map { true }.count())
     }
 
     test fun requireNoNulls() {
-        val stream = sequenceOf<String?>("foo", "bar")
-        val notNull = stream.requireNoNulls()
+        val sequence = sequenceOf<String?>("foo", "bar")
+        val notNull = sequence.requireNoNulls()
         assertEquals(listOf("foo", "bar"), notNull.toList())
 
-        val streamWithNulls = sequenceOf("foo", null, "bar")
-        val notNull2 = streamWithNulls.requireNoNulls() // shouldn't fail yet
+        val sequenceWithNulls = sequenceOf("foo", null, "bar")
+        val notNull2 = sequenceWithNulls.requireNoNulls() // shouldn't fail yet
         fails {
             // should throw an exception as we have a null
             notNull2.toList()
@@ -84,7 +84,7 @@ public class SequenceTest {
     }
 
     test fun foldReducesTheFirstNElements() {
-        val sum = {(a: Int, b: Int) -> a + b }
+        val sum = { a: Int, b: Int -> a + b }
         assertEquals(listOf(13, 21, 34, 55, 89).fold(0, sum), fibonacci().filter { it > 10 }.take(5).fold(0, sum))
     }
 
@@ -93,7 +93,7 @@ public class SequenceTest {
     }
 
     test fun mapAndTakeWhileExtractTheTransformedElements() {
-        assertEquals(listOf(0, 3, 3, 6, 9, 15), fibonacci().map { it * 3 }.takeWhile {(i: Int) -> i < 20 }.toList())
+        assertEquals(listOf(0, 3, 3, 6, 9, 15), fibonacci().map { it * 3 }.takeWhile { i: Int -> i < 20 }.toList())
     }
 
     test fun joinConcatenatesTheFirstNElementsAboveAThreshold() {
@@ -128,9 +128,9 @@ public class SequenceTest {
     }
 
     test fun plus() {
-        val stream = sequenceOf("foo", "bar")
-        val streamCheese = stream + "cheese"
-        assertEquals(listOf("foo", "bar", "cheese"), streamCheese.toList())
+        val sequence = sequenceOf("foo", "bar")
+        val sequenceCheese = sequence + "cheese"
+        assertEquals(listOf("foo", "bar", "cheese"), sequenceCheese.toList())
 
         // lets use a mutable variable
         var mi = sequenceOf("a", "b")
@@ -141,8 +141,8 @@ public class SequenceTest {
     test fun plusCollection() {
         val a = sequenceOf("foo", "bar")
         val b = listOf("cheese", "wine")
-        val stream = a + b
-        assertEquals(listOf("foo", "bar", "cheese", "wine"), stream.toList())
+        val sequence = a + b
+        assertEquals(listOf("foo", "bar", "cheese", "wine"), sequence.toList())
 
         // lets use a mutable variable
         var ml = sequenceOf("a")
@@ -154,7 +154,7 @@ public class SequenceTest {
     }
 
 
-    test fun iterationOverStream() {
+    test fun iterationOverSequence() {
         var s = ""
         for (i in sequenceOf(0, 1, 2, 3, 4, 5)) {
             s = s + i.toString()
@@ -162,21 +162,53 @@ public class SequenceTest {
         assertEquals("012345", s)
     }
 
-    test fun streamFromFunction() {
+    test fun sequenceFromFunction() {
         var count = 3
 
-        val stream = sequence {
+        val sequence = sequence {
             count--
             if (count >= 0) count else null
         }
 
-        val list = stream.toList()
+        val list = sequence.toList()
         assertEquals(listOf(2, 1, 0), list)
+
+        fails {
+            sequence.toList()
+        }
     }
 
-    test fun streamFromFunctionWithInitialValue() {
+    test fun sequenceFromFunctionWithInitialValue() {
         val values = sequence(3) { n -> if (n > 0) n - 1 else null }
-        assertEquals(listOf(3, 2, 1, 0), values.toList())
+        val expected = listOf(3, 2, 1, 0)
+        assertEquals(expected, values.toList())
+        assertEquals(expected, values.toList(), "Iterating sequence second time yields the same result")
+    }
+
+
+    test fun sequenceFromIterator() {
+        val list = listOf(3, 2, 1, 0)
+        val iterator = list.iterator()
+        val sequence = iterator.sequence()
+        assertEquals(list, sequence.toList())
+        fails {
+            sequence.toList()
+        }
+    }
+
+    test fun makeSequenceOneTimeConstrained() {
+        val sequence = sequenceOf(1, 2, 3, 4)
+        sequence.toList()
+        sequence.toList()
+
+        val oneTime = sequence.constrainOnce()
+        oneTime.toList()
+        assertTrue("should fail with IllegalStateException") {
+            fails {
+                oneTime.toList()
+            } is IllegalStateException
+        }
+
     }
 
     private fun <T, C : MutableCollection<in T>> Sequence<T>.takeWhileTo(result: C, predicate: (T) -> Boolean): C {
@@ -184,7 +216,7 @@ public class SequenceTest {
         return result
     }
 
-    test fun streamExtensions() {
+    test fun sequenceExtensions() {
         val d = ArrayList<Int>()
         sequenceOf(0, 1, 2, 3, 4, 5).takeWhileTo(d, { i -> i < 4 })
         assertEquals(4, d.size())

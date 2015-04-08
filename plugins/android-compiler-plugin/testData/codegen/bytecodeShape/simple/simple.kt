@@ -6,7 +6,7 @@ import java.io.File
 import kotlinx.android.synthetic.layout.*
 
 public class MyActivity : Activity() {
-    {login}
+    init {login}
 }
 
 // 1 public _\$_findCachedViewById

@@ -1,6 +1,6 @@
 class Foo {
 
-  {Foo.test()}
+  init {Foo.test()}
 
   companion object {
     private fun test() {

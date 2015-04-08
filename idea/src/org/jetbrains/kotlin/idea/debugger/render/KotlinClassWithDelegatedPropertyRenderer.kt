@@ -37,6 +37,7 @@ import com.sun.jdi.Method
 import org.jetbrains.kotlin.codegen.PropertyCodegen
 import org.jetbrains.kotlin.name.Name
 import com.intellij.debugger.engine.evaluation.EvaluateException
+import org.jetbrains.kotlin.idea.debugger.KotlinDebuggerSettings
 
 public class KotlinClassWithDelegatedPropertyRenderer : ClassRenderer() {
 
@@ -69,24 +70,22 @@ public class KotlinClassWithDelegatedPropertyRenderer : ClassRenderer() {
             }
 
             val fieldDescriptor = nodeDescriptorFactory.getFieldDescriptor(builder.getParentDescriptor(), value, field)
-            children.add(nodeManager.createNode(fieldDescriptor, context))
 
             if (field.name().endsWith(JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX)) {
-                val method = findGetterForDelegatedProperty(value, field)
-                val threadReference = context.getSuspendContext().getThread()?.getThreadReference()
-                if (method != null && threadReference != null) {
-                    val propValue = try {
-                        context.getDebugProcess().invokeInstanceMethod(context, value, method, listOf<Nothing>(), context.getSuspendContext().getSuspendPolicy())
-                    }
-                    catch(e: EvaluateException) {
-                        e.getExceptionFromTargetVM()
-                    }
-                    if (propValue != null) {
-                        val delegatedPropertyDescriptor = DelegatedPropertyFieldDescriptor(
-                                context.getDebugProcess().getProject()!!, propValue, value, field)
-                        children.add(nodeManager.createNode(delegatedPropertyDescriptor, context))
-                    }
+                val shouldRenderDelegatedProperty = KotlinDebuggerSettings.getInstance().DEBUG_RENDER_DELEGATED_PROPERTIES
+                if (shouldRenderDelegatedProperty) {
+                    children.add(nodeManager.createNode(fieldDescriptor, context))
                 }
+
+                val delegatedPropertyDescriptor = DelegatedPropertyFieldDescriptor(
+                        context.getDebugProcess().getProject()!!,
+                        value,
+                        field,
+                        shouldRenderDelegatedProperty)
+                children.add(nodeManager.createNode(delegatedPropertyDescriptor, context))
+            }
+            else {
+                children.add(nodeManager.createNode(fieldDescriptor, context))
             }
         }
 
@@ -97,9 +96,4 @@ public class KotlinClassWithDelegatedPropertyRenderer : ClassRenderer() {
         builder.setChildren(children)
     }
 
-    private fun findGetterForDelegatedProperty(objRef: ObjectReference, delegate: Field): Method? {
-        val fieldName = delegate.name().trimTrailing(JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX)
-        val getterName = PropertyCodegen.getterName(Name.identifier(fieldName))
-        return objRef.referenceType().methodsByName(getterName)?.firstOrNull()
-    }
 }

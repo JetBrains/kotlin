@@ -35,16 +35,16 @@ public abstract class CallGenerator {
 
         @Override
         public void genCallInner(
-                @NotNull CallableMethod callableMethod,
+                @NotNull Callable callableMethod,
                 ResolvedCall<?> resolvedCall,
                 boolean callDefault,
                 @NotNull ExpressionCodegen codegen
         ) {
             if (!callDefault) {
-                callableMethod.invokeWithNotNullAssertion(codegen.v, codegen.getState(), resolvedCall);
+                callableMethod.genInvokeInstruction(codegen.v);
             }
             else {
-                callableMethod.invokeDefaultWithNotNullAssertion(codegen.v, codegen.getState(), resolvedCall);
+                ((CallableMethod)callableMethod).genInvokeDefaultInstruction(codegen.v);
             }
         }
 
@@ -52,7 +52,7 @@ public abstract class CallGenerator {
         public void genCallWithoutAssertions(
                 @NotNull CallableMethod method, @NotNull ExpressionCodegen codegen
         ) {
-            method.invokeWithoutAssertions(codegen.v);
+            method.genInvokeInstruction(codegen.v);
         }
 
         @Override
@@ -90,7 +90,7 @@ public abstract class CallGenerator {
         }
     }
 
-    public void genCall(@NotNull CallableMethod callableMethod, @Nullable ResolvedCall<?> resolvedCall, boolean callDefault, @NotNull ExpressionCodegen codegen) {
+    public void genCall(@NotNull Callable callableMethod, @Nullable ResolvedCall<?> resolvedCall, boolean callDefault, @NotNull ExpressionCodegen codegen) {
         if (resolvedCall != null) {
             JetExpression calleeExpression = resolvedCall.getCall().getCalleeExpression();
             if (calleeExpression != null) {
@@ -101,7 +101,7 @@ public abstract class CallGenerator {
         genCallInner(callableMethod, resolvedCall, callDefault, codegen);
     }
 
-    public abstract void genCallInner(@NotNull CallableMethod callableMethod, @Nullable ResolvedCall<?> resolvedCall, boolean callDefault, @NotNull ExpressionCodegen codegen);
+    public abstract void genCallInner(@NotNull Callable callableMethod, @Nullable ResolvedCall<?> resolvedCall, boolean callDefault, @NotNull ExpressionCodegen codegen);
 
     public abstract void genCallWithoutAssertions(@NotNull CallableMethod callableMethod, @NotNull ExpressionCodegen codegen);
 

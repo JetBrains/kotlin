@@ -290,7 +290,7 @@ class StringJVMTest {
 
     test fun testReplaceAllClosure() {
         val s = "test123zzz"
-        val result = s.replaceAll("\\d+") { (mr) ->
+        val result = s.replaceAll("\\d+") { mr ->
             "[" + mr.group() + "]"
         }
         assertEquals("test[123]zzz", result)
@@ -298,7 +298,7 @@ class StringJVMTest {
 
     test fun testReplaceAllClosureAtStart() {
         val s = "123zzz"
-        val result = s.replaceAll("\\d+") { (mr) ->
+        val result = s.replaceAll("\\d+") { mr ->
             "[" + mr.group() + "]"
         }
         assertEquals("[123]zzz", result)
@@ -306,7 +306,7 @@ class StringJVMTest {
 
     test fun testReplaceAllClosureAtEnd() {
         val s = "test123"
-        val result = s.replaceAll("\\d+") { (mr) ->
+        val result = s.replaceAll("\\d+") { mr ->
             "[" + mr.group() + "]"
         }
         assertEquals("test[123]", result)
@@ -314,7 +314,7 @@ class StringJVMTest {
 
     test fun testReplaceAllClosureEmpty() {
         val s = ""
-        val result = s.replaceAll("\\d+") { (mr) ->
+        val result = s.replaceAll("\\d+") { mr ->
             "x"
         }
         assertEquals("", result)

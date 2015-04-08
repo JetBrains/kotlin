@@ -16,32 +16,15 @@
 
 package org.jetbrains.kotlin.codegen.intrinsics
 
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.codegen.ExpressionCodegen
-import org.jetbrains.kotlin.codegen.StackValue
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_STRING_TYPE
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
+import org.jetbrains.kotlin.codegen.Callable
+import org.jetbrains.kotlin.codegen.CallableMethod
 
-public class StringPlus : LazyIntrinsicMethod() {
-    override fun generateImpl(
-            codegen: ExpressionCodegen,
-            returnType: Type,
-            element: PsiElement?,
-            arguments: List<JetExpression>,
-            receiver: StackValue
-    ): StackValue {
-        return StackValue.operation(JAVA_STRING_TYPE) {
-            if (receiver == StackValue.none()) {
-                codegen.gen(arguments.get(0)).put(JAVA_STRING_TYPE, it)
-                codegen.gen(arguments.get(1)).put(OBJECT_TYPE, it)
-            }
-            else {
-                receiver.put(JAVA_STRING_TYPE, it)
-                codegen.gen(arguments.get(0)).put(OBJECT_TYPE, it)
-            }
-            it.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "stringPlus", "(Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/String;", false)
+public class StringPlus : IntrinsicMethod() {
+
+    override fun toCallable(method: CallableMethod): Callable {
+        return createIntrinsicCallable(method) {
+            it.invokestatic("kotlin/jvm/internal/Intrinsics", "stringPlus", "(Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/String;", false)
         }
     }
+
 }

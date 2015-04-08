@@ -6,7 +6,7 @@ fun box(): String {
     val l = object : C {
         override val a: Any
 
-        {
+        init {
             a = {}
         }
     }

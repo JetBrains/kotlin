@@ -33,7 +33,7 @@ public fun OutputFileCollection.writeAll(outputDir: File, report: (sources: List
     }
 }
 
-private val REPORT_NOTHING = { (sources: List<File>, output: File) -> }
+private val REPORT_NOTHING = { sources: List<File>, output: File -> }
 
 public fun OutputFileCollection.writeAllTo(outputDir: File) {
     writeAll(outputDir, REPORT_NOTHING)

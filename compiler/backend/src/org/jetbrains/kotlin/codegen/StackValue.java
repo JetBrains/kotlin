@@ -23,26 +23,23 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
-import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethod;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.psi.JetArrayAccessExpression;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationsPackage;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
-import org.jetbrains.org.objectweb.asm.commons.Method;
 
-import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
@@ -138,17 +135,6 @@ public abstract class StackValue {
         throw new UnsupportedOperationException("Cannot store to value " + this);
     }
 
-    public void condJump(@NotNull Label label, boolean jumpIfFalse, @NotNull InstructionAdapter v) {
-        put(this.type, v);
-        coerceTo(Type.BOOLEAN_TYPE, v);
-        if (jumpIfFalse) {
-            v.ifeq(label);
-        }
-        else {
-            v.ifne(label);
-        }
-    }
-
     @NotNull
     public static Local local(int index, @NotNull Type type) {
         return new Local(index, type);
@@ -166,17 +152,39 @@ public abstract class StackValue {
 
     @NotNull
     public static StackValue constant(@Nullable Object value, @NotNull Type type) {
-        return new Constant(value, type);
+        if (type == Type.BOOLEAN_TYPE) {
+            assert value instanceof Boolean : "Value for boolean constant should have boolean type: " + value;
+            return BranchedValue.Companion.booleanConstant((Boolean) value);
+        }
+        else {
+            return new Constant(value, type);
+        }
     }
 
     @NotNull
     public static StackValue cmp(@NotNull IElementType opToken, @NotNull Type type, StackValue left, StackValue right) {
-        return type.getSort() == Type.OBJECT ? new ObjectCompare(opToken, type, left, right) : new NumberCompare(opToken, type, left, right);
+        return BranchedValue.Companion.cmp(opToken, type, left, right);
     }
 
     @NotNull
     public static StackValue not(@NotNull StackValue stackValue) {
-        return new Invert(stackValue);
+        return BranchedValue.Companion.createInvertValue(stackValue);
+    }
+
+    public static StackValue or(@NotNull StackValue left, @NotNull StackValue right) {
+        return new Or(left, right);
+    }
+
+    public static StackValue and(@NotNull StackValue left, @NotNull StackValue right) {
+        return new And(left, right);
+    }
+
+    public static StackValue compareIntWithZero(@NotNull StackValue argument, int operation) {
+        return new BranchedValue(argument, null, Type.INT_TYPE, operation);
+    }
+
+    public static StackValue compareWithNull(@NotNull StackValue argument, int operation) {
+        return new BranchedValue(argument, null, AsmTypes.OBJECT_TYPE, operation);
     }
 
     @NotNull
@@ -379,17 +387,6 @@ public abstract class StackValue {
         return UNIT;
     }
 
-    public void putAsBoolean(InstructionAdapter v) {
-        Label ifTrue = new Label();
-        Label end = new Label();
-        condJump(ifTrue, false, v);
-        v.iconst(0);
-        v.goTo(end);
-        v.mark(ifTrue);
-        v.iconst(1);
-        v.mark(end);
-    }
-
     public static StackValue none() {
         return None.INSTANCE;
     }
@@ -437,6 +434,9 @@ public abstract class StackValue {
             ResolvedCall resolvedCall,
             @NotNull ExpressionCodegen codegen
     ) {
+        if (stackValue instanceof StackValue.Local && Type.INT_TYPE == stackValue.type) {
+            return preIncrementForLocalVar(((StackValue.Local) stackValue).index, delta);
+        }
         return new PrefixIncrement(type, stackValue, delta, method, resolvedCall, codegen);
     }
 
@@ -444,7 +444,7 @@ public abstract class StackValue {
             ResolvedCall<?> resolvedCall,
             StackValue receiver,
             ExpressionCodegen codegen,
-            @Nullable CallableMethod callableMethod
+            @Nullable Callable callableMethod
     ) {
         if (resolvedCall.getDispatchReceiver().exists() || resolvedCall.getExtensionReceiver().exists() || isLocalFunCall(callableMethod)) {
             boolean hasExtensionReceiver = resolvedCall.getExtensionReceiver().exists();
@@ -463,7 +463,7 @@ public abstract class StackValue {
             @NotNull StackValue receiver,
             @NotNull ExpressionCodegen codegen,
             @NotNull ResolvedCall resolvedCall,
-            @Nullable CallableMethod callableMethod,
+            @Nullable Callable callableMethod,
             boolean isExtension
     ) {
         ReceiverValue receiverValue = isExtension ? resolvedCall.getExtensionReceiver() : resolvedCall.getDispatchReceiver();
@@ -497,7 +497,7 @@ public abstract class StackValue {
     }
 
     @Contract("null -> false")
-    private static boolean isLocalFunCall(@Nullable CallableMethod callableMethod) {
+    private static boolean isLocalFunCall(@Nullable Callable callableMethod) {
         return callableMethod != null && callableMethod.getGenerateCalleeType() != null;
     }
 
@@ -587,10 +587,28 @@ public abstract class StackValue {
                 int size = this.type.getSize();
                 if (size == 1) {
                     v.swap();
-                } else if (size == 2) {
+                }
+                else if (size == 2) {
                     v.dupX2();
                     v.pop();
-                } else {
+                }
+                else {
+                    throw new UnsupportedOperationException("don't know how to move type " + type + " to top of stack");
+                }
+
+                coerceTo(type, v);
+            }
+            else if (depth == 2) {
+                int size = this.type.getSize();
+                if (size == 1) {
+                    v.dup2X1();
+                    v.pop2();
+                }
+                else if (size == 2) {
+                    v.dup2X2();
+                    v.pop2();
+                }
+                else {
                     throw new UnsupportedOperationException("don't know how to move type " + type + " to top of stack");
                 }
 
@@ -630,129 +648,6 @@ public abstract class StackValue {
             }
 
             coerceTo(type, v);
-        }
-
-        @Override
-        public void condJump(@NotNull Label label, boolean jumpIfFalse, @NotNull InstructionAdapter v) {
-            if (value instanceof Boolean) {
-                boolean boolValue = (Boolean) value;
-                if (boolValue ^ jumpIfFalse) {
-                    v.goTo(label);
-                }
-            }
-            else {
-                throw new UnsupportedOperationException("don't know how to generate this condjump");
-            }
-        }
-    }
-
-    private static class NumberCompare extends StackValue {
-        protected final IElementType opToken;
-        protected final Type operandType;
-        protected final StackValue left;
-        protected final StackValue right;
-
-        public NumberCompare(IElementType opToken, Type operandType, StackValue left, StackValue right) {
-            super(Type.BOOLEAN_TYPE);
-            this.opToken = opToken;
-            this.operandType = operandType;
-            this.left = left;
-            this.right = right;
-        }
-
-        @Override
-        public void putSelector(@NotNull Type type, @NotNull InstructionAdapter v) {
-            putAsBoolean(v);
-            coerceTo(type, v);
-        }
-
-        @Override
-        public void condJump(@NotNull Label label, boolean jumpIfFalse, @NotNull InstructionAdapter v) {
-            left.put(this.operandType, v);
-            right.put(this.operandType, v);
-            int opcode;
-            if (opToken == JetTokens.EQEQ || opToken == JetTokens.EQEQEQ) {
-                opcode = jumpIfFalse ? IFNE : IFEQ;
-            }
-            else if (opToken == JetTokens.EXCLEQ || opToken == JetTokens.EXCLEQEQEQ) {
-                opcode = jumpIfFalse ? IFEQ : IFNE;
-            }
-            else if (opToken == JetTokens.GT) {
-                opcode = jumpIfFalse ? IFLE : IFGT;
-            }
-            else if (opToken == JetTokens.GTEQ) {
-                opcode = jumpIfFalse ? IFLT : IFGE;
-            }
-            else if (opToken == JetTokens.LT) {
-                opcode = jumpIfFalse ? IFGE : IFLT;
-            }
-            else if (opToken == JetTokens.LTEQ) {
-                opcode = jumpIfFalse ? IFGT : IFLE;
-            }
-            else {
-                throw new UnsupportedOperationException("Don't know how to generate this condJump: " + opToken);
-            }
-            if (operandType == Type.FLOAT_TYPE || operandType == Type.DOUBLE_TYPE) {
-                if (opToken == JetTokens.GT || opToken == JetTokens.GTEQ) {
-                    v.cmpl(operandType);
-                }
-                else {
-                    v.cmpg(operandType);
-                }
-            }
-            else if (operandType == Type.LONG_TYPE) {
-                v.lcmp();
-            }
-            else {
-                opcode += (IF_ICMPEQ - IFEQ);
-            }
-            v.visitJumpInsn(opcode, label);
-        }
-    }
-
-    private static class ObjectCompare extends NumberCompare {
-        public ObjectCompare(IElementType opToken, Type operandType, StackValue left, StackValue right) {
-            super(opToken, operandType, left, right);
-        }
-
-        @Override
-        public void condJump(@NotNull Label label, boolean jumpIfFalse, @NotNull InstructionAdapter v) {
-            left.put(this.operandType, v);
-            right.put(this.operandType, v);
-            int opcode;
-            if (opToken == JetTokens.EQEQEQ) {
-                opcode = jumpIfFalse ? IF_ACMPNE : IF_ACMPEQ;
-            }
-            else if (opToken == JetTokens.EXCLEQEQEQ) {
-                opcode = jumpIfFalse ? IF_ACMPEQ : IF_ACMPNE;
-            }
-            else {
-                throw new UnsupportedOperationException("don't know how to generate this condjump");
-            }
-            v.visitJumpInsn(opcode, label);
-        }
-    }
-
-    private static class Invert extends StackValue {
-        private final StackValue myOperand;
-
-        private Invert(StackValue operand) {
-            super(Type.BOOLEAN_TYPE);
-            myOperand = operand;
-            if (myOperand.type != Type.BOOLEAN_TYPE) {
-                throw new UnsupportedOperationException("operand of ! must be boolean");
-            }
-        }
-
-        @Override
-        public void putSelector(@NotNull Type type, @NotNull InstructionAdapter v) {
-            putAsBoolean(v);
-            coerceTo(type, v);
-        }
-
-        @Override
-        public void condJump(@NotNull Label label, boolean jumpIfFalse, @NotNull InstructionAdapter v) {
-            myOperand.condJump(label, !jumpIfFalse, v);
         }
     }
 
@@ -800,12 +695,12 @@ public abstract class StackValue {
         private final ResolvedCall<FunctionDescriptor> resolvedSetCall;
 
         public CollectionElementReceiver(
-                Callable callable,
-                StackValue receiver,
+                @NotNull Callable callable,
+                @NotNull StackValue receiver,
                 ResolvedCall<FunctionDescriptor> resolvedGetCall,
                 ResolvedCall<FunctionDescriptor> resolvedSetCall,
                 boolean isGetter,
-                ExpressionCodegen codegen,
+                @NotNull ExpressionCodegen codegen,
                 ArgumentGenerator argumentGenerator,
                 List<ResolvedValueArgument> valueArguments,
                 JetExpression array,
@@ -835,8 +730,8 @@ public abstract class StackValue {
                 @NotNull Type type, @NotNull InstructionAdapter v
         ) {
             ResolvedCall<?> call = isGetter ? resolvedGetCall : resolvedSetCall;
-            if (callable instanceof CallableMethod) {
-                StackValue newReceiver = StackValue.receiver(call, receiver, codegen, (CallableMethod) callable);
+            if (callable instanceof Callable) {
+                StackValue newReceiver = StackValue.receiver(call, receiver, codegen, (Callable) callable);
                 newReceiver.put(newReceiver.type, v);
                 argumentGenerator.generate(valueArguments);
             }
@@ -1002,8 +897,10 @@ public abstract class StackValue {
             this.state = state;
             this.setterDescriptor = resolvedSetCall == null ? null : resolvedSetCall.getResultingDescriptor();
             this.getterDescriptor = resolvedGetCall == null ? null : resolvedGetCall.getResultingDescriptor();
-            this.setter = resolvedSetCall == null ? null : codegen.resolveToCallable(setterDescriptor, false);
-            this.getter = resolvedGetCall == null ? null : codegen.resolveToCallable(getterDescriptor, false);
+            this.setter =
+                    resolvedSetCall == null ? null : (Callable) codegen.resolveToCallable(setterDescriptor, false, resolvedSetCall);
+            this.getter =
+                    resolvedGetCall == null ? null : (Callable) codegen.resolveToCallable(getterDescriptor, false, resolvedGetCall);
             this.codegen = codegen;
         }
 
@@ -1012,13 +909,8 @@ public abstract class StackValue {
             if (getter == null) {
                 throw new UnsupportedOperationException("no getter specified");
             }
-            if (getter instanceof CallableMethod) {
-                ((CallableMethod) getter).invokeWithNotNullAssertion(v, state, resolvedGetCall);
-            }
-            else {
-                StackValue result = ((IntrinsicMethod) getter).generate(codegen, this.type, null, Collections.<JetExpression>emptyList(), StackValue.none());
-                result.put(result.type, v);
-            }
+
+            getter.genInvokeInstruction(v);
             coerceTo(type, v);
         }
 
@@ -1068,21 +960,13 @@ public abstract class StackValue {
             if (setter == null) {
                 throw new UnsupportedOperationException("no setter specified");
             }
-            if (setter instanceof CallableMethod) {
-                CallableMethod method = (CallableMethod) setter;
-                Method asmMethod = method.getAsmMethod();
-                Type[] argumentTypes = asmMethod.getArgumentTypes();
-                coerce(topOfStackType, argumentTypes[argumentTypes.length - 1], v);
-                method.invokeWithNotNullAssertion(v, state, resolvedSetCall);
-                Type returnType = asmMethod.getReturnType();
-                if (returnType != Type.VOID_TYPE) {
-                    pop(v, returnType);
-                }
-            }
-            else {
-                //noinspection ConstantConditions
-                StackValue result = ((IntrinsicMethod) setter).generate(codegen, null, null, Collections.<JetExpression>emptyList(), StackValue.none());
-                result.put(result.type, v);
+
+            Type[] argumentTypes = setter.getParameterTypes();
+            coerce(topOfStackType, argumentTypes[argumentTypes.length - 1], v);
+            setter.genInvokeInstruction(v);
+            Type returnType = setter.getReturnType();
+            if (returnType != Type.VOID_TYPE) {
+                pop(v, returnType);
             }
         }
     }
@@ -1145,8 +1029,8 @@ public abstract class StackValue {
                 coerceTo(type, v);
             }
             else {
-                getter.invokeWithoutAssertions(v);
-                coerce(getter.getAsmMethod().getReturnType(), type, v);
+                getter.genInvokeInstruction(v);
+                coerce(getter.getReturnType(), type, v);
             }
         }
 
@@ -1158,7 +1042,7 @@ public abstract class StackValue {
                 v.visitFieldInsn(isStaticStore ? PUTSTATIC : PUTFIELD, backingFieldOwner.getInternalName(), fieldName, this.type.getDescriptor());
             }
             else {
-                setter.invokeWithoutAssertions(v);
+                setter.genInvokeInstruction(v);
             }
         }
 
@@ -1369,7 +1253,7 @@ public abstract class StackValue {
             value = StackValue.complexReceiver(value, true, false, true);
             value.put(this.type, v);
 
-            if (callable instanceof CallableMethod) {
+            if (callable instanceof Callable) {
                 value.store(codegen.invokeFunction(resolvedCall, StackValue.onStack(this.type)), v, true);
             }
             else {
@@ -1399,7 +1283,7 @@ public abstract class StackValue {
         public static Type calcType(
                 @NotNull ResolvedCall<?> resolvedCall,
                 @NotNull JetTypeMapper typeMapper,
-                @Nullable CallableMethod callableMethod
+                @Nullable Callable callableMethod
         ) {
             CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
 
@@ -1407,14 +1291,14 @@ public abstract class StackValue {
             ReceiverParameterDescriptor extensionReceiver = descriptor.getExtensionReceiverParameter();
 
             if (extensionReceiver != null) {
-                return callableMethod != null ? callableMethod.getReceiverClass() : typeMapper.mapType(extensionReceiver.getType());
+                return callableMethod != null ? callableMethod.getExtensionReceiverType() : typeMapper.mapType(extensionReceiver.getType());
             }
             else if (dispatchReceiver != null) {
                 if (AnnotationsPackage.isPlatformStaticInObjectOrClass(descriptor)) {
                     return Type.VOID_TYPE;
                 }
                 else {
-                    return callableMethod != null ? callableMethod.getThisType() : typeMapper.mapType(dispatchReceiver.getType());
+                    return callableMethod != null ? callableMethod.getDispatchReceiverType() : typeMapper.mapType(dispatchReceiver.getType());
                 }
             }
             else if (isLocalFunCall(callableMethod)) {

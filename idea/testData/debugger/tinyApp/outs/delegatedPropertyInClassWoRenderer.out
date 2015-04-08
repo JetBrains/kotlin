@@ -1,0 +1,32 @@
+LineBreakpoint created at delegatedPropertyInClassWoRenderer.kt:8
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! delegatedPropertyInClassWoRenderer.DelegatedPropertyInClassWoRendererPackage
+Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+delegatedPropertyInClassWoRenderer.kt:8
+package delegatedPropertyInClassWoRenderer
+
+import kotlin.properties.Delegates
+
+fun main(args: Array<String>) {
+    val a = A()
+    //Breakpoint!
+    args.size()
+}
+
+class A {
+    val prop by MyDelegate()
+}
+
+class MyDelegate {
+    fun get(t: Any?, p: PropertyMetadata): Int = 1
+}
+
+// RENDER_DELEGATED_PROPERTIES: false
+// PRINT_FRAME
+ frame    = main():8, DelegatedPropertyInClassWoRendererPackage$@packagePartHASH {delegatedPropertyInClassWoRenderer}
+   static   = static = delegatedPropertyInClassWoRenderer.DelegatedPropertyInClassWoRendererPackage$@packagePartHASH
+   local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = delegatedPropertyInClassWoRenderer.kt, 5)
+   local    = a: delegatedPropertyInClassWoRenderer.A = {delegatedPropertyInClassWoRenderer.A@uniqueID} (sp = delegatedPropertyInClassWoRenderer.kt, 6)
+     field    = prop: delegatedPropertyInClassWoRenderer.MyDelegate = {delegatedPropertyInClassWoRenderer.MyDelegate@uniqueID} (sp = delegatedPropertyInClassWoRenderer.kt, 12)
+Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+
+Process finished with exit code 0

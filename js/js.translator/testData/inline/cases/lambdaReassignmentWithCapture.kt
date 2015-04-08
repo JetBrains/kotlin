@@ -7,14 +7,14 @@ inline fun run(func: () -> Int): Int {
 }
 
 fun bar(p: IntPair): Int {
-    var f = { () -> p.fst++ }
+    var f = { -> p.fst++ }
     var get0 = f
 
-    f = { () -> ++p.snd }
+    f = { -> ++p.snd }
     var get1 = f
 
     var get2 = get1
-    f = { () -> ++p.fst }
+    f = { -> ++p.fst }
     get2 = f
 
     return run(get0) + run(get1) + run(get2)

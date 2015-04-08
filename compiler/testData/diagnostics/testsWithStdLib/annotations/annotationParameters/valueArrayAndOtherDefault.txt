@@ -1,0 +1,23 @@
+package
+
+A(value = {"1", "2", "3"}: kotlin.Array<out kotlin.String>) internal fun test1(): kotlin.Unit
+A(value = {"5", "6"}: kotlin.Array<kotlin.String>, x = kotlin.Any.class: java.lang.Class<kotlin.Any>, y = IntegerValueType(3): IntegerValueType(3)) internal fun test10(): kotlin.Unit
+A(value = {"5", "6", "7"}: kotlin.Array<kotlin.String>, x = kotlin.Any.class: java.lang.Class<kotlin.Any>, y = IntegerValueType(3): IntegerValueType(3)) internal fun test11(): kotlin.Unit
+A(value = {"4"}: kotlin.Array<out kotlin.String>) internal fun test2(): kotlin.Unit
+A(value = {{"5", "6"}, "7"}: kotlin.Array<out kotlin.String>) internal fun test3(): kotlin.Unit
+A(value = {"1", "2", "3"}: kotlin.Array<out kotlin.String>, x = kotlin.String.class: java.lang.Class<kotlin.String>) internal fun test4(): kotlin.Unit
+A(value = {"4"}: kotlin.Array<out kotlin.String>, y = IntegerValueType(2): IntegerValueType(2)) internal fun test5(): kotlin.Unit
+A(value = {{"5", "6"}, "7"}: kotlin.Array<out kotlin.String>, x = kotlin.Any.class: java.lang.Class<kotlin.Any>, y = IntegerValueType(3): IntegerValueType(3)) internal fun test6(): kotlin.Unit
+A(value = {}: kotlin.Array<out kotlin.String>) internal fun test7(): kotlin.Unit
+A(value = {}: kotlin.Array<out kotlin.String>) internal fun test8(): kotlin.Unit
+A(value = {}: kotlin.Array<out kotlin.String>, x = kotlin.Any.class: java.lang.Class<kotlin.Any>, y = IntegerValueType(3): IntegerValueType(3)) internal fun test9(): kotlin.Unit
+
+public final annotation class A : kotlin.Annotation {
+    public constructor A(/*0*/ vararg value: kotlin.String /*kotlin.Array<out kotlin.String>*/, /*1*/ x: java.lang.Class<*> = ..., /*2*/ y: kotlin.Int = ...)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public abstract fun value(): kotlin.Array<kotlin.String>
+    public abstract fun x(): java.lang.Class<*>
+    public abstract fun y(): kotlin.Int
+}

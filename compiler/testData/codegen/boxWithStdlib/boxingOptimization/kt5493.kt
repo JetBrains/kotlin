@@ -3,6 +3,6 @@ fun box() : String {
         return "OK"
     }
     finally {
-        null?.hashCode()
+        null?.toString()
     }
 }

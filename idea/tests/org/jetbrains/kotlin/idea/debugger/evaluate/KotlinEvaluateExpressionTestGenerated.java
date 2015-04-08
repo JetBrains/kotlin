@@ -399,6 +399,12 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
                 doSingleBreakpointTest(fileName);
             }
 
+            @TestMetadata("delegatedPropertyInClassWoRenderer.kt")
+            public void testDelegatedPropertyInClassWoRenderer() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/delegatedPropertyInClassWoRenderer.kt");
+                doSingleBreakpointTest(fileName);
+            }
+
             @TestMetadata("frameAnonymousObject.kt")
             public void testFrameAnonymousObject() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/frameAnonymousObject.kt");

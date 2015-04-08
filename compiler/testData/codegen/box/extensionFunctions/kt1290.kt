@@ -6,7 +6,7 @@ class Foo<T>(val filter: (T) -> Boolean) {
     }
 }
 
-fun foo() = Foo({ (i: Int) -> i < 5 }).bar(2)
+fun foo() = Foo({ i: Int -> i < 5 }).bar(2)
 
 fun box() : String {
     if (!foo()) return "fail"

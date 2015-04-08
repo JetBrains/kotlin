@@ -1,0 +1,17 @@
+package
+
+internal fun F(): kotlin.MutableMap<kotlin.String, kotlin.String>
+internal fun hashMapOf(/*0*/ pair: StringPair): kotlin.MutableMap<kotlin.String, kotlin.String>
+internal fun kotlin.String.to(/*0*/ second: kotlin.String): StringPair
+
+kotlin.data() internal final class StringPair {
+    public constructor StringPair(/*0*/ first: kotlin.String, /*1*/ second: kotlin.String)
+    internal final val first: kotlin.String
+    internal final val second: kotlin.String
+    internal final /*synthesized*/ fun component1(): kotlin.String
+    internal final /*synthesized*/ fun component2(): kotlin.String
+    public final /*synthesized*/ fun copy(/*0*/ first: kotlin.String = ..., /*1*/ second: kotlin.String = ...): StringPair
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

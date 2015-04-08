@@ -954,11 +954,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             }
         }
 
-        for (Type argType : callableMethod.getAsmMethod().getArgumentTypes()) {
+        for (Type argType : callableMethod.getParameterTypes()) {
             iv.load(reg, argType);
             reg += argType.getSize();
         }
-        callableMethod.invokeWithoutAssertions(iv);
+        callableMethod.genInvokeInstruction(iv);
     }
 
     private void generateFieldForSingleton() {

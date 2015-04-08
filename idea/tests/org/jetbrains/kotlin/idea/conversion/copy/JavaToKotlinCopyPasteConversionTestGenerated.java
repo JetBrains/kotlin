@@ -32,6 +32,36 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class JavaToKotlinCopyPasteConversionTestGenerated extends AbstractJavaToKotlinCopyPasteConversionTest {
+    @TestMetadata("AddImports.java")
+    public void testAddImports() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/conversion/AddImports.java");
+        doTest(fileName);
+    }
+
+    @TestMetadata("AddImportsButNoConversion.java")
+    public void testAddImportsButNoConversion() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/conversion/AddImportsButNoConversion.java");
+        doTest(fileName);
+    }
+
+    @TestMetadata("AddImportsButNoConversion2.java")
+    public void testAddImportsButNoConversion2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/conversion/AddImportsButNoConversion2.java");
+        doTest(fileName);
+    }
+
+    @TestMetadata("AddImportsClassInSamePackage.java")
+    public void testAddImportsClassInSamePackage() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/conversion/AddImportsClassInSamePackage.java");
+        doTest(fileName);
+    }
+
+    @TestMetadata("AddImportsDummyConflict.java")
+    public void testAddImportsDummyConflict() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/conversion/AddImportsDummyConflict.java");
+        doTest(fileName);
+    }
+
     public void testAllFilesPresentInConversion() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/copyPaste/conversion"), Pattern.compile("^(.+)\\.java$"), true);
     }
@@ -45,6 +75,12 @@ public class JavaToKotlinCopyPasteConversionTestGenerated extends AbstractJavaTo
     @TestMetadata("Constructor.java")
     public void testConstructor() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/conversion/Constructor.java");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ConversionInCorrectContext.java")
+    public void testConversionInCorrectContext() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/conversion/ConversionInCorrectContext.java");
         doTest(fileName);
     }
 
@@ -99,6 +135,18 @@ public class JavaToKotlinCopyPasteConversionTestGenerated extends AbstractJavaTo
     @TestMetadata("OnlyQualifier.java")
     public void testOnlyQualifier() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/conversion/OnlyQualifier.java");
+        doTest(fileName);
+    }
+
+    @TestMetadata("RedundantTypeCast.java")
+    public void testRedundantTypeCast() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/conversion/RedundantTypeCast.java");
+        doTest(fileName);
+    }
+
+    @TestMetadata("RedundantTypeCast2.java")
+    public void testRedundantTypeCast2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/conversion/RedundantTypeCast2.java");
         doTest(fileName);
     }
 

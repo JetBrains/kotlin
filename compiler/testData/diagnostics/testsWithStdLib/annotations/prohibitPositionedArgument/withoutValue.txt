@@ -1,0 +1,15 @@
+package
+
+A(a = IntegerValueType(1): IntegerValueType(1), b = 1.0.toDouble(): kotlin.Double, x = false: kotlin.Boolean) internal fun foo1(): kotlin.Unit
+A(a = IntegerValueType(2): IntegerValueType(2), b = 2.0.toDouble(): kotlin.Double, x = true: kotlin.Boolean) internal fun foo2(): kotlin.Unit
+A(a = IntegerValueType(4): IntegerValueType(4), b = 3.0.toDouble(): kotlin.Double, x = true: kotlin.Boolean) internal fun foo3(): kotlin.Unit
+
+public final annotation class A : kotlin.Annotation {
+    public constructor A(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Double, /*2*/ x: kotlin.Boolean)
+    public abstract fun a(): kotlin.Int
+    public abstract fun b(): kotlin.Double
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public abstract fun x(): kotlin.Boolean
+}

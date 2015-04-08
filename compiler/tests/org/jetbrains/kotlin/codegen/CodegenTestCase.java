@@ -23,7 +23,6 @@ import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
-import org.jetbrains.kotlin.cli.jvm.config.ConfigPackage;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.name.FqName;
@@ -133,10 +132,9 @@ public abstract class CodegenTestCase extends UsefulTestCase {
             fail("Double initialization of class loader in same test");
         }
 
-        ClassFileFactory factory = generateClassesInFile();
-        initializedClassLoader = new GeneratedClassLoader(factory, ForTestCompileRuntime.runtimeJarClassLoader(), getClassPathURLs());
+        initializedClassLoader = createClassLoader();
 
-        if (!verifyAllFilesWithAsm(factory, initializedClassLoader)) {
+        if (!verifyAllFilesWithAsm(generateClassesInFile(), initializedClassLoader)) {
             fail("Verification failed: see exceptions above");
         }
 
@@ -144,7 +142,12 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     }
 
     @NotNull
-    protected URL[] getClassPathURLs() {
+    protected GeneratedClassLoader createClassLoader() {
+        return new GeneratedClassLoader(generateClassesInFile(), ForTestCompileRuntime.runtimeJarClassLoader(), getClassPathURLs());
+    }
+
+    @NotNull
+    private URL[] getClassPathURLs() {
         List<URL> urls = Lists.newArrayList();
         for (File file : getJvmClasspathRoots(myEnvironment.getConfiguration())) {
             try {

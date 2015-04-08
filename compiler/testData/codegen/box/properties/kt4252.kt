@@ -6,7 +6,7 @@ public class Foo
         private var bar = 0
     }
 
-    {
+    init {
         ++bar
     }
 

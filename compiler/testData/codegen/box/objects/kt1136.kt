@@ -7,7 +7,7 @@ public object SomeObject {
         }
     }
 
-    {
+    init {
         workerThread.start()
     }
 
@@ -35,7 +35,7 @@ public class SomeClass() {
         }
     }
 
-    {
+    init {
         workerThread.start()
         workerThread.join()
     }

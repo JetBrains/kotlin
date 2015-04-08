@@ -117,7 +117,7 @@ object KDocRenderer {
 
     public fun MarkdownNode.toHtml(): String {
         val sb = StringBuilder()
-        visit {(node, processChildren) ->
+        visit { node, processChildren ->
             val nodeType = node.type
             val nodeText = node.text
             when (nodeType) {

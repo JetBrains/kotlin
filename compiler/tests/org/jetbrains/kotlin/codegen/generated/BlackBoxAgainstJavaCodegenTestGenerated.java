@@ -60,6 +60,18 @@ public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxCod
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxAgainstJava/annotations"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("javaAnnotationArrayValueDefault.kt")
+        public void testJavaAnnotationArrayValueDefault() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/annotations/javaAnnotationArrayValueDefault.kt");
+            doTestAgainstJava(fileName);
+        }
+
+        @TestMetadata("javaAnnotationArrayValueNoDefault.kt")
+        public void testJavaAnnotationArrayValueNoDefault() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/annotations/javaAnnotationArrayValueNoDefault.kt");
+            doTestAgainstJava(fileName);
+        }
+
         @TestMetadata("javaAnnotationCall.kt")
         public void testJavaAnnotationCall() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/annotations/javaAnnotationCall.kt");

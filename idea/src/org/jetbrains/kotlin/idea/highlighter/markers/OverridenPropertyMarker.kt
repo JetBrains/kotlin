@@ -47,7 +47,7 @@ fun getOverriddenPropertyTooltip(property: JetProperty): String? {
 
     val consumer = AdapterProcessor<PsiMethod, PsiClass>(
             CommonProcessors.UniqueProcessor<PsiClass>(PsiElementProcessorAdapter(overriddenInClassesProcessor)),
-            Function { (method: PsiMethod?): PsiClass? -> method?.getContainingClass() }
+            Function { method: PsiMethod? -> method?.getContainingClass() }
     )
 
     for (method in LightClassUtil.getLightClassPropertyMethods(property)) {

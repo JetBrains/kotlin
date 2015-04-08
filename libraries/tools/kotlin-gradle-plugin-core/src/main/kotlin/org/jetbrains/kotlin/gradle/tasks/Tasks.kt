@@ -209,7 +209,7 @@ public open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArgumen
     public val sourceMap: Boolean
             get() = kotlinOptions.sourceMap
 
-    {
+    init {
         getOutputs().file(MethodClosure(this, "getOutputFile"))
     }
 
@@ -255,7 +255,7 @@ public open class KDoc() : SourceTask() {
 
     public var destinationDir: File? = null
 
-    {
+    init {
         // by default, output dir is not defined in options
         kdocArgs.docConfig.docOutputDir = ""
     }

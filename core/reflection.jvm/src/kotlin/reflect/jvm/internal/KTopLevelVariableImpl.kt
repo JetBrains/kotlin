@@ -16,16 +16,14 @@
 
 package kotlin.reflect.jvm.internal
 
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import java.lang.reflect.Method
 import kotlin.reflect.IllegalPropertyAccessException
 import kotlin.reflect.KMutableTopLevelVariable
 import kotlin.reflect.KTopLevelVariable
 
-open class KTopLevelVariableImpl<out R>(
-        override val container: KPackageImpl,
-        computeDescriptor: () -> PropertyDescriptor
-) : DescriptorBasedProperty(computeDescriptor), KTopLevelVariable<R>, KVariableImpl<R> {
+open class KTopLevelVariableImpl<out R> : DescriptorBasedProperty, KTopLevelVariable<R>, KVariableImpl<R> {
+    constructor(container: KPackageImpl, name: String) : super(container, name, null)
+
     override val name: String get() = descriptor.getName().asString()
 
     override val getter: Method get() = super<DescriptorBasedProperty>.getter!!
@@ -41,10 +39,9 @@ open class KTopLevelVariableImpl<out R>(
     }
 }
 
-class KMutableTopLevelVariableImpl<R>(
-        container: KPackageImpl,
-        computeDescriptor: () -> PropertyDescriptor
-) : KTopLevelVariableImpl<R>(container, computeDescriptor), KMutableTopLevelVariable<R>, KMutableVariableImpl<R> {
+class KMutableTopLevelVariableImpl<R> : KTopLevelVariableImpl<R>, KMutableTopLevelVariable<R>, KMutableVariableImpl<R> {
+    constructor(container: KPackageImpl, name: String) : super(container, name)
+
     override val setter: Method get() = super<KTopLevelVariableImpl>.setter!!
 
     override fun set(value: R) {

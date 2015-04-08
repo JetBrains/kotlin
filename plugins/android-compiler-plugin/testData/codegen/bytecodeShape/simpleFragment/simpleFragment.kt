@@ -5,7 +5,7 @@ import java.io.File
 import kotlinx.android.synthetic.layout.*
 
 public class MyFragment : Fragment() {
-    {login}
+    init {login}
 }
 
 // 1 public _\$_findCachedViewById

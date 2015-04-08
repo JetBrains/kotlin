@@ -1,6 +1,6 @@
 // FILE: A.java
 public @interface A {
-    String[] arg();
+    String[] value();
 }
 
 // FILE: b.kt

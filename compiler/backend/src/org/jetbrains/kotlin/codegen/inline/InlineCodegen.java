@@ -125,7 +125,7 @@ public class InlineCodegen extends CallGenerator {
     }
 
     @Override
-    public void genCallInner(@NotNull CallableMethod callableMethod, @Nullable ResolvedCall<?> resolvedCall, boolean callDefault, @NotNull ExpressionCodegen codegen) {
+    public void genCallInner(@NotNull Callable callableMethod, @Nullable ResolvedCall<?> resolvedCall, boolean callDefault, @NotNull ExpressionCodegen codegen) {
         SMAPAndMethodNode nodeAndSmap = null;
 
         try {

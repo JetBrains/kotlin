@@ -49,7 +49,7 @@ public fun HierarchySearchRequest<PsiElement>.searchOverriders(): Query<PsiMetho
 
     return psiMethods
             .map { psiMethod -> KotlinPsiMethodOverridersSearch.search(copy(psiMethod)) }
-            .reduce {(query1, query2) -> MergeQuery(query1, query2)}
+            .reduce { query1, query2 -> MergeQuery(query1, query2)}
 }
 
 public object KotlinPsiMethodOverridersSearch : HierarchySearch<PsiMethod>(PsiMethodOverridingHierarchyTraverser) {

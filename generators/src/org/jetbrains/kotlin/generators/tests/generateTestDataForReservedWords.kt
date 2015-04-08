@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.renderer.KeywordStringsGenerated
 import com.google.dart.compiler.backend.js.ast.JsFunctionScope
 import org.jetbrains.kotlin.generators.di.GeneratorsFileUtil.writeFileIfContentChanged
 
-val commonCases: CaseBuilder.(String, String) -> Unit = { (testByName, testByRef) ->
+val commonCases: CaseBuilder.(String, String) -> Unit = { testByName, testByRef ->
     case("val", "val $KEYWORD_MARKER: Int", " = 0", testByName)
     case("var", "var $KEYWORD_MARKER: Int", " = 0", testByName)
     case("fun", "fun $KEYWORD_MARKER()", " { $KEYWORD_MARKER() }", testByRef)
@@ -142,7 +142,7 @@ fun box(): String {
         suite("dataClass",
 """
 data class DataClass($DEFINITION_MARKER: String) {
-    {
+    init {
         $TEST_BLOCK_MARKER
     }
 }

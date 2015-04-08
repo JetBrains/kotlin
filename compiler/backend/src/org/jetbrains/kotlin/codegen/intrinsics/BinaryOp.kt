@@ -16,39 +16,28 @@
 
 package org.jetbrains.kotlin.codegen.intrinsics
 
-import com.intellij.psi.PsiElement
-import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
-import org.jetbrains.kotlin.codegen.ExpressionCodegen
-import org.jetbrains.kotlin.codegen.StackValue
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.org.objectweb.asm.Opcodes.*
-import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
 import org.jetbrains.kotlin.codegen.AsmUtil.numberFunctionOperandType
+import org.jetbrains.kotlin.codegen.Callable
+import org.jetbrains.kotlin.codegen.CallableMethod
+import org.jetbrains.org.objectweb.asm.Opcodes.ISHL
+import org.jetbrains.org.objectweb.asm.Opcodes.ISHR
+import org.jetbrains.org.objectweb.asm.Opcodes.IUSHR
+import org.jetbrains.org.objectweb.asm.Type
 
 public class BinaryOp(private val opcode: Int) : IntrinsicMethod() {
 
-    override fun generateImpl(codegen: ExpressionCodegen, v: InstructionAdapter, returnType: Type, element: PsiElement?, arguments: List<JetExpression>, receiver: StackValue): Type {
-        assert(isPrimitive(returnType)) { "Return type of BinaryOp intrinsic should be of primitive type : " + returnType }
-
-        val operandType = numberFunctionOperandType(returnType)
-
-        if (arguments.size() == 1) {
-            // Intrinsic is called as an ordinary function
-            if (receiver != StackValue.none()) {
-                receiver.put(operandType, v)
-            }
-            codegen.gen(arguments.get(0), if (shift()) Type.INT_TYPE else operandType)
-        }
-        else {
-            codegen.gen(arguments.get(0), operandType)
-            codegen.gen(arguments.get(1), if (shift()) Type.INT_TYPE else operandType)
-        }
-        v.visitInsn(returnType.getOpcode(opcode))
-        return returnType
-    }
-
     private fun shift(): Boolean {
         return opcode == ISHL || opcode == ISHR || opcode == IUSHR
+    }
+
+    override fun toCallable(method: CallableMethod): Callable {
+        val returnType = method.returnType
+        assert(method.getValueParameters().size() == 1)
+        val operandType = numberFunctionOperandType(returnType)
+        val paramType = if (shift()) Type.INT_TYPE else operandType
+
+        return createBinaryIntrinsicCallable(operandType, paramType, operandType) {
+            v -> v.visitInsn(returnType.getOpcode(opcode))
+        }
     }
 }

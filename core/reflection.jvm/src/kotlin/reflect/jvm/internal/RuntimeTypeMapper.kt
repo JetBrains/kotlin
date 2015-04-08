@@ -17,6 +17,7 @@
 package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.jvm.IntrinsicObjects
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.load.java.structure.reflect.classId
@@ -30,11 +31,12 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
+import kotlin.reflect.KotlinReflectionInternalError
 
 object RuntimeTypeMapper : JavaToKotlinClassMapBuilder() {
     private val kotlinFqNameToJvmDesc = linkedMapOf<FqName, String>()
     private val kotlinFqNameToJvmDescNullable = linkedMapOf<FqName, String>()
-    private val jvmDescToKotlinClassId = linkedMapOf<String, ClassId>();
+    private val jvmDescToKotlinClassId = linkedMapOf<String, ClassId>()
 
     init {
         init()
@@ -61,8 +63,9 @@ object RuntimeTypeMapper : JavaToKotlinClassMapBuilder() {
 
         val companionObject = kotlinDescriptor.getCompanionObjectDescriptor()
         if (companionObject != null) {
-            // TODO: see org.jetbrains.kotlin.codegen.intrinsics.IntrinsicObjects, extract that logic to core/
-            recordMapping(companionObject, "Lkotlin/jvm/internal/${kotlinDescriptor.getName().asString()}CompanionObject;")
+            val runtimeCompanionFqName = IntrinsicObjects.mapType(companionObject)
+                                         ?: throw KotlinReflectionInternalError("Failed to map intrinsic companion of $kotlinDescriptor")
+            recordMapping(companionObject, ClassId.topLevel(runtimeCompanionFqName).desc)
         }
     }
 
@@ -72,6 +75,7 @@ object RuntimeTypeMapper : JavaToKotlinClassMapBuilder() {
     }
 
     override fun register(javaClass: Class<*>, kotlinDescriptor: ClassDescriptor, direction: JavaToKotlinClassMapBuilder.Direction) {
+        // TODO: use direction correctly
         recordMapping(kotlinDescriptor, javaClass.classId.desc)
     }
 

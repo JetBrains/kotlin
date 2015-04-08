@@ -84,4 +84,4 @@ fun JetType.getSubtypesPredicate(): TypePredicate {
 private fun JetType.render(): String = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(this)
 
 public fun <T> TypePredicate.expectedTypeFor(keys: Iterable<T>): Map<T, TypePredicate> =
-        keys.fold(SmartFMap.emptyMap<T, TypePredicate>()) { (map, key) -> map.plus(key, this) }
+        keys.fold(SmartFMap.emptyMap<T, TypePredicate>()) { map, key -> map.plus(key, this) }

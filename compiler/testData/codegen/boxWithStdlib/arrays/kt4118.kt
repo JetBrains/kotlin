@@ -1,10 +1,10 @@
 fun Array<String>.test1(): Array<String> {
-    val func = {(i:Int) -> this}
+    val func = { i:Int  -> this}
     return func(1)
 }
 
 fun Array<String>.test1Nested(): Array<String> {
-    val func = {(i:Int) -> { this }()}
+    val func = { i: Int -> { this }()}
     return func(1)
 }
 
@@ -71,7 +71,7 @@ fun Array<String>.test4Nested() : Array<String> {
 }
 
 fun Array<DoubleArray>.test1(): Array<DoubleArray> {
-    val func = {(i:Int) -> this}
+    val func = { i: Int -> this}
     return func(1)
 }
 

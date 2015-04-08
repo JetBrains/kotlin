@@ -181,6 +181,13 @@ public class LazyDeclarationResolver {
             }
 
             @Override
+            public DeclarationDescriptor visitPrimaryConstructor(@NotNull JetPrimaryConstructor constructor, Void data) {
+                JetClass klass = constructor.getContainingClass();
+                getClassDescriptor(klass).getConstructors();
+                return getBindingContext().get(BindingContext.CONSTRUCTOR, klass);
+            }
+
+            @Override
             public DeclarationDescriptor visitProperty(@NotNull JetProperty property, Void data) {
                 JetScope scopeForDeclaration = resolutionScopeToResolveDeclaration(property);
                 scopeForDeclaration.getProperties(property.getNameAsSafeName());

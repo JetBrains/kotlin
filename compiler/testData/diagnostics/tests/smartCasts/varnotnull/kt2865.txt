@@ -1,0 +1,5 @@
+package
+
+internal fun foo(/*0*/ a: kotlin.MutableMap<kotlin.String, kotlin.String>, /*1*/ x: kotlin.String?): kotlin.Unit
+internal fun foo1(/*0*/ a: kotlin.MutableMap<kotlin.String, kotlin.String>, /*1*/ x: kotlin.String?): kotlin.Unit
+internal fun </*0*/ K, /*1*/ V> kotlin.MutableMap<K, V>.set(/*0*/ k: K, /*1*/ v: V): kotlin.Unit

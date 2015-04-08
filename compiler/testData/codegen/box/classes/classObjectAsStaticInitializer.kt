@@ -2,7 +2,7 @@ var global = 0;
 
 class C {
   companion object {
-      {
+      init {
         global = 1;
       }
   }

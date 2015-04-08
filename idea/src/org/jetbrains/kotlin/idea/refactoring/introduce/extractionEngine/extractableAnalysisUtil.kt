@@ -435,7 +435,7 @@ fun TypeParameter.collectReferencedTypes(bindingContext: BindingContext): List<J
 }
 
 private fun JetType.isExtractable(targetScope: JetScope?): Boolean {
-    return collectReferencedTypes(true).fold(true) { (extractable, typeToCheck) ->
+    return collectReferencedTypes(true).fold(true) { extractable, typeToCheck ->
         val parameterTypeDescriptor = typeToCheck.getConstructor().getDeclarationDescriptor() as? TypeParameterDescriptor
         val typeParameter = parameterTypeDescriptor?.let {
             DescriptorToSourceUtils.descriptorToDeclaration(it)
@@ -452,7 +452,7 @@ private fun JetType.processTypeIfExtractable(
         targetScope: JetScope?,
         processTypeArguments: Boolean = true
 ): Boolean {
-    return collectReferencedTypes(processTypeArguments).fold(true) { (extractable, typeToCheck) ->
+    return collectReferencedTypes(processTypeArguments).fold(true) { extractable, typeToCheck ->
         val parameterTypeDescriptor = typeToCheck.getConstructor().getDeclarationDescriptor() as? TypeParameterDescriptor
         val typeParameter = parameterTypeDescriptor?.let {
             DescriptorToSourceUtils.descriptorToDeclaration(it)

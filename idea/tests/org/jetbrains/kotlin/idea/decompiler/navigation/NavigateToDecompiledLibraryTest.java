@@ -31,16 +31,21 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.LightProjectDescriptor;
+import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.JdkAndMockLibraryProjectDescriptor;
+import org.jetbrains.kotlin.idea.PluginTestCaseBase;
 import org.jetbrains.kotlin.idea.decompiler.JetClsFile;
 import org.jetbrains.kotlin.psi.JetDeclaration;
 import org.jetbrains.kotlin.psi.JetFile;
 
 import java.util.Map;
 
-public class NavigateToDecompiledLibraryTest extends AbstractNavigateToLibraryTest {
+public class NavigateToDecompiledLibraryTest extends LightCodeInsightFixtureTestCase {
+    protected static final String PACKAGE = "testData.libraries";
+    protected static final String TEST_DATA_PATH = PluginTestCaseBase.getTestDataPathBase() + "/decompiler/navigation";
+
     private VirtualFile classFile;
 
     public void testAbstractClass() {

@@ -1,6 +1,6 @@
 package foo
 
-val a1 = Array<Int>(3, {(i: Int) -> i })
+val a1 = Array<Int>(3, { i: Int -> i })
 
 fun box(): Boolean {
     val i = a1.iterator()

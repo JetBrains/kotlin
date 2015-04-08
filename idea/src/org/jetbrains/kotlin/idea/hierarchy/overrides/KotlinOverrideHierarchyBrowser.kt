@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.asJava.getRepresentativeLightMethod
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.ElementDescriptionUtil
 import com.intellij.refactoring.util.RefactoringDescriptionLocation
+import com.intellij.usageView.UsageViewLongNameLocation
 import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.asJava.unwrapped
 
@@ -57,7 +58,7 @@ class KotlinOverrideHierarchyBrowser(
     override fun getContentDisplayName(typeName: String, element: PsiElement): String? {
         val targetElement = element.unwrapped
         if (targetElement is JetDeclaration) {
-            return ElementDescriptionUtil.getElementDescription(targetElement, RefactoringDescriptionLocation.WITHOUT_PARENT)
+            return ElementDescriptionUtil.getElementDescription(targetElement, UsageViewLongNameLocation.INSTANCE)
         }
         return super.getContentDisplayName(typeName, element)
     }

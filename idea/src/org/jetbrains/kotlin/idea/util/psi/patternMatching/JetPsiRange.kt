@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.psiUtil.siblings
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiRange.Match
 
-private val SIGNIFICANT_FILTER = { (e: PsiElement) -> e !is PsiWhiteSpace && e !is PsiComment && e.getTextLength() > 0 }
+private val SIGNIFICANT_FILTER = { e: PsiElement -> e !is PsiWhiteSpace && e !is PsiComment && e.getTextLength() > 0 }
 
 public trait JetPsiRange {
     public object Empty : JetPsiRange {

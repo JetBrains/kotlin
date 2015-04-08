@@ -146,7 +146,7 @@ public class CapturedTypeApproximationTest() : JetLiteFixture() {
         addRandomVariants("00200", "22213", "12114", "20304", "34014", "41333", "11214", "02004", "43244", "03004")
         addRandomVariants("021022", "124230", "210030", "202344", "043234", "024400", "102121", "423143", "132121", "233001")
 
-        return variants.map { it.fold("#T#") {(type, index) -> type.replace("#T#", typePatterns[index]) } }
+        return variants.map { it.fold("#T#") { type, index -> type.replace("#T#", typePatterns[index]) } }
     }
 
     private fun getTestTypesForTwoTypeVariables(): List<String> {

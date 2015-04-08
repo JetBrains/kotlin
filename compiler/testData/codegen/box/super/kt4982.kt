@@ -1,5 +1,5 @@
 abstract class WaitFor {
-    {
+    init {
         condition()
     }
 

@@ -25,6 +25,7 @@ fun testCompanionObjectAccess() {
     val l = Long
     val sh = Short
     val b = Byte
+    val ch = Char
     val st = String
     val en = Enum
 }
@@ -36,6 +37,7 @@ fun testInCall() {
     test(Long)
     test(Short)
     test(Byte)
+    test(Char)
     test(String)
     test(Enum)
 }

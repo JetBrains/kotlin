@@ -1,1 +1,1 @@
-b - c + d
+val v = b - c + d

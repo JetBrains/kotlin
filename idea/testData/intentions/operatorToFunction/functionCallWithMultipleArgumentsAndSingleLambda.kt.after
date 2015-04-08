@@ -4,5 +4,5 @@ class Mocha() {
 }
 fun main() {
     val mocha = Mocha()
-    val testing = mocha.invoke(1, "fire"){ (x: Int) -> "hello world" }
+    val testing = mocha.invoke(1, "fire"){ x: Int -> "hello world" }
 }

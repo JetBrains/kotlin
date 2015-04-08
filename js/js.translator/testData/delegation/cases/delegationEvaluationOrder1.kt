@@ -11,7 +11,7 @@ class BaseImpl(val s: String) : Base {
 var global = ""
 
 open class DerivedBase() {
-    {
+    init {
         global += ":DerivedBase"
     }
 }
@@ -22,13 +22,13 @@ fun newBase(): Base {
 }
 
 class Derived() : DerivedBase(), Base by newBase() {
-    {
+    init {
         global += ":Derived"
     }
 }
 
 class Derived1() : Base by newBase(), DerivedBase() {
-    {
+    init {
         global += ":Derived"
     }
 }
