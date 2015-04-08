@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.lazy
 
+import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.storage.MemoizedFunctionToNullable
 import org.jetbrains.kotlin.name.FqName
@@ -28,10 +29,12 @@ import org.jetbrains.kotlin.utils.emptyOrSingletonList
 
 public class LazyJavaPackageFragmentProvider(
         outerContext: GlobalJavaResolverContext,
-        module: ModuleDescriptor
+        module: ModuleDescriptor,
+        reflectionTypes: ReflectionTypes
 ) : PackageFragmentProvider {
 
-    private val c = LazyJavaResolverContext(outerContext, this, FragmentClassResolver(), module, TypeParameterResolver.EMPTY)
+    private val c =
+            LazyJavaResolverContext(outerContext, this, FragmentClassResolver(), module, reflectionTypes, TypeParameterResolver.EMPTY)
 
     private val packageFragments: MemoizedFunctionToNullable<FqName, LazyJavaPackageFragment> =
             c.storageManager.createMemoizedFunctionWithNullableValues {
