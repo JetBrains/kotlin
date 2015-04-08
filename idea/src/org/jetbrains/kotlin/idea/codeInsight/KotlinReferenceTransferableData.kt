@@ -62,7 +62,8 @@ public class KotlinReferenceData(
         CLASS
         PACKAGE
         NON_EXTENSION_CALLABLE
-        EXTENSION_CALLABLE
+        EXTENSION_FUNCTION
+        EXTENSION_PROPERTY
     }
 
     public override fun clone(): KotlinReferenceData {

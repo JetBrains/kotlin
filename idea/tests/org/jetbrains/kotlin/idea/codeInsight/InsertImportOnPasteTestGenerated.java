@@ -42,6 +42,12 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/copyPaste/imports"), Pattern.compile("^([^\\.]+)\\.kt$"), false);
         }
 
+        @TestMetadata("AlreadyImportedExtensions.kt")
+        public void testAlreadyImportedExtensions() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/AlreadyImportedExtensions.kt");
+            doTestCopy(fileName);
+        }
+
         @TestMetadata("AlreadyImportedViaStar.kt")
         public void testAlreadyImportedViaStar() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/AlreadyImportedViaStar.kt");
@@ -361,6 +367,12 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
     public static class Cut extends AbstractInsertImportOnPasteTest {
         public void testAllFilesPresentInCut() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/copyPaste/imports"), Pattern.compile("^([^\\.]+)\\.kt$"), false);
+        }
+
+        @TestMetadata("AlreadyImportedExtensions.kt")
+        public void testAlreadyImportedExtensions() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/AlreadyImportedExtensions.kt");
+            doTestCut(fileName);
         }
 
         @TestMetadata("AlreadyImportedViaStar.kt")

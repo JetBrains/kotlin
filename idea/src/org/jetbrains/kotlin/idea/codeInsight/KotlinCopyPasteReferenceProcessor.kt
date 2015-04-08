@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.codeInsight
 
 import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.codeInsight.editorActions.CopyPastePostProcessor
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.RangeMarker
@@ -29,10 +28,7 @@ import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.shorten.performDelayedShortening
@@ -57,6 +53,7 @@ import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver
 import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver.LookupMode
 import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
+import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.awt.datatransfer.Transferable
@@ -181,8 +178,11 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
             is PackageViewDescriptor ->
                 KotlinReferenceData.Kind.PACKAGE
 
-            is CallableDescriptor ->
-                if (descriptor.isExtension) KotlinReferenceData.Kind.EXTENSION_CALLABLE else KotlinReferenceData.Kind.NON_EXTENSION_CALLABLE
+            is FunctionDescriptor ->
+                if (descriptor.isExtension) KotlinReferenceData.Kind.EXTENSION_FUNCTION else KotlinReferenceData.Kind.NON_EXTENSION_CALLABLE
+
+            is PropertyDescriptor ->
+                if (descriptor.isExtension) KotlinReferenceData.Kind.EXTENSION_PROPERTY else KotlinReferenceData.Kind.NON_EXTENSION_CALLABLE
 
             else ->
                 null
@@ -229,10 +229,11 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
     private fun findReferencesToRestore(file: PsiFile, blockStart: Int, referenceData: Array<out KotlinReferenceData>): List<ReferenceToRestoreData> {
         if (file !is JetFile) return listOf()
 
+        val fileResolutionScope = file.getResolutionFacade().getFileTopLevelScope(file)
         return referenceData.map {
             val referenceElement = findReference(it, file, blockStart)
             if (referenceElement != null)
-                createReferenceToRestoreData(referenceElement, it)
+                createReferenceToRestoreData(referenceElement, it, fileResolutionScope)
             else
                 null
         }.filterNotNull()
@@ -259,7 +260,16 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
         return null
     }
 
-    private fun createReferenceToRestoreData(element: JetElement, refData: KotlinReferenceData): ReferenceToRestoreData? {
+    private fun createReferenceToRestoreData(element: JetElement, refData: KotlinReferenceData, fileResolutionScope: JetScope): ReferenceToRestoreData? {
+        val originalFqName = FqName(refData.fqName)
+
+        if (refData.kind == KotlinReferenceData.Kind.EXTENSION_FUNCTION) {
+            if (fileResolutionScope.getFunctions(originalFqName.shortName()).any { it.importableFqName == originalFqName }) return null // already imported
+        }
+        else if (refData.kind == KotlinReferenceData.Kind.EXTENSION_PROPERTY) {
+            if (fileResolutionScope.getProperties(originalFqName.shortName()).any { it.importableFqName == originalFqName }) return null // already imported
+        }
+
         val reference = element.getReference() as? JetReference ?: return null
         val referencedDescriptors = try {
             reference.resolveToDescriptors(element.analyze()) //TODO: we could use partial body resolve for all references together
@@ -273,7 +283,6 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
                 .map { it.importableFqName }
                 .filterNotNull()
                 .toSet()
-        val originalFqName = FqName(refData.fqName)
         if (referencedFqNames.singleOrNull() == originalFqName) return null
         return ReferenceToRestoreData(reference, refData)
     }
@@ -292,12 +301,12 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
         for ((reference, refData) in referencesToRestore) {
             val fqName = FqName(refData.fqName)
 
-            if (refData.kind != KotlinReferenceData.Kind.EXTENSION_CALLABLE && reference is JetSimpleNameReference) {
+            if (!refData.kind.isExtensionCallable() && reference is JetSimpleNameReference) {
                 val pointer = smartPointerManager.createSmartPsiElementPointer(reference.getElement(), file)
                 bindingRequests.add(BindingRequest(pointer, fqName))
             }
 
-            if (refData.kind == KotlinReferenceData.Kind.EXTENSION_CALLABLE) {
+            if (refData.kind.isExtensionCallable()) {
                 extensionsToImport.addIfNotNull(findCallableToImport(fqName, file))
             }
         }
@@ -312,6 +321,9 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
         performDelayedShortening(file.getProject())
     }
 
+    private fun KotlinReferenceData.Kind.isExtensionCallable()
+            = this == KotlinReferenceData.Kind.EXTENSION_FUNCTION || this == KotlinReferenceData.Kind.EXTENSION_PROPERTY
+
     private fun findCallableToImport(fqName: FqName, file: JetFile): CallableDescriptor? {
         val importDirective = JetPsiFactory(file.getProject()).createImportDirective(ImportPath(fqName, false))
         val moduleDescriptor = file.getResolutionFacade().findModuleDescriptor(file)
@@ -320,7 +332,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
                 .processImportReference(importDirective, scope, scope, BindingTraceContext(), LookupMode.EVERYTHING)
                 .getAllDescriptors()
                 .filterIsInstance<CallableDescriptor>()
-        return descriptors.singleOrNull()
+        return descriptors.singleOrNull() //TODO: not correct
     }
 
     private fun showRestoreReferencesDialog(project: Project, referencesToRestore: List<ReferenceToRestoreData>): Collection<ReferenceToRestoreData> {
