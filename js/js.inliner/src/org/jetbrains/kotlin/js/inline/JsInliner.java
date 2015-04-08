@@ -23,11 +23,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink;
 import org.jetbrains.kotlin.js.inline.context.*;
+import org.jetbrains.kotlin.js.inline.util.ExpressionDecomposer;
 import org.jetbrains.kotlin.js.resolve.diagnostics.ErrorsJs;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.resolve.inline.InlineStrategy;
 
 import java.util.*;
+import kotlin.Function1;
 
 import static org.jetbrains.kotlin.js.inline.FunctionInlineMutator.getInlineableCallReplacement;
 import static org.jetbrains.kotlin.js.inline.clean.CleanPackage.removeUnusedFunctionDefinitions;
@@ -47,6 +49,15 @@ public class JsInliner extends JsVisitorWithContextImpl {
     // these are needed for error reporting, when inliner detects cycle
     private final Stack<JsFunction> namedFunctionsStack = new Stack<JsFunction>();
     private final LinkedList<JsCallInfo> inlineCallInfos = new LinkedList<JsCallInfo>();
+    private final Function1<JsNode, Boolean> canBeExtractedByInliner = new Function1<JsNode, Boolean>() {
+        @Override
+        public Boolean invoke(JsNode node) {
+            if (!(node instanceof JsInvocation)) return false;
+
+            JsInvocation call = (JsInvocation) node;
+            return hasToBeInlined(call);
+        }
+    };
 
     public static JsProgram process(@NotNull TranslationContext context) {
         JsProgram program = context.program();
@@ -100,24 +111,21 @@ public class JsInliner extends JsVisitorWithContextImpl {
 
     @Override
     public boolean visit(@NotNull JsInvocation call, @NotNull JsContext context) {
-        if (shouldInline(call) && canInline(call)) {
-            JsFunction containingFunction = getCurrentNamedFunction();
-            if (containingFunction != null) {
-                inlineCallInfos.add(new JsCallInfo(call, containingFunction));
-            }
+        if (!hasToBeInlined(call)) return true;
 
-            JsFunction definition = getFunctionContext().getFunctionDefinition(call);
+        JsFunction containingFunction = getCurrentNamedFunction();
 
-            if (inProcessFunctions.contains(definition))  {
-                reportInlineCycle(call, definition);
-                return false;
-            }
+        if (containingFunction != null) {
+            inlineCallInfos.add(new JsCallInfo(call, containingFunction));
+        }
 
-            if (!processedFunctions.contains(definition)) {
-                accept(definition);
-            }
+        JsFunction definition = getFunctionContext().getFunctionDefinition(call);
 
-            inline(call, context);
+        if (inProcessFunctions.contains(definition))  {
+            reportInlineCycle(call, definition);
+        }
+        else if (!processedFunctions.contains(definition)) {
+            accept(definition);
         }
 
         return true;
@@ -125,6 +133,10 @@ public class JsInliner extends JsVisitorWithContextImpl {
 
     @Override
     public void endVisit(@NotNull JsInvocation x, @NotNull JsContext ctx) {
+        if (hasToBeInlined(x)) {
+            inline(x, ctx);
+        }
+
         JsCallInfo lastCallInfo = null;
 
         if (!inlineCallInfos.isEmpty()) {
@@ -134,6 +146,25 @@ public class JsInliner extends JsVisitorWithContextImpl {
         if (lastCallInfo != null && lastCallInfo.call == x) {
             inlineCallInfos.removeLast();
         }
+    }
+
+    @Override
+    protected void doAcceptStatementList(List<JsStatement> statements) {
+        // at top level of js ast, contexts stack can be empty,
+        // but there is no inline calls anyway
+        if(!inliningContexts.isEmpty()) {
+            JsScope scope = getFunctionContext().getScope();
+            int i = 0;
+
+            while (i < statements.size()) {
+                List<JsStatement> additionalStatements =
+                        ExpressionDecomposer.preserveEvaluationOrder(scope, statements.get(i), canBeExtractedByInliner);
+                statements.addAll(i, additionalStatements);
+                i += additionalStatements.size() + 1;
+            }
+        }
+
+        super.doAcceptStatementList(statements);
     }
 
     private void inline(@NotNull JsInvocation call, @NotNull JsContext context) {
@@ -146,7 +177,9 @@ public class JsInliner extends JsVisitorWithContextImpl {
         JsExpression resultExpression = inlineableResult.getResultExpression();
         JsContext<JsStatement> statementContext = inliningContext.getStatementContext();
         // body of inline function can contain call to lambdas that need to be inlined
-        accept(inlineableBody);
+        JsStatement statement = accept(inlineableBody);
+        assert inlineableBody == statement;
+
         statementContext.addPrevious(flattenStatement(inlineableBody));
 
         /**
@@ -195,14 +228,11 @@ public class JsInliner extends JsVisitorWithContextImpl {
         }
     }
 
-    private boolean canInline(@NotNull JsInvocation call) {
-        FunctionContext functionContext = getFunctionContext();
-        return functionContext.hasFunctionDefinition(call);
-    }
-
-    private static boolean shouldInline(@NotNull JsInvocation call) {
+    public boolean hasToBeInlined(@NotNull JsInvocation call) {
         InlineStrategy strategy = MetadataPackage.getInlineStrategy(call);
-        return strategy != null && strategy.isInline();
+        if (strategy == null || !strategy.isInline()) return false;
+
+        return getFunctionContext().hasFunctionDefinition(call);
     }
 
     private class JsInliningContext implements InliningContext {

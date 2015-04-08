@@ -16,9 +16,8 @@
 
 package org.jetbrains.kotlin.js.translate.utils.ast
 
-import com.google.dart.compiler.backend.js.ast.JsFunction
-import com.google.dart.compiler.backend.js.ast.JsStatement
-import com.google.dart.compiler.backend.js.ast.JsParameter
+import com.google.dart.compiler.backend.js.ast.*
+import org.jetbrains.kotlin.js.inline.util.IdentitySet
 
 public fun JsFunction.addStatement(stmt: JsStatement) {
     getBody().getStatements().add(stmt)
@@ -35,4 +34,24 @@ public fun JsFunction.addParameter(identifier: String, index: Int? = null): JsPa
     }
 
     return parameter
+}
+
+/**
+ * Tests, if any node containing in receiver's AST matches, [predicate].
+ */
+public fun JsNode.any(predicate: (JsNode) -> Boolean): Boolean {
+    val visitor = object : RecursiveJsVisitor() {
+        public var matched: Boolean = false
+
+        override fun visitElement(node: JsNode) {
+            matched = matched || predicate(node)
+
+            if (!matched) {
+                super.visitElement(node)
+            }
+        }
+    }
+
+    visitor.accept(this)
+    return visitor.matched
 }

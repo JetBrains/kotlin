@@ -16,67 +16,33 @@
 
 package org.jetbrains.kotlin.js.inline.util
 
-import com.google.dart.compiler.backend.js.ast.JsArrayAccess
-import com.google.dart.compiler.backend.js.ast.JsArrayLiteral
-import com.google.dart.compiler.backend.js.ast.JsBinaryOperation
-import com.google.dart.compiler.backend.js.ast.JsConditional
-import com.google.dart.compiler.backend.js.ast.JsExpression
-import com.google.dart.compiler.backend.js.ast.JsInvocation
-import com.google.dart.compiler.backend.js.ast.JsLiteral.JsThisRef
-import com.google.dart.compiler.backend.js.ast.JsLiteral.JsValueLiteral
-import com.google.dart.compiler.backend.js.ast.JsNameRef
-import com.google.dart.compiler.backend.js.ast.JsNode
-import com.google.dart.compiler.backend.js.ast.RecursiveJsVisitor
+import com.google.dart.compiler.backend.js.ast.JsLiteral.*
+import com.google.dart.compiler.backend.js.ast.*
+import org.jetbrains.kotlin.js.translate.utils.ast.any
 
-public fun canHaveSideEffect(x: JsExpression): Boolean {
-    return with(SideEffectVisitor()) {
-        accept(x)
-        !sideEffectFree
-    }
-}
+public fun JsExpression.canHaveSideEffect(): Boolean =
+        any { it is JsExpression && it.canHaveOwnSideEffect() }
 
-public fun needToAlias(x: JsExpression): Boolean {
-    return with(NeedToAliasVisitor()) {
-        accept(x)
-        !sideEffectFree
-    }
-}
-
-private open class SideEffectVisitor() : RecursiveJsVisitor() {
-    public var sideEffectFree: Boolean = true
-        protected set
-
-    override fun visitElement(node: JsNode) {
-        sideEffectFree = sideEffectFree && isSideEffectFree(node)
-
-        if (sideEffectFree) {
-            super.visitElement(node)
-        }
+public fun JsExpression.canHaveOwnSideEffect(): Boolean =
+    when (this) {
+        is JsValueLiteral,
+        is JsConditional,
+        is JsArrayAccess,
+        is JsArrayLiteral,
+        is JsNameRef -> false
+        is JsBinaryOperation -> getOperator().isAssignment()
+        else -> true
     }
 
-    protected open fun isSideEffectFree(node: JsNode): Boolean =
-        when (node) {
-            is JsValueLiteral,
-            is JsConditional,
-            is JsArrayAccess,
-            is JsArrayLiteral,
-            is JsNameRef ->
-                true
-            is JsBinaryOperation ->
-                !node.getOperator().isAssignment()
-            else ->
-                false
-        }
-}
+public fun JsExpression.needToAlias(): Boolean =
+        any { it is JsExpression && it.shouldHaveOwnAlias() }
 
-private class NeedToAliasVisitor() : SideEffectVisitor() {
-    override fun isSideEffectFree(node: JsNode): Boolean =
-        when (node) {
+public fun JsExpression.shouldHaveOwnAlias(): Boolean =
+        when (this) {
             is JsThisRef,
             is JsConditional,
             is JsBinaryOperation,
-            is JsArrayLiteral -> false
-            is JsInvocation -> isFunctionCreatorInvocation(node)
-            else -> super.isSideEffectFree(node)
+            is JsArrayLiteral -> true
+            is JsInvocation -> !isFunctionCreatorInvocation(this)
+            else -> canHaveOwnSideEffect()
         }
-}

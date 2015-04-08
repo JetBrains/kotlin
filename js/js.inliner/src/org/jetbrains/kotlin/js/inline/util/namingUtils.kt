@@ -32,7 +32,7 @@ public fun aliasArgumentsIfNeeded(
     for ((arg, param) in arguments zip parameters) {
         val paramName = param.getName()
         val replacement =
-                if (needToAlias(arg)) {
+                if (arg.needToAlias()) {
                     val freshName = context.getFreshName(paramName)
                     context.newVar(freshName, arg)
                     freshName.makeRef()

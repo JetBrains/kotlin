@@ -59,7 +59,7 @@ class ReturnReplacingVisitor(private val resultRef: JsNameRef?, private val brea
             if (resultRef != null)
                 return JsAstUtils.assignment(resultRef, returnExpression)
 
-            if (canHaveSideEffect(returnExpression))
+            if (returnExpression.canHaveSideEffect())
                 return returnExpression
         }
 
