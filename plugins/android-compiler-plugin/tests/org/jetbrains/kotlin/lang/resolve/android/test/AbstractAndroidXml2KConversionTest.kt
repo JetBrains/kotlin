@@ -31,12 +31,15 @@ import kotlin.test.*
 public abstract class AbstractAndroidXml2KConversionTest : UsefulTestCase() {
 
     public fun doTest(path: String) {
+        val testDirectory = File(path)
+
         val jetCoreEnvironment = getEnvironment()
         val parser = CliAndroidUIXmlProcessor(jetCoreEnvironment.project, path + "AndroidManifest.xml", path + "/res")
+        parser.supportV4 = testDirectory.name.startsWith("support")
 
         val actual = parser.parse(false).toMap { it.name }
 
-        val expectedLayoutFiles = File(path).listFiles {
+        val expectedLayoutFiles = testDirectory.listFiles {
             it.isFile() && it.name.endsWith(".kt")
         }?.toMap { it.name.substringBefore(".kt") } ?: mapOf()
 
