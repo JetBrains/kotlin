@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.resolve.TypeResolver;
 import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver;
 import org.jetbrains.kotlin.resolve.TypeResolver.FlexibleTypeCapabilitiesProvider;
 import org.jetbrains.kotlin.resolve.FunctionDescriptorResolver;
-import org.jetbrains.kotlin.types.reflect.ReflectionTypes;
+import org.jetbrains.kotlin.builtins.ReflectionTypes;
 import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver;
 import org.jetbrains.kotlin.resolve.StatementFilter;
 import org.jetbrains.kotlin.resolve.calls.CallCompleter;

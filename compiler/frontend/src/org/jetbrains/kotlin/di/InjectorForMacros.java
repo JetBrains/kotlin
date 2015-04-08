@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.types.DynamicTypesSettings;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.kotlin.types.expressions.ForLoopConventionsChecker;
 import org.jetbrains.kotlin.types.expressions.LocalClassifierAnalyzer;
-import org.jetbrains.kotlin.types.reflect.ReflectionTypes;
+import org.jetbrains.kotlin.builtins.ReflectionTypes;
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.kotlin.resolve.calls.CallCompleter;
 import org.jetbrains.kotlin.resolve.calls.CandidateResolver;

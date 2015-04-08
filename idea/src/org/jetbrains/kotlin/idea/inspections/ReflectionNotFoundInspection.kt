@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetVisitorVoid
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
-import org.jetbrains.kotlin.types.reflect.ReflectionTypes
+import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.singletonOrEmptyList

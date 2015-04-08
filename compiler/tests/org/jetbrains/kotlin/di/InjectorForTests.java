@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils;
 import org.jetbrains.kotlin.types.DynamicTypesSettings;
 import org.jetbrains.kotlin.types.expressions.ForLoopConventionsChecker;
 import org.jetbrains.kotlin.types.expressions.LocalClassifierAnalyzer;
-import org.jetbrains.kotlin.types.reflect.ReflectionTypes;
+import org.jetbrains.kotlin.builtins.ReflectionTypes;
 import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver;
 import org.jetbrains.kotlin.resolve.StatementFilter;
 import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver;

@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.tasks.TasksPackage;
-import org.jetbrains.kotlin.types.reflect.ReflectionTypes;
+import org.jetbrains.kotlin.builtins.ReflectionTypes;
 
 import java.util.Map;
 

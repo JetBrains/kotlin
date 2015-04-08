@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
-import org.jetbrains.kotlin.types.reflect.ReflectionTypes;
+import org.jetbrains.kotlin.builtins.ReflectionTypes;
 
 import java.util.ArrayList;
 import java.util.Arrays;

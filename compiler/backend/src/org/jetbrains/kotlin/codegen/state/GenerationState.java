@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.psi.JetScript;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace;
-import org.jetbrains.kotlin.types.reflect.ReflectionTypes;
+import org.jetbrains.kotlin.builtins.ReflectionTypes;
 
 import java.io.File;
 import java.util.Collection;
