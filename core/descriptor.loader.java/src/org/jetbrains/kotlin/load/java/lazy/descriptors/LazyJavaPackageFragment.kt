@@ -24,7 +24,7 @@ import kotlin.properties.Delegates
 class LazyJavaPackageFragment(
         private val c: LazyJavaResolverContext,
         private val jPackage: JavaPackage
-) : PackageFragmentDescriptorImpl(c.packageFragmentProvider.module, jPackage.getFqName()) {
+) : PackageFragmentDescriptorImpl(c.module, jPackage.getFqName()) {
     private val scope by Delegates.lazy { LazyPackageFragmentScopeForJavaPackage(c, jPackage, this) }
 
     override fun getMemberScope() = scope

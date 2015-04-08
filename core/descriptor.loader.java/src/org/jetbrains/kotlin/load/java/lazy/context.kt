@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.load.java.lazy
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.load.java.lazy.types.LazyJavaTypeResolver
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.components.*
 import org.jetbrains.kotlin.load.kotlin.DeserializedDescriptorResolver
@@ -48,6 +49,7 @@ open class LazyJavaResolverContext(
         globalContext: GlobalJavaResolverContext,
         val packageFragmentProvider: LazyJavaPackageFragmentProvider,
         val javaClassResolver: LazyJavaClassResolver,
+        val module: ModuleDescriptor,
         val typeParameterResolver: TypeParameterResolver
 ) : GlobalJavaResolverContext(
         globalContext.storageManager,
@@ -69,7 +71,7 @@ open class LazyJavaResolverContext(
 
 fun LazyJavaResolverContext.child(
         typeParameterResolver: TypeParameterResolver
-) = LazyJavaResolverContext(this, packageFragmentProvider, javaClassResolver, typeParameterResolver)
+) = LazyJavaResolverContext(this, packageFragmentProvider, javaClassResolver, module, typeParameterResolver)
 
 
 fun LazyJavaResolverContext.child(

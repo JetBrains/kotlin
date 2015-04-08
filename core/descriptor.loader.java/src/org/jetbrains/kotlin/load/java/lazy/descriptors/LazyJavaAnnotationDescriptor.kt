@@ -151,7 +151,7 @@ class LazyJavaAnnotationDescriptor(
                 TypeUsage.MEMBER_SIGNATURE_INVARIANT.toAttributes(allowFlexible = false))
         )
 
-        val jlClass = c.packageFragmentProvider.module.resolveTopLevelClass(FqName("java.lang.Class"))
+        val jlClass = c.module.resolveTopLevelClass(FqName("java.lang.Class"))
         if (jlClass == null) return null
 
         val arguments = listOf(TypeProjectionImpl(type))
