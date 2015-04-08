@@ -22,6 +22,7 @@ import com.intellij.codeInsight.template.impl.TemplateState;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.Result;
+import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.markup.RangeHighlighter;
@@ -136,6 +137,16 @@ public class KotlinInplaceVariableIntroducer<D extends JetCallableDeclaration> e
         myDoNotChangeVar = doNotChangeVar;
         myExprType = exprType;
         this.noTypeInference = noTypeInference;
+
+        String advertisementActionId = getAdvertisementActionId();
+        if (advertisementActionId != null) {
+            showDialogAdvertisement(advertisementActionId);
+        }
+    }
+
+    @Nullable
+    protected String getAdvertisementActionId() {
+        return null;
     }
 
     @NotNull
@@ -419,6 +430,19 @@ public class KotlinInplaceVariableIntroducer<D extends JetCallableDeclaration> e
             else {
                 myEditor.getCaretModel().moveToOffset(myExprMarker.getEndOffset());
             }
+        }
+    }
+
+    public void stopIntroduce() {
+        final TemplateState templateState = TemplateManagerImpl.getTemplateState(myEditor);
+        if (templateState != null) {
+            Runnable runnable = new Runnable() {
+                @Override
+                public void run() {
+                    templateState.gotoEnd(true);
+                }
+            };
+            CommandProcessor.getInstance().executeCommand(myProject, runnable, getCommandName(), getCommandName());
         }
     }
 
