@@ -174,7 +174,7 @@ Each lambda is compiled to an anonymous class which inherits from `FunctionImpl`
 
 // is translated to
 
-object : FunctionImpl(2), Function2<String, Int> {
+object : FunctionImpl(1), Function1<String, Int> {
     /* bridge */ fun invoke(p1: Any?): Any? = ...
     override fun invoke(p1: String): Int = p1.length
 }
