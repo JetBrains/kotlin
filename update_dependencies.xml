@@ -1,6 +1,9 @@
 <project name="Update Dependencies" default="update">
     <property name="ideaVersion" value="141.588.1"/>
 
+    <property name="kotlin.bootstrap.locator" value="buildType:bt345,tag:bootstrap,status:SUCCESS" />
+    <property name="markdown.locator" value="buildType:IntelliJMarkdownParser_Build,status:SUCCESS"/>
+
     <condition property="os.tag" value="win.zip">
         <os family="windows"/>
     </condition>
@@ -223,9 +226,13 @@
             </not>
             <then>
                 <!-- Download bootstrap compiler for local build -->
-                <get
-                    src="https://teamcity.jetbrains.com/guestAuth/repository/download/bt345/bootstrap.tcbuildtag/kotlin-plugin-{build.number}.zip"
-                    dest="dependencies/download/bootstrap-compiler.zip" usetimestamp="true"/>
+                <download_teamcity_artifact
+                    teamcity.server.url="https://teamcity.jetbrains.com"
+                    build.locator.request="${kotlin.bootstrap.locator}"
+                    artifact.path="kotlin-plugin-{build.number}.zip"
+                    dest="dependencies/download/bootstrap-compiler.zip"
+                    usetimestamp="true"/>
+
                 <delete dir="dependencies/bootstrap-compiler" failonerror="false"/>
                 <unzip src="dependencies/download/bootstrap-compiler.zip" dest="dependencies/bootstrap-compiler"/>
             </then>
@@ -259,8 +266,15 @@
         </if>
 
         <!-- Markdown parser -->
-        <get src="https://teamcity.jetbrains.com/guestAuth/repository/download/IntelliJMarkdownParser_Build/.lastFinished/markdown_jar/markdown.jar"
-            dest="dependencies/markdown.jar" usetimestamp="true"/>
+        <download_teamcity_artifact
+            teamcity.server.url="https://teamcity.jetbrains.com"
+            build.locator.request="${markdown.locator}"
+            artifact.path="markdown_jar/markdown.jar"
+            dest="dependencies/markdown.jar"
+            usetimestamp="true"
+            build.number.pattern="\d+\s-\sKotlin\s[\d\.]+"
+            />
+
     </target>
 
     <macrodef name="get_android_sdk">
@@ -391,6 +405,60 @@
                     </propertyfile>
                 </else>
             </if>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="download_teamcity_artifact">
+        <attribute name="teamcity.server.url"/>
+        <attribute name="build.locator.request"/>
+        <attribute name="artifact.path"/>
+        <attribute name="dest"/>
+        <attribute name="usetimestamp"/>
+        <attribute name="build.number.pattern" default="[\d\.]+"/>
+
+        <sequential>
+            <local name="artifact.build.id"/>
+
+            <local name="build.request.url"/>
+            <property name="build.request.url" value="@{teamcity.server.url}/guestAuth/app/rest/builds/?locator=@{build.locator.request},count:1"/>
+
+            <echo message="Requested URL ${build.request.url}"/>
+
+            <loadresource property="artifact.build.id">
+                <url url="${build.request.url}"/>
+                <filterchain>
+                    <tokenfilter>
+                        <filetokenizer/>
+                        <replaceregex pattern="^(.*)\sid=&quot;(\d+)&quot;(.*)$" replace="\2" flags="s"/>
+                    </tokenfilter>
+                </filterchain>
+            </loadresource>
+
+            <local name="processed.artifact.path"/>
+
+            <local name="artifact.build.number"/>
+            <loadresource property="artifact.build.number">
+                <url url="${build.request.url}"/>
+                <filterchain>
+                    <tokenfilter>
+                        <filetokenizer/>
+                        <replaceregex pattern="^(.*)\snumber=&quot;(@{build.number.pattern})&quot;(.*)$" replace="\2" flags="s"/>
+                    </tokenfilter>
+                </filterchain>
+            </loadresource>
+
+            <propertyregex property="processed.artifact.path"
+                           input="@{artifact.path}"
+                           regexp="\{build.number\}"
+                           replace="${artifact.build.number}"
+                           global="true"
+                           defaultvalue="@{artifact.path}"/>
+
+            <echo message="Build Number: ${artifact.build.number} Build Id: ${artifact.build.id}"/>
+
+            <get
+                src="@{teamcity.server.url}/guestAuth/app/rest/builds/id:${artifact.build.id}/artifacts/content/${processed.artifact.path}"
+                dest="@{dest}" usetimestamp="@{usetimestamp}"/>
         </sequential>
     </macrodef>
 
