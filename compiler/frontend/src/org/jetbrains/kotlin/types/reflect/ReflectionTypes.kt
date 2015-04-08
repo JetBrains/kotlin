@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.name.isSubpackageOf
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.TypeUtils.makeStarProjection
 import java.util.ArrayList
 import kotlin.properties.Delegates
 
@@ -61,20 +60,14 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
     public val kTopLevelExtensionProperty: ClassDescriptor by ClassLookup
     public val kMutableTopLevelExtensionProperty: ClassDescriptor by ClassLookup
 
-    public fun getKClassType(annotations: Annotations, classDescriptor: ClassDescriptor): JetType {
-        val kClassDescriptor = kClass
-        if (ErrorUtils.isError(kClassDescriptor)) {
-            return kClassDescriptor.getDefaultType()
+    public fun getKClassType(annotations: Annotations, type: JetType): JetType {
+        val descriptor = kClass
+        if (ErrorUtils.isError(descriptor)) {
+            return descriptor.getDefaultType()
         }
 
-        val typeConstructor = classDescriptor.getTypeConstructor()
-        val arguments = typeConstructor.getParameters().map(TypeUtils::makeStarProjection)
-        val kClassArguments = listOf(TypeProjectionImpl(
-                Variance.INVARIANT,
-                JetTypeImpl(Annotations.EMPTY, typeConstructor, false, arguments, classDescriptor.getMemberScope(arguments))
-        ))
-        return JetTypeImpl(annotations, kClassDescriptor.getTypeConstructor(), false, kClassArguments,
-                           kClassDescriptor.getMemberScope(kClassArguments))
+        val arguments = listOf(TypeProjectionImpl(Variance.INVARIANT, type))
+        return JetTypeImpl(annotations, descriptor.getTypeConstructor(), false, arguments, descriptor.getMemberScope(arguments))
     }
 
     public fun getKFunctionType(

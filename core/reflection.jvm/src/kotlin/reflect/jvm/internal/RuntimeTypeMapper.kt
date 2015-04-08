@@ -34,6 +34,8 @@ import org.jetbrains.kotlin.types.TypeUtils
 import kotlin.reflect.KotlinReflectionInternalError
 
 object RuntimeTypeMapper : JavaToKotlinClassMapBuilder() {
+    private val kotlinArrayClassId = KotlinBuiltIns.getInstance().getArray().classId
+
     private val kotlinFqNameToJvmDesc = linkedMapOf<FqName, String>()
     private val kotlinFqNameToJvmDescNullable = linkedMapOf<FqName, String>()
     private val jvmDescToKotlinClassId = linkedMapOf<String, ClassId>()
@@ -110,6 +112,10 @@ object RuntimeTypeMapper : JavaToKotlinClassMapBuilder() {
     }
 
     fun mapJvmClassToKotlinClassId(klass: Class<*>): ClassId {
+        if (klass.isArray() && !klass.getComponentType().isPrimitive()) {
+            return kotlinArrayClassId
+        }
+
         return jvmDescToKotlinClassId[klass.desc] ?: klass.classId
     }
 

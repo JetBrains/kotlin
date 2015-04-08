@@ -22,6 +22,7 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import kotlin.Function0;
 import kotlin.Function1;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -451,11 +452,11 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
     @Override
     public JetTypeInfo visitClassLiteralExpression(@NotNull JetClassLiteralExpression expression, ExpressionTypingContext c) {
-        ClassDescriptor descriptor = resolveClassLiteral(expression, c);
-        if (descriptor != null && !ErrorUtils.isError(descriptor)) {
-            JetType type = components.reflectionTypes.getKClassType(Annotations.EMPTY, descriptor);
-            if (!type.isError()) {
-                return JetTypeInfo.create(type, c.dataFlowInfo);
+        JetType type = resolveClassLiteral(expression, c);
+        if (type != null && !type.isError()) {
+            JetType kClassType = components.reflectionTypes.getKClassType(Annotations.EMPTY, type);
+            if (!kClassType.isError()) {
+                return JetTypeInfo.create(kClassType, c.dataFlowInfo);
             }
             c.trace.report(REFLECTION_TYPES_NOT_LOADED.on(expression.getDoubleColonTokenReference()));
         }
@@ -464,7 +465,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Nullable
-    private ClassDescriptor resolveClassLiteral(@NotNull JetClassLiteralExpression expression, ExpressionTypingContext c) {
+    private JetType resolveClassLiteral(@NotNull JetClassLiteralExpression expression, ExpressionTypingContext c) {
         JetTypeReference typeReference = expression.getTypeReference();
 
         if (typeReference == null) {
@@ -478,28 +479,63 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         PossiblyBareType possiblyBareType =
                 components.expressionTypingServices.getTypeResolver().resolvePossiblyBareType(context, typeReference);
 
-        TypeConstructor typeConstructor = null;
+        JetType type = null;
         if (possiblyBareType.isBare()) {
             if (!possiblyBareType.isNullable()) {
-                typeConstructor = possiblyBareType.getBareTypeConstructor();
+                ClassifierDescriptor descriptor = possiblyBareType.getBareTypeConstructor().getDeclarationDescriptor();
+                if (descriptor instanceof ClassDescriptor) {
+                    ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
+                    if (KotlinBuiltIns.isNonPrimitiveArray(classDescriptor)) {
+                        context.trace.report(ARRAY_CLASS_LITERAL_REQUIRES_ARGUMENT.on(expression));
+                        return null;
+                    }
+                    type = substituteWithStarProjections(classDescriptor);
+                }
             }
         }
         else {
-            JetType type = possiblyBareType.getActualType();
-            if (!type.isMarkedNullable() && type.getArguments().isEmpty()) {
-                typeConstructor = type.getConstructor();
+            JetType actualType = possiblyBareType.getActualType();
+            if (isAllowedInClassLiteral(actualType)) {
+                type = actualType;
             }
         }
 
-        if (typeConstructor != null) {
-            ClassifierDescriptor classifier = typeConstructor.getDeclarationDescriptor();
-            if (classifier instanceof ClassDescriptor) {
-                return (ClassDescriptor) classifier;
-            }
+        if (type != null) {
+            return type;
         }
 
         context.trace.report(CLASS_LITERAL_LHS_NOT_A_CLASS.on(expression));
         return null;
+    }
+
+    @NotNull
+    private static JetType substituteWithStarProjections(@NotNull ClassDescriptor descriptor) {
+        TypeConstructor typeConstructor = descriptor.getTypeConstructor();
+        List<TypeProjection> arguments =
+                KotlinPackage.map(typeConstructor.getParameters(), new Function1<TypeParameterDescriptor, TypeProjection>() {
+                    @Override
+                    public TypeProjection invoke(TypeParameterDescriptor descriptor) {
+                        return TypeUtils.makeStarProjection(descriptor);
+                    }
+                });
+
+        return new JetTypeImpl(Annotations.EMPTY, typeConstructor, false, arguments, descriptor.getMemberScope(arguments));
+    }
+
+    private static boolean isAllowedInClassLiteral(@NotNull JetType type) {
+        if (type.isMarkedNullable()) return false;
+
+        TypeConstructor typeConstructor = type.getConstructor();
+        if (!(typeConstructor.getDeclarationDescriptor() instanceof ClassDescriptor)) return false;
+
+        List<TypeParameterDescriptor> parameters = typeConstructor.getParameters();
+        if (parameters.size() != type.getArguments().size()) return false;
+
+        for (TypeParameterDescriptor parameter : parameters) {
+            if (!parameter.isReified()) return false;
+        }
+
+        return true;
     }
 
     @Override

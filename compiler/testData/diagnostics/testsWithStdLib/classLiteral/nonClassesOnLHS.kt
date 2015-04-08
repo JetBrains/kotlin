@@ -12,3 +12,5 @@ fun foo<T : Any>() {
     val t1 = <!CLASS_LITERAL_LHS_NOT_A_CLASS!>T::class<!>
     val t2 = <!CLASS_LITERAL_LHS_NOT_A_CLASS!>T?::class<!>
 }
+
+val m = <!CLASS_LITERAL_LHS_NOT_A_CLASS!>Map<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><String><!>::class<!>

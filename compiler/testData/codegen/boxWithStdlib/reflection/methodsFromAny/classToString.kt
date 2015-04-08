@@ -15,10 +15,12 @@ fun box(): String {
     assertEquals("class kotlin.Int", "${Int::class}")
     assertEquals("class kotlin.Int\$Companion", "${Int.Companion::class}")
     assertEquals("class kotlin.IntArray", "${IntArray::class}")
-    // TODO
-    // assertEquals("class kotlin.Array", "${Array<Any>::class}")
     assertEquals("class kotlin.String", "${String::class}")
     assertEquals("class kotlin.String", "${java.lang.String::class}")
+
+    assertEquals("class kotlin.Array", "${Array<Any>::class}")
+    assertEquals("class kotlin.Array", "${Array<Int>::class}")
+    assertEquals("class kotlin.Array", "${Array<Array<String>>::class}")
 
     assertEquals("class java.lang.Runnable", "${Runnable::class}")
 

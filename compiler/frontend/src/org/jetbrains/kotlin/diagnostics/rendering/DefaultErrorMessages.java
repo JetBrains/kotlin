@@ -589,6 +589,7 @@ public class DefaultErrorMessages {
         MAP.put(CALLABLE_REFERENCE_LHS_NOT_A_CLASS, "Left hand side of a callable reference cannot be a type parameter");
 
         MAP.put(CLASS_LITERAL_LHS_NOT_A_CLASS, "Only classes are allowed on the left hand side of a class literal");
+        MAP.put(ARRAY_CLASS_LITERAL_REQUIRES_ARGUMENT, "kotlin.Array class literal requires a type argument, please specify one in angle brackets");
 
         //Inline
         MAP.put(INVISIBLE_MEMBER_FROM_INLINE, "Cannot access effectively non-public-api ''{0}'' member from effectively public-api ''{1}''", SHORT_NAMES_IN_TYPES, SHORT_NAMES_IN_TYPES);

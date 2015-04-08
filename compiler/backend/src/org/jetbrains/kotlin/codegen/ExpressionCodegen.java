@@ -36,7 +36,9 @@ import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
 import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension;
 import org.jetbrains.kotlin.codegen.inline.*;
-import org.jetbrains.kotlin.codegen.intrinsics.*;
+import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethod;
+import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
+import org.jetbrains.kotlin.codegen.intrinsics.JavaClassProperty;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
@@ -2668,10 +2670,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         assert state.getReflectionTypes().getkClass().getTypeConstructor().equals(type.getConstructor())
                 : "::class expression should be type checked to a KClass: " + type;
 
-        ClassifierDescriptor typeArgument = KotlinPackage.single(type.getArguments()).getType().getConstructor().getDeclarationDescriptor();
-        assert typeArgument instanceof ClassDescriptor : "KClass argument should be a class: " + typeArgument;
-
-        return generateClassLiteralReference((ClassDescriptor) typeArgument);
+        return generateClassLiteralReference(KotlinPackage.single(type.getArguments()).getType());
     }
 
     @Override
@@ -2763,7 +2762,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             @Override
             public Unit invoke(InstructionAdapter v) {
                 v.visitLdcInsn(descriptor.getName().asString());
-                StackValue receiverClass = generateClassLiteralReference(containingClass);
+                StackValue receiverClass = generateClassLiteralReference(containingClass.getDefaultType());
                 receiverClass.put(receiverClass.type, v);
                 v.invokestatic(REFLECTION, factoryMethod.getName(), factoryMethod.getDescriptor(), false);
 
@@ -2773,11 +2772,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @NotNull
-    private StackValue generateClassLiteralReference(@NotNull final ClassDescriptor descriptor) {
+    private StackValue generateClassLiteralReference(@NotNull final JetType type) {
         return StackValue.operation(K_CLASS_TYPE, new Function1<InstructionAdapter, Unit>() {
             @Override
             public Unit invoke(InstructionAdapter v) {
-                Type classAsmType = typeMapper.mapClass(descriptor);
+                Type classAsmType = typeMapper.mapType(type);
+                ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
+                //noinspection ConstantConditions
                 ModuleDescriptor module = DescriptorUtils.getContainingModule(descriptor);
                 if (descriptor instanceof JavaClassDescriptor || module == module.getBuiltIns().getBuiltInsModule()) {
                     putJavaLangClassInstance(v, classAsmType);

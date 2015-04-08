@@ -853,6 +853,10 @@ public class KotlinBuiltIns {
         return type != null && isNotNullConstructedFromGivenClass(type, FQ_NAMES.string);
     }
 
+    public static boolean isNonPrimitiveArray(@NotNull ClassDescriptor descriptor) {
+        return FQ_NAMES.array.equals(DescriptorUtils.getFqName(descriptor));
+    }
+
     public static boolean isCloneable(@NotNull ClassDescriptor descriptor) {
         return FQ_NAMES.cloneable.equals(DescriptorUtils.getFqName(descriptor));
     }

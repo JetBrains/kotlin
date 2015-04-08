@@ -1,0 +1,7 @@
+package 
+
+internal val a01: [ERROR : Unresolved class]
+internal val a02: kotlin.reflect.KClass<kotlin.Array<[ERROR : Array]>>
+internal val a03: kotlin.reflect.KClass<kotlin.Array<kotlin.Any?>>
+internal val a04: kotlin.reflect.KClass<kotlin.Array<kotlin.Array<kotlin.Any?>?>>
+internal val a05: kotlin.reflect.KClass<kotlin.Array<kotlin.IntArray?>>

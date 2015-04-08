@@ -758,6 +758,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 doTestWithStdlib(fileName);
             }
 
+            @TestMetadata("extensionToArray.kt")
+            public void testExtensionToArray() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/callableReference/property/extensionToArray.kt");
+                doTestWithStdlib(fileName);
+            }
+
             @TestMetadata("genericProperty.kt")
             public void testGenericProperty() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/callableReference/property/genericProperty.kt");
@@ -2707,6 +2713,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
         public static class ClassLiterals extends AbstractBlackBoxCodegenTest {
             public void testAllFilesPresentInClassLiterals() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/reflection/classLiterals"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("arrays.kt")
+            public void testArrays() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/classLiterals/arrays.kt");
+                doTestWithStdlib(fileName);
             }
 
             @TestMetadata("builtinClassLiterals.kt")
