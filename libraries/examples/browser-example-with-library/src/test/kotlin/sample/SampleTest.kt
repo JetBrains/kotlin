@@ -17,6 +17,6 @@ open class SampleTest {
         val foo = driver.findElement(By.id("foo"))!!
         val text = foo.getText() ?: ""
         println("Found $foo with text '$text'")
-        assertEquals("x=30 y=200 z=100", text.trim())
+        assertEquals("x=30 y=200 z=100 u=1000", text.trim())
     }
 }
