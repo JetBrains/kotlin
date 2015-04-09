@@ -290,7 +290,9 @@ fun isFunctionWithArity(x: Any?, n: Int): Boolean = (x as? Function).arity == n
 
 `as` should check if `isFunctionWithArity(instance, arity)`, and checkcast if it is or throw exception if not.
 
-A downside is that `instanceof Function5` obviously won't work correctly from Java.
+A downside is that `instanceof Function5` obviously won't work correctly from Java. We should provide a public facade to `isFunctionWithArity` which should be used from Java instead of `instanceof`.
+
+Also we should issue warnings on `is Array<Function2<*, *, *>>` (or `as`), since it won't work for empty arrays (there's no instance of `FunctionImpl` to reach out and ask the arity).
 
 ## How this will help reflection
 
