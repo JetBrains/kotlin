@@ -1,5 +1,5 @@
 import java.io.File
 
 fun foo() {
-    list.add(File.separatorChar)<caret>
+    list.add(File.separatorChar)
 }

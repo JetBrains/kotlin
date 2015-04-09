@@ -1,3 +1,3 @@
 import java.io.File
 
-fun foo(): List<File><caret>
+fun foo(): List<File>

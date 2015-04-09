@@ -17,12 +17,12 @@
 package org.jetbrains.kotlin.idea.conversion.copy
 
 import com.intellij.openapi.actionSystem.IdeActions
-import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.idea.AbstractCopyPasteTest
 import org.jetbrains.kotlin.idea.JetWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.editor.JetEditorOptions
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.JetTestUtils
 import java.io.File
 import kotlin.test.assertEquals
 
@@ -31,9 +31,9 @@ public abstract class AbstractJavaToKotlinCopyPasteConversionTest : AbstractCopy
 
     private var oldEditorOptions: JetEditorOptions? = null
 
-    override fun getProjectDescriptor(): LightProjectDescriptor {
-        return JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
-    }
+    override fun getTestDataPath() = BASE_PATH
+
+    override fun getProjectDescriptor() = JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
     override fun setUp() {
         super.setUp()
@@ -57,15 +57,9 @@ public abstract class AbstractJavaToKotlinCopyPasteConversionTest : AbstractCopy
 
         myFixture.performEditorAction(IdeActions.ACTION_COPY)
 
-        val toFileName = testName + ".to.kt"
-        val dependencyFileName = testName + ".dependency.kt"
+        configureByDependencyIfExists(testName + ".dependency.kt")
 
-        if (File(BASE_PATH + File.separator + dependencyFileName).exists()) {
-            myFixture.configureByFiles(toFileName, dependencyFileName)
-        }
-        else {
-            myFixture.configureByFile(toFileName)
-        }
+        configureTargetFile(testName + ".to.kt")
 
         ConvertJavaCopyPastePostProcessor.conversionPerformed = false
 
@@ -74,6 +68,6 @@ public abstract class AbstractJavaToKotlinCopyPasteConversionTest : AbstractCopy
         assertEquals(noConversionExpected, !ConvertJavaCopyPastePostProcessor.conversionPerformed,
         if (noConversionExpected) "Conversion to Kotlin should not be suggested" else "No conversion to Kotlin suggested")
 
-        myFixture.checkResultByFile(testName + ".expected.kt")
+        JetTestUtils.assertEqualsToFile(File(path.replace(".java", ".expected.kt")), myFixture.getFile().getText())
     }
 }

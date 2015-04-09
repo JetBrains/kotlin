@@ -17,9 +17,14 @@
 package org.jetbrains.kotlin.idea
 
 import com.intellij.codeInsight.CodeInsightSettings
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.psi.JetFile
+import java.io.File
 
 public abstract class AbstractCopyPasteTest : JetLightCodeInsightFixtureTestCase() {
     private var savedImportsOnPasteSetting: Int = 0
+    private val DEFAULT_TO_FILE_TEXT = "package to\n\n<caret>"
 
     override fun setUp() {
         super.setUp()
@@ -30,6 +35,27 @@ public abstract class AbstractCopyPasteTest : JetLightCodeInsightFixtureTestCase
     override fun tearDown() {
         CodeInsightSettings.getInstance().ADD_IMPORTS_ON_PASTE = savedImportsOnPasteSetting
         super.tearDown()
+    }
+
+    protected fun configureByDependencyIfExists(dependencyFileName: String): PsiFile? {
+        val file = File(getTestDataPath() + File.separator + dependencyFileName)
+        if (!file.exists()) return null
+        return if (dependencyFileName.endsWith(".java")) {
+            //allow test framework to put it under right directory
+            myFixture.addClass(FileUtil.loadFile(file, true)).getContainingFile()
+        }
+        else {
+            myFixture.configureByFile(dependencyFileName)
+        }
+    }
+
+    protected  fun configureTargetFile(fileName: String): JetFile {
+        if (File(getTestDataPath() + File.separator + fileName).exists()) {
+            return myFixture.configureByFile(fileName) as JetFile
+        }
+        else {
+            return myFixture.configureByText(fileName, DEFAULT_TO_FILE_TEXT) as JetFile
+        }
     }
 }
 

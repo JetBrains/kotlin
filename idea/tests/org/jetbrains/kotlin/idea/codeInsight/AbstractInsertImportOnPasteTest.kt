@@ -30,7 +30,6 @@ import java.io.File
 
 public abstract class AbstractInsertImportOnPasteTest : AbstractCopyPasteTest() {
     private val BASE_PATH = PluginTestCaseBase.getTestDataPathBase() + "/copyPaste/imports"
-    private val DEFAULT_TO_FILE_TEXT = "package to\n\n<caret>"
 
     private val NO_ERRORS_DUMP_DIRECTIVE = "// NO_ERRORS_DUMP"
     private val DELETE_DEPENDENCIES_BEFORE_PASTE_DIRECTIVE = "// DELETE_DEPENDENCIES_BEFORE_PASTE"
@@ -66,7 +65,7 @@ public abstract class AbstractInsertImportOnPasteTest : AbstractCopyPasteTest() 
 
         KotlinCopyPasteReferenceProcessor.declarationsToImportSuggested = emptyList()
 
-        configureToFile(testFileName.replace(".kt", ".to.kt"))
+        configureTargetFile(testFileName.replace(".kt", ".to.kt"))
         performNotWriteEditorAction(IdeActions.ACTION_PASTE)
 
         val namesToImportDump = KotlinCopyPasteReferenceProcessor.declarationsToImportSuggested.joinToString("\n")
@@ -78,26 +77,5 @@ public abstract class AbstractInsertImportOnPasteTest : AbstractCopyPasteTest() 
         else
             resultFile.dumpTextWithErrors()
         JetTestUtils.assertEqualsToFile(File(path.replace(".kt", ".expected.kt")), resultText)
-    }
-
-    private fun configureToFile(toFileName: String): JetFile {
-        if (File(BASE_PATH + "/" + toFileName).exists()) {
-            return myFixture.configureByFile(toFileName) as JetFile
-        }
-        else {
-            return myFixture.configureByText(toFileName, DEFAULT_TO_FILE_TEXT) as JetFile
-        }
-    }
-
-    private fun configureByDependencyIfExists(dependencyFileName: String): PsiFile? {
-        val file = File(BASE_PATH + "/" + dependencyFileName)
-        if (!file.exists()) return null
-        return if (dependencyFileName.endsWith(".java")) {
-            //allow test framework to put it under right directory
-            myFixture.addClass(FileUtil.loadFile(file, true)).getContainingFile()
-        }
-        else {
-            myFixture.configureByFile(dependencyFileName)
-        }
     }
 }

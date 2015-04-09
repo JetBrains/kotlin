@@ -1,5 +1,5 @@
 import ppp.Dependency
 
 fun f() {
-    return Dependency.FIELD<caret>
+    return Dependency.FIELD
 }
