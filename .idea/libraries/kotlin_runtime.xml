@@ -5,7 +5,9 @@
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$KOTLIN_BUNDLED$/lib/kotlin-runtime-sources.jar!/" />
+      <root url="file://$PROJECT_DIR$/libraries/stdlib/src" />
+      <root url="file://$PROJECT_DIR$/core/builtins/src" />
+      <root url="file://$PROJECT_DIR$/core/runtime.jvm/src" />
     </SOURCES>
   </library>
 </component>
