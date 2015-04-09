@@ -3,6 +3,7 @@ package kotlin.io
 import java.io.File
 import java.util.Collections
 import java.util.NoSuchElementException
+import kotlin.text.Regex
 
 /**
  * Estimation of a root name by a given file name.
@@ -95,7 +96,7 @@ public fun File.filePathComponents(): FilePathComponents {
     // Split not only by / or \, but also by //, ///, \\, \\\, etc.
     val list = if (rootName.length() > 0 && subPath.isEmpty()) listOf() else
         // Looks awful but we split just by /+ or \+ depending on OS
-        subPath.split("""\Q${File.separatorChar}\E+""".toPattern()).toList().map { it -> File(it) }
+        subPath.split(Regex.fromLiteral(File.separatorChar.toString())).toList().map { it -> File(it) }
     return FilePathComponents(rootName, list)
 }
 

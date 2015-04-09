@@ -71,4 +71,38 @@ class RegexTest {
         assertEquals("bye", m2.groups[2]?.value)
     }
 
+    test fun escapeLiteral() {
+        val literal = """[-\/\\^$*+?.()|[\]{}]"""
+        assertTrue(Regex.fromLiteral(literal).matches(literal))
+        assertTrue(Regex(Regex.escape(literal)).matches(literal))
+    }
+
+    test fun replace() {
+        val input = "123-456"
+        val pattern = "(\\d+)".toRegex()
+        assertEquals("(123)-(456)", pattern.replace(input, "($1)"))
+
+    }
+
+    test fun replaceEvaluator() {
+        val input = "/12/456/7890/"
+        val pattern = "\\d+".toRegex()
+        assertEquals("/2/3/4/", pattern.replace(input, { it.value.length().toString() } ))
+    }
+
+
+    test fun split() {
+        val input = """
+         some  ${"\t"}  word
+         split
+        """.trim()
+
+        assertEquals(listOf("some", "word", "split"), "\\s+".toRegex().split(input))
+
+        assertEquals(listOf("name", "value=5"), "=".toRegex().split("name=value=5", limit = 2))
+
+    }
+
+
+
 }

@@ -16,7 +16,7 @@
 
 package kotlin.text
 
-private val TODO: Nothing get() = throw java.lang.UnsupportedOperationException()
+import java.util.ArrayList
 
 
 public enum class RegexOption(val value: String) {
@@ -45,16 +45,55 @@ public class Regex(pattern: String, options: Set<RegexOption>) {
     public fun matchAll(input: CharSequence): Sequence<MatchResult> = sequence({ match(input) }, { match -> match.next() })
 
     public fun replace(input: CharSequence, replacement: String): String = input.toString().nativeReplace(nativePattern, replacement)
-    public fun replace(input: CharSequence, evaluator: (MatchResult) -> String): String = TODO
 
-    public fun split(input: CharSequence, limit: Int = 0): List<String> = TODO
+    public inline fun replace(input: CharSequence, transform: (MatchResult) -> String): String {
+        var match = match(input)
+        if (match == null) return input.toString()
+
+        var lastStart = 0
+        val length = input.length()
+        val sb = StringBuilder(length)
+        do {
+            val foundMatch = match!!
+            sb.append(input, lastStart, foundMatch.range.start)
+            sb.append(transform(foundMatch))
+            lastStart = foundMatch.range.end + 1
+            match = foundMatch.next()
+        } while (lastStart < length && match != null)
+
+        if (lastStart < length) {
+            sb.append(input, lastStart, length)
+        }
+
+        return sb.toString()
+    }
+
+    public fun replaceFirst(input: CharSequence, replacement: String): String =
+            input.toString().nativeReplace(RegExp(pattern, options.map { it.value }.joinToString()), replacement)
+
+    public fun split(input: CharSequence, limit: Int = 0): List<String> {
+        require(limit >= 0, { "Limit must be non-negative, but was $limit" } )
+        val matches = matchAll(input).let { if (limit == 0) it else it.take(limit - 1) }
+        val result = ArrayList<String>()
+        var lastStart = 0
+
+        for (match in matches) {
+            result.add(input.subSequence(lastStart, match.range.start).toString())
+            lastStart = match.range.end + 1
+        }
+        result.add(input.subSequence(lastStart, input.length()).toString())
+        return result
+    }
 
     public override fun toString(): String = nativePattern.toString()
 
     companion object {
         public fun fromLiteral(literal: String): Regex = Regex(escape(literal))
-        public fun escape(literal: String): String = TODO
-        public fun escapeReplacement(literal: String): String = literal.nativeReplace(RegExp("\\$", "g"), "$$$$")
+        public fun escape(literal: String): String = literal.nativeReplace(patternEscape, "\\$&")
+        public fun escapeReplacement(literal: String): String = literal.nativeReplace(replacementEscape, "$$$$")
+
+        private val patternEscape = RegExp("""[-\\^$*+?.()|[\]{}]""", "g")
+        private val replacementEscape = RegExp("""\$""", "g")
     }
 }
 

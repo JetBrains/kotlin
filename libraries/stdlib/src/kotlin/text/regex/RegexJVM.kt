@@ -19,8 +19,6 @@ package kotlin.text
 import java.util.regex.Pattern
 import java.util.regex.Matcher
 
-private val TODO: Nothing get() = throw UnsupportedOperationException()
-
 public trait FlagEnum {
     public val value: Int
     public val mask: Int
@@ -65,9 +63,35 @@ public class Regex( /* visibility? */ val nativePattern: Pattern) {
     public fun matchAll(input: CharSequence): Sequence<MatchResult> = sequence({ match(input) }, { match -> match.next() })
 
     public fun replace(input: CharSequence, replacement: String): String = nativePattern.matcher(input).replaceAll(replacement)
-    public fun replace(input: CharSequence, evaluator: (MatchResult) -> String): String = TODO
 
-    public fun split(input: CharSequence, limit: Int = 0): List<String> = nativePattern.split(input, limit).asList() // TODO: require(limit>=0)
+    public fun replaceFirst(input: CharSequence, replacement: String): String = nativePattern.matcher(input).replaceFirst(replacement)
+
+    public inline fun replace(input: CharSequence, transform: (MatchResult) -> String): String {
+        var match = match(input)
+        if (match == null) return input.toString()
+
+        var lastStart = 0
+        val length = input.length()
+        val sb = StringBuilder(length)
+        do {
+            val foundMatch = match!!
+            sb.append(input, lastStart, foundMatch.range.start)
+            sb.append(transform(foundMatch))
+            lastStart = foundMatch.range.end + 1
+            match = foundMatch.next()
+        } while (lastStart < length && match != null)
+
+        if (lastStart < length) {
+            sb.append(input, lastStart, length)
+        }
+
+        return sb.toString()
+    }
+
+    public fun split(input: CharSequence, limit: Int = 0): List<String> {
+        require(limit >= 0, { "Limit must be non-negative, but was $limit" } )
+        return nativePattern.split(input, if (limit == 0) -1 else limit).asList()
+    }
 
     public override fun toString(): String = nativePattern.toString()
 
