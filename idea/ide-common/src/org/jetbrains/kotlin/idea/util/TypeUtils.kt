@@ -32,6 +32,7 @@ fun JetType.makeNotNullable() = TypeUtils.makeNotNullable(this)
 
 fun JetType.supertypes(): Set<JetType> = TypeUtils.getAllSupertypes(this)
 
+fun JetType.isNothing(): Boolean = KotlinBuiltIns.isNothing(this)
 fun JetType.isUnit(): Boolean = KotlinBuiltIns.isUnit(this)
 fun JetType.isAny(): Boolean = KotlinBuiltIns.isAnyOrNullableAny(this)
 

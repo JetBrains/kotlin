@@ -36,14 +36,14 @@ import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.KotlinIntroduceHandlerBase
 import org.jetbrains.kotlin.idea.refactoring.introduce.selectElementsWithTargetParent
+import org.jetbrains.kotlin.idea.refactoring.introduce.showErrorHint
 import org.jetbrains.kotlin.idea.refactoring.introduce.showErrorHintByKey
 import org.jetbrains.kotlin.idea.search.usagesSearch.DefaultSearchHelper
 import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchTarget
 import org.jetbrains.kotlin.idea.search.usagesSearch.search
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.idea.util.approximateWithResolvableType
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiUnifier
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
 import org.jetbrains.kotlin.psi.*
@@ -139,11 +139,20 @@ public open class KotlinIntroduceParameterHandler: KotlinIntroduceHandlerBase() 
             e is JetObjectDeclaration || (e is JetClass && !e.isInner())
 
     fun invoke(project: Project, editor: Editor, expression: JetExpression, targetParent: JetNamedDeclaration) {
-        val psiFactory = JetPsiFactory(project)
+        val context = expression.analyze()
+
+        val expressionType = context[BindingContext.EXPRESSION_TYPE, expression]
+        if (expressionType.isUnit() || expressionType.isNothing()) {
+            val message = JetRefactoringBundle.message(
+                    "cannot.introduce.parameter.of.0.type",
+                    IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(expressionType)
+            )
+            showErrorHint(project, editor, message, INTRODUCE_PARAMETER)
+            return
+        }
 
         val parameterList = targetParent.getValueParameterList()
 
-        val context = expression.analyze()
         val descriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, targetParent]
         val functionDescriptor: FunctionDescriptor =
                 when (descriptor) {
@@ -151,7 +160,6 @@ public open class KotlinIntroduceParameterHandler: KotlinIntroduceHandlerBase() 
                     is ClassDescriptor -> descriptor.getUnsubstitutedPrimaryConstructor()
                     else -> null
                 } ?: throw AssertionError("Unexpected element type: ${JetPsiUtil.getElementTextWithContext(targetParent)}")
-        val expressionType = context[BindingContext.EXPRESSION_TYPE, expression] ?: KotlinBuiltIns.getInstance().getAnyType()
         val parameterType = expressionType.approximateWithResolvableType(JetScopeUtils.getResolutionScope(targetParent, context), false)
 
         val body = when (targetParent) {
@@ -197,6 +205,8 @@ public open class KotlinIntroduceParameterHandler: KotlinIntroduceHandlerBase() 
                 .filterNotNull()
 
         project.executeCommand(INTRODUCE_PARAMETER) {
+            val psiFactory = JetPsiFactory(project)
+            
             val renderedType = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(parameterType)
             val newParameter = psiFactory.createParameter("${suggestedNames.first()}: $renderedType")
 
