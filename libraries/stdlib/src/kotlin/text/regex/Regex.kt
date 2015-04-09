@@ -30,7 +30,3 @@ public trait MatchResult {
     public fun next(): MatchResult?
 }
 
-// maybe move them to kotlin package to be more discoverable
-public fun String.toPattern(vararg options: PatternOption): Pattern = Pattern(this, *options)
-public fun String.toPattern(options: Set<PatternOption>): Pattern = Pattern(this, options)
-

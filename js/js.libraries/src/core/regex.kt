@@ -19,19 +19,19 @@ package kotlin.text
 private val TODO: Nothing get() = throw java.lang.UnsupportedOperationException()
 
 
-public enum class PatternOption(val value: String) {
-    IGNORE_CASE : PatternOption("i")
-    MULTILINE : PatternOption("m")
+public enum class RegexOption(val value: String) {
+    IGNORE_CASE : RegexOption("i")
+    MULTILINE : RegexOption("m")
 }
 
 
 public data class MatchGroup(val value: String)
 
 
-public class Pattern (pattern: String, options: Set<PatternOption>) {
+public class Regex(pattern: String, options: Set<RegexOption>) {
 
     public val pattern: String = pattern
-    public val options: Set<PatternOption> = options.toSet()
+    public val options: Set<RegexOption> = options.toSet()
     private val nativePattern: RegExp = RegExp(pattern, options.map { it.value }.joinToString() + "g")
 
 
@@ -52,13 +52,13 @@ public class Pattern (pattern: String, options: Set<PatternOption>) {
     public override fun toString(): String = nativePattern.toString()
 
     companion object {
-        public fun fromLiteral(literal: String): Pattern = Pattern(escape(literal))
+        public fun fromLiteral(literal: String): Regex = Regex(escape(literal))
         public fun escape(literal: String): String = TODO
         public fun escapeReplacement(literal: String): String = literal.nativeReplace(RegExp("\\$", "g"), "$$$$")
     }
 }
 
-public fun Pattern(pattern: String, vararg options: PatternOption): Pattern = Pattern(pattern, options.toSet())
+public fun Regex(pattern: String, vararg options: RegexOption): Regex = Regex(pattern, options.toSet())
 
 
 private fun RegExp.findNext(input: String, from: Int): MatchResult? {

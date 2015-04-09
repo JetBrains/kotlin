@@ -95,7 +95,7 @@ public fun File.filePathComponents(): FilePathComponents {
     // Split not only by / or \, but also by //, ///, \\, \\\, etc.
     val list = if (rootName.length() > 0 && subPath.isEmpty()) listOf() else
         // Looks awful but we split just by /+ or \+ depending on OS
-        subPath.split("""\Q${File.separatorChar}\E+""".toRegex()).toList().map { it -> File(it) }
+        subPath.split("""\Q${File.separatorChar}\E+""".toPattern()).toList().map { it -> File(it) }
     return FilePathComponents(rootName, list)
 }
 

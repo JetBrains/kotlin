@@ -16,7 +16,7 @@
 
 package kotlin.text
 
-import java.util.regex.Pattern as NativePattern
+import java.util.regex.Pattern
 import java.util.regex.Matcher
 
 private val TODO: Nothing get() = throw UnsupportedOperationException()
@@ -31,32 +31,32 @@ public fun <T: FlagEnum> fromInt(value: Int, allValues: Array<T>): Set<T> =
         allValues.filter({ value and it.mask == it.value }).toSet()
 
 
-public enum class PatternOption(override val value: Int, override val mask: Int = value) : FlagEnum {
+public enum class RegexOption(override val value: Int, override val mask: Int = value) : FlagEnum {
     // common
-    IGNORE_CASE : PatternOption(NativePattern.CASE_INSENSITIVE)
-    MULTILINE : PatternOption(NativePattern.MULTILINE)
+    IGNORE_CASE : RegexOption(Pattern.CASE_INSENSITIVE)
+    MULTILINE : RegexOption(Pattern.MULTILINE)
 
     //jvm-specific
-    LITERAL : PatternOption(NativePattern.LITERAL)
-    UNICODE_CASE: PatternOption(NativePattern.UNICODE_CASE)
-    UNIX_LINES: PatternOption(NativePattern.UNIX_LINES)
-    COMMENTS: PatternOption(NativePattern.COMMENTS)
-    DOT_MATCHES_ALL: PatternOption(NativePattern.DOTALL)
-    CANON_EQ: PatternOption(NativePattern.CANON_EQ)
+    LITERAL : RegexOption(Pattern.LITERAL)
+    UNICODE_CASE: RegexOption(Pattern.UNICODE_CASE)
+    UNIX_LINES: RegexOption(Pattern.UNIX_LINES)
+    COMMENTS: RegexOption(Pattern.COMMENTS)
+    DOT_MATCHES_ALL: RegexOption(Pattern.DOTALL)
+    CANON_EQ: RegexOption(Pattern.CANON_EQ)
 }
 
 public data class MatchGroup(val value: String, val range: IntRange)
 
 
-public class Pattern ( /* visibility? */ val nativePattern: NativePattern) {
+public class Regex( /* visibility? */ val nativePattern: Pattern) {
 
-    public constructor(pattern: String, options: Set<PatternOption>): this(NativePattern.compile(pattern, options.toInt()))
-    public constructor(pattern: String, vararg options: PatternOption) : this(pattern, options.toSet())
+    public constructor(pattern: String, options: Set<RegexOption>): this(Pattern.compile(pattern, options.toInt()))
+    public constructor(pattern: String, vararg options: RegexOption) : this(pattern, options.toSet())
 
     public val pattern: String
         get() = nativePattern.pattern()
 
-    public val options: Set<PatternOption> = fromInt(nativePattern.flags(), PatternOption.values())
+    public val options: Set<RegexOption> = fromInt(nativePattern.flags(), RegexOption.values())
 
     public fun matches(input: CharSequence): Boolean = nativePattern.matcher(input).matches()
 
@@ -72,8 +72,8 @@ public class Pattern ( /* visibility? */ val nativePattern: NativePattern) {
     public override fun toString(): String = nativePattern.toString()
 
     companion object {
-        public fun fromLiteral(literal: String): Pattern = Pattern(literal, PatternOption.LITERAL)
-        public fun escape(literal: String): String = NativePattern.quote(literal)
+        public fun fromLiteral(literal: String): Regex = Regex(literal, RegexOption.LITERAL)
+        public fun escape(literal: String): String = Pattern.quote(literal)
         public fun escapeReplacement(literal: String): String = Matcher.quoteReplacement(literal)
     }
 

@@ -94,7 +94,7 @@ public fun String.split(regex: Pattern, limit: Int = 0): List<String> = regex.sp
  * Splits this string around matches of the given regular expression.
  */
 deprecated("Convert an argument to regex with toRegex or use splitBy instead.")
-public fun String.split(regex: String): Array<String> = split(regex.toRegex()).toTypedArray()
+public fun String.split(regex: String): Array<String> = split(regex.toPattern()).toTypedArray()
 
 
 /**
@@ -403,7 +403,7 @@ public fun CharSequence.slice(range: IntRange): CharSequence {
  * with the specified flags from [Pattern] or'd together
  * so that strings can be split or matched on.
  */
-public fun String.toRegex(flags: Int = 0): java.util.regex.Pattern {
+public fun String.toPattern(flags: Int = 0): java.util.regex.Pattern {
     return java.util.regex.Pattern.compile(this, flags)
 }
 
@@ -480,7 +480,7 @@ public inline fun <T : Appendable> String.takeWhileTo(result: T, predicate: (Cha
  */
 public fun String.replaceAll(regexp: String, body: (java.util.regex.MatchResult) -> String): String {
     val sb = StringBuilder(this.length())
-    val p = regexp.toRegex()
+    val p = regexp.toPattern()
     val m = p.matcher(this)
 
     var lastIdx = 0

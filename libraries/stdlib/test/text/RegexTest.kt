@@ -5,10 +5,10 @@ import kotlin.text.*
 import kotlin.test.*
 import org.junit.Test as test
 
-class PatternTest {
+class RegexTest {
 
     test fun matchResult() {
-        val p = "\\d+".toPattern()
+        val p = "\\d+".toRegex()
         val input = "123 456 789"
 
         val first = p.match(input)
@@ -30,7 +30,7 @@ class PatternTest {
 
     test fun matchSequence() {
         val input = "123 456 789"
-        val pattern = "\\d+".toPattern()
+        val pattern = "\\d+".toRegex()
 
         val matches = pattern.matchAll(input)
         val values = matches.map { it.value }
@@ -43,7 +43,7 @@ class PatternTest {
 
     test fun matchGroups() {
         val input = "1a 2b 3c"
-        val pattern = "(\\d)(\\w)".toPattern()
+        val pattern = "(\\d)(\\w)".toRegex()
 
         val matches = pattern.matchAll(input).toList()
         assertTrue(matches.all { it.groups.size() == 3 })
@@ -58,7 +58,7 @@ class PatternTest {
     }
 
     test fun matchOptionalGroup() {
-        val pattern = "(hi)|(bye)".toPattern(PatternOption.IGNORE_CASE)
+        val pattern = "(hi)|(bye)".toRegex(RegexOption.IGNORE_CASE)
 
         val m1 = pattern.match("Hi!")!!
         assertEquals(3, m1.groups.size())

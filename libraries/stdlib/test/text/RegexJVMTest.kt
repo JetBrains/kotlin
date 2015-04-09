@@ -5,13 +5,13 @@ import kotlin.text.*
 import org.junit.Test as test
 
 
-class PatternJVMTest {
+class RegexJVMTest {
 
     test fun matchGroups() {
         val input = "1a 2b 3c"
-        val pattern = "(\\d)(\\w)".toPattern()
+        val regex = "(\\d)(\\w)".toRegex()
 
-        val matches = pattern.matchAll(input).toList()
+        val matches = regex.matchAll(input).toList()
         assertTrue(matches.all { it.groups.size() == 3 })
         val m1 = matches[0]
         assertEquals("1a", m1.groups[0]?.value)

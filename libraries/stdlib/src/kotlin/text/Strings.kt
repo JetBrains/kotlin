@@ -1,7 +1,7 @@
 package kotlin
 
 import java.util.NoSuchElementException
-import kotlin.text.Pattern
+import kotlin.text.Regex
 
 /** Returns the string with leading and trailing text matching the given string removed */
 deprecated("Use removeSurrounding(text, text) or removePrefix(text).removeSuffix(text)")
@@ -910,7 +910,7 @@ public fun String.split(vararg delimiters: Char, ignoreCase: Boolean = false, li
 /**
  * Splits this string around matches of the given regular expression.
  */
-public fun String.split(pattern: Pattern, limit: Int = 0): List<String> = pattern.split(this, limit)
+public fun String.split(pattern: Regex, limit: Int = 0): List<String> = pattern.split(this, limit)
 
 /**
  * Splits this string to a sequence of lines delimited by any of the following character sequences: CRLF, LF or CR.
