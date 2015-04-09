@@ -18,8 +18,6 @@ package org.jetbrains.kotlin.idea.conversion.copy
 
 import com.intellij.codeInsight.editorActions.CopyPastePostProcessor
 import com.intellij.codeInsight.editorActions.TextBlockTransferableData
-import com.intellij.lang.java.JavaLanguage
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.RangeMarker
@@ -27,7 +25,10 @@ import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.*
+import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiJavaFile
 import org.jetbrains.kotlin.idea.codeInsight.KotlinCopyPasteReferenceProcessor
 import org.jetbrains.kotlin.idea.codeInsight.KotlinReferenceData
 import org.jetbrains.kotlin.idea.editor.JetEditorOptions
@@ -35,14 +36,9 @@ import org.jetbrains.kotlin.idea.j2k.IdeaResolverForConverter
 import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.j2k.*
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.FqNameUnsafe
-import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
 import java.awt.datatransfer.Transferable
-import java.util.ArrayList
 
 public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBlockTransferableData>() {
     private val LOG = Logger.getInstance("#org.jetbrains.kotlin.idea.conversion.copy.ConvertJavaCopyPastePostProcessor")
@@ -77,9 +73,9 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
         val targetFile = PsiDocumentManager.getInstance(project).getPsiFile(document) as? JetFile ?: return
 
         fun doConversion(): Pair<String?, Collection<KotlinReferenceData>> {
-            val sourceFile = PsiFileFactory.getInstance(project).createFileFromText(JavaLanguage.INSTANCE, data.fileText) as PsiJavaFile
-            val result = convertCopiedCodeToKotlin(data, sourceFile)
-            val referenceData = buildReferenceData(result.text, result.parseContext, sourceFile, targetFile)
+            val dataForConversion = DataForConversion.prepare(data, project)
+            val result = convertCopiedCodeToKotlin(dataForConversion.elementsAndTexts, project)
+            val referenceData = buildReferenceData(result.text, result.parseContext, dataForConversion.importsAndPackage, targetFile)
             return (if (result.textChanged) result.text else null) to referenceData
         }
 
@@ -137,37 +133,29 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
         }
     }
 
-    private data class ConversionResult(
+    private class ConversionResult(
             val text: String,
             val parseContext: ParseContext,
             val textChanged: Boolean
     )
 
-    private fun convertCopiedCodeToKotlin(code: CopiedJavaCode, sourceFile: PsiJavaFile): ConversionResult {
-        assert(code.startOffsets.size() == code.endOffsets.size(), "Must have the same size")
-        val sourceFileText = code.fileText
-
-        val list = ArrayList<Any>()
-        for (i in code.startOffsets.indices) {
-            list.collectElementsToConvert(sourceFile, sourceFileText, TextRange(code.startOffsets[i], code.endOffsets[i]))
-        }
-
+    private fun convertCopiedCodeToKotlin(elementsAndTexts: Collection<Any>, project: Project): ConversionResult {
         val converter = JavaToKotlinConverter(
-                sourceFile.getProject(),
+                project,
                 ConverterSettings.defaultSettings,
                 IdeaReferenceSearcher,
                 IdeaResolverForConverter,
                 null
         )
 
-        val inputElements = list.filterIsInstance<PsiElement>().map { JavaToKotlinConverter.InputElement(it, null) }
+        val inputElements = elementsAndTexts.filterIsInstance<PsiElement>().map { JavaToKotlinConverter.InputElement(it, null) }
         val results = converter.elementsToKotlin(inputElements).results
 
         var resultIndex = 0
         val convertedCodeBuilder = StringBuilder()
         val originalCodeBuilder = StringBuilder()
         var parseContext: ParseContext? = null
-        for (o in list) {
+        for (o in elementsAndTexts) {
             if (o is PsiElement) {
                 val originalText = o.getText()
                 originalCodeBuilder.append(originalText)
@@ -194,49 +182,11 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
         return ConversionResult(convertedCode, parseContext ?: ParseContext.TOP_LEVEL, convertedCode != originalCode)
     }
 
-    // builds list consisting of PsiElement's to convert and plain String's
-    private fun MutableList<Any>.collectElementsToConvert(
-            file: PsiJavaFile,
-            fileText: String,
-            range: TextRange
-    ) {
-        val elements = file.elementsInRange(range)
-        if (elements.isEmpty()) {
-            add(fileText.substring(range.getStartOffset(), range.getEndOffset()))
-        }
-        else {
-            add(fileText.substring(range.getStartOffset(), elements.first().getTextRange().getStartOffset()))
-            addAll(elements)
-            add(fileText.substring(elements.last().getTextRange().getEndOffset(), range.getEndOffset()))
-        }
-    }
-
-    private fun buildReferenceData(text: String, parseContext: ParseContext, sourceFile: PsiJavaFile, targetFile: JetFile): Collection<KotlinReferenceData> {
+    private fun buildReferenceData(text: String, parseContext: ParseContext, importsAndPackage: String, targetFile: JetFile): Collection<KotlinReferenceData> {
         var blockStart: Int? = null
         var blockEnd: Int? = null
         val fileText = StringBuilder {
-            val packageName = sourceFile.getPackageName()
-            if (!packageName.isEmpty()) {
-                append("package $packageName\n")
-            }
-
-            val importList = sourceFile.getImportList()
-            if (importList != null) {
-                for (import in importList.getImportStatements()) {
-                    val qualifiedName = import.getQualifiedName() ?: continue
-                    if (import.isOnDemand()) {
-                        append("import $qualifiedName.*\n")
-                    }
-                    else {
-                        val fqName = FqNameUnsafe(qualifiedName)
-                        // skip explicit imports of platform classes mapped into Kotlin classes
-                        if (fqName.isSafe() && JavaToKotlinClassMap.INSTANCE.mapPlatformClass(fqName.toSafe()).isNotEmpty()) continue
-                        append("import $qualifiedName\n")
-                    }
-                }
-                //TODO: static imports
-            }
-
+            append(importsAndPackage)
 
             val (contextPrefix, contextSuffix) = when (parseContext) {
                 ParseContext.CODE_BLOCK -> "fun ${generateDummyFunctionName(text)}() {\n" to "\n}"
