@@ -1403,6 +1403,24 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/typeArgsOrNot/SecondTypeArg.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("SecondTypeArg2.kt")
+            public void testSecondTypeArg2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/typeArgsOrNot/SecondTypeArg2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("SecondTypeArg3.kt")
+            public void testSecondTypeArg3() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/typeArgsOrNot/SecondTypeArg3.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("SecondTypeArg4.kt")
+            public void testSecondTypeArg4() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/typeArgsOrNot/SecondTypeArg4.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("idea/testData/completion/basic/common/visibility")

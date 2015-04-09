@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 public class KotlinCompletionContributor : CompletionContributor() {
-
     private val AFTER_NUMBER_LITERAL = psiElement().afterLeafSkipping(psiElement().withText(""), psiElement().withElementType(elementType().oneOf(JetTokens.FLOAT_LITERAL, JetTokens.INTEGER_LITERAL)))
     private val AFTER_INTEGER_LITERAL_AND_DOT = psiElement().afterLeafSkipping(psiElement().withText("."), psiElement().withElementType(elementType().oneOf(JetTokens.INTEGER_LITERAL)))
 
@@ -286,6 +285,11 @@ public class KotlinCompletionContributor : CompletionContributor() {
 
     private fun specialInTypeArgsDummyIdentifier(tokenBefore: PsiElement?): String? {
         if (tokenBefore == null) return null
+
+        if (tokenBefore.getParentOfType<JetTypeArgumentList>(true) != null) { // already parsed inside type argument list
+            return CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED // do not insert '$' to not break type argument list parsing
+        }
+
         val pair = unclosedTypeArgListNameAndBalance(tokenBefore) ?: return null
         val (nameToken, balance) = pair
         assert(balance > 0)
@@ -308,7 +312,6 @@ public class KotlinCompletionContributor : CompletionContributor() {
     }
 
     private fun unclosedTypeArgListNameAndBalance(tokenBefore: PsiElement): Pair<PsiElement, Int>? {
-        if (tokenBefore.getParentOfType<JetTypeArgumentList>(true) != null) return null // already parsed inside type argument list
         val nameToken = findCallNameTokenIfInTypeArgs(tokenBefore) ?: return null
         val pair = unclosedTypeArgListNameAndBalance(nameToken)
         if (pair == null) {
