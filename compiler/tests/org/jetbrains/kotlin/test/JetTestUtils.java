@@ -34,7 +34,6 @@ import com.intellij.psi.impl.PsiFileFactoryImpl;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.testFramework.TestDataFile;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
@@ -87,9 +86,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.addJavaSourceRoots;
-import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.addJvmClasspathRoot;
-import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.addJvmClasspathRoots;
+import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.*;
 import static org.jetbrains.kotlin.cli.jvm.config.JVMConfigurationKeys.ANNOTATIONS_PATH_KEY;
 import static org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil.compileKotlinToDirAndGetAnalysisResult;
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
@@ -235,9 +232,6 @@ public class JetTestUtils {
             }
         }
     };
-
-    @SuppressWarnings("unchecked")
-    private static final Class<? extends TestCase>[] NO_INNER_CLASSES = ArrayUtil.EMPTY_CLASS_ARRAY;
 
     // We suspect sequences of eight consecutive hexadecimal digits to be a package part hash code
     private static final Pattern STRIP_PACKAGE_PART_HASH_PATTERN = Pattern.compile("\\$([0-9a-f]{8})");
@@ -849,14 +843,9 @@ public class JetTestUtils {
         return false;
     }
 
-    private static void assertTestClassPresentByMetadata(
-            @NotNull Class<?> outerClass,
-            @NotNull File testDataDir
-    ) {
-        InnerTestClasses innerClassesAnnotation = outerClass.getAnnotation(InnerTestClasses.class);
-        Class<? extends TestCase>[] innerClasses = innerClassesAnnotation == null ? NO_INNER_CLASSES : innerClassesAnnotation.value();
-        for (Class<?> innerClass : innerClasses) {
-            TestMetadata testMetadata = innerClass.getAnnotation(TestMetadata.class);
+    private static void assertTestClassPresentByMetadata(@NotNull Class<?> outerClass, @NotNull File testDataDir) {
+        for (Class<?> nestedClass : outerClass.getDeclaredClasses()) {
+            TestMetadata testMetadata = nestedClass.getAnnotation(TestMetadata.class);
             if (testMetadata != null && testMetadata.value().equals(getFilePath(testDataDir))) {
                 return;
             }
