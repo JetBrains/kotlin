@@ -11,6 +11,11 @@ class RegexTest {
         val p = "\\d+".toRegex()
         val input = "123 456 789"
 
+        assertFalse(input.matches(p))
+        assertFalse(p.matches(input))
+
+        assertTrue(p.hasMatch(input))
+
         val first = p.match(input)
         assertTrue(first != null); first!!
         assertEquals("123", first.value)
@@ -21,11 +26,18 @@ class RegexTest {
         assertEquals("456", second1.value)
         assertEquals(second1.value, second2.value)
 
+        assertEquals("56", p.match(input, startIndex = 5)?.value)
+
         val last = second1.next()!!
         assertEquals("789", last.value)
 
         val noMatch = last.next()
         assertEquals(null, noMatch)
+    }
+
+    test fun matchIgnoreCase() {
+        for (input in listOf("ascii", "shrödinger"))
+            assertTrue(input.toUpperCase().matches(input.toLowerCase().toRegex(RegexOption.IGNORE_CASE)))
     }
 
     test fun matchSequence() {
@@ -37,6 +49,7 @@ class RegexTest {
         val expected = listOf("123", "456", "789")
         assertEquals(expected, values.toList())
         assertEquals(expected, values.toList(), "running match sequence second time")
+        assertEquals(expected.drop(1), pattern.matchAll(input, startIndex = 3).map { it.value }.toList())
 
         assertEquals(listOf(0..2, 4..6, 8..10), matches.map { it.range }.toList())
     }
@@ -82,6 +95,8 @@ class RegexTest {
         val pattern = "(\\d+)".toRegex()
         assertEquals("(123)-(456)", pattern.replace(input, "($1)"))
 
+        assertEquals("$&-$&", pattern.replace(input, Regex.escapeReplacement("$&")))
+        assertEquals("X-456", pattern.replaceFirst(input, "X"))
     }
 
     test fun replaceEvaluator() {
