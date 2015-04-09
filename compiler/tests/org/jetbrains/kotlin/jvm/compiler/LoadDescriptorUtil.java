@@ -88,7 +88,7 @@ public final class LoadDescriptorUtil {
                 testJdkKind,
                 JetTestUtils.getAnnotationsJar(),
                 javaRoot,
-                new File("compiler/tests") // for @ExpectLoadError annotation
+                new File("compiler/testData/loadJava/include")
         );
         KotlinCoreEnvironment environment =
                 KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
@@ -107,7 +107,7 @@ public final class LoadDescriptorUtil {
                            JetTestUtils.getAnnotationsJar().getPath();
         JetTestUtils.compileJavaFiles(javaFiles, Arrays.asList(
                 "-classpath", classPath,
-                "-sourcepath", "compiler/tests", // for @ExpectLoadError annotation
+                "-sourcepath", "compiler/testData/loadJava/include",
                 "-d", outDir.getPath()
         ));
     }

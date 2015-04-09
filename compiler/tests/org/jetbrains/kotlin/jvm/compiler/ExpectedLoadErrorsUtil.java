@@ -21,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies;
-import org.jetbrains.kotlin.jvm.compiler.annotation.ExpectLoadError;
 import org.jetbrains.kotlin.load.java.JavaBindingContext;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
@@ -35,7 +34,7 @@ import static com.intellij.testFramework.UsefulTestCase.assertNotNull;
 import static com.intellij.testFramework.UsefulTestCase.assertSameElements;
 
 public class ExpectedLoadErrorsUtil {
-    public static final String ANNOTATION_CLASS_NAME = ExpectLoadError.class.getName();
+    public static final String ANNOTATION_CLASS_NAME = "org.jetbrains.kotlin.jvm.compiler.annotation.ExpectLoadError";
 
     public static void checkForLoadErrors(
             @NotNull PackageViewDescriptor packageFromJava,
@@ -88,6 +87,7 @@ public class ExpectedLoadErrorsUtil {
                 CompileTimeConstant<?> argument = annotation.getAllValueArguments().values().iterator().next();
 
                 String error = (String) argument.getValue();
+                //noinspection ConstantConditions
                 List<String> errors = Arrays.asList(error.split("\\|"));
 
                 map.put(descriptor, errors);

@@ -142,7 +142,8 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(
                 ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, tmpdir);
         addKotlinSourceRoot(configuration, sourcesDir.getAbsolutePath());
-        addJavaSourceRoot(configuration, new File("compiler/tests")); // for @ExpectLoadError annotation
+        addJavaSourceRoot(configuration, new File("compiler/testData/loadJava/include"));
+
         KotlinCoreEnvironment environment =
                 KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
 
