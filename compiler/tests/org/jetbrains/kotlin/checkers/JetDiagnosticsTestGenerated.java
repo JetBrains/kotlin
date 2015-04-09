@@ -6739,6 +6739,18 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("lambdaAsGeneric.kt")
+                public void testLambdaAsGeneric() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inline/nonLocalReturns/lambdaAsGeneric.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("lambdaAsNonFunction.kt")
+                public void testLambdaAsNonFunction() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inline/nonLocalReturns/lambdaAsNonFunction.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("lambdaWithGlobalReturnsInsideOnlyLocalOne.kt")
                 public void testLambdaWithGlobalReturnsInsideOnlyLocalOne() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inline/nonLocalReturns/lambdaWithGlobalReturnsInsideOnlyLocalOne.kt");

@@ -84,7 +84,7 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
         if (descriptor instanceof ValueParameterDescriptor) {
             DeclarationDescriptor containingDescriptor = descriptor.getContainingDeclaration();
             return InlineUtil.getInlineType(containingDescriptor).isInline()
-                   && !InlineUtil.hasNoinlineAnnotation(descriptor);
+                   && InlineUtil.isInlineLambdaParameter(descriptor);
         }
 
         return false;

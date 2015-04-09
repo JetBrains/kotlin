@@ -76,7 +76,7 @@ public class InlineDescriptorUtils {
                     ArgumentMapping mapping = resolvedCall.getArgumentMapping(argument);
                     if (mapping instanceof ArgumentMatch) {
                         ValueParameterDescriptor parameter = ((ArgumentMatch) mapping).getValueParameter();
-                        if (!InlineUtil.hasNoinlineAnnotation(parameter)) {
+                        if (InlineUtil.isInlineLambdaParameter(parameter)) {
                             return !checkNonLocalReturn || allowsNonLocalReturns(parameter);
                         }
                     }

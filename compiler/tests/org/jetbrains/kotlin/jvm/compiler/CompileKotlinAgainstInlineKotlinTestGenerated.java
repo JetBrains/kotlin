@@ -320,6 +320,18 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/noInline"), Pattern.compile("^(.+)\\.1.kt$"), true);
         }
 
+        @TestMetadata("lambdaAsGeneric.1.kt")
+        public void testLambdaAsGeneric() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/noInline/lambdaAsGeneric.1.kt");
+            doBoxTestWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("lambdaAsNonFunction.1.kt")
+        public void testLambdaAsNonFunction() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/noInline/lambdaAsNonFunction.1.kt");
+            doBoxTestWithInlineCheck(fileName);
+        }
+
         @TestMetadata("noInline.1.kt")
         public void testNoInline() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/noInline/noInline.1.kt");

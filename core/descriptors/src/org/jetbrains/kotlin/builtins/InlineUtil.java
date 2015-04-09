@@ -29,13 +29,21 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.constants.ArrayValue;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.EnumValue;
+import org.jetbrains.kotlin.types.JetType;
 
 import java.util.List;
 
 public class InlineUtil {
 
-    public static boolean hasNoinlineAnnotation(@NotNull CallableDescriptor valueParameterDescriptor) {
-        return KotlinBuiltIns.containsAnnotation(valueParameterDescriptor, KotlinBuiltIns.getNoinlineClassAnnotationFqName());
+    public static boolean hasNoinlineAnnotation(@NotNull CallableDescriptor valueParameterOrReceiver) {
+        return KotlinBuiltIns.containsAnnotation(valueParameterOrReceiver, KotlinBuiltIns.getNoinlineClassAnnotationFqName());
+    }
+
+    public static boolean isInlineLambdaParameter(@NotNull CallableDescriptor valueParameterOrReceiver) {
+        JetType type = valueParameterOrReceiver.getOriginal().getReturnType();
+        return !hasNoinlineAnnotation(valueParameterOrReceiver) &&
+               type != null &&
+               KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(type);
     }
 
     @NotNull

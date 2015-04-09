@@ -143,16 +143,14 @@ public class InlineAnalyzerExtension implements FunctionAnalyzerExtension.Analyz
             @Nullable BindingTrace trace
     ) {
         JetType type = parameter.getReturnType();
-        if (type != null && KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(type)) {
-            if (!InlineUtil.hasNoinlineAnnotation(parameter)) {
-                if (type.isMarkedNullable()) {
-                    if (trace != null) {
-                        trace.report(Errors.NULLABLE_INLINE_PARAMETER.on(expression, expression, functionDescriptor));
-                    }
+        if (type != null && InlineUtil.isInlineLambdaParameter(parameter)) {
+            if (type.isMarkedNullable()) {
+                if (trace != null) {
+                    trace.report(Errors.NULLABLE_INLINE_PARAMETER.on(expression, expression, functionDescriptor));
                 }
-                else {
-                    return true;
-                }
+            }
+            else {
+                return true;
             }
         }
         return false;

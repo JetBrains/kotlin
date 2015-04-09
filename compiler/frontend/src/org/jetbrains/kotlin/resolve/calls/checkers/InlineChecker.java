@@ -222,9 +222,8 @@ class InlineChecker implements CallChecker {
     private static boolean isInlinableParameter(@NotNull CallableDescriptor descriptor) {
         JetType type = descriptor.getReturnType();
         return type != null &&
-               KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(type) &&
-               !type.isMarkedNullable() &&
-               !InlineUtil.hasNoinlineAnnotation(descriptor);
+               InlineUtil.isInlineLambdaParameter(descriptor) &&
+               !type.isMarkedNullable();
     }
 
     private static boolean isInvokeOrInlineExtension(@NotNull CallableDescriptor descriptor) {
@@ -272,13 +271,4 @@ class InlineChecker implements CallChecker {
             context.trace.report(Errors.NON_LOCAL_RETURN_NOT_ALLOWED.on(parameterUsage, parameterUsage, inlinableParameterDescriptor, descriptor));
         }
     }
-
-    @Nullable
-    public static PsiElement getDeclaration(JetExpression expression) {
-        do {
-            expression = PsiTreeUtil.getParentOfType(expression, JetDeclaration.class);
-        } while (expression instanceof JetMultiDeclaration || expression instanceof JetProperty);
-        return expression;
-    }
-
 }

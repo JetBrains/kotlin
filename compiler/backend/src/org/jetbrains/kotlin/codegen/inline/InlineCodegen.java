@@ -24,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.builtins.InlineStrategy;
 import org.jetbrains.kotlin.builtins.InlineUtil;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.codegen.*;
 import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.context.FieldOwnerContext;
@@ -508,11 +509,11 @@ public class InlineCodegen extends CallGenerator {
         }
     }
 
-    public static boolean isInliningClosure(JetExpression expression, ValueParameterDescriptor valueParameterDescriptora) {
+    public static boolean isInliningClosure(JetExpression expression, ValueParameterDescriptor valueParameterDescriptor) {
         //TODO deparenthisise typed
-        JetExpression deparenthesize = JetPsiUtil.deparenthesize(expression);
-        return deparenthesize instanceof JetFunctionLiteralExpression &&
-               !InlineUtil.hasNoinlineAnnotation(valueParameterDescriptora);
+        JetExpression deparenthesized = JetPsiUtil.deparenthesize(expression);
+        return deparenthesized instanceof JetFunctionLiteralExpression &&
+               InlineUtil.isInlineLambdaParameter(valueParameterDescriptor);
     }
 
     public void rememberClosure(JetExpression expression, Type type) {
