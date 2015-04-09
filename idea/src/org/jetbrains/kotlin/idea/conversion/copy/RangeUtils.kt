@@ -28,6 +28,9 @@ public val TextRange.start: Int
 public val TextRange.end: Int
     get() = getEndOffset()
 
+public val TextRange.length: Int
+    get() = getLength()
+
 public val PsiElement.range: TextRange
     get() = getTextRange()!!
 

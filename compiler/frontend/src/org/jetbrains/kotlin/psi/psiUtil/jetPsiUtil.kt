@@ -367,16 +367,16 @@ public fun JetExpression.isFunctionLiteralOutsideParentheses(): Boolean {
     }
 }
 
-public fun PsiElement.siblings(forward: Boolean = true, withItself: Boolean = true): Stream<PsiElement> {
+public fun PsiElement.siblings(forward: Boolean = true, withItself: Boolean = true): Sequence<PsiElement> {
     val stepFun = if (forward) { e: PsiElement -> e.getNextSibling() } else { e: PsiElement -> e.getPrevSibling() }
-    val stream = stream(this, stepFun)
-    return if (withItself) stream else stream.drop(1)
+    val sequence = sequence(this, stepFun)
+    return if (withItself) sequence else sequence.drop(1)
 }
 
-public fun ASTNode.siblings(forward: Boolean = true, withItself: Boolean = true): Stream<ASTNode> {
+public fun ASTNode.siblings(forward: Boolean = true, withItself: Boolean = true): Sequence<ASTNode> {
     val stepFun = if (forward) { node: ASTNode -> node.getTreeNext() } else { e: ASTNode -> e.getTreeNext() }
-    val stream = stream(this, stepFun)
-    return if (withItself) stream else stream.drop(1)
+    val sequence = sequence(this, stepFun)
+    return if (withItself) sequence else sequence.drop(1)
 }
 
 public fun PsiElement.parents(withItself: Boolean = true): Sequence<PsiElement> {
@@ -384,9 +384,9 @@ public fun PsiElement.parents(withItself: Boolean = true): Sequence<PsiElement> 
     return if (withItself) sequence else sequence.drop(1)
 }
 
-public fun ASTNode.parents(withItself: Boolean = true): Stream<ASTNode> {
-    val stream = stream(this) { it.getTreeParent() }
-    return if (withItself) stream else stream.drop(1)
+public fun ASTNode.parents(withItself: Boolean = true): Sequence<ASTNode> {
+    val sequence = sequence(this) { it.getTreeParent() }
+    return if (withItself) sequence else sequence.drop(1)
 }
 
 public fun JetExpression.getAssignmentByLHS(): JetBinaryExpression? {

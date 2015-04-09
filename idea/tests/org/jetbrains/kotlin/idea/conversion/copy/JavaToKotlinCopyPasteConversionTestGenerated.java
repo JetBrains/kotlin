@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.conversion.copy;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.InnerTestClasses;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
@@ -72,6 +71,12 @@ public class JavaToKotlinCopyPasteConversionTestGenerated extends AbstractJavaTo
         doTest(fileName);
     }
 
+    @TestMetadata("ClassWithNoDocComment.java")
+    public void testClassWithNoDocComment() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/conversion/ClassWithNoDocComment.java");
+        doTest(fileName);
+    }
+
     @TestMetadata("Constructor.java")
     public void testConstructor() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/conversion/Constructor.java");
@@ -81,6 +86,24 @@ public class JavaToKotlinCopyPasteConversionTestGenerated extends AbstractJavaTo
     @TestMetadata("ConversionInCorrectContext.java")
     public void testConversionInCorrectContext() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/conversion/ConversionInCorrectContext.java");
+        doTest(fileName);
+    }
+
+    @TestMetadata("FieldWithNoEndComment.java")
+    public void testFieldWithNoEndComment() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/conversion/FieldWithNoEndComment.java");
+        doTest(fileName);
+    }
+
+    @TestMetadata("FieldWithNoModifierAndNoSemicolon.java")
+    public void testFieldWithNoModifierAndNoSemicolon() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/conversion/FieldWithNoModifierAndNoSemicolon.java");
+        doTest(fileName);
+    }
+
+    @TestMetadata("FileWithNoPackageStatement.java")
+    public void testFileWithNoPackageStatement() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/conversion/FileWithNoPackageStatement.java");
         doTest(fileName);
     }
 
@@ -114,9 +137,27 @@ public class JavaToKotlinCopyPasteConversionTestGenerated extends AbstractJavaTo
         doTest(fileName);
     }
 
+    @TestMetadata("MethodDeclarationWithNoBody.java")
+    public void testMethodDeclarationWithNoBody() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/conversion/MethodDeclarationWithNoBody.java");
+        doTest(fileName);
+    }
+
     @TestMetadata("MethodReferenceWithoutQualifier.java")
     public void testMethodReferenceWithoutQualifier() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/conversion/MethodReferenceWithoutQualifier.java");
+        doTest(fileName);
+    }
+
+    @TestMetadata("MethodWithNoAnnotation.java")
+    public void testMethodWithNoAnnotation() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/conversion/MethodWithNoAnnotation.java");
+        doTest(fileName);
+    }
+
+    @TestMetadata("MethodWithOnlyOneAnnotation.java")
+    public void testMethodWithOnlyOneAnnotation() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/conversion/MethodWithOnlyOneAnnotation.java");
         doTest(fileName);
     }
 
