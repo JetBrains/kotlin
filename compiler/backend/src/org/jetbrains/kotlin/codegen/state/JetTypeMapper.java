@@ -187,7 +187,7 @@ public class JetTypeMapper {
             return mapType(descriptor.getReturnType(), sw, JetTypeMapperMode.TYPE_PARAMETER);
         }
         else {
-            return mapType(returnType, sw, JetTypeMapperMode.VALUE, Variance.OUT_VARIANCE, false);
+            return mapType(returnType, sw, JetTypeMapperMode.VALUE, Variance.OUT_VARIANCE);
         }
     }
 
@@ -229,7 +229,7 @@ public class JetTypeMapper {
 
     @NotNull
     private Type mapType(@NotNull JetType jetType, @Nullable BothSignatureWriter signatureVisitor, @NotNull JetTypeMapperMode mode) {
-        return mapType(jetType, signatureVisitor, mode, Variance.INVARIANT, false);
+        return mapType(jetType, signatureVisitor, mode, Variance.INVARIANT);
     }
 
     @NotNull
@@ -237,8 +237,7 @@ public class JetTypeMapper {
             @NotNull JetType jetType,
             @Nullable BothSignatureWriter signatureVisitor,
             @NotNull JetTypeMapperMode kind,
-            @NotNull Variance howThisTypeIsUsed,
-            boolean arrayParameter
+            @NotNull Variance howThisTypeIsUsed
     ) {
         Type known = null;
         DeclarationDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
@@ -256,7 +255,7 @@ public class JetTypeMapper {
                 return mapKnownAsmType(jetType, known, signatureVisitor, howThisTypeIsUsed);
             }
             else if (kind == JetTypeMapperMode.TYPE_PARAMETER || kind == JetTypeMapperMode.SUPER_TYPE) {
-                return mapKnownAsmType(jetType, boxType(known), signatureVisitor, howThisTypeIsUsed, arrayParameter, projectionsAllowed);
+                return mapKnownAsmType(jetType, boxType(known), signatureVisitor, howThisTypeIsUsed, projectionsAllowed);
             }
             else if (kind == JetTypeMapperMode.IMPL) {
                 // TODO: enable and fix tests
@@ -295,13 +294,25 @@ public class JetTypeMapper {
             TypeProjection memberProjection = jetType.getArguments().get(0);
             JetType memberType = memberProjection.getType();
 
-            if (signatureVisitor != null) {
-                signatureVisitor.writeArrayType();
-                mapType(memberType, signatureVisitor, JetTypeMapperMode.TYPE_PARAMETER, memberProjection.getProjectionKind(), true);
-                signatureVisitor.writeArrayEnd();
+            Type arrayElementType;
+            if (memberProjection.getProjectionKind() == Variance.IN_VARIANCE) {
+                arrayElementType = AsmTypes.OBJECT_TYPE;
+                if (signatureVisitor != null) {
+                    signatureVisitor.writeArrayType();
+                    signatureVisitor.writeAsmType(arrayElementType);
+                    signatureVisitor.writeArrayEnd();
+                }
+            }
+            else {
+                arrayElementType = boxType(mapType(memberType, kind));
+                if (signatureVisitor != null) {
+                    signatureVisitor.writeArrayType();
+                    mapType(memberType, signatureVisitor, JetTypeMapperMode.TYPE_PARAMETER, memberProjection.getProjectionKind());
+                    signatureVisitor.writeArrayEnd();
+                }
             }
 
-            return Type.getType("[" + boxType(mapType(memberType, kind)).getDescriptor());
+            return Type.getType("[" + arrayElementType.getDescriptor());
         }
 
         if (descriptor instanceof ClassDescriptor) {
@@ -462,7 +473,7 @@ public class JetTypeMapper {
             @Nullable BothSignatureWriter signatureVisitor,
             @NotNull Variance howThisTypeIsUsed
     ) {
-        return mapKnownAsmType(jetType, asmType, signatureVisitor, howThisTypeIsUsed, false, true);
+        return mapKnownAsmType(jetType, asmType, signatureVisitor, howThisTypeIsUsed, true);
     }
 
     private Type mapKnownAsmType(
@@ -470,14 +481,10 @@ public class JetTypeMapper {
             Type asmType,
             @Nullable BothSignatureWriter signatureVisitor,
             @NotNull Variance howThisTypeIsUsed,
-            boolean arrayParameter,
             boolean allowProjections
     ) {
         if (signatureVisitor != null) {
             if (jetType.getArguments().isEmpty()) {
-                if (arrayParameter && howThisTypeIsUsed == Variance.IN_VARIANCE) {
-                    asmType = AsmTypes.OBJECT_TYPE;
-                }
                 signatureVisitor.writeAsmType(asmType);
             }
             else {
