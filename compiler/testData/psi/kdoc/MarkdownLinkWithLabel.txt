@@ -1,0 +1,16 @@
+JetFile: MarkdownLinkWithLabel.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  KDoc
+    PsiElement(KDOC_START)('/**')
+    PsiWhiteSpace('\n ')
+    KDOC_SECTION
+      PsiElement(KDOC_LEADING_ASTERISK)('*')
+      PsiElement(KDOC_TEXT)(' [foo]')
+      KDOC_MARKDOWN_LINK
+        PsiElement(LBRACKET)('[')
+        KDOC_NAME
+          PsiElement(IDENTIFIER)('bar')
+        PsiElement(RBRACKET)(']')
+    PsiWhiteSpace('\n ')
+    PsiElement(KDOC_END)('*/')

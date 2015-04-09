@@ -139,6 +139,11 @@ CODE_LINK=\[{QUALIFIED_NAME}\]
     "\\"[\[\]]   { yybegin(CONTENTS);
                    return KDocTokens.MARKDOWN_ESCAPED_CHAR; }
 
+    "[" [^\[]* "](" [^)]* ")" {
+        yybegin(CONTENTS);
+        return KDocTokens.MARKDOWN_INLINE_LINK;
+    }
+
     /* We're only interested in parsing links that can become code references,
        meaning they contain only identifier characters and characters that can be
        used in type declarations. No brackets, backticks, asterisks or anything like that.

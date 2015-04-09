@@ -1134,6 +1134,12 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
                 doParsingTest(fileName);
             }
 
+            @TestMetadata("MarkdownLinkWithLabel.kt")
+            public void testMarkdownLinkWithLabel() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/kdoc/MarkdownLinkWithLabel.kt");
+                doParsingTest(fileName);
+            }
+
             @TestMetadata("MarkdownQualifiedName.kt")
             public void testMarkdownQualifiedName() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/kdoc/MarkdownQualifiedName.kt");
