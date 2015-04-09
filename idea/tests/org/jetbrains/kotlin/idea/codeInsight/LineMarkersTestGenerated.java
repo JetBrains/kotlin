@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.codeInsight;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.InnerTestClasses;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
@@ -30,10 +29,6 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/codeInsight/lineMarker")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({
-        LineMarkersTestGenerated.OverrideImplement.class,
-        LineMarkersTestGenerated.RecursiveCall.class,
-})
 @RunWith(JUnit3RunnerWithInners.class)
 public class LineMarkersTestGenerated extends AbstractLineMarkersTest {
     public void testAllFilesPresentInLineMarker() throws Exception {

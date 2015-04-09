@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.j2k;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.InnerTestClasses;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
@@ -30,79 +29,6 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("j2k/testData/fileOrElement")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({
-        JavaToKotlinConverterForWebDemoTestGenerated.Annotations.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.AnonymousBlock.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.ArrayAccessExpression.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.ArrayInitializerExpression.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.ArrayType.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.AssertStatement.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.AssignmentExpression.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.BinaryExpression.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.Blocks.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.BoxedType.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.BreakStatement.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.CallChainExpression.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.Class.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.ClassExpression.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.CodeSimplifications.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.Comments.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.ConditionalExpression.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.Constructors.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.ContinueStatement.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.DeclarationStatement.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.DoWhileStatement.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.DocComments.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.DropAccessors.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.Enum.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.Equals.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.Field.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.For.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.ForeachStatement.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.Formatting.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.Function.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.Identifier.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.IfStatement.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.ImportStatement.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.Inheritance.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.IsOperator.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.Issues.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.KotlinApiAccess.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.LabelStatement.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.List.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.LiteralExpression.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.LocalVariable.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.MethodCallExpression.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.Misc.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.MutableCollections.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.NewClassExpression.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.Nullability.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.ObjectLiteral.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.Overloads.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.PackageStatement.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.ParenthesizedExpression.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.PolyadicExpression.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.PostfixOperator.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.PrefixOperator.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.Projections.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.RawGenerics.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.ReturnStatement.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.Settings.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.StaticMembers.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.SuperExpression.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.Switch.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.SynchronizedStatement.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.ThisExpression.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.ThrowStatement.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.ToKotlinClasses.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.Trait.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.TryStatement.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.TryWithResource.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.TypeCastExpression.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.TypeParameters.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.VarArg.class,
-        JavaToKotlinConverterForWebDemoTestGenerated.WhileStatement.class,
-})
 @RunWith(JUnit3RunnerWithInners.class)
 public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaToKotlinConverterForWebDemoTest {
     public void testAllFilesPresentInFileOrElement() throws Exception {

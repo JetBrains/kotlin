@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.cfg;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.InnerTestClasses;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
@@ -30,19 +29,6 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/cfg")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({
-        ControlFlowTestGenerated.Arrays.class,
-        ControlFlowTestGenerated.Basic.class,
-        ControlFlowTestGenerated.Bugs.class,
-        ControlFlowTestGenerated.ControlStructures.class,
-        ControlFlowTestGenerated.Conventions.class,
-        ControlFlowTestGenerated.DeadCode.class,
-        ControlFlowTestGenerated.Declarations.class,
-        ControlFlowTestGenerated.Expressions.class,
-        ControlFlowTestGenerated.Functions.class,
-        ControlFlowTestGenerated.SecondaryConstructors.class,
-        ControlFlowTestGenerated.TailCalls.class,
-})
 @RunWith(JUnit3RunnerWithInners.class)
 public class ControlFlowTestGenerated extends AbstractControlFlowTest {
     public void testAllFilesPresentInCfg() throws Exception {
@@ -303,14 +289,6 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
 
     @TestMetadata("compiler/testData/cfg/declarations")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({
-            Declarations.ClassesAndObjects.class,
-            Declarations.FunctionLiterals.class,
-            Declarations.Functions.class,
-            Declarations.Local.class,
-            Declarations.MultiDeclaration.class,
-            Declarations.Properties.class,
-    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Declarations extends AbstractControlFlowTest {
         public void testAllFilesPresentInDeclarations() throws Exception {

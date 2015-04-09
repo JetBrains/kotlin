@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.resolve.annotation;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.InnerTestClasses;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
@@ -30,9 +29,6 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/resolveAnnotations/parameters")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({
-        AnnotationParameterTestGenerated.Expressions.class,
-})
 @RunWith(JUnit3RunnerWithInners.class)
 public class AnnotationParameterTestGenerated extends AbstractAnnotationParameterTest {
     public void testAllFilesPresentInParameters() throws Exception {

@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.jvm.compiler;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.InnerTestClasses;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
@@ -30,24 +29,6 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/codegen/boxInline")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({
-        CompileKotlinAgainstInlineKotlinTestGenerated.AnonymousObject.class,
-        CompileKotlinAgainstInlineKotlinTestGenerated.Builders.class,
-        CompileKotlinAgainstInlineKotlinTestGenerated.Capture.class,
-        CompileKotlinAgainstInlineKotlinTestGenerated.Complex.class,
-        CompileKotlinAgainstInlineKotlinTestGenerated.DefaultValues.class,
-        CompileKotlinAgainstInlineKotlinTestGenerated.LambdaClassClash.class,
-        CompileKotlinAgainstInlineKotlinTestGenerated.LambdaTransformation.class,
-        CompileKotlinAgainstInlineKotlinTestGenerated.LocalFunInLambda.class,
-        CompileKotlinAgainstInlineKotlinTestGenerated.NoInline.class,
-        CompileKotlinAgainstInlineKotlinTestGenerated.NonLocalReturns.class,
-        CompileKotlinAgainstInlineKotlinTestGenerated.Reified.class,
-        CompileKotlinAgainstInlineKotlinTestGenerated.Simple.class,
-        CompileKotlinAgainstInlineKotlinTestGenerated.Smap.class,
-        CompileKotlinAgainstInlineKotlinTestGenerated.Special.class,
-        CompileKotlinAgainstInlineKotlinTestGenerated.Trait.class,
-        CompileKotlinAgainstInlineKotlinTestGenerated.TryCatchFinally.class,
-})
 @RunWith(JUnit3RunnerWithInners.class)
 public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompileKotlinAgainstInlineKotlinTest {
     public void testAllFilesPresentInBoxInline() throws Exception {
@@ -359,10 +340,6 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
 
     @TestMetadata("compiler/testData/codegen/boxInline/nonLocalReturns")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({
-            NonLocalReturns.Deparenthesize.class,
-            NonLocalReturns.TryFinally.class,
-    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class NonLocalReturns extends AbstractCompileKotlinAgainstInlineKotlinTest {
         public void testAllFilesPresentInNonLocalReturns() throws Exception {
@@ -434,11 +411,6 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
 
         @TestMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally")
         @TestDataPath("$PROJECT_ROOT")
-        @InnerTestClasses({
-                TryFinally.CallSite.class,
-                TryFinally.DeclSite.class,
-                TryFinally.ExceptionTable.class,
-        })
         @RunWith(JUnit3RunnerWithInners.class)
         public static class TryFinally extends AbstractCompileKotlinAgainstInlineKotlinTest {
             public void testAllFilesPresentInTryFinally() throws Exception {
@@ -752,10 +724,6 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
 
     @TestMetadata("compiler/testData/codegen/boxInline/smap")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({
-            Smap.Anonymous.class,
-            Smap.Resolve.class,
-    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Smap extends AbstractCompileKotlinAgainstInlineKotlinTest {
         public void testAllFilesPresentInSmap() throws Exception {

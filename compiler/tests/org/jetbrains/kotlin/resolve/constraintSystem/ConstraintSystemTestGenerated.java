@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.resolve.constraintSystem;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.InnerTestClasses;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
@@ -30,13 +29,6 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/constraintSystem")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({
-        ConstraintSystemTestGenerated.CheckStatus.class,
-        ConstraintSystemTestGenerated.ComputeValues.class,
-        ConstraintSystemTestGenerated.IntegerValueTypes.class,
-        ConstraintSystemTestGenerated.SeveralVariables.class,
-        ConstraintSystemTestGenerated.Variance.class,
-})
 @RunWith(JUnit3RunnerWithInners.class)
 public class ConstraintSystemTestGenerated extends AbstractConstraintSystemTest {
     public void testAllFilesPresentInConstraintSystem() throws Exception {

@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.debugger.evaluate;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.InnerTestClasses;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
@@ -30,9 +29,6 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/completion/basic/codeFragments")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({
-        CodeFragmentCompletionTestGenerated.RuntimeType.class,
-})
 @RunWith(JUnit3RunnerWithInners.class)
 public class CodeFragmentCompletionTestGenerated extends AbstractCodeFragmentCompletionTest {
     public void testAllFilesPresentInCodeFragments() throws Exception {

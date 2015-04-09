@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.stubs;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.InnerTestClasses;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
@@ -30,24 +29,6 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/loadJava/compiledKotlin")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({
-        ResolveByStubTestGenerated.Annotations.class,
-        ResolveByStubTestGenerated.Class.class,
-        ResolveByStubTestGenerated.ClassFun.class,
-        ResolveByStubTestGenerated.ClassObject.class,
-        ResolveByStubTestGenerated.Constructor.class,
-        ResolveByStubTestGenerated.DataClass.class,
-        ResolveByStubTestGenerated.Enum.class,
-        ResolveByStubTestGenerated.FromLoadJava.class,
-        ResolveByStubTestGenerated.Fun.class,
-        ResolveByStubTestGenerated.Inline.class,
-        ResolveByStubTestGenerated.MemberOrder.class,
-        ResolveByStubTestGenerated.Nested.class,
-        ResolveByStubTestGenerated.PlatformTypes.class,
-        ResolveByStubTestGenerated.Prop.class,
-        ResolveByStubTestGenerated.Type.class,
-        ResolveByStubTestGenerated.Visibility.class,
-})
 @RunWith(JUnit3RunnerWithInners.class)
 public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
     public void testAllFilesPresentInCompiledKotlin() throws Exception {
@@ -56,13 +37,6 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
 
     @TestMetadata("compiler/testData/loadJava/compiledKotlin/annotations")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({
-            Annotations.ClassMembers.class,
-            Annotations.Classes.class,
-            Annotations.PackageMembers.class,
-            Annotations.Parameters.class,
-            Annotations.PropertiesWithoutBackingFields.class,
-    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Annotations extends AbstractResolveByStubTest {
         public void testAllFilesPresentInAnnotations() throws Exception {
@@ -447,9 +421,6 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
 
     @TestMetadata("compiler/testData/loadJava/compiledKotlin/class")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({
-            Class.JavaBean.class,
-    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Class extends AbstractResolveByStubTest {
         public void testAllFilesPresentInClass() throws Exception {
@@ -840,9 +811,6 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
 
     @TestMetadata("compiler/testData/loadJava/compiledKotlin/constructor")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({
-            Constructor.Vararg.class,
-    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Constructor extends AbstractResolveByStubTest {
         public void testAllFilesPresentInConstructor() throws Exception {
@@ -1071,12 +1039,6 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
 
     @TestMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({
-            FromLoadJava.KotlinSignature.class,
-            FromLoadJava.Library.class,
-            FromLoadJava.Modality.class,
-            FromLoadJava.NotNull.class,
-    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class FromLoadJava extends AbstractResolveByStubTest {
         public void testAllFilesPresentInFromLoadJava() throws Exception {
@@ -1289,10 +1251,6 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
 
         @TestMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature")
         @TestDataPath("$PROJECT_ROOT")
-        @InnerTestClasses({
-                KotlinSignature.Error.class,
-                KotlinSignature.Propagation.class,
-        })
         @RunWith(JUnit3RunnerWithInners.class)
         public static class KotlinSignature extends AbstractResolveByStubTest {
             @TestMetadata("AllBoundsInWhen.kt")
@@ -1568,11 +1526,6 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
 
             @TestMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation")
             @TestDataPath("$PROJECT_ROOT")
-            @InnerTestClasses({
-                    Propagation.Parameter.class,
-                    Propagation.Return.class,
-                    Propagation.TypeParameter.class,
-            })
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Propagation extends AbstractResolveByStubTest {
                 public void testAllFilesPresentInPropagation() throws Exception {
@@ -2112,12 +2065,6 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
 
     @TestMetadata("compiler/testData/loadJava/compiledKotlin/fun")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({
-            Fun.GenericWithTypeVariables.class,
-            Fun.GenericWithoutTypeVariables.class,
-            Fun.NonGeneric.class,
-            Fun.Vararg.class,
-    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Fun extends AbstractResolveByStubTest {
         public void testAllFilesPresentInFun() throws Exception {
@@ -2535,9 +2482,6 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
 
     @TestMetadata("compiler/testData/loadJava/compiledKotlin/prop")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({
-            Prop.DefaultAccessors.class,
-    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Prop extends AbstractResolveByStubTest {
         public void testAllFilesPresentInProp() throws Exception {

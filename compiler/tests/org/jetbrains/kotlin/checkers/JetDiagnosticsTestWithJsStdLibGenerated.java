@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.checkers;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.InnerTestClasses;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
@@ -30,12 +29,6 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({
-        JetDiagnosticsTestWithJsStdLibGenerated.DynamicTypes.class,
-        JetDiagnosticsTestWithJsStdLibGenerated.JsCode.class,
-        JetDiagnosticsTestWithJsStdLibGenerated.Native.class,
-        JetDiagnosticsTestWithJsStdLibGenerated.UnsupportedFeatures.class,
-})
 @RunWith(JUnit3RunnerWithInners.class)
 public class JetDiagnosticsTestWithJsStdLibGenerated extends AbstractJetDiagnosticsTestWithJsStdLib {
     public void testAllFilesPresentInTestsWithJsStdLib() throws Exception {
@@ -272,13 +265,6 @@ public class JetDiagnosticsTestWithJsStdLibGenerated extends AbstractJetDiagnost
 
     @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({
-            Native.NativeGetter.class,
-            Native.NativeInvoke.class,
-            Native.NativeSetter.class,
-            Native.OptionlBody.class,
-            Native.UnusedParam.class,
-    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Native extends AbstractJetDiagnosticsTestWithJsStdLib {
         public void testAllFilesPresentInNative() throws Exception {

@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.codegen.generated;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.InnerTestClasses;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
@@ -30,42 +29,6 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/codegen/boxWithStdlib")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({
-        BlackBoxWithStdlibCodegenTestGenerated.Annotations.class,
-        BlackBoxWithStdlibCodegenTestGenerated.Arrays.class,
-        BlackBoxWithStdlibCodegenTestGenerated.BoxingOptimization.class,
-        BlackBoxWithStdlibCodegenTestGenerated.CallableReference.class,
-        BlackBoxWithStdlibCodegenTestGenerated.Casts.class,
-        BlackBoxWithStdlibCodegenTestGenerated.Classes.class,
-        BlackBoxWithStdlibCodegenTestGenerated.DataClasses.class,
-        BlackBoxWithStdlibCodegenTestGenerated.DeadCodeElimination.class,
-        BlackBoxWithStdlibCodegenTestGenerated.DefaultArguments.class,
-        BlackBoxWithStdlibCodegenTestGenerated.Enum.class,
-        BlackBoxWithStdlibCodegenTestGenerated.Evaluate.class,
-        BlackBoxWithStdlibCodegenTestGenerated.FullJdk.class,
-        BlackBoxWithStdlibCodegenTestGenerated.HashPMap.class,
-        BlackBoxWithStdlibCodegenTestGenerated.Intrinsics.class,
-        BlackBoxWithStdlibCodegenTestGenerated.JdkAnnotations.class,
-        BlackBoxWithStdlibCodegenTestGenerated.JvmOverloads.class,
-        BlackBoxWithStdlibCodegenTestGenerated.LazyCodegen.class,
-        BlackBoxWithStdlibCodegenTestGenerated.LocalFunInLambda.class,
-        BlackBoxWithStdlibCodegenTestGenerated.MultiDeclForArray.class,
-        BlackBoxWithStdlibCodegenTestGenerated.NonLocalReturns.class,
-        BlackBoxWithStdlibCodegenTestGenerated.PlatformNames.class,
-        BlackBoxWithStdlibCodegenTestGenerated.PlatformStatic.class,
-        BlackBoxWithStdlibCodegenTestGenerated.Ranges.class,
-        BlackBoxWithStdlibCodegenTestGenerated.Reflection.class,
-        BlackBoxWithStdlibCodegenTestGenerated.Regressions.class,
-        BlackBoxWithStdlibCodegenTestGenerated.Reified.class,
-        BlackBoxWithStdlibCodegenTestGenerated.StoreStackBeforeInline.class,
-        BlackBoxWithStdlibCodegenTestGenerated.Strings.class,
-        BlackBoxWithStdlibCodegenTestGenerated.Synthetic.class,
-        BlackBoxWithStdlibCodegenTestGenerated.ToArray.class,
-        BlackBoxWithStdlibCodegenTestGenerated.Vararg.class,
-        BlackBoxWithStdlibCodegenTestGenerated.When.class,
-        BlackBoxWithStdlibCodegenTestGenerated.WhenEnumOptimization.class,
-        BlackBoxWithStdlibCodegenTestGenerated.WhenStringOptimization.class,
-})
 @RunWith(JUnit3RunnerWithInners.class)
 public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     public void testAllFilesPresentInBoxWithStdlib() throws Exception {
@@ -359,10 +322,6 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
 
     @TestMetadata("compiler/testData/codegen/boxWithStdlib/callableReference")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({
-            CallableReference.Function.class,
-            CallableReference.Property.class,
-    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class CallableReference extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInCallableReference() throws Exception {
@@ -371,9 +330,6 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
 
         @TestMetadata("compiler/testData/codegen/boxWithStdlib/callableReference/function")
         @TestDataPath("$PROJECT_ROOT")
-        @InnerTestClasses({
-                Function.Local.class,
-        })
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Function extends AbstractBlackBoxCodegenTest {
             @TestMetadata("abstractClassMember.kt")
@@ -924,12 +880,6 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
 
     @TestMetadata("compiler/testData/codegen/boxWithStdlib/dataClasses")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({
-            DataClasses.Copy.class,
-            DataClasses.Equals.class,
-            DataClasses.Hashcode.class,
-            DataClasses.Tostring.class,
-    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class DataClasses extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInDataClasses() throws Exception {
@@ -1296,9 +1246,6 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
 
     @TestMetadata("compiler/testData/codegen/boxWithStdlib/defaultArguments")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({
-            DefaultArguments.Constructor.class,
-    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class DefaultArguments extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInDefaultArguments() throws Exception {
@@ -1437,12 +1384,6 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
 
     @TestMetadata("compiler/testData/codegen/boxWithStdlib/fullJdk")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({
-            FullJdk.Native.class,
-            FullJdk.Regressions.class,
-            FullJdk.Smap.class,
-            FullJdk.Synchronized.class,
-    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class FullJdk extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInFullJdk() throws Exception {
@@ -1896,9 +1837,6 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
 
     @TestMetadata("compiler/testData/codegen/boxWithStdlib/lazyCodegen")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({
-            LazyCodegen.Optimizations.class,
-    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class LazyCodegen extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInLazyCodegen() throws Exception {
@@ -2058,10 +1996,6 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
 
     @TestMetadata("compiler/testData/codegen/boxWithStdlib/multiDeclForArray")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({
-            MultiDeclForArray.Int.class,
-            MultiDeclForArray.Long.class,
-    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class MultiDeclForArray extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInMultiDeclForArray() throws Exception {
@@ -2314,10 +2248,6 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
 
     @TestMetadata("compiler/testData/codegen/boxWithStdlib/ranges")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({
-            Ranges.Expression.class,
-            Ranges.Literal.class,
-    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Ranges extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInRanges() throws Exception {
@@ -2717,14 +2647,6 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
 
     @TestMetadata("compiler/testData/codegen/boxWithStdlib/reflection")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({
-            Reflection.ClassLiterals.class,
-            Reflection.Enclosing.class,
-            Reflection.GenericSignature.class,
-            Reflection.Mapping.class,
-            Reflection.MethodsFromAny.class,
-            Reflection.Properties.class,
-    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Reflection extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInReflection() throws Exception {

@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.intentions;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.InnerTestClasses;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
@@ -30,50 +29,6 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/intentions")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({
-        IntentionTestGenerated.AddBraces.class,
-        IntentionTestGenerated.AttributeCallReplacements.class,
-        IntentionTestGenerated.Branched.class,
-        IntentionTestGenerated.ConvertAssertToIf.class,
-        IntentionTestGenerated.ConvertFunctionToProperty.class,
-        IntentionTestGenerated.ConvertIfToAssert.class,
-        IntentionTestGenerated.ConvertNegatedBooleanSequence.class,
-        IntentionTestGenerated.ConvertNegatedExpressionWithDemorgansLaw.class,
-        IntentionTestGenerated.ConvertParameterToReceiver.class,
-        IntentionTestGenerated.ConvertPropertyToFunction.class,
-        IntentionTestGenerated.ConvertReceiverToParameter.class,
-        IntentionTestGenerated.ConvertToBlockBody.class,
-        IntentionTestGenerated.ConvertToConcatenatedStringIntention.class,
-        IntentionTestGenerated.ConvertToExpressionBody.class,
-        IntentionTestGenerated.ConvertToForEachFunctionCall.class,
-        IntentionTestGenerated.ConvertToForEachLoop.class,
-        IntentionTestGenerated.ConvertToStringTemplateIntention.class,
-        IntentionTestGenerated.Declarations.class,
-        IntentionTestGenerated.InsertCurlyBracesToTemplate.class,
-        IntentionTestGenerated.InsertExplicitTypeArguments.class,
-        IntentionTestGenerated.InvertIfCondition.class,
-        IntentionTestGenerated.MakeTypeExplicitInLambda.class,
-        IntentionTestGenerated.MakeTypeImplicitInLambda.class,
-        IntentionTestGenerated.MoveLambdaInsideParentheses.class,
-        IntentionTestGenerated.MoveLambdaOutsideParentheses.class,
-        IntentionTestGenerated.OperatorToFunction.class,
-        IntentionTestGenerated.ReconstructedType.class,
-        IntentionTestGenerated.RemoveBraces.class,
-        IntentionTestGenerated.RemoveCurlyBracesFromTemplate.class,
-        IntentionTestGenerated.RemoveExplicitTypeArguments.class,
-        IntentionTestGenerated.RemoveUnnecessaryParentheses.class,
-        IntentionTestGenerated.ReplaceExplicitFunctionLiteralParamWithIt.class,
-        IntentionTestGenerated.ReplaceItWithExplicitFunctionLiteralParam.class,
-        IntentionTestGenerated.ReplaceWithDotQualifiedMethodCall.class,
-        IntentionTestGenerated.ReplaceWithInfixFunctionCall.class,
-        IntentionTestGenerated.ReplaceWithOperatorAssign.class,
-        IntentionTestGenerated.ReplaceWithTraditionalAssignment.class,
-        IntentionTestGenerated.SimplifyBooleanWithConstants.class,
-        IntentionTestGenerated.SimplifyNegatedBinaryExpressionIntention.class,
-        IntentionTestGenerated.SpecifyType.class,
-        IntentionTestGenerated.SplitIf.class,
-        IntentionTestGenerated.SwapBinaryExpression.class,
-})
 @RunWith(JUnit3RunnerWithInners.class)
 public class IntentionTestGenerated extends AbstractIntentionTest {
     public void testAllFilesPresentInIntentions() throws Exception {
@@ -139,13 +94,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
 
     @TestMetadata("idea/testData/intentions/attributeCallReplacements")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({
-            AttributeCallReplacements.ReplaceBinaryInfixIntention.class,
-            AttributeCallReplacements.ReplaceContainsIntention.class,
-            AttributeCallReplacements.ReplaceGetIntention.class,
-            AttributeCallReplacements.ReplaceInvokeIntention.class,
-            AttributeCallReplacements.ReplaceUnaryPrefixIntention.class,
-    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class AttributeCallReplacements extends AbstractIntentionTest {
         public void testAllFilesPresentInAttributeCallReplacements() throws Exception {
@@ -382,8 +330,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
 
         @TestMetadata("idea/testData/intentions/attributeCallReplacements/replaceGetIntention")
         @TestDataPath("$PROJECT_ROOT")
-        @InnerTestClasses({
-        })
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ReplaceGetIntention extends AbstractIntentionTest {
             @TestMetadata("acceptableVararg.kt")
@@ -647,18 +593,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
 
     @TestMetadata("idea/testData/intentions/branched")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({
-            Branched.DoubleBangToIfThen.class,
-            Branched.ElvisToIfThen.class,
-            Branched.Folding.class,
-            Branched.IfThenToDoubleBang.class,
-            Branched.IfThenToElvis.class,
-            Branched.IfThenToSafeAccess.class,
-            Branched.IfWhen.class,
-            Branched.SafeAccessToIfThen.class,
-            Branched.Unfolding.class,
-            Branched.When.class,
-    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Branched extends AbstractIntentionTest {
         public void testAllFilesPresentInBranched() throws Exception {
@@ -823,13 +757,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
 
         @TestMetadata("idea/testData/intentions/branched/folding")
         @TestDataPath("$PROJECT_ROOT")
-        @InnerTestClasses({
-                Folding.IfToAssignment.class,
-                Folding.IfToReturn.class,
-                Folding.IfToReturnAsymmetrically.class,
-                Folding.WhenToAssignment.class,
-                Folding.WhenToReturn.class,
-        })
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Folding extends AbstractIntentionTest {
             public void testAllFilesPresentInFolding() throws Exception {
@@ -1241,8 +1168,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
 
         @TestMetadata("idea/testData/intentions/branched/ifThenToElvis")
         @TestDataPath("$PROJECT_ROOT")
-        @InnerTestClasses({
-        })
         @RunWith(JUnit3RunnerWithInners.class)
         public static class IfThenToElvis extends AbstractIntentionTest {
             public void testAllFilesPresentInIfThenToElvis() throws Exception {
@@ -1445,8 +1370,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
 
         @TestMetadata("idea/testData/intentions/branched/ifThenToSafeAccess")
         @TestDataPath("$PROJECT_ROOT")
-        @InnerTestClasses({
-        })
         @RunWith(JUnit3RunnerWithInners.class)
         public static class IfThenToSafeAccess extends AbstractIntentionTest {
             public void testAllFilesPresentInIfThenToSafeAccess() throws Exception {
@@ -1661,10 +1584,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
 
         @TestMetadata("idea/testData/intentions/branched/ifWhen")
         @TestDataPath("$PROJECT_ROOT")
-        @InnerTestClasses({
-                IfWhen.IfToWhen.class,
-                IfWhen.WhenToIf.class,
-        })
         @RunWith(JUnit3RunnerWithInners.class)
         public static class IfWhen extends AbstractIntentionTest {
             public void testAllFilesPresentInIfWhen() throws Exception {
@@ -1959,14 +1878,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
 
         @TestMetadata("idea/testData/intentions/branched/unfolding")
         @TestDataPath("$PROJECT_ROOT")
-        @InnerTestClasses({
-                Unfolding.AssignmentToIf.class,
-                Unfolding.AssignmentToWhen.class,
-                Unfolding.PropertyToIf.class,
-                Unfolding.PropertyToWhen.class,
-                Unfolding.ReturnToIf.class,
-                Unfolding.ReturnToWhen.class,
-        })
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Unfolding extends AbstractIntentionTest {
             public void testAllFilesPresentInUnfolding() throws Exception {
@@ -2228,12 +2139,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
 
         @TestMetadata("idea/testData/intentions/branched/when")
         @TestDataPath("$PROJECT_ROOT")
-        @InnerTestClasses({
-                When.EliminateSubject.class,
-                When.Flatten.class,
-                When.IntroduceSubject.class,
-                When.Merge.class,
-        })
         @RunWith(JUnit3RunnerWithInners.class)
         public static class When extends AbstractIntentionTest {
             public void testAllFilesPresentInWhen() throws Exception {
@@ -3864,10 +3769,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
 
     @TestMetadata("idea/testData/intentions/declarations")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({
-            Declarations.ConvertMemberToExtension.class,
-            Declarations.Split.class,
-    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Declarations extends AbstractIntentionTest {
         public void testAllFilesPresentInDeclarations() throws Exception {
@@ -5134,8 +5035,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
 
     @TestMetadata("idea/testData/intentions/removeExplicitTypeArguments")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({
-    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class RemoveExplicitTypeArguments extends AbstractIntentionTest {
         public void testAllFilesPresentInRemoveExplicitTypeArguments() throws Exception {
@@ -5836,8 +5735,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
 
     @TestMetadata("idea/testData/intentions/simplifyNegatedBinaryExpressionIntention")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({
-    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class SimplifyNegatedBinaryExpressionIntention extends AbstractIntentionTest {
         public void testAllFilesPresentInSimplifyNegatedBinaryExpressionIntention() throws Exception {

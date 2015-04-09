@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.shortenRefs;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.InnerTestClasses;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
@@ -30,13 +29,6 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/shortenRefs")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({
-        ShortenRefsTestGenerated.Constructor.class,
-        ShortenRefsTestGenerated.Imports.class,
-        ShortenRefsTestGenerated.Java.class,
-        ShortenRefsTestGenerated.This.class,
-        ShortenRefsTestGenerated.Type.class,
-})
 @RunWith(JUnit3RunnerWithInners.class)
 public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
     public void testAllFilesPresentInShortenRefs() throws Exception {

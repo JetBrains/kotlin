@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.intentions.declarations;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.InnerTestClasses;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
@@ -30,11 +29,6 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/joinLines")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({
-        JoinLinesTestGenerated.DeclarationAndAssignment.class,
-        JoinLinesTestGenerated.NestedIfs.class,
-        JoinLinesTestGenerated.RemoveBraces.class,
-})
 @RunWith(JUnit3RunnerWithInners.class)
 public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
     public void testAllFilesPresentInJoinLines() throws Exception {

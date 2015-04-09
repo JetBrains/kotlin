@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.repl;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.InnerTestClasses;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
@@ -30,14 +29,6 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/repl")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({
-        ReplInterpreterTestGenerated.Classes.class,
-        ReplInterpreterTestGenerated.Multiline.class,
-        ReplInterpreterTestGenerated.Objects.class,
-        ReplInterpreterTestGenerated.PrimitiveTypes.class,
-        ReplInterpreterTestGenerated.Reflection.class,
-        ReplInterpreterTestGenerated.Regressions.class,
-})
 @RunWith(JUnit3RunnerWithInners.class)
 public class ReplInterpreterTestGenerated extends AbstractReplInterpreterTest {
     public void testAllFilesPresentInRepl() throws Exception {

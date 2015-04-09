@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.decompiler.textBuilder;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.InnerTestClasses;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
@@ -30,8 +29,6 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/decompiler/decompiledText")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({
-})
 @RunWith(JUnit3RunnerWithInners.class)
 public class DecompiledTextTestGenerated extends AbstractDecompiledTextTest {
     public void testAllFilesPresentInDecompiledText() throws Exception {

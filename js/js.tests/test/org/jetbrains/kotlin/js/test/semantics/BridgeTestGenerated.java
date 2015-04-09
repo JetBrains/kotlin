@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.js.test.semantics;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.InnerTestClasses;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
@@ -30,9 +29,6 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/codegen/box/bridges")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({
-        BridgeTestGenerated.SubstitutionInSuperClass.class,
-})
 @RunWith(JUnit3RunnerWithInners.class)
 public class BridgeTestGenerated extends AbstractBridgeTest {
     @TestMetadata("objectClone.kt")

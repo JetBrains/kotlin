@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.cfg;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.InnerTestClasses;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
@@ -30,11 +29,6 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/cfg-variables")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({
-        DataFlowTestGenerated.Basic.class,
-        DataFlowTestGenerated.Bugs.class,
-        DataFlowTestGenerated.LexicalScopes.class,
-})
 @RunWith(JUnit3RunnerWithInners.class)
 public class DataFlowTestGenerated extends AbstractDataFlowTest {
     public void testAllFilesPresentInCfg_variables() throws Exception {

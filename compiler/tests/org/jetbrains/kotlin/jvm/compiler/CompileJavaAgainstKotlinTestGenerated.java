@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.jvm.compiler;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.InnerTestClasses;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
@@ -30,13 +29,6 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/compileJavaAgainstKotlin")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({
-        CompileJavaAgainstKotlinTestGenerated.Class.class,
-        CompileJavaAgainstKotlinTestGenerated.Method.class,
-        CompileJavaAgainstKotlinTestGenerated.PlatformStatic.class,
-        CompileJavaAgainstKotlinTestGenerated.Property.class,
-        CompileJavaAgainstKotlinTestGenerated.StaticFields.class,
-})
 @RunWith(JUnit3RunnerWithInners.class)
 public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAgainstKotlinTest {
     public void testAllFilesPresentInCompileJavaAgainstKotlin() throws Exception {
@@ -132,11 +124,6 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
 
     @TestMetadata("compiler/testData/compileJavaAgainstKotlin/method")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({
-            Method.PlatformName.class,
-            Method.PrimitiveOverride.class,
-            Method.Throws.class,
-    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Method extends AbstractCompileJavaAgainstKotlinTest {
         @TestMetadata("AccessorGenericSignature.kt")
@@ -464,9 +451,6 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
 
     @TestMetadata("compiler/testData/compileJavaAgainstKotlin/property")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({
-            Property.PlatformName.class,
-    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Property extends AbstractCompileJavaAgainstKotlinTest {
         public void testAllFilesPresentInProperty() throws Exception {

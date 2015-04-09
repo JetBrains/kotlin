@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.resolve;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.InnerTestClasses;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
@@ -30,14 +29,6 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/resolve")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({
-        ResolveTestGenerated.CandidatesPriority.class,
-        ResolveTestGenerated.DelegatedProperty.class,
-        ResolveTestGenerated.Imports.class,
-        ResolveTestGenerated.Labels.class,
-        ResolveTestGenerated.Regressions.class,
-        ResolveTestGenerated.Varargs.class,
-})
 @RunWith(JUnit3RunnerWithInners.class)
 public class ResolveTestGenerated extends AbstractResolveTest {
     public void testAllFilesPresentInResolve() throws Exception {

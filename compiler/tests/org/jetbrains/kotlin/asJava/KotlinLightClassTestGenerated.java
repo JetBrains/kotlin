@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.asJava;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.InnerTestClasses;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
@@ -30,10 +29,6 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/asJava/lightClasses")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({
-        KotlinLightClassTestGenerated.Delegation.class,
-        KotlinLightClassTestGenerated.NullabilityAnnotations.class,
-})
 @RunWith(JUnit3RunnerWithInners.class)
 public class KotlinLightClassTestGenerated extends AbstractKotlinLightClassTest {
     public void testAllFilesPresentInLightClasses() throws Exception {

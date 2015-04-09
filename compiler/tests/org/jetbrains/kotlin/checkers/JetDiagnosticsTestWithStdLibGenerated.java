@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.checkers;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.InnerTestClasses;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
@@ -30,19 +29,6 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/diagnostics/testsWithStdLib")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({
-        JetDiagnosticsTestWithStdLibGenerated.Annotations.class,
-        JetDiagnosticsTestWithStdLibGenerated.CallableReference.class,
-        JetDiagnosticsTestWithStdLibGenerated.ClassLiteral.class,
-        JetDiagnosticsTestWithStdLibGenerated.DuplicateJvmSignature.class,
-        JetDiagnosticsTestWithStdLibGenerated.FunctionLiterals.class,
-        JetDiagnosticsTestWithStdLibGenerated.Inference.class,
-        JetDiagnosticsTestWithStdLibGenerated.KotlinSignature.class,
-        JetDiagnosticsTestWithStdLibGenerated.Native.class,
-        JetDiagnosticsTestWithStdLibGenerated.Reified.class,
-        JetDiagnosticsTestWithStdLibGenerated.Resolve.class,
-        JetDiagnosticsTestWithStdLibGenerated.Varargs.class,
-})
 @RunWith(JUnit3RunnerWithInners.class)
 public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnosticsTestWithStdLib {
     public void testAllFilesPresentInTestsWithStdLib() throws Exception {
@@ -51,15 +37,6 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
 
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({
-            Annotations.AnnotationApplicability.class,
-            Annotations.AnnotationParameterMustBeConstant.class,
-            Annotations.AnnotationParameters.class,
-            Annotations.AnnotationWithVarargParameter.class,
-            Annotations.JvmOverloads.class,
-            Annotations.PlatformStatic.class,
-            Annotations.ProhibitPositionedArgument.class,
-    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Annotations extends AbstractJetDiagnosticsTestWithStdLib {
         public void testAllFilesPresentInAnnotations() throws Exception {
@@ -306,10 +283,6 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
 
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({
-            CallableReference.Function.class,
-            CallableReference.Property.class,
-    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class CallableReference extends AbstractJetDiagnosticsTestWithStdLib {
         public void testAllFilesPresentInCallableReference() throws Exception {

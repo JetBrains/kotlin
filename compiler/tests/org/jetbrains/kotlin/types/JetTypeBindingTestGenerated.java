@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.types;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.InnerTestClasses;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
@@ -30,10 +29,6 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/type/binding")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({
-        JetTypeBindingTestGenerated.Explicit.class,
-        JetTypeBindingTestGenerated.Implicit.class,
-})
 @RunWith(JUnit3RunnerWithInners.class)
 public class JetTypeBindingTestGenerated extends AbstractJetTypeBindingTest {
     public void testAllFilesPresentInBinding() throws Exception {
