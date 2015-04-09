@@ -153,6 +153,42 @@ PsiJetFileStubImpl[package=]
             USER_TYPE:[isAbsoluteInRootPackage=false]
               REFERENCE_EXPRESSION:[referencedName=kotlin]
             REFERENCE_EXPRESSION:[referencedName=Unit]
+      FUN:[fqName=Annotations.types, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=types]
+        MODIFIER_LIST:[internal final]
+        VALUE_PARAMETER_LIST:
+          VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=param]
+            TYPE_REFERENCE:
+              ANNOTATION:
+                ANNOTATION_ENTRY:[hasValueArguments=false, shortName=a]
+                  CONSTRUCTOR_CALLEE:
+                    TYPE_REFERENCE:
+                      USER_TYPE:[isAbsoluteInRootPackage=false]
+                        REFERENCE_EXPRESSION:[referencedName=a]
+                ANNOTATION_ENTRY:[hasValueArguments=false, shortName=b]
+                  CONSTRUCTOR_CALLEE:
+                    TYPE_REFERENCE:
+                      USER_TYPE:[isAbsoluteInRootPackage=false]
+                        REFERENCE_EXPRESSION:[referencedName=b]
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  REFERENCE_EXPRESSION:[referencedName=kotlin]
+                REFERENCE_EXPRESSION:[referencedName=DoubleRange]
+        TYPE_REFERENCE:
+          ANNOTATION:
+            ANNOTATION_ENTRY:[hasValueArguments=false, shortName=a]
+              CONSTRUCTOR_CALLEE:
+                TYPE_REFERENCE:
+                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                    REFERENCE_EXPRESSION:[referencedName=a]
+            ANNOTATION_ENTRY:[hasValueArguments=false, shortName=b]
+              CONSTRUCTOR_CALLEE:
+                TYPE_REFERENCE:
+                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                    REFERENCE_EXPRESSION:[referencedName=b]
+          USER_TYPE:[isAbsoluteInRootPackage=false]
+            USER_TYPE:[isAbsoluteInRootPackage=false]
+              REFERENCE_EXPRESSION:[referencedName=kotlin]
+            REFERENCE_EXPRESSION:[referencedName=Unit]
       CLASS:[fqName=Annotations.Nested, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=Nested, superNames=[]]
         MODIFIER_LIST:[internal final]
         PRIMARY_CONSTRUCTOR:

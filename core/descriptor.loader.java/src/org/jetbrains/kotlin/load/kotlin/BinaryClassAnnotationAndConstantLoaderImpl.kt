@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.serialization.deserialization.AnnotationDeserializer
 import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.ErrorUtils
 import java.util.ArrayList
@@ -48,11 +47,8 @@ public class BinaryClassAnnotationAndConstantLoaderImpl(
 ) {
     private val annotationDeserializer = AnnotationDeserializer(module)
 
-    override fun loadTypeAnnotations(type: ProtoBuf.Type, nameResolver: NameResolver): List<AnnotationDescriptor> {
-        return type.getExtension(JvmProtoBuf.typeAnnotation).map { annotation ->
-            annotationDeserializer.deserializeAnnotation(annotation, nameResolver)
-        }
-    }
+    override fun loadTypeAnnotation(proto: ProtoBuf.Annotation, nameResolver: NameResolver): AnnotationDescriptor =
+            annotationDeserializer.deserializeAnnotation(proto, nameResolver)
 
     override fun loadConstant(desc: String, initializer: Any): CompileTimeConstant<*>? {
         val normalizedValue: Any = if (desc in "ZBCS") {

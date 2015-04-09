@@ -21,6 +21,8 @@ a public class Annotations private [a] (private [a] val c1: Int, [a] val c2: Int
     }
 
     class Nested [a] private [b(E.E1) b(E.E2)] ()
+
+    fun types(param: [a] [b(E.E1)] DoubleRange): [a] [b(E.E2)] Unit {}
 }
 
 annotation class a

@@ -16,23 +16,22 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.ClassId
-import java.util.ArrayList
-import org.jetbrains.kotlin.serialization.deserialization.AnnotatedCallableKind
-import org.jetbrains.kotlin.serialization.deserialization.NameResolver
-import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.*
-import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
-import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
 import org.jetbrains.kotlin.name.FqName
-import java.util.HashMap
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.Flags
-import org.jetbrains.kotlin.serialization.deserialization.AnnotationAndConstantLoader
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames
-import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
+import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.serialization.deserialization.*
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.implClassName
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.index
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.methodSignature
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.propertySignature
+import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.JetType
+import java.util.ArrayList
+import java.util.HashMap
 
 public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any>(
         storageManager: StorageManager,
@@ -50,6 +49,8 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
             annotationClassId: ClassId,
             result: MutableList<A>
     ): KotlinJvmBinaryClass.AnnotationArgumentVisitor?
+
+    protected abstract fun loadTypeAnnotation(proto: ProtoBuf.Annotation, nameResolver: NameResolver): A
 
     private fun loadAnnotationIfNotSpecial(
             annotationClassId: ClassId,
@@ -126,6 +127,10 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
         }
 
         return listOf()
+    }
+
+    override fun loadTypeAnnotations(type: ProtoBuf.Type, nameResolver: NameResolver): List<A> {
+        return type.getExtension(JvmProtoBuf.typeAnnotation).map { loadTypeAnnotation(it, nameResolver) }
     }
 
     override fun loadPropertyConstant(

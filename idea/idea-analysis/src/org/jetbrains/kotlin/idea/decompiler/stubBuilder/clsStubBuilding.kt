@@ -170,14 +170,14 @@ fun createModifierListStub(
 
 fun createAnnotationStubs(
         annotationIds: List<ClassId>,
-        modifierList: KotlinModifierListStubImpl,
+        parent: KotlinStubBaseImpl<*>,
         needWrappingAnnotationEntries: Boolean = false
 ) {
     if (annotationIds.isEmpty()) return
 
     val entriesParent =
-            if (needWrappingAnnotationEntries) KotlinPlaceHolderStubImpl<JetAnnotation>(modifierList, JetStubElementTypes.ANNOTATION)
-            else modifierList
+            if (needWrappingAnnotationEntries) KotlinPlaceHolderStubImpl<JetAnnotation>(parent, JetStubElementTypes.ANNOTATION)
+            else parent
 
     annotationIds.forEach {
         annotationClassId ->

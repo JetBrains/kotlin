@@ -1,0 +1,50 @@
+PsiJetFileStubImpl[package=]
+  PACKAGE_DIRECTIVE:
+  CLASS:[fqName=a, isEnumEntry=false, isLocal=false, isTopLevel=true, isTrait=false, name=a, superNames=[]]
+    MODIFIER_LIST:[annotation]
+  CLASS:[fqName=b, isEnumEntry=false, isLocal=false, isTopLevel=true, isTrait=false, name=b, superNames=[]]
+    MODIFIER_LIST:[annotation]
+    PRIMARY_CONSTRUCTOR:
+      VALUE_PARAMETER_LIST:
+        VALUE_PARAMETER:[fqName=b.e, hasDefaultValue=false, hasValOrVarNode=true, isMutable=false, name=e]
+          TYPE_REFERENCE:
+            USER_TYPE:[isAbsoluteInRootPackage=false]
+              REFERENCE_EXPRESSION:[referencedName=E]
+  CLASS:[fqName=E, isEnumEntry=false, isLocal=false, isTopLevel=true, isTrait=false, name=E, superNames=[]]
+    MODIFIER_LIST:[enum]
+    CLASS_BODY:
+      ENUM_ENTRY:[fqName=E.E1, isEnumEntry=true, isLocal=false, isTopLevel=false, isTrait=false, name=E1, superNames=[]]
+      ENUM_ENTRY:[fqName=E.E2, isEnumEntry=true, isLocal=false, isTopLevel=false, isTrait=false, name=E2, superNames=[]]
+  FUN:[fqName=types, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, name=types]
+    VALUE_PARAMETER_LIST:
+      VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=param]
+        TYPE_REFERENCE:
+          ANNOTATION:
+            ANNOTATION_ENTRY:[hasValueArguments=false, shortName=a]
+              CONSTRUCTOR_CALLEE:
+                TYPE_REFERENCE:
+                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                    REFERENCE_EXPRESSION:[referencedName=a]
+          ANNOTATION:
+            ANNOTATION_ENTRY:[hasValueArguments=true, shortName=b]
+              CONSTRUCTOR_CALLEE:
+                TYPE_REFERENCE:
+                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                    REFERENCE_EXPRESSION:[referencedName=b]
+          USER_TYPE:[isAbsoluteInRootPackage=false]
+            REFERENCE_EXPRESSION:[referencedName=DoubleRange]
+    TYPE_REFERENCE:
+      ANNOTATION:
+        ANNOTATION_ENTRY:[hasValueArguments=false, shortName=a]
+          CONSTRUCTOR_CALLEE:
+            TYPE_REFERENCE:
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                REFERENCE_EXPRESSION:[referencedName=a]
+      ANNOTATION:
+        ANNOTATION_ENTRY:[hasValueArguments=true, shortName=b]
+          CONSTRUCTOR_CALLEE:
+            TYPE_REFERENCE:
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                REFERENCE_EXPRESSION:[referencedName=b]
+      USER_TYPE:[isAbsoluteInRootPackage=false]
+        REFERENCE_EXPRESSION:[referencedName=Unit]

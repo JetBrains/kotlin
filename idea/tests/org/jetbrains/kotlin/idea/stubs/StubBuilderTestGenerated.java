@@ -238,4 +238,10 @@ public class StubBuilderTestGenerated extends AbstractStubBuilderTest {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/stubs/StarProjection.kt");
         doTest(fileName);
     }
+
+    @TestMetadata("TypeAnnotation.kt")
+    public void testTypeAnnotation() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/stubs/TypeAnnotation.kt");
+        doTest(fileName);
+    }
 }

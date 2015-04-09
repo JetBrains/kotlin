@@ -42,6 +42,12 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
 
     fun createTypeReferenceStub(parent: StubElement<out PsiElement>, typeProto: Type) {
         val typeReference = KotlinPlaceHolderStubImpl<JetTypeReference>(parent, JetStubElementTypes.TYPE_REFERENCE)
+
+        val typeAnnotations = c.components.annotationLoader.loadTypeAnnotations(typeProto, c.nameResolver)
+        if (typeAnnotations.isNotEmpty()) {
+            createAnnotationStubs(typeAnnotations, typeReference, needWrappingAnnotationEntries = true)
+        }
+
         createTypeStub(typeReference, typeProto)
     }
 
