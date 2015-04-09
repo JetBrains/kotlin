@@ -1366,7 +1366,7 @@ public class JetParsing extends AbstractJetParsing {
     }
 
     private boolean definitelyOutOfReceiver() {
-        return atSet(EQ, COLON, LBRACE, BY_KEYWORD) || atSet(TOPLEVEL_OBJECT_FIRST);
+        return atSet(EQ, COLON, LBRACE, RBRACE, BY_KEYWORD) || atSet(TOPLEVEL_OBJECT_FIRST);
     }
 
     /*

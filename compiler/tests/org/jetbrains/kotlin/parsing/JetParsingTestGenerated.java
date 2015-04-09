@@ -1428,6 +1428,12 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/psi/recovery"), Pattern.compile("^(.*)\\.kts?$"), true);
             }
 
+            @TestMetadata("BareVal.kt")
+            public void testBareVal() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/BareVal.kt");
+                doParsingTest(fileName);
+            }
+
             @TestMetadata("DoWhileWithEmptyCondition.kt")
             public void testDoWhileWithEmptyCondition() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/DoWhileWithEmptyCondition.kt");
