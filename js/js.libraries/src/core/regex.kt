@@ -18,34 +18,75 @@ package kotlin.text
 
 import java.util.ArrayList
 
-
+/**
+ * Provides enumeration values to use to set regular expression options.
+ */
 public enum class RegexOption(val value: String) {
+    /** Enables case-insensitive matching. */
     IGNORE_CASE : RegexOption("i")
+    /** Enables multiline mode.
+     *
+     * In multiline mode the expressions `^` and `$` match just after or just before,
+     * respectively, a line terminator or the end of the input sequence. */
     MULTILINE : RegexOption("m")
 }
 
 
+/**
+ * Represents the results from a single capturing group within a [MatchResult] of [Regex].
+ *
+ * @param value The value of captured group.
+ */
 public data class MatchGroup(val value: String)
 
-
+/** A compiled representation of a regular expression.
+ *
+ * For pattern syntax reference see [https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp] and [http://www.w3schools.com/jsref/jsref_obj_regexp.asp]
+ */
 public class Regex(pattern: String, options: Set<RegexOption>) {
 
+    /** The pattern string of this regular expression. */
     public val pattern: String = pattern
+    /** The set of options that were used to create this regular expression. */
     public val options: Set<RegexOption> = options.toSet()
     private val nativePattern: RegExp = RegExp(pattern, options.map { it.value }.joinToString() + "g")
 
-
+    /** Indicates whether the regular expression matches the entire [input]. */
     public fun matches(input: CharSequence): Boolean {
+        nativePattern.reset()
+        val match = nativePattern.exec(input.toString())
+        return match != null && (match as RegExpMatch).index == 0 && nativePattern.lastIndex == input.length()
+    }
+
+    /** Indicates whether the regular expression can find at least a match in the specified [input]. */
+    public fun hasMatch(input: CharSequence): Boolean {
         nativePattern.reset()
         return nativePattern.test(input.toString())
     }
 
-    public fun match(input: CharSequence): MatchResult? = nativePattern.findNext(input.toString(), 0)
+    /** Returns the first match of a regular expression in the [input], beginning at the specified [startIndex].
+     *
+     * @param startIndex An index to start search with, by default 0. Must be not less than zero and not greater than `input.length()`
+     * @return An instance of [MatchResult] if match was found or `null` otherwise.
+     */
+    public fun match(input: CharSequence, startIndex: Int = 0): MatchResult? = nativePattern.findNext(input.toString(), startIndex)
 
-    public fun matchAll(input: CharSequence): Sequence<MatchResult> = sequence({ match(input) }, { match -> match.next() })
+    /** Returns a sequence of all occurrences of a regular expression within the [input] string, beginning at the specified [startIndex].
+     */
+    public fun matchAll(input: CharSequence, startIndex: Int = 0): Sequence<MatchResult> = sequence({ match(input, startIndex) }, { match -> match.next() })
 
+    /**
+     * Replaces all occurrences of this regular expression in the specified [input] string with specified [replacement] expression.
+     *
+     * @param replacement A replacement expression that can include substitutions. See [https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace] for details.
+     */
     public fun replace(input: CharSequence, replacement: String): String = input.toString().nativeReplace(nativePattern, replacement)
 
+    /**
+     * Replaces all occurrences of this regular expression in the specified [input] string with the result of
+     * the given function [transform] that takes [MatchResult] and returns a string to be used as a
+     * replacement for that match.
+     */
     public inline fun replace(input: CharSequence, transform: (MatchResult) -> String): String {
         var match = match(input)
         if (match == null) return input.toString()
@@ -68,9 +109,19 @@ public class Regex(pattern: String, options: Set<RegexOption>) {
         return sb.toString()
     }
 
+    /**
+     * Replaces the first occurrence of this regular expression in the specified [input] string with specified [replacement] expression.
+     *
+     * @param replacement A replacement expression that can include substitutions. See [Matcher.appendReplacement] for details.
+     */
     public fun replaceFirst(input: CharSequence, replacement: String): String =
             input.toString().nativeReplace(RegExp(pattern, options.map { it.value }.joinToString()), replacement)
 
+    /**
+     * Splits this string around matches of the given regular expression.
+     *
+     * @param limit The maximum number of times the split can occur.
+     */
     public fun split(input: CharSequence, limit: Int = 0): List<String> {
         require(limit >= 0, { "Limit must be non-negative, but was $limit" } )
         val matches = matchAll(input).let { if (limit == 0) it else it.take(limit - 1) }
@@ -85,11 +136,15 @@ public class Regex(pattern: String, options: Set<RegexOption>) {
         return result
     }
 
+    /** Returns the string representation of this regular expression. */
     public override fun toString(): String = nativePattern.toString()
 
     companion object {
+        /** Returns a literal regex for the specified [literal] string. */
         public fun fromLiteral(literal: String): Regex = Regex(escape(literal))
+        /** Returns a literal pattern for the specified [literal] string. */
         public fun escape(literal: String): String = literal.nativeReplace(patternEscape, "\\$&")
+        /** Returns a literal replacement exression for the specified [literal] string. */
         public fun escapeReplacement(literal: String): String = literal.nativeReplace(replacementEscape, "$$$$")
 
         private val patternEscape = RegExp("""[-\\^$*+?.()|[\]{}]""", "g")
@@ -97,6 +152,9 @@ public class Regex(pattern: String, options: Set<RegexOption>) {
     }
 }
 
+/**
+ * Creates a regular expression from the specified [pattern] string and the specified [options].
+ */
 public fun Regex(pattern: String, vararg options: RegexOption): Regex = Regex(pattern, options.toSet())
 
 

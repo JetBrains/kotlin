@@ -19,53 +19,121 @@ package kotlin.text
 import java.util.regex.Pattern
 import java.util.regex.Matcher
 
-public trait FlagEnum {
+private trait FlagEnum {
     public val value: Int
     public val mask: Int
 }
-public fun Iterable<FlagEnum>.toInt(): Int =
+private fun Iterable<FlagEnum>.toInt(): Int =
         this.fold(0, { value, option -> value or option.value })
-public fun <T: FlagEnum> fromInt(value: Int, allValues: Array<T>): Set<T> =
+private fun <T: FlagEnum> fromInt(value: Int, allValues: Array<T>): Set<T> =
         allValues.filter({ value and it.mask == it.value }).toSet()
 
-
+/**
+ * Provides enumeration values to use to set regular expression options.
+ */
 public enum class RegexOption(override val value: Int, override val mask: Int = value) : FlagEnum {
     // common
+
+    /** Enables case-insensitive matching. Case comparison is Unicode-aware. */
     IGNORE_CASE : RegexOption(Pattern.CASE_INSENSITIVE)
+
+    /** Enables multiline mode.
+     *
+     * In multiline mode the expressions `^` and `$` match just after or just before,
+     * respectively, a line terminator or the end of the input sequence. */
     MULTILINE : RegexOption(Pattern.MULTILINE)
 
     //jvm-specific
+
+    /** Enables literal parsing of the pattern.
+     *
+     * Metacharacters or escape sequences in the input sequence will be given no special meaning.
+     */
     LITERAL : RegexOption(Pattern.LITERAL)
-    UNICODE_CASE: RegexOption(Pattern.UNICODE_CASE)
-    UNIX_LINES: RegexOption(Pattern.UNIX_LINES)
+
+//    // Unicode case is enabled by default with the IGNORE_CASE
+//    /** Enables Unicode-aware case folding. */
+//    UNICODE_CASE: RegexOption(Pattern.UNICODE_CASE)
+
+    /** Enables Unix lines mode.
+     * In this mode, only the `'\n'` is recognized as a line terminator.
+     */
+    UNIX_LINES: RegexOption(Pattern.UNIX_LINES) // TODO: Remove this
+
+    /** Permits whitespace and comments in pattern. */
     COMMENTS: RegexOption(Pattern.COMMENTS)
+
+    /** Enables the mode, when the expression `.` matches any character,
+     * including a line terminator.
+     */
     DOT_MATCHES_ALL: RegexOption(Pattern.DOTALL)
+
+    /** Enables equivalence by canonical decomposition. */
     CANON_EQ: RegexOption(Pattern.CANON_EQ)
 }
 
-public data class MatchGroup(val value: String, val range: IntRange)
 
+/**
+ * Represents the results from a single capturing group within a [MatchResult] of [Regex].
+ *
+ * @param value The value of captured group.
+ * @param range The range of indices in the input string where group was captured.
+ *
+ * The [range] property is available on JVM only
+ */
+public data class MatchGroup(public val value: String, public val range: IntRange)
 
-public class Regex( /* visibility? */ val nativePattern: Pattern) {
+/**
+ * Represents an immutable regular expression.
+ *
+ * For pattern syntax reference see [java.util.regex.Pattern]
+ */
+public class Regex( /* visibility? */ public val nativePattern: Pattern) {
 
-    public constructor(pattern: String, options: Set<RegexOption>): this(Pattern.compile(pattern, options.toInt()))
+    /** Creates a regular expression from the specified [pattern] string and the specified set of [options].  */
+    public constructor(pattern: String, options: Set<RegexOption>): this(Pattern.compile(pattern, ensureUnicodeCase(options.toInt())))
+
+    /** Creates a regular expression from the specified [pattern] string and the specified [options]. */
     public constructor(pattern: String, vararg options: RegexOption) : this(pattern, options.toSet())
 
+    /** The pattern string of this regular expression. */
     public val pattern: String
         get() = nativePattern.pattern()
 
+    /** The set of options that were used to create this regular expression.  */
     public val options: Set<RegexOption> = fromInt(nativePattern.flags(), RegexOption.values())
 
+    /** Indicates whether the regular expression matches the entire [input]. */
     public fun matches(input: CharSequence): Boolean = nativePattern.matcher(input).matches()
 
-    public fun match(input: CharSequence): MatchResult? = nativePattern.matcher(input).findNext(0)
+    /** Indicates whether the regular expression can find at least a match in the specified [input]. */
+    public fun hasMatch(input: CharSequence): Boolean = nativePattern.matcher(input).find()
 
-    public fun matchAll(input: CharSequence): Sequence<MatchResult> = sequence({ match(input) }, { match -> match.next() })
+    /**
+     * Returns the first match of a regular expression in the [input], beginning at the specified [startIndex].
+     *
+     * @param startIndex An index to start search with, by default 0. Must be not less than zero and not greater than `input.length()`
+     * @return An instance of [MatchResult] if match was found or `null` otherwise.
+     */
+    public fun match(input: CharSequence, startIndex: Int = 0): MatchResult? = nativePattern.matcher(input).findNext(startIndex)
 
+    /**
+     * Returns a sequence of all occurrences of a regular expression within the [input] string, beginning at the specified [startIndex].
+     */
+    public fun matchAll(input: CharSequence, startIndex: Int = 0): Sequence<MatchResult> = sequence({ match(input, startIndex) }, { match -> match.next() })
+
+    /**
+     * Replaces all occurrences of this regular expression in the specified [input] string with specified [replacement] expression.
+     *
+     * @param replacement A replacement expression that can include substitutions. See [Matcher.appendReplacement] for details.
+     */
     public fun replace(input: CharSequence, replacement: String): String = nativePattern.matcher(input).replaceAll(replacement)
 
-    public fun replaceFirst(input: CharSequence, replacement: String): String = nativePattern.matcher(input).replaceFirst(replacement)
-
+    /**
+     * Replaces all occurrences of this regular expression in the specified [input] string with the result of
+     * the given function [transform] that takes [MatchResult] and returns a string to be used as a
+     * replacement for that match.
+     */
     public inline fun replace(input: CharSequence, transform: (MatchResult) -> String): String {
         var match = match(input)
         if (match == null) return input.toString()
@@ -88,20 +156,45 @@ public class Regex( /* visibility? */ val nativePattern: Pattern) {
         return sb.toString()
     }
 
+    /**
+     * Replaces the first occurrence of this regular expression in the specified [input] string with specified [replacement] expression.
+     *
+     * @param replacement A replacement expression that can include substitutions. See [Matcher.appendReplacement] for details.
+     */
+    public fun replaceFirst(input: CharSequence, replacement: String): String = nativePattern.matcher(input).replaceFirst(replacement)
+
+
+    /**
+     * Splits this string around matches of the given regular expression.
+     *
+     * @param limit The maximum number of times the split can occur.
+     */
     public fun split(input: CharSequence, limit: Int = 0): List<String> {
         require(limit >= 0, { "Limit must be non-negative, but was $limit" } )
         return nativePattern.split(input, if (limit == 0) -1 else limit).asList()
     }
 
+    /** Returns the string representation of this regular expression, namely the [pattern] of this regular expression. */
     public override fun toString(): String = nativePattern.toString()
 
     companion object {
+        /** Returns a literal regex for the specified [literal] string. */
         public fun fromLiteral(literal: String): Regex = Regex(literal, RegexOption.LITERAL)
+        /** Returns a literal pattern for the specified [literal] string. */
         public fun escape(literal: String): String = Pattern.quote(literal)
+        /** Returns a literal replacement exression for the specified [literal] string. */
         public fun escapeReplacement(literal: String): String = Matcher.quoteReplacement(literal)
+
+        private fun ensureUnicodeCase(flags: Int) = if (flags and Pattern.CASE_INSENSITIVE != 0) flags or Pattern.UNICODE_CASE else flags
     }
 
 }
+
+public fun Pattern.asRegex(): Regex = Regex(this)
+// TODO: function as/toPattern
+
+
+// implementation
 
 private fun Matcher.findNext(from: Int): MatchResult? {
     if (!find(from))

@@ -409,7 +409,7 @@ public fun CharSequence.slice(range: IntRange): CharSequence {
 
 /**
  * Converts the string into a regular expression [Pattern] optionally
- * with the specified flags from [Pattern] or'd together
+ * with the specified [flags] from [Pattern] or'd together
  * so that strings can be split or matched on.
  */
 public fun String.toPattern(flags: Int = 0): java.util.regex.Pattern {

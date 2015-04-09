@@ -16,17 +16,36 @@
 
 package kotlin.text
 
-
+/** Represents a collection of captured groups in a single match. */
 public trait MatchGroupCollection : Collection<MatchGroup?> {
+
+    /** Returns a group with the specified [index]
+     *
+     * @return An instance of [MatchGroup] if the group with the specified [index] was matched or `null` otherwise.
+     *
+     * The groups are indexed from 1 to the count of groups in regular expression. The group with zero index
+     * represents the entire match.
+     */
     public fun get(index: Int): MatchGroup?
+
+    // TODO: Provide get(name: String) on JVM 7+
 }
 
+/**
+ * Represents the results from a single regular expression match.
+ */
 public trait MatchResult {
+    /** The range of indices in the original string where match was captured. */
     public val range: IntRange
+    /** The substring from the input string captured by this match. */
     public val value: String
+    /** A collection of groups matched by the regular expression. */
     public val groups: MatchGroupCollection
     // TODO: Should we have groupCount (equals groups.size()-1)?
 
+    /** Returns a new [MatchResult] with the results for the next match, starting at the position
+     *  at which the last match ended (at the character after the last matched character).
+     */
     public fun next(): MatchResult?
 }
 
