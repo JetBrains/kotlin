@@ -1,6 +1,7 @@
 package kotlin
 
 import java.util.NoSuchElementException
+import kotlin.text.MatchResult
 import kotlin.text.Regex
 
 /** Returns the string with leading and trailing text matching the given string removed */
@@ -493,6 +494,32 @@ public fun String.replaceBeforeLast(delimiter: String, replacement: String, miss
     val index = lastIndexOf(delimiter)
     return if (index == -1) missingDelimiterValue else replaceRange(0, index, replacement)
 }
+
+
+// public fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boolean): String // JVM- and JS-specific
+// public fun String.replace(oldValue: String, newValue: String, ignoreCase: Boolean): String // JVM- and JS-specific
+
+/**
+ * Returns a new string obtained by replacing each substring of this string that matches the given regular expression
+ * with the given [replacement].
+ *
+ * The [replacement] can consist of any combination of literal text and $-substitutions. To treat the replacement string
+ * literally escape it with the [kotlin.text.Regex.Companion.escapeReplacement] method.
+ */
+public fun String.replace(regex: Regex, replacement: String): String = regex.replace(this, replacement)
+
+/**
+ * Returns a new string obtained by replacing each substring of this string that matches the given regular expression
+ * with the result of the given function [transform] that takes [MatchResult] and returns a string to be used as a
+ * replacement for that match.
+ */
+public fun String.replace(regex: Regex, transform: (MatchResult) -> String): String = regex.replace(this, transform)
+
+/**
+ * Returns `true` if this string matches the given regular expression.
+ */
+public fun String.matches(regex: Regex): Boolean = regex.matches(this)
+
 
 /**
  * Returns `true` if this string starts with the specified character.

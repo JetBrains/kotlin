@@ -55,10 +55,6 @@ public fun CharSequence.isEmpty(): Boolean = noImpl
 
 
 // TODO: internal
-// native because we need to escape newValue
-//native("replace")
-//public fun String.nativeReplace(oldValue: String, newValue: String): String = noImpl
-// TODO: internal
 native("replace")
 public fun String.nativeReplace(pattern: RegExp, replacement: String): String = noImpl
 

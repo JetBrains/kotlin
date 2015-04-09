@@ -1,5 +1,7 @@
 package kotlin.js
 
+import kotlin.text.Regex
+
 // TODO: make internal
 public inline fun String.nativeIndexOf(ch : Char, fromIndex : Int) : Int = nativeIndexOf(ch.toString(), fromIndex)
 public inline fun String.nativeLastIndexOf(ch : Char, fromIndex : Int) : Int = nativeLastIndexOf(ch.toString(), fromIndex)
@@ -80,8 +82,8 @@ public inline fun String.decapitalize(): String {
 }
 
 
-public fun String.replace(oldValue: String, newValue: String): String =
-        nativeReplace(RegExp(kotlin.text.Regex.escape(oldValue),"g"), kotlin.text.Regex.escapeReplacement(newValue))
+public fun String.replace(oldValue: String, newValue: String, ignoreCase: Boolean = false): String =
+        nativeReplace(RegExp(Regex.escape(oldValue), if (ignoreCase) "gi" else "g"), Regex.escapeReplacement(newValue))
 
-public fun String.replace(oldChar: Char, newChar: Char): String =
-        nativeReplace(RegExp(kotlin.text.Regex.escape(oldChar.toString()),"g"), newChar.toString())
+public fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boolean = false): String =
+        nativeReplace(RegExp(Regex.escape(oldChar.toString()), if (ignoreCase) "gi" else "g"), newChar.toString())

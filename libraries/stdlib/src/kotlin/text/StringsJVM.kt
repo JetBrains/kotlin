@@ -6,6 +6,7 @@ import java.util.Locale
 import java.util.regex.MatchResult
 import java.util.regex.Pattern
 import java.nio.charset.Charset
+import kotlin.text.Regex
 
 
 /**
@@ -50,12 +51,25 @@ public fun String.equals(anotherString: String, ignoreCase: Boolean = false): Bo
 /**
  * Returns a copy of this string with all occurrences of [oldChar] replaced with [newChar].
  */
-public fun String.replace(oldChar: Char, newChar: Char): String = (this as java.lang.String).replace(oldChar, newChar)
+public fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boolean = false): String {
+    if (!ignoreCase)
+        return (this as java.lang.String).replace(oldChar, newChar)
+    else
+        return splitToSequence(oldChar, ignoreCase = ignoreCase).joinToString(separator = newChar.toString())
+}
+
+/**
+ * Returns a new string obtained by replacing all occurrences of the [oldValue] substring in this string
+ * with the specified [newValue] string.
+ */
+public fun String.replace(oldValue: String, newValue: String, ignoreCase: Boolean = false): String =
+        splitToSequence(oldValue, ignoreCase = ignoreCase).joinToString(separator = newValue)
 
 /**
  * Returns a new string obtained by replacing each substring of this string that matches the given regular expression
  * with the given [replacement].
  */
+deprecated("Use String.replace(Regex, String) instead. You can convert regex parameter with .toRegex() extension function.")
 public fun String.replaceAll(regex: String, replacement: String): String = (this as java.lang.String).replaceAll(regex, replacement)
 
 /**
@@ -94,7 +108,7 @@ public fun String.split(regex: Pattern, limit: Int = 0): List<String> = regex.sp
  * Splits this string around matches of the given regular expression.
  */
 deprecated("Convert an argument to regex with toRegex or use splitBy instead.")
-public fun String.split(regex: String): Array<String> = split(regex.toPattern()).toTypedArray()
+public fun String.split(regex: String): Array<String> = split(regex.toRegex()).toTypedArray()
 
 
 /**
@@ -277,6 +291,7 @@ public fun String.isBlank(): Boolean = length() == 0 || all { it.isWhitespace() 
 /**
  * Returns `true` if this string matches the given regular expression.
  */
+deprecated("Use String.matches(Regex) instead. You can convert regex parameter with .toRegex() extension function.")
 public fun String.matches(regex: String): Boolean = (this as java.lang.String).matches(regex)
 
 /**
@@ -307,12 +322,6 @@ public fun String.regionMatches(thisOffset: Int, other: String, otherOffset: Int
             (this as java.lang.String).regionMatches(thisOffset, other, otherOffset, length)
         else
             (this as java.lang.String).regionMatches(ignoreCase, thisOffset, other, otherOffset, length)
-
-/**
- * Returns a new string obtained by replacing all occurrences of the [target] substring in this string
- * with the specified [replacement] string.
- */
-public fun String.replace(target: CharSequence, replacement: CharSequence): String = (this as java.lang.String).replace(target, replacement)
 
 /**
  * Returns a copy of this string converted to lower case using the rules of the specified locale.
@@ -478,6 +487,7 @@ public inline fun <T : Appendable> String.takeWhileTo(result: T, predicate: (Cha
  * Replaces every [regexp] occurence in the text with the value returned by the given function [body] that
  * takes a [MatchResult].
  */
+deprecated("Use String.replace(Regex, (MatchResult)->String) instead.  You can convert regex parameter with .toRegex() extension function.")
 public fun String.replaceAll(regexp: String, body: (java.util.regex.MatchResult) -> String): String {
     val sb = StringBuilder(this.length())
     val p = regexp.toPattern()
