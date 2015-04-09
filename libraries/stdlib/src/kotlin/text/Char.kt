@@ -43,34 +43,33 @@ public fun Char.equals(other: Char, ignoreCase: Boolean = false): Boolean {
 /**
  * Returns `true` if this character is a Unicode high-surrogate code unit (also known as leading-surrogate code unit).
  */
-public fun Char.isHighSurrogate(): Boolean = this in MIN_HIGH_SURROGATE..MAX_HIGH_SURROGATE
+public fun Char.isHighSurrogate(): Boolean = this in Char.MIN_HIGH_SURROGATE..Char.MAX_HIGH_SURROGATE
 
 /**
  * Returns `true` if this character is a Unicode low-surrogate code unit (also known as trailing-surrogate code unit).
  */
-public fun Char.isLowSurrogate(): Boolean = this in MIN_LOW_SURROGATE..MAX_LOW_SURROGATE
+public fun Char.isLowSurrogate(): Boolean = this in Char.MIN_LOW_SURROGATE..Char.MAX_LOW_SURROGATE
 
-// TODO: make these constants public in Char.Companion after resolving #KT-7271
 /**
  * The minimum value of a Unicode high-surrogate code unit
  */
-private val MIN_HIGH_SURROGATE: Char
+public val Char.Companion.MIN_HIGH_SURROGATE: Char
     get() = '\uD800'
 
 /**
  * The maximum value of a Unicode high-surrogate code unit
  */
-private val MAX_HIGH_SURROGATE: Char
+public val Char.Companion.MAX_HIGH_SURROGATE: Char
     get() = '\uDBFF'
 
 /**
  * The minimum value of a Unicode low-surrogate code unit
  */
-private val MIN_LOW_SURROGATE: Char
+public val Char.Companion.MIN_LOW_SURROGATE: Char
     get() = '\uDC00'
 
 /**
  * The maximum value of a Unicode low-surrogate code unit
  */
-private val MAX_LOW_SURROGATE: Char
+public val Char.Companion.MAX_LOW_SURROGATE: Char
     get() = '\uDFFF'
