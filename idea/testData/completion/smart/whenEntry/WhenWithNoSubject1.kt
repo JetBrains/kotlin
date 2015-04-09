@@ -8,4 +8,4 @@ fun foo(b1: Boolean, b2: Boolean) {
 // EXIST: b2
 // ABSENT: true
 // ABSENT: false
-// EXIST: {"lookupString":"else","tailText":" ->","itemText":"else"}
+// ABSENT: else

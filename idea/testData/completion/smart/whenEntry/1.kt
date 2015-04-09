@@ -13,4 +13,4 @@ fun foo(e: E) {
 // EXIST: { lookupString:"A", itemText:"E.A" }
 // EXIST: { lookupString:"B", itemText:"E.B" }
 // EXIST: { lookupString:"C", itemText:"E.C" }
-// EXIST: {"lookupString":"else","tailText":" ->","itemText":"else"}
+// ABSENT: else

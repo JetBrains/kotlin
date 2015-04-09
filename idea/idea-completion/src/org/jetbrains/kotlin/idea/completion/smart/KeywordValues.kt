@@ -34,7 +34,8 @@ object KeywordValues {
         if (whenCondition != null) {
             val entry = whenCondition.getParent() as JetWhenEntry
             val whenExpression = entry.getParent() as JetWhenExpression
-            if (whenExpression.getElseExpression() == null && entry == whenExpression.getEntries().last) {
+            val entries = whenExpression.getEntries()
+            if (whenExpression.getElseExpression() == null && entry == entries.last() && entries.size() != 1) {
                 val lookupElement = LookupElementBuilder.create("else").bold().withTailText(" ->")
                 collection.add(object: LookupElementDecorator<LookupElement>(lookupElement) {
                     override fun handleInsert(context: InsertionContext) {
