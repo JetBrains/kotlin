@@ -93,7 +93,7 @@ class ClassBodyConverter(private val psiClass: PsiClass,
                 }
             }
 
-            return ClassBody(null, null, convertedMembers.values().toList(), emptyList(), lBrace, rBrace, overloadReducer)
+            return ClassBody(null, null, convertedMembers.values().toList(), emptyList(), lBrace, rBrace)
         }
 
         val useCompanionObject = shouldGenerateCompanionObject(convertedMembers)
@@ -128,7 +128,7 @@ class ClassBodyConverter(private val psiClass: PsiClass,
             primaryConstructorSignature = null // no "()" after class name is needed in this case
         }
 
-        return ClassBody(primaryConstructorSignature, constructorConverter?.baseClassParams, members, companionObjectMembers, lBrace, rBrace, overloadReducer)
+        return ClassBody(primaryConstructorSignature, constructorConverter?.baseClassParams, members, companionObjectMembers, lBrace, rBrace)
     }
 
     private fun Converter.convertMember(member: PsiMember,

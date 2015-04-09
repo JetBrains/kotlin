@@ -30,8 +30,7 @@ class ClassBody (
         val members: List<Member>,
         val companionObjectMembers: List<Member>,
         val lBrace: LBrace,
-        val rBrace: RBrace,
-        val overloadReducer: OverloadReducer) {
+        val rBrace: RBrace) {
 
     fun append(builder: CodeBuilder) {
         val membersFiltered = members.filter { !it.isEmpty }

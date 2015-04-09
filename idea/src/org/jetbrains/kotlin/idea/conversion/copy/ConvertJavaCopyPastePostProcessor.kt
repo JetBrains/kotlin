@@ -29,6 +29,7 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiJavaFile
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.codeInsight.KotlinCopyPasteReferenceProcessor
 import org.jetbrains.kotlin.idea.codeInsight.KotlinReferenceData
 import org.jetbrains.kotlin.idea.editor.JetEditorOptions
@@ -223,7 +224,7 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
     }
 
     companion object {
-        // used for testing
+        [TestOnly]
         public var conversionPerformed: Boolean = false
     }
 }

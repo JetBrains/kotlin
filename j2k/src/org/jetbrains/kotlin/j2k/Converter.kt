@@ -277,7 +277,7 @@ class Converter private(
         // to convert fields and nested types - they are not allowed in Kotlin but we convert them and let user refactor code
         var classBody = ClassBodyConverter(psiClass, this, isOpenClass = false, isObject = false).convertBody()
         classBody = ClassBody(constructorSignature, classBody.baseClassParams, classBody.members,
-                              classBody.companionObjectMembers, classBody.lBrace, classBody.rBrace, classBody.overloadReducer)
+                              classBody.companionObjectMembers, classBody.lBrace, classBody.rBrace)
 
         val annotationAnnotation = Annotation(Identifier("annotation").assignNoPrototype(), listOf(), false, false).assignNoPrototype()
         return Class(psiClass.declarationIdentifier(),

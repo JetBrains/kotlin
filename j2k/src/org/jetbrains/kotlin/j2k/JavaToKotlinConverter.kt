@@ -40,7 +40,10 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.BindingContext
-import java.util.*
+import java.util.ArrayList
+import java.util.Comparator
+import java.util.LinkedHashMap
+import kotlin.properties.Delegates
 
 public trait PostProcessor {
     public fun analyzeFile(file: JetFile, range: TextRange?): BindingContext
@@ -88,7 +91,11 @@ public class JavaToKotlinConverter(private val project: Project,
 
     public data class ElementResult(val text: String,  val parseContext: ParseContext)
 
-    public data class Result(val results: List<ElementResult?>, val externalCodeProcessing: ((ProgressIndicator) -> (() -> Unit)?)?) //TODO: change interface to not perform write-actions under progress
+    public trait ExternalCodeProcessing {
+        public fun prepareWriteOperation(progress: ProgressIndicator): () -> Unit
+    }
+
+    public data class Result(val results: List<ElementResult?>, val externalCodeProcessing: ExternalCodeProcessing?)
 
     public fun elementsToKotlin(
             inputElements: List<InputElement>,
@@ -200,12 +207,14 @@ public class JavaToKotlinConverter(private val project: Project,
             val target: PsiElement,
             val file: PsiFile,
             val processings: Collection<UsageProcessing>
-    )
+    ) {
+        val depth: Int by Delegates.lazy { target.parents(withItself = true).takeWhile { it !is PsiFile }.count() }
+    }
 
     private fun buildExternalCodeProcessing(
             usageProcessings: Map<PsiElement, Collection<UsageProcessing>>,
             inConversionScope: (PsiElement) -> Boolean
-    ): ((ProgressIndicator) -> (() -> Unit)?)? {
+    ): ExternalCodeProcessing? {
         if (usageProcessings.isEmpty()) return null
 
         val map: Map<PsiElement, Collection<UsageProcessing>> = usageProcessings.values()
@@ -214,51 +223,53 @@ public class JavaToKotlinConverter(private val project: Project,
                 .groupBy { it.targetElement }
         if (map.isEmpty()) return null
 
-        return fun(progress: ProgressIndicator): (() -> Unit)? {
-            val refs = ArrayList<ReferenceInfo>()
+        return object: ExternalCodeProcessing {
+            override fun prepareWriteOperation(progress: ProgressIndicator): () -> Unit {
+                val refs = ArrayList<ReferenceInfo>()
 
-            progress.setText("Searching usages to update...")
+                progress.setText("Searching usages to update...")
 
-            for ((i, entry) in map.entrySet().withIndex()) {
-                val psiElement = entry.key
-                val processings = entry.value
+                for ((i, entry) in map.entrySet().withIndex()) {
+                    val psiElement = entry.key
+                    val processings = entry.value
 
-                progress.setText2((psiElement as? PsiNamedElement)?.getName() ?: "")
-                progress.checkCanceled()
+                    progress.setText2((psiElement as? PsiNamedElement)?.getName() ?: "")
+                    progress.checkCanceled()
 
-                ProgressManager.getInstance().runProcess(
-                        {
-                            val searchJava = processings.any { it.javaCodeProcessor != null }
-                            val searchKotlin = processings.any { it.kotlinCodeProcessor != null }
-                            referenceSearcher.findExternalCodeProcessingUsages(psiElement, searchJava, searchKotlin)
-                                    .filterNot { inConversionScope(it.getElement()) }
-                                    .mapTo(refs) { ReferenceInfo(it, psiElement, it.getElement().getContainingFile(), processings) }
-                        },
-                        ProgressPortionReporter(progress, i / map.size().toDouble(), 1.0 / map.size()))
+                    ProgressManager.getInstance().runProcess(
+                            {
+                                val searchJava = processings.any { it.javaCodeProcessor != null }
+                                val searchKotlin = processings.any { it.kotlinCodeProcessor != null }
+                                referenceSearcher.findUsagesForExternalCodeProcessing(psiElement, searchJava, searchKotlin)
+                                        .filterNot { inConversionScope(it.getElement()) }
+                                        .mapTo(refs) { ReferenceInfo(it, psiElement, it.getElement().getContainingFile(), processings) }
+                            },
+                            ProgressPortionReporter(progress, i / map.size().toDouble(), 1.0 / map.size()))
 
+                }
+
+                return { processUsages(refs) }
             }
-
-            if (refs.isEmpty()) return null
-
-            return { processUsages(refs) }
         }
     }
 
     private fun processUsages(refs: Collection<ReferenceInfo>) {
-        @ReferenceLoop
-        for ((reference, target, file, processings) in refs.sortBy(ReferenceComparator)) {
-            val processors = when (reference.getElement().getLanguage()) {
-                JavaLanguage.INSTANCE -> processings.map { it.javaCodeProcessor }.filterNotNull()
-                JetLanguage.INSTANCE -> processings.map { it.kotlinCodeProcessor }.filterNotNull()
-                else -> continue@ReferenceLoop
-            }
+        for (fileRefs in refs.groupBy { it.file }.values()) { // group by file for faster sorting
+            @ReferenceLoop
+            for ((reference, target, file, processings) in fileRefs.sortBy(ReferenceComparator)) {
+                val processors = when (reference.getElement().getLanguage()) {
+                    JavaLanguage.INSTANCE -> processings.map { it.javaCodeProcessor }.filterNotNull()
+                    JetLanguage.INSTANCE -> processings.map { it.kotlinCodeProcessor }.filterNotNull()
+                    else -> continue@ReferenceLoop
+                }
 
-            checkReferenceValid(reference)
+                checkReferenceValid(reference)
 
-            var references = listOf(reference)
-            for (processor in processors) {
-                references = references.flatMap { processor.processUsage(it) ?: listOf(it) }
-                references.forEach { checkReferenceValid(it) }
+                var references = listOf(reference)
+                for (processor in processors) {
+                    references = references.flatMap { processor.processUsage(it) ?: listOf(it) }
+                    references.forEach { checkReferenceValid(it) }
+                }
             }
         }
     }
@@ -273,18 +284,15 @@ public class JavaToKotlinConverter(private val project: Project,
             val element1 = info1.reference.getElement()
             val element2 = info2.reference.getElement()
 
-            val deepness1 = element1.deepnessInTree()
-            val deepness2 = element2.deepnessInTree()
-            if (deepness1 != deepness2) { // put deeper elements first to not invalidate them when processing ancestors
-                return -deepness1.compareTo(deepness2)
+            val depth1 = info1.depth
+            val depth2 = info2.depth
+            if (depth1 != depth2) { // put deeper elements first to not invalidate them when processing ancestors
+                return -depth1.compareTo(depth2)
             }
 
-            // process elements of the same deepness from right to left so that right-side of assignments is not invalidated by processing of the left one
+            // process elements with the same parent from right to left so that right-side of assignments is not invalidated by processing of the left one
             return -element1.getStartOffsetInParent().compareTo(element2.getStartOffsetInParent())
         }
-
-        private fun PsiElement.deepnessInTree() = parents(withItself = true).takeWhile { it !is PsiFile }.count()
-
     }
 
     private class ProgressPortionReporter(

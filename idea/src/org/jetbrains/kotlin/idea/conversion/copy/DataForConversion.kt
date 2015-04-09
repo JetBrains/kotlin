@@ -57,14 +57,15 @@ data class DataForConversion private(
         }
 
         private fun clipTextIfNeeded(file: PsiJavaFile, fileText: String, startOffsets: IntArray, endOffsets: IntArray): String? {
-            fun canDropRange(range: TextRange)
-                    = startOffsets.indices.all { range !in TextRange(startOffsets[it], endOffsets[it]) }
+            val ranges = startOffsets.indices.map { TextRange(startOffsets[it], endOffsets[it]) }.sortBy { it.start }
+
+            fun canDropRange(range: TextRange) = ranges.all { range !in it }
 
             val rangesToDrop = ArrayList<TextRange>()
-            for (i in startOffsets.indices) {
-                val start = startOffsets[i]
-                val end = endOffsets[i]
-                val range = TextRange(start, end)
+            for (range in ranges) {
+                val start = range.start
+                val end = range.end
+                if (start == end) continue
 
                 val startToken = file.findElementAt(start)!!
                 val elementToClipLeft = startToken.maximalParentToClip(range)
@@ -197,7 +198,7 @@ data class DataForConversion private(
                     if (!canDropElementFromText(child)) return null
                     clipTo = childRange.end
                 }
-                else { // rangeBound is inside element's range
+                else { // rangeBound is inside child's range
                     if (child is PsiWhiteSpace) break // no need to cut whitespace - we can leave it as is
                     return tryClipSide(child, rangeBound, rangeFunction, childrenFunction)
                 }
