@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.types.expressions;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
+import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
@@ -34,6 +36,8 @@ import static org.jetbrains.kotlin.diagnostics.Errors.TYPECHECKER_HAS_RUN_INTO_R
 import static org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilPackage.recordScopeAndDataFlowInfo;
 
 public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, ExpressionTypingContext> implements ExpressionTypingInternals {
+
+    private static final Logger LOG = Logger.getInstance(ExpressionTypingVisitor.class);
 
     @NotNull
     public static ExpressionTypingFacade create(@NotNull ExpressionTypingComponents components) {
@@ -164,9 +168,14 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, E
             throw e;
         }
         catch (Throwable e) {
-            throw new KotlinFrontEndException(
+            context.trace.report(Errors.EXCEPTION_FROM_ANALYZER.on(expression, e));
+            LOG.error(
                     "Exception while analyzing expression at " + DiagnosticUtils.atLocation(expression) + ":\n" + expression.getText() + "\n",
                     e
+            );
+            return JetTypeInfo.create(
+                    ErrorUtils.createErrorType(e.getClass().getSimpleName() + " from analyzer"),
+                    context.dataFlowInfo
             );
         }
     }  

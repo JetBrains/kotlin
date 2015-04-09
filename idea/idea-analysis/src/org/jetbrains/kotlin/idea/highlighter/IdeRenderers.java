@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.highlighter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.diagnostics.rendering.Renderers;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.renderer.Renderer;
 import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData;
@@ -149,6 +150,14 @@ public class IdeRenderers {
             }
             sb.append("</ul>");
             return ("The following declarations have the same JVM signature (<code>" + data.getSignature().getName() + data.getSignature().getDesc() + "</code>):<br/>\n" + sb).trim();
+        }
+    };
+
+    public static final Renderer<Throwable> HTML_THROWABLE = new Renderer<Throwable>() {
+        @NotNull
+        @Override
+        public String render(@NotNull Throwable e) {
+            return Renderers.THROWABLE.render(e).replace("\n", "<br/>");
         }
     };
 }

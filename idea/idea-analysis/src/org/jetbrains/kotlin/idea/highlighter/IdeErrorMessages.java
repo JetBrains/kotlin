@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.highlighter;
 
+import com.intellij.icons.AllIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
@@ -25,6 +26,8 @@ import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticRenderer;
 import org.jetbrains.kotlin.js.resolve.diagnostics.ErrorsJs;
 import org.jetbrains.kotlin.js.resolve.diagnostics.JsCallDataHtmlRenderer;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
+
+import java.net.URL;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.diagnostics.rendering.Renderers.RENDER_CLASS_OR_OBJECT;
@@ -127,6 +130,21 @@ public class IdeErrorMessages {
 
         MAP.put(CONFLICTING_JVM_DECLARATIONS, "<html>Platform declaration clash: {0}</html>", HTML_CONFLICTING_JVM_DECLARATIONS_DATA);
         MAP.put(ACCIDENTAL_OVERRIDE, "<html>Accidental override: {0}</html>", HTML_CONFLICTING_JVM_DECLARATIONS_DATA);
+
+        URL errorIconUrl = AllIcons.class.getResource("/general/error.png");
+        MAP.put(EXCEPTION_FROM_ANALYZER, "<html>Internal Error occurred while analyzing this expression <br/>" +
+                                         "<table cellspacing=\"0\" cellpadding=\"0\">" +
+                                         "<tr>" +
+                                         "<td>(<strong>Please use the \"</strong></td>" +
+                                         "<td><img src=\"" + errorIconUrl + "\"/></td>" +
+                                         "<td><strong>\" icon in the bottom-right corner to report this error</strong>):</td>" +
+                                         "</tr>" +
+                                         "</table>" +
+                                         "<br/>" +
+                                         "<pre>{0}</pre>" +
+                                         "</html>",
+                HTML_THROWABLE);
+
         MAP.put(ErrorsJs.JSCODE_ERROR, "<html>JavaScript: {0}</html>", JsCallDataHtmlRenderer.INSTANCE$);
         MAP.put(ErrorsJs.JSCODE_WARNING, "<html>JavaScript: {0}</html>", JsCallDataHtmlRenderer.INSTANCE$);
         MAP.setImmutable();

@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.diagnostics.rendering
 
-import com.google.common.base.Predicate
 import com.google.common.collect.Lists
 import com.google.common.collect.Sets
 import com.intellij.openapi.diagnostic.Logger
@@ -24,6 +23,8 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.newTable
+import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.newText
 import org.jetbrains.kotlin.psi.JetClass
 import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.psi.JetNamedDeclaration
@@ -31,18 +32,20 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.Renderer
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.inference.*
-import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.JetTypeChecker
-
-import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.*
+import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.Bound
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.LOWER_BOUND
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.UPPER_BOUND
+import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.RECEIVER_POSITION
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.VALUE_PARAMETER_POSITION
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.checker.JetTypeChecker
+import java.io.PrintWriter
+import java.io.StringWriter
 import kotlin.platform.platformStatic
-import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.Bound
 
 public object Renderers {
 
@@ -59,6 +62,12 @@ public object Renderers {
     }
 
     public val STRING: Renderer<String> = Renderer { it }
+
+    public val THROWABLE: Renderer<Throwable> = Renderer {
+        val writer = StringWriter()
+        it.printStackTrace(PrintWriter(writer))
+        StringUtil.first(writer.toString(), 2048, true)
+    }
 
     public val NAME: Renderer<Named> = Renderer { it.getName().asString() }
 
