@@ -16,11 +16,13 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
-import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedAnnotations
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.utils.toReadOnlyList
 
@@ -42,7 +44,16 @@ class DeserializedType(
     }
 
     private val memberScope = c.storageManager.createLazyValue {
-        computeMemberScope()
+        if (isError()) {
+            ErrorUtils.createErrorScope(getConstructor().toString())
+        }
+        else {
+            getTypeMemberScope(getConstructor(), getArguments())
+        }
+    }
+
+    private val annotations = DeserializedAnnotations(c.storageManager) {
+        c.components.annotationAndConstantLoader.loadTypeAnnotations(typeProto, c.nameResolver)
     }
 
     override fun getConstructor(): TypeConstructor = constructor()
@@ -50,14 +61,6 @@ class DeserializedType(
     override fun getArguments(): List<TypeProjection> = arguments()
 
     override fun isMarkedNullable(): Boolean = typeProto.getNullable()
-
-    private fun computeMemberScope(): JetScope =
-            if (isError()) {
-                ErrorUtils.createErrorScope(getConstructor().toString())
-            }
-            else {
-                getTypeMemberScope(getConstructor(), getArguments())
-            }
 
     private fun getTypeMemberScope(constructor: TypeConstructor, typeArguments: List<TypeProjection>): JetScope {
         val descriptor = constructor.getDeclarationDescriptor()
@@ -75,7 +78,7 @@ class DeserializedType(
         return descriptor != null && ErrorUtils.isError(descriptor)
     }
 
-    override fun getAnnotations(): Annotations = Annotations.EMPTY
+    override fun getAnnotations(): Annotations = annotations
 
     private fun <E: Any> List<E>.getOrNull(index: Int): E? {
         return if (index in indices) this[index] else null

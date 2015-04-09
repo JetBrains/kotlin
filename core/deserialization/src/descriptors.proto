@@ -130,13 +130,15 @@ message Type {
 
   // Id in the StringTable
   // If this field is set, the type is flexible.
-  // All the fields above represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
+  // All the other fields and extensions represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
   optional int32 flexible_type_capabilities_id = 4;
 
   // While such an "indirect" encoding helps backwards compatibility with pre-flexible-types versions of this format,
   // we use it mainly to save space: having a special mandatory tag on each an every type just to have an option
   // to represent flexible types is too many wasted bytes.
   optional Type flexible_upper_bound = 5;
+
+  extensions 100 to 199;
 }
 
 message TypeParameter {

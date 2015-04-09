@@ -92,6 +92,11 @@ class AnnotationLoaderForStubBuilder(
         errorReporter: ErrorReporter
 ) : AbstractBinaryClassAnnotationAndConstantLoader<ClassId, Unit>(
         LockBasedStorageManager.NO_LOCKS, kotlinClassFinder, errorReporter) {
+    override fun loadTypeAnnotations(type: ProtoBuf.Type, nameResolver: NameResolver): MutableList<ClassId> {
+        // TODO: support type annotations in cls stubs
+        throw UnsupportedOperationException()
+    }
+
     override fun loadConstant(desc: String, initializer: Any) = null
 
     override fun loadAnnotation(annotationClassId: ClassId, result: MutableList<ClassId>): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {

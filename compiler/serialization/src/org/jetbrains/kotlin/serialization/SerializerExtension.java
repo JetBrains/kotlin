@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
+import org.jetbrains.kotlin.types.JetType;
 
 import java.util.Collection;
 
@@ -49,6 +50,13 @@ public abstract class SerializerExtension {
     public void serializeValueParameter(
             @NotNull ValueParameterDescriptor descriptor,
             @NotNull ProtoBuf.Callable.ValueParameter.Builder proto,
+            @NotNull StringTable stringTable
+    ) {
+    }
+
+    public void serializeType(
+            @NotNull JetType type,
+            @NotNull ProtoBuf.Type.Builder proto,
             @NotNull StringTable stringTable
     ) {
     }

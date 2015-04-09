@@ -85,6 +85,10 @@ extend org.jetbrains.kotlin.serialization.Callable {
   optional int32 impl_class_name = 102;
 }
 
+extend org.jetbrains.kotlin.serialization.Type {
+  repeated Annotation type_annotation = 100;
+}
+
 extend org.jetbrains.kotlin.serialization.Callable.ValueParameter {
   // Index of the corresponding parameter of this method in JVM (counting receiver parameters, enum constructor synthetic parameters, etc.)
   optional int32 index = 100;

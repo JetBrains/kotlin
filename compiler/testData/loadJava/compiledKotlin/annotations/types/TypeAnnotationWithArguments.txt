@@ -1,0 +1,14 @@
+package test
+
+internal final annotation class Ann : kotlin.Annotation {
+    /*primary*/ public constructor Ann(/*0*/ x: kotlin.String, /*1*/ y: kotlin.Double)
+    internal final val x: kotlin.String
+        internal final fun <get-x>(): kotlin.String
+    internal final val y: kotlin.Double
+        internal final fun <get-y>(): kotlin.Double
+}
+
+internal final class TypeAnnotationWithArguments {
+    /*primary*/ public constructor TypeAnnotationWithArguments()
+    internal final fun foo(/*0*/ param: [test.Ann(x = "param": kotlin.String, y = 3.14.toDouble(): kotlin.Double)] kotlin.IntRange): [test.Ann(x = "fun": kotlin.String, y = 2.72.toDouble(): kotlin.Double)] kotlin.Unit
+}

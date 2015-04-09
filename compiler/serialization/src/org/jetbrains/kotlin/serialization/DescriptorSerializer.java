@@ -299,7 +299,7 @@ public class DescriptorSerializer {
             case IN_VARIANCE:
                 return ProtoBuf.TypeParameter.Variance.IN;
             case OUT_VARIANCE:
-                return  ProtoBuf.TypeParameter.Variance.OUT;
+                return ProtoBuf.TypeParameter.Variance.OUT;
         }
         throw new IllegalStateException("Unknown variance: " + variance);
     }
@@ -322,6 +322,8 @@ public class DescriptorSerializer {
         if (type.isMarkedNullable()) {
             builder.setNullable(true);
         }
+
+        extension.serializeType(type, builder, stringTable);
 
         return builder;
     }

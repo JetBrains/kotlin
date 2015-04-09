@@ -5362,8 +5362,9 @@ public final class DebugProtoBuf {
     // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.Annotation)
   }
 
-  public interface TypeOrBuilder
-      extends com.google.protobuf.MessageOrBuilder {
+  public interface TypeOrBuilder extends
+      com.google.protobuf.GeneratedMessage.
+          ExtendableMessageOrBuilder<Type> {
 
     // required .org.jetbrains.kotlin.serialization.Type.Constructor constructor = 1;
     /**
@@ -5421,7 +5422,7 @@ public final class DebugProtoBuf {
      * <pre>
      * Id in the StringTable
      * If this field is set, the type is flexible.
-     * All the fields above represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
+     * All the other fields and extensions represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
      * </pre>
      */
     boolean hasFlexibleTypeCapabilitiesId();
@@ -5431,7 +5432,7 @@ public final class DebugProtoBuf {
      * <pre>
      * Id in the StringTable
      * If this field is set, the type is flexible.
-     * All the fields above represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
+     * All the other fields and extensions represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
      * </pre>
      */
     int getFlexibleTypeCapabilitiesId();
@@ -5472,10 +5473,10 @@ public final class DebugProtoBuf {
    * Protobuf type {@code org.jetbrains.kotlin.serialization.Type}
    */
   public static final class Type extends
-      com.google.protobuf.GeneratedMessage
-      implements TypeOrBuilder {
+      com.google.protobuf.GeneratedMessage.ExtendableMessage<
+        Type> implements TypeOrBuilder {
     // Use Type.newBuilder() to construct.
-    private Type(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+    private Type(com.google.protobuf.GeneratedMessage.ExtendableBuilder<org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, ?> builder) {
       super(builder);
       this.unknownFields = builder.getUnknownFields();
     }
@@ -7066,7 +7067,7 @@ public final class DebugProtoBuf {
      * <pre>
      * Id in the StringTable
      * If this field is set, the type is flexible.
-     * All the fields above represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
+     * All the other fields and extensions represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
      * </pre>
      */
     public boolean hasFlexibleTypeCapabilitiesId() {
@@ -7078,7 +7079,7 @@ public final class DebugProtoBuf {
      * <pre>
      * Id in the StringTable
      * If this field is set, the type is flexible.
-     * All the fields above represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
+     * All the other fields and extensions represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
      * </pre>
      */
     public int getFlexibleTypeCapabilitiesId() {
@@ -7157,6 +7158,10 @@ public final class DebugProtoBuf {
           return false;
         }
       }
+      if (!extensionsAreInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -7164,6 +7169,9 @@ public final class DebugProtoBuf {
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       getSerializedSize();
+      com.google.protobuf.GeneratedMessage
+        .ExtendableMessage<org.jetbrains.kotlin.serialization.DebugProtoBuf.Type>.ExtensionWriter extensionWriter =
+          newExtensionWriter();
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         output.writeMessage(1, constructor_);
       }
@@ -7179,6 +7187,7 @@ public final class DebugProtoBuf {
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         output.writeMessage(5, flexibleUpperBound_);
       }
+      extensionWriter.writeUntil(200, output);
       getUnknownFields().writeTo(output);
     }
 
@@ -7208,6 +7217,7 @@ public final class DebugProtoBuf {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(5, flexibleUpperBound_);
       }
+      size += extensionsSerializedSize();
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
       return size;
@@ -7290,8 +7300,8 @@ public final class DebugProtoBuf {
      * Protobuf type {@code org.jetbrains.kotlin.serialization.Type}
      */
     public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.Builder<Builder>
-       implements org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder {
+        com.google.protobuf.GeneratedMessage.ExtendableBuilder<
+          org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, Builder> implements org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
         return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Type_descriptor;
@@ -7464,6 +7474,7 @@ public final class DebugProtoBuf {
         if (other.hasFlexibleUpperBound()) {
           mergeFlexibleUpperBound(other.getFlexibleUpperBound());
         }
+        this.mergeExtensionFields(other);
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
       }
@@ -7488,6 +7499,10 @@ public final class DebugProtoBuf {
             
             return false;
           }
+        }
+        if (!extensionsAreInitialized()) {
+          
+          return false;
         }
         return true;
       }
@@ -7909,7 +7924,7 @@ public final class DebugProtoBuf {
        * <pre>
        * Id in the StringTable
        * If this field is set, the type is flexible.
-       * All the fields above represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
+       * All the other fields and extensions represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
        * </pre>
        */
       public boolean hasFlexibleTypeCapabilitiesId() {
@@ -7921,7 +7936,7 @@ public final class DebugProtoBuf {
        * <pre>
        * Id in the StringTable
        * If this field is set, the type is flexible.
-       * All the fields above represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
+       * All the other fields and extensions represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
        * </pre>
        */
       public int getFlexibleTypeCapabilitiesId() {
@@ -7933,7 +7948,7 @@ public final class DebugProtoBuf {
        * <pre>
        * Id in the StringTable
        * If this field is set, the type is flexible.
-       * All the fields above represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
+       * All the other fields and extensions represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
        * </pre>
        */
       public Builder setFlexibleTypeCapabilitiesId(int value) {
@@ -7948,7 +7963,7 @@ public final class DebugProtoBuf {
        * <pre>
        * Id in the StringTable
        * If this field is set, the type is flexible.
-       * All the fields above represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
+       * All the other fields and extensions represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
        * </pre>
        */
       public Builder clearFlexibleTypeCapabilitiesId() {
@@ -9885,6 +9900,7 @@ public final class DebugProtoBuf {
        * <pre>
        * If this field is present, it contains serialized data for the primary constructor.
        * Otherwise it's default and can be created manually upon deserialization
+       * Note: currently only objects have default primary constructor
        * </pre>
        */
       boolean hasData();
@@ -9894,6 +9910,7 @@ public final class DebugProtoBuf {
        * <pre>
        * If this field is present, it contains serialized data for the primary constructor.
        * Otherwise it's default and can be created manually upon deserialization
+       * Note: currently only objects have default primary constructor
        * </pre>
        */
       org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable getData();
@@ -9903,6 +9920,7 @@ public final class DebugProtoBuf {
        * <pre>
        * If this field is present, it contains serialized data for the primary constructor.
        * Otherwise it's default and can be created manually upon deserialization
+       * Note: currently only objects have default primary constructor
        * </pre>
        */
       org.jetbrains.kotlin.serialization.DebugProtoBuf.CallableOrBuilder getDataOrBuilder();
@@ -10020,6 +10038,7 @@ public final class DebugProtoBuf {
        * <pre>
        * If this field is present, it contains serialized data for the primary constructor.
        * Otherwise it's default and can be created manually upon deserialization
+       * Note: currently only objects have default primary constructor
        * </pre>
        */
       public boolean hasData() {
@@ -10031,6 +10050,7 @@ public final class DebugProtoBuf {
        * <pre>
        * If this field is present, it contains serialized data for the primary constructor.
        * Otherwise it's default and can be created manually upon deserialization
+       * Note: currently only objects have default primary constructor
        * </pre>
        */
       public org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable getData() {
@@ -10042,6 +10062,7 @@ public final class DebugProtoBuf {
        * <pre>
        * If this field is present, it contains serialized data for the primary constructor.
        * Otherwise it's default and can be created manually upon deserialization
+       * Note: currently only objects have default primary constructor
        * </pre>
        */
       public org.jetbrains.kotlin.serialization.DebugProtoBuf.CallableOrBuilder getDataOrBuilder() {
@@ -10306,6 +10327,7 @@ public final class DebugProtoBuf {
          * <pre>
          * If this field is present, it contains serialized data for the primary constructor.
          * Otherwise it's default and can be created manually upon deserialization
+         * Note: currently only objects have default primary constructor
          * </pre>
          */
         public boolean hasData() {
@@ -10317,6 +10339,7 @@ public final class DebugProtoBuf {
          * <pre>
          * If this field is present, it contains serialized data for the primary constructor.
          * Otherwise it's default and can be created manually upon deserialization
+         * Note: currently only objects have default primary constructor
          * </pre>
          */
         public org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable getData() {
@@ -10332,6 +10355,7 @@ public final class DebugProtoBuf {
          * <pre>
          * If this field is present, it contains serialized data for the primary constructor.
          * Otherwise it's default and can be created manually upon deserialization
+         * Note: currently only objects have default primary constructor
          * </pre>
          */
         public Builder setData(org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable value) {
@@ -10353,6 +10377,7 @@ public final class DebugProtoBuf {
          * <pre>
          * If this field is present, it contains serialized data for the primary constructor.
          * Otherwise it's default and can be created manually upon deserialization
+         * Note: currently only objects have default primary constructor
          * </pre>
          */
         public Builder setData(
@@ -10372,6 +10397,7 @@ public final class DebugProtoBuf {
          * <pre>
          * If this field is present, it contains serialized data for the primary constructor.
          * Otherwise it's default and can be created manually upon deserialization
+         * Note: currently only objects have default primary constructor
          * </pre>
          */
         public Builder mergeData(org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable value) {
@@ -10396,6 +10422,7 @@ public final class DebugProtoBuf {
          * <pre>
          * If this field is present, it contains serialized data for the primary constructor.
          * Otherwise it's default and can be created manually upon deserialization
+         * Note: currently only objects have default primary constructor
          * </pre>
          */
         public Builder clearData() {
@@ -10414,6 +10441,7 @@ public final class DebugProtoBuf {
          * <pre>
          * If this field is present, it contains serialized data for the primary constructor.
          * Otherwise it's default and can be created manually upon deserialization
+         * Note: currently only objects have default primary constructor
          * </pre>
          */
         public org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.Builder getDataBuilder() {
@@ -10427,6 +10455,7 @@ public final class DebugProtoBuf {
          * <pre>
          * If this field is present, it contains serialized data for the primary constructor.
          * Otherwise it's default and can be created manually upon deserialization
+         * Note: currently only objects have default primary constructor
          * </pre>
          */
         public org.jetbrains.kotlin.serialization.DebugProtoBuf.CallableOrBuilder getDataOrBuilder() {
@@ -10442,6 +10471,7 @@ public final class DebugProtoBuf {
          * <pre>
          * If this field is present, it contains serialized data for the primary constructor.
          * Otherwise it's default and can be created manually upon deserialization
+         * Note: currently only objects have default primary constructor
          * </pre>
          */
         private com.google.protobuf.SingleFieldBuilder<
@@ -17002,7 +17032,7 @@ public final class DebugProtoBuf {
       "\n\004BYTE\020\000\022\010\n\004CHAR\020\001\022\t\n\005SHORT\020\002\022\007\n\003INT\020\003\022\010" +
       "\n\004LONG\020\004\022\t\n\005FLOAT\020\005\022\n\n\006DOUBLE\020\006\022\013\n\007BOOLE" +
       "AN\020\007\022\n\n\006STRING\020\010\022\t\n\005CLASS\020\t\022\010\n\004ENUM\020\n\022\016\n" +
-      "\nANNOTATION\020\013\022\t\n\005ARRAY\020\014\"\377\004\n\004Type\022I\n\013con",
+      "\nANNOTATION\020\013\022\t\n\005ARRAY\020\014\"\206\005\n\004Type\022I\n\013con",
       "structor\030\001 \002(\01324.org.jetbrains.kotlin.se" +
       "rialization.Type.Constructor\022C\n\010argument" +
       "\030\002 \003(\01321.org.jetbrains.kotlin.serializat" +
@@ -17018,55 +17048,55 @@ public final class DebugProtoBuf {
       "ialization.Type.Argument.Projection:\003INV" +
       "\0226\n\004type\030\002 \001(\0132(.org.jetbrains.kotlin.se" +
       "rialization.Type\"0\n\nProjection\022\006\n\002IN\020\000\022\007" +
-      "\n\003OUT\020\001\022\007\n\003INV\020\002\022\010\n\004STAR\020\003\"\371\001\n\rTypeParam" +
-      "eter\022\n\n\002id\030\001 \002(\005\022\014\n\004name\030\002 \002(\005\022\026\n\007reifie" +
-      "d\030\003 \001(\010:\005false\022Q\n\010variance\030\004 \001(\0162:.org.j" +
-      "etbrains.kotlin.serialization.TypeParame" +
-      "ter.Variance:\003INV\022=\n\013upper_bound\030\005 \003(\0132(",
-      ".org.jetbrains.kotlin.serialization.Type" +
-      "\"$\n\010Variance\022\006\n\002IN\020\000\022\007\n\003OUT\020\001\022\007\n\003INV\020\002\"\261" +
-      "\005\n\005Class\022\020\n\005flags\030\001 \001(\005:\0010\022\017\n\007fq_name\030\003 " +
-      "\002(\005\022\035\n\025companion_object_name\030\004 \001(\005\022I\n\016ty" +
-      "pe_parameter\030\005 \003(\01321.org.jetbrains.kotli" +
-      "n.serialization.TypeParameter\022;\n\tsuperty" +
-      "pe\030\006 \003(\0132(.org.jetbrains.kotlin.serializ" +
-      "ation.Type\022\031\n\021nested_class_name\030\007 \003(\005\022<\n" +
-      "\006member\030\013 \003(\0132,.org.jetbrains.kotlin.ser" +
-      "ialization.Callable\022\022\n\nenum_entry\030\014 \003(\005\022",
-      "Y\n\023primary_constructor\030\r \001(\0132<.org.jetbr" +
-      "ains.kotlin.serialization.Class.PrimaryC" +
-      "onstructor\022K\n\025secondary_constructor\030\016 \003(" +
-      "\0132,.org.jetbrains.kotlin.serialization.C" +
-      "allable\032P\n\022PrimaryConstructor\022:\n\004data\030\001 " +
-      "\001(\0132,.org.jetbrains.kotlin.serialization" +
-      ".Callable\"p\n\004Kind\022\t\n\005CLASS\020\000\022\t\n\005TRAIT\020\001\022" +
-      "\016\n\nENUM_CLASS\020\002\022\016\n\nENUM_ENTRY\020\003\022\024\n\020ANNOT" +
-      "ATION_CLASS\020\004\022\n\n\006OBJECT\020\005\022\020\n\014CLASS_OBJEC" +
-      "T\020\006*\005\010d\020\310\001\"N\n\007Package\022<\n\006member\030\001 \003(\0132,.",
-      "org.jetbrains.kotlin.serialization.Calla" +
-      "ble*\005\010d\020\310\001\"\300\005\n\010Callable\022\r\n\005flags\030\001 \001(\005\022\024" +
-      "\n\014getter_flags\030\t \001(\005\022\024\n\014setter_flags\030\n \001" +
-      "(\005\022I\n\016type_parameter\030\004 \003(\01321.org.jetbrai" +
-      "ns.kotlin.serialization.TypeParameter\022?\n" +
-      "\rreceiver_type\030\005 \001(\0132(.org.jetbrains.kot" +
-      "lin.serialization.Type\022\014\n\004name\030\006 \002(\005\022T\n\017" +
-      "value_parameter\030\007 \003(\0132;.org.jetbrains.ko" +
-      "tlin.serialization.Callable.ValueParamet" +
-      "er\022=\n\013return_type\030\010 \002(\0132(.org.jetbrains.",
-      "kotlin.serialization.Type\032\263\001\n\016ValueParam" +
-      "eter\022\r\n\005flags\030\001 \001(\005\022\014\n\004name\030\002 \002(\005\0226\n\004typ" +
-      "e\030\003 \002(\0132(.org.jetbrains.kotlin.serializa" +
-      "tion.Type\022E\n\023vararg_element_type\030\004 \001(\0132(" +
-      ".org.jetbrains.kotlin.serialization.Type" +
-      "*\005\010d\020\310\001\"Q\n\nMemberKind\022\017\n\013DECLARATION\020\000\022\021" +
-      "\n\rFAKE_OVERRIDE\020\001\022\016\n\nDELEGATION\020\002\022\017\n\013SYN" +
-      "THESIZED\020\003\":\n\014CallableKind\022\007\n\003FUN\020\000\022\007\n\003V" +
-      "AL\020\001\022\007\n\003VAR\020\002\022\017\n\013CONSTRUCTOR\020\003*\005\010d\020\310\001*-\n" +
-      "\010Modality\022\t\n\005FINAL\020\000\022\010\n\004OPEN\020\001\022\014\n\010ABSTRA",
-      "CT\020\002*b\n\nVisibility\022\014\n\010INTERNAL\020\000\022\013\n\007PRIV" +
-      "ATE\020\001\022\r\n\tPROTECTED\020\002\022\n\n\006PUBLIC\020\003\022\023\n\017PRIV" +
-      "ATE_TO_THIS\020\004\022\t\n\005LOCAL\020\005B\022B\rDebugProtoBu" +
-      "f\210\001\000"
+      "\n\003OUT\020\001\022\007\n\003INV\020\002\022\010\n\004STAR\020\003*\005\010d\020\310\001\"\371\001\n\rTy" +
+      "peParameter\022\n\n\002id\030\001 \002(\005\022\014\n\004name\030\002 \002(\005\022\026\n" +
+      "\007reified\030\003 \001(\010:\005false\022Q\n\010variance\030\004 \001(\0162" +
+      ":.org.jetbrains.kotlin.serialization.Typ" +
+      "eParameter.Variance:\003INV\022=\n\013upper_bound\030",
+      "\005 \003(\0132(.org.jetbrains.kotlin.serializati" +
+      "on.Type\"$\n\010Variance\022\006\n\002IN\020\000\022\007\n\003OUT\020\001\022\007\n\003" +
+      "INV\020\002\"\261\005\n\005Class\022\020\n\005flags\030\001 \001(\005:\0010\022\017\n\007fq_" +
+      "name\030\003 \002(\005\022\035\n\025companion_object_name\030\004 \001(" +
+      "\005\022I\n\016type_parameter\030\005 \003(\01321.org.jetbrain" +
+      "s.kotlin.serialization.TypeParameter\022;\n\t" +
+      "supertype\030\006 \003(\0132(.org.jetbrains.kotlin.s" +
+      "erialization.Type\022\031\n\021nested_class_name\030\007" +
+      " \003(\005\022<\n\006member\030\013 \003(\0132,.org.jetbrains.kot" +
+      "lin.serialization.Callable\022\022\n\nenum_entry",
+      "\030\014 \003(\005\022Y\n\023primary_constructor\030\r \001(\0132<.or" +
+      "g.jetbrains.kotlin.serialization.Class.P" +
+      "rimaryConstructor\022K\n\025secondary_construct" +
+      "or\030\016 \003(\0132,.org.jetbrains.kotlin.serializ" +
+      "ation.Callable\032P\n\022PrimaryConstructor\022:\n\004" +
+      "data\030\001 \001(\0132,.org.jetbrains.kotlin.serial" +
+      "ization.Callable\"p\n\004Kind\022\t\n\005CLASS\020\000\022\t\n\005T" +
+      "RAIT\020\001\022\016\n\nENUM_CLASS\020\002\022\016\n\nENUM_ENTRY\020\003\022\024" +
+      "\n\020ANNOTATION_CLASS\020\004\022\n\n\006OBJECT\020\005\022\020\n\014CLAS" +
+      "S_OBJECT\020\006*\005\010d\020\310\001\"N\n\007Package\022<\n\006member\030\001",
+      " \003(\0132,.org.jetbrains.kotlin.serializatio" +
+      "n.Callable*\005\010d\020\310\001\"\300\005\n\010Callable\022\r\n\005flags\030" +
+      "\001 \001(\005\022\024\n\014getter_flags\030\t \001(\005\022\024\n\014setter_fl" +
+      "ags\030\n \001(\005\022I\n\016type_parameter\030\004 \003(\01321.org." +
+      "jetbrains.kotlin.serialization.TypeParam" +
+      "eter\022?\n\rreceiver_type\030\005 \001(\0132(.org.jetbra" +
+      "ins.kotlin.serialization.Type\022\014\n\004name\030\006 " +
+      "\002(\005\022T\n\017value_parameter\030\007 \003(\0132;.org.jetbr" +
+      "ains.kotlin.serialization.Callable.Value" +
+      "Parameter\022=\n\013return_type\030\010 \002(\0132(.org.jet",
+      "brains.kotlin.serialization.Type\032\263\001\n\016Val" +
+      "ueParameter\022\r\n\005flags\030\001 \001(\005\022\014\n\004name\030\002 \002(\005" +
+      "\0226\n\004type\030\003 \002(\0132(.org.jetbrains.kotlin.se" +
+      "rialization.Type\022E\n\023vararg_element_type\030" +
+      "\004 \001(\0132(.org.jetbrains.kotlin.serializati" +
+      "on.Type*\005\010d\020\310\001\"Q\n\nMemberKind\022\017\n\013DECLARAT" +
+      "ION\020\000\022\021\n\rFAKE_OVERRIDE\020\001\022\016\n\nDELEGATION\020\002" +
+      "\022\017\n\013SYNTHESIZED\020\003\":\n\014CallableKind\022\007\n\003FUN" +
+      "\020\000\022\007\n\003VAL\020\001\022\007\n\003VAR\020\002\022\017\n\013CONSTRUCTOR\020\003*\005\010" +
+      "d\020\310\001*-\n\010Modality\022\t\n\005FINAL\020\000\022\010\n\004OPEN\020\001\022\014\n",
+      "\010ABSTRACT\020\002*b\n\nVisibility\022\014\n\010INTERNAL\020\000\022" +
+      "\013\n\007PRIVATE\020\001\022\r\n\tPROTECTED\020\002\022\n\n\006PUBLIC\020\003\022" +
+      "\023\n\017PRIVATE_TO_THIS\020\004\022\t\n\005LOCAL\020\005B\022B\rDebug" +
+      "ProtoBuf\210\001\000"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {

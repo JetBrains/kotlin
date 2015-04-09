@@ -443,6 +443,8 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     private String renderDefaultType(@NotNull JetType type) {
         StringBuilder sb = new StringBuilder();
 
+        renderAnnotations(type, sb, /* needBrackets = */ true);
+
         if (type.isError()) {
             sb.append(type.getConstructor().toString()); // Debug name of an error type is more informative
         }

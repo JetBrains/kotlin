@@ -10,6 +10,7 @@ public final class DebugJvmProtoBuf {
     registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.methodSignature);
     registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.propertySignature);
     registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.implClassName);
+    registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.typeAnnotation);
     registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.index);
   }
   public interface JvmTypeOrBuilder
@@ -3762,6 +3763,17 @@ public final class DebugJvmProtoBuf {
           .newFileScopedGeneratedExtension(
         java.lang.Integer.class,
         null);
+  public static final int TYPE_ANNOTATION_FIELD_NUMBER = 100;
+  /**
+   * <code>extend .org.jetbrains.kotlin.serialization.Type { ... }</code>
+   */
+  public static final
+    com.google.protobuf.GeneratedMessage.GeneratedExtension<
+      org.jetbrains.kotlin.serialization.DebugProtoBuf.Type,
+      java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation>> typeAnnotation = com.google.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.class,
+        org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.getDefaultInstance());
   public static final int INDEX_FIELD_NUMBER = 100;
   /**
    * <code>extend .org.jetbrains.kotlin.serialization.Callable.ValueParameter { ... }</code>
@@ -3837,9 +3849,12 @@ public final class DebugJvmProtoBuf {
       "jetbrains.kotlin.serialization.jvm.JvmPr" +
       "opertySignature:E\n\017impl_class_name\022,.org" +
       ".jetbrains.kotlin.serialization.Callable" +
-      "\030f \001(\005:J\n\005index\022;.org.jetbrains.kotlin.s" +
-      "erialization.Callable.ValueParameter\030d \001" +
-      "(\005B\022B\020DebugJvmProtoBuf"
+      "\030f \001(\005:q\n\017type_annotation\022(.org.jetbrain" +
+      "s.kotlin.serialization.Type\030d \003(\0132..org." +
+      "jetbrains.kotlin.serialization.Annotatio" +
+      "n:J\n\005index\022;.org.jetbrains.kotlin.serial" +
+      "ization.Callable.ValueParameter\030d \001(\005B\022B",
+      "\020DebugJvmProtoBuf"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -3873,7 +3888,8 @@ public final class DebugJvmProtoBuf {
           methodSignature.internalInit(descriptor.getExtensions().get(0));
           propertySignature.internalInit(descriptor.getExtensions().get(1));
           implClassName.internalInit(descriptor.getExtensions().get(2));
-          index.internalInit(descriptor.getExtensions().get(3));
+          typeAnnotation.internalInit(descriptor.getExtensions().get(3));
+          index.internalInit(descriptor.getExtensions().get(4));
           return null;
         }
       };

@@ -16,23 +16,27 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
-import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils
-import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor
-import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.storage.StorageManager
-import java.util.*
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.constants.ArrayValue
-import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
-import org.jetbrains.kotlin.resolve.constants.ErrorValue
-import org.jetbrains.kotlin.resolve.constants.createCompileTimeConstant
+import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.constants.*
+import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.serialization.deserialization.AnnotationDeserializer
+import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
+import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
-import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
+import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.types.ErrorUtils
+import java.util.ArrayList
+import java.util.HashMap
 
 public class BinaryClassAnnotationAndConstantLoaderImpl(
         private val module: ModuleDescriptor,
@@ -42,6 +46,13 @@ public class BinaryClassAnnotationAndConstantLoaderImpl(
 ) : AbstractBinaryClassAnnotationAndConstantLoader<AnnotationDescriptor, CompileTimeConstant<*>>(
         storageManager, kotlinClassFinder, errorReporter
 ) {
+    private val annotationDeserializer = AnnotationDeserializer(module)
+
+    override fun loadTypeAnnotations(type: ProtoBuf.Type, nameResolver: NameResolver): List<AnnotationDescriptor> {
+        return type.getExtension(JvmProtoBuf.typeAnnotation).map { annotation ->
+            annotationDeserializer.deserializeAnnotation(annotation, nameResolver)
+        }
+    }
 
     override fun loadConstant(desc: String, initializer: Any): CompileTimeConstant<*>? {
         val normalizedValue: Any = if (desc in "ZBCS") {
@@ -64,7 +75,6 @@ public class BinaryClassAnnotationAndConstantLoaderImpl(
         )
         return compileTimeConstant
     }
-
 
     override fun loadAnnotation(
             annotationClassId: ClassId,

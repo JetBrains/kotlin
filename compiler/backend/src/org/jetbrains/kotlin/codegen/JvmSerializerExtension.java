@@ -21,9 +21,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.load.kotlin.SignatureDeserializer;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.serialization.AnnotationSerializer;
 import org.jetbrains.kotlin.serialization.ProtoBuf;
 import org.jetbrains.kotlin.serialization.SerializerExtension;
 import org.jetbrains.kotlin.serialization.StringTable;
@@ -31,6 +33,7 @@ import org.jetbrains.kotlin.serialization.deserialization.NameResolver;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor;
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf;
+import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 
@@ -67,6 +70,14 @@ public class JvmSerializerExtension extends SerializerExtension {
         Integer index = bindings.get(INDEX_FOR_VALUE_PARAMETER, descriptor);
         if (index != null) {
             proto.setExtension(JvmProtoBuf.index, index);
+        }
+    }
+
+    @Override
+    public void serializeType(@NotNull JetType type, @NotNull ProtoBuf.Type.Builder proto, @NotNull StringTable stringTable) {
+        // TODO: don't store type annotations in our binary metadata on Java 8, use *TypeAnnotations attributes instead
+        for (AnnotationDescriptor annotation : type.getAnnotations()) {
+            proto.addExtension(JvmProtoBuf.typeAnnotation, AnnotationSerializer.INSTANCE$.serializeAnnotation(annotation, stringTable));
         }
     }
 

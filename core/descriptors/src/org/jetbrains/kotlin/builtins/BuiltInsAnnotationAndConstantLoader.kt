@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.builtins
 
-import org.jetbrains.kotlin.serialization.*
-import org.jetbrains.kotlin.serialization.deserialization.*
-import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
+import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf
+import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.types.JetType
 
 class BuiltInsAnnotationAndConstantLoader(
@@ -56,6 +56,11 @@ class BuiltInsAnnotationAndConstantLoader(
     ): List<AnnotationDescriptor> {
         val annotations = proto.getExtension(BuiltInsProtoBuf.parameterAnnotation).orEmpty()
         return annotations.map { proto -> deserializer.deserializeAnnotation(proto, nameResolver) }
+    }
+
+    override fun loadTypeAnnotations(proto: ProtoBuf.Type, nameResolver: NameResolver): List<AnnotationDescriptor> {
+        // TODO: support type annotations in built-ins
+        return listOf()
     }
 
     override fun loadPropertyConstant(

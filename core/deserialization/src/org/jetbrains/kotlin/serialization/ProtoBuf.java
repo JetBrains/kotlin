@@ -4276,8 +4276,9 @@ public final class ProtoBuf {
     // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.Annotation)
   }
 
-  public interface TypeOrBuilder
-      extends com.google.protobuf.MessageLiteOrBuilder {
+  public interface TypeOrBuilder extends 
+       com.google.protobuf.GeneratedMessageLite.
+            ExtendableMessageOrBuilder<Type> {
 
     // required .org.jetbrains.kotlin.serialization.Type.Constructor constructor = 1;
     /**
@@ -4321,7 +4322,7 @@ public final class ProtoBuf {
      * <pre>
      * Id in the StringTable
      * If this field is set, the type is flexible.
-     * All the fields above represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
+     * All the other fields and extensions represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
      * </pre>
      */
     boolean hasFlexibleTypeCapabilitiesId();
@@ -4331,7 +4332,7 @@ public final class ProtoBuf {
      * <pre>
      * Id in the StringTable
      * If this field is set, the type is flexible.
-     * All the fields above represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
+     * All the other fields and extensions represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
      * </pre>
      */
     int getFlexibleTypeCapabilitiesId();
@@ -4362,10 +4363,10 @@ public final class ProtoBuf {
    * Protobuf type {@code org.jetbrains.kotlin.serialization.Type}
    */
   public static final class Type extends
-      com.google.protobuf.GeneratedMessageLite
-      implements TypeOrBuilder {
+      com.google.protobuf.GeneratedMessageLite.ExtendableMessage<
+        Type> implements TypeOrBuilder {
     // Use Type.newBuilder() to construct.
-    private Type(com.google.protobuf.GeneratedMessageLite.Builder builder) {
+    private Type(com.google.protobuf.GeneratedMessageLite.ExtendableBuilder<org.jetbrains.kotlin.serialization.ProtoBuf.Type, ?> builder) {
       super(builder);
 
     }
@@ -5652,7 +5653,7 @@ public final class ProtoBuf {
      * <pre>
      * Id in the StringTable
      * If this field is set, the type is flexible.
-     * All the fields above represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
+     * All the other fields and extensions represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
      * </pre>
      */
     public boolean hasFlexibleTypeCapabilitiesId() {
@@ -5664,7 +5665,7 @@ public final class ProtoBuf {
      * <pre>
      * Id in the StringTable
      * If this field is set, the type is flexible.
-     * All the fields above represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
+     * All the other fields and extensions represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
      * </pre>
      */
     public int getFlexibleTypeCapabilitiesId() {
@@ -5731,6 +5732,10 @@ public final class ProtoBuf {
           return false;
         }
       }
+      if (!extensionsAreInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -5738,6 +5743,9 @@ public final class ProtoBuf {
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       getSerializedSize();
+      com.google.protobuf.GeneratedMessageLite
+        .ExtendableMessage<org.jetbrains.kotlin.serialization.ProtoBuf.Type>.ExtensionWriter extensionWriter =
+          newExtensionWriter();
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         output.writeMessage(1, constructor_);
       }
@@ -5753,6 +5761,7 @@ public final class ProtoBuf {
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         output.writeMessage(5, flexibleUpperBound_);
       }
+      extensionWriter.writeUntil(200, output);
     }
 
     private int memoizedSerializedSize = -1;
@@ -5781,6 +5790,7 @@ public final class ProtoBuf {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(5, flexibleUpperBound_);
       }
+      size += extensionsSerializedSize();
       memoizedSerializedSize = size;
       return size;
     }
@@ -5856,9 +5866,8 @@ public final class ProtoBuf {
      * Protobuf type {@code org.jetbrains.kotlin.serialization.Type}
      */
     public static final class Builder extends
-        com.google.protobuf.GeneratedMessageLite.Builder<
-          org.jetbrains.kotlin.serialization.ProtoBuf.Type, Builder>
-        implements org.jetbrains.kotlin.serialization.ProtoBuf.TypeOrBuilder {
+        com.google.protobuf.GeneratedMessageLite.ExtendableBuilder<
+          org.jetbrains.kotlin.serialization.ProtoBuf.Type, Builder> implements org.jetbrains.kotlin.serialization.ProtoBuf.TypeOrBuilder {
       // Construct using org.jetbrains.kotlin.serialization.ProtoBuf.Type.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
@@ -5954,6 +5963,7 @@ public final class ProtoBuf {
         if (other.hasFlexibleUpperBound()) {
           mergeFlexibleUpperBound(other.getFlexibleUpperBound());
         }
+        this.mergeExtensionFields(other);
         return this;
       }
 
@@ -5977,6 +5987,10 @@ public final class ProtoBuf {
             
             return false;
           }
+        }
+        if (!extensionsAreInitialized()) {
+          
+          return false;
         }
         return true;
       }
@@ -6227,7 +6241,7 @@ public final class ProtoBuf {
        * <pre>
        * Id in the StringTable
        * If this field is set, the type is flexible.
-       * All the fields above represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
+       * All the other fields and extensions represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
        * </pre>
        */
       public boolean hasFlexibleTypeCapabilitiesId() {
@@ -6239,7 +6253,7 @@ public final class ProtoBuf {
        * <pre>
        * Id in the StringTable
        * If this field is set, the type is flexible.
-       * All the fields above represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
+       * All the other fields and extensions represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
        * </pre>
        */
       public int getFlexibleTypeCapabilitiesId() {
@@ -6251,7 +6265,7 @@ public final class ProtoBuf {
        * <pre>
        * Id in the StringTable
        * If this field is set, the type is flexible.
-       * All the fields above represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
+       * All the other fields and extensions represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
        * </pre>
        */
       public Builder setFlexibleTypeCapabilitiesId(int value) {
@@ -6266,7 +6280,7 @@ public final class ProtoBuf {
        * <pre>
        * Id in the StringTable
        * If this field is set, the type is flexible.
-       * All the fields above represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
+       * All the other fields and extensions represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
        * </pre>
        */
       public Builder clearFlexibleTypeCapabilitiesId() {
@@ -7793,6 +7807,7 @@ public final class ProtoBuf {
        * <pre>
        * If this field is present, it contains serialized data for the primary constructor.
        * Otherwise it's default and can be created manually upon deserialization
+       * Note: currently only objects have default primary constructor
        * </pre>
        */
       boolean hasData();
@@ -7802,6 +7817,7 @@ public final class ProtoBuf {
        * <pre>
        * If this field is present, it contains serialized data for the primary constructor.
        * Otherwise it's default and can be created manually upon deserialization
+       * Note: currently only objects have default primary constructor
        * </pre>
        */
       org.jetbrains.kotlin.serialization.ProtoBuf.Callable getData();
@@ -7898,6 +7914,7 @@ public final class ProtoBuf {
        * <pre>
        * If this field is present, it contains serialized data for the primary constructor.
        * Otherwise it's default and can be created manually upon deserialization
+       * Note: currently only objects have default primary constructor
        * </pre>
        */
       public boolean hasData() {
@@ -7909,6 +7926,7 @@ public final class ProtoBuf {
        * <pre>
        * If this field is present, it contains serialized data for the primary constructor.
        * Otherwise it's default and can be created manually upon deserialization
+       * Note: currently only objects have default primary constructor
        * </pre>
        */
       public org.jetbrains.kotlin.serialization.ProtoBuf.Callable getData() {
@@ -8120,6 +8138,7 @@ public final class ProtoBuf {
          * <pre>
          * If this field is present, it contains serialized data for the primary constructor.
          * Otherwise it's default and can be created manually upon deserialization
+         * Note: currently only objects have default primary constructor
          * </pre>
          */
         public boolean hasData() {
@@ -8131,6 +8150,7 @@ public final class ProtoBuf {
          * <pre>
          * If this field is present, it contains serialized data for the primary constructor.
          * Otherwise it's default and can be created manually upon deserialization
+         * Note: currently only objects have default primary constructor
          * </pre>
          */
         public org.jetbrains.kotlin.serialization.ProtoBuf.Callable getData() {
@@ -8142,6 +8162,7 @@ public final class ProtoBuf {
          * <pre>
          * If this field is present, it contains serialized data for the primary constructor.
          * Otherwise it's default and can be created manually upon deserialization
+         * Note: currently only objects have default primary constructor
          * </pre>
          */
         public Builder setData(org.jetbrains.kotlin.serialization.ProtoBuf.Callable value) {
@@ -8159,6 +8180,7 @@ public final class ProtoBuf {
          * <pre>
          * If this field is present, it contains serialized data for the primary constructor.
          * Otherwise it's default and can be created manually upon deserialization
+         * Note: currently only objects have default primary constructor
          * </pre>
          */
         public Builder setData(
@@ -8174,6 +8196,7 @@ public final class ProtoBuf {
          * <pre>
          * If this field is present, it contains serialized data for the primary constructor.
          * Otherwise it's default and can be created manually upon deserialization
+         * Note: currently only objects have default primary constructor
          * </pre>
          */
         public Builder mergeData(org.jetbrains.kotlin.serialization.ProtoBuf.Callable value) {
@@ -8194,6 +8217,7 @@ public final class ProtoBuf {
          * <pre>
          * If this field is present, it contains serialized data for the primary constructor.
          * Otherwise it's default and can be created manually upon deserialization
+         * Note: currently only objects have default primary constructor
          * </pre>
          */
         public Builder clearData() {

@@ -47,6 +47,12 @@ public interface AnnotationAndConstantLoader<A, C> {
             @NotNull ProtoBuf.Callable.ValueParameter proto
     );
 
+    @NotNull
+    List<A> loadTypeAnnotations(
+            @NotNull ProtoBuf.Type type,
+            @NotNull NameResolver nameResolver
+    );
+
     @Nullable
     C loadPropertyConstant(
             @NotNull ProtoContainer container,
