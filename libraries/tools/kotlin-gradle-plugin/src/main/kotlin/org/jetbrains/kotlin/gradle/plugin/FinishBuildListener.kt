@@ -17,9 +17,10 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.BuildAdapter
-import org.gradle.api.logging.Logging
 import org.gradle.BuildResult
+import org.gradle.api.logging.Logging
 import java.lang.ref.Reference
+import java.util.concurrent.ScheduledExecutorService
 
 class FinishBuildListener(var pluginClassLoader: ParentLastURLClassLoader?) : BuildAdapter() {
     val log = Logging.getLogger(this.javaClass)
@@ -29,6 +30,7 @@ class FinishBuildListener(var pluginClassLoader: ParentLastURLClassLoader?) : Bu
 
         stopZipFileCache()
         stopLowMemoryWatcher()
+        stopJobScheduler()
 
 		// TODO: Try to clean up thread locals without this ugly hack
 		// TODO: Further investigation of PermGen leak (KT-6451)
@@ -79,6 +81,18 @@ class FinishBuildListener(var pluginClassLoader: ParentLastURLClassLoader?) : Bu
     private fun stopLowMemoryWatcher() {
         callVoidStaticMethod("com.intellij.openapi.util.LowMemoryWatcher", "stopAll")
         log.debug("LowMemoryWatcher finished successfully")
+    }
+
+    private fun stopJobScheduler() {
+        log.debug("Stop JobScheduler")
+
+        val jobSchedulerClass = Class.forName("com.intellij.concurrency.JobScheduler", false, pluginClassLoader)
+
+        val getSchedulerMethod = jobSchedulerClass.getMethod("getScheduler")
+        val executorService = getSchedulerMethod.invoke(this) as ScheduledExecutorService
+
+        executorService.shutdown()
+        log.debug("JobScheduler stopped")
     }
 
     private fun callVoidStaticMethod(classFqName: String, methodName: String) {
