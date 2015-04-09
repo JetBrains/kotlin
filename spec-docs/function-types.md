@@ -113,11 +113,11 @@ inherits from it (and adds `invoke()`), and we don't want to override anything b
 
 ## Functions with 0..22 parameters at runtime
 
-There are 23 function traits in `kotlin.platform.jvm`: `Function0`, `Function1`, ..., `Function22`.
+There are 23 function traits in `kotlin.jvm.functions`: `Function0`, `Function1`, ..., `Function22`.
 Here's `Function1` declaration, for example:
 
 ``` kotlin
-package kotlin.platform.jvm
+package kotlin.jvm.functions
 
 trait Function1<in P1, out R> : kotlin.Function<R> {
     fun invoke(p1: P1): R
@@ -125,10 +125,8 @@ trait Function1<in P1, out R> : kotlin.Function<R> {
 ```
 
 These traits are supposed to be inherited from by Java classes when passing lambdas to Kotlin.
-
-Package `kotlin.platform.jvm` is supposed to contain interfaces which help use Kotlin from Java.
-(And not from Kotlin, because normally you would use a function type there,
-most of the time even without mentioning built-in function classes: `(P1, P2, P3) -> R`.)
+They shouldn't be used from Kotlin however, because normally you would use a function type there,
+most of the time even without mentioning built-in function classes: `(P1, P2, P3) -> R`.
 
 ## Translation of Kotlin lambdas
 
@@ -185,7 +183,7 @@ object : FunctionImpl(1), Function1<String, Int> {
 To support functions with many parameters there's a special trait in JVM runtime:
 
 ``` kotlin
-package kotlin.platform.jvm
+package kotlin.jvm.functions
 
 trait FunctionN<out R> : kotlin.Function<R> {
     val arity: Int
@@ -199,7 +197,7 @@ trait FunctionN<out R> : kotlin.Function<R> {
 And another type annotation:
 
 ``` kotlin
-package kotlin.platform.jvm
+package kotlin.jvm.functions
 
 annotation class arity(val value: Int)
 ```
