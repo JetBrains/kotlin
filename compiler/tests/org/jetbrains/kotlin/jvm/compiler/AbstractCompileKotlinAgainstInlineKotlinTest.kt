@@ -28,10 +28,16 @@ public abstract class AbstractCompileKotlinAgainstInlineKotlinTest : AbstractCom
 
         val (factory1, factory2) = doBoxTest(inputFiles)
         val allGeneratedFiles = factory1.asList() + factory2.asList()
-        InlineTestUtil.checkNoCallsToInline(allGeneratedFiles)
 
-        val sourceFiles = factory1.getInputFiles() + factory2.getInputFiles()
-        checkSMAP(sourceFiles, allGeneratedFiles)
+        try {
+            InlineTestUtil.checkNoCallsToInline(allGeneratedFiles)
+            val sourceFiles = factory1.getInputFiles() + factory2.getInputFiles()
+            checkSMAP(sourceFiles, allGeneratedFiles)
+        }
+        catch (e: Throwable) {
+            System.out.println(factory1.createText() + "\n" + factory2.createText())
+            throw e
+        }
     }
 
     private fun doBoxTest(files: List<String>): Pair<ClassFileFactory, ClassFileFactory> {

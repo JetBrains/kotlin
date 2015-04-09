@@ -1,0 +1,21 @@
+fun box(){
+    checkEquals(test(),
+                fail())
+
+    checkEquals(fail(),
+                test())
+}
+
+public fun checkEquals(p1: String, p2: String) {
+    throw AssertionError("fail")
+}
+
+inline fun test() : String {
+    return "123"
+}
+
+fun fail() : String {
+    throw AssertionError("fail")
+}
+
+// 2 14 2 5 14 5 7 10 14 18
