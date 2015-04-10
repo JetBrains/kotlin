@@ -811,6 +811,10 @@ fun main(args: Array<String>) {
             model("inlineStdlib/cases")
         }
 
+        testClass(javaClass<AbstractInlineEvaluationOrderTest>()) {
+            model("inlineEvaluationOrder/cases")
+        }
+
         testClass(javaClass<AbstractLabelTest>()) {
             model("labels/cases")
         }
