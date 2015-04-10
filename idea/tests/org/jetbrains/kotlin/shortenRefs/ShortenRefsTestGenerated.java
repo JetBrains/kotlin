@@ -217,6 +217,12 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/shortenRefs/java"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
         }
 
+        @TestMetadata("innerClassImport.kt")
+        public void testInnerClassImport() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/java/innerClassImport.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("innerClassNoImports.kt")
         public void testInnerClassNoImports() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/java/innerClassNoImports.kt");
