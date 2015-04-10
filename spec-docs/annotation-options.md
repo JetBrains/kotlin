@@ -59,12 +59,15 @@ To check applicability, we can use the following constants:
 | PROPERTY_SETTER | METHOD |
 | TYPE | TYPE_USE |
 | EXPRESSION | \<no analog> |
+| FILE | \<no analog> |
 
 Putting an annotation on an element that is not allowed by the specified target is a compile-time error.
 No targets specified means that all targets are accepted.
 
-> NOTE: Java has the following [targets](https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/ElementType.html):
+> NOTE: Java has the following [targets](https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/ElementType.html)
+By default, Java has everything but Java8-specific targets (`TYPE_USE`, `TYPE_PARAMETER`), which makes it unclear as of which target should we take by default.
 
+One option to work around the problem of adding more targets later: have an explicit `ALL` target. But there's the issue of matching it with Java's one.
 
 **TODO** Open question: what about traits/classes/objects?  
 **TODO** local variables are just like properties, but local  
