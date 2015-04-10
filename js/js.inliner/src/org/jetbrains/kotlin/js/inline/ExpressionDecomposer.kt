@@ -77,6 +77,40 @@ class ExpressionDecomposer private (
     }
 
 
+    override fun visit(x: JsWhile, ctx: JsContext<*>): Boolean {
+        x.process(true)
+        return false
+    }
+
+    override fun visit(x: JsDoWhile, ctx: JsContext<*>): Boolean {
+        x.process(false)
+        return false
+    }
+
+    private fun JsWhile.process(addBreakToBegin: Boolean) {
+        if (test !in containsExtractable) return
+
+        withNewAdditionalStatements {
+            test = accept(test)
+            val breakIfNotTest = JsIf(not(test), JsBreak())
+            // Body can be JsBlock or other JsStatement.
+            // Convert to statements list to avoid nested block.
+            val bodyStatements = flattenStatement(body)
+
+            if (addBreakToBegin) {
+                addStatement(breakIfNotTest)
+                addStatements(bodyStatements)
+            }
+            else {
+                addStatements(0, bodyStatements)
+                addStatement(breakIfNotTest)
+            }
+
+            body = additionalStatements.toStatement()
+            test = JsLiteral.TRUE
+        }
+    }
+
     // TODO: comma operator?
     override fun visit(x: JsBinaryOperation, ctx: JsContext<*>): Boolean {
         x.arg1 = accept(x.arg1)
@@ -249,12 +283,15 @@ class ExpressionDecomposer private (
     private fun addStatements(statements: List<JsStatement>) =
             additionalStatements.addAll(statements)
 
+    private fun addStatements(index: Int, statements: List<JsStatement>) =
+            additionalStatements.addAll(index, statements)
+
     private fun JsExpression.extractToTemporary(): JsExpression {
         val tmp = Temporary(this)
         addStatement(tmp.variable)
         return tmp.nameRef
     }
-
+    
     private inner class Temporary(val value: JsExpression? = null) {
         val name: JsName = scope.declareTemporary()
 
@@ -320,8 +357,15 @@ private open class JsExpressionVisitor() : JsVisitorWithContextImpl() {
         return false
     }
 
-    override fun visit(x: JsWhile, ctx: JsContext<*>): Boolean = false
-    override fun visit(x: JsDoWhile, ctx: JsContext<*>): Boolean = false
+    override fun visit(x: JsWhile, ctx: JsContext<*>): Boolean {
+        x.test = accept(x.test)
+        return false
+    }
+
+    override fun visit(x: JsDoWhile, ctx: JsContext<*>): Boolean {
+        x.test = accept(x.test)
+        return false
+    }
 
     override fun visit(x: JsArrayAccess, ctx: JsContext<*>): Boolean = true
     override fun visit(x: JsArrayLiteral, ctx: JsContext<*>): Boolean = true

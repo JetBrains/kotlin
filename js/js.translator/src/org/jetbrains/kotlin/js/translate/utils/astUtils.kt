@@ -60,6 +60,14 @@ public var JsNameRef.qualifier: JsExpression?
     get() = getQualifier()
     set(value) = setQualifier(value)
 
+public var JsWhile.test: JsExpression
+    get() = getCondition()
+    set(value) = setCondition(value)
+
+public var JsWhile.body: JsStatement
+    get() = getBody()
+    set(value) = setBody(value)
+
 public var JsArrayAccess.index: JsExpression
     get() = getIndexExpression()
     set(value) = setIndexExpression(value)
