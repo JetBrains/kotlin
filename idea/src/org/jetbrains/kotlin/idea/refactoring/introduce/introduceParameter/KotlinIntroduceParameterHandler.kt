@@ -284,4 +284,4 @@ public open class KotlinIntroduceParameterHandler: KotlinIntroduceHandlerBase() 
     }
 }
 
-val INTRODUCE_PARAMETER: String = JetRefactoringBundle.message("introduce.property")
+val INTRODUCE_PARAMETER: String = JetRefactoringBundle.message("introduce.parameter")
