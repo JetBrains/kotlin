@@ -160,12 +160,6 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
             doTest(fileName);
         }
 
-        @TestMetadata("DefaultMethod.kt")
-        public void testDefaultMethod() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/DefaultMethod.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("Delegation.kt")
         public void testDelegation() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/Delegation.kt");

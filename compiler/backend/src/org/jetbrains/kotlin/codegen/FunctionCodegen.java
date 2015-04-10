@@ -578,6 +578,7 @@ public class FunctionCodegen {
 
         int flags = getVisibilityAccessFlag(functionDescriptor) |
                     getDeprecatedAccessFlag(functionDescriptor) |
+                    ACC_SYNTHETIC |
                     (functionDescriptor instanceof ConstructorDescriptor ? 0 : ACC_STATIC);
 
         Method defaultMethod = typeMapper.mapDefaultMethod(functionDescriptor, kind, owner);

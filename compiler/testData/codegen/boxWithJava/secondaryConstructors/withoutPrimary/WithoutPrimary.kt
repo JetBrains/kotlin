@@ -14,9 +14,6 @@ fun box(): String {
     val test1 = WithoutPrimary.test1().toString()
     if (test1 != "123#abc") return "fail1: $test1"
 
-    val test2 = WithoutPrimary.test2().toString()
-    if (test2 != "def_x#1") return "fail2: $test2"
-
     val test3 = WithoutPrimary.test3().toString()
     if (test3 != "123#456") return "fail3: $test3"
 
