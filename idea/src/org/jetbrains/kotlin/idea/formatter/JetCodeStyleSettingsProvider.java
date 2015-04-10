@@ -58,6 +58,7 @@ public class JetCodeStyleSettingsProvider extends CodeStyleSettingsProvider {
                         addIndentOptionsTab(settings);
                         addSpacesTab(settings);
                         addWrappingAndBracesTab(settings);
+                        addTab(new ImportSettingsPanelWrapper(settings));
                     }
                 };
             }
