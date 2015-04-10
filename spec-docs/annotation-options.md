@@ -69,8 +69,24 @@ By default, Java has everything but Java8-specific targets (`TYPE_USE`, `TYPE_PA
 
 One option to work around the problem of adding more targets later: have an explicit `ALL` target. But there's the issue of matching it with Java's one.
 
+For `TYPE` it may make sense to add an extra `@typeTarget` annotation with the following options:
+* `ALL` - any useage of types
+* `RETURN_TYPE` (including that of function types?)
+* `VALUE_PARAMETER_TYPE`(including that of function types?, including receiver types?)
+* `TYPE_ARGUMENT`
+* `TYPE_CONSTRUCTOR` (complement of `TYPE_ARGUMENT`)
+* `SUPERTYPE`
+* `UPPER_BOUND`
+* `ANNOTATION_TYPE`
+* `CONSTRUCTOR_USAGE` (this one is an issue: use site is ambiguous with annotated expression)
+* <maybe more>
+
+Also there are some exotic type usages, such as ones on outer types: `@A (@B Outer).Inner`, here `@A` belongs to `Inner`, and `@B` belongs to `Outer`.
+
 **TODO** Open question: what about traits/classes/objects?  
 **TODO** local variables are just like properties, but local  
+
+
 
 > Possible platform-specific targets
 * SINGLETON_FIELD for objects
