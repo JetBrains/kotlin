@@ -21,6 +21,7 @@ import com.google.dart.compiler.backend.js.ast.metadata.*
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*
 
 import kotlin.platform.platformStatic
+import kotlin.properties.Delegates
 
 import com.intellij.util.SmartList
 
@@ -73,6 +74,87 @@ class ExpressionDecomposer private (
             return decomposer.additionalStatements
         }
     }
+    override fun visit(x: JsInvocation, ctx: JsContext<*>): Boolean {
+        CallableInvocationAdapter(x).process()
+        return false
+    }
+
+    override fun visit(x: JsNew, ctx: JsContext<*>): Boolean {
+        CallableNewAdapter(x).process()
+        return false
+    }
+
+    private abstract class Callable(hasArguments: HasArguments) {
+        abstract var qualifier: JsExpression
+        val arguments = hasArguments.getArguments()
+    }
+
+    private class CallableInvocationAdapter(val invocation: JsInvocation) : Callable(invocation) {
+        override var qualifier: JsExpression
+            get() = invocation.getQualifier()
+            set(value) = invocation.setQualifier(value)
+    }
+
+    private class CallableNewAdapter(val jsnew: JsNew) : Callable(jsnew) {
+        override var qualifier: JsExpression
+            get() = jsnew.getConstructorExpression()
+            set(value) = jsnew.setConstructorExpression(value)
+    }
+
+    private fun Callable.process() {
+        val matchedIndices = arguments.indicesOfExtractable
+        if (!matchedIndices.hasNext()) return
+
+        qualifier = accept(qualifier)
+        if (qualifier in containsNodeWithSideEffect) {
+            qualifier = qualifier.extractToTemporary()
+        }
+
+        processByIndices(arguments, matchedIndices)
+    }
+
+    private fun processByIndices(elements: MutableList<JsExpression>, matchedIndices: Iterator<Int>) {
+        var prev = 0
+        while (matchedIndices.hasNext()) {
+            val curr = matchedIndices.next()
+
+            for (i in prev..curr-1) {
+                val arg = elements[i]
+                if (arg !in containsNodeWithSideEffect) continue
+
+                elements[i] = arg.extractToTemporary()
+            }
+
+            elements[curr] = accept(elements[curr])
+            prev = curr
+        }
+    }
+
+    private fun addStatement(statement: JsStatement) =
+            additionalStatements.add(statement)
+
+    private fun JsExpression.extractToTemporary(): JsExpression {
+        val tmp = Temporary(this)
+        addStatement(tmp.variable)
+        return tmp.nameRef
+    }
+
+    private inner class Temporary(val value: JsExpression? = null) {
+        val name: JsName = scope.declareTemporary()
+
+        val variable: JsVars by Delegates.lazy {
+            newVar(name, value)
+        }
+
+        val nameRef: JsExpression
+            get() = name.makeRef()
+
+        fun assign(value: JsExpression): JsStatement =
+                assignment(nameRef, value).makeStmt()
+    }
+
+    private val List<JsNode>.indicesOfExtractable: Iterator<Int>
+        get() = indices.filter { get(it) in containsExtractable }.iterator()
 }
 
 /**
