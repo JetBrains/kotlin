@@ -25,6 +25,8 @@ import java.util.concurrent.ScheduledExecutorService
 class FinishBuildListener(var pluginClassLoader: ParentLastURLClassLoader?) : BuildAdapter() {
     val log = Logging.getLogger(this.javaClass)
 
+    private var threadTracker: ThreadTracker? = ThreadTracker()
+
     override fun buildFinished(result: BuildResult?) {
         log.debug("Build finished listener")
 
@@ -38,6 +40,9 @@ class FinishBuildListener(var pluginClassLoader: ParentLastURLClassLoader?) : Bu
 
         pluginClassLoader = null
         result?.getGradle()?.removeListener(this)
+
+        threadTracker?.checkThreadLeak(result?.getGradle())
+        threadTracker = null
     }
 
     public fun removeThreadLocals() {

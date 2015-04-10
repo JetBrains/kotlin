@@ -37,7 +37,7 @@ abstract class BaseGradleIT {
         copyDirRecursively(File(resourcesRootFile, "GradleWrapper-$wrapperVersion"), projectDir)
         val cmd = createCommand(tasks)
 
-        println("<=== Test build: ${this.projectName} $cmd ====>")
+        println("<=== Test build: ${this.projectName} $cmd ===>")
 
         val process = createProcess(cmd, projectDir)
 
@@ -96,7 +96,8 @@ abstract class BaseGradleIT {
 
     private fun Project.createCommand(params: Array<out String>): List<String> {
         val pathToKotlinPlugin = "-PpathToKotlinPlugin=" + File("local-repo").getAbsolutePath()
-        val tailParameters = params + listOf(pathToKotlinPlugin, "--no-daemon", "--${minLogLevel.name().toLowerCase()}")
+        val tailParameters = params +
+                listOf(pathToKotlinPlugin, "--no-daemon", "--${minLogLevel.name().toLowerCase()}", "-Pkotlin.gradle.test=true")
 
         return if (isWindows())
             listOf("cmd", "/C", "gradlew.bat") + tailParameters
