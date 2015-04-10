@@ -1,0 +1,12 @@
+// PACKAGE_TO_USE_STAR_IMPORTS: java.io
+// PACKAGE_TO_USE_STAR_IMPORTS: java
+// PACKAGES_TO_USE_STAR_IMPORTS: java.util.concurrent
+
+
+import java.io.*
+import java.util.ArrayList
+import java.util.concurrent.atomic.*
+
+val v: File
+val v: AtomicBoolean
+val v: ArrayList<String>

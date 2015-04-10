@@ -18,9 +18,9 @@ package org.jetbrains.kotlin.idea.core.formatter;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.codeStyle.CodeStyleSettings;
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
-import com.intellij.psi.codeStyle.CustomCodeStyleSettings;
+import com.intellij.psi.codeStyle.*;
+import com.intellij.util.ReflectionUtil;
+import org.jetbrains.annotations.NotNull;
 
 public class JetCodeStyleSettings extends CustomCodeStyleSettings {
 
@@ -45,6 +45,7 @@ public class JetCodeStyleSettings extends CustomCodeStyleSettings {
     public int NAME_COUNT_TO_USE_STAR_IMPORT = ApplicationManager.getApplication().isUnitTestMode() ? Integer.MAX_VALUE : 5;
     public boolean IMPORT_PACKAGES = true;
     public boolean IMPORT_NESTED_CLASSES = false;
+    public final PackageEntryTable PACKAGES_TO_USE_STAR_IMPORTS = new PackageEntryTable();
 
     public static JetCodeStyleSettings getInstance(Project project) {
         return CodeStyleSettingsManager.getSettings(project).getCustomSettings(JetCodeStyleSettings.class);
@@ -52,5 +53,23 @@ public class JetCodeStyleSettings extends CustomCodeStyleSettings {
 
     public JetCodeStyleSettings(CodeStyleSettings container) {
         super("JetCodeStyleSettings", container);
+
+        // defaults in IDE but not in tests
+        if (!ApplicationManager.getApplication().isUnitTestMode()) {
+            PACKAGES_TO_USE_STAR_IMPORTS.addEntry(new PackageEntry(false, "java.util", false));
+        }
+    }
+
+    @Override
+    public Object clone() {
+        JetCodeStyleSettings clone = new JetCodeStyleSettings(getContainer());
+        clone.copyFrom(this);
+        return clone;
+    }
+
+    private void copyFrom(@NotNull JetCodeStyleSettings from) {
+        ReflectionUtil.copyFields(getClass().getFields(), from, this);
+
+        PACKAGES_TO_USE_STAR_IMPORTS.copyFrom(from.PACKAGES_TO_USE_STAR_IMPORTS);
     }
 }

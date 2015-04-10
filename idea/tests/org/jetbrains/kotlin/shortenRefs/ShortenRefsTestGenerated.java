@@ -71,6 +71,12 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
         doTest(fileName);
     }
 
+    @TestMetadata("PackagesToUseStarImports.kt")
+    public void testPackagesToUseStarImports() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/PackagesToUseStarImports.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("idea/testData/shortenRefs/constructor")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

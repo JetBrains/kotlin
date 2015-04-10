@@ -17,11 +17,12 @@
 package org.jetbrains.kotlin
 
 import com.intellij.codeInsight.CodeInsightSettings
+import com.intellij.psi.codeStyle.CodeStyleSettingsManager
+import com.intellij.psi.codeStyle.PackageEntry
 import org.jdom.Element
 import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.JetWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
-import org.jetbrains.kotlin.idea.testUtils.dumpTextWithErrors
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -34,8 +35,12 @@ public abstract class AbstractImportsTest : JetLightCodeInsightFixtureTestCase()
 
     protected fun doTest(testPath: String) {
         val codeInsightSettings = CodeInsightSettings.getInstance()
+
+        val settingManager = CodeStyleSettingsManager.getInstance()
+        val tempSettings = settingManager.getCurrentSettings().clone()
+        settingManager.setTemporarySettings(tempSettings)
+
         val codeStyleSettings = JetCodeStyleSettings.getInstance(getProject())
-        val codeStyleSettingsSaved = codeStyleSettings.clone() as JetCodeStyleSettings
         val optimizeImportsSaved = codeInsightSettings.OPTIMIZE_IMPORTS_ON_THE_FLY
 
         try {
@@ -53,11 +58,19 @@ public abstract class AbstractImportsTest : JetLightCodeInsightFixtureTestCase()
 
             val file = fixture.getFile() as JetFile
 
-            codeInsightSettings.OPTIMIZE_IMPORTS_ON_THE_FLY = InTextDirectivesUtils.getPrefixedBoolean(file.getText(), "// OPTIMIZE_IMPORTS:") ?: false
+            val fileText = file.getText()
+            codeInsightSettings.OPTIMIZE_IMPORTS_ON_THE_FLY = InTextDirectivesUtils.getPrefixedBoolean(fileText, "// OPTIMIZE_IMPORTS:") ?: false
 
-            codeStyleSettings.NAME_COUNT_TO_USE_STAR_IMPORT = InTextDirectivesUtils.getPrefixedInt(file.getText(), "// NAME_COUNT_TO_USE_STAR_IMPORT:") ?: nameCountToUseStarImportDefault
-            codeStyleSettings.IMPORT_PACKAGES = InTextDirectivesUtils.getPrefixedBoolean(file.getText(), "// IMPORT_PACKAGES:") ?: true
-            codeStyleSettings.IMPORT_NESTED_CLASSES = InTextDirectivesUtils.getPrefixedBoolean(file.getText(), "// IMPORT_NESTED_CLASSES:") ?: false
+            codeStyleSettings.NAME_COUNT_TO_USE_STAR_IMPORT = InTextDirectivesUtils.getPrefixedInt(fileText, "// NAME_COUNT_TO_USE_STAR_IMPORT:") ?: nameCountToUseStarImportDefault
+            codeStyleSettings.IMPORT_PACKAGES = InTextDirectivesUtils.getPrefixedBoolean(fileText, "// IMPORT_PACKAGES:") ?: true
+            codeStyleSettings.IMPORT_NESTED_CLASSES = InTextDirectivesUtils.getPrefixedBoolean(fileText, "// IMPORT_NESTED_CLASSES:") ?: false
+
+            InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, "// PACKAGE_TO_USE_STAR_IMPORTS:").forEach {
+                codeStyleSettings.PACKAGES_TO_USE_STAR_IMPORTS.addEntry(PackageEntry(false, it.trim(), false))
+            }
+            InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, "// PACKAGES_TO_USE_STAR_IMPORTS:").forEach {
+                codeStyleSettings.PACKAGES_TO_USE_STAR_IMPORTS.addEntry(PackageEntry(false, it.trim(), true))
+            }
 
             getProject().executeWriteCommand("") {
                 doTest(file)
@@ -67,10 +80,7 @@ public abstract class AbstractImportsTest : JetLightCodeInsightFixtureTestCase()
         }
         finally {
             codeInsightSettings.OPTIMIZE_IMPORTS_ON_THE_FLY = optimizeImportsSaved
-
-            val root = Element("fake")
-            codeStyleSettingsSaved.writeExternal(root, codeStyleSettings)
-            codeStyleSettings.readExternal(root)
+            settingManager.dropTemporarySettings()
         }
     }
 

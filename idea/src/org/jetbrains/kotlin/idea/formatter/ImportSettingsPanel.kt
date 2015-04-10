@@ -17,17 +17,22 @@
 package org.jetbrains.kotlin.idea.formatter
 
 import com.intellij.application.options.CodeStyleAbstractPanel
+import com.intellij.application.options.ImportLayoutPanel
+import com.intellij.application.options.PackagePanel
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.application.ApplicationBundle
 import com.intellij.openapi.editor.colors.EditorColorsScheme
 import com.intellij.psi.codeStyle.CodeStyleSettings
+import com.intellij.psi.codeStyle.PackageEntryTable
 import com.intellij.ui.OptionGroup
+import com.intellij.ui.table.JBTable
 import org.jdom.Element
 import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
 import java.awt.Insets
 import javax.swing.*
+import javax.swing.table.AbstractTableModel
 
 class ImportSettingsPanelWrapper(settings: CodeStyleSettings) : CodeStyleAbstractPanel(settings) {
     private val importsPanel = ImportSettingsPanel(settings)
@@ -64,10 +69,28 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
     private val cbImportNestedClasses = JCheckBox("Insert imports for nested classes")
     private val cbImportPackages = JCheckBox("Insert imports for packages")
 
+    private val starImportPackageEntryTable = PackageEntryTable()
+    private val dummyImportLayoutPanel = object : ImportLayoutPanel() {
+        override fun areStaticImportsEnabled() = false
+        override fun refresh() { }
+    }
+    private val starImportPackageTable = ImportLayoutPanel.createTableForPackageEntries(starImportPackageEntryTable, dummyImportLayoutPanel)
+
     init {
         setLayout(GridBagLayout())
-        add(createGeneralOptionsPanel(),
-            GridBagConstraints().init { fill = GridBagConstraints.BOTH; weightx = 1.0; weighty = 1.0; insets = Insets(0, 10, 10, 10) })
+        val constraints = GridBagConstraints().init {
+            weightx = 1.0
+            insets = Insets(0, 10, 10, 10)
+        }
+        add(createGeneralOptionsPanel(), constraints.init {
+            fill = GridBagConstraints.HORIZONTAL
+            gridy = 0
+        })
+        add(PackagePanel.createPackagesPanel(starImportPackageTable, starImportPackageEntryTable), constraints.init {
+            gridy = 1
+            fill = GridBagConstraints.BOTH
+            weighty = 1.0
+        })
     }
 
     private fun createGeneralOptionsPanel(): JPanel {
@@ -113,9 +136,15 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
 
         cbImportNestedClasses.setSelected(settings.IMPORT_NESTED_CLASSES)
         cbImportPackages.setSelected(settings.IMPORT_PACKAGES)
+
+        starImportPackageEntryTable.copyFrom(settings.PACKAGES_TO_USE_STAR_IMPORTS)
+        (starImportPackageTable.getModel() as AbstractTableModel).fireTableDataChanged()
+        if (starImportPackageTable.getRowCount() > 0) {
+            starImportPackageTable.getSelectionModel().setSelectionInterval(0, 0)
+        }
     }
 
-    fun apply(settings: JetCodeStyleSettings) {
+    fun apply(settings: JetCodeStyleSettings, dropEmptyPackages: Boolean = true) {
         settings.NAME_COUNT_TO_USE_STAR_IMPORT = when {
             rbUseSingleImports.isSelected() -> Int.MAX_VALUE
             rbUseStarImports.isSelected() -> 1
@@ -123,11 +152,16 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
         }
         settings.IMPORT_NESTED_CLASSES = cbImportNestedClasses.isSelected()
         settings.IMPORT_PACKAGES = cbImportPackages.isSelected()
+
+        if (dropEmptyPackages) {
+            starImportPackageEntryTable.removeEmptyPackages()
+        }
+        settings.PACKAGES_TO_USE_STAR_IMPORTS.copyFrom(starImportPackageEntryTable)
     }
 
     fun isModified(settings: JetCodeStyleSettings): Boolean {
         val tempSettings = JetCodeStyleSettings(commonSettings)
-        apply(tempSettings)
+        apply(tempSettings, dropEmptyPackages = false)
         val root = Element("fake")
         tempSettings.writeExternal(root, settings)
         return root.getChildren().isNotEmpty()
