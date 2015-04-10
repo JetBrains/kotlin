@@ -2,7 +2,9 @@
  -Test
   compareTo(E): Int location=→Enum
   equals(Any?): Boolean location=→Enum
+  FIRST
   hashCode(): Int location=→Enum
   name(): String location=→Enum
   ordinal(): Int location=→Enum
+  SECOND
   toString(): String location=→Enum

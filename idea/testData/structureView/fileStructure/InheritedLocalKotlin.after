@@ -8,3 +8,4 @@
  -B
   a: Int location=→TA
   some(): Unit location=→TA
+ TA
