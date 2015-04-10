@@ -63,3 +63,15 @@ public var JsArrayAccess.index: JsExpression
 public var JsArrayAccess.array: JsExpression
     get() = getArrayExpression()
     set(value) = setArrayExpression(value)
+
+public var JsConditional.test: JsExpression
+    get() = getTestExpression()
+    set(value) = setTestExpression(value)
+
+public var JsConditional.then: JsExpression
+    get() = getThenExpression()
+    set(value) = setThenExpression(value)
+
+public var JsConditional.otherwise: JsExpression
+    get() = getElseExpression()
+    set(value) = setElseExpression(value)

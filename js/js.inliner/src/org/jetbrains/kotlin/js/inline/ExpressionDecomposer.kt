@@ -97,6 +97,35 @@ class ExpressionDecomposer private (
         index = accept(index)
     }
 
+    override fun visit(x: JsConditional, ctx: JsContext<*>): Boolean {
+        x.process(ctx)
+        return false
+    }
+
+    private fun JsConditional.process(ctx: JsContext<*>) {
+        test = accept(test)
+        if (then !in containsExtractable && otherwise !in containsExtractable) return
+
+        val tmp = Temporary()
+        addStatement(tmp.variable)
+
+        val thenBlock = withNewAdditionalStatements {
+            then = accept(then)
+            addStatement(tmp.assign(then))
+            additionalStatements.toStatement()
+        }
+
+        val elseBlock = withNewAdditionalStatements {
+            otherwise = accept(otherwise)
+            addStatement(tmp.assign(otherwise))
+            additionalStatements.toStatement()
+        }
+
+        val lazyEval = JsIf(test, thenBlock, elseBlock)
+        addStatement(lazyEval)
+        ctx.replaceMe(tmp.nameRef)
+    }
+
     override fun visit(x: JsInvocation, ctx: JsContext<*>): Boolean {
         CallableInvocationAdapter(x).process()
         return false
@@ -153,8 +182,20 @@ class ExpressionDecomposer private (
         }
     }
 
+    inline
+    private fun withNewAdditionalStatements<T>(fn: ()->T): T {
+        val backup = additionalStatements
+        additionalStatements = SmartList<JsStatement>()
+        val result = fn()
+        additionalStatements = backup
+        return result
+    }
+
     private fun addStatement(statement: JsStatement) =
             additionalStatements.add(statement)
+
+    private fun addStatements(statements: List<JsStatement>) =
+            additionalStatements.addAll(statements)
 
     private fun JsExpression.extractToTemporary(): JsExpression {
         val tmp = Temporary(this)
@@ -294,3 +335,10 @@ private fun JsNode.withParentsOfNodes(nodes: Set<JsNode>): Set<JsNode> {
     visitor.accept(this)
     return visitor.matched
 }
+
+private fun List<JsStatement>.toStatement(): JsStatement =
+        when (size()) {
+            0 -> JsEmpty
+            1 -> get(0)
+            else -> JsBlock(this)
+        }
