@@ -20,15 +20,16 @@ fun fibonacci(): Sequence<Int> {
 public class SequenceTest {
 
     test fun filterEmptySequence() {
-        val sequence = sequenceOf<String>()
-        assertEquals(0, sequence.filter { false }.count())
-        assertEquals(0, sequence.filter { true }.count())
+        for (sequence in listOf(emptySequence<String>(), sequenceOf<String>())) {
+            assertEquals(0, sequence.filter { false }.count())
+            assertEquals(0, sequence.filter { true }.count())
+        }
     }
 
     test fun mapEmptySequence() {
-        val sequence = sequenceOf<String>()
-        assertEquals(0, sequence.map { false }.count())
-        assertEquals(0, sequence.map { true }.count())
+        for (sequence in listOf(emptySequence<String>(), sequenceOf<String>())) {
+            assertEquals(0, sequence.map { true }.count())
+        }
     }
 
     test fun requireNoNulls() {
