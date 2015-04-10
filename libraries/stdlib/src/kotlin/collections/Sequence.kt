@@ -1,5 +1,6 @@
 package kotlin
 
+import java.util.Enumeration
 import java.util.NoSuchElementException
 
 deprecated("Use Sequence<T> instead.")
@@ -43,6 +44,11 @@ public fun <T> Iterator<T>.asSequence(): Sequence<T> {
 deprecated("Use asSequence() instead.")
 public fun <T> Iterator<T>.sequence(): Sequence<T> = asSequence()
 
+
+/**
+ * Creates a sequence that returns all values from this enumeration. The sequence is constrained to be iterated only once.
+ */
+public fun<T> Enumeration<T>.asSequence(): Sequence<T> = this.iterator().sequence()
 
 /**
  * Creates a sequence that returns the specified values.
