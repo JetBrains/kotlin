@@ -355,7 +355,7 @@ Checklist:
 
 ### Appendix
 
-We can also support teh following annotations out-of-the-box:
+We can also support the following annotations out-of-the-box:
 * [`android.support.annotation`](https://developer.android.com/reference/android/support/annotation/package-summary.html)
  * [`android.support.annotation.Nullable`](https://developer.android.com/reference/android/support/annotation/Nullable.html)
  * [`android.support.annotation.NonNull`](https://developer.android.com/reference/android/support/annotation/NonNull.html)
