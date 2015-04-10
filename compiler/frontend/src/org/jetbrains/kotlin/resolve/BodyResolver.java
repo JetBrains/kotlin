@@ -416,6 +416,10 @@ public class BodyResolver {
                     if (supertypeOwner.getKind() == ClassKind.ENUM_CLASS) {
                         trace.report(CLASS_IN_SUPERTYPE_FOR_ENUM.on(typeReference));
                     }
+                    else if (supertypeOwner.getKind() == ClassKind.TRAIT &&
+                             !classAppeared && !TypesPackage.isDynamic(supertype) /* avoid duplicate diagnostics */) {
+                        trace.report(TRAIT_WITH_SUPERCLASS.on(typeReference));
+                    }
                     if (classAppeared) {
                         trace.report(MANY_CLASSES_IN_SUPERTYPE_LIST.on(typeReference));
                     }

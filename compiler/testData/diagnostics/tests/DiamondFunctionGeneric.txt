@@ -1,9 +1,8 @@
 package
 
-internal open class Base</*0*/ P> {
-    public constructor Base</*0*/ P>()
+internal trait Base</*0*/ P> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    internal final fun f(): kotlin.Int
+    internal open fun f(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
@@ -11,7 +10,7 @@ internal open class Base</*0*/ P> {
 internal final class Diamond</*0*/ P> : Left<P>, Right<P> {
     public constructor Diamond</*0*/ P>()
     public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    internal final override /*2*/ /*fake_override*/ fun f(): kotlin.Int
+    internal open override /*2*/ /*fake_override*/ fun f(): kotlin.Int
     public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 }
@@ -19,14 +18,14 @@ internal final class Diamond</*0*/ P> : Left<P>, Right<P> {
 internal open class Left</*0*/ P> : Base<P> {
     public constructor Left</*0*/ P>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    internal final override /*1*/ /*fake_override*/ fun f(): kotlin.Int
+    internal open override /*1*/ /*fake_override*/ fun f(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 internal trait Right</*0*/ P> : Base<P> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    internal final override /*1*/ /*fake_override*/ fun f(): kotlin.Int
+    internal open override /*1*/ /*fake_override*/ fun f(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

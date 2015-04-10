@@ -1,9 +1,10 @@
-
-open class Base() {
-    var v : Int = 0
+trait Base {
+    var v : Int
+        get() = 1
+        set(v) {}
 }
     
-open class Left() : Base()
+open class Left() : Base
 
 trait Right : Base
 

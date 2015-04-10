@@ -24,11 +24,11 @@ trait T2<T> {}
 trait Test<error>()</error> {
 }
 
-trait Test1 : C2<error>()</error> {}
+trait Test1 : <warning>C2</warning><error>()</error> {}
 
-trait Test2 : C2 {}
+trait Test2 : <warning>C2</warning> {}
 
-trait Test3 : C2, <error>C3</error> {}
+trait Test3 : <warning>C2</warning>, <error>C3</error> {}
 
 trait Test4 : T1 {}
 

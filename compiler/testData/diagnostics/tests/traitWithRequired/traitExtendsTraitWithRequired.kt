@@ -1,6 +1,6 @@
 open class Required(val value: String)
 
-trait First : Required
+trait First : <!TRAIT_WITH_SUPERCLASS!>Required<!>
 
 trait Second : First
 

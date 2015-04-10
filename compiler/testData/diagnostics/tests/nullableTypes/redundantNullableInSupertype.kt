@@ -1,4 +1,5 @@
-trait X: Any<!NULLABLE_SUPERTYPE!>?<!><!REDUNDANT_NULLABLE!>?<!> {
+trait A
+trait X: A<!NULLABLE_SUPERTYPE!>?<!><!REDUNDANT_NULLABLE!>?<!> {
 
 }
 

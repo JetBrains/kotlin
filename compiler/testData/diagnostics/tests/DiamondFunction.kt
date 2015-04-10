@@ -1,8 +1,8 @@
-open class Base() {
+trait Base {
     fun f() = 1
 }
     
-open class Left() : Base()
+open class Left() : Base
 
 trait Right : Base
 

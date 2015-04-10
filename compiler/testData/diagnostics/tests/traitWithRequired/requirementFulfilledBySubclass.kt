@@ -1,6 +1,6 @@
 open class RequiredBase
 
-trait Trait : RequiredBase
+trait Trait : <!TRAIT_WITH_SUPERCLASS!>RequiredBase<!>
 
 open class RequiredDerived : RequiredBase()
 

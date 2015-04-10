@@ -6,6 +6,6 @@ open class Bbb() : Aaa() {
     override fun foo() = 2
 }
 
-trait Ccc : Aaa
+trait Ccc : <!TRAIT_WITH_SUPERCLASS!>Aaa<!>
 
 class Ddd() : Bbb(), Ccc

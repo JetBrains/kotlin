@@ -1,12 +1,12 @@
 open class Required
 
-trait A : Required
+trait A : <!TRAIT_WITH_SUPERCLASS!>Required<!>
 
-trait B : A, Required
+trait B : A, <!TRAIT_WITH_SUPERCLASS!>Required<!>
 
-trait C : Required
+trait C : <!TRAIT_WITH_SUPERCLASS!>Required<!>
 
-trait D : B, Required
+trait D : B, <!TRAIT_WITH_SUPERCLASS!>Required<!>
 
 <!UNMET_TRAIT_REQUIREMENT, UNMET_TRAIT_REQUIREMENT, UNMET_TRAIT_REQUIREMENT!>class W<!> : D
 class X : D, Required()
