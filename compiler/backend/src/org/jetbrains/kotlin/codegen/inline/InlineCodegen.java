@@ -24,7 +24,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.builtins.InlineStrategy;
 import org.jetbrains.kotlin.builtins.InlineUtil;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.codegen.*;
 import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.context.FieldOwnerContext;
@@ -63,6 +62,7 @@ import static org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive;
 import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil.addInlineMarker;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isFunctionExpression;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isFunctionLiteral;
+import static org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage.getResolvedCallWithAssert;
 
 public class InlineCodegen extends CallGenerator {
     private final GenerationState state;
@@ -299,7 +299,7 @@ public class InlineCodegen extends CallGenerator {
     }
 
     private SMAPAndMethodNode generateLambdaBody(LambdaInfo info) {
-        JetFunctionLiteral declaration = info.getFunctionLiteral();
+        JetExpression declaration = info.getFunctionLiteralOrCallableReference();
         FunctionDescriptor descriptor = info.getFunctionDescriptor();
 
         MethodContext parentContext = codegen.getContext();
@@ -321,27 +321,37 @@ public class InlineCodegen extends CallGenerator {
             @NotNull MethodVisitor adapter,
             @NotNull FunctionDescriptor descriptor,
             @NotNull MethodContext context,
-            @NotNull JetDeclarationWithBody declaration,
+            @NotNull JetExpression expression,
             @NotNull JvmMethodSignature jvmMethodSignature,
             boolean isLambda
     ) {
         FakeMemberCodegen parentCodegen =
-                new FakeMemberCodegen(codegen.getParentCodegen(), declaration,
+                new FakeMemberCodegen(codegen.getParentCodegen(), expression,
                                       (FieldOwnerContext) context.getParentContext(),
                                       isLambda ? codegen.getParentCodegen().getClassName() : typeMapper.mapOwner(descriptor, false).getInternalName());
 
+        FunctionGenerationStrategy strategy =
+                expression instanceof JetCallableReferenceExpression ?
+                new ExpressionCodegen.CallableReferenceGenerationStrategy(
+                        state,
+                        descriptor,
+                        getResolvedCallWithAssert(((JetCallableReferenceExpression) expression).getCallableReference(),
+                                                  codegen.getBindingContext()
+                        )) :
+                new FunctionGenerationStrategy.FunctionDefault(state, descriptor, (JetDeclarationWithBody) expression);
+
         FunctionCodegen.generateMethodBody(
                 adapter, descriptor, context, jvmMethodSignature,
-                new FunctionGenerationStrategy.FunctionDefault(state, descriptor, declaration),
+                strategy,
                 // Wrapping for preventing marking actual parent codegen as containing reifier markers
                 parentCodegen
         );
 
-        return createSMAPWithDefaultMapping(declaration, parentCodegen.getOrCreateSourceMapper().getResultMappings());
+        return createSMAPWithDefaultMapping(expression, parentCodegen.getOrCreateSourceMapper().getResultMappings());
     }
 
     private static SMAP createSMAPWithDefaultMapping(
-            @NotNull JetDeclarationWithBody declaration,
+            @NotNull JetExpression declaration,
             @NotNull List<FileMapping> mappings
     ) {
         PsiFile containingFile = declaration.getContainingFile();
@@ -509,21 +519,27 @@ public class InlineCodegen extends CallGenerator {
         }
     }
 
-    public static boolean isInliningClosure(JetExpression expression, ValueParameterDescriptor valueParameterDescriptor) {
+    /*lambda or callable reference*/
+    public static boolean isInliningParameter(JetExpression expression, ValueParameterDescriptor valueParameterDescriptor) {
         //TODO deparenthisise typed
         JetExpression deparenthesized = JetPsiUtil.deparenthesize(expression);
-        return deparenthesized instanceof JetFunctionLiteralExpression &&
-               InlineUtil.isInlineLambdaParameter(valueParameterDescriptor);
+        return InlineUtil.isInlineLambdaParameter(valueParameterDescriptor) &&
+               (deparenthesized instanceof JetFunctionLiteralExpression ||
+               deparenthesized instanceof JetCallableReferenceExpression);
     }
 
     public void rememberClosure(JetExpression expression, Type type) {
-        JetFunctionLiteralExpression lambda = (JetFunctionLiteralExpression) JetPsiUtil.deparenthesize(expression);
-        assert lambda != null : "Couldn't find lambda in " + expression.getText();
+        JetExpression lambda = JetPsiUtil.deparenthesize(expression);
+        assert lambda instanceof JetCallableReferenceExpression || lambda instanceof JetFunctionLiteralExpression :
+                "Couldn't find inline expression in " + expression.getText();
 
         String labelNameIfPresent = null;
         PsiElement parent = lambda.getParent();
         if (parent instanceof JetLabeledExpression) {
             labelNameIfPresent = ((JetLabeledExpression) parent).getLabelName();
+        }
+        if (lambda instanceof JetFunctionLiteralExpression) {
+            lambda = ((JetFunctionLiteralExpression) lambda).getFunctionLiteral();
         }
         LambdaInfo info = new LambdaInfo(lambda, typeMapper, labelNameIfPresent);
 
@@ -572,10 +588,10 @@ public class InlineCodegen extends CallGenerator {
             @NotNull JetExpression argumentExpression,
             @NotNull Type parameterType
     ) {
-        //TODO deparenthisise
-        if (isInliningClosure(argumentExpression, valueParameterDescriptor)) {
+        if (isInliningParameter(argumentExpression, valueParameterDescriptor)) {
             rememberClosure(argumentExpression, parameterType);
-        } else {
+        }
+        else {
             StackValue value = codegen.gen(argumentExpression);
             putValueIfNeeded(valueParameterDescriptor, parameterType, value);
         }

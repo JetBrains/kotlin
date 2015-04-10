@@ -26,8 +26,7 @@ import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
-import org.jetbrains.kotlin.psi.JetFunctionLiteral;
-import org.jetbrains.kotlin.psi.JetFunctionLiteralExpression;
+import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -41,7 +40,7 @@ import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.*;
 
 public class LambdaInfo implements CapturedParamOwner, LabelOwner {
 
-    public final JetFunctionLiteralExpression expression;
+    public final JetExpression expression;
 
     private final JetTypeMapper typeMapper;
 
@@ -60,12 +59,12 @@ public class LambdaInfo implements CapturedParamOwner, LabelOwner {
 
     private final Type closureClassType;
 
-    LambdaInfo(@NotNull JetFunctionLiteralExpression expression, @NotNull JetTypeMapper typeMapper, @Nullable String labelName) {
+    LambdaInfo(@NotNull JetExpression expression, @NotNull JetTypeMapper typeMapper, @Nullable String labelName) {
         this.expression = expression;
         this.typeMapper = typeMapper;
         this.labelName = labelName;
         BindingContext bindingContext = typeMapper.getBindingContext();
-        functionDescriptor = bindingContext.get(BindingContext.FUNCTION, expression.getFunctionLiteral());
+        functionDescriptor = bindingContext.get(BindingContext.FUNCTION, expression);
         assert functionDescriptor != null : "Function is not resolved to descriptor: " + expression.getText();
 
         classDescriptor = anonymousClassForFunction(bindingContext, functionDescriptor);
@@ -87,8 +86,8 @@ public class LambdaInfo implements CapturedParamOwner, LabelOwner {
         return functionDescriptor;
     }
 
-    public JetFunctionLiteral getFunctionLiteral() {
-        return expression.getFunctionLiteral();
+    public JetExpression getFunctionLiteralOrCallableReference() {
+        return expression;
     }
 
     public ClassDescriptor getClassDescriptor() {
