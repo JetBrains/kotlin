@@ -41,6 +41,12 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
         doTest(fileName);
     }
 
+    @TestMetadata("ClassNameConflictNoPackageImport.kt")
+    public void testClassNameConflictNoPackageImport() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/ClassNameConflictNoPackageImport.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("classObject.kt")
     public void testClassObject() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/classObject.kt");
