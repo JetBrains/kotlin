@@ -36,6 +36,9 @@ abstract class BaseGradleIT {
         val projectDir = File(workingDir, projectName)
         copyDirRecursively(File(resourcesRootFile, "GradleWrapper-$wrapperVersion"), projectDir)
         val cmd = createCommand(tasks)
+
+        println("<=== Test build: ${this.projectName} $cmd ====>")
+
         val process = createProcess(cmd, projectDir)
 
         val (output, resultCode) = readOutput(process)
