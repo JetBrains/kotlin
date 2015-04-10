@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.java;
 
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
@@ -97,6 +98,15 @@ public final class JvmAnnotationNames {
     public static final FqName OLD_KOTLIN_PACKAGE_FRAGMENT = new FqName("jet.KotlinPackageFragment");
     @Deprecated
     public static final FqName OLD_KOTLIN_TRAIT_IMPL = new FqName("jet.KotlinTraitImpl");
+
+    // When these annotations appear on a declaration, they are copied to the _type_ of the declaration, becoming type annotations
+    // See also DescriptorRendererBuilder#excludedTypeAnnotationClasses
+    public static final Set<FqName> ANNOTATIONS_COPIED_TO_TYPES = KotlinPackage.setOf(
+            JETBRAINS_READONLY_ANNOTATION,
+            JETBRAINS_MUTABLE_ANNOTATION,
+            JETBRAINS_NOT_NULL_ANNOTATION,
+            JETBRAINS_NULLABLE_ANNOTATION
+    );
 
     private static final Set<JvmClassName> SPECIAL_ANNOTATIONS = new HashSet<JvmClassName>();
     private static final Set<JvmClassName> NULLABILITY_ANNOTATIONS = new HashSet<JvmClassName>();

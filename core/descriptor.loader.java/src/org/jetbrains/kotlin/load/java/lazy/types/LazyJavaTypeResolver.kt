@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.components.TypeUsage
 import org.jetbrains.kotlin.load.java.components.TypeUsage.*
@@ -93,7 +94,7 @@ class LazyJavaTypeResolver(
             val projectionKind = if (attr.howThisTypeIsUsed == MEMBER_SIGNATURE_CONTRAVARIANT || isVararg) OUT_VARIANCE else INVARIANT
             val result = c.module.builtIns.getArrayType(projectionKind, componentType)
             return@run TypeUtils.makeNullableAsSpecified(result, !attr.isMarkedNotNull)
-        }.replaceAnnotations(attr.annotations)
+        }.replaceAnnotations(attr.typeAnnotations)
     }
 
     fun makeStarProjection(
@@ -291,7 +292,7 @@ class LazyJavaTypeResolver(
 
         override fun isMarkedNullable(): Boolean = nullable()
 
-        override fun getAnnotations() = attr.annotations
+        override fun getAnnotations() = attr.typeAnnotations
     }
 
     public object FlexibleJavaClassifierTypeCapabilities : FlexibleTypeCapabilities {
@@ -351,7 +352,7 @@ trait JavaTypeAttributes {
         get() = INFLEXIBLE
     val allowFlexible: Boolean
         get() = true
-    val annotations: Annotations
+    val typeAnnotations: Annotations
     val isForAnnotationParameter: Boolean
         get() = false
 }
@@ -366,10 +367,15 @@ class LazyJavaTypeAttributes(
         c: LazyJavaResolverContext,
         val annotationOwner: JavaAnnotationOwner,
         override val howThisTypeIsUsed: TypeUsage,
-        override val annotations: Annotations,
+        annotations: Annotations,
         override val allowFlexible: Boolean = true,
         override val isForAnnotationParameter: Boolean = false
 ): JavaTypeAttributes {
+    override val typeAnnotations: Annotations by c.storageManager.createLazyValue {
+        AnnotationsImpl(JvmAnnotationNames.ANNOTATIONS_COPIED_TO_TYPES.map { fqName ->
+            annotations.findAnnotation(fqName)
+        }.filterNotNull())
+    }
 
     override val howThisTypeIsUsedAccordingToAnnotations: TypeUsage by c.storageManager.createLazyValue {
         if (annotations.isMarkedReadOnly() && !annotations.isMarkedMutable())
@@ -395,7 +401,7 @@ fun TypeUsage.toAttributes(allowFlexible: Boolean = true, isForAnnotationParamet
     override val isMarkedNotNull: Boolean = false
     override val allowFlexible: Boolean = allowFlexible
 
-    override val annotations: Annotations = Annotations.EMPTY
+    override val typeAnnotations: Annotations = Annotations.EMPTY
 
     override val isForAnnotationParameter: Boolean = isForAnnotationParameter
 }

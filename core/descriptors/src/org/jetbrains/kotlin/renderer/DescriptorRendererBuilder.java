@@ -61,6 +61,14 @@ public class DescriptorRendererBuilder {
     private boolean renderCompanionObjectName = false;
     private boolean renderAccessors = false;
 
+    // See JvmAnnotationNames#ANNOTATIONS_COPIED_TO_TYPES
+    private Collection<FqName> excludedTypeAnnotationClasses = KotlinPackage.setOf(
+            new FqName("org.jetbrains.annotations.ReadOnly"),
+            new FqName("org.jetbrains.annotations.Mutable"),
+            new FqName("org.jetbrains.annotations.NotNull"),
+            new FqName("org.jetbrains.annotations.Nullable")
+    );
+
     public DescriptorRendererBuilder() {
     }
 
@@ -154,6 +162,12 @@ public class DescriptorRendererBuilder {
     }
 
     @NotNull
+    public DescriptorRendererBuilder setExcludedTypeAnnotationClasses(@NotNull Collection<FqName> excludedTypeAnnotationClasses) {
+        this.excludedTypeAnnotationClasses = excludedTypeAnnotationClasses;
+        return this;
+    }
+
+    @NotNull
     public DescriptorRendererBuilder setPrettyFunctionTypes(boolean prettyFunctionTypes) {
         this.prettyFunctionTypes = prettyFunctionTypes;
         return this;
@@ -236,10 +250,11 @@ public class DescriptorRendererBuilder {
         return new DescriptorRendererImpl(
                 nameShortness, withDefinedIn, modifiers, startFromName, debugMode, classWithPrimaryConstructor, verbose, unitReturnType,
                 normalizedVisibilities, showInternalKeyword, prettyFunctionTypes, uninferredTypeParameterAsName,
-                overrideRenderingPolicy, valueParametersHandler, textFormat, excludedAnnotationClasses, includePropertyConstant,
-                parameterNameRenderingPolicy, withoutTypeParameters, receiverAfterName, renderCompanionObjectName, withoutSuperTypes,
-                typeNormalizer, renderDefaultValues, flexibleTypesForCode, secondaryConstructorsAsPrimary,
-                renderAccessors);
+                overrideRenderingPolicy, valueParametersHandler, textFormat, excludedAnnotationClasses, excludedTypeAnnotationClasses,
+                includePropertyConstant, parameterNameRenderingPolicy, withoutTypeParameters, receiverAfterName, renderCompanionObjectName,
+                withoutSuperTypes, typeNormalizer, renderDefaultValues, flexibleTypesForCode, secondaryConstructorsAsPrimary,
+                renderAccessors
+        );
     }
 
 }

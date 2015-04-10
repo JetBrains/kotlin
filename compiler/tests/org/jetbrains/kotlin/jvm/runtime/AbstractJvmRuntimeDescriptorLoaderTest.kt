@@ -58,12 +58,8 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
                         // TODO: add these annotations when they are retained at runtime
                         "kotlin.deprecated",
                         "kotlin.data",
-                        "kotlin.inline",
-                        "org.jetbrains.annotations.NotNull",
-                        "org.jetbrains.annotations.Nullable",
-                        "org.jetbrains.annotations.Mutable",
-                        "org.jetbrains.annotations.ReadOnly"
-                ).map { FqName(it) })
+                        "kotlin.inline"
+                ).map { FqName(it) } + JvmAnnotationNames.ANNOTATIONS_COPIED_TO_TYPES)
                 .setOverrideRenderingPolicy(DescriptorRenderer.OverrideRenderingPolicy.RENDER_OPEN_OVERRIDE)
                 .setParameterNameRenderingPolicy(DescriptorRenderer.ParameterNameRenderingPolicy.NONE)
                 .setIncludePropertyConstant(false)

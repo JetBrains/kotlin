@@ -1,6 +1,6 @@
-package
+package 
 
-internal fun A.foo(/*0*/ a: kotlin.Int): kotlin.Unit
+internal fun [[ERROR : x]()] A.foo(/*0*/ a: [[ERROR : x]()] kotlin.Int): kotlin.Unit
 
 internal final class A {
     public constructor A()

@@ -43,7 +43,6 @@ import static org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject;
 import static org.jetbrains.kotlin.types.TypeUtils.CANT_INFER_FUNCTION_PARAM_TYPE;
 
 public class DescriptorRendererImpl implements DescriptorRenderer {
-
     private final Function1<JetType, JetType> typeNormalizer;
     private final NameShortness nameShortness;
     private final boolean withDefinedIn;
@@ -70,6 +69,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     private final boolean includePropertyConstant;
     private final boolean secondaryConstructorsAsPrimary;
     private final Set<FqName> excludedAnnotationClasses;
+    private final Set<FqName> excludedTypeAnnotationClasses;
     private final boolean renderAccessors;
 
     /* package */ DescriptorRendererImpl(
@@ -89,6 +89,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             @NotNull ValueParametersHandler handler,
             @NotNull TextFormat textFormat,
             @NotNull Collection<FqName> excludedAnnotationClasses,
+            @NotNull Collection<FqName> excludedTypeAnnotationClasses,
             boolean includePropertyConstant,
             @NotNull ParameterNameRenderingPolicy parameterNameRenderingPolicy,
             boolean withoutTypeParameters,
@@ -118,6 +119,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         this.secondaryConstructorsAsPrimary = secondaryConstructorsAsPrimary;
         this.renderAccessors = renderAccessors;
         this.excludedAnnotationClasses = new HashSet<FqName>(excludedAnnotationClasses);
+        this.excludedTypeAnnotationClasses = new HashSet<FqName>(excludedTypeAnnotationClasses);
         this.prettyFunctionTypes = prettyFunctionTypes;
         this.uninferredTypeParameterAsName = uninferredTypeParameterAsName;
         this.parameterNameRenderingPolicy = parameterNameRenderingPolicy;
@@ -538,12 +540,14 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     private void renderAnnotations(@NotNull Annotated annotated, @NotNull StringBuilder builder, boolean needBrackets) {
         if (!modifiers.contains(Modifier.ANNOTATIONS)) return;
 
+        Set<FqName> excluded = annotated instanceof JetType ? excludedTypeAnnotationClasses : excludedAnnotationClasses;
+
         StringBuilder annotationsBuilder = new StringBuilder();
         for (AnnotationDescriptor annotation : annotated.getAnnotations()) {
             ClassDescriptor annotationClass = (ClassDescriptor) annotation.getType().getConstructor().getDeclarationDescriptor();
             assert annotationClass != null;
 
-            if (!excludedAnnotationClasses.contains(DescriptorUtils.getFqNameSafe(annotationClass))) {
+            if (!excluded.contains(DescriptorUtils.getFqNameSafe(annotationClass))) {
                 annotationsBuilder.append(renderAnnotation(annotation)).append(" ");
             }
         }
