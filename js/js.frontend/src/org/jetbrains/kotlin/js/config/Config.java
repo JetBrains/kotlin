@@ -120,6 +120,10 @@ public abstract class Config {
         for(KotlinJavascriptMetadata metadataEntry : metadata) {
             moduleDescriptors.add(createModuleDescriptor(metadataEntry));
         }
+        for(ModuleDescriptorImpl module : moduleDescriptors) {
+            setDependencies(module, moduleDescriptors);
+            module.seal();
+        }
 
         return moduleDescriptors;
     }
@@ -150,11 +154,15 @@ public abstract class Config {
         CompositePackageFragmentProvider compositePackageFragmentProvider = new CompositePackageFragmentProvider(providers);
 
         moduleDescriptor.initialize(compositePackageFragmentProvider);
-        moduleDescriptor.addDependencyOnModule(moduleDescriptor);
         moduleDescriptor.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule());
-        moduleDescriptor.seal();
 
         return moduleDescriptor;
+    }
+
+    private static void setDependencies(ModuleDescriptorImpl module, List<ModuleDescriptorImpl> modules) {
+        for(ModuleDescriptorImpl moduleItem : modules) {
+            module.addDependencyOnModule(moduleItem);
+        }
     }
 
     @NotNull
