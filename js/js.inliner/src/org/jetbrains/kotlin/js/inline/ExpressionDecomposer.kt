@@ -74,6 +74,13 @@ class ExpressionDecomposer private (
             return decomposer.additionalStatements
         }
     }
+
+    override fun visit(x: JsArrayLiteral, ctx: JsContext<*>): Boolean {
+        val elements = x.getExpressions()
+        processByIndices(elements, elements.indicesOfExtractable)
+        return false
+    }
+
     override fun visit(x: JsInvocation, ctx: JsContext<*>): Boolean {
         CallableInvocationAdapter(x).process()
         return false
