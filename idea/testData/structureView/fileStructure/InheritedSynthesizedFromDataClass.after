@@ -6,3 +6,4 @@
   hashCode(): Int location=→Any
   some(): Unit location=→TestData
   toString(): String location=→Any
+ TestData
