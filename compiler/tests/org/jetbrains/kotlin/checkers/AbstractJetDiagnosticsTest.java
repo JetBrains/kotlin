@@ -20,6 +20,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
@@ -260,6 +261,12 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
                 rootPackageText.append("\n\n");
             }
         }
+
+        int lineCount = StringUtil.getLineBreakCount(rootPackageText);
+        assert lineCount < 1000 :
+                "Rendered descriptors of this test take up " + lineCount + " lines. " +
+                "Please ensure you don't render JRE contents to the .txt file. " +
+                "Such tests are hard to maintain, take long time to execute and are subject to sudden unreviewed changes anyway.";
 
         JetTestUtils.assertEqualsToFile(expectedFile, rootPackageText.toString());
     }

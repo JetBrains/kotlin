@@ -295,12 +295,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             doTest(fileName);
         }
 
-        @TestMetadata("MergePackagesWithJava.kt")
-        public void testMergePackagesWithJava() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/MergePackagesWithJava.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("MultilineStringTemplates.kt")
         public void testMultilineStringTemplates() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/MultilineStringTemplates.kt");
@@ -5277,12 +5271,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("PackageLocalClassNotImported.kt")
             public void testPackageLocalClassNotImported() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/PackageLocalClassNotImported.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("PackageLocalClassNotImportedWithDefaultImport.kt")
-            public void testPackageLocalClassNotImportedWithDefaultImport() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/PackageLocalClassNotImportedWithDefaultImport.kt");
                 doTest(fileName);
             }
 
@@ -10377,12 +10365,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("kt939.kt")
             public void testKt939() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/kt939.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("kt955.kt")
-            public void testKt955() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/kt955.kt");
                 doTest(fileName);
             }
 

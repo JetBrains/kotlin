@@ -83,6 +83,12 @@ public class BlackBoxMultiFileCodegenTestGenerated extends AbstractBlackBoxCodeg
         doTestMultiFile(fileName);
     }
 
+    @TestMetadata("packageLocalClassNotImportedWithDefaultImport")
+    public void testPackageLocalClassNotImportedWithDefaultImport() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/packageLocalClassNotImportedWithDefaultImport/");
+        doTestMultiFile(fileName);
+    }
+
     @TestMetadata("samWrappersDifferentFiles")
     public void testSamWrappersDifferentFiles() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/samWrappersDifferentFiles/");
