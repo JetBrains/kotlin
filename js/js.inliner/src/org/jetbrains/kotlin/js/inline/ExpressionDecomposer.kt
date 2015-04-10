@@ -314,7 +314,12 @@ private open class JsExpressionVisitor() : JsVisitorWithContextImpl() {
     // where init and test do not contain inline calls.
     override fun visit(x: JsFor, ctx: JsContext<*>): Boolean = false
 
-    override fun visit(x: JsIf, ctx: JsContext<*>): Boolean = false
+    override fun visit(x: JsIf, ctx: JsContext<*>): Boolean {
+        val test = x.getIfExpression()
+        x.setIfExpression(accept(test))
+        return false
+    }
+
     override fun visit(x: JsWhile, ctx: JsContext<*>): Boolean = false
     override fun visit(x: JsDoWhile, ctx: JsContext<*>): Boolean = false
 
