@@ -25,9 +25,10 @@ import com.intellij.openapi.editor.colors.EditorColorsScheme
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.codeStyle.PackageEntryTable
 import com.intellij.ui.OptionGroup
-import com.intellij.ui.table.JBTable
+import com.intellij.ui.components.JBScrollPane
 import org.jdom.Element
 import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
+import java.awt.BorderLayout
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
 import java.awt.Insets
@@ -77,20 +78,22 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
     private val starImportPackageTable = ImportLayoutPanel.createTableForPackageEntries(starImportPackageEntryTable, dummyImportLayoutPanel)
 
     init {
-        setLayout(GridBagLayout())
-        val constraints = GridBagConstraints().init {
-            weightx = 1.0
-            insets = Insets(0, 10, 10, 10)
-        }
-        add(createGeneralOptionsPanel(), constraints.init {
-            fill = GridBagConstraints.HORIZONTAL
-            gridy = 0
-        })
-        add(PackagePanel.createPackagesPanel(starImportPackageTable, starImportPackageEntryTable), constraints.init {
-            gridy = 1
-            fill = GridBagConstraints.BOTH
-            weighty = 1.0
-        })
+        setLayout(BorderLayout())
+        add(JBScrollPane(JPanel(GridBagLayout()).init {
+            val constraints = GridBagConstraints().init {
+                weightx = 1.0
+                insets = Insets(0, 10, 10, 10)
+            }
+            add(createGeneralOptionsPanel(), constraints.init {
+                fill = GridBagConstraints.HORIZONTAL
+                gridy = 0
+            })
+            add(PackagePanel.createPackagesPanel(starImportPackageTable, starImportPackageEntryTable), constraints.init {
+                gridy = 1
+                fill = GridBagConstraints.BOTH
+                weighty = 1.0
+            })
+        }), BorderLayout.CENTER)
     }
 
     private fun createGeneralOptionsPanel(): JPanel {
