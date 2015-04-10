@@ -385,6 +385,7 @@ public class DefaultErrorMessages {
         MAP.put(SUPERTYPE_INITIALIZED_IN_TRAIT, "Traits cannot initialize supertypes");
         MAP.put(CLASS_IN_SUPERTYPE_FOR_ENUM, "Enum class cannot inherit from classes");
         MAP.put(CONSTRUCTOR_IN_TRAIT, "A trait may not have a constructor");
+        MAP.put(TRAIT_WITH_SUPERCLASS, "Specifying a required base class for trait implementations is deprecated");
         MAP.put(SUPERTYPE_APPEARS_TWICE, "A supertype appears twice");
         MAP.put(FINAL_SUPERTYPE, "This type is final, so it cannot be inherited from");
         MAP.put(SINGLETON_IN_SUPERTYPE, "Cannot inherit from a singleton");

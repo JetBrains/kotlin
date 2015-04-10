@@ -1,7 +1,7 @@
 open class Generic<T>
 
-trait A : Generic<String>
+trait A : <!TRAIT_WITH_SUPERCLASS!>Generic<String><!>
 
-trait B : Generic<Int>
+trait B : <!TRAIT_WITH_SUPERCLASS!>Generic<Int><!>
 
 trait C : <!INCONSISTENT_TYPE_PARAMETER_VALUES!>A, B<!>
