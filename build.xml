@@ -949,6 +949,10 @@
             <zipgroupfileset dir="${kotlin-home}/lib" includes="kotlin-runtime.jar"/>
             <zipgroupfileset dir="${kotlin-home}/lib" includes="kotlin-runtime-sources.jar"/>
 
+            <zipgroupfileset file="${kotlin-home}/lib/kotlin-reflect.jar">
+                <include name="com/google/protobuf/**/*.class"/>
+            </zipgroupfileset>
+
             <!-- icons, etc. -->
             <fileset dir="idea/resources"/>
             <!-- plugin.xml and friends -->
