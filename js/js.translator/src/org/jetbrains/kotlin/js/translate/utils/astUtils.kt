@@ -55,3 +55,11 @@ public fun JsNode.any(predicate: (JsNode) -> Boolean): Boolean {
     visitor.accept(this)
     return visitor.matched
 }
+
+public var JsArrayAccess.index: JsExpression
+    get() = getIndexExpression()
+    set(value) = setIndexExpression(value)
+
+public var JsArrayAccess.array: JsExpression
+    get() = getArrayExpression()
+    set(value) = setArrayExpression(value)

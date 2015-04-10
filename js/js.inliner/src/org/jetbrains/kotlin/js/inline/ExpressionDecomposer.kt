@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.js.inline.util
 import com.google.dart.compiler.backend.js.ast.*
 import com.google.dart.compiler.backend.js.ast.metadata.*
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*
+import org.jetbrains.kotlin.js.translate.utils.ast.*
 
 import kotlin.platform.platformStatic
 import kotlin.properties.Delegates
@@ -79,6 +80,21 @@ class ExpressionDecomposer private (
         val elements = x.getExpressions()
         processByIndices(elements, elements.indicesOfExtractable)
         return false
+    }
+
+    override fun visit(x: JsArrayAccess, ctx: JsContext<*>): Boolean {
+        x.process()
+        return false
+    }
+
+    private fun JsArrayAccess.process() {
+        array = accept(array)
+
+        if (array in containsNodeWithSideEffect && index in containsExtractable) {
+            array = array.extractToTemporary()
+        }
+
+        index = accept(index)
     }
 
     override fun visit(x: JsInvocation, ctx: JsContext<*>): Boolean {
