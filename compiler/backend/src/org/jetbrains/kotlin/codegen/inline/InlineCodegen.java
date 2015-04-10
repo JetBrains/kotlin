@@ -299,7 +299,7 @@ public class InlineCodegen extends CallGenerator {
     }
 
     private SMAPAndMethodNode generateLambdaBody(LambdaInfo info) {
-        JetExpression declaration = info.getFunctionLiteralOrCallableReference();
+        JetExpression declaration = info.getFunctionWithBodyOrCallableReference();
         FunctionDescriptor descriptor = info.getFunctionDescriptor();
 
         MethodContext parentContext = codegen.getContext();
@@ -524,14 +524,18 @@ public class InlineCodegen extends CallGenerator {
         //TODO deparenthisise typed
         JetExpression deparenthesized = JetPsiUtil.deparenthesize(expression);
         return InlineUtil.isInlineLambdaParameter(valueParameterDescriptor) &&
-               (deparenthesized instanceof JetFunctionLiteralExpression ||
-               deparenthesized instanceof JetCallableReferenceExpression);
+               isInlinableParameterExpression(deparenthesized);
+    }
+
+    protected static boolean isInlinableParameterExpression(JetExpression deparenthesized) {
+        return deparenthesized instanceof JetFunctionLiteralExpression ||
+               deparenthesized instanceof JetNamedFunction ||
+               deparenthesized instanceof JetCallableReferenceExpression;
     }
 
     public void rememberClosure(JetExpression expression, Type type) {
         JetExpression lambda = JetPsiUtil.deparenthesize(expression);
-        assert lambda instanceof JetCallableReferenceExpression || lambda instanceof JetFunctionLiteralExpression :
-                "Couldn't find inline expression in " + expression.getText();
+        assert isInlinableParameterExpression(lambda) :"Couldn't find inline expression in " + expression.getText();
 
         String labelNameIfPresent = null;
         PsiElement parent = lambda.getParent();

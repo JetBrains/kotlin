@@ -86,7 +86,7 @@ public class LambdaInfo implements CapturedParamOwner, LabelOwner {
         return functionDescriptor;
     }
 
-    public JetExpression getFunctionLiteralOrCallableReference() {
+    public JetExpression getFunctionWithBodyOrCallableReference() {
         return expression;
     }
 
