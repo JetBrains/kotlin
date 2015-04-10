@@ -83,6 +83,12 @@ public class InlineJsTestGenerated extends AbstractInlineJsTest {
         doTest(fileName);
     }
 
+    @TestMetadata("expressionBodyWithLambdaCall.kt")
+    public void testExpressionBodyWithLambdaCall() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inline/cases/expressionBodyWithLambdaCall.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("extension.kt")
     public void testExtension() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inline/cases/extension.kt");
@@ -266,6 +272,18 @@ public class InlineJsTestGenerated extends AbstractInlineJsTest {
     @TestMetadata("metadataForPublicFunction.kt")
     public void testMetadataForPublicFunction() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inline/cases/metadataForPublicFunction.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("multiDeclaration.kt")
+    public void testMultiDeclaration() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inline/cases/multiDeclaration.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("noAdditionalVarsCreated.kt")
+    public void testNoAdditionalVarsCreated() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inline/cases/noAdditionalVarsCreated.kt");
         doTest(fileName);
     }
 
