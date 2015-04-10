@@ -62,7 +62,7 @@ public class JavaToKotlinCopyPasteConversionTestGenerated extends AbstractJavaTo
     }
 
     public void testAllFilesPresentInConversion() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/copyPaste/conversion"), Pattern.compile("^(.+)\\.java$"), true);
+        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/copyPaste/conversion"), Pattern.compile("^([^\\.]+)\\.java$"), true);
     }
 
     @TestMetadata("Arithmetic.java")
@@ -74,6 +74,12 @@ public class JavaToKotlinCopyPasteConversionTestGenerated extends AbstractJavaTo
     @TestMetadata("ClassWithNoDocComment.java")
     public void testClassWithNoDocComment() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/conversion/ClassWithNoDocComment.java");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ClassWithOverrides.java")
+    public void testClassWithOverrides() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/conversion/ClassWithOverrides.java");
         doTest(fileName);
     }
 

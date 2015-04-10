@@ -5,5 +5,3 @@ public object JavaClass {
         println("Hello, world!")
     }
 }
-
-fun main(args: Array<String>) = JavaClass.main(args)

@@ -144,8 +144,7 @@ data class DataForConversion private(
         // element's text can be removed from file's text keeping parsing the same
         private fun canDropElementFromText(element: PsiElement): Boolean {
             return when (element) {
-                is PsiWhiteSpace, is PsiComment, is PsiModifierList,
-                is PsiAnnotation, is PsiPackageStatement, is PsiImportList, is PsiImportStatementBase -> true
+                is PsiWhiteSpace, is PsiComment, is PsiModifierList, is PsiAnnotation -> true
 
                 is PsiJavaToken -> {
                     when (element.getTokenType()) {

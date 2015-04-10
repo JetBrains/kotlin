@@ -58,6 +58,7 @@ public abstract class AbstractJavaToKotlinCopyPasteConversionTest : AbstractCopy
         myFixture.performEditorAction(IdeActions.ACTION_COPY)
 
         configureByDependencyIfExists(testName + ".dependency.kt")
+        configureByDependencyIfExists(testName + ".dependency.java")
 
         configureTargetFile(testName + ".to.kt")
 

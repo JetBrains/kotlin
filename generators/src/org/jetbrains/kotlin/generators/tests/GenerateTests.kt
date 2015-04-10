@@ -588,7 +588,7 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractJavaToKotlinCopyPasteConversionTest>()) {
-            model("copyPaste/conversion", extension = "java")
+            model("copyPaste/conversion", pattern = """^([^\.]+)\.java$""")
         }
 
         testClass(javaClass<AbstractInsertImportOnPasteTest>()) {
