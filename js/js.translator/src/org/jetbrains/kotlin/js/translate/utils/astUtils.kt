@@ -56,6 +56,10 @@ public fun JsNode.any(predicate: (JsNode) -> Boolean): Boolean {
     return visitor.matched
 }
 
+public var JsNameRef.qualifier: JsExpression?
+    get() = getQualifier()
+    set(value) = setQualifier(value)
+
 public var JsArrayAccess.index: JsExpression
     get() = getIndexExpression()
     set(value) = setIndexExpression(value)
@@ -75,3 +79,14 @@ public var JsConditional.then: JsExpression
 public var JsConditional.otherwise: JsExpression
     get() = getElseExpression()
     set(value) = setElseExpression(value)
+
+public var JsBinaryOperation.arg1: JsExpression
+    get() = getArg1()
+    set(value) = setArg1(value)
+
+public var JsBinaryOperation.arg2: JsExpression
+    get() = getArg2()
+    set(value) = setArg2(value)
+
+public val JsBinaryOperation.operator: JsBinaryOperator
+    get() = getOperator()

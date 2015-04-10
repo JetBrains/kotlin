@@ -76,6 +76,58 @@ class ExpressionDecomposer private (
         }
     }
 
+
+    // TODO: comma operator?
+    override fun visit(x: JsBinaryOperation, ctx: JsContext<*>): Boolean {
+        x.arg1 = accept(x.arg1)
+
+        when (x.operator) {
+            JsBinaryOperator.AND,
+            JsBinaryOperator.OR -> x.processOrAnd(ctx)
+            else -> x.process()
+        }
+
+        return false
+    }
+
+    private fun JsBinaryOperation.processOrAnd(ctx: JsContext<*>) {
+        if (arg2 !in containsExtractable) return
+
+        val tmp = Temporary(arg1)
+        addStatement(tmp.variable)
+        var test = if (operator == JsBinaryOperator.OR) not(tmp.nameRef) else tmp.nameRef
+        val arg2Eval = withNewAdditionalStatements {
+            arg2 = accept(arg2)
+            addStatement(tmp.assign(arg2))
+            additionalStatements.toStatement()
+        }
+
+        addStatement(JsIf(test, arg2Eval))
+        ctx.replaceMe(tmp.nameRef)
+    }
+
+    private fun JsBinaryOperation.process() {
+        if (arg1 !in containsNodeWithSideEffect || arg2 !in containsExtractable) {
+            // If arg1 does not have side effect, but arg2 contains extractable,
+            // we should extract from arg2 anyway.
+            // If arg2 does not contain extractable, it's still ok to visit.
+            arg2 = accept(arg2)
+            return
+        }
+
+        if (operator.isAssignment()) {
+            // Must be (someThingWithSideEffect).x = arg2, because arg1 can have side effect
+            assert(arg1 is JsNameRef) { "Valid JavaScript left-hand side must be JsNameRef, got: $this" }
+            val arg1AsRef = arg1 as JsNameRef
+            arg1AsRef.qualifier = arg1AsRef.qualifier!!.extractToTemporary()
+        }
+        else {
+            arg1 = arg1.extractToTemporary()
+        }
+
+        arg2 = accept(arg2)
+    }
+
     override fun visit(x: JsArrayLiteral, ctx: JsContext<*>): Boolean {
         val elements = x.getExpressions()
         processByIndices(elements, elements.indicesOfExtractable)
