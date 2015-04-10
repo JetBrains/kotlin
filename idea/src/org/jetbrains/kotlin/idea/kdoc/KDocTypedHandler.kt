@@ -25,72 +25,75 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 
 public class KDocTypedHandler(): TypedHandlerDelegate() {
-    override fun beforeCharTyped(c: Char, project: Project, editor: Editor, file: PsiFile, fileType: FileType): TypedHandlerDelegate.Result =
-        if (handleBeforeBracketTyped(c, editor, file)) TypedHandlerDelegate.Result.STOP else TypedHandlerDelegate.Result.CONTINUE
+    override fun beforeCharTyped(c: Char, project: Project, editor: Editor, file: PsiFile, fileType: FileType): TypedHandlerDelegate.Result {
+        if (overwriteClosingBracket(c, editor, file)) {
+            EditorModificationUtil.moveCaretRelatively(editor, 1)
+            return TypedHandlerDelegate.Result.STOP
+        }
+        return TypedHandlerDelegate.Result.CONTINUE
+    }
 
     override fun charTyped(c: Char, project: Project, editor: Editor, file: PsiFile): TypedHandlerDelegate.Result =
         if (handleBracketTyped(c, project, editor, file)) TypedHandlerDelegate.Result.STOP else TypedHandlerDelegate.Result.CONTINUE
 
-    private fun handleBeforeBracketTyped(c: Char, editor: Editor, file: PsiFile): Boolean {
-        if (file !is JetFile) {
-            return false
-        }
-        if (!CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET) {
-            return false
-        }
+    private fun overwriteClosingBracket(c: Char, editor: Editor, file: PsiFile): Boolean {
+        if (c != ']' && c != ')') return false
+        if (file !is JetFile) return false
+        if (!CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET) return false
 
         val offset = editor.getCaretModel().getOffset()
         val document = editor.getDocument()
-        if ((c == ']' || c == ')') && offset < document.getTextLength() && document.getCharsSequence().charAt(offset) == c) {
+        val chars = document.getCharsSequence()
+        if (offset < document.getTextLength() && chars[offset] == c) {
             PsiDocumentManager.getInstance(file.getProject()).commitDocument(document)
-            val element = file.findElementAt(offset)
-            // if the bracket is not part of a link, it will be part of KDOC_TEXT, not a separate RBRACKET element
-            if (c == ']' &&
-                element?.getNode()?.getElementType() == JetTokens.RBRACKET ||
-                (offset > 0 && document.getCharsSequence().charAt(offset - 1) == '[')) {
-                EditorModificationUtil.moveCaretRelatively(editor, 1)
-                return true
-            }
-            if (c == ')' && element?.getNode()?.getElementType() == KDocTokens.MARKDOWN_INLINE_LINK) {
-                EditorModificationUtil.moveCaretRelatively(editor, 1)
-                return true
+
+            val element = file.findElementAt(offset) ?: return false
+            val elementType = element.getNode().getElementType()
+            return when (c) {
+                ']' -> {
+                    // if the bracket is not part of a link, it will be part of KDOC_TEXT, not a separate RBRACKET element
+                    element.getParentOfType<KDocLink>(false) != null
+                           && (elementType == JetTokens.RBRACKET || (offset > 0 && chars[offset - 1] == '['))
+                }
+
+                ')' -> elementType == KDocTokens.MARKDOWN_INLINE_LINK
+
+                else -> false
             }
         }
         return false
     }
 
     private fun handleBracketTyped(c: Char, project: Project, editor: Editor, file: PsiFile): Boolean {
-        if (file !is JetFile) {
-            return false
-        }
-        if (!CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET) {
-            return false
-        }
-        val offset = editor.getCaretModel().getOffset()
-        if (offset == 0) {
-            return false
-        }
+        if (c != '[' && c != '(') return false
+        if (file !is JetFile) return false
+        if (!CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET) return false
 
-        if (c == '[' || c == '(') {
-            val document = editor.getDocument()
-            PsiDocumentManager.getInstance(project).commitDocument(document)
-            val element = file.findElementAt(offset - 1)
-            if (element == null ||
-                element.getNode().getElementType() != KDocTokens.TEXT) {
-                return false
-            }
-            if (c == '[')
-            {
+        val offset = editor.getCaretModel().getOffset()
+        if (offset == 0) return false
+
+        val document = editor.getDocument()
+        PsiDocumentManager.getInstance(project).commitDocument(document)
+        val element = file.findElementAt(offset - 1) ?: return false
+        if (element.getNode().getElementType() != KDocTokens.TEXT) return false
+
+        when (c) {
+            '[' -> {
                 document.insertString(offset, "]")
                 return true
             }
-            if (c == '(' && offset > 1 && document.getCharsSequence().charAt(offset - 2) == ']') {
-                document.insertString(offset, ")")
-                return true
+
+            '(' -> {
+                if (offset > 1 && document.getCharsSequence()[offset - 2] == ']') {
+                    document.insertString(offset, ")")
+                    return true
+                }
             }
         }
         return false
