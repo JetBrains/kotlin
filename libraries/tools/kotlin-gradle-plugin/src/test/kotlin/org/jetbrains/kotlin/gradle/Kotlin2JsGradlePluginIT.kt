@@ -8,7 +8,7 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
     Test fun testBuildAndClean() {
         val project = Project("kotlin2JsProject", "1.6")
 
-        project.build("build") {
+        project.build("build", "-Pkotlin.gradle.noThreadTest=true") {
             assertSuccessful()
             assertReportExists()
 
