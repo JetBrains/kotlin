@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.types.ErrorUtils;
 
 import static org.jetbrains.kotlin.serialization.ProtoBuf.QualifiedNameTable.QualifiedName;
 
@@ -71,6 +72,10 @@ public class StringTable {
     }
 
     public int getFqNameIndex(@NotNull ClassOrPackageFragmentDescriptor descriptor) {
+        if (ErrorUtils.isError(descriptor)) {
+            throw new IllegalStateException("Cannot get FQ name of error class: " + descriptor);
+        }
+
         QualifiedName.Builder builder = QualifiedName.newBuilder();
         if (descriptor instanceof ClassDescriptor) {
             builder.setKind(QualifiedName.Kind.CLASS);

@@ -60,4 +60,9 @@ public class AnnotationsImpl implements Annotations {
     public Iterator<AnnotationDescriptor> iterator() {
         return getAnnotationDescriptors().iterator();
     }
+
+    @Override
+    public String toString() {
+        return annotations.toString();
+    }
 }

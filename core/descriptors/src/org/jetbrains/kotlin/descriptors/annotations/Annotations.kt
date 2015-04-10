@@ -16,9 +16,7 @@
 
 package org.jetbrains.kotlin.descriptors.annotations
 
-import org.jetbrains.annotations.Nullable
 import org.jetbrains.kotlin.name.FqName
-import java.util.Collections
 
 public trait Annotations : Iterable<AnnotationDescriptor> {
 
@@ -32,7 +30,9 @@ public trait Annotations : Iterable<AnnotationDescriptor> {
 
             override fun findAnnotation(fqName: FqName) = null
 
-            override fun iterator() = Collections.emptyList<AnnotationDescriptor>().iterator()
+            override fun iterator() = emptyList<AnnotationDescriptor>().iterator()
+
+            override fun toString() = "EMPTY"
         }
     }
 }

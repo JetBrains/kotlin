@@ -16,20 +16,24 @@
 
 package org.jetbrains.kotlin.serialization
 
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument.Value
 import org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument.Value.Type
+import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 
 public object AnnotationSerializer {
     public fun serializeAnnotation(annotation: AnnotationDescriptor, stringTable: StringTable): ProtoBuf.Annotation {
         return with(ProtoBuf.Annotation.newBuilder()) {
             val annotationClass = annotation.getType().getConstructor().getDeclarationDescriptor() as? ClassDescriptor
                                   ?: error("Annotation type is not a class: ${annotation.getType()}")
+            if (ErrorUtils.isError(annotationClass)) {
+                error("Unresolved annotation type: ${annotation.getType()}")
+            }
 
             setId(stringTable.getFqNameIndex(annotationClass))
 
