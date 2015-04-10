@@ -16,174 +16,100 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.util.text.StringUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.load.java.JvmAbi;
-import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
-import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.backend.common.output.OutputFile;
-import org.jetbrains.org.objectweb.asm.*;
-import org.jetbrains.org.objectweb.asm.tree.MethodNode;
+import com.intellij.openapi.util.Ref
+import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.kotlin.backend.common.output.OutputFile
+import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.org.objectweb.asm.*
+import org.jetbrains.org.objectweb.asm.tree.MethodNode
+import java.util.ArrayList
+import java.util.HashSet
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+public object InlineTestUtil {
 
-public class InlineTestUtil {
+    public val INLINE_ANNOTATION_CLASS: String = "kotlin/inline"
 
-    public static final String INLINE_ANNOTATION_CLASS = "kotlin/inline";
+    public fun checkNoCallsToInline(files: List<OutputFile>) {
+        val inlinedMethods = collectInlineMethods(files)
+        assert(!inlinedMethods.isEmpty(), "There are no inline methods")
 
-    public static void checkNoCallsToInline(List<OutputFile> files) {
-        Set<MethodInfo> inlinedMethods = collectInlineMethods(files);
-        assert !inlinedMethods.isEmpty() : "There are no inline methods";
-
-        List<NotInlinedCall> notInlinedCalls = checkInlineNotInvoked(files, inlinedMethods);
-        assert notInlinedCalls.isEmpty() : "All inline methods should be inlined but " + StringUtil.join(notInlinedCalls, "\n");
+        val notInlinedCalls = checkInlineNotInvoked(files, inlinedMethods)
+        assert(notInlinedCalls.isEmpty()) { "All inline methods should be inlined but " + StringUtil.join(notInlinedCalls, "\n") }
     }
 
-    private static Set<MethodInfo> collectInlineMethods(List<OutputFile> files) {
-        final Set<MethodInfo> inlineMethods = new HashSet<MethodInfo>();
+    private fun collectInlineMethods(files: List<OutputFile>): Set<MethodInfo> {
+        val inlineMethods = HashSet<MethodInfo>()
 
-        for (OutputFile file : files) {
-            ClassReader cr = new ClassReader(file.asByteArray());
-            final String[] className = {null};
+        for (file in files) {
+            val cr = ClassReader(file.asByteArray())
+            var className: String? = null
 
-            cr.accept(new ClassVisitor(Opcodes.ASM4) {
+            cr.accept(object : ClassVisitor(Opcodes.ASM4) {
 
-                @Override
-                public void visit(int version, int access, @NotNull String name, String signature, String superName, String[] interfaces) {
-                    className[0] = name;
-                    super.visit(version, access, name, signature, superName, interfaces);
+                override fun visit(version: Int, access: Int, name: String, signature: String?, superName: String?, interfaces: Array<String>?) {
+                    className = name
+                    super.visit(version, access, name, signature, superName, interfaces)
                 }
 
-                @Override
-                public MethodVisitor visitMethod(
-                        int access, @NotNull String name, @NotNull String desc, String signature, String[] exceptions
-                ) {
-                    return new MethodNode(Opcodes.ASM4, access, name, desc, signature, exceptions) {
-                        @NotNull
-                        @Override
-                        public AnnotationVisitor visitAnnotation(@NotNull String desc, boolean visible) {
-                            Type type = Type.getType(desc);
-                            String annotationClass = type.getInternalName();
-                            if (INLINE_ANNOTATION_CLASS.equals(annotationClass)) {
-                                inlineMethods.add(new MethodInfo(className[0], name, this.desc));
+                override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<String>?): MethodVisitor {
+                    return object : MethodNode(Opcodes.ASM4, access, name, desc, signature, exceptions) {
+                        public override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor {
+                            val type = Type.getType(desc)
+                            val annotationClass = type.getInternalName()
+                            if (INLINE_ANNOTATION_CLASS == annotationClass) {
+                                inlineMethods.add(MethodInfo(className!!, name, this.desc))
                             }
-                            return super.visitAnnotation(desc, visible);
+                            return super.visitAnnotation(desc, visible)
                         }
-                    };
+                    }
                 }
-            }, 0);
+            }, 0)
 
         }
-        return inlineMethods;
+        return inlineMethods
     }
 
-    private static List<NotInlinedCall> checkInlineNotInvoked(List<OutputFile> files, final Set<MethodInfo> inlinedMethods) {
-        final List<NotInlinedCall> notInlined = new ArrayList<NotInlinedCall>();
-        for (OutputFile file : files) {
-            ClassReader cr = new ClassReader(file.asByteArray());
-
-            final Ref<String> className = Ref.create();
-            cr.accept(new ClassVisitor(Opcodes.ASM4) {
-                @Override
-                public void visit(int version, int access, @NotNull String name, String signature, String superName, String[] interfaces) {
-                    className.set(name);
-                    super.visit(version, access, name, signature, superName, interfaces);
+    private fun checkInlineNotInvoked(files: List<OutputFile>, inlinedMethods: Set<MethodInfo>): List<NotInlinedCall> {
+        val notInlined = ArrayList<NotInlinedCall>()
+        files.forEach { file ->
+            val cr = ClassReader(file.asByteArray())
+            var className: String? = null
+            cr.accept(object : ClassVisitor(Opcodes.ASM4) {
+                override fun visit(version: Int, access: Int, name: String, signature: String, superName: String, interfaces: Array<String>) {
+                    className = name
+                    super.visit(version, access, name, signature, superName, interfaces)
                 }
 
-                @Override
-                public MethodVisitor visitMethod(
-                        int access, @NotNull String name, @NotNull String desc, String signature, String[] exceptions
-                ) {
-                    FqName classFqName = JvmClassName.byInternalName(className.get()).getFqNameForClassNameWithoutDollars();
+                override fun visitMethod(access: Int, name: String, desc: String, signature: String, exceptions: Array<String>): MethodVisitor? {
+                    val classFqName = JvmClassName.byInternalName(className!!).getFqNameForClassNameWithoutDollars()
                     if (PackageClassUtils.isPackageClassFqName(classFqName)) {
-                        return super.visitMethod(access, name, desc, signature, exceptions);
+                        return null
                     }
 
-                    return new MethodNode(Opcodes.ASM4, access, name, desc, signature, exceptions) {
-                        @Override
-                        public void visitMethodInsn(int opcode, @NotNull String owner, String name, @NotNull String desc, boolean itf) {
-                            MethodInfo methodCall = new MethodInfo(owner, name, desc);
+                    return object : MethodNode(Opcodes.ASM4, access, name, desc, signature, exceptions) {
+                        public override fun visitMethodInsn(opcode: Int, owner: String, name: String, desc: String, itf: Boolean) {
+                            val methodCall = MethodInfo(owner, name, desc)
                             if (inlinedMethods.contains(methodCall)) {
-                                MethodInfo fromCall = new MethodInfo(className.get(), this.name, this.desc);
+                                val fromCall = MethodInfo(className!!, this.name, this.desc)
 
                                 //skip delegation to trait impl from child class
-                                if (methodCall.owner.endsWith(JvmAbi.TRAIT_IMPL_SUFFIX) && !fromCall.owner.equals(methodCall.owner)) {
-                                    return;
+                                if (methodCall.owner.endsWith(JvmAbi.TRAIT_IMPL_SUFFIX) && fromCall.owner != methodCall.owner) {
+                                    return
                                 }
-                                notInlined.add(new NotInlinedCall(fromCall, methodCall));
+                                notInlined.add(NotInlinedCall(fromCall, methodCall))
                             }
                         }
-                    };
+                    }
                 }
-            }, 0);
+            }, 0)
         }
 
-        return notInlined;
+        return notInlined
     }
 
-    private static class NotInlinedCall {
-        public final MethodInfo fromCall;
-        public final MethodInfo inlineMethod;
+    private data class NotInlinedCall(public val fromCall: MethodInfo, public val inlineMethod: MethodInfo)
 
-        public NotInlinedCall(MethodInfo call, MethodInfo method) {
-            fromCall = call;
-            inlineMethod = method;
-        }
-
-        @Override
-        public String toString() {
-            return "NotInlinedCall{" +
-                   "fromCall=" + fromCall +
-                   ", inlineMethod=" + inlineMethod +
-                   '}';
-        }
-    }
-
-    private static class MethodInfo {
-        private final String owner;
-        private final String name;
-        private final String desc;
-
-        public MethodInfo(@NotNull String owner, @NotNull String name, @NotNull String desc) {
-            this.owner = owner;
-            this.name = name;
-            this.desc = desc;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            MethodInfo method = (MethodInfo) o;
-
-            if (!desc.equals(method.desc)) return false;
-            if (!name.equals(method.name)) return false;
-            if (!owner.equals(method.owner)) return false;
-
-            return true;
-        }
-
-        @Override
-        public int hashCode() {
-            int result = owner.hashCode();
-            result = 31 * result + name.hashCode();
-            result = 31 * result + desc.hashCode();
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "MethodInfo{" +
-                   "owner='" + owner + '\'' +
-                   ", name='" + name + '\'' +
-                   ", desc='" + desc + '\'' +
-                   '}';
-        }
-    }
+    private data class MethodInfo(val owner: String, val name: String, val desc: String)
 }
