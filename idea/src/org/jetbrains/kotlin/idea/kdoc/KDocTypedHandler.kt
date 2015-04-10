@@ -25,7 +25,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
-import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
+import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
@@ -58,7 +58,7 @@ public class KDocTypedHandler(): TypedHandlerDelegate() {
             return when (c) {
                 ']' -> {
                     // if the bracket is not part of a link, it will be part of KDOC_TEXT, not a separate RBRACKET element
-                    element.getParentOfType<KDocLink>(false) != null
+                    element.getParentOfType<KDoc>(false) != null
                            && (elementType == JetTokens.RBRACKET || (offset > 0 && chars[offset - 1] == '['))
                 }
 

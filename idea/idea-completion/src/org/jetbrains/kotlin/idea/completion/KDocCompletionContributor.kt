@@ -20,15 +20,11 @@ import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.codeInsight.lookup.LookupElementDecorator
+import com.intellij.patterns.ElementPattern
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.patterns.StandardPatterns
 import com.intellij.util.ProcessingContext
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.KotlinCacheService
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.completion.KotlinCompletionContributor
-import org.jetbrains.kotlin.idea.completion.LookupElementFactory
 import org.jetbrains.kotlin.idea.kdoc.getParamDescriptors
 import org.jetbrains.kotlin.idea.kdoc.getResolutionScope
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
@@ -38,7 +34,6 @@ import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 
 class KDocCompletionContributor(): CompletionContributor() {
     init {
@@ -102,11 +97,14 @@ class KDocNameCompletionSession(parameters: CompletionParameters,
 
 object KDocTagCompletionProvider: CompletionProvider<CompletionParameters>() {
     override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
-        val prefix = if (parameters.getPosition().getNode().getElementType() == KDocTokens.TAG_NAME)
-            parameters.getPosition().getText().removeSuffix(KotlinCompletionContributor.DEFAULT_DUMMY_IDENTIFIER)
-        else
-            null
-        val resultWithPrefix = if (prefix != null) result.withPrefixMatcher(prefix) else result
+        // findIdentifierPrefix() requires identifier part characters to be a superset of identifier start characters
+        val prefix = CompletionUtil.findIdentifierPrefix(
+                parameters.getPosition().getContainingFile(),
+                parameters.getOffset(),
+                StandardPatterns.character().javaIdentifierPart() or singleCharPattern('@'),
+                StandardPatterns.character().javaIdentifierStart() or singleCharPattern('@'))
+
+        val resultWithPrefix = result.withPrefixMatcher(prefix)
         KDocKnownTag.values().forEach {
             resultWithPrefix.addElement(LookupElementBuilder.create("@" + it.name().toLowerCase()))
         }

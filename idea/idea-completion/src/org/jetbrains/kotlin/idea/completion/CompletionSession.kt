@@ -98,13 +98,6 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
     protected val bindingContext: BindingContext = resolutionFacade.analyze(position.parents().firstIsInstance<JetElement>(), BodyResolveMode.PARTIAL_FOR_COMPLETION)
     protected val inDescriptor: DeclarationDescriptor? = expression?.let { bindingContext.get(BindingContext.RESOLUTION_SCOPE, it)?.getContainingDeclaration() }
 
-    private fun singleCharPattern(char: Char): CharPattern {
-        return StandardPatterns.character().with(
-                object : PatternCondition<Char>(char.toString()) {
-                    override fun accepts(c: Char, context: ProcessingContext) = c == char
-                })
-    }
-
     private val kotlinIdentifierStartPattern: ElementPattern<Char>
     private val kotlinIdentifierPartPattern: ElementPattern<Char>
 
@@ -115,15 +108,15 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
             kotlinIdentifierPartPattern = StandardPatterns.character().javaIdentifierPart()
         }
         else {
-            kotlinIdentifierStartPattern = StandardPatterns.and(StandardPatterns.character().javaIdentifierStart(), StandardPatterns.not(singleCharPattern('$')))
-            kotlinIdentifierPartPattern = StandardPatterns.and(StandardPatterns.character().javaIdentifierPart(), StandardPatterns.not(singleCharPattern('$')))
+            kotlinIdentifierStartPattern = StandardPatterns.character().javaIdentifierStart() andNot singleCharPattern('$')
+            kotlinIdentifierPartPattern = StandardPatterns.character().javaIdentifierPart() andNot singleCharPattern('$')
         }
     }
 
     protected val prefix: String = CompletionUtil.findIdentifierPrefix(
             parameters.getPosition().getContainingFile(),
             parameters.getOffset(),
-            StandardPatterns.or(kotlinIdentifierPartPattern, singleCharPattern('@')),
+            kotlinIdentifierPartPattern or singleCharPattern('@'),
             kotlinIdentifierStartPattern)
 
     protected val resultSet: CompletionResultSet = resultSet
