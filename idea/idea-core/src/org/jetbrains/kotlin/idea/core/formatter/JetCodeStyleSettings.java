@@ -44,6 +44,7 @@ public class JetCodeStyleSettings extends CustomCodeStyleSettings {
 
     public int NAME_COUNT_TO_USE_STAR_IMPORT = ApplicationManager.getApplication().isUnitTestMode() ? Integer.MAX_VALUE : 5;
     public boolean IMPORT_PACKAGES = true;
+    public boolean IMPORT_NESTED_CLASSES = false;
 
     public static JetCodeStyleSettings getInstance(Project project) {
         return CodeStyleSettingsManager.getSettings(project).getCustomSettings(JetCodeStyleSettings.class);

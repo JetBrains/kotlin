@@ -139,13 +139,18 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
         val importable = descriptor.getImportableDescriptor()
         return when (importable) {
             is PackageViewDescriptor -> JetCodeStyleSettings.getInstance(project).IMPORT_PACKAGES
-            else -> importable.getContainingDeclaration() is PackageFragmentDescriptor // do not import nested classes and non-top-level declarations
+
+            is ClassDescriptor -> {
+                importable.getContainingDeclaration() is PackageFragmentDescriptor
+                    || JetCodeStyleSettings.getInstance(project).IMPORT_NESTED_CLASSES
+            }
+
+            else -> importable.getContainingDeclaration() is PackageFragmentDescriptor // do not import members (e.g. java static members)
         }
     }
 
-    override fun importDescriptor(file: JetFile, descriptor: DeclarationDescriptor): ImportDescriptorResult {
-        return Importer(file).importDescriptor(descriptor)
-    }
+    override fun importDescriptor(file: JetFile, descriptor: DeclarationDescriptor)
+            = Importer(file).importDescriptor(descriptor)
 
     private inner class Importer(
             private val file: JetFile
@@ -155,11 +160,11 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
 
         fun importDescriptor(descriptor: DeclarationDescriptor): ImportDescriptorResult {
             val target = descriptor.getImportableDescriptor()
+            if (!target.canBeReferencedViaImport()) return ImportDescriptorResult.FAIL
 
             val name = target.getName()
             val topLevelScope = resolutionFacade.getFileTopLevelScope(file)
-
-            val targetFqName = target.importableFqName ?: return ImportDescriptorResult.FAIL
+            val targetFqName = target.importableFqNameSafe
 
             // check if import is not needed
             when (target) {
@@ -171,11 +176,6 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
             }
 
             if (!mayImportByCodeStyle(descriptor)) {
-                return ImportDescriptorResult.FAIL
-            }
-
-            // cannot import for non-top level function or property
-            if (target is CallableDescriptor && target.getContainingDeclaration() !is PackageFragmentDescriptor) {
                 return ImportDescriptorResult.FAIL
             }
 
@@ -379,16 +379,13 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
             return result
         }
 
-        private fun targetFqName(ref: JetReferenceExpression): FqName? {
-            return ref.resolveTargets().map { it.importableFqName }.toSet().singleOrNull()
-        }
+        private fun targetFqName(ref: JetReferenceExpression): FqName?
+                = ref.resolveTargets().map { it.importableFqName }.toSet().singleOrNull()
 
-        private fun JetReferenceExpression.resolveTargets(): Collection<DeclarationDescriptor> {
-            return this.getImportableTargets(resolutionFacade.analyze(this, BodyResolveMode.PARTIAL))
-        }
+        private fun JetReferenceExpression.resolveTargets(): Collection<DeclarationDescriptor>
+                = this.getImportableTargets(resolutionFacade.analyze(this, BodyResolveMode.PARTIAL))
 
-        private fun addImport(fqName: FqName, allUnder: Boolean): JetImportDirective {
-            return addImport(file, ImportPath(fqName, allUnder))
-        }
+        private fun addImport(fqName: FqName, allUnder: Boolean): JetImportDirective
+                = addImport(file, ImportPath(fqName, allUnder))
     }
 }

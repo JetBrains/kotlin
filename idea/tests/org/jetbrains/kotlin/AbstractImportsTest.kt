@@ -17,11 +17,11 @@
 package org.jetbrains.kotlin
 
 import com.intellij.codeInsight.CodeInsightSettings
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.command.CommandProcessor
+import org.jdom.Element
 import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.JetWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
+import org.jetbrains.kotlin.idea.testUtils.dumpTextWithErrors
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -35,8 +35,8 @@ public abstract class AbstractImportsTest : JetLightCodeInsightFixtureTestCase()
     protected fun doTest(testPath: String) {
         val codeInsightSettings = CodeInsightSettings.getInstance()
         val codeStyleSettings = JetCodeStyleSettings.getInstance(getProject())
-        val optimizeImportsBefore = codeInsightSettings.OPTIMIZE_IMPORTS_ON_THE_FLY
-        val nameCountToUseStarBefore = codeStyleSettings.NAME_COUNT_TO_USE_STAR_IMPORT
+        val codeStyleSettingsSaved = codeStyleSettings.clone() as JetCodeStyleSettings
+        val optimizeImportsSaved = codeInsightSettings.OPTIMIZE_IMPORTS_ON_THE_FLY
 
         try {
             val fixture = myFixture
@@ -54,17 +54,23 @@ public abstract class AbstractImportsTest : JetLightCodeInsightFixtureTestCase()
             val file = fixture.getFile() as JetFile
 
             codeInsightSettings.OPTIMIZE_IMPORTS_ON_THE_FLY = InTextDirectivesUtils.getPrefixedBoolean(file.getText(), "// OPTIMIZE_IMPORTS:") ?: false
+
             codeStyleSettings.NAME_COUNT_TO_USE_STAR_IMPORT = InTextDirectivesUtils.getPrefixedInt(file.getText(), "// NAME_COUNT_TO_USE_STAR_IMPORT:") ?: nameCountToUseStarImportDefault
+            codeStyleSettings.IMPORT_PACKAGES = InTextDirectivesUtils.getPrefixedBoolean(file.getText(), "// IMPORT_PACKAGES:") ?: true
+            codeStyleSettings.IMPORT_NESTED_CLASSES = InTextDirectivesUtils.getPrefixedBoolean(file.getText(), "// IMPORT_NESTED_CLASSES:") ?: false
 
             getProject().executeWriteCommand("") {
                 doTest(file)
             }
 
-            fixture.checkResultByFile(testPath + ".after")
+            JetTestUtils.assertEqualsToFile(File(testPath + ".after"), myFixture.getFile().getText())
         }
         finally {
-            codeInsightSettings.OPTIMIZE_IMPORTS_ON_THE_FLY = optimizeImportsBefore
-            codeStyleSettings.NAME_COUNT_TO_USE_STAR_IMPORT = nameCountToUseStarBefore
+            codeInsightSettings.OPTIMIZE_IMPORTS_ON_THE_FLY = optimizeImportsSaved
+
+            val root = Element("fake")
+            codeStyleSettingsSaved.writeExternal(root, codeStyleSettings)
+            codeStyleSettings.readExternal(root)
         }
     }
 
