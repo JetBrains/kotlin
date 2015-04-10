@@ -378,6 +378,7 @@ fun aggregates(): List<GenericFunction> {
 
     templates add f("reduce(operation: (T, T) -> T)") {
         inline(true)
+        exclude(ArraysOfObjects, Iterables, Sequences)
 
         doc { "Accumulates value starting with the first element and applying *operation* from left to right to current accumulator value and each element" }
         returns("T")
@@ -395,10 +396,32 @@ fun aggregates(): List<GenericFunction> {
         }
     }
 
+    templates add f("reduce(operation: (S, T) -> S)") {
+        inline(true)
+        only(ArraysOfObjects, Iterables, Sequences)
+
+        doc { "Accumulates value starting with the first element and applying *operation* from left to right to current accumulator value and each element" }
+        typeParam("S")
+        typeParam("T: S")
+        returns("S")
+        body {
+            """
+            val iterator = this.iterator()
+            if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced")
+
+            var accumulator: S = iterator.next()
+            while (iterator.hasNext()) {
+                accumulator = operation(accumulator, iterator.next())
+            }
+            return accumulator
+            """
+        }
+    }
+
     templates add f("reduceRight(operation: (T, T) -> T)") {
         inline(true)
 
-        only(Strings, Lists, ArraysOfObjects, ArraysOfPrimitives)
+        only(Strings, ArraysOfPrimitives)
         doc { "Accumulates value starting with last element and applying *operation* from right to left to each element and current accumulator value" }
         returns("T")
         body {
@@ -416,6 +439,28 @@ fun aggregates(): List<GenericFunction> {
         }
     }
 
+    templates add f("reduceRight(operation: (T, S) -> S)") {
+        inline(true)
+
+        only(Lists, ArraysOfObjects)
+        doc { "Accumulates value starting with last element and applying *operation* from right to left to each element and current accumulator value" }
+        typeParam("S")
+        typeParam("T: S")
+        returns("S")
+        body {
+            """
+            var index = lastIndex
+            if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced")
+
+            var accumulator: S = get(index--)
+            while (index >= 0) {
+                accumulator = operation(get(index--), accumulator)
+            }
+
+            return accumulator
+            """
+        }
+    }
 
     templates add f("forEach(operation: (T) -> Unit)") {
         inline(true)

@@ -151,7 +151,7 @@ class CollectionTest {
         //        TODO replace with more accurate version when KT-5987 will be fixed
         //        failsWith(javaClass<UnsupportedOperationException>()) {
         fails {
-            arrayListOf<Int>().reduce { a, b -> a + b }
+            run { arrayListOf<Int>().reduce { a, b -> a + b } }
         }
     }
 
@@ -164,7 +164,7 @@ class CollectionTest {
         //        TODO replace with more accurate version when KT-5987 will be fixed
         //        failsWith(javaClass<UnsupportedOperationException>()) {
         fails {
-            arrayListOf<Int>().reduceRight { a, b -> a + b }
+            run { arrayListOf<Int>().reduceRight { a, b -> a + b } }
         }
     }
 

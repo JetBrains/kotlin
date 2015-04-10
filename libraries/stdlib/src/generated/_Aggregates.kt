@@ -2122,10 +2122,51 @@ public inline fun String.none(predicate: (Char) -> Boolean): Boolean {
 /**
  * Accumulates value starting with the first element and applying *operation* from left to right to current accumulator value and each element
  */
-public inline fun <T> Array<out T>.reduce(operation: (T, T) -> T): T {
+public inline fun <S, T: S> Array<out T>.reduce(operation: (S, T) -> S): S {
     val iterator = this.iterator()
     if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced")
-    var accumulator = iterator.next()
+    var accumulator: S = iterator.next()
+    while (iterator.hasNext()) {
+        accumulator = operation(accumulator, iterator.next())
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with the first element and applying *operation* from left to right to current accumulator value and each element
+ */
+public inline fun <S, T: S> Iterable<T>.reduce(operation: (S, T) -> S): S {
+    val iterator = this.iterator()
+    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced")
+    var accumulator: S = iterator.next()
+    while (iterator.hasNext()) {
+        accumulator = operation(accumulator, iterator.next())
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with the first element and applying *operation* from left to right to current accumulator value and each element
+ */
+public inline fun <S, T: S> Sequence<T>.reduce(operation: (S, T) -> S): S {
+    val iterator = this.iterator()
+    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced")
+    var accumulator: S = iterator.next()
+    while (iterator.hasNext()) {
+        accumulator = operation(accumulator, iterator.next())
+    }
+    return accumulator
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
+/**
+ * Accumulates value starting with the first element and applying *operation* from left to right to current accumulator value and each element
+ */
+public inline fun <S, T: S> Stream<T>.reduce(operation: (S, T) -> S): S {
+    val iterator = this.iterator()
+    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced")
+    var accumulator: S = iterator.next()
     while (iterator.hasNext()) {
         accumulator = operation(accumulator, iterator.next())
     }
@@ -2239,47 +2280,6 @@ public inline fun ShortArray.reduce(operation: (Short, Short) -> Short): Short {
 /**
  * Accumulates value starting with the first element and applying *operation* from left to right to current accumulator value and each element
  */
-public inline fun <T> Iterable<T>.reduce(operation: (T, T) -> T): T {
-    val iterator = this.iterator()
-    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced")
-    var accumulator = iterator.next()
-    while (iterator.hasNext()) {
-        accumulator = operation(accumulator, iterator.next())
-    }
-    return accumulator
-}
-
-/**
- * Accumulates value starting with the first element and applying *operation* from left to right to current accumulator value and each element
- */
-public inline fun <T> Sequence<T>.reduce(operation: (T, T) -> T): T {
-    val iterator = this.iterator()
-    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced")
-    var accumulator = iterator.next()
-    while (iterator.hasNext()) {
-        accumulator = operation(accumulator, iterator.next())
-    }
-    return accumulator
-}
-
-
-deprecated("Migrate to using Sequence<T> and respective functions")
-/**
- * Accumulates value starting with the first element and applying *operation* from left to right to current accumulator value and each element
- */
-public inline fun <T> Stream<T>.reduce(operation: (T, T) -> T): T {
-    val iterator = this.iterator()
-    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced")
-    var accumulator = iterator.next()
-    while (iterator.hasNext()) {
-        accumulator = operation(accumulator, iterator.next())
-    }
-    return accumulator
-}
-
-/**
- * Accumulates value starting with the first element and applying *operation* from left to right to current accumulator value and each element
- */
 public inline fun String.reduce(operation: (Char, Char) -> Char): Char {
     val iterator = this.iterator()
     if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced")
@@ -2293,10 +2293,23 @@ public inline fun String.reduce(operation: (Char, Char) -> Char): Char {
 /**
  * Accumulates value starting with last element and applying *operation* from right to left to each element and current accumulator value
  */
-public inline fun <T> Array<out T>.reduceRight(operation: (T, T) -> T): T {
+public inline fun <S, T: S> Array<out T>.reduceRight(operation: (T, S) -> S): S {
     var index = lastIndex
     if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced")
-    var accumulator = get(index--)
+    var accumulator: S = get(index--)
+    while (index >= 0) {
+        accumulator = operation(get(index--), accumulator)
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with last element and applying *operation* from right to left to each element and current accumulator value
+ */
+public inline fun <S, T: S> List<T>.reduceRight(operation: (T, S) -> S): S {
+    var index = lastIndex
+    if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced")
+    var accumulator: S = get(index--)
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)
     }
@@ -2398,19 +2411,6 @@ public inline fun LongArray.reduceRight(operation: (Long, Long) -> Long): Long {
  * Accumulates value starting with last element and applying *operation* from right to left to each element and current accumulator value
  */
 public inline fun ShortArray.reduceRight(operation: (Short, Short) -> Short): Short {
-    var index = lastIndex
-    if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced")
-    var accumulator = get(index--)
-    while (index >= 0) {
-        accumulator = operation(get(index--), accumulator)
-    }
-    return accumulator
-}
-
-/**
- * Accumulates value starting with last element and applying *operation* from right to left to each element and current accumulator value
- */
-public inline fun <T> List<T>.reduceRight(operation: (T, T) -> T): T {
     var index = lastIndex
     if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced")
     var accumulator = get(index--)
