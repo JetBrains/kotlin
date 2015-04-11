@@ -103,6 +103,9 @@ public class Regex( /* visibility? */ public val nativePattern: Pattern) {
     /** The set of options that were used to create this regular expression.  */
     public val options: Set<RegexOption> = fromInt(nativePattern.flags(), RegexOption.values())
 
+    deprecated("To get the Matcher from java.util.regex.Pattern use toPattern to convert string to Pattern, or migrate to Regex API")
+    public fun matcher(input: CharSequence): Matcher = nativePattern.matcher(input)
+
     /** Indicates whether the regular expression matches the entire [input]. */
     public fun matches(input: CharSequence): Boolean = nativePattern.matcher(input).matches()
 
