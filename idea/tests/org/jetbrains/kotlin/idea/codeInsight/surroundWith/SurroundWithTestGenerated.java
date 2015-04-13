@@ -43,6 +43,12 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
             doTestWithIfSurrounder(fileName);
         }
 
+        @TestMetadata("emptyLine.kt")
+        public void testEmptyLine() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/surroundWith/if/emptyLine.kt");
+            doTestWithIfSurrounder(fileName);
+        }
+
         @TestMetadata("severalStatements.kt")
         public void testSeveralStatements() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/surroundWith/if/severalStatements.kt");

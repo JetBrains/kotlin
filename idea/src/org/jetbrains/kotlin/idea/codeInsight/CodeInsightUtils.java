@@ -73,6 +73,8 @@ public class CodeInsightUtils {
         startOffset = element1.getTextRange().getStartOffset();
         endOffset = element2.getTextRange().getEndOffset();
 
+        if (startOffset >= endOffset) return PsiElement.EMPTY_ARRAY;
+
         PsiElement parent = PsiTreeUtil.findCommonParent(element1, element2);
         if (parent == null) return PsiElement.EMPTY_ARRAY;
         while (true) {
