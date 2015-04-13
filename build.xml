@@ -607,6 +607,10 @@
                     }
                     -keep class com.intellij.openapi.util.text.StringHash { *; }
 
+                    # for gradle plugin and other server tools
+                    -keep class com.intellij.openapi.util.io.ZipFileCache { public *; }
+                    -keep class com.intellij.openapi.util.LowMemoryWatcher { public *; }
+
                     -keepclassmembers enum * {
                         public static **[] values();
                         public static ** valueOf(java.lang.String);

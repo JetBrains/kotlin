@@ -135,13 +135,18 @@ public class LowMemoryWatcher {
         ourInstances.remove(this);
     }
 
-    public static void shutdown() throws InterruptedException, ListenerNotFoundException {
+    /**
+     * LowMemoryWatcher maintains a background thread where all the handlers are invoked.
+     * In server environments, this thread may run indefinitely and prevent the class loader from
+     * being gc-ed. Thus it's necessary to invoke this method to stop that thread and let the classes be garbage-collected.
+     */
+    public static void stopAll() throws InterruptedException, ListenerNotFoundException {
         ourInstances.clear();
         ((NotificationEmitter)ManagementFactory.getMemoryMXBean()).removeNotificationListener(lowMemoryListener);
 
         ourExecutor.shutdown();
 
-        boolean terminated = ourExecutor.awaitTermination(1000, TimeUnit.MICROSECONDS);
+        boolean terminated = ourExecutor.awaitTermination(50, TimeUnit.MICROSECONDS);
         if (!terminated) {
             ourExecutor.shutdownNow();
         }
