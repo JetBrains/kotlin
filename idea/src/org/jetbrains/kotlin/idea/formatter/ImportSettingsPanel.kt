@@ -40,11 +40,11 @@ class ImportSettingsPanelWrapper(settings: CodeStyleSettings) : CodeStyleAbstrac
 
     private fun CodeStyleSettings.kotlinSettings() = getCustomSettings(javaClass<JetCodeStyleSettings>())
 
-    override fun getRightMargin() = 0
+    override fun getRightMargin() = throw UnsupportedOperationException()
 
-    override fun createHighlighter(scheme: EditorColorsScheme) = null
+    override fun createHighlighter(scheme: EditorColorsScheme) = throw UnsupportedOperationException()
 
-    override fun getFileType() = JavaFileType.INSTANCE
+    override fun getFileType() = throw UnsupportedOperationException()
 
     override fun getPreviewText() = null
 
@@ -114,10 +114,10 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
             add(rbUseSingleImports, true)
             add(rbUseStarImports, true)
             add(JPanel(GridBagLayout()).init {
-                val constrains = GridBagConstraints().init { gridx = GridBagConstraints.RELATIVE }
-                add(rbUseStarImportsIfMore, constrains)
-                add(starImportLimitField, constrains)
-                add(JLabel(" names used"), constrains.init { fill = GridBagConstraints.HORIZONTAL; weightx = 1.0 })
+                val constraints = GridBagConstraints().init { gridx = GridBagConstraints.RELATIVE }
+                add(rbUseStarImportsIfMore, constraints)
+                add(starImportLimitField, constraints)
+                add(JLabel(" names used"), constraints.init { fill = GridBagConstraints.HORIZONTAL; weightx = 1.0 })
             }, true)
 
             add(cbImportNestedClasses)
