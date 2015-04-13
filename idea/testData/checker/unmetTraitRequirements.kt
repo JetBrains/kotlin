@@ -1,7 +1,7 @@
 open class Base {
 }
 
-trait Derived: Base {
+trait Derived: <warning descr="[TRAIT_WITH_SUPERCLASS] Specifying a required base class for trait implementations is deprecated">Base</warning> {
     fun foo() {
         f1(this@Derived)
     }

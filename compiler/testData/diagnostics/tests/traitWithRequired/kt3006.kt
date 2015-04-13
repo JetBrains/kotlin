@@ -1,7 +1,7 @@
 open class Base {
 }
 
-trait Derived: Base {
+trait Derived: <!TRAIT_WITH_SUPERCLASS!>Base<!> {
     fun foo() {
         f1(this@Derived)
     }

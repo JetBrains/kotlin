@@ -188,6 +188,8 @@ public interface Errors {
 
     DiagnosticFactory0<JetDelegatorByExpressionSpecifier> DELEGATION_IN_TRAIT = DiagnosticFactory0.create(ERROR);
 
+    DiagnosticFactory0<PsiElement> TRAIT_WITH_SUPERCLASS = DiagnosticFactory0.create(WARNING);
+
     DiagnosticFactory2<JetNamedDeclaration, ClassDescriptor, ClassDescriptor> UNMET_TRAIT_REQUIREMENT =
             DiagnosticFactory2.create(ERROR, PositioningStrategies.DECLARATION_NAME);
 

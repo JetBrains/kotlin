@@ -1,6 +1,6 @@
 open class Required
 
-trait Trait : Required
+trait Trait : <!TRAIT_WITH_SUPERCLASS!>Required<!>
 
 abstract <!UNMET_TRAIT_REQUIREMENT!>class Abstract<!> : Trait
 
