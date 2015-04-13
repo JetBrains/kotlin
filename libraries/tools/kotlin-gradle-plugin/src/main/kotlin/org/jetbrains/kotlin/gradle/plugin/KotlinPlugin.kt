@@ -288,7 +288,7 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
 
         project afterEvaluate { project ->
             if (project != null) {
-                val testVariants = ext.getTestVariants()!!
+                val testVariants = AndroidGradleWrapper.getTestVariants(ext)
                 processVariants(testVariants, project, ext)
                 if (ext is AppExtension) {
                     val appVariants = ext.getApplicationVariants()!!
