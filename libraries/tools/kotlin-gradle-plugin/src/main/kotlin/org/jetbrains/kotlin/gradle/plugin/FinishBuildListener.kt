@@ -72,12 +72,12 @@ class FinishBuildListener(var pluginClassLoader: ParentLastURLClassLoader?) : Bu
     }
 
     private fun stopZipFileCache() {
-        callVoidStaticMethod("com.intellij.openapi.util.io.ZipFileCache", "shutdown")
+        callVoidStaticMethod("com.intellij.openapi.util.io.ZipFileCache", "stopBackgroundThread")
         log.debug("ZipFileCache finished successfully")
     }
 
     private fun stopLowMemoryWatcher() {
-        callVoidStaticMethod("com.intellij.openapi.util.LowMemoryWatcher", "shutdown")
+        callVoidStaticMethod("com.intellij.openapi.util.LowMemoryWatcher", "stopAll")
         log.debug("LowMemoryWatcher finished successfully")
     }
 
