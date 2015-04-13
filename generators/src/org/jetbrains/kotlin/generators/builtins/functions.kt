@@ -58,15 +58,21 @@ class GenerateFunctions(out: PrintWriter, val kind: FunctionKind) : BuiltInsSour
             out.print("P$j, ")
         }
 
+        generateReturnTypeParameter(variance)
+
+        out.print(">")
+    }
+
+    fun generateReturnTypeParameter(variance: Boolean) {
         if (variance) out.print("out ")
-        out.print("R>")
+        out.print("R")
     }
 
     override fun generateBody() {
         for (i in 0..MAX_PARAM_COUNT) {
             generateDocumentation(i)
             out.print("public interface " + kind.getClassName(i))
-            generateTypeParameters(i, true)
+            generateTypeParameters(i, variance = true)
             generateSuperClass(i)
             generateFunctionClassBody(i)
         }
@@ -81,7 +87,12 @@ class GenerateFunctions(out: PrintWriter, val kind: FunctionKind) : BuiltInsSour
         val superClass = kind.getSuperClassName(i)
         if (superClass != null) {
             out.print(" : $superClass")
-            generateTypeParameters(i, false)
+            generateTypeParameters(i, variance = false)
+        }
+        else {
+            out.print(" : Function<")
+            generateReturnTypeParameter(variance = false)
+            out.print(">")
         }
     }
 

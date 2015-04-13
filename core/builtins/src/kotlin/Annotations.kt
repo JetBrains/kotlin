@@ -31,6 +31,11 @@ public annotation class data
 public annotation class deprecated(val value: String)
 
 /**
+ * Signifies that the annotated functional type represents an extension function.
+ */
+public annotation class extension
+
+/**
  * Suppresses the given compilation warnings in the annotated element.
  * @property names names of the compiler diagnostics to suppress.
  */

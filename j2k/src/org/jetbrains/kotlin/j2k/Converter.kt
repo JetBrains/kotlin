@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.j2k.ast.*
 import org.jetbrains.kotlin.j2k.ast.Annotation
 import org.jetbrains.kotlin.j2k.ast.Class
 import org.jetbrains.kotlin.j2k.ast.Enum
+import org.jetbrains.kotlin.j2k.ast.Function
 import org.jetbrains.kotlin.j2k.ast.Object
 import org.jetbrains.kotlin.j2k.usageProcessing.FieldToPropertyProcessing
 import org.jetbrains.kotlin.j2k.usageProcessing.UsageProcessing

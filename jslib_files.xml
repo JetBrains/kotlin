@@ -3,6 +3,7 @@
         <include name="native/kotlin/Iterator.kt"/>
         <include name="native/kotlin/Collections.kt"/>
         <include name="src/kotlin/ExtensionFunctions.kt"/>
+        <include name="src/kotlin/Function.kt"/>
         <include name="src/kotlin/Functions.kt"/>
         <include name="src/kotlin/Iterators.kt"/>
         <include name="src/kotlin/Range.kt"/>

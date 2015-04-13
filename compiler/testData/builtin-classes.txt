@@ -1522,6 +1522,10 @@ public final annotation class deprecated : kotlin.Annotation {
         internal final fun <get-value>(): kotlin.String
 }
 
+public final annotation class extension : kotlin.Annotation {
+    /*primary*/ public constructor extension()
+}
+
 public final annotation class inline : kotlin.Annotation {
     /*primary*/ public constructor inline(/*0*/ strategy: kotlin.InlineStrategy = ...)
     public final val strategy: kotlin.InlineStrategy
