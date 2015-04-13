@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.introduceProperty.KotlinI
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.test.ConfigLibraryUtil
+import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.JetTestUtils
 import org.jetbrains.kotlin.test.util.findElementByComment

@@ -44,9 +44,9 @@ import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import org.jetbrains.kotlin.psi.JetTreeVisitorVoid
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.test.ConfigLibraryUtil
-import org.jetbrains.kotlin.test.ConfigLibraryUtil.configureKotlinJsRuntime
-import org.jetbrains.kotlin.test.ConfigLibraryUtil.configureKotlinRuntime
+import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
+import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil.configureKotlinJsRuntime
+import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil.configureKotlinRuntime
 import org.junit.Assert
 import java.io.File
 import java.util.ArrayList

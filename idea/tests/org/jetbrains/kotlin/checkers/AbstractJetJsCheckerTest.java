@@ -19,13 +19,13 @@ package org.jetbrains.kotlin.checkers;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase;
-import org.jetbrains.kotlin.idea.test.JetStdJSProjectDescriptor;
+import org.jetbrains.kotlin.idea.test.KotlinStdJSProjectDescriptor;
 
 public abstract class AbstractJetJsCheckerTest extends JetLightCodeInsightFixtureTestCase {
     @NotNull
     @Override
     protected LightProjectDescriptor getProjectDescriptor() {
-        return JetStdJSProjectDescriptor.INSTANCE;
+        return KotlinStdJSProjectDescriptor.Companion.getInstance();
     }
 
     public void doTest(String filePath) {

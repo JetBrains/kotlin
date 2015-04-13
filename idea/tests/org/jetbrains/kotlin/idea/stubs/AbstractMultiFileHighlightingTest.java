@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.stubs;
 
+import com.intellij.codeInsight.completion.CompletionTestCase;
 import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerImpl;
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.openapi.application.ApplicationManager;
@@ -30,13 +31,13 @@ import com.intellij.testFramework.ExpectedHighlightingData;
 import kotlin.Function0;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.KotlinCompletionTestCase;
+import org.jetbrains.kotlin.idea.test.AstAccessControl;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 
 import java.io.File;
 import java.util.Collection;
 
-public abstract class AbstractMultiFileHighlightingTest extends KotlinCompletionTestCase {
+public abstract class AbstractMultiFileHighlightingTest extends CompletionTestCase {
 
     public void doTest(@NotNull String filePath) throws Exception {
         configureByFile(new File(filePath).getName(), "");

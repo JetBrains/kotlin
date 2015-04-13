@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.generators.tests
 
 import junit.framework.TestCase
+import org.jetbrains.kotlin.AbstractDataFlowValueRenderingTest
 import org.jetbrains.kotlin.addImport.AbstractAddImportTest
 import org.jetbrains.kotlin.android.*
 import org.jetbrains.kotlin.asJava.AbstractKotlinLightClassTest
@@ -30,13 +31,6 @@ import org.jetbrains.kotlin.codegen.defaultConstructor.AbstractDefaultArgumentsR
 import org.jetbrains.kotlin.codegen.flags.AbstractWriteFlagsTest
 import org.jetbrains.kotlin.codegen.generated.AbstractBlackBoxCodegenTest
 import org.jetbrains.kotlin.codegen.generated.AbstractBlackBoxInlineCodegenTest
-import org.jetbrains.kotlin.completion.*
-import org.jetbrains.kotlin.completion.handlers.AbstractBasicCompletionHandlerTest
-import org.jetbrains.kotlin.completion.handlers.AbstractCompletionCharFilterTest
-import org.jetbrains.kotlin.completion.handlers.AbstractKeywordCompletionHandlerTest
-import org.jetbrains.kotlin.completion.handlers.AbstractSmartCompletionHandlerTest
-import org.jetbrains.kotlin.completion.weighers.AbstractBasicCompletionWeigherTest
-import org.jetbrains.kotlin.completion.weighers.AbstractSmartCompletionWeigherTest
 import org.jetbrains.kotlin.findUsages.AbstractJetFindUsagesTest
 import org.jetbrains.kotlin.formatter.AbstractJetFormatterTest
 import org.jetbrains.kotlin.formatter.AbstractJetTypingIndentationTestBase
@@ -52,6 +46,13 @@ import org.jetbrains.kotlin.idea.codeInsight.AbstractOutOfBlockModificationTest
 import org.jetbrains.kotlin.idea.codeInsight.moveUpDown.AbstractCodeMoverTest
 import org.jetbrains.kotlin.idea.codeInsight.surroundWith.AbstractSurroundWithTest
 import org.jetbrains.kotlin.idea.codeInsight.unwrap.AbstractUnwrapRemoveTest
+import org.jetbrains.kotlin.idea.completion.test.*
+import org.jetbrains.kotlin.idea.completion.test.handlers.AbstractBasicCompletionHandlerTest
+import org.jetbrains.kotlin.idea.completion.test.handlers.AbstractCompletionCharFilterTest
+import org.jetbrains.kotlin.idea.completion.test.handlers.AbstractKeywordCompletionHandlerTest
+import org.jetbrains.kotlin.idea.completion.test.handlers.AbstractSmartCompletionHandlerTest
+import org.jetbrains.kotlin.idea.completion.test.weighers.AbstractBasicCompletionWeigherTest
+import org.jetbrains.kotlin.idea.completion.test.weighers.AbstractSmartCompletionWeigherTest
 import org.jetbrains.kotlin.idea.configuration.AbstractConfigureProjectByChangingFileTest
 import org.jetbrains.kotlin.idea.conversion.copy.AbstractJavaToKotlinCopyPasteConversionTest
 import org.jetbrains.kotlin.idea.coverage.AbstractKotlinCoverageOutputFilesTest
@@ -344,59 +345,6 @@ fun main(args: Array<String>) {
             model("quickfix", pattern = "^before(\\w+)\\.kt$")
         }
 
-        testClass(javaClass<AbstractJSBasicCompletionTest>()) {
-            model("completion/basic/common")
-            model("completion/basic/js")
-        }
-
-        testClass(javaClass<AbstractJvmBasicCompletionTest>()) {
-            model("completion/basic/common")
-            model("completion/basic/java")
-        }
-
-        testClass(javaClass<AbstractJvmSmartCompletionTest>()) {
-            model("completion/smart")
-        }
-
-        testClass(javaClass<AbstractKeywordCompletionTest>()) {
-            model("completion/keywords", recursive = false)
-        }
-
-        testClass(javaClass<AbstractJvmWithLibBasicCompletionTest>()) {
-            model("completion/basic/custom", recursive = false)
-        }
-
-        testClass(javaClass<AbstractBasicCompletionHandlerTest>()) {
-            model("completion/handlers/basic")
-        }
-
-        testClass(javaClass<AbstractSmartCompletionHandlerTest>()) {
-            model("completion/handlers/smart")
-        }
-
-        testClass(javaClass<AbstractKeywordCompletionHandlerTest>()) {
-            model("completion/handlers/keywords")
-        }
-
-        testClass(javaClass<AbstractCompletionCharFilterTest>()) {
-            model("completion/handlers/charFilter")
-        }
-
-        testClass(javaClass<AbstractCodeFragmentCompletionHandlerTest>()) {
-            model("completion/handlers/runtimeCast")
-        }
-
-        testClass(javaClass<AbstractCodeFragmentCompletionTest>()) {
-            model("completion/basic/codeFragments", extension = "kt")
-        }
-
-        testClass(javaClass<AbstractMultiFileJvmBasicCompletionTest>()) {
-            model("completion/basic/multifile", extension = null, recursive = false)
-        }
-        testClass(javaClass<AbstractMultiFileSmartCompletionTest>()) {
-            model("completion/smartMultiFile", extension = null, recursive = false)
-        }
-
         testClass(javaClass<AbstractGotoSuperTest>()) {
             model("navigation/gotoSuper", extension = "test")
         }
@@ -540,13 +488,6 @@ fun main(args: Array<String>) {
             model("refactoring/move", extension = "test", singleClass = true)
         }
 
-        testClass(javaClass<AbstractBasicCompletionWeigherTest>()) {
-            model("completion/weighers/basic", pattern = """^([^\.]+)\.kt$""")
-        }
-        testClass(javaClass<AbstractSmartCompletionWeigherTest>()) {
-            model("completion/weighers/smart", pattern = """^([^\.]+)\.kt$""")
-        }
-
         testClass(javaClass<AbstractConfigureProjectByChangingFileTest>()) {
             model("configuration/android-gradle", pattern = """(\w+)_before\.gradle$""", testMethod = "doTestAndroidGradle")
             model("configuration/gradle", pattern = """(\w+)_before\.gradle$""", testMethod = "doTestGradle")
@@ -609,14 +550,6 @@ fun main(args: Array<String>) {
         }
         testClass(javaClass<AbstractAddImportTest>()) {
             model("addImport", pattern = """^([^\.]+)\.kt$""")
-        }
-
-        testClass(javaClass<AbstractCompiledKotlinInJavaCompletionTest>()) {
-            model("completion/injava", extension = "java")
-        }
-
-        testClass(javaClass<AbstractKotlinSourceInJavaCompletionTest>()) {
-            model("completion/injava", extension = "java")
         }
 
         testClass(javaClass<AbstractSmartSelectionTest>()) {
@@ -695,15 +628,90 @@ fun main(args: Array<String>) {
         testClass(javaClass<AbstractKDocHighlightingTest>()) {
             model("kdoc/highlighting")
         }
-
-        testClass<AbstractJvmBasicCompletionTest>("org.jetbrains.kotlin.idea.kdoc.KDocCompletionTestGenerated") {
-            model("kdoc/completion")
-        }
     }
 
     testGroup("idea/tests", "compiler/testData") {
         testClass(javaClass<AbstractResolveByStubTest>()) {
             model("loadJava/compiledKotlin")
+        }
+    }
+
+    testGroup("idea/idea-completion/tests", "idea/idea-completion/testData") {
+        testClass(javaClass<AbstractCompiledKotlinInJavaCompletionTest>()) {
+            model("injava", extension = "java")
+        }
+
+        testClass(javaClass<AbstractKotlinSourceInJavaCompletionTest>()) {
+            model("injava", extension = "java")
+        }
+
+        testClass(javaClass<AbstractBasicCompletionWeigherTest>()) {
+            model("weighers/basic", pattern = """^([^\.]+)\.kt$""")
+        }
+
+        testClass(javaClass<AbstractSmartCompletionWeigherTest>()) {
+            model("weighers/smart", pattern = """^([^\.]+)\.kt$""")
+        }
+
+        testClass(javaClass<AbstractJSBasicCompletionTest>()) {
+            model("basic/common")
+            model("basic/js")
+        }
+
+        testClass(javaClass<AbstractJvmBasicCompletionTest>()) {
+            model("basic/common")
+            model("basic/java")
+        }
+
+        testClass(javaClass<AbstractJvmSmartCompletionTest>()) {
+            model("smart")
+        }
+
+        testClass(javaClass<AbstractKeywordCompletionTest>()) {
+            model("keywords", recursive = false)
+        }
+
+        testClass(javaClass<AbstractJvmWithLibBasicCompletionTest>()) {
+            model("basic/custom", recursive = false)
+        }
+
+        testClass(javaClass<AbstractBasicCompletionHandlerTest>()) {
+            model("handlers/basic")
+        }
+
+        testClass(javaClass<AbstractSmartCompletionHandlerTest>()) {
+            model("handlers/smart")
+        }
+
+        testClass(javaClass<AbstractKeywordCompletionHandlerTest>()) {
+            model("handlers/keywords")
+        }
+
+        testClass(javaClass<AbstractCompletionCharFilterTest>()) {
+            model("handlers/charFilter")
+        }
+
+        testClass(javaClass<AbstractMultiFileJvmBasicCompletionTest>()) {
+            model("basic/multifile", extension = null, recursive = false)
+        }
+
+        testClass(javaClass<AbstractMultiFileSmartCompletionTest>()) {
+            model("smartMultiFile", extension = null, recursive = false)
+        }
+
+        testClass<AbstractJvmBasicCompletionTest>("org.jetbrains.kotlin.idea.completion.test.KDocCompletionTestGenerated") {
+            model("kdoc")
+        }
+    }
+
+    //TODO: move these tests into idea-completion module
+    testGroup("idea/tests", "idea/idea-completion/testData") {
+        testClass(javaClass<AbstractCodeFragmentCompletionHandlerTest>()) {
+            model("handlers/runtimeCast")
+        }
+
+        testClass(javaClass<AbstractCodeFragmentCompletionTest>()) {
+            model("basic/codeFragments", extension = "kt")
         }
     }
 

@@ -16,35 +16,29 @@
 
 package org.jetbrains.kotlin.idea.debugger.evaluate
 
-import org.jetbrains.kotlin.checkers.AbstractJetPsiCheckerTest
-import org.jetbrains.kotlin.completion.AbstractJvmBasicCompletionTest
-import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
-import com.intellij.openapi.util.io.FileUtil
-import java.io.File
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.idea.util.ImportInsertHelper
-import org.jetbrains.kotlin.psi.JetFile
-import com.intellij.openapi.application.ApplicationManager
-import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.psi.JetCodeFragment
-import org.jetbrains.kotlin.psi.JetTypeReference
-import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.completion.ExpectedCompletionUtils
-import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.kotlin.completion.handlers.AbstractCompletionHandlerTest
 import com.intellij.codeInsight.completion.CompletionType
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.PsiElement
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
+import org.jetbrains.kotlin.checkers.AbstractJetPsiCheckerTest
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.completion.test.AbstractJvmBasicCompletionTest
+import org.jetbrains.kotlin.idea.completion.test.ExpectedCompletionUtils
+import org.jetbrains.kotlin.idea.completion.test.handlers.AbstractCompletionHandlerTest
+import org.jetbrains.kotlin.idea.util.ImportInsertHelper
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.JetModuleUtil
 import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver
-import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver.LookupMode
-import org.jetbrains.kotlin.idea.caches.resolve.*
-import com.intellij.psi.*
-import com.intellij.psi.util.PsiModificationTracker
-import com.intellij.psi.impl.PsiModificationTrackerImpl
-import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.JetTestUtils
+import java.io.File
 import kotlin.test.fail
 
 public abstract class AbstractCodeFragmentHighlightingTest : AbstractJetPsiCheckerTest() {

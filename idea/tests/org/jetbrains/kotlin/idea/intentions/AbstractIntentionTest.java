@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.idea.util.application.ApplicationPackage;
 import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.test.ConfigLibraryUtil;
+import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.junit.Assert;
 

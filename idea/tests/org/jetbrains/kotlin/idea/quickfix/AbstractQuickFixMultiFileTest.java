@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils;
 import org.jetbrains.kotlin.idea.KotlinDaemonAnalyzerTestCase;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.test.ConfigLibraryUtil;
+import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.JetTestUtils;
 

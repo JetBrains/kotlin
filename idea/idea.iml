@@ -47,5 +47,6 @@
     <orderEntry type="module" module-name="android-idea-plugin" scope="TEST" />
     <orderEntry type="library" name="markdown" level="project" />
     <orderEntry type="module" module-name="idea-completion" scope="TEST" />
+    <orderEntry type="module" module-name="idea-test-framework" scope="TEST" />
   </component>
 </module>

@@ -23,11 +23,11 @@
     </option>
     <envs />
     <patterns>
-      <pattern testClass="org.jetbrains.kotlin.completion.JvmSmartCompletionTestGenerated" />
-      <pattern testClass="org.jetbrains.kotlin.completion.handlers.SmartCompletionHandlerTestGenerated" />
-      <pattern testClass="org.jetbrains.kotlin.completion.handlers.SmartCompletionMultifileHandlerTest" />
-      <pattern testClass="org.jetbrains.kotlin.completion.weighers.SmartCompletionWeigherTestGenerated" />
-      <pattern testClass="org.jetbrains.kotlin.completion.MultiFileSmartCompletionTestGenerated" />
+      <pattern testClass="org.jetbrains.kotlin.idea.completion.test.JvmSmartCompletionTestGenerated" />
+      <pattern testClass="org.jetbrains.kotlin.idea.completion.test.handlers.SmartCompletionHandlerTestGenerated" />
+      <pattern testClass="org.jetbrains.kotlin.idea.completion.test.handlers.SmartCompletionMultifileHandlerTest" />
+      <pattern testClass="org.jetbrains.kotlin.idea.completion.test.weighers.SmartCompletionWeigherTestGenerated" />
+      <pattern testClass="org.jetbrains.kotlin.idea.completion.test.MultiFileSmartCompletionTestGenerated" />
     </patterns>
     <RunnerSettings RunnerId="Debug">
       <option name="DEBUG_PORT" value="" />

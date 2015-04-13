@@ -33,6 +33,7 @@
       <module fileurl="file://$PROJECT_DIR$/idea/idea-core/idea-core.iml" filepath="$PROJECT_DIR$/idea/idea-core/idea-core.iml" group="ide" />
       <module fileurl="file://$PROJECT_DIR$/idea/idea-jps-common/idea-jps-common.iml" filepath="$PROJECT_DIR$/idea/idea-jps-common/idea-jps-common.iml" group="ide" />
       <module fileurl="file://$PROJECT_DIR$/idea-runner/idea-runner.iml" filepath="$PROJECT_DIR$/idea-runner/idea-runner.iml" group="ide" />
+      <module fileurl="file://$PROJECT_DIR$/idea/idea-test-framework/idea-test-framework.iml" filepath="$PROJECT_DIR$/idea/idea-test-framework/idea-test-framework.iml" group="ide" />
       <module fileurl="file://$PROJECT_DIR$/generators/injector-generator/injector-generator.iml" filepath="$PROJECT_DIR$/generators/injector-generator/injector-generator.iml" group="infrastructure" />
       <module fileurl="file://$PROJECT_DIR$/compiler/preloader/instrumentation/instrumentation.iml" filepath="$PROJECT_DIR$/compiler/preloader/instrumentation/instrumentation.iml" group="compiler/cli" />
       <module fileurl="file://$PROJECT_DIR$/j2k/j2k.iml" filepath="$PROJECT_DIR$/j2k/j2k.iml" group="j2k" />

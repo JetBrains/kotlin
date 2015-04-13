@@ -22,10 +22,11 @@ import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.test.AstAccessControl;
 import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor;
 import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
-import org.jetbrains.kotlin.idea.testUtils.TestUtilsPackage;
+import org.jetbrains.kotlin.idea.test.TestPackage;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator;
@@ -43,7 +44,7 @@ public abstract class AbstractResolveByStubTest extends KotlinCodeInsightTestCas
     private void doTest(@NotNull final String path, final boolean checkPrimaryConstructors, final boolean checkPropertyAccessors)
             throws Exception {
         configureByFile(path);
-        TestUtilsPackage.configureAs(getModule(), JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE);
+        TestPackage.configureAs(getModule(), JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE);
         boolean shouldFail = getTestName(false).equals("ClassWithConstVal");
         AstAccessControl.INSTANCE$.testWithControlledAccessToAst(
                 shouldFail, getProject(), getTestRootDisposable(),

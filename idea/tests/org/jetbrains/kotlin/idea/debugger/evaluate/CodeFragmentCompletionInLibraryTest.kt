@@ -16,25 +16,25 @@
 
 package org.jetbrains.kotlin.idea.debugger.evaluate
 
-import org.jetbrains.kotlin.completion.AbstractJvmBasicCompletionTest
+import com.intellij.codeInsight.completion.CompletionType
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.roots.ContentEntry
+import com.intellij.openapi.roots.ModifiableRootModel
+import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
+import org.jetbrains.kotlin.idea.completion.test.AbstractJvmBasicCompletionTest
+import org.jetbrains.kotlin.idea.completion.test.testCompletion
+import org.jetbrains.kotlin.idea.project.TargetPlatform
+import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetFunction
 import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.completion.util.testCompletion
-import org.jetbrains.kotlin.idea.project.TargetPlatform
-import com.intellij.codeInsight.completion.CompletionType
-import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import com.intellij.openapi.module.Module
-import com.intellij.openapi.roots.ModifiableRootModel
-import com.intellij.openapi.roots.ContentEntry
+import org.jetbrains.kotlin.test.JetTestUtils
 import java.io.File
-import com.intellij.openapi.roots.OrderRootType
-import com.intellij.openapi.vfs.VirtualFile
 
-private val LIBRARY_SRC_PATH = PluginTestCaseBase.getTestDataPathBase() + "/completion/codeFragmentInLibrarySource/customLibrary/"
+private val LIBRARY_SRC_PATH = JetTestUtils.getHomeDirectory() + "/idea/idea-completion/testData/codeFragmentInLibrarySource/customLibrary/"
 
 public class CodeFragmentCompletionInLibraryTest : AbstractJvmBasicCompletionTest() {
 

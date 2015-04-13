@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.idea.test.ProjectDescriptorWithStdlibSources;
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.test.ConfigLibraryUtil;
+import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.MockLibraryUtil;
 
