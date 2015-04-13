@@ -149,7 +149,7 @@ public abstract class LazyJavaMemberScope(
     protected fun computeMethodReturnType(method: JavaMethod, annotations: Annotations, c: LazyJavaResolverContext): JetType {
         val annotationMethod = method.getContainingClass().isAnnotationType()
         val returnTypeAttrs = LazyJavaTypeAttributes(
-                c, method, TypeUsage.MEMBER_SIGNATURE_COVARIANT, annotations,
+                TypeUsage.MEMBER_SIGNATURE_COVARIANT, annotations,
                 allowFlexible = !annotationMethod,
                 isForAnnotationParameter = annotationMethod
         )
@@ -172,7 +172,7 @@ public abstract class LazyJavaMemberScope(
             val (index, javaParameter) = pair
 
             val annotations = c.resolveAnnotations(javaParameter)
-            val typeUsage = LazyJavaTypeAttributes(c, javaParameter, TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT, annotations)
+            val typeUsage = LazyJavaTypeAttributes(TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT, annotations)
             val (outType, varargElementType) =
                     if (javaParameter.isVararg()) {
                         val paramType = javaParameter.getType() as? JavaArrayType
@@ -282,7 +282,7 @@ public abstract class LazyJavaMemberScope(
         val allowFlexible = PLATFORM_TYPES && !(finalStatic && c.javaPropertyInitializerEvaluator.isNotNullCompileTimeConstant(field))
         val propertyType = c.typeResolver.transformJavaType(
                 field.getType(),
-                LazyJavaTypeAttributes(c, field, TypeUsage.MEMBER_SIGNATURE_INVARIANT, annotations, allowFlexible)
+                LazyJavaTypeAttributes(TypeUsage.MEMBER_SIGNATURE_INVARIANT, annotations, allowFlexible)
         )
         if ((!allowFlexible || !PLATFORM_TYPES) && finalStatic) {
             return TypeUtils.makeNotNullable(propertyType)

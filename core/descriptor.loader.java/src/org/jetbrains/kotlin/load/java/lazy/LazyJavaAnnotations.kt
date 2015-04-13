@@ -21,10 +21,11 @@ import org.jetbrains.kotlin.load.java.lazy.descriptors.resolveAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotationOwner
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 class LazyJavaAnnotations(
         private val c: LazyJavaResolverContext,
-        val annotationOwner: JavaAnnotationOwner
+        private val annotationOwner: JavaAnnotationOwner
 ) : Annotations {
     private val annotationDescriptors = c.storageManager.createMemoizedFunctionWithNullableValues {
         annotation: JavaAnnotation ->
@@ -34,6 +35,26 @@ class LazyJavaAnnotations(
     override fun findAnnotation(fqName: FqName) = annotationOwner.findAnnotation(fqName)?.let(annotationDescriptors)
 
     override fun iterator() = annotationOwner.getAnnotations().sequence().map(annotationDescriptors).filterNotNull().iterator()
+
+    override fun isEmpty() = !iterator().hasNext()
+}
+
+class FilteredAnnotations(
+        private val delegate: Annotations,
+        private val fqNameFilter: (FqName) -> Boolean
+) : Annotations {
+    override fun findAnnotation(fqName: FqName) =
+            if (fqNameFilter(fqName)) delegate.findAnnotation(fqName)
+            else null
+
+    override fun iterator() = delegate.sequence()
+            .filter { annotation ->
+                val descriptor = annotation.getType().getConstructor().getDeclarationDescriptor()
+                descriptor != null && DescriptorUtils.getFqName(descriptor).let { fqName ->
+                    fqName.isSafe() && fqNameFilter(fqName.toSafe())
+                }
+            }
+            .iterator()
 
     override fun isEmpty() = !iterator().hasNext()
 }

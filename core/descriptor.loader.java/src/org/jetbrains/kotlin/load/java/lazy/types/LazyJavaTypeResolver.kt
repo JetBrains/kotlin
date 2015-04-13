@@ -20,10 +20,10 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames.*
 import org.jetbrains.kotlin.load.java.components.TypeUsage
 import org.jetbrains.kotlin.load.java.components.TypeUsage.*
+import org.jetbrains.kotlin.load.java.lazy.FilteredAnnotations
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.lazy.TypeParameterResolver
 import org.jetbrains.kotlin.load.java.lazy.types.JavaTypeFlexibility.FLEXIBLE_LOWER_BOUND
@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.resolve.jvm.PLATFORM_TYPES
 import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.storage.get
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.Variance.INVARIANT
 import org.jetbrains.kotlin.types.Variance.IN_VARIANCE
@@ -364,35 +363,26 @@ enum class JavaTypeFlexibility {
 }
 
 class LazyJavaTypeAttributes(
-        c: LazyJavaResolverContext,
-        val annotationOwner: JavaAnnotationOwner,
         override val howThisTypeIsUsed: TypeUsage,
         annotations: Annotations,
         override val allowFlexible: Boolean = true,
         override val isForAnnotationParameter: Boolean = false
 ): JavaTypeAttributes {
-    override val typeAnnotations: Annotations by c.storageManager.createLazyValue {
-        AnnotationsImpl(JvmAnnotationNames.ANNOTATIONS_COPIED_TO_TYPES.map { fqName ->
-            annotations.findAnnotation(fqName)
-        }.filterNotNull())
-    }
+    override val typeAnnotations = FilteredAnnotations(annotations) { it in ANNOTATIONS_COPIED_TO_TYPES }
 
-    override val howThisTypeIsUsedAccordingToAnnotations: TypeUsage by c.storageManager.createLazyValue {
-        if (annotations.isMarkedReadOnly() && !annotations.isMarkedMutable())
-            TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT
-        else
-            TypeUsage.MEMBER_SIGNATURE_COVARIANT
-    }
+    override val howThisTypeIsUsedAccordingToAnnotations: TypeUsage get() =
+            if (hasAnnotation(JETBRAINS_READONLY_ANNOTATION) && !hasAnnotation(JETBRAINS_MUTABLE_ANNOTATION))
+                TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT
+            else
+                TypeUsage.MEMBER_SIGNATURE_COVARIANT
 
-    override val isMarkedNotNull: Boolean by c.storageManager.createLazyValue {
-        annotationOwner.findAnnotation(JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION) != null
-    }
+    override val isMarkedNotNull: Boolean get() = typeAnnotations.isMarkedNotNull()
+
+    private fun hasAnnotation(fqName: FqName) = typeAnnotations.findAnnotation(fqName) != null
 }
 
-private fun Annotations.isMarkedReadOnly() = findAnnotation(JvmAnnotationNames.JETBRAINS_READONLY_ANNOTATION) != null
-private fun Annotations.isMarkedMutable() = findAnnotation(JvmAnnotationNames.JETBRAINS_MUTABLE_ANNOTATION) != null
-internal fun Annotations.isMarkedNotNull() = findAnnotation(JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION) != null
-internal fun Annotations.isMarkedNullable() = findAnnotation(JvmAnnotationNames.JETBRAINS_NULLABLE_ANNOTATION) != null
+internal fun Annotations.isMarkedNotNull() = findAnnotation(JETBRAINS_NOT_NULL_ANNOTATION) != null
+internal fun Annotations.isMarkedNullable() = findAnnotation(JETBRAINS_NULLABLE_ANNOTATION) != null
 
 fun TypeUsage.toAttributes(allowFlexible: Boolean = true, isForAnnotationParameter: Boolean = false) = object : JavaTypeAttributes {
     override val howThisTypeIsUsed: TypeUsage = this@toAttributes
