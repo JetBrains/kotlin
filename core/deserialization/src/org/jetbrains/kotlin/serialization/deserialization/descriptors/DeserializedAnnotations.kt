@@ -16,13 +16,13 @@
 
 package org.jetbrains.kotlin.serialization.deserialization.descriptors
 
-import org.jetbrains.kotlin.utils.toReadOnlyList
-import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.utils.toReadOnlyList
 
 class DeserializedAnnotations(
         storageManager: StorageManager,
@@ -32,11 +32,13 @@ class DeserializedAnnotations(
 
     override fun isEmpty(): Boolean = annotations().isEmpty()
 
-    override fun findAnnotation(fqName: FqName): AnnotationDescriptor? = annotations().firstOrNull {
+    override fun findAnnotation(fqName: FqName) = annotations().firstOrNull {
         annotation ->
         val descriptor = annotation.getType().getConstructor().getDeclarationDescriptor()
         descriptor is ClassDescriptor && fqName.equalsTo(DescriptorUtils.getFqName(descriptor))
     }
+
+    override fun findExternalAnnotation(fqName: FqName) = null
 
     override fun iterator(): Iterator<AnnotationDescriptor> = annotations().iterator()
 }

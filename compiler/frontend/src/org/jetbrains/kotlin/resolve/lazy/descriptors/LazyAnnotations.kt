@@ -16,20 +16,20 @@
 
 package org.jetbrains.kotlin.resolve.lazy.descriptors
 
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.resolve.lazy.LazyEntity
-import org.jetbrains.kotlin.psi.JetAnnotationEntry
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.JetAnnotationEntry
+import org.jetbrains.kotlin.resolve.AnnotationResolver
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
-import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.resolve.AnnotationResolver
-import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.lazy.LazyEntity
 import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.storage.StorageManager
 
 abstract class LazyAnnotationsContext(
          val annotationResolver: AnnotationResolver,
@@ -75,9 +75,9 @@ public class LazyAnnotations(
         return null
     }
 
-    override fun iterator(): Iterator<AnnotationDescriptor> {
-        return annotationEntries.stream().map(annotation).iterator()
-    }
+    override fun findExternalAnnotation(fqName: FqName) = null
+
+    override fun iterator(): Iterator<AnnotationDescriptor> = annotationEntries.sequence().map(annotation).iterator()
 
     override fun forceResolveAllContents() {
         // To resolve all entries

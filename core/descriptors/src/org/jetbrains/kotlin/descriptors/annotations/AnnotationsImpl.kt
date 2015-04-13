@@ -16,27 +16,21 @@
 
 package org.jetbrains.kotlin.descriptors.annotations
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 
-public trait Annotations : Iterable<AnnotationDescriptor> {
+public class AnnotationsImpl(private val annotations: List<AnnotationDescriptor>) : Annotations {
+    override fun isEmpty() = annotations.isEmpty()
 
-    public fun isEmpty(): Boolean
-
-    public fun findAnnotation(fqName: FqName): AnnotationDescriptor?
-
-    public fun findExternalAnnotation(fqName: FqName): AnnotationDescriptor?
-
-    companion object {
-        public val EMPTY: Annotations = object : Annotations {
-            override fun isEmpty() = true
-
-            override fun findAnnotation(fqName: FqName) = null
-
-            override fun findExternalAnnotation(fqName: FqName) = null
-
-            override fun iterator() = emptyList<AnnotationDescriptor>().iterator()
-
-            override fun toString() = "EMPTY"
-        }
+    override fun findAnnotation(fqName: FqName) = annotations.firstOrNull {
+        val descriptor = it.getType().getConstructor().getDeclarationDescriptor()
+        descriptor is ClassDescriptor && fqName.toUnsafe() == DescriptorUtils.getFqName(descriptor)
     }
+
+    override fun findExternalAnnotation(fqName: FqName) = null
+
+    override fun iterator() = annotations.iterator()
+
+    override fun toString() = annotations.toString()
 }

@@ -32,9 +32,14 @@ class LazyJavaAnnotations(
         c.resolveAnnotation(annotation)
     }
 
-    override fun findAnnotation(fqName: FqName) = annotationOwner.findAnnotation(fqName)?.let(annotationDescriptors)
+    override fun findAnnotation(fqName: FqName) =
+            annotationOwner.findAnnotation(fqName)?.let(annotationDescriptors)
 
-    override fun iterator() = annotationOwner.getAnnotations().sequence().map(annotationDescriptors).filterNotNull().iterator()
+    override fun findExternalAnnotation(fqName: FqName) =
+            c.externalAnnotationResolver.findExternalAnnotation(annotationOwner, fqName)?.let(annotationDescriptors)
+
+    override fun iterator() =
+            annotationOwner.getAnnotations().sequence().map(annotationDescriptors).filterNotNull().iterator()
 
     override fun isEmpty() = !iterator().hasNext()
 }
@@ -45,6 +50,10 @@ class FilteredAnnotations(
 ) : Annotations {
     override fun findAnnotation(fqName: FqName) =
             if (fqNameFilter(fqName)) delegate.findAnnotation(fqName)
+            else null
+
+    override fun findExternalAnnotation(fqName: FqName) =
+            if (fqNameFilter(fqName)) delegate.findExternalAnnotation(fqName)
             else null
 
     override fun iterator() = delegate.sequence()
