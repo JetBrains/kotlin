@@ -20,9 +20,7 @@ import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.scopes.*;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
@@ -37,20 +35,16 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
     private final ClassKind kind;
     private final boolean isInner;
 
-    private Annotations annotations;
     private Modality modality;
     private Visibility visibility;
     private TypeConstructor typeConstructor;
     private List<TypeParameterDescriptor> typeParameters;
     private Collection<JetType> supertypes = new ArrayList<JetType>();
 
-    private MutableClassDescriptor companionObjectDescriptor;
-
     private final Set<ConstructorDescriptor> constructors = Sets.newLinkedHashSet();
     private ConstructorDescriptor primaryConstructor;
 
     private final Set<CallableMemberDescriptor> declaredCallableMembers = Sets.newLinkedHashSet();
-    private final Set<CallableMemberDescriptor> allCallableMembers = Sets.newLinkedHashSet(); // includes fake overrides
     private final Set<PropertyDescriptor> properties = Sets.newLinkedHashSet();
     private final Set<SimpleFunctionDescriptor> functions = Sets.newLinkedHashSet();
 
@@ -95,28 +89,13 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
     @Nullable
     @Override
     public MutableClassDescriptor getCompanionObjectDescriptor() {
-        return companionObjectDescriptor;
-    }
-
-    public void setCompanionObjectDescriptor(@NotNull MutableClassDescriptor classObjectDescriptor) {
-        assert this.companionObjectDescriptor == null : "classObjectDescriptor already assigned in " + this;
-        this.companionObjectDescriptor = classObjectDescriptor;
+        return null;
     }
 
     @NotNull
     @Override
     public Annotations getAnnotations() {
-        if (annotations == null) {
-            annotations = new AnnotationsImpl(new ArrayList<AnnotationDescriptor>(0));
-        }
-        return annotations;
-    }
-
-    public void addAnnotations(@NotNull Iterable<AnnotationDescriptor> annotationsToAdd) {
-        List<AnnotationDescriptor> annotations = ((AnnotationsImpl) getAnnotations()).getAnnotationDescriptors();
-        for (AnnotationDescriptor annotationDescriptor : annotationsToAdd) {
-            annotations.add(annotationDescriptor);
-        }
+        return Annotations.EMPTY;
     }
 
     public void setModality(@NotNull Modality modality) {
@@ -152,7 +131,6 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
 
     @Override
     public boolean isCompanionObject() {
-        //TODO:
         return false;
     }
 
@@ -197,13 +175,6 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
         }
     }
 
-    public void addConstructorParametersToInitializersScope(@NotNull Collection<? extends VariableDescriptor> variables) {
-        WritableScope scope = getWritableScopeForInitializers();
-        for (VariableDescriptor variable : variables) {
-            scope.addVariableDescriptor(variable);
-        }
-    }
-
     @NotNull
     @Override
     public Set<ConstructorDescriptor> getConstructors() {
@@ -232,11 +203,6 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
         return declaredCallableMembers;
     }
 
-    @NotNull
-    public Set<CallableMemberDescriptor> getAllCallableMembers() {
-        return allCallableMembers;
-    }
-
     public void setTypeParameterDescriptors(@NotNull List<TypeParameterDescriptor> typeParameters) {
         if (this.typeParameters != null) {
             throw new IllegalStateException("Type parameters are already set for " + getName());
@@ -252,7 +218,7 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
         assert typeConstructor == null : typeConstructor;
         this.typeConstructor = TypeConstructorImpl.createForClass(
                 this,
-                Annotations.EMPTY, // TODO : pass annotations from the class?
+                Annotations.EMPTY,
                 !getModality().isOverridable(),
                 getName().asString(),
                 typeParameters,
@@ -306,25 +272,9 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
     }
 
     @NotNull
-    private WritableScope getScopeForMemberLookupAsWritableScope() {
-        // hack
-        return (WritableScope) scopeForMemberLookup;
-    }
-
-    @NotNull
     @Override
     public JetScope getStaticScope() {
         return staticScope;
-    }
-
-    public void lockScopes() {
-        getScopeForMemberLookupAsWritableScope().changeLockLevel(WritableScope.LockLevel.READING);
-        if (companionObjectDescriptor != null) {
-            companionObjectDescriptor.lockScopes();
-        }
-        scopeForSupertypeResolution.changeLockLevel(WritableScope.LockLevel.READING);
-        scopeForMemberResolution.changeLockLevel(WritableScope.LockLevel.READING);
-        getWritableScopeForInitializers().changeLockLevel(WritableScope.LockLevel.READING);
     }
 
     @Override
