@@ -17,7 +17,7 @@
 package kotlin
 
 /**
- * Concatenates this Char and a String
+ * Concatenates this Char and a String.
  */
 public fun Char.plus(string: String) : String = this.toString() + string
 
@@ -51,25 +51,42 @@ public fun Char.isHighSurrogate(): Boolean = this in Char.MIN_HIGH_SURROGATE..Ch
 public fun Char.isLowSurrogate(): Boolean = this in Char.MIN_LOW_SURROGATE..Char.MAX_LOW_SURROGATE
 
 /**
- * The minimum value of a Unicode high-surrogate code unit
+ * Returns `true` if this character is a Unicode surrogate code unit.
+ */
+public fun Char.isSurrogate(): Boolean = this in Char.MIN_SURROGATE..Char.MAX_SURROGATE
+
+/**
+ * The minimum value of a Unicode high-surrogate code unit.
  */
 public val Char.Companion.MIN_HIGH_SURROGATE: Char
     get() = '\uD800'
 
 /**
- * The maximum value of a Unicode high-surrogate code unit
+ * The maximum value of a Unicode high-surrogate code unit.
  */
 public val Char.Companion.MAX_HIGH_SURROGATE: Char
     get() = '\uDBFF'
 
 /**
- * The minimum value of a Unicode low-surrogate code unit
+ * The minimum value of a Unicode low-surrogate code unit.
  */
 public val Char.Companion.MIN_LOW_SURROGATE: Char
     get() = '\uDC00'
 
 /**
- * The maximum value of a Unicode low-surrogate code unit
+ * The maximum value of a Unicode low-surrogate code unit.
  */
 public val Char.Companion.MAX_LOW_SURROGATE: Char
     get() = '\uDFFF'
+
+/**
+ * The minimum value of a Unicode surrogate code unit.
+ */
+public val Char.Companion.MIN_SURROGATE: Char
+    get() = MIN_HIGH_SURROGATE
+
+/**
+ * The maximum value of a Unicode surrogate code unit.
+ */
+public val Char.Companion.MAX_SURROGATE: Char
+    get() = MAX_LOW_SURROGATE
