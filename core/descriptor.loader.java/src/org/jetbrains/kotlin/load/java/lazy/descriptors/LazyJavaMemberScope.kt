@@ -16,36 +16,37 @@
 
 package org.jetbrains.kotlin.load.java.lazy.descriptors
 
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.storage.NotNullLazyValue
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.load.java.structure.JavaMethod
-import org.jetbrains.kotlin.load.java.structure.JavaField
-import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
-import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.load.java.lazy.child
-import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
-import org.jetbrains.kotlin.load.java.lazy.resolveAnnotations
-import org.jetbrains.kotlin.load.java.structure.JavaArrayType
-import org.jetbrains.kotlin.load.java.components.TypeUsage
-import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.load.java.lazy.hasNotNullAnnotation
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
+import org.jetbrains.kotlin.load.java.components.ExternalSignatureResolver
+import org.jetbrains.kotlin.load.java.components.TypeUsage
+import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
+import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
+import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
+import org.jetbrains.kotlin.load.java.lazy.child
+import org.jetbrains.kotlin.load.java.lazy.resolveAnnotations
 import org.jetbrains.kotlin.load.java.lazy.types.LazyJavaTypeAttributes
+import org.jetbrains.kotlin.load.java.structure.JavaArrayType
+import org.jetbrains.kotlin.load.java.structure.JavaField
+import org.jetbrains.kotlin.load.java.structure.JavaMethod
 import org.jetbrains.kotlin.load.java.structure.JavaValueParameter
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.jvm.PLATFORM_TYPES
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude.NonExtensions
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.storage.NotNullLazyValue
+import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.utils.Printer
+import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.util.ArrayList
 import java.util.LinkedHashSet
-import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
-import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
-import org.jetbrains.kotlin.load.java.components.ExternalSignatureResolver
-import org.jetbrains.kotlin.utils.*
-import org.jetbrains.kotlin.resolve.jvm.PLATFORM_TYPES
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude.NonExtensions
 
 public abstract class LazyJavaMemberScope(
         protected val c: LazyJavaResolverContext,
@@ -167,26 +168,21 @@ public abstract class LazyJavaMemberScope(
             jValueParameters: List<JavaValueParameter>
     ): ResolvedValueParameters {
         var synthesizedNames = false
-        val descriptors = jValueParameters.withIndices().map { pair ->
+        val descriptors = jValueParameters.withIndex().map { pair ->
             val (index, javaParameter) = pair
 
             val annotations = c.resolveAnnotations(javaParameter)
             val typeUsage = LazyJavaTypeAttributes(c, javaParameter, TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT, annotations)
             val (outType, varargElementType) =
-                if (javaParameter.isVararg()) {
-                    val paramType = javaParameter.getType()
-                    assert (paramType is JavaArrayType) { "Vararg parameter should be an array: $paramType" }
-                    val arrayType = c.typeResolver.transformArrayType(paramType as JavaArrayType, typeUsage, true)
-                    val outType = if (PLATFORM_TYPES) arrayType else TypeUtils.makeNotNullable(arrayType)
-                    outType to KotlinBuiltIns.getInstance().getArrayElementType(outType)
-                }
-                else {
-                    val jetType = c.typeResolver.transformJavaType(javaParameter.getType(), typeUsage)
-                    if (!PLATFORM_TYPES && jetType.isMarkedNullable() && c.hasNotNullAnnotation(javaParameter))
-                        TypeUtils.makeNotNullable(jetType) to null
-                    else
-                        jetType to null
-                }
+                    if (javaParameter.isVararg()) {
+                        val paramType = javaParameter.getType() as? JavaArrayType
+                                        ?: throw AssertionError("Vararg parameter should be an array: $javaParameter")
+                        val outType = c.typeResolver.transformArrayType(paramType, typeUsage, true)
+                        outType to KotlinBuiltIns.getInstance().getArrayElementType(outType)
+                    }
+                    else {
+                        c.typeResolver.transformJavaType(javaParameter.getType(), typeUsage) to null
+                    }
 
             val name = if (function.getName().asString() == "equals" &&
                            jValueParameters.size() == 1 &&
