@@ -361,6 +361,10 @@ class StringTest {
         assertEquals(listOf("abc", "def", "123", "456"), "abc<BR>def<br>123<bR>456".splitBy("<BR>", ignoreCase = true))
 
         assertEquals(listOf("abc", "def", "123", "456"), "abc=-def==123=456".splitBy("==", "=-", "="))
+
+        assertEquals(listOf("", "a", "b", "c", ""), "abc".splitBy(""))
+        assertEquals(listOf("", "a", "b", "b", "a", ""), "abba".splitBy("", "a"))
+        assertEquals(listOf("", "", "b", "b", "", ""), "abba".splitBy("a", ""))
     }
 
     test fun splitToLines() {
@@ -536,5 +540,7 @@ class StringTest {
 
         assertEquals("${'$'}bAb", input.replace("ab", "$"))
         assertEquals("/b/", input.replace("ab", "/", ignoreCase = true))
+
+        assertEquals("-a-b-b-A-b-", input.replace("", "-"))
     }
 }

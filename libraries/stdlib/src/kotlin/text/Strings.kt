@@ -643,7 +643,7 @@ private fun String.findAnyOf(strings: Collection<String>, startIndex: Int, ignor
         return if (index < 0) null else index to string
     }
 
-    val indices = if (!last) Math.max(startIndex, 0)..lastIndex else Math.min(startIndex, lastIndex) downTo 0
+    val indices = if (!last) Math.max(startIndex, 0)..length() else Math.min(startIndex, lastIndex) downTo 0
     for (index in indices) {
         val matchingString = strings.firstOrNull { it.regionMatches(0, this, index, it.length(), ignoreCase) }
         if (matchingString != null)
@@ -794,29 +794,31 @@ private class DelimitedRangesSequence(private val string: String, private val st
     override fun iterator(): Iterator<IntRange> = object : Iterator<IntRange> {
         var nextState: Int = -1 // -1 for unknown, 0 for done, 1 for continue
         var currentStartIndex: Int = Math.min(Math.max(startIndex, 0), string.length())
+        var nextSearchIndex: Int = currentStartIndex
         var nextItem: IntRange? = null
         var counter: Int = 0
 
         private fun calcNext() {
-            if (currentStartIndex < 0) {
+            if (nextSearchIndex < 0) {
                 nextState = 0
                 nextItem = null
             }
             else {
-                if (limit > 0 && ++counter >= limit) {
+                if (limit > 0 && ++counter >= limit || nextSearchIndex > string.length()) {
                     nextItem = currentStartIndex..string.lastIndex
-                    currentStartIndex = -1
+                    nextSearchIndex = -1
                 }
                 else {
-                    val match = string.getNextMatch(currentStartIndex)
+                    val match = string.getNextMatch(nextSearchIndex)
                     if (match == null) {
                         nextItem = currentStartIndex..string.lastIndex
-                        currentStartIndex = -1
+                        nextSearchIndex = -1
                     }
                     else {
                         val (index,length) = match
                         nextItem = currentStartIndex..index-1
                         currentStartIndex = index + length
+                        nextSearchIndex = currentStartIndex + if (length == 0) 1 else 0
                     }
                 }
                 nextState = 1
