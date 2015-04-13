@@ -89,7 +89,7 @@ public class JavaToKotlinAction : AnAction() {
 
             val newFiles = saveResults(javaFiles, converterResult!!.results.map { it!!.text /*conversion of a file always succeeds*/ })
 
-            externalCodeUpdate!!.invoke()
+            externalCodeUpdate?.invoke()
 
             newFiles.singleOrNull()?.let {
                 FileEditorManager.getInstance(project).openFile(it, true)
