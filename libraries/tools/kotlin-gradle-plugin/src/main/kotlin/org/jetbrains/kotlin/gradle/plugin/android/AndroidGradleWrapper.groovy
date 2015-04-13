@@ -4,6 +4,8 @@ import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.BasePlugin
 import com.android.build.gradle.api.ApkVariant
 import com.android.build.gradle.api.BaseVariant
+import com.android.build.gradle.api.TestVariant
+import org.gradle.api.internal.DefaultDomainObjectSet
 import org.gradle.api.tasks.util.PatternFilterable
 import org.jetbrains.annotations.NotNull
 
@@ -49,6 +51,14 @@ class AndroidGradleWrapper {
   @NotNull
   static def List<String> getProductFlavorsNames(ApkVariant variant) {
       return variant.getProductFlavors().iterator().collect { it.getName() }
+  }
+
+  @NotNull
+  static def DefaultDomainObjectSet<TestVariant> getTestVariants(BaseExtension extension) {
+    if (extension.getMetaClass().getMetaMethod("getTestVariants")) {
+      return extension.getTestVariants()
+    }
+    return Collections.emptyList()
   }
 
   @NotNull
