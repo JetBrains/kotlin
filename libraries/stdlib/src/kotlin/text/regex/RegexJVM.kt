@@ -88,7 +88,7 @@ public data class MatchGroup(public val value: String, public val range: IntRang
  *
  * For pattern syntax reference see [java.util.regex.Pattern]
  */
-public class Regex( /* visibility? */ public val nativePattern: Pattern) {
+public class Regex internal (private val nativePattern: Pattern) {
 
     /** Creates a regular expression from the specified [pattern] string and the specified set of [options].  */
     public constructor(pattern: String, options: Set<RegexOption>): this(Pattern.compile(pattern, ensureUnicodeCase(options.toInt())))
@@ -180,12 +180,19 @@ public class Regex( /* visibility? */ public val nativePattern: Pattern) {
     /** Returns the string representation of this regular expression, namely the [pattern] of this regular expression. */
     public override fun toString(): String = nativePattern.toString()
 
+    /**
+     * Returns an instance of [Pattern] with the same pattern string and options as this instance of [Regex] has.
+     *
+     * Provides the way to use [Regex] where [Pattern] is required.
+     */
+    public fun toPattern(): Pattern = nativePattern
+
     companion object {
         /** Returns a literal regex for the specified [literal] string. */
         public fun fromLiteral(literal: String): Regex = Regex(literal, RegexOption.LITERAL)
         /** Returns a literal pattern for the specified [literal] string. */
         public fun escape(literal: String): String = Pattern.quote(literal)
-        /** Returns a literal replacement exression for the specified [literal] string. */
+        /** Returns a literal replacement expression for the specified [literal] string. */
         public fun escapeReplacement(literal: String): String = Matcher.quoteReplacement(literal)
 
         private fun ensureUnicodeCase(flags: Int) = if (flags and Pattern.CASE_INSENSITIVE != 0) flags or Pattern.UNICODE_CASE else flags
@@ -193,8 +200,12 @@ public class Regex( /* visibility? */ public val nativePattern: Pattern) {
 
 }
 
-public fun Pattern.asRegex(): Regex = Regex(this)
-// TODO: function as/toPattern
+/**
+ * Converts this [Pattern] to an instance of [Regex].
+ *
+ * Provides the way to use Regex API on the instances of [Pattern].
+ */
+public fun Pattern.toRegex(): Regex = Regex(this)
 
 
 // implementation
@@ -203,8 +214,7 @@ private fun Matcher.findNext(from: Int): MatchResult? {
     if (!find(from))
         return null
 
-    // TODO: If we need MatchResult to be thread safe we must lock everything, or call this.toMatchResult early
-    var matchResult: java.util.regex.MatchResult = this
+    val matchResult = this.toMatchResult()
 
     return object: MatchResult {
         override val range: IntRange
@@ -229,11 +239,7 @@ private fun Matcher.findNext(from: Int): MatchResult? {
         }
 
 
-        override fun next(): MatchResult? {
-            if (this@findNext === matchResult)
-                matchResult = this@findNext.toMatchResult()
-            return this@findNext.findNext(matchResult.end())
-        }
+        override fun next(): MatchResult? = this@findNext.findNext(matchResult.end())
     }
 }
 
