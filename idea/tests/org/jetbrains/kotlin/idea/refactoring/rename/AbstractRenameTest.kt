@@ -16,37 +16,42 @@
 
 package org.jetbrains.kotlin.idea.refactoring.rename
 
-import com.intellij.openapi.util.io.FileUtil
-import java.io.File
-import org.junit.Assert
-import com.google.gson.JsonParser
 import com.google.gson.JsonObject
-import com.intellij.openapi.util.text.StringUtil
+import com.google.gson.JsonParser
+import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.PsiElement
+import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsException
 import com.intellij.refactoring.rename.RenameProcessor
 import com.intellij.refactoring.rename.RenamePsiElementProcessor
-import org.jetbrains.kotlin.psi.JetFile
-import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.JavaPsiFacade
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.module.Module
-import java.util.Collections
+import com.intellij.refactoring.rename.naming.AutomaticRenamerFactory
+import com.intellij.refactoring.util.CommonRefactoringUtil.RefactoringErrorHintException
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.idea.refactoring.move.getString
-import org.jetbrains.kotlin.idea.refactoring.move.getNullableString
-import org.jetbrains.kotlin.idea.search.allScope
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsException
-import com.intellij.refactoring.util.CommonRefactoringUtil.RefactoringErrorHintException
-import org.jetbrains.kotlin.idea.test.KotlinMultiFileTestCase
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
-import org.jetbrains.kotlin.name.*
-import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
+import org.jetbrains.kotlin.idea.refactoring.move.getNullableString
+import org.jetbrains.kotlin.idea.refactoring.move.getString
+import org.jetbrains.kotlin.idea.search.allScope
+import org.jetbrains.kotlin.idea.test.KotlinMultiFileTestCase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqNameUnsafe
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.isSubpackageOf
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
+import org.junit.Assert
+import java.io.File
+import java.util.Collections
 
 private enum class RenameType {
     JAVA_CLASS
@@ -110,7 +115,7 @@ public abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
             val aClass = context.javaFacade.findClass(classFQN, context.project.allScope())!!
             val substitution = RenamePsiElementProcessor.forElement(aClass).substituteElementToRename(aClass, null)
 
-            RenameProcessor(context.project, substitution, newName, true, true).run()
+            runRenameProcessor(context, newName, substitution, true, true)
         }
     }
 
@@ -128,7 +133,7 @@ public abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
             if (method == null) throw IllegalStateException("Method with signature '$methodSignature' wasn't found in class $classFQN")
 
             val substitution = RenamePsiElementProcessor.forElement(method).substituteElementToRename(method, null)
-            RenameProcessor(context.project, substitution, newName, false, false).run()
+            runRenameProcessor(context, newName, substitution, false, false)
         }
     }
 
@@ -173,7 +178,7 @@ public abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
             val psiElement = segmentReference.resolve()!!
 
             val substitution = RenamePsiElementProcessor.forElement(psiElement).substituteElementToRename(psiElement, null)
-            RenameProcessor(context.project, substitution, newName, true, true).run()
+            runRenameProcessor(context, newName, substitution, true, true)
         }
     }
 
@@ -196,8 +201,20 @@ public abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
 
             val substitution = RenamePsiElementProcessor.forElement(psiElement).substituteElementToRename(psiElement, null)
 
-            RenameProcessor(context.project, substitution, newName, true, true).run()
+            runRenameProcessor(context, newName, substitution, true, true)
         }
+    }
+
+    private fun runRenameProcessor(
+            context: TestContext,
+            newName: String,
+            substitution: PsiElement?,
+            isSearchInComments: Boolean,
+            isSearchTextOccurrences: Boolean
+    ) {
+        val renameProcessor = RenameProcessor(context.project, substitution, newName, isSearchInComments, isSearchTextOccurrences)
+        Extensions.getExtensions(AutomaticRenamerFactory.EP_NAME).forEach { renameProcessor.addRenamerFactory(it) }
+        renameProcessor.run()
     }
 
     protected fun getTestDirName(lowercaseFirstLetter : Boolean) : String {
