@@ -1584,6 +1584,45 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 }
             }
 
+            @TestMetadata("idea/testData/refactoring/extractFunction/parameters/capturedFunctions")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class CapturedFunctions extends AbstractJetExtractionTest {
+                public void testAllFilesPresentInCapturedFunctions() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/extractFunction/parameters/capturedFunctions"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("deeplyLocalFun.kt")
+                public void testDeeplyLocalFun() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/capturedFunctions/deeplyLocalFun.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
+                @TestMetadata("localExtensionFun.kt")
+                public void testLocalExtensionFun() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/capturedFunctions/localExtensionFun.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
+                @TestMetadata("localExtensionFunChainedCalls.kt")
+                public void testLocalExtensionFunChainedCalls() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/capturedFunctions/localExtensionFunChainedCalls.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
+                @TestMetadata("localExtensionFunInfixCall.kt")
+                public void testLocalExtensionFunInfixCall() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/capturedFunctions/localExtensionFunInfixCall.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
+                @TestMetadata("localFun.kt")
+                public void testLocalFun() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/capturedFunctions/localFun.kt");
+                    doExtractFunctionTest(fileName);
+                }
+            }
+
             @TestMetadata("idea/testData/refactoring/extractFunction/parameters/extractSuper")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)

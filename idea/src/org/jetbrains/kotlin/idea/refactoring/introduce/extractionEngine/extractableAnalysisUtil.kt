@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.traverse
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.traverseFollowingInstructions
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
@@ -66,6 +67,7 @@ import org.jetbrains.kotlin.psi.psiUtil.isInsideOf
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
@@ -83,8 +85,8 @@ import org.jetbrains.kotlin.utils.DFS.VisitedWithSet
 import java.util.*
 import kotlin.properties.Delegates
 
-private val DEFAULT_RETURN_TYPE = KotlinBuiltIns.getInstance().getUnitType()
-private val DEFAULT_PARAMETER_TYPE = KotlinBuiltIns.getInstance().getNullableAnyType()
+private val DEFAULT_RETURN_TYPE = KotlinBuiltIns.getInstance().getUnitType()!!
+private val DEFAULT_PARAMETER_TYPE = KotlinBuiltIns.getInstance().getNullableAnyType()!!
 
 private fun DeclarationDescriptor.renderForMessage(): String =
         IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(this)
@@ -640,9 +642,16 @@ private fun ExtractionData.inferParametersInfo(
                             (originalDeclaration is JetProperty && originalDeclaration.isLocal()) ||
                             originalDeclaration is JetParameter
 
+            val extractFunctionRef =
+                    options.captureLocalFunctions
+                    && originalRef.getReferencedName() == originalDescriptor.getName().asString() // to forbid calls by convention
+                    && originalDescriptor is FunctionDescriptor
+                    && DescriptorUtils.isLocal(originalDescriptor)
+                    && (targetScope == null || originalDescriptor !in targetScope.getFunctions(originalDescriptor.getName()))
+
             val descriptorToExtract = (if (extractThis) thisDescriptor else null) ?: originalDescriptor
 
-            val extractParameter = extractThis || extractLocalVar
+            val extractParameter = extractThis || extractLocalVar || extractFunctionRef
             if (extractParameter) {
                 val parameterExpression = when {
                     receiverToExtract is ExpressionReceiver -> receiverToExtract.getExpression()
@@ -651,6 +660,13 @@ private fun ExtractionData.inferParametersInfo(
                 }
 
                 val parameterType = when {
+                    extractFunctionRef -> {
+                        originalDescriptor as FunctionDescriptor
+                        KotlinBuiltIns.getInstance().getFunctionType(Annotations.EMPTY,
+                                                                     originalDescriptor.getExtensionReceiverParameter()?.getType(),
+                                                                     originalDescriptor.getValueParameters().map { it.getType() },
+                                                                     originalDescriptor.getReturnType() ?: DEFAULT_RETURN_TYPE)
+                    }
                     parameterExpression != null -> bindingContext[BindingContext.SMARTCAST, parameterExpression]
                                                    ?: bindingContext[BindingContext.EXPRESSION_TYPE, parameterExpression]
                                                    ?: if (receiverToExtract.exists()) receiverToExtract.getType() else null
@@ -666,13 +682,17 @@ private fun ExtractionData.inferParametersInfo(
                 } ?: DEFAULT_PARAMETER_TYPE
 
                 val parameter = extractedDescriptorToParameter.getOrPut(descriptorToExtract) {
-                    val argumentText =
+                    var argumentText =
                             if (hasThisReceiver && extractThis) {
                                 val label = if (descriptorToExtract is ClassDescriptor) "@${descriptorToExtract.getName().asString()}" else ""
                                 "this$label"
                             }
                             else
                                 (thisExpr ?: ref).getText() ?: throw AssertionError("'this' reference shouldn't be empty: code fragment = $codeFragmentText")
+                    if (extractFunctionRef) {
+                        val receiverTypeText = (originalDeclaration as JetCallableDeclaration).getReceiverTypeReference()?.getText() ?: ""
+                        argumentText = "$receiverTypeText::$argumentText"
+                    }
 
                     MutableParameter(argumentText, descriptorToExtract, extractThis, targetScope)
                 }
@@ -693,6 +713,9 @@ private fun ExtractionData.inferParametersInfo(
                     if (receiverValue != null) {
                         parameter.addTypePredicate(getExpectedTypePredicate(receiverValue, bindingContext))
                     }
+                }
+                else if (extractFunctionRef) {
+                    parameter.addTypePredicate(SingleType(parameterType))
                 }
                 else {
                     pseudocode.getElementValuesRecursively(originalRef).forEach {

@@ -1,0 +1,18 @@
+// OPTIONS: true, false, false, false, true
+// PARAM_DESCRIPTOR: local final fun baz(m: kotlin.Int): Int defined in foo.bar
+// PARAM_DESCRIPTOR: value-parameter val n: kotlin.Int defined in foo
+// PARAM_TYPES: (kotlin.Int) -> Int
+// PARAM_TYPES: kotlin.Int
+
+// SIBLING:
+fun foo(n: Int): Int {
+    fun bar(): Int {
+        fun baz(m: Int) = m * n
+
+        return i(::baz, n)
+    }
+
+    return bar()
+}
+
+private fun i(baz: (Int) -> Int, n: Int) = baz(n + 1)

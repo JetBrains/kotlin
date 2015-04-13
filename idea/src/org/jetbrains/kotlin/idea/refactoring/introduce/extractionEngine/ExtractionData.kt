@@ -47,7 +47,8 @@ data class ExtractionOptions(
         val inferUnitTypeForUnusedValues: Boolean = true,
         val enableListBoxing: Boolean = false,
         val extractAsProperty: Boolean = false,
-        val allowSpecialClassNames: Boolean = false
+        val allowSpecialClassNames: Boolean = false,
+        val captureLocalFunctions: Boolean = false
 ) {
     companion object {
         val DEFAULT = ExtractionOptions()
