@@ -24,11 +24,11 @@ trait T2<T> {}
 trait Test<error>()</error> {
 }
 
-trait Test1 : C2<error>()</error> {}
+trait Test1 : <warning descr="[TRAIT_WITH_SUPERCLASS] Specifying a required base class for trait implementations is deprecated">C2</warning><error descr="[SUPERTYPE_INITIALIZED_IN_TRAIT] Traits cannot initialize supertypes">()</error> {}
 
-trait Test2 : C2 {}
+trait Test2 : <warning descr="[TRAIT_WITH_SUPERCLASS] Specifying a required base class for trait implementations is deprecated">C2</warning> {}
 
-trait Test3 : C2, <error>C3</error> {}
+trait Test3 : <warning descr="[TRAIT_WITH_SUPERCLASS] Specifying a required base class for trait implementations is deprecated">C2</warning>, <error descr="[MANY_CLASSES_IN_SUPERTYPE_LIST] Only one class may appear in a supertype list">C3</error> {}
 
 trait Test4 : T1 {}
 
