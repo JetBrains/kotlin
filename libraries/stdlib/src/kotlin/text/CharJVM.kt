@@ -79,3 +79,19 @@ public fun Char.toUpperCase(): Char = Character.toUpperCase(this)
  * Converts this character to lowercase.
  */
 public fun Char.toLowerCase(): Char = Character.toLowerCase(this)
+
+/**
+ * Returns a value indicating a character's general category.
+ */
+public fun Char.category(): CharCategory = CharCategory.valueOf(Character.getType(this))
+
+/**
+ * Returns the Unicode directionality property for the given character.
+ */
+public fun Char.directionality(): CharDirectionality = CharDirectionality.valueOf(Character.getDirectionality(this).toInt())
+
+// TODO Provide name for JVM7+
+///**
+// * Returns the Unicode name of this character, or null if the code point of this character is unassigned.
+// */
+//public fun Char.name(): String? = Character.getName(this.toInt())
