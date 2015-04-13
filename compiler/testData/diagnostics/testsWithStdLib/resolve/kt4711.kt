@@ -6,10 +6,10 @@ fun main(args:Array<String>) {
     val startTimeNanos = System.nanoTime()
 
     // the problem sits on the next line:
-    val pi = 4.0.toDouble() * delta * (1..n).<!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>reduce<!>(
+    val pi = 4.0.toDouble() * delta * (1..n).reduce(
             {t, i ->
                 val x = (i - 0.5) * delta
-                t + 1.0 / (1.0 + x * x)
+                <!TYPE_MISMATCH!>t + 1.0 / (1.0 + x * x)<!>
 
             })
     // !!! pi has error type here
