@@ -349,7 +349,7 @@ public abstract class LazyJavaMemberScope(
         p.println(javaClass.getSimpleName(), " {")
         p.pushIndent()
 
-        p.println("containigDeclaration: ${getContainingDeclaration()}")
+        p.println("containingDeclaration: ${getContainingDeclaration()}")
 
         p.popIndent()
         p.println("}")
