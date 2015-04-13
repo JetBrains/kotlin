@@ -398,14 +398,15 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
                     val basePlugin: BasePlugin = plugin as BasePlugin
                     val javaSources = project.files(javaSourceList)
                     val androidRT = project.files(AndroidGradleWrapper.getRuntimeJars(basePlugin, androidExt))
-                    val fullClasspath = javaTask.getClasspath() + (javaSources + androidRT)
+                    val fullClasspath = (javaTask.getClasspath() + (javaSources + androidRT)) - project.files(kotlinTask.property("kotlinDestinationDir"))
                     (it as AbstractCompile).setClasspath(fullClasspath)
-
-                    val javacClassPath = javaTask.getClasspath() + project.files(kotlinTask.property("kotlinDestinationDir"))
-                    javaTask.setClasspath(javacClassPath)
                 }
 
                 javaTask.dependsOn(kotlinTaskName)
+
+                javaTask doFirst  {
+                    javaTask.setClasspath(javaTask.getClasspath() + project.files(kotlinTask.property("kotlinDestinationDir")))
+                }
             }
         }
     }
