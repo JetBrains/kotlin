@@ -26,9 +26,9 @@ import com.intellij.refactoring.BaseRefactoringProcessor;
 import com.intellij.refactoring.safeDelete.SafeDeleteHandler;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase;
-import org.jetbrains.kotlin.idea.JetWithJdkAndRuntimeLightProjectDescriptor;
-import org.jetbrains.kotlin.idea.PluginTestCaseBase;
+import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase;
+import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor;
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.psi.*;
 
 import java.io.File;

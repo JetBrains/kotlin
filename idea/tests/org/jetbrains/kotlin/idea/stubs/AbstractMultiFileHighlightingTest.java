@@ -31,7 +31,7 @@ import kotlin.Function0;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.KotlinCompletionTestCase;
-import org.jetbrains.kotlin.idea.PluginTestCaseBase;
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 
 import java.io.File;
 import java.util.Collection;

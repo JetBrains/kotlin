@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.idea.util.application.runReadAction
 import com.intellij.debugger.impl.PositionUtil
 import com.intellij.execution.process.ProcessOutputTypes
 import com.intellij.openapi.roots.libraries.LibraryUtil
-import org.jetbrains.kotlin.idea.JetJdkAndLibraryProjectDescriptor
+import org.jetbrains.kotlin.idea.test.JetJdkAndLibraryProjectDescriptor
 import com.intellij.openapi.roots.JdkOrderEntry
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.debugger.SourcePosition

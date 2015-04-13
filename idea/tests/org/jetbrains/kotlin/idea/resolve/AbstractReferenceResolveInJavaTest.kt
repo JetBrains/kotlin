@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.idea.resolve
 
-import org.jetbrains.kotlin.idea.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 
 private val FILE_WITH_KOTLIN_CODE = PluginTestCaseBase.getTestDataPathBase() +  "/resolve/referenceInJava/dependencies.kt"
 

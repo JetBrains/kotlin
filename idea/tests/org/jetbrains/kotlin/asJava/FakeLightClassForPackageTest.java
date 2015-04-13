@@ -22,8 +22,8 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase;
-import org.jetbrains.kotlin.idea.JetLightProjectDescriptor;
+import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase;
+import org.jetbrains.kotlin.idea.test.JetLightProjectDescriptor;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetFile;
 

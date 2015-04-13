@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.idea;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase;
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 
 import java.io.File;
 

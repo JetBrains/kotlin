@@ -32,9 +32,9 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase;
-import org.jetbrains.kotlin.idea.JetWithJdkAndRuntimeLightProjectDescriptor;
-import org.jetbrains.kotlin.idea.PluginTestCaseBase;
+import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase;
+import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor;
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 
 import java.io.File;
 import java.util.ArrayList;

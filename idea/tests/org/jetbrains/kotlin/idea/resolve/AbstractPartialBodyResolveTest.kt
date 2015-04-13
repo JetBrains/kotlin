@@ -16,11 +16,11 @@
 
 package org.jetbrains.kotlin.idea.resolve
 
-import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.idea.JetWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import java.util.HashSet

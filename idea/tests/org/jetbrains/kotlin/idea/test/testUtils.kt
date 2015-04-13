@@ -23,8 +23,8 @@ import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.util.Consumer
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
-import org.jetbrains.kotlin.idea.JetStdJSProjectDescriptor
-import org.jetbrains.kotlin.idea.ProjectDescriptorWithStdlibSources
+import org.jetbrains.kotlin.idea.test.JetStdJSProjectDescriptor
+import org.jetbrains.kotlin.idea.test.ProjectDescriptorWithStdlibSources
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.psi.JetFile
 

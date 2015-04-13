@@ -28,7 +28,7 @@ import com.intellij.refactoring.rename.RenameProcessor
 import com.intellij.refactoring.rename.RenamePsiElementProcessor
 import org.jetbrains.kotlin.psi.JetFile
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.idea.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.openapi.project.Project
@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsException
 import com.intellij.refactoring.util.CommonRefactoringUtil.RefactoringErrorHintException
-import org.jetbrains.kotlin.idea.KotlinMultiFileTestCase
+import org.jetbrains.kotlin.idea.test.KotlinMultiFileTestCase
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass

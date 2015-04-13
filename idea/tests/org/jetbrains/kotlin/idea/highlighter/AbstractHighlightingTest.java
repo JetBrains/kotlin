@@ -22,8 +22,8 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase;
-import org.jetbrains.kotlin.idea.JetLightProjectDescriptor;
+import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase;
+import org.jetbrains.kotlin.idea.test.JetLightProjectDescriptor;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.TagsTestDataUtil;
 

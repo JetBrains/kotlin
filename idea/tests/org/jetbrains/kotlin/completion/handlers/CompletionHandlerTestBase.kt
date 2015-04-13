@@ -25,7 +25,7 @@ import com.intellij.codeInsight.lookup.impl.LookupImpl
 import com.intellij.openapi.application.Result
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
-import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.test.JetTestUtils
 import org.junit.Assert
 

@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.idea.codeInsight
 
-import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 
 import java.io.File
 import org.jetbrains.kotlin.idea.liveTemplates.JetTemplateContextType

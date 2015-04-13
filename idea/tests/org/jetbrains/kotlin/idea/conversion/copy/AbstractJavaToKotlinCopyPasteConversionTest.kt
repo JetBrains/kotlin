@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.idea.conversion.copy
 
 import com.intellij.openapi.actionSystem.IdeActions
 import org.jetbrains.kotlin.idea.AbstractCopyPasteTest
-import org.jetbrains.kotlin.idea.JetWithJdkAndRuntimeLightProjectDescriptor
-import org.jetbrains.kotlin.idea.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.editor.JetEditorOptions
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.JetTestUtils

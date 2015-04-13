@@ -30,7 +30,7 @@ import com.intellij.refactoring.MultiFileTestCase;
 import com.intellij.testFramework.PsiTestUtil;
 import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.PluginTestCaseBase;
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.utils.UtilsPackage;
 

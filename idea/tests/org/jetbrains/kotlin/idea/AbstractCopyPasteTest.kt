@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea
 import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.psi.JetFile
 import java.io.File
 

@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages;
-import org.jetbrains.kotlin.idea.PluginTestCaseBase;
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm;

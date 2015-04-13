@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea;
+package org.jetbrains.kotlin.idea.test;
 
 import com.intellij.ide.startup.impl.StartupManagerImpl;
 import com.intellij.openapi.actionSystem.*;

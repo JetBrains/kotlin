@@ -21,7 +21,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.testFramework.LightPlatformTestCase
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.JetFileType
-import org.jetbrains.kotlin.idea.KotlinCodeInsightTestCase
+import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase
 import org.jetbrains.kotlin.idea.testUtils.ModuleKind
 import org.jetbrains.kotlin.idea.testUtils.configureAs
 

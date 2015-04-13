@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.completion
 
 import org.jetbrains.kotlin.completion.util.*
 import org.jetbrains.kotlin.idea.KotlinCompletionTestCase
-import org.jetbrains.kotlin.idea.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.project.TargetPlatform
 import org.jetbrains.kotlin.idea.stubs.AstAccessControl
 import com.intellij.codeInsight.completion.CompletionType

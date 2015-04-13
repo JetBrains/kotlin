@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea;
+package org.jetbrains.kotlin.idea.test;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
@@ -22,14 +22,16 @@ import com.intellij.openapi.module.StdModuleTypes;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
+import com.intellij.openapi.roots.libraries.NewLibraryConfiguration;
+import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEditor;
 import com.intellij.testFramework.LightProjectDescriptor;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.idea.framework.JSLibraryStdDescription;
+import org.jetbrains.kotlin.test.ConfigLibraryUtil;
 
-public class JetLightProjectDescriptor implements LightProjectDescriptor {
-    protected JetLightProjectDescriptor() {
-    }
-    
-    public static final JetLightProjectDescriptor INSTANCE = new JetLightProjectDescriptor();
-    
+public class JetStdJSProjectDescriptor implements LightProjectDescriptor {
+    public static final JetStdJSProjectDescriptor INSTANCE = new JetStdJSProjectDescriptor();
+
     @Override
     public ModuleType getModuleType() {
         return StdModuleTypes.JAVA;
@@ -37,10 +39,18 @@ public class JetLightProjectDescriptor implements LightProjectDescriptor {
 
     @Override
     public Sdk getSdk() {
-        return PluginTestCaseBase.mockJdk();
+        return null;
     }
 
     @Override
-    public void configureModule(Module module, ModifiableRootModel model, ContentEntry contentEntry) {
+    public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model, ContentEntry contentEntry) {
+        NewLibraryConfiguration configuration = new JSLibraryStdDescription(module.getProject()).createNewLibraryForTests();
+
+        assert configuration != null : "Configuration should exist";
+
+        NewLibraryEditor editor = new NewLibraryEditor(configuration.getLibraryType(), configuration.getProperties());
+        configuration.addRoots(editor);
+
+        ConfigLibraryUtil.addLibrary(editor, model);
     }
 }

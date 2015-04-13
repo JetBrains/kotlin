@@ -21,7 +21,7 @@ import com.intellij.testFramework.LightPlatformCodeInsightTestCase
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil
 import com.intellij.refactoring.rename.inplace.VariableInplaceRenameHandler
 import kotlin.test.*
-import org.jetbrains.kotlin.idea.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import org.jetbrains.kotlin.idea.refactoring.rename.RenameKotlinImplicitLambdaParameter

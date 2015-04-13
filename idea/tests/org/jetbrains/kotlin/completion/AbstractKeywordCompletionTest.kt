@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.completion
 
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.lookup.LookupElement
-import org.jetbrains.kotlin.idea.JetLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.JetLightProjectDescriptor
 import org.jetbrains.kotlin.idea.completion.KeywordLookupObject
 import org.jetbrains.kotlin.idea.project.TargetPlatform
 

@@ -21,9 +21,9 @@ import com.intellij.psi.PsiElement
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.UsefulTestCase
 import junit.framework.TestCase
-import org.jetbrains.kotlin.idea.JdkAndMockLibraryProjectDescriptor
-import org.jetbrains.kotlin.idea.KotlinCodeInsightTestCase
-import org.jetbrains.kotlin.idea.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor
+import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.navigation.NavigationTestUtils
 import org.jetbrains.kotlin.idea.references.JetReference
 import org.jetbrains.kotlin.idea.testUtils.ModuleKind

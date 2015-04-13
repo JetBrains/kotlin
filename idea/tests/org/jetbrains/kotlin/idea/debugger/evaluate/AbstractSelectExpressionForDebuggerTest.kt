@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.debugger.evaluate
 
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.debugger.KotlinEditorTextProvider
-import org.jetbrains.kotlin.idea.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.junit.Assert
 

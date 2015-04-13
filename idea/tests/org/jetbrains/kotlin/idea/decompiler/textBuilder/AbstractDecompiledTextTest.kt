@@ -18,12 +18,12 @@ package org.jetbrains.kotlin.idea.decompiler.textBuilder
 
 import com.intellij.psi.PsiManager
 import com.intellij.testFramework.LightProjectDescriptor
-import org.jetbrains.kotlin.idea.JdkAndMockLibraryProjectDescriptor
-import org.jetbrains.kotlin.idea.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import com.intellij.testFramework.UsefulTestCase.*
 import org.junit.Assert.*
-import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.JetLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.JetLightProjectDescriptor
 import org.jetbrains.kotlin.idea.decompiler.navigation.NavigateToDecompiledLibraryTest
 import com.intellij.psi.PsiRecursiveElementVisitor
 import com.intellij.psi.PsiErrorElement

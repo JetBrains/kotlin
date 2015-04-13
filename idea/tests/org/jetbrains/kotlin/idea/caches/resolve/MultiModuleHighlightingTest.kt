@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
-import org.jetbrains.kotlin.idea.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import com.intellij.openapi.module.StdModuleTypes
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import org.jetbrains.kotlin.idea.project.PluginJetFilesProvider

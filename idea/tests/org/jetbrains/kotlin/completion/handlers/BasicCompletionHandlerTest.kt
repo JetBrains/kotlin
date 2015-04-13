@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.completion.handlers
 
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
-import org.jetbrains.kotlin.idea.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
 import java.io.File
 

@@ -20,7 +20,7 @@ import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.JetWithJdkAndRuntimeLightProjectDescriptor;
+import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor;
 import org.jetbrains.kotlin.idea.project.TargetPlatform;
 
 public abstract class AbstractJvmBasicCompletionTest extends JetFixtureCompletionBaseTestCase {

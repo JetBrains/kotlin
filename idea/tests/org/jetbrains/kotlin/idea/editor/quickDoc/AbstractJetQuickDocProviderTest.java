@@ -24,8 +24,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase;
-import org.jetbrains.kotlin.idea.ProjectDescriptorWithStdlibSources;
+import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase;
+import org.jetbrains.kotlin.idea.test.ProjectDescriptorWithStdlibSources;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.util.UtilPackage;
 

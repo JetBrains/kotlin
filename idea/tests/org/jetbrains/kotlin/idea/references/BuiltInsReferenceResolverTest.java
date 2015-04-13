@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies;
-import org.jetbrains.kotlin.idea.PluginTestCaseBase;
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde;
 import org.jetbrains.kotlin.test.JetTestUtils;
 

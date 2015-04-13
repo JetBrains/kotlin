@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.psi.patternMatching
 
-import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
 import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.psiUtil.parents
@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.test.JetTestUtils
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.psi.JetTypeReference
 import org.jetbrains.kotlin.psi.JetWhenCondition
-import org.jetbrains.kotlin.idea.DirectiveBasedActionUtils
+import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils
 
 public abstract class AbstractJetPsiUnifierTest: JetLightCodeInsightFixtureTestCase() {
     public fun doTest(filePath: String) {

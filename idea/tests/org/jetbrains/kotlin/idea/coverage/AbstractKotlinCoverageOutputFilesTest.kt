@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.idea.coverage
 
-import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.test.JetTestUtils
 import java.io.File

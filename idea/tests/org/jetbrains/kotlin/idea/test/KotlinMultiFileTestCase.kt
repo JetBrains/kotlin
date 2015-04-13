@@ -14,14 +14,20 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea;
+package org.jetbrains.kotlin.idea.test
 
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
+import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
+import com.intellij.refactoring.MultiFileTestCase
+import org.jetbrains.kotlin.test.JetTestUtils
 
-public class JetWithJdkAndRuntimeLightProjectDescriptor extends JetJdkAndLibraryProjectDescriptor {
-    protected JetWithJdkAndRuntimeLightProjectDescriptor() {
-        super(ForTestCompileRuntime.runtimeJarForTests());
+public abstract class KotlinMultiFileTestCase : MultiFileTestCase() {
+    override fun setUp() {
+        super.setUp()
+        VfsRootAccess.allowRootAccess(JetTestUtils.getHomeDirectory())
     }
 
-    public static final JetWithJdkAndRuntimeLightProjectDescriptor INSTANCE = new JetWithJdkAndRuntimeLightProjectDescriptor();
+    override fun tearDown() {
+        VfsRootAccess.disallowRootAccess(JetTestUtils.getHomeDirectory())
+        super.tearDown()
+    }
 }

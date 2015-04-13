@@ -20,7 +20,7 @@ import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.command.UndoConfirmationPolicy
 import java.io.File
 import org.junit.Assert
-import org.jetbrains.kotlin.idea.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.psi.*
 

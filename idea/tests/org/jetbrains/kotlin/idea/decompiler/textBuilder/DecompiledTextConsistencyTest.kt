@@ -24,9 +24,9 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.JetWithJdkAndRuntimeLightProjectDescriptor
-import org.jetbrains.kotlin.idea.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.name.ClassId

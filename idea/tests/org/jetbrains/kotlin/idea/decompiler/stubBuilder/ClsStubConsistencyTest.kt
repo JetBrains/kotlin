@@ -16,13 +16,13 @@
 
 package org.jetbrains.kotlin.idea.decompiler.stubBuilder
 
-import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.buildDecompiledText
-import org.jetbrains.kotlin.idea.JetWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor
 import com.intellij.util.indexing.FileContentImpl
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.stubs.elements.JetFileStubBuilder

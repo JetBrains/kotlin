@@ -36,7 +36,7 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.KotlinHierarchyViewTestBase;
-import org.jetbrains.kotlin.idea.PluginTestCaseBase;
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.idea.hierarchy.calls.KotlinCalleeMethodsTreeStructure;
 import org.jetbrains.kotlin.idea.hierarchy.calls.KotlinCallerMethodsTreeStructure;
 import org.jetbrains.kotlin.idea.hierarchy.overrides.KotlinOverrideTreeStructure;

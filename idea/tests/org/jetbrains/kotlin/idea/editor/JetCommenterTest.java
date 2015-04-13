@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.editor;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.EditorTestUtil;
 import com.intellij.testFramework.LightCodeInsightTestCase;
-import org.jetbrains.kotlin.idea.PluginTestCaseBase;
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 
 import java.io.File;
 

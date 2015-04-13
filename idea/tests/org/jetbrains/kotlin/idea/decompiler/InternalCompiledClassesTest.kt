@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.idea.decompiler
 
 import com.intellij.psi.ClassFileViewProvider
 import com.intellij.testFramework.LightProjectDescriptor
-import org.jetbrains.kotlin.idea.JdkAndMockLibraryProjectDescriptor
-import org.jetbrains.kotlin.idea.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinClass.Kind.ANONYMOUS_OBJECT
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinClass.Kind.LOCAL_CLASS
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass.Kind.*

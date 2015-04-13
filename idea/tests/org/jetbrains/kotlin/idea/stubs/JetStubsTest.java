@@ -20,7 +20,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.JetLightProjectDescriptor;
+import org.jetbrains.kotlin.idea.test.JetLightProjectDescriptor;
 import org.jetbrains.kotlin.psi.JetClass;
 import org.jetbrains.kotlin.psi.JetDeclaration;
 import org.jetbrains.kotlin.psi.JetFile;

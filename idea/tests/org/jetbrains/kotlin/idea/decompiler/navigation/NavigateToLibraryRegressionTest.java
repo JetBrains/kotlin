@@ -26,7 +26,7 @@ import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.JetFileType;
 import org.jetbrains.kotlin.idea.JetLanguage;
-import org.jetbrains.kotlin.idea.JetWithJdkAndRuntimeLightProjectDescriptor;
+import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor;
 
 public class NavigateToLibraryRegressionTest extends LightCodeInsightFixtureTestCase {
     /**

@@ -28,7 +28,7 @@ import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.JetWithJdkAndRuntimeLightProjectDescriptor;
+import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor;
 import org.jetbrains.kotlin.idea.references.BuiltInsReferenceResolver;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;

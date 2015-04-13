@@ -21,7 +21,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.rename.RenameProcessor;
 import com.intellij.testFramework.LightCodeInsightTestCase;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.PluginTestCaseBase;
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 
 public class KdocRenameTest extends LightCodeInsightTestCase {
     @NotNull

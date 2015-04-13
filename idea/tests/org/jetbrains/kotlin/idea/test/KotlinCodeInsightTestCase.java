@@ -14,20 +14,22 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea
+package org.jetbrains.kotlin.idea.test;
 
-import com.intellij.refactoring.MultiFileTestCase
-import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
-import org.jetbrains.kotlin.test.JetTestUtils
+import com.intellij.codeInsight.CodeInsightTestCase;
+import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
+import org.jetbrains.kotlin.test.JetTestUtils;
 
-public abstract class KotlinMultiFileTestCase : MultiFileTestCase() {
-    override fun setUp() {
-        super.setUp()
-        VfsRootAccess.allowRootAccess(JetTestUtils.getHomeDirectory())
+public abstract class KotlinCodeInsightTestCase extends CodeInsightTestCase {
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        VfsRootAccess.allowRootAccess(JetTestUtils.getHomeDirectory());
     }
 
-    override fun tearDown() {
-        VfsRootAccess.disallowRootAccess(JetTestUtils.getHomeDirectory())
-        super.tearDown()
+    @Override
+    protected void tearDown() throws Exception {
+        VfsRootAccess.disallowRootAccess(JetTestUtils.getHomeDirectory());
+        super.tearDown();
     }
 }

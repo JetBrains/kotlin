@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.editor.quickDoc
 
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.JetQuickDocumentationProvider
-import org.jetbrains.kotlin.idea.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.psi.JetClass
 import org.jetbrains.kotlin.psi.JetFunction
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType

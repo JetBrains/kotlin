@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.navigation
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.testFramework.LightCodeInsightTestCase
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase
-import org.jetbrains.kotlin.idea.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.test.JetTestUtils
 import java.io.File
 

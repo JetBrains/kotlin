@@ -33,7 +33,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.JetLanguage;
-import org.jetbrains.kotlin.idea.PluginTestCaseBase;
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.SettingsConfigurator;

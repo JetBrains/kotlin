@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.idea.codeInsight.smartEnter
 
-import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
 import com.intellij.openapi.actionSystem.IdeActions
 import org.jetbrains.kotlin.idea.JetFileType
 import org.jetbrains.kotlin.test.util.trimIndent

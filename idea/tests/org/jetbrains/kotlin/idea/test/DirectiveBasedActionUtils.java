@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea;
+package org.jetbrains.kotlin.idea.test;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;

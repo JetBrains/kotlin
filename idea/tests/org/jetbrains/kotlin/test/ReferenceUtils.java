@@ -25,7 +25,7 @@ import com.intellij.util.PathUtil;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.PluginTestCaseBase;
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.psi.JetClass;
 import org.jetbrains.kotlin.psi.JetObjectDeclaration;
 import org.junit.Assert;

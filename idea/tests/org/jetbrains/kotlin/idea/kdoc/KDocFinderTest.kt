@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.kdoc
 
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.idea.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetFile

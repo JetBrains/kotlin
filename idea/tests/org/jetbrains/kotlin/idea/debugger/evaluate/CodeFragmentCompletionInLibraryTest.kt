@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.completion.util.testCompletion
 import org.jetbrains.kotlin.idea.project.TargetPlatform
 import com.intellij.codeInsight.completion.CompletionType
-import org.jetbrains.kotlin.idea.JdkAndMockLibraryProjectDescriptor
-import org.jetbrains.kotlin.idea.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.roots.ContentEntry

@@ -27,7 +27,7 @@ import com.siyeh.ig.bugs.StaticFieldReferenceOnSubclassInspection;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.kotlin.idea.KotlinDaemonAnalyzerTestCase;
-import org.jetbrains.kotlin.idea.PluginTestCaseBase;
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.utils.UtilsPackage;
 

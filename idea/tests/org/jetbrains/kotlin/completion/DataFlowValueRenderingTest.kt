@@ -16,14 +16,14 @@
 
 package org.jetbrains.kotlin.completion
 
-import org.jetbrains.kotlin.idea.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.idea.completion.renderDataFlowValue
 import org.jetbrains.kotlin.test.JetTestUtils
 import com.intellij.openapi.util.io.FileUtil
 import java.io.File
-import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo

@@ -19,13 +19,13 @@ package org.jetbrains.kotlin.idea.debugger
 import com.intellij.debugger.actions.SmartStepTarget
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
-import org.jetbrains.kotlin.idea.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import com.intellij.debugger.actions.MethodSmartStepTarget
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import com.intellij.psi.util.PsiFormatUtil
 import com.intellij.psi.PsiSubstitutor
 import com.intellij.psi.util.PsiFormatUtilBase
-import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
 
 public abstract class AbstractSmartStepIntoTest : JetLightCodeInsightFixtureTestCase() {
     private val fixture: JavaCodeInsightTestFixture

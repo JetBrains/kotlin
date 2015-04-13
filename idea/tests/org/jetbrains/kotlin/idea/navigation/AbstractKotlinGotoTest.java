@@ -30,7 +30,7 @@ import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase;
+import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.ReferenceUtils;
 import org.jetbrains.kotlin.test.TestMetadata;

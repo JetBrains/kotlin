@@ -27,8 +27,8 @@ import com.intellij.testFramework.InspectionTestUtil
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
-import org.jetbrains.kotlin.idea.JetLightProjectDescriptor
-import org.jetbrains.kotlin.idea.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.JetLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.JetTestUtils

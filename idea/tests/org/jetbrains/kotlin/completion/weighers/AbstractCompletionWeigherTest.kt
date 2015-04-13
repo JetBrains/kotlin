@@ -19,11 +19,11 @@ package org.jetbrains.kotlin.completion.weighers
 import com.intellij.codeInsight.completion.CompletionType
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import java.io.File
-import org.jetbrains.kotlin.idea.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.testng.Assert
 import org.jetbrains.kotlin.test.util.configureWithExtraFile
-import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.JetWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor
 
 public abstract class AbstractCompletionWeigherTest(val completionType: CompletionType, val relativeTestDataPath: String) : JetLightCodeInsightFixtureTestCase() {
     fun doTest(path: String) {

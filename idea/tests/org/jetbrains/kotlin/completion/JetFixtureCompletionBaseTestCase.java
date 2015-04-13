@@ -22,7 +22,7 @@ import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.completion.util.UtilPackage;
-import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase;
+import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.idea.caches.resolve.LibraryModificationTracker;
 import org.jetbrains.kotlin.idea.project.TargetPlatform;
 

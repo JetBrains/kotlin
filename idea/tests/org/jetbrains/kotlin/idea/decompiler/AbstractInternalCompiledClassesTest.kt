@@ -21,7 +21,7 @@ import com.intellij.psi.PsiCompiledFile
 import com.intellij.psi.PsiJavaFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.compiled.ClsFileImpl
-import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.decompiler.navigation.NavigateToDecompiledLibraryTest
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinClass

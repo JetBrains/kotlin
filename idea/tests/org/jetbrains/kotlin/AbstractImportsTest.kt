@@ -20,8 +20,8 @@ import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 import com.intellij.psi.codeStyle.PackageEntry
 import org.jdom.Element
-import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.JetWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.psi.JetFile

@@ -20,7 +20,7 @@ import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.AbstractCopyPasteTest
-import org.jetbrains.kotlin.idea.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.testUtils.dumpTextWithErrors
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.JetFile

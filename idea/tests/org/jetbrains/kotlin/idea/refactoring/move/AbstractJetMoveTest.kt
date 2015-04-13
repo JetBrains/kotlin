@@ -37,8 +37,8 @@ import com.intellij.refactoring.move.moveInner.MoveInnerProcessor
 import com.intellij.refactoring.move.moveMembers.MockMoveMembersOptions
 import com.intellij.refactoring.move.moveMembers.MoveMembersProcessor
 import com.intellij.util.ActionRunner
-import org.jetbrains.kotlin.idea.KotlinMultiFileTestCase
-import org.jetbrains.kotlin.idea.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.KotlinMultiFileTestCase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.JetFileKotlinMoveTarget
 import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.MoveDestinationKotlinMoveTarget
 import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.MoveKotlinTopLevelDeclarationsOptions

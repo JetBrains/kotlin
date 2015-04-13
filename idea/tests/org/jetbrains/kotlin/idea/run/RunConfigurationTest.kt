@@ -37,7 +37,7 @@ import com.intellij.psi.PsiManager
 import com.intellij.testFramework.MapDataContext
 import com.intellij.testFramework.PlatformTestCase
 import com.intellij.testFramework.PsiTestUtil
-import org.jetbrains.kotlin.idea.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.stubindex.JetTopLevelFunctionFqnNameIndex
 import org.jetbrains.kotlin.idea.util.application.runWriteAction

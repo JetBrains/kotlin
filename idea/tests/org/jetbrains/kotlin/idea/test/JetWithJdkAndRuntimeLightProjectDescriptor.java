@@ -14,22 +14,14 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea;
+package org.jetbrains.kotlin.idea.test;
 
-import com.intellij.codeInsight.CodeInsightTestCase;
-import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 
-public abstract class KotlinCodeInsightTestCase extends CodeInsightTestCase {
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        VfsRootAccess.allowRootAccess(JetTestUtils.getHomeDirectory());
+public class JetWithJdkAndRuntimeLightProjectDescriptor extends JetJdkAndLibraryProjectDescriptor {
+    protected JetWithJdkAndRuntimeLightProjectDescriptor() {
+        super(ForTestCompileRuntime.runtimeJarForTests());
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        VfsRootAccess.disallowRootAccess(JetTestUtils.getHomeDirectory());
-        super.tearDown();
-    }
+    public static final JetWithJdkAndRuntimeLightProjectDescriptor INSTANCE = new JetWithJdkAndRuntimeLightProjectDescriptor();
 }

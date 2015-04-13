@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.completion.handlers;
 
 import com.intellij.codeInsight.completion.CompletionType;
 import org.jetbrains.kotlin.idea.KotlinCompletionTestCase;
-import org.jetbrains.kotlin.idea.PluginTestCaseBase;
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 
 import java.io.File;
 

@@ -20,8 +20,8 @@ import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.JdkAndMockLibraryProjectDescriptor;
-import org.jetbrains.kotlin.idea.PluginTestCaseBase;
+import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor;
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.idea.project.TargetPlatform;
 
 public abstract class AbstractCompiledKotlinInJavaCompletionTest extends JetFixtureCompletionBaseTestCase {

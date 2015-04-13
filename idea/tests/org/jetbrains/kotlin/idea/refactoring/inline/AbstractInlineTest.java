@@ -23,8 +23,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase;
-import org.jetbrains.kotlin.idea.JetWithJdkAndRuntimeLightProjectDescriptor;
+import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase;
+import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 
 import java.io.File;

@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.completion.handlers
 
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.idea.JetLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.JetLightProjectDescriptor
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import java.io.File
 

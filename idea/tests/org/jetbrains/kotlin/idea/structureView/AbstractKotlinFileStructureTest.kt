@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.idea.structureView
 
-import org.jetbrains.kotlin.idea.PluginTestCaseBase
-import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
 import com.intellij.util.ui.tree.TreeUtil
 import com.intellij.openapi.util.io.FileUtil
 import java.io.File

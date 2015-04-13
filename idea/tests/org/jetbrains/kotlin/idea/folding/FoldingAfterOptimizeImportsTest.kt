@@ -20,7 +20,7 @@ import com.intellij.codeInsight.folding.CodeFoldingManager
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.command.UndoConfirmationPolicy
 import com.intellij.openapi.editor.FoldRegion
-import org.jetbrains.kotlin.idea.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import java.io.File
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import org.jetbrains.kotlin.test.InTextDirectivesUtils

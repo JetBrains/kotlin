@@ -24,7 +24,7 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.PluginTestCaseBase;
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.idea.project.TargetPlatform;
 
 import java.io.File;

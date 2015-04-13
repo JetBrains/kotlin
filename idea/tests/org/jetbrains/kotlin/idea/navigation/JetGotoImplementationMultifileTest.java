@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.idea.navigation;
 
 import com.intellij.codeInsight.navigation.GotoTargetHandler;
-import org.jetbrains.kotlin.idea.KotlinCodeInsightTestCase;
-import org.jetbrains.kotlin.idea.PluginTestCaseBase;
+import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase;
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 
 import java.io.File;
 
