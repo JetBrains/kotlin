@@ -769,12 +769,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
-        @TestMetadata("twoListsInSupertypes.kt")
-        public void testTwoListsInSupertypes() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/builtinStubMethods/twoListsInSupertypes.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("compiler/testData/codegen/box/builtinStubMethods/extendJavaCollections")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

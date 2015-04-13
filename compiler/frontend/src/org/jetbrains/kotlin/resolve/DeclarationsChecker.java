@@ -201,21 +201,7 @@ public class DeclarationsChecker {
                 for (TypeProjection projection : projections) {
                     conflictingTypes.add(projection.getType());
                 }
-                switch (typeParameterDescriptor.getVariance()) {
-                    case INVARIANT:
-                        // Leave conflicting types as is
-                        Filter.REMOVE_IF_EQUAL_TYPE_IN_THE_SET.proceed(conflictingTypes);
-                        break;
-                    case IN_VARIANCE:
-                        // Filter out those who have supertypes in this set (common supertype)
-                        Filter.REMOVE_IF_SUPERTYPE_IN_THE_SET.proceed(conflictingTypes);
-                        break;
-                    case OUT_VARIANCE:
-                        // Filter out those who have subtypes in this set (common subtype)
-                        Filter.REMOVE_IF_SUBTYPE_IN_THE_SET.proceed(conflictingTypes);
-                        break;
-                }
-
+                removeDuplicateTypes(conflictingTypes);
                 if (conflictingTypes.size() > 1) {
                     DeclarationDescriptor containingDeclaration = typeParameterDescriptor.getContainingDeclaration();
                     assert containingDeclaration instanceof ClassDescriptor : containingDeclaration;
@@ -231,42 +217,18 @@ public class DeclarationsChecker {
         }
     }
 
-    private enum Filter {
-        REMOVE_IF_SUBTYPE_IN_THE_SET {
-            @Override
-            public boolean removeNeeded(JetType subject, JetType other) {
-                return JetTypeChecker.DEFAULT.isSubtypeOf(other, subject);
-            }
-        },
-        REMOVE_IF_SUPERTYPE_IN_THE_SET {
-            @Override
-            public boolean removeNeeded(JetType subject, JetType other) {
-                return JetTypeChecker.DEFAULT.isSubtypeOf(subject, other);
-            }
-        },
-        REMOVE_IF_EQUAL_TYPE_IN_THE_SET {
-            @Override
-            public boolean removeNeeded(JetType subject, JetType other) {
-                return JetTypeChecker.DEFAULT.equalTypes(subject, other);
-            }
-        };
-
-        private void proceed(Set<JetType> conflictingTypes) {
-            for (Iterator<JetType> iterator = conflictingTypes.iterator(); iterator.hasNext(); ) {
-                JetType type = iterator.next();
-                for (JetType otherType : conflictingTypes) {
-                    boolean subtypeOf = removeNeeded(type, otherType);
-                    if (type != otherType && subtypeOf) {
-                        iterator.remove();
-                        break;
-                    }
+    private static void removeDuplicateTypes(Set<JetType> conflictingTypes) {
+        for (Iterator<JetType> iterator = conflictingTypes.iterator(); iterator.hasNext(); ) {
+            JetType type = iterator.next();
+            for (JetType otherType : conflictingTypes) {
+                boolean subtypeOf = JetTypeChecker.DEFAULT.equalTypes(type, otherType);
+                if (type != otherType && subtypeOf) {
+                    iterator.remove();
+                    break;
                 }
             }
         }
-
-        public abstract boolean removeNeeded(JetType subject, JetType other);
     }
-
     private void checkObject(JetObjectDeclaration declaration, ClassDescriptor classDescriptor) {
         checkDeprecatedClassObjectSyntax(declaration);
         reportErrorIfHasIllegalModifier(declaration);
