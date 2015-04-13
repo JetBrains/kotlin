@@ -19,8 +19,8 @@ inline fun test(): String {
 fun box(): String {
     return test()
 }
+//NO_CHECK_LAMBDA_INLINING
 //TODO SHOULD BE LESS
-
 //SMAP
 //objectOnInlineCallSite.1.kt
 //Kotlin

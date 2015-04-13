@@ -90,7 +90,7 @@ fun box(): String {
 }
 
 
-public fun assertError(index: Int, h: Holder, expected: String, l: (h: Holder) -> Holder) {
+inline fun assertError(index: Int, h: Holder, expected: String, l: (h: Holder) -> Holder) {
     try {
         l(h)
         fail("fail $index: no error")

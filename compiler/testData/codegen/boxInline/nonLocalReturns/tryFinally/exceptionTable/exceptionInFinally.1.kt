@@ -53,7 +53,7 @@ fun box() : String {
     return "OK"
 }
 
-public fun assertError(index: Int, expected: String, l: Test.()->Unit) {
+inline fun assertError(index: Int, expected: String, l: Test.()->Unit) {
     val testLocal = Test()
     try {
         testLocal.l()

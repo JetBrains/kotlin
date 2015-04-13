@@ -15,7 +15,7 @@ fun test(): String {
 fun box(): String {
     return test()
 }
-
+//NO_CHECK_LAMBDA_INLINING
 //SMAP
 //object.1.kt
 //Kotlin

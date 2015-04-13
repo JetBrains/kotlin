@@ -1,3 +1,4 @@
+//NO_CHECK_LAMBDA_INLINING
 fun test1(): Int {
     return calc( { l: Int -> 2*l},  { l: Int -> 4*l})
 }

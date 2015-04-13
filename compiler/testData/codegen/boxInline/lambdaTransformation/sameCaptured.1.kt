@@ -1,3 +1,4 @@
+//NO_CHECK_LAMBDA_INLINING
 import test.*
 import kotlin.InlineOption.*
 

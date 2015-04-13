@@ -15,7 +15,7 @@ fun test(): String {
 fun box(): String {
     return test()
 }
-
+//NO_CHECK_LAMBDA_INLINING
 
 //SMAP
 //lambda.1.kt

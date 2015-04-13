@@ -4,7 +4,7 @@ import kotlin.InlineOption.*
 fun box(): String {
     return test()
 }
-
+//NO_CHECK_LAMBDA_INLINING
 
 //SXMAP
 //objectOnInlineCallSite2.1.kt

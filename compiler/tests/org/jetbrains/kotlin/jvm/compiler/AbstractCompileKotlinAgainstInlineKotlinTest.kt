@@ -30,8 +30,8 @@ public abstract class AbstractCompileKotlinAgainstInlineKotlinTest : AbstractCom
         val allGeneratedFiles = factory1.asList() + factory2.asList()
 
         try {
-            InlineTestUtil.checkNoCallsToInline(allGeneratedFiles)
             val sourceFiles = factory1.getInputFiles() + factory2.getInputFiles()
+            InlineTestUtil.checkNoCallsToInline(allGeneratedFiles, sourceFiles)
             checkSMAP(sourceFiles, allGeneratedFiles)
         }
         catch (e: Throwable) {

@@ -1,3 +1,4 @@
+//NO_CHECK_LAMBDA_INLINING
 import test.*
 
 fun test1(): String {
@@ -27,4 +28,3 @@ fun box() : String {
 
     return "OK"
 }
-

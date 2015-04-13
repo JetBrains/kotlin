@@ -1,3 +1,4 @@
+//NO_CHECK_LAMBDA_INLINING
 import test.*
 
 fun Data.test1(d: Data) : Long  {

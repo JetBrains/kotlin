@@ -28,7 +28,7 @@ public abstract class AbstractBlackBoxInlineCodegenTest : AbstractBlackBoxCodege
 
         doTestMultiFile(inputFiles)
         try {
-            InlineTestUtil.checkNoCallsToInline(initializedClassLoader.getAllGeneratedFiles())
+            InlineTestUtil.checkNoCallsToInline(initializedClassLoader.getAllGeneratedFiles(), myFiles.getPsiFiles())
             checkSMAP(myFiles.getPsiFiles(), generateClassesInFile().asList())
         }
         catch (e: Throwable) {

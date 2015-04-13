@@ -1,3 +1,4 @@
+//NO_CHECK_LAMBDA_INLINING
 fun test1(): Int {
     val inlineX = Inline()
     var p = { l : Int -> l};

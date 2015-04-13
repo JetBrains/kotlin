@@ -1,10 +1,11 @@
+//NO_CHECK_LAMBDA_INLINING
 import test.*
 import java.util.*
 
 fun test1(prefix: String): String {
     var result = "fail"
     mfun {
-        concat("start") {
+        noInline("start") {
             if (it.startsWith(prefix)) {
                 result = "OK"
             }

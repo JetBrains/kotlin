@@ -19,7 +19,7 @@ fun test(): String {
 fun box(): String {
     return test()
 }
-
+//NO_CHECK_LAMBDA_INLINING
 
 //SMAP
 //objectOnCallSite.1.kt

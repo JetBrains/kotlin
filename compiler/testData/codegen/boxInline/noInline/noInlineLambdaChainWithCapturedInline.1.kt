@@ -1,5 +1,5 @@
+//NO_CHECK_LAMBDA_INLINING
 import test.*
-
 import kotlin.InlineOption.*
 
 inline fun test1(inlineOptions(ONLY_LOCAL_RETURN) param: () -> String): String {
