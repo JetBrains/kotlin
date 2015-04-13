@@ -34,7 +34,8 @@ public abstract class MultipleModulesTranslationTest(main: String) : BasicTest(m
         val dirName = getTestName(true)
         dependencies = readModuleDependencies(filePath)
 
-        for ((moduleName, dependencies) in dependencies) {
+        // KT-7428: !! is necessary here
+        for ((moduleName, dependencies) in dependencies!!) {
             translateModule(dirName, filePath, moduleName, dependencies)
         }
 
