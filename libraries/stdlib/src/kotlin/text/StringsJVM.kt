@@ -49,7 +49,7 @@ public fun String.equals(anotherString: String, ignoreCase: Boolean = false): Bo
 }
 
 /**
- * Returns a copy of this string with all occurrences of [oldChar] replaced with [newChar].
+ * Returns a new string with all occurrences of [oldChar] replaced with [newChar].
  */
 public fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boolean = false): String {
     if (!ignoreCase)
@@ -65,6 +65,25 @@ public fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boolean = fa
 public fun String.replace(oldValue: String, newValue: String, ignoreCase: Boolean = false): String =
         splitToSequence(oldValue, ignoreCase = ignoreCase).joinToString(separator = newValue)
 
+
+/**
+ * Returns a new string with the first occurrence of [oldChar] replaced with [newChar].
+ */
+public fun String.replaceFirst(oldChar: Char, newChar: Char, ignoreCase: Boolean = false): String {
+    val index = indexOf(oldChar, ignoreCase = ignoreCase)
+    return if (index < 0) this else this.replaceRange(index, index + 1, newChar.toString())
+}
+
+/**
+ * Returns a new string obtained by replacing the first occurrence of the [oldValue] substring in this string
+ * with the specified [newValue] string.
+ *
+ * Soon shall be renamed back to replaceFirst.
+ */
+public fun String.replaceFirstLiteral(oldValue: String, newValue: String, ignoreCase: Boolean = false): String {
+    val index = indexOf(oldValue, ignoreCase = ignoreCase)
+    return if (index < 0) this else this.replaceRange(index, index + oldValue.length(), newValue)
+}
 /**
  * Returns a new string obtained by replacing each substring of this string that matches the given regular expression
  * with the given [replacement].
@@ -231,6 +250,7 @@ public fun String(stringBuilder: java.lang.StringBuilder): String = java.lang.St
 /**
  * Replaces the first substring of this string that matches the given regular expression with the given replacement.
  */
+deprecated("Use replaceFirst(Regex, String) or replaceFirstLiteral(String, String) instead.")
 public fun String.replaceFirst(regex: String, replacement: String): String = (this as java.lang.String).replaceFirst(regex, replacement)
 
 /**

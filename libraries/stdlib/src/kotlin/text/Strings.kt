@@ -516,6 +516,14 @@ public fun String.replace(regex: Regex, replacement: String): String = regex.rep
 public fun String.replace(regex: Regex, transform: (MatchResult) -> String): String = regex.replace(this, transform)
 
 /**
+ * Replaces the first occurrence of the given regular expression [regex] in this string with specified [replacement] expression.
+ *
+ * @param replacement A replacement expression that can include substitutions. See [Regex.replaceFirst] for details.
+ */
+public fun String.replaceFirst(regex: Regex, replacement: String): String = regex.replaceFirst(this, replacement)
+
+
+/**
  * Returns `true` if this string matches the given regular expression.
  */
 public fun String.matches(regex: Regex): Boolean = regex.matches(this)

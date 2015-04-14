@@ -543,4 +543,19 @@ class StringTest {
 
         assertEquals("-a-b-b-A-b-", input.replace("", "-"))
     }
+
+    test fun replaceFirst() {
+        val input = "AbbabA"
+        assertEquals("Abb${'$'}bA", input.replaceFirst('a','$'))
+        assertEquals("${'$'}bbabA", input.replaceFirst('a','$', ignoreCase = true))
+        // doesn't pass in Rhino JS
+        // assertEquals("schrodinger", "schrÖdinger".replaceFirst('ö', 'o', ignoreCase = true))
+
+        assertEquals("Abba${'$'}", input.replaceFirstLiteral("bA", "$"))
+        assertEquals("Ab${'$'}bA", input.replaceFirstLiteral("bA", "$", ignoreCase = true))
+
+        assertEquals("-test", "test".replaceFirstLiteral("", "-"))
+    }
+
+
 }
