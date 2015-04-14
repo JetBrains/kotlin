@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.resolve.inline.InlineStrategy;
 import java.util.*;
 import kotlin.Function1;
 
+import static org.jetbrains.kotlin.js.inline.FunctionInlineMutator.canBeExpression;
 import static org.jetbrains.kotlin.js.inline.FunctionInlineMutator.getInlineableCallReplacement;
 import static org.jetbrains.kotlin.js.inline.clean.CleanPackage.removeUnusedFunctionDefinitions;
 import static org.jetbrains.kotlin.js.inline.clean.CleanPackage.removeUnusedLocalFunctionDeclarations;
@@ -55,7 +56,13 @@ public class JsInliner extends JsVisitorWithContextImpl {
             if (!(node instanceof JsInvocation)) return false;
 
             JsInvocation call = (JsInvocation) node;
-            return hasToBeInlined(call);
+
+            if (hasToBeInlined(call)) {
+                JsFunction function = getFunctionContext().getFunctionDefinition(call);
+                return !canBeExpression(function);
+            }
+
+            return false;
         }
     };
 

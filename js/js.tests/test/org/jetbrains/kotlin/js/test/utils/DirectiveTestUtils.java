@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.js.test.utils;
 
-import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsFunction;
-import com.google.dart.compiler.backend.js.ast.JsLabel;
-import com.google.dart.compiler.backend.js.ast.JsNode;
+import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.js.translate.expression.InlineMetadata;
@@ -94,28 +91,56 @@ public class DirectiveTestUtils {
         }
     };
 
-    private static final DirectiveHandler COUNT_LABELS = new DirectiveHandler("CHECK_LABELS_COUNT") {
+    private abstract static class CountNodesDirective<T extends JsNode> extends DirectiveHandler {
+
+        @NotNull
+        private final Class<T> klass;
+
+        CountNodesDirective(@NotNull String directive, @NotNull Class<T> klass) {
+            super(directive);
+            this.klass = klass;
+        }
+
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
             String functionName = arguments.getNamedArgument("function");
-            String labelName = arguments.getNamedArgument("name");
             String countStr = arguments.getNamedArgument("count");
             int expectedCount = Integer.valueOf(countStr);
 
             JsNode scope = AstSearchUtil.getFunction(ast, functionName);
-            List<JsLabel> labels = collectInstances(JsLabel.class, scope);
+            List<T> nodes = collectInstances(klass, scope);
             int actualCount = 0;
-            for (JsLabel label : labels) {
-                if (label.getName().getIdent().equals(labelName)) {
-                    actualCount++;
-                }
+
+            for (T node : nodes) {
+                actualCount += getActualCountFor(node, arguments);
             }
 
-            String message = "Label " + labelName +
-                             " is expected to be counted " + expectedCount +
-                             " times at function " + functionName +
-                             " but was encountered " + actualCount + " times";
+            String message = "Function " + functionName + " contains " + actualCount +
+                             " nodes of type " + klass.getName() +
+                             ", but expected count is " + expectedCount;
             assertEquals(message, expectedCount, actualCount);
+        }
+
+        protected abstract int getActualCountFor(@NotNull T node, @NotNull ArgumentsHelper arguments);
+    }
+
+    private static final DirectiveHandler COUNT_LABELS = new CountNodesDirective<JsLabel>("CHECK_LABELS_COUNT", JsLabel.class) {
+        @Override
+        protected int getActualCountFor(@NotNull JsLabel node, @NotNull ArgumentsHelper arguments) {
+            String labelName = arguments.getNamedArgument("name");
+
+            if (node.getName().getIdent().equals(labelName)) {
+                return 1;
+            }
+
+            return 0;
+        }
+    };
+
+    private static final DirectiveHandler COUNT_VARS = new CountNodesDirective<JsVars>("CHECK_VARS_COUNT", JsVars.class) {
+        @Override
+        protected int getActualCountFor(@NotNull JsVars node, @NotNull ArgumentsHelper arguments) {
+            return node.getVars().size();
         }
     };
 
@@ -146,6 +171,7 @@ public class DirectiveTestUtils {
         FUNCTION_NOT_CALLED_IN_SCOPE.process(ast, sourceCode);
         FUNCTIONS_HAVE_SAME_LINES.process(ast, sourceCode);
         COUNT_LABELS.process(ast, sourceCode);
+        COUNT_VARS.process(ast, sourceCode);
         HAS_INLINE_METADATA.process(ast, sourceCode);
         HAS_NO_INLINE_METADATA.process(ast, sourceCode);
     }

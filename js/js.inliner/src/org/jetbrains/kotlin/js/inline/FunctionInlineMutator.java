@@ -224,6 +224,10 @@ class FunctionInlineMutator {
         return !thisRefs.isEmpty();
     }
 
+    public static boolean canBeExpression(JsFunction function) {
+        return canBeExpression(function.getBody());
+    }
+
     private static boolean canBeExpression(JsBlock body) {
         List<JsStatement> statements = body.getStatements();
         return statements.size() == 1 && statements.get(0) instanceof JsReturn;
