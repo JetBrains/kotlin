@@ -214,21 +214,43 @@
             <mapper type="flatten"/>
         </unzip>
 
-        <!-- Bootstrap compiler -->
-        <get src="https://teamcity.jetbrains.com/guestAuth/repository/download/bt345/bootstrap.tcbuildtag/kotlin-plugin-{build.number}.zip"
-             dest="dependencies/download/bootstrap-compiler.zip" usetimestamp="true"/>
-        <delete dir="dependencies/bootstrap-compiler" failonerror="false"/>
-        <unzip src="dependencies/download/bootstrap-compiler.zip" dest="dependencies/bootstrap-compiler"/>
         <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${basedir}/dependencies/ant-contrib.jar"/>
+
+        <!-- Bootstrap compiler -->
         <if>
-            <matches pattern="mac\.zip|tar\.gz" string="${os.tag}"/>
+            <not>
+                <isset property="teamcity.version"/>
+            </not>
             <then>
-                <!-- Java can't manipulate permissions -->
-                <exec executable="find">
-                    <arg value="dependencies/bootstrap-compiler/Kotlin/kotlinc/bin"/>
-                    <arg line="-name 'kotlin*' ! -name '*.bat' -exec chmod a+x '{}' ;"/>
-                </exec>
+                <!-- Download bootstrap compiler for local build -->
+                <get src="https://teamcity.jetbrains.com/guestAuth/repository/download/bt345/bootstrap.tcbuildtag/kotlin-plugin-{build.number}.zip"
+                     dest="dependencies/download/bootstrap-compiler.zip" usetimestamp="true"/>
+                <delete dir="dependencies/bootstrap-compiler" failonerror="false"/>
+                <unzip src="dependencies/download/bootstrap-compiler.zip" dest="dependencies/bootstrap-compiler"/>
+                <if>
+                    <matches pattern="mac\.zip|tar\.gz" string="${os.tag}"/>
+                    <then>
+                        <!-- Java can't manipulate permissions -->
+                        <exec executable="find">
+                            <arg value="dependencies/bootstrap-compiler/Kotlin/kotlinc/bin"/>
+                            <arg line="-name 'kotlin*' ! -name '*.bat' -exec chmod a+x '{}' ;"/>
+                        </exec>
+                    </then>
+                </if>
             </then>
+            <else>
+                <!-- Teamcity should provide bootstrap compiler with dependency feature -->
+                <if>
+                    <not>
+                        <and>
+                            <available file="dependencies/bootstrap-compiler/Kotlin"/>
+                        </and>
+                    </not>
+                    <then>
+                        <fail message="Bootstrap compiler is expected to be downloaded to 'dependencies/bootstrap-compiler' by TeamCity"/>
+                    </then>
+                </if>
+            </else>
         </if>
 
         <!-- Markdown parser -->
