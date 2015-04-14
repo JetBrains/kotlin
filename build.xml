@@ -946,12 +946,9 @@
             <fileset dir="${basedir}/compiler/backend/src" includes="META-INF/services/**"/>
 
             <zipgroupfileset dir="${basedir}/lib" includes="*.jar"/>
-            <zipgroupfileset dir="${kotlin-home}/lib" includes="kotlin-runtime.jar"/>
-            <zipgroupfileset dir="${kotlin-home}/lib" includes="kotlin-runtime-sources.jar"/>
-
-            <zipgroupfileset file="${kotlin-home}/lib/kotlin-reflect.jar">
-                <include name="com/google/protobuf/**/*.class"/>
-            </zipgroupfileset>
+            <zipgroupfileset file="${kotlin-home}/lib/kotlin-runtime.jar"/>
+            <zipgroupfileset file="${kotlin-home}/lib/kotlin-runtime-sources.jar"/>
+            <zipgroupfileset file="${kotlin-home}/lib/kotlin-reflect.jar"/>
 
             <fileset dir="${basedir}/resources"/>
             <!-- icons, etc. -->
