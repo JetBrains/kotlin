@@ -58,13 +58,13 @@ import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.refactoring.checkConflictsInteractively
 import org.jetbrains.kotlin.idea.core.refactoring.reportDeclarationConflict
 
-public class ConvertPropertyToFunctionIntention : JetSelfTargetingIntention<JetProperty>(
-        "convert.property.to.function.intention", javaClass()
-) {
-    private inner class Convertor(
+public class ConvertPropertyToFunctionIntention : JetSelfTargetingIntention<JetProperty>(javaClass(), "Convert property to function") {
+    private inner class Converter(
             project: Project,
             descriptor: CallableDescriptor,
-            context: BindingContext): CallableRefactoring<CallableDescriptor>(project, descriptor, context, getText()) {
+            context: BindingContext
+    ): CallableRefactoring<CallableDescriptor>(project, descriptor, context, getText()) {
+
         private fun convertJetProperty(originalProperty: JetProperty, psiFactory: JetPsiFactory) {
             val property = originalProperty.copy() as JetProperty;
             val getter = property.getGetter();
@@ -134,7 +134,7 @@ public class ConvertPropertyToFunctionIntention : JetSelfTargetingIntention<JetP
                             val refElement = usage.getElement()
                             conflicts.putValue(
                                     refElement,
-                                    "Unrecognized reference will be skipped: ${StringUtil.htmlEmphasize(refElement.getText())}"
+                                    "Unrecognized reference will be skipped: " + StringUtil.htmlEmphasize(refElement.getText())
                             )
                         }
                         continue
@@ -156,7 +156,7 @@ public class ConvertPropertyToFunctionIntention : JetSelfTargetingIntention<JetP
 
                     conflicts.putValue(
                             refElement,
-                            "Can't replace foreign reference with call expression: ${StringUtil.htmlEmphasize(refElement.getText())}"
+                            "Can't replace foreign reference with call expression: " + StringUtil.htmlEmphasize(refElement.getText())
                     )
                 }
             }
@@ -172,9 +172,9 @@ public class ConvertPropertyToFunctionIntention : JetSelfTargetingIntention<JetP
                             is PsiMethod -> it.setName(propertyName)
                         }
                     }
-                    kotlinRefs.forEach { it.replace(kotlinPsiFactory.createExpression("${it.getText()}()")) }
+                    kotlinRefs.forEach { it.replace(kotlinPsiFactory.createExpression(it.getText() + "()")) }
                     foreignRefsToRename.forEach { it.handleElementRename(propertyName) }
-                    javaRefsToReplaceWithCall.forEach { it.replace(javaPsiFactory.createExpressionFromText("${it.getText()}()", null)) }
+                    javaRefsToReplaceWithCall.forEach { it.replace(javaPsiFactory.createExpressionFromText(it.getText() + "()", null)) }
                 }
             }
         }
@@ -183,15 +183,14 @@ public class ConvertPropertyToFunctionIntention : JetSelfTargetingIntention<JetP
     override fun startInWriteAction(): Boolean = false
 
     override fun isApplicableTo(element: JetProperty, caretOffset: Int): Boolean {
-        val elementAtCaret = element.getContainingFile().findElementAt(caretOffset)
-        if (!(element.getNameIdentifier()?.isAncestor(elementAtCaret) ?: false)) return false
-
+        val identifier = element.getNameIdentifier() ?: return false
+        if (!identifier.getTextRange().containsOffset(caretOffset)) return false
         return element.getDelegate() == null && !element.isVar() && !element.isLocal()
     }
 
     override fun applyTo(element: JetProperty, editor: Editor) {
         val context = element.analyze()
         val descriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, element] as? CallableDescriptor ?: return
-        Convertor(element.getProject(), descriptor, context).run()
+        Converter(element.getProject(), descriptor, context).run()
     }
 }
