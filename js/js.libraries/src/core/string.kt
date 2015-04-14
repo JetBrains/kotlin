@@ -7,20 +7,16 @@ native public fun String.toUpperCase() : String = noImpl
 
 native public fun String.toLowerCase() : String = noImpl
 
-// TODO: make internal
 native("indexOf")
-public fun String.nativeIndexOf(str : String, fromIndex : Int) : Int = noImpl
+internal fun String.nativeIndexOf(str : String, fromIndex : Int) : Int = noImpl
 
-// TODO: make internal
 native("lastIndexOf")
-public fun String.nativeLastIndexOf(str : String, fromIndex : Int) : Int = noImpl
+internal fun String.nativeLastIndexOf(str : String, fromIndex : Int) : Int = noImpl
 
-// TODO: make internal
 native("startsWith")
-public fun String.nativeStartsWith(s: String, position: Int): Boolean = noImpl
-// TODO: make internal
+internal fun String.nativeStartsWith(s: String, position: Int): Boolean = noImpl
 native("endsWith")
-public fun String.nativeEndsWith(s: String): Boolean = noImpl
+internal fun String.nativeEndsWith(s: String): Boolean = noImpl
 
 deprecated("Use split(Regex) instead.")
 library("splitString")
@@ -57,9 +53,8 @@ public fun CharSequence.isEmpty(): Boolean = noImpl
 
 
 
-// TODO: internal
 native("replace")
-public fun String.nativeReplace(pattern: RegExp, replacement: String): String = noImpl
+internal fun String.nativeReplace(pattern: RegExp, replacement: String): String = noImpl
 
 
 /*

@@ -3,9 +3,8 @@ package kotlin
 import kotlin.text.Regex
 import kotlin.text.js.RegExp
 
-// TODO: make internal
-public inline fun String.nativeIndexOf(ch : Char, fromIndex : Int) : Int = nativeIndexOf(ch.toString(), fromIndex)
-public inline fun String.nativeLastIndexOf(ch : Char, fromIndex : Int) : Int = nativeLastIndexOf(ch.toString(), fromIndex)
+internal inline fun String.nativeIndexOf(ch : Char, fromIndex : Int) : Int = nativeIndexOf(ch.toString(), fromIndex)
+internal inline fun String.nativeLastIndexOf(ch : Char, fromIndex : Int) : Int = nativeLastIndexOf(ch.toString(), fromIndex)
 
 /**
  * Returns `true` if this string starts with the specified prefix.
