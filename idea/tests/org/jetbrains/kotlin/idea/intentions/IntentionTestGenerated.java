@@ -3194,161 +3194,161 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
-    @TestMetadata("idea/testData/intentions/convertToConcatenatedStringIntention")
+    @TestMetadata("idea/testData/intentions/convertToConcatenatedString")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class ConvertToConcatenatedStringIntention extends AbstractIntentionTest {
-        public void testAllFilesPresentInConvertToConcatenatedStringIntention() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertToConcatenatedStringIntention"), Pattern.compile("^(.+)\\.kt$"), true);
+    public static class ConvertToConcatenatedString extends AbstractIntentionTest {
+        public void testAllFilesPresentInConvertToConcatenatedString() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertToConcatenatedString"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("embeddedIf.kt")
         public void testEmbeddedIf() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToConcatenatedStringIntention/embeddedIf.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToConcatenatedString/embeddedIf.kt");
             doTest(fileName);
         }
 
         @TestMetadata("embeddedIfBraces.kt")
         public void testEmbeddedIfBraces() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToConcatenatedStringIntention/embeddedIfBraces.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToConcatenatedString/embeddedIfBraces.kt");
             doTest(fileName);
         }
 
         @TestMetadata("emptyBraces.kt")
         public void testEmptyBraces() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToConcatenatedStringIntention/emptyBraces.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToConcatenatedString/emptyBraces.kt");
             doTest(fileName);
         }
 
         @TestMetadata("handlesEscapeString.kt")
         public void testHandlesEscapeString() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToConcatenatedStringIntention/handlesEscapeString.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToConcatenatedString/handlesEscapeString.kt");
             doTest(fileName);
         }
 
         @TestMetadata("interpolate2StringConstants.kt")
         public void testInterpolate2StringConstants() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToConcatenatedStringIntention/interpolate2StringConstants.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToConcatenatedString/interpolate2StringConstants.kt");
             doTest(fileName);
         }
 
         @TestMetadata("interpolate3.kt")
         public void testInterpolate3() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToConcatenatedStringIntention/interpolate3.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToConcatenatedString/interpolate3.kt");
             doTest(fileName);
         }
 
         @TestMetadata("interpolateChar.kt")
         public void testInterpolateChar() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToConcatenatedStringIntention/interpolateChar.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToConcatenatedString/interpolateChar.kt");
             doTest(fileName);
         }
 
         @TestMetadata("interpolateConstants.kt")
         public void testInterpolateConstants() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToConcatenatedStringIntention/interpolateConstants.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToConcatenatedString/interpolateConstants.kt");
             doTest(fileName);
         }
 
         @TestMetadata("interpolateMapAccess.kt")
         public void testInterpolateMapAccess() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToConcatenatedStringIntention/interpolateMapAccess.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToConcatenatedString/interpolateMapAccess.kt");
             doTest(fileName);
         }
 
         @TestMetadata("interpolateMethodInvoke.kt")
         public void testInterpolateMethodInvoke() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToConcatenatedStringIntention/interpolateMethodInvoke.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToConcatenatedString/interpolateMethodInvoke.kt");
             doTest(fileName);
         }
 
         @TestMetadata("interpolateSimpleWithBraces.kt")
         public void testInterpolateSimpleWithBraces() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToConcatenatedStringIntention/interpolateSimpleWithBraces.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToConcatenatedString/interpolateSimpleWithBraces.kt");
             doTest(fileName);
         }
 
         @TestMetadata("interpolateStringWithFloat.kt")
         public void testInterpolateStringWithFloat() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToConcatenatedStringIntention/interpolateStringWithFloat.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToConcatenatedString/interpolateStringWithFloat.kt");
             doTest(fileName);
         }
 
         @TestMetadata("interpolateStringWithInt.kt")
         public void testInterpolateStringWithInt() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToConcatenatedStringIntention/interpolateStringWithInt.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToConcatenatedString/interpolateStringWithInt.kt");
             doTest(fileName);
         }
 
         @TestMetadata("lastExprIsNamedExpression.kt")
         public void testLastExprIsNamedExpression() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToConcatenatedStringIntention/lastExprIsNamedExpression.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToConcatenatedString/lastExprIsNamedExpression.kt");
             doTest(fileName);
         }
 
         @TestMetadata("multilineString.kt")
         public void testMultilineString() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToConcatenatedStringIntention/multilineString.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToConcatenatedString/multilineString.kt");
             doTest(fileName);
         }
 
         @TestMetadata("multilineWhenExpr.kt")
         public void testMultilineWhenExpr() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToConcatenatedStringIntention/multilineWhenExpr.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToConcatenatedString/multilineWhenExpr.kt");
             doTest(fileName);
         }
 
         @TestMetadata("namedExprBetweenConstants.kt")
         public void testNamedExprBetweenConstants() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToConcatenatedStringIntention/namedExprBetweenConstants.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToConcatenatedString/namedExprBetweenConstants.kt");
             doTest(fileName);
         }
 
         @TestMetadata("notApplicableForErrorElement.kt")
         public void testNotApplicableForErrorElement() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToConcatenatedStringIntention/notApplicableForErrorElement.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToConcatenatedString/notApplicableForErrorElement.kt");
             doTest(fileName);
         }
 
         @TestMetadata("notApplicableForSimple.kt")
         public void testNotApplicableForSimple() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToConcatenatedStringIntention/notApplicableForSimple.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToConcatenatedString/notApplicableForSimple.kt");
             doTest(fileName);
         }
 
         @TestMetadata("notAvailableForDollarSignLiteral.kt")
         public void testNotAvailableForDollarSignLiteral() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToConcatenatedStringIntention/notAvailableForDollarSignLiteral.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToConcatenatedString/notAvailableForDollarSignLiteral.kt");
             doTest(fileName);
         }
 
         @TestMetadata("singleVar.kt")
         public void testSingleVar() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToConcatenatedStringIntention/singleVar.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToConcatenatedString/singleVar.kt");
             doTest(fileName);
         }
 
         @TestMetadata("startsWithInt.kt")
         public void testStartsWithInt() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToConcatenatedStringIntention/startsWithInt.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToConcatenatedString/startsWithInt.kt");
             doTest(fileName);
         }
 
         @TestMetadata("startsWithStringExpression.kt")
         public void testStartsWithStringExpression() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToConcatenatedStringIntention/startsWithStringExpression.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToConcatenatedString/startsWithStringExpression.kt");
             doTest(fileName);
         }
 
         @TestMetadata("tricky.kt")
         public void testTricky() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToConcatenatedStringIntention/tricky.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToConcatenatedString/tricky.kt");
             doTest(fileName);
         }
 
         @TestMetadata("withAndWithoutBraces.kt")
         public void testWithAndWithoutBraces() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToConcatenatedStringIntention/withAndWithoutBraces.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToConcatenatedString/withAndWithoutBraces.kt");
             doTest(fileName);
         }
     }
@@ -3602,173 +3602,173 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
-    @TestMetadata("idea/testData/intentions/convertToStringTemplateIntention")
+    @TestMetadata("idea/testData/intentions/convertToStringTemplate")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class ConvertToStringTemplateIntention extends AbstractIntentionTest {
-        public void testAllFilesPresentInConvertToStringTemplateIntention() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertToStringTemplateIntention"), Pattern.compile("^(.+)\\.kt$"), true);
+    public static class ConvertToStringTemplate extends AbstractIntentionTest {
+        public void testAllFilesPresentInConvertToStringTemplate() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertToStringTemplate"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("backslashNMultilineString.kt")
         public void testBackslashNMultilineString() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplateIntention/backslashNMultilineString.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/backslashNMultilineString.kt");
             doTest(fileName);
         }
 
         @TestMetadata("combineEmptyStrings.kt")
         public void testCombineEmptyStrings() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplateIntention/combineEmptyStrings.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/combineEmptyStrings.kt");
             doTest(fileName);
         }
 
         @TestMetadata("combinesNonStringsAsStrings.kt")
         public void testCombinesNonStringsAsStrings() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplateIntention/combinesNonStringsAsStrings.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/combinesNonStringsAsStrings.kt");
             doTest(fileName);
         }
 
         @TestMetadata("combinesNonStringsAsStrings2.kt")
         public void testCombinesNonStringsAsStrings2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplateIntention/combinesNonStringsAsStrings2.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/combinesNonStringsAsStrings2.kt");
             doTest(fileName);
         }
 
         @TestMetadata("consecutiveNewlines.kt")
         public void testConsecutiveNewlines() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplateIntention/consecutiveNewlines.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/consecutiveNewlines.kt");
             doTest(fileName);
         }
 
         @TestMetadata("doesNotCorruptExistingTemplate.kt")
         public void testDoesNotCorruptExistingTemplate() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplateIntention/doesNotCorruptExistingTemplate.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/doesNotCorruptExistingTemplate.kt");
             doTest(fileName);
         }
 
         @TestMetadata("doesNotCorruptExistingTemplateWithBraces.kt")
         public void testDoesNotCorruptExistingTemplateWithBraces() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplateIntention/doesNotCorruptExistingTemplateWithBraces.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/doesNotCorruptExistingTemplateWithBraces.kt");
             doTest(fileName);
         }
 
         @TestMetadata("insertBracesForSimpleNamedExpression.kt")
         public void testInsertBracesForSimpleNamedExpression() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplateIntention/insertBracesForSimpleNamedExpression.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/insertBracesForSimpleNamedExpression.kt");
             doTest(fileName);
         }
 
         @TestMetadata("interpolate2StringConstants.kt")
         public void testInterpolate2StringConstants() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplateIntention/interpolate2StringConstants.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/interpolate2StringConstants.kt");
             doTest(fileName);
         }
 
         @TestMetadata("interpolate2Vals.kt")
         public void testInterpolate2Vals() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplateIntention/interpolate2Vals.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/interpolate2Vals.kt");
             doTest(fileName);
         }
 
         @TestMetadata("interpolate3Left.kt")
         public void testInterpolate3Left() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplateIntention/interpolate3Left.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/interpolate3Left.kt");
             doTest(fileName);
         }
 
         @TestMetadata("interpolate3Right.kt")
         public void testInterpolate3Right() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplateIntention/interpolate3Right.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/interpolate3Right.kt");
             doTest(fileName);
         }
 
         @TestMetadata("interpolateChar.kt")
         public void testInterpolateChar() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplateIntention/interpolateChar.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/interpolateChar.kt");
             doTest(fileName);
         }
 
         @TestMetadata("interpolateDollarSign.kt")
         public void testInterpolateDollarSign() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplateIntention/interpolateDollarSign.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/interpolateDollarSign.kt");
             doTest(fileName);
         }
 
         @TestMetadata("interpolateMapAccess.kt")
         public void testInterpolateMapAccess() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplateIntention/interpolateMapAccess.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/interpolateMapAccess.kt");
             doTest(fileName);
         }
 
         @TestMetadata("interpolateMethodInvoke.kt")
         public void testInterpolateMethodInvoke() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplateIntention/interpolateMethodInvoke.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/interpolateMethodInvoke.kt");
             doTest(fileName);
         }
 
         @TestMetadata("interpolateMultiline.kt")
         public void testInterpolateMultiline() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplateIntention/interpolateMultiline.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/interpolateMultiline.kt");
             doTest(fileName);
         }
 
         @TestMetadata("interpolateStringWithFloat.kt")
         public void testInterpolateStringWithFloat() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplateIntention/interpolateStringWithFloat.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/interpolateStringWithFloat.kt");
             doTest(fileName);
         }
 
         @TestMetadata("interpolateStringWithInt.kt")
         public void testInterpolateStringWithInt() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplateIntention/interpolateStringWithInt.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/interpolateStringWithInt.kt");
             doTest(fileName);
         }
 
         @TestMetadata("multilineString.kt")
         public void testMultilineString() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplateIntention/multilineString.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/multilineString.kt");
             doTest(fileName);
         }
 
         @TestMetadata("noBracesForLastSimpleExpression.kt")
         public void testNoBracesForLastSimpleExpression() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplateIntention/noBracesForLastSimpleExpression.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/noBracesForLastSimpleExpression.kt");
             doTest(fileName);
         }
 
         @TestMetadata("noBracesSimpleFollowedByDot.kt")
         public void testNoBracesSimpleFollowedByDot() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplateIntention/noBracesSimpleFollowedByDot.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/noBracesSimpleFollowedByDot.kt");
             doTest(fileName);
         }
 
         @TestMetadata("notApplicableForErrorElement.kt")
         public void testNotApplicableForErrorElement() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplateIntention/notApplicableForErrorElement.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/notApplicableForErrorElement.kt");
             doTest(fileName);
         }
 
         @TestMetadata("onlyForConcat.kt")
         public void testOnlyForConcat() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplateIntention/onlyForConcat.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/onlyForConcat.kt");
             doTest(fileName);
         }
 
         @TestMetadata("onlyForStrings.kt")
         public void testOnlyForStrings() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplateIntention/onlyForStrings.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/onlyForStrings.kt");
             doTest(fileName);
         }
 
         @TestMetadata("requiresPlusOperator.kt")
         public void testRequiresPlusOperator() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplateIntention/requiresPlusOperator.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/requiresPlusOperator.kt");
             doTest(fileName);
         }
 
         @TestMetadata("tricky.kt")
         public void testTricky() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplateIntention/tricky.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/tricky.kt");
             doTest(fileName);
         }
     }
@@ -5739,83 +5739,83 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
-    @TestMetadata("idea/testData/intentions/simplifyNegatedBinaryExpressionIntention")
+    @TestMetadata("idea/testData/intentions/simplifyNegatedBinaryExpression")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class SimplifyNegatedBinaryExpressionIntention extends AbstractIntentionTest {
-        public void testAllFilesPresentInSimplifyNegatedBinaryExpressionIntention() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/simplifyNegatedBinaryExpressionIntention"), Pattern.compile("^(.+)\\.kt$"), true);
+    public static class SimplifyNegatedBinaryExpression extends AbstractIntentionTest {
+        public void testAllFilesPresentInSimplifyNegatedBinaryExpression() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/simplifyNegatedBinaryExpression"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("equals.kt")
         public void testEquals() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/simplifyNegatedBinaryExpressionIntention/equals.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/simplifyNegatedBinaryExpression/equals.kt");
             doTest(fileName);
         }
 
         @TestMetadata("greaterThan.kt")
         public void testGreaterThan() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/simplifyNegatedBinaryExpressionIntention/greaterThan.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/simplifyNegatedBinaryExpression/greaterThan.kt");
             doTest(fileName);
         }
 
         @TestMetadata("greaterThanOrEquals.kt")
         public void testGreaterThanOrEquals() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/simplifyNegatedBinaryExpressionIntention/greaterThanOrEquals.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/simplifyNegatedBinaryExpression/greaterThanOrEquals.kt");
             doTest(fileName);
         }
 
         @TestMetadata("in.kt")
         public void testIn() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/simplifyNegatedBinaryExpressionIntention/in.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/simplifyNegatedBinaryExpression/in.kt");
             doTest(fileName);
         }
 
         @TestMetadata("inapplicableBinaryOperation.kt")
         public void testInapplicableBinaryOperation() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/simplifyNegatedBinaryExpressionIntention/inapplicableBinaryOperation.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/simplifyNegatedBinaryExpression/inapplicableBinaryOperation.kt");
             doTest(fileName);
         }
 
         @TestMetadata("is.kt")
         public void testIs() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/simplifyNegatedBinaryExpressionIntention/is.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/simplifyNegatedBinaryExpression/is.kt");
             doTest(fileName);
         }
 
         @TestMetadata("lessThan.kt")
         public void testLessThan() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/simplifyNegatedBinaryExpressionIntention/lessThan.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/simplifyNegatedBinaryExpression/lessThan.kt");
             doTest(fileName);
         }
 
         @TestMetadata("lessThanOrEquals.kt")
         public void testLessThanOrEquals() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/simplifyNegatedBinaryExpressionIntention/lessThanOrEquals.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/simplifyNegatedBinaryExpression/lessThanOrEquals.kt");
             doTest(fileName);
         }
 
         @TestMetadata("notEquals.kt")
         public void testNotEquals() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/simplifyNegatedBinaryExpressionIntention/notEquals.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/simplifyNegatedBinaryExpression/notEquals.kt");
             doTest(fileName);
         }
 
         @TestMetadata("notIn.kt")
         public void testNotIn() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/simplifyNegatedBinaryExpressionIntention/notIn.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/simplifyNegatedBinaryExpression/notIn.kt");
             doTest(fileName);
         }
 
         @TestMetadata("notIs.kt")
         public void testNotIs() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/simplifyNegatedBinaryExpressionIntention/notIs.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/simplifyNegatedBinaryExpression/notIs.kt");
             doTest(fileName);
         }
 
         @TestMetadata("simpleInvert.kt")
         public void testSimpleInvert() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/simplifyNegatedBinaryExpressionIntention/simpleInvert.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/simplifyNegatedBinaryExpression/simpleInvert.kt");
             doTest(fileName);
         }
 

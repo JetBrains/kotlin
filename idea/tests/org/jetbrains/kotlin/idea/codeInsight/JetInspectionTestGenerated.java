@@ -61,9 +61,9 @@ public class JetInspectionTestGenerated extends AbstractJetInspectionTest {
             doTest(fileName);
         }
 
-        @TestMetadata("simplifyNegatedBinaryExpressionIntention/inspectionData/inspections.test")
-        public void testSimplifyNegatedBinaryExpressionIntention_inspectionData_Inspections_test() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/simplifyNegatedBinaryExpressionIntention/inspectionData/inspections.test");
+        @TestMetadata("simplifyNegatedBinaryExpression/inspectionData/inspections.test")
+        public void testSimplifyNegatedBinaryExpression_inspectionData_Inspections_test() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/simplifyNegatedBinaryExpression/inspectionData/inspections.test");
             doTest(fileName);
         }
     }
