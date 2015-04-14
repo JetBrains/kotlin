@@ -29,8 +29,10 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetMethodDescriptor
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.modify
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 
-public class ConvertParameterToReceiverIntention: JetSelfTargetingOffsetIndependentIntention<JetParameter>("convert.parameter.to.receiver.intention", javaClass()) {
-    override fun isApplicableTo(element: JetParameter): Boolean {
+public class ConvertParameterToReceiverIntention: JetSelfTargetingIntention<JetParameter>(javaClass(), "Convert parameter to receiver") {
+    override fun isApplicableTo(element: JetParameter, caretOffset: Int): Boolean {
+        val identifier = element.getNameIdentifier() ?: return false
+        if (!identifier.getTextRange().containsOffset(caretOffset)) return false
         if (element.isVarArg()) return false
         val function = element.getStrictParentOfType<JetNamedFunction>() ?: return false
         return function.getValueParameterList() == element.getParent() && function.getReceiverTypeReference() == null
