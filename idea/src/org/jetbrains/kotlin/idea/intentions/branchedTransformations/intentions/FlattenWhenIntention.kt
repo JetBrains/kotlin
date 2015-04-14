@@ -16,12 +16,13 @@
 
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingIntention
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.*
-import org.jetbrains.kotlin.psi.JetWhenExpression
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.canFlatten
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.flatten
+import org.jetbrains.kotlin.psi.JetWhenExpression
 
-public class FlattenWhenIntention : JetSelfTargetingIntention<JetWhenExpression>("flatten.when", javaClass()) {
+public class FlattenWhenIntention : JetSelfTargetingOffsetIndependentIntention<JetWhenExpression>("flatten.when", javaClass()) {
     override fun isApplicableTo(element: JetWhenExpression): Boolean = element.canFlatten()
 
     override fun applyTo(element: JetWhenExpression, editor: Editor) {

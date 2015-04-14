@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.idea.util.JetPsiPrecedences
 import org.jetbrains.kotlin.lexer.JetTokens.*
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
-public class SwapBinaryExpression : JetSelfTargetingIntention<JetBinaryExpression>(
+public class SwapBinaryExpression : JetSelfTargetingOffsetIndependentIntention<JetBinaryExpression>(
         "swap.binary.expression", javaClass()
 ) {
     companion object {

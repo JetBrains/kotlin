@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 
 
-public class ConvertToStringTemplateIntention : JetSelfTargetingIntention<JetBinaryExpression>("convert.to.string.template", javaClass()) {
+public class ConvertToStringTemplateIntention : JetSelfTargetingOffsetIndependentIntention<JetBinaryExpression>("convert.to.string.template", javaClass()) {
     override fun isApplicableTo(element: JetBinaryExpression): Boolean {
         if (element.getOperationToken() != JetTokens.PLUS) return false
 

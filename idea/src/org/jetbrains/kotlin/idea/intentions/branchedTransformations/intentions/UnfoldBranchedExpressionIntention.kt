@@ -16,18 +16,15 @@
 
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.*
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingIntention
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetBinaryExpression
-import org.jetbrains.kotlin.psi.JetReturnExpression
-import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedUnfoldingUtils
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.UnfoldableKind
+import org.jetbrains.kotlin.psi.*
 
 public open class UnfoldBranchedExpressionIntention<T: JetExpression>(
         val kind: UnfoldableKind, elementType: Class<T>
-) : JetSelfTargetingIntention<T>(kind.getKey(), elementType) {
+) : JetSelfTargetingOffsetIndependentIntention<T>(kind.getKey(), elementType) {
     override fun isApplicableTo(element: T): Boolean = BranchedUnfoldingUtils.getUnfoldableExpressionKind(element) == kind
 
     override fun applyTo(element: T, editor: Editor) {

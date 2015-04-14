@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.lexer.JetKeywordToken
 import org.jetbrains.kotlin.psi.JetNamedFunction
 import org.jetbrains.kotlin.psi.JetBlockExpression
 
-public class InvertIfConditionIntention : JetSelfTargetingIntention<JetIfExpression>("invert.if.condition", javaClass()) {
+public class InvertIfConditionIntention : JetSelfTargetingOffsetIndependentIntention<JetIfExpression>("invert.if.condition", javaClass()) {
     fun checkForNegation(element: JetUnaryExpression): Boolean {
         return element.getOperationReference().getReferencedName().equals("!")
     }

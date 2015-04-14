@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import java.util.LinkedList
 import org.jetbrains.kotlin.idea.JetBundle
 
-public class ConvertNegatedExpressionWithDemorgansLawIntention : JetSelfTargetingIntention<JetPrefixExpression>(
+public class ConvertNegatedExpressionWithDemorgansLawIntention : JetSelfTargetingOffsetIndependentIntention<JetPrefixExpression>(
         "convert.negated.expression.with.demorgans.law", javaClass()
 ) {
 

@@ -16,12 +16,13 @@
 
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingIntention
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.*
-import org.jetbrains.kotlin.psi.JetWhenExpression
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.canIntroduceSubject
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.introduceSubject
+import org.jetbrains.kotlin.psi.JetWhenExpression
 
-public class IntroduceWhenSubjectIntention : JetSelfTargetingIntention<JetWhenExpression>("introduce.when.subject", javaClass()) {
+public class IntroduceWhenSubjectIntention : JetSelfTargetingOffsetIndependentIntention<JetWhenExpression>("introduce.when.subject", javaClass()) {
     override fun isApplicableTo(element: JetWhenExpression): Boolean = element.canIntroduceSubject()
 
     override fun applyTo(element: JetWhenExpression, editor: Editor) {

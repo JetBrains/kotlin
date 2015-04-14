@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.psi.JetThrowExpression
 import org.jetbrains.kotlin.psi.psiUtil.replaced
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 
-public class ConvertAssertToIfWithThrowIntention : JetSelfTargetingIntention<JetCallExpression>(
+public class ConvertAssertToIfWithThrowIntention : JetSelfTargetingOffsetIndependentIntention<JetCallExpression>(
         "convert.assert.to.if.with.throw", javaClass()) {
 
     private var messageIsAFunction : Boolean by Delegates.notNull()

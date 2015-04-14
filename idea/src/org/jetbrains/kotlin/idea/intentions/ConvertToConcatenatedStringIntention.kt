@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.psi.JetIfExpression
 import org.jetbrains.kotlin.psi.JetBlockExpression
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 
-public class ConvertToConcatenatedStringIntention : JetSelfTargetingIntention<JetStringTemplateExpression>("convert.to.concatenated.string.intention", javaClass()) {
+public class ConvertToConcatenatedStringIntention : JetSelfTargetingOffsetIndependentIntention<JetStringTemplateExpression>("convert.to.concatenated.string.intention", javaClass()) {
     override fun isApplicableTo(element: JetStringTemplateExpression): Boolean {
         return element.getEntries().any { it is JetStringTemplateEntryWithExpression }
     }

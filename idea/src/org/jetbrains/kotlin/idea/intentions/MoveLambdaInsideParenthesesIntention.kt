@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.psi.JetFunctionLiteralArgument
 import org.jetbrains.kotlin.idea.util.psiModificationUtil.moveInsideParentheses
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 
-public class MoveLambdaInsideParenthesesIntention : JetSelfTargetingIntention<JetFunctionLiteralArgument>(
+public class MoveLambdaInsideParenthesesIntention : JetSelfTargetingOffsetIndependentIntention<JetFunctionLiteralArgument>(
         "move.lambda.inside.parentheses", javaClass()) {
 
     override fun isApplicableTo(element: JetFunctionLiteralArgument): Boolean = true

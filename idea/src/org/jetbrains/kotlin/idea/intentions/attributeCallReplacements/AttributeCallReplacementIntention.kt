@@ -16,23 +16,23 @@
 
 package org.jetbrains.kotlin.idea.intentions.attributeCallReplacements
 
-import org.jetbrains.kotlin.psi.JetCallExpression
+import com.intellij.codeInsight.hint.HintManager
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.psi.JetQualifiedExpression
-import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingIntention
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.idea.JetBundle
-import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
-import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
 import org.jetbrains.kotlin.idea.util.Maybe
 import org.jetbrains.kotlin.idea.util.MaybeError
 import org.jetbrains.kotlin.idea.util.MaybeValue
-import com.intellij.codeInsight.hint.HintManager
+import org.jetbrains.kotlin.psi.JetCallExpression
+import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
+import org.jetbrains.kotlin.psi.JetQualifiedExpression
+import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument
 
 // Internal because you shouldn't construct this manually. You can end up with an inconsistant CallDescription.
 public class CallDescription internal (
@@ -97,7 +97,7 @@ public fun JetQualifiedExpression.toCallDescription(): CallDescription? {
     return CallDescription(this, callExpression, resolvedCall)
 }
 
-public abstract class AttributeCallReplacementIntention(private val name: String) : JetSelfTargetingIntention<JetDotQualifiedExpression>(name, javaClass()) {
+public abstract class AttributeCallReplacementIntention(private val name: String) : JetSelfTargetingOffsetIndependentIntention<JetDotQualifiedExpression>(name, javaClass()) {
 
     protected abstract fun isApplicableToCall(call: CallDescription): Boolean
 

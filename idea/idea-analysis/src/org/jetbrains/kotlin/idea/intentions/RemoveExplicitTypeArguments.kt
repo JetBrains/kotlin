@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.idea.util.approximateFlexibleTypes
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 
-public class RemoveExplicitTypeArguments : JetSelfTargetingIntention<JetTypeArgumentList>(
+public class RemoveExplicitTypeArguments : JetSelfTargetingOffsetIndependentIntention<JetTypeArgumentList>(
         "remove.explicit.type.arguments", javaClass()) {
 
     override fun isApplicableTo(element: JetTypeArgumentList): Boolean {

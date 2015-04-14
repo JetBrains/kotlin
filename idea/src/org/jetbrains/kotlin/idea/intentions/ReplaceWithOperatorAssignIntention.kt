@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.matches
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 
-public class ReplaceWithOperatorAssignIntention : JetSelfTargetingIntention<JetBinaryExpression>("replace.with.operator.assign.intention", javaClass()) {
+public class ReplaceWithOperatorAssignIntention : JetSelfTargetingOffsetIndependentIntention<JetBinaryExpression>("replace.with.operator.assign.intention", javaClass()) {
 
     override fun isApplicableTo(element: JetBinaryExpression): Boolean {
         fun isWellFormedAssignment(element : JetBinaryExpression): Boolean {

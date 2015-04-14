@@ -16,12 +16,13 @@
 
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingIntention
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.*
-import org.jetbrains.kotlin.psi.JetWhenExpression
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.canMergeWithNext
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.mergeWithNext
+import org.jetbrains.kotlin.psi.JetWhenExpression
 
-public class MergeWhenIntention : JetSelfTargetingIntention<JetWhenExpression>("merge.when", javaClass()) {
+public class MergeWhenIntention : JetSelfTargetingOffsetIndependentIntention<JetWhenExpression>("merge.when", javaClass()) {
     override fun isApplicableTo(element: JetWhenExpression): Boolean = element.canMergeWithNext()
 
     override fun applyTo(element: JetWhenExpression, editor: Editor) {

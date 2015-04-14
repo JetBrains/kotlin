@@ -190,12 +190,8 @@ public class ConvertFunctionToPropertyIntention : JetSelfTargetingIntention<JetN
 
     override fun startInWriteAction(): Boolean = false
 
-    override fun isApplicableTo(element: JetNamedFunction): Boolean {
-        throw IllegalStateException("isApplicableTo(JetExpressionImpl, Editor) should be called instead")
-    }
-
-    override fun isApplicableTo(element: JetNamedFunction, editor: Editor): Boolean {
-        val elementAtCaret = element.getContainingFile().findElementAt(editor.getCaretModel().getOffset())
+    override fun isApplicableTo(element: JetNamedFunction, caretOffset: Int): Boolean {
+        val elementAtCaret = element.getContainingFile().findElementAt(caretOffset)
         if (!(element.getNameIdentifier()?.isAncestor(elementAtCaret) ?: false)) return false
 
         if (element.getValueParameters().isNotEmpty() || element.isLocal()) return false

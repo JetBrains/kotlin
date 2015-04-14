@@ -16,22 +16,18 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.psi.JetElement
-import com.intellij.psi.PsiElementVisitor
-import com.intellij.codeInspection.LocalInspectionToolSession
-import com.intellij.codeInspection.ProblemsHolder
-import com.intellij.codeInspection.ProblemHighlightType
-import com.intellij.codeInspection.LocalQuickFix
-import com.intellij.openapi.project.Project
-import com.intellij.codeInspection.ProblemDescriptor
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingIntention
-import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.intellij.openapi.editor.EditorFactory
+import com.intellij.codeInspection.*
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.editor.EditorFactory
+import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
+import org.jetbrains.kotlin.psi.JetElement
 
 public abstract class IntentionBasedInspection<T: JetElement>(
-        protected val intention: JetSelfTargetingIntention<T>
+        protected val intention: JetSelfTargetingOffsetIndependentIntention<T>
 ) : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         return object: PsiElementVisitor() {
@@ -70,11 +66,8 @@ public abstract class IntentionBasedInspection<T: JetElement>(
 }
 
 private fun PsiElement.getOrCreateEditor(): Editor? {
-    val file = getContainingFile()?.getVirtualFile()
-    if (file == null) return null
-
-    val document = FileDocumentManager.getInstance()!!.getDocument(file)
-    if (document == null) return null
+    val file = getContainingFile()?.getVirtualFile() ?: return null
+    val document = FileDocumentManager.getInstance().getDocument(file) ?: return null
 
     val editorFactory = EditorFactory.getInstance()!!
 

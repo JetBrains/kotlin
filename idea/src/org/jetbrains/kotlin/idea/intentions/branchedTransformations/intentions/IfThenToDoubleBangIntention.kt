@@ -16,26 +16,17 @@
 
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingIntention
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.psi.JetIfExpression
-import org.jetbrains.kotlin.psi.JetBinaryExpression
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.evaluatesTo
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.comparesNonNullToNull
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.getNonNullExpression
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.replace
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStableVariable
-import org.jetbrains.kotlin.psi.JetPostfixExpression
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.inlineBaseExpressionIfApplicableWithPrompt
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.extractExpressionIfSingle
-import org.jetbrains.kotlin.psi.JetThrowExpression
 import org.jetbrains.kotlin.idea.JetBundle
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isNullExpressionOrEmptyBlock
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.throwsNullPointerExceptionWithNoArguments
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStatement
+import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.*
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.psi.JetBinaryExpression
+import org.jetbrains.kotlin.psi.JetIfExpression
+import org.jetbrains.kotlin.psi.JetPostfixExpression
+import org.jetbrains.kotlin.psi.JetThrowExpression
 
-public class IfThenToDoubleBangIntention : JetSelfTargetingIntention<JetIfExpression>("if.then.to.double.bang", javaClass()) {
+public class IfThenToDoubleBangIntention : JetSelfTargetingOffsetIndependentIntention<JetIfExpression>("if.then.to.double.bang", javaClass()) {
 
     override fun isApplicableTo(element: JetIfExpression): Boolean {
         val condition = element.getCondition()

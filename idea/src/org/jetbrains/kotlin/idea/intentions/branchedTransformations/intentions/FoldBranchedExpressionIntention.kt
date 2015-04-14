@@ -16,18 +16,18 @@
 
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingIntention
+import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedFoldingUtils
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.FoldableKind
-import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetIfExpression
 import org.jetbrains.kotlin.psi.JetWhenExpression
 
 public open class FoldBranchedExpressionIntention<T: JetExpression>(
         val kind: FoldableKind, elementType: Class<T>
-) : JetSelfTargetingIntention<T>(kind.getKey(), elementType) {
+) : JetSelfTargetingOffsetIndependentIntention<T>(kind.getKey(), elementType) {
     override fun isApplicableTo(element: T): Boolean = BranchedFoldingUtils.getFoldableExpressionKind(element) == kind
 
     override fun applyTo(element: T, editor: Editor) {

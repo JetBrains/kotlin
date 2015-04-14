@@ -16,25 +16,13 @@
 
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingIntention
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.psi.JetIfExpression
-import org.jetbrains.kotlin.psi.JetBinaryExpression
+import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.*
 import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.extractExpressionIfSingle
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.evaluatesTo
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.comparesNonNullToNull
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.getNonNullExpression
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isNotNullExpression
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.replace
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.inlineLeftSideIfApplicableWithPrompt
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStableVariable
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.throwsNullPointerExceptionWithNoArguments
-import org.jetbrains.kotlin.psi.JetThrowExpression
-import org.jetbrains.kotlin.psi.JetPsiUtil
-import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.psi.*
 
-public class IfThenToElvisIntention : JetSelfTargetingIntention<JetIfExpression>("if.then.to.elvis", javaClass()) {
+public class IfThenToElvisIntention : JetSelfTargetingOffsetIndependentIntention<JetIfExpression>("if.then.to.elvis", javaClass()) {
 
     override fun isApplicableTo(element: JetIfExpression): Boolean {
         val condition = element.getCondition()

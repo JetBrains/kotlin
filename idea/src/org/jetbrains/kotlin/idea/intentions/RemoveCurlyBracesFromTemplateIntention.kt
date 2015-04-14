@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.psi.JetPsiFactory
 import java.util.regex.*
 import org.jetbrains.kotlin.psi.JetStringTemplateEntryWithExpression
 
-public class RemoveCurlyBracesFromTemplateIntention : JetSelfTargetingIntention<JetBlockStringTemplateEntry>(
+public class RemoveCurlyBracesFromTemplateIntention : JetSelfTargetingOffsetIndependentIntention<JetBlockStringTemplateEntry>(
         "remove.unnecessary.curly.brackets.from.string.template", javaClass()) {
 
     companion object {

@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 
 public class ConvertIfWithThrowToAssertIntention :
-        JetSelfTargetingIntention<JetIfExpression>("convert.if.with.throw.to.assert", javaClass()) {
+        JetSelfTargetingOffsetIndependentIntention<JetIfExpression>("convert.if.with.throw.to.assert", javaClass()) {
 
     override fun isApplicableTo(element: JetIfExpression): Boolean {
         if (element.getElse() != null) return false

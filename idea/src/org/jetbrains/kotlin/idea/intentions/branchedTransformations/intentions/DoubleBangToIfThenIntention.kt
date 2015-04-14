@@ -16,30 +16,24 @@
 
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingIntention
-import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetPsiUtil
-import org.jetbrains.kotlin.psi.JetPostfixExpression
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStableVariable
-import org.jetbrains.kotlin.idea.intentions.JetTypeLookupExpression
+import com.intellij.codeInsight.template.Template
+import com.intellij.codeInsight.template.TemplateBuilderImpl
 import com.intellij.codeInsight.template.TemplateEditingAdapter
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl
-import com.intellij.codeInsight.template.Template
-import org.jetbrains.kotlin.idea.JetBundle
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.convertToIfNotNullExpression
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.introduceValueForCondition
-import org.jetbrains.kotlin.psi.JetThrowExpression
-import com.intellij.codeInsight.template.TemplateBuilderImpl
+import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiDocumentManager
 import org.apache.commons.lang.StringEscapeUtils.escapeJava
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.convertToIfNullExpression
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.NULL_PTR_EXCEPTION
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.KOTLIN_NULL_PTR_EXCEPTION
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStatement
+import org.jetbrains.kotlin.idea.JetBundle
+import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
+import org.jetbrains.kotlin.idea.intentions.JetTypeLookupExpression
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.*
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.psi.JetPostfixExpression
+import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.JetPsiUtil
+import org.jetbrains.kotlin.psi.JetThrowExpression
 
-public class DoubleBangToIfThenIntention : JetSelfTargetingIntention<JetPostfixExpression>("double.bang.to.if.then", javaClass()) {
+public class DoubleBangToIfThenIntention : JetSelfTargetingOffsetIndependentIntention<JetPostfixExpression>("double.bang.to.if.then", javaClass()) {
 
     override fun isApplicableTo(element: JetPostfixExpression): Boolean =
             element.getOperationToken() == JetTokens.EXCLEXCL

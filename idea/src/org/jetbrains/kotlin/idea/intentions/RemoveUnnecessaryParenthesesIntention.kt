@@ -20,7 +20,7 @@ import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.psi.JetParenthesizedExpression
 import org.jetbrains.kotlin.psi.JetPsiUtil
 
-public class RemoveUnnecessaryParenthesesIntention : JetSelfTargetingIntention<JetParenthesizedExpression>(
+public class RemoveUnnecessaryParenthesesIntention : JetSelfTargetingOffsetIndependentIntention<JetParenthesizedExpression>(
         "remove.unnecessary.parentheses", javaClass()
 ) {
     override fun isApplicableTo(element: JetParenthesizedExpression): Boolean = JetPsiUtil.areParenthesesUseless(element)

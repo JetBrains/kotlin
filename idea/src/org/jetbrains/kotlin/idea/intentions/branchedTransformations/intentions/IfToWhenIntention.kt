@@ -16,12 +16,13 @@
 
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingIntention
-import org.jetbrains.kotlin.psi.JetIfExpression
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.*
+import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.canTransformToWhen
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.transformToWhen
+import org.jetbrains.kotlin.psi.JetIfExpression
 
-public class IfToWhenIntention : JetSelfTargetingIntention<JetIfExpression>("if.to.when", javaClass()) {
+public class IfToWhenIntention : JetSelfTargetingOffsetIndependentIntention<JetIfExpression>("if.to.when", javaClass()) {
     override fun isApplicableTo(element: JetIfExpression): Boolean = element.canTransformToWhen()
 
     override fun applyTo(element: JetIfExpression, editor: Editor) {

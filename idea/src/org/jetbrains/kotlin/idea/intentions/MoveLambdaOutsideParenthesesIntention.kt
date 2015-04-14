@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.psi.JetLabeledExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentsInParentheses
 
-public class MoveLambdaOutsideParenthesesIntention : JetSelfTargetingIntention<JetCallExpression>(
+public class MoveLambdaOutsideParenthesesIntention : JetSelfTargetingOffsetIndependentIntention<JetCallExpression>(
         "move.lambda.outside.parentheses", javaClass()) {
 
     private fun isLambdaOrLabeledLambda(expression: JetExpression?): Boolean =

@@ -20,7 +20,7 @@ import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.psi.JetSimpleNameStringTemplateEntry
 import org.jetbrains.kotlin.psi.JetPsiFactory
 
-public class InsertCurlyBracesToTemplateIntention : JetSelfTargetingIntention<JetSimpleNameStringTemplateEntry>(
+public class InsertCurlyBracesToTemplateIntention : JetSelfTargetingOffsetIndependentIntention<JetSimpleNameStringTemplateEntry>(
         "insert.curly.brackets.to.string.template", javaClass()) {
 
     override fun isApplicableTo(element: JetSimpleNameStringTemplateEntry): Boolean = true

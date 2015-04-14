@@ -30,20 +30,14 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 
 public open class ReplaceWithInfixFunctionCallIntention : JetSelfTargetingIntention<JetCallExpression>("replace.with.infix.function.call.intention", javaClass()) {
-    override fun isApplicableTo(element: JetCallExpression): Boolean {
-        throw IllegalStateException("isApplicableTo(JetExpressionImpl, Editor) should be called instead")
-    }
-
-    override fun isApplicableTo(element: JetCallExpression, editor: Editor): Boolean {
-        val caretLocation = editor.getCaretModel().getOffset()
-
+    override fun isApplicableTo(element: JetCallExpression, caretOffset: Int): Boolean {
         val calleeExpr = element.getCalleeExpression()
         if (calleeExpr == null) return false
 
         val textRange = calleeExpr.getTextRange()
         if (textRange == null) return false
 
-        if (caretLocation !in textRange) return false
+        if (caretOffset !in textRange) return false
 
         val parent = element.getParent()
 

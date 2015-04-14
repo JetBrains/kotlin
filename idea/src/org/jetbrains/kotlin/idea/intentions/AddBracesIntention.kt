@@ -24,16 +24,10 @@ import org.jetbrains.kotlin.JetNodeTypes
 import com.intellij.psi.PsiWhiteSpace
 
 public class AddBracesIntention : JetSelfTargetingIntention<JetExpressionImpl>("add.braces", javaClass()) {
-    override fun isApplicableTo(element: JetExpressionImpl): Boolean {
-        throw IllegalStateException("isApplicableTo(JetExpressionImpl, Editor) should be called instead")
-    }
+    override fun isApplicableTo(element: JetExpressionImpl, caretOffset: Int): Boolean {
+        val expressionKind = element.getExpressionKind(caretOffset) ?: return false
 
-    override fun isApplicableTo(element: JetExpressionImpl, editor: Editor): Boolean {
-        val expressionKind = element.getExpressionKind(editor.getCaretModel().getOffset())
-        if (expressionKind == null) return false
-
-        val jetBlockElement = element.findBlockInExpression(expressionKind)
-        if (jetBlockElement != null) return false
+        if (element.findBlockInExpression(expressionKind) != null) return false
 
         setText("Add braces to '${expressionKind.text}' statement")
         return true

@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.JetParameter
 import org.jetbrains.kotlin.psi.JetOperationExpression
 
-public class ConvertToForEachFunctionCallIntention : JetSelfTargetingIntention<JetForExpression>("convert.to.for.each.function.call.intention", javaClass()) {
+public class ConvertToForEachFunctionCallIntention : JetSelfTargetingOffsetIndependentIntention<JetForExpression>("convert.to.for.each.function.call.intention", javaClass()) {
     override fun isApplicableTo(element: JetForExpression): Boolean {
         return element.getLoopRange() != null && element.getLoopParameter() != null && element.getBody() != null
     }

@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 
-public class OperatorToFunctionIntention : JetSelfTargetingIntention<JetExpression>("operator.to.function", javaClass()) {
+public class OperatorToFunctionIntention : JetSelfTargetingOffsetIndependentIntention<JetExpression>("operator.to.function", javaClass()) {
     companion object {
         private fun isApplicablePrefix(element: JetPrefixExpression): Boolean {
             return when (element.getOperationReference().getReferencedNameElementType()) {

@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.psi.JetFunctionLiteralExpression
 import org.jetbrains.kotlin.psi.JetParenthesizedExpression
 import org.jetbrains.kotlin.lexer.JetTokens
 
-public class ReplaceWithDotQualifiedMethodCallIntention : JetSelfTargetingIntention<JetBinaryExpression>("replace.with.dot.qualified.method.call.intention", javaClass()) {
+public class ReplaceWithDotQualifiedMethodCallIntention : JetSelfTargetingOffsetIndependentIntention<JetBinaryExpression>("replace.with.dot.qualified.method.call.intention", javaClass()) {
     override fun isApplicableTo(element: JetBinaryExpression): Boolean {
         return element.getLeft() != null && element.getRight() != null && element.getOperationToken() == JetTokens.IDENTIFIER
     }

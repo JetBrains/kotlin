@@ -37,27 +37,42 @@ public abstract class JetSelfTargetingIntention<T: JetElement>(
         this.text = text
     }
 
-    override fun getText() = text
-    override fun getFamilyName() = familyName
+    final override fun getText() = text
+    final override fun getFamilyName() = familyName
 
-    public abstract fun isApplicableTo(element: T): Boolean
-    public open fun isApplicableTo(element: T, editor: Editor): Boolean = isApplicableTo(element)
+    public abstract fun isApplicableTo(element: T, caretOffset: Int): Boolean
+
     public abstract fun applyTo(element: T, editor: Editor)
 
-    protected fun getTarget(editor: Editor, file: PsiFile): T? {
+    private fun getTarget(editor: Editor, file: PsiFile): T? {
         val offset = editor.getCaretModel().getOffset()
-        return file.findElementAt(offset)?.getParentOfTypesAndPredicate(false, elementType) { element -> isApplicableTo(element, editor) }
+        return file.findElementAt(offset)?.getParentOfTypesAndPredicate(false, elementType) { element -> isApplicableTo(element, offset) }
     }
 
-    override fun isAvailable(project: Project, editor: Editor, file: PsiFile)
+    final override fun isAvailable(project: Project, editor: Editor, file: PsiFile)
             = getTarget(editor, file) != null
 
-    override fun invoke(project: Project, editor: Editor, file: PsiFile): Unit {
+    final override fun invoke(project: Project, editor: Editor, file: PsiFile): Unit {
         val target = getTarget(editor, file) ?: error("Intention is not applicable")
         applyTo(target, editor)
     }
 
-    override fun startInWriteAction(): Boolean = true
+    override fun startInWriteAction() = true
 
     override fun toString(): String = getText()
+}
+
+public abstract class JetSelfTargetingOffsetIndependentIntention<T: JetElement>(
+        elementType: Class<T>,
+        text: String,
+        familyName: String)
+: JetSelfTargetingIntention<T>(elementType, text, familyName) {
+
+    deprecated("Use primary constructor, no need to use i18n")
+    public constructor(key: String, elementType: Class<T>) : this(elementType, JetBundle.message(key), JetBundle.message(key + ".family")) {
+    }
+
+    public abstract fun isApplicableTo(element: T): Boolean
+
+    override final fun isApplicableTo(element: T, caretOffset: Int): Boolean = isApplicableTo(element)
 }

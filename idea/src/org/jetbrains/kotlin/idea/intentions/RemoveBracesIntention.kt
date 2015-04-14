@@ -24,16 +24,10 @@ import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.PsiComment
 
 public class RemoveBracesIntention : JetSelfTargetingIntention<JetExpressionImpl>("remove.braces", javaClass()) {
-    override fun isApplicableTo(element: JetExpressionImpl): Boolean {
-        throw IllegalStateException("isApplicableTo(JetExpressionImpl, Editor) should be called instead")
-    }
+    override fun isApplicableTo(element: JetExpressionImpl, caretOffset: Int): Boolean {
+        val expressionKind = element.getExpressionKind(caretOffset) ?: return false
 
-    override fun isApplicableTo(element: JetExpressionImpl, editor: Editor): Boolean {
-        val expressionKind = element.getExpressionKind(editor.getCaretModel().getOffset())
-        if (expressionKind == null) return false
-
-        val jetBlockElement = element.findBlockInExpression(expressionKind)
-        if (jetBlockElement == null) return false
+        val jetBlockElement = element.findBlockInExpression(expressionKind) ?: return false
 
         if (jetBlockElement.getStatements().size == 1) {
             setText("Remove braces from '${expressionKind.text}' statement")

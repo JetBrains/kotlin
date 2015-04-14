@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.JetPsiUtil
 import java.util.LinkedList
 
 
-public class ConvertNegatedBooleanSequenceIntention : JetSelfTargetingIntention<JetBinaryExpression>(
+public class ConvertNegatedBooleanSequenceIntention : JetSelfTargetingOffsetIndependentIntention<JetBinaryExpression>(
         "convert.negated.boolean.sequence", javaClass()) {
 
     override fun isApplicableTo(element: JetBinaryExpression): Boolean {

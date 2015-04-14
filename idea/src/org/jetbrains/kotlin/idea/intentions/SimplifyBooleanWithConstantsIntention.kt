@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.psi.psiUtil.copied
 import org.jetbrains.kotlin.psi.psiUtil.replaced
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 
-public class SimplifyBooleanWithConstantsIntention : JetSelfTargetingIntention<JetBinaryExpression>(
+public class SimplifyBooleanWithConstantsIntention : JetSelfTargetingOffsetIndependentIntention<JetBinaryExpression>(
         "simplify.boolean.with.constants", javaClass()) {
 
     private var topParent : JetBinaryExpression? = null

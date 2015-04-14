@@ -16,16 +16,16 @@
 
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
-import org.jetbrains.kotlin.psi.JetBinaryExpression
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingIntention
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetPsiUtil
+import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.convertToIfNotNullExpression
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.introduceValueForCondition
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStableVariable
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.psi.JetBinaryExpression
+import org.jetbrains.kotlin.psi.JetPsiUtil
 
-public class ElvisToIfThenIntention : JetSelfTargetingIntention<JetBinaryExpression>("elvis.to.if.then", javaClass()) {
+public class ElvisToIfThenIntention : JetSelfTargetingOffsetIndependentIntention<JetBinaryExpression>("elvis.to.if.then", javaClass()) {
     override fun isApplicableTo(element: JetBinaryExpression): Boolean =
             element.getOperationToken() == JetTokens.ELVIS
 

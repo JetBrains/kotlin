@@ -16,19 +16,15 @@
 
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
-import org.jetbrains.kotlin.psi.JetSafeQualifiedExpression
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingIntention
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.psi.JetPsiUtil
-import org.jetbrains.kotlin.psi.JetBinaryExpression
+import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.convertToIfNotNullExpression
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.introduceValueForCondition
-import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStableVariable
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStatement
+import org.jetbrains.kotlin.psi.*
 
-public class SafeAccessToIfThenIntention : JetSelfTargetingIntention<JetSafeQualifiedExpression>("safe.access.to.if.then", javaClass()) {
+public class SafeAccessToIfThenIntention : JetSelfTargetingOffsetIndependentIntention<JetSafeQualifiedExpression>("safe.access.to.if.then", javaClass()) {
     override fun isApplicableTo(element: JetSafeQualifiedExpression): Boolean = true
 
     override fun applyTo(element: JetSafeQualifiedExpression, editor: Editor) {

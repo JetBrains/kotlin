@@ -16,23 +16,13 @@
 
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingIntention
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.psi.JetIfExpression
-import org.jetbrains.kotlin.psi.JetBinaryExpression
-import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
+import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.*
 import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.extractExpressionIfSingle
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.comparesNonNullToNull
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.getNonNullExpression
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isNullExpressionOrEmptyBlock
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.replace
-import org.jetbrains.kotlin.psi.JetSafeQualifiedExpression
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStableVariable
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.inlineReceiverIfApplicableWithPrompt
+import org.jetbrains.kotlin.psi.*
 
-public class IfThenToSafeAccessIntention : JetSelfTargetingIntention<JetIfExpression>("if.then.to.safe.access", javaClass()) {
+public class IfThenToSafeAccessIntention : JetSelfTargetingOffsetIndependentIntention<JetIfExpression>("if.then.to.safe.access", javaClass()) {
 
     override fun isApplicableTo(element: JetIfExpression): Boolean {
         val condition = element.getCondition()

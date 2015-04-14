@@ -29,16 +29,12 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 public class InsertExplicitTypeArguments : JetSelfTargetingIntention<JetCallExpression>(
         "insert.explicit.type.arguments", javaClass()) {
 
-    override fun isApplicableTo(element: JetCallExpression): Boolean {
-        throw IllegalStateException("isApplicableTo(JetExpressionImpl, Editor) should be called instead")
-    }
-
-    override fun isApplicableTo(element: JetCallExpression, editor: Editor): Boolean {
+    override fun isApplicableTo(element: JetCallExpression, caretOffset: Int): Boolean {
         if (!element.getTypeArguments().isEmpty()) return false
         if (element.getText() == null) return false
 
         val textRange = element.getCalleeExpression()?.getTextRange()
-        if (textRange == null || !textRange.contains(editor.getCaretModel().getOffset())) return false
+        if (textRange == null || !textRange.contains(caretOffset)) return false
 
         val context = element.analyze()
         val resolvedCall = element.getResolvedCall(context)

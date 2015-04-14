@@ -29,18 +29,13 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 public class MakeTypeExplicitInLambdaIntention : JetSelfTargetingIntention<JetFunctionLiteralExpression>(
         "make.type.explicit.in.lambda", javaClass()) {
 
-    override fun isApplicableTo(element: JetFunctionLiteralExpression): Boolean {
-        throw IllegalStateException("isApplicableTo(JetExpressionImpl, Editor) should be called instead")
-    }
-
-    override fun isApplicableTo(element: JetFunctionLiteralExpression, editor: Editor): Boolean {
+    override fun isApplicableTo(element: JetFunctionLiteralExpression, caretOffset: Int): Boolean {
         val openBraceOffset = element.getLeftCurlyBrace().getStartOffset()
         val closeBraceOffset = element.getRightCurlyBrace()?.getStartOffset()
-        val caretLocation = editor.getCaretModel().getOffset()
         val arrow = element.getFunctionLiteral().getArrowNode()
-        if (arrow != null && !(openBraceOffset < caretLocation && caretLocation < arrow.getStartOffset() + 2) &&
-            caretLocation != closeBraceOffset) return false
-        else if (arrow == null && caretLocation != openBraceOffset + 1 && caretLocation != closeBraceOffset) return false
+        if (arrow != null && !(openBraceOffset < caretOffset && caretOffset < arrow.getStartOffset() + 2) &&
+            caretOffset != closeBraceOffset) return false
+        else if (arrow == null && caretOffset != openBraceOffset + 1 && caretOffset != closeBraceOffset) return false
 
         val context = element.analyze()
         val func = context[BindingContext.FUNCTION, element.getFunctionLiteral()]

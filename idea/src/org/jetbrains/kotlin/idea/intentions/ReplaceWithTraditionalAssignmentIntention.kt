@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.JetPsiUnparsingUtils
 
-public class ReplaceWithTraditionalAssignmentIntention : JetSelfTargetingIntention<JetBinaryExpression>("replace.with.traditional.assignment.intention", javaClass()) {
+public class ReplaceWithTraditionalAssignmentIntention : JetSelfTargetingOffsetIndependentIntention<JetBinaryExpression>("replace.with.traditional.assignment.intention", javaClass()) {
     override fun isApplicableTo(element: JetBinaryExpression): Boolean {
         fun checkForNullSafety(element: JetBinaryExpression): Boolean = element.getLeft() != null && element.getRight() != null && element.getOperationToken() != null
 

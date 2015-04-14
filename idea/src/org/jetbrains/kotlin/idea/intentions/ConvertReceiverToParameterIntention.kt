@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeSignatureC
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetMethodDescriptor
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.modify
 
-public class ConvertReceiverToParameterIntention: JetSelfTargetingIntention<JetTypeReference>("convert.receiver.to.parameter.intention", javaClass()) {
+public class ConvertReceiverToParameterIntention: JetSelfTargetingOffsetIndependentIntention<JetTypeReference>("convert.receiver.to.parameter.intention", javaClass()) {
     override fun isApplicableTo(element: JetTypeReference): Boolean {
         return (element.getParent() as? JetNamedFunction)?.getReceiverTypeReference() == element
     }
