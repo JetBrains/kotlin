@@ -16,36 +16,29 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
-import org.jetbrains.kotlin.psi.JetBinaryExpression
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.psi.JetPrefixExpression
+import org.jetbrains.kotlin.lexer.JetSingleValueToken
 import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.psi.JetParenthesizedExpression
-import org.jetbrains.kotlin.psi.JetPsiUtil
+import org.jetbrains.kotlin.psi.*
 import java.util.LinkedList
 
 
 public class ConvertNegatedBooleanSequenceIntention : JetSelfTargetingOffsetIndependentIntention<JetBinaryExpression>(
-        "convert.negated.boolean.sequence", javaClass()) {
+        javaClass(), "Replace negated sequence with DeMorgan equivalent") {
 
     override fun isApplicableTo(element: JetBinaryExpression): Boolean {
         if (element.getParent() is JetBinaryExpression) return false // operate only on the longest sequence
-        val originalOperator = element.getOperationToken()
-
-        if (!(originalOperator == JetTokens.ANDAND || originalOperator == JetTokens.OROR)) {
-            return false
-        }
+        val opToken = element.getOperationToken()
+        if (opToken != JetTokens.ANDAND && opToken != JetTokens.OROR) return false
 
         return splitBooleanSequence(element) != null
     }
 
     override fun applyTo(element: JetBinaryExpression, editor: Editor) {
-        val operator = element.getOperationToken()
-        val operatorText = when(operator) {
+        val operatorText = when(element.getOperationToken()) {
             JetTokens.ANDAND -> JetTokens.OROR.getValue()
             JetTokens.OROR -> JetTokens.ANDAND.getValue()
-            else -> throw IllegalArgumentException("Invalid operator: '$operator'. Only expressions using '&&' or '||' can be converted.")
+            else -> throw IllegalArgumentException()
         }
 
         val elements = splitBooleanSequence(element)!!
@@ -64,22 +57,21 @@ public class ConvertNegatedBooleanSequenceIntention : JetSelfTargetingOffsetInde
         }
     }
 
-    fun splitBooleanSequence(expression: JetBinaryExpression): List<JetPrefixExpression>? {
+    private fun splitBooleanSequence(expression: JetBinaryExpression): List<JetPrefixExpression>? {
         val itemList = LinkedList<JetPrefixExpression>()
         val firstOperator = expression.getOperationToken()
-        var currentItem: JetBinaryExpression? = expression
 
+        var currentItem: JetBinaryExpression? = expression
         while (currentItem != null) {
             if (currentItem!!.getOperationToken() != firstOperator) return null //Boolean sequence must be homogenous
 
             val rightChild = currentItem!!.getRight() as? JetPrefixExpression ?: return null
             itemList.add(rightChild)
+
             val leftChild = currentItem!!.getLeft()
-            if (leftChild is JetPrefixExpression) {
-                itemList.add(leftChild as JetPrefixExpression)
-            }
-            else if (leftChild !is JetBinaryExpression) {
-                return null
+            when (leftChild) {
+                is JetPrefixExpression -> itemList.add(leftChild)
+                !is JetBinaryExpression -> return null
             }
 
             currentItem = leftChild as? JetBinaryExpression
