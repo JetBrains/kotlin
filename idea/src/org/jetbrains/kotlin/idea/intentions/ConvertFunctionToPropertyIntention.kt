@@ -61,17 +61,14 @@ import org.jetbrains.kotlin.idea.core.refactoring.checkConflictsInteractively
 import org.jetbrains.kotlin.idea.core.refactoring.reportDeclarationConflict
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 
-public class ConvertFunctionToPropertyIntention : JetSelfTargetingIntention<JetNamedFunction>(
-        "convert.function.to.property.intention", javaClass()
-) {
-    companion object {
-        private var JetNamedFunction.typeFqNameToAdd: String? by UserDataProperty(Key.create("TYPE_FQ_NAME_TO_ADD"))
-    }
+public class ConvertFunctionToPropertyIntention : JetSelfTargetingIntention<JetNamedFunction>(javaClass(), "Convert function to property") {
+    private var JetNamedFunction.typeFqNameToAdd: String? by UserDataProperty(Key.create("TYPE_FQ_NAME_TO_ADD"))
 
-    private inner class Convertor(
+    private inner class Converter(
             project: Project,
-            descriptor: CallableDescriptor,
-            context: BindingContext): CallableRefactoring<CallableDescriptor>(project, descriptor, context, getText()) {
+            descriptor: FunctionDescriptor,
+            context: BindingContext
+    ): CallableRefactoring<FunctionDescriptor>(project, descriptor, context, getText()) {
         private val elementsToShorten = ArrayList<JetElement>()
 
         private fun convertJetFunction(originalFunction: JetNamedFunction, psiFactory: JetPsiFactory) {
@@ -91,7 +88,7 @@ public class ConvertFunctionToPropertyIntention : JetSelfTargetingIntention<JetN
                     ?.firstOrNull { it !is PsiWhiteSpace }
             if (insertAfter != null) {
                 function.addAfter(psiFactory.createParameterList("()"), insertAfter)
-                function.addAfter(propertySample.getGetter().getNamePlaceholder(), insertAfter)
+                function.addAfter(propertySample.getGetter()!!.getNamePlaceholder(), insertAfter)
                 function.addAfter(psiFactory.createNewLine(), insertAfter)
             }
 
@@ -191,26 +188,24 @@ public class ConvertFunctionToPropertyIntention : JetSelfTargetingIntention<JetN
     override fun startInWriteAction(): Boolean = false
 
     override fun isApplicableTo(element: JetNamedFunction, caretOffset: Int): Boolean {
-        val elementAtCaret = element.getContainingFile().findElementAt(caretOffset)
-        if (!(element.getNameIdentifier()?.isAncestor(elementAtCaret) ?: false)) return false
+        val identifier = element.getNameIdentifier() ?: return false
+        if (!identifier.getTextRange().containsOffset(caretOffset)) return false
 
         if (element.getValueParameters().isNotEmpty() || element.isLocal()) return false
 
-        val name = element.getName()
-        when {
-            name == "invoke",
-            name == "iterator",
-            OperatorConventions.UNARY_OPERATION_NAMES.inverse().containsKey(Name.identifier(name)) -> return false
+        val name = element.getName()!!
+        if (name == "invoke" || name == "iterator" || Name.identifier(name) in OperatorConventions.UNARY_OPERATION_NAMES.inverse().keySet()) {
+            return false
         }
 
         val descriptor = element.analyze()[BindingContext.DECLARATION_TO_DESCRIPTOR, element] as? FunctionDescriptor ?: return false
-        val returnType = descriptor.getReturnType()
-        return !(KotlinBuiltIns.isUnit(returnType) || KotlinBuiltIns.isNothing(returnType))
+        val returnType = descriptor.getReturnType() ?: return false
+        return !KotlinBuiltIns.isUnit(returnType) && !KotlinBuiltIns.isNothing(returnType)
     }
 
     override fun applyTo(element: JetNamedFunction, editor: Editor) {
         val context = element.analyze()
-        val descriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, element] as? CallableDescriptor ?: return
-        Convertor(element.getProject(), descriptor, context).run()
+        val descriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, element] as FunctionDescriptor
+        Converter(element.getProject(), descriptor, context).run()
     }
 }
