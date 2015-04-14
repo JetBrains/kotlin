@@ -953,6 +953,7 @@
                 <include name="com/google/protobuf/**/*.class"/>
             </zipgroupfileset>
 
+            <fileset dir="${basedir}/resources"/>
             <!-- icons, etc. -->
             <fileset dir="idea/resources"/>
             <!-- plugin.xml and friends -->
