@@ -81,6 +81,18 @@ public fun Char.toUpperCase(): Char = Character.toUpperCase(this)
 public fun Char.toLowerCase(): Char = Character.toLowerCase(this)
 
 /**
+ * Returns `true` if this character is a titlecase character.
+ */
+public fun Char.isTitleCase(): Boolean = Character.isTitleCase(this)
+
+/**
+ * Converts this character to titlecase.
+ *
+ * @see Character.toTitleCase
+ */
+public fun Char.toTitleCase(): Char = Character.toTitleCase(this)
+
+/**
  * Returns a value indicating a character's general category.
  */
 public fun Char.category(): CharCategory = CharCategory.valueOf(Character.getType(this))
