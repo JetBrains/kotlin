@@ -29,7 +29,7 @@ Usage: ... <destination dir> (<source dir>)+
 
 Analyzes Kotlin sources found in the given source directories and serializes
 found top-level declarations to <destination dir> (files such as
-.kotlin_class_names, .kotlin_name_table, .kotlin_package, *.kotlin_class)"""
+.kotlin_string_table, .kotlin_package, *.kotlin_class)"""
         )
         return
     }
