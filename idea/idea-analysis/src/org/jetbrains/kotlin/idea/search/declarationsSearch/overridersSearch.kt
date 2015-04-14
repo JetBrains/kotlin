@@ -43,7 +43,7 @@ fun PsiElement.isOverridableElement(): Boolean = when (this) {
     else -> false
 }
 
-public fun HierarchySearchRequest<PsiElement>.searchOverriders(): Query<PsiMethod> {
+public fun HierarchySearchRequest<*>.searchOverriders(): Query<PsiMethod> {
     val psiMethods = originalElement.toLightMethods()
     if (psiMethods.isEmpty()) return EmptyQuery.getEmptyQuery()
 

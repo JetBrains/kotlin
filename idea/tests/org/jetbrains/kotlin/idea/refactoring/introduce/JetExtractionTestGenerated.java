@@ -2521,4 +2521,25 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             doIntroduceLambdaParameterTest(fileName);
         }
     }
+
+    @TestMetadata("idea/testData/refactoring/introduceJavaParameter")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class IntroduceJavaParameter extends AbstractJetExtractionTest {
+        public void testAllFilesPresentInIntroduceJavaParameter() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/introduceJavaParameter"), Pattern.compile("^(.+)\\.java$"), true);
+        }
+
+        @TestMetadata("javaMethod.java")
+        public void testJavaMethod() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceJavaParameter/javaMethod.java");
+            doIntroduceJavaParameterTest(fileName);
+        }
+
+        @TestMetadata("javaMethodOverridingKotlinFunctionWithUsages.java")
+        public void testJavaMethodOverridingKotlinFunctionWithUsages() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceJavaParameter/javaMethodOverridingKotlinFunctionWithUsages.java");
+            doIntroduceJavaParameterTest(fileName);
+        }
+    }
 }

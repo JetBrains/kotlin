@@ -16,11 +16,23 @@
 
 package org.jetbrains.kotlin.idea.refactoring.introduce
 
+import com.intellij.codeInsight.CodeInsightUtil
+import com.intellij.codeInsight.completion.JavaCompletionUtil
 import com.intellij.ide.DataManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiJavaFile
+import com.intellij.psi.codeStyle.JavaCodeStyleManager
+import com.intellij.psi.codeStyle.VariableKind
 import com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsException
+import com.intellij.refactoring.IntroduceParameterRefactoring
+import com.intellij.refactoring.introduceField.ElementToWorkOn
+import com.intellij.refactoring.introduceParameter.AbstractJavaInplaceIntroducer
+import com.intellij.refactoring.introduceParameter.IntroduceParameterProcessor
+import com.intellij.refactoring.introduceParameter.Util
+import com.intellij.refactoring.util.occurrences.ExpressionOccurrenceManager
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil
@@ -52,6 +64,8 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
 
     protected fun doIntroduceVariableTest(path: String) {
         doTest(path) { file ->
+            file as JetFile
+
             KotlinIntroduceVariableHandler().invoke(
                     fixture.getProject(),
                     fixture.getEditor(),
@@ -111,9 +125,85 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
     protected fun doIntroduceLambdaParameterTest(path: String) {
         doIntroduceParameterTest(path, true)
     }
-    
+
+    protected fun doIntroduceJavaParameterTest(path: String) {
+        // Copied from com.intellij.refactoring.IntroduceParameterTest.perform()
+        doTest(path, true) { file ->
+            file as PsiJavaFile
+
+            var elementToWorkOn: ElementToWorkOn? = null
+            ElementToWorkOn.processElementToWorkOn(
+                    getEditor(),
+                    file,
+                    "Introduce parameter",
+                    null,
+                    getProject(),
+                    object : ElementToWorkOn.ElementsProcessor<ElementToWorkOn> {
+                        override fun accept(e: ElementToWorkOn): Boolean {
+                            return true
+                        }
+
+                        override fun pass(e: ElementToWorkOn?) {
+                            if (e != null) {
+                                elementToWorkOn = e
+                            }
+                        }
+                    })
+
+            val expr = elementToWorkOn!!.getExpression()
+            val localVar = elementToWorkOn!!.getLocalVariable()
+
+            val context = expr ?: localVar
+            val method = Util.getContainingMethod(context) ?: throw AssertionError("No containing method found")
+
+            val applyToSuper = InTextDirectivesUtils.isDirectiveDefined(file.getText(), "// APPLY_TO_SUPER")
+            val methodToSearchFor = if (applyToSuper) method.findDeepestSuperMethods()[0] else method
+
+            val (initializer, occurrences) =
+                    if (expr == null) {
+                        localVar.getInitializer()!! to CodeInsightUtil.findReferenceExpressions(method, localVar)
+                    }
+                    else {
+                        expr to ExpressionOccurrenceManager(expr, method, null).findExpressionOccurrences()
+                    }
+            val type = initializer.getType()
+
+            val parametersToRemove = Util.findParametersToRemove(method, initializer, occurrences)
+
+            val codeStyleManager = JavaCodeStyleManager.getInstance(getProject())
+            val info = codeStyleManager.suggestUniqueVariableName(
+                    codeStyleManager.suggestVariableName(VariableKind.PARAMETER, localVar?.getName(), initializer, type),
+                    expr,
+                    true
+            )
+            val suggestedNames = AbstractJavaInplaceIntroducer.appendUnresolvedExprName(
+                    JavaCompletionUtil.completeVariableNameForRefactoring(codeStyleManager, type, VariableKind.LOCAL_VARIABLE, info),
+                    initializer
+            )
+
+            IntroduceParameterProcessor(getProject(),
+                                        method,
+                                        methodToSearchFor,
+                                        initializer,
+                                        expr,
+                                        localVar,
+                                        true,
+                                        suggestedNames.first(),
+                                        true,
+                                        IntroduceParameterRefactoring.REPLACE_FIELDS_WITH_GETTERS_NONE,
+                                        false,
+                                        false,
+                                        null,
+                                        parametersToRemove).run()
+
+            getEditor().getSelectionModel().removeSelection()
+        }
+    }
+
     protected fun doIntroducePropertyTest(path: String) {
         doTest(path) { file ->
+            file as JetFile
+
             val extractionTarget = propertyTargets.single {
                 it.name == InTextDirectivesUtils.findStringWithPrefixes(file.getText(), "// EXTRACTION_TARGET: ")
             }
@@ -144,6 +234,8 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
 
     protected fun doExtractFunctionTest(path: String) {
         doTest(path) { file ->
+            file as JetFile
+
             val explicitPreviousSibling = file.findElementByComment("// SIBLING:")
             val fileText = file.getText() ?: ""
             val expectedNames = InTextDirectivesUtils.findListWithPrefixes(fileText, "// SUGGESTED_NAMES: ")
@@ -206,7 +298,7 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
         }
     }
 
-    protected fun doTest(path: String, action: (JetFile) -> Unit) {
+    protected fun doTest(path: String, checkAdditionalAfterdata: Boolean = false, action: (PsiFile) -> Unit) {
         val mainFile = File(path)
         val afterFile = File("$path.after")
         val conflictFile = File("$path.conflicts")
@@ -215,13 +307,11 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
 
         val mainFileName = mainFile.getName()
         val mainFileBaseName = FileUtil.getNameWithoutExtension(mainFileName)
-        mainFile.getParentFile()
-                .listFiles { file, name ->
-                    name != mainFileName && name.startsWith("$mainFileBaseName.") && (name.endsWith(".kt") || name.endsWith(".java"))
-                }.forEach {
-                    fixture.configureByFile(it.getName())
-                }
-        val file = fixture.configureByFile(mainFileName) as JetFile
+        val extraFiles = mainFile.getParentFile().listFiles { file, name ->
+            name != mainFileName && name.startsWith("$mainFileBaseName.") && (name.endsWith(".kt") || name.endsWith(".java"))
+        }
+        val extraFilesToPsi = extraFiles.toMap { fixture.configureByFile(it.getName()) }
+        val file = fixture.configureByFile(mainFileName)
 
         val addKotlinRuntime = InTextDirectivesUtils.findStringWithPrefixes(file.getText(), "// WITH_RUNTIME") != null
         if (addKotlinRuntime) {
@@ -233,6 +323,12 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
 
             assert(!conflictFile.exists()) { "Conflict file $conflictFile should not exist" }
             JetTestUtils.assertEqualsToFile(afterFile, file.getText()!!)
+
+            if (checkAdditionalAfterdata) {
+                for ((extraPsiFile, extraFile) in extraFilesToPsi) {
+                    JetTestUtils.assertEqualsToFile(File("${extraFile.getPath()}.after"), extraPsiFile.getText())
+                }
+            }
         }
         catch(e: Exception) {
             val message = if (e is ConflictsInTestsException) e.getMessages().sort().joinToString(" ") else e.getMessage()

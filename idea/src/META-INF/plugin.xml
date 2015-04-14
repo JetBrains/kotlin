@@ -262,6 +262,8 @@
         language="jet" />
     <refactoring.copyHandler implementation="org.jetbrains.kotlin.idea.refactoring.copy.JetCopyClassHandler"/>
     <refactoring.changeSignatureUsageProcessor implementation="org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeSignatureUsageProcessor"/>
+    <refactoring.introduceParameterMethodUsagesProcessor
+        implementation="org.jetbrains.kotlin.idea.refactoring.introduce.introduceParameter.KotlinIntroduceParameterMethodUsageProcessor"/>
     <inlineActionHandler implementation="org.jetbrains.kotlin.idea.refactoring.inline.KotlinInlineValHandler"/>
     <treeStructureProvider implementation="org.jetbrains.kotlin.idea.projectView.JetProjectViewProvider"/>
 

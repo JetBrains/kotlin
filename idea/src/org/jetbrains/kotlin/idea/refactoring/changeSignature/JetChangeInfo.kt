@@ -46,7 +46,7 @@ public class JetChangeInfo(
         val methodDescriptor: JetMethodDescriptor,
         private var name: String = methodDescriptor.getName(),
         val newReturnType: JetType? = methodDescriptor.baseDescriptor.getReturnType(),
-        var newReturnTypeText: String = newReturnType?.let { IdeDescriptorRenderers.SOURCE_CODE.renderType(it) } ?: "",
+        var newReturnTypeText: String = methodDescriptor.renderOriginalReturnType(),
         var newVisibility: Visibility = methodDescriptor.getVisibility(),
         parameterInfos: List<JetParameterInfo> = methodDescriptor.getParameters(),
         receiver: JetParameterInfo? = methodDescriptor.receiver,

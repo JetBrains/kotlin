@@ -626,6 +626,7 @@ fun main(args: Array<String>) {
             model("refactoring/introduceProperty", extension = "kt", testMethod = "doIntroducePropertyTest")
             model("refactoring/introduceParameter", extension = "kt", testMethod = "doIntroduceSimpleParameterTest")
             model("refactoring/introduceLambdaParameter", extension = "kt", testMethod = "doIntroduceLambdaParameterTest")
+            model("refactoring/introduceJavaParameter", extension = "java", testMethod = "doIntroduceJavaParameterTest")
         }
 
         testClass(javaClass<AbstractSelectExpressionForDebuggerTest>()) {
