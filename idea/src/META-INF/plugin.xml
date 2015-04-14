@@ -455,6 +455,7 @@
     <annotatedElementsSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinAnnotatedElementsSearcher"/>
     <methodReferencesSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinLightPropertyAccessorsReferenceSearcher"/>
     <methodReferencesSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinConstructorDelegationCallReferenceSearcher"/>
+    <methodReferencesSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinOverridingMethodReferenceSearcher"/>
 
     <exceptionFilter implementation="org.jetbrains.kotlin.idea.filters.JetExceptionFilterFactory" order="first"/>
 
