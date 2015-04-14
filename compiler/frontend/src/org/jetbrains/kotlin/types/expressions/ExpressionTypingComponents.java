@@ -20,7 +20,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.context.GlobalContext;
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
-import org.jetbrains.kotlin.resolve.AdditionalCheckerProvider;
+import org.jetbrains.kotlin.resolve.*;
+import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver;
 import org.jetbrains.kotlin.resolve.calls.CallResolver;
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator;
 import org.jetbrains.kotlin.types.DynamicTypesSettings;
@@ -33,7 +34,6 @@ public class ExpressionTypingComponents {
     /*package*/ ExpressionTypingServices expressionTypingServices;
     /*package*/ CallResolver callResolver;
     /*package*/ PlatformToKotlinClassMap platformToKotlinClassMap;
-    /*package*/ ExpressionTypingUtils expressionTypingUtils;
     /*package*/ ControlStructureTypingUtils controlStructureTypingUtils;
     /*package*/ ForLoopConventionsChecker forLoopConventionsChecker;
     /*package*/ ReflectionTypes reflectionTypes;
@@ -42,6 +42,13 @@ public class ExpressionTypingComponents {
     /*package*/ DynamicTypesSettings dynamicTypesSettings;
     /*package*/ KotlinBuiltIns builtIns;
     /*package*/ LocalClassifierAnalyzer localClassifierAnalyzer;
+    /*package*/ FunctionDescriptorResolver functionDescriptorResolver;
+    /*package*/ CallExpressionResolver callExpressionResolver;
+    /*package*/ DescriptorResolver descriptorResolver;
+    /*package*/ TypeResolver typeResolver;
+    /*package*/ AnnotationResolver annotationResolver;
+    /*package*/ ValueParameterResolver valueParameterResolver;
+    /*package*/ MultiDeclarationResolver multiDeclarationResolver;
 
     @Inject
     public void setGlobalContext(@NotNull GlobalContext globalContext) {
@@ -61,11 +68,6 @@ public class ExpressionTypingComponents {
     @Inject
     public void setPlatformToKotlinClassMap(@NotNull PlatformToKotlinClassMap platformToKotlinClassMap) {
         this.platformToKotlinClassMap = platformToKotlinClassMap;
-    }
-
-    @Inject
-    public void setExpressionTypingUtils(@NotNull ExpressionTypingUtils expressionTypingUtils) {
-        this.expressionTypingUtils = expressionTypingUtils;
     }
 
     @Inject
@@ -108,8 +110,48 @@ public class ExpressionTypingComponents {
         this.localClassifierAnalyzer = localClassifierAnalyzer;
     }
 
+    @Inject
+    public void setFunctionDescriptorResolver(FunctionDescriptorResolver functionDescriptorResolver) {
+        this.functionDescriptorResolver = functionDescriptorResolver;
+    }
+
+    @Inject
+    public void setCallExpressionResolver(CallExpressionResolver callExpressionResolver) {
+        this.callExpressionResolver = callExpressionResolver;
+    }
+
+    @Inject
+    public void setDescriptorResolver(DescriptorResolver descriptorResolver) {
+        this.descriptorResolver = descriptorResolver;
+    }
+
+    @Inject
+    public void setTypeResolver(TypeResolver typeResolver) {
+        this.typeResolver = typeResolver;
+    }
+
+    @Inject
+    public void setAnnotationResolver(AnnotationResolver annotationResolver) {
+        this.annotationResolver = annotationResolver;
+    }
+
+    @Inject
+    public void setValueParameterResolver(ValueParameterResolver valueParameterResolver) {
+        this.valueParameterResolver = valueParameterResolver;
+    }
+
+    @Inject
+    public void setMultiDeclarationResolver(MultiDeclarationResolver multiDeclarationResolver) {
+        this.multiDeclarationResolver = multiDeclarationResolver;
+    }
+
     @NotNull
     public ForLoopConventionsChecker getForLoopConventionsChecker() {
         return forLoopConventionsChecker;
+    }
+
+    @NotNull
+    public AdditionalCheckerProvider getAdditionalCheckerProvider() {
+        return additionalCheckerProvider;
     }
 }

@@ -27,19 +27,21 @@ import org.jetbrains.kotlin.resolve.TypeResolver;
 import org.jetbrains.kotlin.context.GlobalContext;
 import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.resolve.AdditionalCheckerProvider.DefaultProvider;
-import org.jetbrains.kotlin.resolve.validation.DefaultSymbolUsageValidator;
+import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator;
+import org.jetbrains.kotlin.resolve.StatementFilter;
 import org.jetbrains.kotlin.resolve.AnnotationResolver;
 import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver;
+import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils;
 import org.jetbrains.kotlin.resolve.DescriptorResolver;
 import org.jetbrains.kotlin.resolve.DelegatedPropertyResolver;
-import org.jetbrains.kotlin.resolve.FunctionDescriptorResolver;
-import org.jetbrains.kotlin.resolve.StatementFilter;
-import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils;
 import org.jetbrains.kotlin.types.DynamicTypesSettings;
-import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.kotlin.types.expressions.ForLoopConventionsChecker;
+import org.jetbrains.kotlin.types.expressions.FakeCallResolver;
+import org.jetbrains.kotlin.resolve.FunctionDescriptorResolver;
 import org.jetbrains.kotlin.types.expressions.LocalClassifierAnalyzer;
+import org.jetbrains.kotlin.types.expressions.MultiDeclarationResolver;
 import org.jetbrains.kotlin.builtins.ReflectionTypes;
+import org.jetbrains.kotlin.types.expressions.ValueParameterResolver;
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.kotlin.resolve.calls.CallCompleter;
 import org.jetbrains.kotlin.resolve.calls.CandidateResolver;
@@ -65,19 +67,21 @@ public class InjectorForMacros {
     private final GlobalContext globalContext;
     private final StorageManager storageManager;
     private final DefaultProvider defaultProvider;
-    private final DefaultSymbolUsageValidator defaultSymbolUsageValidator;
+    private final SymbolUsageValidator symbolUsageValidator;
+    private final StatementFilter statementFilter;
     private final AnnotationResolver annotationResolver;
     private final CallExpressionResolver callExpressionResolver;
+    private final ControlStructureTypingUtils controlStructureTypingUtils;
     private final DescriptorResolver descriptorResolver;
     private final DelegatedPropertyResolver delegatedPropertyResolver;
-    private final FunctionDescriptorResolver functionDescriptorResolver;
-    private final StatementFilter statementFilter;
-    private final ControlStructureTypingUtils controlStructureTypingUtils;
     private final DynamicTypesSettings dynamicTypesSettings;
-    private final ExpressionTypingUtils expressionTypingUtils;
     private final ForLoopConventionsChecker forLoopConventionsChecker;
+    private final FakeCallResolver fakeCallResolver;
+    private final FunctionDescriptorResolver functionDescriptorResolver;
     private final LocalClassifierAnalyzer localClassifierAnalyzer;
+    private final MultiDeclarationResolver multiDeclarationResolver;
     private final ReflectionTypes reflectionTypes;
+    private final ValueParameterResolver valueParameterResolver;
     private final ArgumentTypeResolver argumentTypeResolver;
     private final CallCompleter callCompleter;
     private final CandidateResolver candidateResolver;
@@ -106,46 +110,47 @@ public class InjectorForMacros {
         this.dynamicTypesSettings = new DynamicTypesSettings();
         this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, moduleDescriptor, flexibleTypeCapabilitiesProvider, storageManager, typeLazinessToken, dynamicTypesSettings);
         this.defaultProvider = DefaultProvider.INSTANCE$;
-        this.defaultSymbolUsageValidator = DefaultSymbolUsageValidator.INSTANCE$;
-        this.callExpressionResolver = new CallExpressionResolver();
+        this.symbolUsageValidator = defaultProvider.getSymbolUsageValidator();
+        this.statementFilter = new StatementFilter();
+        this.callExpressionResolver = new CallExpressionResolver(getCallResolver());
+        this.controlStructureTypingUtils = new ControlStructureTypingUtils(getCallResolver());
         this.descriptorResolver = new DescriptorResolver();
         this.delegatedPropertyResolver = new DelegatedPropertyResolver();
-        this.functionDescriptorResolver = new FunctionDescriptorResolver(getTypeResolver(), descriptorResolver, annotationResolver, storageManager, getExpressionTypingServices(), kotlinBuiltIns);
-        this.statementFilter = new StatementFilter();
-        this.controlStructureTypingUtils = new ControlStructureTypingUtils(getExpressionTypingServices());
-        this.expressionTypingUtils = new ExpressionTypingUtils(getExpressionTypingServices(), getCallResolver(), kotlinBuiltIns);
         this.forLoopConventionsChecker = new ForLoopConventionsChecker();
+        this.fakeCallResolver = new FakeCallResolver(project, getCallResolver());
+        this.functionDescriptorResolver = new FunctionDescriptorResolver(getTypeResolver(), descriptorResolver, annotationResolver, storageManager, getExpressionTypingServices(), kotlinBuiltIns);
         this.localClassifierAnalyzer = new LocalClassifierAnalyzer(descriptorResolver, functionDescriptorResolver, getTypeResolver(), annotationResolver);
+        this.multiDeclarationResolver = new MultiDeclarationResolver(fakeCallResolver, descriptorResolver, getTypeResolver(), symbolUsageValidator);
         this.reflectionTypes = new ReflectionTypes(moduleDescriptor);
+        this.valueParameterResolver = new ValueParameterResolver(defaultProvider, getExpressionTypingServices());
         this.argumentTypeResolver = new ArgumentTypeResolver();
         this.candidateResolver = new CandidateResolver();
         this.callCompleter = new CallCompleter(argumentTypeResolver, candidateResolver);
         this.taskPrioritizer = new TaskPrioritizer(storageManager);
 
-        this.expressionTypingServices.setAnnotationResolver(annotationResolver);
-        this.expressionTypingServices.setBuiltIns(kotlinBuiltIns);
-        this.expressionTypingServices.setCallExpressionResolver(callExpressionResolver);
-        this.expressionTypingServices.setCallResolver(callResolver);
-        this.expressionTypingServices.setDescriptorResolver(descriptorResolver);
-        this.expressionTypingServices.setFunctionDescriptorResolver(functionDescriptorResolver);
-        this.expressionTypingServices.setProject(project);
         this.expressionTypingServices.setStatementFilter(statementFilter);
-        this.expressionTypingServices.setTypeResolver(typeResolver);
 
         this.expressionTypingComponents.setAdditionalCheckerProvider(defaultProvider);
+        this.expressionTypingComponents.setAnnotationResolver(annotationResolver);
         this.expressionTypingComponents.setBuiltIns(kotlinBuiltIns);
+        this.expressionTypingComponents.setCallExpressionResolver(callExpressionResolver);
         this.expressionTypingComponents.setCallResolver(callResolver);
         this.expressionTypingComponents.setControlStructureTypingUtils(controlStructureTypingUtils);
+        this.expressionTypingComponents.setDescriptorResolver(descriptorResolver);
         this.expressionTypingComponents.setDynamicTypesSettings(dynamicTypesSettings);
         this.expressionTypingComponents.setExpressionTypingServices(expressionTypingServices);
-        this.expressionTypingComponents.setExpressionTypingUtils(expressionTypingUtils);
         this.expressionTypingComponents.setForLoopConventionsChecker(forLoopConventionsChecker);
+        this.expressionTypingComponents.setFunctionDescriptorResolver(functionDescriptorResolver);
         this.expressionTypingComponents.setGlobalContext(globalContext);
         this.expressionTypingComponents.setLocalClassifierAnalyzer(localClassifierAnalyzer);
+        this.expressionTypingComponents.setMultiDeclarationResolver(multiDeclarationResolver);
         this.expressionTypingComponents.setPlatformToKotlinClassMap(platformToKotlinClassMap);
         this.expressionTypingComponents.setReflectionTypes(reflectionTypes);
-        this.expressionTypingComponents.setSymbolUsageValidator(defaultSymbolUsageValidator);
+        this.expressionTypingComponents.setSymbolUsageValidator(symbolUsageValidator);
+        this.expressionTypingComponents.setTypeResolver(typeResolver);
+        this.expressionTypingComponents.setValueParameterResolver(valueParameterResolver);
 
+        this.callResolver.setAdditionalCheckerProvider(defaultProvider);
         this.callResolver.setArgumentTypeResolver(argumentTypeResolver);
         this.callResolver.setCallCompleter(callCompleter);
         this.callResolver.setCandidateResolver(candidateResolver);
@@ -166,14 +171,14 @@ public class InjectorForMacros {
         descriptorResolver.setStorageManager(storageManager);
         descriptorResolver.setTypeResolver(typeResolver);
 
+        delegatedPropertyResolver.setAdditionalCheckerProvider(defaultProvider);
         delegatedPropertyResolver.setBuiltIns(kotlinBuiltIns);
         delegatedPropertyResolver.setCallResolver(callResolver);
         delegatedPropertyResolver.setExpressionTypingServices(expressionTypingServices);
 
         forLoopConventionsChecker.setBuiltIns(kotlinBuiltIns);
-        forLoopConventionsChecker.setExpressionTypingServices(expressionTypingServices);
-        forLoopConventionsChecker.setExpressionTypingUtils(expressionTypingUtils);
-        forLoopConventionsChecker.setProject(project);
+        forLoopConventionsChecker.setFakeCallResolver(fakeCallResolver);
+        forLoopConventionsChecker.setSymbolUsageValidator(symbolUsageValidator);
 
         argumentTypeResolver.setBuiltIns(kotlinBuiltIns);
         argumentTypeResolver.setExpressionTypingServices(expressionTypingServices);
@@ -181,7 +186,7 @@ public class InjectorForMacros {
 
         candidateResolver.setArgumentTypeResolver(argumentTypeResolver);
 
-        qualifiedExpressionResolver.setSymbolUsageValidator(defaultSymbolUsageValidator);
+        qualifiedExpressionResolver.setSymbolUsageValidator(symbolUsageValidator);
 
     }
 

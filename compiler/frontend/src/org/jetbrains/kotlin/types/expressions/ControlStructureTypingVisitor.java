@@ -395,8 +395,9 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             if (multiParameter != null && loopRange != null) {
                 JetType elementType = expectedParameterType == null ? ErrorUtils.createErrorType("Loop range has no type") : expectedParameterType;
                 TransientReceiver iteratorNextAsReceiver = new TransientReceiver(elementType);
-                components.expressionTypingUtils.defineLocalVariablesFromMultiDeclaration(loopScope, multiParameter, iteratorNextAsReceiver,
-                                                                                          loopRange, context);
+                components.multiDeclarationResolver.defineLocalVariablesFromMultiDeclaration(
+                        loopScope, multiParameter, iteratorNextAsReceiver, loopRange, context
+                );
             }
         }
 
@@ -425,7 +426,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         JetTypeReference typeReference = loopParameter.getTypeReference();
         VariableDescriptor variableDescriptor;
         if (typeReference != null) {
-            variableDescriptor = components.expressionTypingServices.getDescriptorResolver().resolveLocalVariableDescriptor(context.scope, loopParameter, context.trace);
+            variableDescriptor = components.descriptorResolver.resolveLocalVariableDescriptor(context.scope, loopParameter, context.trace);
             JetType actualParameterType = variableDescriptor.getType();
             if (expectedParameterType != null &&
                     !JetTypeChecker.DEFAULT.isSubtypeOf(expectedParameterType, actualParameterType)) {
@@ -436,7 +437,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             if (expectedParameterType == null) {
                 expectedParameterType = ErrorUtils.createErrorType("Error");
             }
-            variableDescriptor = components.expressionTypingServices.getDescriptorResolver().resolveLocalVariableDescriptor(loopParameter, expectedParameterType, context.trace, context.scope);
+            variableDescriptor = components.descriptorResolver.resolveLocalVariableDescriptor(loopParameter, expectedParameterType, context.trace, context.scope);
         }
 
         {
@@ -465,7 +466,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 DescriptorResolver.checkParameterHasNoValOrVar(context.trace, catchParameter, VAL_OR_VAR_ON_CATCH_PARAMETER);
                 DescriptorResolver.checkParameterHasNoModifier(context.trace, catchParameter);
 
-                VariableDescriptor variableDescriptor = components.expressionTypingServices.getDescriptorResolver().resolveLocalVariableDescriptor(
+                VariableDescriptor variableDescriptor = components.descriptorResolver.resolveLocalVariableDescriptor(
                         context.scope, catchParameter, context.trace);
                 JetType throwableType = components.builtIns.getThrowable().getDefaultType();
                 DataFlowUtils.checkType(variableDescriptor.getType(), catchParameter, context.replaceExpectedType(throwableType));

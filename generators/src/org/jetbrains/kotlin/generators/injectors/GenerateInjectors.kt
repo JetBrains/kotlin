@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.jvm.JavaLazyAnalyzerPostConstruct
 import org.jetbrains.kotlin.resolve.lazy.*
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
-import org.jetbrains.kotlin.resolve.validation.DefaultSymbolUsageValidator
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.DynamicTypesAllowed
 import org.jetbrains.kotlin.types.DynamicTypesSettings
@@ -87,7 +86,7 @@ private fun generatorForLazyLocalClassifierAnalyzer() =
             parameter<GlobalContext>(useAsContext = true)
             parameter<BindingTrace>()
             parameter<ModuleDescriptor>(name = "module", useAsContext = true)
-            parameter<AdditionalCheckerProvider>()
+            parameter<AdditionalCheckerProvider>(useAsContext = true)
             parameter<DynamicTypesSettings>()
             parameter<LocalClassDescriptorHolder>()
 
@@ -97,7 +96,6 @@ private fun generatorForLazyLocalClassifierAnalyzer() =
             field<NoFileScopeProvider>()
             field<DeclarationScopeProviderForLocalClassifierAnalyzer>()
             field<LocalLazyDeclarationResolver>()
-            field<DefaultSymbolUsageValidator>()
         }
 
 private fun generatorForLazyBodyResolve() =
@@ -106,11 +104,10 @@ private fun generatorForLazyBodyResolve() =
             parameter<GlobalContext>(useAsContext = true)
             parameter<KotlinCodeAnalyzer>(name = "analyzer", useAsContext = true)
             parameter<BindingTrace>()
-            parameter<AdditionalCheckerProvider>()
+            parameter<AdditionalCheckerProvider>(useAsContext = true)
             parameter<DynamicTypesSettings>()
 
             field<ModuleDescriptor>(init = GivenExpression("analyzer.getModuleDescriptor()"), useAsContext = true)
-            field<DefaultSymbolUsageValidator>()
 
             publicField<LazyTopDownAnalyzerForTopLevel>()
         }
@@ -121,7 +118,7 @@ private fun generatorForTopDownAnalyzerForJs() =
 
             publicField<LazyTopDownAnalyzerForTopLevel>()
 
-            field<KotlinJsCheckerProvider>()
+            field<KotlinJsCheckerProvider>(useAsContext = true)
             field<DynamicTypesAllowed>()
         }
 
@@ -181,7 +178,7 @@ private fun generatorForLazyResolveWithJava() =
             field<LazyResolveToken>()
             field<JavaLazyAnalyzerPostConstruct>()
 
-            field<KotlinJvmCheckerProvider>()
+            field<KotlinJvmCheckerProvider>(useAsContext = true)
         }
 
 private fun generatorForReplWithJava() =
@@ -203,8 +200,7 @@ private fun generatorForMacro() =
             field<GlobalContext>(useAsContext = true,
                   init = GivenExpression("org.jetbrains.kotlin.context.ContextPackage.GlobalContext()"))
 
-            field<AdditionalCheckerProvider.DefaultProvider>()
-            field<DefaultSymbolUsageValidator>()
+            field<AdditionalCheckerProvider.DefaultProvider>(useAsContext = true)
         }
 
 private fun generatorForTests() =
@@ -214,16 +210,14 @@ private fun generatorForTests() =
 
             publicField<DescriptorResolver>()
             publicField<FunctionDescriptorResolver>()
-            publicField<ExpressionTypingServices>()
-            publicField<ExpressionTypingUtils>()
             publicField<TypeResolver>()
+            publicField<FakeCallResolver>()
+            publicField<KotlinJvmCheckerProvider>(name = "additionalCheckerProvider", useAsContext = true)
+            publicField<ExpressionTypingServices>()
             publicField<QualifiedExpressionResolver>()
 
             field<GlobalContext>(init = GivenExpression("org.jetbrains.kotlin.context.ContextPackage.GlobalContext()"),
                   useAsContext = true)
-
-            field<KotlinJvmCheckerProvider>()
-            field<DefaultSymbolUsageValidator>()
         }
 
 private fun generatorForBodyResolve() =
@@ -232,11 +226,10 @@ private fun generatorForBodyResolve() =
             parameter<GlobalContext>(useAsContext = true)
             parameter<BindingTrace>()
             parameter<ModuleDescriptor>(useAsContext = true)
-            parameter<AdditionalCheckerProvider>()
+            parameter<AdditionalCheckerProvider>(useAsContext = true)
             parameter<StatementFilter>()
 
             publicField<BodyResolver>()
-            field<DefaultSymbolUsageValidator>()
         }
 
 private fun generatorForLazyResolve() =
@@ -246,14 +239,13 @@ private fun generatorForLazyResolve() =
             parameter<ModuleDescriptorImpl>(useAsContext = true)
             parameter<DeclarationProviderFactory>()
             parameter<BindingTrace>()
-            parameter<AdditionalCheckerProvider>()
+            parameter<AdditionalCheckerProvider>(useAsContext = true)
             parameter<DynamicTypesSettings>()
 
             publicField<ResolveSession>()
 
             field<ScopeProvider>()
             field<LazyResolveToken>()
-            field<DefaultSymbolUsageValidator>()
         }
 
 private fun DependencyInjectorGenerator.commonForResolveSessionBased() {
@@ -265,7 +257,6 @@ private fun DependencyInjectorGenerator.commonForResolveSessionBased() {
 
     publicField<ResolveSession>()
     field<ScopeProvider>()
-    field<DefaultSymbolUsageValidator>()
 }
 
 private fun DependencyInjectorGenerator.commonForJavaTopDownAnalyzer() {
@@ -296,7 +287,7 @@ private fun DependencyInjectorGenerator.commonForJavaTopDownAnalyzer() {
     field<JavaLazyAnalyzerPostConstruct>()
     field<JavaFlexibleTypeCapabilitiesProvider>()
 
-    field<KotlinJvmCheckerProvider>()
+    field<KotlinJvmCheckerProvider>(useAsContext = true)
 
     field<VirtualFileFinder>(init = GivenExpression(javaClass<VirtualFileFinder>().getName() + ".SERVICE.getInstance(project)"))
 }

@@ -16,8 +16,7 @@
 
 package org.jetbrains.kotlin.types.expressions;
 
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Pair;
+import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -30,6 +29,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
+import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
 
@@ -41,29 +41,23 @@ import static org.jetbrains.kotlin.resolve.BindingContext.*;
 
 public class ForLoopConventionsChecker {
 
-    private Project project;
-    private ExpressionTypingServices expressionTypingServices;
-    private ExpressionTypingUtils expressionTypingUtils;
     private KotlinBuiltIns builtIns;
-
-    @Inject
-    public void setProject(@NotNull Project project) {
-        this.project = project;
-    }
-
-    @Inject
-    public void setExpressionTypingUtils(@NotNull ExpressionTypingUtils expressionTypingUtils) {
-        this.expressionTypingUtils = expressionTypingUtils;
-    }
-
-    @Inject
-    public void setExpressionTypingServices(@NotNull ExpressionTypingServices expressionTypingServices) {
-        this.expressionTypingServices = expressionTypingServices;
-    }
+    private SymbolUsageValidator symbolUsageValidator;
+    private FakeCallResolver fakeCallResolver;
 
     @Inject
     public void setBuiltIns(@NotNull KotlinBuiltIns builtIns) {
         this.builtIns = builtIns;
+    }
+
+    @Inject
+    public void setFakeCallResolver(@NotNull FakeCallResolver fakeCallResolver) {
+        this.fakeCallResolver = fakeCallResolver;
+    }
+
+    @Inject
+    public void setSymbolUsageValidator(SymbolUsageValidator symbolUsageValidator) {
+        this.symbolUsageValidator = symbolUsageValidator;
     }
 
     @Nullable
@@ -73,7 +67,7 @@ public class ForLoopConventionsChecker {
         // Make a fake call loopRange.iterator(), and try to resolve it
         Name iterator = Name.identifier("iterator");
         Pair<Call, OverloadResolutionResults<FunctionDescriptor>> calls =
-                expressionTypingUtils.makeAndResolveFakeCall(loopRange, context, Collections.<JetExpression>emptyList(), iterator,
+                fakeCallResolver.makeAndResolveFakeCall(loopRange, context, Collections.<JetExpression>emptyList(), iterator,
                                                              loopRange.getExpression());
         OverloadResolutionResults<FunctionDescriptor> iteratorResolutionResults = calls.getSecond();
 
@@ -82,7 +76,7 @@ public class ForLoopConventionsChecker {
             context.trace.record(LOOP_RANGE_ITERATOR_RESOLVED_CALL, loopRangeExpression, iteratorResolvedCall);
             FunctionDescriptor iteratorFunction = iteratorResolvedCall.getResultingDescriptor();
 
-            expressionTypingServices.getSymbolUsageValidator().validateCall(iteratorFunction, context.trace, loopRangeExpression);
+            symbolUsageValidator.validateCall(iteratorFunction, context.trace, loopRangeExpression);
 
             JetType iteratorType = iteratorFunction.getReturnType();
             JetType hasNextType = checkConventionForIterator(context, loopRangeExpression, iteratorType, "hasNext",
@@ -117,7 +111,7 @@ public class ForLoopConventionsChecker {
             @NotNull DiagnosticFactory1<JetExpression, JetType> noneApplicable,
             @NotNull WritableSlice<JetExpression, ResolvedCall<FunctionDescriptor>> resolvedCallKey
     ) {
-        OverloadResolutionResults<FunctionDescriptor> nextResolutionResults = expressionTypingUtils.resolveFakeCall(
+        OverloadResolutionResults<FunctionDescriptor> nextResolutionResults = fakeCallResolver.resolveFakeCall(
                 context, new TransientReceiver(iteratorType), Name.identifier(name), loopRangeExpression);
         if (nextResolutionResults.isAmbiguity()) {
             context.trace.report(ambiguity.on(loopRangeExpression, iteratorType));
@@ -133,7 +127,7 @@ public class ForLoopConventionsChecker {
             ResolvedCall<FunctionDescriptor> resolvedCall = nextResolutionResults.getResultingCall();
             context.trace.record(resolvedCallKey, loopRangeExpression, resolvedCall);
             FunctionDescriptor functionDescriptor = resolvedCall.getResultingDescriptor();
-            expressionTypingServices.getSymbolUsageValidator().validateCall(functionDescriptor, context.trace, loopRangeExpression);
+            symbolUsageValidator.validateCall(functionDescriptor, context.trace, loopRangeExpression);
             return functionDescriptor.getReturnType();
         }
         return null;

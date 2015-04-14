@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
+import org.jetbrains.kotlin.types.expressions.ValueParameterResolver;
 import org.jetbrains.kotlin.util.Box;
 import org.jetbrains.kotlin.util.ReenteringLazyValueComputationException;
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
@@ -61,6 +62,8 @@ public class BodyResolver {
     private AnnotationResolver annotationResolver;
     private DelegatedPropertyResolver delegatedPropertyResolver;
     private FunctionAnalyzerExtension functionAnalyzerExtension;
+    private AdditionalCheckerProvider additionalCheckerProvider;
+    private ValueParameterResolver valueParameterResolver;
 
     @Inject
     public void setScriptBodyResolverResolver(@NotNull ScriptBodyResolver scriptBodyResolverResolver) {
@@ -107,6 +110,16 @@ public class BodyResolver {
         this.functionAnalyzerExtension = functionAnalyzerExtension;
     }
 
+    @Inject
+    public void setAdditionalCheckerProvider(AdditionalCheckerProvider additionalCheckerProvider) {
+        this.additionalCheckerProvider = additionalCheckerProvider;
+    }
+
+    @Inject
+    public void setValueParameterResolver(ValueParameterResolver valueParameterResolver) {
+        this.valueParameterResolver = valueParameterResolver;
+    }
+
     private void resolveBehaviorDeclarationBodies(@NotNull BodiesResolveContext c) {
         resolveDelegationSpecifierLists(c);
 
@@ -148,7 +161,7 @@ public class BodyResolver {
     ) {
         AnnotationResolver.resolveAnnotationsArguments(constructor.getModifierList(), trace);
 
-        final CallChecker callChecker = new ConstructorHeaderCallChecker(descriptor, expressionTypingServices.getCallChecker());
+        final CallChecker callChecker = new ConstructorHeaderCallChecker(descriptor, additionalCheckerProvider.getCallChecker());
         resolveFunctionBody(c, trace, constructor, descriptor, declaringScope,
                             new Function1<JetScope, DataFlowInfo>() {
                                 @Override
@@ -497,7 +510,7 @@ public class BodyResolver {
 
             if (unsubstitutedPrimaryConstructor != null) {
                 WritableScope parameterScope = getPrimaryConstructorParametersScope(classDescriptor.getScopeForClassHeaderResolution(), unsubstitutedPrimaryConstructor);
-                expressionTypingServices.resolveValueParameters(klass.getPrimaryConstructorParameters(), unsubstitutedPrimaryConstructor.getValueParameters(),
+                valueParameterResolver.resolveValueParameters(klass.getPrimaryConstructorParameters(), unsubstitutedPrimaryConstructor.getValueParameters(),
                                        parameterScope, c.getOuterDataFlowInfo(), trace);
             }
         }
@@ -729,10 +742,10 @@ public class BodyResolver {
         List<JetParameter> valueParameters = function.getValueParameters();
         List<ValueParameterDescriptor> valueParameterDescriptors = functionDescriptor.getValueParameters();
 
-        expressionTypingServices.resolveValueParameters(
+        valueParameterResolver.resolveValueParameters(
                 valueParameters, valueParameterDescriptors,
                 ExpressionTypingContext.newContext(
-                        expressionTypingServices, trace, innerScope, c.getOuterDataFlowInfo(), NO_EXPECTED_TYPE, callChecker)
+                        additionalCheckerProvider, trace, innerScope, c.getOuterDataFlowInfo(), NO_EXPECTED_TYPE, callChecker)
         );
 
         DataFlowInfo dataFlowInfo = null;
@@ -761,7 +774,7 @@ public class BodyResolver {
 
         JetScope scope = getPrimaryConstructorParametersScope(declaringScope, constructorDescriptor);
 
-        expressionTypingServices.resolveValueParameters(valueParameters, valueParameterDescriptors, scope,
+        valueParameterResolver.resolveValueParameters(valueParameters, valueParameterDescriptors, scope,
                                                         c.getOuterDataFlowInfo(), trace);
     }
 

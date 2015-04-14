@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.types.expressions;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.resolve.AdditionalCheckerProvider;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.StatementFilter;
 import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker;
@@ -36,18 +37,18 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
 
     @NotNull
     public static ExpressionTypingContext newContext(
-            @NotNull ExpressionTypingServices expressionTypingServices,
+            @NotNull AdditionalCheckerProvider additionalCheckerProvider,
             @NotNull BindingTrace trace,
             @NotNull JetScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull JetType expectedType
     ) {
-        return newContext(expressionTypingServices, trace, scope, dataFlowInfo, expectedType, null);
+        return newContext(additionalCheckerProvider, trace, scope, dataFlowInfo, expectedType, null);
     }
 
     @NotNull
     public static ExpressionTypingContext newContext(
-            @NotNull ExpressionTypingServices expressionTypingServices,
+            @NotNull AdditionalCheckerProvider additionalCheckerProvider,
             @NotNull BindingTrace trace,
             @NotNull JetScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
@@ -56,9 +57,9 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
     ) {
         return newContext(trace, scope, dataFlowInfo, expectedType,
                           ContextDependency.INDEPENDENT, new ResolutionResultsCacheImpl(),
-                          callChecker != null ? callChecker : expressionTypingServices.getCallChecker(),
-                          expressionTypingServices.getSymbolUsageValidator(),
-                          expressionTypingServices.getAdditionalTypeChecker(),
+                          callChecker != null ? callChecker : additionalCheckerProvider.getCallChecker(),
+                          additionalCheckerProvider.getSymbolUsageValidator(),
+                          additionalCheckerProvider.getTypeChecker(),
                           StatementFilter.NONE, false);
     }
 

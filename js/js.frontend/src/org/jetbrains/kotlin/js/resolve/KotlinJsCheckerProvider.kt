@@ -22,5 +22,6 @@ import org.jetbrains.kotlin.resolve.AdditionalCheckerProvider
 public object KotlinJsCheckerProvider : AdditionalCheckerProvider(
         additionalDeclarationCheckers = listOf(NativeInvokeChecker(), NativeGetterChecker(), NativeSetterChecker(), ClassDeclarationChecker()),
         additionalCallCheckers = listOf(JsCallChecker()),
-        additionalTypeCheckers = listOf()
+        additionalTypeCheckers = listOf(),
+        additionalSymbolUsageValidators = listOf()
 )

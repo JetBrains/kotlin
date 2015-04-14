@@ -16,64 +16,35 @@
 
 package org.jetbrains.kotlin.types.expressions;
 
-import com.google.common.collect.Lists;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.JetNodeTypes;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.JetTokens;
-import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
-import org.jetbrains.kotlin.resolve.calls.CallResolver;
-import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
-import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
-import org.jetbrains.kotlin.resolve.dataClassUtils.DataClassUtilsPackage;
 import org.jetbrains.kotlin.resolve.scopes.WritableScope;
 import org.jetbrains.kotlin.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.JetType;
-import org.jetbrains.kotlin.types.TypeUtils;
-import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryPackage;
-import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
-import static org.jetbrains.kotlin.resolve.BindingContext.*;
-import static org.jetbrains.kotlin.types.TypeUtils.noExpectedType;
+import static org.jetbrains.kotlin.resolve.BindingContext.PROCESSED;
 
 public class ExpressionTypingUtils {
-
-    private final ExpressionTypingServices expressionTypingServices;
-    private final CallResolver callResolver;
-    private final KotlinBuiltIns builtIns;
-
-    public ExpressionTypingUtils(
-            @NotNull ExpressionTypingServices expressionTypingServices,
-            @NotNull CallResolver resolver,
-            @NotNull KotlinBuiltIns builtIns
-    ) {
-        this.expressionTypingServices = expressionTypingServices;
-        this.callResolver = resolver;
-        this.builtIns = builtIns;
-    }
 
     @NotNull
     public static ReceiverValue normalizeReceiverValueForVisibility(@NotNull ReceiverValue receiverValue, @NotNull BindingContext trace) {
@@ -88,7 +59,7 @@ public class ExpressionTypingUtils {
             }
 
             if (referenceExpression != null) {
-                 DeclarationDescriptor descriptor = trace.get(BindingContext.REFERENCE_TARGET, referenceExpression);
+                DeclarationDescriptor descriptor = trace.get(BindingContext.REFERENCE_TARGET, referenceExpression);
                 if (descriptor instanceof ClassDescriptor) {
                     return new ClassReceiver((ClassDescriptor) descriptor.getOriginal());
                 }
@@ -98,18 +69,26 @@ public class ExpressionTypingUtils {
     }
 
     @Nullable
-    protected static ExpressionReceiver getExpressionReceiver(@NotNull JetExpression expression, @Nullable JetType type) {
+    public static ExpressionReceiver getExpressionReceiver(@NotNull JetExpression expression, @Nullable JetType type) {
         if (type == null) return null;
         return new ExpressionReceiver(expression, type);
     }
 
     @Nullable
-    protected static ExpressionReceiver getExpressionReceiver(@NotNull ExpressionTypingFacade facade, @NotNull JetExpression expression, ExpressionTypingContext context) {
+    public static ExpressionReceiver getExpressionReceiver(
+            @NotNull ExpressionTypingFacade facade,
+            @NotNull JetExpression expression,
+            ExpressionTypingContext context
+    ) {
         return getExpressionReceiver(expression, facade.getTypeInfo(expression, context).getType());
     }
 
     @NotNull
-    protected static ExpressionReceiver safeGetExpressionReceiver(@NotNull ExpressionTypingFacade facade, @NotNull JetExpression expression, ExpressionTypingContext context) {
+    public static ExpressionReceiver safeGetExpressionReceiver(
+            @NotNull ExpressionTypingFacade facade,
+            @NotNull JetExpression expression,
+            ExpressionTypingContext context
+    ) {
         JetType type = safeGetType(facade.safeGetTypeInfo(expression, context));
         return new ExpressionReceiver(expression, type);
     }
@@ -129,62 +108,6 @@ public class ExpressionTypingUtils {
         return scope;
     }
 
-    public boolean ensureBooleanResult(JetExpression operationSign, Name name, JetType resultType, ExpressionTypingContext context) {
-        return ensureBooleanResultWithCustomSubject(operationSign, resultType, "'" + name + "'", context);
-    }
-
-    private boolean ensureBooleanResultWithCustomSubject(JetExpression operationSign, JetType resultType, String subjectName, ExpressionTypingContext context) {
-        if (resultType != null) {
-            // TODO : Relax?
-            if (!builtIns.isBooleanOrSubtype(resultType)) {
-                context.trace.report(RESULT_TYPE_MISMATCH.on(operationSign, subjectName, builtIns.getBooleanType(), resultType));
-                return false;
-            }
-        }
-        return true;
-    }
-
-    @NotNull
-    public JetType getDefaultType(IElementType constantType) {
-        if (constantType == JetNodeTypes.INTEGER_CONSTANT) {
-            return builtIns.getIntType();
-        }
-        else if (constantType == JetNodeTypes.FLOAT_CONSTANT) {
-            return builtIns.getDoubleType();
-        }
-        else if (constantType == JetNodeTypes.BOOLEAN_CONSTANT) {
-            return builtIns.getBooleanType();
-        }
-        else if (constantType == JetNodeTypes.CHARACTER_CONSTANT) {
-            return builtIns.getCharType();
-        }
-        else if (constantType == JetNodeTypes.NULL) {
-            return builtIns.getNullableNothingType();
-        }
-        else {
-            throw new IllegalArgumentException("Unsupported constant type: " + constantType);
-        }
-    }
-
-    @NotNull
-    public OverloadResolutionResults<FunctionDescriptor> resolveFakeCall(
-            @NotNull ExpressionTypingContext context,
-            @NotNull ReceiverValue receiver,
-            @NotNull Name name,
-            @Nullable JetExpression callElement, 
-            @NotNull JetType... argumentTypes
-    ) {
-        TemporaryBindingTrace traceWithFakeArgumentInfo = TemporaryBindingTrace.create(context.trace, "trace to store fake argument for",
-                                                                                       name);
-        List<JetExpression> fakeArguments = Lists.newArrayList();
-        for (JetType type : argumentTypes) {
-            fakeArguments.add(createFakeExpressionOfType(expressionTypingServices.getProject(), traceWithFakeArgumentInfo,
-                                                         "fakeArgument" + fakeArguments.size(), type));
-        }
-        return makeAndResolveFakeCall(receiver, context.replaceBindingTrace(traceWithFakeArgumentInfo), fakeArguments, name,
-                                      callElement).getSecond();
-    }
-
     public static JetExpression createFakeExpressionOfType(
             @NotNull Project project,
             @NotNull BindingTrace trace,
@@ -197,103 +120,11 @@ public class ExpressionTypingUtils {
         return fakeExpression;
     }
 
-    @NotNull
-    public OverloadResolutionResults<FunctionDescriptor> resolveFakeCall(
+    public static void checkVariableShadowing(
             @NotNull ExpressionTypingContext context,
-            @NotNull ReceiverValue receiver,
-            @NotNull Name name,
-            @NotNull JetExpression callElement
+            @NotNull VariableDescriptor variableDescriptor,
+            @Nullable VariableDescriptor oldDescriptor
     ) {
-        return resolveFakeCall(receiver, context, Collections.<JetExpression>emptyList(), name, callElement);
-    }
-
-    @NotNull
-    public OverloadResolutionResults<FunctionDescriptor> resolveFakeCall(
-            @NotNull ReceiverValue receiver,
-            @NotNull ExpressionTypingContext context,
-            @NotNull List<JetExpression> valueArguments,
-            @NotNull Name name,
-            @NotNull JetExpression callElement
-    ) {
-        return makeAndResolveFakeCall(receiver, context, valueArguments, name, callElement).getSecond();
-    }
-
-    @NotNull
-    public Pair<Call, OverloadResolutionResults<FunctionDescriptor>> makeAndResolveFakeCall(
-            @NotNull ReceiverValue receiver,
-            @NotNull ExpressionTypingContext context,
-            @NotNull List<JetExpression> valueArguments,
-            @NotNull Name name,
-            @Nullable JetExpression callElement
-    ) {
-        final JetReferenceExpression fake = JetPsiFactory(expressionTypingServices.getProject()).createSimpleName("fake");
-        TemporaryBindingTrace fakeTrace = TemporaryBindingTrace.create(context.trace, "trace to resolve fake call for", name);
-        Call call = CallMaker.makeCallWithExpressions(callElement != null ? callElement : fake, receiver, null, fake, valueArguments);
-        OverloadResolutionResults<FunctionDescriptor> results =
-                callResolver.resolveCallWithGivenName(context.replaceBindingTrace(fakeTrace), call, fake, name);
-        if (results.isSuccess()) {
-            fakeTrace.commit(new TraceEntryFilter() {
-                @Override
-                public boolean accept(@Nullable WritableSlice<?, ?> slice, Object key) {
-                    // excluding all entries related to fake expression
-                    return key != fake;
-                }
-            }, true);
-        }
-        return Pair.create(call, results);
-    }
-
-    public void defineLocalVariablesFromMultiDeclaration(
-            @NotNull WritableScope writableScope,
-            @NotNull JetMultiDeclaration multiDeclaration,
-            @NotNull ReceiverValue receiver,
-            @NotNull JetExpression reportErrorsOn,
-            @NotNull ExpressionTypingContext context
-    ) {
-        int componentIndex = 1;
-        for (JetMultiDeclarationEntry entry : multiDeclaration.getEntries()) {
-            Name componentName = DataClassUtilsPackage.createComponentName(componentIndex);
-            componentIndex++;
-
-            JetType expectedType = getExpectedTypeForComponent(context, entry);
-            OverloadResolutionResults<FunctionDescriptor> results =
-                    resolveFakeCall(context.replaceExpectedType(expectedType), receiver, componentName, entry);
-
-            JetType componentType = null;
-            if (results.isSuccess()) {
-                context.trace.record(COMPONENT_RESOLVED_CALL, entry, results.getResultingCall());
-                FunctionDescriptor componentFunction = results.getResultingDescriptor();
-
-                expressionTypingServices.getSymbolUsageValidator().validateCall(componentFunction, context.trace, entry);
-
-                componentType = componentFunction.getReturnType();
-                if (componentType != null && !noExpectedType(expectedType)
-                       && !JetTypeChecker.DEFAULT.isSubtypeOf(componentType, expectedType)) {
-
-                    context.trace.report(
-                            COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH.on(reportErrorsOn, componentName, componentType, expectedType));
-                }
-            }
-            else if (results.isAmbiguity()) {
-                context.trace.report(COMPONENT_FUNCTION_AMBIGUITY.on(reportErrorsOn, componentName, results.getResultingCalls()));
-            }
-            else {
-                context.trace.report(COMPONENT_FUNCTION_MISSING.on(reportErrorsOn, componentName, receiver.getType()));
-            }
-            if (componentType == null) {
-                componentType = ErrorUtils.createErrorType(componentName + "() return type");
-            }
-            VariableDescriptor variableDescriptor = expressionTypingServices.getDescriptorResolver().
-                resolveLocalVariableDescriptorWithType(writableScope, entry, componentType, context.trace);
-
-            VariableDescriptor olderVariable = writableScope.getLocalVariable(variableDescriptor.getName());
-            checkVariableShadowing(context, variableDescriptor, olderVariable);
-
-            writableScope.addVariableDescriptor(variableDescriptor);
-        }
-    }
-
-    public static void checkVariableShadowing(@NotNull ExpressionTypingContext context, @NotNull VariableDescriptor variableDescriptor, VariableDescriptor oldDescriptor) {
         if (oldDescriptor != null && isLocal(variableDescriptor.getContainingDeclaration(), oldDescriptor)) {
             PsiElement declaration = DescriptorToSourceUtils.descriptorToDeclaration(variableDescriptor);
             if (declaration != null) {
@@ -302,25 +133,18 @@ public class ExpressionTypingUtils {
         }
     }
 
-    @NotNull
-    private JetType getExpectedTypeForComponent(ExpressionTypingContext context, JetMultiDeclarationEntry entry) {
-        JetTypeReference entryTypeRef = entry.getTypeReference();
-        if (entryTypeRef != null) {
-            return expressionTypingServices.getTypeResolver().resolveType(context.scope, entryTypeRef, context.trace, true);
-        }
-        else {
-            return TypeUtils.NO_EXPECTED_TYPE;
-        }
-    }
-
-    public static ObservableBindingTrace makeTraceInterceptingTypeMismatch(@NotNull BindingTrace trace, @NotNull final JetElement expressionToWatch, @NotNull final boolean[] mismatchFound) {
+    public static ObservableBindingTrace makeTraceInterceptingTypeMismatch(
+            @NotNull BindingTrace trace,
+            @NotNull final JetElement expressionToWatch,
+            @NotNull final boolean[] mismatchFound
+    ) {
         return new ObservableBindingTrace(trace) {
 
             @Override
             public void report(@NotNull Diagnostic diagnostic) {
                 DiagnosticFactory<?> factory = diagnostic.getFactory();
                 if ((factory == TYPE_MISMATCH || factory == CONSTANT_EXPECTED_TYPE_MISMATCH || factory == NULL_FOR_NONNULL_TYPE)
-                        && diagnostic.getPsiElement() == expressionToWatch) {
+                    && diagnostic.getPsiElement() == expressionToWatch) {
                     mismatchFound[0] = true;
                 }
                 if (TYPE_INFERENCE_ERRORS.contains(factory) &&
@@ -408,5 +232,8 @@ public class ExpressionTypingUtils {
             return isUnaryExpressionDependentOnExpectedType((JetUnaryExpression) expr);
         }
         return true;
+    }
+
+    private ExpressionTypingUtils() {
     }
 }

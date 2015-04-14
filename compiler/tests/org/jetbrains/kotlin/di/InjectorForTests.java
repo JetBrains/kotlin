@@ -22,14 +22,14 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
 import org.jetbrains.kotlin.resolve.DescriptorResolver;
 import org.jetbrains.kotlin.resolve.FunctionDescriptorResolver;
-import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
-import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.kotlin.resolve.TypeResolver;
+import org.jetbrains.kotlin.types.expressions.FakeCallResolver;
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmCheckerProvider;
+import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator;
+import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
 import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver;
 import org.jetbrains.kotlin.context.GlobalContext;
 import org.jetbrains.kotlin.storage.StorageManager;
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmCheckerProvider;
-import org.jetbrains.kotlin.resolve.validation.DefaultSymbolUsageValidator;
 import org.jetbrains.kotlin.resolve.AnnotationResolver;
 import org.jetbrains.kotlin.resolve.calls.CallResolver;
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver;
@@ -37,16 +37,18 @@ import org.jetbrains.kotlin.resolve.calls.CallCompleter;
 import org.jetbrains.kotlin.resolve.calls.CandidateResolver;
 import org.jetbrains.kotlin.resolve.calls.tasks.TaskPrioritizer;
 import org.jetbrains.kotlin.resolve.DelegatedPropertyResolver;
-import org.jetbrains.kotlin.types.expressions.ExpressionTypingComponents;
-import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils;
-import org.jetbrains.kotlin.types.DynamicTypesSettings;
-import org.jetbrains.kotlin.types.expressions.ForLoopConventionsChecker;
-import org.jetbrains.kotlin.types.expressions.LocalClassifierAnalyzer;
-import org.jetbrains.kotlin.builtins.ReflectionTypes;
-import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver;
-import org.jetbrains.kotlin.resolve.StatementFilter;
 import org.jetbrains.kotlin.resolve.TypeResolver.FlexibleTypeCapabilitiesProvider;
 import org.jetbrains.kotlin.context.TypeLazinessToken;
+import org.jetbrains.kotlin.types.DynamicTypesSettings;
+import org.jetbrains.kotlin.types.expressions.ExpressionTypingComponents;
+import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver;
+import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils;
+import org.jetbrains.kotlin.types.expressions.ForLoopConventionsChecker;
+import org.jetbrains.kotlin.types.expressions.LocalClassifierAnalyzer;
+import org.jetbrains.kotlin.types.expressions.MultiDeclarationResolver;
+import org.jetbrains.kotlin.builtins.ReflectionTypes;
+import org.jetbrains.kotlin.types.expressions.ValueParameterResolver;
+import org.jetbrains.kotlin.resolve.StatementFilter;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
 
@@ -60,14 +62,14 @@ public class InjectorForTests {
     private final PlatformToKotlinClassMap platformToKotlinClassMap;
     private final DescriptorResolver descriptorResolver;
     private final FunctionDescriptorResolver functionDescriptorResolver;
-    private final ExpressionTypingServices expressionTypingServices;
-    private final ExpressionTypingUtils expressionTypingUtils;
     private final TypeResolver typeResolver;
+    private final FakeCallResolver fakeCallResolver;
+    private final KotlinJvmCheckerProvider additionalCheckerProvider;
+    private final SymbolUsageValidator symbolUsageValidator;
+    private final ExpressionTypingServices expressionTypingServices;
     private final QualifiedExpressionResolver qualifiedExpressionResolver;
     private final GlobalContext globalContext;
     private final StorageManager storageManager;
-    private final KotlinJvmCheckerProvider kotlinJvmCheckerProvider;
-    private final DefaultSymbolUsageValidator defaultSymbolUsageValidator;
     private final AnnotationResolver annotationResolver;
     private final CallResolver callResolver;
     private final ArgumentTypeResolver argumentTypeResolver;
@@ -75,16 +77,18 @@ public class InjectorForTests {
     private final CandidateResolver candidateResolver;
     private final TaskPrioritizer taskPrioritizer;
     private final DelegatedPropertyResolver delegatedPropertyResolver;
-    private final ExpressionTypingComponents expressionTypingComponents;
-    private final ControlStructureTypingUtils controlStructureTypingUtils;
-    private final DynamicTypesSettings dynamicTypesSettings;
-    private final ForLoopConventionsChecker forLoopConventionsChecker;
-    private final LocalClassifierAnalyzer localClassifierAnalyzer;
-    private final ReflectionTypes reflectionTypes;
-    private final CallExpressionResolver callExpressionResolver;
-    private final StatementFilter statementFilter;
     private final FlexibleTypeCapabilitiesProvider flexibleTypeCapabilitiesProvider;
     private final TypeLazinessToken typeLazinessToken;
+    private final DynamicTypesSettings dynamicTypesSettings;
+    private final ExpressionTypingComponents expressionTypingComponents;
+    private final CallExpressionResolver callExpressionResolver;
+    private final ControlStructureTypingUtils controlStructureTypingUtils;
+    private final ForLoopConventionsChecker forLoopConventionsChecker;
+    private final LocalClassifierAnalyzer localClassifierAnalyzer;
+    private final MultiDeclarationResolver multiDeclarationResolver;
+    private final ReflectionTypes reflectionTypes;
+    private final ValueParameterResolver valueParameterResolver;
+    private final StatementFilter statementFilter;
 
     public InjectorForTests(
         @NotNull Project project,
@@ -107,19 +111,21 @@ public class InjectorForTests {
         this.expressionTypingServices = new ExpressionTypingServices(expressionTypingComponents);
         this.functionDescriptorResolver = new FunctionDescriptorResolver(getTypeResolver(), getDescriptorResolver(), annotationResolver, storageManager, getExpressionTypingServices(), kotlinBuiltIns);
         this.callResolver = new CallResolver();
-        this.expressionTypingUtils = new ExpressionTypingUtils(getExpressionTypingServices(), callResolver, kotlinBuiltIns);
-        this.kotlinJvmCheckerProvider = KotlinJvmCheckerProvider.INSTANCE$;
-        this.defaultSymbolUsageValidator = DefaultSymbolUsageValidator.INSTANCE$;
+        this.fakeCallResolver = new FakeCallResolver(project, callResolver);
+        this.additionalCheckerProvider = KotlinJvmCheckerProvider.INSTANCE$;
+        this.symbolUsageValidator = additionalCheckerProvider.getSymbolUsageValidator();
         this.argumentTypeResolver = new ArgumentTypeResolver();
         this.candidateResolver = new CandidateResolver();
         this.callCompleter = new CallCompleter(argumentTypeResolver, candidateResolver);
         this.taskPrioritizer = new TaskPrioritizer(storageManager);
         this.delegatedPropertyResolver = new DelegatedPropertyResolver();
-        this.controlStructureTypingUtils = new ControlStructureTypingUtils(getExpressionTypingServices());
+        this.callExpressionResolver = new CallExpressionResolver(callResolver);
+        this.controlStructureTypingUtils = new ControlStructureTypingUtils(callResolver);
         this.forLoopConventionsChecker = new ForLoopConventionsChecker();
         this.localClassifierAnalyzer = new LocalClassifierAnalyzer(getDescriptorResolver(), getFunctionDescriptorResolver(), getTypeResolver(), annotationResolver);
+        this.multiDeclarationResolver = new MultiDeclarationResolver(getFakeCallResolver(), getDescriptorResolver(), getTypeResolver(), symbolUsageValidator);
         this.reflectionTypes = new ReflectionTypes(moduleDescriptor);
-        this.callExpressionResolver = new CallExpressionResolver();
+        this.valueParameterResolver = new ValueParameterResolver(getAdditionalCheckerProvider(), getExpressionTypingServices());
         this.statementFilter = new StatementFilter();
 
         this.descriptorResolver.setAnnotationResolver(annotationResolver);
@@ -129,22 +135,15 @@ public class InjectorForTests {
         this.descriptorResolver.setStorageManager(storageManager);
         this.descriptorResolver.setTypeResolver(typeResolver);
 
-        this.expressionTypingServices.setAnnotationResolver(annotationResolver);
-        this.expressionTypingServices.setBuiltIns(kotlinBuiltIns);
-        this.expressionTypingServices.setCallExpressionResolver(callExpressionResolver);
-        this.expressionTypingServices.setCallResolver(callResolver);
-        this.expressionTypingServices.setDescriptorResolver(descriptorResolver);
-        this.expressionTypingServices.setFunctionDescriptorResolver(functionDescriptorResolver);
-        this.expressionTypingServices.setProject(project);
         this.expressionTypingServices.setStatementFilter(statementFilter);
-        this.expressionTypingServices.setTypeResolver(typeResolver);
 
-        this.qualifiedExpressionResolver.setSymbolUsageValidator(defaultSymbolUsageValidator);
+        this.qualifiedExpressionResolver.setSymbolUsageValidator(symbolUsageValidator);
 
         annotationResolver.setCallResolver(callResolver);
         annotationResolver.setStorageManager(storageManager);
         annotationResolver.setTypeResolver(typeResolver);
 
+        callResolver.setAdditionalCheckerProvider(additionalCheckerProvider);
         callResolver.setArgumentTypeResolver(argumentTypeResolver);
         callResolver.setCallCompleter(callCompleter);
         callResolver.setCandidateResolver(candidateResolver);
@@ -158,30 +157,36 @@ public class InjectorForTests {
 
         candidateResolver.setArgumentTypeResolver(argumentTypeResolver);
 
+        delegatedPropertyResolver.setAdditionalCheckerProvider(additionalCheckerProvider);
         delegatedPropertyResolver.setBuiltIns(kotlinBuiltIns);
         delegatedPropertyResolver.setCallResolver(callResolver);
         delegatedPropertyResolver.setExpressionTypingServices(expressionTypingServices);
 
-        expressionTypingComponents.setAdditionalCheckerProvider(kotlinJvmCheckerProvider);
+        expressionTypingComponents.setAdditionalCheckerProvider(additionalCheckerProvider);
+        expressionTypingComponents.setAnnotationResolver(annotationResolver);
         expressionTypingComponents.setBuiltIns(kotlinBuiltIns);
+        expressionTypingComponents.setCallExpressionResolver(callExpressionResolver);
         expressionTypingComponents.setCallResolver(callResolver);
         expressionTypingComponents.setControlStructureTypingUtils(controlStructureTypingUtils);
+        expressionTypingComponents.setDescriptorResolver(descriptorResolver);
         expressionTypingComponents.setDynamicTypesSettings(dynamicTypesSettings);
         expressionTypingComponents.setExpressionTypingServices(expressionTypingServices);
-        expressionTypingComponents.setExpressionTypingUtils(expressionTypingUtils);
         expressionTypingComponents.setForLoopConventionsChecker(forLoopConventionsChecker);
+        expressionTypingComponents.setFunctionDescriptorResolver(functionDescriptorResolver);
         expressionTypingComponents.setGlobalContext(globalContext);
         expressionTypingComponents.setLocalClassifierAnalyzer(localClassifierAnalyzer);
+        expressionTypingComponents.setMultiDeclarationResolver(multiDeclarationResolver);
         expressionTypingComponents.setPlatformToKotlinClassMap(platformToKotlinClassMap);
         expressionTypingComponents.setReflectionTypes(reflectionTypes);
-        expressionTypingComponents.setSymbolUsageValidator(defaultSymbolUsageValidator);
-
-        forLoopConventionsChecker.setBuiltIns(kotlinBuiltIns);
-        forLoopConventionsChecker.setExpressionTypingServices(expressionTypingServices);
-        forLoopConventionsChecker.setExpressionTypingUtils(expressionTypingUtils);
-        forLoopConventionsChecker.setProject(project);
+        expressionTypingComponents.setSymbolUsageValidator(symbolUsageValidator);
+        expressionTypingComponents.setTypeResolver(typeResolver);
+        expressionTypingComponents.setValueParameterResolver(valueParameterResolver);
 
         callExpressionResolver.setExpressionTypingServices(expressionTypingServices);
+
+        forLoopConventionsChecker.setBuiltIns(kotlinBuiltIns);
+        forLoopConventionsChecker.setFakeCallResolver(fakeCallResolver);
+        forLoopConventionsChecker.setSymbolUsageValidator(symbolUsageValidator);
 
     }
 
@@ -197,16 +202,20 @@ public class InjectorForTests {
         return this.functionDescriptorResolver;
     }
 
-    public ExpressionTypingServices getExpressionTypingServices() {
-        return this.expressionTypingServices;
-    }
-
-    public ExpressionTypingUtils getExpressionTypingUtils() {
-        return this.expressionTypingUtils;
-    }
-
     public TypeResolver getTypeResolver() {
         return this.typeResolver;
+    }
+
+    public FakeCallResolver getFakeCallResolver() {
+        return this.fakeCallResolver;
+    }
+
+    public KotlinJvmCheckerProvider getAdditionalCheckerProvider() {
+        return this.additionalCheckerProvider;
+    }
+
+    public ExpressionTypingServices getExpressionTypingServices() {
+        return this.expressionTypingServices;
     }
 
     public QualifiedExpressionResolver getQualifiedExpressionResolver() {

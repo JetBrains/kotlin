@@ -24,28 +24,30 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
 import org.jetbrains.kotlin.resolve.AdditionalCheckerProvider;
+import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator;
 import org.jetbrains.kotlin.resolve.StatementFilter;
 import org.jetbrains.kotlin.resolve.BodyResolver;
-import org.jetbrains.kotlin.resolve.validation.DefaultSymbolUsageValidator;
 import org.jetbrains.kotlin.resolve.AnnotationResolver;
 import org.jetbrains.kotlin.resolve.calls.CallResolver;
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingComponents;
+import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver;
 import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils;
-import org.jetbrains.kotlin.types.DynamicTypesSettings;
-import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
-import org.jetbrains.kotlin.types.expressions.ForLoopConventionsChecker;
-import org.jetbrains.kotlin.types.expressions.LocalClassifierAnalyzer;
 import org.jetbrains.kotlin.resolve.DescriptorResolver;
 import org.jetbrains.kotlin.resolve.DelegatedPropertyResolver;
 import org.jetbrains.kotlin.resolve.TypeResolver;
 import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver;
 import org.jetbrains.kotlin.resolve.TypeResolver.FlexibleTypeCapabilitiesProvider;
 import org.jetbrains.kotlin.context.TypeLazinessToken;
+import org.jetbrains.kotlin.types.DynamicTypesSettings;
+import org.jetbrains.kotlin.types.expressions.ForLoopConventionsChecker;
+import org.jetbrains.kotlin.types.expressions.FakeCallResolver;
 import org.jetbrains.kotlin.resolve.FunctionDescriptorResolver;
+import org.jetbrains.kotlin.types.expressions.LocalClassifierAnalyzer;
+import org.jetbrains.kotlin.types.expressions.MultiDeclarationResolver;
 import org.jetbrains.kotlin.builtins.ReflectionTypes;
-import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver;
+import org.jetbrains.kotlin.types.expressions.ValueParameterResolver;
 import org.jetbrains.kotlin.resolve.calls.CallCompleter;
 import org.jetbrains.kotlin.resolve.calls.CandidateResolver;
 import org.jetbrains.kotlin.resolve.calls.tasks.TaskPrioritizer;
@@ -69,28 +71,30 @@ public class InjectorForBodyResolve {
     private final KotlinBuiltIns kotlinBuiltIns;
     private final PlatformToKotlinClassMap platformToKotlinClassMap;
     private final AdditionalCheckerProvider additionalCheckerProvider;
+    private final SymbolUsageValidator symbolUsageValidator;
     private final StatementFilter statementFilter;
     private final BodyResolver bodyResolver;
-    private final DefaultSymbolUsageValidator defaultSymbolUsageValidator;
     private final AnnotationResolver annotationResolver;
     private final CallResolver callResolver;
     private final ArgumentTypeResolver argumentTypeResolver;
     private final ExpressionTypingServices expressionTypingServices;
     private final ExpressionTypingComponents expressionTypingComponents;
+    private final CallExpressionResolver callExpressionResolver;
     private final ControlStructureTypingUtils controlStructureTypingUtils;
-    private final DynamicTypesSettings dynamicTypesSettings;
-    private final ExpressionTypingUtils expressionTypingUtils;
-    private final ForLoopConventionsChecker forLoopConventionsChecker;
-    private final LocalClassifierAnalyzer localClassifierAnalyzer;
     private final DescriptorResolver descriptorResolver;
     private final DelegatedPropertyResolver delegatedPropertyResolver;
     private final TypeResolver typeResolver;
     private final QualifiedExpressionResolver qualifiedExpressionResolver;
     private final FlexibleTypeCapabilitiesProvider flexibleTypeCapabilitiesProvider;
     private final TypeLazinessToken typeLazinessToken;
+    private final DynamicTypesSettings dynamicTypesSettings;
+    private final ForLoopConventionsChecker forLoopConventionsChecker;
+    private final FakeCallResolver fakeCallResolver;
     private final FunctionDescriptorResolver functionDescriptorResolver;
+    private final LocalClassifierAnalyzer localClassifierAnalyzer;
+    private final MultiDeclarationResolver multiDeclarationResolver;
     private final ReflectionTypes reflectionTypes;
-    private final CallExpressionResolver callExpressionResolver;
+    private final ValueParameterResolver valueParameterResolver;
     private final CallCompleter callCompleter;
     private final CandidateResolver candidateResolver;
     private final TaskPrioritizer taskPrioritizer;
@@ -116,28 +120,30 @@ public class InjectorForBodyResolve {
         this.kotlinBuiltIns = moduleDescriptor.getBuiltIns();
         this.platformToKotlinClassMap = moduleDescriptor.getPlatformToKotlinClassMap();
         this.additionalCheckerProvider = additionalCheckerProvider;
+        this.symbolUsageValidator = additionalCheckerProvider.getSymbolUsageValidator();
         this.statementFilter = statementFilter;
         this.bodyResolver = new BodyResolver();
-        this.defaultSymbolUsageValidator = DefaultSymbolUsageValidator.INSTANCE$;
         this.annotationResolver = new AnnotationResolver();
         this.callResolver = new CallResolver();
         this.argumentTypeResolver = new ArgumentTypeResolver();
         this.expressionTypingComponents = new ExpressionTypingComponents();
         this.expressionTypingServices = new ExpressionTypingServices(expressionTypingComponents);
-        this.controlStructureTypingUtils = new ControlStructureTypingUtils(expressionTypingServices);
-        this.dynamicTypesSettings = new DynamicTypesSettings();
-        this.expressionTypingUtils = new ExpressionTypingUtils(expressionTypingServices, callResolver, kotlinBuiltIns);
-        this.forLoopConventionsChecker = new ForLoopConventionsChecker();
+        this.callExpressionResolver = new CallExpressionResolver(callResolver);
+        this.controlStructureTypingUtils = new ControlStructureTypingUtils(callResolver);
         this.descriptorResolver = new DescriptorResolver();
+        this.delegatedPropertyResolver = new DelegatedPropertyResolver();
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
         this.flexibleTypeCapabilitiesProvider = new FlexibleTypeCapabilitiesProvider();
         this.typeLazinessToken = new TypeLazinessToken();
+        this.dynamicTypesSettings = new DynamicTypesSettings();
         this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, moduleDescriptor, flexibleTypeCapabilitiesProvider, storageManager, typeLazinessToken, dynamicTypesSettings);
+        this.forLoopConventionsChecker = new ForLoopConventionsChecker();
+        this.fakeCallResolver = new FakeCallResolver(project, callResolver);
         this.functionDescriptorResolver = new FunctionDescriptorResolver(typeResolver, descriptorResolver, annotationResolver, storageManager, expressionTypingServices, kotlinBuiltIns);
         this.localClassifierAnalyzer = new LocalClassifierAnalyzer(descriptorResolver, functionDescriptorResolver, typeResolver, annotationResolver);
-        this.delegatedPropertyResolver = new DelegatedPropertyResolver();
+        this.multiDeclarationResolver = new MultiDeclarationResolver(fakeCallResolver, descriptorResolver, typeResolver, symbolUsageValidator);
         this.reflectionTypes = new ReflectionTypes(moduleDescriptor);
-        this.callExpressionResolver = new CallExpressionResolver();
+        this.valueParameterResolver = new ValueParameterResolver(additionalCheckerProvider, expressionTypingServices);
         this.candidateResolver = new CandidateResolver();
         this.callCompleter = new CallCompleter(argumentTypeResolver, candidateResolver);
         this.taskPrioritizer = new TaskPrioritizer(storageManager);
@@ -147,6 +153,7 @@ public class InjectorForBodyResolve {
         this.functionAnalyzerExtension = new FunctionAnalyzerExtension();
         this.scriptBodyResolver = new ScriptBodyResolver();
 
+        this.bodyResolver.setAdditionalCheckerProvider(additionalCheckerProvider);
         this.bodyResolver.setAnnotationResolver(annotationResolver);
         this.bodyResolver.setCallResolver(callResolver);
         this.bodyResolver.setControlFlowAnalyzer(controlFlowAnalyzer);
@@ -156,11 +163,13 @@ public class InjectorForBodyResolve {
         this.bodyResolver.setFunctionAnalyzerExtension(functionAnalyzerExtension);
         this.bodyResolver.setScriptBodyResolverResolver(scriptBodyResolver);
         this.bodyResolver.setTrace(bindingTrace);
+        this.bodyResolver.setValueParameterResolver(valueParameterResolver);
 
         annotationResolver.setCallResolver(callResolver);
         annotationResolver.setStorageManager(storageManager);
         annotationResolver.setTypeResolver(typeResolver);
 
+        callResolver.setAdditionalCheckerProvider(additionalCheckerProvider);
         callResolver.setArgumentTypeResolver(argumentTypeResolver);
         callResolver.setCallCompleter(callCompleter);
         callResolver.setCandidateResolver(candidateResolver);
@@ -172,34 +181,29 @@ public class InjectorForBodyResolve {
         argumentTypeResolver.setExpressionTypingServices(expressionTypingServices);
         argumentTypeResolver.setTypeResolver(typeResolver);
 
-        expressionTypingServices.setAnnotationResolver(annotationResolver);
-        expressionTypingServices.setBuiltIns(kotlinBuiltIns);
-        expressionTypingServices.setCallExpressionResolver(callExpressionResolver);
-        expressionTypingServices.setCallResolver(callResolver);
-        expressionTypingServices.setDescriptorResolver(descriptorResolver);
-        expressionTypingServices.setFunctionDescriptorResolver(functionDescriptorResolver);
-        expressionTypingServices.setProject(project);
         expressionTypingServices.setStatementFilter(statementFilter);
-        expressionTypingServices.setTypeResolver(typeResolver);
 
         expressionTypingComponents.setAdditionalCheckerProvider(additionalCheckerProvider);
+        expressionTypingComponents.setAnnotationResolver(annotationResolver);
         expressionTypingComponents.setBuiltIns(kotlinBuiltIns);
+        expressionTypingComponents.setCallExpressionResolver(callExpressionResolver);
         expressionTypingComponents.setCallResolver(callResolver);
         expressionTypingComponents.setControlStructureTypingUtils(controlStructureTypingUtils);
+        expressionTypingComponents.setDescriptorResolver(descriptorResolver);
         expressionTypingComponents.setDynamicTypesSettings(dynamicTypesSettings);
         expressionTypingComponents.setExpressionTypingServices(expressionTypingServices);
-        expressionTypingComponents.setExpressionTypingUtils(expressionTypingUtils);
         expressionTypingComponents.setForLoopConventionsChecker(forLoopConventionsChecker);
+        expressionTypingComponents.setFunctionDescriptorResolver(functionDescriptorResolver);
         expressionTypingComponents.setGlobalContext(globalContext);
         expressionTypingComponents.setLocalClassifierAnalyzer(localClassifierAnalyzer);
+        expressionTypingComponents.setMultiDeclarationResolver(multiDeclarationResolver);
         expressionTypingComponents.setPlatformToKotlinClassMap(platformToKotlinClassMap);
         expressionTypingComponents.setReflectionTypes(reflectionTypes);
-        expressionTypingComponents.setSymbolUsageValidator(defaultSymbolUsageValidator);
+        expressionTypingComponents.setSymbolUsageValidator(symbolUsageValidator);
+        expressionTypingComponents.setTypeResolver(typeResolver);
+        expressionTypingComponents.setValueParameterResolver(valueParameterResolver);
 
-        forLoopConventionsChecker.setBuiltIns(kotlinBuiltIns);
-        forLoopConventionsChecker.setExpressionTypingServices(expressionTypingServices);
-        forLoopConventionsChecker.setExpressionTypingUtils(expressionTypingUtils);
-        forLoopConventionsChecker.setProject(project);
+        callExpressionResolver.setExpressionTypingServices(expressionTypingServices);
 
         descriptorResolver.setAnnotationResolver(annotationResolver);
         descriptorResolver.setBuiltIns(kotlinBuiltIns);
@@ -208,13 +212,16 @@ public class InjectorForBodyResolve {
         descriptorResolver.setStorageManager(storageManager);
         descriptorResolver.setTypeResolver(typeResolver);
 
+        delegatedPropertyResolver.setAdditionalCheckerProvider(additionalCheckerProvider);
         delegatedPropertyResolver.setBuiltIns(kotlinBuiltIns);
         delegatedPropertyResolver.setCallResolver(callResolver);
         delegatedPropertyResolver.setExpressionTypingServices(expressionTypingServices);
 
-        qualifiedExpressionResolver.setSymbolUsageValidator(defaultSymbolUsageValidator);
+        qualifiedExpressionResolver.setSymbolUsageValidator(symbolUsageValidator);
 
-        callExpressionResolver.setExpressionTypingServices(expressionTypingServices);
+        forLoopConventionsChecker.setBuiltIns(kotlinBuiltIns);
+        forLoopConventionsChecker.setFakeCallResolver(fakeCallResolver);
+        forLoopConventionsChecker.setSymbolUsageValidator(symbolUsageValidator);
 
         candidateResolver.setArgumentTypeResolver(argumentTypeResolver);
 
@@ -226,6 +233,7 @@ public class InjectorForBodyResolve {
 
         functionAnalyzerExtension.setTrace(bindingTrace);
 
+        scriptBodyResolver.setAdditionalCheckerProvider(additionalCheckerProvider);
         scriptBodyResolver.setExpressionTypingServices(expressionTypingServices);
 
     }

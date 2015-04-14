@@ -72,15 +72,15 @@ public class RemoveExplicitTypeArguments : JetSelfTargetingOffsetIndependentInte
             TypeUtils.NO_EXPECTED_TYPE
         }
         val dataFlow = context.getDataFlowInfo(callExpression)
-        val resolutionResults = injector.getExpressionTypingServices()?.getCallResolver()?.resolveFunctionCall(
+        val resolutionResults = injector.getCallResolver().resolveFunctionCall(
                 BindingTraceContext(), scope, untypedCall, jType, dataFlow, false)
-        assert (resolutionResults?.isSingleResult() ?: true) { "Removing type arguments changed resolve for: " +
-                "${callExpression.getTextWithLocation()} to ${resolutionResults?.getResultCode()}" }
+        assert (resolutionResults.isSingleResult()) { "Removing type arguments changed resolve for: " +
+                "${callExpression.getTextWithLocation()} to ${resolutionResults.getResultCode()}" }
 
         val args = originalCall.getTypeArguments()
-        val newArgs = resolutionResults?.getResultingCall()?.getTypeArguments()
+        val newArgs = resolutionResults.getResultingCall().getTypeArguments()
 
-        return args == newArgs?.mapValues { approximateFlexibleTypes(it.getValue(), false) }
+        return args == newArgs.mapValues { approximateFlexibleTypes(it.getValue(), false) }
     }
 
     private class CallWithoutTypeArgs(call: Call) : DelegatingCall(call) {

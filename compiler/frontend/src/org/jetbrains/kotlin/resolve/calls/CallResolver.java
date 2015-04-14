@@ -63,18 +63,13 @@ import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 
 @SuppressWarnings("RedundantTypeArguments")
 public class CallResolver {
-    @NotNull
     private ExpressionTypingServices expressionTypingServices;
-    @NotNull
     private TypeResolver typeResolver;
-    @NotNull
     private CandidateResolver candidateResolver;
-    @NotNull
     private ArgumentTypeResolver argumentTypeResolver;
-    @NotNull
     private CallCompleter callCompleter;
-    @NotNull
     private TaskPrioritizer taskPrioritizer;
+    private AdditionalCheckerProvider additionalCheckerProvider;
 
     @Inject
     public void setExpressionTypingServices(@NotNull ExpressionTypingServices expressionTypingServices) {
@@ -104,6 +99,11 @@ public class CallResolver {
     @Inject
     public void setTaskPrioritizer(@NotNull TaskPrioritizer taskPrioritizer) {
         this.taskPrioritizer = taskPrioritizer;
+    }
+
+    @Inject
+    public void setAdditionalCheckerProvider(AdditionalCheckerProvider additionalCheckerProvider) {
+        this.additionalCheckerProvider = additionalCheckerProvider;
     }
 
     @NotNull
@@ -232,7 +232,8 @@ public class CallResolver {
         return resolveFunctionCall(
                 BasicCallResolutionContext.create(
                         trace, scope, call, expectedType, dataFlowInfo, ContextDependency.INDEPENDENT, CheckValueArgumentsMode.ENABLED,
-                        expressionTypingServices.getCallChecker(), expressionTypingServices.getSymbolUsageValidator(), expressionTypingServices.getAdditionalTypeChecker(), isAnnotationContext)
+                        additionalCheckerProvider.getCallChecker(), additionalCheckerProvider.getSymbolUsageValidator(),
+                        additionalCheckerProvider.getTypeChecker(), isAnnotationContext)
         );
     }
 
@@ -312,7 +313,7 @@ public class CallResolver {
                 CallMaker.makeCall(ReceiverValue.NO_RECEIVER, null, call),
                 NO_EXPECTED_TYPE,
                 dataFlowInfo, ContextDependency.INDEPENDENT, CheckValueArgumentsMode.ENABLED,
-                callChecker, expressionTypingServices.getSymbolUsageValidator(), expressionTypingServices.getAdditionalTypeChecker(), false);
+                callChecker, additionalCheckerProvider.getSymbolUsageValidator(), additionalCheckerProvider.getTypeChecker(), false);
 
         if (call.getCalleeExpression() == null) return checkArgumentTypesAndFail(context);
 

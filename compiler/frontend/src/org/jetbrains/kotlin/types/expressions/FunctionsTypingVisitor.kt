@@ -18,23 +18,20 @@ package org.jetbrains.kotlin.types.expressions
 
 import com.google.common.collect.Lists
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
-import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
-import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.diagnostics.Errors.*
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.resolve.BindingContext.AUTO_CREATED_IT
 import org.jetbrains.kotlin.resolve.BindingContext.EXPECTED_RETURN_TYPE
-import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.scopes.WritableScope
 import org.jetbrains.kotlin.resolve.source.toSourceElement
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.CommonSupertypes
+import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils.CANT_INFER_FUNCTION_PARAM_TYPE
 import org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE
 import org.jetbrains.kotlin.types.TypeUtils.noExpectedType
@@ -72,11 +69,9 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
             }
         }
 
-        val services = components.expressionTypingServices
-
         val functionDescriptor: SimpleFunctionDescriptor
         if (isStatement) {
-            functionDescriptor = services.getFunctionDescriptorResolver().resolveFunctionDescriptor(
+            functionDescriptor = components.functionDescriptorResolver.resolveFunctionDescriptor(
                     context.scope.getContainingDeclaration(), context.scope, function, context.trace, context.dataFlowInfo)
             assert(statementScope != null) {
                 "statementScope must be not null for function: " + function.getName() + " at location " + DiagnosticUtils.atLocation(function)
@@ -84,15 +79,20 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
             statementScope!!.addFunctionDescriptor(functionDescriptor)
         }
         else {
-            functionDescriptor = services.getFunctionDescriptorResolver().resolveFunctionExpressionDescriptor(
-                    context.scope.getContainingDeclaration(), context.scope, function, context.trace, context.dataFlowInfo, context.expectedType)
+            functionDescriptor = components.functionDescriptorResolver.resolveFunctionExpressionDescriptor(
+                    context.scope.getContainingDeclaration(), context.scope, function,
+                    context.trace, context.dataFlowInfo, context.expectedType
+            )
         }
 
         val functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(context.scope, functionDescriptor, context.trace)
-        services.checkFunctionReturnType(functionInnerScope, function, functionDescriptor, context.dataFlowInfo, null, context.trace)
+        components.expressionTypingServices.checkFunctionReturnType(
+                functionInnerScope, function, functionDescriptor, context.dataFlowInfo, null, context.trace
+        )
 
-        services.resolveValueParameters(function.getValueParameters(), functionDescriptor.getValueParameters(), context.scope,
-                                        context.dataFlowInfo, context.trace);
+        components.valueParameterResolver.resolveValueParameters(
+                function.getValueParameters(), functionDescriptor.getValueParameters(), context.scope, context.dataFlowInfo, context.trace
+        )
 
         ModifiersChecker.create(context.trace, components.additionalCheckerProvider)
                 .checkModifiersForLocalDeclaration(function, functionDescriptor)
@@ -153,7 +153,7 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
         val functionLiteral = expression.getFunctionLiteral()
         val functionDescriptor = AnonymousFunctionDescriptor(context.scope.getContainingDeclaration(), Annotations.EMPTY,
                                                              CallableMemberDescriptor.Kind.DECLARATION, functionLiteral.toSourceElement())
-        components.expressionTypingServices.getFunctionDescriptorResolver().
+        components.functionDescriptorResolver.
                 initializeFunctionDescriptorAndExplicitReturnType(context.scope.getContainingDeclaration(), context.scope, functionLiteral,
                                                                   functionDescriptor, context.trace, context.expectedType)
         BindingContextUtils.recordFunctionDeclarationToDescriptor(context.trace, functionLiteral, functionDescriptor)
@@ -185,7 +185,7 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
     ): JetType? {
         val functionLiteral = expression.getFunctionLiteral()
         val declaredReturnType = functionLiteral.getTypeReference()?.let {
-            val type = components.expressionTypingServices.getTypeResolver().resolveType(context.scope, it, context.trace, true)
+            val type = components.typeResolver.resolveType(context.scope, it, context.trace, true)
             if (expectedReturnType != null && !JetTypeChecker.DEFAULT.isSubtypeOf(type, expectedReturnType)) {
                 context.trace.report(EXPECTED_RETURN_TYPE_MISMATCH.on(it, expectedReturnType))
             }

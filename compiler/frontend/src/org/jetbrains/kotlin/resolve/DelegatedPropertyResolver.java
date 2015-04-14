@@ -55,12 +55,13 @@ import static org.jetbrains.kotlin.types.TypeUtils.noExpectedType;
 import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.createFakeExpressionOfType;
 
 public class DelegatedPropertyResolver {
-   
+
+    public static final Name PROPERTY_DELEGATED_FUNCTION_NAME = Name.identifier("propertyDelegated");
+
     private ExpressionTypingServices expressionTypingServices;
     private CallResolver callResolver;
     private KotlinBuiltIns builtIns;
-
-    public static final Name PROPERTY_DELEGATED_FUNCTION_NAME = Name.identifier("propertyDelegated");
+    private AdditionalCheckerProvider additionalCheckerProvider;
 
     @Inject
     public void setExpressionTypingServices(@NotNull ExpressionTypingServices expressionTypingServices) {
@@ -75,6 +76,11 @@ public class DelegatedPropertyResolver {
     @Inject
     public void setBuiltIns(@NotNull KotlinBuiltIns builtIns) {
         this.builtIns = builtIns;
+    }
+
+    @Inject
+    public void setAdditionalCheckerProvider(AdditionalCheckerProvider additionalCheckerProvider) {
+        this.additionalCheckerProvider = additionalCheckerProvider;
     }
 
     @Nullable
@@ -142,7 +148,7 @@ public class DelegatedPropertyResolver {
     ) {
         TemporaryBindingTrace traceToResolvePDMethod = TemporaryBindingTrace.create(trace, "Trace to resolve propertyDelegated method in delegated property");
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
-                expressionTypingServices, traceToResolvePDMethod, scope,
+                additionalCheckerProvider, traceToResolvePDMethod, scope,
                 DataFlowInfo.EMPTY, TypeUtils.NO_EXPECTED_TYPE);
 
         List<JetExpression> arguments = Lists.newArrayList();
@@ -216,7 +222,7 @@ public class DelegatedPropertyResolver {
             JetPropertyDelegate delegate = property.getDelegate();
             if (delegate != null) {
                 PsiElement byKeyword = delegate.getByKeywordNode().getPsi();
-                expressionTypingServices.getSymbolUsageValidator().validateCall(resultingCall.getResultingDescriptor(), trace, byKeyword);
+                additionalCheckerProvider.getSymbolUsageValidator().validateCall(resultingCall.getResultingDescriptor(), trace, byKeyword);
             }
         }
         trace.record(DELEGATED_PROPERTY_RESOLVED_CALL, accessor, resultingCall);
@@ -239,7 +245,7 @@ public class DelegatedPropertyResolver {
                                ? propertyDescriptor.getType() : TypeUtils.NO_EXPECTED_TYPE;
 
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
-                expressionTypingServices, trace, scope,
+                additionalCheckerProvider, trace, scope,
                 DataFlowInfo.EMPTY, expectedType);
 
         boolean hasThis = propertyDescriptor.getExtensionReceiverParameter() != null || propertyDescriptor.getDispatchReceiverParameter() != null;
@@ -251,7 +257,7 @@ public class DelegatedPropertyResolver {
         arguments.add(createExpressionForPropertyMetadata(psiFactory, propertyDescriptor));
 
         if (!isGet) {
-            JetReferenceExpression fakeArgument = (JetReferenceExpression) createFakeExpressionOfType(expressionTypingServices.getProject(), trace,
+            JetReferenceExpression fakeArgument = (JetReferenceExpression) createFakeExpressionOfType(delegateExpression.getProject(), trace,
                                                                              "fakeArgument" + arguments.size(),
                                                                              propertyDescriptor.getType());
             arguments.add(fakeArgument);

@@ -37,12 +37,17 @@ import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 public class ScriptBodyResolver {
 
     private ExpressionTypingServices expressionTypingServices;
+    private AdditionalCheckerProvider additionalCheckerProvider;
 
     @Inject
     public void setExpressionTypingServices(@NotNull ExpressionTypingServices expressionTypingServices) {
         this.expressionTypingServices = expressionTypingServices;
     }
 
+    @Inject
+    public void setAdditionalCheckerProvider(AdditionalCheckerProvider additionalCheckerProvider) {
+        this.additionalCheckerProvider = additionalCheckerProvider;
+    }
 
     public void resolveScriptBodies(@NotNull BodiesResolveContext c) {
         for (Map.Entry<JetScript, ScriptDescriptor> e : c.getScripts().entrySet()) {
@@ -59,7 +64,7 @@ public class ScriptBodyResolver {
     ) {
         // Resolve all contents of the script
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
-                expressionTypingServices,
+                additionalCheckerProvider,
                 trace,
                 scriptDescriptor.getScopeForBodyResolution(),
                 DataFlowInfo.EMPTY,

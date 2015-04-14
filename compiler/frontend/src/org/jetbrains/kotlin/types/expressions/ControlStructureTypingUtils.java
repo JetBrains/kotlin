@@ -59,10 +59,10 @@ import static org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.Co
 public class ControlStructureTypingUtils {
     private static final Logger LOG = Logger.getInstance(ControlStructureTypingUtils.class);
 
-    private final ExpressionTypingServices expressionTypingServices;
+    private final CallResolver callResolver;
 
-    public ControlStructureTypingUtils(@NotNull ExpressionTypingServices expressionTypingServices) {
-        this.expressionTypingServices = expressionTypingServices;
+    public ControlStructureTypingUtils(@NotNull CallResolver callResolver) {
+        this.callResolver = callResolver;
     }
 
     /*package*/ ResolvedCall<FunctionDescriptor> resolveSpecialConstructionAsCall(
@@ -77,7 +77,6 @@ public class ControlStructureTypingUtils {
                 constructionName.toUpperCase(), argumentNames, isArgumentNullable);
         TracingStrategy tracing = createTracingForSpecialConstruction(call, constructionName, context);
         ResolutionCandidate<CallableDescriptor> resolutionCandidate = ResolutionCandidate.<CallableDescriptor>create(call, function);
-        CallResolver callResolver = expressionTypingServices.getCallResolver();
         OverloadResolutionResults<FunctionDescriptor> results = callResolver.resolveCallWithKnownCandidate(
                 call, tracing, context, resolutionCandidate, dataFlowInfoForArguments);
         assert results.isSingleResult() : "Not single result after resolving one known candidate";

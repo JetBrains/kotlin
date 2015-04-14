@@ -57,7 +57,8 @@ public object KotlinJvmCheckerProvider : AdditionalCheckerProvider(
         additionalCallCheckers = listOf(NeedSyntheticChecker(), JavaAnnotationCallChecker(),
                                         JavaAnnotationMethodCallChecker(), TraitDefaultMethodCallChecker()),
 
-        additionalTypeCheckers = listOf(JavaNullabilityWarningsChecker())
+        additionalTypeCheckers = listOf(JavaNullabilityWarningsChecker()),
+        additionalSymbolUsageValidators = listOf()
 )
 
 public class LocalFunInlineChecker : DeclarationChecker {

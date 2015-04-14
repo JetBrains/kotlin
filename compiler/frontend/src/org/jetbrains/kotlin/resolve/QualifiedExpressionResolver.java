@@ -29,11 +29,9 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.calls.CallResolver;
 import org.jetbrains.kotlin.resolve.scopes.AbstractScopeAdapter;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.kotlin.resolve.validation.CompositeSymbolUsageValidator;
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator;
 
 import javax.inject.Inject;
@@ -44,7 +42,7 @@ import java.util.Set;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 
 public class QualifiedExpressionResolver {
-    private SymbolUsageValidator symbolUsageValidator = new CompositeSymbolUsageValidator();
+    private SymbolUsageValidator symbolUsageValidator = SymbolUsageValidator.Empty;
 
     /**
      * @deprecated Instance of this class should be obtained from the Injector
@@ -54,7 +52,7 @@ public class QualifiedExpressionResolver {
     }
 
     @Inject
-    public void setSymbolUsageValidator(SymbolUsageValidator symbolUsageValidator) {
+    public void setSymbolUsageValidator(@NotNull SymbolUsageValidator symbolUsageValidator) {
         this.symbolUsageValidator = symbolUsageValidator;
     }
 

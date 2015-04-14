@@ -253,7 +253,7 @@ public class ArgumentTypeResolver {
             @Nullable JetType defaultValue
     ) {
         if (returnTypeRef != null) {
-            return expressionTypingServices.getTypeResolver().resolveType(scope, returnTypeRef, trace, true);
+            return typeResolver.resolveType(scope, returnTypeRef, trace, true);
         }
         return defaultValue;
     }

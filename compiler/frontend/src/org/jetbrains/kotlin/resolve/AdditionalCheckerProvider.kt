@@ -17,20 +17,25 @@
 package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.resolve.calls.checkers.*
+import org.jetbrains.kotlin.resolve.validation.DeprecatedSymbolValidator
+import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
 
 private val DEFAULT_DECLARATION_CHECKERS = listOf(DataClassAnnotationChecker())
 private val DEFAULT_CALL_CHECKERS = listOf(CapturingInClosureChecker(), InlineCheckerWrapper(), ReifiedTypeParameterSubstitutionChecker())
 private val DEFAULT_TYPE_CHECKERS = listOf(TypeApproximator())
+private val DEFAULT_VALIDATORS = listOf(DeprecatedSymbolValidator())
 
 public abstract class AdditionalCheckerProvider(
         additionalDeclarationCheckers: List<DeclarationChecker>,
         additionalCallCheckers: List<CallChecker>,
-        additionalTypeCheckers: List<AdditionalTypeChecker>
+        additionalTypeCheckers: List<AdditionalTypeChecker>,
+        additionalSymbolUsageValidators: List<SymbolUsageValidator>
 ) {
 
     public val declarationCheckers: List<DeclarationChecker> = DEFAULT_DECLARATION_CHECKERS + additionalDeclarationCheckers
-    public val callCheckers: List<CallChecker> = DEFAULT_CALL_CHECKERS + additionalCallCheckers
-    public val additionalTypeCheckers: List<AdditionalTypeChecker> = DEFAULT_TYPE_CHECKERS + additionalTypeCheckers
+    public val callChecker: CallChecker = CompositeChecker(DEFAULT_CALL_CHECKERS + additionalCallCheckers)
+    public val typeChecker: AdditionalTypeChecker = AdditionalTypeChecker.Composite(DEFAULT_TYPE_CHECKERS + additionalTypeCheckers)
+    public val symbolUsageValidator: SymbolUsageValidator = SymbolUsageValidator.Composite(DEFAULT_VALIDATORS + additionalSymbolUsageValidators)
 
-    public object DefaultProvider : AdditionalCheckerProvider(listOf(), listOf(), listOf()) {}
+    public object DefaultProvider : AdditionalCheckerProvider(listOf(), listOf(), listOf(), listOf()) {}
 }

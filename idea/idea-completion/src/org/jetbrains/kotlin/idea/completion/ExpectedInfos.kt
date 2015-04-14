@@ -16,62 +16,38 @@
 
 package org.jetbrains.kotlin.idea.completion
 
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.psi.JetValueArgument
-import org.jetbrains.kotlin.psi.JetValueArgumentList
-import org.jetbrains.kotlin.psi.JetCallExpression
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import com.intellij.lang.ASTNode
-import org.jetbrains.kotlin.psi.JetQualifiedExpression
-import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
-import org.jetbrains.kotlin.resolve.calls.util.CallMaker
-import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
-import org.jetbrains.kotlin.resolve.calls.context.CheckValueArgumentsMode
-import org.jetbrains.kotlin.resolve.calls.checkers.CompositeChecker
-import org.jetbrains.kotlin.di.InjectorForMacros
-import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import java.util.HashSet
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.psi.JetBinaryExpression
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetIfExpression
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.psi.JetContainerNode
-import org.jetbrains.kotlin.resolve.calls.callUtil.noErrorsInValueArguments
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.psi.JetBlockExpression
-import org.jetbrains.kotlin.idea.util.makeNotNullable
-import org.jetbrains.kotlin.psi.JetWhenConditionWithExpression
-import org.jetbrains.kotlin.psi.JetWhenEntry
-import org.jetbrains.kotlin.psi.JetWhenExpression
-import org.jetbrains.kotlin.psi.JetCallElement
-import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
-import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
-import org.jetbrains.kotlin.psi.JetPrefixExpression
-import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall
-import org.jetbrains.kotlin.psi.JetFunctionLiteralArgument
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
-import org.jetbrains.kotlin.psi.JetArrayAccessExpression
-import org.jetbrains.kotlin.psi.JetProperty
-import org.jetbrains.kotlin.psi.JetDeclarationWithBody
-import org.jetbrains.kotlin.psi.JetReturnExpression
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getTargetFunctionDescriptor
-import org.jetbrains.kotlin.idea.completion.smart.toList
-import org.jetbrains.kotlin.descriptors.PropertyGetterDescriptor
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.di.InjectorForMacros
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
-import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
-import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
+import org.jetbrains.kotlin.idea.completion.smart.toList
+import org.jetbrains.kotlin.idea.util.makeNotNullable
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getTargetFunctionDescriptor
+import org.jetbrains.kotlin.resolve.calls.callUtil.noErrorsInValueArguments
 import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.resolve.validation.CompositeSymbolUsageValidator
+import org.jetbrains.kotlin.resolve.calls.checkers.CompositeChecker
+import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
+import org.jetbrains.kotlin.resolve.calls.context.CheckValueArgumentsMode
+import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
+import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
+import org.jetbrains.kotlin.resolve.calls.util.CallMaker
+import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
+import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
+import java.util.HashSet
 
 enum class Tail {
     COMMA
@@ -174,7 +150,7 @@ class ExpectedInfos(
         val bindingTrace = DelegatingBindingTrace(bindingContext, "Temporary trace for completion")
         val context = BasicCallResolutionContext.create(bindingTrace, resolutionScope, call, expectedType, dataFlowInfo,
                                                                            ContextDependency.INDEPENDENT, CheckValueArgumentsMode.ENABLED,
-                                                                           CompositeChecker(listOf()), CompositeSymbolUsageValidator(), AdditionalTypeChecker.Composite(listOf()), false)
+                                                                           CompositeChecker(listOf()), SymbolUsageValidator.Empty, AdditionalTypeChecker.Composite(listOf()), false)
         val callResolutionContext = context.replaceCollectAllCandidates(true)
         val callResolver = InjectorForMacros(
                 callElement.getProject(),

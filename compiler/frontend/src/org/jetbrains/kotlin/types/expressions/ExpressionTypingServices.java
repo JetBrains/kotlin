@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.types.expressions;
 
-import com.google.common.base.Function;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,23 +24,15 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor;
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
-import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver;
-import org.jetbrains.kotlin.resolve.calls.CallResolver;
-import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker;
-import org.jetbrains.kotlin.resolve.calls.checkers.CompositeChecker;
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
-import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
-import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.resolve.scopes.WritableScope;
 import org.jetbrains.kotlin.resolve.scopes.WritableScopeImpl;
-import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryPackage;
@@ -51,109 +41,20 @@ import javax.inject.Inject;
 import java.util.Iterator;
 import java.util.List;
 
-import static org.jetbrains.kotlin.types.TypeUtils.*;
+import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
+import static org.jetbrains.kotlin.types.TypeUtils.UNIT_EXPECTED_TYPE;
 import static org.jetbrains.kotlin.types.expressions.CoercionStrategy.COERCION_TO_UNIT;
 
 public class ExpressionTypingServices {
 
-    @NotNull
     private final ExpressionTypingFacade expressionTypingFacade;
-    @NotNull
     private final ExpressionTypingComponents expressionTypingComponents;
 
-    private Project project;
-    private CallResolver callResolver;
-    private CallExpressionResolver callExpressionResolver;
-    private DescriptorResolver descriptorResolver;
-    private FunctionDescriptorResolver functionDescriptorResolver;
-    private TypeResolver typeResolver;
-    private AnnotationResolver annotationResolver;
     private StatementFilter statementFilter;
-    private KotlinBuiltIns builtIns;
-
-    @NotNull
-    public Project getProject() {
-        return project;
-    }
-
-    @Inject
-    public void setProject(@NotNull Project project) {
-        this.project = project;
-    }
-
-    @NotNull
-    public CallResolver getCallResolver() {
-        return callResolver;
-    }
-
-    @Inject
-    public void setCallResolver(@NotNull CallResolver callResolver) {
-        this.callResolver = callResolver;
-    }
-
-    @NotNull
-    public CallExpressionResolver getCallExpressionResolver() {
-        return callExpressionResolver;
-    }
-
-    @Inject
-    public void setCallExpressionResolver(@NotNull CallExpressionResolver callExpressionResolver) {
-        this.callExpressionResolver = callExpressionResolver;
-    }
-
-    @NotNull
-    public DescriptorResolver getDescriptorResolver() {
-        return descriptorResolver;
-    }
-
-    @Inject
-    public void setDescriptorResolver(@NotNull DescriptorResolver descriptorResolver) {
-        this.descriptorResolver = descriptorResolver;
-    }
-
-    @NotNull
-    public FunctionDescriptorResolver getFunctionDescriptorResolver() {
-        return functionDescriptorResolver;
-    }
-
-    @Inject
-    public void setFunctionDescriptorResolver(FunctionDescriptorResolver functionDescriptorResolver) {
-        this.functionDescriptorResolver = functionDescriptorResolver;
-    }
-
-    @NotNull
-    public TypeResolver getTypeResolver() {
-        return typeResolver;
-    }
-
-    @Inject
-    public void setTypeResolver(@NotNull TypeResolver typeResolver) {
-        this.typeResolver = typeResolver;
-    }
-
-    @NotNull
-    public AnnotationResolver getAnnotationResolver() {
-        return annotationResolver;
-    }
-
-    @Inject
-    public void setAnnotationResolver(@NotNull AnnotationResolver annotationResolver) {
-        this.annotationResolver = annotationResolver;
-    }
-
-    @NotNull
-    private StatementFilter getStatementFilter() {
-        return statementFilter;
-    }
 
     @Inject
     public void setStatementFilter(@NotNull StatementFilter statementFilter) {
         this.statementFilter = statementFilter;
-    }
-
-    @Inject
-    public void setBuiltIns(@NotNull KotlinBuiltIns builtIns) {
-        this.builtIns = builtIns;
     }
 
     public ExpressionTypingServices(@NotNull ExpressionTypingComponents components) {
@@ -181,7 +82,9 @@ public class ExpressionTypingServices {
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull BindingTrace trace
     ) {
-        ExpressionTypingContext context = ExpressionTypingContext.newContext(this, trace, scope, dataFlowInfo, expectedType);
+        ExpressionTypingContext context = ExpressionTypingContext.newContext(
+                expressionTypingComponents.additionalCheckerProvider, trace, scope, dataFlowInfo, expectedType
+        );
         return expressionTypingFacade.getTypeInfo(expression, context);
     }
 
@@ -218,7 +121,8 @@ public class ExpressionTypingServices {
             }
         }
         checkFunctionReturnType(function, ExpressionTypingContext.newContext(
-                this, trace, functionInnerScope, dataFlowInfo, expectedReturnType != null ? expectedReturnType : NO_EXPECTED_TYPE
+                expressionTypingComponents.additionalCheckerProvider, trace,
+                functionInnerScope, dataFlowInfo, expectedReturnType != null ? expectedReturnType : NO_EXPECTED_TYPE
         ));
     }
 
@@ -246,7 +150,7 @@ public class ExpressionTypingServices {
             @NotNull CoercionStrategy coercionStrategyForLastExpression,
             @NotNull ExpressionTypingContext context
     ) {
-        List<JetElement> block = ResolvePackage.filterStatements(getStatementFilter(), expression);
+        List<JetElement> block = ResolvePackage.filterStatements(statementFilter, expression);
 
         // SCRIPT: get code descriptor for script declaration
         DeclarationDescriptor containingDescriptor = context.scope.getContainingDeclaration();
@@ -263,11 +167,11 @@ public class ExpressionTypingServices {
 
         JetTypeInfo r;
         if (block.isEmpty()) {
-            r = TypeInfoFactoryPackage.createCheckedTypeInfo(builtIns.getUnitType(), context, expression);
+            r = TypeInfoFactoryPackage.createCheckedTypeInfo(expressionTypingComponents.builtIns.getUnitType(), context, expression);
         }
         else {
             r = getBlockReturnedTypeWithWritableScope(scope, block, coercionStrategyForLastExpression,
-                                                      context.replaceStatementFilter(getStatementFilter()));
+                                                      context.replaceStatementFilter(statementFilter));
         }
         scope.changeLockLevel(WritableScope.LockLevel.READING);
 
@@ -291,7 +195,7 @@ public class ExpressionTypingServices {
         JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(outerScope, functionDescriptor, trace);
 
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
-                this, trace, functionInnerScope, dataFlowInfo, NO_EXPECTED_TYPE
+                expressionTypingComponents.additionalCheckerProvider, trace, functionInnerScope, dataFlowInfo, NO_EXPECTED_TYPE
         );
         JetTypeInfo typeInfo = expressionTypingFacade.getTypeInfo(bodyExpression, context, function.hasBlockBody());
 
@@ -316,7 +220,7 @@ public class ExpressionTypingServices {
             @NotNull ExpressionTypingContext context
     ) {
         if (block.isEmpty()) {
-            return TypeInfoFactoryPackage.createTypeInfo(builtIns.getUnitType(), context);
+            return TypeInfoFactoryPackage.createTypeInfo(expressionTypingComponents.builtIns.getUnitType(), context);
         }
 
         ExpressionTypingInternals blockLevelVisitor = ExpressionTypingVisitorDispatcher.createForBlock(expressionTypingComponents, scope);
@@ -392,84 +296,9 @@ public class ExpressionTypingServices {
             if (mightBeUnit) {
                 // ExpressionTypingVisitorForStatements should return only null or Unit for declarations and assignments
                 assert result.getType() == null || KotlinBuiltIns.isUnit(result.getType());
-                result = result.replaceType(builtIns.getUnitType()).replaceDataFlowInfo(context.dataFlowInfo);
+                result = result.replaceType(expressionTypingComponents.builtIns.getUnitType()).replaceDataFlowInfo(context.dataFlowInfo);
             }
         }
         return result;
-    }
-
-    @Nullable
-    public JetExpression deparenthesizeWithTypeResolution(
-            @Nullable JetExpression expression,
-            @NotNull final ExpressionTypingContext context
-    ) {
-        return JetPsiUtil.deparenthesizeWithResolutionStrategy(expression, true, new Function<JetTypeReference, Void>() {
-            @Override
-            public Void apply(JetTypeReference reference) {
-                getTypeResolver().resolveType(context.scope, reference, context.trace, true);
-                return null;
-            }
-        });
-    }
-
-    public void resolveValueParameters(
-            @NotNull List<JetParameter> valueParameters,
-            @NotNull List<ValueParameterDescriptor> valueParameterDescriptors,
-            @NotNull JetScope declaringScope,
-            @NotNull DataFlowInfo dataFlowInfo,
-            @NotNull BindingTrace trace
-    ) {
-        resolveValueParameters(
-                valueParameters, valueParameterDescriptors,
-                ExpressionTypingContext.newContext(this, trace, declaringScope, dataFlowInfo, NO_EXPECTED_TYPE));
-    }
-
-    public void resolveValueParameters(
-            @NotNull List<JetParameter> valueParameters,
-            @NotNull List<ValueParameterDescriptor> valueParameterDescriptors,
-            @NotNull ExpressionTypingContext context
-    ) {
-        for (int i = 0; i < valueParameters.size(); i++) {
-            ValueParameterDescriptor valueParameterDescriptor = valueParameterDescriptors.get(i);
-            JetParameter jetParameter = valueParameters.get(i);
-
-            AnnotationResolver.resolveAnnotationsArguments(jetParameter.getModifierList(), context.trace);
-
-            resolveDefaultValue(valueParameterDescriptor, jetParameter, context);
-        }
-    }
-
-    private void resolveDefaultValue(
-            @NotNull ValueParameterDescriptor valueParameterDescriptor,
-            @NotNull JetParameter jetParameter,
-            @NotNull ExpressionTypingContext context
-    ) {
-        if (valueParameterDescriptor.hasDefaultValue()) {
-            JetExpression defaultValue = jetParameter.getDefaultValue();
-            if (defaultValue != null) {
-                getTypeInfo(defaultValue, context.replaceExpectedType(valueParameterDescriptor.getType()));
-                if (DescriptorUtils.isAnnotationClass(DescriptorResolver.getContainingClass(context.scope))) {
-                    ConstantExpressionEvaluator.evaluate(
-                            defaultValue, context.trace, valueParameterDescriptor.getType());
-                }
-            }
-        }
-    }
-
-    @NotNull
-    public CallChecker getCallChecker() {
-        List<CallChecker> checkers = expressionTypingComponents.additionalCheckerProvider.getCallCheckers();
-        return new CompositeChecker(checkers);
-    }
-
-    @NotNull
-    public SymbolUsageValidator getSymbolUsageValidator() {
-        return expressionTypingComponents.symbolUsageValidator;
-    }
-
-    @NotNull
-    public AdditionalTypeChecker getAdditionalTypeChecker() {
-        List<AdditionalTypeChecker> checkers = expressionTypingComponents.additionalCheckerProvider.getAdditionalTypeCheckers();
-        return new AdditionalTypeChecker.Composite(checkers);
     }
 }

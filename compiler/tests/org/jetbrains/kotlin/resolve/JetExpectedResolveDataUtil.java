@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
-import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -128,13 +127,12 @@ public class JetExpectedResolveDataUtil {
     ) {
         ModuleDescriptor emptyModule = JetTestUtils.createEmptyModule();
         InjectorForTests injector = new InjectorForTests(project, emptyModule);
-        ExpressionTypingServices expressionTypingServices = injector.getExpressionTypingServices();
 
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
-                expressionTypingServices, new BindingTraceContext(), classDescriptor.getDefaultType().getMemberScope(),
+                injector.getAdditionalCheckerProvider(), new BindingTraceContext(), classDescriptor.getDefaultType().getMemberScope(),
                 DataFlowInfo.EMPTY, TypeUtils.NO_EXPECTED_TYPE);
 
-        OverloadResolutionResults<FunctionDescriptor> functions = injector.getExpressionTypingUtils().resolveFakeCall(
+        OverloadResolutionResults<FunctionDescriptor> functions = injector.getFakeCallResolver().resolveFakeCall(
                 context, ReceiverValue.NO_RECEIVER, Name.identifier(name), null, parameterTypes);
 
         for (ResolvedCall<? extends FunctionDescriptor> resolvedCall : functions.getResultingCalls()) {
