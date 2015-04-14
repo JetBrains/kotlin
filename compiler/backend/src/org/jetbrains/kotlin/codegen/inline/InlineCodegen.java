@@ -659,17 +659,9 @@ public class InlineCodegen extends CallGenerator {
                 //Exception table for external try/catch/finally blocks will be generated in original codegen after exiting this method
                 InlineCodegenUtil.insertNodeBefore(finallyNode, intoNode, curInstr);
 
-                List<TryCatchBlockNodeWrapper> blocks = processor.getCoveringFromInnermost();
-                ListIterator<TryCatchBlockNodeWrapper> iterator = blocks.listIterator(blocks.size());
-                while (iterator.hasPrevious()) {
-                    TryCatchBlockNodeWrapper previous = iterator.previous();
-                    LabelNode oldStart = previous.getStartLabel();
-                    TryCatchBlockNode node = previous.getNode();
-                    node.start = (LabelNode) end.info;
-                    processor.remapStartLabel(oldStart, previous);
-
-                    TryCatchBlockNode additionalNode = new TryCatchBlockNode(oldStart, (LabelNode) start.info, node.handler, node.type);
-                    processor.addTryNode(additionalNode);
+                List<TryCatchBlockNodeInfo> blocks = new ArrayList<TryCatchBlockNodeInfo>(processor.getTryBlocksMetaInfo().getCurrentIntervals());
+                for (TryCatchBlockNodeInfo block : blocks) {
+                    processor.getTryBlocksMetaInfo().split(block, new SimpleInterval((LabelNode) start.info, (LabelNode) end.info), false);
                 }
             }
 
@@ -677,15 +669,14 @@ public class InlineCodegen extends CallGenerator {
         }
 
         processor.sortTryCatchBlocks();
-        Iterable<TryCatchBlockNodeWrapper> nodes = processor.getNonEmptyNodes();
+        Iterable<TryCatchBlockNodeInfo> nodes = processor.getNonEmptyNodes();
         intoNode.tryCatchBlocks.clear();
-        for (TryCatchBlockNodeWrapper node : nodes) {
+        for (TryCatchBlockNodeInfo node : nodes) {
             intoNode.tryCatchBlocks.add(node.getNode());
         }
 
         intoNode.localVariables.clear();
-        List<LocalVarNodeWrapper> intervals = processor.getLocalVarsMetaInfo().getAllIntervals();
-        for (LocalVarNodeWrapper interval : intervals) {
+        for (LocalVarNodeWrapper interval : processor.getLocalVarsMetaInfo().getAllIntervals()) {
             intoNode.localVariables.add(interval.getNode());
         }
     }

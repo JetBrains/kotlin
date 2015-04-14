@@ -23,7 +23,7 @@ import org.jetbrains.org.objectweb.asm.tree.*
 import java.util.Comparator
 import java.util.Collections
 
-public abstract class CoveringTryCatchNodeProcessor<T: IntervalWithHandler>() {
+public abstract class CoveringTryCatchNodeProcessor<T : IntervalWithHandler>  where T : SplittableInterval<T> {
 
     public val tryBlocksMetaInfo: IntervalMetaInfo<T> = IntervalMetaInfo();
 
@@ -31,18 +31,6 @@ public abstract class CoveringTryCatchNodeProcessor<T: IntervalWithHandler>() {
 
     public val coveringFromInnermost: List<T>
         get() = tryBlocksMetaInfo.currentIntervals.reverse()
-
-    protected fun addNewTryCatchNode(newInfo: T) {
-        tryBlocksMetaInfo.addNewInterval(newInfo)
-    }
-
-    protected fun addNewLocalVar(newInfo: LocalVarNodeWrapper) {
-        localVarsMetaInfo.addNewInterval(newInfo)
-    }
-
-    fun remapStartLabel(oldStart: LabelNode, remapped: T) {
-        tryBlocksMetaInfo.remapStartLabel(oldStart, remapped)
-    }
 
     public fun getStartNodes(label: LabelNode): List<T> {
         return tryBlocksMetaInfo.intervalStarts.get(label)
@@ -86,19 +74,14 @@ public abstract class CoveringTryCatchNodeProcessor<T: IntervalWithHandler>() {
 
     public abstract fun instructionIndex(inst: AbstractInsnNode): Int
 
-
-    public fun getNonEmptyNodes(): List<T> {
-        return tryBlocksMetaInfo.getNonEmptyNodes()
-    }
-
     public fun sortTryCatchBlocks() {
         val comp = Comparator { t1: T, t2: T ->
             var result = instructionIndex(t1.handler) - instructionIndex(t2.handler)
             if (result == 0) {
-                result = instructionIndex(t1.startLabel) - instructionIndex(t2.startLabel)
+                result = instructionIndex((t1 as Interval).startLabel) - instructionIndex((t2 as Interval).startLabel)
                 if (result == 0) {
                     assert(false, "Error: support multicatch finallies!")
-                    result = instructionIndex(t1.endLabel) - instructionIndex(t2.endLabel)
+                    result = instructionIndex((t1 as Interval).endLabel) - instructionIndex((t2 as Interval).endLabel)
                 }
             }
             result
@@ -108,7 +91,7 @@ public abstract class CoveringTryCatchNodeProcessor<T: IntervalWithHandler>() {
     }
 }
 
-class IntervalMetaInfo<T: Interval> {
+class IntervalMetaInfo<T : Interval> {
 
     val intervalStarts = LinkedListMultimap.create<LabelNode, T>()
 
@@ -131,7 +114,18 @@ class IntervalMetaInfo<T: Interval> {
 
     fun remapEndLabel(oldEnd: LabelNode, remapped: T) {
         intervalEnds.remove(oldEnd, remapped)
-        intervalEnds.put(remapped.startLabel, remapped)
+        intervalEnds.put(remapped.endLabel, remapped)
+    }
+
+    fun split(interval: SplittableInterval<T>, by : Interval, keepStart: Boolean): SplittedPair<T> {
+        val splittedPair = interval.split(by, keepStart)
+        if (!keepStart) {
+            remapStartLabel((splittedPair.newPart as Interval).startLabel, splittedPair.patchedPart)
+        } else {
+            remapEndLabel((splittedPair.newPart as Interval).endLabel, splittedPair.patchedPart)
+        }
+        addNewInterval(splittedPair.newPart)
+        return splittedPair
     }
 
     public fun getNonEmptyNodes(): List<T> {
@@ -152,7 +146,7 @@ class IntervalMetaInfo<T: Interval> {
     }
 }
 
-public class DefaultProcessor(val node: MethodNode) : CoveringTryCatchNodeProcessor<TryCatchBlockNodeWrapper>() {
+public class DefaultProcessor(val node: MethodNode) : CoveringTryCatchNodeProcessor<TryCatchBlockNodeInfo>() {
 
     init {
         node.tryCatchBlocks.forEach { addTryNode(it) }
@@ -160,11 +154,11 @@ public class DefaultProcessor(val node: MethodNode) : CoveringTryCatchNodeProces
     }
 
     fun addLocalVarNode(it: LocalVariableNode) {
-        addNewLocalVar(LocalVarNodeWrapper(it))
+        localVarsMetaInfo.addNewInterval(LocalVarNodeWrapper(it))
     }
 
     fun addTryNode(node: TryCatchBlockNode) {
-        addNewTryCatchNode(TryCatchBlockNodeWrapper(node))
+        tryBlocksMetaInfo.addNewInterval(TryCatchBlockNodeInfo(node, false))
     }
 
     override fun instructionIndex(inst: AbstractInsnNode): Int {
@@ -172,20 +166,27 @@ public class DefaultProcessor(val node: MethodNode) : CoveringTryCatchNodeProces
     }
 }
 
-public class LocalVarNodeWrapper(val node: LocalVariableNode) : Interval {
+public class LocalVarNodeWrapper(val node: LocalVariableNode) : Interval, SplittableInterval<LocalVarNodeWrapper> {
     override val startLabel: LabelNode
         get() = node.start
     override val endLabel: LabelNode
         get() = node.end
-}
 
-public class TryCatchBlockNodeWrapper(val node: TryCatchBlockNode) : IntervalWithHandler {
-    override val startLabel: LabelNode
-        get() = node.start
-    override val endLabel: LabelNode
-        get() = node.end
-    override val handler: LabelNode
-        get() = node.handler
-    override val type: String?
-        get() = node.type
+    override fun split(split: Interval, keepStart: Boolean): SplittedPair<LocalVarNodeWrapper> {
+        val newPartInterval = if (keepStart) {
+            val oldEnd = endLabel
+            node.end = split.startLabel
+            Pair(split.endLabel, oldEnd)
+        }
+        else {
+            val oldStart = startLabel
+            node.start = split.endLabel
+            Pair(oldStart, split.startLabel)
+        }
+
+        return SplittedPair(this, LocalVarNodeWrapper(
+                LocalVariableNode(node.name, node.desc, node.signature, newPartInterval.first, newPartInterval.second, node.index)
+        ))
+    }
+
 }

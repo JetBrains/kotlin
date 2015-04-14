@@ -81,8 +81,9 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor<T
     //due to code generation specific they placed before function TryCatchBlockNodes
     private InternalFinallyBlockInliner(@NotNull MethodNode inlineFun, List<TryCatchBlockNodeInfo> inlineFunTryBlockInfo) {
         this.inlineFun = inlineFun;
+        IntervalMetaInfo<TryCatchBlockNodeInfo> info = getTryBlocksMetaInfo();
         for (TryCatchBlockNodeInfo block : inlineFunTryBlockInfo) {
-            addNewTryCatchNode(block);
+            info.addNewInterval(block);
         }
     }
 
@@ -293,6 +294,7 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor<T
         List<TryBlockCluster<TryCatchBlockNodePosition>> clusters = InlinePackage.doClustering(tryCatchBlockPresentInFinally);
         Map<LabelNode, TryBlockCluster<TryCatchBlockNodePosition>> handler2Cluster = new HashMap<LabelNode, TryBlockCluster<TryCatchBlockNodePosition>>();
 
+        IntervalMetaInfo<TryCatchBlockNodeInfo> tryBlocksMetaInfo = getTryBlocksMetaInfo();
         for (TryBlockCluster<TryCatchBlockNodePosition> cluster : clusters) {
             List<TryCatchBlockNodePosition> clusterBlocks = cluster.getBlocks();
             TryCatchBlockNodePosition block0 = clusterBlocks.get(0);
@@ -313,8 +315,7 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor<T
 
                     assert inlineFun.instructions.indexOf(additionalTryCatchBlock.start) <= inlineFun.instructions.indexOf(additionalTryCatchBlock.end);
 
-                    TryCatchBlockNodeInfo newInfo = new TryCatchBlockNodeInfo(additionalTryCatchBlock, true);
-                    addNewTryCatchNode(newInfo);
+                    tryBlocksMetaInfo.addNewInterval(new TryCatchBlockNodeInfo(additionalTryCatchBlock, true));
                 }
             }
             else if (clusterPosition == TryCatchPosition.END) {
@@ -367,37 +368,16 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor<T
         // so we should split original interval by inserted finally one
         for (TryCatchBlockNodeInfo block : toProcess) {
             //update exception mapping
-            LabelNode oldStartNode = block.getNode().start;
-            block.getNode().start = (LabelNode) newFinallyEnd.info;
-            remapStartLabel(oldStartNode, block);
-
+            tryBlocksMetaInfo.split(block, new SimpleInterval((LabelNode) newFinallyStart.info, (LabelNode) newFinallyEnd.info), false);
             patched.add(block);
-
-            TryCatchBlockNode additionalTryCatchBlock =
-                    new TryCatchBlockNode(oldStartNode, (LabelNode) newFinallyStart.info, block.getNode().handler, block.getNode().type);
-
-            TryCatchBlockNodeInfo newInfo = new TryCatchBlockNodeInfo(additionalTryCatchBlock, block.getOnlyCopyNotProcess());
-            addNewTryCatchNode(newInfo);
-
             //TODO add assert
         }
         sortTryCatchBlocks();
     }
 
     private void patchTryBlocks(@NotNull LabelNode newStartLabelNode, @NotNull TryCatchBlockNodeInfo endNode) {
-        LabelNode oldStart = endNode.getStartLabel();
-        endNode.getNode().start = newStartLabelNode;
-        remapStartLabel(oldStart, endNode);
-
-        TryCatchBlockNode endTryBlock = endNode.getNode();
-        TryCatchBlockNode additionalTryCatchBlock =
-                new TryCatchBlockNode(oldStart,
-                                      (LabelNode) endTryBlock.end.getLabel().info,
-                                      endTryBlock.handler,
-                                      endTryBlock.type);
-
-        TryCatchBlockNodeInfo newInfo = new TryCatchBlockNodeInfo(additionalTryCatchBlock, endNode.getOnlyCopyNotProcess());
-        addNewTryCatchNode(newInfo);
+        getTryBlocksMetaInfo()
+                .split(endNode, new SimpleInterval((LabelNode) endNode.getNode().end.getLabel().info, newStartLabelNode), false);
     }
 
     private static LabelNode getNewOrOldLabel(LabelNode oldHandler, @NotNull Set<LabelNode> labelsInsideFinally) {
