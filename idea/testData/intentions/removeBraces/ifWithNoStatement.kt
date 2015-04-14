@@ -1,4 +1,4 @@
 // IS_APPLICABLE: false
 fun foo() {
-    if (true) { }
+    if (true) <caret>{ }
 }

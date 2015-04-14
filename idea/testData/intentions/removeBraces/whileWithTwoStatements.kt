@@ -5,5 +5,5 @@ fun foo() {
     while (true) {
         doSomething("test")
         doSomething("test2")
-        <caret>}
+    <caret>}
 }

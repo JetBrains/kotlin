@@ -5,5 +5,5 @@ fun foo() {
     if (true) {
         doSomething("test")
         doSomething("test2")
-        <caret>}
+    <caret>}
 }

@@ -1,7 +1,7 @@
 fun doSomething<T>(a: T) {}
 
 fun foo() {
-    <caret>if (true) {
+    if (true) {
         doSomething("test");
-    }
+    <caret>}
 }

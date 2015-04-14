@@ -16,49 +16,53 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
-import org.jetbrains.kotlin.psi.JetExpressionImpl
-import org.jetbrains.kotlin.psi.JetPsiFactory
 import com.intellij.openapi.editor.Editor
-import com.intellij.lang.ASTNode
-import org.jetbrains.kotlin.JetNodeTypes
 import com.intellij.psi.PsiWhiteSpace
+import org.jetbrains.kotlin.psi.*
 
-public class AddBracesIntention : JetSelfTargetingIntention<JetExpressionImpl>("add.braces", javaClass()) {
-    override fun isApplicableTo(element: JetExpressionImpl, caretOffset: Int): Boolean {
-        val expressionKind = element.getExpressionKind(caretOffset) ?: return false
+public class AddBracesIntention : JetSelfTargetingIntention<JetExpression>(javaClass(), "Add braces") {
+    override fun isApplicableTo(element: JetExpression, caretOffset: Int): Boolean {
+        val expression = element.getTargetExpression(caretOffset) ?: return false
+        if (expression is JetBlockExpression) return false
 
-        if (element.findBlockInExpression(expressionKind) != null) return false
-
-        setText("Add braces to '${expressionKind.text}' statement")
+        val description = (expression.getParent() as JetContainerNode).description()
+        setText("Add braces to '$description' statement")
         return true
     }
 
-    override fun applyTo(element: JetExpressionImpl, editor: Editor) {
-        val expressionKind = element.getExpressionKind(editor.getCaretModel().getOffset())!!
-        val bodyNode = when (expressionKind) {
-            ExpressionKind.ELSE -> element.getNode().findChildByType(JetNodeTypes.ELSE)
-            ExpressionKind.IF -> element.getNode().findChildByType(JetNodeTypes.THEN)
-            else -> element.getNode().findChildByType(JetNodeTypes.BODY)
-        }
-        generateCleanOutput(element, bodyNode, expressionKind)
-    }
+    override fun applyTo(element: JetExpression, editor: Editor) {
+        val expression = element.getTargetExpression(editor.getCaretModel().getOffset())!!
 
-    fun generateCleanOutput(element: JetExpressionImpl, bodyNode: ASTNode?, expressionKind: ExpressionKind) {
         if (element.getNextSibling()?.getText() == ";") {
             element.getNextSibling()!!.delete()
         }
-        val psiFactory = JetPsiFactory(element)
-        val newElement = bodyNode!!.getPsi()!!.replace(psiFactory.createFunctionBody(bodyNode.getText()))
 
-        //handles the case of the block statement being on a new line
-        if (newElement.getPrevSibling() is PsiWhiteSpace) {
-            newElement.getPrevSibling()!!.replace(psiFactory.createWhiteSpace())
-        } else {
-            //handles the case of no space between condition and statement
-            newElement.addBefore(psiFactory.createWhiteSpace(), newElement.getFirstChild())
+        val psiFactory = JetPsiFactory(element)
+        expression.replace(psiFactory.createFunctionBody(expression.getText()))
+
+        if (element is JetDoWhileExpression) { // remove new line between '}' and while
+            (element.getBody()!!.getParent().getNextSibling() as? PsiWhiteSpace)?.delete()
         }
-        if (expressionKind == ExpressionKind.DOWHILE) {
-            newElement.getNextSibling()?.delete()
+    }
+
+    private fun JetExpression.getTargetExpression(caretLocation: Int): JetExpression? {
+        when (this) {
+            is JetIfExpression -> {
+                val thenExpr = getThen() ?: return null
+                val elseExpr = getElse()
+                if (elseExpr != null && caretLocation >= getElseKeyword()!!.getTextRange().getStartOffset()) {
+                    return elseExpr
+                }
+                return thenExpr
+            }
+
+            is JetWhileExpression -> return getBody()
+
+            is JetDoWhileExpression -> return getBody()
+
+            is JetForExpression -> return getBody()
+
+            else -> return null
         }
     }
 }

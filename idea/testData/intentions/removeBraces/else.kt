@@ -3,7 +3,7 @@ fun doSomething<T>(a: T) {}
 fun foo() {
     if (true) {
         doSomething("test")
-    } <caret>else {
+    } else <caret>{
         doSomething("test2")
     }
 }
