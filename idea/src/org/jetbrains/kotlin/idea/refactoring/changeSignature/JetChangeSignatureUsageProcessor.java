@@ -21,6 +21,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.*;
 import com.intellij.psi.codeStyle.JavaCodeStyleManager;
+import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.changeSignature.ChangeInfo;
@@ -43,6 +45,7 @@ import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.idea.JetFileType;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde;
 import org.jetbrains.kotlin.idea.codeInsight.JetFileReferencesResolver;
@@ -93,6 +96,23 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
             }
             else {
                 result.add(functionUsageInfo);
+
+                PsiElement callee = functionUsageInfo.getElement();
+                if (callee == null) continue;
+
+                SearchScope scope = callee.getUseScope();
+                if (scope instanceof GlobalSearchScope) {
+                    scope = GlobalSearchScope.getScopeRestrictedByFileTypes((GlobalSearchScope) scope, JetFileType.INSTANCE);
+                }
+
+                for (PsiReference reference : ReferencesSearch.search(callee, scope)) {
+                    PsiElement element = reference.getElement();
+                    JetCallElement callElement = PsiTreeUtil.getParentOfType(element, JetCallElement.class);
+                    JetExpression calleeExpression = callElement != null ? callElement.getCalleeExpression() : null;
+                    if (calleeExpression != null && PsiTreeUtil.isAncestor(calleeExpression, element, false)) {
+                        result.add(new JetFunctionCallUsage(callElement, changeInfo.getMethodDescriptor().getOriginalPrimaryFunction()));
+                    }
+                }
             }
         }
     }
