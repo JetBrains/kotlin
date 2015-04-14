@@ -30,8 +30,9 @@ import org.jetbrains.kotlin.psi.psiUtil.parents
 public abstract class JetSelfTargetingIntention<TElement : JetElement>(
         public val elementType: Class<TElement>,
         private var text: String,
-        private val familyName: String = text)
-: IntentionAction {
+        private val familyName: String = text,
+        private val firstElementOfTypeOnly: Boolean = false
+) : IntentionAction {
     deprecated("Use primary constructor, no need to use i18n")
     public constructor(key: String, elementType: Class<TElement>) : this(elementType, JetBundle.message(key), JetBundle.message(key + ".family")) {
     }
@@ -64,7 +65,14 @@ public abstract class JetSelfTargetingIntention<TElement : JetElement>(
             elementsToCheck += commonParent.parents()
         }
 
-        return elementsToCheck.filterIsInstance(elementType).firstOrNull { isApplicableTo(it, offset) }
+        val elementsOfType = elementsToCheck.filterIsInstance(elementType)
+        if (firstElementOfTypeOnly) {
+            val candidate = elementsOfType.firstOrNull() ?: return null
+            return if (isApplicableTo(candidate, offset)) candidate else null
+        }
+        else {
+            return elementsOfType.firstOrNull { isApplicableTo(it, offset) }
+        }
     }
 
     final override fun isAvailable(project: Project, editor: Editor, file: PsiFile)
@@ -83,8 +91,9 @@ public abstract class JetSelfTargetingIntention<TElement : JetElement>(
 public abstract class JetSelfTargetingOffsetIndependentIntention<TElement : JetElement>(
         elementType: Class<TElement>,
         text: String,
-        familyName: String = text)
-: JetSelfTargetingIntention<TElement>(elementType, text, familyName) {
+        familyName: String = text,
+        firstElementOfTypeOnly: Boolean = false
+) : JetSelfTargetingIntention<TElement>(elementType, text, familyName, firstElementOfTypeOnly) {
 
     deprecated("Use primary constructor, no need to use i18n")
     public constructor(key: String, elementType: Class<TElement>) : this(elementType, JetBundle.message(key), JetBundle.message(key + ".family")) {

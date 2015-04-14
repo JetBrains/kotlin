@@ -16,39 +16,39 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
-import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analyzer.analyzeInContext
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
-import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
+import kotlin.platform.platformName
 
-public class ConvertToExpressionBodyAction : PsiElementBaseIntentionAction() {
-    override fun getFamilyName(): String = JetBundle.message("convert.to.expression.body.action.family.name")
-
-    public fun isAvailable(element: PsiElement): Boolean {
-        val data = calcData(element)
-        return data != null && !containsReturn(data.value)
+public class ConvertToExpressionBodyIntention : JetSelfTargetingOffsetIndependentIntention<JetDeclarationWithBody>(
+        javaClass(), "Convert to expression body", firstElementOfTypeOnly = true
+) {
+    override fun isApplicableTo(element: JetDeclarationWithBody): Boolean {
+        val value = calcValue(element)
+        return value != null && !containsReturn(value)
     }
 
-    override fun isAvailable(project: Project, editor: Editor, element: PsiElement): Boolean {
-        setText(JetBundle.message("convert.to.expression.body.action.name"))
-        return isAvailable(element)
+    override fun applyTo(element: JetDeclarationWithBody, editor: Editor) {
+        applyToInternal(element, editor)
     }
 
-    public fun invoke(element: PsiElement, editor: Editor? = null) {
-        val (declaration, value) = calcData(element)!!
+    public fun applyTo(declaration: JetDeclarationWithBody) {
+        applyToInternal(declaration, null)
+    }
+
+    private fun applyToInternal(declaration: JetDeclarationWithBody, editor: Editor?) {
+        val value = calcValue(declaration)!!
 
         if (!declaration.hasDeclaredReturnType() && declaration is JetNamedFunction) {
             val valueType = expressionType(value)
@@ -79,10 +79,6 @@ public class ConvertToExpressionBodyAction : PsiElementBaseIntentionAction() {
         }
     }
 
-    override fun invoke(project: Project, editor: Editor, element: PsiElement) {
-        invoke(element, editor)
-    }
-
     private fun canOmitType(declaration: JetCallableDeclaration, expression: JetExpression): Boolean {
         if (declaration.getModifierList()?.hasModifier(JetTokens.OVERRIDE_KEYWORD) ?: false) return true
 
@@ -101,39 +97,28 @@ public class ConvertToExpressionBodyAction : PsiElementBaseIntentionAction() {
         return expressionType.isSubtypeOf(declaredType)
     }
 
-    private data class Data(val declaration: JetDeclarationWithBody, val value: JetExpression)
-
-    private fun calcData(element: PsiElement): Data? {
-        val declaration = element.getStrictParentOfType<JetDeclarationWithBody>()
-        if (declaration == null || declaration is JetFunctionLiteral) return null
+    private fun calcValue(declaration: JetDeclarationWithBody): JetExpression? {
+        if (declaration is JetFunctionLiteral) return null
         val body = declaration.getBodyExpression()
         if (!declaration.hasBlockBody() || body !is JetBlockExpression) return null
 
-        val statements = body.getStatements()
-        if (statements.size != 1) return null
-        val statement = statements[0]
-        return when(statement) {
+        val statement = body.getStatements().singleOrNull() ?: return null
+        when(statement) {
             is JetReturnExpression -> {
-                val value = statement.getReturnedExpression()
-                if (value != null) Data(declaration, value) else null
+                return statement.getReturnedExpression()
             }
 
             //TODO: IMO this is not good code, there should be a way to detect that JetExpression does not have value
-            is JetDeclaration -> null // is JetExpression but does not have value
-            is JetLoopExpression -> null // is JetExpression but does not have value
+            is JetDeclaration, is JetLoopExpression -> return null // is JetExpression but does not have value
 
             is JetExpression -> {
                 if (statement is JetBinaryExpression && statement.getOperationToken() == JetTokens.EQ) return null // assignment does not have value
-
-                val expressionType = expressionType(statement)
-                if (expressionType != null &&
-                      (KotlinBuiltIns.isUnit(expressionType) || KotlinBuiltIns.isNothing(expressionType)))
-                    Data(declaration, statement)
-                else
-                    null
+                val expressionType = expressionType(statement) ?: return null
+                if (!KotlinBuiltIns.isUnit(expressionType) && !KotlinBuiltIns.isNothing(expressionType)) return null
+                return statement
             }
 
-            else -> null
+            else -> return null
         }
     }
 

@@ -21,7 +21,7 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.core.refactoring.JetNameSuggester
 import org.jetbrains.kotlin.idea.core.refactoring.isMultiLine
-import org.jetbrains.kotlin.idea.intentions.ConvertToExpressionBodyAction
+import org.jetbrains.kotlin.idea.intentions.ConvertToExpressionBodyIntention
 import org.jetbrains.kotlin.idea.refactoring.JetNameValidatorImpl
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.ExpressionValue
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.Initializer
@@ -531,10 +531,11 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
         }
 
         if (generatorOptions.allowExpressionBody) {
-            val convertToExpressionBody = ConvertToExpressionBodyAction()
+            val convertToExpressionBody = ConvertToExpressionBodyIntention()
             val bodyExpression = body.getStatements().singleOrNull()
-            if (bodyExpression != null && !bodyExpression.isMultiLine() && convertToExpressionBody.isAvailable(body)) {
-                convertToExpressionBody.invoke(body)
+            val bodyOwner = body.getParent() as JetDeclarationWithBody
+            if (bodyExpression != null && !bodyExpression.isMultiLine() && convertToExpressionBody.isApplicableTo(bodyOwner)) {
+                convertToExpressionBody.applyTo(bodyOwner)
             }
         }
     }

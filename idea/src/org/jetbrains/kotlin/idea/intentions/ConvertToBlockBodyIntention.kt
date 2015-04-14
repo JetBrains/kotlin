@@ -25,7 +25,9 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
-public class ConvertToBlockBodyIntention : JetSelfTargetingIntention<JetDeclarationWithBody>(javaClass(), "Convert to block body") {
+public class ConvertToBlockBodyIntention : JetSelfTargetingIntention<JetDeclarationWithBody>(
+        javaClass(), "Convert to block body", firstElementOfTypeOnly = true
+) {
     override fun isApplicableTo(element: JetDeclarationWithBody, caretOffset: Int): Boolean {
         if (element is JetFunctionLiteral || element.hasBlockBody() || !element.hasBody()) return false
 
