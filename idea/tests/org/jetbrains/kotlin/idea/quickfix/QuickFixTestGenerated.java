@@ -1586,6 +1586,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("beforeDoNotStripPrefix.kt")
+                public void testDoNotStripPrefix() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/beforeDoNotStripPrefix.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("beforeExtensionFunOnTrait.kt")
                 public void testExtensionFunOnTrait() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/beforeExtensionFunOnTrait.kt");
@@ -1775,6 +1781,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 @TestMetadata("beforeSmartCastWithNullCheck.kt")
                 public void testSmartCastWithNullCheck() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/beforeSmartCastWithNullCheck.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("beforeStripPrefix.kt")
+                public void testStripPrefix() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/beforeStripPrefix.kt");
                     doTest(fileName);
                 }
 

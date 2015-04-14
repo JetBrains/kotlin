@@ -1,0 +1,10 @@
+// "Create function 'foo'" "true"
+class SetOptions
+
+fun isModified(setOptions: SetOptions, c: C) = c.foo(setOptions)
+
+class C {
+    fun foo(options: SetOptions): Any {
+        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+}

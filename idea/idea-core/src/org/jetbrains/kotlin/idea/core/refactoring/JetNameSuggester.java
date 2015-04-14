@@ -192,11 +192,22 @@ public class JetNameSuggester {
         }
     }
 
+    private static final String[] ACCESSOR_PREFIXES = { "get", "is", "set" };
+
     private static void addCamelNames(ArrayList<String> result, String name, JetNameValidator validator) {
         if (name == "") return;
         String s = deleteNonLetterFromString(name);
-        if (s.startsWith("get") || s.startsWith("set")) s = s.substring(3);
-        else if (s.startsWith("is")) s = s.substring(2);
+
+        for (String prefix : ACCESSOR_PREFIXES) {
+            if (!s.startsWith(prefix)) continue;
+
+            int len = prefix.length();
+            if (len < s.length() && Character.isUpperCase(s.charAt(len))) {
+                s = s.substring(len);
+                break;
+            }
+        }
+
         for (int i = 0; i < s.length(); ++i) {
             if (i == 0) {
                 addName(result, StringUtil.decapitalize(s), validator);
