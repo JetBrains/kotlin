@@ -3214,6 +3214,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("emptyBraces.kt")
+        public void testEmptyBraces() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToConcatenatedStringIntention/emptyBraces.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("handlesEscapeString.kt")
         public void testHandlesEscapeString() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToConcatenatedStringIntention/handlesEscapeString.kt");

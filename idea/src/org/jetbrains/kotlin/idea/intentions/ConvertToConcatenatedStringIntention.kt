@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 
-public class ConvertToConcatenatedStringIntention : JetSelfTargetingOffsetIndependentIntention<JetStringTemplateExpression>("convert.to.concatenated.string.intention", javaClass()) {
+public class ConvertToConcatenatedStringIntention : JetSelfTargetingOffsetIndependentIntention<JetStringTemplateExpression>(javaClass(), "Convert template to concatenated string") {
     override fun isApplicableTo(element: JetStringTemplateExpression): Boolean {
         if (element.getLastChild().getNode().getElementType() != JetTokens.CLOSING_QUOTE) return false // not available for unclosed literal
         return element.getEntries().any { it is JetStringTemplateEntryWithExpression }
@@ -34,46 +34,47 @@ public class ConvertToConcatenatedStringIntention : JetSelfTargetingOffsetIndepe
         val quote = if (tripleQuoted) "\"\"\"" else "\""
         val entries = element.getEntries()
 
-        val result = entries.sequence()
+        val text = entries
+                .filterNot { it is JetStringTemplateEntryWithExpression && it.getExpression() == null }
                 .mapIndexed { index, entry ->
-                    entry.toSeparateString(quote, convertExplicitly = index == 0, isFinalEntry = index == entries.size() - 1)
+                    entry.toSeparateString(quote, convertExplicitly = (index == 0), isFinalEntry = (index == entries.lastIndex))
                 }
                 .join(separator = "+")
                 .replaceAll("""$quote\+$quote""", "")
 
-        val replacement = JetPsiFactory(element).createExpression(result)
-
+        val replacement = JetPsiFactory(element).createExpression(text)
         element.replace(replacement)
     }
 
     private fun isTripleQuoted(str: String) = str.startsWith("\"\"\"") && str.endsWith("\"\"\"")
 
     private fun JetStringTemplateEntry.toSeparateString(quote: String, convertExplicitly: Boolean, isFinalEntry: Boolean): String {
-        if (this !is JetStringTemplateEntryWithExpression) return getText()!!.quote(quote)
-
-        val expression = getExpression()!!
-
-        val expressionText = if (needsParenthesis(expression, isFinalEntry)) "(${expression.getText()})" else expression.getText()!!
-        return if (convertExplicitly && !expression.isStringExpression()) {
-            expressionText + ".toString()"
+        if (this !is JetStringTemplateEntryWithExpression) {
+            return getText().quote(quote)
         }
-        else {
-            expressionText
-        }
+
+        val expression = getExpression()!! // checked before
+
+        val text = if (needsParenthesis(expression, isFinalEntry))
+            "(" + expression.getText() + ")"
+        else
+            expression.getText()
+
+        return if (convertExplicitly && !expression.isStringExpression())
+            text + ".toString()"
+        else
+            text
     }
 
-    private fun needsParenthesis(expression: JetExpression, isFinalEntry: Boolean) = when (expression) {
-        is JetBinaryExpression -> true
-        is JetIfExpression -> expression.getElse() !is JetBlockExpression && !isFinalEntry
-        else -> false
+    private fun needsParenthesis(expression: JetExpression, isFinalEntry: Boolean): Boolean {
+        return when (expression) {
+            is JetBinaryExpression -> true
+            is JetIfExpression -> expression.getElse() !is JetBlockExpression && !isFinalEntry
+            else -> false
+        }
     }
 
     private fun String.quote(quote: String) = quote + this + quote
 
-    private fun JetExpression.isStringExpression(): Boolean {
-        val context = this.analyze()
-        val elementType = BindingContextUtils.getRecordedTypeInfo(this, context)?.getType()
-
-        return KotlinBuiltIns.isString(elementType)
-    }
+    private fun JetExpression.isStringExpression() = KotlinBuiltIns.isString(BindingContextUtils.getRecordedTypeInfo(this, analyze())?.getType())
 }
