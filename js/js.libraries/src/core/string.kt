@@ -1,5 +1,8 @@
 package kotlin.js
 
+import kotlin.text.js.RegExp
+
+
 native public fun String.toUpperCase() : String = noImpl
 
 native public fun String.toLowerCase() : String = noImpl

@@ -16,6 +16,7 @@
 
 package kotlin.text
 
+import kotlin.text.js.*
 import java.util.ArrayList
 
 /**

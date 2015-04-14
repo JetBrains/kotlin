@@ -16,6 +16,8 @@
 
 package test.js
 
+import kotlin.text.js.*
+
 import kotlin.test.*
 import org.junit.Test as test
 

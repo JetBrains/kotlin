@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package kotlin.js
+package kotlin.text.js
 
 
 native public class RegExp(pattern: String, flags: String? = null) {
