@@ -114,6 +114,8 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         for (PsiReference reference : ReferencesSearch.search(functionPsi, functionPsi.getUseScope())) {
             PsiElement element = reference.getElement();
 
+            if (functionPsi instanceof JetClass && reference.resolve() != functionPsi) continue;
+
             if (element instanceof JetReferenceExpression) {
                 PsiElement parent = element.getParent();
 

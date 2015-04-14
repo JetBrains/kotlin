@@ -49,7 +49,6 @@ import java.io.File;
 import java.util.*;
 
 import static org.jetbrains.kotlin.idea.refactoring.changeSignature.ChangeSignaturePackage.getChangeSignatureDialog;
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 
 public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
     public void testBadSelection() throws Exception {
@@ -838,6 +837,14 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         for (int i = changeInfo.getNewParametersCount() - 1; i >= 0; i--) {
             changeInfo.removeParameter(i);
         }
+        doTest(changeInfo);
+    }
+
+    public void testDoNotApplyPrimarySignatureToSecondaryCalls() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        JetParameterInfo[] newParameters = changeInfo.getNewParameters();
+        changeInfo.setNewParameter(0, newParameters[1]);
+        changeInfo.setNewParameter(1, newParameters[0]);
         doTest(changeInfo);
     }
 
