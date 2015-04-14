@@ -1,4 +1,4 @@
-package kotlin.js
+package kotlin
 
 import kotlin.text.Regex
 import kotlin.text.js.RegExp

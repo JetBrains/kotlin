@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package kotlin.js
+package kotlin
 
 // actually \s is enough to match all whitespace, but \xA0 added because of different regexp behavior of Rhino used in Selenium tests
 public fun Char.isWhitespace(): Boolean = toString().matches("[\\s\\xA0]")
