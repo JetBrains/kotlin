@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.analyzer.AnalyzerPackage;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils;
-import org.jetbrains.kotlin.idea.intentions.ConvertToBlockBodyAction;
+import org.jetbrains.kotlin.idea.intentions.ConvertToBlockBodyIntention;
 import org.jetbrains.kotlin.idea.intentions.RemoveCurlyBracesFromTemplateIntention;
 import org.jetbrains.kotlin.idea.core.refactoring.JetNameSuggester;
 import org.jetbrains.kotlin.idea.refactoring.JetNameValidatorImpl;
@@ -263,7 +263,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                     final JetExpression originalBody = originalDeclaration.getBodyExpression();
                     assert originalBody != null : "Original body is not found: " + originalDeclaration;
 
-                    JetDeclarationWithBody newDeclaration = ConvertToBlockBodyAction.Companion.convert(originalDeclaration);
+                    JetDeclarationWithBody newDeclaration = ConvertToBlockBodyIntention.Companion.convert(originalDeclaration);
 
                     JetBlockExpression newCommonContainer = (JetBlockExpression) newDeclaration.getBodyExpression();
                     assert newCommonContainer != null : "New body is not found: " + newDeclaration;

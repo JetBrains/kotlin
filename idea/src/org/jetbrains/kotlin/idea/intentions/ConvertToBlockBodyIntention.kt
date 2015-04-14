@@ -25,20 +25,29 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
-public class ConvertToBlockBodyAction : PsiElementBaseIntentionAction() {
-    override fun getFamilyName(): String = JetBundle.message("convert.to.block.body.action.family.name")
+public class ConvertToBlockBodyIntention : JetSelfTargetingIntention<JetDeclarationWithBody>(javaClass(), "Convert to block body") {
+    override fun isApplicableTo(element: JetDeclarationWithBody, caretOffset: Int): Boolean {
+        if (element is JetFunctionLiteral || element.hasBlockBody() || !element.hasBody()) return false
 
-    override fun isAvailable(project: Project, editor: Editor, element: PsiElement): Boolean {
-        setText(JetBundle.message("convert.to.block.body.action.name"))
-        return findDeclaration(element) != null
+        when (element) {
+            is JetNamedFunction -> {
+                val returnType = functionReturnType(element) ?: return false
+                if (!element.hasDeclaredReturnType() && returnType.isError()) return false// do not convert when type is implicit and unknown
+                return true
+            }
+
+            is JetPropertyAccessor -> return true
+
+            else -> error("Unknown declaration type: $element")
+        }
     }
 
-    override fun invoke(project: Project, editor: Editor, element: PsiElement) {
-        convert(findDeclaration(element)!!)
+    override fun applyTo(element: JetDeclarationWithBody, editor: Editor) {
+        convert(element)
     }
 
     companion object {
-        fun convert(declaration: JetDeclarationWithBody): JetDeclarationWithBody {
+        public fun convert(declaration: JetDeclarationWithBody): JetDeclarationWithBody {
             val body = declaration.getBodyExpression()!!
 
             fun generateBody(returnsValue: Boolean): JetExpression {
@@ -68,26 +77,6 @@ public class ConvertToBlockBodyAction : PsiElementBaseIntentionAction() {
             declaration.getEqualsToken()!!.delete()
             body.replace(newBody)
             return declaration
-        }
-
-        private fun findDeclaration(element: PsiElement): JetDeclarationWithBody? {
-            val declaration = element.getStrictParentOfType<JetDeclarationWithBody>()
-            if (declaration == null || declaration is JetFunctionLiteral || declaration.hasBlockBody()) return null
-            val body = declaration.getBodyExpression()
-            if (body == null) return null
-
-            return when (declaration) {
-                is JetNamedFunction -> {
-                    val returnType = functionReturnType(declaration)
-                    if (returnType == null) return null
-                    if (!declaration.hasDeclaredReturnType() && returnType.isError()) return null // do not convert when type is implicit and unknown
-                    declaration
-                }
-
-                is JetPropertyAccessor -> declaration
-
-                else -> throw RuntimeException("Unknown declaration type: $declaration")
-            }
         }
     }
 }

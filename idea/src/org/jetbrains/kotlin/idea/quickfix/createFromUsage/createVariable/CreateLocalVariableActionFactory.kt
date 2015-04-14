@@ -22,7 +22,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.JetBundle
-import org.jetbrains.kotlin.idea.intentions.ConvertToBlockBodyAction
+import org.jetbrains.kotlin.idea.intentions.ConvertToBlockBodyIntention
 import org.jetbrains.kotlin.idea.quickfix.JetSingleIntentionActionFactory
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.CreateFromUsageFixBase
@@ -57,7 +57,7 @@ object CreateLocalVariableActionFactory: JetSingleIntentionActionFactory() {
 
                 val actualContainer = when (container) {
                     is JetBlockExpression -> container
-                    else -> ConvertToBlockBodyAction.convert(container as JetDeclarationWithBody).getBodyExpression()!!
+                    else -> ConvertToBlockBodyIntention.convert(container as JetDeclarationWithBody).getBodyExpression()!!
                 } as JetBlockExpression
 
                 if (actualContainer != container) {
