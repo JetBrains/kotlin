@@ -34,11 +34,11 @@ public class JsVars extends SourceInfoAwareJsNode implements JsStatement, Iterab
     }
 
     public JsVars(JsVar var) {
-        this(Collections.singletonList(var), false);
+        this(new SmartList<JsVar>(var), false);
     }
 
     public JsVars(JsVar... vars) {
-        this(Arrays.asList(vars), false);
+        this(new SmartList<JsVar>(vars), false);
     }
 
     public boolean isMultiline() {

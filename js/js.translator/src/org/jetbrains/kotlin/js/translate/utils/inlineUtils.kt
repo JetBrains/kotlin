@@ -24,7 +24,8 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.js.inline.util.isCallInvocation
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.reference.CallExpressionTranslator
-import org.jetbrains.kotlin.psi.JetCallExpression
+import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.inline.InlineStrategy
 
 /**
@@ -40,10 +41,11 @@ import org.jetbrains.kotlin.resolve.inline.InlineStrategy
  */
 fun setInlineCallMetadata(
         expression: JsExpression,
-        jetCall: JetCallExpression,
+        psiElement: JetExpression,
+        resolvedCall: ResolvedCall<*>,
         context: TranslationContext
 ) {
-    val descriptor = PsiUtils.getFunctionDescriptor(jetCall, context)
+    val descriptor = PsiUtils.getFunctionDescriptor(resolvedCall)
     assert(CallExpressionTranslator.shouldBeInlined(descriptor)) {
         "Expected descriptor of callable, that should be inlined, but got: $descriptor"
     }
@@ -57,7 +59,7 @@ fun setInlineCallMetadata(
             if (name == invocation.name) {
                 invocation.descriptor = descriptor
                 invocation.inlineStrategy = InlineStrategy.IN_PLACE
-                invocation.psiElement = jetCall
+                invocation.psiElement = psiElement
             }
         }
     }

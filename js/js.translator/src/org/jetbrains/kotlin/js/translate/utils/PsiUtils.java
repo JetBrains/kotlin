@@ -146,6 +146,11 @@ public final class PsiUtils {
         ResolvedCall<?> resolvedCall = CallUtilPackage.getResolvedCall(expression, context.bindingContext());
         assert resolvedCall != null;
 
+        return getFunctionDescriptor(resolvedCall);
+    }
+
+    @NotNull
+    public static CallableDescriptor getFunctionDescriptor(ResolvedCall<?> resolvedCall) {
         if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
             return  ((VariableAsFunctionResolvedCall) resolvedCall).getVariableCall().getCandidateDescriptor();
         }
