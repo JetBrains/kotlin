@@ -55,7 +55,7 @@ public abstract class AndroidResourceManager(val project: Project) {
             return allChildren
         }
 
-        val resDirectories = info.mainResDirectories.map { fileManager.findFileByUrl("file://$it") }
+        val resDirectories = info.resDirectories.map { fileManager.findFileByUrl("file://$it") }
         val allChildren = resDirectories.flatMap { it?.getAllChildren() ?: listOf() }
 
         return allChildren
@@ -64,13 +64,6 @@ public abstract class AndroidResourceManager(val project: Project) {
                 .filterNotNull()
                 .groupBy { it.getName().substringBeforeLast('.') }
                 .mapValues { it.getValue().sortBy { it.getParent().getName().length() } }
-    }
-
-    fun getModuleResDirectories(): List<VirtualFile> {
-        val info = androidModuleInfo
-        if (info == null) return listOf()
-        val fileManager = VirtualFileManager.getInstance()
-        return info.mainResDirectories.map { fileManager.findFileByUrl("file://" + it) }
     }
 
     companion object {

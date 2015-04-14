@@ -28,11 +28,11 @@ import kotlin.properties.Delegates
 public class CliAndroidResourceManager(
         project: Project,
         private val manifestPath: String,
-        private val mainResDirectory: List<String>
+        private val resDirectories: List<String>
 ) : AndroidResourceManager(project) {
 
     override val androidModuleInfo by Delegates.lazy {
-        AndroidModuleInfo(getApplicationPackage(manifestPath), mainResDirectory)
+        AndroidModuleInfo(getApplicationPackage(manifestPath), resDirectories)
     }
 
     val saxParser: SAXParser = initSAX()
