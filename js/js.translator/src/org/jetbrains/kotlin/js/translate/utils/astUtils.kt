@@ -98,3 +98,7 @@ public var JsBinaryOperation.arg2: JsExpression
 
 public val JsBinaryOperation.operator: JsBinaryOperator
     get() = getOperator()
+
+public var JsVars.JsVar.initExpression: JsExpression?
+    get() = getInitExpression()
+    set(value) = setInitExpression(value)

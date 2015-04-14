@@ -76,6 +76,25 @@ class ExpressionDecomposer private (
         }
     }
 
+    // TODO: add test case (after KT-7371 fix): var a = foo(), b = foo() + inlineBar()
+    override fun visit(x: JsVars, ctx: JsContext<*>): Boolean {
+        val vars = x.getVars()
+        var prevVars = SmartList<JsVars.JsVar>()
+
+        for (jsVar in vars) {
+            if (jsVar in containsExtractable && prevVars.isNotEmpty()) {
+                addStatement(JsVars(prevVars, x.isMultiline()))
+                prevVars = SmartList<JsVars.JsVar>()
+            }
+
+            jsVar.initExpression = accept(jsVar.initExpression)
+            prevVars.add(jsVar)
+        }
+
+        vars.clear()
+        vars.addAll(prevVars)
+        return false
+    }
 
     override fun visit(x: JsWhile, ctx: JsContext<*>): Boolean {
         x.process(true)
