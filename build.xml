@@ -193,7 +193,7 @@
             <fileset dir="core/util.runtime/src"/>
             <fileset dir="compiler/backend/src"/>
             <fileset dir="compiler/backend-common/src"/>
-            <fileset dir="compiler/builtins-serializer"/>
+            <fileset dir="compiler/builtins-serializer/src"/>
             <fileset dir="compiler/cli/src"/>
             <fileset dir="compiler/cli/cli-common/src"/>
             <fileset dir="compiler/frontend/src"/>
