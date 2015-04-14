@@ -30,7 +30,7 @@ public abstract class AbstractAndroidRenameTest : KotlinAndroidTestCase() {
 
     public fun doTest(path: String) {
         val f = myFixture!!
-        f.copyDirectoryToProject(getResDir()!!, "res")
+        getResourceDirs(path).forEach { myFixture.copyDirectoryToProject(it.name, it.name) }
         val virtualFile = f.copyFileToProject(path + getTestName(true) + ".kt", "src/" + getTestName(true) + ".kt");
         f.configureFromExistingVirtualFile(virtualFile)
 

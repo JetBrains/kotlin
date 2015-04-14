@@ -28,6 +28,7 @@ import com.intellij.facet.ModifiableFacetModel;
 import com.intellij.ide.startup.impl.StartupManagerImpl;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ModuleRootModificationUtil;
 import com.intellij.openapi.startup.StartupManager;
@@ -38,7 +39,6 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.PsiManagerEx;
 import com.intellij.psi.impl.file.impl.FileManager;
 import com.intellij.testFramework.InspectionTestUtil;
-import com.intellij.testFramework.TestLogger;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import com.intellij.testFramework.fixtures.*;
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
@@ -46,13 +46,13 @@ import com.intellij.testFramework.fixtures.impl.GlobalInspectionContextForTests;
 import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.AndroidRootUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.android.KotlinAndroidTestCaseBase;
 import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode;
 import org.jetbrains.kotlin.idea.references.BuiltInsReferenceResolver;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.test.JetTestUtils;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -77,9 +77,13 @@ public abstract class KotlinAndroidTestCase extends KotlinAndroidTestCaseBase {
         this(true);
     }
 
-    @NotNull
-    protected String getResRelativePath() {
-        return "res/";
+    protected File[] getResourceDirs(String path) {
+        return new File(path).listFiles(new FileFilter() {
+            @Override
+            public boolean accept(@NotNull File file) {
+                return file.getName().startsWith("res") && file.isDirectory();
+            }
+        });
     }
 
     @Override
@@ -119,10 +123,12 @@ public abstract class KotlinAndroidTestCase extends KotlinAndroidTestCaseBase {
 
         androidSdk = createAndroidSdk(getTestSdkPath(), getPlatformDir());
         myFacet = addAndroidFacet(myModule, sdkPath, getPlatformDir(), isToAddSdk());
-        if (new File(getResDir()).exists()) {
-            myFixture.copyDirectoryToProject(getResDir(), "res");
-        } else {
-            TestLogger.getInstance(this.getClass()).info("No res directory found in test");
+        for (File resDir : getResourceDirs(dirPath)) {
+            if (resDir.exists()) {
+                myFixture.copyDirectoryToProject(resDir.getName(), resDir.getName());
+            } else {
+                Logger.getInstance(this.getClass()).info("No res directory found in test");
+            }
         }
         myAdditionalModules = new ArrayList<Module>();
 
@@ -180,10 +186,6 @@ public abstract class KotlinAndroidTestCase extends KotlinAndroidTestCaseBase {
 
     protected static String getContentRootPath(@NotNull String moduleName) {
         return "/additionalModules/" + moduleName;
-    }
-
-    protected String getResDir() {
-        return "res";
     }
 
     public static void tuneModule(JavaModuleFixtureBuilder moduleBuilder, String moduleDirPath) {

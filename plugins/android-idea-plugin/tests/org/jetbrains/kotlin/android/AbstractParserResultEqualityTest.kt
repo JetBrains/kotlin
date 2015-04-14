@@ -25,14 +25,19 @@ import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.JetTestUtils
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import java.io.File
 import kotlin.test.assertEquals
 
 public abstract class AbstractParserResultEqualityTest : KotlinAndroidTestCase() {
     public fun doTest(path: String) {
         val project = myFixture.getProject()
         project.putUserData(TestConst.TESTDATA_PATH, path)
-        myFixture.copyDirectoryToProject(getResDir(), "res")
-        val cliParser = CliAndroidUIXmlProcessor(project, path + "../AndroidManifest.xml", path + getResDir() + "/layout/")
+        val resDirs = getResourceDirs(path).map {
+            myFixture.copyDirectoryToProject(it.name, it.name)
+            "$path${it.name}/"
+        }
+
+        val cliParser = CliAndroidUIXmlProcessor(project, path + "../AndroidManifest.xml", resDirs)
         val ideParser = IDEAndroidUIXmlProcessor(ModuleManager.getInstance(project).getModules()[0])
 
         val cliResult = cliParser.parseToPsi()!!.joinToString("\n\n")

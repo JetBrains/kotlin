@@ -30,11 +30,11 @@ import com.intellij.psi.util.CachedValueProvider.Result
 public class CliAndroidUIXmlProcessor(
         project: Project,
         private val manifestPath: String,
-        private val mainResDirectory: String
+        private val mainResDirectories: List<String>
 ) : AndroidUIXmlProcessor(project) {
 
     override val resourceManager: CliAndroidResourceManager by Delegates.lazy {
-        CliAndroidResourceManager(project, manifestPath, mainResDirectory)
+        CliAndroidResourceManager(project, manifestPath, mainResDirectories)
     }
 
     override val cachedSources: CachedValue<List<AndroidSyntheticFile>> by Delegates.lazy {

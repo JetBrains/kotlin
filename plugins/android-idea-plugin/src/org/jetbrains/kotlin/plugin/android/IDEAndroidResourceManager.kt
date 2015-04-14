@@ -54,10 +54,10 @@ public class IDEAndroidResourceManager(val module: Module) : AndroidResourceMana
 
     private fun AndroidFacet.toAndroidModuleInfo(): AndroidModuleInfo? {
         val applicationPackage = getManifest()?.getPackage()?.toString()
-        val mainResDirectory = getAllResourceDirectories().firstOrNull()?.getPath()
+        val mainResDirectories = getAllResourceDirectories().map { it.getPath() }
 
         return if (applicationPackage != null) {
-            AndroidModuleInfo(applicationPackage, mainResDirectory)
+            AndroidModuleInfo(applicationPackage, mainResDirectories)
         }
         else null
     }

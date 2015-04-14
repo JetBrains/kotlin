@@ -34,11 +34,8 @@ import org.jetbrains.kotlin.lang.resolve.android.*
 import org.jetbrains.kotlin.psi.JetFile
 
 public object AndroidConfigurationKeys {
-
-    public val ANDROID_RES_PATH: CompilerConfigurationKey<String> = CompilerConfigurationKey.create<String>("android resources search path")
-
+    public val ANDROID_RES_PATH: CompilerConfigurationKey<List<String>> = CompilerConfigurationKey.create<List<String>>("android resources search path")
     public val ANDROID_MANIFEST: CompilerConfigurationKey<String> = CompilerConfigurationKey.create<String>("android manifest file")
-
     public val SUPPORT_V4: CompilerConfigurationKey<String> = CompilerConfigurationKey.create<String>("'true' if compiled with support-v4 library")
 }
 
@@ -46,7 +43,7 @@ public class AndroidCommandLineProcessor : CommandLineProcessor {
     companion object {
         public val ANDROID_COMPILER_PLUGIN_ID: String = "org.jetbrains.kotlin.android"
 
-        public val RESOURCE_PATH_OPTION: CliOption = CliOption("androidRes", "<path>", "Android resources path")
+        public val RESOURCE_PATH_OPTION: CliOption = CliOption("androidRes", "<path>", "Android resources path", allowMultipleOccurrences = true)
         public val MANIFEST_FILE_OPTION: CliOption = CliOption("androidManifest", "<path>", "Android manifest file")
         public val SUPPORT_V4_OPTION: CliOption = CliOption("supportV4", "<path>", "Support android-v4 library", required = false)
     }
@@ -57,7 +54,11 @@ public class AndroidCommandLineProcessor : CommandLineProcessor {
 
     override fun processOption(option: CliOption, value: String, configuration: CompilerConfiguration) {
         when (option) {
-            RESOURCE_PATH_OPTION -> configuration.put(AndroidConfigurationKeys.ANDROID_RES_PATH, value)
+            RESOURCE_PATH_OPTION -> {
+                val paths = configuration.getList(AndroidConfigurationKeys.ANDROID_RES_PATH).toArrayList()
+                paths.add(value)
+                configuration.put(AndroidConfigurationKeys.ANDROID_RES_PATH, paths)
+            }
             MANIFEST_FILE_OPTION -> configuration.put(AndroidConfigurationKeys.ANDROID_MANIFEST, value)
             SUPPORT_V4_OPTION -> configuration.put(AndroidConfigurationKeys.SUPPORT_V4, value)
             else -> throw CliOptionProcessingException("Unknown option: ${option.name}")
