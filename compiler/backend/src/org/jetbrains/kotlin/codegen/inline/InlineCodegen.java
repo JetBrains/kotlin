@@ -638,6 +638,7 @@ public class InlineCodegen extends CallGenerator {
         AbstractInsnNode curInstr = intoNode.instructions.getFirst();
         while (curInstr != null) {
             processor.updateCoveringTryBlocks(curInstr, true);
+            processor.updateCoveringLocalVars(curInstr, true);
 
             MethodInliner.PointForExternalFinallyBlocks extension = extensionPoints.get(curInstr);
             if (extension != null) {
@@ -668,7 +669,7 @@ public class InlineCodegen extends CallGenerator {
                     processor.remapStartLabel(oldStart, previous);
 
                     TryCatchBlockNode additionalNode = new TryCatchBlockNode(oldStart, (LabelNode) start.info, node.handler, node.type);
-                    processor.addNode(additionalNode);
+                    processor.addTryNode(additionalNode);
                 }
             }
 
@@ -680,6 +681,12 @@ public class InlineCodegen extends CallGenerator {
         intoNode.tryCatchBlocks.clear();
         for (TryCatchBlockNodeWrapper node : nodes) {
             intoNode.tryCatchBlocks.add(node.getNode());
+        }
+
+        intoNode.localVariables.clear();
+        List<LocalVarNodeWrapper> intervals = processor.getLocalVarsMetaInfo().getAllIntervals();
+        for (LocalVarNodeWrapper interval : intervals) {
+            intoNode.localVariables.add(interval.getNode());
         }
     }
 

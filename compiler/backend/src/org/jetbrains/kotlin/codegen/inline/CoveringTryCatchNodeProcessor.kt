@@ -16,46 +16,40 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
-import org.jetbrains.org.objectweb.asm.tree.MethodNode
-import org.jetbrains.org.objectweb.asm.tree.LabelNode
 import com.google.common.collect.LinkedListMultimap
 import java.util.ArrayList
 import com.intellij.util.containers.Stack
-import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
-import org.jetbrains.org.objectweb.asm.tree.TryCatchBlockNode
+import org.jetbrains.org.objectweb.asm.tree.*
 import java.util.Comparator
 import java.util.Collections
 
 public abstract class CoveringTryCatchNodeProcessor<T: IntervalWithHandler>() {
 
-    private val tryBlockStarts = LinkedListMultimap.create<LabelNode, T>()
+    public val tryBlocksMetaInfo: IntervalMetaInfo<T> = IntervalMetaInfo();
 
-    private val tryBlockEnds = LinkedListMultimap.create<LabelNode, T>()
-
-    public val allTryCatchNodes: ArrayList<T> = arrayListOf()
-
-    private val currentCoveringBlocks: Stack<T> = Stack()
+    public val localVarsMetaInfo: IntervalMetaInfo<LocalVarNodeWrapper> = IntervalMetaInfo();
 
     public val coveringFromInnermost: List<T>
-        get() = currentCoveringBlocks.reverse()
+        get() = tryBlocksMetaInfo.currentIntervals.reverse()
 
-    fun addNewTryCatchNode(newInfo: T) {
-        tryBlockStarts.put(newInfo.startLabel, newInfo)
-        tryBlockEnds.put(newInfo.endLabel, newInfo)
-        allTryCatchNodes.add(newInfo)
+    protected fun addNewTryCatchNode(newInfo: T) {
+        tryBlocksMetaInfo.addNewInterval(newInfo)
+    }
+
+    protected fun addNewLocalVar(newInfo: LocalVarNodeWrapper) {
+        localVarsMetaInfo.addNewInterval(newInfo)
     }
 
     fun remapStartLabel(oldStart: LabelNode, remapped: T) {
-        tryBlockStarts.remove(oldStart, remapped)
-        tryBlockStarts.put(remapped.startLabel, remapped)
+        tryBlocksMetaInfo.remapStartLabel(oldStart, remapped)
     }
 
     public fun getStartNodes(label: LabelNode): List<T> {
-        return tryBlockStarts.get(label)
+        return tryBlocksMetaInfo.intervalStarts.get(label)
     }
 
     public fun getEndNodes(label: LabelNode): List<T> {
-        return tryBlockEnds.get(label)
+        return tryBlocksMetaInfo.intervalEnds.get(label)
     }
 
     //Keep information about try blocks that cover current instruction -
@@ -63,9 +57,8 @@ public abstract class CoveringTryCatchNodeProcessor<T: IntervalWithHandler>() {
     public open fun updateCoveringTryBlocks(curIns: AbstractInsnNode, directOrder: Boolean) {
         if (curIns !is LabelNode) return
 
-        val infosToClose = if (!directOrder) getStartNodes(curIns) else getEndNodes(curIns)
-        for (startNode in infosToClose) {
-            val pop = currentCoveringBlocks.pop()
+        for (startNode in tryBlocksMetaInfo.infoToClose(curIns, directOrder)) {
+            val pop = tryBlocksMetaInfo.currentIntervals.pop()
             //Temporary disabled cause during patched structure of exceptions changed
 //            if (startNode != pop) {
 //                throw RuntimeException("Wrong try-catch structure " + startNode + " " + pop + " " + infosToClose.size())
@@ -74,25 +67,28 @@ public abstract class CoveringTryCatchNodeProcessor<T: IntervalWithHandler>() {
 
         //Reversing list order cause we should pop external block before internal one
         // (originally internal blocks goes before external one, such invariant preserved via sortTryCatchBlocks method)
-        val infoToOpen = if (!directOrder) getEndNodes(curIns) else getStartNodes(curIns)
-        for (info in infoToOpen.reverse()) {
-            currentCoveringBlocks.add(info)
+        for (info in tryBlocksMetaInfo.infoToOpen(curIns, directOrder).reverse()) {
+            tryBlocksMetaInfo.currentIntervals.add(info)
+        }
+    }
+
+    public open fun updateCoveringLocalVars(curIns: AbstractInsnNode, directOrder: Boolean) {
+        if (curIns !is LabelNode) return
+
+        localVarsMetaInfo.infoToClose(curIns, directOrder).forEach {
+            localVarsMetaInfo.currentIntervals.pop()
+        }
+
+        localVarsMetaInfo.infoToOpen(curIns, directOrder).forEach {
+            localVarsMetaInfo.currentIntervals.add(it)
         }
     }
 
     public abstract fun instructionIndex(inst: AbstractInsnNode): Int
 
-    private fun isEmptyInterval(node: T): Boolean {
-        val start = node.startLabel
-        var end: AbstractInsnNode = node.endLabel
-        while (end != start && end is LabelNode) {
-            end = end.getPrevious()
-        }
-        return start == end;
-    }
 
     public fun getNonEmptyNodes(): List<T> {
-        return allTryCatchNodes.filterNot { isEmptyInterval(it) }
+        return tryBlocksMetaInfo.getNonEmptyNodes()
     }
 
     public fun sortTryCatchBlocks() {
@@ -108,25 +104,79 @@ public abstract class CoveringTryCatchNodeProcessor<T: IntervalWithHandler>() {
             result
         }
 
-        Collections.sort<T>(allTryCatchNodes, comp)
+        Collections.sort<T>(tryBlocksMetaInfo.allIntervals, comp)
+    }
+}
+
+class IntervalMetaInfo<T: Interval> {
+
+    val intervalStarts = LinkedListMultimap.create<LabelNode, T>()
+
+    val intervalEnds = LinkedListMultimap.create<LabelNode, T>()
+
+    val allIntervals: ArrayList<T> = arrayListOf()
+
+    val currentIntervals: Stack<T> = Stack()
+
+    fun addNewInterval(newInfo: T) {
+        intervalStarts.put(newInfo.startLabel, newInfo)
+        intervalEnds.put(newInfo.endLabel, newInfo)
+        allIntervals.add(newInfo)
     }
 
+    fun remapStartLabel(oldStart: LabelNode, remapped: T) {
+        intervalStarts.remove(oldStart, remapped)
+        intervalStarts.put(remapped.startLabel, remapped)
+    }
+
+    fun remapEndLabel(oldEnd: LabelNode, remapped: T) {
+        intervalEnds.remove(oldEnd, remapped)
+        intervalEnds.put(remapped.startLabel, remapped)
+    }
+
+    public fun getNonEmptyNodes(): List<T> {
+        return allIntervals.filterNot { isEmptyInterval(it) }
+    }
+
+    fun infoToClose(curIns: LabelNode, directOrder: Boolean) = if (!directOrder) intervalStarts.get(curIns) else intervalEnds.get(curIns)
+
+    fun infoToOpen(curIns: LabelNode, directOrder: Boolean) = if (directOrder) intervalStarts.get(curIns) else intervalEnds.get(curIns)
+
+    private fun isEmptyInterval(node: T): Boolean {
+        val start = node.startLabel
+        var end: AbstractInsnNode = node.endLabel
+        while (end != start && end is LabelNode) {
+            end = end.getPrevious()
+        }
+        return start == end;
+    }
 }
 
 public class DefaultProcessor(val node: MethodNode) : CoveringTryCatchNodeProcessor<TryCatchBlockNodeWrapper>() {
 
     init {
-        node.tryCatchBlocks.forEach { addNode(it) }
+        node.tryCatchBlocks.forEach { addTryNode(it) }
+        node.localVariables.forEach { addLocalVarNode(it) }
     }
 
-    fun addNode(node: TryCatchBlockNode) {
+    fun addLocalVarNode(it: LocalVariableNode) {
+        addNewLocalVar(LocalVarNodeWrapper(it))
+    }
+
+    fun addTryNode(node: TryCatchBlockNode) {
         addNewTryCatchNode(TryCatchBlockNodeWrapper(node))
     }
 
     override fun instructionIndex(inst: AbstractInsnNode): Int {
         return node.instructions.indexOf(inst)
     }
+}
 
+public class LocalVarNodeWrapper(val node: LocalVariableNode) : Interval {
+    override val startLabel: LabelNode
+        get() = node.start
+    override val endLabel: LabelNode
+        get() = node.end
 }
 
 public class TryCatchBlockNodeWrapper(val node: TryCatchBlockNode) : IntervalWithHandler {
