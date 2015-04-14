@@ -62,7 +62,8 @@ public abstract class AbstractAndroidJpsTestCase : JpsBuildTestCase() {
         addJdk(jdkName)
         val properties = JpsAndroidSdkProperties("android-21", jdkName)
         val sdkPath = getHomePath() + "/../dependencies/androidSDK"
-        val library = myModel!!.getGlobal().addSdk<JpsSimpleElement<JpsAndroidSdkProperties>>(SDK_NAME, sdkPath, "", JpsAndroidSdkType.INSTANCE, JpsSimpleElementImpl(properties))
+        val library = myModel!!.getGlobal().addSdk<JpsSimpleElement<JpsAndroidSdkProperties>>(SDK_NAME, sdkPath, "",
+                JpsAndroidSdkType.INSTANCE, JpsSimpleElementImpl(properties))
         library!!.addRoot(File(sdkPath + "/platforms/android-21/android.jar"), JpsOrderRootType.COMPILED)
         return library.getProperties()
     }

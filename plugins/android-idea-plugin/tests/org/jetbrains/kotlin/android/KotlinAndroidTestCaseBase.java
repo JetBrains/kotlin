@@ -64,37 +64,12 @@ public abstract class KotlinAndroidTestCaseBase extends UsefulTestCase {
         IdeaTestCase.initPlatformPrefix();
     }
 
-    public String getAbsoluteTestDataPath() {
-        // The following code doesn't work right now that the Android
-        // plugin lives in a separate place:
-        //String androidHomePath = System.getProperty("android.home.path");
-        //if (androidHomePath == null) {
-        //  androidHomePath = new File(PathManager.getHomePath(), "android/android").getPath();
-        //}
-        //return PathUtil.getCanonicalPath(androidHomePath + "/testData");
-
-        // getTestDataPath already gives the absolute path anyway:
-        String path = getTestDataPath();
-        assertTrue(new File(path).isAbsolute());
-        return path;
-    }
-
     public static String getPluginTestDataPathBase() {
         return JetTestUtils.getHomeDirectory() + TEST_DATA_PROJECT_RELATIVE;
     }
 
     public String getTestDataPath() {
         return getPluginTestDataPathBase();
-    }
-
-    public static String getAndroidPluginHome() {
-        // Now that the Android plugin is kept in a separate place, we need to look in
-        // a relative position instead
-        String adtPath = PathManager.getHomePath() + "/../adt/idea/android";
-        if (new File(adtPath).exists()) {
-            return adtPath;
-        }
-        return new File(PathManager.getHomePath(), "android/android").getPath();
     }
 
     public String getDefaultTestSdkPath() {
@@ -199,122 +174,6 @@ public abstract class KotlinAndroidTestCaseBase extends UsefulTestCase {
 
     protected Project getProject() {
         return myFixture.getProject();
-    }
-
-    protected void ensureSdkManagerAvailable() {
-        AndroidSdkData sdkData = AndroidSdkUtils.tryToChooseAndroidSdk();
-        if (sdkData == null) {
-            sdkData = createTestSdkManager();
-            if (sdkData != null) {
-                AndroidSdkUtils.setSdkData(sdkData);
-            }
-        }
-        assertNotNull(sdkData);
-    }
-
-    @Nullable
-    protected AndroidSdkData createTestSdkManager() {
-        Sdk androidSdk = createAndroidSdk(getTestSdkPath(), getPlatformDir());
-        AndroidSdkAdditionalData data = (AndroidSdkAdditionalData)androidSdk.getSdkAdditionalData();
-        if (data != null) {
-            AndroidPlatform androidPlatform = data.getAndroidPlatform();
-            if (androidPlatform != null) {
-                // Put default platforms in the list before non-default ones so they'll be looked at first.
-                return androidPlatform.getSdkData();
-            } else {
-                fail("No getAndroidPlatform() associated with the AndroidSdkAdditionalData: " + data);
-            }
-        } else {
-            fail("Could not find data associated with the SDK: " + androidSdk.getName());
-        }
-        return null;
-    }
-
-    /** Returns a description of the given elements, suitable as unit test golden file output */
-    public static String describeElements(@Nullable PsiElement[] elements) {
-        if (elements == null) {
-            return "Empty";
-        }
-        StringBuilder sb = new StringBuilder();
-        for (PsiElement target : elements) {
-            appendElementDescription(sb, target);
-        }
-        return sb.toString();
-    }
-
-    /** Appends a description of the given element, suitable as unit test golden file output */
-    public static void appendElementDescription(@NotNull StringBuilder sb, @NotNull PsiElement element) {
-        if (element instanceof LazyValueResourceElementWrapper) {
-            LazyValueResourceElementWrapper wrapper = (LazyValueResourceElementWrapper)element;
-            XmlAttributeValue value = wrapper.computeElement();
-            if (value != null) {
-                element = value;
-            }
-        }
-        PsiFile file = element.getContainingFile();
-        int offset = element.getTextOffset();
-        TextRange segment = element.getTextRange();
-        appendSourceDescription(sb, file, offset, segment);
-    }
-
-    /** Appends a description of the given elements, suitable as unit test golden file output */
-    public static void appendSourceDescription(@NotNull StringBuilder sb, @Nullable PsiFile file, int offset, @Nullable Segment segment) {
-        if (file != null && segment != null) {
-            if (ResourceHelper.getFolderType(file) != null) {
-                assertNotNull(file.getParent());
-                sb.append(file.getParent().getName());
-                sb.append("/");
-            }
-            sb.append(file.getName());
-            sb.append(':');
-            String text = file.getText();
-            int lineNumber = 1;
-            for (int i = 0; i < offset; i++) {
-                if (text.charAt(i) == '\n') {
-                    lineNumber++;
-                }
-            }
-            sb.append(lineNumber);
-            sb.append(":");
-            sb.append('\n');
-            int startOffset = segment.getStartOffset();
-            int endOffset = segment.getEndOffset();
-            assertTrue(offset == -1 || offset >= startOffset);
-            assertTrue(offset == -1 || offset <= endOffset);
-
-            int lineStart = startOffset;
-            while (lineStart > 0 && text.charAt(lineStart - 1) != '\n') {
-                lineStart--;
-            }
-
-            // Skip over leading whitespace
-            while (lineStart < startOffset && Character.isWhitespace(text.charAt(lineStart))) {
-                lineStart++;
-            }
-
-            int lineEnd = startOffset;
-            while (lineEnd < text.length() && text.charAt(lineEnd) != '\n') {
-                lineEnd++;
-            }
-            String indent = "  ";
-            sb.append(indent);
-            sb.append(text.substring(lineStart, lineEnd));
-            sb.append('\n');
-            sb.append(indent);
-            for (int i = lineStart; i < lineEnd; i++) {
-                if (i == offset) {
-                    sb.append('|');
-                } else if (i >= startOffset && i <= endOffset) {
-                    sb.append('~');
-                } else {
-                    sb.append(' ');
-                }
-            }
-        } else {
-            sb.append(offset);
-            sb.append(":?");
-        }
-        sb.append('\n');
     }
 }
 

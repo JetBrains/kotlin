@@ -79,6 +79,12 @@ public class AndroidXml2KConversionTestGenerated extends AbstractAndroidXml2KCon
             doTest(fileName);
         }
 
+        @TestMetadata("severalResDirs")
+        public void testSeveralResDirs() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/android/converter/simple/severalResDirs/");
+            doTest(fileName);
+        }
+
         @TestMetadata("singleFile")
         public void testSingleFile() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/android/converter/simple/singleFile/");

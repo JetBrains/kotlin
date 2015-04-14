@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.android;
 import com.android.SdkConstants;
 import com.android.ide.common.rendering.RenderSecurityManager;
 import com.intellij.analysis.AnalysisScope;
-import com.intellij.codeInspection.GlobalInspectionTool;
 import com.intellij.codeInspection.InspectionManager;
 import com.intellij.codeInspection.ex.GlobalInspectionToolWrapper;
 import com.intellij.codeInspection.ex.InspectionManagerEx;
@@ -64,7 +63,7 @@ public abstract class KotlinAndroidTestCase extends KotlinAndroidTestCaseBase {
     protected Module myModule;
     protected List<Module> myAdditionalModules;
 
-    private boolean myCreateManifest;
+    private final boolean myCreateManifest;
     protected AndroidFacet myFacet;
 
     private boolean kotlinInternalModeOriginalValue;
@@ -109,7 +108,7 @@ public abstract class KotlinAndroidTestCase extends KotlinAndroidTestCaseBase {
         }
         tuneModule(moduleFixtureBuilder, dirPath);
 
-        final ArrayList<MyAdditionalModuleData> modules = new ArrayList<MyAdditionalModuleData>();
+        final List<MyAdditionalModuleData> modules = new ArrayList<MyAdditionalModuleData>();
         configureAdditionalModules(projectBuilder, modules);
 
         myFixture.setUp();
@@ -172,18 +171,6 @@ public abstract class KotlinAndroidTestCase extends KotlinAndroidTestCaseBase {
             @NotNull List<MyAdditionalModuleData> modules) {
     }
 
-    protected void addModuleWithAndroidFacet(@NotNull TestFixtureBuilder<IdeaProjectTestFixture> projectBuilder,
-            @NotNull List<MyAdditionalModuleData> modules,
-            @NotNull String dirName,
-            boolean library) {
-        final JavaModuleFixtureBuilder moduleFixtureBuilder = projectBuilder.addModule(JavaModuleFixtureBuilder.class);
-        final String moduleDirPath = myFixture.getTempDirPath() + getContentRootPath(dirName);
-        //noinspection ResultOfMethodCallIgnored
-        new File(moduleDirPath).mkdirs();
-        tuneModule(moduleFixtureBuilder, moduleDirPath);
-        modules.add(new MyAdditionalModuleData(moduleFixtureBuilder, dirName, library));
-    }
-
     protected static String getContentRootPath(@NotNull String moduleName) {
         return "/additionalModules/" + moduleName;
     }
@@ -202,11 +189,6 @@ public abstract class KotlinAndroidTestCase extends KotlinAndroidTestCaseBase {
 
     protected void createManifest() throws IOException {
         myFixture.copyFileToProject("plugins/android-idea-plugin/testData/android/AndroidManifest.xml", SdkConstants.FN_ANDROID_MANIFEST_XML);
-     //   myFixture.copyFileToProject(SdkConstants.FN_ANDROID_MANIFEST_XML, SdkConstants.FN_ANDROID_MANIFEST_XML);
-    }
-
-    protected void createProjectProperties() throws IOException {
-        myFixture.copyFileToProject(SdkConstants.FN_PROJECT_PROPERTIES, SdkConstants.FN_PROJECT_PROPERTIES);
     }
 
     protected void deleteManifest() throws IOException {
@@ -280,27 +262,6 @@ public abstract class KotlinAndroidTestCase extends KotlinAndroidTestCaseBase {
             }
         });
         return facet;
-    }
-
-    protected void doGlobalInspectionTest(@NotNull GlobalInspectionTool inspection,
-            @NotNull String globalTestDir,
-            @NotNull AnalysisScope scope) {
-        doGlobalInspectionTest(new GlobalInspectionToolWrapper(inspection), globalTestDir, scope);
-    }
-
-    protected void doGlobalInspectionTest(@NotNull GlobalInspectionToolWrapper wrapper,
-            @NotNull String globalTestDir,
-            @NotNull AnalysisScope scope) {
-        myFixture.enableInspections(wrapper.getTool());
-
-        scope.invalidate();
-
-        final InspectionManagerEx inspectionManager = (InspectionManagerEx)InspectionManager.getInstance(getProject());
-        final GlobalInspectionContextForTests globalContext =
-                CodeInsightTestFixtureImpl.createGlobalContextForTool(scope, getProject(), inspectionManager, wrapper);
-
-        InspectionTestUtil.runTool(wrapper, scope, globalContext);
-        InspectionTestUtil.compareToolResults(globalContext, wrapper, false, getTestDataPath() + globalTestDir);
     }
 
     protected static class MyAdditionalModuleData {
