@@ -97,7 +97,7 @@ public fun JetQualifiedExpression.toCallDescription(): CallDescription? {
     return CallDescription(this, callExpression, resolvedCall)
 }
 
-public abstract class AttributeCallReplacementIntention(name: String) : JetSelfTargetingIntention<JetDotQualifiedExpression>(name, javaClass()) {
+public abstract class AttributeCallReplacementIntention(private val name: String) : JetSelfTargetingIntention<JetDotQualifiedExpression>(name, javaClass()) {
 
     protected abstract fun isApplicableToCall(call: CallDescription): Boolean
 
@@ -107,7 +107,7 @@ public abstract class AttributeCallReplacementIntention(name: String) : JetSelfT
     final override fun isApplicableTo(element: JetDotQualifiedExpression): Boolean {
         val callDescription = element.toCallDescription()
         if (callDescription != null && isApplicableToCall(callDescription)) {
-            setText(JetBundle.message(key, *formatArgumentsFor(callDescription)))
+            setText(JetBundle.message(name, *formatArgumentsFor(callDescription)))
             return true
         } else {
             return false

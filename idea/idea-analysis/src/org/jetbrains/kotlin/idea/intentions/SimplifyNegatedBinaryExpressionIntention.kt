@@ -64,7 +64,7 @@ public class SimplifyNegatedBinaryExpressionIntention : JetSelfTargetingIntentio
         val operation = (JetPsiUtil.getOperationToken(expression) as? JetSingleValueToken) ?: return false
         val negOperation = operation.negate() ?: return false
 
-        setText(JetBundle.message(key, operation.getValue(), negOperation.getValue()))
+        setText(JetBundle.message("simplify.negated.binary.expression", operation.getValue(), negOperation.getValue()))
         return true
     }
 

@@ -24,12 +24,21 @@ import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypesAndPredicate
 import com.intellij.codeInsight.intention.IntentionAction
 
-public abstract class JetSelfTargetingIntention<T: JetElement>(protected val key: String, val elementType: Class<T>) : IntentionAction {
-    private var myText:String = JetBundle.message(key);
-    protected fun setText(text: String) {
-        myText = text
+public abstract class JetSelfTargetingIntention<T: JetElement>(
+        public val elementType: Class<T>,
+        private var text: String,
+        private val familyName: String)
+: IntentionAction {
+    deprecated("Use primary constructor, no need to use i18n")
+    public constructor(key: String, elementType: Class<T>) : this(elementType, JetBundle.message(key), JetBundle.message(key + ".family")) {
     }
-    override fun getText(): String = myText
+
+    protected fun setText(text: String) {
+        this.text = text
+    }
+
+    override fun getText() = text
+    override fun getFamilyName() = familyName
 
     public abstract fun isApplicableTo(element: T): Boolean
     public open fun isApplicableTo(element: T, editor: Editor): Boolean = isApplicableTo(element)
@@ -40,19 +49,12 @@ public abstract class JetSelfTargetingIntention<T: JetElement>(protected val key
         return file.findElementAt(offset)?.getParentOfTypesAndPredicate(false, elementType) { element -> isApplicableTo(element, editor) }
     }
 
-    public override fun getFamilyName(): String {
-        return JetBundle.message(key + ".family")
-    }
+    override fun isAvailable(project: Project, editor: Editor, file: PsiFile)
+            = getTarget(editor, file) != null
 
-    public override fun isAvailable(project: Project, editor: Editor, file: PsiFile): Boolean {
-        return getTarget(editor, file) != null
-    }
-
-    public override fun invoke(project: Project, editor: Editor, file: PsiFile): Unit {
-        val target = getTarget(editor, file)
-        assert(target != null, "Intention is not applicable")
-
-        applyTo(target!!, editor)
+    override fun invoke(project: Project, editor: Editor, file: PsiFile): Unit {
+        val target = getTarget(editor, file) ?: error("Intention is not applicable")
+        applyTo(target, editor)
     }
 
     override fun startInWriteAction(): Boolean = true
