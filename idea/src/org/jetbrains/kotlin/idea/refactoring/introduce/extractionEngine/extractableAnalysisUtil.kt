@@ -69,8 +69,10 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.JetScopeUtils
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
 import org.jetbrains.kotlin.types.*
@@ -642,12 +644,26 @@ private fun ExtractionData.inferParametersInfo(
 
             val extractParameter = extractThis || extractLocalVar
             if (extractParameter) {
-                val parameterType = when {
-                    receiverToExtract.exists() -> receiverToExtract.getType()
-                    else -> bindingContext[BindingContext.SMARTCAST, originalRef]
-                            ?: bindingContext[BindingContext.EXPRESSION_TYPE, originalRef]
-                            ?: DEFAULT_PARAMETER_TYPE
+                val parameterExpression = when {
+                    receiverToExtract is ExpressionReceiver -> receiverToExtract.getExpression()
+                    receiverToExtract.exists() -> null
+                    else -> (originalRef.getParent() as? JetThisExpression) ?: originalRef
                 }
+
+                val parameterType = when {
+                    parameterExpression != null -> bindingContext[BindingContext.SMARTCAST, parameterExpression]
+                                                   ?: bindingContext[BindingContext.EXPRESSION_TYPE, parameterExpression]
+                                                   ?: if (receiverToExtract.exists()) receiverToExtract.getType() else null
+                    receiverToExtract is ThisReceiver -> {
+                        val calleeExpression = resolvedCall!!.getCall().getCalleeExpression()
+                        bindingContext[BindingContext.EXPRESSION_DATA_FLOW_INFO, calleeExpression]?.let { dataFlowInfo ->
+                            val possibleTypes = dataFlowInfo.getPossibleTypes(DataFlowValueFactory.createDataFlowValue(receiverToExtract))
+                            CommonSupertypes.commonSupertype(possibleTypes)
+                        } ?: receiverToExtract.getType()
+                    }
+                    receiverToExtract.exists() -> receiverToExtract.getType()
+                    else -> null
+                } ?: DEFAULT_PARAMETER_TYPE
 
                 val parameter = extractedDescriptorToParameter.getOrPut(descriptorToExtract) {
                     val argumentText =

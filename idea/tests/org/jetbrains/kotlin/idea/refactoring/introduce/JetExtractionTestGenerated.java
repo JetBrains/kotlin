@@ -1643,6 +1643,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                     doExtractFunctionTest(fileName);
                 }
 
+                @TestMetadata("explicitThisWithSmartCast.kt")
+                public void testExplicitThisWithSmartCast() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/extractThis/explicitThisWithSmartCast.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
                 @TestMetadata("implicitAndExplicitLabeledThisInMember.kt")
                 public void testImplicitAndExplicitLabeledThisInMember() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/extractThis/implicitAndExplicitLabeledThisInMember.kt");
@@ -1664,6 +1670,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 @TestMetadata("implicitThisInMember.kt")
                 public void testImplicitThisInMember() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/extractThis/implicitThisInMember.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
+                @TestMetadata("implicitThisWithSmartCast.kt")
+                public void testImplicitThisWithSmartCast() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/extractThis/implicitThisWithSmartCast.kt");
                     doExtractFunctionTest(fileName);
                 }
 
