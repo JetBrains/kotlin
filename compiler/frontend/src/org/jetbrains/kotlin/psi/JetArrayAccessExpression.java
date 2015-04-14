@@ -51,18 +51,28 @@ public class JetArrayAccessExpression extends JetExpressionImpl implements JetRe
 
     @NotNull
     public JetContainerNode getIndicesNode() {
-        JetContainerNode indicesNode = (JetContainerNode) findChildByType(JetNodeTypes.INDICES);
+        JetContainerNode indicesNode = findChildByType(JetNodeTypes.INDICES);
         assert indicesNode != null : "Can't be null because of parser";
         return indicesNode;
     }
 
     @NotNull
     public List<TextRange> getBracketRanges() {
-        PsiElement lBracket = getIndicesNode().findChildByType(JetTokens.LBRACKET);
-        PsiElement rBracket = getIndicesNode().findChildByType(JetTokens.RBRACKET);
+        PsiElement lBracket = getLeftBracket();
+        PsiElement rBracket = getRightBracket();
         if (lBracket == null || rBracket == null) {
             return Collections.emptyList();
         }
         return Lists.newArrayList(lBracket.getTextRange(), rBracket.getTextRange());
+    }
+
+    @Nullable
+    public PsiElement getLeftBracket() {
+        return getIndicesNode().findChildByType(JetTokens.LBRACKET);
+    }
+
+    @Nullable
+    public PsiElement getRightBracket() {
+        return getIndicesNode().findChildByType(JetTokens.RBRACKET);
     }
 }

@@ -16,49 +16,57 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
-import org.jetbrains.kotlin.psi.JetExpression
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.psi.JetPrefixExpression
-import org.jetbrains.kotlin.psi.JetPostfixExpression
-import org.jetbrains.kotlin.psi.JetBinaryExpression
-import org.jetbrains.kotlin.psi.JetArrayAccessExpression
-import org.jetbrains.kotlin.psi.JetCallExpression
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
-import org.jetbrains.kotlin.resolve.BindingContext
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 
-public class OperatorToFunctionIntention : JetSelfTargetingOffsetIndependentIntention<JetExpression>("operator.to.function", javaClass()) {
+public class OperatorToFunctionIntention : JetSelfTargetingIntention<JetExpression>(javaClass(), "Replace overloaded operator with function call") {
     companion object {
-        private fun isApplicablePrefix(element: JetPrefixExpression): Boolean {
-            return when (element.getOperationReference().getReferencedNameElementType()) {
+        private fun isApplicablePrefix(element: JetPrefixExpression, caretOffset: Int): Boolean {
+            val opRef = element.getOperationReference()
+            if (!opRef.getTextRange().containsOffset(caretOffset)) return false
+            return when (opRef.getReferencedNameElementType()) {
                 JetTokens.PLUS, JetTokens.MINUS, JetTokens.PLUSPLUS, JetTokens.MINUSMINUS, JetTokens.EXCL -> true
                 else -> false
             }
         }
 
-        private fun isApplicablePostfix(element: JetPostfixExpression): Boolean {
-            return when (element.getOperationReference().getReferencedNameElementType()) {
+        private fun isApplicablePostfix(element: JetPostfixExpression, caretOffset: Int): Boolean {
+            val opRef = element.getOperationReference()
+            if (!opRef.getTextRange().containsOffset(caretOffset)) return false
+            return when (opRef.getReferencedNameElementType()) {
                 JetTokens.PLUSPLUS, JetTokens.MINUSMINUS -> true
                 else -> false
             }
         }
 
-        private fun isApplicableBinary(element: JetBinaryExpression): Boolean {
-            return when (element.getOperationReference().getReferencedNameElementType()) {
+        private fun isApplicableBinary(element: JetBinaryExpression, caretOffset: Int): Boolean {
+            val opRef = element.getOperationReference()
+            if (!opRef.getTextRange().containsOffset(caretOffset)) return false
+            return when (opRef.getReferencedNameElementType()) {
                 JetTokens.PLUS, JetTokens.MINUS, JetTokens.MUL, JetTokens.DIV, JetTokens.PERC, JetTokens.RANGE, JetTokens.IN_KEYWORD, JetTokens.NOT_IN, JetTokens.PLUSEQ, JetTokens.MINUSEQ, JetTokens.MULTEQ, JetTokens.DIVEQ, JetTokens.PERCEQ, JetTokens.EQEQ, JetTokens.EXCLEQ, JetTokens.GT, JetTokens.LT, JetTokens.GTEQ, JetTokens.LTEQ -> true
                 JetTokens.EQ -> element.getLeft() is JetArrayAccessExpression
                 else -> false
             }
         }
 
-        private fun isApplicableCall(element: JetCallExpression): Boolean {
-            val bindingContext = element.analyze()
-            val resolvedCall = element.getResolvedCall(bindingContext)
+        private fun isApplicableArrayAccess(element: JetArrayAccessExpression, caretOffset: Int): Boolean {
+            val lbracket = element.getLeftBracket() ?: return false
+            return lbracket.getTextRange().containsOffset(caretOffset)
+        }
+
+        private fun isApplicableCall(element: JetCallExpression, caretOffset: Int): Boolean {
+            val lbrace = (element.getValueArgumentList()?.getLeftParenthesis()
+                          ?: element.getFunctionLiteralArguments().firstOrNull()?.getFunctionLiteral()?.getLeftCurlyBrace()
+                          ?: return false) as PsiElement
+            if (!lbrace.getTextRange().containsOffset(caretOffset)) return false
+
+            val resolvedCall = element.getResolvedCall(element.analyze())
             val descriptor = resolvedCall?.getResultingDescriptor()
             if (descriptor is FunctionDescriptor && descriptor.getName().asString() == "invoke") {
                 val parent = element.getParent()
@@ -110,7 +118,7 @@ public class OperatorToFunctionIntention : JetSelfTargetingOffsetIndependentInte
 
             if (op == JetTokens.EQ) {
                 if (left is JetArrayAccessExpression) {
-                    convertArrayAccess(left as JetArrayAccessExpression)
+                    convertArrayAccess(left)
                 }
                 return element
             }
@@ -195,13 +203,13 @@ public class OperatorToFunctionIntention : JetSelfTargetingOffsetIndependentInte
         }
     }
 
-    override fun isApplicableTo(element: JetExpression): Boolean {
+    override fun isApplicableTo(element: JetExpression, caretOffset: Int): Boolean {
         return when (element) {
-            is JetPrefixExpression -> isApplicablePrefix(element)
-            is JetPostfixExpression -> isApplicablePostfix(element)
-            is JetBinaryExpression -> isApplicableBinary(element)
-            is JetArrayAccessExpression -> true
-            is JetCallExpression -> isApplicableCall(element)
+            is JetPrefixExpression -> isApplicablePrefix(element, caretOffset)
+            is JetPostfixExpression -> isApplicablePostfix(element, caretOffset)
+            is JetBinaryExpression -> isApplicableBinary(element, caretOffset)
+            is JetArrayAccessExpression -> isApplicableArrayAccess(element, caretOffset)
+            is JetCallExpression -> isApplicableCall(element, caretOffset)
             else -> false
         }
     }

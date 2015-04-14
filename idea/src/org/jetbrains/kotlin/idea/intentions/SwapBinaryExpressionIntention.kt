@@ -24,23 +24,24 @@ import org.jetbrains.kotlin.idea.util.JetPsiPrecedences
 import org.jetbrains.kotlin.lexer.JetTokens.*
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
-public class SwapBinaryExpression : JetSelfTargetingOffsetIndependentIntention<JetBinaryExpression>(
-        "swap.binary.expression", javaClass()
-) {
+public class SwapBinaryExpressionIntention : JetSelfTargetingIntention<JetBinaryExpression>(javaClass(), "Flip binary expression") {
     companion object {
-        val SUPPORTED_OPERATIONS = setOf(PLUS, MUL, OROR, ANDAND, EQEQ, EXCLEQ, EQEQEQ, EXCLEQEQEQ, GT, LT, GTEQ, LTEQ)
+        private val SUPPORTED_OPERATIONS = setOf(PLUS, MUL, OROR, ANDAND, EQEQ, EXCLEQ, EQEQEQ, EXCLEQEQEQ, GT, LT, GTEQ, LTEQ)
 
-        val SUPPORTED_OPERATION_NAMES = SUPPORTED_OPERATIONS.map { OperatorConventions.BINARY_OPERATION_NAMES[it]?.asString() }.toSet().filterNotNull() +
+        private val SUPPORTED_OPERATION_NAMES = SUPPORTED_OPERATIONS.map { OperatorConventions.BINARY_OPERATION_NAMES[it]?.asString() }.toSet().filterNotNull() +
                                         setOf("xor", "or", "and", "equals", "identityEquals")
     }
 
-    override fun isApplicableTo(element: JetBinaryExpression): Boolean {
+    override fun isApplicableTo(element: JetBinaryExpression, caretOffset: Int): Boolean {
+        val opRef = element.getOperationReference()
+        if (!opRef.getTextRange().containsOffset(caretOffset)) return false
+
         if (leftSubject(element) == null || rightSubject(element) == null) {
             return false
         }
 
         val operationToken = element.getOperationToken()
-        val operationTokenText = element.getOperationReference().getText()
+        val operationTokenText = opRef.getText()
         if (operationToken in SUPPORTED_OPERATIONS
                 || operationToken == IDENTIFIER && operationTokenText in SUPPORTED_OPERATION_NAMES) {
             setText("Flip '$operationTokenText'")
@@ -62,11 +63,9 @@ public class SwapBinaryExpression : JetSelfTargetingOffsetIndependentIntention<J
         val left = leftSubject(element)!!
         val right = rightSubject(element)!!
         val psiFactory = JetPsiFactory(element)
-        val newRight = psiFactory.createExpression(left.getText()!!)
-        val newLeft = psiFactory.createExpression(right.getText()!!)
-        left.replace(newLeft)
-        right.replace(newRight)
-        element.replace(psiFactory.createBinaryExpression(element.getLeft(), convertedOperator, element.getRight()))
+        left.replace(psiFactory.createExpression(right.getText()))
+        right.replace(psiFactory.createExpression(left.getText()))
+        element.replace(psiFactory.createBinaryExpression(element.getLeft()!!, convertedOperator, element.getRight()!!))
     }
 
     private fun leftSubject(element: JetBinaryExpression): JetExpression? {

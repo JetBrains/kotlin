@@ -4,5 +4,5 @@ class coffee() {
     }
 }
 fun main() {
-    val f = coffee().<caret>invoke()
+    val f = coffee().invoke<caret>()
 }

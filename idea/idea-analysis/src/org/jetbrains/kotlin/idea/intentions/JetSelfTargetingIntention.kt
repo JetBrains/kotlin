@@ -16,21 +16,24 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
+import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.psi.JetElement
+import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.idea.JetBundle
+import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypesAndPredicate
-import com.intellij.codeInsight.intention.IntentionAction
+import org.jetbrains.kotlin.psi.psiUtil.parents
 
-public abstract class JetSelfTargetingIntention<T: JetElement>(
-        public val elementType: Class<T>,
+public abstract class JetSelfTargetingIntention<TElement : JetElement>(
+        public val elementType: Class<TElement>,
         private var text: String,
-        private val familyName: String)
+        private val familyName: String = text)
 : IntentionAction {
     deprecated("Use primary constructor, no need to use i18n")
-    public constructor(key: String, elementType: Class<T>) : this(elementType, JetBundle.message(key), JetBundle.message(key + ".family")) {
+    public constructor(key: String, elementType: Class<TElement>) : this(elementType, JetBundle.message(key), JetBundle.message(key + ".family")) {
     }
 
     protected fun setText(text: String) {
@@ -40,13 +43,28 @@ public abstract class JetSelfTargetingIntention<T: JetElement>(
     final override fun getText() = text
     final override fun getFamilyName() = familyName
 
-    public abstract fun isApplicableTo(element: T, caretOffset: Int): Boolean
+    public abstract fun isApplicableTo(element: TElement, caretOffset: Int): Boolean
 
-    public abstract fun applyTo(element: T, editor: Editor)
+    public abstract fun applyTo(element: TElement, editor: Editor)
 
-    private fun getTarget(editor: Editor, file: PsiFile): T? {
+    private fun getTarget(editor: Editor, file: PsiFile): TElement? {
         val offset = editor.getCaretModel().getOffset()
-        return file.findElementAt(offset)?.getParentOfTypesAndPredicate(false, elementType) { element -> isApplicableTo(element, offset) }
+        val leaf1 = file.findElementAt(offset)
+        val leaf2 = file.findElementAt(offset - 1)
+        val commonParent = if (leaf1 != null && leaf2 != null) PsiTreeUtil.findCommonParent(leaf1, leaf2) else null
+
+        var elementsToCheck: Sequence<PsiElement> = sequence { null }
+        if (leaf1 != null) {
+            elementsToCheck += leaf1.parents().takeWhile { it != commonParent }
+        }
+        if (leaf2 != null) {
+            elementsToCheck += leaf2.parents().takeWhile { it != commonParent }
+        }
+        if (commonParent != null) {
+            elementsToCheck += commonParent.parents()
+        }
+
+        return elementsToCheck.filterIsInstance(elementType).firstOrNull { isApplicableTo(it, offset) }
     }
 
     final override fun isAvailable(project: Project, editor: Editor, file: PsiFile)
@@ -62,17 +80,17 @@ public abstract class JetSelfTargetingIntention<T: JetElement>(
     override fun toString(): String = getText()
 }
 
-public abstract class JetSelfTargetingOffsetIndependentIntention<T: JetElement>(
-        elementType: Class<T>,
+public abstract class JetSelfTargetingOffsetIndependentIntention<TElement : JetElement>(
+        elementType: Class<TElement>,
         text: String,
-        familyName: String)
-: JetSelfTargetingIntention<T>(elementType, text, familyName) {
+        familyName: String = text)
+: JetSelfTargetingIntention<TElement>(elementType, text, familyName) {
 
     deprecated("Use primary constructor, no need to use i18n")
-    public constructor(key: String, elementType: Class<T>) : this(elementType, JetBundle.message(key), JetBundle.message(key + ".family")) {
+    public constructor(key: String, elementType: Class<TElement>) : this(elementType, JetBundle.message(key), JetBundle.message(key + ".family")) {
     }
 
-    public abstract fun isApplicableTo(element: T): Boolean
+    public abstract fun isApplicableTo(element: TElement): Boolean
 
-    override final fun isApplicableTo(element: T, caretOffset: Int): Boolean = isApplicableTo(element)
+    override final fun isApplicableTo(element: TElement, caretOffset: Int): Boolean = isApplicableTo(element)
 }

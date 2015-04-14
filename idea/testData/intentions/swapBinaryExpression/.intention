@@ -1,1 +1,1 @@
-org.jetbrains.kotlin.idea.intentions.SwapBinaryExpression
+org.jetbrains.kotlin.idea.intentions.SwapBinaryExpressionIntention

@@ -16,21 +16,16 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
-import org.jetbrains.kotlin.psi.JetStringTemplateExpression
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.psi.JetStringTemplateEntry
-import org.jetbrains.kotlin.psi.JetBinaryExpression
-import org.jetbrains.kotlin.psi.JetStringTemplateEntryWithExpression
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.psi.JetIfExpression
-import org.jetbrains.kotlin.psi.JetBlockExpression
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContextUtils
 
 public class ConvertToConcatenatedStringIntention : JetSelfTargetingOffsetIndependentIntention<JetStringTemplateExpression>("convert.to.concatenated.string.intention", javaClass()) {
     override fun isApplicableTo(element: JetStringTemplateExpression): Boolean {
+        if (element.getLastChild().getNode().getElementType() != JetTokens.CLOSING_QUOTE) return false // not available for unclosed literal
         return element.getEntries().any { it is JetStringTemplateEntryWithExpression }
     }
 
@@ -39,7 +34,7 @@ public class ConvertToConcatenatedStringIntention : JetSelfTargetingOffsetIndepe
         val quote = if (tripleQuoted) "\"\"\"" else "\""
         val entries = element.getEntries()
 
-        val result = entries.stream()
+        val result = entries.sequence()
                 .mapIndexed { index, entry ->
                     entry.toSeparateString(quote, convertExplicitly = index == 0, isFinalEntry = index == entries.size() - 1)
                 }
