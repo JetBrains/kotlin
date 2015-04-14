@@ -17,121 +17,99 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.psi.JetCallExpression
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.psi.JetPrefixExpression
-import org.jetbrains.kotlin.idea.util.ShortenReferences
-import org.jetbrains.kotlin.psi.JetCallableReferenceExpression
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import kotlin.properties.Delegates
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.psi.JetIfExpression
-import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.psi.JetBlockExpression
-import org.jetbrains.kotlin.psi.JetThrowExpression
-import org.jetbrains.kotlin.psi.psiUtil.replaced
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.util.ShortenReferences
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.replaced
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 
-public class ConvertAssertToIfWithThrowIntention : JetSelfTargetingOffsetIndependentIntention<JetCallExpression>(
-        "convert.assert.to.if.with.throw", javaClass()) {
+public class ConvertAssertToIfWithThrowIntention : JetSelfTargetingIntention<JetCallExpression>(javaClass(), "Replace 'assert' with 'if' statement") {
+    override fun isApplicableTo(element: JetCallExpression, caretOffset: Int): Boolean {
+        val callee = element.getCalleeExpression() ?: return false
+        if (callee.getText() != "assert") return false
+        if (!callee.getTextRange().containsOffset(caretOffset)) return false
 
-    private var messageIsAFunction : Boolean by Delegates.notNull()
-
-    override fun isApplicableTo(element: JetCallExpression): Boolean {
-        if (element.getCalleeExpression()?.getText() != "assert") return false
-
-        val argumentSize = element.getValueArguments().size
+        val argumentSize = element.getValueArguments().size()
         if (argumentSize !in 1..2) return false
-        if (element.getFunctionLiteralArguments().size == 1 && argumentSize == 1) return false
+        if (element.getFunctionLiteralArguments().size() == 1 && argumentSize == 1) return false
 
-        val context = element.analyze()
-        val resolvedCall = element.getResolvedCall(context)
-        if (resolvedCall == null) return false
-
-        val valParameters = resolvedCall.getResultingDescriptor().getValueParameters()
-        if (valParameters.size > 1) {
-            messageIsAFunction = (valParameters[1].getType() != KotlinBuiltIns.getInstance().getAnyType())
-        } else {
-            messageIsAFunction = false
-        }
-
+        val resolvedCall = element.getResolvedCall(element.analyze()) ?: return false
         return DescriptorUtils.getFqName(resolvedCall.getResultingDescriptor()).asString() == "kotlin.assert"
     }
 
     override fun applyTo(element: JetCallExpression, editor: Editor) {
         val args = element.getValueArguments()
         val conditionText = args[0]?.getArgumentExpression()?.getText() ?: return
-        val lambdas = element.getFunctionLiteralArguments()
+        val functionLiterals = element.getFunctionLiteralArguments()
+        val messageIsFunction = messageIsFunction(element)
 
         val psiFactory = JetPsiFactory(element)
-        val messageExpr =
-                if (args.size == 2) {
-                    args[1]?.getArgumentExpression()
-                }
-                else if (lambdas.isNotEmpty()) {
-                    element.getFunctionLiteralArguments()[0]
-                }
-                else {
-                    psiFactory.createExpression("\"Assertion failed\"")
-                }
 
-        if (messageExpr == null) return
+        val messageExpr = when {
+            args.size() == 2 -> args[1]?.getArgumentExpression() ?: return
+            functionLiterals.isNotEmpty() -> functionLiterals.first()
+            else -> psiFactory.createExpression("\"Assertion failed\"")
+        }
 
-        val replaced = replaceWithIfThenThrowExpression(element)
+        val ifExpression = replaceWithIfThenThrowExpression(element)
 
-        ShortenReferences.DEFAULT.process(replaced.getThen()!!)
+        // shorten java.lang.AssertionError
+        ShortenReferences.DEFAULT.process(ifExpression.getThen()!!)
 
         fun replaceMessage() {
-            val thrownExpression = ((replaced.getThen() as JetBlockExpression).getStatements().first() as JetThrowExpression).getThrownExpression()
-            val assertionErrorCall = if (thrownExpression is JetCallExpression) {
-                thrownExpression: JetCallExpression
-            }
-            else {
+            val thrownExpression = ((ifExpression.getThen() as JetBlockExpression).getStatements().single() as JetThrowExpression).getThrownExpression()
+            val assertionErrorCall = if (thrownExpression is JetCallExpression)
+                thrownExpression
+            else
                 (thrownExpression as JetDotQualifiedExpression).getSelectorExpression() as JetCallExpression
-            }
 
             val message = psiFactory.createExpression(
-                    if (messageIsAFunction && messageExpr is JetCallableReferenceExpression) {
-                        "${messageExpr.getCallableReference().getText()}()"
+                    if (messageIsFunction && messageExpr is JetCallableReferenceExpression) {
+                        messageExpr.getCallableReference().getText() + "()"
                     }
-                    else if (messageIsAFunction) {
-                        "${messageExpr.getText()}()"
+                    else if (messageIsFunction) {
+                        messageExpr.getText() + "()"
                     }
                     else {
-                        "${messageExpr.getText()}"
+                        messageExpr.getText()
                     }
             )
-            assertionErrorCall.getValueArguments().single()!!.getArgumentExpression()!!.replace(message)
+            assertionErrorCall.getValueArguments().single().getArgumentExpression()!!.replace(message)
         }
 
         fun replaceCondition() {
-            val ifCondition = replaced.getCondition() as JetPrefixExpression
+            val ifCondition = ifExpression.getCondition() as JetPrefixExpression
             ifCondition.getBaseExpression()!!.replace(psiFactory.createExpression(conditionText))
         }
 
         replaceCondition()
         replaceMessage()
 
-        simplifyConditionIfPossible(editor, replaced)
+        simplifyConditionIfPossible(ifExpression)
     }
 
-    private fun simplifyConditionIfPossible(editor: Editor, replaced: JetIfExpression) {
-        val condition = replaced.getCondition() as JetPrefixExpression
+    private fun messageIsFunction(callExpr: JetCallExpression): Boolean {
+        val resolvedCall = callExpr.getResolvedCall(callExpr.analyze()) ?: return false
+        val valParameters = resolvedCall.getResultingDescriptor().getValueParameters()
+        return valParameters.size() > 1 && valParameters[1].getType() != KotlinBuiltIns.getInstance().getAnyType()
+    }
+
+    private fun simplifyConditionIfPossible(ifExpression: JetIfExpression) {
+        val condition = ifExpression.getCondition() as JetPrefixExpression
         val simplifier = SimplifyNegatedBinaryExpressionIntention()
         if (simplifier.isApplicableTo(condition)) {
-            simplifier.applyTo(condition, editor)
+            simplifier.applyTo(condition)
         }
     }
 
     private fun replaceWithIfThenThrowExpression(original: JetCallExpression): JetIfExpression {
         val replacement = JetPsiFactory(original).createExpression("if (!true) { throw java.lang.AssertionError(\"\") }") as JetIfExpression
         val parent = original.getParent()
-        return if (parent is JetDotQualifiedExpression) {
+        return if (parent is JetDotQualifiedExpression)
             parent.replaced(replacement)
-        }
-        else {
+        else
             original.replaced(replacement)
-        }
     }
 }
