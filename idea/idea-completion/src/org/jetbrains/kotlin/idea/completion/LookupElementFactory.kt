@@ -154,7 +154,7 @@ public class LookupElementFactory(
         val name = nameAndIconDescriptor.getName().asString()
         val icon = JetDescriptorIconProvider.getIcon(nameAndIconDescriptor, iconDeclaration, Iconable.ICON_FLAG_VISIBILITY)
 
-        var element = LookupElementBuilder.create(DeclarationDescriptorLookupObject(descriptor, resolutionFacade, declaration), name)
+        var element = LookupElementBuilder.create(DeclarationDescriptorLookupObjectImpl(descriptor, resolutionFacade, declaration), name)
                 .withIcon(icon)
 
         when (descriptor) {

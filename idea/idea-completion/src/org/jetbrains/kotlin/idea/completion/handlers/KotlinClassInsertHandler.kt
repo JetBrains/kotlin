@@ -18,18 +18,18 @@ package org.jetbrains.kotlin.idea.completion.handlers
 
 import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.LookupElement
-import com.intellij.psi.PsiDocumentManager
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.idea.util.ShortenReferences
-import org.jetbrains.kotlin.idea.completion.DeclarationDescriptorLookupObject
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import com.intellij.psi.PsiClass
-import org.jetbrains.kotlin.psi.JetNameReferenceExpression
+import com.intellij.psi.PsiDocumentManager
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.completion.isAfterDot
+import org.jetbrains.kotlin.idea.core.completion.DeclarationDescriptorLookupObject
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.ShortenReferences
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.JetNameReferenceExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.idea.completion.isAfterDot
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 
 public object KotlinClassInsertHandler : BaseDeclarationInsertHandler() {
     override fun handleInsert(context: InsertionContext, item: LookupElement) {

@@ -20,16 +20,17 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.core.completion.DeclarationDescriptorLookupObject
 
 /**
  * Stores information about resolved descriptor and position of that descriptor.
  * Position will be used for sorting
  */
-public class DeclarationDescriptorLookupObject(
-        public val descriptor: DeclarationDescriptor,
+public class DeclarationDescriptorLookupObjectImpl(
+        public override val descriptor: DeclarationDescriptor,
         private val resolutionFacade: ResolutionFacade,
-        public val psiElement: PsiElement?
-) {
+        public override val psiElement: PsiElement?
+): DeclarationDescriptorLookupObject {
     override fun toString(): String {
         return super.toString() + " " + descriptor
     }
@@ -42,7 +43,7 @@ public class DeclarationDescriptorLookupObject(
         if (this identityEquals other) return true
         if (other == null || javaClass != other.javaClass) return false
 
-        val lookupObject = other as DeclarationDescriptorLookupObject
+        val lookupObject = other as DeclarationDescriptorLookupObjectImpl
 
         if (resolutionFacade != lookupObject.resolutionFacade) {
             LOG.warn("Descriptors from different resolve sessions")

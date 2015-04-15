@@ -17,10 +17,10 @@
 package org.jetbrains.kotlin.idea.completion.handlers
 
 import com.intellij.codeInsight.completion.InsertHandler
-import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.completion.InsertionContext
-import org.jetbrains.kotlin.idea.completion.DeclarationDescriptorLookupObject
+import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.idea.core.completion.DeclarationDescriptorLookupObject
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 
 open class BaseDeclarationInsertHandler : InsertHandler<LookupElement> {
