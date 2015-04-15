@@ -63,9 +63,7 @@ public class JsLibraryStdDetectionUtil {
             if (root.getFileSystem().getProtocol() != StandardFileSystems.JAR_PROTOCOL) continue;
 
             VirtualFile jar = VfsUtilCore.getVirtualFileForJar(root);
-            assert jar != null : "expected not null for root '" + root.getPath() + "'";
-
-            if (LibraryUtils.isKotlinJavascriptStdLibrary(new File(jar.getPath()))) {
+            if (jar != null && LibraryUtils.isKotlinJavascriptStdLibrary(new File(jar.getPath()))) {
                 return jar;
             }
         }
