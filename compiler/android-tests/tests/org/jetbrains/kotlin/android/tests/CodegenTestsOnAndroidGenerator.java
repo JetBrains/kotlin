@@ -71,8 +71,8 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
     }
 
     private void prepareAndroidModule() throws IOException {
-        System.out.println("Copying kotlin-runtime.jar in android module...");
-        copyKotlinRuntimeJar();
+        System.out.println("Copying kotlin-runtime.jar and kotlin-reflect.jar in android module...");
+        copyKotlinRuntimeJars();
 
         System.out.println("Check \"libs\" folder in tested android module...");
         File libsFolderInTestedModule = new File(pathManager.getLibsFolderInAndroidTestedModuleTmpFolder());
@@ -81,10 +81,14 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
         }
     }
 
-    private void copyKotlinRuntimeJar() throws IOException {
+    private void copyKotlinRuntimeJars() throws IOException {
         FileUtil.copy(
                 ForTestCompileRuntime.runtimeJarForTests(),
                 new File(pathManager.getLibsFolderInAndroidTmpFolder() + "/kotlin-runtime.jar")
+        );
+        FileUtil.copy(
+                ForTestCompileRuntime.reflectJarForTests(),
+                new File(pathManager.getLibsFolderInAndroidTmpFolder() + "/kotlin-reflect.jar")
         );
     }
 
