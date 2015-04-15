@@ -223,20 +223,11 @@
             </not>
             <then>
                 <!-- Download bootstrap compiler for local build -->
-                <get src="https://teamcity.jetbrains.com/guestAuth/repository/download/bt345/bootstrap.tcbuildtag/kotlin-plugin-{build.number}.zip"
-                     dest="dependencies/download/bootstrap-compiler.zip" usetimestamp="true"/>
+                <get
+                    src="https://teamcity.jetbrains.com/guestAuth/repository/download/bt345/bootstrap.tcbuildtag/kotlin-plugin-{build.number}.zip"
+                    dest="dependencies/download/bootstrap-compiler.zip" usetimestamp="true"/>
                 <delete dir="dependencies/bootstrap-compiler" failonerror="false"/>
                 <unzip src="dependencies/download/bootstrap-compiler.zip" dest="dependencies/bootstrap-compiler"/>
-                <if>
-                    <matches pattern="mac\.zip|tar\.gz" string="${os.tag}"/>
-                    <then>
-                        <!-- Java can't manipulate permissions -->
-                        <exec executable="find">
-                            <arg value="dependencies/bootstrap-compiler/Kotlin/kotlinc/bin"/>
-                            <arg line="-name 'kotlin*' ! -name '*.bat' -exec chmod a+x '{}' ;"/>
-                        </exec>
-                    </then>
-                </if>
             </then>
             <else>
                 <!-- Teamcity should provide bootstrap compiler with dependency feature -->
@@ -249,13 +240,27 @@
                     <then>
                         <fail message="Bootstrap compiler is expected to be downloaded to 'dependencies/bootstrap-compiler' by TeamCity"/>
                     </then>
+                    <else>
+                        <echo message="Bootstrap compiler found in 'dependencies/bootstrap-compiler'"/>
+                    </else>
                 </if>
             </else>
         </if>
 
+        <if>
+            <matches pattern="mac\.zip|tar\.gz" string="${os.tag}"/>
+            <then>
+                <!-- Java can't manipulate permissions -->
+                <exec executable="find">
+                    <arg value="dependencies/bootstrap-compiler/Kotlin/kotlinc/bin"/>
+                    <arg line="-name 'kotlin*' ! -name '*.bat' -exec chmod a+x '{}' ;"/>
+                </exec>
+            </then>
+        </if>
+
         <!-- Markdown parser -->
         <get src="https://teamcity.jetbrains.com/guestAuth/repository/download/IntelliJMarkdownParser_Build/.lastFinished/markdown_jar/markdown.jar"
-             dest="dependencies/markdown.jar" usetimestamp="true"/>
+            dest="dependencies/markdown.jar" usetimestamp="true"/>
     </target>
 
     <macrodef name="get_android_sdk">
@@ -301,7 +306,7 @@
 
             <if>
                 <equals arg1="${android.os.tag}" arg2="windows"/>
-                <then />
+                <then/>
                 <else>
                     <exec executable="chmod">
                         <arg value="a+x"/>
@@ -382,7 +387,7 @@
                     <execute_update base.url="@{teamcity.server.url}/guestAuth/app/rest/builds/id:${execute.build.id}"/>
 
                     <propertyfile file="${dependencies.info.file}">
-                        <entry key="idea.build.id" value="${execute.build.id}" />
+                        <entry key="idea.build.id" value="${execute.build.id}"/>
                     </propertyfile>
                 </else>
             </if>
