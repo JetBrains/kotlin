@@ -168,7 +168,7 @@ public class LazyJavaClassMemberScope(
         val methods = jClass.getMethods()
         val result = ArrayList<ValueParameterDescriptor>(methods.size())
 
-        val attr = TypeUsage.MEMBER_SIGNATURE_INVARIANT.toAttributes(allowFlexible = false)
+        val attr = TypeUsage.MEMBER_SIGNATURE_INVARIANT.toAttributes(allowFlexible = false, isForAnnotationParameter = true)
 
         val (methodsNamedValue, otherMethods) = methods.
                 partition { it.getName() == JvmAnnotationNames.DEFAULT_ANNOTATION_MEMBER_NAME }

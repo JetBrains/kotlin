@@ -351,6 +351,18 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledJava(fileName);
             }
 
+            @TestMetadata("ClassObjectInParamRaw.java")
+            public void testClassObjectInParamRaw() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/annotations/ClassObjectInParamRaw.java");
+                doTestCompiledJava(fileName);
+            }
+
+            @TestMetadata("ClassObjectInParamVariance.java")
+            public void testClassObjectInParamVariance() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/annotations/ClassObjectInParamVariance.java");
+                doTestCompiledJava(fileName);
+            }
+
             @TestMetadata("CustomAnnotation.java")
             public void testCustomAnnotation() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/annotations/CustomAnnotation.java");

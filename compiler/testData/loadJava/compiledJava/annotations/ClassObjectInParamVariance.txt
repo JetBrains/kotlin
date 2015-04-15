@@ -1,0 +1,17 @@
+package test
+
+public open class ClassObjectInParamVariance {
+    public constructor ClassObjectInParamVariance()
+
+    public final annotation class Anno : kotlin.Annotation {
+        public constructor Anno(/*0*/ arg1: kotlin.reflect.KClass<out kotlin.Int!>, /*1*/ arg2: kotlin.reflect.KClass<in kotlin.Int!>, /*2*/ arg3: kotlin.Array<kotlin.reflect.KClass<out kotlin.Int!>>, /*3*/ arg4: kotlin.Array<kotlin.reflect.KClass<in kotlin.Int!>>, /*4*/ arg5: kotlin.Array<kotlin.reflect.KClass<out java.lang.Class<*>!>>, /*5*/ arg6: kotlin.Array<kotlin.reflect.KClass<in java.lang.Class<*>!>>, /*6*/ arg7: kotlin.Array<kotlin.reflect.KClass<out java.lang.Class<kotlin.Int!>!>>, /*7*/ arg8: kotlin.Array<kotlin.reflect.KClass<in java.lang.Class<kotlin.Int!>!>>)
+        public abstract fun arg1(): kotlin.reflect.KClass<out kotlin.Int!>
+        public abstract fun arg2(): kotlin.reflect.KClass<in kotlin.Int!>
+        public abstract fun arg3(): kotlin.Array<kotlin.reflect.KClass<out kotlin.Int!>>
+        public abstract fun arg4(): kotlin.Array<kotlin.reflect.KClass<in kotlin.Int!>>
+        public abstract fun arg5(): kotlin.Array<kotlin.reflect.KClass<out java.lang.Class<*>!>>
+        public abstract fun arg6(): kotlin.Array<kotlin.reflect.KClass<in java.lang.Class<*>!>>
+        public abstract fun arg7(): kotlin.Array<kotlin.reflect.KClass<out java.lang.Class<kotlin.Int!>!>>
+        public abstract fun arg8(): kotlin.Array<kotlin.reflect.KClass<in java.lang.Class<kotlin.Int!>!>>
+    }
+}

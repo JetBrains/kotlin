@@ -120,7 +120,11 @@ public abstract class LazyJavaMemberScope(
         val valueParameters = resolveValueParameters(c, functionDescriptorImpl, method.getValueParameters())
 
         val annotationMethod = method.getContainingClass().isAnnotationType()
-        val returnTypeAttrs = LazyJavaTypeAttributes(c, method, TypeUsage.MEMBER_SIGNATURE_COVARIANT, annotations, allowFlexible = !annotationMethod)
+        val returnTypeAttrs = LazyJavaTypeAttributes(
+                c, method, TypeUsage.MEMBER_SIGNATURE_COVARIANT, annotations,
+                allowFlexible = !annotationMethod,
+                isForAnnotationParameter = annotationMethod
+        )
         val returnJavaType = method.getReturnType() ?: throw IllegalStateException("Constructor passed as method: $method")
         // Annotation arguments are never null in Java
         val returnType = c.typeResolver.transformJavaType(returnJavaType, returnTypeAttrs).let {

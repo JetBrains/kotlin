@@ -90,6 +90,51 @@ public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxCod
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/annotations/retentionInJava.kt");
             doTestAgainstJava(fileName);
         }
+
+        @TestMetadata("compiler/testData/codegen/boxAgainstJava/annotations/kClassMapping")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class KClassMapping extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInKClassMapping() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxAgainstJava/annotations/kClassMapping"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("arrayClassParameter.kt")
+            public void testArrayClassParameter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/annotations/kClassMapping/arrayClassParameter.kt");
+                doTestAgainstJava(fileName);
+            }
+
+            @TestMetadata("arrayClassParameterOnJavaClass.kt")
+            public void testArrayClassParameterOnJavaClass() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/annotations/kClassMapping/arrayClassParameterOnJavaClass.kt");
+                doTestAgainstJava(fileName);
+            }
+
+            @TestMetadata("classParameter.kt")
+            public void testClassParameter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/annotations/kClassMapping/classParameter.kt");
+                doTestAgainstJava(fileName);
+            }
+
+            @TestMetadata("classParameterOnJavaClass.kt")
+            public void testClassParameterOnJavaClass() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/annotations/kClassMapping/classParameterOnJavaClass.kt");
+                doTestAgainstJava(fileName);
+            }
+
+            @TestMetadata("varargClassParameter.kt")
+            public void testVarargClassParameter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/annotations/kClassMapping/varargClassParameter.kt");
+                doTestAgainstJava(fileName);
+            }
+
+            @TestMetadata("varargClassParameterOnJavaClass.kt")
+            public void testVarargClassParameterOnJavaClass() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/annotations/kClassMapping/varargClassParameterOnJavaClass.kt");
+                doTestAgainstJava(fileName);
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/boxAgainstJava/callableReference")

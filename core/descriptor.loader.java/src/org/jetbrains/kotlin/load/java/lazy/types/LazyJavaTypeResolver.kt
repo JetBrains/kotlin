@@ -35,9 +35,12 @@ import org.jetbrains.kotlin.resolve.jvm.PLATFORM_TYPES
 import org.jetbrains.kotlin.load.java.lazy.types.JavaTypeFlexibility.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.name.FqName
 import kotlin.platform.platformStatic
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 import kotlin.properties.*
+
+private val JAVA_LANG_CLASS_FQ_NAME: FqName = FqName("java.lang.Class")
 
 class LazyJavaTypeResolver(
         private val c: LazyJavaResolverContext,
@@ -76,7 +79,8 @@ class LazyJavaTypeResolver(
                 }
             }
 
-            val componentType = transformJavaType(javaComponentType, TYPE_ARGUMENT.toAttributes(attr.allowFlexible))
+            val componentType = transformJavaType(javaComponentType,
+                                                  TYPE_ARGUMENT.toAttributes(attr.allowFlexible, attr.isForAnnotationParameter))
 
             if (PLATFORM_TYPES && attr.allowFlexible) {
                 return@run FlexibleJavaClassifierTypeCapabilities.create(
@@ -117,21 +121,7 @@ class LazyJavaTypeResolver(
                     val fqName = classifier.getFqName()
                             .sure("Class type should have a FQ name: " + classifier)
 
-                    val javaToKotlinClassMap = JavaToKotlinClassMap.INSTANCE
-                    val howThisTypeIsUsedEffectively = when {
-                        attr.flexibility == FLEXIBLE_LOWER_BOUND -> MEMBER_SIGNATURE_COVARIANT
-                        attr.flexibility == FLEXIBLE_UPPER_BOUND -> MEMBER_SIGNATURE_CONTRAVARIANT
-
-                        // This case has to be checked before isMarkedReadOnly/isMarkedMutable, because those two are slow
-                        // not mapped, we don't care about being marked mutable/read-only
-                        javaToKotlinClassMap.mapPlatformClass(fqName).isEmpty() -> attr.howThisTypeIsUsed
-
-                        // Read (possibly external) annotations
-                        else -> attr.howThisTypeIsUsedAccordingToAnnotations
-                    }
-
-                    val classData = javaToKotlinClassMap.mapKotlinClass(fqName, howThisTypeIsUsedEffectively)
-                                    ?: c.moduleClassResolver.resolveClass(classifier)
+                    val classData = mapKotlinClass(fqName) ?: c.moduleClassResolver.resolveClass(classifier)
 
                     classData?.getTypeConstructor()
                         ?: ErrorUtils.createErrorTypeConstructor("Unresolved java classifier: " + javaType.getPresentableText())
@@ -147,6 +137,28 @@ class LazyJavaTypeResolver(
                 }
                 else -> throw IllegalStateException("Unknown classifier kind: $classifier")
             }
+        }
+
+        private fun mapKotlinClass(fqName: FqName): ClassDescriptor? {
+            if (attr.isForAnnotationParameter && fqName == JAVA_LANG_CLASS_FQ_NAME) {
+                return c.reflectionTypes.kClass
+            }
+
+            val javaToKotlinClassMap = JavaToKotlinClassMap.INSTANCE
+
+            val howThisTypeIsUsedEffectively = when {
+                attr.flexibility == FLEXIBLE_LOWER_BOUND -> MEMBER_SIGNATURE_COVARIANT
+                attr.flexibility == FLEXIBLE_UPPER_BOUND -> MEMBER_SIGNATURE_CONTRAVARIANT
+
+                // This case has to be checked before isMarkedReadOnly/isMarkedMutable, because those two are slow
+                // not mapped, we don't care about being marked mutable/read-only
+                javaToKotlinClassMap.mapPlatformClass(fqName).isEmpty() -> attr.howThisTypeIsUsed
+
+                // Read (possibly external) annotations
+                else -> attr.howThisTypeIsUsedAccordingToAnnotations
+            }
+
+            return javaToKotlinClassMap.mapKotlinClass(fqName, howThisTypeIsUsedEffectively)
         }
 
         private fun isConstructorTypeParameter(): Boolean {
@@ -331,6 +343,8 @@ trait JavaTypeAttributes {
     val allowFlexible: Boolean
         get() = true
     val annotations: Annotations
+    val isForAnnotationParameter: Boolean
+        get() = false
 }
 
 enum class JavaTypeFlexibility {
@@ -344,7 +358,8 @@ class LazyJavaTypeAttributes(
         val annotationOwner: JavaAnnotationOwner,
         override val howThisTypeIsUsed: TypeUsage,
         override val annotations: Annotations,
-        override val allowFlexible: Boolean = true
+        override val allowFlexible: Boolean = true,
+        override val isForAnnotationParameter: Boolean = false
 ): JavaTypeAttributes {
 
     override val howThisTypeIsUsedAccordingToAnnotations: TypeUsage by c.storageManager.createLazyValue {
@@ -362,7 +377,7 @@ private fun Annotations.isMarkedMutable() = findAnnotation(JvmAnnotationNames.JE
 internal fun Annotations.isMarkedNotNull() = findAnnotation(JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION) != null
 internal fun Annotations.isMarkedNullable() = findAnnotation(JvmAnnotationNames.JETBRAINS_NULLABLE_ANNOTATION) != null
 
-fun TypeUsage.toAttributes(allowFlexible: Boolean = true) = object : JavaTypeAttributes {
+fun TypeUsage.toAttributes(allowFlexible: Boolean = true, isForAnnotationParameter: Boolean = false) = object : JavaTypeAttributes {
     override val howThisTypeIsUsed: TypeUsage = this@toAttributes
     override val howThisTypeIsUsedAccordingToAnnotations: TypeUsage
             get() = howThisTypeIsUsed
@@ -370,6 +385,8 @@ fun TypeUsage.toAttributes(allowFlexible: Boolean = true) = object : JavaTypeAtt
     override val allowFlexible: Boolean = allowFlexible
 
     override val annotations: Annotations = Annotations.EMPTY
+
+    override val isForAnnotationParameter: Boolean = isForAnnotationParameter
 }
 
 fun JavaTypeAttributes.toFlexible(flexibility: JavaTypeFlexibility) =
