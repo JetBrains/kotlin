@@ -45,7 +45,7 @@ AnnAnn(i = {Ann(i = {IntegerValueType(1)}: kotlin.IntArray)}: kotlin.Array<Ann>)
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-AnnJC(i = {Test.class}: kotlin.Array<java.lang.Class<*>>) AnnJC(i = {}: kotlin.Array<java.lang.Class<*>>) internal final class TestJC {
+AnnJC(i = {javaClass<Test>()}: kotlin.Array<java.lang.Class<*>>) AnnJC(i = {}: kotlin.Array<java.lang.Class<*>>) internal final class TestJC {
     public constructor TestJC()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

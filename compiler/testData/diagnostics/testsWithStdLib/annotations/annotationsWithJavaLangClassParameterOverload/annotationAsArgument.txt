@@ -21,7 +21,7 @@ public final annotation class B : kotlin.Annotation {
     public abstract fun y(): kotlin.Int
 }
 
-A(arg = kotlin.String.class: java.lang.Class<kotlin.String>, b = B(): B) internal final class MyClass1 {
+A(arg = javaClass<kotlin.String>(): java.lang.Class<kotlin.String>, b = B(): B) internal final class MyClass1 {
     public constructor MyClass1()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -35,21 +35,21 @@ A(b = B(y = IntegerValueType(3): IntegerValueType(3)): B) internal final class M
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-A(b = B(arg = kotlin.Double.class: java.lang.Class<kotlin.Double>): B) internal final class MyClass4 {
+A(b = B(arg = javaClass<kotlin.Double>(): java.lang.Class<kotlin.Double>): B) internal final class MyClass4 {
     public constructor MyClass4()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-A(arg = kotlin.Boolean.class: java.lang.Class<kotlin.Boolean>, b = B(arg = kotlin.Char::class: kotlin.reflect.KClass<kotlin.Char>): B) internal final class MyClass5 {
+A(arg = javaClass<kotlin.Boolean>(): java.lang.Class<kotlin.Boolean>, b = B(arg = kotlin.Char::class: kotlin.reflect.KClass<kotlin.Char>): B) internal final class MyClass5 {
     public constructor MyClass5()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-A(arg = kotlin.String::class: kotlin.reflect.KClass<kotlin.String>, b = B(arg = kotlin.Boolean.class: java.lang.Class<kotlin.Boolean>): B) internal final class MyClass6 {
+A(arg = kotlin.String::class: kotlin.reflect.KClass<kotlin.String>, b = B(arg = javaClass<kotlin.Boolean>(): java.lang.Class<kotlin.Boolean>): B) internal final class MyClass6 {
     public constructor MyClass6()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

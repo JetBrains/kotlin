@@ -609,7 +609,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
 
                     @Override
                     public String visitJavaClassValue(JavaClassValue value, Void data) {
-                        return renderType(value.getValue()) + ".class";
+                        return "javaClass<" + renderType(value.getValue()) + ">()";
                     }
 
                     @Override

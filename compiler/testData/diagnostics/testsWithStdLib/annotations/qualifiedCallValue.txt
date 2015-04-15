@@ -5,7 +5,7 @@ package a {
     package a.b {
 
         package a.b.c {
-            kotlin.deprecated(value = "aaa": kotlin.String) a.b.c.ann1(p = kotlin.deprecated(value = "aaa": kotlin.String): kotlin.deprecated) a.b.c.ann1() a.b.c.ann2(p = a.b.c.ann1(): a.b.c.ann1) a.b.c.A.IAnn() a.b.c.ann3(p = a.b.c.A.IAnn(): a.b.c.A.IAnn) a.b.c.A.IAnn() a.b.c.ann3(p = a.b.c.A.IAnn(): a.b.c.A.IAnn) a.b.c.annJavaClass(p = a.b.c.A.class: java.lang.Class<a.b.c.A>) a.b.c.annArray(p = {"a"}: kotlin.Array<kotlin.String>) internal fun test(): kotlin.Int
+            kotlin.deprecated(value = "aaa": kotlin.String) a.b.c.ann1(p = kotlin.deprecated(value = "aaa": kotlin.String): kotlin.deprecated) a.b.c.ann1() a.b.c.ann2(p = a.b.c.ann1(): a.b.c.ann1) a.b.c.A.IAnn() a.b.c.ann3(p = a.b.c.A.IAnn(): a.b.c.A.IAnn) a.b.c.A.IAnn() a.b.c.ann3(p = a.b.c.A.IAnn(): a.b.c.A.IAnn) a.b.c.annJavaClass(p = javaClass<a.b.c.A>(): java.lang.Class<a.b.c.A>) a.b.c.annArray(p = {"a"}: kotlin.Array<kotlin.String>) internal fun test(): kotlin.Int
 
             internal final class A {
                 public constructor A()

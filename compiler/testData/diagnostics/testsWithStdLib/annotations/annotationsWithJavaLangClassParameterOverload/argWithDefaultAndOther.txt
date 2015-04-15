@@ -10,7 +10,7 @@ public final annotation class A : kotlin.Annotation {
     public abstract fun x(): kotlin.Int
 }
 
-A(arg = kotlin.String.class: java.lang.Class<kotlin.String>, x = IntegerValueType(3): IntegerValueType(3)) internal final class MyClass1 {
+A(arg = javaClass<kotlin.String>(): java.lang.Class<kotlin.String>, x = IntegerValueType(3): IntegerValueType(3)) internal final class MyClass1 {
     public constructor MyClass1()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

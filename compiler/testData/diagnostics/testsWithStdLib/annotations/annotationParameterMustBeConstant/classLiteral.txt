@@ -24,7 +24,7 @@ AnnC() internal final class Test {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-AnnC(c = A.class: java.lang.Class<A>) internal final class Test2 {
+AnnC(c = javaClass<A>(): java.lang.Class<A>) internal final class Test2 {
     public constructor Test2()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

@@ -16,7 +16,7 @@ package test {
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-        test.AnnClass(a = test.MyClass.class: java.lang.Class<test.MyClass>) internal companion object Companion {
+        test.AnnClass(a = javaClass<test.MyClass>(): java.lang.Class<test.MyClass>) internal companion object Companion {
             private constructor Companion()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
