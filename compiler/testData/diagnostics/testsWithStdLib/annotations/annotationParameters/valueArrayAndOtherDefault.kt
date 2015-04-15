@@ -22,6 +22,6 @@ public @interface A {
 
 [A] fun test8() {}
 
-[A(x = javaClass<Any>(), <!MIXING_NAMED_AND_POSITIONED_ARGUMENTS!>*array("5", "6")<!>, <!MIXING_NAMED_AND_POSITIONED_ARGUMENTS!>"7"<!>, y = 3)] fun test9() {}
-[A(x = javaClass<Any>(), value = *array("5", "6"), <!MIXING_NAMED_AND_POSITIONED_ARGUMENTS!>"7"<!>, y = 3)] fun test10() {}
+[A(x = <!TYPE_MISMATCH(kotlin.reflect.KClass<*>; java.lang.Class<kotlin.Any>)!>javaClass<Any>()<!>, <!MIXING_NAMED_AND_POSITIONED_ARGUMENTS!>*array("5", "6")<!>, <!MIXING_NAMED_AND_POSITIONED_ARGUMENTS!>"7"<!>, y = 3)] fun test9() {}
+[A(x = <!TYPE_MISMATCH(kotlin.reflect.KClass<*>; java.lang.Class<kotlin.Any>)!>javaClass<Any>()<!>, value = *array("5", "6"), <!MIXING_NAMED_AND_POSITIONED_ARGUMENTS!>"7"<!>, y = 3)] fun test10() {}
 [A(x = javaClass<Any>(), value = *array("5", "6", "7"), y = 3)] fun test11() {}

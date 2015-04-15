@@ -4,6 +4,7 @@ public open class ClassObjectArrayInParam {
     public constructor ClassObjectArrayInParam()
 
     public final annotation class Anno : kotlin.Annotation {
+        public /*synthesized*/ constructor Anno(/*0*/ vararg value: java.lang.Class<*> /*kotlin.Array<out java.lang.Class<*>>*/)
         public constructor Anno(/*0*/ vararg value: kotlin.reflect.KClass<*> /*kotlin.Array<out kotlin.reflect.KClass<*>>*/)
         public abstract fun value(): kotlin.Array<kotlin.reflect.KClass<*>>
     }

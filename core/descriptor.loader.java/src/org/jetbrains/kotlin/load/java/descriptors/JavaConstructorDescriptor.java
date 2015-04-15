@@ -18,10 +18,7 @@ package org.jetbrains.kotlin.load.java.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
-import org.jetbrains.kotlin.descriptors.SourceElement;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.ConstructorDescriptorImpl;
 
@@ -45,9 +42,10 @@ public class JavaConstructorDescriptor extends ConstructorDescriptorImpl impleme
             @NotNull ClassDescriptor containingDeclaration,
             @NotNull Annotations annotations,
             boolean isPrimary,
-            @NotNull SourceElement source
+            @NotNull SourceElement source,
+            Kind kind
     ) {
-        return new JavaConstructorDescriptor(containingDeclaration, null, annotations, isPrimary, Kind.DECLARATION, source);
+        return new JavaConstructorDescriptor(containingDeclaration, null, annotations, isPrimary, kind, source);
     }
 
     @Override

@@ -78,7 +78,6 @@ public final class DescriptorResolverUtils {
     @Nullable
     public static ValueParameterDescriptor getAnnotationParameterByName(@NotNull Name name, @NotNull ClassDescriptor annotationClass) {
         Collection<ConstructorDescriptor> constructors = annotationClass.getConstructors();
-        assert constructors.size() == 1 : "Annotation class descriptor must have only one constructor";
 
         for (ValueParameterDescriptor parameter : constructors.iterator().next().getValueParameters()) {
             if (parameter.getName().equals(name)) {

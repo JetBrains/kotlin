@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.lazy.descriptors
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.load.java.structure.*
@@ -62,7 +63,7 @@ public class LazyJavaClassMemberScope(
             result.add(descriptor)
             result.addIfNotNull(c.samConversionResolver.resolveSamAdapter(descriptor))
         }
-        result ifEmpty { emptyOrSingletonList(createDefaultConstructor()) }
+        result ifEmpty { createDefaultConstructors() }
     }
 
     override fun computeNonDeclaredFunctions(result: MutableCollection<SimpleFunctionDescriptor>, name: Name) {
@@ -108,7 +109,8 @@ public class LazyJavaClassMemberScope(
         val classDescriptor = getContainingDeclaration()
 
         val constructorDescriptor = JavaConstructorDescriptor.createJavaConstructor(
-                classDescriptor, c.resolveAnnotations(constructor), /* isPrimary = */ false, c.sourceElementFactory.source(constructor)
+                classDescriptor, c.resolveAnnotations(constructor), false, c.sourceElementFactory.source(constructor),
+                CallableMemberDescriptor.Kind.DECLARATION
         )
 
         val valueParameters = resolveValueParameters(c, constructorDescriptor, constructor.getValueParameters())
@@ -135,24 +137,45 @@ public class LazyJavaClassMemberScope(
         return constructorDescriptor
     }
 
-    private fun createDefaultConstructor(): ConstructorDescriptor? {
-        val isAnnotation: Boolean = jClass.isAnnotationType()
+    private fun createDefaultConstructors(): List<ConstructorDescriptor> {
+        val isAnnotation = jClass.isAnnotationType()
         if (jClass.isInterface() && !isAnnotation)
-            return null
+            return emptyList()
+
+        val defaultConstructor = createDefaultConstructor(true)
+
+        val additionalConstructor =
+            if (isAnnotation && defaultConstructor.getValueParameters().any { it.getType().isKClassOrArray() })
+                createDefaultConstructor(false)
+            else null
+
+        return listOf(defaultConstructor) + additionalConstructor.singletonOrEmptyList()
+    }
+
+    private fun JetType.isKClassOrArray() = isKClass() || (KotlinBuiltIns.isArray(this) && getArguments().first().getType().isKClass())
+    private fun JetType.isKClass() =
+            (getConstructor().getDeclarationDescriptor() as? ClassDescriptor)?.let { KotlinBuiltIns.isKClass(it) } ?: false
+
+    private fun createDefaultConstructor(isPrimary: Boolean): JavaConstructorDescriptor {
+        val isAnnotation = jClass.isAnnotationType()
 
         val classDescriptor = getContainingDeclaration()
         val constructorDescriptor = JavaConstructorDescriptor.createJavaConstructor(
-                classDescriptor, Annotations.EMPTY, /* isPrimary = */ true, c.sourceElementFactory.source(jClass)
+                classDescriptor, Annotations.EMPTY, isPrimary, c.sourceElementFactory.source(jClass),
+                if (isPrimary) CallableMemberDescriptor.Kind.DECLARATION else CallableMemberDescriptor.Kind.SYNTHESIZED
         )
         val typeParameters = classDescriptor.getTypeConstructor().getParameters()
-        val valueParameters = if (isAnnotation) createAnnotationConstructorParameters(constructorDescriptor)
+        val valueParameters = if (isAnnotation) createAnnotationConstructorParameters(constructorDescriptor, isPrimary)
                               else Collections.emptyList<ValueParameterDescriptor>()
+
         constructorDescriptor.setHasSynthesizedParameterNames(false)
 
         constructorDescriptor.initialize(typeParameters, valueParameters, getConstructorVisibility(classDescriptor))
         constructorDescriptor.setHasStableParameterNames(true)
         constructorDescriptor.setReturnType(classDescriptor.getDefaultType())
-        c.javaResolverCache.recordConstructor(jClass, constructorDescriptor);
+        if (isPrimary) {
+            c.javaResolverCache.recordConstructor(jClass, constructorDescriptor)
+        }
         return constructorDescriptor
     }
 
@@ -164,11 +187,15 @@ public class LazyJavaClassMemberScope(
         return visibility
     }
 
-    private fun createAnnotationConstructorParameters(constructor: ConstructorDescriptorImpl): List<ValueParameterDescriptor> {
+    private fun createAnnotationConstructorParameters(
+            constructor: ConstructorDescriptorImpl,
+            loadJavaClassAsKClass: Boolean
+    ): List<ValueParameterDescriptor> {
         val methods = jClass.getMethods()
         val result = ArrayList<ValueParameterDescriptor>(methods.size())
 
-        val attr = TypeUsage.MEMBER_SIGNATURE_INVARIANT.toAttributes(allowFlexible = false, isForAnnotationParameter = true)
+        val attr = TypeUsage.MEMBER_SIGNATURE_INVARIANT.toAttributes(
+                allowFlexible = false, isForAnnotationParameter = loadJavaClassAsKClass)
 
         val (methodsNamedValue, otherMethods) = methods.
                 partition { it.getName() == JvmAnnotationNames.DEFAULT_ANNOTATION_MEMBER_NAME }
