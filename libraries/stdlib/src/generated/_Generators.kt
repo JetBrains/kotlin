@@ -705,7 +705,7 @@ public fun <T> Iterable<T>.plus(collection: Iterable<T>): List<T> {
  * Returns a sequence containing all elements of original sequence and then all elements of the given [collection]
  */
 public fun <T> Sequence<T>.plus(collection: Iterable<T>): Sequence<T> {
-    return MultiSequence(sequenceOf(this, collection.sequence()))
+    return sequenceOf(this, collection.sequence()).flatten()
 }
 
 
@@ -714,7 +714,7 @@ deprecated("Migrate to using Sequence<T> and respective functions")
  * Returns a stream containing all elements of original stream and then all elements of the given [collection]
  */
 public fun <T> Stream<T>.plus(collection: Iterable<T>): Stream<T> {
-    return Multistream(streamOf(this, collection.stream()))
+    return streamOf(this, collection.stream()).flatten()
 }
 
 /**
@@ -811,7 +811,7 @@ public fun <T> Iterable<T>.plus(element: T): List<T> {
  * Returns a sequence containing all elements of original sequence and then the given element
  */
 public fun <T> Sequence<T>.plus(element: T): Sequence<T> {
-    return MultiSequence(sequenceOf(this, sequenceOf(element)))
+    return sequenceOf(this, sequenceOf(element)).flatten()
 }
 
 
@@ -820,14 +820,14 @@ deprecated("Migrate to using Sequence<T> and respective functions")
  * Returns a stream containing all elements of original stream and then the given element
  */
 public fun <T> Stream<T>.plus(element: T): Stream<T> {
-    return Multistream(streamOf(this, streamOf(element)))
+    return streamOf(this, streamOf(element)).flatten()
 }
 
 /**
  * Returns a sequence containing all elements of original sequence and then all elements of the given [sequence]
  */
 public fun <T> Sequence<T>.plus(sequence: Sequence<T>): Sequence<T> {
-    return MultiSequence(sequenceOf(this, sequence))
+    return sequenceOf(this, sequence).flatten()
 }
 
 
@@ -836,7 +836,7 @@ deprecated("Migrate to using Sequence<T> and respective functions")
  * Returns a stream containing all elements of original stream and then all elements of the given [stream]
  */
 public fun <T> Stream<T>.plus(stream: Stream<T>): Stream<T> {
-    return Multistream(streamOf(this, stream))
+    return streamOf(this, stream).flatten()
 }
 
 /**

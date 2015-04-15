@@ -579,7 +579,7 @@ public fun <T : Any> Iterable<T?>.filterNotNull(): List<T> {
  * Returns a sequence containing all elements that are not null
  */
 public fun <T : Any> Sequence<T?>.filterNotNull(): Sequence<T> {
-    return FilteringSequence(this, false, { it == null }) as Sequence<T>
+    return filterNot { it == null } as Sequence<T>
 }
 
 
@@ -588,7 +588,7 @@ deprecated("Migrate to using Sequence<T> and respective functions")
  * Returns a stream containing all elements that are not null
  */
 public fun <T : Any> Stream<T?>.filterNotNull(): Stream<T> {
-    return FilteringStream(this, false, { it == null }) as Stream<T>
+    return filterNot { it == null } as Stream<T>
 }
 
 /**

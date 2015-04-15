@@ -471,7 +471,7 @@ public inline fun <reified R> Iterable<*>.filterIsInstance(): List<R> {
  * Returns a sequence containing all elements that are instances of specified type parameter R
  */
 public inline fun <reified R> Sequence<*>.filterIsInstance(): Sequence<R> {
-    return FilteringSequence(this, true, { it is R }) as Sequence<R>
+    return filter { it is R } as Sequence<R>
 }
 
 
@@ -480,7 +480,7 @@ deprecated("Migrate to using Sequence<T> and respective functions")
  * Returns a stream containing all elements that are instances of specified type parameter R
  */
 public inline fun <reified R> Stream<*>.filterIsInstance(): Stream<R> {
-    return FilteringStream(this, true, { it is R }) as Stream<R>
+    return filter { it is R } as Stream<R>
 }
 
 /**
@@ -501,7 +501,7 @@ public fun <R> Iterable<*>.filterIsInstance(klass: Class<R>): List<R> {
  * Returns a sequence containing all elements that are instances of specified class
  */
 public fun <R> Sequence<*>.filterIsInstance(klass: Class<R>): Sequence<R> {
-    return FilteringSequence(this, true, { klass.isInstance(it) }) as Sequence<R>
+    return filter { klass.isInstance(it) } as Sequence<R>
 }
 
 
@@ -510,7 +510,7 @@ deprecated("Migrate to using Sequence<T> and respective functions")
  * Returns a stream containing all elements that are instances of specified class
  */
 public fun <R> Stream<*>.filterIsInstance(klass: Class<R>): Stream<R> {
-    return FilteringStream(this, true, { klass.isInstance(it) }) as Stream<R>
+    return filter { klass.isInstance(it) } as Stream<R>
 }
 
 /**

@@ -351,7 +351,7 @@ fun filtering(): List<GenericFunction> {
         returns(Sequences) { "Sequence<T>" }
         body(Sequences) {
             """
-            return FilteringSequence(this, false, { it == null }) as Sequence<T>
+            return filterNot { it == null } as Sequence<T>
             """
         }
     }

@@ -106,7 +106,7 @@ fun specialJVM(): List<GenericFunction> {
         returns(Sequences) { "Sequence<R>" }
         body(Sequences) {
             """
-            return FilteringSequence(this, true, { klass.isInstance(it) }) as Sequence<R>
+            return filter { klass.isInstance(it) } as Sequence<R>
             """
         }
     }
@@ -146,7 +146,7 @@ fun specialJVM(): List<GenericFunction> {
         receiverAsterisk(true)
         body(Sequences) {
             """
-            return FilteringSequence(this, true, { it is R }) as Sequence<R>
+            return filter { it is R } as Sequence<R>
             """
         }
     }

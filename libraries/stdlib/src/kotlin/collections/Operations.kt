@@ -18,7 +18,7 @@ public fun <T> Iterable<Iterable<T>>.flatten(): List<T> {
  * Returns a sequence of all elements from all sequences in this sequence.
  */
 public fun <T> Sequence<Sequence<T>>.flatten(): Sequence<T> {
-    return FlatteningSequence(this, { it })
+    return MultiSequence(this)
 }
 
 /**

@@ -27,12 +27,7 @@ fun guards(): List<GenericFunction> {
         }
         body(Sequences) {
             """
-            return FilteringSequence(this) {
-                if (it == null) {
-                    throw IllegalArgumentException("null element found in $THIS")
-                }
-                true
-            } as Sequence<T>
+            return map { it ?: throw IllegalArgumentException("null element found in $THIS") }
             """
         }
     }

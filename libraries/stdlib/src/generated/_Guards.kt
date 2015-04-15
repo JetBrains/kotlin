@@ -49,12 +49,7 @@ public fun <T : Any> List<T?>.requireNoNulls(): List<T> {
  * Returns an original collection containing all the non-*null* elements, throwing an [[IllegalArgumentException]] if there are any null elements
  */
 public fun <T : Any> Sequence<T?>.requireNoNulls(): Sequence<T> {
-    return FilteringSequence(this) {
-        if (it == null) {
-            throw IllegalArgumentException("null element found in $this")
-        }
-        true
-    } as Sequence<T>
+    return map { it ?: throw IllegalArgumentException("null element found in $this") }
 }
 
 
@@ -63,11 +58,6 @@ deprecated("Migrate to using Sequence<T> and respective functions")
  * Returns an original collection containing all the non-*null* elements, throwing an [[IllegalArgumentException]] if there are any null elements
  */
 public fun <T : Any> Stream<T?>.requireNoNulls(): Stream<T> {
-    return FilteringStream(this) {
-        if (it == null) {
-            throw IllegalArgumentException("null element found in $this")
-        }
-        true
-    } as Stream<T>
+    return map { it ?: throw IllegalArgumentException("null element found in $this") }
 }
 

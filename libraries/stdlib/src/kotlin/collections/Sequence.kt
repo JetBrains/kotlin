@@ -63,6 +63,7 @@ public class FilteringStream<T>(stream: Stream<T>, sendWhen: Boolean = true, pre
  * @param sendWhen If `true`, values for which the predicate returns `true` are returned. Otherwise,
 * values for which the predicate returns `false` are returned
  */
+deprecated("This class is an implementation detail and shall be made internal soon. Use sequence.filter() or sequence.filterNot() instead.")
 public class FilteringSequence<T>(private val sequence: Sequence<T>,
                                   private val sendWhen: Boolean = true,
                                   private val predicate: (T) -> Boolean
@@ -112,6 +113,7 @@ public class TransformingStream<T, R>(stream: Stream<T>, transformer: (T) -> R)
  * A sequence which returns the results of applying the given [transformer] function to the values
  * in the underlying [sequence].
  */
+deprecated("This class is an implementation detail and shall be made internal soon. Use sequence.map() instead.")
 public class TransformingSequence<T, R>(private val sequence: Sequence<T>, private val transformer: (T) -> R) : Sequence<R> {
     override fun iterator(): Iterator<R> = object : Iterator<R> {
         val iterator = sequence.iterator()
@@ -134,6 +136,7 @@ public class TransformingIndexedStream<T, R>(stream: Stream<T>, transformer: (In
  * in the underlying [sequence], where the transformer function takes the index of the value in the underlying
  * sequence along with the value itself.
  */
+deprecated("This class is an implementation detail and shall be made internal soon. Use sequence.mapIndexed() instead.")
 public class TransformingIndexedSequence<T, R>(private val sequence: Sequence<T>, private val transformer: (Int, T) -> R) : Sequence<R> {
     override fun iterator(): Iterator<R> = object : Iterator<R> {
         val iterator = sequence.iterator()
@@ -156,6 +159,7 @@ public class IndexingStream<T>(stream: Stream<T>)
  * A sequence which combines values from the underlying [sequence] with their indices and returns them as
  * [IndexedValue] objects.
  */
+deprecated("This class is an implementation detail and shall be made internal soon. Use sequence.withIndex() instead.")
 public class IndexingSequence<T>(private val sequence: Sequence<T>) : Sequence<IndexedValue<T>> {
     override fun iterator(): Iterator<IndexedValue<T>> = object : Iterator<IndexedValue<T>> {
         val iterator = sequence.iterator()
@@ -179,6 +183,7 @@ public class MergingStream<T1, T2, V>(stream1: Stream<T1>, stream2: Stream<T2>, 
  * [transform] function and returns the values returned by that function. The sequence stops returning
  * values as soon as one of the underlying sequences stops returning values.
  */
+deprecated("This class is an implementation detail and shall be made internal soon. Use sequence.merge() instead.")
 public class MergingSequence<T1, T2, V>(private val sequence1: Sequence<T1>,
                                         private val sequence2: Sequence<T2>,
                                         private val transform: (T1, T2) -> V
@@ -200,6 +205,7 @@ deprecated("Use FlatteningSequence<T> instead")
 public class FlatteningStream<T, R>(stream: Stream<T>, transformer: (T) -> Stream<R>)
 : Stream<R> by FlatteningSequence(stream.toSequence(), { transformer(it).toSequence() })
 
+deprecated("This class is an implementation detail and shall be made internal soon. Use sequence.flatMap() instead.")
 public class FlatteningSequence<T, R>(private val sequence: Sequence<T>,
                                       private val transformer: (T) -> Sequence<R>
                                      ) : Sequence<R> {
@@ -242,6 +248,7 @@ deprecated("Use MultiSequence<T> instead")
 public class Multistream<T>(stream: Stream<Stream<T>>)
 : Stream<T> by FlatteningSequence(stream.toSequence(), { it.toSequence() })
 
+deprecated("This class is an implementation detail and shall be made internal soon. Use sequence.flatten() instead.")
 public class MultiSequence<T>(private val sequence: Sequence<Sequence<T>>) : Sequence<T> {
     override fun iterator(): Iterator<T> = object : Iterator<T> {
         val iterator = sequence.iterator()
@@ -286,6 +293,7 @@ public class TakeStream<T>(stream: Stream<T>, count: Int)
  * A sequence that returns at most [count] values from the underlying [sequence], and stops returning values
  * as soon as that count is reached.
  */
+deprecated("This class is an implementation detail and shall be made internal soon. Use sequence.take() instead.")
 public class TakeSequence<T>(private val sequence: Sequence<T>,
                              private val count: Int
                             ) : Sequence<T> {
@@ -317,6 +325,7 @@ public class TakeWhileStream<T>(stream: Stream<T>, predicate: (T) -> Boolean) : 
  * A sequence that returns values from the underlying [sequence] while the [predicate] function returns
  * `true`, and stops returning values once the function returns `false` for the next element.
  */
+deprecated("This class is an implementation detail and shall be made internal soon. Use sequence.takeWhile() instead.")
 public class TakeWhileSequence<T>(private val sequence: Sequence<T>,
                                   private val predicate: (T) -> Boolean
                                  ) : Sequence<T> {
@@ -366,6 +375,7 @@ public class DropStream<T>(stream: Stream<T>, count: Int)
  * A sequence that skips the specified number of values from the underlying [sequence] and returns
  * all values after that.
  */
+deprecated("This class is an implementation detail and shall be made internal soon. Use sequence.drop() instead.")
 public class DropSequence<T>(private val sequence: Sequence<T>,
                              private val count: Int
                             ) : Sequence<T> {
@@ -404,6 +414,7 @@ public class DropWhileStream<T>(stream: Stream<T>, predicate: (T) -> Boolean) : 
  * A sequence that skips the values from the underlying [sequence] while the given [predicate] returns `true` and returns
  * all values after that.
  */
+deprecated("This class is an implementation detail and shall be made internal soon. Use sequence.dropWhile() instead.")
 public class DropWhileSequence<T>(private val sequence: Sequence<T>,
                                   private val predicate: (T) -> Boolean
                                  ) : Sequence<T> {
@@ -450,7 +461,7 @@ public class DropWhileSequence<T>(private val sequence: Sequence<T>,
  * A sequence which repeatedly calls the specified [producer] function and returns its return values, until
  * `null` is returned from [producer].
  */
-deprecated("Implementation detail. Use function sequence(nextFunction: () -> T?) instead.")
+deprecated("This class is an implementation detail and shall be made internal soon. Use function sequence(nextFunction: () -> T?) instead.")
 public class FunctionSequence<T : Any>(private val producer: () -> T?) : Sequence<T> {
     override fun iterator(): Iterator<T> = object : Iterator<T> {
         var nextState: Int = -1 // -1 for unknown, 0 for done, 1 for continue

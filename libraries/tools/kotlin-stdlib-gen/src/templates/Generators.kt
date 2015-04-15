@@ -21,7 +21,7 @@ fun generators(): List<GenericFunction> {
         returns(Sequences) { "Sequence<T>" }
         body(Sequences) {
             """
-            return MultiSequence(sequenceOf(this, sequenceOf(element)))
+            return sequenceOf(this, sequenceOf(element)).flatten()
             """
         }
     }
@@ -58,7 +58,7 @@ fun generators(): List<GenericFunction> {
         returns("Sequence<T>")
         body {
             """
-            return MultiSequence(sequenceOf(this, collection.sequence()))
+            return sequenceOf(this, collection.sequence()).flatten()
             """
         }
     }
@@ -69,7 +69,7 @@ fun generators(): List<GenericFunction> {
         returns("Sequence<T>")
         body {
             """
-            return MultiSequence(sequenceOf(this, sequence))
+            return sequenceOf(this, sequence).flatten()
             """
         }
     }
