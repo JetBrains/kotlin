@@ -248,9 +248,9 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
             StringBuilder builder = new StringBuilder();
             builder.append("super");
             if (classOrObject.getDelegationSpecifiers().size() > 1) {
-                builder.append("<").append(descriptor.getContainingDeclaration().getName()).append(">");
+                builder.append("<").append(DescriptorRenderer.COMPACT.renderName(descriptor.getContainingDeclaration().getName())).append(">");
             }
-            builder.append(".").append(descriptor.getName());
+            builder.append(".").append(DescriptorRenderer.COMPACT.renderName(descriptor.getName()));
 
             if (descriptor instanceof FunctionDescriptor) {
                 builder.append("(");
@@ -260,7 +260,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
                         builder.append(", ");
                     }
                     first = false;
-                    builder.append(parameterDescriptor.getName());
+                    builder.append(DescriptorRenderer.COMPACT.renderName(parameterDescriptor.getName()));
                 }
                 builder.append(")");
             }

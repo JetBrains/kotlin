@@ -201,4 +201,8 @@ public final class OverrideImplementTest extends AbstractOverrideImplementTest {
     public void testStarProjections() {
         doImplementFileTest();
     }
+
+    public void testEscapeIdentifiers() {
+        doOverrideFileTest();
+    }
 }
