@@ -23,16 +23,10 @@ fun generateCollectionsAPI(outDir: File) {
 
     numeric().writeTo(File(outDir, "_Numeric.kt")) {
         val builder = StringBuilder()
-        // TODO: decide if sum for byte and short is needed and how to make it work
-        for (numeric in listOf(PrimitiveType.Int, PrimitiveType.Long, /*Byte, Short, */ PrimitiveType.Double, PrimitiveType.Float)) {
-            build(builder, Iterables, numeric)
-            build(builder, Sequences, numeric)
-        }
+        for (numeric in numericPrimitives)
+            for (family in buildFamilies)
+                build(builder, family, numeric)
 
-        for (numeric in numericPrimitives) {
-            build(builder, ArraysOfObjects, numeric)
-            build(builder, ArraysOfPrimitives, numeric)
-        }
         builder.toString()
     }
 

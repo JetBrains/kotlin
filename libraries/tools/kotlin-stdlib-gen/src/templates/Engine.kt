@@ -6,6 +6,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.HashSet
 import java.util.StringTokenizer
+import kotlin.properties.Delegates
 
 enum class Family {
     Sequences
@@ -20,6 +21,8 @@ enum class Family {
     ProgressionsOfPrimitives
     Primitives
     Generic
+
+    val isPrimitiveSpecialization: Boolean by Delegates.lazy { this in listOf(ArraysOfPrimitives, RangesOfPrimitives, ProgressionsOfPrimitives, Primitives) }
 }
 
 enum class PrimitiveType(val name: String) {
@@ -169,7 +172,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
     }
 
     fun build(builder: StringBuilder, f: Family) {
-        if (f == ArraysOfPrimitives || f == RangesOfPrimitives || f == ProgressionsOfPrimitives || f == Primitives) {
+        if (f.isPrimitiveSpecialization) {
             for (primitive in buildPrimitives.sortBy { it.name() })
                 build(builder, f, primitive)
         } else {
@@ -308,6 +311,11 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
             }
         }
 
+        fun getPlatformName(primitive: PrimitiveType): String {
+            val name = signature.substringBefore('(').trim()
+            return "${name}Of${primitive.name}"
+        }
+
         val methodDoc = docs[f] ?: doc
         if (methodDoc != "") {
             builder.append("/**\n")
@@ -323,6 +331,10 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
         if (deprecated != "") {
             builder.append("deprecated(\"$deprecated\")\n")
         }
+
+        // heuristics to define that platform overloads are likely to clash
+        if (!f.isPrimitiveSpecialization && primitive != null && ((returnType == returnType.renderType() && returnType != "T") || returnType == "SUM"))
+            builder.append("platformName(\"${getPlatformName(primitive!!)}\")\n")
 
         builder.append("public ")
         if (inlineFamilies[f] ?: defaultInline)
