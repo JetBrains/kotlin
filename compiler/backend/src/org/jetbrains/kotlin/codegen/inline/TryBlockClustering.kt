@@ -33,10 +33,14 @@ class SimpleInterval(override val startLabel: LabelNode, override val endLabel: 
 trait Interval {
     val startLabel: LabelNode
     val endLabel: LabelNode
+
+    /*note that some intervals are mutable */
+    public fun isEmpty(): Boolean = startLabel == endLabel
+
 }
 
 trait SplittableInterval<T: Interval> : Interval {
-    fun split(split: Interval, keepStart: Boolean): SplittedPair<T>
+    fun split(splitBy: Interval, keepStart: Boolean): SplittedPair<T>
 }
 
 
@@ -45,7 +49,7 @@ trait IntervalWithHandler : Interval {
     val type: String?
 }
 
-open class TryCatchBlockNodeInfo(val node: TryCatchBlockNode, val onlyCopyNotProcess: Boolean) : IntervalWithHandler, SplittableInterval<TryCatchBlockNodeInfo> {
+class TryCatchBlockNodeInfo(val node: TryCatchBlockNode, val onlyCopyNotProcess: Boolean) : IntervalWithHandler, SplittableInterval<TryCatchBlockNodeInfo> {
     override val startLabel: LabelNode
         get() = node.start
     override val endLabel: LabelNode
@@ -55,16 +59,16 @@ open class TryCatchBlockNodeInfo(val node: TryCatchBlockNode, val onlyCopyNotPro
     override val type: String?
         get() = node.type
 
-    override fun split(by: Interval, keepStart: Boolean): SplittedPair<TryCatchBlockNodeInfo> {
+    override fun split(splitBy: Interval, keepStart: Boolean): SplittedPair<TryCatchBlockNodeInfo> {
         val newPartInterval = if (keepStart) {
             val oldEnd = endLabel
-            node.end = by.startLabel
-            Pair(by.endLabel, oldEnd)
+            node.end = splitBy.startLabel
+            Pair(splitBy.endLabel, oldEnd)
         }
         else {
             val oldStart = startLabel
-            node.start = by.endLabel
-            Pair(oldStart, by.startLabel)
+            node.start = splitBy.endLabel
+            Pair(oldStart, splitBy.startLabel)
         }
         return SplittedPair(
                 this,

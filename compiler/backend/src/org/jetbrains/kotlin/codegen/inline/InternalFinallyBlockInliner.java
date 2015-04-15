@@ -136,9 +136,10 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
                 continue;
             }
 
-            AbstractInsnNode instrInsertFinallyBefore = curIns.getPrevious();
+            AbstractInsnNode markedReturn = curIns;
+            final AbstractInsnNode instrInsertFinallyBefore = markedReturn.getPrevious();
             AbstractInsnNode nextPrev = instrInsertFinallyBefore.getPrevious();
-            Type nonLocalReturnType = InlineCodegenUtil.getReturnType(curIns.getOpcode());
+            Type nonLocalReturnType = InlineCodegenUtil.getReturnType(markedReturn.getOpcode());
 
             //Generally there could be several tryCatch blocks (group) on one code interval (same start and end labels, but maybe different handlers) -
             // all of them refer to one try/*catches*/finally or try/catches.
@@ -190,7 +191,7 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
                             !(currentIns instanceof JumpInsnNode) ||
                             labelsInsideFinally.contains(((JumpInsnNode) currentIns).label);
 
-                    copyInstruction(nextTempNonLocalVarIndex, curIns, instrInsertFinallyBefore, nonLocalReturnType, finallyBlockCopy,
+                    copyInstruction(nextTempNonLocalVarIndex, markedReturn, instrInsertFinallyBefore, nonLocalReturnType, finallyBlockCopy,
                                     currentIns, isInsOrJumpInsideFinally);
 
                     currentIns = currentIns.getNext();
@@ -212,15 +213,25 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
             }
 
             //skip just inserted finally
-            curIns = curIns.getPrevious();
+            curIns = markedReturn.getPrevious();
             while (curIns != null && curIns != nextPrev) {
                 processInstruction(curIns, false);
                 curIns = curIns.getPrevious();
             }
+
+            //finally block inserted so we need split update localVarTable in lambda
+            if (instrInsertFinallyBefore.getPrevious() != nextPrev && curIns != null) {
+                LabelNode startNode = new LabelNode();
+                LabelNode endNode = new LabelNode();
+                instructions.insert(curIns, startNode);
+                //TODO: note that on return expression we have no variables
+                instructions.insert(markedReturn, endNode);
+                getLocalVarsMetaInfo().splitCurrentIntervals(new SimpleInterval(startNode, endNode), true);
+            }
         }
 
         substituteTryBlockNodes(inlineFun);
-        //substituteLocalVarTable(inlineFun);
+        substituteLocalVarTable(inlineFun);
     }
 
     private static void copyInstruction(
@@ -378,18 +389,17 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
         toProcess.addAll(patched);
         toProcess.addAll(updatingClusterBlocks);
         patched.clear();
+        SimpleInterval splitBy = new SimpleInterval((LabelNode) newFinallyStart.info, (LabelNode) newFinallyEnd.info);
         // Inserted finally shouldn't be handled by corresponding catches,
         // so we should split original interval by inserted finally one
         for (TryCatchBlockNodeInfo block : toProcess) {
             //update exception mapping
-            tryBlocksMetaInfo.split(block, new SimpleInterval((LabelNode) newFinallyStart.info, (LabelNode) newFinallyEnd.info), false);
+            tryBlocksMetaInfo.split(block, splitBy, false);
             //block patched in split method
+            assert !block.isEmpty() : "Finally block should be non-empty";
             patched.add(block);
             //TODO add assert
         }
-
-        getLocalVarsMetaInfo().splitCurrentIntervals(new SimpleInterval((LabelNode) newFinallyStart.info, (LabelNode) newFinallyEnd.info),
-                                                     false);
 
         sortTryCatchBlocks();
     }

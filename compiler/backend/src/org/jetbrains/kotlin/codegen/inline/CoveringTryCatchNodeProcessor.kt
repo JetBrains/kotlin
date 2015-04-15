@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.codegen.inline
 import com.google.common.collect.LinkedListMultimap
 import java.util.ArrayList
 import com.intellij.util.containers.Stack
+import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.*
 import java.util.Comparator
@@ -61,6 +62,7 @@ public abstract class CoveringTryCatchNodeProcessor(parameterSize: Int) {
     // pushing and popping it to stack entering and exiting tryCatchBlock start and end labels
     protected open fun updateCoveringTryBlocks(curIns: LabelNode, directOrder: Boolean) {
         for (startNode in tryBlocksMetaInfo.closeIntervals(curIns, directOrder)) {
+            assert(!startNode.isEmpty(), {"Try block should be non-empty"})
             val pop = tryBlocksMetaInfo.currentIntervals.pop()
             //Temporary disabled cause during patched structure of exceptions changed
 //            if (startNode != pop) {
@@ -71,16 +73,21 @@ public abstract class CoveringTryCatchNodeProcessor(parameterSize: Int) {
         //Reversing list order cause we should pop external block before internal one
         // (originally internal blocks goes before external one, such invariant preserved via sortTryCatchBlocks method)
         for (info in tryBlocksMetaInfo.openIntervals(curIns, directOrder).reverse()) {
+            assert(!info.isEmpty(), {"Try block should be non-empty"})
             tryBlocksMetaInfo.currentIntervals.add(info)
         }
     }
 
     protected open fun updateCoveringLocalVars(curIns: LabelNode, directOrder: Boolean) {
-        localVarsMetaInfo.closeIntervals(curIns, directOrder).forEach {
+        localVarsMetaInfo.closeIntervals(curIns, directOrder).filterNot {
+            it.isEmpty()
+        } forEach {
             localVarsMetaInfo.currentIntervals.pop()
         }
 
-        localVarsMetaInfo.openIntervals(curIns, directOrder).forEach {
+        localVarsMetaInfo.openIntervals(curIns, directOrder).filterNot {
+            it.isEmpty()
+        } forEach {
             localVarsMetaInfo.currentIntervals.add(it)
         }
     }
@@ -105,7 +112,7 @@ public abstract class CoveringTryCatchNodeProcessor(parameterSize: Int) {
 
     protected fun substituteTryBlockNodes(node: MethodNode) {
         node.tryCatchBlocks.clear()
-        for (info in tryBlocksMetaInfo.getNonEmptyNodes()) {
+        for (info in tryBlocksMetaInfo.getMeaningfulIntervals()) {
             node.tryCatchBlocks.add(info.node)
         }
     }
@@ -113,7 +120,7 @@ public abstract class CoveringTryCatchNodeProcessor(parameterSize: Int) {
 
     public fun substituteLocalVarTable(node: MethodNode) {
         node.localVariables.clear()
-        for (info in localVarsMetaInfo.getNonEmptyNodes()) {
+        for (info in localVarsMetaInfo.getMeaningfulIntervals()) {
             node.localVariables.add(info.node)
         }
     }
@@ -160,22 +167,22 @@ class IntervalMetaInfo<T : SplittableInterval<T>> {
         return splittedPair
     }
 
-    public fun getNonEmptyNodes(): List<T> {
-        return allIntervals.filterNot { isEmptyInterval(it) }
-    }
-
     fun closeIntervals(curIns: LabelNode, directOrder: Boolean) = if (!directOrder) intervalStarts.get(curIns) else intervalEnds.get(curIns)
 
     fun openIntervals(curIns: LabelNode, directOrder: Boolean) = if (directOrder) intervalStarts.get(curIns) else intervalEnds.get(curIns)
+}
 
-    private fun isEmptyInterval(node: T): Boolean {
-        val start = node.startLabel
-        var end: AbstractInsnNode = node.endLabel
-        while (end != start && end is LabelNode) {
-            end = end.getPrevious()
-        }
-        return start == end
+private fun Interval.isMeaningless(): Boolean {
+    val start = this.startLabel
+    var end: AbstractInsnNode = this.endLabel
+    while (end != start && !end.isMeaningful) {
+        end = end.getPrevious()
     }
+    return start == end
+}
+
+public fun <T : SplittableInterval<T>> IntervalMetaInfo<T>.getMeaningfulIntervals(): List<T> {
+    return allIntervals.filterNot { it.isMeaningless() }
 }
 
 public class DefaultProcessor(val node: MethodNode, parameterSize: Int) : CoveringTryCatchNodeProcessor(parameterSize) {
