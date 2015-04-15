@@ -60,12 +60,12 @@ public class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() 
         if (context !is JetElement) {
             return null
         }
+
         val project = psiManager.getProject()
         val cacheService = KotlinCacheService.getInstance(project)
         val session = cacheService.getLazyResolveSession(context)
-        val facade = cacheService.getResolutionFacade(listOf(context))
-        val bindingContext = facade.analyze(context, BodyResolveMode.PARTIAL)
-        val contextDescriptor = bindingContext.get<PsiElement, DeclarationDescriptor>(BindingContext.DECLARATION_TO_DESCRIPTOR, context)
+        val bindingContext = context.analyze(BodyResolveMode.PARTIAL)
+        val contextDescriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, context]
         if (contextDescriptor == null) {
             return null
         }
