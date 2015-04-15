@@ -22,6 +22,7 @@ import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
@@ -307,6 +308,9 @@ public class AnnotationResolver {
         }
         else if (descriptor instanceof ClassDescriptor && CompileTimeConstantUtils.isJavaLangClass((ClassDescriptor) descriptor)) {
             trace.report(Errors.ANNOTATION_PARAMETER_MUST_BE_CLASS_LITERAL.on(argumentExpression));
+        }
+        else if (descriptor instanceof ClassDescriptor && KotlinBuiltIns.isKClass((ClassDescriptor) descriptor)) {
+            trace.report(Errors.ANNOTATION_PARAMETER_MUST_BE_KCLASS_LITERAL.on(argumentExpression));
         }
         else {
             trace.report(Errors.ANNOTATION_PARAMETER_MUST_BE_CONST.on(argumentExpression));

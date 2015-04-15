@@ -564,7 +564,8 @@ public class DefaultErrorMessages {
         MAP.put(ILLEGAL_ANNOTATION_KEYWORD, "''annotation'' keyword is only applicable for class");
         MAP.put(ANNOTATION_PARAMETER_MUST_BE_CONST, "An annotation parameter must be a compile-time constant");
         MAP.put(ANNOTATION_PARAMETER_MUST_BE_ENUM_CONST, "An enum annotation parameter must be a enum constant");
-        MAP.put(ANNOTATION_PARAMETER_MUST_BE_CLASS_LITERAL, "An annotation parameter must be a class literal");
+        MAP.put(ANNOTATION_PARAMETER_MUST_BE_CLASS_LITERAL, "An annotation parameter must be a `javaClass<T>()` call");
+        MAP.put(ANNOTATION_PARAMETER_MUST_BE_KCLASS_LITERAL, "An annotation parameter must be a class literal (T::class)");
 
         MAP.put(DEFAULT_VALUE_NOT_ALLOWED_IN_OVERRIDE, "An overriding function is not allowed to specify default values for its parameters");
 
