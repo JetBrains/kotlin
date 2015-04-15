@@ -29,12 +29,14 @@ fun generateCollectionsAPI(outDir: File) {
             build(builder, Sequences, numeric)
         }
 
-        for (numeric in listOf(PrimitiveType.Int, PrimitiveType.Long, PrimitiveType.Byte, PrimitiveType.Short, PrimitiveType.Double, PrimitiveType.Float)) {
+        for (numeric in numericPrimitives) {
             build(builder, ArraysOfObjects, numeric)
             build(builder, ArraysOfPrimitives, numeric)
         }
         builder.toString()
     }
+
+    comparables().writeTo(File(outDir, "_Comparables.kt")) { build() }
 
 }
 

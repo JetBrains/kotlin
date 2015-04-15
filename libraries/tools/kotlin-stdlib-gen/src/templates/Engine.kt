@@ -18,6 +18,8 @@ enum class Family {
     Strings
     RangesOfPrimitives
     ProgressionsOfPrimitives
+    Primitives
+    Generic
 }
 
 enum class PrimitiveType(val name: String) {
@@ -32,8 +34,11 @@ enum class PrimitiveType(val name: String) {
 }
 
 
+
 class GenericFunction(val signature: String, val keyword: String = "fun") : Comparable<GenericFunction> {
     val defaultFamilies = array(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives, Strings)
+    val defaultPrimitives = PrimitiveType.values()
+    val numericPrimitives = array(PrimitiveType.Int, PrimitiveType.Long, PrimitiveType.Byte, PrimitiveType.Short, PrimitiveType.Double, PrimitiveType.Float)
 
     var toNullableT: Boolean = false
 
@@ -42,7 +47,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
     val inlineFamilies = HashMap<Family, Boolean>()
 
     val buildFamilies = HashSet(defaultFamilies.toList())
-    private val buildPrimitives = HashSet(PrimitiveType.values().toList())
+    private val buildPrimitives = HashSet(defaultPrimitives.toList())
 
     var deprecate: String = ""
     val deprecates = hashMapOf<Family, String>()
@@ -136,6 +141,11 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
         buildFamilies.addAll(families.toList())
     }
 
+    fun only(vararg primitives: PrimitiveType) {
+        buildPrimitives.clear()
+        buildPrimitives.addAll(primitives.toList())
+    }
+
     fun include(vararg families: Family) {
         buildFamilies.addAll(families.toList())
     }
@@ -159,7 +169,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
     }
 
     fun build(builder: StringBuilder, f: Family) {
-        if (f == ArraysOfPrimitives || f == RangesOfPrimitives || f == ProgressionsOfPrimitives) {
+        if (f == ArraysOfPrimitives || f == RangesOfPrimitives || f == ProgressionsOfPrimitives || f == Primitives) {
             for (primitive in buildPrimitives.sortBy { it.name() })
                 build(builder, f, primitive)
         } else {
@@ -202,6 +212,8 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
             ArraysOfPrimitives -> primitive?.let { it.name() + "Array" } ?: throw IllegalArgumentException("Primitive array should specify primitive type")
             RangesOfPrimitives -> primitive?.let { it.name() + "Range" } ?: throw IllegalArgumentException("Primitive range should specify primitive type")
             ProgressionsOfPrimitives -> primitive?.let { it.name() + "Progression" } ?: throw IllegalArgumentException("Primitive progression should specify primitive type")
+            Primitives -> primitive?.let { it.name } ?: throw IllegalArgumentException("Primitive should specify primitive type")
+            Generic -> "T"
             else -> throw IllegalStateException("Invalid family")
         }
 
@@ -246,12 +258,24 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
                                   }
                                   "T" -> {
                                       when (f) {
+                                          Generic -> "T"
                                           Strings -> "Char"
                                           Maps -> "Map.Entry<K, V>"
                                           else -> primitive?.name() ?: token
                                       }
                                   }
-                                  "TProgression" -> primitive!!.name + "Progression"
+                                  "TRange" -> {
+                                      when (f) {
+                                          Generic -> "Range<T>"
+                                          else -> primitive!!.name + "Range"
+                                      }
+                                  }
+                                  "TProgression" -> {
+                                      when (f) {
+                                          Generic -> "Progression<out T>"
+                                          else -> primitive!!.name + "Progression"
+                                      }
+                                  }
                                   else -> token
                               })
             }
@@ -260,8 +284,16 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
         }
 
         fun effectiveTypeParams(): List<String> {
+            // TODO: Model for type parameter
             val types = ArrayList(typeParams)
-            if (primitive == null && f != Strings) {
+            if (f == Generic) {
+                // ensure type parameter T, if it's not added to typeParams before
+                if (!types.any { it == "T" || it.startsWith("T:")}) {
+                    types.add("T")
+                }
+                return types
+            }
+            else if (primitive == null && f != Strings) {
                 val implicitTypeParameters = receiver.dropWhile { it != '<' }.drop(1).filterNot { it == ' ' }.takeWhile { it != '>' }.split(",")
                 for (implicit in implicitTypeParameters.reverse()) {
                     if (implicit != "*" && !types.any { it.startsWith(implicit) || it.startsWith("reified " + implicit) }) {
