@@ -23,7 +23,7 @@ internal abstract class A {
 
 internal trait B {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    kotlin.inline() private open fun good1(): kotlin.Unit
+    kotlin.inline() private final fun good1(): kotlin.Unit
     kotlin.inline() public final fun good2(): kotlin.Unit
     kotlin.inline() protected final fun good3(): kotlin.Unit
     kotlin.inline() internal final fun good4(): kotlin.Unit

@@ -155,8 +155,8 @@ class FunctionDescriptorResolver(
 
         val returnType = function.getTypeReference()?.let { typeResolver.resolveType(innerScope, it, trace, true) }
 
-        val modality = resolveModalityFromModifiers(function, getDefaultModality(containingDescriptor, function.hasBody()))
         val visibility = resolveVisibilityFromModifiers(function, getDefaultVisibility(function, containingDescriptor))
+        val modality = resolveModalityFromModifiers(function, getDefaultModality(containingDescriptor, visibility, function.hasBody()))
         functionDescriptor.initialize(
                 receiverType,
                 getDispatchReceiverParameterIfNeeded(containingDescriptor),

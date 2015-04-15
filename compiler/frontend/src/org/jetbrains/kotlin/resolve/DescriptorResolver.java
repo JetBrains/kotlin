@@ -327,12 +327,12 @@ public class DescriptorResolver {
         return defaultVisibility;
     }
 
-    public static Modality getDefaultModality(DeclarationDescriptor containingDescriptor, boolean isBodyPresent) {
+    public static Modality getDefaultModality(DeclarationDescriptor containingDescriptor, Visibility visibility, boolean isBodyPresent) {
         Modality defaultModality;
         if (containingDescriptor instanceof ClassDescriptor) {
             boolean isTrait = ((ClassDescriptor) containingDescriptor).getKind() == ClassKind.TRAIT;
             boolean isDefinitelyAbstract = isTrait && !isBodyPresent;
-            Modality basicModality = isTrait ? Modality.OPEN : Modality.FINAL;
+            Modality basicModality = isTrait && !Visibilities.isPrivate(visibility) ? Modality.OPEN : Modality.FINAL;
             defaultModality = isDefinitelyAbstract ? Modality.ABSTRACT : basicModality;
         }
         else {
@@ -710,10 +710,10 @@ public class DescriptorResolver {
         boolean isVar = property.isVar();
 
         boolean hasBody = hasBody(property);
-        Modality modality = containingDeclaration instanceof ClassDescriptor
-                            ? resolveModalityFromModifiers(property, getDefaultModality(containingDeclaration, hasBody))
-                            : Modality.FINAL;
         Visibility visibility = resolveVisibilityFromModifiers(property, getDefaultVisibility(property, containingDeclaration));
+        Modality modality = containingDeclaration instanceof ClassDescriptor
+                            ? resolveModalityFromModifiers(property, getDefaultModality(containingDeclaration, visibility, hasBody))
+                            : Modality.FINAL;
         PropertyDescriptorImpl propertyDescriptor = PropertyDescriptorImpl.create(
                 containingDeclaration,
                 annotationResolver.resolveAnnotationsWithoutArguments(scope, modifierList, trace),

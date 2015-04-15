@@ -1,7 +1,7 @@
 package
 
 internal trait One {
-    private open fun boo(): kotlin.Int
+    private final fun boo(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public abstract fun foo(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -9,7 +9,7 @@ internal trait One {
 }
 
 internal trait OneImpl : One {
-    invisible_fake open override /*1*/ /*fake_override*/ fun boo(): kotlin.Int
+    invisible_fake final override /*1*/ /*fake_override*/ fun boo(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ fun foo(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -18,7 +18,7 @@ internal trait OneImpl : One {
 
 internal final class Test1 : TwoImpl, OneImpl {
     public constructor Test1()
-    invisible_fake open override /*1*/ /*fake_override*/ fun boo(): kotlin.Int
+    invisible_fake final override /*1*/ /*fake_override*/ fun boo(): kotlin.Int
     public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*2*/ /*fake_override*/ fun foo(): kotlin.Int
     public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -27,7 +27,7 @@ internal final class Test1 : TwoImpl, OneImpl {
 
 internal final class Test2 : One, Two {
     public constructor Test2(/*0*/ a: One)
-    internal open /*delegation*/ fun boo(): kotlin.Int
+    invisible_fake final override /*1*/ /*fake_override*/ fun boo(): kotlin.Int
     public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*2*/ /*delegation*/ fun foo(): kotlin.Int
     public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -36,7 +36,7 @@ internal final class Test2 : One, Two {
 
 internal final class Test3 : Two, One {
     public constructor Test3(/*0*/ a: One, /*1*/ b: Two)
-    internal open /*delegation*/ fun boo(): kotlin.Int
+    invisible_fake final override /*1*/ /*fake_override*/ fun boo(): kotlin.Int
     public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*2*/ /*delegation*/ fun foo(): kotlin.Int
     public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
