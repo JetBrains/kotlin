@@ -19,33 +19,28 @@ package org.jetbrains.kotlin.idea
 import com.intellij.lang.documentation.AbstractDocumentationProvider
 import com.intellij.lang.java.JavaDocumentationProvider
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.asJava.KotlinLightMethod
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
-import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.idea.caches.resolve.KotlinCacheService
-import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
-import org.jetbrains.kotlin.idea.caches.resolve.*
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.kdoc.KDocFinder
 import org.jetbrains.kotlin.idea.kdoc.KDocRenderer
-import org.jetbrains.kotlin.idea.kdoc.*
-import org.jetbrains.kotlin.idea.project.ResolveSessionForBodies
-import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag
+import org.jetbrains.kotlin.idea.kdoc.resolveKDocLink
 import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.JetPsiUtil
 import org.jetbrains.kotlin.psi.JetReferenceExpression
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.renderer.DescriptorRendererBuilder
+import org.jetbrains.kotlin.renderer.NameShortness
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
-import java.util.Collections
 
 public class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
 
@@ -78,6 +73,14 @@ public class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() 
 
     companion object {
         private val LOG = Logger.getInstance(javaClass<KotlinQuickDocumentationProvider>())
+
+        val quickDocNameFormat = DescriptorRendererBuilder()
+                .setWithDefinedIn(true)
+                .setNameShortness(NameShortness.SHORT)
+                .setRenderCompanionObjectName(true)
+                .setTextFormat(DescriptorRenderer.TextFormat.HTML)
+                .build()
+
 
         private fun getText(element: PsiElement, originalElement: PsiElement, quickNavigation: Boolean): String? {
             if (element is JetDeclaration) {
@@ -115,11 +118,10 @@ public class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() 
                 return "No documentation available"
             }
 
-            var renderedDecl = DescriptorRenderer.HTML_NAMES_WITH_SHORT_TYPES.render(declarationDescriptor)
+            var renderedDecl = quickDocNameFormat.render(declarationDescriptor)
             if (!quickNavigation) {
-                renderedDecl = "<pre>" + DescriptorRenderer.HTML_NAMES_WITH_SHORT_TYPES.render(declarationDescriptor) + "</pre>"
+                renderedDecl = "<pre>" + renderedDecl + "</pre>"
             }
-
             val comment = KDocFinder.findKDoc(declarationDescriptor)
             if (comment != null) {
                 renderedDecl = renderedDecl + "<br/>" + KDocRenderer.renderKDoc(comment)

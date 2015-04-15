@@ -14,5 +14,5 @@ fun test() {
     D().f<caret>oo
 }
 
-//INFO: <b>internal</b> <b>open</b> <b>val</b> foo: Int<br/><p>This property returns zero.
+//INFO: <b>internal</b> <b>open</b> <b>val</b> foo: Int <i>defined in</i> D<br/><p>This property returns zero.
 //INFO: </p>

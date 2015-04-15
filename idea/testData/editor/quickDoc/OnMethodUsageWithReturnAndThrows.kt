@@ -14,7 +14,7 @@ fun test() {
     <caret>testMethod(1, "value")
 }
 
-//INFO: <b>internal</b> <b>fun</b> testMethod(a: Int, b: String): Unit<br/><p>Some documentation
+//INFO: <b>internal</b> <b>fun</b> testMethod(a: Int, b: String): Unit <i>defined in</i> root package<br/><p>Some documentation
 //INFO: <dl><dt><b>Parameters:</b></dt><dd><code>a</code> - Some int</dd><dd><code>b</code> - String</dd></dl>
 //INFO: <dl><dt><b>Returns:</b></dt><dd>Return value</dd></dl>
 //INFO: <dl><dt><b>Throws:</b></dt><dd><code>IllegalArgumentException</code> - if the weather is bad</dd></dl>
