@@ -28,10 +28,14 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.*;
+import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.BindingContextUtils;
+import org.jetbrains.kotlin.resolve.DescriptorResolver;
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
+import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.resolve.scopes.WritableScope;
 import org.jetbrains.kotlin.resolve.scopes.WritableScopeImpl;
@@ -48,9 +52,7 @@ import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
 import static org.jetbrains.kotlin.resolve.calls.context.ContextDependency.INDEPENDENT;
-import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
-import static org.jetbrains.kotlin.types.TypeUtils.isDontCarePlaceholder;
-import static org.jetbrains.kotlin.types.TypeUtils.noExpectedType;
+import static org.jetbrains.kotlin.types.TypeUtils.*;
 import static org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils.createCallForSpecialConstruction;
 import static org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils.createDataFlowInfoForArgumentsForIfCall;
 import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.*;
@@ -496,7 +498,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             FunctionDescriptor containingFunctionDescriptor = containingFunInfo.getFirst();
 
             if (containingFunctionDescriptor != null) {
-                if (!InlineDescriptorUtils.checkNonLocalReturnUsage(containingFunctionDescriptor, expression, context.trace) ||
+                if (!InlineUtil.checkNonLocalReturnUsage(containingFunctionDescriptor, expression, context.trace) ||
                     isClassInitializer(containingFunInfo)) {
                     // Unqualified, in a function literal
                     context.trace.report(RETURN_NOT_ALLOWED.on(expression));
@@ -515,7 +517,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             SimpleFunctionDescriptor functionDescriptor = context.trace.get(FUNCTION, labelTargetElement);
             if (functionDescriptor != null) {
                 expectedType = getFunctionExpectedReturnType(functionDescriptor, labelTargetElement, context);
-                if (!InlineDescriptorUtils.checkNonLocalReturnUsage(functionDescriptor, expression, context.trace)) {
+                if (!InlineUtil.checkNonLocalReturnUsage(functionDescriptor, expression, context.trace)) {
                     // Qualified, non-local
                     context.trace.report(RETURN_NOT_ALLOWED.on(expression));
                     resultType = ErrorUtils.createErrorType(RETURN_NOT_ALLOWED_MESSAGE);

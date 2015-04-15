@@ -16,15 +16,22 @@
 
 package org.jetbrains.kotlin.resolve.inline;
 
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.descriptors.CallableDescriptor;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor;
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.BindingTrace;
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
+import org.jetbrains.kotlin.resolve.calls.model.ArgumentMapping;
+import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch;
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.constants.ArrayValue;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.EnumValue;
@@ -82,5 +89,86 @@ public class InlineUtil {
         }
 
         return false;
+    }
+
+    public static boolean checkNonLocalReturnUsage(
+            @NotNull DeclarationDescriptor fromFunction,
+            @NotNull JetExpression startExpression,
+            @NotNull BindingTrace trace
+    ) {
+        PsiElement containingFunction = PsiTreeUtil.getParentOfType(startExpression, JetClassOrObject.class, JetDeclarationWithBody.class);
+        if (containingFunction == null) {
+            return false;
+        }
+
+        DeclarationDescriptor containingFunctionDescriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, containingFunction);
+        if (containingFunctionDescriptor == null) {
+            return false;
+        }
+
+        BindingContext bindingContext = trace.getBindingContext();
+
+        while (containingFunction instanceof JetFunctionLiteral && fromFunction != containingFunctionDescriptor) {
+            //JetFunctionLiteralExpression
+            containingFunction = containingFunction.getParent();
+            if (!isInlineLambda((JetFunctionLiteralExpression) containingFunction, bindingContext, true)) {
+                return false;
+            }
+
+            containingFunctionDescriptor = getContainingClassOrFunctionDescriptor(containingFunctionDescriptor, true);
+
+            containingFunction = containingFunctionDescriptor != null
+                                 ? DescriptorToSourceUtils.descriptorToDeclaration(containingFunctionDescriptor)
+                                 : null;
+        }
+
+        return fromFunction == containingFunctionDescriptor;
+    }
+
+    public static boolean isInlineLambda(
+            @NotNull JetFunctionLiteralExpression lambdaExpression,
+            @NotNull BindingContext bindingContext,
+            boolean checkNonLocalReturn
+    ) {
+        JetExpression call = JetPsiUtil.getParentCallIfPresent(lambdaExpression);
+        if (call != null) {
+            ResolvedCall<?> resolvedCall = CallUtilPackage.getResolvedCall(call, bindingContext);
+            if (resolvedCall != null && isInline(resolvedCall.getResultingDescriptor())) {
+                ValueArgument argument = CallUtilPackage.getValueArgumentForExpression(resolvedCall.getCall(), lambdaExpression);
+                if (argument != null) {
+                    ArgumentMapping mapping = resolvedCall.getArgumentMapping(argument);
+                    if (mapping instanceof ArgumentMatch) {
+                        ValueParameterDescriptor parameter = ((ArgumentMatch) mapping).getValueParameter();
+                        if (isInlineLambdaParameter(parameter)) {
+                            return !checkNonLocalReturn || allowsNonLocalReturns(parameter);
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    @Nullable
+    public static DeclarationDescriptor getContainingClassOrFunctionDescriptor(@NotNull DeclarationDescriptor descriptor, boolean strict) {
+        DeclarationDescriptor current = strict ? descriptor.getContainingDeclaration() : descriptor;
+        while (current != null) {
+            if (current instanceof FunctionDescriptor || current instanceof ClassDescriptor) {
+                return current;
+            }
+            current = current.getContainingDeclaration();
+        }
+
+        return null;
+    }
+
+    public static boolean allowsNonLocalReturns(@NotNull CallableDescriptor lambda) {
+        if (lambda instanceof ValueParameterDescriptor) {
+            if (hasOnlyLocalReturn((ValueParameterDescriptor) lambda)) {
+                //annotated
+                return false;
+            }
+        }
+        return true;
     }
 }

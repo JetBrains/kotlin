@@ -43,9 +43,9 @@ import java.util.Set;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.NON_LOCAL_RETURN_NOT_ALLOWED;
 import static org.jetbrains.kotlin.diagnostics.Errors.USAGE_IS_NOT_INLINABLE;
-import static org.jetbrains.kotlin.resolve.InlineDescriptorUtils.allowsNonLocalReturns;
-import static org.jetbrains.kotlin.resolve.InlineDescriptorUtils.checkNonLocalReturnUsage;
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getIsEffectivelyPublicApi;
+import static org.jetbrains.kotlin.resolve.inline.InlineUtil.allowsNonLocalReturns;
+import static org.jetbrains.kotlin.resolve.inline.InlineUtil.checkNonLocalReturnUsage;
 
 class InlineChecker implements CallChecker {
     private final SimpleFunctionDescriptor descriptor;

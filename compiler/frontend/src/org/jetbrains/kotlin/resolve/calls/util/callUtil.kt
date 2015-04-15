@@ -25,13 +25,13 @@ import org.jetbrains.kotlin.psi.psiUtil.getTextWithLocation
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContext.CALL
 import org.jetbrains.kotlin.resolve.BindingContext.RESOLVED_CALL
-import org.jetbrains.kotlin.resolve.InlineDescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatchStatus
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentUnmapped
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.utils.sure
 
 // resolved call
@@ -184,5 +184,5 @@ public fun JetFunctionLiteral.isInlined(bindingContext: BindingContext): Boolean
     val parent = this.getParent()
     assert(parent is JetFunctionLiteralExpression) { "parent of JetFunctionLiteral is " + parent }
 
-    return InlineDescriptorUtils.isInlineLambda(parent as JetFunctionLiteralExpression, bindingContext, false)
+    return InlineUtil.isInlineLambda(parent as JetFunctionLiteralExpression, bindingContext, false)
 }

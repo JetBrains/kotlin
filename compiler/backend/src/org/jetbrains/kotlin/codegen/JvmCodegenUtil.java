@@ -41,8 +41,8 @@ import org.jetbrains.kotlin.psi.codeFragmentUtil.CodeFragmentUtilPackage;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.InlineDescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
+import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor;
 import org.jetbrains.kotlin.types.JetType;
 
@@ -235,7 +235,7 @@ public class JvmCodegenUtil {
         PsiElement declaration = DescriptorToSourceUtils.descriptorToDeclaration(descriptor);
         return declaration instanceof JetFunctionLiteral &&
                declaration.getParent() instanceof JetFunctionLiteralExpression &&
-               InlineDescriptorUtils.isInlineLambda((JetFunctionLiteralExpression) declaration.getParent(), bindingContext, false);
+               InlineUtil.isInlineLambda((JetFunctionLiteralExpression) declaration.getParent(), bindingContext, false);
     }
 
     @Nullable
