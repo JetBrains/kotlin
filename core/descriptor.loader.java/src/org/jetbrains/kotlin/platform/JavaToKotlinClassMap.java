@@ -164,11 +164,11 @@ public class JavaToKotlinClassMap implements PlatformToKotlinClassMap {
         return className.isSafe() ? mapPlatformClass(className.toSafe()) : Collections.<ClassDescriptor>emptySet();
     }
 
-    public boolean isMutableCollection(@NotNull ClassDescriptor mutable) {
+    public boolean isMutable(@NotNull ClassDescriptor mutable) {
         return mutableToReadOnly.containsKey(mutable);
     }
 
-    public boolean isReadOnlyCollection(@NotNull ClassDescriptor readOnly) {
+    public boolean isReadOnly(@NotNull ClassDescriptor readOnly) {
         return readOnlyToMutable.containsKey(readOnly);
     }
 

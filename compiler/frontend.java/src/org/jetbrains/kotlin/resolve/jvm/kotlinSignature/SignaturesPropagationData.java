@@ -158,12 +158,13 @@ public class SignaturesPropagationData {
         if (JvmPackage.getPLATFORM_TYPES()) return autoType;
 
         List<TypeAndVariance> typesFromSuperMethods = ContainerUtil.map(superFunctions,
-                new Function<FunctionDescriptor, TypeAndVariance>() {
-                    @Override
-                    public TypeAndVariance fun(FunctionDescriptor superFunction) {
-                        return new TypeAndVariance(superFunction.getReturnType(), Variance.OUT_VARIANCE);
-                    }
-                });
+                                                                        new Function<FunctionDescriptor, TypeAndVariance>() {
+                                                                            @Override
+                                                                            public TypeAndVariance fun(FunctionDescriptor superFunction) {
+                                                                                return new TypeAndVariance(superFunction.getReturnType(),
+                                                                                                           Variance.OUT_VARIANCE);
+                                                                            }
+                                                                        });
 
         return modifyTypeAccordingToSuperMethods(autoType, typesFromSuperMethods, MEMBER_SIGNATURE_COVARIANT);
     }
@@ -629,10 +630,10 @@ public class SignaturesPropagationData {
             if (classifierFromSuper instanceof ClassDescriptor) {
                 ClassDescriptor classFromSuper = (ClassDescriptor) classifierFromSuper;
 
-                if (JavaToKotlinClassMap.INSTANCE.isMutableCollection(classFromSuper)) {
+                if (JavaToKotlinClassMap.INSTANCE.isMutable(classFromSuper)) {
                     someSupersMutable = true;
                 }
-                else if (JavaToKotlinClassMap.INSTANCE.isReadOnlyCollection(classFromSuper)) {
+                else if (JavaToKotlinClassMap.INSTANCE.isReadOnly(classFromSuper)) {
                     if (typeFromSuper.varianceOfPosition == Variance.OUT_VARIANCE) {
                         someSupersCovariantReadOnly = true;
                     }
@@ -648,12 +649,12 @@ public class SignaturesPropagationData {
             return classifier;
         }
         else if (someSupersMutable) {
-            if (JavaToKotlinClassMap.INSTANCE.isReadOnlyCollection(klass)) {
+            if (JavaToKotlinClassMap.INSTANCE.isReadOnly(klass)) {
                 return JavaToKotlinClassMap.INSTANCE.convertReadOnlyToMutable(klass);
             }
         }
         else if (someSupersNotCovariantReadOnly || someSupersCovariantReadOnly) {
-            if (JavaToKotlinClassMap.INSTANCE.isMutableCollection(klass)) {
+            if (JavaToKotlinClassMap.INSTANCE.isMutable(klass)) {
                 return JavaToKotlinClassMap.INSTANCE.convertMutableToReadOnly(klass);
             }
         }
