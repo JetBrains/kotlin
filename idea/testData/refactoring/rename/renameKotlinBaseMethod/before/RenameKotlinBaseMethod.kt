@@ -6,8 +6,6 @@ trait A {
 
 public open class B: A {
     override fun first() = 1
-
-    fun first(a: Int) = 12
 }
 
 class C: B() {

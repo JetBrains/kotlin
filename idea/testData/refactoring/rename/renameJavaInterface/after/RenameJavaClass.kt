@@ -1,11 +1,11 @@
 package kotlin.testing
 
-import testing.NewInterfaceName
+import testing.NewInterface
 
-class Some(s: NewInterfaceName) : NewInterfaceName() {
+class New(s: NewInterface) : NewInterface() {
     val test = s
 
-    fun testFun(param : NewInterfaceName) : NewInterfaceName {
+    fun testFun(param : NewInterface) : NewInterface {
         return test;
     }
 }
