@@ -16,52 +16,36 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
-import org.jetbrains.kotlin.psi.JetForExpression
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.psi.JetBlockExpression
-import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.kotlin.psi.JetParameter
-import org.jetbrains.kotlin.psi.JetOperationExpression
+import org.jetbrains.kotlin.psi.*
 
-public class ConvertToForEachFunctionCallIntention : JetSelfTargetingOffsetIndependentIntention<JetForExpression>("convert.to.for.each.function.call.intention", javaClass()) {
-    override fun isApplicableTo(element: JetForExpression): Boolean {
+public class ConvertToForEachFunctionCallIntention : JetSelfTargetingIntention<JetForExpression>(javaClass(), "Replace with a forEach function call") {
+    override fun isApplicableTo(element: JetForExpression, caretOffset: Int): Boolean {
+        val rParen = element.getRightParenthesis() ?: return false
+        if (caretOffset > rParen.getTextRange().getEndOffset()) return false // available only on the loop header, not in the body
         return element.getLoopRange() != null && element.getLoopParameter() != null && element.getBody() != null
     }
 
     override fun applyTo(element: JetForExpression, editor: Editor) {
-        fun buildStatements(statements: List<JetElement>): String {
-            return when {
-                statements.isEmpty() -> ""
-                statements.size() == 1 -> statements[0].getText() ?: throw AssertionError("Statements in ForExpression shouldn't be empty: expressionText = ${element.getText()}")
-                else -> statements.fold(StringBuilder(), { acc, h -> acc.append("${h.getText()}\n") }).toString()
-            }
-        }
-
-        fun buildReplacementBodyText(loopParameter: JetParameter, functionBodyText: String): String {
-            return when {
-                loopParameter.getTypeReference() != null -> " (${loopParameter.getText()}) -> $functionBodyText"
-                else -> "${loopParameter.getText()} -> $functionBodyText"
-            }
-        }
-
-        fun buildReceiverText(element: JetForExpression): String {
-            val loopRange = element.getLoopRange()!!
-
-            return when (loopRange) {
-                is JetOperationExpression -> "(${loopRange.getText()})"
-                else -> loopRange.getText() ?: throw AssertionError("LoopRange in ForExpression shouldn't be empty: expressionText = ${element.getText()}")
-            }
-        }
-
         val body = element.getBody()!!
         val loopParameter = element.getLoopParameter()!!
+        val factory = JetPsiFactory(element)
 
-        val bodyText = buildReplacementBodyText(loopParameter, when (body) {
-            is JetBlockExpression -> buildStatements(body.getStatements())
-            else -> body.getText() ?: throw AssertionError("Body of ForExpression shouldn't be empty: expressionText = ${element.getText()}")
-        })
+        val functionBodyText = when (body) {
+            is JetBlockExpression -> body.getStatements().map { it.getText() }.joinToString("\n")
+            else -> body.getText()
+        }
+        val bodyText = buildFunctionLiteralBodyText(loopParameter, functionBodyText)
 
-        element.replace(JetPsiFactory(element).createExpression("${buildReceiverText(element)}.forEach { $bodyText }"))
+        val foreachExpression = factory.createExpression("x.forEach { $bodyText }") as JetDotQualifiedExpression
+        foreachExpression.getReceiverExpression().replace(element.getLoopRange()!!)
+        element.replace(foreachExpression)
+    }
+
+    private fun buildFunctionLiteralBodyText(loopParameter: JetParameter, functionBodyText: String): String {
+        return when {
+            loopParameter.getTypeReference() != null -> " (${loopParameter.getText()}) -> $functionBodyText"
+            else -> "${loopParameter.getText()} -> $functionBodyText"
+        }
     }
 }
