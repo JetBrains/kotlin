@@ -56,7 +56,7 @@
 
   <actions>
     <action id="Kotlin.NewFile" class="org.jetbrains.kotlin.idea.actions.NewKotlinFileAction">
-      <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFromTemplate"/>
+      <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewGroup1"/>
     </action>
 
     <action id="ShowKotlinExpressionType" class="org.jetbrains.kotlin.idea.actions.ShowExpressionTypeAction"
