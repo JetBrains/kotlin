@@ -162,7 +162,7 @@ class LazyJavaTypeResolver(
             val kotlinDescriptor = javaToKotlin.mapJavaToKotlin(fqName) ?: return null
 
             if (howThisTypeIsUsedEffectively == MEMBER_SIGNATURE_COVARIANT || howThisTypeIsUsedEffectively == SUPERTYPE) {
-                if (javaToKotlin.isReadOnlyCollection(kotlinDescriptor)) {
+                if (javaToKotlin.isReadOnly(kotlinDescriptor)) {
                     return javaToKotlin.convertReadOnlyToMutable(kotlinDescriptor)
                 }
             }
