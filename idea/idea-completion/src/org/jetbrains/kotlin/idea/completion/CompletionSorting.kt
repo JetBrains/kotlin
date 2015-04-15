@@ -16,30 +16,30 @@
 
 package org.jetbrains.kotlin.idea.completion
 
-import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.completion.CompletionParameters
+import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.completion.CompletionSorter
-import org.jetbrains.kotlin.psi.JetFile
-import com.intellij.codeInsight.lookup.LookupElementWeigher
-import com.intellij.codeInsight.lookup.LookupElement
-import com.intellij.codeInsight.lookup.WeighingContext
-import org.jetbrains.kotlin.idea.completion.*
-import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.name.isValidJavaFqName
-import org.jetbrains.kotlin.resolve.ImportPath
 import com.intellij.codeInsight.completion.CompletionType
+import com.intellij.codeInsight.lookup.LookupElement
+import com.intellij.codeInsight.lookup.LookupElementWeigher
+import com.intellij.codeInsight.lookup.WeighingContext
+import com.intellij.psi.PsiClass
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.completion.smart.NameSimilarityWeigher
 import org.jetbrains.kotlin.idea.completion.smart.SMART_COMPLETION_ITEM_PRIORITY_KEY
 import org.jetbrains.kotlin.idea.completion.smart.SmartCompletionItemPriority
-import com.intellij.psi.PsiClass
-import java.util.HashSet
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
+import org.jetbrains.kotlin.idea.core.completion.DeclarationDescriptorLookupObject
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.isValidJavaFqName
+import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.ImportPath
+import java.util.HashSet
 
 public fun CompletionResultSet.addKotlinSorting(parameters: CompletionParameters): CompletionResultSet {
     var sorter = CompletionSorter.defaultSorter(parameters, getPrefixMatcher())!!
@@ -89,7 +89,7 @@ private object KindWeigher : LookupElementWeigher("kotlin.kind") {
         val o = element.getObject()
 
         return when (o) {
-            is DeclarationDescriptorLookupObject -> {
+            is DeclarationDescriptorLookupObjectImpl -> {
                 val descriptor = o.descriptor
                 when (descriptor) {
                     is VariableDescriptor -> CompoundWeight(Weight.variable, element.getUserData(CALLABLE_WEIGHT_KEY))
@@ -136,7 +136,7 @@ private class JetDeclarationRemotenessWeigher(private val file: JetFile) : Looku
 
     override fun weigh(element: LookupElement): Weight {
         val o = element.getObject()
-        if (o is DeclarationDescriptorLookupObject) {
+        if (o is DeclarationDescriptorLookupObjectImpl) {
             val elementFile = o.psiElement?.getContainingFile()
             if (elementFile is JetFile && elementFile.getOriginalFile() == file) {
                 return Weight.thisFile

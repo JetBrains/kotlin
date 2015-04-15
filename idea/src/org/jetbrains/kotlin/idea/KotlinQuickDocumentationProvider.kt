@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.core.completion.DeclarationDescriptorLookupObject
 import org.jetbrains.kotlin.idea.kdoc.KDocFinder
 import org.jetbrains.kotlin.idea.kdoc.KDocRenderer
 import org.jetbrains.kotlin.idea.kdoc.resolveKDocLink
@@ -67,6 +68,13 @@ public class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() 
         if (target is DeclarationDescriptorWithSource) {
             val source = target.getSource()
             return (source as? PsiSourceElement)?.psi
+        }
+        return null
+    }
+
+    override fun getDocumentationElementForLookupItem(psiManager: PsiManager, `object`: Any?, element: PsiElement?): PsiElement? {
+        if (`object` is DeclarationDescriptorLookupObject) {
+            return `object`.psiElement
         }
         return null
     }
