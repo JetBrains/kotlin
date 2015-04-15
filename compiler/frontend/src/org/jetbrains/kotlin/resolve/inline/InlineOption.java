@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.builtins;
+package org.jetbrains.kotlin.resolve.inline;
 
 public enum InlineOption {
     LOCAL_CONTINUE_AND_BREAK,

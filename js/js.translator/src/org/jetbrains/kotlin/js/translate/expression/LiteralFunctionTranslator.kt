@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.js.translate.expression
 import com.google.dart.compiler.backend.js.ast.*
 import com.google.dart.compiler.backend.js.ast.metadata.isLocal
 import com.google.dart.compiler.backend.js.ast.metadata.staticRef
-import org.jetbrains.kotlin.builtins.InlineUtil
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.js.inline.util.getInnerFunction
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
@@ -32,6 +31,7 @@ import org.jetbrains.kotlin.js.translate.utils.FunctionBodyTranslator.translateF
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.simpleReturnFunction
 import org.jetbrains.kotlin.psi.JetDeclarationWithBody
+import org.jetbrains.kotlin.resolve.inline.InlineUtil
 
 class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslator(context) {
     fun translate(declaration: JetDeclarationWithBody): JsExpression {

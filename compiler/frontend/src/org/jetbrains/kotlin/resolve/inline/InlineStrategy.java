@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.builtins;
+package org.jetbrains.kotlin.resolve.inline;
 
 public enum InlineStrategy {
     AS_FUNCTION,

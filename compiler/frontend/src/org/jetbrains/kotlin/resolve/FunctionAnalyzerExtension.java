@@ -17,11 +17,11 @@
 package org.jetbrains.kotlin.resolve;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.builtins.InlineUtil;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.kotlin.psi.JetNamedFunction;
-import org.jetbrains.kotlin.resolve.extension.InlineAnalyzerExtension;
+import org.jetbrains.kotlin.resolve.inline.InlineAnalyzerExtension;
+import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 
 import javax.inject.Inject;
 import java.util.Collections;

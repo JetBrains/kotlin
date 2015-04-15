@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.builtins;
+package org.jetbrains.kotlin.resolve.inline;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor;
@@ -32,7 +33,6 @@ import org.jetbrains.kotlin.types.JetType;
 import static kotlin.KotlinPackage.firstOrNull;
 
 public class InlineUtil {
-
     public static boolean isInlineLambdaParameter(@NotNull CallableDescriptor valueParameterOrReceiver) {
         JetType type = valueParameterOrReceiver.getOriginal().getReturnType();
         return type != null &&

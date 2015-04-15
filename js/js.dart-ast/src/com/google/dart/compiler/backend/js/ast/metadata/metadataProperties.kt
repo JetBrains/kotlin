@@ -17,13 +17,13 @@
 package com.google.dart.compiler.backend.js.ast.metadata
 
 import com.google.dart.compiler.backend.js.ast.*
-import org.jetbrains.kotlin.builtins.InlineStrategy
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.resolve.inline.InlineStrategy
 
 public var JsName.staticRef: JsNode? by MetadataProperty(default = null)
 
+// TODO: move this to module 'js.inliner' and change dependency on 'frontend' to dependency on 'descriptors'
 public var JsInvocation.inlineStrategy: InlineStrategy? by MetadataProperty(default = null)
 
 public var JsInvocation.descriptor: CallableDescriptor? by MetadataProperty(default = null)

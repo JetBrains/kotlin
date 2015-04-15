@@ -20,7 +20,6 @@ import com.google.dart.compiler.backend.js.ast.*
 import com.google.dart.compiler.backend.js.ast.metadata.inlineStrategy
 import com.google.gwt.dev.js.ThrowExceptionOnErrorReporter
 import com.intellij.util.containers.SLRUCache
-import org.jetbrains.kotlin.builtins.InlineStrategy
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.js.config.LibrarySourcesConfig
@@ -32,6 +31,7 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.reference.CallExpressionTranslator
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getExternalModuleName
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
+import org.jetbrains.kotlin.resolve.inline.InlineStrategy
 import org.jetbrains.kotlin.utils.LibraryUtils
 import org.jetbrains.kotlin.utils.sure
 import java.io.File

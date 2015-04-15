@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.resolve.extension;
+package org.jetbrains.kotlin.resolve.inline;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.InlineUtil;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.psi.*;

@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.resolve.calls.checkers
 
-import org.jetbrains.kotlin.builtins.InlineUtil
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import java.lang.ref.WeakReference
 
 public class InlineCheckerWrapper : CallChecker {

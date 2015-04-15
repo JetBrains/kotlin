@@ -17,14 +17,15 @@
 package org.jetbrains.kotlin.js.translate.utils
 
 import com.google.dart.compiler.backend.js.ast.*
-import com.google.dart.compiler.backend.js.ast.metadata.*
-import org.jetbrains.kotlin.builtins.InlineStrategy
+import com.google.dart.compiler.backend.js.ast.metadata.descriptor
+import com.google.dart.compiler.backend.js.ast.metadata.inlineStrategy
+import com.google.dart.compiler.backend.js.ast.metadata.psiElement
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.js.inline.util.isCallInvocation
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.reference.CallExpressionTranslator
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.psi.JetCallExpression
+import org.jetbrains.kotlin.resolve.inline.InlineStrategy
 
 /**
  * Recursively walks expression and sets metadata for all invocations of descriptor.

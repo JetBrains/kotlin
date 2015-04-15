@@ -21,11 +21,11 @@ import com.google.dart.compiler.backend.js.ast.metadata.MetadataPackage;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.InlineStrategy;
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink;
 import org.jetbrains.kotlin.js.inline.context.*;
 import org.jetbrains.kotlin.js.resolve.diagnostics.ErrorsJs;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
+import org.jetbrains.kotlin.resolve.inline.InlineStrategy;
 
 import java.util.*;
 
