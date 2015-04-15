@@ -1,4 +1,4 @@
-class Bar : Throwable()
+open class Bar : Throwable()
 
 val bar: Bar = Bar()
 val bar1: Bar = Bar()
@@ -33,3 +33,7 @@ fun topLevel(bar: Bar) {
 fun collectionLikes(bars: List<Array<Bar>>, foos: List<Map<Bar, Bar>>) {
 
 }
+
+class BarImpl : Bar()
+
+object BarObj : Bar()

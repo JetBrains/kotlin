@@ -1,0 +1,3 @@
+class JavaBar extends Bar {
+
+}
