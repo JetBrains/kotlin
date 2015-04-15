@@ -48,11 +48,11 @@ public class AndroidPsiTreeChangePreprocessor : PsiTreeChangePreprocessor, Simpl
                 val module = projectFileIndex.getModuleForFile(file.getVirtualFile())
                 if (module != null) {
                     val resourceManager = AndroidResourceManager.getInstance(module)
-                    val mainResDirectory = resourceManager.getResDirectories()
+                    val resDirectories = resourceManager.getModuleResDirectories()
                     val baseDirectory = file.getParent()?.getParent()?.getVirtualFile()
 
-                    //File from res/ directory was modified
-                    if (mainResDirectory == baseDirectory && file.isLayoutXmlFile()) {
+                    // File from the res/ directory was modified
+                    if (baseDirectory in resDirectories && file.isLayoutXmlFile()) {
                         incModificationCount()
                     }
                 }

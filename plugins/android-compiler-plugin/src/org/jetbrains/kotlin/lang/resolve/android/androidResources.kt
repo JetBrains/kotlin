@@ -16,7 +16,9 @@
 
 package org.jetbrains.kotlin.lang.resolve.android
 
-public data class AndroidModuleInfo(val applicationPackage: String, val resDirectories: List<String>)
+public data class AndroidModuleInfo(val applicationPackage: String, resDirectories: List<String>) {
+    val resDirectories = resDirectories.sort()
+}
 
 public abstract class AndroidResource(val id: String) {
     public abstract val className: String
