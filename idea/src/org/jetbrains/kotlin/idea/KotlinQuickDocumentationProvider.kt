@@ -14,138 +14,132 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea;
+package org.jetbrains.kotlin.idea
 
-import com.intellij.lang.documentation.AbstractDocumentationProvider;
-import com.intellij.lang.java.JavaDocumentationProvider;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.util.PsiTreeUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.asJava.KotlinLightMethod;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource;
-import org.jetbrains.kotlin.descriptors.SourceElement;
-import org.jetbrains.kotlin.idea.caches.resolve.KotlinCacheService;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
-import org.jetbrains.kotlin.idea.kdoc.KDocFinder;
-import org.jetbrains.kotlin.idea.kdoc.KDocRenderer;
-import org.jetbrains.kotlin.idea.kdoc.KdocPackage;
-import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag;
-import org.jetbrains.kotlin.psi.JetDeclaration;
-import org.jetbrains.kotlin.psi.JetElement;
-import org.jetbrains.kotlin.psi.JetPsiUtil;
-import org.jetbrains.kotlin.psi.JetReferenceExpression;
-import org.jetbrains.kotlin.renderer.DescriptorRenderer;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
-import org.jetbrains.kotlin.resolve.source.PsiSourceElement;
+import com.intellij.lang.documentation.AbstractDocumentationProvider
+import com.intellij.lang.java.JavaDocumentationProvider
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiManager
+import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.asJava.KotlinLightMethod
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
+import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.idea.caches.resolve.KotlinCacheService
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.*
+import org.jetbrains.kotlin.idea.kdoc.KDocFinder
+import org.jetbrains.kotlin.idea.kdoc.KDocRenderer
+import org.jetbrains.kotlin.idea.kdoc.*
+import org.jetbrains.kotlin.idea.project.ResolveSessionForBodies
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag
+import org.jetbrains.kotlin.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.JetPsiUtil
+import org.jetbrains.kotlin.psi.JetReferenceExpression
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.resolve.source.PsiSourceElement
+import java.util.Collections
 
-import java.util.Collection;
-import java.util.Collections;
+public class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
 
-public class JetQuickDocumentationProvider extends AbstractDocumentationProvider {
-    private static final Logger LOG = Logger.getInstance(JetQuickDocumentationProvider.class);
-
-    @Override
-    public String getQuickNavigateInfo(PsiElement element, PsiElement originalElement) {
-        return getText(element, originalElement, true);
+    override fun getQuickNavigateInfo(element: PsiElement, originalElement: PsiElement): String? {
+        return getText(element, originalElement, true)
     }
 
-    @Override
-    public String generateDoc(PsiElement element, PsiElement originalElement) {
-        return getText(element, originalElement, false);
+    override fun generateDoc(element: PsiElement, originalElement: PsiElement): String? {
+        return getText(element, originalElement, false)
     }
 
-    private static String getText(PsiElement element, PsiElement originalElement, boolean quickNavigation) {
-        if (element instanceof JetDeclaration) {
-            return renderKotlinDeclaration((JetDeclaration) element, quickNavigation);
+    override fun getDocumentationElementForLink(psiManager: PsiManager, link: String, context: PsiElement?): PsiElement? {
+        if (context !is JetElement) {
+            return null
         }
-        else if (element instanceof KotlinLightMethod) {
-            return renderKotlinDeclaration(((KotlinLightMethod) element).getOrigin(), quickNavigation);
-        }
-
-        if (quickNavigation) {
-            JetReferenceExpression referenceExpression = PsiTreeUtil.getParentOfType(originalElement, JetReferenceExpression.class, false);
-            if (referenceExpression != null) {
-                BindingContext context = ResolvePackage.analyze(referenceExpression, BodyResolveMode.PARTIAL);
-                DeclarationDescriptor declarationDescriptor = context.get(BindingContext.REFERENCE_TARGET, referenceExpression);
-                if (declarationDescriptor != null) {
-                    return mixKotlinToJava(declarationDescriptor, element, originalElement);
-                }
-            }
-        }
-        else {
-            // This element was resolved to non-kotlin element, it will be rendered with own provider
-        }
-
-        return null;
-    }
-
-    private static String renderKotlinDeclaration(JetDeclaration declaration, boolean quickNavigation) {
-        BindingContext context = ResolvePackage.analyze(declaration, BodyResolveMode.PARTIAL);
-        DeclarationDescriptor declarationDescriptor = context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
-
-        if (declarationDescriptor == null) {
-            LOG.info("Failed to find descriptor for declaration " + JetPsiUtil.getElementTextWithContext(declaration));
-            return "No documentation available";
-        }
-
-        String renderedDecl = DescriptorRenderer.HTML_NAMES_WITH_SHORT_TYPES.render(declarationDescriptor);
-        if (!quickNavigation) {
-            renderedDecl = "<pre>" + DescriptorRenderer.HTML_NAMES_WITH_SHORT_TYPES.render(declarationDescriptor) + "</pre>";
-        }
-
-        KDocTag comment = KDocFinder.INSTANCE$.findKDoc(declarationDescriptor);
-        if (comment != null) {
-            renderedDecl = renderedDecl + "<br/>" + KDocRenderer.INSTANCE$.renderKDoc(comment);
-        }
-
-        return renderedDecl;
-    }
-
-    private static String mixKotlinToJava(
-            @NotNull DeclarationDescriptor declarationDescriptor,
-            PsiElement element, PsiElement originalElement
-    ) {
-        String originalInfo = new JavaDocumentationProvider().getQuickNavigateInfo(element, originalElement);
-        if (originalInfo != null) {
-            String renderedDecl = DescriptorRenderer.HTML_NAMES_WITH_SHORT_TYPES.render(declarationDescriptor);
-            return renderedDecl + "<br/>Java declaration:<br/>" + originalInfo;
-        }
-
-        return null;
-    }
-
-    @Override
-    public PsiElement getDocumentationElementForLink(PsiManager psiManager, String link, PsiElement context) {
-        if (!(context instanceof JetElement)) {
-            return null;
-        }
-        JetElement jetElement = (JetElement) context;
-        Project project = psiManager.getProject();
-        KotlinCacheService cacheService = KotlinCacheService.getInstance(project);
-        ResolutionFacade facade = cacheService.getResolutionFacade(Collections.singletonList(jetElement));
-        BindingContext bindingContext = facade.analyze(jetElement, BodyResolveMode.PARTIAL);
-        DeclarationDescriptor contextDescriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, context);
+        val project = psiManager.getProject()
+        val cacheService = KotlinCacheService.getInstance(project)
+        val session = cacheService.getLazyResolveSession(context)
+        val facade = cacheService.getResolutionFacade(listOf(context))
+        val bindingContext = facade.analyze(context, BodyResolveMode.PARTIAL)
+        val contextDescriptor = bindingContext.get<PsiElement, DeclarationDescriptor>(BindingContext.DECLARATION_TO_DESCRIPTOR, context)
         if (contextDescriptor == null) {
-            return null;
+            return null
         }
-        Collection<DeclarationDescriptor> descriptors =
-                KdocPackage.resolveKDocLink(facade, contextDescriptor, null, StringUtil.split(link, ","));
+        val descriptors = resolveKDocLink(session, contextDescriptor, null, StringUtil.split(link, ","))
         if (!descriptors.isEmpty()) {
-            DeclarationDescriptor target = descriptors.iterator().next();
-            if (target instanceof DeclarationDescriptorWithSource) {
-                SourceElement source = ((DeclarationDescriptorWithSource) target).getSource();
-                if (source instanceof PsiSourceElement) {
-                    return ((PsiSourceElement) source).getPsi();
+            val target = descriptors.iterator().next()
+            if (target is DeclarationDescriptorWithSource) {
+                val source = target.getSource()
+                if (source is PsiSourceElement) {
+                    return source.psi
                 }
             }
         }
-        return null;
+        return null
+    }
+
+    companion object {
+        private val LOG = Logger.getInstance(javaClass<KotlinQuickDocumentationProvider>())
+
+        private fun getText(element: PsiElement, originalElement: PsiElement, quickNavigation: Boolean): String? {
+            if (element is JetDeclaration) {
+                return renderKotlinDeclaration(element, quickNavigation)
+            }
+            else if (element is KotlinLightMethod) {
+                return renderKotlinDeclaration(element.getOrigin(), quickNavigation)
+            }
+
+            if (quickNavigation) {
+                val referenceExpression = PsiTreeUtil.getParentOfType<JetReferenceExpression>(originalElement, javaClass<JetReferenceExpression>(), false)
+                if (referenceExpression != null) {
+                    val context = referenceExpression.analyze(BodyResolveMode.PARTIAL)
+                    val declarationDescriptor = context.get<JetReferenceExpression, DeclarationDescriptor>(BindingContext.REFERENCE_TARGET, referenceExpression)
+                    if (declarationDescriptor != null) {
+                        return mixKotlinToJava(declarationDescriptor, element, originalElement)
+                    }
+                }
+            }
+            else {
+                // This element was resolved to non-kotlin element, it will be rendered with own provider
+            }
+
+            return null
+        }
+
+        private fun renderKotlinDeclaration(declaration: JetDeclaration, quickNavigation: Boolean): String {
+            val context = declaration.analyze(BodyResolveMode.PARTIAL)
+            val declarationDescriptor = context.get<PsiElement, DeclarationDescriptor>(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration)
+
+            if (declarationDescriptor == null) {
+                LOG.info("Failed to find descriptor for declaration " + JetPsiUtil.getElementTextWithContext(declaration))
+                return "No documentation available"
+            }
+
+            var renderedDecl = DescriptorRenderer.HTML_NAMES_WITH_SHORT_TYPES.render(declarationDescriptor)
+            if (!quickNavigation) {
+                renderedDecl = "<pre>" + DescriptorRenderer.HTML_NAMES_WITH_SHORT_TYPES.render(declarationDescriptor) + "</pre>"
+            }
+
+            val comment = KDocFinder.findKDoc(declarationDescriptor)
+            if (comment != null) {
+                renderedDecl = renderedDecl + "<br/>" + KDocRenderer.renderKDoc(comment)
+            }
+
+            return renderedDecl
+        }
+
+        private fun mixKotlinToJava(declarationDescriptor: DeclarationDescriptor, element: PsiElement, originalElement: PsiElement): String? {
+            val originalInfo = JavaDocumentationProvider().getQuickNavigateInfo(element, originalElement)
+            if (originalInfo != null) {
+                val renderedDecl = DescriptorRenderer.HTML_NAMES_WITH_SHORT_TYPES.render(declarationDescriptor)
+                return renderedDecl + "<br/>Java declaration:<br/>" + originalInfo
+            }
+
+            return null
+        }
     }
 }

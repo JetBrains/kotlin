@@ -349,8 +349,8 @@
     <copyPastePostProcessor implementation="org.jetbrains.kotlin.idea.conversion.copy.ConvertJavaCopyPastePostProcessor"/>
     <copyPastePostProcessor implementation="org.jetbrains.kotlin.idea.codeInsight.KotlinCopyPasteReferenceProcessor"/>
 
-    <lang.documentationProvider language="JAVA" implementationClass="org.jetbrains.kotlin.idea.JetQuickDocumentationProvider" order="first"/>
-    <documentationProvider implementation="org.jetbrains.kotlin.idea.JetQuickDocumentationProvider"/>
+    <lang.documentationProvider language="JAVA" implementationClass="org.jetbrains.kotlin.idea.KotlinQuickDocumentationProvider" order="first"/>
+    <documentationProvider implementation="org.jetbrains.kotlin.idea.KotlinQuickDocumentationProvider"/>
     <configurationType implementation="org.jetbrains.kotlin.idea.run.JetRunConfigurationType"/>
     <configurationType implementation="org.jetbrains.kotlin.idea.k2jsrun.K2JSRunConfigurationType"/>
     <programRunner implementation="org.jetbrains.kotlin.idea.k2jsrun.K2JSBrowserProgramRunner"/>

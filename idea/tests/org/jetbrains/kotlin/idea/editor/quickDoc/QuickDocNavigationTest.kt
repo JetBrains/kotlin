@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.idea.editor.quickDoc
 
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.JetQuickDocumentationProvider
+import org.jetbrains.kotlin.idea.KotlinQuickDocumentationProvider
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.psi.JetClass
 import org.jetbrains.kotlin.psi.JetFunction
@@ -32,7 +32,7 @@ public class QuickDocNavigationTest() : LightPlatformCodeInsightFixtureTestCase(
     public fun testSimple() {
         myFixture.configureByFile(getTestName(true) + ".kt")
         val source = myFixture.getElementAtCaret().getParentOfType<JetFunction>(false)
-        val target = JetQuickDocumentationProvider().getDocumentationElementForLink(
+        val target = KotlinQuickDocumentationProvider().getDocumentationElementForLink(
                 myFixture.getPsiManager(), "C", source);
         Assert.assertTrue(target is JetClass)
         Assert.assertEquals("C", (target as JetClass).getName())
