@@ -128,7 +128,7 @@ public class MethodInliner {
         resultNode.visitLabel(end);
 
         if (inliningContext.isRoot()) {
-            InternalFinallyBlockInliner.processInlineFunFinallyBlocks(resultNode, lambdasFinallyBlocks);
+            InternalFinallyBlockInliner.processInlineFunFinallyBlocks(resultNode, lambdasFinallyBlocks, ((StackValue.Local)remapper.remap(parameters.totalSize() + 1).value).index);
         }
 
         processReturns(resultNode, labelOwner, remapReturn, end);

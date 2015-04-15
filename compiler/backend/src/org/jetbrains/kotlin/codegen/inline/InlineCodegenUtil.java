@@ -455,4 +455,8 @@ public class InlineCodegenUtil {
                           (isStartNotEnd ? INLINE_MARKER_BEFORE_METHOD_NAME : INLINE_MARKER_AFTER_METHOD_NAME),
                           "()V", false);
     }
+
+    public static int getLoadStoreArgSize(int opcode) {
+        return opcode == Opcodes.DSTORE || opcode == Opcodes.LSTORE || opcode == Opcodes.DLOAD || opcode == Opcodes.LLOAD ? 2 : 1;
+    }
 }

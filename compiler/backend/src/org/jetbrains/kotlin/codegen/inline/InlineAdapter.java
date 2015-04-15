@@ -25,6 +25,8 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil.getLoadStoreArgSize;
+
 public class InlineAdapter extends InstructionAdapter {
 
     private int nextLocalIndex = 0;
@@ -51,7 +53,7 @@ public class InlineAdapter extends InstructionAdapter {
     @Override
     public void visitVarInsn(int opcode, int var) {
         super.visitVarInsn(opcode, var);
-        updateIndex(var, (opcode == Opcodes.DSTORE || opcode == Opcodes.LSTORE || opcode == Opcodes.DLOAD || opcode == Opcodes.LLOAD ? 2 : 1));
+        updateIndex(var, getLoadStoreArgSize(opcode));
     }
 
     private void updateIndex(int var, int varSize) {

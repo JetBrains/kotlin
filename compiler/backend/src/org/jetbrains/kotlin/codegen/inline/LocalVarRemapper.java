@@ -132,7 +132,7 @@ public class LocalVarRemapper {
         FAIL
     }
 
-    private static class RemapInfo {
+    public static class RemapInfo {
         public final StackValue value;
         public final ParameterInfo parameterInfo;
         public final RemapStatus status;

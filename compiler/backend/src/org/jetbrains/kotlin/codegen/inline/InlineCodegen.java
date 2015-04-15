@@ -53,7 +53,6 @@ import org.jetbrains.org.objectweb.asm.commons.Method;
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode;
 import org.jetbrains.org.objectweb.asm.tree.LabelNode;
 import org.jetbrains.org.objectweb.asm.tree.MethodNode;
-import org.jetbrains.org.objectweb.asm.tree.TryCatchBlockNode;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -287,7 +286,7 @@ public class InlineCodegen extends CallGenerator {
             }
         };
         List<MethodInliner.PointForExternalFinallyBlocks> infos = MethodInliner.processReturns(adapter, labelOwner, true, null);
-        generateAndInsertFinallyBlocks(adapter, infos);
+        generateAndInsertFinallyBlocks(adapter, infos, ((StackValue.Local)remapper.remap(parameters.totalSize() + 1).value).index);
 
         adapter.accept(new InliningInstructionAdapter(codegen.v));
 
@@ -624,7 +623,11 @@ public class InlineCodegen extends CallGenerator {
     }
 
 
-    public void generateAndInsertFinallyBlocks(MethodNode intoNode, List<MethodInliner.PointForExternalFinallyBlocks> insertPoints) {
+    public void generateAndInsertFinallyBlocks(
+            MethodNode intoNode,
+            List<MethodInliner.PointForExternalFinallyBlocks> insertPoints,
+            int offsetForFinallyLocalVar
+    ) {
         if (!codegen.hasFinallyBlocks()) return;
 
         Map<AbstractInsnNode, MethodInliner.PointForExternalFinallyBlocks> extensionPoints =
@@ -633,7 +636,7 @@ public class InlineCodegen extends CallGenerator {
             extensionPoints.put(insertPoint.beforeIns, insertPoint);
         }
 
-        DefaultProcessor processor = new DefaultProcessor(intoNode);
+        DefaultProcessor processor = new DefaultProcessor(intoNode, offsetForFinallyLocalVar);
 
         AbstractInsnNode curInstr = intoNode.instructions.getFirst();
         while (curInstr != null) {
@@ -652,6 +655,12 @@ public class InlineCodegen extends CallGenerator {
                                               codegen.getContext(), codegen.getState(), codegen.getParentCodegen());
                 finallyCodegen.addBlockStackElementsForNonLocalReturns(codegen.getBlockStackElements());
 
+                FrameMap frameMap = finallyCodegen.getFrameMap();
+                FrameMap.Mark mark = frameMap.mark();
+                while (frameMap.getCurrentSize() < processor.getNextFreeLocalIndex()) {
+                    frameMap.enterTemp(Type.INT_TYPE);
+                }
+
                 finallyCodegen.generateFinallyBlocksIfNeeded(extension.returnType);
                 finallyNode.visitLabel(end);
                 //Exception table for external try/catch/finally blocks will be generated in original codegen after exiting this method
@@ -661,6 +670,8 @@ public class InlineCodegen extends CallGenerator {
                 processor.getTryBlocksMetaInfo().splitCurrentIntervals(splitBy, false);
 
                 processor.getLocalVarsMetaInfo().splitCurrentIntervals(splitBy, false);
+
+                mark.dropTo();
             }
 
             curInstr = curInstr.getNext();
@@ -675,4 +686,5 @@ public class InlineCodegen extends CallGenerator {
     private SourceMapper createNestedSourceMapper(@NotNull SMAPAndMethodNode nodeAndSmap) {
         return new NestedSourceMapper(sourceMapper, nodeAndSmap.getRanges(), nodeAndSmap.getClassSMAP().getSourceInfo());
     }
+
 }

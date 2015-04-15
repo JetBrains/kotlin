@@ -19,15 +19,19 @@ package org.jetbrains.kotlin.codegen.inline
 import com.google.common.collect.LinkedListMultimap
 import java.util.ArrayList
 import com.intellij.util.containers.Stack
+import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.*
 import java.util.Comparator
 import java.util.Collections
 
-public abstract class CoveringTryCatchNodeProcessor {
+public abstract class CoveringTryCatchNodeProcessor(parameterSize: Int) {
 
-    public val tryBlocksMetaInfo: IntervalMetaInfo<TryCatchBlockNodeInfo> = IntervalMetaInfo();
+    public val tryBlocksMetaInfo: IntervalMetaInfo<TryCatchBlockNodeInfo> = IntervalMetaInfo()
 
-    public val localVarsMetaInfo: IntervalMetaInfo<LocalVarNodeWrapper> = IntervalMetaInfo();
+    public val localVarsMetaInfo: IntervalMetaInfo<LocalVarNodeWrapper> = IntervalMetaInfo()
+
+    public var nextFreeLocalIndex: Int = parameterSize
+        private set
 
     public val coveringFromInnermost: List<TryCatchBlockNodeInfo>
         get() = tryBlocksMetaInfo.currentIntervals.reverse()
@@ -41,10 +45,16 @@ public abstract class CoveringTryCatchNodeProcessor {
     }
 
     public open fun processInstruction(curInstr: AbstractInsnNode, directOrder: Boolean) {
-        if (curInstr !is LabelNode) return
+        if (curInstr is VarInsnNode || curInstr is IincInsnNode) {
+            val argSize = InlineCodegenUtil.getLoadStoreArgSize(curInstr.getOpcode())
+            val varIndex = if (curInstr is VarInsnNode) curInstr.`var` else (curInstr as IincInsnNode).`var`
+            nextFreeLocalIndex = Math.max(nextFreeLocalIndex, varIndex + argSize)
+        }
 
-        updateCoveringTryBlocks(curInstr, directOrder)
-        updateCoveringLocalVars(curInstr, directOrder)
+        if (curInstr is LabelNode) {
+            updateCoveringTryBlocks(curInstr, directOrder)
+            updateCoveringLocalVars(curInstr, directOrder)
+        }
     }
 
     //Keep information about try blocks that cover current instruction -
@@ -164,11 +174,11 @@ class IntervalMetaInfo<T : SplittableInterval<T>> {
         while (end != start && end is LabelNode) {
             end = end.getPrevious()
         }
-        return start == end;
+        return start == end
     }
 }
 
-public class DefaultProcessor(val node: MethodNode) : CoveringTryCatchNodeProcessor() {
+public class DefaultProcessor(val node: MethodNode, parameterSize: Int) : CoveringTryCatchNodeProcessor(parameterSize) {
 
     init {
         node.tryCatchBlocks.forEach { addTryNode(it) }

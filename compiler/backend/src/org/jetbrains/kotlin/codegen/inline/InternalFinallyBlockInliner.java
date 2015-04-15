@@ -62,7 +62,7 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
         }
     }
 
-    public static void processInlineFunFinallyBlocks(@NotNull MethodNode inlineFun, int lambdaTryCatchBlockNodes) {
+    public static void processInlineFunFinallyBlocks(@NotNull MethodNode inlineFun, int lambdaTryCatchBlockNodes, int finallyParamOffset) {
         int index = 0;
         List<TryCatchBlockNodeInfo> inlineFunTryBlockInfo = new ArrayList<TryCatchBlockNodeInfo>();
         for (TryCatchBlockNode block : inlineFun.tryCatchBlocks) {
@@ -75,7 +75,7 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
         }
 
         if (hasFinallyBlocks(inlineFunTryBlockInfo)) {
-            new InternalFinallyBlockInliner(inlineFun, inlineFunTryBlockInfo, localVars).processInlineFunFinallyBlocks();
+            new InternalFinallyBlockInliner(inlineFun, inlineFunTryBlockInfo, localVars, finallyParamOffset).processInlineFunFinallyBlocks();
         }
     }
 
@@ -85,7 +85,11 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
 
     //lambdaTryCatchBlockNodes is number of TryCatchBlockNodes that was inlined with lambdas into function
     //due to code generation specific they placed before function TryCatchBlockNodes
-    private InternalFinallyBlockInliner(@NotNull MethodNode inlineFun, List<TryCatchBlockNodeInfo> inlineFunTryBlockInfo, List<LocalVarNodeWrapper> localVariableInfo) {
+    private InternalFinallyBlockInliner(@NotNull MethodNode inlineFun,
+            @NotNull List<TryCatchBlockNodeInfo> inlineFunTryBlockInfo,
+            @NotNull List<LocalVarNodeWrapper> localVariableInfo,
+            int finallyParamOffset) {
+        super(finallyParamOffset);
         this.inlineFun = inlineFun;
         for (TryCatchBlockNodeInfo block : inlineFunTryBlockInfo) {
             getTryBlocksMetaInfo().addNewInterval(block);
@@ -97,8 +101,6 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
     }
 
     private int initAndGetVarIndexForNonLocalReturnValue() {
-        //sortTryCatchBlocks();/*TODO maybe remove*/
-
         MaxLocalsCalculator tempCalcNode = new MaxLocalsCalculator(
                 InlineCodegenUtil.API,
                 inlineFun.access, inlineFun.desc, null
