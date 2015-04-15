@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.JetPsiUtil
 import org.jetbrains.kotlin.psi.JetReferenceExpression
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -61,23 +62,16 @@ public class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() 
             return null
         }
 
-        val project = psiManager.getProject()
-        val cacheService = KotlinCacheService.getInstance(project)
-        val session = cacheService.getLazyResolveSession(context)
         val bindingContext = context.analyze(BodyResolveMode.PARTIAL)
         val contextDescriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, context]
         if (contextDescriptor == null) {
             return null
         }
-        val descriptors = resolveKDocLink(session, contextDescriptor, null, StringUtil.split(link, ","))
-        if (!descriptors.isEmpty()) {
-            val target = descriptors.iterator().next()
-            if (target is DeclarationDescriptorWithSource) {
-                val source = target.getSource()
-                if (source is PsiSourceElement) {
-                    return source.psi
-                }
-            }
+        val descriptors = resolveKDocLink(context.getResolutionFacade(), contextDescriptor, null, StringUtil.split(link, ","))
+        val target = descriptors.firstOrNull()
+        if (target is DeclarationDescriptorWithSource) {
+            val source = target.getSource()
+            return (source as? PsiSourceElement)?.psi
         }
         return null
     }
@@ -90,14 +84,16 @@ public class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() 
                 return renderKotlinDeclaration(element, quickNavigation)
             }
             else if (element is KotlinLightMethod) {
-                return renderKotlinDeclaration(element.getOrigin(), quickNavigation)
+                val origin = element.getOrigin()
+                if (origin == null) return null
+                return renderKotlinDeclaration(origin, quickNavigation)
             }
 
             if (quickNavigation) {
-                val referenceExpression = PsiTreeUtil.getParentOfType<JetReferenceExpression>(originalElement, javaClass<JetReferenceExpression>(), false)
+                val referenceExpression = originalElement.getNonStrictParentOfType<JetReferenceExpression>()
                 if (referenceExpression != null) {
                     val context = referenceExpression.analyze(BodyResolveMode.PARTIAL)
-                    val declarationDescriptor = context.get<JetReferenceExpression, DeclarationDescriptor>(BindingContext.REFERENCE_TARGET, referenceExpression)
+                    val declarationDescriptor = context[BindingContext.REFERENCE_TARGET, referenceExpression]
                     if (declarationDescriptor != null) {
                         return mixKotlinToJava(declarationDescriptor, element, originalElement)
                     }
@@ -112,7 +108,7 @@ public class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() 
 
         private fun renderKotlinDeclaration(declaration: JetDeclaration, quickNavigation: Boolean): String {
             val context = declaration.analyze(BodyResolveMode.PARTIAL)
-            val declarationDescriptor = context.get<PsiElement, DeclarationDescriptor>(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration)
+            val declarationDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration]
 
             if (declarationDescriptor == null) {
                 LOG.info("Failed to find descriptor for declaration " + JetPsiUtil.getElementTextWithContext(declaration))
