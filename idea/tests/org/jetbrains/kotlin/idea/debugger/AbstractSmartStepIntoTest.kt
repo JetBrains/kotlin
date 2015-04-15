@@ -16,16 +16,16 @@
 
 package org.jetbrains.kotlin.idea.debugger
 
-import com.intellij.debugger.actions.SmartStepTarget
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
-import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import com.intellij.debugger.actions.MethodSmartStepTarget
-import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import com.intellij.psi.util.PsiFormatUtil
+import com.intellij.debugger.actions.SmartStepTarget
 import com.intellij.psi.PsiSubstitutor
+import com.intellij.psi.util.PsiFormatUtil
 import com.intellij.psi.util.PsiFormatUtilBase
+import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
+import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 
 public abstract class AbstractSmartStepIntoTest : JetLightCodeInsightFixtureTestCase() {
     private val fixture: JavaCodeInsightTestFixture
@@ -44,11 +44,15 @@ public abstract class AbstractSmartStepIntoTest : JetLightCodeInsightFixtureTest
         val expected = InTextDirectivesUtils.findListWithPrefixes(fixture.getFile()?.getText()!!.replace("\\,", "+++"), "// EXISTS: ").map { it.replace("+++", ",") }
 
         for (actualTargetName in actual) {
-            assert(expected.contains(actualTargetName), "Unexpected step into target was found: ${actualTargetName}\n${renderTableWithResults(expected, actual)}")
+            assert(actualTargetName in expected) {
+                "Unexpected step into target was found: $actualTargetName\n${renderTableWithResults(expected, actual)}"
+            }
         }
 
         for (expectedTargetName in expected) {
-            assert(actual.contains(expectedTargetName), "Missed step into target: ${expectedTargetName}\n${renderTableWithResults(expected, actual)}")
+            assert(expectedTargetName in actual) {
+                "Missed step into target: $expectedTargetName\n${renderTableWithResults(expected, actual)}"
+            }
         }
     }
 

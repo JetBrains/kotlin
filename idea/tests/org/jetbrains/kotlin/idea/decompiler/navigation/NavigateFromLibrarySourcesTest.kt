@@ -82,14 +82,11 @@ public class NavigateFromLibrarySourcesTest: LightCodeInsightFixtureTestCase() {
                 assertEquals(expectedFqName, element.getQualifiedName())
             }
             is JetClass -> {
-                val name = element.getFqName()
-                assert(name != null)
-                assertEquals(expectedFqName, name!!.asString())
+                assertEquals(expectedFqName, element.getFqName()!!.asString())
             }
             else -> {
                 fail("Navigation element should be JetClass or PsiClass: " + element.javaClass + ", " + element.getText())
             }
         }
     }
-
 }

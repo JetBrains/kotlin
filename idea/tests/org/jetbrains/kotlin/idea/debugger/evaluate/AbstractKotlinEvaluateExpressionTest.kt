@@ -17,54 +17,47 @@
 package org.jetbrains.kotlin.idea.debugger.evaluate
 
 import com.intellij.debugger.DebuggerInvocationUtil
-import com.intellij.debugger.engine.evaluation.expression.EvaluatorBuilderImpl
-import com.intellij.debugger.engine.evaluation.TextWithImportsImpl
-import com.intellij.debugger.engine.evaluation.CodeFragmentKind
+import com.intellij.debugger.DebuggerManagerEx
+import com.intellij.debugger.SourcePosition
 import com.intellij.debugger.engine.ContextUtil
+import com.intellij.debugger.engine.SourcePositionProvider
 import com.intellij.debugger.engine.SuspendContextImpl
-import org.jetbrains.kotlin.idea.debugger.*
-import org.junit.Assert
-import org.jetbrains.kotlin.idea.JetFileType
-import com.intellij.openapi.util.io.FileUtil
-import java.io.File
-import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.eval4j.jdi.asValue
-import org.jetbrains.eval4j.Value
-import org.jetbrains.eval4j.ObjectValue
-import com.sun.jdi.ObjectReference
-import org.jetbrains.kotlin.psi.JetCodeFragment
-import java.util.Collections
+import com.intellij.debugger.engine.evaluation.CodeFragmentKind
 import com.intellij.debugger.engine.evaluation.EvaluateException
-import com.intellij.execution.process.ProcessOutputTypes
-import org.apache.log4j.AppenderSkeleton
-import org.apache.log4j.spi.LoggingEvent
-import org.apache.log4j.Level
-import org.apache.log4j.Logger
+import com.intellij.debugger.engine.evaluation.TextWithImports
+import com.intellij.debugger.engine.evaluation.TextWithImportsImpl
+import com.intellij.debugger.engine.evaluation.expression.EvaluatorBuilderImpl
+import com.intellij.debugger.settings.NodeRendererSettings
 import com.intellij.debugger.ui.impl.FrameVariablesTree
-import com.intellij.openapi.util.Disposer
-import com.intellij.debugger.ui.impl.watch.DebuggerTree
-import com.intellij.debugger.ui.impl.watch.DebuggerTreeNodeImpl
-import com.intellij.debugger.ui.impl.watch.DefaultNodeDescriptor
-import com.intellij.xdebugger.impl.ui.XDebuggerUIConstants
+import com.intellij.debugger.ui.impl.watch.*
+import com.intellij.debugger.ui.tree.FieldDescriptor
 import com.intellij.debugger.ui.tree.LocalVariableDescriptor
 import com.intellij.debugger.ui.tree.StackFrameDescriptor
 import com.intellij.debugger.ui.tree.StaticDescriptor
-import com.intellij.debugger.ui.impl.watch.ThisDescriptorImpl
-import com.intellij.debugger.ui.tree.FieldDescriptor
-import com.intellij.debugger.ui.impl.watch.NodeDescriptorImpl
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.psi.search.FilenameIndex
-import com.intellij.psi.PsiManager
-import com.intellij.debugger.DebuggerManagerEx
-import com.intellij.psi.PsiDocumentManager
+import com.intellij.execution.process.ProcessOutputTypes
 import com.intellij.openapi.application.ModalityState
-import com.intellij.debugger.settings.NodeRendererSettings
-import com.intellij.debugger.SourcePosition
-import com.intellij.debugger.engine.SourcePositionProvider
-import com.intellij.debugger.engine.evaluation.TextWithImports
-import com.intellij.debugger.ui.impl.watch.WatchItemDescriptor
+import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.PsiManager
+import com.intellij.psi.search.FilenameIndex
+import com.intellij.xdebugger.impl.ui.XDebuggerUIConstants
+import com.sun.jdi.ObjectReference
+import org.apache.log4j.AppenderSkeleton
+import org.apache.log4j.Level
+import org.apache.log4j.Logger
+import org.apache.log4j.spi.LoggingEvent
+import org.jetbrains.eval4j.ObjectValue
+import org.jetbrains.eval4j.Value
+import org.jetbrains.eval4j.jdi.asValue
+import org.jetbrains.kotlin.idea.JetFileType
+import org.jetbrains.kotlin.idea.debugger.KotlinDebuggerTestBase
+import org.jetbrains.kotlin.idea.debugger.KotlinFrameExtraVariablesProvider
 import org.jetbrains.kotlin.idea.util.application.runReadAction
-import java.util.regex.Matcher
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.junit.Assert
+import java.io.File
+import java.util.Collections
 import java.util.regex.Pattern
 
 public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
@@ -188,7 +181,7 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
         val breakpoints = InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, "// ADDITIONAL_BREAKPOINT: ")
         for (breakpoint in breakpoints) {
             val position = breakpoint.split(".kt:")
-            assert(position.size() == 2, "Couldn't parse position from test directive: directive = ${breakpoint}")
+            assert(position.size() == 2) { "Couldn't parse position from test directive: directive = $breakpoint" }
             createBreakpoint(position[0], position[1])
         }
     }
@@ -200,7 +193,7 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
                     it.contentsToByteArray().toString("UTF-8").contains(lineMarker)
         }
 
-        assert(sourceFiles.size() == 1, "One source file should be found: name = $fileName, sourceFiles = $sourceFiles")
+        assert(sourceFiles.size() == 1) { "One source file should be found: name = $fileName, sourceFiles = $sourceFiles" }
 
         val runnable = Runnable() {
             val psiSourceFile = PsiManager.getInstance(project).findFile(sourceFiles.first())!!

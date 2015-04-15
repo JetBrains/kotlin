@@ -16,17 +16,17 @@
 
 package org.jetbrains.kotlin.resolve.constants.evaluate
 
-import org.jetbrains.kotlin.resolve.annotation.AbstractAnnotationDescriptorResolveTest
-import org.jetbrains.kotlin.resolve.BindingContext
-import java.io.File
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import kotlin.test.assertNotNull
-import java.util.regex.Pattern
-import org.jetbrains.kotlin.test.JetTestUtils
-import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.annotation.AbstractAnnotationDescriptorResolveTest
 import org.jetbrains.kotlin.resolve.constants.IntegerValueConstant
+import org.jetbrains.kotlin.resolve.constants.StringValue
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.JetTestUtils
+import java.io.File
+import java.util.regex.Pattern
+import kotlin.test.assertNotNull
 
 public abstract class AbstractEvaluateExpressionTest : AbstractAnnotationDescriptorResolveTest() {
 
@@ -92,7 +92,7 @@ public abstract class AbstractEvaluateExpressionTest : AbstractAnnotationDescrip
 
         var actualFileText = fileText
         for ((expected, actual) in expectedActual) {
-            assert(actualFileText.contains(expected), "File text should contains $expected")
+            assert(actualFileText.contains(expected)) { "File text should contain $expected" }
             actualFileText = actualFileText.replace(expected, actual)
         }
 

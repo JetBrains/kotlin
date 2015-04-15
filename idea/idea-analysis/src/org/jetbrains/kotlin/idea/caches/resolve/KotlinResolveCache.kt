@@ -16,58 +16,35 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
-import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.kotlin.psi.JetFile
-import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analyzer.AnalysisResult
-import com.intellij.psi.util.CachedValuesManager
-import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
-import com.intellij.util.containers.SLRUCache
-import com.intellij.psi.util.PsiModificationTracker
-import com.intellij.openapi.project.DumbService
-import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
-import org.jetbrains.kotlin.context.SimpleGlobalContext
-import org.jetbrains.kotlin.resolve.TopDownAnalysisParameters
 import com.intellij.openapi.progress.ProcessCanceledException
-import com.intellij.psi.util.CachedValueProvider
-import org.jetbrains.kotlin.asJava.LightClassUtil
-import org.jetbrains.kotlin.resolve.LibrarySourceHacks
-import org.jetbrains.kotlin.idea.project.TargetPlatform
-import org.jetbrains.kotlin.idea.project.ResolveSessionForBodies
-import java.util.HashMap
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.psi.JetNamedFunction
-import org.jetbrains.kotlin.psi.JetClassInitializer
-import org.jetbrains.kotlin.psi.JetProperty
-import org.jetbrains.kotlin.psi.JetImportDirective
-import org.jetbrains.kotlin.psi.JetAnnotationEntry
-import org.jetbrains.kotlin.psi.JetTypeConstraint
-import org.jetbrains.kotlin.psi.JetPackageDirective
-import org.jetbrains.kotlin.psi.JetPsiUtil
-import org.jetbrains.kotlin.psi.JetDeclaration
-import org.jetbrains.kotlin.resolve.CompositeBindingContext
-import org.jetbrains.kotlin.psi.JetParameter
-import org.jetbrains.kotlin.psi.JetDelegationSpecifierList
-import org.jetbrains.kotlin.psi.JetTypeParameter
-import org.jetbrains.kotlin.psi.JetClassOrObject
-import org.jetbrains.kotlin.psi.JetCallableDeclaration
-import org.jetbrains.kotlin.psi.JetCodeFragment
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.analyzer.analyzeInContext
-import org.jetbrains.kotlin.resolve.BindingTraceContext
-import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.resolve.scopes.ChainedScope
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
-import org.jetbrains.kotlin.di.InjectorForLazyBodyResolve
-import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
-import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
-import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.IndexNotReadyException
-import org.jetbrains.kotlin.psi.JetBlockExpression
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
+import com.intellij.psi.util.CachedValueProvider
+import com.intellij.psi.util.CachedValuesManager
+import com.intellij.psi.util.PsiModificationTracker
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.util.containers.SLRUCache
+import org.jetbrains.kotlin.analyzer.AnalysisResult
+import org.jetbrains.kotlin.analyzer.analyzeInContext
+import org.jetbrains.kotlin.asJava.LightClassUtil
+import org.jetbrains.kotlin.context.SimpleGlobalContext
+import org.jetbrains.kotlin.di.InjectorForLazyBodyResolve
+import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
+import org.jetbrains.kotlin.idea.project.ResolveSessionForBodies
+import org.jetbrains.kotlin.idea.project.TargetPlatform
+import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
+import org.jetbrains.kotlin.resolve.scopes.ChainedScope
+import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.types.TypeUtils
+import java.util.HashMap
 
 public trait CacheExtension<T> {
     public val platform: TargetPlatform
@@ -152,7 +129,7 @@ private class PerFileAnalysisCache(val file: JetFile, val resolveSession: Resolv
     }
 
     fun getAnalysisResults(element: JetElement): AnalysisResult {
-        assert (element.getContainingJetFile() == file, "Wrong file. Expected $file, but was ${element.getContainingJetFile()}")
+        assert (element.getContainingJetFile() == file) { "Wrong file. Expected $file, but was ${element.getContainingJetFile()}" }
 
         val analyzableParent = KotlinResolveDataProvider.findAnalyzableParent(element)
 

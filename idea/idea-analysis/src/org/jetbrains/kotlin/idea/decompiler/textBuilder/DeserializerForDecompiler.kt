@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.serialization.deserialization.DeserializationCompone
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import java.util.Collections
 
 public fun DeserializerForDecompiler(classFile: VirtualFile): DeserializerForDecompiler {
     val kotlinClass = KotlinBinaryClassCache.getKotlinBinaryClass(classFile)
@@ -55,12 +54,12 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
     override fun resolveTopLevelClass(classId: ClassId) = deserializationComponents.deserializeClass(classId)
 
     override fun resolveDeclarationsInPackage(packageFqName: FqName): Collection<DeclarationDescriptor> {
-        assert(packageFqName == directoryPackageFqName, "Was called for $packageFqName but only $directoryPackageFqName is expected.")
+        assert(packageFqName == directoryPackageFqName) { "Was called for $packageFqName but only $directoryPackageFqName is expected" }
         val binaryClassForPackageClass = classFinder.findKotlinClass(PackageClassUtils.getPackageClassId(packageFqName))
         val annotationData = binaryClassForPackageClass?.getClassHeader()?.annotationData
         if (annotationData == null) {
             LOG.error("Could not read annotation data for $packageFqName from ${binaryClassForPackageClass?.getClassId()}")
-            return Collections.emptyList()
+            return emptyList()
         }
         val packageData = JvmProtoBufUtil.readPackageDataFrom(annotationData)
         val membersScope = DeserializedPackageMemberScope(
@@ -68,7 +67,7 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
                 packageData.getPackageProto(),
                 packageData.getNameResolver(),
                 deserializationComponents
-        ) { listOf() }
+        ) { emptyList() }
         return membersScope.getDescriptors()
     }
 

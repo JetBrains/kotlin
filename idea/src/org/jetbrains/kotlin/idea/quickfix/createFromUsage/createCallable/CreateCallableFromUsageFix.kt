@@ -16,17 +16,16 @@
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable
 
-import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.CreateFromUsageFixBase
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
 import org.jetbrains.kotlin.idea.core.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.core.refactoring.chooseContainerElementIfNecessary
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.CreateFromUsageFixBase
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
 import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.psi.*
 import java.util.Collections
@@ -42,13 +41,13 @@ public class CreateCallableFromUsageFix(
                 isExtension: Boolean) : this(originalExpression, Collections.singletonList(callableInfo), isExtension) { }
 
     init {
-        assert (callableInfos.isNotEmpty(), "No CallableInfos: ${JetPsiUtil.getElementTextWithContext(originalElement)}")
-        if (callableInfos.size > 1) {
+        assert (callableInfos.isNotEmpty()) { "No CallableInfos: ${JetPsiUtil.getElementTextWithContext(originalElement)}" }
+        if (callableInfos.size() > 1) {
             val receiverSet = callableInfos.mapTo(HashSet<TypeInfo>()) { it.receiverTypeInfo }
-            if (receiverSet.size > 1) throw AssertionError("All functions must have common receiver: $receiverSet")
+            if (receiverSet.size() > 1) throw AssertionError("All functions must have common receiver: $receiverSet")
 
             val possibleContainerSet = callableInfos.mapTo(HashSet<List<JetElement>>()) { it.possibleContainers }
-            if (possibleContainerSet.size > 1) throw AssertionError("All functions must have common containers: $possibleContainerSet")
+            if (possibleContainerSet.size() > 1) throw AssertionError("All functions must have common containers: $possibleContainerSet")
         }
     }
 
@@ -132,7 +131,9 @@ public class CreateCallableFromUsageFix(
             }
         }
         else {
-            assert(callableInfo.receiverTypeInfo is TypeInfo.Empty, "No receiver type candidates: ${element.getText()} in ${file.getText()}")
+            assert(callableInfo.receiverTypeInfo is TypeInfo.Empty) {
+                "No receiver type candidates: ${element.getText()} in ${file.getText()}"
+            }
 
             chooseContainerElementIfNecessary(callableInfo.possibleContainers, editor, popupTitle, true, { it }) {
                 val container = if (it is JetClassBody) it.getParent() as JetClassOrObject else it

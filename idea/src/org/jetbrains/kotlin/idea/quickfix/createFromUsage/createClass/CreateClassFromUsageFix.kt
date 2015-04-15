@@ -16,31 +16,28 @@
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass
 
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.CreateFromUsageFixBase
-import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.kotlin.idea.JetBundle
-import com.intellij.openapi.project.Project
+import com.intellij.ide.util.DirectoryChooserUtil
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.psi.JetFile
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiDirectory
+import com.intellij.openapi.module.ModuleUtilCore
+import com.intellij.openapi.project.Project
+import com.intellij.psi.*
+import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.JetFileType
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
-import java.util.Collections
-import com.intellij.openapi.command.CommandProcessor
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.ClassKind.*
-import com.intellij.psi.PsiPackage
-import com.intellij.openapi.module.ModuleUtilCore
-import com.intellij.ide.util.DirectoryChooserUtil
-import java.util.HashMap
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.psi.PsiMember
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.core.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.core.refactoring.getOrCreateKotlinFile
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.CreateFromUsageFixBase
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.ClassKind.ENUM_ENTRY
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.ClassKind.OBJECT
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.ClassKind.PLAIN_CLASS
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.ClassKind.TRAIT
 import org.jetbrains.kotlin.idea.util.application.executeCommand
+import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.JetFile
+import java.util.Collections
+import java.util.HashMap
 
 enum class ClassKind(val keyword: String, val description: String) {
     PLAIN_CLASS: ClassKind("class", "class")
@@ -83,7 +80,7 @@ public class CreateClassFromUsageFix(
     override fun invoke(project: Project, editor: Editor, file: JetFile) {
         fun createFileByPackage(psiPackage: PsiPackage): JetFile? {
             val directories = psiPackage.getDirectories().filter { it.canRefactor() }
-            assert (directories.isNotEmpty(), "Package '${psiPackage.getQualifiedName() ?: ""}' must be refactorable")
+            assert (directories.isNotEmpty()) { "Package '${psiPackage.getQualifiedName()}' must be refactorable" }
 
             val currentModule = ModuleUtilCore.findModuleForPsiElement(file)
             val preferredDirectory =

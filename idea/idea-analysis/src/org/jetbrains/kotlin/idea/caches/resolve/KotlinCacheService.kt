@@ -16,30 +16,31 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
+import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ProjectRootModificationTracker
+import com.intellij.psi.util.CachedValueProvider
+import com.intellij.psi.util.PsiModificationTracker
+import com.intellij.util.containers.SLRUCache
+import org.jetbrains.kotlin.analyzer.AnalysisResult
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.idea.project.AnalyzerFacadeProvider
+import org.jetbrains.kotlin.idea.project.ResolveSessionForBodies
+import org.jetbrains.kotlin.idea.project.TargetPlatform
+import org.jetbrains.kotlin.idea.project.TargetPlatform.JS
+import org.jetbrains.kotlin.idea.project.TargetPlatform.JVM
+import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
+import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
+import org.jetbrains.kotlin.psi.JetCodeFragment
+import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.JetFile
-import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analyzer.AnalysisResult
-import com.intellij.openapi.diagnostic.Logger
-import com.intellij.util.containers.SLRUCache
-import com.intellij.psi.util.PsiModificationTracker
-import com.intellij.psi.util.CachedValueProvider
 import org.jetbrains.kotlin.resolve.BindingContext
-import com.intellij.openapi.components.ServiceManager
-import org.jetbrains.kotlin.idea.project.AnalyzerFacadeProvider
-import org.jetbrains.kotlin.idea.project.TargetPlatform
-import org.jetbrains.kotlin.idea.project.TargetPlatform.*
-import org.jetbrains.kotlin.idea.project.ResolveSessionForBodies
-import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
-import org.jetbrains.kotlin.psi.JetCodeFragment
-import org.jetbrains.kotlin.utils.keysToMap
-import com.intellij.openapi.roots.ProjectRootModificationTracker
-import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.psi.JetDeclaration
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.utils.keysToMap
 import kotlin.platform.platformStatic
 
 private val LOG = Logger.getInstance(javaClass<KotlinCacheService>())
@@ -226,7 +227,9 @@ public class KotlinCacheService(val project: Project) {
         val thisInfo = elements.first().getModuleInfo()
         elements.forEach {
             val extraFileInfo = it.getModuleInfo()
-            assert(extraFileInfo == thisInfo, "All files under analysis should be in the same module.\nExpected: $thisInfo\nWas:${extraFileInfo}")
+            assert(extraFileInfo == thisInfo) {
+                "All files under analysis should be in the same module.\nExpected: $thisInfo\nWas:$extraFileInfo"
+            }
         }
     }
 

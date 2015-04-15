@@ -289,7 +289,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 val typeArgumentsForFakeFunction = callableInfo.typeParameterInfos
                         .map {
                             val typeCandidates = computeTypeCandidates(it)
-                            assert (typeCandidates.size == 1, "Ambiguous type candidates for type parameter $it: $typeCandidates")
+                            assert (typeCandidates.size() == 1) { "Ambiguous type candidates for type parameter $it: $typeCandidates" }
                             typeCandidates.first().theType
                         }
                         .subtract(substitutionMap.keySet())
@@ -336,7 +336,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 return receiverClassDescriptor.getScopeForMemberDeclarationResolution()
             }
 
-            assert (receiverClassDescriptor is JavaClassDescriptor, "Unexpected receiver class: ${receiverClassDescriptor}")
+            assert (receiverClassDescriptor is JavaClassDescriptor) { "Unexpected receiver class: $receiverClassDescriptor" }
 
             val typeParamScope = with(
                     WritableScopeImpl(

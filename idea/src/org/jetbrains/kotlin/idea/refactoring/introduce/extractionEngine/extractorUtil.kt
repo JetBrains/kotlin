@@ -114,11 +114,11 @@ fun createNameCounterpartMap(from: JetElement, to: JetElement): Map<JetSimpleNam
 
     val fromOffset = from.getTextRange()!!.getStartOffset()
     from.accept(
-            object: JetTreeVisitorVoid() {
+            object : JetTreeVisitorVoid() {
                 override fun visitSimpleNameExpression(expression: JetSimpleNameExpression) {
                     val offset = expression.getTextRange()!!.getStartOffset() - fromOffset
                     val newExpression = to.findElementAt(offset)?.getNonStrictParentOfType<JetSimpleNameExpression>()
-                    assert(newExpression!= null, "Couldn't find expression at $offset in '${to.getText()}'")
+                    assert(newExpression != null) { "Couldn't find expression at $offset in '${to.getText()}'" }
 
                     map[expression] = newExpression!!
                 }
@@ -437,7 +437,7 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
          */
         for ((offsetInBody, resolveResult) in descriptor.extractionData.refOffsetToDeclaration.entrySet().sortDescendingBy { it.key }) {
             val expr = file.findElementAt(bodyOffset + offsetInBody)?.getNonStrictParentOfType<JetSimpleNameExpression>()
-            assert(expr != null, "Couldn't find expression at $offsetInBody in '${body.getText()}'")
+            assert(expr != null) { "Couldn't find expression at $offsetInBody in '${body.getText()}'" }
 
             originalOffsetByExpr[expr!!] = offsetInBody
 
