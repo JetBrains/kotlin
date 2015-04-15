@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.resolve.extension;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.InlineUtil;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.psi.*;
@@ -35,22 +34,19 @@ public class InlineAnalyzerExtension implements FunctionAnalyzerExtension.Analyz
     public static final InlineAnalyzerExtension INSTANCE = new InlineAnalyzerExtension();
 
     private InlineAnalyzerExtension() {
-
     }
 
     @Override
     public void process(
             @NotNull final FunctionDescriptor descriptor, @NotNull JetNamedFunction function, @NotNull final BindingTrace trace
     ) {
-        assert descriptor instanceof SimpleFunctionDescriptor && ((SimpleFunctionDescriptor) descriptor).getInlineStrategy().isInline() :
-                "This method should be invoced on inline function: " + descriptor;
+        assert InlineUtil.isInline(descriptor) : "This method should be invoked on inline function: " + descriptor;
 
         checkDefaults(descriptor, function, trace);
         checkNotVirtual(descriptor, function, trace);
         checkHasInlinableAndNullability(descriptor, function, trace);
 
         JetVisitorVoid visitor = new JetVisitorVoid() {
-
             @Override
             public void visitJetElement(@NotNull JetElement element) {
                 super.visitJetElement(element);
@@ -85,7 +81,7 @@ public class InlineAnalyzerExtension implements FunctionAnalyzerExtension.Analyz
         for (ValueParameterDescriptor parameter : functionDescriptor.getValueParameters()) {
             if (parameter.hasDefaultValue()) {
                 JetParameter jetParameter = jetParameters.get(index);
-                //report not supported default only on inlinable lambda and on parameter with inherited dafault (there is some problems to inline it)
+                //report not supported default only on inlinable lambda and on parameter with inherited default (there is some problems to inline it)
                 if (checkInlinableParameter(parameter, jetParameter, functionDescriptor, null) || !parameter.declaresDefaultValue()) {
                     trace.report(Errors.NOT_YET_SUPPORTED_IN_INLINE.on(jetParameter, jetParameter, functionDescriptor));
                 }

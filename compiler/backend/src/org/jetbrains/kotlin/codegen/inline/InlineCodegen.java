@@ -55,7 +55,10 @@ import org.jetbrains.org.objectweb.asm.tree.MethodNode;
 import org.jetbrains.org.objectweb.asm.tree.TryCatchBlockNode;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.getMethodAsmFlags;
 import static org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive;
@@ -94,7 +97,7 @@ public class InlineCodegen extends CallGenerator {
             @NotNull JetElement callElement,
             @Nullable ReifiedTypeParameterMappings typeParameterMappings
     ) {
-        assert functionDescriptor.getInlineStrategy().isInline() : "InlineCodegen could inline only inline function but " + functionDescriptor;
+        assert InlineUtil.isInline(functionDescriptor) : "InlineCodegen could inline only inline function: " + functionDescriptor;
 
         this.state = state;
         this.typeMapper = state.getTypeMapper();
@@ -109,8 +112,8 @@ public class InlineCodegen extends CallGenerator {
         context = (MethodContext) getContext(functionDescriptor, state);
         jvmSignature = typeMapper.mapSignature(functionDescriptor, context.getContextKind());
 
-        InlineStrategy inlineStrategy =
-                codegen.getContext().isInlineFunction() ? InlineStrategy.IN_PLACE : functionDescriptor.getInlineStrategy();
+        // TODO: implement AS_FUNCTION inline strategy
+        InlineStrategy inlineStrategy = InlineUtil.getInlineType(functionDescriptor);
         this.asFunctionInline = false;
 
         isSameModule = JvmCodegenUtil.isCallInsideSameModuleAsDeclared(functionDescriptor, codegen.getContext(), state.getOutDirectory());

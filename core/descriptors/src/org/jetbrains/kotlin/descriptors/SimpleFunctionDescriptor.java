@@ -17,13 +17,11 @@
 package org.jetbrains.kotlin.descriptors;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.builtins.InlineStrategy;
 
 /**
  * Simple functions are the ones with 'fun' keyword and function literals
  */
 public interface SimpleFunctionDescriptor extends FunctionDescriptor {
-
     @NotNull
     @Override
     SimpleFunctionDescriptor copy(DeclarationDescriptor newOwner, Modality modality, Visibility visibility, Kind kind, boolean copyOverrides);
@@ -31,7 +29,4 @@ public interface SimpleFunctionDescriptor extends FunctionDescriptor {
     @NotNull
     @Override
     SimpleFunctionDescriptor getOriginal();
-
-    @NotNull
-    InlineStrategy getInlineStrategy();
 }

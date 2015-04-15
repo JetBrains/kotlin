@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.codegen.context;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.InlineUtil;
 import org.jetbrains.kotlin.codegen.AsmUtil;
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil;
 import org.jetbrains.kotlin.codegen.OwnerKind;
@@ -112,11 +113,7 @@ public class MethodContext extends CodegenContext<CallableMemberDescriptor> {
     }
 
     public boolean isInlineFunction() {
-        DeclarationDescriptor descriptor = getContextDescriptor();
-        if (descriptor instanceof SimpleFunctionDescriptor) {
-            return ((SimpleFunctionDescriptor) descriptor).getInlineStrategy().isInline();
-        }
-        return false;
+        return InlineUtil.isInline(getContextDescriptor());
     }
 
     public boolean isInliningLambda() {

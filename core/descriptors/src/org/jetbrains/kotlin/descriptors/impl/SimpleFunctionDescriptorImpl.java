@@ -23,15 +23,10 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
-import org.jetbrains.kotlin.builtins.InlineStrategy;
-import org.jetbrains.kotlin.builtins.InlineUtil;
 
 import java.util.List;
 
 public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl implements SimpleFunctionDescriptor {
-
-    private InlineStrategy inlineStrategy;
-
     protected SimpleFunctionDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
             @Nullable SimpleFunctionDescriptor original,
@@ -54,7 +49,6 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
         return new SimpleFunctionDescriptorImpl(containingDeclaration, null, annotations, name, kind, source);
     }
 
-
     @NotNull
     @Override
     public SimpleFunctionDescriptorImpl initialize(
@@ -66,9 +60,8 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
             @Nullable Modality modality,
             @NotNull Visibility visibility
     ) {
-        super.initialize(receiverParameterType, dispatchReceiverParameter, typeParameters, unsubstitutedValueParameters, unsubstitutedReturnType,
-                         modality, visibility);
-        this.inlineStrategy = InlineUtil.getInlineType(this);
+        super.initialize(receiverParameterType, dispatchReceiverParameter, typeParameters, unsubstitutedValueParameters,
+                         unsubstitutedReturnType, modality, visibility);
         return this;
     }
 
@@ -93,18 +86,20 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
                 getName(),
                 kind,
                 SourceElement.NO_SOURCE
-                );
+        );
     }
 
     @NotNull
     @Override
-    public SimpleFunctionDescriptor copy(DeclarationDescriptor newOwner, Modality modality, Visibility visibility, Kind kind, boolean copyOverrides) {
-        return (SimpleFunctionDescriptorImpl)doSubstitute(TypeSubstitutor.EMPTY, newOwner, modality, visibility, null, copyOverrides, kind);
-    }
-
-    @NotNull
-    @Override
-    public InlineStrategy getInlineStrategy() {
-        return inlineStrategy;
+    public SimpleFunctionDescriptor copy(
+            DeclarationDescriptor newOwner,
+            Modality modality,
+            Visibility visibility,
+            Kind kind,
+            boolean copyOverrides
+    ) {
+        return (SimpleFunctionDescriptorImpl) doSubstitute(
+                TypeSubstitutor.EMPTY, newOwner, modality, visibility, null, copyOverrides, kind
+        );
     }
 }

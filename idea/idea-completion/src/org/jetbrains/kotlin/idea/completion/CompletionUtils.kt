@@ -23,6 +23,7 @@ import com.intellij.openapi.util.Key
 import com.intellij.patterns.ElementPattern
 import com.intellij.patterns.StandardPatterns
 import com.intellij.util.PlatformIcons
+import org.jetbrains.kotlin.builtins.InlineUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
@@ -252,8 +253,7 @@ fun returnExpressionItems(bindingContext: BindingContext, position: JetElement):
 
                 // check if the current function literal is inlined and stop processing outer declarations if it's not
                 val callee = call?.getCalleeExpression() as? JetReferenceExpression ?: break // not inlined
-                val target = bindingContext[BindingContext.REFERENCE_TARGET, callee] as? SimpleFunctionDescriptor ?: break // not inlined
-                if (!target.getInlineStrategy().isInline()) break // not inlined
+                if (!InlineUtil.isInline(bindingContext[BindingContext.REFERENCE_TARGET, callee])) break // not inlined
             }
             else {
                 if (parent.hasBlockBody()) {

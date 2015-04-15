@@ -16,11 +16,12 @@
 
 package org.jetbrains.kotlin.resolve.calls.checkers
 
+import org.jetbrains.kotlin.builtins.InlineUtil
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import java.lang.ref.WeakReference
 
 public class InlineCheckerWrapper : CallChecker {
@@ -34,8 +35,8 @@ public class InlineCheckerWrapper : CallChecker {
         while (parentDescriptor != null) {
             val descriptor = parentDescriptor!!
 
-            if (descriptor is SimpleFunctionDescriptor && descriptor.getInlineStrategy().isInline()) {
-                val checker = getChecker(descriptor)
+            if (InlineUtil.isInline(descriptor)) {
+                val checker = getChecker(descriptor as SimpleFunctionDescriptor)
                 checker.check(resolvedCall, context)
             }
 

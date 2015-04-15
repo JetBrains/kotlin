@@ -68,9 +68,7 @@ public class InlineDescriptorUtils {
         JetExpression call = JetPsiUtil.getParentCallIfPresent(lambdaExpression);
         if (call != null) {
             ResolvedCall<?> resolvedCall = CallUtilPackage.getResolvedCall(call, bindingContext);
-            CallableDescriptor resultingDescriptor = resolvedCall == null ? null : resolvedCall.getResultingDescriptor();
-            if (resultingDescriptor instanceof SimpleFunctionDescriptor &&
-                ((SimpleFunctionDescriptor) resultingDescriptor).getInlineStrategy().isInline()) {
+            if (resolvedCall != null && InlineUtil.isInline(resolvedCall.getResultingDescriptor())) {
                 ValueArgument argument = CallUtilPackage.getValueArgumentForExpression(resolvedCall.getCall(), lambdaExpression);
                 if (argument != null) {
                     ArgumentMapping mapping = resolvedCall.getArgumentMapping(argument);

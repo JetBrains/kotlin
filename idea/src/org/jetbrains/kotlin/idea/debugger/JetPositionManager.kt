@@ -16,13 +16,14 @@
 
 package org.jetbrains.kotlin.idea.debugger
 
+import com.intellij.debugger.MultiRequestPositionManager
 import com.intellij.debugger.NoDataException
 import com.intellij.debugger.SourcePosition
 import com.intellij.debugger.engine.DebugProcess
 import com.intellij.debugger.requests.ClassPrepareRequestor
+import com.intellij.find.findUsages.FindUsagesOptions
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.roots.libraries.LibraryUtil
-import com.intellij.openapi.util.Pair
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
@@ -32,35 +33,31 @@ import com.sun.jdi.Location
 import com.sun.jdi.ReferenceType
 import com.sun.jdi.request.ClassPrepareRequest
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.builtins.InlineUtil
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
+import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.calls.callUtil.*
-import org.jetbrains.kotlin.resolve.extension.InlineAnalyzerExtension
-import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
+import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
+import org.jetbrains.kotlin.idea.findUsages.toSearchTarget
+import org.jetbrains.kotlin.idea.search.usagesSearch.DefaultSearchHelper
+import org.jetbrains.kotlin.idea.search.usagesSearch.search
+import org.jetbrains.kotlin.idea.util.DebuggerUtils
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.builtins.InlineUtil
-import org.jetbrains.kotlin.idea.caches.resolve.*
-import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
-import org.jetbrains.kotlin.idea.util.DebuggerUtils
-import org.jetbrains.kotlin.idea.search.usagesSearch.DefaultSearchHelper
-import com.intellij.find.findUsages.FindUsagesOptions
-import org.jetbrains.kotlin.idea.findUsages.toSearchTarget
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
-import org.jetbrains.kotlin.idea.search.usagesSearch.search
-import java.util.WeakHashMap
-import org.jetbrains.kotlin.idea.util.application.runReadAction
-import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.extension.InlineAnalyzerExtension
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.util.ArrayList
-import org.jetbrains.kotlin.codegen.binding.CodegenBinding
-import com.intellij.debugger.MultiRequestPositionManager
-import java.util.Collections
+import java.util.WeakHashMap
 
 class PositionedElement(val className: String?, val element: PsiElement?)
 
@@ -439,22 +436,20 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
             val typeMapper = if (!isInLibrary) prepareTypeMapper(jetFile) else createTypeMapperForLibraryFile(element, jetFile)
             val psiElement = getInternalClassNameForElement(element, typeMapper, jetFile, isInLibrary).element;
 
-            if (psiElement is JetNamedFunction) {
-                val descriptor = typeMapper.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, psiElement)
+            if (psiElement is JetNamedFunction &&
+                InlineUtil.isInline(typeMapper.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, psiElement))
+            ) {
+                val project = myDebugProcess.getProject()
+                val usagesSearchTarget = FindUsagesOptions(project).toSearchTarget(psiElement, true)
 
-                if (descriptor is SimpleFunctionDescriptor && descriptor.getInlineStrategy().isInline()) {
-                    val project = myDebugProcess.getProject()
-                    val usagesSearchTarget = FindUsagesOptions(project).toSearchTarget(psiElement, true)
-
-                    val usagesSearchRequest = DefaultSearchHelper<JetNamedFunction>(true).newRequest(usagesSearchTarget)
-                    usagesSearchRequest.search().forEach {
-                        val psiElement = it.getElement()
-                        if (psiElement is JetElement) {
-                            //TODO recursive search
-                            val name = classNameForPosition(psiElement)
-                            if (name != null) {
-                                result.add(name)
-                            }
+                val usagesSearchRequest = DefaultSearchHelper<JetNamedFunction>(true).newRequest(usagesSearchTarget)
+                usagesSearchRequest.search().forEach {
+                    val psiElement = it.getElement()
+                    if (psiElement is JetElement) {
+                        //TODO recursive search
+                        val name = classNameForPosition(psiElement)
+                        if (name != null) {
+                            result.add(name)
                         }
                     }
                 }

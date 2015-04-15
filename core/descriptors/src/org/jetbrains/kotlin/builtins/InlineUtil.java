@@ -19,10 +19,7 @@ package org.jetbrains.kotlin.builtins;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.CallableDescriptor;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotated;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -44,6 +41,10 @@ public class InlineUtil {
         return !hasNoinlineAnnotation(valueParameterOrReceiver) &&
                type != null &&
                KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(type);
+    }
+
+    public static boolean isInline(@Nullable DeclarationDescriptor descriptor) {
+        return descriptor instanceof SimpleFunctionDescriptor && getInlineType(descriptor).isInline();
     }
 
     @NotNull

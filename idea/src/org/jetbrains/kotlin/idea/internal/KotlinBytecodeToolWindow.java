@@ -40,13 +40,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
+import org.jetbrains.kotlin.builtins.InlineUtil;
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories;
 import org.jetbrains.kotlin.codegen.CompilationErrorHandler;
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.Progress;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink;
 import org.jetbrains.kotlin.idea.caches.resolve.KotlinCacheService;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
@@ -116,7 +116,7 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
             try {
                 AnalysisResult result = ResolvePackage.analyzeFullyAndGetResult(jetFile);
                 boolean disableInline = !enableInline.isSelected();
-                Ref<Set<JetElement>> ref = new Ref();
+                Ref<Set<JetElement>> ref = Ref.create();
                 if (!disableInline) {
                     result = processInlinedDeclarations(jetFile.getProject(), result, Collections.<JetElement>singleton(jetFile), 1, ref);
                 }
@@ -199,17 +199,12 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
             Set<JetElement> collectedElements = new HashSet<JetElement>();
             collectedElements.addAll(originalElements);
             Map<Call, ResolvedCall<?>> contents = result.getBindingContext().getSliceContents(BindingContext.RESOLVED_CALL);
-            Collection<ResolvedCall<?>> values = contents.values();
-            for (ResolvedCall call : values) {
+            for (ResolvedCall call : contents.values()) {
                 CallableDescriptor descriptor = call.getResultingDescriptor();
-                if (!(descriptor instanceof DeserializedSimpleFunctionDescriptor)) {
-                    if (descriptor instanceof SimpleFunctionDescriptor &&
-                        ((SimpleFunctionDescriptor) descriptor).getInlineStrategy().isInline()) {
-                        PsiElement declaration =
-                                DescriptorToSourceUtilsIde.INSTANCE$.getAnyDeclaration(project, descriptor);
-                        if (declaration != null && declaration instanceof JetElement) {
-                            collectedElements.add((JetElement) declaration);
-                        }
+                if (!(descriptor instanceof DeserializedSimpleFunctionDescriptor) && InlineUtil.isInline(descriptor)) {
+                    PsiElement declaration = DescriptorToSourceUtilsIde.INSTANCE$.getAnyDeclaration(project, descriptor);
+                    if (declaration != null && declaration instanceof JetElement) {
+                        collectedElements.add((JetElement) declaration);
                     }
                 }
             }
@@ -381,7 +376,7 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
 
     public static class Factory implements ToolWindowFactory {
         @Override
-        public void createToolWindowContent(Project project, ToolWindow toolWindow) {
+        public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
             ContentManager contentManager = toolWindow.getContentManager();
             ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
             contentManager.addContent(contentFactory.createContent(

@@ -31,6 +31,7 @@ import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
+import org.jetbrains.kotlin.builtins.InlineUtil;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
 import org.jetbrains.kotlin.codegen.context.*;
@@ -2377,20 +2378,19 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     protected CallGenerator getOrCreateCallGenerator(
             @NotNull CallableDescriptor descriptor,
             @Nullable JetElement callElement,
-            @Nullable ReifiedTypeParameterMappings reifierTypeParameterMappings
+            @Nullable ReifiedTypeParameterMappings reifiedTypeParameterMappings
     ) {
         if (callElement == null) return defaultCallGenerator;
 
         // We should inline callable containing reified type parameters even if inline is disabled
         // because they may contain something to reify and straight call will probably fail at runtime
         boolean isInline = (state.isInlineEnabled() || DescriptorUtils.containsReifiedTypeParameters(descriptor)) &&
-                           descriptor instanceof SimpleFunctionDescriptor &&
-                           ((SimpleFunctionDescriptor) descriptor).getInlineStrategy().isInline();
+                           InlineUtil.isInline(descriptor);
 
         if (!isInline) return defaultCallGenerator;
 
         SimpleFunctionDescriptor original = DescriptorUtils.unwrapFakeOverride((SimpleFunctionDescriptor) descriptor.getOriginal());
-        return new InlineCodegen(this, state, original, callElement, reifierTypeParameterMappings);
+        return new InlineCodegen(this, state, original, callElement, reifiedTypeParameterMappings);
     }
 
     @NotNull
