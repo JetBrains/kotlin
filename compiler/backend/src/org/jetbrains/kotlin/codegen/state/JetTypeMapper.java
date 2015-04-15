@@ -241,8 +241,12 @@ public class JetTypeMapper {
     }
 
     @NotNull
-    public Type mapAnnotationParameterType(@NotNull PropertyDescriptor descriptor) {
-        return mapType(descriptor.getType(), null, JetTypeMapperMode.VALUE_FOR_ANNOTATION);
+    public JvmMethodSignature mapAnnotationParameterSignature(@NotNull PropertyDescriptor descriptor) {
+        BothSignatureWriter sw = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD);
+        sw.writeReturnType();
+        mapType(descriptor.getType(), sw, JetTypeMapperMode.VALUE_FOR_ANNOTATION);
+        sw.writeReturnTypeEnd();
+        return sw.makeJvmMethodSignature(descriptor.getName().asString());
     }
 
     @NotNull
@@ -353,14 +357,9 @@ public class JetTypeMapper {
                 return asmType;
             }
 
-            if (kind.isForAnnotation() && KotlinBuiltIns.isKClass((ClassDescriptor) descriptor)) {
-                if (signatureVisitor != null) {
-                    signatureVisitor.writeAsmType(AsmTypes.JAVA_CLASS_TYPE);
-                }
-                return AsmTypes.JAVA_CLASS_TYPE;
-            }
-
-            Type asmType = computeAsmType((ClassDescriptor) descriptor.getOriginal());
+            Type asmType = kind.isForAnnotation() && KotlinBuiltIns.isKClass((ClassDescriptor) descriptor) ?
+                           AsmTypes.JAVA_CLASS_TYPE :
+                           computeAsmType((ClassDescriptor) descriptor.getOriginal());
             writeGenericType(signatureVisitor, asmType, jetType, howThisTypeIsUsed, projectionsAllowed);
             return asmType;
         }

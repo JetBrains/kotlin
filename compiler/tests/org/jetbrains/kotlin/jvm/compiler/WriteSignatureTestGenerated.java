@@ -137,6 +137,57 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
         doTest(fileName);
     }
 
+    @TestMetadata("compiler/testData/writeSignature/annotations")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Annotations extends AbstractWriteSignatureTest {
+        public void testAllFilesPresentInAnnotations() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeSignature/annotations"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("jArrayClassOfKClass.kt")
+        public void testJArrayClassOfKClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/annotations/jArrayClassOfKClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("jClassBasic.kt")
+        public void testJClassBasic() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/annotations/jClassBasic.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("jClassInt.kt")
+        public void testJClassInt() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/annotations/jClassInt.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kArrayClassOfJClass.kt")
+        public void testKArrayClassOfJClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/annotations/kArrayClassOfJClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kArrayClassOfKClass.kt")
+        public void testKArrayClassOfKClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/annotations/kArrayClassOfKClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kClassBasic.kt")
+        public void testKClassBasic() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/annotations/kClassBasic.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kClassInt.kt")
+        public void testKClassInt() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/annotations/kClassInt.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/writeSignature/constructor")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
