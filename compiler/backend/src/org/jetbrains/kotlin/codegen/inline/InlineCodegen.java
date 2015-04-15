@@ -637,8 +637,7 @@ public class InlineCodegen extends CallGenerator {
 
         AbstractInsnNode curInstr = intoNode.instructions.getFirst();
         while (curInstr != null) {
-            processor.updateCoveringTryBlocks(curInstr, true);
-            processor.updateCoveringLocalVars(curInstr, true);
+            processor.processInstruction(curInstr, true);
 
             MethodInliner.PointForExternalFinallyBlocks extension = extensionPoints.get(curInstr);
             if (extension != null) {
@@ -655,34 +654,25 @@ public class InlineCodegen extends CallGenerator {
 
                 finallyCodegen.generateFinallyBlocksIfNeeded(extension.returnType);
                 finallyNode.visitLabel(end);
-
                 //Exception table for external try/catch/finally blocks will be generated in original codegen after exiting this method
                 InlineCodegenUtil.insertNodeBefore(finallyNode, intoNode, curInstr);
 
-                List<TryCatchBlockNodeInfo> blocks = new ArrayList<TryCatchBlockNodeInfo>(processor.getTryBlocksMetaInfo().getCurrentIntervals());
-                for (TryCatchBlockNodeInfo block : blocks) {
-                    processor.getTryBlocksMetaInfo().split(block, new SimpleInterval((LabelNode) start.info, (LabelNode) end.info), false);
-                }
+                SimpleInterval splitBy = new SimpleInterval((LabelNode) start.info, (LabelNode) end.info);
+                processor.getTryBlocksMetaInfo().splitCurrentIntervals(splitBy, false);
+
+                processor.getLocalVarsMetaInfo().splitCurrentIntervals(splitBy, false);
             }
 
             curInstr = curInstr.getNext();
         }
 
         processor.sortTryCatchBlocks();
-        Iterable<TryCatchBlockNodeInfo> nodes = processor.getNonEmptyNodes();
-        intoNode.tryCatchBlocks.clear();
-        for (TryCatchBlockNodeInfo node : nodes) {
-            intoNode.tryCatchBlocks.add(node.getNode());
-        }
+        processor.substituteTryBlockNodes(intoNode);
 
-        intoNode.localVariables.clear();
-        for (LocalVarNodeWrapper interval : processor.getLocalVarsMetaInfo().getAllIntervals()) {
-            intoNode.localVariables.add(interval.getNode());
-        }
+        //processor.substituteLocalVarTable(intoNode);
     }
 
     private SourceMapper createNestedSourceMapper(@NotNull SMAPAndMethodNode nodeAndSmap) {
         return new NestedSourceMapper(sourceMapper, nodeAndSmap.getRanges(), nodeAndSmap.getClassSMAP().getSourceInfo());
     }
-
 }

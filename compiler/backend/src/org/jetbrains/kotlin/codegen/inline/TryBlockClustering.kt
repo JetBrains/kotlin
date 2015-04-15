@@ -45,7 +45,7 @@ trait IntervalWithHandler : Interval {
     val type: String?
 }
 
-class TryCatchBlockNodeInfo(val node: TryCatchBlockNode, val onlyCopyNotProcess: Boolean) : IntervalWithHandler, SplittableInterval<TryCatchBlockNodeInfo> {
+open class TryCatchBlockNodeInfo(val node: TryCatchBlockNode, val onlyCopyNotProcess: Boolean) : IntervalWithHandler, SplittableInterval<TryCatchBlockNodeInfo> {
     override val startLabel: LabelNode
         get() = node.start
     override val endLabel: LabelNode
