@@ -16,12 +16,4 @@
 
 package org.jetbrains.kotlin.utils
 
-public fun <T : Any> T?.sure(message: String): T = this ?: throw AssertionError(message)
-
-fun <T> T.printAndReturn(message: String = ""): T {
-    if (!message.isEmpty()) {
-        println("$message:")
-    }
-    println(this)
-    return this
-}
+public inline fun <T : Any> T?.sure(message: () -> String): T = this ?: throw AssertionError(message())

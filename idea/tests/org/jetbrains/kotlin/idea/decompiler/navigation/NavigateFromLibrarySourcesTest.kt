@@ -16,24 +16,24 @@
 
 package org.jetbrains.kotlin.idea.decompiler.navigation
 
-import com.intellij.testFramework.LightProjectDescriptor
-import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.LibraryOrderEntry
+import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiClass
-import org.jetbrains.kotlin.psi.JetClass
-import kotlin.test.assertEquals
-import kotlin.test.fail
-import org.jetbrains.kotlin.utils.sure
+import com.intellij.psi.PsiElement
+import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.asJava.LightClassUtil
-import kotlin.test.assertTrue
 import org.jetbrains.kotlin.idea.caches.resolve.KotlinLightClassForDecompiledDeclaration
+import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.psi.JetClass
+import org.jetbrains.kotlin.psi.JetClassOrObject
+import org.jetbrains.kotlin.utils.sure
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
+import kotlin.test.fail
 
 public class NavigateFromLibrarySourcesTest: LightCodeInsightFixtureTestCase() {
     public fun testJdkClass() {
@@ -69,7 +69,7 @@ public class NavigateFromLibrarySourcesTest: LightCodeInsightFixtureTestCase() {
         val psiFile = getPsiManager().findFile(vf)!!
         val indexOf = psiFile.getText()!!.indexOf(referenceText)
         val reference = psiFile.findReferenceAt(indexOf)
-        return reference.sure("Couldn't find reference").resolve().sure("Couldn't resolve reference").getNavigationElement()!!
+        return reference.sure { "Couldn't find reference" }.resolve().sure { "Couldn't resolve reference" }.getNavigationElement()!!
     }
 
     override fun getProjectDescriptor(): LightProjectDescriptor {

@@ -18,33 +18,23 @@ package org.jetbrains.kotlin.js.inline
 
 import com.google.dart.compiler.backend.js.ast.*
 import com.google.dart.compiler.backend.js.ast.metadata.inlineStrategy
-import com.google.dart.compiler.common.SourceInfoImpl
-import com.google.gwt.dev.js.JsAstMapper
 import com.google.gwt.dev.js.ThrowExceptionOnErrorReporter
-import com.google.gwt.dev.js.parserExceptions.AbortParsingException
-import com.google.gwt.dev.js.parserExceptions.JsParserException
-import com.google.gwt.dev.js.rhino.ErrorReporter
-import com.google.gwt.dev.js.rhino.EvaluatorException
+import com.intellij.util.containers.SLRUCache
 import org.jetbrains.kotlin.builtins.InlineStrategy
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.js.config.LibrarySourcesConfig
 import org.jetbrains.kotlin.js.inline.util.IdentitySet
 import org.jetbrains.kotlin.js.inline.util.isCallInvocation
+import org.jetbrains.kotlin.js.parser.parseFunction
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
-import org.jetbrains.kotlin.js.translate.expression.InlineMetadata
 import org.jetbrains.kotlin.js.translate.reference.CallExpressionTranslator
-import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
-import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.*
-import org.jetbrains.kotlin.resolve.descriptorUtil.*
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.utils.*
-
-import com.intellij.util.containers.SLRUCache
-import java.io.*
-import java.net.URL
-import org.jetbrains.kotlin.js.parser.*
+import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getExternalModuleName
+import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
+import org.jetbrains.kotlin.utils.LibraryUtils
+import org.jetbrains.kotlin.utils.sure
+import java.io.File
 
 // TODO: add hash checksum to defineModule?
 /**
@@ -94,7 +84,7 @@ public class FunctionReader(private val context: TranslationContext) {
 
     private val functionCache = object : SLRUCache<CallableDescriptor, JsFunction>(50, 50) {
         override fun createValue(descriptor: CallableDescriptor): JsFunction =
-                requireNotNull(readFunction(descriptor), "Could not read function: $descriptor")
+                readFunction(descriptor).sure { "Could not read function: $descriptor" }
     }
 
     public fun contains(descriptor: CallableDescriptor): Boolean {
@@ -109,7 +99,7 @@ public class FunctionReader(private val context: TranslationContext) {
         if (descriptor !in this) return null
 
         val moduleName = getExternalModuleName(descriptor)
-        val file = requireNotNull(moduleJsDefinition[moduleName], "Module $moduleName file have not been read")
+        val file = moduleJsDefinition[moduleName].sure { "Module $moduleName file have not been read" }
         val function = readFunctionFromSource(descriptor, file)
         function?.markInlineArguments(descriptor)
         return function

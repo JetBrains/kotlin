@@ -33,7 +33,7 @@ public class CliDeclarationProviderFactoryService(private val sourceFiles: Colle
     ): DeclarationProviderFactory {
         val allFiles = ArrayList<JetFile>()
         sourceFiles.filterTo(allFiles) {
-            val vFile = it.getVirtualFile().sure("Source files should be physical files")
+            val vFile = it.getVirtualFile().sure { "Source files should be physical files" }
             filesScope.contains(vFile)
         }
         allFiles addAll syntheticFiles

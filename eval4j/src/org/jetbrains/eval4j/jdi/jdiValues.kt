@@ -16,24 +16,26 @@
 
 package org.jetbrains.eval4j.jdi
 
-import org.jetbrains.eval4j.*
-import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
-import org.jetbrains.org.objectweb.asm.tree.MethodNode
-import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.org.objectweb.asm.Opcodes.*
 import com.sun.jdi
+import org.jetbrains.eval4j.*
+import org.jetbrains.org.objectweb.asm.Opcodes.ACC_STATIC
+import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.tree.MethodNode
+import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 
 public fun makeInitialFrame(methodNode: MethodNode, arguments: List<Value>): Frame<Value> {
     val isStatic = (methodNode.access and ACC_STATIC) != 0
 
     val params = Type.getArgumentTypes(methodNode.desc)
-    assert(arguments.size() == (if (isStatic) params.size else params.size + 1), "Wrong number of arguments for $methodNode: $arguments")
+    assert(arguments.size() == (if (isStatic) params.size() else params.size() + 1)) {
+        "Wrong number of arguments for $methodNode: $arguments"
+    }
 
     val frame = Frame<Value>(methodNode.maxLocals, methodNode.maxStack)
     frame.setReturn(makeNotInitializedValue(Type.getReturnType(methodNode.desc)))
 
     var index = 0
-    for ((i, arg) in arguments.withIndices()) {
+    for ((i, arg) in arguments.withIndex()) {
         frame.setLocal(index++, arg)
         if (arg.getSize() == 2) {
             frame.setLocal(index++, NOT_A_VALUE)
@@ -48,8 +50,6 @@ public fun makeInitialFrame(methodNode: MethodNode, arguments: List<Value>): Fra
 }
 
 class JDIFailureException(message: String?, cause: Throwable? = null): RuntimeException(message, cause)
-
-fun <T: Any> T?.sure(message: String? = null): T = this ?: throw JDIFailureException(message)
 
 public fun jdi.ObjectReference?.asValue(): ObjectValue {
     return when (this) {

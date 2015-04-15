@@ -148,11 +148,11 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
         for (classFile in allClassFiles) {
             val className = tmpdir.relativePath(classFile).substringBeforeLast(".class").replace('/', '.').replace('\\', '.')
 
-            val klass = classLoader.loadClass(className).sure("Couldn't load class $className")
+            val klass = classLoader.loadClass(className).sure { "Couldn't load class $className" }
             val header = ReflectKotlinClass.create(klass)?.getClassHeader()
 
             if (header?.kind == KotlinClassHeader.Kind.PACKAGE_FACADE) {
-                val packageView = module.getPackage(actual.getFqName()).sure("Couldn't resolve package ${actual.getFqName()}")
+                val packageView = module.getPackage(actual.getFqName()).sure { "Couldn't resolve package ${actual.getFqName()}" }
                 scope.importScope(packageView.getMemberScope())
             }
             else if (header == null ||
@@ -160,7 +160,7 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
                 // Either a normal Kotlin class or a Java class
                 val classId = klass.classId
                 if (!classId.isLocal()) {
-                    val classDescriptor = module.findClassAcrossModuleDependencies(classId).sure("Couldn't resolve class $className")
+                    val classDescriptor = module.findClassAcrossModuleDependencies(classId).sure { "Couldn't resolve class $className" }
                     if (DescriptorUtils.isTopLevelDeclaration(classDescriptor)) {
                         scope.addClassifierDescriptor(classDescriptor)
                     }

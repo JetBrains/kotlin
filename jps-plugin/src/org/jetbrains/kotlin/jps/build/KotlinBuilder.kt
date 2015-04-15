@@ -555,6 +555,7 @@ private class GeneratedJvmClass (
         sourceFiles: Collection<File>,
         outputFile: File
 ) : GeneratedFile(target, sourceFiles, outputFile) {
-    val outputClass = LocalFileKotlinClass.create(outputFile).sure(
-            "Couldn't load KotlinClass from $outputFile; it may happen because class doesn't have valid Kotlin annotations")
+    val outputClass = LocalFileKotlinClass.create(outputFile).sure {
+        "Couldn't load KotlinClass from $outputFile; it may happen because class doesn't have valid Kotlin annotations"
+    }
 }

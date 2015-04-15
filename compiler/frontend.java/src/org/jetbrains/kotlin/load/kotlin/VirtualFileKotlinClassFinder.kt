@@ -32,7 +32,7 @@ public abstract class VirtualFileKotlinClassFinder : VirtualFileFinder {
         if (javaClass.getOuterClass() != null) {
             // For nested classes we get a file of the containing class, to get the actual class file for A.B.C,
             // we take the file for A, take its parent directory, then in this directory we look for A$B$C.class
-            file = file.getParent()!!.findChild(classFileName(javaClass) + ".class").sure("Virtual file not found for $javaClass")
+            file = file.getParent()!!.findChild(classFileName(javaClass) + ".class").sure { "Virtual file not found for $javaClass" }
         }
 
         return KotlinBinaryClassCache.getKotlinBinaryClass(file)

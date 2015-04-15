@@ -16,29 +16,34 @@
 
 package org.jetbrains.kotlin.load.java.lazy.types
 
-import org.jetbrains.kotlin.load.java.structure.*
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.load.java.components.TypeUsage.*
-import org.jetbrains.kotlin.load.java.components.*
-import org.jetbrains.kotlin.types.Variance.*
-import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.utils.sure
-import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.load.java.lazy.*
-import org.jetbrains.kotlin.storage.*
-import java.util.HashSet
-import org.jetbrains.kotlin.types.checker.JetTypeChecker
-import org.jetbrains.kotlin.resolve.jvm.PLATFORM_TYPES
-import org.jetbrains.kotlin.load.java.lazy.types.JavaTypeFlexibility.*
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.load.java.components.TypeUsage
+import org.jetbrains.kotlin.load.java.components.TypeUsage.*
+import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
+import org.jetbrains.kotlin.load.java.lazy.TypeParameterResolver
+import org.jetbrains.kotlin.load.java.lazy.hasNotNullAnnotation
+import org.jetbrains.kotlin.load.java.lazy.types.JavaTypeFlexibility.FLEXIBLE_LOWER_BOUND
+import org.jetbrains.kotlin.load.java.lazy.types.JavaTypeFlexibility.FLEXIBLE_UPPER_BOUND
+import org.jetbrains.kotlin.load.java.lazy.types.JavaTypeFlexibility.INFLEXIBLE
+import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.FqName
-import kotlin.platform.platformStatic
+import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
+import org.jetbrains.kotlin.resolve.jvm.PLATFORM_TYPES
+import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.storage.get
+import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.Variance.INVARIANT
+import org.jetbrains.kotlin.types.Variance.IN_VARIANCE
+import org.jetbrains.kotlin.types.Variance.OUT_VARIANCE
+import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
-import kotlin.properties.*
+import org.jetbrains.kotlin.utils.sure
+import java.util.HashSet
+import kotlin.platform.platformStatic
 
 private val JAVA_LANG_CLASS_FQ_NAME: FqName = FqName("java.lang.Class")
 
@@ -118,8 +123,7 @@ class LazyJavaTypeResolver(
             }
             return when (classifier) {
                 is JavaClass -> {
-                    val fqName = classifier.getFqName()
-                            .sure("Class type should have a FQ name: " + classifier)
+                    val fqName = classifier.getFqName().sure { "Class type should have a FQ name: $classifier" }
 
                     val classData = mapKotlinClass(fqName) ?: c.moduleClassResolver.resolveClass(classifier)
 
@@ -219,7 +223,7 @@ class LazyJavaTypeResolver(
                 return typeParameters.map { p -> TypeProjectionImpl(ErrorUtils.createErrorType(p.getName().asString())) }
             }
             var howTheProjectionIsUsed = if (attr.howThisTypeIsUsed == SUPERTYPE) SUPERTYPE_ARGUMENT else TYPE_ARGUMENT
-            return javaType.getTypeArguments().withIndices().map {
+            return javaType.getTypeArguments().withIndex().map {
                 javaTypeParameter ->
                 val (i, t) = javaTypeParameter
                 val parameter = if (i >= typeParameters.size())

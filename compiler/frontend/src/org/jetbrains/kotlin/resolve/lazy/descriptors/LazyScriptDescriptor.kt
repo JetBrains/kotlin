@@ -16,31 +16,27 @@
 
 package org.jetbrains.kotlin.resolve.lazy.descriptors
 
-import org.jetbrains.kotlin.resolve.lazy.ResolveSession
-import org.jetbrains.kotlin.psi.JetScript
-import org.jetbrains.kotlin.resolve.lazy.LazyEntity
-import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorNonRootImpl
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.ScriptDescriptor
-import org.jetbrains.kotlin.resolve.scopes.receivers.ScriptReceiver
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.utils.sure
-import org.jetbrains.kotlin.resolve.ScriptParameterResolver
-import org.jetbrains.kotlin.resolve.ScriptBodyResolver
-import org.jetbrains.kotlin.descriptors.impl.ScriptCodeDescriptor
-import org.jetbrains.kotlin.types.DeferredType
-import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.resolve.scopes.WritableScopeImpl
-import org.jetbrains.kotlin.resolve.scopes.ChainedScope
-import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
-import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorVisitor
-import org.jetbrains.kotlin.resolve.scopes.RedeclarationHandler
-import org.jetbrains.kotlin.resolve.scopes.WritableScope
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.ScriptDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorNonRootImpl
+import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.ScriptCodeDescriptor
+import org.jetbrains.kotlin.psi.JetScript
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.ScriptBodyResolver
+import org.jetbrains.kotlin.resolve.ScriptParameterResolver
+import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
+import org.jetbrains.kotlin.resolve.lazy.LazyEntity
+import org.jetbrains.kotlin.resolve.lazy.ResolveSession
+import org.jetbrains.kotlin.resolve.scopes.*
+import org.jetbrains.kotlin.resolve.scopes.receivers.ScriptReceiver
 import org.jetbrains.kotlin.resolve.source.toSourceElement
+import org.jetbrains.kotlin.types.DeferredType
+import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.utils.sure
 
 public class LazyScriptDescriptor(
         private val resolveSession: ResolveSession,
@@ -50,12 +46,12 @@ public class LazyScriptDescriptor(
 ) : ScriptDescriptor, LazyEntity, DeclarationDescriptorNonRootImpl(
         jetScript.getContainingJetFile().getPackageFqName().let {
             fqName ->
-            resolveSession.getPackageFragment(fqName).sure("Package not found $fqName")
+            resolveSession.getPackageFragment(fqName).sure { "Package not found $fqName" }
         },
         Annotations.EMPTY,
         ScriptDescriptor.NAME,
         jetScript.toSourceElement()
- ) {
+) {
     init {
         resolveSession.getTrace().record(BindingContext.SCRIPT, jetScript, this)
     }
@@ -108,6 +104,6 @@ public class LazyScriptDescriptor(
     override fun substitute(substitutor: TypeSubstitutor) = this
 
     override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R {
-        return visitor.visitScriptDescriptor(this, data) as R
+        return visitor.visitScriptDescriptor(this, data)
     }
 }

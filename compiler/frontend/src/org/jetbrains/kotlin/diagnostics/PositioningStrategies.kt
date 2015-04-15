@@ -21,12 +21,12 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.JetNodeTypes
-import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.lexer.JetKeywordToken
 import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.utils.sure
 import kotlin.platform.platformStatic
-import org.jetbrains.kotlin.psi.psiUtil.*
 
 public object PositioningStrategies {
     private open class DeclarationHeader<T : JetDeclaration> : PositioningStrategy<T>() {
@@ -234,7 +234,7 @@ public object PositioningStrategies {
     public fun modifierSetPosition(vararg tokens: JetKeywordToken): PositioningStrategy<JetModifierListOwner> {
         return object : PositioningStrategy<JetModifierListOwner>() {
             override fun mark(element: JetModifierListOwner): List<TextRange> {
-                val modifierList = element.getModifierList().sure("No modifier list, but modifier has been found by the analyzer")
+                val modifierList = element.getModifierList().sure { "No modifier list, but modifier has been found by the analyzer" }
 
                 for (token in tokens) {
                     val node = modifierList.getModifierNode(token)

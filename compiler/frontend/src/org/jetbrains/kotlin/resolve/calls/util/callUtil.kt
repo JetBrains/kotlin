@@ -16,24 +16,23 @@
 
 package org.jetbrains.kotlin.resolve.calls.callUtil
 
+import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.calls.model.ArgumentUnmapped
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getTextWithLocation
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext.CALL
+import org.jetbrains.kotlin.resolve.BindingContext.RESOLVED_CALL
+import org.jetbrains.kotlin.resolve.InlineDescriptorUtils
+import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
+import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatchStatus
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
-import org.jetbrains.kotlin.resolve.BindingContext.CALL
-import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.resolve.BindingContext.RESOLVED_CALL
+import org.jetbrains.kotlin.resolve.calls.model.ArgumentUnmapped
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.utils.sure
-import org.jetbrains.kotlin.psi.psiUtil.getTextWithLocation
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
-import org.jetbrains.kotlin.resolve.InlineDescriptorUtils
-import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 
 // resolved call
 
@@ -161,15 +160,15 @@ public fun JetElement?.getParentResolvedCall(context: BindingContext, strict: Bo
 }
 
 public fun JetElement.getCallWithAssert(context: BindingContext): Call {
-    return getCall(context).sure("No call for ${this.getTextWithLocation()}")
+    return getCall(context).sure { "No call for ${this.getTextWithLocation()}" }
 }
 
 public fun JetElement.getResolvedCallWithAssert(context: BindingContext): ResolvedCall<out CallableDescriptor> {
-    return getResolvedCall(context).sure("No resolved call for ${this.getTextWithLocation()}")
+    return getResolvedCall(context).sure { "No resolved call for ${this.getTextWithLocation()}" }
 }
 
 public fun Call.getResolvedCallWithAssert(context: BindingContext): ResolvedCall<out CallableDescriptor> {
-    return getResolvedCall(context).sure("No resolved call for ${this.getCallElement().getTextWithLocation()}")
+    return getResolvedCall(context).sure { "No resolved call for ${this.getCallElement().getTextWithLocation()}" }
 }
 
 public fun JetExpression.getFunctionResolvedCallWithAssert(context: BindingContext): ResolvedCall<out FunctionDescriptor> {
