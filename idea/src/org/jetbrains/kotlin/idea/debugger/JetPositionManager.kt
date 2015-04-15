@@ -408,14 +408,15 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
             val call = (parent as JetElement).getResolvedCall(context)
             if (call == null) return false
 
-            val inlineType = InlineUtil.getInlineType(call.getResultingDescriptor())
-            if (!inlineType.isInline()) return false
+            if (!InlineUtil.isInline(call.getResultingDescriptor())) return false
 
             for ((valueParameterDescriptor, resolvedValueArgument) in call.getValueArguments()) {
                 for (next in resolvedValueArgument.getArguments()) {
                     val expression = next.getArgumentExpression()
                     if (valueArgument == expression) {
-                        return InlineAnalyzerExtension.checkInlinableParameter(valueParameterDescriptor, expression, call.getResultingDescriptor(), null)
+                        return InlineAnalyzerExtension.checkInlinableParameter(
+                                valueParameterDescriptor, expression, call.getResultingDescriptor(), null
+                        )
                     }
                 }
             }

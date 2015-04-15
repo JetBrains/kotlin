@@ -16,11 +16,9 @@
 
 package org.jetbrains.kotlin.builtins;
 
-import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.annotations.Annotated;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.constants.ArrayValue;
@@ -28,7 +26,7 @@ import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.EnumValue;
 import org.jetbrains.kotlin.types.JetType;
 
-import java.util.List;
+import static kotlin.KotlinPackage.firstOrNull;
 
 public class InlineUtil {
 
@@ -44,23 +42,22 @@ public class InlineUtil {
     }
 
     public static boolean isInline(@Nullable DeclarationDescriptor descriptor) {
-        return descriptor instanceof SimpleFunctionDescriptor && getInlineType(descriptor).isInline();
+        return descriptor instanceof SimpleFunctionDescriptor && getInlineStrategy(descriptor).isInline();
     }
 
     @NotNull
-    public static InlineStrategy getInlineType(@NotNull DeclarationDescriptor descriptor) {
+    public static InlineStrategy getInlineStrategy(@NotNull DeclarationDescriptor descriptor) {
         ClassDescriptor inlineAnnotation = KotlinBuiltIns.getInstance().getInlineClassAnnotation();
         AnnotationDescriptor annotation = descriptor.getAnnotations().findAnnotation(DescriptorUtils.getFqNameSafe(inlineAnnotation));
         if (annotation == null) {
             return InlineStrategy.NOT_INLINE;
         }
-        CompileTimeConstant<?> argument = getAnnotationSingleArgument(descriptor, inlineAnnotation);
+        CompileTimeConstant<?> argument = firstOrNull(annotation.getAllValueArguments().values());
         if (argument == null) {
             return InlineStrategy.AS_FUNCTION;
         }
         assert argument instanceof EnumValue : "Inline annotation parameter should be enum entry but was: " + argument;
-        String name = ((EnumValue) argument).getValue().getName().asString();
-        return name.equals(InlineStrategy.IN_PLACE.name()) ? InlineStrategy.IN_PLACE : InlineStrategy.AS_FUNCTION;
+        return InlineStrategy.valueOf(((EnumValue) argument).getValue().getName().asString());
     }
 
     public static boolean hasOnlyLocalContinueAndBreak(@NotNull ValueParameterDescriptor descriptor) {
@@ -72,15 +69,14 @@ public class InlineUtil {
     }
 
     private static boolean hasInlineOption(@NotNull ValueParameterDescriptor descriptor, @NotNull InlineOption option) {
-        CompileTimeConstant<?> argument =
-                getAnnotationSingleArgument(descriptor, KotlinBuiltIns.getInstance().getInlineOptionsClassAnnotation());
-
-        if (argument instanceof ArrayValue) {
-            List<CompileTimeConstant<?>> values = ((ArrayValue) argument).getValue();
-
-            for (CompileTimeConstant<?> value : values) {
-                if (value instanceof EnumValue) {
-                    if (((EnumValue) value).getValue().getName().asString().equals(option.name())) {
+        AnnotationDescriptor annotation = descriptor.getAnnotations().findAnnotation(
+                DescriptorUtils.getFqNameSafe(KotlinBuiltIns.getInstance().getInlineOptionsClassAnnotation())
+        );
+        if (annotation != null) {
+            CompileTimeConstant<?> argument = firstOrNull(annotation.getAllValueArguments().values());
+            if (argument instanceof ArrayValue) {
+                for (CompileTimeConstant<?> value : ((ArrayValue) argument).getValue()) {
+                    if (value instanceof EnumValue && ((EnumValue) value).getValue().getName().asString().equals(option.name())) {
                         return true;
                     }
                 }
@@ -88,17 +84,5 @@ public class InlineUtil {
         }
 
         return false;
-    }
-
-    @Nullable
-    private static CompileTimeConstant<?> getAnnotationSingleArgument(
-            @NotNull Annotated annotated,
-            @NotNull ClassDescriptor annotationClass
-    ) {
-        AnnotationDescriptor annotation = annotated.getAnnotations().findAnnotation(DescriptorUtils.getFqNameSafe(annotationClass));
-        if (annotation != null) {
-            return KotlinPackage.firstOrNull(annotation.getAllValueArguments().values());
-        }
-        return null;
     }
 }

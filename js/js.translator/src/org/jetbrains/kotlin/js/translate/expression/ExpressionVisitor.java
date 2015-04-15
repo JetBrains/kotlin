@@ -419,7 +419,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
 
         FunctionDescriptor descriptor = getFunctionDescriptor(context.bindingContext(), expression);
         JsName name = context.getNameForDescriptor(descriptor);
-        if (InlineUtil.getInlineType(descriptor).isInline()) {
+        if (InlineUtil.isInline(descriptor)) {
             MetadataPackage.setStaticRef(name, alias);
         }
 

@@ -113,7 +113,7 @@ public class InlineCodegen extends CallGenerator {
         jvmSignature = typeMapper.mapSignature(functionDescriptor, context.getContextKind());
 
         // TODO: implement AS_FUNCTION inline strategy
-        InlineStrategy inlineStrategy = InlineUtil.getInlineType(functionDescriptor);
+        InlineStrategy inlineStrategy = InlineUtil.getInlineStrategy(functionDescriptor);
         this.asFunctionInline = false;
 
         isSameModule = JvmCodegenUtil.isCallInsideSameModuleAsDeclared(functionDescriptor, codegen.getContext(), state.getOutDirectory());
