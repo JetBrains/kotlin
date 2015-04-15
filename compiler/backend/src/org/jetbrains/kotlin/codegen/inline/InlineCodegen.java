@@ -24,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.builtins.InlineStrategy;
 import org.jetbrains.kotlin.builtins.InlineUtil;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.codegen.*;
 import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.context.FieldOwnerContext;
@@ -468,7 +469,7 @@ public class InlineCodegen extends CallGenerator {
         }
 
         //TODO: check type of context
-        return !(codegen.getContext().isInliningLambda() && descriptor != null && !InlineUtil.hasNoinlineAnnotation(descriptor));
+        return !(codegen.getContext().isInliningLambda() && descriptor != null && !KotlinBuiltIns.isNoinline(descriptor));
     }
 
     private void putParameterOnStack(ParameterInfo... infos) {

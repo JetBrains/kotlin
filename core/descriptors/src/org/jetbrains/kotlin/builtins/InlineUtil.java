@@ -18,7 +18,10 @@ package org.jetbrains.kotlin.builtins;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.CallableDescriptor;
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor;
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.constants.ArrayValue;
@@ -30,14 +33,10 @@ import static kotlin.KotlinPackage.firstOrNull;
 
 public class InlineUtil {
 
-    public static boolean hasNoinlineAnnotation(@NotNull CallableDescriptor valueParameterOrReceiver) {
-        return KotlinBuiltIns.containsAnnotation(valueParameterOrReceiver, KotlinBuiltIns.getNoinlineClassAnnotationFqName());
-    }
-
     public static boolean isInlineLambdaParameter(@NotNull CallableDescriptor valueParameterOrReceiver) {
         JetType type = valueParameterOrReceiver.getOriginal().getReturnType();
-        return !hasNoinlineAnnotation(valueParameterOrReceiver) &&
-               type != null &&
+        return type != null &&
+               !KotlinBuiltIns.isNoinline(valueParameterOrReceiver) &&
                KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(type);
     }
 
@@ -47,8 +46,7 @@ public class InlineUtil {
 
     @NotNull
     public static InlineStrategy getInlineStrategy(@NotNull DeclarationDescriptor descriptor) {
-        ClassDescriptor inlineAnnotation = KotlinBuiltIns.getInstance().getInlineClassAnnotation();
-        AnnotationDescriptor annotation = descriptor.getAnnotations().findAnnotation(DescriptorUtils.getFqNameSafe(inlineAnnotation));
+        AnnotationDescriptor annotation = descriptor.getAnnotations().findAnnotation(KotlinBuiltIns.FQ_NAMES.inline);
         if (annotation == null) {
             return InlineStrategy.NOT_INLINE;
         }
