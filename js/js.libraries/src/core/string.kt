@@ -48,8 +48,6 @@ native public fun String.match(regex : String) : Array<String> = noImpl
 native("length")
 public val CharSequence.size: Int get() = noImpl
 
-library
-public fun CharSequence.isEmpty(): Boolean = noImpl
 
 
 

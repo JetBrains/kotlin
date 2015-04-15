@@ -31,6 +31,5 @@ public final class StringOperationFIF extends CompositeFIF {
         add(pattern("kotlin", "CharSequence", "charAt").checkOverridden(), new BuiltInFunctionIntrinsic("charAt"));
         add(pattern("kotlin", "CharSequence", "length").checkOverridden(), LENGTH_PROPERTY_INTRINSIC);
         add(pattern("kotlin", "CharSequence", "subSequence").checkOverridden(), new BuiltInFunctionIntrinsic("substring"));
-        add(pattern("kotlin.js", "isEmpty").isExtensionOf("kotlin.CharSequence"), IS_EMPTY_INTRINSIC);
     }
 }

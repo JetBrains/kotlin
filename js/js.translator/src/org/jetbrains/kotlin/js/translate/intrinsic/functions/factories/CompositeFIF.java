@@ -35,16 +35,6 @@ public abstract class CompositeFIF implements FunctionIntrinsicFactory {
     @NotNull
     public static final FunctionIntrinsic LENGTH_PROPERTY_INTRINSIC = new BuiltInPropertyIntrinsic("length");
     public static final FunctionIntrinsic MESSAGE_PROPERTY_INTRINSIC = new BuiltInPropertyIntrinsic("message");
-    public static final FunctionIntrinsic IS_EMPTY_INTRINSIC = new FunctionIntrinsic() {
-        @NotNull
-        @Override
-        public JsExpression apply(
-                @Nullable JsExpression receiver, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context
-        ) {
-            assert receiver != null;
-            return JsAstUtils.equality(new JsNameRef("length", receiver), context.program().getNumberLiteral(0));
-        }
-    };
 
     @NotNull
     private final List<Pair<Predicate<FunctionDescriptor>, FunctionIntrinsic>> patternsAndIntrinsics = Lists.newArrayList();
