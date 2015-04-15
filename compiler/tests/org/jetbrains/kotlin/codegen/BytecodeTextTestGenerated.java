@@ -41,6 +41,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
+    @TestMetadata("annotationDefaultValue.kt")
+    public void testAnnotationDefaultValue() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/annotationDefaultValue.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("annotationRetentionPolicyClass.kt")
     public void testAnnotationRetentionPolicyClass() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/annotationRetentionPolicyClass.kt");
