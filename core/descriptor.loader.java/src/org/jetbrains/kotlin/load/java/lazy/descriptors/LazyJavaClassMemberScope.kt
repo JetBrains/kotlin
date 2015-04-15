@@ -194,7 +194,16 @@ public class LazyJavaClassMemberScope(
         val methods = jClass.getMethods()
         val result = ArrayList<ValueParameterDescriptor>(methods.size())
 
-        val attr = TypeUsage.MEMBER_SIGNATURE_INVARIANT.toAttributes(
+        // Using MEMBER_SIGNATURE_CONTRAVARIANT is just a hack to make overload resolution work in cases like
+        // Ann(arg = array(javaClass<Int>())) class Annotated
+        //
+        // If we load constructor parameters' types as invariant: Ann(arg: Array<Class<*>>), Ann(arg: Array<KClass<*>>), then
+        // when resolving `Ann(arg = array(javaClass<Int>()))` type of array is inferred as Array<Class<Int>>
+        // which is neither subtype of Array<Class<*>> nor Array<KClass<*>> (similar case is KT-7410)
+        //
+        // Hack should be removed if support of Class<*> in annotations is dropped or KT-7410 is fixed
+        // Also see tests `AnnotationsWithClassParameterOverload`
+        val attr = TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT.toAttributes(
                 allowFlexible = false, isForAnnotationParameter = loadJavaClassAsKClass)
 
         val (methodsNamedValue, otherMethods) = methods.
