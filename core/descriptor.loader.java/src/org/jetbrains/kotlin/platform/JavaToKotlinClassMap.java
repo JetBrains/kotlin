@@ -73,6 +73,19 @@ public class JavaToKotlinClassMap implements PlatformToKotlinClassMap {
             add(ClassId.topLevel(new FqName("kotlin.jvm.internal." + descriptor.getName().asString() + "CompanionObject")), companion);
         }
 
+        // TODO: support also functions with >= 23 parameters
+        for (int i = 0; i < 23; i++) {
+            add(ClassId.topLevel(new FqName("kotlin.jvm.functions.Function" + i)), builtIns.getFunction(i));
+
+            for (String kFun : Arrays.asList(
+                    "kotlin.reflect.KFunction",
+                    "kotlin.reflect.KMemberFunction",
+                    "kotlin.reflect.KExtensionFunction"
+            )) {
+                addKotlinToJava(ClassId.topLevel(new FqName(kFun)), new FqNameUnsafe(kFun + i));
+            }
+        }
+
         addJavaToKotlin(classId(Deprecated.class), builtIns.getDeprecatedAnnotation());
 
         addKotlinToJava(classId(Void.class), builtIns.getNothing());
@@ -87,6 +100,7 @@ public class JavaToKotlinClassMap implements PlatformToKotlinClassMap {
      * java.util.List -> kotlin.List
      * java.util.Map.Entry -> kotlin.Map.Entry
      * java.lang.Void -> null
+     * kotlin.jvm.functions.Function3 -> kotlin.Function3
      */
     @Nullable
     public ClassDescriptor mapJavaToKotlin(@NotNull FqName fqName) {
@@ -100,6 +114,8 @@ public class JavaToKotlinClassMap implements PlatformToKotlinClassMap {
      * kotlin.Int.Companion -> kotlin.jvm.internal.IntCompanionObject
      * kotlin.Nothing -> java.lang.Void
      * kotlin.IntArray -> null
+     * kotlin.Function3 -> kotlin.jvm.functions.Function3
+     * kotlin.reflect.KFunction3 -> kotlin.reflect.KFunction
      */
     @Nullable
     public ClassId mapKotlinToJava(@NotNull FqNameUnsafe kotlinFqName) {
@@ -134,7 +150,11 @@ public class JavaToKotlinClassMap implements PlatformToKotlinClassMap {
     }
 
     private void addKotlinToJava(@NotNull ClassId javaClassId, @NotNull ClassDescriptor kotlinDescriptor) {
-        kotlinToJava.put(DescriptorUtils.getFqName(kotlinDescriptor), javaClassId);
+        addKotlinToJava(javaClassId, DescriptorUtils.getFqName(kotlinDescriptor));
+    }
+
+    private void addKotlinToJava(@NotNull ClassId javaClassId, @NotNull FqNameUnsafe kotlinFqName) {
+        kotlinToJava.put(kotlinFqName, javaClassId);
     }
 
     @NotNull

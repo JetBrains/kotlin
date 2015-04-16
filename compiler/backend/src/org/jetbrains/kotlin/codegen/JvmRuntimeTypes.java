@@ -28,11 +28,12 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.JetTypeImpl;
+import org.jetbrains.kotlin.types.TypeProjection;
+import org.jetbrains.kotlin.types.TypeProjectionImpl;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.*;
 
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getBuiltIns;
 
@@ -94,30 +95,40 @@ public class JvmRuntimeTypes {
         ReceiverParameterDescriptor extensionReceiver = descriptor.getExtensionReceiverParameter();
         ReceiverParameterDescriptor dispatchReceiver = descriptor.getDispatchReceiverParameter();
 
+        List<TypeProjection> typeArguments = new ArrayList<TypeProjection>(2);
+
+        ClassDescriptor kFunctionClass;
         ClassDescriptor functionImplClass;
         JetType receiverType;
         if (extensionReceiver != null) {
             functionImplClass = extensionFunctionImpl;
             receiverType = extensionReceiver.getType();
+            kFunctionClass = reflectionTypes.getkExtensionFunction();
+            typeArguments.add(new TypeProjectionImpl(receiverType));
         }
         else if (dispatchReceiver != null) {
             functionImplClass = memberFunctionImpl;
             receiverType = dispatchReceiver.getType();
+            kFunctionClass = reflectionTypes.getkMemberFunction();
+            typeArguments.add(new TypeProjectionImpl(receiverType));
         }
         else {
             functionImplClass = functionImpl;
             receiverType = null;
+            kFunctionClass = reflectionTypes.getkFunction();
         }
 
         JetType functionImplType = functionImplClass.getDefaultType();
 
         //noinspection ConstantConditions
-        JetType kFunctionType = reflectionTypes.getKFunctionType(
-                Annotations.EMPTY,
-                receiverType,
-                ExpressionTypingUtils.getValueParametersTypes(descriptor.getValueParameters()),
-                descriptor.getReturnType(),
-                extensionReceiver != null
+        typeArguments.add(new TypeProjectionImpl(descriptor.getReturnType()));
+
+        JetType kFunctionType = new JetTypeImpl(
+                kFunctionClass.getDefaultType().getAnnotations(),
+                kFunctionClass.getTypeConstructor(),
+                false,
+                typeArguments,
+                kFunctionClass.getMemberScope(typeArguments)
         );
 
         return Arrays.asList(functionImplType, kFunctionType);

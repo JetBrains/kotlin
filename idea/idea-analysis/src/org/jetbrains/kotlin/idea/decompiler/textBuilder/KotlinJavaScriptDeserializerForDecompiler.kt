@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.decompiler.navigation.JsMetaFileUtils
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.serialization.deserialization.ClassDescriptorFactory
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
 import org.jetbrains.kotlin.serialization.deserialization.FlexibleTypeCapabilitiesDeserializer
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
@@ -51,7 +52,7 @@ public class KotlinJavaScriptDeserializerForDecompiler(
 
     override val deserializationComponents = DeserializationComponents(
             storageManager, moduleDescriptor, classDataFinder, annotationAndConstantLoader, packageFragmentProvider,
-            ResolveEverythingToKotlinAnyLocalClassResolver, FlexibleTypeCapabilitiesDeserializer.Dynamic
+            ResolveEverythingToKotlinAnyLocalClassResolver, FlexibleTypeCapabilitiesDeserializer.Dynamic, ClassDescriptorFactory.EMPTY
     )
 
     override fun resolveDeclarationsInPackage(packageFqName: FqName): Collection<DeclarationDescriptor> {

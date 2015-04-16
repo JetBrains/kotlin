@@ -7,7 +7,7 @@ public interface InheritedOverriddenAdapter {
     }
 
     public class Sub extends Super {
-        public void foo(kotlin.Function0<kotlin.Unit> r) {
+        public void foo(kotlin.jvm.functions.Function0<kotlin.Unit> r) {
         }
     }
 }

@@ -256,7 +256,7 @@ public class InlineCodegenUtil {
             return false;
         }
 
-        for (String prefix : Arrays.asList("kotlin/Function", "kotlin/ExtensionFunction")) {
+        for (String prefix : Arrays.asList("kotlin/jvm/functions/Function", "kotlin/ExtensionFunction")) {
             if (owner.startsWith(prefix)) {
                 String suffix = owner.substring(prefix.length());
                 if (isInteger(suffix)) {

@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
+import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor;
 import org.jetbrains.kotlin.codegen.*;
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.binding.MutableClosure;
@@ -595,7 +596,9 @@ public class JetTypeMapper {
 
                 signature = mapSignature(functionDescriptor.getOriginal());
 
-                ClassDescriptor receiver = currentIsInterface && !originalIsInterface ? declarationOwner : currentOwner;
+                ClassDescriptor receiver = (currentIsInterface && !originalIsInterface) || currentOwner instanceof FunctionClassDescriptor
+                                           ? declarationOwner
+                                           : currentOwner;
                 owner = mapClass(receiver);
                 thisClass = owner;
             }

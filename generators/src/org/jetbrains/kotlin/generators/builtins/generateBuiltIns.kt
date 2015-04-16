@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.generators.builtins.generateBuiltIns
 
 import org.jetbrains.kotlin.generators.builtins.arrayIterators.GenerateArrayIterators
 import org.jetbrains.kotlin.generators.builtins.arrays.GenerateArrays
+import org.jetbrains.kotlin.generators.builtins.functionImpl.GenerateFunctionImpl
 import org.jetbrains.kotlin.generators.builtins.functions.FunctionKind
 import org.jetbrains.kotlin.generators.builtins.functions.GenerateFunctions
 import org.jetbrains.kotlin.generators.builtins.iterators.GenerateIterators
@@ -40,13 +41,21 @@ abstract class BuiltInsSourceGenerator(val out: PrintWriter) {
 
     protected open fun getPackage(): String = "kotlin"
 
+    protected open val language: Language = Language.KOTLIN
+
+    enum class Language {
+        KOTLIN
+        JAVA
+    }
+
     final fun generate() {
         out.println(File("license/LICENSE.txt").readText())
         // Don't include generator class name in the message: these are built-in sources,
         // and we don't want to scare users with any internal information about our project
         out.println("// Auto-generated file. DO NOT EDIT!")
         out.println()
-        out.println("package ${getPackage()}")
+        out.print("package ${getPackage()}")
+        if (language == Language.KOTLIN) out.println() else out.println(";")
         out.println()
 
         generateBody()
@@ -63,6 +72,7 @@ fun generateBuiltIns(generate: (File, (PrintWriter) -> BuiltInsSourceGenerator) 
         generate(File(dir, kind.fileName)) { GenerateFunctions(it, kind) }
     }
 
+    generate(File(RUNTIME_JVM_DIR, "kotlin/jvm/internal/FunctionImpl.java")) { GenerateFunctionImpl(it) }
     generate(File(BUILT_INS_NATIVE_DIR, "kotlin/Arrays.kt")) { GenerateArrays(it) }
     generate(File(BUILT_INS_NATIVE_DIR, "kotlin/Primitives.kt")) { GeneratePrimitives(it) }
     generate(File(BUILT_INS_SRC_DIR, "kotlin/Iterators.kt")) { GenerateIterators(it) }

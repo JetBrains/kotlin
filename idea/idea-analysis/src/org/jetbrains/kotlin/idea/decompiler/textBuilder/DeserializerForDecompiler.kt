@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.load.kotlin.JavaFlexibleTypeCapabilitiesDeserializer
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.serialization.deserialization.ClassDescriptorFactory
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
@@ -49,7 +50,7 @@ public class DeserializerForDecompiler(
 
     override val deserializationComponents: DeserializationComponents = DeserializationComponents(
             storageManager, moduleDescriptor, classDataFinder, annotationAndConstantLoader, packageFragmentProvider,
-            ResolveEverythingToKotlinAnyLocalClassResolver, JavaFlexibleTypeCapabilitiesDeserializer
+            ResolveEverythingToKotlinAnyLocalClassResolver, JavaFlexibleTypeCapabilitiesDeserializer, ClassDescriptorFactory.EMPTY
     )
 
     override fun resolveDeclarationsInPackage(packageFqName: FqName): Collection<DeclarationDescriptor> {

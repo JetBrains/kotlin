@@ -20,10 +20,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.PackageFragmentProviderImpl
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
-import org.jetbrains.kotlin.serialization.deserialization.FlexibleTypeCapabilitiesDeserializer
-import org.jetbrains.kotlin.serialization.deserialization.LocalClassResolverImpl
-import org.jetbrains.kotlin.serialization.deserialization.ResourceLoadingClassDataFinder
+import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.storage.StorageManager
 import java.io.InputStream
 
@@ -47,7 +44,8 @@ public fun createKotlinJavascriptPackageFragmentProvider(
             KotlinJavascriptAnnotationAndConstantLoader(module),
             provider,
             localClassResolver,
-            FlexibleTypeCapabilitiesDeserializer.Dynamic
+            FlexibleTypeCapabilitiesDeserializer.Dynamic,
+            ClassDescriptorFactory.EMPTY
     )
 
     localClassResolver.setDeserializationComponents(components)

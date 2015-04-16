@@ -21,6 +21,7 @@ import kotlin.*;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.functions.BuiltInFictitiousFunctionClassFactory;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
@@ -116,6 +117,7 @@ public class KotlinBuiltIns {
         PackageFragmentProvider packageFragmentProvider = BuiltinsPackage.createBuiltInPackageFragmentProvider(
                 storageManager, builtInsModule,
                 setOf(BUILT_INS_PACKAGE_FQ_NAME, BuiltinsPackage.getKOTLIN_REFLECT_FQ_NAME()),
+                new BuiltInFictitiousFunctionClassFactory(storageManager, builtInsModule),
                 new Function1<String, InputStream>() {
                     @Override
                     public InputStream invoke(String path) {

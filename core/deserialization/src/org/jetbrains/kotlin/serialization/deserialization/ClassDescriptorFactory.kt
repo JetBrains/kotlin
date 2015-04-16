@@ -14,10 +14,15 @@
  * limitations under the License.
  */
 
-package kotlin.jvm.internal
+package org.jetbrains.kotlin.serialization.deserialization
 
-import java.io.Serializable
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.name.ClassId
 
-public abstract class FunctionImpl : Serializable {
-    override fun toString() = "${(this as Object).getClass().getGenericInterfaces()[0]}"
+public interface ClassDescriptorFactory {
+    public fun createClass(classId: ClassId): ClassDescriptor?
+
+    public object EMPTY : ClassDescriptorFactory {
+        override fun createClass(classId: ClassId): ClassDescriptor? = null
+    }
 }

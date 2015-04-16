@@ -1,7 +1,6 @@
 package a;
 
-import kotlin.jvm.functions.*;
-import kotlin.*;
+import kotlin.jvm.functions.Function0;
 
 public class X {
     private A outer;

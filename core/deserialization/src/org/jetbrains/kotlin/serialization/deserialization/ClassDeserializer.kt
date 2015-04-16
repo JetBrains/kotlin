@@ -16,23 +16,26 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.ClassData
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 
 public class ClassDeserializer(private val components: DeserializationComponents) {
-    private val classes: (ClassKey) -> DeserializedClassDescriptor? =
+    private val classes: (ClassKey) -> ClassDescriptor? =
             components.storageManager.createMemoizedFunctionWithNullableValues { key -> createClass(key) }
 
     // Additional ClassData parameter is needed to avoid calling ClassDataFinder#findClassData() if it is already computed at call site
-    public fun deserializeClass(classId: ClassId, classData: ClassData? = null): DeserializedClassDescriptor? =
+    public fun deserializeClass(classId: ClassId, classData: ClassData? = null): ClassDescriptor? =
             classes(ClassKey(classId, classData))
 
-    private fun createClass(key: ClassKey): DeserializedClassDescriptor? {
+    private fun createClass(key: ClassKey): ClassDescriptor? {
         val classId = key.classId
+        components.fictitiousClassDescriptorFactory.createClass(classId)?.let { return it }
+
         val classData = key.classData ?: components.classDataFinder.findClassData(classId) ?: return null
         val outerContext = if (classId.isNestedClass()) {
-            deserializeClass(classId.getOuterClassId())?.c ?: return null
+            (deserializeClass(classId.getOuterClassId()) as? DeserializedClassDescriptor)?.c ?: return null
         }
         else {
             val fragments = components.packageFragmentProvider.getPackageFragments(classId.getPackageFqName())

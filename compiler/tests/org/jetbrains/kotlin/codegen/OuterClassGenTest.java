@@ -91,7 +91,7 @@ public class OuterClassGenTest extends CodegenTestCase {
     }
 
     public void testLocalObjectInInlineFunction() throws Exception {
-        OuterClassInfo expectedInfo = new OuterClassInfo("foo/Foo", "inlineFoo", "(Lkotlin/Function0;)V");
+        OuterClassInfo expectedInfo = new OuterClassInfo("foo/Foo", "inlineFoo", "(Lkotlin/jvm/functions/Function0;)V");
         doCustomTest("foo/Foo\\$inlineFoo\\$localObject\\$1", expectedInfo, "inlineObject");
     }
 
@@ -116,7 +116,7 @@ public class OuterClassGenTest extends CodegenTestCase {
     }
 
     public void testLambdaInInlineFunction() throws Exception {
-        OuterClassInfo expectedInfo = new OuterClassInfo("foo/Foo", "inlineFoo", "(Lkotlin/Function0;)V");
+        OuterClassInfo expectedInfo = new OuterClassInfo("foo/Foo", "inlineFoo", "(Lkotlin/jvm/functions/Function0;)V");
         doCustomTest("foo/Foo\\$inlineFoo\\$1", expectedInfo, "inlineLambda");
     }
 

@@ -6,13 +6,13 @@ fun check(expected: String, obj: Any?) {
 
 
 fun box(): String {
-    check("kotlin.Function0<kotlin.Unit>")
+    check("kotlin.jvm.functions.Function0<kotlin.Unit>")
     { -> }
-    check("kotlin.Function0<java.lang.Integer>")
-    {  -> 42 }
-    check("kotlin.Function1<java.lang.String, java.lang.Long>",
+    check("kotlin.jvm.functions.Function0<java.lang.Integer>")
+    { -> 42 }
+    check("kotlin.jvm.functions.Function1<java.lang.String, java.lang.Long>",
           fun (s: String) = 42.toLong())
-    check("kotlin.Function2<java.lang.Integer, java.lang.Integer, kotlin.Unit>")
+    check("kotlin.jvm.functions.Function2<java.lang.Integer, java.lang.Integer, kotlin.Unit>")
     { x: Int, y: Int -> }
 
     check("kotlin.ExtensionFunction0<java.lang.Integer, kotlin.Unit>",
