@@ -153,10 +153,13 @@ public class Regex(pattern: String, options: Set<RegexOption>) {
     }
 }
 
-/**
- * Creates a regular expression from the specified [pattern] string and the specified [options].
- */
-public fun Regex(pattern: String, vararg options: RegexOption): Regex = Regex(pattern, options.toSet())
+/** Creates a regular expression from the specified [pattern] string and the specified single [option].  */
+public fun Regex(pattern: String, option: RegexOption): Regex = Regex(pattern, setOf(option))
+
+/** Creates a regular expression from the specified [pattern] string and the default options.  */
+public fun Regex(pattern: String): Regex = Regex(pattern, emptySet())
+
+
 
 
 private fun RegExp.findNext(input: String, from: Int): MatchResult? {

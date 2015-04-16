@@ -90,11 +90,16 @@ public data class MatchGroup(public val value: String, public val range: IntRang
  */
 public class Regex internal (private val nativePattern: Pattern) {
 
+
+    /** Creates a regular expression from the specified [pattern] string and the default options.  */
+    public constructor(pattern: String): this(Pattern.compile(pattern))
+
+    /** Creates a regular expression from the specified [pattern] string and the specified single [option].  */
+    public constructor(pattern: String, option: RegexOption): this(Pattern.compile(pattern, ensureUnicodeCase(option.value)))
+
     /** Creates a regular expression from the specified [pattern] string and the specified set of [options].  */
     public constructor(pattern: String, options: Set<RegexOption>): this(Pattern.compile(pattern, ensureUnicodeCase(options.toInt())))
 
-    /** Creates a regular expression from the specified [pattern] string and the specified [options]. */
-    public constructor(pattern: String, vararg options: RegexOption) : this(pattern, options.toSet())
 
     /** The pattern string of this regular expression. */
     public val pattern: String
@@ -189,7 +194,7 @@ public class Regex internal (private val nativePattern: Pattern) {
 
     companion object {
         /** Returns a literal regex for the specified [literal] string. */
-        public fun fromLiteral(literal: String): Regex = Regex(literal, RegexOption.LITERAL)
+        public fun fromLiteral(literal: String): Regex = literal.toRegex(RegexOption.LITERAL)
         /** Returns a literal pattern for the specified [literal] string. */
         public fun escape(literal: String): String = Pattern.quote(literal)
         /** Returns a literal replacement expression for the specified [literal] string. */

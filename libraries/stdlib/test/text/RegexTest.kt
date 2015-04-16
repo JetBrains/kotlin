@@ -87,7 +87,7 @@ class RegexTest {
     test fun escapeLiteral() {
         val literal = """[-\/\\^$*+?.()|[\]{}]"""
         assertTrue(Regex.fromLiteral(literal).matches(literal))
-        assertTrue(Regex(Regex.escape(literal)).matches(literal))
+        assertTrue(Regex.escape(literal).toRegex().matches(literal))
     }
 
     test fun replace() {
