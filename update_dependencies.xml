@@ -2,7 +2,11 @@
     <property name="ideaVersion" value="141.588.1"/>
 
     <property name="kotlin.bootstrap.locator" value="buildType:bt345,tag:bootstrap,status:SUCCESS" />
+    <property name="kotlin.bootstrap.locator.force" value="false"/>
+
     <property name="markdown.locator" value="buildType:IntelliJMarkdownParser_Build,status:SUCCESS"/>
+
+    <property name="bootstrap.build.no.tests" value="false"/>
 
     <condition property="os.tag" value="win.zip">
         <os family="windows"/>
@@ -221,9 +225,13 @@
 
         <!-- Bootstrap compiler -->
         <if>
-            <not>
-                <isset property="teamcity.version"/>
-            </not>
+            <or>
+                <not><isset property="teamcity.version"/></not>
+                <and>
+                    <istrue value="${kotlin.bootstrap.locator.force}"/>
+                    <istrue value="${bootstrap.build.no.tests}"/>
+                </and>
+            </or>
             <then>
                 <!-- Download bootstrap compiler for local build -->
                 <download_teamcity_artifact
