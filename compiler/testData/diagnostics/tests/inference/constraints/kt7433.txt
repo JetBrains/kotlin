@@ -1,0 +1,4 @@
+package
+
+internal fun test(/*0*/ ints: kotlin.List<kotlin.Int>): kotlin.Unit
+kotlin.inline() public fun </*0*/ S, /*1*/ T : S> kotlin.Iterable<T>.reduce1(/*0*/ operation: (S, T) -> S): S

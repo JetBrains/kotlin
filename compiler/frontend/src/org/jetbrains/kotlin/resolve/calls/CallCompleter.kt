@@ -140,14 +140,6 @@ public class CallCompleter(
         val returnType = getCandidateDescriptor().getReturnType()
         if (returnType != null) {
             getConstraintSystem()!!.addSupertypeConstraint(expectedType, returnType, EXPECTED_TYPE_POSITION.position())
-
-            if (expectedType === TypeUtils.UNIT_EXPECTED_TYPE) {
-                updateSystemIfSuccessful {
-                    system ->
-                    system.addSupertypeConstraint(KotlinBuiltIns.getInstance().getUnitType(), returnType, EXPECTED_TYPE_POSITION.position())
-                    system.getStatus().isSuccessful()
-                }
-            }
         }
 
         val constraintSystemCompleter = trace[CONSTRAINT_SYSTEM_COMPLETER, getCall().getCalleeExpression()]
@@ -161,6 +153,14 @@ public class CallCompleter(
         }
 
         (getConstraintSystem() as ConstraintSystemImpl).processDeclaredBoundConstraints()
+
+        if (returnType != null && expectedType === TypeUtils.UNIT_EXPECTED_TYPE) {
+            updateSystemIfSuccessful {
+                system ->
+                system.addSupertypeConstraint(KotlinBuiltIns.getInstance().getUnitType(), returnType, EXPECTED_TYPE_POSITION.position())
+                system.getStatus().isSuccessful()
+            }
+        }
 
         setResultingSubstitutor(getConstraintSystem()!!.getResultingSubstitutor())
     }
