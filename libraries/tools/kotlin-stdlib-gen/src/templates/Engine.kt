@@ -1,11 +1,9 @@
 package templates
 
 import templates.Family.*
+import templates.Family.Collections
 import java.io.StringReader
-import java.util.ArrayList
-import java.util.HashMap
-import java.util.HashSet
-import java.util.StringTokenizer
+import java.util.*
 import kotlin.properties.Delegates
 
 enum class Family {
@@ -49,8 +47,8 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
     var receiverAsterisk = false
     val inlineFamilies = HashMap<Family, Boolean>()
 
-    val buildFamilies = HashSet(defaultFamilies.toList())
-    private val buildPrimitives = HashSet(defaultPrimitives.toList())
+    val buildFamilies = LinkedHashSet(defaultFamilies.toList())
+    private val buildPrimitives = LinkedHashSet(defaultPrimitives.toList())
 
     var deprecate: String = ""
     val deprecates = hashMapOf<Family, String>()
