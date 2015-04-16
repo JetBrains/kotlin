@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.idea.internal;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
@@ -47,6 +49,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.Progress;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
@@ -201,12 +204,20 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
         GenerationState state;
         try {
             ResolutionFacade resolutionFacade = ResolvePackage.getResolutionFacade(jetFile);
-            BindingContext bindingContext = resolutionFacade.analyzeFullyAndGetResult(Collections.singletonList(jetFile)).getBindingContext();
-            Ref<Set<JetElement>> ref = Ref.create();
-            if (enableInline) {
-                bindingContext = processInlinedDeclarations(jetFile.getProject(), resolutionFacade, bindingContext, Collections.<JetElement>singleton(jetFile), 1, ref);
-            }
 
+            Ref<Set<JetElement>> ref = Ref.create();
+            BindingContext bindingContext = processInlinedDeclarations(
+                    jetFile.getProject(),
+                    resolutionFacade,
+                    Collections.<JetElement>singleton(jetFile),
+                    1,
+                    ref,
+                    !enableInline
+            );
+
+
+            //We processing another files just to annotate anonymous classes within their inline functions
+            //Bytecode not produced for them cause of filtering via generateClassFilter
             Set<JetFile> toProcess = new LinkedHashSet<JetFile>();
             toProcess.add(jetFile);
             if (ref.get() != null) {
@@ -271,15 +282,13 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
     private static BindingContext processInlinedDeclarations(
             @NotNull Project project,
             @NotNull ResolutionFacade resolutionFacade,
-            @NotNull BindingContext bindingContext,
             @NotNull Set<JetElement> originalElements,
             int deep,
-            @NotNull Ref<Set<JetElement>> resultElements
+            @NotNull Ref<Set<JetElement>> resultElements,
+            boolean processOnlyReifiedInline
     ) {
-        if (deep >= 10) {
-            resultElements.set(originalElements);
-            return bindingContext;
-        }
+        AnalysisResult newResult = resolutionFacade.analyzeFullyAndGetResult(originalElements);
+        BindingContext bindingContext = newResult.getBindingContext();
 
         Set<JetElement> collectedElements = new HashSet<JetElement>();
         collectedElements.addAll(originalElements);
@@ -287,25 +296,35 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
         for (ResolvedCall call : contents.values()) {
             CallableDescriptor descriptor = call.getResultingDescriptor();
             if (!(descriptor instanceof DeserializedSimpleFunctionDescriptor) && InlineUtil.isInline(descriptor)) {
-                PsiElement declaration = DescriptorToSourceUtilsIde.INSTANCE$.getAnyDeclaration(project, descriptor);
-                if (declaration != null && declaration instanceof JetElement) {
-                    collectedElements.add((JetElement) declaration);
+                if (!processOnlyReifiedInline || hasReifiedTypeParameters(descriptor)) {
+                    PsiElement declaration = DescriptorToSourceUtilsIde.INSTANCE$.getAnyDeclaration(project, descriptor);
+                    if (declaration != null && declaration instanceof JetElement) {
+                        collectedElements.add((JetElement) declaration);
+                    }
                 }
             }
         }
 
         if (collectedElements.size() != originalElements.size()) {
-            AnalysisResult newResult = resolutionFacade.analyzeFullyAndGetResult(collectedElements);
-            if (newResult.isError()) {
+            if (newResult.isError() || deep >= 10) {
                 resultElements.set(collectedElements);
-                return newResult.getBindingContext();
+                return bindingContext;
             }
 
-            return processInlinedDeclarations(project, resolutionFacade, newResult.getBindingContext(), collectedElements, deep + 1, resultElements);
+            return processInlinedDeclarations(project, resolutionFacade, collectedElements, deep + 1, resultElements, processOnlyReifiedInline);
         }
 
         resultElements.set(collectedElements);
         return bindingContext;
+    }
+
+    private static boolean hasReifiedTypeParameters(CallableDescriptor descriptor) {
+        return Iterables.any(descriptor.getTypeParameters(), new Predicate<TypeParameterDescriptor>() {
+            @Override
+            public boolean apply(TypeParameterDescriptor input) {
+                return input.isReified();
+            }
+        });
     }
 
     private static Pair<Integer, Integer> mapLines(String text, int startLine, int endLine) {
