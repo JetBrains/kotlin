@@ -16,35 +16,28 @@
 
 package org.jetbrains.kotlin.generators.builtins.functions
 
-import org.jetbrains.kotlin.generators.builtins.functions.FunctionKind.*
 import org.jetbrains.kotlin.generators.builtins.generateBuiltIns.BuiltInsSourceGenerator
 import java.io.PrintWriter
 
 val MAX_PARAM_COUNT = 22
 
 enum class FunctionKind(
-        private val classNamePrefix: String,
+        val classFqNamePrefix: String,
         val docPrefix: String,
-        val hasReceiverParameter: Boolean,
-        private val superClassNamePrefix: String?
+        val hasReceiverParameter: Boolean
 ) {
-    FUNCTION("Function", "A function", false, null),
-    EXTENSION_FUNCTION("ExtensionFunction", "An extension function", true, null),
+    FUNCTION : FunctionKind("kotlin.jvm.functions.Function", "A function", false)
+    EXTENSION_FUNCTION : FunctionKind("kotlin.ExtensionFunction", "An extension function", true)
 
-    K_FUNCTION("KFunction", "A function with introspection capabilities", false, "Function"),
-    K_MEMBER_FUNCTION("KMemberFunction", "A member function with introspection capabilities", true, "ExtensionFunction"),
-    K_EXTENSION_FUNCTION("KExtensionFunction", "An extension function with introspection capabilities", true, "ExtensionFunction");
+    val classNamePrefix: String get() = classFqNamePrefix.substringAfterLast('.')
+    val packageFqName: String get() = classFqNamePrefix.substringBeforeLast('.')
+    val fileName: String get() = classFqNamePrefix.replace('.', '/') + "s.kt"
 
-    fun getFileName() = (if (isReflection()) "reflect/" else "") + classNamePrefix + "s.kt"
     fun getClassName(i: Int) = classNamePrefix + i
-    fun getSuperClassName(i: Int) = superClassNamePrefix?.plus(i)
-    fun getPackage() = if (isReflection()) "kotlin.reflect" else "kotlin"
-
-    fun isReflection() = name() startsWith "K"
 }
 
 class GenerateFunctions(out: PrintWriter, val kind: FunctionKind) : BuiltInsSourceGenerator(out) {
-    override fun getPackage() = kind.getPackage()
+    override fun getPackage() = kind.packageFqName
 
     fun generateTypeParameters(i: Int, variance: Boolean) {
         out.print("<")
@@ -73,7 +66,7 @@ class GenerateFunctions(out: PrintWriter, val kind: FunctionKind) : BuiltInsSour
             generateDocumentation(i)
             out.print("public interface " + kind.getClassName(i))
             generateTypeParameters(i, variance = true)
-            generateSuperClass(i)
+            generateSuperClass()
             generateFunctionClassBody(i)
         }
     }
@@ -83,28 +76,16 @@ class GenerateFunctions(out: PrintWriter, val kind: FunctionKind) : BuiltInsSour
         out.println("/** ${kind.docPrefix} that takes $i argument${suffix}. */")
     }
 
-    fun generateSuperClass(i: Int) {
-        val superClass = kind.getSuperClassName(i)
-        if (superClass != null) {
-            out.print(" : $superClass")
-            generateTypeParameters(i, variance = false)
-        }
-        else {
-            out.print(" : Function<")
-            generateReturnTypeParameter(variance = false)
-            out.print(">")
-        }
+    fun generateSuperClass() {
+        out.print(" : Function<")
+        generateReturnTypeParameter(variance = false)
+        out.print(">")
     }
 
-    fun generateFunctionClassBody(i: Int): Unit = when (kind) {
-        FUNCTION, EXTENSION_FUNCTION -> {
-            out.println(" {")
-            generateInvokeSignature(i)
-            out.println("}")
-        }
-        K_FUNCTION, K_MEMBER_FUNCTION, K_EXTENSION_FUNCTION -> {
-            out.println()
-        }
+    fun generateFunctionClassBody(i: Int) {
+        out.println(" {")
+        generateInvokeSignature(i)
+        out.println("}")
     }
 
     fun generateInvokeSignature(i: Int) {

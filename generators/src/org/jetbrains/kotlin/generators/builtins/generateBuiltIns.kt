@@ -31,9 +31,9 @@ import java.io.PrintWriter
 fun assertExists(file: File): Unit =
         if (!file.exists()) error("Output dir does not exist: ${file.getAbsolutePath()}")
 
-val BUILT_INS_NATIVE_DIR = File("core/builtins/native/kotlin/")
-val BUILT_INS_SRC_DIR = File("core/builtins/src/kotlin/")
-val RUNTIME_JVM_DIR = File("core/runtime.jvm/src/kotlin/")
+val BUILT_INS_NATIVE_DIR = File("core/builtins/native/")
+val BUILT_INS_SRC_DIR = File("core/builtins/src/")
+val RUNTIME_JVM_DIR = File("core/runtime.jvm/src/")
 
 abstract class BuiltInsSourceGenerator(val out: PrintWriter) {
     protected abstract fun generateBody(): Unit
@@ -59,16 +59,17 @@ fun generateBuiltIns(generate: (File, (PrintWriter) -> BuiltInsSourceGenerator) 
     assertExists(RUNTIME_JVM_DIR)
 
     for (kind in FunctionKind.values()) {
-        generate(File(BUILT_INS_SRC_DIR, kind.getFileName())) { GenerateFunctions(it, kind) }
+        val dir = if (kind == FunctionKind.FUNCTION) RUNTIME_JVM_DIR else BUILT_INS_SRC_DIR
+        generate(File(dir, kind.fileName)) { GenerateFunctions(it, kind) }
     }
 
-    generate(File(BUILT_INS_NATIVE_DIR, "Arrays.kt")) { GenerateArrays(it) }
-    generate(File(BUILT_INS_NATIVE_DIR, "Primitives.kt")) { GeneratePrimitives(it) }
-    generate(File(BUILT_INS_SRC_DIR, "Iterators.kt")) { GenerateIterators(it) }
-    generate(File(RUNTIME_JVM_DIR, "jvm/internal/ArrayIterators.kt")) { GenerateArrayIterators(it) }
-    generate(File(BUILT_INS_SRC_DIR, "ProgressionIterators.kt")) { GenerateProgressionIterators(it) }
-    generate(File(BUILT_INS_SRC_DIR, "Progressions.kt")) { GenerateProgressions(it) }
-    generate(File(BUILT_INS_SRC_DIR, "Ranges.kt")) { GenerateRanges(it) }
+    generate(File(BUILT_INS_NATIVE_DIR, "kotlin/Arrays.kt")) { GenerateArrays(it) }
+    generate(File(BUILT_INS_NATIVE_DIR, "kotlin/Primitives.kt")) { GeneratePrimitives(it) }
+    generate(File(BUILT_INS_SRC_DIR, "kotlin/Iterators.kt")) { GenerateIterators(it) }
+    generate(File(RUNTIME_JVM_DIR, "kotlin/jvm/internal/ArrayIterators.kt")) { GenerateArrayIterators(it) }
+    generate(File(BUILT_INS_SRC_DIR, "kotlin/ProgressionIterators.kt")) { GenerateProgressionIterators(it) }
+    generate(File(BUILT_INS_SRC_DIR, "kotlin/Progressions.kt")) { GenerateProgressions(it) }
+    generate(File(BUILT_INS_SRC_DIR, "kotlin/Ranges.kt")) { GenerateRanges(it) }
 }
 
 fun main(args: Array<String>) {
