@@ -2540,6 +2540,75 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/convertForEachToForLoop")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ConvertForEachToForLoop extends AbstractIntentionTest {
+        public void testAllFilesPresentInConvertForEachToForLoop() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertForEachToForLoop"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("complexReceiver.kt")
+        public void testComplexReceiver() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertForEachToForLoop/complexReceiver.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("explicitFunctionLiteral.kt")
+        public void testExplicitFunctionLiteral() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertForEachToForLoop/explicitFunctionLiteral.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("extraArguments.kt")
+        public void testExtraArguments() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertForEachToForLoop/extraArguments.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("implicitFunctionLiteralParameter.kt")
+        public void testImplicitFunctionLiteralParameter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertForEachToForLoop/implicitFunctionLiteralParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("infixCall.kt")
+        public void testInfixCall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertForEachToForLoop/infixCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("parenthesizedExpression.kt")
+        public void testParenthesizedExpression() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertForEachToForLoop/parenthesizedExpression.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertForEachToForLoop/simple.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("typeArgumentPresent.kt")
+        public void testTypeArgumentPresent() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertForEachToForLoop/typeArgumentPresent.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("userDefined.kt")
+        public void testUserDefined() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertForEachToForLoop/userDefined.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("zeroArguments.kt")
+        public void testZeroArguments() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertForEachToForLoop/zeroArguments.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/convertFunctionToProperty")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -3529,75 +3598,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("typeAnnotatedWithNonBlockBody.kt")
         public void testTypeAnnotatedWithNonBlockBody() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToForEachFunctionCall/typeAnnotatedWithNonBlockBody.kt");
-            doTest(fileName);
-        }
-    }
-
-    @TestMetadata("idea/testData/intentions/convertToForEachLoop")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class ConvertToForEachLoop extends AbstractIntentionTest {
-        public void testAllFilesPresentInConvertToForEachLoop() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertToForEachLoop"), Pattern.compile("^(.+)\\.kt$"), true);
-        }
-
-        @TestMetadata("complexReceiver.kt")
-        public void testComplexReceiver() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToForEachLoop/complexReceiver.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("explicitFunctionLiteral.kt")
-        public void testExplicitFunctionLiteral() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToForEachLoop/explicitFunctionLiteral.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("extraArguments.kt")
-        public void testExtraArguments() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToForEachLoop/extraArguments.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("implicitFunctionLiteralParameter.kt")
-        public void testImplicitFunctionLiteralParameter() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToForEachLoop/implicitFunctionLiteralParameter.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("infixCall.kt")
-        public void testInfixCall() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToForEachLoop/infixCall.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("parenthesizedExpression.kt")
-        public void testParenthesizedExpression() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToForEachLoop/parenthesizedExpression.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("simple.kt")
-        public void testSimple() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToForEachLoop/simple.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("typeArgumentPresent.kt")
-        public void testTypeArgumentPresent() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToForEachLoop/typeArgumentPresent.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("userDefined.kt")
-        public void testUserDefined() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToForEachLoop/userDefined.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("zeroArguments.kt")
-        public void testZeroArguments() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToForEachLoop/zeroArguments.kt");
             doTest(fileName);
         }
     }

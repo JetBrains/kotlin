@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 
-public class ConvertToForEachLoopIntention : JetSelfTargetingIntention<JetExpression>(javaClass(), "Replace with a for each loop") {
+public class ConvertForEachToForLoopIntention : JetSelfTargetingIntention<JetExpression>(javaClass(), "Replace with a for each loop") {
     override fun isApplicableTo(element: JetExpression, caretOffset: Int): Boolean {
         val data = extractData(element) ?: return false
         if (data.functionLiteral.getValueParameters().size() > 1) return false

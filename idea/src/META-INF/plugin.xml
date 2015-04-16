@@ -785,7 +785,7 @@
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.ConvertToForEachLoopIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.ConvertForEachToForLoopIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
