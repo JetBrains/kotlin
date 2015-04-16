@@ -446,7 +446,7 @@ public class CandidateResolver {
         if (deparenthesizedArgument == null || type == null) return type;
 
         DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(deparenthesizedArgument, type, context);
-        if (!dataFlowValue.isStableIdentifier() && !dataFlowValue.isLocalVariable()) return type;
+        if (!dataFlowValue.isPredictable()) return type;
 
         Set<JetType> possibleTypes = context.dataFlowInfo.getPossibleTypes(dataFlowValue);
         if (possibleTypes.isEmpty()) return type;

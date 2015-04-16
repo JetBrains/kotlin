@@ -130,7 +130,7 @@ public class DataFlowValueFactory {
         JetType type = variableDescriptor.getType();
         return new DataFlowValue(variableDescriptor, type,
                                  isStableVariable(variableDescriptor, usageContainingModule),
-                                 isLocalVariable(variableDescriptor, bindingContext),
+                                 isUncapturedLocalVariable(variableDescriptor, bindingContext),
                                  getImmanentNullability(type));
     }
 
@@ -166,6 +166,11 @@ public class DataFlowValueFactory {
     }
 
     @NotNull
+    private static IdentifierInfo createStableInfo(Object id) {
+        return createInfo(id, true, false);
+    }
+
+    @NotNull
     private static IdentifierInfo createPackageInfo(Object id) {
         return new IdentifierInfo(id, true, false, true);
     }
@@ -180,6 +185,7 @@ public class DataFlowValueFactory {
         }
         return createInfo(Pair.create(receiverInfo.id, selectorInfo.id),
                           receiverInfo.isStable && selectorInfo.isStable,
+                          // x.y can never be a local variable
                           false);
     }
 
@@ -240,7 +246,7 @@ public class DataFlowValueFactory {
             VariableDescriptor variableDescriptor = (VariableDescriptor) declarationDescriptor;
             return combineInfo(receiverInfo, createInfo(variableDescriptor,
                                                         isStableVariable(variableDescriptor, usageModuleDescriptor),
-                                                        isLocalVariable(variableDescriptor, bindingContext)));
+                                                        isUncapturedLocalVariable(variableDescriptor, bindingContext)));
         }
         if (declarationDescriptor instanceof PackageViewDescriptor) {
             return createPackageInfo(declarationDescriptor);
@@ -267,21 +273,18 @@ public class DataFlowValueFactory {
             ReceiverParameterDescriptor receiverParameter = ((CallableDescriptor) descriptorOfThisReceiver).getExtensionReceiverParameter();
             assert receiverParameter != null : "'This' refers to the callable member without a receiver parameter: " +
                                                descriptorOfThisReceiver;
-            return createInfo(receiverParameter.getValue(), true, false);
+            return createStableInfo(receiverParameter.getValue());
         }
         if (descriptorOfThisReceiver instanceof ClassDescriptor) {
-            return createInfo(((ClassDescriptor) descriptorOfThisReceiver).getThisAsReceiverParameter().getValue(), true, false);
+            return createStableInfo(((ClassDescriptor) descriptorOfThisReceiver).getThisAsReceiverParameter().getValue());
         }
         return NO_IDENTIFIER_INFO;
     }
 
-    public static boolean isLocalVariable(@NotNull VariableDescriptor variableDescriptor, @NotNull BindingContext bindingContext) {
-        if (variableDescriptor.isVar() && variableDescriptor instanceof LocalVariableDescriptor) {
-            if (BindingContextUtils.isVarCapturedInClosure(bindingContext, variableDescriptor))
-                return false;
-            return true;
-        }
-        return false;
+    public static boolean isUncapturedLocalVariable(@NotNull VariableDescriptor variableDescriptor, @NotNull BindingContext bindingContext) {
+        return variableDescriptor.isVar()
+               && variableDescriptor instanceof LocalVariableDescriptor
+               && !BindingContextUtils.isVarCapturedInClosure(bindingContext, variableDescriptor);
     }
 
     /**

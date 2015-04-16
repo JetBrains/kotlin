@@ -33,15 +33,17 @@ public class DataFlowValue {
     public static final DataFlowValue ERROR = new DataFlowValue(new Object(), ErrorUtils.createErrorType("Error type for data flow"), false, false, Nullability.IMPOSSIBLE);
 
     private final boolean stableIdentifier;
-    private final boolean localVariable;
+    private final boolean uncapturedlocalVariable;
     private final JetType type;
     private final Object id;
     private final Nullability immanentNullability;
 
     // Use DataFlowValueFactory
-    /*package*/ DataFlowValue(Object id, JetType type, boolean stableIdentifier, boolean localVariable, Nullability immanentNullability) {
+    /*package*/ DataFlowValue(Object id, JetType type, boolean stableIdentifier, boolean uncapturedlocalVariable, Nullability immanentNullability) {
+        assert !stableIdentifier || !uncapturedlocalVariable :
+                "data flow value cannot be together a stable identifier and an uncaptured local variable";
         this.stableIdentifier = stableIdentifier;
-        this.localVariable = localVariable;
+        this.uncapturedlocalVariable = uncapturedlocalVariable;
         this.type = type;
         this.id = id;
         this.immanentNullability = immanentNullability;
@@ -59,16 +61,28 @@ public class DataFlowValue {
 
     /**
      * Stable identifier is a non-literal value that is statically known to be immutable
+     *
+     * NB: this function is no longer public!
+     * If you are checking for a possible smart cast, probably you need isPredictable() instead
      */
-    public boolean isStableIdentifier() {
+    private boolean isStableIdentifier() {
         return stableIdentifier;
     }
 
     /**
      * Identifier is considered a local variable here if it's mutable (var), local and not captured in a closure
      */
-    public boolean isLocalVariable() {
-        return localVariable;
+    public boolean isUncapturedLocalVariable() {
+        return uncapturedlocalVariable;
+    }
+
+    /**
+     * Both stable identifiers and uncaptured local variables are considered "predictable".
+     * Predictable means here we do not expect some sudden change of their values,
+     * like accessing mutable properties in another thread or mutable variables from closures.
+     */
+    public boolean isPredictable() {
+        return stableIdentifier || uncapturedlocalVariable;
     }
 
     @NotNull

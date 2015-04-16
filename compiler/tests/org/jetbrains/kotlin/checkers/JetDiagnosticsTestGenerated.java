@@ -11786,6 +11786,18 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("whileTrueWithBracketSet.kt")
+                public void testWhileTrueWithBracketSet() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/whileTrueWithBracketSet.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("whileTrueWithBrackets.kt")
+                public void testWhileTrueWithBrackets() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/whileTrueWithBrackets.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("whileWithBreak.kt")
                 public void testWhileWithBreak() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/whileWithBreak.kt");

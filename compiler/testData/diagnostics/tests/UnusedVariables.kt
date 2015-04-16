@@ -68,7 +68,7 @@ class MyTest() {
         }
         else {
             a = "ss"
-            doSmth(a as String)
+            doSmth(<!DEBUG_INFO_SMARTCAST!>a<!>)
         }
         doSmth(a)
 

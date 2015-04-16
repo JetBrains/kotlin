@@ -36,24 +36,26 @@ class PreliminaryLoopVisitor extends JetTreeVisitor<Void> {
     // loop under analysis
     private final JetLoopExpression loopExpression;
 
-    private Set<Name> assignedNames = new LinkedHashSet<Name>();
+    private final Set<Name> assignedNames = new LinkedHashSet<Name>();
 
-    public PreliminaryLoopVisitor(JetLoopExpression loopExpression) {
+    private PreliminaryLoopVisitor(@NotNull JetLoopExpression loopExpression) {
         this.loopExpression = loopExpression;
     }
 
-    public void launch() {
-        loopExpression.accept(this, null);
+    @NotNull
+    static public PreliminaryLoopVisitor visitLoop(@NotNull JetLoopExpression loopExpression) {
+        PreliminaryLoopVisitor visitor = new PreliminaryLoopVisitor(loopExpression);
+        loopExpression.accept(visitor, null);
+        return visitor;
     }
 
-    public DataFlowInfo clearDataFlowInfoForAssignedLocalVariables(DataFlowInfo dataFlowInfo) {
+    @NotNull
+    public DataFlowInfo clearDataFlowInfoForAssignedLocalVariables(@NotNull DataFlowInfo dataFlowInfo) {
         Map<DataFlowValue, Nullability> nullabilityMap = dataFlowInfo.getCompleteNullabilityInfo();
         Set<DataFlowValue> valueSetToClear = new LinkedHashSet<DataFlowValue>();
         for (DataFlowValue value: nullabilityMap.keySet()) {
-            // Only local variables which are not stable are under interest
-            if (value.isStableIdentifier() || !value.isLocalVariable())
-                continue;
-            if (value.getId() instanceof LocalVariableDescriptor) {
+            // Only uncaptured local variables are under interest here
+            if (value.isUncapturedLocalVariable() && value.getId() instanceof LocalVariableDescriptor) {
                 LocalVariableDescriptor descriptor = (LocalVariableDescriptor)value.getId();
                 if (assignedNames.contains(descriptor.getName())) {
                     valueSetToClear.add(value);
@@ -67,14 +69,13 @@ class PreliminaryLoopVisitor extends JetTreeVisitor<Void> {
     }
 
     @Override
-    public Void visitLoopExpression(@NotNull JetLoopExpression loopExpression, Void arg) {
-        return super.visitLoopExpression(loopExpression, arg);
-    }
-
-    @Override
     public Void visitBinaryExpression(@NotNull JetBinaryExpression binaryExpression, Void arg) {
-        if (binaryExpression.getOperationToken() == JetTokens.EQ && binaryExpression.getLeft() instanceof JetNameReferenceExpression) {
-            assignedNames.add(((JetNameReferenceExpression) binaryExpression.getLeft()).getReferencedNameAsName());
+        if (binaryExpression.getOperationToken() == JetTokens.EQ) {
+            JetExpression left = JetPsiUtil.deparenthesize(binaryExpression.getLeft());
+            if (left instanceof JetNameReferenceExpression) {
+                // deparenthesize
+                assignedNames.add(((JetNameReferenceExpression) left).getReferencedNameAsName());
+            }
         }
         return null;
     }

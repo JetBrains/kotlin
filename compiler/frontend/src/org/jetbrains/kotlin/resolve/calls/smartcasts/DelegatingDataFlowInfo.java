@@ -39,14 +39,12 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
     @NotNull
     private final ImmutableMap<DataFlowValue, Nullability> nullabilityInfo;
 
-    /**
-     * Also immutable
-     */
+    // Also immutable
     @NotNull
     private final SetMultimap<DataFlowValue, JetType> typeInfo;
 
     /**
-     * Value for which type info was cleared at this point
+     * Value for which type info was cleared or reassigned at this point
      * so parent type info should not be in use
      */
     @Nullable
@@ -94,16 +92,16 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
     @NotNull
     public SetMultimap<DataFlowValue, JetType> getCompleteTypeInfo() {
         SetMultimap<DataFlowValue, JetType> result = newTypeInfo();
-        Set<DataFlowValue> resultCompleted = new HashSet<DataFlowValue>();
+        Set<DataFlowValue> withGivenTypeInfo = new HashSet<DataFlowValue>();
         DelegatingDataFlowInfo info = this;
         while (info != null) {
             for (DataFlowValue key : info.typeInfo.keySet()) {
-                if (!resultCompleted.contains(key)) {
+                if (!withGivenTypeInfo.contains(key)) {
                     result.putAll(key, info.typeInfo.get(key));
                 }
             }
             if (valueWithGivenTypeInfo != null) {
-                resultCompleted.add(valueWithGivenTypeInfo);
+                withGivenTypeInfo.add(valueWithGivenTypeInfo);
             }
             info = (DelegatingDataFlowInfo) info.parent;
         }
@@ -113,7 +111,7 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
     @Override
     @NotNull
     public Nullability getNullability(@NotNull DataFlowValue key) {
-        if (!key.isStableIdentifier() && !key.isLocalVariable()) return key.getImmanentNullability();
+        if (!key.isPredictable()) return key.getImmanentNullability();
         Nullability nullability = nullabilityInfo.get(key);
         return nullability != null ? nullability :
                parent != null ? parent.getNullability(key) :
@@ -125,7 +123,7 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
             @NotNull DataFlowValue value,
             @NotNull Nullability nullability
     ) {
-        if (!value.isStableIdentifier() && !value.isLocalVariable()) return false;
+        if (!value.isPredictable()) return false;
         map.put(value, nullability);
         return nullability != getNullability(value);
     }
@@ -160,14 +158,8 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
     @NotNull
     public DataFlowInfo clearValueInfo(@NotNull DataFlowValue value) {
         Map<DataFlowValue, Nullability> builder = Maps.newHashMap();
-        boolean changed = putNullability(builder, value, Nullability.UNKNOWN);
-        // We want to clear all these types
-        if (!changed) {
-            changed = !collectTypesFromMeAndParents(value).isEmpty();
-        }
-        return !changed
-               ? this
-               : new DelegatingDataFlowInfo(
+        putNullability(builder, value, Nullability.UNKNOWN);
+        return new DelegatingDataFlowInfo(
                        this,
                        ImmutableMap.copyOf(builder),
                        EMPTY_TYPE_INFO,
@@ -178,23 +170,23 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
     @Override
     @NotNull
     public DataFlowInfo assign(@NotNull DataFlowValue a, @NotNull DataFlowValue b) {
-        Map<DataFlowValue, Nullability> builder = Maps.newHashMap();
+        Map<DataFlowValue, Nullability> nullability = Maps.newHashMap();
         Nullability nullabilityOfB = getNullability(b);
-        boolean changed = putNullability(builder, a, nullabilityOfB);
+        putNullability(nullability, a, nullabilityOfB);
+
         SetMultimap<DataFlowValue, JetType> newTypeInfo = newTypeInfo();
-        Set<JetType> typesForA = collectTypesFromMeAndParents(a);
         Set<JetType> typesForB = collectTypesFromMeAndParents(b);
+        // Own type of B must be recorded separately, e.g. for a constant
+        // But if its type is the same as A or it's null, there is no reason to do it
+        // because usually null type or own type are not saved in this set
         if (nullabilityOfB.canBeNonNull() && !a.getType().equals(b.getType())) {
             typesForB.add(b.getType());
         }
         newTypeInfo.putAll(a, typesForB);
-        changed |= !typesForA.equals(typesForB);
 
-        return !changed
-               ? this
-               : new DelegatingDataFlowInfo(
+        return new DelegatingDataFlowInfo(
                        this,
-                       ImmutableMap.copyOf(builder),
+                       ImmutableMap.copyOf(nullability),
                        newTypeInfo.isEmpty() ? EMPTY_TYPE_INFO : newTypeInfo,
                        a
                );

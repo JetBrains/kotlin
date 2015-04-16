@@ -149,6 +149,8 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
                         propertyDescriptor, context.trace.getBindingContext(),
                         DescriptorUtils.getContainingModuleOrNull(scope.getContainingDeclaration()));
                 DataFlowValue initializerDataFlowValue = DataFlowValueFactory.createDataFlowValue(initializer, type, context);
+                // We cannot say here anything new about initializerDataFlowValue
+                // except it has the same value as variableDataFlowValue
                 dataFlowInfo = dataFlowInfo.assign(variableDataFlowValue, initializerDataFlowValue);
             }
         }
@@ -350,6 +352,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             if (left != null && leftType != null && rightType != null) {
                 DataFlowValue leftValue = DataFlowValueFactory.createDataFlowValue(left, leftType, context);
                 DataFlowValue rightValue = DataFlowValueFactory.createDataFlowValue(right, rightType, context);
+                // We cannot say here anything new about rightValue except it has the same value as leftValue
                 dataFlowInfo = dataFlowInfo.assign(leftValue, rightValue);
             }
         }
