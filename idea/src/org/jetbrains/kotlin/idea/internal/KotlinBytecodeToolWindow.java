@@ -46,8 +46,9 @@ import org.jetbrains.kotlin.codegen.KotlinCodegenFacade;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.Progress;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink;
-import org.jetbrains.kotlin.idea.caches.resolve.KotlinCacheService;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde;
 import org.jetbrains.kotlin.idea.util.InfinitePeriodicalTask;
@@ -109,112 +110,10 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
         @NotNull
         @Override
         protected String processRequest(@NotNull Location location) {
-            final JetFile jetFile = location.getJetFile();
+            JetFile jetFile = location.getJetFile();
             assert jetFile != null;
 
-            GenerationState state;
-            try {
-                AnalysisResult result = ResolvePackage.analyzeFullyAndGetResult(jetFile);
-                boolean disableInline = !enableInline.isSelected();
-                Ref<Set<JetElement>> ref = Ref.create();
-                if (!disableInline) {
-                    result = processInlinedDeclarations(jetFile.getProject(), result, Collections.<JetElement>singleton(jetFile), 1, ref);
-                }
-
-                if (result.isError()) {
-                    return printStackTraceToString(result.getError());
-                }
-
-                Set<JetFile> toProcess = new LinkedHashSet<JetFile>();
-                toProcess.add(jetFile);
-                if (ref.get() != null) {
-                    for (JetElement element: ref.get()) {
-                        JetFile file = element.getContainingJetFile();
-                        toProcess.add(file);
-                    }
-                }
-
-                GenerationState.GenerateClassFilter generateClassFilter = new GenerationState.GenerateClassFilter() {
-
-                    @Override
-                    public boolean shouldGeneratePackagePart(JetFile file) {
-                        return file == jetFile;
-                    }
-
-                    @Override
-                    public boolean shouldAnnotateClass(JetClassOrObject classOrObject) {
-                        return true;
-                    }
-
-                    @Override
-                    public boolean shouldGenerateClass(JetClassOrObject classOrObject) {
-                        return classOrObject.getContainingJetFile() == jetFile;
-                    }
-
-                    @Override
-                    public boolean shouldGenerateScript(JetScript script) {
-                        return script.getContainingJetFile() == jetFile;
-                    }
-                };
-
-                state = new GenerationState(jetFile.getProject(), ClassBuilderFactories.TEST, Progress.DEAF,
-                                            result.getModuleDescriptor(), result.getBindingContext(),
-                                            new ArrayList<JetFile>(toProcess), !enableAssertions.isSelected(), !enableAssertions.isSelected(),
-                                            generateClassFilter,
-                                            disableInline, !enableOptimization.isSelected(), null, null,
-                                            DiagnosticSink.DO_NOTHING, null);
-                KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
-            }
-            catch (ProcessCanceledException e) {
-                throw e;
-            }
-            catch (Exception e) {
-                return printStackTraceToString(e);
-            }
-
-            StringBuilder answer = new StringBuilder();
-
-            OutputFileCollection outputFiles = state.getFactory();
-            for (OutputFile outputFile : outputFiles.asList()) {
-                answer.append("// ================");
-                answer.append(outputFile.getRelativePath());
-                answer.append(" =================\n");
-                answer.append(outputFile.asText()).append("\n\n");
-            }
-
-            return answer.toString();
-        }
-
-        private AnalysisResult processInlinedDeclarations(
-                @NotNull Project project,
-                @NotNull AnalysisResult result,
-                @NotNull Set<JetElement> originalElements,
-                int deep,
-                @NotNull Ref<Set<JetElement>> resultElements
-        ) {
-            if (deep >= 10 || result.isError()) {
-                resultElements.set(originalElements);
-                return result;
-            }
-            Set<JetElement> collectedElements = new HashSet<JetElement>();
-            collectedElements.addAll(originalElements);
-            Map<Call, ResolvedCall<?>> contents = result.getBindingContext().getSliceContents(BindingContext.RESOLVED_CALL);
-            for (ResolvedCall call : contents.values()) {
-                CallableDescriptor descriptor = call.getResultingDescriptor();
-                if (!(descriptor instanceof DeserializedSimpleFunctionDescriptor) && InlineUtil.isInline(descriptor)) {
-                    PsiElement declaration = DescriptorToSourceUtilsIde.INSTANCE$.getAnyDeclaration(project, descriptor);
-                    if (declaration != null && declaration instanceof JetElement) {
-                        collectedElements.add((JetElement) declaration);
-                    }
-                }
-            }
-            if (collectedElements.size() != originalElements.size()) {
-                AnalysisResult newResult = KotlinCacheService.getInstance(project).getAnalysisResults(collectedElements);
-                return processInlinedDeclarations(project, newResult, collectedElements, deep + 1, resultElements);
-            }
-
-            resultElements.set(collectedElements);
-            return result;
+            return getBytecodeForFile(jetFile, enableInline.isSelected(), enableAssertions.isSelected(), enableOptimization.isSelected());
         }
 
         @Override
@@ -290,6 +189,123 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
         }).start();
 
         setText(DEFAULT_TEXT);
+    }
+
+    @NotNull
+    private static String getBytecodeForFile(
+            final JetFile jetFile,
+            boolean enableInline,
+            boolean enableAssertions,
+            boolean enableOptimization
+    ) {
+        GenerationState state;
+        try {
+            ResolutionFacade resolutionFacade = ResolvePackage.getResolutionFacade(jetFile);
+            BindingContext bindingContext = resolutionFacade.analyzeFullyAndGetResult(Collections.singletonList(jetFile)).getBindingContext();
+            Ref<Set<JetElement>> ref = Ref.create();
+            if (enableInline) {
+                bindingContext = processInlinedDeclarations(jetFile.getProject(), resolutionFacade, bindingContext, Collections.<JetElement>singleton(jetFile), 1, ref);
+            }
+
+            Set<JetFile> toProcess = new LinkedHashSet<JetFile>();
+            toProcess.add(jetFile);
+            if (ref.get() != null) {
+                for (JetElement element: ref.get()) {
+                    JetFile file = element.getContainingJetFile();
+                    toProcess.add(file);
+                }
+            }
+
+            GenerationState.GenerateClassFilter generateClassFilter = new GenerationState.GenerateClassFilter() {
+
+                @Override
+                public boolean shouldGeneratePackagePart(JetFile file) {
+                    return file == jetFile;
+                }
+
+                @Override
+                public boolean shouldAnnotateClass(JetClassOrObject classOrObject) {
+                    return true;
+                }
+
+                @Override
+                public boolean shouldGenerateClass(JetClassOrObject classOrObject) {
+                    return classOrObject.getContainingJetFile() == jetFile;
+                }
+
+                @Override
+                public boolean shouldGenerateScript(JetScript script) {
+                    return script.getContainingJetFile() == jetFile;
+                }
+            };
+
+            ModuleDescriptor moduleDescriptor = resolutionFacade.findModuleDescriptor(jetFile);
+            state = new GenerationState(jetFile.getProject(), ClassBuilderFactories.TEST, Progress.DEAF,
+                                        moduleDescriptor, bindingContext,
+                                        new ArrayList<JetFile>(toProcess), !enableAssertions, !enableAssertions,
+                                        generateClassFilter,
+                                        !enableInline, !enableOptimization, null, null,
+                                        DiagnosticSink.DO_NOTHING, null);
+            KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
+        }
+        catch (ProcessCanceledException e) {
+            throw e;
+        }
+        catch (Exception e) {
+            return printStackTraceToString(e);
+        }
+
+        StringBuilder answer = new StringBuilder();
+
+        OutputFileCollection outputFiles = state.getFactory();
+        for (OutputFile outputFile : outputFiles.asList()) {
+            answer.append("// ================");
+            answer.append(outputFile.getRelativePath());
+            answer.append(" =================\n");
+            answer.append(outputFile.asText()).append("\n\n");
+        }
+
+        return answer.toString();
+    }
+
+    private static BindingContext processInlinedDeclarations(
+            @NotNull Project project,
+            @NotNull ResolutionFacade resolutionFacade,
+            @NotNull BindingContext bindingContext,
+            @NotNull Set<JetElement> originalElements,
+            int deep,
+            @NotNull Ref<Set<JetElement>> resultElements
+    ) {
+        if (deep >= 10) {
+            resultElements.set(originalElements);
+            return bindingContext;
+        }
+
+        Set<JetElement> collectedElements = new HashSet<JetElement>();
+        collectedElements.addAll(originalElements);
+        Map<Call, ResolvedCall<?>> contents = bindingContext.getSliceContents(BindingContext.RESOLVED_CALL);
+        for (ResolvedCall call : contents.values()) {
+            CallableDescriptor descriptor = call.getResultingDescriptor();
+            if (!(descriptor instanceof DeserializedSimpleFunctionDescriptor) && InlineUtil.isInline(descriptor)) {
+                PsiElement declaration = DescriptorToSourceUtilsIde.INSTANCE$.getAnyDeclaration(project, descriptor);
+                if (declaration != null && declaration instanceof JetElement) {
+                    collectedElements.add((JetElement) declaration);
+                }
+            }
+        }
+
+        if (collectedElements.size() != originalElements.size()) {
+            AnalysisResult newResult = resolutionFacade.analyzeFullyAndGetResult(collectedElements);
+            if (newResult.isError()) {
+                resultElements.set(collectedElements);
+                return newResult.getBindingContext();
+            }
+
+            return processInlinedDeclarations(project, resolutionFacade, newResult.getBindingContext(), collectedElements, deep + 1, resultElements);
+        }
+
+        resultElements.set(collectedElements);
+        return bindingContext;
     }
 
     private static Pair<Integer, Integer> mapLines(String text, int startLine, int endLine) {

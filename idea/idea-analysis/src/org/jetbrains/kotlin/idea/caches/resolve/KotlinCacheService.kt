@@ -188,15 +188,6 @@ public class KotlinCacheService(val project: Project) {
         return getCacheToAnalyzeFiles(listOf(file)).getLazyResolveSession(file)
     }
 
-    public fun getAnalysisResults(elements: Collection<JetElement>): AnalysisResult {
-        if (elements.isEmpty()) return AnalysisResult.EMPTY
-
-        val files = elements.map { it.getContainingJetFile() }.toSet()
-        assertAreInSameModule(files)
-
-        return getCacheToAnalyzeFiles(files).getAnalysisResultsForElements(elements)
-    }
-
     private fun getCacheToAnalyzeFiles(files: Collection<JetFile>): KotlinResolveCache {
         val syntheticFiles = findSyntheticFiles(files)
         return if (syntheticFiles.isNotEmpty()) {
@@ -218,19 +209,6 @@ public class KotlinCacheService(val project: Project) {
         val contextFile = (contextElement as? JetElement)?.getContainingJetFile()
                           ?: throw AssertionError("Analyzing kotlin code fragment of type $javaClass with java context of type ${contextElement.javaClass}")
         return if (contextFile is JetCodeFragment) contextFile.getContextFile() else contextFile
-    }
-
-    private fun assertAreInSameModule(elements: Collection<JetElement>) {
-        if (elements.size() <= 1) {
-            return
-        }
-        val thisInfo = elements.first().getModuleInfo()
-        elements.forEach {
-            val extraFileInfo = it.getModuleInfo()
-            assert(extraFileInfo == thisInfo) {
-                "All files under analysis should be in the same module.\nExpected: $thisInfo\nWas:$extraFileInfo"
-            }
-        }
     }
 
     public fun <T> get(extension: CacheExtension<T>): T {
