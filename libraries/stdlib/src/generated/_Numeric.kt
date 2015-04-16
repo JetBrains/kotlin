@@ -11,6 +11,462 @@ import java.util.*
 import java.util.Collections // TODO: it's temporary while we have java.util.Collections in js
 
 /**
+ * Returns an average value of elements in the collection
+ */
+platformName("averageOfInt")
+public fun Iterable<Int>.average(): Double {
+    val iterator = iterator()
+    var sum: Double = 0.0
+    var count: Int = 0
+    while (iterator.hasNext()) {
+        sum += iterator.next()
+        count += 1
+    }
+    return if (count == 0) 0.0 else sum / count
+}
+
+/**
+ * Returns an average value of elements in the collection
+ */
+platformName("averageOfInt")
+public fun Sequence<Int>.average(): Double {
+    val iterator = iterator()
+    var sum: Double = 0.0
+    var count: Int = 0
+    while (iterator.hasNext()) {
+        sum += iterator.next()
+        count += 1
+    }
+    return if (count == 0) 0.0 else sum / count
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
+/**
+ * Returns an average value of elements in the collection
+ */
+platformName("averageOfInt")
+public fun Stream<Int>.average(): Double {
+    val iterator = iterator()
+    var sum: Double = 0.0
+    var count: Int = 0
+    while (iterator.hasNext()) {
+        sum += iterator.next()
+        count += 1
+    }
+    return if (count == 0) 0.0 else sum / count
+}
+
+/**
+ * Returns an average value of elements in the collection
+ */
+platformName("averageOfInt")
+public fun Array<out Int>.average(): Double {
+    val iterator = iterator()
+    var sum: Double = 0.0
+    var count: Int = 0
+    while (iterator.hasNext()) {
+        sum += iterator.next()
+        count += 1
+    }
+    return if (count == 0) 0.0 else sum / count
+}
+
+/**
+ * Returns an average value of elements in the collection
+ */
+public fun IntArray.average(): Double {
+    val iterator = iterator()
+    var sum: Double = 0.0
+    var count: Int = 0
+    while (iterator.hasNext()) {
+        sum += iterator.next()
+        count += 1
+    }
+    return if (count == 0) 0.0 else sum / count
+}
+
+/**
+ * Returns an average value of elements in the collection
+ */
+platformName("averageOfLong")
+public fun Iterable<Long>.average(): Double {
+    val iterator = iterator()
+    var sum: Double = 0.0
+    var count: Int = 0
+    while (iterator.hasNext()) {
+        sum += iterator.next()
+        count += 1
+    }
+    return if (count == 0) 0.0 else sum / count
+}
+
+/**
+ * Returns an average value of elements in the collection
+ */
+platformName("averageOfLong")
+public fun Sequence<Long>.average(): Double {
+    val iterator = iterator()
+    var sum: Double = 0.0
+    var count: Int = 0
+    while (iterator.hasNext()) {
+        sum += iterator.next()
+        count += 1
+    }
+    return if (count == 0) 0.0 else sum / count
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
+/**
+ * Returns an average value of elements in the collection
+ */
+platformName("averageOfLong")
+public fun Stream<Long>.average(): Double {
+    val iterator = iterator()
+    var sum: Double = 0.0
+    var count: Int = 0
+    while (iterator.hasNext()) {
+        sum += iterator.next()
+        count += 1
+    }
+    return if (count == 0) 0.0 else sum / count
+}
+
+/**
+ * Returns an average value of elements in the collection
+ */
+platformName("averageOfLong")
+public fun Array<out Long>.average(): Double {
+    val iterator = iterator()
+    var sum: Double = 0.0
+    var count: Int = 0
+    while (iterator.hasNext()) {
+        sum += iterator.next()
+        count += 1
+    }
+    return if (count == 0) 0.0 else sum / count
+}
+
+/**
+ * Returns an average value of elements in the collection
+ */
+public fun LongArray.average(): Double {
+    val iterator = iterator()
+    var sum: Double = 0.0
+    var count: Int = 0
+    while (iterator.hasNext()) {
+        sum += iterator.next()
+        count += 1
+    }
+    return if (count == 0) 0.0 else sum / count
+}
+
+/**
+ * Returns an average value of elements in the collection
+ */
+platformName("averageOfByte")
+public fun Iterable<Byte>.average(): Double {
+    val iterator = iterator()
+    var sum: Double = 0.0
+    var count: Int = 0
+    while (iterator.hasNext()) {
+        sum += iterator.next()
+        count += 1
+    }
+    return if (count == 0) 0.0 else sum / count
+}
+
+/**
+ * Returns an average value of elements in the collection
+ */
+platformName("averageOfByte")
+public fun Sequence<Byte>.average(): Double {
+    val iterator = iterator()
+    var sum: Double = 0.0
+    var count: Int = 0
+    while (iterator.hasNext()) {
+        sum += iterator.next()
+        count += 1
+    }
+    return if (count == 0) 0.0 else sum / count
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
+/**
+ * Returns an average value of elements in the collection
+ */
+platformName("averageOfByte")
+public fun Stream<Byte>.average(): Double {
+    val iterator = iterator()
+    var sum: Double = 0.0
+    var count: Int = 0
+    while (iterator.hasNext()) {
+        sum += iterator.next()
+        count += 1
+    }
+    return if (count == 0) 0.0 else sum / count
+}
+
+/**
+ * Returns an average value of elements in the collection
+ */
+platformName("averageOfByte")
+public fun Array<out Byte>.average(): Double {
+    val iterator = iterator()
+    var sum: Double = 0.0
+    var count: Int = 0
+    while (iterator.hasNext()) {
+        sum += iterator.next()
+        count += 1
+    }
+    return if (count == 0) 0.0 else sum / count
+}
+
+/**
+ * Returns an average value of elements in the collection
+ */
+public fun ByteArray.average(): Double {
+    val iterator = iterator()
+    var sum: Double = 0.0
+    var count: Int = 0
+    while (iterator.hasNext()) {
+        sum += iterator.next()
+        count += 1
+    }
+    return if (count == 0) 0.0 else sum / count
+}
+
+/**
+ * Returns an average value of elements in the collection
+ */
+platformName("averageOfShort")
+public fun Iterable<Short>.average(): Double {
+    val iterator = iterator()
+    var sum: Double = 0.0
+    var count: Int = 0
+    while (iterator.hasNext()) {
+        sum += iterator.next()
+        count += 1
+    }
+    return if (count == 0) 0.0 else sum / count
+}
+
+/**
+ * Returns an average value of elements in the collection
+ */
+platformName("averageOfShort")
+public fun Sequence<Short>.average(): Double {
+    val iterator = iterator()
+    var sum: Double = 0.0
+    var count: Int = 0
+    while (iterator.hasNext()) {
+        sum += iterator.next()
+        count += 1
+    }
+    return if (count == 0) 0.0 else sum / count
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
+/**
+ * Returns an average value of elements in the collection
+ */
+platformName("averageOfShort")
+public fun Stream<Short>.average(): Double {
+    val iterator = iterator()
+    var sum: Double = 0.0
+    var count: Int = 0
+    while (iterator.hasNext()) {
+        sum += iterator.next()
+        count += 1
+    }
+    return if (count == 0) 0.0 else sum / count
+}
+
+/**
+ * Returns an average value of elements in the collection
+ */
+platformName("averageOfShort")
+public fun Array<out Short>.average(): Double {
+    val iterator = iterator()
+    var sum: Double = 0.0
+    var count: Int = 0
+    while (iterator.hasNext()) {
+        sum += iterator.next()
+        count += 1
+    }
+    return if (count == 0) 0.0 else sum / count
+}
+
+/**
+ * Returns an average value of elements in the collection
+ */
+public fun ShortArray.average(): Double {
+    val iterator = iterator()
+    var sum: Double = 0.0
+    var count: Int = 0
+    while (iterator.hasNext()) {
+        sum += iterator.next()
+        count += 1
+    }
+    return if (count == 0) 0.0 else sum / count
+}
+
+/**
+ * Returns an average value of elements in the collection
+ */
+platformName("averageOfDouble")
+public fun Iterable<Double>.average(): Double {
+    val iterator = iterator()
+    var sum: Double = 0.0
+    var count: Int = 0
+    while (iterator.hasNext()) {
+        sum += iterator.next()
+        count += 1
+    }
+    return if (count == 0) 0.0 else sum / count
+}
+
+/**
+ * Returns an average value of elements in the collection
+ */
+platformName("averageOfDouble")
+public fun Sequence<Double>.average(): Double {
+    val iterator = iterator()
+    var sum: Double = 0.0
+    var count: Int = 0
+    while (iterator.hasNext()) {
+        sum += iterator.next()
+        count += 1
+    }
+    return if (count == 0) 0.0 else sum / count
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
+/**
+ * Returns an average value of elements in the collection
+ */
+platformName("averageOfDouble")
+public fun Stream<Double>.average(): Double {
+    val iterator = iterator()
+    var sum: Double = 0.0
+    var count: Int = 0
+    while (iterator.hasNext()) {
+        sum += iterator.next()
+        count += 1
+    }
+    return if (count == 0) 0.0 else sum / count
+}
+
+/**
+ * Returns an average value of elements in the collection
+ */
+platformName("averageOfDouble")
+public fun Array<out Double>.average(): Double {
+    val iterator = iterator()
+    var sum: Double = 0.0
+    var count: Int = 0
+    while (iterator.hasNext()) {
+        sum += iterator.next()
+        count += 1
+    }
+    return if (count == 0) 0.0 else sum / count
+}
+
+/**
+ * Returns an average value of elements in the collection
+ */
+public fun DoubleArray.average(): Double {
+    val iterator = iterator()
+    var sum: Double = 0.0
+    var count: Int = 0
+    while (iterator.hasNext()) {
+        sum += iterator.next()
+        count += 1
+    }
+    return if (count == 0) 0.0 else sum / count
+}
+
+/**
+ * Returns an average value of elements in the collection
+ */
+platformName("averageOfFloat")
+public fun Iterable<Float>.average(): Double {
+    val iterator = iterator()
+    var sum: Double = 0.0
+    var count: Int = 0
+    while (iterator.hasNext()) {
+        sum += iterator.next()
+        count += 1
+    }
+    return if (count == 0) 0.0 else sum / count
+}
+
+/**
+ * Returns an average value of elements in the collection
+ */
+platformName("averageOfFloat")
+public fun Sequence<Float>.average(): Double {
+    val iterator = iterator()
+    var sum: Double = 0.0
+    var count: Int = 0
+    while (iterator.hasNext()) {
+        sum += iterator.next()
+        count += 1
+    }
+    return if (count == 0) 0.0 else sum / count
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
+/**
+ * Returns an average value of elements in the collection
+ */
+platformName("averageOfFloat")
+public fun Stream<Float>.average(): Double {
+    val iterator = iterator()
+    var sum: Double = 0.0
+    var count: Int = 0
+    while (iterator.hasNext()) {
+        sum += iterator.next()
+        count += 1
+    }
+    return if (count == 0) 0.0 else sum / count
+}
+
+/**
+ * Returns an average value of elements in the collection
+ */
+platformName("averageOfFloat")
+public fun Array<out Float>.average(): Double {
+    val iterator = iterator()
+    var sum: Double = 0.0
+    var count: Int = 0
+    while (iterator.hasNext()) {
+        sum += iterator.next()
+        count += 1
+    }
+    return if (count == 0) 0.0 else sum / count
+}
+
+/**
+ * Returns an average value of elements in the collection
+ */
+public fun FloatArray.average(): Double {
+    val iterator = iterator()
+    var sum: Double = 0.0
+    var count: Int = 0
+    while (iterator.hasNext()) {
+        sum += iterator.next()
+        count += 1
+    }
+    return if (count == 0) 0.0 else sum / count
+}
+
+/**
  * Returns the sum of all elements in the collection.
  */
 platformName("sumOfInt")

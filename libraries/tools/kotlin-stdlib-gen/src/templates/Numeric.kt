@@ -21,5 +21,23 @@ fun numeric(): List<GenericFunction> {
         }
     }
 
+    templates add f("average()") {
+        exclude(Strings)
+        doc { "Returns an average value of elements in the collection"}
+        returns("Double")
+        body {
+            """
+            val iterator = iterator()
+            var sum: Double = 0.0
+            var count: Int = 0
+            while (iterator.hasNext()) {
+                sum += iterator.next()
+                count += 1
+            }
+            return if (count == 0) 0.0 else sum / count
+            """
+        }
+    }
+
     return templates
 }
