@@ -14,230 +14,217 @@
  * the License.
  */
 
-package org.jetbrains.kotlin.js.inline;
+package org.jetbrains.kotlin.js.inline
 
-import com.google.dart.compiler.backend.js.ast.*;
-import com.intellij.util.containers.ContainerUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.js.inline.context.FunctionContext;
-import org.jetbrains.kotlin.js.inline.context.InliningContext;
-import org.jetbrains.kotlin.js.inline.context.NamingContext;
+import com.google.dart.compiler.backend.js.ast.*
+import com.intellij.util.containers.ContainerUtil
+import org.jetbrains.kotlin.js.inline.clean.removeDefaultInitializers
+import org.jetbrains.kotlin.js.inline.context.InliningContext
+import org.jetbrains.kotlin.js.inline.context.NamingContext
+import org.jetbrains.kotlin.js.inline.util.*
+import kotlin.platform.platformStatic
 
-import java.util.List;
+class FunctionInlineMutator private (private val call: JsInvocation, private val inliningContext: InliningContext) {
+    private val invokedFunction: JsFunction
+    private val isResultNeeded: Boolean
+    private val namingContext: NamingContext
+    private val body: JsBlock
+    private var resultExpr: JsExpression? = null
+    private var breakLabel: JsLabel? = null
 
-import static org.jetbrains.kotlin.js.inline.clean.CleanPackage.removeDefaultInitializers;
-import static org.jetbrains.kotlin.js.inline.util.UtilPackage.*;
+    init {
 
-class FunctionInlineMutator {
-
-    private final JsInvocation call;
-    private final InliningContext inliningContext;
-    private final JsFunction invokedFunction;
-    private final boolean isResultNeeded;
-    private final NamingContext namingContext;
-    private final JsBlock body;
-    private JsExpression resultExpr = null;
-    private JsLabel breakLabel = null;
-
-    public static InlineableResult getInlineableCallReplacement(
-            @NotNull JsInvocation call,
-            @NotNull InliningContext inliningContext
-    ) {
-        FunctionInlineMutator mutator = new FunctionInlineMutator(call, inliningContext);
-        mutator.process();
-
-        JsStatement inlineableBody = mutator.body;
-        if (mutator.breakLabel != null) {
-            mutator.breakLabel.setStatement(inlineableBody);
-            inlineableBody = mutator.breakLabel;
-        }
-
-        JsExpression resultExpression = null;
-        if (mutator.isResultNeeded) {
-            resultExpression = mutator.resultExpr;
-        }
-
-        return new InlineableResult(inlineableBody, resultExpression);
+        val functionContext = inliningContext.functionContext
+        invokedFunction = functionContext.getFunctionDefinition(call)
+        body = invokedFunction.getBody().deepCopy()
+        isResultNeeded = isResultNeeded(call)
+        namingContext = inliningContext.newNamingContext()
     }
 
-    private FunctionInlineMutator(@NotNull JsInvocation call, @NotNull InliningContext inliningContext) {
-        this.inliningContext = inliningContext;
-        this.call = call;
+    private fun process() {
+        val arguments = getArguments()
+        val parameters = getParameters()
 
-        FunctionContext functionContext = inliningContext.getFunctionContext();
-        invokedFunction = functionContext.getFunctionDefinition(call);
-        body = invokedFunction.getBody().deepCopy();
-        isResultNeeded = isResultNeeded(call);
-        namingContext = inliningContext.newNamingContext();
-    }
-
-    private void process() {
-        List<JsExpression> arguments = getArguments();
-        List<JsParameter> parameters = getParameters();
-
-        replaceThis();
-        removeDefaultInitializers(arguments, parameters, body);
-        aliasArgumentsIfNeeded(namingContext, arguments, parameters);
-        renameLocalNames(namingContext, invokedFunction);
-        removeStatementsAfterTopReturn();
+        replaceThis()
+        removeDefaultInitializers(arguments, parameters, body)
+        aliasArgumentsIfNeeded(namingContext, arguments, parameters)
+        renameLocalNames(namingContext, invokedFunction)
+        removeStatementsAfterTopReturn()
 
         if (isResultNeeded && canBeExpression(body)) {
-            resultExpr = asExpression(body);
-            body.getStatements().clear();
+            resultExpr = asExpression(body)
+            body.getStatements().clear()
 
-            /** JsExpression can be immutable, so need to reassign */
-            resultExpr = (JsExpression) namingContext.applyRenameTo(resultExpr);
-        } else {
-            processReturns();
-            namingContext.applyRenameTo(body);
+            /** JsExpression can be immutable, so need to reassign  */
+            resultExpr = namingContext.applyRenameTo(resultExpr!!) as JsExpression
+        }
+        else {
+            processReturns()
+            namingContext.applyRenameTo(body)
         }
     }
 
-    private void replaceThis() {
-        if (!hasThisReference(body)) return;
+    private fun replaceThis() {
+        if (!hasThisReference(body)) return
 
-        JsExpression thisReplacement = getThisReplacement(call);
-        if (thisReplacement == null) return;
+        var thisReplacement = getThisReplacement(call)
+        if (thisReplacement == null) return
 
-        if (needToAlias(thisReplacement)) {
-            JsName thisName = namingContext.getFreshName(getThisAlias());
-            namingContext.newVar(thisName, thisReplacement);
-            thisReplacement = thisName.makeRef();
+        if (thisReplacement!!.needToAlias()) {
+            val thisName = namingContext.getFreshName(getThisAlias())
+            namingContext.newVar(thisName, thisReplacement)
+            thisReplacement = thisName.makeRef()
         }
 
-        replaceThisReference(body, thisReplacement);
+        replaceThisReference(body, thisReplacement!!)
     }
 
-    private void removeStatementsAfterTopReturn() {
-        List<JsStatement> statements = body.getStatements();
+    private fun removeStatementsAfterTopReturn() {
+        val statements = body.getStatements()
 
-        int statementsSize = statements.size();
-        for (int i = 0; i < statementsSize; i++) {
-            JsStatement statement = statements.get(i);
+        val statementsSize = statements.size()
+        for (i in 0..statementsSize - 1) {
+            val statement = statements.get(i)
 
-            if (statement instanceof JsReturn) {
-                statements.subList(i + 1, statementsSize).clear();
-                break;
+            if (statement is JsReturn) {
+                statements.subList(i + 1, statementsSize).clear()
+                break
             }
         }
     }
 
-    private void processReturns() {
-        int returnCount = collectInstances(JsReturn.class, body).size();
+    private fun processReturns() {
+        val returnCount = collectInstances(javaClass<JsReturn>(), body).size()
         if (returnCount == 0) {
             // TODO return Unit (KT-5647)
-            resultExpr = JsLiteral.UNDEFINED;
-        } else {
-            doReplaceReturns(returnCount);
+            resultExpr = JsLiteral.UNDEFINED
+        }
+        else {
+            doReplaceReturns(returnCount)
         }
     }
 
-    private void doReplaceReturns(int returnCount) {
-        JsReturn returnOnTop = ContainerUtil.findInstance(body.getStatements(), JsReturn.class);
-        boolean hasReturnOnTopLevel = returnOnTop != null;
+    private fun doReplaceReturns(returnCount: Int) {
+        val returnOnTop = ContainerUtil.findInstance(body.getStatements(), javaClass<JsReturn>())
+        val hasReturnOnTopLevel = returnOnTop != null
 
         if (isResultNeeded) {
-            JsName resultName = namingContext.getFreshName(getResultLabel());
-            namingContext.newVar(resultName, null);
-            resultExpr = resultName.makeRef();
+            val resultName = namingContext.getFreshName(getResultLabel())
+            namingContext.newVar(resultName, null)
+            resultExpr = resultName.makeRef()
         }
 
-        boolean needBreakLabel = !(returnCount == 1 && hasReturnOnTopLevel);
-        JsNameRef breakLabelRef = null;
+        val needBreakLabel = !(returnCount == 1 && hasReturnOnTopLevel)
+        var breakLabelRef: JsNameRef? = null
 
         if (needBreakLabel) {
-            JsName breakName = namingContext.getFreshName(getBreakLabel());
-            breakLabelRef = breakName.makeRef();
-            breakLabel = new JsLabel(breakName);
+            val breakName = namingContext.getFreshName(getBreakLabel())
+            breakLabelRef = breakName.makeRef()
+            breakLabel = JsLabel(breakName)
         }
 
-        assert resultExpr == null || resultExpr instanceof JsNameRef;
-        replaceReturns(body, (JsNameRef) resultExpr, breakLabelRef);
+        assert(resultExpr == null || resultExpr is JsNameRef)
+        replaceReturns(body, resultExpr as? JsNameRef, breakLabelRef)
     }
 
-    @NotNull
-    private List<JsExpression> getArguments() {
-        List<JsExpression> arguments = call.getArguments();
+    private fun getArguments(): List<JsExpression> {
+        val arguments = call.getArguments()
         if (isCallInvocation(call)) {
-            return arguments.subList(1, arguments.size());
+            return arguments.subList(1, arguments.size())
         }
 
-        return arguments;
+        return arguments
     }
 
-    private boolean isResultNeeded(JsInvocation call) {
-        JsContext<JsStatement> statementContext = inliningContext.getStatementContext();
-        JsStatement currentStatement = statementContext.getCurrentNode();
-        return !(currentStatement instanceof JsExpressionStatement)
-               || call != ((JsExpressionStatement) currentStatement).getExpression();
+    private fun isResultNeeded(call: JsInvocation): Boolean {
+        val statementContext = inliningContext.statementContext
+        val currentStatement = statementContext.getCurrentNode()
+        return currentStatement !is JsExpressionStatement || call != currentStatement.getExpression()
     }
 
-    @NotNull
-    private List<JsParameter> getParameters() {
-        return invokedFunction.getParameters();
+    private fun getParameters(): List<JsParameter> {
+        return invokedFunction.getParameters()
     }
 
-    @NotNull
-    private String getResultLabel() {
-        return getLabelPrefix() + "result";
+    private fun getResultLabel(): String {
+        return getLabelPrefix() + "result"
     }
 
-    @NotNull
-    private String getBreakLabel() {
-        return getLabelPrefix() + "break";
+    private fun getBreakLabel(): String {
+        return getLabelPrefix() + "break"
     }
 
-    @SuppressWarnings("MethodMayBeStatic")
-    @NotNull
-    private String getThisAlias() {
-        return "$this";
+    private fun getThisAlias(): String {
+        return "\$this"
     }
 
-    @NotNull
-    String getLabelPrefix() {
-        String ident = getSimpleIdent(call);
-        String labelPrefix = ident != null ? ident : "inline$";
+    fun getLabelPrefix(): String {
+        val ident = getSimpleIdent(call)
+        val labelPrefix = ident ?: "inline$"
 
         if (labelPrefix.endsWith("$")) {
-            return labelPrefix;
+            return labelPrefix
         }
 
-        return labelPrefix + "$";
+        return labelPrefix + "$"
     }
 
-    @Nullable
-    private static JsExpression getThisReplacement(JsInvocation call) {
-        if (isCallInvocation(call)) {
-            return call.getArguments().get(0);
+    companion object {
+
+        platformStatic
+        public fun getInlineableCallReplacement(call: JsInvocation, inliningContext: InliningContext): InlineableResult {
+            val mutator = FunctionInlineMutator(call, inliningContext)
+            mutator.process()
+
+            var inlineableBody: JsStatement = mutator.body
+            val breakLabel = mutator.breakLabel
+            if (breakLabel != null) {
+                breakLabel.setStatement(inlineableBody)
+                inlineableBody = breakLabel
+            }
+
+            var resultExpression: JsExpression? = null
+            if (mutator.isResultNeeded) {
+                resultExpression = mutator.resultExpr
+            }
+
+            return InlineableResult(inlineableBody, resultExpression)
         }
 
-        if (hasCallerQualifier(call)) {
-            return getCallerQualifier(call);
+        platformStatic
+        private fun getThisReplacement(call: JsInvocation): JsExpression? {
+            if (isCallInvocation(call)) {
+                return call.getArguments().get(0)
+            }
+
+            if (hasCallerQualifier(call)) {
+                return getCallerQualifier(call)
+            }
+
+            return null
         }
 
-        return null;
-    }
+        private fun hasThisReference(body: JsBlock): Boolean {
+            val thisRefs = collectInstances(javaClass<JsLiteral.JsThisRef>(), body)
+            return !thisRefs.isEmpty()
+        }
 
-    private static boolean hasThisReference(JsBlock body) {
-        List<JsLiteral.JsThisRef> thisRefs = collectInstances(JsLiteral.JsThisRef.class, body);
-        return !thisRefs.isEmpty();
-    }
+        platformStatic
+        public fun canBeExpression(function: JsFunction): Boolean {
+            return canBeExpression(function.getBody())
+        }
 
-    public static boolean canBeExpression(JsFunction function) {
-        return canBeExpression(function.getBody());
-    }
+        private fun canBeExpression(body: JsBlock): Boolean {
+            val statements = body.getStatements()
+            return statements.size() == 1 && statements.get(0) is JsReturn
+        }
 
-    private static boolean canBeExpression(JsBlock body) {
-        List<JsStatement> statements = body.getStatements();
-        return statements.size() == 1 && statements.get(0) instanceof JsReturn;
-    }
+        private fun asExpression(body: JsBlock): JsExpression {
+            assert(canBeExpression(body))
 
-    private static JsExpression asExpression(JsBlock body) {
-        assert canBeExpression(body);
-
-        List<JsStatement> statements = body.getStatements();
-        JsReturn returnStatement = (JsReturn) statements.get(0);
-        return returnStatement.getExpression();
+            val statements = body.getStatements()
+            val returnStatement = statements.get(0) as JsReturn
+            return returnStatement.getExpression()
+        }
     }
 }
