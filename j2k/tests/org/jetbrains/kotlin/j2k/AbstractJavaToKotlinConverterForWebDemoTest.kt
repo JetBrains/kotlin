@@ -16,19 +16,104 @@
 
 package org.jetbrains.kotlin.j2k
 
+import com.intellij.codeInsight.ContainerProvider
+import com.intellij.codeInsight.NullableNotNullManager
+import com.intellij.codeInsight.runner.JavaMainMethodProvider
+import com.intellij.core.CoreApplicationEnvironment
+import com.intellij.core.JavaCoreApplicationEnvironment
+import com.intellij.core.JavaCoreProjectEnvironment
+import com.intellij.openapi.extensions.Extensions
+import com.intellij.openapi.extensions.ExtensionsArea
+import com.intellij.openapi.fileTypes.ContentBasedFileSubstitutor
+import com.intellij.openapi.fileTypes.FileTypeExtensionPoint
 import junit.framework.TestCase
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.Disposer
+import com.intellij.psi.*
+import com.intellij.psi.augment.PsiAugmentProvider
+import com.intellij.psi.compiled.ClassFileDecompilers
+import com.intellij.psi.impl.PsiTreeChangePreprocessor
+import com.intellij.psi.impl.compiled.ClsCustomNavigationPolicy
+import com.intellij.psi.impl.compiled.ClsStubBuilderFactory
+import com.intellij.psi.meta.MetaDataContributor
+import com.intellij.psi.stubs.BinaryFileStubBuilders
+import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
+import java.net.URLClassLoader
 
 public abstract class AbstractJavaToKotlinConverterForWebDemoTest : TestCase() {
+    val DISPOSABLE = Disposer.newDisposable()
+
     public fun doTest(javaPath: String) {
         try {
             val fileContents = FileUtil.loadFile(File(javaPath), true)
-            translateToKotlin(fileContents)
+            val javaCoreEnvironment: JavaCoreProjectEnvironment = setUpJavaCoreEnvironment()
+            translateToKotlin(fileContents, javaCoreEnvironment.getProject())
         }
         finally {
-            Disposer.dispose(JavaToKotlinTranslator.DISPOSABLE)
+            Disposer.dispose(DISPOSABLE)
         }
+    }
+
+    fun setUpJavaCoreEnvironment(): JavaCoreProjectEnvironment {
+        Extensions.cleanRootArea(DISPOSABLE)
+        val area = Extensions.getRootArea()
+
+        registerExtensionPoints(area)
+
+        val applicationEnvironment = JavaCoreApplicationEnvironment(DISPOSABLE)
+        val javaCoreEnvironment = object : JavaCoreProjectEnvironment(DISPOSABLE, applicationEnvironment) {
+            override fun preregisterServices() {
+                val projectArea = Extensions.getArea(getProject())
+                CoreApplicationEnvironment.registerExtensionPoint(projectArea, PsiTreeChangePreprocessor.EP_NAME, javaClass<PsiTreeChangePreprocessor>())
+                CoreApplicationEnvironment.registerExtensionPoint(projectArea, PsiElementFinder.EP_NAME, javaClass<PsiElementFinder>())
+            }
+        };
+
+        javaCoreEnvironment.getProject().registerService(javaClass<NullableNotNullManager>(), object : NullableNotNullManager() {
+            override fun isNullable(owner: PsiModifierListOwner, checkBases: Boolean) = !isNotNull(owner, checkBases)
+            override fun isNotNull(owner: PsiModifierListOwner, checkBases: Boolean) = true
+            override fun hasHardcodedContracts(element: PsiElement): Boolean = false
+        })
+
+        for (root in PathUtil.getJdkClassesRoots()) {
+            javaCoreEnvironment.addJarToClassPath(root)
+        }
+        val annotations: File? = findAnnotations()
+        if (annotations != null && annotations.exists()) {
+            javaCoreEnvironment.addJarToClassPath(annotations)
+        }
+        return javaCoreEnvironment
+    }
+
+    private fun registerExtensionPoints(area: ExtensionsArea) {
+        CoreApplicationEnvironment.registerExtensionPoint(area, ContentBasedFileSubstitutor.EP_NAME, javaClass<ContentBasedFileSubstitutor>())
+        CoreApplicationEnvironment.registerExtensionPoint(area, BinaryFileStubBuilders.EP_NAME, javaClass<FileTypeExtensionPoint<Any>>())
+        CoreApplicationEnvironment.registerExtensionPoint(area, FileContextProvider.EP_NAME, javaClass<FileContextProvider>())
+
+        CoreApplicationEnvironment.registerExtensionPoint(area, MetaDataContributor.EP_NAME, javaClass<MetaDataContributor>())
+        CoreApplicationEnvironment.registerExtensionPoint(area, ClsStubBuilderFactory.EP_NAME, javaClass<ClsStubBuilderFactory<PsiFile>>())
+        CoreApplicationEnvironment.registerExtensionPoint(area, PsiAugmentProvider.EP_NAME, javaClass<PsiAugmentProvider>())
+        CoreApplicationEnvironment.registerExtensionPoint(area, JavaMainMethodProvider.EP_NAME, javaClass<JavaMainMethodProvider>())
+
+        CoreApplicationEnvironment.registerExtensionPoint(area, ContainerProvider.EP_NAME, javaClass<ContainerProvider>())
+        CoreApplicationEnvironment.registerExtensionPoint(area, ClsCustomNavigationPolicy.EP_NAME, javaClass<ClsCustomNavigationPolicy>())
+        CoreApplicationEnvironment.registerExtensionPoint(area, ClassFileDecompilers.EP_NAME, javaClass<ClassFileDecompilers.Decompiler>())
+    }
+
+    fun findAnnotations(): File? {
+        var classLoader = javaClass<JavaToKotlinTranslator>().getClassLoader()
+        while (classLoader != null) {
+            val loader = classLoader
+            if (loader is URLClassLoader) {
+                for (url in loader.getURLs()) {
+                    if ("file" == url.getProtocol() && url.getFile()!!.endsWith("/annotations.jar")) {
+                        return File(url.getFile()!!)
+                    }
+                }
+            }
+            classLoader = classLoader?.getParent()
+        }
+        return null
     }
 }

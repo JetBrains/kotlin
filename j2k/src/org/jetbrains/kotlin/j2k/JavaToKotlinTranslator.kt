@@ -44,63 +44,15 @@ import com.intellij.psi.compiled.ClassFileDecompilers
 import com.intellij.psi.impl.PsiTreeChangePreprocessor
 import com.intellij.psi.PsiElementFinder
 import com.intellij.openapi.extensions.ExtensionsArea
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 
 public object JavaToKotlinTranslator {
-    val DISPOSABLE = Disposer.newDisposable()
-
-    private fun createFile(text: String): PsiFile? {
-        val javaCoreEnvironment: JavaCoreProjectEnvironment? = setUpJavaCoreEnvironment()
-        return PsiFileFactory.getInstance(javaCoreEnvironment?.getProject()!!).createFileFromText("test.java", JavaLanguage.INSTANCE, text)
+    private fun createFile(text: String, project: Project): PsiFile? {
+        return PsiFileFactory.getInstance(project).createFileFromText("test.java", JavaLanguage.INSTANCE, text)
     }
 
-    fun setUpJavaCoreEnvironment(): JavaCoreProjectEnvironment {
-        Extensions.cleanRootArea(DISPOSABLE)
-        val area = Extensions.getRootArea()
-
-        registerExtensionPoints(area)
-
-        val applicationEnvironment = JavaCoreApplicationEnvironment(DISPOSABLE)
-        val javaCoreEnvironment = object : JavaCoreProjectEnvironment(DISPOSABLE, applicationEnvironment) {
-            override fun preregisterServices() {
-                val projectArea = Extensions.getArea(getProject())
-                CoreApplicationEnvironment.registerExtensionPoint(projectArea, PsiTreeChangePreprocessor.EP_NAME, javaClass<PsiTreeChangePreprocessor>())
-                CoreApplicationEnvironment.registerExtensionPoint(projectArea, PsiElementFinder.EP_NAME, javaClass<PsiElementFinder>())
-            }
-        };
-
-        javaCoreEnvironment.getProject().registerService(javaClass<NullableNotNullManager>(), object : NullableNotNullManager() {
-            override fun isNullable(owner: PsiModifierListOwner, checkBases: Boolean) = !isNotNull(owner, checkBases)
-            override fun isNotNull(owner: PsiModifierListOwner, checkBases: Boolean) = true
-            override fun hasHardcodedContracts(element: PsiElement): Boolean = false
-        })
-
-        for (root in PathUtil.getJdkClassesRoots()) {
-            javaCoreEnvironment.addJarToClassPath(root)
-        }
-        val annotations: File? = findAnnotations()
-        if (annotations != null && annotations.exists()) {
-            javaCoreEnvironment.addJarToClassPath(annotations)
-        }
-        return javaCoreEnvironment
-    }
-
-    private fun registerExtensionPoints(area: ExtensionsArea) {
-        CoreApplicationEnvironment.registerExtensionPoint(area, ContentBasedFileSubstitutor.EP_NAME, javaClass<ContentBasedFileSubstitutor>())
-        CoreApplicationEnvironment.registerExtensionPoint(area, BinaryFileStubBuilders.EP_NAME, javaClass<FileTypeExtensionPoint<Any>>())
-        CoreApplicationEnvironment.registerExtensionPoint(area, FileContextProvider.EP_NAME, javaClass<FileContextProvider>())
-        //
-        CoreApplicationEnvironment.registerExtensionPoint(area, MetaDataContributor.EP_NAME, javaClass<MetaDataContributor>())
-        CoreApplicationEnvironment.registerExtensionPoint(area, ClsStubBuilderFactory.EP_NAME, javaClass<ClsStubBuilderFactory<PsiFile>>())
-        CoreApplicationEnvironment.registerExtensionPoint(area, PsiAugmentProvider.EP_NAME, javaClass<PsiAugmentProvider>())
-        CoreApplicationEnvironment.registerExtensionPoint(area, JavaMainMethodProvider.EP_NAME, javaClass<JavaMainMethodProvider>())
-        //
-        CoreApplicationEnvironment.registerExtensionPoint(area, ContainerProvider.EP_NAME, javaClass<ContainerProvider>())
-        CoreApplicationEnvironment.registerExtensionPoint(area, ClsCustomNavigationPolicy.EP_NAME, javaClass<ClsCustomNavigationPolicy>())
-        CoreApplicationEnvironment.registerExtensionPoint(area, ClassFileDecompilers.EP_NAME, javaClass<ClassFileDecompilers.Decompiler>())
-    }
-
-    fun prettify(code: String?): String {
+    public fun prettify(code: String?): String {
         if (code == null) {
             return ""
         }
@@ -115,24 +67,8 @@ public object JavaToKotlinTranslator {
                 .trim()
     }
 
-    fun findAnnotations(): File? {
-        var classLoader = javaClass<JavaToKotlinTranslator>().getClassLoader()
-        while (classLoader != null) {
-            val loader = classLoader
-            if (loader is URLClassLoader) {
-                for (url in loader.getURLs()) {
-                    if ("file" == url.getProtocol() && url.getFile()!!.endsWith("/annotations.jar")) {
-                        return File(url.getFile()!!)
-                    }
-                }
-            }
-            classLoader = classLoader?.getParent()
-        }
-        return null
-    }
-
-    fun generateKotlinCode(javaCode: String): String {
-        val file = createFile(javaCode)
+    public fun generateKotlinCode(javaCode: String, project: Project): String {
+        val file = createFile(javaCode, project)
         if (file is PsiJavaFile) {
             val converter = JavaToKotlinConverter(file.getProject(), ConverterSettings.defaultSettings, EmptyReferenceSearcher, EmptyResolverForConverter, null)
             return prettify(converter.elementsToKotlin(listOf(JavaToKotlinConverter.InputElement(file, null))).results.single()!!.text)
@@ -141,27 +77,7 @@ public object JavaToKotlinTranslator {
     }
 }
 
-fun main(args: Array<String>) {
-    if (args.size() == 1) {
-        try {
-            val kotlinCode = JavaToKotlinTranslator.generateKotlinCode(args[0])
-            if (kotlinCode.isEmpty()) {
-                println("EXCEPTION: generated code is empty.")
-            }
-            else {
-                println(kotlinCode)
-            }
-        }
-        catch (e: Exception) {
-            println("EXCEPTION: " + e.getMessage())
-        }
-    }
-    else {
-        println("EXCEPTION: wrong number of arguments (should be 1).")
-    }
-}
-
 //used in Kotlin Web Demo
-public fun translateToKotlin(code: String): String {
-    return JavaToKotlinTranslator.generateKotlinCode(code)
+public fun translateToKotlin(code: String, project: Project): String {
+    return JavaToKotlinTranslator.generateKotlinCode(code, project)
 }
