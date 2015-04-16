@@ -21,13 +21,12 @@ import org.jetbrains.kotlin.psi.JetSimpleNameStringTemplateEntry
 import org.jetbrains.kotlin.psi.JetPsiFactory
 
 public class InsertCurlyBracesToTemplateIntention : JetSelfTargetingOffsetIndependentIntention<JetSimpleNameStringTemplateEntry>(
-        "insert.curly.brackets.to.string.template", javaClass()) {
+        javaClass(), "Insert curly braces around variable") {
 
     override fun isApplicableTo(element: JetSimpleNameStringTemplateEntry): Boolean = true
 
     override fun applyTo(element: JetSimpleNameStringTemplateEntry, editor: Editor) {
-        val expression = element.getExpression()
-        if (expression == null) return
+        val expression = element.getExpression() ?: return
         element.replace(JetPsiFactory(element).createBlockStringTemplateEntry(expression))
     }
 }
