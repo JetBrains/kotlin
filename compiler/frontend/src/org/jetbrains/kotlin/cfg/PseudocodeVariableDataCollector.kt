@@ -16,15 +16,19 @@
 
 package org.jetbrains.kotlin.cfg
 
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.cfg.pseudocodeTraverser.*
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.LexicalScope
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.VariableDeclarationInstruction
-
-import java.util.*
+import org.jetbrains.kotlin.cfg.pseudocodeTraverser.Edges
+import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder
+import org.jetbrains.kotlin.cfg.pseudocodeTraverser.collectData
+import org.jetbrains.kotlin.cfg.pseudocodeTraverser.traverse
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.resolve.BindingContext
+import java.util.ArrayList
+import java.util.Collections
+import java.util.HashMap
 
 public class PseudocodeVariableDataCollector(
         private val bindingContext: BindingContext,
@@ -75,11 +79,16 @@ public class PseudocodeVariableDataCollector(
                 val variableDeclarationElement = instruction.variableDeclarationElement
                 val descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, variableDeclarationElement)
                 if (descriptor != null) {
-                    assert(descriptor is VariableDescriptor,
-                           "Variable descriptor should correspond to the instruction for ${instruction.element.getText()}.\n" +
-                           "Descriptor : $descriptor")
+                    // TODO: investigate why tests fail without this eager computation here
+                    descriptor.toString()
+
+                    assert(descriptor is VariableDescriptor) {
+                        "Variable descriptor should correspond to the instruction for ${instruction.element.getText()}.\n" +
+                        "Descriptor: $descriptor"
+                    }
                     lexicalScopeVariableInfo.registerVariableDeclaredInScope(
-                            descriptor as VariableDescriptor, instruction.lexicalScope)
+                            descriptor as VariableDescriptor, instruction.lexicalScope
+                    )
                 }
             }
         })
