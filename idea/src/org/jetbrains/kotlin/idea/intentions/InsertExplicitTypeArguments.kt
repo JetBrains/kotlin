@@ -26,51 +26,36 @@ import org.jetbrains.kotlin.psi.JetTypeArgumentList
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 
-public class InsertExplicitTypeArguments : JetSelfTargetingIntention<JetCallExpression>(
-        "insert.explicit.type.arguments", javaClass()) {
-
+public class InsertExplicitTypeArguments : JetSelfTargetingIntention<JetCallExpression>(javaClass(), "Add explicit type arguments") {
     override fun isApplicableTo(element: JetCallExpression, caretOffset: Int): Boolean {
         if (!element.getTypeArguments().isEmpty()) return false
-        if (element.getText() == null) return false
+        val callee = element.getCalleeExpression() ?: return false
+        if (!callee.getTextRange().containsOffset(caretOffset)) return false
 
-        val textRange = element.getCalleeExpression()?.getTextRange()
-        if (textRange == null || !textRange.contains(caretOffset)) return false
-
-        val context = element.analyze()
-        val resolvedCall = element.getResolvedCall(context)
-        if (resolvedCall == null) return false
-
-        val types = resolvedCall.getTypeArguments()
-        return !types.isEmpty() && types.values().none { ErrorUtils.containsErrorType(it) }
+        val resolvedCall = element.getResolvedCall(element.analyze()) ?: return false
+        val typeArgs = resolvedCall.getTypeArguments()
+        return !typeArgs.isEmpty() && typeArgs.values().none { ErrorUtils.containsErrorType(it) }
     }
 
     override fun applyTo(element: JetCallExpression, editor: Editor) {
-        val argumentList = createTypeArguments(element)
-        if (argumentList == null) return
+        val argumentList = createTypeArguments(element)!!
 
-        val callee = element.getCalleeExpression()
-        if (callee == null) return
+        val callee = element.getCalleeExpression()!!
+        val newArgumentList = element.addAfter(argumentList, callee) as JetTypeArgumentList
 
-        element.addAfter(argumentList, callee)
-        ShortenReferences.DEFAULT.process(element.getTypeArgumentList()!!)
+        ShortenReferences.DEFAULT.process(newArgumentList)
     }
 
     companion object {
-        fun createTypeArguments(element: JetCallExpression): JetTypeArgumentList? {
-            val context = element.analyze()
-            val resolvedCall = element.getResolvedCall(context)
-            if (resolvedCall == null) return null
+        public fun createTypeArguments(element: JetCallExpression): JetTypeArgumentList? {
+            val resolvedCall = element.getResolvedCall(element.analyze()) ?: return null
 
             val args = resolvedCall.getTypeArguments()
             val types = resolvedCall.getCandidateDescriptor().getTypeParameters()
 
-            val psiFactory = JetPsiFactory(element)
-            val typeArgs = types.map {
-                assert(args[it] != null, "there is a null in the type arguments to transform")
-                IdeDescriptorRenderers.SOURCE_CODE.renderType(args[it]!!)
-            }.joinToString(", ", "<", ">")
+            val text = types.map { IdeDescriptorRenderers.SOURCE_CODE.renderType(args[it]!!) }.joinToString(", ", "<", ">")
 
-            return psiFactory.createTypeArguments(typeArgs)
+            return JetPsiFactory(element).createTypeArguments(text)
         }
     }
 }
