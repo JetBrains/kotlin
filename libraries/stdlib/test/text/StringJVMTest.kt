@@ -351,4 +351,11 @@ class StringJVMTest {
             builder.slice(listOf(10))
         }
     }
+
+
+    test fun orderIgnoringCase() {
+        val list = listOf("Beast", "Ast", "asterisk")
+        assertEquals(listOf("Ast", "Beast", "asterisk"), list.sort())
+        assertEquals(listOf("Ast", "asterisk", "Beast"), list.sortBy(String.CASE_INSENSITIVE_ORDER))
+    }
 }

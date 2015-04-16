@@ -1,11 +1,10 @@
 package kotlin
 
 import java.io.StringReader
-import java.util.ArrayList
-import java.util.Locale
 import java.util.regex.MatchResult
 import java.util.regex.Pattern
 import java.nio.charset.Charset
+import java.util.*
 import kotlin.text.Regex
 
 
@@ -270,7 +269,18 @@ public fun String.codePointCount(beginIndex: Int, endIndex: Int): Int = (this as
 /**
  * Compares two strings lexicographically, ignoring case differences.
  */
+deprecated("Use compareTo with true passed to ignoreCase parameter.")
 public fun String.compareToIgnoreCase(str: String): Int = (this as java.lang.String).compareToIgnoreCase(str)
+
+/**
+ * Compares two strings lexicographically, optionally ignoring case differences.
+ */
+public fun String.compareTo(other: String, ignoreCase: Boolean = false): Int {
+    if (ignoreCase)
+        return (this as java.lang.String).compareToIgnoreCase(other)
+    else
+        return (this as java.lang.String).compareTo(other)
+}
 
 /**
  * Returns a new string obtained by concatenating this string and the specified string.
@@ -528,3 +538,11 @@ public fun String.replaceAll(regexp: String, body: (java.util.regex.MatchResult)
     return sb.toString()
 }
 
+/**
+ * A Comparator that orders strings ignoring character case.
+ *
+ * Note that this Comparator does not take locale into account,
+ * and will result in an unsatisfactory ordering for certain locales.
+ */
+public val String.Companion.CASE_INSENSITIVE_ORDER: Comparator<String>
+    get() = java.lang.String.CASE_INSENSITIVE_ORDER
