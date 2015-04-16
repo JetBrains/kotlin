@@ -32,6 +32,8 @@ import java.util.regex.Pattern;
 import static org.jetbrains.kotlin.generators.tests.generator.TestGenerator.TargetBackend;
 
 public class SimpleTestMethodModel implements TestMethodModel {
+    private static final String DIRECTIVES_FILE_NAME = "directives.txt";
+
     @NotNull
     private final File rootDir;
     @NotNull
@@ -73,7 +75,16 @@ public class SimpleTestMethodModel implements TestMethodModel {
         if (targetBackend == TargetBackend.ANY) return false;
 
         try {
-            String fileText = FileUtil.loadFile(file);
+            String fileText;
+            if (file.isDirectory()) {
+                File directivesFile = new File(file, DIRECTIVES_FILE_NAME);
+                if (!directivesFile.exists()) return false;
+
+                fileText = FileUtil.loadFile(directivesFile);
+            }
+            else {
+                fileText = FileUtil.loadFile(file);
+            }
             List<String> backends = InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, "// TARGET_BACKEND: ");
             return backends.size() > 0 && !targetBackend.name().equals(backends.get(0));
         } catch (IOException e) {
