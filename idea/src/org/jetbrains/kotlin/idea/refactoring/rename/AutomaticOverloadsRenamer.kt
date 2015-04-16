@@ -28,22 +28,14 @@ import com.intellij.refactoring.rename.naming.AutomaticRenamerFactory
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.idea.stubindex.JetTopLevelFunctionByPackageIndex
 import org.jetbrains.kotlin.idea.stubindex.JetTopLevelFunctionFqnNameIndex
+import org.jetbrains.kotlin.psi.JetClassBody
+import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetNamedFunction
 
 public class AutomaticOverloadsRenamer(function: JetNamedFunction, newName: String) : AutomaticRenamer() {
     init {
-        val project = function.getProject()
-        val module = ProjectFileIndex.SERVICE.getInstance(project).getModuleForFile(function.getContainingFile().getVirtualFile())
-        if (module != null) {
-            val searchScope = GlobalSearchScope.moduleScope(module)
-            val overloads = JetTopLevelFunctionFqnNameIndex.getInstance().get(function.getFqName()!!.asString(), project, searchScope)
-            for (overload in overloads) {
-                if (overload != function) {
-                    myElements.add(overload)
-                }
-            }
-        }
+        myElements.addAll(function.getOverloads().filter { it != function })
         suggestAllNames(function.getName(), newName)
     }
 
@@ -53,10 +45,30 @@ public class AutomaticOverloadsRenamer(function: JetNamedFunction, newName: Stri
     override fun isSelectedByDefault(): Boolean = true
 }
 
+private fun JetNamedFunction.getOverloads(): Collection<JetNamedFunction> {
+    val parent = getParent()
+    when (parent) {
+        is JetFile -> {
+            val module = ModuleUtilCore.findModuleForPsiElement(this)
+            if (module != null) {
+                val searchScope = GlobalSearchScope.moduleScope(module)
+                val fqName = getFqName()
+                if (fqName != null) {
+                    return JetTopLevelFunctionFqnNameIndex.getInstance().get(fqName.asString(), getProject(), searchScope)
+                }
+            }
+        }
+        is JetClassBody -> {
+            return parent.getDeclarations().filterIsInstance<JetNamedFunction>().filter { it.getName() == this.getName() }
+        }
+    }
+    return emptyList()
+}
 
 public class AutomaticOverloadsRenamerFactory : AutomaticRenamerFactory {
     override fun isApplicable(element: PsiElement): Boolean {
-        return element is JetNamedFunction && element.getName() != null && element.getParent() is JetFile
+        return element is JetNamedFunction && element.getName() != null
+               && (element.getParent() is JetFile || element.getParent() is JetClassBody)
     }
 
     override fun getOptionName() = RefactoringBundle.message("rename.overloads")
