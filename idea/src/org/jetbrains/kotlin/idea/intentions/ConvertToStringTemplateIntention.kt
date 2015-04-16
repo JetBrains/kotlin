@@ -35,18 +35,16 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 
 
-public class ConvertToStringTemplateIntention : JetSelfTargetingOffsetIndependentIntention<JetBinaryExpression>("convert.to.string.template", javaClass()) {
+public class ConvertToStringTemplateIntention : JetSelfTargetingOffsetIndependentIntention<JetBinaryExpression>(javaClass(), "Convert concatenation to template") {
     override fun isApplicableTo(element: JetBinaryExpression): Boolean {
         if (element.getOperationToken() != JetTokens.PLUS) return false
 
-        val context = element.analyze()
-        val elementType = BindingContextUtils.getRecordedTypeInfo(element, context)?.getType()
-        if (!(KotlinBuiltIns.isString(elementType))) return false
+        val elementType = BindingContextUtils.getRecordedTypeInfo(element, element.analyze())?.getType()
+        if (!KotlinBuiltIns.isString(elementType)) return false
 
-        val (left, right) = Pair(element.getLeft(), element.getRight())
-        if (left == null || right == null) return false
-
-        return !(PsiUtilCore.hasErrorElementChild(left) || PsiUtilCore.hasErrorElementChild(right))
+        val left = element.getLeft() ?: return false
+        val right = element.getRight() ?: return false
+        return !PsiUtilCore.hasErrorElementChild(left) && !PsiUtilCore.hasErrorElementChild(right)
     }
 
     override fun applyTo(element: JetBinaryExpression, editor: Editor) {
@@ -55,61 +53,63 @@ public class ConvertToStringTemplateIntention : JetSelfTargetingOffsetIndependen
             return applyTo(parent, editor)
         }
 
-        val rightStr = mkString(element.getRight(), false)
-        val resultStr = fold(element.getLeft(), rightStr)
-        val expr = JetPsiFactory(element).createExpression(resultStr)
+        val rightText = buildText(element.getRight(), false)
+        val text = fold(element.getLeft(), rightText)
 
-        element.replace(expr)
+        element.replace(JetPsiFactory(element).createExpression(text))
     }
 
     private fun fold(left: JetExpression?, right: String): String {
-        val needsBraces = !right.isEmpty() && right.first() != '$' && Character.isJavaIdentifierPart(right.first())
+        val needsBraces = !right.isEmpty() && right.first() != '$' && right.first().isJavaIdentifierPart()
+
         if (left is JetBinaryExpression && isApplicableTo(left)) {
-            val l_right = mkString(left.getRight(), needsBraces)
-            val newBase = "%s%s".format(l_right, right)
-            return fold(left.getLeft(), newBase)
+            val leftRight = buildText(left.getRight(), needsBraces)
+            return fold(left.getLeft(), leftRight + right)
         }
         else {
-            val leftStr = mkString(left, needsBraces)
-            return "\"%s%s\"".format(leftStr, right)
+            val leftText = buildText(left, needsBraces)
+            return "\"" + leftText + right + "\""
         }
     }
 
-    private fun mkString(expr: JetExpression?, needsBraces: Boolean): String {
+    private fun buildText(expr: JetExpression?, needsBraces: Boolean): String {
         val expression = JetPsiUtil.deparenthesize(expr)
         val expressionText = expression?.getText() ?: ""
         return when (expression) {
             is JetConstantExpression -> {
                 val context = expression.analyze()
-                val trace = DelegatingBindingTrace(context, "Trace for evaluating constant")
-                val constant = ConstantExpressionEvaluator.evaluate(expression, trace, null)
+                val constant = ConstantExpressionEvaluator.evaluate(expression, DelegatingBindingTrace(context, "Trace for evaluating constant"), null)
                 if (constant is IntegerValueTypeConstant) {
-                    val elementType = BindingContextUtils.getRecordedTypeInfo(expression, context)?.getType()
-                    constant.getValue(elementType!!).toString()
+                    val elementType = BindingContextUtils.getRecordedTypeInfo(expression, context)?.getType()!!
+                    constant.getValue(elementType).toString()
                 }
                 else {
                     constant?.getValue().toString()
                 }
             }
+
             is JetStringTemplateExpression -> {
-                val base = if (expressionText.startsWith("\"\"\"") && (expressionText.endsWith("\"\"\""))) {
-                    val unquoted = expressionText.substring(3, expressionText.length - 3)
+                val base = if (expressionText.startsWith("\"\"\"") && expressionText.endsWith("\"\"\"")) {
+                    val unquoted = expressionText.substring(3, expressionText.length() - 3)
                     StringUtil.escapeStringCharacters(unquoted)
                 }
                 else {
                     StringUtil.unquoteString(expressionText)
                 }
                 if (needsBraces && base.endsWith('$')) {
-                    base.substring(0, base.length - 1) + "\\$"
+                    base.substring(0, base.length() - 1) + "\\$"
                 }
                 else {
                     base
                 }
             }
+
             is JetSimpleNameExpression ->
-                if (needsBraces) "\${${expressionText}}" else "\$${expressionText}"
+                if (needsBraces) "\${" + expressionText + "}" else "\$" + expressionText
+
             null -> ""
-            else -> "\${${expressionText.replaceAll("\n+", " ")}}"
+
+            else -> "\${" + expressionText.replaceAll("\n+", " ") + "}"
         }
     }
 }
