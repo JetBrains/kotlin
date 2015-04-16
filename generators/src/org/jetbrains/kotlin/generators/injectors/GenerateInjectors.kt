@@ -128,7 +128,6 @@ private fun generatorForTopDownAnalyzerForJs() =
 
             publicField<LazyTopDownAnalyzerForTopLevel>()
 
-            field<MutablePackageFragmentProvider>()
             field<KotlinJsCheckerProvider>()
             field<DynamicTypesAllowed>()
         }
@@ -294,7 +293,6 @@ private fun DependencyInjectorGenerator.commonForJavaTopDownAnalyzer() {
     field<JavaPropertyInitializerEvaluatorImpl>()
     field<SamConversionResolverImpl>()
     field<JavaSourceElementFactoryImpl>()
-    field<MutablePackageFragmentProvider>()
     field<SingleModuleClassResolver>()
     field<JavaLazyAnalyzerPostConstruct>()
     field<JavaFlexibleTypeCapabilitiesProvider>()
