@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.kotlin.storage.ExceptionTracker;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
+import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.util.DescriptorValidator;
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator;
@@ -240,6 +241,16 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
             List<TestFile> testFiles,
             Map<TestModule, ModuleDescriptorImpl> modules
     ) {
+        if (KotlinPackage.any(testFiles, new Function1<TestFile, Boolean>() {
+            @Override
+            public Boolean invoke(TestFile file) {
+                return InTextDirectivesUtils.isDirectiveDefined(file.expectedText, "// SKIP_TXT");
+            }
+        })) {
+            assertFalse(".txt file should not exist if SKIP_TXT directive is used: " + expectedFile, expectedFile.exists());
+            return;
+        }
+
         RecursiveDescriptorComparator comparator = new RecursiveDescriptorComparator(createdAffectedPackagesConfiguration(testFiles));
 
         boolean isMultiModuleTest = modules.size() != 1;

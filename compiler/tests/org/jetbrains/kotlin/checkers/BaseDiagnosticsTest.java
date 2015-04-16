@@ -235,7 +235,7 @@ public abstract class BaseDiagnosticsTest extends
 
     protected class TestFile {
         private final List<CheckerTestUtil.DiagnosedRange> diagnosedRanges = Lists.newArrayList();
-        private final String expectedText;
+        public final String expectedText;
         private final TestModule module;
         private final String clearText;
         private final JetFile jetFile;

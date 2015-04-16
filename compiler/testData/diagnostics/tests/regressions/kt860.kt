@@ -1,7 +1,7 @@
 // !DIAGNOSTICS: -NOTHING_TO_INLINE
 // KT-860 ConcurrentModificationException in frontend
 
-package kotlin.util
+package std.util
 
 import java.util.*
 

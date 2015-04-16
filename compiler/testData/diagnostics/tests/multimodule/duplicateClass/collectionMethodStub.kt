@@ -1,4 +1,5 @@
 // FILE: f1.kt
+// SKIP_TXT
 
 package kotlin
 
