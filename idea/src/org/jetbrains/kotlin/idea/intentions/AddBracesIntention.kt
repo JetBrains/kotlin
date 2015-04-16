@@ -25,7 +25,7 @@ public class AddBracesIntention : JetSelfTargetingIntention<JetExpression>(javaC
         val expression = element.getTargetExpression(caretOffset) ?: return false
         if (expression is JetBlockExpression) return false
 
-        val description = (expression.getParent() as JetContainerNode).description()
+        val description = (expression.getParent() as JetContainerNode).description()!!
         setText("Add braces to '$description' statement")
         return true
     }

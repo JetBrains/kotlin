@@ -35,17 +35,10 @@ public class ConvertToForEachFunctionCallIntention : JetSelfTargetingIntention<J
             is JetBlockExpression -> body.getStatements().map { it.getText() }.joinToString("\n")
             else -> body.getText()
         }
-        val bodyText = buildFunctionLiteralBodyText(loopParameter, functionBodyText)
+        val bodyText = "${loopParameter.getText()} -> $functionBodyText"
 
         val foreachExpression = factory.createExpression("x.forEach { $bodyText }") as JetDotQualifiedExpression
         foreachExpression.getReceiverExpression().replace(element.getLoopRange()!!)
         element.replace(foreachExpression)
-    }
-
-    private fun buildFunctionLiteralBodyText(loopParameter: JetParameter, functionBodyText: String): String {
-        return when {
-            loopParameter.getTypeReference() != null -> " (${loopParameter.getText()}) -> $functionBodyText"
-            else -> "${loopParameter.getText()} -> $functionBodyText"
-        }
     }
 }

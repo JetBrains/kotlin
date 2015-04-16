@@ -38,7 +38,7 @@ public class ConvertNegatedBooleanSequenceIntention : JetSelfTargetingOffsetInde
         val operatorText = when(element.getOperationToken()) {
             JetTokens.ANDAND -> JetTokens.OROR.getValue()
             JetTokens.OROR -> JetTokens.ANDAND.getValue()
-            else -> throw IllegalArgumentException()
+            else -> throw IllegalArgumentException() // checked in isApplicableTo
         }
 
         val elements = splitBooleanSequence(element)!!

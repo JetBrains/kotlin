@@ -28,12 +28,13 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 public class ConvertAssertToIfWithThrowIntention : JetSelfTargetingIntention<JetCallExpression>(javaClass(), "Replace 'assert' with 'if' statement") {
     override fun isApplicableTo(element: JetCallExpression, caretOffset: Int): Boolean {
         val callee = element.getCalleeExpression() ?: return false
-        if (callee.getText() != "assert") return false
         if (!callee.getTextRange().containsOffset(caretOffset)) return false
 
         val argumentSize = element.getValueArguments().size()
         if (argumentSize !in 1..2) return false
-        if (element.getFunctionLiteralArguments().size() == 1 && argumentSize == 1) return false
+        val functionLiterals = element.getFunctionLiteralArguments()
+        if (functionLiterals.size() > 1) return false
+        if (functionLiterals.size() == 1 && argumentSize == 1) return false // "assert {...}" is incorrect
 
         val resolvedCall = element.getResolvedCall(element.analyze()) ?: return false
         return DescriptorUtils.getFqName(resolvedCall.getResultingDescriptor()).asString() == "kotlin.assert"
@@ -42,14 +43,14 @@ public class ConvertAssertToIfWithThrowIntention : JetSelfTargetingIntention<Jet
     override fun applyTo(element: JetCallExpression, editor: Editor) {
         val args = element.getValueArguments()
         val conditionText = args[0]?.getArgumentExpression()?.getText() ?: return
-        val functionLiterals = element.getFunctionLiteralArguments()
+        val functionLiteral = element.getFunctionLiteralArguments().singleOrNull()
         val messageIsFunction = messageIsFunction(element)
 
         val psiFactory = JetPsiFactory(element)
 
         val messageExpr = when {
             args.size() == 2 -> args[1]?.getArgumentExpression() ?: return
-            functionLiterals.isNotEmpty() -> functionLiterals.first()
+            functionLiteral != null -> functionLiteral!!
             else -> psiFactory.createExpression("\"Assertion failed\"")
         }
 
@@ -58,34 +59,27 @@ public class ConvertAssertToIfWithThrowIntention : JetSelfTargetingIntention<Jet
         // shorten java.lang.AssertionError
         ShortenReferences.DEFAULT.process(ifExpression.getThen()!!)
 
-        fun replaceMessage() {
-            val thrownExpression = ((ifExpression.getThen() as JetBlockExpression).getStatements().single() as JetThrowExpression).getThrownExpression()
-            val assertionErrorCall = if (thrownExpression is JetCallExpression)
-                thrownExpression
-            else
-                (thrownExpression as JetDotQualifiedExpression).getSelectorExpression() as JetCallExpression
+        val ifCondition = ifExpression.getCondition() as JetPrefixExpression
+        ifCondition.getBaseExpression()!!.replace(psiFactory.createExpression(conditionText))
 
-            val message = psiFactory.createExpression(
-                    if (messageIsFunction && messageExpr is JetCallableReferenceExpression) {
-                        messageExpr.getCallableReference().getText() + "()"
-                    }
-                    else if (messageIsFunction) {
-                        messageExpr.getText() + "()"
-                    }
-                    else {
-                        messageExpr.getText()
-                    }
-            )
-            assertionErrorCall.getValueArguments().single().getArgumentExpression()!!.replace(message)
-        }
+        val thrownExpression = ((ifExpression.getThen() as JetBlockExpression).getStatements().single() as JetThrowExpression).getThrownExpression()
+        val assertionErrorCall = if (thrownExpression is JetCallExpression)
+            thrownExpression
+        else
+            (thrownExpression as JetDotQualifiedExpression).getSelectorExpression() as JetCallExpression
 
-        fun replaceCondition() {
-            val ifCondition = ifExpression.getCondition() as JetPrefixExpression
-            ifCondition.getBaseExpression()!!.replace(psiFactory.createExpression(conditionText))
-        }
-
-        replaceCondition()
-        replaceMessage()
+        val message = psiFactory.createExpression(
+                if (messageIsFunction && messageExpr is JetCallableReferenceExpression) {
+                    messageExpr.getCallableReference().getText() + "()"
+                }
+                else if (messageIsFunction) {
+                    messageExpr.getText() + "()"
+                }
+                else {
+                    messageExpr.getText()
+                }
+        )
+        assertionErrorCall.getValueArguments().single().getArgumentExpression()!!.replace(message)
 
         simplifyConditionIfPossible(ifExpression)
     }

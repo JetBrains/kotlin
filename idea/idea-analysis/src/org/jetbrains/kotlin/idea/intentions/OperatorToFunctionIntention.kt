@@ -57,7 +57,8 @@ public class OperatorToFunctionIntention : JetSelfTargetingIntention<JetExpressi
 
         private fun isApplicableArrayAccess(element: JetArrayAccessExpression, caretOffset: Int): Boolean {
             val lbracket = element.getLeftBracket() ?: return false
-            return lbracket.getTextRange().containsOffset(caretOffset)
+            val rbracket = element.getRightBracket() ?: return false
+            return lbracket.getTextRange().containsOffset(caretOffset) || rbracket.getTextRange().containsOffset(caretOffset)
         }
 
         private fun isApplicableCall(element: JetCallExpression, caretOffset: Int): Boolean {

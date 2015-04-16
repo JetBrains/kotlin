@@ -20,44 +20,38 @@ import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 
-public class ConvertForEachToForLoopIntention : JetSelfTargetingIntention<JetExpression>(javaClass(), "Replace with a for each loop") {
+public class ConvertForEachToForLoopIntention : JetSelfTargetingIntention<JetExpression>(javaClass(), "Replace with a for loop") {
     override fun isApplicableTo(element: JetExpression, caretOffset: Int): Boolean {
-        val data = extractData(element) ?: return false
-        if (data.functionLiteral.getValueParameters().size() > 1) return false
-        if (data.functionLiteral.getValueParameters().size() > 1 || data.functionLiteral.getBodyExpression() == null) return false
+        val functionLiteral = extractFunctionLiteral(element) ?: return false
+        if (functionLiteral.getValueParameters().size() > 1) return false
+        if (functionLiteral.getBodyExpression() == null) return false
 
-        if (caretOffset > data.functionLiteral.getTextRange().getStartOffset()) return false // not available within function literal body
+        if (caretOffset > functionLiteral.getTextRange().getStartOffset()) return false // not available within function literal body
 
         val resolvedCall = element.getResolvedCall(element.analyze()) ?: return false
-        return DescriptorUtils.getFqName(resolvedCall.getResultingDescriptor()).toString() == "kotlin.forEach"
+        if (DescriptorUtils.getFqName(resolvedCall.getResultingDescriptor()).toString() != "kotlin.forEach") return false
+        return resolvedCall.getCall().getExplicitReceiver() is ExpressionReceiver
     }
 
     override fun applyTo(element: JetExpression, editor: Editor) {
-        val data = extractData(element)!!
-        val loopText = generateLoopText(data.functionLiteral, data.receiver)
-        element.replace(JetPsiFactory(element).createExpression(loopText))
+        val functionLiteral = extractFunctionLiteral(element)!!
+        val receiver = element.getCall(element.analyze())!!.getExplicitReceiver() as ExpressionReceiver
+        val receiverExpression = receiver.getExpression()
+        val loopText = generateLoopText(functionLiteral, receiverExpression)
+        val expressionToReplace = receiverExpression.getParent() // it's correct for both JetDotQualifiedExpression and JetBinaryExpression
+        expressionToReplace.replace(JetPsiFactory(element).createExpression(loopText))
     }
 
-    private data class Data(val functionLiteral: JetFunctionLiteralExpression, val receiver: JetExpression)
-
-    private fun extractData(element: JetExpression): Data? {
-        when (element) {
-            is JetDotQualifiedExpression -> {
-                val selector = element.getSelectorExpression() as? JetCallExpression ?: return null
-                val argument = selector.getValueArguments().singleOrNull() ?: return null
-                val functionLiteral = argument.getArgumentExpression() as? JetFunctionLiteralExpression ?: return null
-                return Data(functionLiteral, element.getReceiverExpression())
-            }
-
-            is JetBinaryExpression -> {
-                val functionLiteral = element.getRight() as? JetFunctionLiteralExpression ?: return null
-                return Data(functionLiteral, element.getLeft() ?: return null)
-            }
-
-            else -> return null
-        }
+    private fun extractFunctionLiteral(element: JetExpression): JetFunctionLiteralExpression? {
+        return when (element) {
+            is JetCallExpression -> element.getValueArguments().singleOrNull()?.getArgumentExpression()
+            is JetBinaryExpression -> element.getRight()
+            else -> null
+        } as? JetFunctionLiteralExpression
     }
 
     private fun generateLoopText(functionLiteral: JetFunctionLiteralExpression, receiver: JetExpression): String {

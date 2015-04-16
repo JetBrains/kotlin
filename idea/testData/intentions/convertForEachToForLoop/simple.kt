@@ -2,5 +2,5 @@
 fun foo() {
     val x = 1..4
 
-    <caret>x.forEach { it.equals(1) }
+    x.forEach<caret> { it.equals(1) }
 }

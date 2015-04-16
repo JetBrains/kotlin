@@ -32,7 +32,8 @@ public class RemoveBracesIntention : JetSelfTargetingIntention<JetBlockExpressio
         val rBrace = element.getRBrace() ?: return false
         if (!lBrace.getTextRange().containsOffset(caretOffset) && !rBrace.getTextRange().containsOffset(caretOffset)) return false
 
-        setText("Remove braces from '${containerNode.description()}' statement")
+        val description = containerNode.description() ?: return false
+        setText("Remove braces from '$description' statement")
         return true
     }
 
