@@ -16,63 +16,20 @@
 
 package org.jetbrains.kotlin.load.java.components;
 
-import kotlin.Function1;
-import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.load.java.structure.*;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.resolve.OverridingUtil;
-import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public final class DescriptorResolverUtils {
     private DescriptorResolverUtils() {
-    }
-
-    @NotNull
-    public static <D extends CallableMemberDescriptor> Collection<D> resolveOverrides(
-            @NotNull Name name,
-            @NotNull Collection<D> membersFromSupertypes,
-            @NotNull Collection<D> membersFromCurrent,
-            @NotNull ClassDescriptor classDescriptor,
-            @NotNull final ErrorReporter errorReporter
-    ) {
-        final Set<D> result = new HashSet<D>();
-
-        OverridingUtil.generateOverridesInFunctionGroup(
-                name, membersFromSupertypes, membersFromCurrent, classDescriptor,
-                new OverridingUtil.DescriptorSink() {
-                    @Override
-                    @SuppressWarnings("unchecked")
-                    public void addFakeOverride(@NotNull CallableMemberDescriptor fakeOverride) {
-                        OverridingUtil.resolveUnknownVisibilityForMember(fakeOverride, new Function1<CallableMemberDescriptor, Unit>() {
-                            @Override
-                            public Unit invoke(@NotNull CallableMemberDescriptor descriptor) {
-                                errorReporter.reportCannotInferVisibility(descriptor);
-                                return Unit.INSTANCE$;
-                            }
-                        });
-                        result.add((D) fakeOverride);
-                    }
-
-                    @Override
-                    public void conflict(@NotNull CallableMemberDescriptor fromSuper, @NotNull CallableMemberDescriptor fromCurrent) {
-                        // nop
-                    }
-                }
-        );
-
-        return result;
     }
 
     @Nullable

@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.descriptors.impl.EnumEntrySyntheticClassDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
-import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils
 import org.jetbrains.kotlin.load.java.components.TypeUsage
 import org.jetbrains.kotlin.load.java.descriptors.JavaConstructorDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
@@ -36,7 +35,9 @@ import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -74,7 +75,8 @@ public class LazyJavaClassMemberScope(
 
     override fun computeNonDeclaredFunctions(result: MutableCollection<SimpleFunctionDescriptor>, name: Name) {
         val functionsFromSupertypes = getFunctionsFromSupertypes(name, getContainingDeclaration())
-        result.addAll(DescriptorResolverUtils.resolveOverrides(name, functionsFromSupertypes, result, getContainingDeclaration(), c.errorReporter))
+        val overrides = bindOverrides(name, functionsFromSupertypes, result, getContainingDeclaration(), c.errorReporter)
+        result.addAll(overrides)
     }
 
     private fun getFunctionsFromSupertypes(name: Name, descriptor: ClassDescriptor): Set<SimpleFunctionDescriptor> {
@@ -90,7 +92,7 @@ public class LazyJavaClassMemberScope(
 
         val propertiesFromSupertypes = getPropertiesFromSupertypes(name, getContainingDeclaration())
 
-        result.addAll(DescriptorResolverUtils.resolveOverrides(name, propertiesFromSupertypes, result, getContainingDeclaration(),
+        result.addAll(bindOverrides(name, propertiesFromSupertypes, result, getContainingDeclaration(),
                                                                    c.errorReporter))
     }
 
@@ -118,6 +120,39 @@ public class LazyJavaClassMemberScope(
         return descriptor.getTypeConstructor().getSupertypes().flatMap {
             it.getMemberScope().getProperties(name).map { p -> p as PropertyDescriptor }
         }.toSet()
+    }
+
+    /**
+     * Binds overrides in `membersFromCurrent` and creates fake overrides for those `membersFromSupertypes` that
+     * were not thus overridden.
+     * @return collection of created fake overrides
+     */
+    private fun <D : CallableMemberDescriptor> bindOverrides(
+            name: Name,
+            membersFromSupertypes: Collection<D>,
+            membersFromCurrent: Collection<D>,
+            current: ClassDescriptor,
+            errorReporter: ErrorReporter
+    ): Collection<D> {
+        val fakeOverrides = LinkedHashSet<D>()
+
+        OverridingUtil.generateOverridesInFunctionGroup(
+                name, membersFromSupertypes, membersFromCurrent, current,
+                object : OverridingUtil.DescriptorSink() {
+                    override fun addFakeOverride(fakeOverride: CallableMemberDescriptor) {
+                        OverridingUtil.resolveUnknownVisibilityForMember(fakeOverride) { descriptor ->
+                            errorReporter.reportCannotInferVisibility(descriptor)
+                        }
+                        [suppress("UNCHECKED_CAST")]
+                        fakeOverrides.add(fakeOverride as D)
+                    }
+
+                    override fun conflict(fromSuper: CallableMemberDescriptor, fromCurrent: CallableMemberDescriptor) {
+                        // nop
+                    }
+                })
+
+        return fakeOverrides
     }
 
     override fun resolveMethodSignature(
