@@ -94,14 +94,18 @@ public data class IntroduceParameterDescriptor(
         }
         else JetValVar.None
         
-        val occurrenceRanges = occurrencesToReplace.map { it.getTextRange() }
-        parametersToRemove = parametersUsages.entrySet()
-                .filter {
-                    it.value.all { paramRef ->
-                        occurrenceRanges.any { occurrenceRange -> occurrenceRange.contains(paramRef.getElement().getTextRange()) }
-                    }
+        parametersToRemove =
+                if (withDefaultValue) Collections.emptyList()
+                else {
+                    val occurrenceRanges = occurrencesToReplace.map { it.getTextRange() }
+                    parametersUsages.entrySet()
+                            .filter {
+                                it.value.all { paramRef ->
+                                    occurrenceRanges.any { occurrenceRange -> occurrenceRange.contains(paramRef.getElement().getTextRange()) }
+                                }
+                            }
+                            .map { it.key }
                 }
-                .map { it.key }
     }
 }
 

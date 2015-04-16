@@ -1,8 +1,8 @@
-fun foo(s: String, i: Int = a + 1): Int {
+fun foo(a: Int, s: String, i: Int = a + 1): Int {
     val t = i * 2
     return i - t
 }
 
 fun test() {
-    foo("2")
+    foo(1, "2")
 }
