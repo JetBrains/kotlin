@@ -8,7 +8,7 @@ fun test() : Unit {
   y <warning>as Int</warning> : Int
   x <warning>as Int?</warning> : Int?
   y <warning>as Int?</warning> : Int?
-  x as? Int : Int?
+  x <warning>as Int?</warning> : Int?
   y <warning>as? Int</warning> : Int?
   x <warning>as? Int?</warning> : Int?
   y <warning>as? Int?</warning> : Int?
