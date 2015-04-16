@@ -18,12 +18,11 @@ package org.jetbrains.kotlin.idea.stubindex.resolve
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.idea.stubindex.JetSourceFilterScope
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.idea.stubindex.JetSourceFilterScope
-import org.jetbrains.kotlin.idea.caches.resolve.JsProjectDetector
 
 public class PluginDeclarationProviderFactoryService : DeclarationProviderFactoryService() {
 
@@ -32,14 +31,6 @@ public class PluginDeclarationProviderFactoryService : DeclarationProviderFactor
             storageManager: StorageManager,
             syntheticFiles: Collection<JetFile>,
             filesScope: GlobalSearchScope
-    ): DeclarationProviderFactory {
-        val scope = if (JsProjectDetector.isJsProject(project)) {
-            //NOTE: we include libraries here to support analyzing JavaScript libraries which are kotlin sources in classes root
-            JetSourceFilterScope.kotlinSourcesAndLibraries(filesScope, project)
-        }
-        else {
-            JetSourceFilterScope.kotlinSources(filesScope, project)
-        }
-        return PluginDeclarationProviderFactory(project, scope, storageManager, syntheticFiles)
-    }
+    ): DeclarationProviderFactory =
+        PluginDeclarationProviderFactory(project, JetSourceFilterScope.kotlinSources(filesScope, project), storageManager, syntheticFiles)
 }
