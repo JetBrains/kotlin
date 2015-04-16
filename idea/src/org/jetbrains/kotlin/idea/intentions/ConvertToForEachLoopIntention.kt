@@ -17,100 +17,53 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.psi.JetCallExpression
-import org.jetbrains.kotlin.psi.JetFunctionLiteralExpression
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
-import org.jetbrains.kotlin.psi.JetBinaryExpression
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.psi.JetParenthesizedExpression
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 
-public class ConvertToForEachLoopIntention : JetSelfTargetingOffsetIndependentIntention<JetExpression>("convert.to.for.each.loop.intention", javaClass()) {
-    private fun getFunctionLiteralArgument(element: JetExpression): JetFunctionLiteralExpression? {
-        val argument = when (element) {
-            is JetDotQualifiedExpression -> {
-                val selector = element.getSelectorExpression()
+public class ConvertToForEachLoopIntention : JetSelfTargetingIntention<JetExpression>(javaClass(), "Replace with a for each loop") {
+    override fun isApplicableTo(element: JetExpression, caretOffset: Int): Boolean {
+        val data = extractData(element) ?: return false
+        if (data.functionLiteral.getValueParameters().size() > 1) return false
+        if (data.functionLiteral.getValueParameters().size() > 1 || data.functionLiteral.getBodyExpression() == null) return false
 
-                when (selector) {
-                    is JetCallExpression -> {
-                        when {
-                            selector.getValueArguments().size() > 0 -> selector.getValueArguments()[0]!!.getArgumentExpression()
-                            selector.getFunctionLiteralArguments().size() > 0 -> selector.getFunctionLiteralArguments()[0]
-                            else -> null
-                        }
-                    }
-                    else -> null
-                }
-            }
-            is JetBinaryExpression -> element.getRight()
-            else -> null
-        }
+        if (caretOffset > data.functionLiteral.getTextRange().getStartOffset()) return false // not available within function literal body
 
-        return argument as? JetFunctionLiteralExpression
-    }
-
-    override fun isApplicableTo(element: JetExpression): Boolean {
-        fun isWellFormedFunctionLiteral(element: JetFunctionLiteralExpression): Boolean {
-            return element.getValueParameters().size() <= 1 && element.getBodyExpression() != null
-        }
-
-        fun checkTotalNumberOfArguments(element: JetExpression): Boolean {
-            return when (element) {
-                is JetDotQualifiedExpression -> {
-                    val selector = element.getSelectorExpression()
-
-                    when (selector) {
-                        is JetCallExpression -> selector.getValueArguments().size() == 1
-                        else -> false
-                    }
-                }
-                is JetBinaryExpression -> true
-                else -> false
-            }
-        }
-
-        val functionLiteral = getFunctionLiteralArgument(element)
-
-        if (functionLiteral != null &&
-            isWellFormedFunctionLiteral(functionLiteral) &&
-            checkTotalNumberOfArguments(element)) {
-
-            val context = element.analyze()
-            val resolvedCall = element.getResolvedCall(context)
-            val functionFqName = if (resolvedCall != null) DescriptorUtils.getFqName(resolvedCall.getResultingDescriptor()).toString() else null
-
-            return "kotlin.forEach".equals(functionFqName);
-        }
-
-        return false;
+        val resolvedCall = element.getResolvedCall(element.analyze()) ?: return false
+        return DescriptorUtils.getFqName(resolvedCall.getResultingDescriptor()).toString() == "kotlin.forEach"
     }
 
     override fun applyTo(element: JetExpression, editor: Editor) {
-        fun buildLoopRangeText(receiver: JetExpression): String? {
-            return when (receiver) {
-                is JetParenthesizedExpression -> receiver.getExpression()?.getText()
-                else -> receiver.getText()
+        val data = extractData(element)!!
+        val loopText = generateLoopText(data.functionLiteral, data.receiver)
+        element.replace(JetPsiFactory(element).createExpression(loopText))
+    }
+
+    private data class Data(val functionLiteral: JetFunctionLiteralExpression, val receiver: JetExpression)
+
+    private fun extractData(element: JetExpression): Data? {
+        when (element) {
+            is JetDotQualifiedExpression -> {
+                val selector = element.getSelectorExpression() as? JetCallExpression ?: return null
+                val argument = selector.getValueArguments().singleOrNull() ?: return null
+                val functionLiteral = argument.getArgumentExpression() as? JetFunctionLiteralExpression ?: return null
+                return Data(functionLiteral, element.getReceiverExpression())
             }
-        }
 
-        fun generateLoopText(receiver: JetExpression, functionLiteral: JetFunctionLiteralExpression): String {
-            return when {
-                functionLiteral.getValueParameters().size() == 0 -> "for (it in ${buildLoopRangeText(receiver)}) { ${functionLiteral.getBodyExpression()!!.getText()} }"
-                else -> "for (${functionLiteral.getValueParameters()[0].getText()} in ${buildLoopRangeText(receiver)}) { ${functionLiteral.getBodyExpression()!!.getText()} }"
+            is JetBinaryExpression -> {
+                val functionLiteral = element.getRight() as? JetFunctionLiteralExpression ?: return null
+                return Data(functionLiteral, element.getLeft() ?: return null)
             }
+
+            else -> return null
         }
+    }
 
-        val receiver = when (element) {
-            is JetDotQualifiedExpression -> element.getReceiverExpression()
-            is JetBinaryExpression -> element.getLeft()
-            else -> throw IllegalArgumentException("The expression ${element.getText()} cannot be converted to a for each loop.")
-        }!!
-
-        val functionLiteral = getFunctionLiteralArgument(element)!!
-
-        element.replace(JetPsiFactory(element).createExpression(generateLoopText(receiver, functionLiteral)))
+    private fun generateLoopText(functionLiteral: JetFunctionLiteralExpression, receiver: JetExpression): String {
+        val loopRangeText = JetPsiUtil.safeDeparenthesize(receiver).getText()
+        val bodyText = functionLiteral.getBodyExpression()!!.getText()
+        val varText = functionLiteral.getValueParameters().singleOrNull()?.getText() ?: "it"
+        return "for ($varText in $loopRangeText) { $bodyText }"
     }
 }

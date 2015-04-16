@@ -70,6 +70,11 @@ public class JetPsiUtil {
     }
 
     @NotNull
+    public static JetExpression safeDeparenthesize(@NotNull JetExpression expression) {
+        return safeDeparenthesize(expression, true);
+    }
+
+    @NotNull
     public static JetExpression safeDeparenthesize(@NotNull JetExpression expression, boolean deparenthesizeBinaryExpressionWithTypeRHS) {
         JetExpression deparenthesized = deparenthesize(expression, deparenthesizeBinaryExpressionWithTypeRHS);
         return deparenthesized != null ? deparenthesized : expression;
