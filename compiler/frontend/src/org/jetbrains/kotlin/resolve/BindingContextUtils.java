@@ -30,8 +30,8 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.types.JetType;
-import org.jetbrains.kotlin.types.JetTypeInfo;
 import org.jetbrains.kotlin.types.TypeUtils;
+import org.jetbrains.kotlin.types.expressions.TypeInfoWithJumpInfo;
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice;
 
 import java.util.Collection;
@@ -144,11 +144,12 @@ public class BindingContextUtils {
     }
 
     @Nullable
-    public static JetTypeInfo getRecordedTypeInfo(@NotNull JetExpression expression, @NotNull BindingContext context) {
+    public static TypeInfoWithJumpInfo getRecordedTypeInfo(@NotNull JetExpression expression, @NotNull BindingContext context) {
         if (!context.get(BindingContext.PROCESSED, expression)) return null;
         DataFlowInfo dataFlowInfo = BindingContextUtilPackage.getDataFlowInfo(context, expression);
         JetType type = context.get(BindingContext.EXPRESSION_TYPE, expression);
-        return JetTypeInfo.create(type, dataFlowInfo);
+        Boolean jumpOutPossible = context.get(BindingContext.EXPRESSION_JUMP_OUT_POSSIBLE, expression);
+        return new TypeInfoWithJumpInfo(type, dataFlowInfo, Boolean.TRUE.equals(jumpOutPossible), dataFlowInfo);
     }
 
     public static boolean isExpressionWithValidReference(

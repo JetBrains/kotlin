@@ -308,14 +308,14 @@ public class ExpressionTypingServices {
      * Determines block returned type and data flow information at the end of the block AND
      * at the nearest jump point from the block beginning.
      */
-    /*package*/ LoopTypeInfo getBlockReturnedTypeWithWritableScope(
+    /*package*/ TypeInfoWithJumpInfo getBlockReturnedTypeWithWritableScope(
             @NotNull WritableScope scope,
             @NotNull List<? extends JetElement> block,
             @NotNull CoercionStrategy coercionStrategyForLastExpression,
             @NotNull ExpressionTypingContext context
     ) {
         if (block.isEmpty()) {
-            return new LoopTypeInfo(builtIns.getUnitType(), context.dataFlowInfo);
+            return new TypeInfoWithJumpInfo(builtIns.getUnitType(), context.dataFlowInfo, false, context.dataFlowInfo);
         }
 
         ExpressionTypingInternals blockLevelVisitor = ExpressionTypingVisitorDispatcher.createForBlock(expressionTypingComponents, scope);
@@ -344,10 +344,10 @@ public class ExpressionTypingServices {
             DataFlowInfo newDataFlowInfo = result.getDataFlowInfo();
             // If jump is not possible, we take new data flow info before jump
             if (!jumpOutPossible) {
-                if (result instanceof LoopTypeInfo) {
-                    LoopTypeInfo loopTypeInfo = (LoopTypeInfo) result;
-                    beforeJumpInfo = loopTypeInfo.getJumpFlowInfo();
-                    jumpOutPossible = loopTypeInfo.isJumpOutPossible();
+                if (result instanceof TypeInfoWithJumpInfo) {
+                    TypeInfoWithJumpInfo jumpTypeInfo = (TypeInfoWithJumpInfo) result;
+                    beforeJumpInfo = jumpTypeInfo.getJumpFlowInfo();
+                    jumpOutPossible = jumpTypeInfo.getJumpOutPossible();
                 }
                 else {
                     beforeJumpInfo = newDataFlowInfo;
@@ -359,7 +359,7 @@ public class ExpressionTypingServices {
             }
             blockLevelVisitor = ExpressionTypingVisitorDispatcher.createForBlock(expressionTypingComponents, scope);
         }
-        return new LoopTypeInfo(result.getType(), result.getDataFlowInfo(), jumpOutPossible, beforeJumpInfo);
+        return new TypeInfoWithJumpInfo(result.getType(), result.getDataFlowInfo(), jumpOutPossible, beforeJumpInfo);
     }
 
     private JetTypeInfo getTypeOfLastExpressionInBlock(

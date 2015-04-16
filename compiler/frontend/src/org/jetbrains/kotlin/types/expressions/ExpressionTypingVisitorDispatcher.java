@@ -142,13 +142,11 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, E
                 // Some recursive definitions (object expressions) must put their types in the cache manually:
                 if (context.trace.get(BindingContext.PROCESSED, expression)) {
                     JetType type = context.trace.getBindingContext().get(BindingContext.EXPRESSION_TYPE, expression);
-                    if (result instanceof LoopTypeInfo) {
-                        LoopTypeInfo loopTypeInfo = (LoopTypeInfo)result;
-                        return new LoopTypeInfo(type,
-                                                loopTypeInfo.getDataFlowInfo(),
-                                                loopTypeInfo.isJumpOutPossible(),
-                                                loopTypeInfo.getJumpFlowInfo());
-                    } else {
+                    if (result instanceof TypeInfoWithJumpInfo) {
+                        TypeInfoWithJumpInfo jumpTypeInfo = (TypeInfoWithJumpInfo) result;
+                        return jumpTypeInfo.replaceType(type);
+                    }
+                    else {
                         return JetTypeInfo.create(type, result.getDataFlowInfo());
                     }
                 }
@@ -159,9 +157,9 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, E
                 if (result.getType() != null) {
                     context.trace.record(BindingContext.EXPRESSION_TYPE, expression, result.getType());
                 }
-                if (result instanceof LoopTypeInfo) {
-                    LoopTypeInfo loopTypeInfo = (LoopTypeInfo)result;
-                    if (loopTypeInfo.isJumpOutPossible()) {
+                if (result instanceof TypeInfoWithJumpInfo) {
+                    TypeInfoWithJumpInfo jumpTypeInfo = (TypeInfoWithJumpInfo)result;
+                    if (jumpTypeInfo.getJumpOutPossible()) {
                         context.trace.record(BindingContext.EXPRESSION_JUMP_OUT_POSSIBLE, expression, true);
                     }
                 }

@@ -1236,14 +1236,15 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         Call call = createCallForSpecialConstruction(expression, expression.getOperationReference(), Lists.newArrayList(left, right));
         ResolvedCall<FunctionDescriptor> resolvedCall = components.controlStructureTypingUtils.resolveSpecialConstructionAsCall(
                 call, "Elvis", Lists.newArrayList("left", "right"), Lists.newArrayList(true, false), contextWithExpectedType, null);
-        JetTypeInfo leftTypeInfo = BindingContextUtils.getRecordedTypeInfo(left, context.trace.getBindingContext());
+        TypeInfoWithJumpInfo leftTypeInfo = BindingContextUtils.getRecordedTypeInfo(left, context.trace.getBindingContext());
         assert leftTypeInfo != null : "Left expression was not processed: " + expression;
         JetType leftType = leftTypeInfo.getType();
         if (leftType != null && isKnownToBeNotNull(left, leftType, context)) {
             context.trace.report(USELESS_ELVIS.on(left, leftType));
         }
-        JetTypeInfo rightTypeInfo = BindingContextUtils.getRecordedTypeInfo(right, context.trace.getBindingContext());
+        TypeInfoWithJumpInfo rightTypeInfo = BindingContextUtils.getRecordedTypeInfo(right, context.trace.getBindingContext());
         assert rightTypeInfo != null : "Right expression was not processed: " + expression;
+        boolean loopBreakContinuePossible = leftTypeInfo.getJumpOutPossible() || rightTypeInfo.getJumpOutPossible();
         JetType rightType = rightTypeInfo.getType();
 
         DataFlowInfo dataFlowInfo = resolvedCall.getDataFlowInfoForArguments().getResultInfo();
@@ -1262,7 +1263,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (context.contextDependency == DEPENDENT) {
             return JetTypeInfo.create(type, dataFlowInfo);
         }
-        return DataFlowUtils.checkType(type, expression, context, dataFlowInfo);
+        JetTypeInfo result = DataFlowUtils.checkType(type, expression, context, dataFlowInfo);
+        // If break or continue was possible, take condition check info as the jump info
+        return new TypeInfoWithJumpInfo(result.getType(), result.getDataFlowInfo(), loopBreakContinuePossible, context.dataFlowInfo);
     }
 
     @NotNull

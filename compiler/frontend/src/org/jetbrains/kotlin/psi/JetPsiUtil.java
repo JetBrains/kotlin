@@ -398,6 +398,11 @@ public class JetPsiUtil {
         return deparenthesized instanceof JetConstantExpression && deparenthesized.getNode().getElementType() == JetNodeTypes.NULL;
     }
 
+    public static boolean isTrueConstant(@Nullable JetExpression condition) {
+        return (condition != null && condition.getNode().getElementType() == JetNodeTypes.BOOLEAN_CONSTANT &&
+                condition.getNode().findChildByType(JetTokens.TRUE_KEYWORD) != null);
+    }
+
     public static boolean isAbstract(@NotNull JetDeclarationWithBody declaration) {
         return declaration.getBodyExpression() == null;
     }
