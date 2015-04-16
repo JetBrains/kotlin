@@ -168,8 +168,7 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
         }
 
         List<JetFunctionLiteralArgument> lambdaArguments = element.getFunctionLiteralArguments();
-        boolean hasLambdaArgumentsBefore = !lambdaArguments.isEmpty();
-        if (hasLambdaArgumentsBefore) {
+        if (!lambdaArguments.isEmpty()) {
             element.deleteChildRange(KotlinPackage.first(lambdaArguments), KotlinPackage.last(lambdaArguments));
         }
 
@@ -197,7 +196,7 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
             newElement = (JetElement) elementToReplace.replace(replacingElement);
         }
 
-        if (hasLambdaArgumentsBefore && hasTrailingLambdaInArgumentListAfter) {
+        if (hasTrailingLambdaInArgumentListAfter) {
             JetCallElement newCallElement =
                     (JetCallElement) (newElement instanceof JetQualifiedExpression
                                       ? ((JetQualifiedExpression) newElement).getSelectorExpression()
