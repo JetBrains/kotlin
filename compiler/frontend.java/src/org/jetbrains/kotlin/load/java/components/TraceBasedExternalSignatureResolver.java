@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.load.java.components;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.resolve.jvm.kotlinSignature.SignaturesPropagationDat
 import org.jetbrains.kotlin.types.JetType;
 
 import javax.inject.Inject;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -133,5 +135,10 @@ public class TraceBasedExternalSignatureResolver implements ExternalSignatureRes
     @Override
     public void reportSignatureErrors(@NotNull CallableMemberDescriptor descriptor, @NotNull List<String> signatureErrors) {
         trace.record(JavaBindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS, descriptor, signatureErrors);
+    }
+
+    @Override
+    public <D extends CallableMemberDescriptor> Collection<D> enhanceSignatures(@NotNull @ReadOnly Collection<D> platformSignatures) {
+        return ComponentsPackage.enhanceSignatures(platformSignatures);
     }
 }

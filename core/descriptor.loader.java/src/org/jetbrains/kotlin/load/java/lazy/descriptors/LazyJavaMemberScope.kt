@@ -86,14 +86,16 @@ public abstract class LazyJavaMemberScope(
 
         computeNonDeclaredFunctions(result, name)
 
+        val enhancedResult = c.externalSignatureResolver.enhanceSignatures(result)
+
         // Make sure that lazy things are computed before we release the lock
-        for (f in result) {
+        for (f in enhancedResult) {
             for (p in f.getValueParameters()) {
                 p.hasDefaultValue()
             }
         }
 
-        result.toReadOnlyList()
+        enhancedResult.toReadOnlyList()
     }
 
     protected data class MethodSignatureData(

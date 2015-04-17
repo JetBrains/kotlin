@@ -18,12 +18,14 @@ package org.jetbrains.kotlin.load.java.components;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.load.java.structure.JavaField;
 import org.jetbrains.kotlin.load.java.structure.JavaMember;
 import org.jetbrains.kotlin.load.java.structure.JavaMethod;
 import org.jetbrains.kotlin.types.JetType;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -72,6 +74,11 @@ public interface ExternalSignatureResolver {
         @Override
         public void reportSignatureErrors(@NotNull CallableMemberDescriptor descriptor, @NotNull List<String> signatureErrors) {
             throw new UnsupportedOperationException("Should not be called");
+        }
+
+        @Override
+        public <D extends CallableMemberDescriptor> Collection<D> enhanceSignatures(@NotNull @ReadOnly Collection<D> platformSignatures) {
+            return platformSignatures;
         }
     };
 
@@ -201,4 +208,10 @@ public interface ExternalSignatureResolver {
     );
 
     void reportSignatureErrors(@NotNull CallableMemberDescriptor descriptor, @NotNull List<String> signatureErrors);
+
+    /**
+     * Replaces some items in the {@code platformSignatures} collection with enhanced signatures.
+     * Is called after binding overrides, so the implementation is allowed to inspect contents of getOverriddenDescriptors()
+     */
+    <D extends CallableMemberDescriptor> Collection<D> enhanceSignatures(@NotNull @ReadOnly Collection<D> platformSignatures);
 }
