@@ -42,7 +42,7 @@ import java.awt.event.MouseEvent
 import java.util.HashSet
 import javax.swing.Icon
 
-public class JetLineMarkerProvider : LineMarkerProvider {
+public class KotlinLineMarkerProvider : LineMarkerProvider {
     override fun getLineMarkerInfo(element: PsiElement): LineMarkerInfo<PsiElement>? {
         // all Kotlin markers are added in slow marker pass
         return null
