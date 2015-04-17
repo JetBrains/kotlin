@@ -3084,6 +3084,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest(fileName);
             }
         }
+
     }
 
     @TestMetadata("idea/testData/quickfix/modifiers")

@@ -25,7 +25,10 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable.*;
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateLocalVariableActionFactory;
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateParameterActionFactory;
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateParameterByNamedArgumentActionFactory;
+import org.jetbrains.kotlin.idea.quickfix.replaceJavaClass.ReplaceJavaClassAsAnnotationArgumentFix;
+import org.jetbrains.kotlin.idea.quickfix.replaceJavaClass.ReplaceJavaClassAsAnnotationArgumentInWholeProjectFix;
 import org.jetbrains.kotlin.psi.JetClass;
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.lexer.JetTokens.*;
@@ -315,5 +318,8 @@ public class QuickFixRegistrar {
 
         QuickFixes.factories.put(EXPLICIT_DELEGATION_CALL_REQUIRED, InsertDelegationCallQuickfix.InsertThisDelegationCallFactory.INSTANCE$);
         QuickFixes.factories.put(EXPLICIT_DELEGATION_CALL_REQUIRED, InsertDelegationCallQuickfix.InsertSuperDelegationCallFactory.INSTANCE$);
+
+        QuickFixes.factories.put(ErrorsJvm.JAVA_LANG_CLASS_ARGUMENT_IN_ANNOTATION, ReplaceJavaClassAsAnnotationArgumentFix.Companion);
+        QuickFixes.factories.put(ErrorsJvm.JAVA_LANG_CLASS_ARGUMENT_IN_ANNOTATION, ReplaceJavaClassAsAnnotationArgumentInWholeProjectFix.Companion);
     }
 }

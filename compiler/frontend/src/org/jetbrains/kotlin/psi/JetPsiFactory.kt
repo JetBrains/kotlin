@@ -65,6 +65,9 @@ public class JetPsiFactory(private val project: Project) {
         return createProperty("val x = $text").getInitializer()!!
     }
 
+    public fun createClassLiteral(className: String): JetClassLiteralExpression =
+            createExpression("$className::class") as JetClassLiteralExpression
+
     public fun createCallArguments(text: String): JetValueArgumentList {
         val property = createProperty("val x = foo $text")
         return (property.getInitializer() as JetCallExpression).getValueArgumentList()!!
