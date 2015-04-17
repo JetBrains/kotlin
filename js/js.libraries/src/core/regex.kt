@@ -50,7 +50,7 @@ public class Regex(pattern: String, options: Set<RegexOption>) {
     public val pattern: String = pattern
     /** The set of options that were used to create this regular expression. */
     public val options: Set<RegexOption> = options.toSet()
-    private val nativePattern: RegExp = RegExp(pattern, options.map { it.value }.joinToString() + "g")
+    private val nativePattern: RegExp = RegExp(pattern, options.map { it.value }.joinToString(separator = "") + "g")
 
     /** Indicates whether the regular expression matches the entire [input]. */
     public fun matches(input: CharSequence): Boolean {
@@ -115,8 +115,10 @@ public class Regex(pattern: String, options: Set<RegexOption>) {
      *
      * @param replacement A replacement expression that can include substitutions. See [Matcher.appendReplacement] for details.
      */
-    public fun replaceFirst(input: CharSequence, replacement: String): String =
-            input.toString().nativeReplace(RegExp(pattern, options.map { it.value }.joinToString()), replacement)
+    public fun replaceFirst(input: CharSequence, replacement: String): String {
+        val nonGlobalOptions = options.map { it.value }.joinToString(separator = "")
+        return input.toString().nativeReplace(RegExp(pattern, nonGlobalOptions), replacement)
+    }
 
     /**
      * Splits this string around matches of the given regular expression.
