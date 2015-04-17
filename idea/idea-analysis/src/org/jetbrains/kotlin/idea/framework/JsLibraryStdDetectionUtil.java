@@ -52,7 +52,7 @@ public class JsLibraryStdDetectionUtil {
         VirtualFile jar = fixedJarName ? LibraryUtils.getJarFile(classesRoots, PathUtil.JS_LIB_JAR_NAME) : getJsStdLibJar(classesRoots);
         if (jar == null) return null;
 
-        assert JsHeaderLibraryDetectionUtil.isJsHeaderLibraryDetected(classesRoots) : "StdLib should also be detected as headers library";
+        assert KotlinJavaScriptLibraryDetectionUtil.isKotlinJavaScriptLibrary(classesRoots) : "StdLib should also be detected as Kotlin/Javascript library";
 
         return JarUtil.getJarAttribute(VfsUtilCore.virtualToIoFile(jar), Attributes.Name.IMPLEMENTATION_VERSION);
     }

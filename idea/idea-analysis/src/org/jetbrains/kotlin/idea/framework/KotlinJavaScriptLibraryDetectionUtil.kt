@@ -17,24 +17,23 @@
 
 package org.jetbrains.kotlin.idea.framework
 
+import com.intellij.openapi.roots.OrderRootType
+import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.idea.JetFileType
 import org.jetbrains.kotlin.js.JavaScript
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import kotlin.platform.platformStatic
 
-public object JsHeaderLibraryDetectionUtil {
+public object KotlinJavaScriptLibraryDetectionUtil {
 
     platformStatic
-    public fun isJsHeaderLibraryDetected(classesRoots: List<VirtualFile>): Boolean =
-        isJsLibraryWithAcceptedFile(classesRoots) {
-            JetFileType.EXTENSION == it.getExtension() || isJsFileWithMetadata(it)
-        }
+    public fun isKotlinJavaScriptLibrary(library: Library): Boolean =
+            isKotlinJavaScriptLibrary(library.getFiles(OrderRootType.CLASSES).toList())
 
     platformStatic
-    public fun isJsHeaderLibraryWithSources(classesRoots: List<VirtualFile>): Boolean =
-            isJsLibraryWithAcceptedFile(classesRoots) { JetFileType.EXTENSION == it.getExtension() }
+    public fun isKotlinJavaScriptLibrary(classesRoots: List<VirtualFile>): Boolean =
+            isJsLibraryWithAcceptedFile(classesRoots) { isJsFileWithMetadata(it) }
 
     private fun isJsLibraryWithAcceptedFile(classesRoots: List<VirtualFile>, accept: (VirtualFile) -> Boolean): Boolean =
         JavaRuntimeDetectionUtil.getJavaRuntimeVersion(classesRoots) == null // Prevent clashing with java runtime
