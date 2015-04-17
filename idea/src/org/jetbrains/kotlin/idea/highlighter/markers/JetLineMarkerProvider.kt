@@ -39,41 +39,39 @@ import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isOverridable
 import java.awt.event.MouseEvent
+import java.util.HashSet
 import javax.swing.Icon
 
 public class JetLineMarkerProvider : LineMarkerProvider {
-
     override fun getLineMarkerInfo(element: PsiElement): LineMarkerInfo<PsiElement>? {
         // all Kotlin markers are added in slow marker pass
         return null
     }
 
-    override fun collectSlowLineMarkers(elements: List<PsiElement>, result: MutableCollection<LineMarkerInfo<PsiElement>>) {
+    override fun collectSlowLineMarkers(elements: List<PsiElement>, result: MutableCollection<LineMarkerInfo<*>>) {
         if (elements.isEmpty()) return
 
-        val first = KotlinPackage.first<PsiElement>(elements)
-        if (DumbService.getInstance(first.getProject()).isDumb() || !ProjectRootsUtil.isInProjectOrLibSource(elements.get(0))) {
-            return
-        }
+        val first = elements.first()
+        if (DumbService.getInstance(first.getProject()).isDumb() || !ProjectRootsUtil.isInProjectOrLibSource(first)) return
 
-        val functions = Sets.newHashSet<JetNamedFunction>()
-        val properties = Sets.newHashSet<JetProperty>()
+        val functions = HashSet<JetNamedFunction>()
+        val properties = HashSet<JetProperty>()
 
         for (element in elements) {
             ProgressManager.checkCanceled()
 
-            if (element is JetClass) {
-                collectInheritedClassMarker(element, result)
-            }
-            else if (element is JetNamedFunction) {
-
-                functions.add(element)
-                collectSuperDeclarationMarkers(element, result)
-            }
-            else if (element is JetProperty) {
-
-                properties.add(element)
-                collectSuperDeclarationMarkers(element, result)
+            when (element) {
+                is JetClass -> {
+                    collectInheritedClassMarker(element, result)
+                }
+                is JetNamedFunction -> {
+                    functions.add(element)
+                    collectSuperDeclarationMarkers(element, result)
+                }
+                is JetProperty -> {
+                    properties.add(element)
+                    collectSuperDeclarationMarkers(element, result)
+                }
             }
         }
 
@@ -87,68 +85,35 @@ public class JetLineMarkerProvider : LineMarkerProvider {
         protected val OVERRIDDEN_MARK: Icon = AllIcons.Gutter.OverridenMethod
         protected val IMPLEMENTED_MARK: Icon = AllIcons.Gutter.ImplementedMethod
 
-        private val SUBCLASSED_CLASS = MarkerType(object : NullableFunction<PsiElement, String> {
-            override fun `fun`(element: PsiElement?): String? {
-                val psiClass = getPsiClass(element)
-                return if (psiClass != null) MarkerType.getSubclassedClassTooltip(psiClass) else null
-            }
-        },
-                                                  object : LineMarkerNavigator() {
-                                                      override fun browse(e: MouseEvent?, element: PsiElement?) {
-                                                          val psiClass = getPsiClass(element)
-                                                          if (psiClass != null) {
-                                                              MarkerType.navigateToSubclassedClass(e, psiClass)
-                                                          }
-                                                      }
-                                                  })
+        private val SUBCLASSED_CLASS = MarkerType(
+                { getPsiClass(it)?.let { MarkerType.getSubclassedClassTooltip(it) } },
+                object : LineMarkerNavigator() {
+                    override fun browse(e: MouseEvent?, element: PsiElement?) {
+                        getPsiClass(element)?.let { MarkerType.navigateToSubclassedClass(e, it) }
+                    }
+                })
 
-        private val OVERRIDDEN_FUNCTION = MarkerType(object : NullableFunction<PsiElement, String> {
-            override fun `fun`(element: PsiElement?): String? {
-                val psiMethod = getPsiMethod(element)
-                return if (psiMethod != null) getOverriddenMethodTooltip(psiMethod) else null
-            }
-        },
-                                                     object : LineMarkerNavigator() {
-                                                         override fun browse(e: MouseEvent?, element: PsiElement?) {
-                                                             val psiMethod = getPsiMethod(element)
-                                                             if (psiMethod != null) {
-                                                                 navigateToOverriddenMethod(e, psiMethod)
-                                                             }
-                                                         }
-                                                     })
+        private val OVERRIDDEN_FUNCTION = MarkerType(
+                { getPsiMethod(it)?.let { getOverriddenMethodTooltip(it) } },
+                object : LineMarkerNavigator() {
+                    override fun browse(e: MouseEvent?, element: PsiElement?) {
+                        getPsiMethod(element)?.let { navigateToOverriddenMethod(e, it) }
+                    }
+                })
 
-        private val OVERRIDDEN_PROPERTY = MarkerType(object : NullableFunction<PsiElement, String> {
-            override fun `fun`(element: PsiElement?): String? {
-                if (element == null) return null
-
-                assert(element.getParent() is JetProperty, "This tooltip provider should be placed only on identifies in properties")
-                val property = element.getParent() as JetProperty
-
-                return getOverriddenPropertyTooltip(property)
-            }
-        },
-                                                     object : LineMarkerNavigator() {
-                                                         override fun browse(e: MouseEvent?, element: PsiElement?) {
-                                                             if (element == null) return
-
-                                                             assert(element.getParent() is JetProperty, "This marker navigator should be placed only on identifies in properties")
-                                                             val property = element.getParent() as JetProperty
-
-                                                             navigateToPropertyOverriddenDeclarations(e, property)
-                                                         }
-                                                     })
+        private val OVERRIDDEN_PROPERTY = MarkerType(
+                { it?.let { getOverriddenPropertyTooltip(it.getParent() as JetProperty) } },
+                object : LineMarkerNavigator() {
+                    override fun browse(e: MouseEvent?, element: PsiElement?) {
+                        element?.let { navigateToPropertyOverriddenDeclarations(e, it.getParent() as JetProperty) }
+                    }
+                })
 
         private fun isImplementsAndNotOverrides(descriptor: CallableMemberDescriptor, overriddenMembers: Collection<CallableMemberDescriptor>): Boolean {
-            if (descriptor.getModality() == Modality.ABSTRACT) return false
-
-            for (function in overriddenMembers) {
-                if (function.getModality() != Modality.ABSTRACT) return false
-            }
-
-            return true
+            return descriptor.getModality() != Modality.ABSTRACT && overriddenMembers.all { it.getModality() == Modality.ABSTRACT }
         }
 
-        private fun collectSuperDeclarationMarkers(declaration: JetDeclaration, result: MutableCollection<LineMarkerInfo<PsiElement>>) {
+        private fun collectSuperDeclarationMarkers(declaration: JetDeclaration, result: MutableCollection<LineMarkerInfo<*>>) {
             assert((declaration is JetNamedFunction || declaration is JetProperty))
 
             if (!declaration.hasModifier(JetTokens.OVERRIDE_KEYWORD)) return
@@ -156,48 +121,45 @@ public class JetLineMarkerProvider : LineMarkerProvider {
             val resolveWithParents = resolveDeclarationWithParents(declaration)
             if (resolveWithParents.overriddenDescriptors.isEmpty()) return
 
+            val implements = isImplementsAndNotOverrides(resolveWithParents.descriptor!!, resolveWithParents.overriddenDescriptors)
+
             // NOTE: Don't store descriptors in line markers because line markers are not deleted while editing other files and this can prevent
             // clearing the whole BindingTrace.
-            val marker = LineMarkerInfo(declaration, declaration.getTextOffset(), if (isImplementsAndNotOverrides(resolveWithParents.descriptor, resolveWithParents.overriddenDescriptors))
-                IMPLEMENTING_MARK
-            else
-                OVERRIDING_MARK, Pass.UPDATE_OVERRIDEN_MARKERS, SuperDeclarationMarkerTooltip, SuperDeclarationMarkerNavigationHandler())
+            val marker = LineMarkerInfo(
+                    declaration,
+                    declaration.getTextOffset(),
+                    if (implements) IMPLEMENTING_MARK else OVERRIDING_MARK,
+                    Pass.UPDATE_OVERRIDEN_MARKERS,
+                    SuperDeclarationMarkerTooltip,
+                    SuperDeclarationMarkerNavigationHandler()
+            )
 
             result.add(marker)
         }
 
-        private fun collectInheritedClassMarker(element: JetClass, result: MutableCollection<LineMarkerInfo<PsiElement>>) {
+        private fun collectInheritedClassMarker(element: JetClass, result: MutableCollection<LineMarkerInfo<*>>) {
             val isTrait = element.isTrait()
             if (!(isTrait || element.hasModifier(JetTokens.OPEN_KEYWORD) || element.hasModifier(JetTokens.ABSTRACT_KEYWORD))) {
                 return
             }
 
-            val lightClass = LightClassUtil.getPsiClass(element)
-            if (lightClass == null) return
+            val lightClass = LightClassUtil.getPsiClass(element) ?: return
 
-            val inheritor = ClassInheritorsSearch.search(lightClass, false).findFirst()
-            if (inheritor != null) {
-                val nameIdentifier = element.getNameIdentifier()
-                val anchor = nameIdentifier ?: element
-                val mark = if (isTrait) IMPLEMENTED_MARK else OVERRIDDEN_MARK
-                result.add(LineMarkerInfo(anchor, anchor.getTextOffset(), mark, Pass.UPDATE_OVERRIDEN_MARKERS, SUBCLASSED_CLASS.getTooltip(), SUBCLASSED_CLASS.getNavigationHandler()))
-            }
+            if (ClassInheritorsSearch.search(lightClass, false).findFirst() == null) return
+
+            val anchor = element.getNameIdentifier() ?: element
+
+            result.add(LineMarkerInfo(
+                    anchor,
+                    anchor.getTextOffset(),
+                    if (isTrait) IMPLEMENTED_MARK else OVERRIDDEN_MARK,
+                    Pass.UPDATE_OVERRIDEN_MARKERS,
+                    SUBCLASSED_CLASS.getTooltip(),
+                    SUBCLASSED_CLASS.getNavigationHandler()
+            ))
         }
 
-        public fun isImplemented(declaration: JetNamedDeclaration): Boolean {
-            if (declaration.hasModifier(JetTokens.ABSTRACT_KEYWORD)) return true
-
-            var parent = declaration.getParent()
-            parent = if ((parent is JetClassBody)) parent.getParent() else parent
-
-            if (parent is JetClass) {
-                return (parent as JetClass).isTrait() && (declaration !is JetDeclarationWithBody || !declaration.hasBody()) && (declaration !is JetWithExpressionInitializer || !declaration.hasInitializer())
-            }
-
-            return false
-        }
-
-        private fun collectOverridingPropertiesAccessors(properties: Collection<JetProperty>, result: MutableCollection<LineMarkerInfo<PsiElement>>) {
+        private fun collectOverridingPropertiesAccessors(properties: Collection<JetProperty>, result: MutableCollection<LineMarkerInfo<*>>) {
             val mappingToJava = Maps.newHashMap<PsiMethod, JetProperty>()
             for (property in properties) {
                 if (property.isOverridable()) {
@@ -216,13 +178,19 @@ public class JetLineMarkerProvider : LineMarkerProvider {
                 var anchor = property.getNameIdentifier()
                 if (anchor == null) anchor = property
 
-                val info = LineMarkerInfo(anchor, anchor!!.getTextOffset(), if (isImplemented(property)) IMPLEMENTED_MARK else OVERRIDDEN_MARK, Pass.UPDATE_OVERRIDEN_MARKERS, OVERRIDDEN_PROPERTY.getTooltip(), OVERRIDDEN_PROPERTY.getNavigationHandler(), GutterIconRenderer.Alignment.RIGHT)
-
-                result.add(info)
+                result.add(LineMarkerInfo(
+                        anchor,
+                        anchor!!.getTextOffset(),
+                        if (isImplemented(property)) IMPLEMENTED_MARK else OVERRIDDEN_MARK,
+                        Pass.UPDATE_OVERRIDEN_MARKERS,
+                        OVERRIDDEN_PROPERTY.getTooltip(),
+                        OVERRIDDEN_PROPERTY.getNavigationHandler(),
+                        GutterIconRenderer.Alignment.RIGHT
+                ))
             }
         }
 
-        private fun collectOverridingAccessors(functions: Collection<JetNamedFunction>, result: MutableCollection<LineMarkerInfo<PsiElement>>) {
+        private fun collectOverridingAccessors(functions: Collection<JetNamedFunction>, result: MutableCollection<LineMarkerInfo<*>>) {
             val mappingToJava = Maps.newHashMap<PsiMethod, JetNamedFunction>()
             for (function in functions) {
                 if (function.isOverridable()) {
@@ -238,12 +206,16 @@ public class JetLineMarkerProvider : LineMarkerProvider {
             for (function in getOverriddenDeclarations(mappingToJava, classes)) {
                 ProgressManager.checkCanceled()
 
-                var anchor = function.getNameIdentifier()
-                if (anchor == null) anchor = function
+                val anchor = function.getNameIdentifier() ?: function
 
-                val info = LineMarkerInfo(anchor, anchor!!.getTextOffset(), if (isImplemented(function)) IMPLEMENTED_MARK else OVERRIDDEN_MARK, Pass.UPDATE_OVERRIDEN_MARKERS, OVERRIDDEN_FUNCTION.getTooltip(), OVERRIDDEN_FUNCTION.getNavigationHandler(), GutterIconRenderer.Alignment.RIGHT)
-
-                result.add(info)
+                result.add(LineMarkerInfo(
+                        anchor,
+                        anchor!!.getTextOffset(),
+                        if (isImplemented(function)) IMPLEMENTED_MARK else OVERRIDDEN_MARK,
+                        Pass.UPDATE_OVERRIDEN_MARKERS, OVERRIDDEN_FUNCTION.getTooltip(),
+                        OVERRIDDEN_FUNCTION.getNavigationHandler(),
+                        GutterIconRenderer.Alignment.RIGHT
+                ))
             }
         }
     }

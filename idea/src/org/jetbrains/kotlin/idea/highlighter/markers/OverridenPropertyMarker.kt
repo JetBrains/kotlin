@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.highlighter.markers
 
-import org.jetbrains.kotlin.psi.JetProperty
 import com.intellij.psi.search.PsiElementProcessor
 import com.intellij.psi.PsiClass
 import org.jetbrains.kotlin.idea.JetBundle
@@ -40,7 +39,8 @@ import javax.swing.JComponent
 import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator
 import com.intellij.psi.NavigatablePsiElement
 import com.intellij.util.Function
-import org.jetbrains.kotlin.idea.highlighter.markers.JetLineMarkerProvider
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.psi.*
 
 fun getOverriddenPropertyTooltip(property: JetProperty): String? {
     val overriddenInClassesProcessor = PsiElementProcessor.CollectElementsWithLimit<PsiClass>(5)
@@ -56,7 +56,7 @@ fun getOverriddenPropertyTooltip(property: JetProperty): String? {
         }
     }
 
-    val isImplemented = JetLineMarkerProvider.isImplemented(property)
+    val isImplemented = isImplemented(property)
     if (overriddenInClassesProcessor.isOverflow()) {
         return if (isImplemented)
             JetBundle.message("property.is.implemented.too.many")
@@ -113,3 +113,16 @@ fun navigateToPropertyOverriddenDeclarations(e: MouseEvent?, property: JetProper
                                         JetBundle.message("navigation.title.overriding.property", property.getName()),
                                         JetBundle.message("navigation.findUsages.title.overriding.property", property.getName()), renderer)
 }
+
+
+public fun isImplemented(declaration: JetNamedDeclaration): Boolean {
+    if (declaration.hasModifier(JetTokens.ABSTRACT_KEYWORD)) return true
+
+    var parent = declaration.getParent()
+    parent = if (parent is JetClassBody) parent.getParent() else parent
+
+    if (parent !is JetClass) return false
+
+    return (parent as JetClass).isTrait() && (declaration !is JetDeclarationWithBody || !declaration.hasBody()) && (declaration !is JetWithExpressionInitializer || !declaration.hasInitializer())
+}
+
