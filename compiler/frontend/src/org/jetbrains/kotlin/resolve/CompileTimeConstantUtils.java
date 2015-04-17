@@ -78,7 +78,7 @@ public class CompileTimeConstantUtils {
         KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
         if (isEnumClass(typeDescriptor) ||
             isAnnotationClass(typeDescriptor) ||
-            isJavaLangClass(typeDescriptor) ||
+            DescriptorUtils.isJavaLangClass(typeDescriptor) ||
             KotlinBuiltIns.isKClass(typeDescriptor) ||
             KotlinBuiltIns.isPrimitiveArray(parameterType) ||
             KotlinBuiltIns.isPrimitiveType(parameterType) ||
@@ -97,7 +97,7 @@ public class CompileTimeConstantUtils {
                 if (arrayTypeDescriptor != null) {
                     return isEnumClass(arrayTypeDescriptor) ||
                            isAnnotationClass(arrayTypeDescriptor) ||
-                           isJavaLangClass(arrayTypeDescriptor) ||
+                           DescriptorUtils.isJavaLangClass(arrayTypeDescriptor) ||
                            KotlinBuiltIns.isKClass(arrayTypeDescriptor) ||
                            builtIns.getStringType().equals(arrayType);
                 }
@@ -125,10 +125,6 @@ public class CompileTimeConstantUtils {
 
     public static boolean isJavaClassMethodCall(@NotNull ResolvedCall<?> resolvedCall) {
         return "kotlin.javaClass.function".equals(getIntrinsicAnnotationArgument(resolvedCall.getResultingDescriptor().getOriginal()));
-    }
-
-    public static boolean isJavaLangClass(ClassDescriptor descriptor) {
-        return "java.lang.Class".equals(DescriptorUtils.getFqName(descriptor).asString());
     }
 
     public static boolean canBeReducedToBooleanConstant(

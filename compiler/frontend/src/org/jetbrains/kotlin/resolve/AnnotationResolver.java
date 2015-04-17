@@ -306,7 +306,7 @@ public class AnnotationResolver {
         if (descriptor != null && DescriptorUtils.isEnumClass(descriptor)) {
             trace.report(Errors.ANNOTATION_PARAMETER_MUST_BE_ENUM_CONST.on(argumentExpression));
         }
-        else if (descriptor instanceof ClassDescriptor && CompileTimeConstantUtils.isJavaLangClass((ClassDescriptor) descriptor)) {
+        else if (descriptor instanceof ClassDescriptor && DescriptorUtils.isJavaLangClass((ClassDescriptor) descriptor)) {
             trace.report(Errors.ANNOTATION_PARAMETER_MUST_BE_CLASS_LITERAL.on(argumentExpression));
         }
         else if (descriptor instanceof ClassDescriptor && KotlinBuiltIns.isKClass((ClassDescriptor) descriptor)) {

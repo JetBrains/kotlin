@@ -117,6 +117,24 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationParameters"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("javaClassArgumentError.kt")
+            public void testJavaClassArgumentError() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationParameters/javaClassArgumentError.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("javaClassArrayInAnnotations.kt")
+            public void testJavaClassArrayInAnnotations() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationParameters/javaClassArrayInAnnotations.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("javaClassInAnnotations.kt")
+            public void testJavaClassInAnnotations() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationParameters/javaClassInAnnotations.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("orderWithValue.kt")
             public void testOrderWithValue() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationParameters/orderWithValue.kt");

@@ -57,6 +57,7 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(ErrorsJvm.NATIVE_DECLARATION_CANNOT_BE_INLINED, "Members of traits can not be inlined");
 
         MAP.put(ErrorsJvm.POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION, "Only named arguments are available for Java annotations");
+        MAP.put(ErrorsJvm.JAVA_LANG_CLASS_ARGUMENT_IN_ANNOTATION, "Usage of `javaClass<T>()` in annotations is deprecated. Use T::class instead");
 
         MAP.put(ErrorsJvm.NO_REFLECTION_IN_CLASS_PATH, "Expression ''{0}'' uses reflection which is not found in compilation classpath. Make sure you have kotlin-reflect.jar in the classpath", Renderers.ELEMENT_TEXT);
 

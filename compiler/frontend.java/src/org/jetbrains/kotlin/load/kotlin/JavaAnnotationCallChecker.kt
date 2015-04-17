@@ -16,15 +16,23 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.descriptors.JavaConstructorDescriptor
+import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
+import org.jetbrains.kotlin.types.JetType
 
 public class JavaAnnotationCallChecker : CallChecker {
     override fun <F : CallableDescriptor?> check(resolvedCall: ResolvedCall<F>, context: BasicCallResolutionContext) {
@@ -32,14 +40,56 @@ public class JavaAnnotationCallChecker : CallChecker {
         if (resultingDescriptor !is JavaConstructorDescriptor ||
             resultingDescriptor.getContainingDeclaration().getKind() != ClassKind.ANNOTATION_CLASS) return
 
+        reportErrorsOnPositionedArguments(resolvedCall, context)
+        reportWarningOnJavaClassUsages(resolvedCall, context)
+    }
+
+    private fun reportWarningOnJavaClassUsages(
+            resolvedCall: ResolvedCall<*>,
+            context: BasicCallResolutionContext
+    ) {
+        resolvedCall.getValueArguments().filter { it.getKey().getType().isJavaLangClassOrArray() }.forEach {
+            reportOnValueArgument(context, it, ErrorsJvm.JAVA_LANG_CLASS_ARGUMENT_IN_ANNOTATION)
+        }
+    }
+
+    private fun JetType.isJavaLangClassOrArray() = isJavaLangClass() ||
+                                                   (KotlinBuiltIns.isArray(this) && getArguments().first().getType().isJavaLangClass())
+
+    private fun JetType.isJavaLangClass(): Boolean {
+        val classifier = getConstructor().getDeclarationDescriptor()
+
+        if (classifier !is ClassDescriptor) return false
+        return DescriptorUtils.isJavaLangClass(classifier)
+    }
+
+    private fun reportErrorsOnPositionedArguments(
+            resolvedCall: ResolvedCall<*>,
+            context: BasicCallResolutionContext
+    ) {
         resolvedCall.getValueArguments().filter {
-            p -> p.key.getName() != JvmAnnotationNames.DEFAULT_ANNOTATION_MEMBER_NAME &&
-                 p.value is ExpressionValueArgument &&
-                 !((p.value as ExpressionValueArgument).getValueArgument()?.isNamed() ?: true)
+            p ->
+            p.key.getName() != JvmAnnotationNames.DEFAULT_ANNOTATION_MEMBER_NAME &&
+            p.value is ExpressionValueArgument &&
+            !((p.value as ExpressionValueArgument).getValueArgument()?.isNamed() ?: true)
         }.forEach {
-            context.trace.report(
-                    ErrorsJvm.POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION.on(
-                            it.getValue().getArguments().first().getArgumentExpression()))
+            reportOnValueArgument(context, it, ErrorsJvm.POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION)
+        }
+    }
+
+    private fun reportOnValueArgument(
+            context: BasicCallResolutionContext,
+            argument: Map.Entry<ValueParameterDescriptor, ResolvedValueArgument>,
+            diagnostic: DiagnosticFactory0<JetExpression>
+    ) {
+        argument.getValue().getArguments().forEach {
+            if (it.getArgumentExpression() != null) {
+                context.trace.report(
+                        diagnostic.on(
+                                it.getArgumentExpression()
+                        )
+                )
+            }
         }
     }
 }
