@@ -16,35 +16,25 @@
 
 package org.jetbrains.kotlin.idea.decompiler.stubBuilder
 
-import com.intellij.util.indexing.FileContentImpl
+import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.buildDecompiledText
-import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinder
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
+import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.psi.stubs.elements.JetFileStubBuilder
-import org.junit.Assert
+import kotlin.properties.Delegates
 
-public class ClsStubConsistencyTest : JetLightCodeInsightFixtureTestCase() {
+public class ClsStubConsistencyTest : StubConsistencyBaseTest() {
 
-    private val STANDARD_LIBRARY_FQNAME = FqName("kotlin")
+    override val packages: List<FqName> = listOf(FqName("kotlin"))
 
-    public fun testConsistencyForKotlinPackage() {
-        val project = getProject()
-        val virtualFileFinder = JvmVirtualFileFinder.SERVICE.getInstance(getProject())
-        val kotlinPackageFile = virtualFileFinder.findVirtualFileWithHeader(PackageClassUtils.getPackageClassId(STANDARD_LIBRARY_FQNAME))!!
-
-        val decompiledText = buildDecompiledText(kotlinPackageFile).text
-        val clsStub = KotlinClsStubBuilder().buildFileStub(FileContentImpl.createByFile(kotlinPackageFile))!!
-
-        val fileWithDecompiledText = JetPsiFactory(project).createFile(decompiledText)
-        val stubTreeFromDecompiledText = JetFileStubBuilder().buildStubTree(fileWithDecompiledText)
-
-        val expectedText = stubTreeFromDecompiledText.serializeToString()
-        Assert.assertEquals(expectedText, clsStub.serializeToString())
+    override val virtualFileFinder: VirtualFileFinder by Delegates.lazy() {
+        JvmVirtualFileFinder.SERVICE.getInstance(getProject())
     }
+
+    override fun createStubBuilder() = KotlinClsStubBuilder()
+
+    override fun getDecompiledText(packageFile: VirtualFile): String = buildDecompiledText(packageFile).text
 
     override fun getProjectDescriptor() = JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 }
