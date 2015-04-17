@@ -146,6 +146,7 @@ public class DataFlowValueFactory {
         public final boolean isPackage;
 
         private IdentifierInfo(Object id, boolean isStable, boolean isLocal, boolean isPackage) {
+            assert !isStable || !isLocal : "Identifier info for object " + id + " cannot be stable and local at one time";
             this.id = id;
             this.isStable = isStable;
             this.isLocal = isLocal;

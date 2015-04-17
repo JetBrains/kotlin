@@ -33,17 +33,17 @@ public class DataFlowValue {
     public static final DataFlowValue ERROR = new DataFlowValue(new Object(), ErrorUtils.createErrorType("Error type for data flow"), false, false, Nullability.IMPOSSIBLE);
 
     private final boolean stableIdentifier;
-    private final boolean uncapturedlocalVariable;
+    private final boolean uncapturedLocalVariable;
     private final JetType type;
     private final Object id;
     private final Nullability immanentNullability;
 
     // Use DataFlowValueFactory
-    /*package*/ DataFlowValue(Object id, JetType type, boolean stableIdentifier, boolean uncapturedlocalVariable, Nullability immanentNullability) {
-        assert !stableIdentifier || !uncapturedlocalVariable :
-                "data flow value cannot be together a stable identifier and an uncaptured local variable";
+    /*package*/ DataFlowValue(Object id, JetType type, boolean stableIdentifier, boolean uncapturedLocalVariable, Nullability immanentNullability) {
+        assert !stableIdentifier || !uncapturedLocalVariable :
+                "data flow value for object " + id + " cannot be together a stable identifier and an uncaptured local variable";
         this.stableIdentifier = stableIdentifier;
-        this.uncapturedlocalVariable = uncapturedlocalVariable;
+        this.uncapturedLocalVariable = uncapturedLocalVariable;
         this.type = type;
         this.id = id;
         this.immanentNullability = immanentNullability;
@@ -73,7 +73,7 @@ public class DataFlowValue {
      * Identifier is considered a local variable here if it's mutable (var), local and not captured in a closure
      */
     public boolean isUncapturedLocalVariable() {
-        return uncapturedlocalVariable;
+        return uncapturedLocalVariable;
     }
 
     /**
@@ -82,7 +82,7 @@ public class DataFlowValue {
      * like accessing mutable properties in another thread or mutable variables from closures.
      */
     public boolean isPredictable() {
-        return stableIdentifier || uncapturedlocalVariable;
+        return stableIdentifier || uncapturedLocalVariable;
     }
 
     @NotNull

@@ -40,12 +40,23 @@ public interface DataFlowInfo {
     @NotNull
     Nullability getNullability(@NotNull DataFlowValue key);
 
+    /**
+     * Gets a set of all possible types for this value, INCLUDING the original (native) type
+     */
+    @NotNull
+    Set<JetType> getPossibleTypes(@NotNull DataFlowValue key, boolean withOriginalType);
+
+    /**
+     * IMPORTANT: by default, the original (native) type for this value
+     * are NOT included. So it's quite possible to get an empty set here.
+     * If you need also the original type, use getPossibleTypes(key, true)
+     */
     @NotNull
     Set<JetType> getPossibleTypes(@NotNull DataFlowValue key);
 
     /**
      * Call this function to clear all data flow information about
-     * the given data flow value.
+     * the given data flow value. Useful when we are not sure how this value can be changed, e.g. in a loop.
      */
     @NotNull
     DataFlowInfo clearValueInfo(@NotNull DataFlowValue value);
