@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.serialization.builtins
 
-import org.jetbrains.kotlin.builtins.BuiltinsPackageFragment
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.createBuiltInPackageFragmentProvider
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil.TEST_PACKAGE_FQNAME
 import org.jetbrains.kotlin.serialization.deserialization.FlexibleTypeCapabilitiesDeserializer
@@ -40,19 +40,21 @@ public class BuiltInsSerializerTest : TestCaseWithTmpdir() {
 
         val module = JetTestUtils.createEmptyModule("<module>")
 
-        val packageFragment =
-            BuiltinsPackageFragment(TEST_PACKAGE_FQNAME, LockBasedStorageManager(), module, FlexibleTypeCapabilitiesDeserializer.ThrowException) {
-                val file = File(tmpdir, it)
-                if (file.exists()) FileInputStream(file) else null
-            }
+        val packageFragmentProvider = createBuiltInPackageFragmentProvider(
+                LockBasedStorageManager(), module, setOf(TEST_PACKAGE_FQNAME),
+                FlexibleTypeCapabilitiesDeserializer.ThrowException
+        ) {
+            val file = File(tmpdir, it)
+            if (file.exists()) FileInputStream(file) else null
+        }
 
-        module.initialize(packageFragment.provider)
+        module.initialize(packageFragmentProvider)
         module.addDependencyOnModule(module)
         module.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule())
         module.seal()
 
         RecursiveDescriptorComparator.validateAndCompareDescriptorWithFile(
-                module.getPackage(TEST_PACKAGE_FQNAME),
+                module.getPackage(TEST_PACKAGE_FQNAME)!!,
                 RecursiveDescriptorComparator.DONT_INCLUDE_METHODS_OF_OBJECT,
                 File(source.replace(".kt", ".txt"))
         )

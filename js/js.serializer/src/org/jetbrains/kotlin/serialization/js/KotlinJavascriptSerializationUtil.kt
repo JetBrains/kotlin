@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.serialization.js
 
 import com.google.protobuf.ByteString
 import org.jetbrains.kotlin.builtins.BuiltInsSerializationUtil
-import org.jetbrains.kotlin.builtins.BuiltinsPackageFragment
+import org.jetbrains.kotlin.builtins.createBuiltInPackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -44,29 +44,26 @@ public object KotlinJavascriptSerializationUtil {
     private val PACKAGE_FILE_SUFFIX = "/.kotlin_package"
 
     platformStatic
-    public fun getPackageFragmentProviders(moduleDescriptor: ModuleDescriptor, metadata: ByteArray): List<PackageFragmentProvider> {
+    public fun createPackageFragmentProvider(moduleDescriptor: ModuleDescriptor, metadata: ByteArray): PackageFragmentProvider? {
         val gzipInputStream = GZIPInputStream(ByteArrayInputStream(metadata))
         val content = JsProtoBuf.Library.parseFrom(gzipInputStream)
         gzipInputStream.close()
 
         val contentMap: MutableMap<String, ByteArray> = hashMapOf()
-        for(index in 0..content.getEntryCount()-1) {
+        for (index in content.getEntryCount().indices) {
             val entry = content.getEntry(index)
             contentMap[entry.getPath()] = entry.getContent().toByteArray()
         }
 
-        val packages = getPackages(contentMap)
+        val packageFqNames = getPackages(contentMap).map { FqName(it) }.toSet()
+        if (packageFqNames.isEmpty()) return null
 
-        val load = { path: String -> if (!contentMap.containsKey(path)) null else ByteArrayInputStream(contentMap.get(path)) }
-
-        val providers = arrayListOf<PackageFragmentProvider>()
-        for (packageName in packages) {
-            val fqName = FqName(packageName)
-            val packageFragment = BuiltinsPackageFragment(fqName, LockBasedStorageManager(), moduleDescriptor, FlexibleTypeCapabilitiesDeserializer.Dynamic, load)
-            providers.add(packageFragment.provider)
+        return createBuiltInPackageFragmentProvider(
+                LockBasedStorageManager(), moduleDescriptor, packageFqNames, FlexibleTypeCapabilitiesDeserializer.Dynamic
+        ) {
+            path ->
+            if (!contentMap.containsKey(path)) null else ByteArrayInputStream(contentMap.get(path))
         }
-
-        return providers
     }
 
     public fun contentMapToByteArray(contentMap: Map<String, ByteArray>): ByteArray {

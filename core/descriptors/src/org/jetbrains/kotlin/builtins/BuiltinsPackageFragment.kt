@@ -16,86 +16,45 @@
 
 package org.jetbrains.kotlin.builtins
 
-import com.google.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
-import org.jetbrains.kotlin.descriptors.PackageFragmentProviderImpl
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.serialization.ClassData
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf
-import org.jetbrains.kotlin.serialization.deserialization.*
+import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
+import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 import org.jetbrains.kotlin.storage.StorageManager
 import java.io.InputStream
+import javax.inject.Inject
+import kotlin.properties.Delegates
 
 public class BuiltinsPackageFragment(
         fqName: FqName,
         storageManager: StorageManager,
         module: ModuleDescriptor,
-        flexibleTypeCapabilitiesDeserializer: FlexibleTypeCapabilitiesDeserializer,
         private val loadResource: (path: String) -> InputStream?
 ) : PackageFragmentDescriptorImpl(module, fqName) {
 
-    private val extensionRegistry: ExtensionRegistryLite
+    val nameResolver = NameResolver.read(loadResourceSure(BuiltInsSerializationUtil.getStringTableFilePath(fqName)))
 
-    init {
-        extensionRegistry = ExtensionRegistryLite.newInstance()
-        BuiltInsProtoBuf.registerAllExtensions(extensionRegistry)
-        extensionRegistry
+    private var components: DeserializationComponents by Delegates.notNull()
+
+    Inject
+    public fun setDeserializationComponents(components: DeserializationComponents) {
+        this.components = components
     }
 
-    private val nameResolver = NameResolver.read(
-            getStream(BuiltInsSerializationUtil.getStringTableFilePath(fqName))
-    )
-
-    public val provider: PackageFragmentProvider = PackageFragmentProviderImpl(listOf(this))
-
-    private val members: DeserializedPackageMemberScope = run {
-        val proto = loadPackage()
-        val localClassResolver = LocalClassResolverImpl()
-        val components = DeserializationComponents(
-                storageManager, module, BuiltInsClassDataFinder(),
-                BuiltInsAnnotationAndConstantLoader(getContainingDeclaration()),
-                provider, localClassResolver,
-                flexibleTypeCapabilitiesDeserializer
-        )
-        localClassResolver.setDeserializationComponents(components)
-        DeserializedPackageMemberScope(this, proto, nameResolver, components, { readClassNames(proto) })
+    private val memberScope = storageManager.createLazyValue {
+        val stream = loadResourceSure(BuiltInsSerializationUtil.getPackageFilePath(fqName))
+        val proto = ProtoBuf.Package.parseFrom(stream, BuiltInsSerializationUtil.EXTENSION_REGISTRY)
+        DeserializedPackageMemberScope(this, proto, nameResolver, components, classNames = {
+            proto.getExtension(BuiltInsProtoBuf.className)?.map { id -> nameResolver.getName(id) } ?: listOf()
+        })
     }
 
-    private fun loadPackage(): ProtoBuf.Package {
-        val stream = getStream(BuiltInsSerializationUtil.getPackageFilePath(fqName))
-        return ProtoBuf.Package.parseFrom(stream, extensionRegistry)
-    }
+    override fun getMemberScope() = memberScope()
 
-    private fun readClassNames(proto: ProtoBuf.Package): List<Name> {
-        return proto.getExtension(BuiltInsProtoBuf.className)?.map { id -> nameResolver.getName(id) } ?: listOf()
-    }
-
-    override fun getMemberScope() = members
-
-    private fun getStream(path: String): InputStream =
+    private fun loadResourceSure(path: String): InputStream =
             loadResource(path) ?: throw IllegalStateException("Resource not found in classpath: $path")
-
-    private inner class BuiltInsClassDataFinder : ClassDataFinder {
-        override fun findClassData(classId: ClassId): ClassData? {
-            val stream = loadResource(BuiltInsSerializationUtil.getClassMetadataPath(classId)) ?: return null
-
-            val classProto = ProtoBuf.Class.parseFrom(stream, extensionRegistry)
-
-            val expectedShortName = classId.getShortClassName()
-            val actualShortName = nameResolver.getClassId(classProto.getFqName()).getShortClassName()
-            if (!actualShortName.isSpecial() && actualShortName != expectedShortName) {
-                // Workaround for case-insensitive file systems,
-                // otherwise we'd find "Collection" for "collection" etc
-                return null
-            }
-
-            return ClassData(nameResolver, classProto)
-        }
-    }
 }
