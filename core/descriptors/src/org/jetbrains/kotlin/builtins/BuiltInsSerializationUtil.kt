@@ -16,14 +16,23 @@
 
 package org.jetbrains.kotlin.builtins
 
-import org.jetbrains.kotlin.name.*
+import com.google.protobuf.ExtensionRegistryLite
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf
 import kotlin.platform.platformStatic
 
 public object BuiltInsSerializationUtil {
+    public val EXTENSION_REGISTRY: ExtensionRegistryLite
+
+    init {
+        EXTENSION_REGISTRY = ExtensionRegistryLite.newInstance()
+        BuiltInsProtoBuf.registerAllExtensions(EXTENSION_REGISTRY)
+    }
+
     private val CLASS_METADATA_FILE_EXTENSION = "kotlin_class"
     private val PACKAGE_FILE_NAME = ".kotlin_package"
     private val STRING_TABLE_FILE_NAME = ".kotlin_string_table"
-    private val CLASS_NAMES_FILE_NAME = ".kotlin_class_names"
 
     platformStatic public fun getClassMetadataPath(classId: ClassId): String {
         return packageFqNameToPath(classId.getPackageFqName()) + "/" + classId.getRelativeClassName().asString() +
@@ -35,9 +44,6 @@ public object BuiltInsSerializationUtil {
 
     platformStatic public fun getStringTableFilePath(fqName: FqName): String =
             packageFqNameToPath(fqName) + "/" + STRING_TABLE_FILE_NAME
-
-    platformStatic public fun getClassNamesFilePath(fqName: FqName): String =
-            packageFqNameToPath(fqName) + "/" + CLASS_NAMES_FILE_NAME
 
     private fun packageFqNameToPath(fqName: FqName): String =
             fqName.asString().replace('.', '/')

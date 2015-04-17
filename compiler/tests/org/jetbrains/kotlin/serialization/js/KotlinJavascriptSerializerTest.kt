@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.js.config.EcmaVersion
@@ -37,6 +36,7 @@ import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import org.jetbrains.kotlin.utils.serializer.KotlinJavaScriptSerializer
+import org.jetbrains.kotlin.utils.sure
 import java.io.File
 
 public class KotlinJavascriptSerializerTest : TestCaseWithTmpdir() {
@@ -84,7 +84,8 @@ public class KotlinJavascriptSerializerTest : TestCaseWithTmpdir() {
         val metadata = KotlinJavascriptMetadataUtils.loadMetadata(metaFile)
         assert(metadata.size() == 1)
 
-        val provider = CompositePackageFragmentProvider(KotlinJavascriptSerializationUtil.getPackageFragmentProviders(module, metadata[0].body))
+        val provider = KotlinJavascriptSerializationUtil.createPackageFragmentProvider(module, metadata[0].body)
+                .sure("No package fragment provider was created")
 
         module.initialize(provider)
         module.addDependencyOnModule(module)

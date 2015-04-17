@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil;
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadata;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -98,7 +99,7 @@ public abstract class Config {
         return moduleId;
     }
 
-    public abstract  boolean checkLibFilesAndReportErrors(@NotNull Function1<String, Unit> report);
+    public abstract boolean checkLibFilesAndReportErrors(@NotNull Function1<String, Unit> report);
 
     protected abstract void init(@NotNull List<JetFile> sourceFilesInLibraries, @NotNull List<KotlinJavascriptMetadata> metadata);
 
@@ -108,7 +109,7 @@ public abstract class Config {
         if (moduleDescriptors != null) return moduleDescriptors;
 
         moduleDescriptors = new SmartList<ModuleDescriptorImpl>();
-        for(KotlinJavascriptMetadata metadataEntry : metadata) {
+        for (KotlinJavascriptMetadata metadataEntry : metadata) {
             moduleDescriptors.add(createModuleDescriptor(metadataEntry));
         }
 
@@ -136,11 +137,12 @@ public abstract class Config {
     private static ModuleDescriptorImpl createModuleDescriptor(KotlinJavascriptMetadata metadata) {
         ModuleDescriptorImpl moduleDescriptor = TopDownAnalyzerFacadeForJS.createJsModule("<" + metadata.getModuleName() + ">");
 
-        List<PackageFragmentProvider> providers = KotlinJavascriptSerializationUtil
-                .getPackageFragmentProviders(moduleDescriptor, metadata.getBody());
-        CompositePackageFragmentProvider compositePackageFragmentProvider = new CompositePackageFragmentProvider(providers);
+        PackageFragmentProvider provider =
+                KotlinJavascriptSerializationUtil.createPackageFragmentProvider(moduleDescriptor, metadata.getBody());
 
-        moduleDescriptor.initialize(compositePackageFragmentProvider);
+        moduleDescriptor.initialize(
+                provider != null ? provider : new CompositePackageFragmentProvider(Collections.<PackageFragmentProvider>emptyList())
+        );
         moduleDescriptor.addDependencyOnModule(moduleDescriptor);
         moduleDescriptor.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule());
         moduleDescriptor.seal();

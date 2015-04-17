@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 import java.io.InputStream;
 import java.util.*;
 
+import static kotlin.KotlinPackage.single;
 import static org.jetbrains.kotlin.builtins.PrimitiveType.*;
 
 public class KotlinBuiltIns {
@@ -109,21 +110,24 @@ public class KotlinBuiltIns {
 
     private KotlinBuiltIns() {
         builtInsModule = new ModuleDescriptorImpl(
-                Name.special("<built-ins lazy module>"), Collections.<ImportPath>emptyList(), PlatformToKotlinClassMap.EMPTY
+                Name.special("<built-ins module>"), Collections.<ImportPath>emptyList(), PlatformToKotlinClassMap.EMPTY
         );
-        builtinsPackageFragment = new BuiltinsPackageFragment(
-                BUILT_INS_PACKAGE_FQ_NAME, new LockBasedStorageManager(), builtInsModule,
-                FlexibleTypeCapabilitiesDeserializer.ThrowException.INSTANCE$,
-                new Function1<String, InputStream>() {
+
+        PackageFragmentProvider packageFragmentProvider = BuiltinsPackage.createBuiltInPackageFragmentProvider(
+                new LockBasedStorageManager(), builtInsModule, Collections.singleton(BUILT_INS_PACKAGE_FQ_NAME),
+                FlexibleTypeCapabilitiesDeserializer.ThrowException.INSTANCE$, new Function1<String, InputStream>() {
                     @Override
                     public InputStream invoke(String path) {
                         return KotlinBuiltIns.class.getClassLoader().getResourceAsStream(path);
                     }
                 }
         );
-        builtInsModule.initialize(builtinsPackageFragment.getProvider());
+
+        builtInsModule.initialize(packageFragmentProvider);
         builtInsModule.addDependencyOnModule(builtInsModule);
         builtInsModule.seal();
+
+        builtinsPackageFragment = (BuiltinsPackageFragment) single(packageFragmentProvider.getPackageFragments(BUILT_INS_PACKAGE_FQ_NAME));
 
         primitiveTypeToNullableJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);
         primitiveTypeToArrayJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);
