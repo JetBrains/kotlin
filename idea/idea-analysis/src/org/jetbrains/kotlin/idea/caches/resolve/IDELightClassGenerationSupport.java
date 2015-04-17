@@ -270,9 +270,8 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
         List<PsiClass> result = new ArrayList<PsiClass>();
         List<KotlinLightPackageClassInfo> packageClassesInfos = findPackageClassesInfos(packageFqName, scope);
         for (KotlinLightPackageClassInfo info : packageClassesInfos) {
-            Collection<JetFile> files = info.getFiles();
-            List<JetFile> filesWithCallables = PackagePartClassUtils.getPackageFilesWithCallables(files);
-            if (filesWithCallables.isEmpty()) continue;
+            List<JetFile> files = PackagePartClassUtils.getPackageFilesWithCallables(info.getFiles());
+            if (files.isEmpty()) continue;
 
             IdeaModuleInfo moduleInfo = info.getModuleInfo();
             if (moduleInfo instanceof ModuleSourceInfo) {
@@ -289,7 +288,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
                 }
             }
             else {
-                PsiClass clsClass = getLightClassForDecompiledPackage(packageFqName, filesWithCallables);
+                PsiClass clsClass = getLightClassForDecompiledPackage(packageFqName, files);
                 if (clsClass != null) {
                     result.add(clsClass);
                 }
