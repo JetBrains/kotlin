@@ -141,6 +141,12 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
                 doTest(fileName);
             }
 
+            @TestMetadata("valueArrayAndOtherDefaultError.kt")
+            public void testValueArrayAndOtherDefaultError() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationParameters/valueArrayAndOtherDefaultError.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("valueArrayOnly.kt")
             public void testValueArrayOnly() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationParameters/valueArrayOnly.kt");
