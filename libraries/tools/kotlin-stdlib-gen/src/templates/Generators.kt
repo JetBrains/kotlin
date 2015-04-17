@@ -11,7 +11,16 @@ fun generators(): List<GenericFunction> {
         returns("List<T>")
         body {
             """
-            val answer = toArrayList()
+            val answer = ArrayList<T>(collectionSizeOrNull()?.let { it + 1 } ?: 10)
+            for (thisElement in this) answer.add(thisElement)
+            answer.add(element)
+            return answer
+            """
+        }
+        body(ArraysOfObjects, ArraysOfPrimitives) {
+            """
+            val answer = ArrayList<T>(size()+1)
+            for (thisElement in this) answer.add(thisElement)
             answer.add(element)
             return answer
             """
@@ -32,7 +41,17 @@ fun generators(): List<GenericFunction> {
         returns("List<T>")
         body {
             """
-            val answer = toArrayList()
+            val answer = ArrayList<T>(collectionSizeOrDefault(10) + collection.collectionSizeOrDefault(10))
+            for (thisElement in this) answer.add(thisElement)
+            answer.addAll(collection)
+            return answer
+            """
+        }
+
+        body(ArraysOfObjects, ArraysOfPrimitives) {
+            """
+            val answer = ArrayList<T>(size() + collection.collectionSizeOrDefault(10))
+            for (thisElement in this) answer.add(thisElement)
             answer.addAll(collection)
             return answer
             """
@@ -45,7 +64,16 @@ fun generators(): List<GenericFunction> {
         returns("List<T>")
         body {
             """
-            val answer = toArrayList()
+            val answer = ArrayList<T>(collectionSizeOrDefault(10) + array.size())
+            for (thisElement in this) answer.add(thisElement)
+            answer.addAll(array)
+            return answer
+            """
+        }
+        body(ArraysOfObjects, ArraysOfPrimitives) {
+            """
+            val answer = ArrayList<T>(size() + array.size())
+            for (thisElement in this) answer.add(thisElement)
             answer.addAll(array)
             return answer
             """
@@ -179,7 +207,7 @@ fun generators(): List<GenericFunction> {
             """
             val first = iterator()
             val second = array.iterator()
-            val list = ArrayList<V>(size())
+            val list = ArrayList<V>(Math.min(size(), array.size()))
             while (first.hasNext() && second.hasNext()) {
                 list.add(transform(first.next(), second.next()))
             }
@@ -187,6 +215,30 @@ fun generators(): List<GenericFunction> {
             """
         }
 
+    }
+
+
+    templates add f("merge(array: SELF, transform: (T, T) -> V)") {
+        only(ArraysOfPrimitives)
+        doc {
+            """
+            Returns a list of values built from elements of both collections with same indexes using provided *transform*. List has length of shortest collection.
+            """
+        }
+        typeParam("V")
+        returns("List<V>")
+        inline(true)
+        body() {
+            """
+            val first = iterator()
+            val second = array.iterator()
+            val list = ArrayList<V>(Math.min(size(), array.size()))
+            while (first.hasNext() && second.hasNext()) {
+                list.add(transform(first.next(), second.next()))
+            }
+            return list
+            """
+        }
     }
 
 
@@ -254,6 +306,21 @@ fun generators(): List<GenericFunction> {
         }
         typeParam("R")
         returns("List<Pair<T, R>>")
+        body {
+            """
+            return merge(array) { t1, t2 -> t1 to t2 }
+            """
+        }
+    }
+
+    templates add f("zip(array: SELF)") {
+        only(ArraysOfPrimitives)
+        doc {
+            """
+            Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
+            """
+        }
+        returns("List<Pair<T, T>>")
         body {
             """
             return merge(array) { t1, t2 -> t1 to t2 }
