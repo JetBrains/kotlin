@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.highlighter
+package org.jetbrains.kotlin.idea.highlighter.markers
 
 import com.google.common.collect.Maps
 import com.google.common.collect.Sets
@@ -27,26 +27,19 @@ import com.intellij.icons.AllIcons
 import com.intellij.openapi.editor.markup.GutterIconRenderer
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.DumbService
-import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.search.searches.ClassInheritorsSearch
 import com.intellij.util.NullableFunction
-import kotlin.KotlinPackage
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.idea.highlighter.markers.*
-import org.jetbrains.kotlin.idea.highlighter.markers.ResolveWithParentsResult
-import org.jetbrains.kotlin.idea.highlighter.markers.SuperDeclarationMarkerNavigationHandler
-import org.jetbrains.kotlin.idea.highlighter.markers.SuperDeclarationMarkerTooltip
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.*
-
-import javax.swing.*
+import org.jetbrains.kotlin.psi.psiUtil.isOverridable
 import java.awt.event.MouseEvent
+import javax.swing.Icon
 
 public class JetLineMarkerProvider : LineMarkerProvider {
 

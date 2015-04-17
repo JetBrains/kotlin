@@ -40,7 +40,7 @@ import javax.swing.JComponent
 import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator
 import com.intellij.psi.NavigatablePsiElement
 import com.intellij.util.Function
-import org.jetbrains.kotlin.idea.highlighter.JetLineMarkerProvider
+import org.jetbrains.kotlin.idea.highlighter.markers.JetLineMarkerProvider
 
 fun getOverriddenPropertyTooltip(property: JetProperty): String? {
     val overriddenInClassesProcessor = PsiElementProcessor.CollectElementsWithLimit<PsiClass>(5)
