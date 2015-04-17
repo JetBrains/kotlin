@@ -673,8 +673,8 @@ private fun ExtractionData.inferParametersInfo(
                     receiverToExtract is ThisReceiver -> {
                         val calleeExpression = resolvedCall!!.getCall().getCalleeExpression()
                         bindingContext[BindingContext.EXPRESSION_DATA_FLOW_INFO, calleeExpression]?.let { dataFlowInfo ->
-                            val possibleTypes = dataFlowInfo.getPossibleTypes(DataFlowValueFactory.createDataFlowValue(receiverToExtract), true)
-                            CommonSupertypes.commonSupertype(possibleTypes)
+                            val possibleTypes = dataFlowInfo.getPossibleTypes(DataFlowValueFactory.createDataFlowValue(receiverToExtract))
+                            if (possibleTypes.isNotEmpty()) CommonSupertypes.commonSupertype(possibleTypes) else null
                         } ?: receiverToExtract.getType()
                     }
                     receiverToExtract.exists() -> receiverToExtract.getType()
