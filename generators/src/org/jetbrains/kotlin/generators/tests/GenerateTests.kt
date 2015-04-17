@@ -306,6 +306,12 @@ fun main(args: Array<String>) {
         }
     }
 
+    testGroup("compiler/java8-tests/tests", "compiler/testData") {
+        testClass(javaClass<AbstractBlackBoxCodegenTest>(), "BlackBoxWithJava8CodegenTestGenerated") {
+            model("codegen/java8/boxWithJava", testMethod = "doTestWithJava", extension = null, recursive = true, excludeParentDirs = true)
+        }
+    }
+
     testGroup("idea/tests", "idea/testData") {
 
         testClass(javaClass<AbstractJavaTypeSubstitutorTest>()) {
