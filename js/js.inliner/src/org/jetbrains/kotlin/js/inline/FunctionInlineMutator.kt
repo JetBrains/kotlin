@@ -17,11 +17,15 @@
 package org.jetbrains.kotlin.js.inline
 
 import com.google.dart.compiler.backend.js.ast.*
+import com.google.dart.compiler.util.AstUtil
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.js.inline.clean.removeDefaultInitializers
 import org.jetbrains.kotlin.js.inline.context.InliningContext
 import org.jetbrains.kotlin.js.inline.context.NamingContext
 import org.jetbrains.kotlin.js.inline.util.*
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.newVar
+import org.jetbrains.kotlin.js.translate.utils.ast.*
+
 import kotlin.platform.platformStatic
 
 class FunctionInlineMutator private (private val call: JsInvocation, private val inliningContext: InliningContext) {
@@ -31,6 +35,7 @@ class FunctionInlineMutator private (private val call: JsInvocation, private val
     private val body: JsBlock
     private var resultExpr: JsExpression? = null
     private var breakLabel: JsLabel? = null
+    private val currentStatement = inliningContext.statementContext.getCurrentNode()
 
     init {
 
@@ -108,12 +113,6 @@ class FunctionInlineMutator private (private val call: JsInvocation, private val
         val returnOnTop = ContainerUtil.findInstance(body.getStatements(), javaClass<JsReturn>())
         val hasReturnOnTopLevel = returnOnTop != null
 
-        if (isResultNeeded) {
-            val resultName = namingContext.getFreshName(getResultLabel())
-            namingContext.newVar(resultName, null)
-            resultExpr = resultName.makeRef()
-        }
-
         val needBreakLabel = !(returnCount == 1 && hasReturnOnTopLevel)
         var breakLabelRef: JsNameRef? = null
 
@@ -123,8 +122,63 @@ class FunctionInlineMutator private (private val call: JsInvocation, private val
             breakLabel = JsLabel(breakName)
         }
 
+        val resultReference = getResultReference()
+        if (resultReference != null) {
+            resultExpr = resultReference
+        }
+
         assert(resultExpr == null || resultExpr is JsNameRef)
         replaceReturns(body, resultExpr as? JsNameRef, breakLabelRef)
+    }
+
+        val breakName = namingContext.getFreshName(getBreakLabel())
+        breakLabel = JsLabel(breakName)
+
+        val visitor = ReturnReplacingVisitor(resultExpr as? JsNameRef, breakName.makeRef())
+        visitor.accept(body)
+    }
+
+    private fun getResultReference(): JsNameRef? {
+        if (!isResultNeeded) return null
+
+        val existingReference = when (currentStatement) {
+            is JsExpressionStatement -> {
+                val expression = currentStatement.getExpression() as? JsBinaryOperation
+                expression?.getResultReference()
+            }
+            is JsVars -> currentStatement.getResultReference()
+            else -> null
+        }
+
+        if (existingReference != null) return existingReference
+
+        val resultName = namingContext.getFreshName(getResultLabel())
+        namingContext.newVar(resultName, null)
+        return resultName.makeRef()
+    }
+
+    private fun JsBinaryOperation.getResultReference(): JsNameRef? {
+        if (operator !== JsBinaryOperator.ASG || arg2 !== call) return null
+
+        return arg1 as? JsNameRef
+    }
+
+    private fun JsVars.getResultReference(): JsNameRef? {
+        val vars = getVars()
+        val variable = vars.first()
+
+        // var a = expr1 + call() is ok, but we don't want to reuse 'a' for result,
+        // as it means to replace every 'return expr2' to 'a = expr1 + expr2'.
+        // If there is more than one return, expr1 copies are undesirable.
+        if (variable.initExpression !== call || vars.size() > 1) return null
+
+        val varName = variable.getName()
+        with (inliningContext.statementContext) {
+            removeMe()
+            addPrevious(newVar(varName, null))
+        }
+
+        return varName.makeRef()
     }
 
     private fun getArguments(): List<JsExpression> {
@@ -137,8 +191,6 @@ class FunctionInlineMutator private (private val call: JsInvocation, private val
     }
 
     private fun isResultNeeded(call: JsInvocation): Boolean {
-        val statementContext = inliningContext.statementContext
-        val currentStatement = statementContext.getCurrentNode()
         return currentStatement !is JsExpressionStatement || call != currentStatement.getExpression()
     }
 
