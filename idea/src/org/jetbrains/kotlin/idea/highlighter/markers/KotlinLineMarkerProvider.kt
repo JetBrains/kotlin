@@ -75,8 +75,8 @@ public class KotlinLineMarkerProvider : LineMarkerProvider {
             }
         }
 
-        collectOverridingAccessors(functions, result)
-        collectOverridingPropertiesAccessors(properties, result)
+        collectOverriddenFunctions(functions, result)
+        collectOverriddenPropertyAccessors(properties, result)
     }
 }
 
@@ -159,7 +159,7 @@ private fun collectInheritedClassMarker(element: JetClass, result: MutableCollec
     ))
 }
 
-private fun collectOverridingPropertiesAccessors(properties: Collection<JetProperty>, result: MutableCollection<LineMarkerInfo<*>>) {
+private fun collectOverriddenPropertyAccessors(properties: Collection<JetProperty>, result: MutableCollection<LineMarkerInfo<*>>) {
     val mappingToJava = Maps.newHashMap<PsiMethod, JetProperty>()
     for (property in properties) {
         if (property.isOverridable()) {
@@ -190,7 +190,7 @@ private fun collectOverridingPropertiesAccessors(properties: Collection<JetPrope
     }
 }
 
-private fun collectOverridingAccessors(functions: Collection<JetNamedFunction>, result: MutableCollection<LineMarkerInfo<*>>) {
+private fun collectOverriddenFunctions(functions: Collection<JetNamedFunction>, result: MutableCollection<LineMarkerInfo<*>>) {
     val mappingToJava = Maps.newHashMap<PsiMethod, JetNamedFunction>()
     for (function in functions) {
         if (function.isOverridable()) {
