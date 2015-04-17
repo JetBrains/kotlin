@@ -86,6 +86,7 @@ public class KotlinIntroduceParameterDialog private (
     private val nameField = NameSuggestionsField(nameSuggestions, project, JetFileType.INSTANCE)
     private val typeField = NameSuggestionsField(typeNameSuggestions, project, JetFileType.INSTANCE)
     private var replaceAllCheckBox: JCheckBox? = null
+    private var defaultValueCheckBox: JCheckBox? = null
     private val removeParamsCheckBoxes = LinkedHashMap<JCheckBox, JetParameter>(descriptor.parametersToRemove.size())
     private var parameterTablePanel: KotlinParameterTablePanel? = null
 
@@ -98,6 +99,14 @@ public class KotlinIntroduceParameterDialog private (
     }
 
     override fun getPreferredFocusedComponent() = nameField.getFocusableComponent()
+
+    private fun updateRemoveParamCheckBoxes() {
+        val enableParamRemove = (replaceAllCheckBox?.isSelected() ?: true) && (!defaultValueCheckBox!!.isSelected())
+        removeParamsCheckBoxes.keySet().forEach {
+            it.setEnabled(enableParamRemove)
+            it.setSelected(enableParamRemove)
+        }
+    }
 
     override fun createNorthPanel(): JComponent? {
         val gbConstraints = GridBagConstraints()
@@ -177,19 +186,24 @@ public class KotlinIntroduceParameterDialog private (
         gbConstraints.gridx = 0
         gbConstraints.insets = Insets(4, 0, 4, 8)
         gbConstraints.gridwidth = 2
+        gbConstraints.gridy++
+
+        val defaultValueCheckBox = NonFocusableCheckBox("Introduce default value")
+        defaultValueCheckBox.setSelected(descriptor.withDefaultValue)
+        defaultValueCheckBox.setMnemonic('d')
+        defaultValueCheckBox.addActionListener { updateRemoveParamCheckBoxes() }
+        panel.add(defaultValueCheckBox, gbConstraints)
+
+        this.defaultValueCheckBox = defaultValueCheckBox
+
         val occurrenceCount = descriptor.occurrencesToReplace.size()
+
         if (occurrenceCount > 1) {
             gbConstraints.gridy++
             val replaceAllCheckBox = NonFocusableCheckBox("Replace all occurrences ($occurrenceCount)")
             replaceAllCheckBox.setSelected(true)
             replaceAllCheckBox.setMnemonic('R')
-            replaceAllCheckBox.addActionListener {
-                val enableParamRemove = replaceAllCheckBox.isSelected()
-                removeParamsCheckBoxes.keySet().forEach {
-                    it.setEnabled(enableParamRemove)
-                    it.setSelected(enableParamRemove)
-                }
-            }
+            replaceAllCheckBox.addActionListener { updateRemoveParamCheckBoxes() }
             panel.add(replaceAllCheckBox, gbConstraints)
             this.replaceAllCheckBox = replaceAllCheckBox
         }
@@ -286,6 +300,7 @@ public class KotlinIntroduceParameterDialog private (
                                 newParameterName = chosenName,
                                 newParameterTypeText = chosenType,
                                 newArgumentValue = newArgumentValue,
+                                withDefaultValue = defaultValueCheckBox!!.isSelected(),
                                 occurrencesToReplace = with(descriptor) {
                                     if (replaceAllCheckBox?.isSelected() ?: true) {
                                         occurrencesToReplace
