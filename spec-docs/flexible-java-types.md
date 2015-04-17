@@ -381,6 +381,48 @@ the enhanced signature must be discarded and a warning issued.
 Checklist:
    - any platform signature should override any enhanced/propagated signature created for the same member or one of its overridden.
 
+### Problematic cases of Java inheritance
+
+**Case 1**. Fake override for conflicting signatures with the same erasure:
+
+```
+// Kotlin
+trait A {
+    fun foo(x: String)
+}
+
+trait B {
+    fun foo(x: String?)
+}
+
+// Java
+interface JC extends A, B {}
+
+// Kotlin
+
+class D : JC {
+    // how to override both foo(String) and foo(String?) in this class?
+}
+```
+
+Possible solution: make fake overrides generated for Java class have platform signatures and perform normal enhancement for them
+ 
+**Case 2**. Inheriting a property through a Java class
+ 
+It may be overridden by a Java function, for example
+ 
+**Case 3**. Inheriting an extension function/property through a Java class
+ 
+Explicit override(s) may also interfere.  
+
+**Case 4**. Raw types interfering with override-compatibility of Java signatures with Kotlin ones
+
+**Case 5**. Order of type parameters in Java methods matters only partly
+
+The first parameter matters, others may come in any order.
+
+See also: [KT-7496](https://youtrack.jetbrains.com/issue/KT-7496)
+
 ### Appendix
 
 We can also support the following annotations out-of-the-box:
