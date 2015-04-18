@@ -16,6 +16,9 @@
 
 package org.jetbrains.kotlin.codegen;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.intellij.openapi.util.SystemInfo;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
@@ -118,6 +121,11 @@ public class CodegenTestUtil {
 
     @NotNull
     public static File compileJava(@NotNull String filename, @NotNull String... additionalClasspath) {
+        return compileJava(Collections.singletonList(filename), additionalClasspath);
+    }
+
+    @NotNull
+    public static File compileJava(@NotNull List<String> filenames, @NotNull String... additionalClasspath) {
         try {
             File javaClassesTempDirectory = JetTestUtils.tmpDir("java-classes");
             List<String> classpath = new ArrayList<String>();
@@ -130,8 +138,14 @@ public class CodegenTestUtil {
                     "-d", javaClassesTempDirectory.getPath()
             );
 
-            File javaFile = new File(JetTestUtils.getTestDataPathBase() + "/codegen/" + filename);
-            JetTestUtils.compileJavaFiles(Collections.singleton(javaFile), options);
+            List<File> fileList = Lists.transform(filenames, new Function<String, File>() {
+                @Override
+                public File apply(@Nullable String input) {
+                    return new File(JetTestUtils.getTestDataPathBase() + "/codegen/" + input);
+                }
+            });
+
+            JetTestUtils.compileJavaFiles(fileList, options);
 
             return javaClassesTempDirectory;
         }
