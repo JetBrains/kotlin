@@ -5,7 +5,6 @@
 package com.google.dart.compiler.backend.js.ast;
 
 import org.jetbrains.annotations.Nullable;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.List;
 
@@ -17,7 +16,7 @@ import java.util.List;
 public abstract class JsContext<T extends JsNode> {
 
   public <R extends T> void addPrevious(R node) {
-    throw new NotImplementedException();
+    throw new UnsupportedOperationException();
   }
 
   public <R extends T> void addPrevious(List<R> nodes) {
@@ -27,7 +26,7 @@ public abstract class JsContext<T extends JsNode> {
   }
 
   public <R extends T> void addNext(R node) {
-    throw new NotImplementedException();
+    throw new UnsupportedOperationException();
   }
 
   public abstract void removeMe();
