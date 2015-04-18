@@ -153,8 +153,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         File kotlinOut = JetTestUtils.tmpDir(toString());
         OutputUtilsPackage.writeAllTo(classFileFactory, kotlinOut);
 
-        // TODO: support several Java sources
-        File javaOut = compileJava(KotlinPackage.single(javaFilePaths), kotlinOut.getPath());
+        File javaOut = compileJava(javaFilePaths, kotlinOut.getPath());
         // Add javac output to classpath so that the created class loader can find generated Java classes
         addJvmClasspathRoot(configuration, javaOut);
 
