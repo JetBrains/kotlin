@@ -47,6 +47,12 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
         doTestWithJava(fileName);
     }
 
+    @TestMetadata("dontDelegateToDefaultMethods")
+    public void testDontDelegateToDefaultMethods() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/java8/boxWithJava/dontDelegateToDefaultMethods/");
+        doTestWithJava(fileName);
+    }
+
     @TestMetadata("samOnInterfaceWithDefaultMethod")
     public void testSamOnInterfaceWithDefaultMethod() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/java8/boxWithJava/samOnInterfaceWithDefaultMethod/");
