@@ -25,7 +25,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
-import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
 import org.jetbrains.kotlin.psi.JetFile;
@@ -33,7 +32,6 @@ import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil;
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadata;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -153,9 +151,7 @@ public abstract class Config {
         PackageFragmentProvider provider =
                 KotlinJavascriptSerializationUtil.createPackageFragmentProvider(moduleDescriptor, metadata.getBody());
 
-        moduleDescriptor.initialize(
-                provider != null ? provider : new CompositePackageFragmentProvider(Collections.<PackageFragmentProvider>emptyList())
-        );
+        moduleDescriptor.initialize(provider != null ? provider : PackageFragmentProvider.Empty.INSTANCE$);
         moduleDescriptor.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule());
 
         return moduleDescriptor;
