@@ -48,13 +48,16 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
     val inlineFamilies = HashMap<Family, Boolean>()
 
     val buildFamilies = LinkedHashSet(defaultFamilies.toList())
-    private val buildPrimitives = LinkedHashSet(defaultPrimitives.toList())
+    val buildPrimitives = LinkedHashSet(defaultPrimitives.toList())
 
     var deprecate: String = ""
     val deprecates = hashMapOf<Family, String>()
 
     var doc: String = ""
     val docs = HashMap<Family, String>()
+
+    var platformName: String? = null
+    val platformNames = hashMapOf<PrimitiveType, String>()
 
     var defaultBody: String = ""
     val bodies = HashMap<Family, String>()
@@ -101,6 +104,15 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
                 deprecates[f] = b()
             }
         }
+    }
+
+    fun platformName(name: String, vararg primitives: PrimitiveType) {
+        if (primitives.isEmpty())
+            platformName = name
+        else
+            for (primitive in primitives) {
+                platformNames[primitive] = name
+            }
     }
 
     fun returns(vararg families: Family, b: () -> String) {
@@ -309,11 +321,6 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
             }
         }
 
-        fun getPlatformName(primitive: PrimitiveType): String {
-            val name = signature.substringBefore('(').trim()
-            return "${name}Of${primitive.name}"
-        }
-
         val methodDoc = docs[f] ?: doc
         if (methodDoc != "") {
             builder.append("/**\n")
@@ -330,9 +337,11 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
             builder.append("deprecated(\"$deprecated\")\n")
         }
 
-        // heuristics to define that platform overloads are likely to clash
-        if (!f.isPrimitiveSpecialization && primitive != null && ((returnType == returnType.renderType() && returnType != "T") || returnType == "SUM"))
-            builder.append("platformName(\"${getPlatformName(primitive!!)}\")\n")
+        if (!f.isPrimitiveSpecialization && primitive != null) {
+            val platformName = (platformNames[primitive] ?: platformName) ?.let { it.replace("<T>", primitive.name)}
+            if (platformName != null)
+                builder.append("platformName(\"${platformName}\")\n")
+        }
 
         builder.append("public ")
         if (inlineFamilies[f] ?: defaultInline)

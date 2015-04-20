@@ -9,6 +9,7 @@ fun numeric(): List<GenericFunction> {
         exclude(Strings)
         doc { "Returns the sum of all elements in the collection." }
         returns("SUM")
+        platformName("sumOf<T>")
         body {
             """
             val iterator = iterator()
@@ -25,6 +26,7 @@ fun numeric(): List<GenericFunction> {
         exclude(Strings)
         doc { "Returns an average value of elements in the collection"}
         returns("Double")
+        platformName("averageOf<T>")
         body {
             """
             val iterator = iterator()
