@@ -295,6 +295,18 @@ class ArraysTest {
         assertEquals(10, intsAsList[1], "Should reflect changes in original array")
     }
 
+    test fun toPrimitiveArray() {
+        val genericArray: Array<Int> = array(1, 2, 3)
+        val primitiveArray: IntArray = genericArray.toIntArray()
+        expect(3) { primitiveArray.size() }
+        assertEquals(genericArray.asList(), primitiveArray.asList())
+
+
+        val charList = listOf('a', 'b')
+        val charArray: CharArray = charList.toCharArray()
+        assertEquals(charList, charArray.asList())
+    }
+
     /*
 
     TODO FIXME ASAP: These currently fail on JS due to missing upto() method on numbers

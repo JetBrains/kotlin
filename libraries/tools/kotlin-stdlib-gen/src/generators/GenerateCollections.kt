@@ -21,6 +21,14 @@ fun generateCollectionsAPI(outDir: File) {
     specialJVM().writeTo(File(outDir, "_SpecialJVM.kt")) { build() }
     ranges().writeTo(File(outDir, "_Ranges.kt")) { build() }
 
+    toPrimitiveArrays().writeTo(File(outDir, "_ArraysToPrimitiveArrays.kt")) {
+        val builder = StringBuilder()
+        for (family in buildFamilies)
+            build(builder, family, buildPrimitives.single())
+
+        builder.toString()
+    }
+
     numeric().writeTo(File(outDir, "_Numeric.kt")) {
         val builder = StringBuilder()
         for (numeric in numericPrimitives)

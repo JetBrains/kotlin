@@ -56,3 +56,34 @@ fun arrays(): List<GenericFunction> {
 
     return templates
 }
+
+
+
+fun toPrimitiveArrays(): List<GenericFunction> =
+    PrimitiveType.values().map { primitive ->
+        val arrayType = primitive.name + "Array"
+        f("to$arrayType()") {
+            only(ArraysOfObjects, Collections)
+            only(primitive)
+            doc(ArraysOfObjects) { "Returns an array of ${primitive.name} containing all of the elements of this generic array." }
+            doc(Collections) { "Returns an array of ${primitive.name} containing all of the elements of this collection." }
+            returns(arrayType)
+            body {
+                """
+                val result = $arrayType(size())
+                for (index in indices)
+                    result[index] = this[index]
+                return result
+                """
+            }
+            body(Collections) {
+                """
+                val result = $arrayType(size())
+                var index = 0
+                for (element in this)
+                    result[index++] = element
+                return result
+                """
+            }
+        }
+    }
