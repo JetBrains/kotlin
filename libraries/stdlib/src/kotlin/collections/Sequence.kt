@@ -33,17 +33,21 @@ public fun <T> streamOf(progression: Progression<T>): Stream<T> = object : Strea
 /**
  * Creates a sequence that returns all values from this iterator. The sequence is constrained to be iterated only once.
  */
-public fun <T> Iterator<T>.sequence(): Sequence<T> {
+public fun <T> Iterator<T>.asSequence(): Sequence<T> {
     val iteratorSequence = object : Sequence<T> {
-        override fun iterator(): Iterator<T> = this@sequence
+        override fun iterator(): Iterator<T> = this@asSequence
     }
     return iteratorSequence.constrainOnce()
 }
 
+deprecated("Use asSequence() instead.")
+public fun <T> Iterator<T>.sequence(): Sequence<T> = asSequence()
+
+
 /**
  * Creates a sequence that returns the specified values.
  */
-public fun <T> sequenceOf(vararg elements: T): Sequence<T> = elements.sequence()
+public fun <T> sequenceOf(vararg elements: T): Sequence<T> = elements.asSequence()
 
 /**
  * Creates a sequence that returns all values in the specified [progression].

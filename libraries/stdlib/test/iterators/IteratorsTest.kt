@@ -39,7 +39,7 @@ class IteratorsTest {
     }
 
     test fun plus() {
-        val iter = arrayListOf("foo", "bar").sequence()
+        val iter = arrayListOf("foo", "bar").asSequence()
         val iter2 = iter + "cheese"
         assertEquals(arrayListOf("foo", "bar", "cheese"), iter2.toList())
 
@@ -52,12 +52,12 @@ class IteratorsTest {
     test fun plusCollection() {
         val a = arrayListOf("foo", "bar")
         val b = arrayListOf("cheese", "wine")
-        val iter = a.sequence() + b.sequence()
+        val iter = a.asSequence() + b.asSequence()
         assertEquals(arrayListOf("foo", "bar", "cheese", "wine"), iter.toList())
 
         // lets use a mutable variable
-        var ml = arrayListOf("a").sequence()
-        ml += a.sequence()
+        var ml = arrayListOf("a").asSequence()
+        ml += a.asSequence()
         ml += "beer"
         ml += b
         ml += "z"
@@ -65,11 +65,11 @@ class IteratorsTest {
     }
 
     test fun requireNoNulls() {
-        val iter = arrayListOf<String?>("foo", "bar").sequence()
+        val iter = arrayListOf<String?>("foo", "bar").asSequence()
         val notNull = iter.requireNoNulls()
         assertEquals(arrayListOf("foo", "bar"), notNull.toList())
 
-        val iterWithNulls = arrayListOf("foo", null, "bar").sequence()
+        val iterWithNulls = arrayListOf("foo", null, "bar").asSequence()
         val notNull2 = iterWithNulls.requireNoNulls()
         fails {
             // should throw an exception as we have a null

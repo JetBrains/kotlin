@@ -189,7 +189,7 @@ public class SequenceTest {
     test fun sequenceFromIterator() {
         val list = listOf(3, 2, 1, 0)
         val iterator = list.iterator()
-        val sequence = iterator.sequence()
+        val sequence = iterator.asSequence()
         assertEquals(list, sequence.toList())
         fails {
             sequence.toList()
@@ -233,7 +233,7 @@ public class SequenceTest {
                 '5' // fibonacci(10) = 55
                              )
 
-        assertEquals(expected, fibonacci().drop(4).flatMap { it.toString().sequence() }.take(10).toList())
+        assertEquals(expected, fibonacci().drop(4).flatMap { it.toString().asSequence() }.take(10).toList())
     }
 
     test fun flatMap() {

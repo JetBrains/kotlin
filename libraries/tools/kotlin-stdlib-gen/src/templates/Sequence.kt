@@ -8,12 +8,12 @@ fun sequences(): List<GenericFunction> {
     templates add f("stream()") {
         include(Maps)
         exclude(Sequences)
-        deprecate { "Use sequence() instead" }
+        deprecate { "Use asSequence() instead" }
         doc { "Returns a sequence from the given collection" }
         returns("Stream<T>")
         body {
             """
-            val sequence = sequence()
+            val sequence = asSequence()
             return object : Stream<T> {
                 override fun iterator(): Iterator<T> {
                     return sequence.iterator()
@@ -27,13 +27,31 @@ fun sequences(): List<GenericFunction> {
     templates add f("sequence()") {
         include(Maps)
         exclude(Sequences)
+        deprecate { "Use asSequence() instead" }
+        doc { "Returns a sequence from the given collection" }
+        returns("Sequence<T>")
+        body {
+            """
+            return asSequence()
+            """
+        }
+
+        body(Sequences) {
+            """
+            return this
+            """
+        }
+    }
+    templates add f("asSequence()") {
+        include(Maps)
+        exclude(Sequences)
         doc { "Returns a sequence from the given collection" }
         returns("Sequence<T>")
         body {
             """
             return object : Sequence<T> {
                 override fun iterator(): Iterator<T> {
-                    return this@sequence.iterator()
+                    return this@asSequence.iterator()
                 }
             }
             """
@@ -48,3 +66,4 @@ fun sequences(): List<GenericFunction> {
 
     return templates
 }
+

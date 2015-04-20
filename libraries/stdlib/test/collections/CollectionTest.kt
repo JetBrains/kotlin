@@ -376,8 +376,8 @@ class CollectionTest {
         expect(2000000000000, { listOf(3000000000000, 2000000000000).min() })
         expect('a', { listOf('a', 'b').min() })
         expect("a", { listOf("a", "b").min() })
-        expect(null, { listOf<Int>().sequence().min<Int>() })
-        expect(2, { listOf(2, 3).sequence().min<Int>() })
+        expect(null, { listOf<Int>().asSequence().min<Int>() })
+        expect(2, { listOf(2, 3).asSequence().min<Int>() })
     }
 
     test fun max() {
@@ -387,8 +387,8 @@ class CollectionTest {
         expect(3000000000000, { listOf(3000000000000, 2000000000000).max() })
         expect('b', { listOf('a', 'b').max() })
         expect("b", { listOf("a", "b").max() })
-        expect(null, { listOf<Int>().sequence().max<Int>() })
-        expect(3, { listOf(2, 3).sequence().max<Int>() })
+        expect(null, { listOf<Int>().asSequence().max<Int>() })
+        expect(3, { listOf(2, 3).asSequence().max<Int>() })
     }
 
     test fun minBy() {
@@ -397,8 +397,8 @@ class CollectionTest {
         expect(3, { listOf(2, 3).minBy { -it } })
         expect('a', { listOf('a', 'b').minBy { "x$it" } })
         expect("b", { listOf("b", "abc").minBy { it.length() } })
-        expect(null, { listOf<Int>().sequence().minBy<Int, Int> { it } })
-        expect(3, { listOf(2, 3).sequence().minBy<Int, Int> { -it } })
+        expect(null, { listOf<Int>().asSequence().minBy<Int, Int> { it } })
+        expect(3, { listOf(2, 3).asSequence().minBy<Int, Int> { -it } })
     }
 
     test fun maxBy() {
@@ -407,8 +407,8 @@ class CollectionTest {
         expect(2, { listOf(2, 3).maxBy { -it } })
         expect('b', { listOf('a', 'b').maxBy { "x$it" } })
         expect("abc", { listOf("b", "abc").maxBy { it.length() } })
-        expect(null, { listOf<Int>().sequence().maxBy<Int, Int> { it } })
-        expect(2, { listOf(2, 3).sequence().maxBy<Int, Int> { -it } })
+        expect(null, { listOf<Int>().asSequence().maxBy<Int, Int> { it } })
+        expect(2, { listOf(2, 3).asSequence().maxBy<Int, Int> { -it } })
     }
 
     test fun minByEvaluateOnce() {
@@ -416,7 +416,7 @@ class CollectionTest {
         expect(1, { listOf(5, 4, 3, 2, 1).minBy { c++; it * it } })
         assertEquals(5, c)
         c = 0
-        expect(1, { listOf(5, 4, 3, 2, 1).sequence().minBy<Int, Int> { c++; it * it } })
+        expect(1, { listOf(5, 4, 3, 2, 1).asSequence().minBy<Int, Int> { c++; it * it } })
         assertEquals(5, c)
     }
 
@@ -425,7 +425,7 @@ class CollectionTest {
         expect(5, { listOf(5, 4, 3, 2, 1).maxBy { c++; it * it } })
         assertEquals(5, c)
         c = 0
-        expect(5, { listOf(5, 4, 3, 2, 1).sequence().maxBy<Int, Int> { c++; it * it } })
+        expect(5, { listOf(5, 4, 3, 2, 1).asSequence().maxBy<Int, Int> { c++; it * it } })
         assertEquals(5, c)
     }
 

@@ -17,11 +17,11 @@ class MutableCollectionTest {
         assertEquals(data, collection)
     }
 
-    test fun fromStream() {
+    test fun fromSequence() {
         val list = listOf("foo", "bar")
         val collection = ArrayList<String>()
 
-        collection.addAll(list.sequence())
+        collection.addAll(list.asSequence())
 
         assertEquals(list, collection)
     }

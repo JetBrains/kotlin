@@ -27,7 +27,7 @@ class IteratorsJVMTest {
     }
 
     test fun flatMapOnIterator() {
-        val result = sequenceOf(1, 2).flatMap { i -> (0..i).sequence()}
+        val result = sequenceOf(1, 2).flatMap { i -> (0..i).asSequence()}
         assertEquals(listOf(0, 1, 0, 1, 2), result.toList())
     }
 }
