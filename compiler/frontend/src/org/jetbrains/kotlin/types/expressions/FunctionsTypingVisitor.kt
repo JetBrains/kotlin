@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.BindingContext.AUTO_CREATED_IT
 import org.jetbrains.kotlin.resolve.BindingContext.EXPECTED_RETURN_TYPE
-import org.jetbrains.kotlin.resolve.BindingContext.EXPRESSION_TYPE
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.scopes.WritableScope
 import org.jetbrains.kotlin.resolve.source.toSourceElement
@@ -41,6 +40,8 @@ import org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE
 import org.jetbrains.kotlin.types.TypeUtils.noExpectedType
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.kotlin.types.expressions.CoercionStrategy.COERCION_TO_UNIT
+import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createCheckedTypeInfo
+import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : ExpressionTypingVisitor(facade) {
@@ -99,10 +100,10 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
         }
 
         if (isStatement) {
-            return DataFlowUtils.checkStatementType(function, context, context.dataFlowInfo)
+            return createTypeInfo(DataFlowUtils.checkStatementType(function, context), context)
         }
         else {
-            return DataFlowUtils.checkType(createFunctionType(functionDescriptor), function, context, context.dataFlowInfo)
+            return createCheckedTypeInfo(createFunctionType(functionDescriptor), context, function)
         }
     }
 
@@ -138,10 +139,10 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
         val resultType = createFunctionType(functionDescriptor)!!
         if (functionTypeExpected) {
             // all checks were done before
-            return JetTypeInfo.create(resultType, context.dataFlowInfo)
+            return createTypeInfo(resultType, context)
         }
 
-        return DataFlowUtils.checkType(resultType, expression, context, context.dataFlowInfo)
+        return createCheckedTypeInfo(resultType, context, expression)
     }
 
     private fun createFunctionDescriptor(
@@ -197,7 +198,7 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
         // This is needed for ControlStructureTypingVisitor#visitReturnExpression() to properly type-check returned expressions
         context.trace.record(EXPECTED_RETURN_TYPE, functionLiteral, expectedType)
         val typeOfBodyExpression = // Type-check the body
-                components.expressionTypingServices.getBlockReturnedType(functionLiteral.getBodyExpression(), COERCION_TO_UNIT, newContext).getType()
+                components.expressionTypingServices.getBlockReturnedType(functionLiteral.getBodyExpression(), COERCION_TO_UNIT, newContext).type
 
         return declaredReturnType ?: computeReturnTypeBasedOnReturnExpressions(functionLiteral, context, typeOfBodyExpression)
     }
@@ -218,7 +219,7 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
             }
             else {
                 // the type should have been computed by getBlockReturnedType() above, but can be null, if returnExpression contains some error
-                returnedExpressionTypes.addIfNotNull(context.trace.get<JetExpression, JetType>(EXPRESSION_TYPE, returnedExpression))
+                returnedExpressionTypes.addIfNotNull(context.trace.getType(returnedExpression))
             }
         }
 
@@ -226,7 +227,7 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
             for (returnExpression in returnExpressions) {
                 val returnedExpression = returnExpression.getReturnedExpression()
                 if (returnedExpression != null) {
-                    val type = context.trace.get<JetExpression, JetType>(EXPRESSION_TYPE, returnedExpression)
+                    val type = context.trace.getType(returnedExpression)
                     if (type == null || !KotlinBuiltIns.isUnit(type)) {
                         context.trace.report(RETURN_TYPE_MISMATCH.on(returnedExpression, components.builtIns.getUnitType()))
                     }

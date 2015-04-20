@@ -42,7 +42,6 @@ import java.util.List;
 import java.util.Set;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.SMARTCAST_IMPOSSIBLE;
-import static org.jetbrains.kotlin.resolve.BindingContext.EXPRESSION_TYPE;
 import static org.jetbrains.kotlin.resolve.BindingContext.SMARTCAST;
 
 public class SmartCastUtils {
@@ -195,7 +194,7 @@ public class SmartCastUtils {
             if (recordExpressionType) {
                 //TODO
                 //Why the expression type is rewritten for receivers and is not rewritten for arguments? Is it necessary?
-                trace.record(EXPRESSION_TYPE, expression, type);
+                trace.recordType(expression, type);
             }
         }
         else {

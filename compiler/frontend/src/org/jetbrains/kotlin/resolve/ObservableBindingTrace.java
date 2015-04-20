@@ -18,7 +18,10 @@ package org.jetbrains.kotlin.resolve;
 
 import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
+import org.jetbrains.kotlin.psi.JetExpression;
+import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice;
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
 
@@ -72,6 +75,17 @@ public class ObservableBindingTrace implements BindingTrace {
     @NotNull
     public <K, V> Collection<K> getKeys(WritableSlice<K, V> slice) {
         return originalTrace.getKeys(slice);
+    }
+
+    @Nullable
+    @Override
+    public JetType getType(@NotNull JetExpression expression) {
+        return originalTrace.getType(expression);
+    }
+
+    @Override
+    public void recordType(@NotNull JetExpression expression, @Nullable JetType type) {
+        originalTrace.recordType(expression, type);
     }
 
     public <K, V> ObservableBindingTrace addHandler(@NotNull WritableSlice<K, V> slice, @NotNull RecordHandler<K, V> handler) {

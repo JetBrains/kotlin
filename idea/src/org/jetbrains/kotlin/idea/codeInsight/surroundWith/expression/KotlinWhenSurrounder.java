@@ -70,7 +70,7 @@ public class KotlinWhenSurrounder extends KotlinExpressionSurrounder {
     }
 
     private String getCodeTemplate(JetExpression expression) {
-        JetType type = ResolvePackage.analyze(expression, BodyResolveMode.PARTIAL).get(BindingContext.EXPRESSION_TYPE, expression);
+        JetType type = ResolvePackage.analyze(expression, BodyResolveMode.PARTIAL).getType(expression);
         if (type != null) {
             ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
             if (descriptor instanceof ClassDescriptor && ((ClassDescriptor) descriptor).getKind() == ClassKind.ENUM_CLASS) {

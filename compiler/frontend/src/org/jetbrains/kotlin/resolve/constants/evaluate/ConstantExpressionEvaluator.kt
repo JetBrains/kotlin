@@ -396,7 +396,7 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
     }
 
     override fun visitClassLiteralExpression(expression: JetClassLiteralExpression, expectedType: JetType?): CompileTimeConstant<*>? {
-        val jetType = trace.get(BindingContext.EXPRESSION_TYPE, expression)
+        val jetType = trace.getType(expression)
         if (jetType.isError()) return null
         return KClassValue(jetType)
     }

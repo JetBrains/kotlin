@@ -118,7 +118,7 @@ public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiE
     ) {
         String name = getNewArgumentName(argument, validator);
         JetExpression expression = argument.getArgumentExpression();
-        JetType type = expression != null ? bindingContext.get(BindingContext.EXPRESSION_TYPE, expression) : null;
+        JetType type = expression != null ? bindingContext.getType(expression) : null;
         type = type != null ? type : KotlinBuiltIns.getInstance().getNullableAnyType();
         JetParameterInfo parameterInfo = new JetParameterInfo(-1, name, type, null, "", JetValVar.None, null);
         parameterInfo.setCurrentTypeText(IdeDescriptorRenderers.SOURCE_CODE.renderType(type));
@@ -135,7 +135,7 @@ public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiE
             assert i < arguments .size(); // number of parameters must not be greater than the number of arguments (it's called only for TOO_MANY_ARGUMENTS error)
             JetExpression argumentExpression = arguments.get(i).getArgumentExpression();
             JetType argumentType =
-                    argumentExpression != null ? bindingContext.get(BindingContext.EXPRESSION_TYPE, argumentExpression) : null;
+                    argumentExpression != null ? bindingContext.getType(argumentExpression) : null;
             JetType parameterType = parameters.get(i).getType();
 
             if (argumentType == null || !JetTypeChecker.DEFAULT.isSubtypeOf(argumentType, parameterType)) {

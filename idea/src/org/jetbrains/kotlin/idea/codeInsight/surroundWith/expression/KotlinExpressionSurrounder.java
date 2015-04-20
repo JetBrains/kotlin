@@ -44,7 +44,7 @@ public abstract class KotlinExpressionSurrounder implements Surrounder {
         if (expression instanceof JetCallExpression && expression.getParent() instanceof JetQualifiedExpression) {
             return false;
         }
-        JetType type = ResolvePackage.analyze(expression, BodyResolveMode.PARTIAL).get(BindingContext.EXPRESSION_TYPE, expression);
+        JetType type = ResolvePackage.analyze(expression, BodyResolveMode.PARTIAL).getType(expression);
         if (type == null || type.equals(KotlinBuiltIns.getInstance().getUnitType())) {
             return false;
         }

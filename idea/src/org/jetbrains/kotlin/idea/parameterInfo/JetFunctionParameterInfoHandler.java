@@ -330,7 +330,7 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
     private static boolean isArgumentTypeValid(BindingContext bindingContext, JetValueArgument argument, ValueParameterDescriptor param) {
         if (argument.getArgumentExpression() != null) {
             JetType paramType = getActualParameterType(param);
-            JetType exprType = bindingContext.get(BindingContext.EXPRESSION_TYPE, argument.getArgumentExpression());
+            JetType exprType = bindingContext.getType(argument.getArgumentExpression());
             return exprType == null || JetTypeChecker.DEFAULT.isSubtypeOf(exprType, paramType);
         }
 

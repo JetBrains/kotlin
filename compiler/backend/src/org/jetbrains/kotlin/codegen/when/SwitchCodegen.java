@@ -32,8 +32,6 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 
 import java.util.*;
 
-import static org.jetbrains.kotlin.resolve.BindingContext.EXPRESSION_TYPE;
-
 abstract public class SwitchCodegen {
     protected final JetWhenExpression expression;
     protected final boolean isStatement;
@@ -132,7 +130,7 @@ abstract public class SwitchCodegen {
     }
 
     protected void generateNullCheckIfNeeded() {
-        JetType subjectJetType = bindingContext.get(EXPRESSION_TYPE, expression.getSubjectExpression());
+        JetType subjectJetType = bindingContext.getType(expression.getSubjectExpression());
 
         assert subjectJetType != null : "subject type can't be null (i.e. void)";
 

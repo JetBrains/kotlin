@@ -65,7 +65,7 @@ class SmartCastCalculator(val bindingContext: BindingContext, val containingDecl
 
         val dataFlowValueToVariable: (DataFlowValue) -> VariableDescriptor?
         if (receiver != null) {
-            val receiverType = bindingContext[BindingContext.EXPRESSION_TYPE, receiver] ?: return ProcessDataFlowInfoResult()
+            val receiverType = bindingContext.getType(receiver) ?: return ProcessDataFlowInfoResult()
             val receiverId = DataFlowValueFactory.createDataFlowValue(receiver, receiverType, bindingContext, containingDeclarationOrModule).getId()
             dataFlowValueToVariable = { value ->
                 val id = value.getId()

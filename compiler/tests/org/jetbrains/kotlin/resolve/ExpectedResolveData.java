@@ -298,7 +298,7 @@ public abstract class ExpectedResolveData {
             PsiElement element = position.getElement();
             JetExpression expression = getAncestorOfType(JetExpression.class, element);
 
-            JetType expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression);
+            JetType expressionType = bindingContext.getType(expression);
             TypeConstructor expectedTypeConstructor;
             if (typeName.startsWith(STANDARD_PREFIX)) {
                 String name = typeName.substring(STANDARD_PREFIX.length());

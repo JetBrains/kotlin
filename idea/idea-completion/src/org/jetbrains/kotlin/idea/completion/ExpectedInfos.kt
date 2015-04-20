@@ -139,7 +139,7 @@ class ExpectedInfos(
         val callOperationNode: ASTNode?
         if (parent is JetQualifiedExpression && callElement == parent.getSelectorExpression()) {
             val receiverExpression = parent.getReceiverExpression()
-            val expressionType = bindingContext[BindingContext.EXPRESSION_TYPE, receiverExpression]
+            val expressionType = bindingContext.getType(receiverExpression)
             val qualifier = bindingContext[BindingContext.QUALIFIER, receiverExpression]
             if (expressionType != null) {
                 receiver = ExpressionReceiver(receiverExpression, expressionType)
@@ -231,7 +231,7 @@ class ExpectedInfos(
                 || operationToken == JetTokens.EQEQEQ || operationToken == JetTokens.EXCLEQEQEQ) {
                 val otherOperand = if (expressionWithType == binaryExpression.getRight()) binaryExpression.getLeft() else binaryExpression.getRight()
                 if (otherOperand != null) {
-                    val expressionType = bindingContext[BindingContext.EXPRESSION_TYPE, otherOperand] ?: return null
+                    val expressionType = bindingContext.getType(otherOperand) ?: return null
                     return listOf(ExpectedInfo(expressionType, expectedNameFromExpression(otherOperand), null))
                 }
             }
@@ -248,7 +248,7 @@ class ExpectedInfos(
 
             ifExpression.getElse() -> {
                 val ifExpectedInfo = calculate(ifExpression)
-                val thenType = bindingContext[BindingContext.EXPRESSION_TYPE, ifExpression.getThen()]
+                val thenType = bindingContext.getType(ifExpression.getThen())
                 if (thenType != null)
                     ifExpectedInfo?.filter { it.type.isSubtypeOf(thenType) }
                 else
@@ -265,7 +265,7 @@ class ExpectedInfos(
             val operationToken = binaryExpression.getOperationToken()
             if (operationToken == JetTokens.ELVIS && expressionWithType == binaryExpression.getRight()) {
                 val leftExpression = binaryExpression.getLeft() ?: return null
-                val leftType = bindingContext[BindingContext.EXPRESSION_TYPE, leftExpression]
+                val leftType = bindingContext.getType(leftExpression)
                 val leftTypeNotNullable = leftType?.makeNotNullable()
                 val expectedInfos = calculate(binaryExpression)
                 if (expectedInfos != null) {
@@ -294,7 +294,7 @@ class ExpectedInfos(
         val whenExpression = entry.getParent() as JetWhenExpression
         val subject = whenExpression.getSubjectExpression()
         if (subject != null) {
-            val subjectType = bindingContext[BindingContext.EXPRESSION_TYPE, subject] ?: return null
+            val subjectType = bindingContext.getType(subject) ?: return null
             return listOf(ExpectedInfo(subjectType, null, null))
         }
         else {

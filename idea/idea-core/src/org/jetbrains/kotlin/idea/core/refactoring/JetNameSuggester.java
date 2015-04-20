@@ -69,7 +69,7 @@ public class JetNameSuggester {
         ArrayList<String> result = new ArrayList<String>();
 
         BindingContext bindingContext = ResolvePackage.analyze(expression, BodyResolveMode.FULL);
-        JetType jetType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression);
+        JetType jetType = bindingContext.getType(expression);
         if (jetType != null) {
             addNamesForType(result, jetType, validator);
         }

@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getTopmostParentQualifiedExpressionForSelector
-import org.jetbrains.kotlin.resolve.BindingContext.EXPRESSION_TYPE
 import org.jetbrains.kotlin.resolve.BindingContext.QUALIFIER
 import org.jetbrains.kotlin.resolve.BindingContext.REFERENCE_TARGET
 import org.jetbrains.kotlin.resolve.BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT
@@ -153,7 +152,7 @@ private fun QualifierReceiver.resolveAsReceiverInQualifiedExpression(context: Ex
         context.trace.report(TYPE_PARAMETER_ON_LHS_OF_DOT.on(referenceExpression, classifier))
     }
     else if (classifier is ClassDescriptor && classifier.hasClassObjectType) {
-        context.trace.record(EXPRESSION_TYPE, expression, classifier.classObjectType)
+        context.trace.recordType(expression, classifier.classObjectType)
     }
 }
 

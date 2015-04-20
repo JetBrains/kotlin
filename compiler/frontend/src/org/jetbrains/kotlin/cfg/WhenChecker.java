@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilPackage
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeUtils;
 
-import static org.jetbrains.kotlin.resolve.BindingContext.EXPRESSION_TYPE;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry;
 
 public final class WhenChecker {
@@ -63,7 +62,7 @@ public final class WhenChecker {
     @Nullable
     private static JetType whenSubjectType(@NotNull JetWhenExpression expression, @NotNull BindingContext context) {
         JetExpression subjectExpression = expression.getSubjectExpression();
-        return subjectExpression == null ? null : context.get(EXPRESSION_TYPE, subjectExpression);
+        return subjectExpression == null ? null : context.getType(subjectExpression);
     }
 
     private static boolean isWhenExhaustive(@NotNull JetWhenExpression expression, @NotNull BindingTrace trace) {
@@ -112,8 +111,7 @@ public final class WhenChecker {
         for (JetWhenEntry entry : expression.getEntries()) {
             for (JetWhenCondition condition : entry.getConditions()) {
                 if (condition instanceof JetWhenConditionWithExpression) {
-                    JetType type = trace.getBindingContext().get(
-                            EXPRESSION_TYPE, ((JetWhenConditionWithExpression) condition).getExpression()
+                    JetType type = trace.getBindingContext().getType(((JetWhenConditionWithExpression) condition).getExpression()
                     );
                     if (type != null && KotlinBuiltIns.isNothingOrNullableNothing(type)) {
                         return true;

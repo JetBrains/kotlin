@@ -395,7 +395,7 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
     private JetType getPropertyOrDelegateType(@NotNull JetProperty property, @NotNull PropertyDescriptor descriptor) {
         JetExpression delegateExpression = property.getDelegateExpression();
         if (delegateExpression != null) {
-            JetType delegateType = bindingContext.get(BindingContext.EXPRESSION_TYPE, delegateExpression);
+            JetType delegateType = bindingContext.getType(delegateExpression);
             assert delegateType != null : "Type of delegate expression should be recorded";
             return delegateType;
         }

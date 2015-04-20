@@ -17,9 +17,7 @@
 package org.jetbrains.kotlin.types.expressions;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.kotlin.types.JetTypeInfo;
 
 public interface ExpressionTypingFacade {
     @NotNull

@@ -216,7 +216,7 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
             is JetPostfixExpression ->
                     if (expression.getOperationToken() == JetTokens.EXCLEXCL) {
                         val baseExpression = expression.getBaseExpression()
-                        val baseExpressionType = c.trace.get(BindingContext.EXPRESSION_TYPE, baseExpression) ?: return
+                        val baseExpressionType = c.trace.getType(baseExpression) ?: return
                         doIfNotNull(
                                 DataFlowValueFactory.createDataFlowValue(baseExpression, baseExpressionType, c),
                                 c
@@ -228,7 +228,7 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
                 when (expression.getOperationToken()) {
                     JetTokens.ELVIS -> {
                         val baseExpression = expression.getLeft()
-                        val baseExpressionType = c.trace.get(BindingContext.EXPRESSION_TYPE, baseExpression) ?: return
+                        val baseExpressionType = c.trace.getType(baseExpression) ?: return
                         doIfNotNull(
                                 DataFlowValueFactory.createDataFlowValue(baseExpression, baseExpressionType, c),
                                 c
@@ -243,7 +243,7 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
                         if (expression.getLeft() != null && expression.getRight() != null) {
                             SenselessComparisonChecker.checkSenselessComparisonWithNull(
                                     expression, expression.getLeft()!!, expression.getRight()!!, c,
-                                    { c.trace.get(BindingContext.EXPRESSION_TYPE, it) },
+                                    { c.trace.getType(it) },
                                     {
                                         value ->
                                         doIfNotNull(value, c) { Nullability.NOT_NULL } ?: Nullability.UNKNOWN

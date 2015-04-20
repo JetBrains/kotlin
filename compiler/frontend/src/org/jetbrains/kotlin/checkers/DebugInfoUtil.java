@@ -196,7 +196,7 @@ public class DebugInfoUtil {
                     // if 'foo' in 'foo[i]' is unresolved it means 'foo[i]' is unresolved (otherwise 'foo[i]' is marked as 'missing unresolved')
                     markedWithError = true;
                 }
-                JetType expressionType = bindingContext.get(EXPRESSION_TYPE, expression);
+                JetType expressionType = bindingContext.getType(expression);
                 DiagnosticFactory<?> factory = markedWithErrorElements.get(expression);
                 if (declarationDescriptor != null &&
                     (ErrorUtils.isError(declarationDescriptor) || ErrorUtils.containsErrorType(expressionType))) {

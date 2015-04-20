@@ -23,12 +23,12 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.types.JetTypeInfo
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.types.expressions.JetTypeInfo
 
 public fun JetExpression.computeTypeInfoInContext(
         scope: JetScope,
@@ -59,7 +59,7 @@ public fun JetExpression.computeTypeInContext(
         expectedType: JetType = TypeUtils.NO_EXPECTED_TYPE,
         module: ModuleDescriptor = scope.getModule()
 ): JetType {
-    return computeTypeInfoInContext(scope, trace, dataFlowInfo, expectedType, module).getType().safeType(this)
+    return computeTypeInfoInContext(scope, trace, dataFlowInfo, expectedType, module).type.safeType(this)
 }
 
 public fun JetType?.safeType(expression: JetExpression): JetType {

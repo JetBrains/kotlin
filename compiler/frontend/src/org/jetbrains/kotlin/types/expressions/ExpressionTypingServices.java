@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.resolve.scopes.WritableScope;
 import org.jetbrains.kotlin.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.JetType;
-import org.jetbrains.kotlin.types.JetTypeInfo;
+import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryPackage;
 
 import javax.inject.Inject;
 import java.util.Iterator;
@@ -262,7 +262,7 @@ public class ExpressionTypingServices {
 
         JetTypeInfo r;
         if (block.isEmpty()) {
-            r = DataFlowUtils.checkType(builtIns.getUnitType(), expression, context, context.dataFlowInfo);
+            r = TypeInfoFactoryPackage.createCheckedTypeInfo(builtIns.getUnitType(), context, expression);
         }
         else {
             r = getBlockReturnedTypeWithWritableScope(scope, block, coercionStrategyForLastExpression,
@@ -308,20 +308,20 @@ public class ExpressionTypingServices {
      * Determines block returned type and data flow information at the end of the block AND
      * at the nearest jump point from the block beginning.
      */
-    /*package*/ TypeInfoWithJumpInfo getBlockReturnedTypeWithWritableScope(
+    /*package*/ JetTypeInfo getBlockReturnedTypeWithWritableScope(
             @NotNull WritableScope scope,
             @NotNull List<? extends JetElement> block,
             @NotNull CoercionStrategy coercionStrategyForLastExpression,
             @NotNull ExpressionTypingContext context
     ) {
         if (block.isEmpty()) {
-            return new TypeInfoWithJumpInfo(builtIns.getUnitType(), context.dataFlowInfo, false, context.dataFlowInfo);
+            return new JetTypeInfo(builtIns.getUnitType(), context.dataFlowInfo, false, context.dataFlowInfo);
         }
 
         ExpressionTypingInternals blockLevelVisitor = ExpressionTypingVisitorDispatcher.createForBlock(expressionTypingComponents, scope);
         ExpressionTypingContext newContext = context.replaceScope(scope).replaceExpectedType(NO_EXPECTED_TYPE);
 
-        JetTypeInfo result = JetTypeInfo.create(null, context.dataFlowInfo);
+        JetTypeInfo result = TypeInfoFactoryPackage.createTypeInfo(context);
         // Jump point data flow info
         DataFlowInfo beforeJumpInfo = newContext.dataFlowInfo;
         boolean jumpOutPossible = false;
@@ -344,14 +344,8 @@ public class ExpressionTypingServices {
             DataFlowInfo newDataFlowInfo = result.getDataFlowInfo();
             // If jump is not possible, we take new data flow info before jump
             if (!jumpOutPossible) {
-                if (result instanceof TypeInfoWithJumpInfo) {
-                    TypeInfoWithJumpInfo jumpTypeInfo = (TypeInfoWithJumpInfo) result;
-                    beforeJumpInfo = jumpTypeInfo.getJumpFlowInfo();
-                    jumpOutPossible = jumpTypeInfo.getJumpOutPossible();
-                }
-                else {
-                    beforeJumpInfo = newDataFlowInfo;
-                }
+                beforeJumpInfo = result.getJumpFlowInfo();
+                jumpOutPossible = result.getJumpOutPossible();
             }
             if (newDataFlowInfo != context.dataFlowInfo) {
                 newContext = newContext.replaceDataFlowInfo(newDataFlowInfo);
@@ -359,7 +353,7 @@ public class ExpressionTypingServices {
             }
             blockLevelVisitor = ExpressionTypingVisitorDispatcher.createForBlock(expressionTypingComponents, scope);
         }
-        return new TypeInfoWithJumpInfo(result.getType(), result.getDataFlowInfo(), jumpOutPossible, beforeJumpInfo);
+        return result.replaceJumpOutPossible(jumpOutPossible).replaceJumpFlowInfo(beforeJumpInfo);
     }
 
     private JetTypeInfo getTypeOfLastExpressionInBlock(
@@ -397,7 +391,7 @@ public class ExpressionTypingServices {
             if (mightBeUnit) {
                 // ExpressionTypingVisitorForStatements should return only null or Unit for declarations and assignments
                 assert result.getType() == null || KotlinBuiltIns.isUnit(result.getType());
-                result = JetTypeInfo.create(builtIns.getUnitType(), context.dataFlowInfo);
+                result = result.replaceType(builtIns.getUnitType()).replaceDataFlowInfo(context.dataFlowInfo);
             }
         }
         return result;

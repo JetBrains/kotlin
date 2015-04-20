@@ -18,10 +18,15 @@ package org.jetbrains.kotlin.resolve;
 
 import com.google.common.collect.ImmutableMap;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
+import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
 import org.jetbrains.kotlin.resolve.diagnostics.MutableDiagnosticsWithSuppression;
+import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.expressions.JetTypeInfo;
+import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryPackage;
 import org.jetbrains.kotlin.util.slicedMap.*;
 
 import java.util.Collection;
@@ -58,6 +63,12 @@ public class BindingTraceContext implements BindingTrace {
         @Override
         public <K, V> ImmutableMap<K, V> getSliceContents(@NotNull ReadOnlySlice<K, V> slice) {
             return map.getSliceContents(slice);
+        }
+
+        @Nullable
+        @Override
+        public JetType getType(@NotNull JetExpression expression) {
+            return BindingTraceContext.this.getType(expression);
         }
     };
 
@@ -111,5 +122,19 @@ public class BindingTraceContext implements BindingTrace {
     @Override
     public <K, V> Collection<K> getKeys(WritableSlice<K, V> slice) {
         return map.getKeys(slice);
+    }
+
+    @Nullable
+    @Override
+    public JetType getType(@NotNull JetExpression expression) {
+        JetTypeInfo typeInfo = get(BindingContext.EXPRESSION_TYPE_INFO, expression);
+        return typeInfo != null ? typeInfo.getType() : null;
+    }
+
+    @Override
+    public void recordType(@NotNull JetExpression expression, @Nullable JetType type) {
+        JetTypeInfo typeInfo = get(BindingContext.EXPRESSION_TYPE_INFO, expression);
+        typeInfo = typeInfo != null ? typeInfo.replaceType(type) : TypeInfoFactoryPackage.createTypeInfo(type);
+        record(BindingContext.EXPRESSION_TYPE_INFO, expression, typeInfo);
     }
 }

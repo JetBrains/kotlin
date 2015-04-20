@@ -140,7 +140,7 @@ object CreateCallableFromCallActionFactory : JetIntentionActionsFactory() {
         return when {
             !receiver.exists() -> TypeInfo.Empty
             receiver is Qualifier -> {
-                val qualifierType = context[BindingContext.EXPRESSION_TYPE, receiver.expression]
+                val qualifierType = context.getType(receiver.expression)
                 if (qualifierType != null) return TypeInfo(qualifierType, Variance.IN_VARIANCE)
 
                 val classifier = receiver.classifier as? JavaClassDescriptor ?: return null

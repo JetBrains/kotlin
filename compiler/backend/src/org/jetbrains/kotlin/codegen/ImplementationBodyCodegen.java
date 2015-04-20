@@ -1266,7 +1266,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     result.addField((JetDelegatorByExpressionSpecifier) specifier, propertyDescriptor);
                 }
                 else {
-                    JetType expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression);
+                    JetType expressionType = bindingContext.getType(expression);
                     Type asmType =
                             expressionType != null ? typeMapper.mapType(expressionType) : typeMapper.mapType(getSuperClass(specifier));
                     result.addField((JetDelegatorByExpressionSpecifier) specifier, asmType, "$delegate_" + n);
@@ -1718,7 +1718,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 DelegationFieldsInfo.Field field = delegationFieldsInfo.getInfo((JetDelegatorByExpressionSpecifier) specifier);
                 generateDelegateField(field);
                 JetExpression delegateExpression = ((JetDelegatorByExpressionSpecifier) specifier).getDelegateExpression();
-                JetType delegateExpressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, delegateExpression);
+                JetType delegateExpressionType = bindingContext.getType(delegateExpression);
                 generateDelegates(getSuperClass(specifier), delegateExpressionType, field);
             }
         }

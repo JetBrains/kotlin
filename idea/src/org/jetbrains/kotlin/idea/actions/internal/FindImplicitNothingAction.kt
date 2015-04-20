@@ -77,7 +77,7 @@ public class FindImplicitNothingAction : AnAction() {
 
                     try {
                         val bindingContext = resolutionFacade.analyze(expression)
-                        val type = bindingContext[BindingContext.EXPRESSION_TYPE, expression] ?: return
+                        val type = bindingContext.getType(expression) ?: return
                         if (KotlinBuiltIns.isNothing(type) && !expression.hasExplicitNothing(bindingContext)) { //TODO: what about nullable Nothing?
                             found.add(expression)
                         }

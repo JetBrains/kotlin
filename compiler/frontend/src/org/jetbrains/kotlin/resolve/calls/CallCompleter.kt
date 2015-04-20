@@ -229,7 +229,7 @@ public class CallCompleter(
         val deparenthesized = ArgumentTypeResolver.getLastElementDeparenthesized(expression, context)
         if (deparenthesized == null) return
 
-        val recordedType = context.trace[BindingContext.EXPRESSION_TYPE, expression]
+        val recordedType = context.trace.getType(expression)
         var updatedType: JetType? = recordedType
 
         val results = completeCallForArgument(deparenthesized, context)
@@ -304,7 +304,7 @@ public class CallCompleter(
             BindingContextUtils.updateRecordedType(
                     updatedType, expression, trace, /* shouldBeMadeNullable = */ hasNecessarySafeCall(expression, trace))
         }
-        return trace[BindingContext.EXPRESSION_TYPE, argumentExpression]
+        return trace.getType(argumentExpression)
     }
 
     private fun hasNecessarySafeCall(expression: JetExpression, trace: BindingTrace): Boolean {
@@ -315,7 +315,7 @@ public class CallCompleter(
         if (expression !is JetSafeQualifiedExpression) return false
 
         //If a receiver type is not null, then this safe expression is useless, and we don't need to make the result type nullable.
-        val expressionType = trace[BindingContext.EXPRESSION_TYPE, expression.getReceiverExpression()]
+        val expressionType = trace.getType(expression.getReceiverExpression())
         return expressionType != null && TypeUtils.isNullableType(expressionType)
     }    
 }

@@ -135,7 +135,7 @@ public class CheckPartialBodyResolveAction : AnAction() {
                     builder.append(" resolves to ${target?.presentation()}")
                 }
 
-                val type = bindingContext[BindingContext.EXPRESSION_TYPE, expression]
+                val type = bindingContext.getType(expression)
                 if (type != null) {
                     builder.append(" has type ${type.presentation()}")
                 }

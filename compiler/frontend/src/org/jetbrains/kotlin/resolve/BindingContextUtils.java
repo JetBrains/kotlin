@@ -24,14 +24,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeUtils;
-import org.jetbrains.kotlin.types.expressions.TypeInfoWithJumpInfo;
+import org.jetbrains.kotlin.types.expressions.JetTypeInfo;
+import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryPackage;
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice;
 
 import java.util.Collection;
@@ -79,6 +79,18 @@ public class BindingContextUtils {
         @NotNull K key
     ) {
         return getNotNull(bindingContext, slice, key, "Value at " + slice + " must not be null for " + key);
+    }
+
+    @NotNull
+    public static JetType getNotNullType(
+            @NotNull BindingContext bindingContext,
+            @NotNull JetExpression expression
+    ) {
+        JetType result = bindingContext.getType(expression);
+        if (result == null) {
+            throw new IllegalStateException("Type must be not null for " + expression);
+        }
+        return result;
     }
 
     @NotNull
@@ -139,17 +151,16 @@ public class BindingContextUtils {
         if (shouldBeMadeNullable) {
             type = TypeUtils.makeNullable(type);
         }
-        trace.record(BindingContext.EXPRESSION_TYPE, expression, type);
+        trace.recordType(expression, type);
         return type;
     }
 
     @Nullable
-    public static TypeInfoWithJumpInfo getRecordedTypeInfo(@NotNull JetExpression expression, @NotNull BindingContext context) {
-        if (!context.get(BindingContext.PROCESSED, expression)) return null;
-        DataFlowInfo dataFlowInfo = BindingContextUtilPackage.getDataFlowInfo(context, expression);
-        JetType type = context.get(BindingContext.EXPRESSION_TYPE, expression);
-        Boolean jumpOutPossible = context.get(BindingContext.EXPRESSION_JUMP_OUT_POSSIBLE, expression);
-        return new TypeInfoWithJumpInfo(type, dataFlowInfo, Boolean.TRUE.equals(jumpOutPossible), dataFlowInfo);
+    public static JetTypeInfo getRecordedTypeInfo(@NotNull JetExpression expression, @NotNull BindingContext context) {
+        // NB: should never return null if expression is already processed
+        if (!Boolean.TRUE.equals(context.get(BindingContext.PROCESSED, expression))) return null;
+        JetTypeInfo result = context.get(BindingContext.EXPRESSION_TYPE_INFO, expression);
+        return result != null ? result : TypeInfoFactoryPackage.createTypeInfo(DataFlowInfo.EMPTY);
     }
 
     public static boolean isExpressionWithValidReference(

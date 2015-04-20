@@ -122,7 +122,7 @@ public class KotlinIndicesHelper(
         if (receiverPair != null) {
             val (receiverExpression, callType) = receiverPair
 
-            val expressionType = bindingContext[BindingContext.EXPRESSION_TYPE, receiverExpression]
+            val expressionType = bindingContext.getType(receiverExpression)
             if (expressionType == null || expressionType.isError()) return emptyList()
 
             val receiverValue = ExpressionReceiver(receiverExpression, expressionType)

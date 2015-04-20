@@ -127,7 +127,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
 
         AnalysisResult analysisResult = ResolvePackage.analyzeAndGetResult(expression);
         final BindingContext bindingContext = analysisResult.getBindingContext();
-        final JetType expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression); //can be null or error type
+        final JetType expressionType = bindingContext.getType(expression); //can be null or error type
         JetScope scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, expression);
         if (scope != null) {
             DataFlowInfo dataFlowInfo = BindingContextUtilPackage.getDataFlowInfo(bindingContext, expression);

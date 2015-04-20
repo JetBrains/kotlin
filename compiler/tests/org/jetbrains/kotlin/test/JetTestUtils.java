@@ -61,6 +61,7 @@ import org.jetbrains.kotlin.idea.JetLanguage;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
+import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
@@ -69,6 +70,8 @@ import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.kotlin.test.util.UtilPackage;
+import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.expressions.JetTypeInfo;
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice;
 import org.jetbrains.kotlin.util.slicedMap.SlicedMap;
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
@@ -141,6 +144,12 @@ public class JetTestUtils {
                 public <K, V> ImmutableMap<K, V> getSliceContents(@NotNull ReadOnlySlice<K, V> slice) {
                     return ImmutableMap.of();
                 }
+
+                @Nullable
+                @Override
+                public JetType getType(@NotNull JetExpression expression) {
+                    return DUMMY_TRACE.getType(expression);
+                }
             };
         }
 
@@ -164,6 +173,17 @@ public class JetTestUtils {
         public <K, V> Collection<K> getKeys(WritableSlice<K, V> slice) {
             assert slice.isCollective();
             return Collections.emptySet();
+        }
+
+        @Nullable
+        @Override
+        public JetType getType(@NotNull JetExpression expression) {
+            JetTypeInfo typeInfo = get(BindingContext.EXPRESSION_TYPE_INFO, expression);
+            return typeInfo != null ? typeInfo.getType() : null;
+        }
+
+        @Override
+        public void recordType(@NotNull JetExpression expression, @Nullable JetType type) {
         }
 
         @Override
@@ -202,6 +222,12 @@ public class JetTestUtils {
                 public <K, V> ImmutableMap<K, V> getSliceContents(@NotNull ReadOnlySlice<K, V> slice) {
                     return ImmutableMap.of();
                 }
+
+                @Nullable
+                @Override
+                public JetType getType(@NotNull JetExpression expression) {
+                    return DUMMY_EXCEPTION_ON_ERROR_TRACE.getType(expression);
+                }
             };
         }
 
@@ -223,6 +249,16 @@ public class JetTestUtils {
         public <K, V> Collection<K> getKeys(WritableSlice<K, V> slice) {
             assert slice.isCollective();
             return Collections.emptySet();
+        }
+
+        @Nullable
+        @Override
+        public JetType getType(@NotNull JetExpression expression) {
+            return null;
+        }
+
+        @Override
+        public void recordType(@NotNull JetExpression expression, @Nullable JetType type) {
         }
 
         @Override

@@ -85,8 +85,8 @@ import org.jetbrains.kotlin.utils.DFS.VisitedWithSet
 import java.util.*
 import kotlin.properties.Delegates
 
-private val DEFAULT_RETURN_TYPE = KotlinBuiltIns.getInstance().getUnitType()!!
-private val DEFAULT_PARAMETER_TYPE = KotlinBuiltIns.getInstance().getNullableAnyType()!!
+private val DEFAULT_RETURN_TYPE = KotlinBuiltIns.getInstance().getUnitType()
+private val DEFAULT_PARAMETER_TYPE = KotlinBuiltIns.getInstance().getNullableAnyType()
 
 private fun DeclarationDescriptor.renderForMessage(): String =
         IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(this)
@@ -158,7 +158,7 @@ private fun List<Instruction>.getResultTypeAndExpressions(
         if (expression == null) return null
         if (options.inferUnitTypeForUnusedValues && expression.isUsedAsStatement(bindingContext)) return null
 
-        return bindingContext[BindingContext.EXPRESSION_TYPE, expression]
+        return bindingContext.getType(expression)
     }
 
     val resultTypes = map(::instructionToType).filterNotNull()
@@ -668,11 +668,11 @@ private fun ExtractionData.inferParametersInfo(
                                                                      originalDescriptor.getReturnType() ?: DEFAULT_RETURN_TYPE)
                     }
                     parameterExpression != null -> bindingContext[BindingContext.SMARTCAST, parameterExpression]
-                                                   ?: bindingContext[BindingContext.EXPRESSION_TYPE, parameterExpression]
+                                                   ?: bindingContext.getType(parameterExpression)
                                                    ?: if (receiverToExtract.exists()) receiverToExtract.getType() else null
                     receiverToExtract is ThisReceiver -> {
                         val calleeExpression = resolvedCall!!.getCall().getCalleeExpression()
-                        bindingContext[BindingContext.EXPRESSION_DATA_FLOW_INFO, calleeExpression]?.let { dataFlowInfo ->
+                        bindingContext[BindingContext.EXPRESSION_TYPE_INFO, calleeExpression]?.dataFlowInfo?.let { dataFlowInfo ->
                             val possibleTypes = dataFlowInfo.getPossibleTypes(DataFlowValueFactory.createDataFlowValue(receiverToExtract))
                             if (possibleTypes.isNotEmpty()) CommonSupertypes.commonSupertype(possibleTypes) else null
                         } ?: receiverToExtract.getType()

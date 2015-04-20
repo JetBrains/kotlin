@@ -45,9 +45,9 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.JetType;
-import org.jetbrains.kotlin.types.JetTypeInfo;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
+import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryPackage;
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
 
 import java.util.ArrayList;
@@ -192,7 +192,7 @@ public class ExpressionTypingUtils {
             @NotNull JetType argumentType
     ) {
         JetExpression fakeExpression = JetPsiFactory(project).createExpression(argumentName);
-        trace.record(EXPRESSION_TYPE, fakeExpression, argumentType);
+        trace.recordType(fakeExpression, argumentType);
         trace.record(PROCESSED, fakeExpression);
         return fakeExpression;
     }
@@ -336,7 +336,7 @@ public class ExpressionTypingUtils {
     ) {
         return expression != null
                ? facade.getTypeInfo(expression, context)
-               : JetTypeInfo.create(null, context.dataFlowInfo);
+               : TypeInfoFactoryPackage.createTypeInfo(context);
     }
 
     @SuppressWarnings("SuspiciousMethodCalls")

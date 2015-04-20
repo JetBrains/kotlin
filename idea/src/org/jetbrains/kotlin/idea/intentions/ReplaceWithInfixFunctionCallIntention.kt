@@ -83,7 +83,7 @@ public open class ReplaceWithInfixFunctionCallIntention : JetSelfTargetingIntent
         val valueArguments = element.getValueArgumentList()?.getArguments() ?: listOf<JetValueArgument>()
         val functionLiteralArguments = element.getFunctionLiteralArguments()
         val bindingContext = parent.analyze()
-        val receiverType = bindingContext[BindingContext.EXPRESSION_TYPE, receiver]
+        val receiverType = bindingContext.getType(receiver)
         if (receiverType == null) {
             if (bindingContext[BindingContext.QUALIFIER, receiver] != null) {
                 intentionFailed(editor, "package.call")

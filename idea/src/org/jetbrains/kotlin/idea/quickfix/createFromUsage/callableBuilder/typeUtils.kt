@@ -55,7 +55,7 @@ private fun DeclarationDescriptor.render(
 private fun JetType.render(typeParameterNameMap: Map<TypeParameterDescriptor, String>, fq: Boolean): String {
     val arguments = getArguments().map { it.getType().render(typeParameterNameMap, fq) }
     val typeString = getConstructor().getDeclarationDescriptor()!!.render(typeParameterNameMap, fq)
-    val typeArgumentString = if (arguments.notEmpty) arguments.joinToString(", ", "<", ">") else ""
+    val typeArgumentString = if (arguments.isNotEmpty()) arguments.joinToString(", ", "<", ">") else ""
     val nullifier = if (isMarkedNullable()) "?" else ""
     return "$typeString$typeArgumentString$nullifier"
 }
@@ -73,10 +73,10 @@ private fun getTypeParameterNamesNotInScope(typeParameters: Collection<TypeParam
 fun JetType.getTypeParameters(): Set<TypeParameterDescriptor> {
     val typeParameters = LinkedHashSet<TypeParameterDescriptor>()
     val arguments = getArguments()
-    if (arguments.empty) {
+    if (arguments.isEmpty()) {
         val descriptor = getConstructor().getDeclarationDescriptor()
         if (descriptor is TypeParameterDescriptor) {
-            typeParameters.add(descriptor as TypeParameterDescriptor)
+            typeParameters.add(descriptor)
         }
     }
     else {
@@ -100,9 +100,9 @@ fun JetExpression.guessTypes(
         && getNonStrictParentOfType<JetAnnotationEntry>() == null) return array(builtIns.getUnitType())
 
     // if we know the actual type of the expression
-    val theType1 = context[BindingContext.EXPRESSION_TYPE, this]
+    val theType1 = context.getType(this)
     if (theType1 != null) {
-        val dataFlowInfo = context[BindingContext.EXPRESSION_DATA_FLOW_INFO, this]
+        val dataFlowInfo = context[BindingContext.EXPRESSION_TYPE_INFO, this]?.dataFlowInfo
         val possibleTypes = dataFlowInfo?.getPossibleTypes(DataFlowValueFactory.createDataFlowValue(this, theType1, context, module))
         return if (possibleTypes != null && possibleTypes.isNotEmpty()) possibleTypes.copyToArray() else array(theType1)
     }
@@ -117,12 +117,12 @@ fun JetExpression.guessTypes(
     return when {
         this is JetTypeConstraint -> {
             // expression itself is a type assertion
-            val constraint = (this as JetTypeConstraint)
+            val constraint = this
             array(context[BindingContext.TYPE, constraint.getBoundTypeReference()]!!)
         }
         parent is JetTypeConstraint -> {
             // expression is on the left side of a type assertion
-            val constraint = (parent as JetTypeConstraint)
+            val constraint = parent
             array(context[BindingContext.TYPE, constraint.getBoundTypeReference()]!!)
         }
         this is JetMultiDeclarationEntry -> {
@@ -162,7 +162,7 @@ fun JetExpression.guessTypes(
                 variable.guessType(context)
             }
         }
-        parent is JetPropertyDelegate && module != null -> {
+        parent is JetPropertyDelegate -> {
             val property = context[BindingContext.DECLARATION_TO_DESCRIPTOR, parent.getParent() as JetProperty] as PropertyDescriptor
             val delegateClassName = if (property.isVar()) "ReadWriteProperty" else "ReadOnlyProperty"
             val delegateClass = module.resolveTopLevelClass(FqName("kotlin.properties.$delegateClassName"))
@@ -180,7 +180,7 @@ fun JetExpression.guessTypes(
 }
 
 private fun JetNamedDeclaration.guessType(context: BindingContext): Array<JetType> {
-    val expectedTypes = SearchUtils.findAllReferences(this, getUseScope())!!.stream().map { ref ->
+    val expectedTypes = SearchUtils.findAllReferences(this, getUseScope())!!.sequence().map { ref ->
         if (ref is JetSimpleNameReference) {
             context[BindingContext.EXPECTED_EXPRESSION_TYPE, ref.expression]
         }

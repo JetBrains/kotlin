@@ -160,7 +160,7 @@ public final class BindingUtils {
     public static Object getCompileTimeValue(@NotNull BindingContext context, @NotNull JetExpression expression, @NotNull CompileTimeConstant<?> constant) {
         if (constant != null) {
             if (constant instanceof IntegerValueTypeConstant) {
-                JetType expectedType = context.get(BindingContext.EXPRESSION_TYPE, expression);
+                JetType expectedType = context.getType(expression);
                 return ((IntegerValueTypeConstant) constant).getValue(expectedType == null ? TypeUtils.NO_EXPECTED_TYPE : expectedType);
             }
             return constant.getValue();
@@ -210,7 +210,7 @@ public final class BindingUtils {
     @NotNull
     public static JetType getTypeForExpression(@NotNull BindingContext context,
             @NotNull JetExpression expression) {
-        return BindingContextUtils.getNotNull(context, BindingContext.EXPRESSION_TYPE, expression);
+        return BindingContextUtils.getNotNullType(context, expression);
     }
 
     @NotNull

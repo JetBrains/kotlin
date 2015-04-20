@@ -376,14 +376,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @NotNull
-    public Type expressionType(JetExpression expression) {
+    public Type expressionType(@Nullable JetExpression expression) {
         JetType type = expressionJetType(expression);
         return type == null ? Type.VOID_TYPE : asmType(type);
     }
 
     @Nullable
-    public JetType expressionJetType(JetExpression expression) {
-        return bindingContext.get(EXPRESSION_TYPE, expression);
+    public JetType expressionJetType(@Nullable JetExpression expression) {
+        return expression != null ? bindingContext.getType(expression) : null;
     }
 
     @Override
@@ -534,7 +534,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         JetExpression loopRange = forExpression.getLoopRange();
-        JetType loopRangeType = bindingContext.get(EXPRESSION_TYPE, loopRange);
+        JetType loopRangeType = bindingContext.getType(loopRange);
         assert loopRangeType != null;
         Type asmLoopRangeType = asmType(loopRangeType);
         if (asmLoopRangeType.getSort() == Type.ARRAY) {
@@ -818,7 +818,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         private ForInArrayLoopGenerator(@NotNull JetForExpression forExpression) {
             super(forExpression);
-            loopRangeType = bindingContext.get(EXPRESSION_TYPE, forExpression.getLoopRange());
+            loopRangeType = bindingContext.getType(forExpression.getLoopRange());
         }
 
         @Override
@@ -1029,7 +1029,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         @Override
         protected void storeRangeStartAndEnd() {
-            JetType loopRangeType = bindingContext.get(EXPRESSION_TYPE, forExpression.getLoopRange());
+            JetType loopRangeType = bindingContext.getType(forExpression.getLoopRange());
             assert loopRangeType != null;
             Type asmLoopRangeType = asmType(loopRangeType);
             gen(forExpression.getLoopRange(), asmLoopRangeType);
@@ -1061,7 +1061,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
             incrementVar = createLoopTempVariable(asmElementType);
 
-            JetType loopRangeType = bindingContext.get(EXPRESSION_TYPE, forExpression.getLoopRange());
+            JetType loopRangeType = bindingContext.getType(forExpression.getLoopRange());
             assert loopRangeType != null;
             Type asmLoopRangeType = asmType(loopRangeType);
 
@@ -1286,7 +1286,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     public static CompileTimeConstant getCompileTimeConstant(@NotNull JetExpression expression, @NotNull BindingContext bindingContext) {
         CompileTimeConstant<?> compileTimeValue = bindingContext.get(COMPILE_TIME_VALUE, expression);
         if (compileTimeValue instanceof IntegerValueTypeConstant) {
-            JetType expectedType = bindingContext.get(EXPRESSION_TYPE, expression);
+            JetType expectedType = bindingContext.getType(expression);
             assert expectedType != null : "Expression is not type checked: " + expression.getText();
             return EvaluatePackage.createCompileTimeConstantWithType((IntegerValueTypeConstant) compileTimeValue, expectedType);
         }
@@ -2664,7 +2664,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     public StackValue visitClassLiteralExpression(@NotNull JetClassLiteralExpression expression, StackValue data) {
         checkReflectionIsAvailable(expression);
 
-        JetType type = bindingContext.get(EXPRESSION_TYPE, expression);
+        JetType type = bindingContext.getType(expression);
         assert type != null;
 
         assert state.getReflectionTypes().getkClass().getTypeConstructor().equals(type.getConstructor())
@@ -3384,7 +3384,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         JetExpression initializer = multiDeclaration.getInitializer();
         if (initializer == null) return StackValue.none();
 
-        JetType initializerType = bindingContext.get(EXPRESSION_TYPE, initializer);
+        JetType initializerType = bindingContext.getType(initializer);
         assert initializerType != null;
 
         Type initializerAsmType = asmType(initializerType);
@@ -3491,7 +3491,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     public StackValue generateNewArray(@NotNull JetCallExpression expression) {
-        JetType arrayType = bindingContext.get(EXPRESSION_TYPE, expression);
+        JetType arrayType = bindingContext.getType(expression);
         assert arrayType != null : "Array instantiation isn't type checked: " + expression.getText();
 
         return generateNewArray(expression, arrayType);
@@ -3531,7 +3531,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     @Override
     public StackValue visitArrayAccessExpression(@NotNull JetArrayAccessExpression expression, StackValue receiver) {
         JetExpression array = expression.getArrayExpression();
-        JetType type = bindingContext.get(EXPRESSION_TYPE, array);
+        JetType type = bindingContext.getType(array);
         Type arrayType = expressionType(array);
         List<JetExpression> indices = expression.getIndexExpressions();
         FunctionDescriptor operationDescriptor = (FunctionDescriptor) bindingContext.get(REFERENCE_TARGET, expression);
@@ -3640,7 +3640,7 @@ The "returned" value of try expression with no finally is either the last expres
 (or blocks).
          */
 
-        JetType jetType = bindingContext.get(EXPRESSION_TYPE, expression);
+        JetType jetType = bindingContext.getType(expression);
         assert jetType != null;
         final Type expectedAsmType = isStatement ? Type.VOID_TYPE : asmType(jetType);
 
@@ -3808,7 +3808,7 @@ The "returned" value of try expression with no finally is either the last expres
                                 v.dup();
                                 Label nonnull = new Label();
                                 v.ifnonnull(nonnull);
-                                JetType leftType = bindingContext.get(EXPRESSION_TYPE, left);
+                                JetType leftType = bindingContext.getType(left);
                                 assert leftType != null;
                                 genThrow(v, "kotlin/TypeCastException", DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(leftType) +
                                                                         " cannot be cast to " +
@@ -3847,7 +3847,7 @@ The "returned" value of try expression with no finally is either the last expres
         if (expressionToMatch != null) {
             Type subjectType = expressionToMatch.type;
             markStartLineNumber(patternExpression);
-            JetType condJetType = bindingContext.get(EXPRESSION_TYPE, patternExpression);
+            JetType condJetType = bindingContext.getType(patternExpression);
             Type condType;
             if (isNumberPrimitive(subjectType) || subjectType.getSort() == Type.BOOLEAN) {
                 assert condJetType != null;
@@ -4051,7 +4051,7 @@ The "returned" value of try expression with no finally is either the last expres
         if (rangeExpression instanceof JetBinaryExpression) {
             JetBinaryExpression binaryExpression = (JetBinaryExpression) rangeExpression;
             if (binaryExpression.getOperationReference().getReferencedNameElementType() == JetTokens.RANGE) {
-                JetType jetType = bindingContext.get(EXPRESSION_TYPE, rangeExpression);
+                JetType jetType = bindingContext.getType(rangeExpression);
                 assert jetType != null;
                 DeclarationDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
                 return INTEGRAL_RANGES.contains(descriptor);

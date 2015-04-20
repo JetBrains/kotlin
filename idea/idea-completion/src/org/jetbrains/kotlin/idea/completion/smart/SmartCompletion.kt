@@ -298,7 +298,7 @@ class SmartCompletion(
                     }
                 }
 
-                val subjectType = bindingContext[BindingContext.EXPRESSION_TYPE, subject] ?: return setOf()
+                val subjectType = bindingContext.getType(subject) ?: return setOf()
                 val classDescriptor = TypeUtils.getClassDescriptor(subjectType)
                 if (classDescriptor != null && DescriptorUtils.isEnumClass(classDescriptor)) {
                     val conditions = whenExpression.getEntries()
@@ -410,7 +410,7 @@ class SmartCompletion(
         val operationToken = binaryExpression.getOperationToken()
         if (operationToken != JetTokens.IN_KEYWORD && operationToken != JetTokens.NOT_IN || expressionWithType != binaryExpression.getRight()) return null
 
-        val leftOperandType = bindingContext.get(BindingContext.EXPRESSION_TYPE, binaryExpression.getLeft()) ?: return null
+        val leftOperandType = bindingContext.getType(binaryExpression.getLeft()) ?: return null
         val scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, expressionWithType)
         val detector = TypesWithContainsDetector(scope, leftOperandType, project, moduleDescriptor)
 

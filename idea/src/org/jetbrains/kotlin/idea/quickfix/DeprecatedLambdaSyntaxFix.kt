@@ -127,7 +127,7 @@ private class LambdaToFunctionExpression(
 
     init {
         val bindingContext = functionLiteralExpression.analyze()
-        val functionLiteralType = bindingContext.get(BindingContext.EXPRESSION_TYPE, functionLiteralExpression)
+        val functionLiteralType = bindingContext.getType(functionLiteralExpression)
         assert(functionLiteralType != null && KotlinBuiltIns.isFunctionOrExtensionFunctionType(functionLiteralType)) {
             "Broken function type for expression: ${functionLiteralExpression.getText()}, at: ${DiagnosticUtils.atLocation(functionLiteralExpression)}"
         }

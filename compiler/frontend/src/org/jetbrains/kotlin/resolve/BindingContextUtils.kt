@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
+import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
 
 public fun JetReturnExpression.getTargetFunctionDescriptor(context: BindingContext): FunctionDescriptor? {
     val targetLabel = getTargetLabel()
@@ -40,7 +41,7 @@ public fun JetReturnExpression.getTargetFunctionDescriptor(context: BindingConte
     val containingFunctionDescriptor = DescriptorUtils.getParentOfType(declarationDescriptor, javaClass<FunctionDescriptor>(), false)
     if (containingFunctionDescriptor == null) return null
 
-    return stream(containingFunctionDescriptor) { DescriptorUtils.getParentOfType(it, javaClass<FunctionDescriptor>()) }
+    return sequence(containingFunctionDescriptor) { DescriptorUtils.getParentOfType(it, javaClass<FunctionDescriptor>()) }
             .dropWhile { it is AnonymousFunctionDescriptor }
             .firstOrNull()
 }
@@ -57,13 +58,17 @@ public fun <C : ResolutionContext<C>> ResolutionContext<C>.recordScopeAndDataFlo
     if (expression == null) return
 
     trace.record(BindingContext.RESOLUTION_SCOPE, expression, scope)
-    if (dataFlowInfo != DataFlowInfo.EMPTY) {
-        trace.record(BindingContext.EXPRESSION_DATA_FLOW_INFO, expression, dataFlowInfo)
+    val typeInfo = trace.get(BindingContext.EXPRESSION_TYPE_INFO, expression)
+    if (typeInfo != null) {
+        trace.record(BindingContext.EXPRESSION_TYPE_INFO, expression, typeInfo.replaceDataFlowInfo(dataFlowInfo))
+    }
+    else if (dataFlowInfo != DataFlowInfo.EMPTY) {
+        trace.record(BindingContext.EXPRESSION_TYPE_INFO, expression, createTypeInfo(dataFlowInfo))
     }
 }
 
 public fun BindingContext.getDataFlowInfo(expression: JetExpression?): DataFlowInfo =
-    expression?.let { this[BindingContext.EXPRESSION_DATA_FLOW_INFO, it] } ?: DataFlowInfo.EMPTY
+    expression?.let { this[BindingContext.EXPRESSION_TYPE_INFO, it]?.dataFlowInfo } ?: DataFlowInfo.EMPTY
 
 public fun JetExpression.isUnreachableCode(context: BindingContext): Boolean = context[BindingContext.UNREACHABLE_CODE, this]!!
 

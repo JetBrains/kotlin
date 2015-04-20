@@ -157,7 +157,7 @@ public abstract class AbstractPartialBodyResolveTest : JetLightCodeInsightFixtur
         else {
             expression
         }
-        val type = bindingContext[BindingContext.EXPRESSION_TYPE, expressionWithType]
+        val type = bindingContext.getType(expressionWithType)
 
         return ResolveData(target, type, processedStatements)
     }

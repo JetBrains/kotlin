@@ -162,7 +162,7 @@ public final class JsDescriptorUtils {
 
     @Nullable
     public static Name getNameIfStandardType(@NotNull JetExpression expression, @NotNull TranslationContext context) {
-        JetType type = context.bindingContext().get(BindingContext.EXPRESSION_TYPE, expression);
+        JetType type = context.bindingContext().getType(expression);
         return type != null ? DescriptorUtilsPackage.getNameIfStandardType(type) : null;
     }
 

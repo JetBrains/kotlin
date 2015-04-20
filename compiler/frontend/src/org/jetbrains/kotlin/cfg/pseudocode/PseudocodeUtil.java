@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.ResolvedCallUtilPackage;
+import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice;
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
 
@@ -62,6 +63,16 @@ public class PseudocodeUtil {
             @Override
             public <K, V> Collection<K> getKeys(WritableSlice<K, V> slice) {
                 return bindingContext.getKeys(slice);
+            }
+
+            @Nullable
+            @Override
+            public JetType getType(@NotNull JetExpression expression) {
+                return bindingContext.getType(expression);
+            }
+
+            @Override
+            public void recordType(@NotNull JetExpression expression, @Nullable JetType type) {
             }
 
             @Override

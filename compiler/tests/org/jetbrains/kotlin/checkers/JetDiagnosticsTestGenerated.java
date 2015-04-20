@@ -11078,6 +11078,18 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/smartCasts/loops"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
 
+                @TestMetadata("assignElvisIfBreakInsideWhileTrue.kt")
+                public void testAssignElvisIfBreakInsideWhileTrue() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/loops/assignElvisIfBreakInsideWhileTrue.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("assignWhenInsideWhileTrue.kt")
+                public void testAssignWhenInsideWhileTrue() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/loops/assignWhenInsideWhileTrue.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("doWhile.kt")
                 public void testDoWhile() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/loops/doWhile.kt");
@@ -11174,6 +11186,24 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("ifBreakAssignInsideDoWhile.kt")
+                public void testIfBreakAssignInsideDoWhile() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/loops/ifBreakAssignInsideDoWhile.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("ifBreakAssignInsideWhileTrue.kt")
+                public void testIfBreakAssignInsideWhileTrue() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/loops/ifBreakAssignInsideWhileTrue.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("ifBreakExprInsideWhileTrue.kt")
+                public void testIfBreakExprInsideWhileTrue() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/loops/ifBreakExprInsideWhileTrue.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("ifElseBlockInsideDoWhile.kt")
                 public void testIfElseBlockInsideDoWhile() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/loops/ifElseBlockInsideDoWhile.kt");
@@ -11183,6 +11213,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 @TestMetadata("ifInsideDoWhile.kt")
                 public void testIfInsideDoWhile() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/loops/ifInsideDoWhile.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("leftElvisBreakInsideWhileTrue.kt")
+                public void testLeftElvisBreakInsideWhileTrue() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/loops/leftElvisBreakInsideWhileTrue.kt");
                     doTest(fileName);
                 }
 
@@ -11228,9 +11264,27 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("plusAssignWhenInsideDoWhile.kt")
+                public void testPlusAssignWhenInsideDoWhile() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/loops/plusAssignWhenInsideDoWhile.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("useInsideDoWhile.kt")
                 public void testUseInsideDoWhile() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/loops/useInsideDoWhile.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("whenInsideWhileTrue.kt")
+                public void testWhenInsideWhileTrue() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/loops/whenInsideWhileTrue.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("whenReturnInsideWhileTrue.kt")
+                public void testWhenReturnInsideWhileTrue() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/loops/whenReturnInsideWhileTrue.kt");
                     doTest(fileName);
                 }
 

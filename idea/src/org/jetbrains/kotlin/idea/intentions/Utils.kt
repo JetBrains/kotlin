@@ -47,7 +47,7 @@ fun specifyTypeExplicitly(declaration: JetNamedFunction, typeReference: JetTypeR
 
 fun expressionType(expression: JetExpression): JetType? {
     val bindingContext = expression.analyze()
-    return bindingContext.get(BindingContext.EXPRESSION_TYPE, expression)
+    return bindingContext.getType(expression)
 }
 
 fun functionReturnType(function: JetNamedFunction): JetType? {

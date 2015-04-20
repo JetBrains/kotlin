@@ -127,7 +127,7 @@ public class OperatorToFunctionIntention : JetSelfTargetingIntention<JetExpressi
             val context = element.analyze()
             val functionCandidate = element.getResolvedCall(context)
             val functionName = functionCandidate?.getCandidateDescriptor()?.getName().toString()
-            val elemType = context[BindingContext.EXPRESSION_TYPE, left]
+            val elemType = context.getType(left)
 
             val transformation = when (op) {
                 JetTokens.PLUS -> "$leftText.plus($rightText)"

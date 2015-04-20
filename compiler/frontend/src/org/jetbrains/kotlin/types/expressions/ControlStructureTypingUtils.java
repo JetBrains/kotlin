@@ -248,7 +248,7 @@ public class ControlStructureTypingUtils {
     @NotNull
     /*package*/ static TracingStrategy createTracingForSpecialConstruction(
             final @NotNull Call call,
-            final @NotNull String constructionName,
+            @NotNull String constructionName,
             final @NotNull ExpressionTypingContext context
     ) {
         class CheckTypeContext {

@@ -23,8 +23,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
+import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
 import org.jetbrains.kotlin.resolve.diagnostics.MutableDiagnosticsWithSuppression;
+import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.expressions.JetTypeInfo;
+import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryPackage;
 import org.jetbrains.kotlin.util.slicedMap.*;
 
 import java.util.Collection;
@@ -49,6 +53,13 @@ public class DelegatingBindingTrace implements BindingTrace {
         @Override
         public <K, V> V get(ReadOnlySlice<K, V> slice, K key) {
             return DelegatingBindingTrace.this.get(slice, key);
+        }
+
+
+        @Nullable
+        @Override
+        public JetType getType(@NotNull JetExpression expression) {
+            return DelegatingBindingTrace.this.getType(expression);
         }
 
         @NotNull
@@ -120,6 +131,25 @@ public class DelegatingBindingTrace implements BindingTrace {
         List<K> result = Lists.newArrayList(keys);
         result.addAll(fromParent);
         return result;
+    }
+
+    @Nullable
+    @Override
+    public JetType getType(@NotNull JetExpression expression) {
+        JetTypeInfo typeInfo = get(BindingContext.EXPRESSION_TYPE_INFO, expression);
+        return typeInfo != null ? typeInfo.getType() : null;
+    }
+
+    @Override
+    public void recordType(@NotNull JetExpression expression, @Nullable JetType type) {
+        JetTypeInfo typeInfo = get(BindingContext.EXPRESSION_TYPE_INFO, expression);
+        if (typeInfo == null) {
+            typeInfo = TypeInfoFactoryPackage.createTypeInfo(type);
+        }
+        else {
+            typeInfo = typeInfo.replaceType(type);
+        }
+        record(BindingContext.EXPRESSION_TYPE_INFO, expression, typeInfo);
     }
 
     public void addAllMyDataTo(@NotNull BindingTrace trace) {

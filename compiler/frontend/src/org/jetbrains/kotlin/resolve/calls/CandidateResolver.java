@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
+import org.jetbrains.kotlin.types.expressions.JetTypeInfo;
 
 import javax.inject.Inject;
 import java.util.*;

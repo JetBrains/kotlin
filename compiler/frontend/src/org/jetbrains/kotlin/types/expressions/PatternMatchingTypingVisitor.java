@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.scopes.WritableScope;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
+import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryPackage;
 
 import java.util.Collections;
 import java.util.Set;
@@ -50,18 +51,18 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
 
     @Override
     public JetTypeInfo visitIsExpression(@NotNull JetIsExpression expression, ExpressionTypingContext contextWithExpectedType) {
-        ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT);
+        ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(
+                INDEPENDENT);
         JetExpression leftHandSide = expression.getLeftHandSide();
         JetTypeInfo typeInfo = facade.safeGetTypeInfo(leftHandSide, context.replaceScope(context.scope));
         JetType knownType = typeInfo.getType();
-        DataFlowInfo dataFlowInfo = typeInfo.getDataFlowInfo();
         if (expression.getTypeReference() != null) {
             DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(leftHandSide, knownType, context);
             DataFlowInfo conditionInfo = checkTypeForIs(context, knownType, expression.getTypeReference(), dataFlowValue).thenInfo;
-            DataFlowInfo newDataFlowInfo = conditionInfo.and(dataFlowInfo);
+            DataFlowInfo newDataFlowInfo = conditionInfo.and(typeInfo.getDataFlowInfo());
             context.trace.record(BindingContext.DATAFLOW_INFO_AFTER_CONDITION, expression, newDataFlowInfo);
         }
-        return DataFlowUtils.checkType(KotlinBuiltIns.getInstance().getBooleanType(), expression, contextWithExpectedType, dataFlowInfo);
+        return typeInfo.replaceType(KotlinBuiltIns.getInstance().getBooleanType()).checkType(expression, contextWithExpectedType);
     }
 
     @Override
@@ -77,11 +78,13 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         JetExpression subjectExpression = expression.getSubjectExpression();
 
         JetType subjectType;
+        boolean loopBreakContinuePossible = false;
         if (subjectExpression == null) {
             subjectType = ErrorUtils.createErrorType("Unknown type");
         }
         else {
             JetTypeInfo typeInfo = facade.safeGetTypeInfo(subjectExpression, context);
+            loopBreakContinuePossible = typeInfo.getJumpOutPossible();
             subjectType = typeInfo.getType();
             context = context.replaceDataFlowInfo(typeInfo.getDataFlowInfo());
         }
@@ -107,6 +110,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
                 CoercionStrategy coercionStrategy = isStatement ? CoercionStrategy.COERCION_TO_UNIT : CoercionStrategy.NO_COERCION;
                 JetTypeInfo typeInfo = components.expressionTypingServices.getBlockReturnedTypeWithWritableScope(
                         scopeToExtend, Collections.singletonList(bodyExpression), coercionStrategy, newContext);
+                loopBreakContinuePossible |= typeInfo.getJumpOutPossible();
                 JetType type = typeInfo.getType();
                 if (type != null) {
                     expressionTypes.add(type);
@@ -124,10 +128,12 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             commonDataFlowInfo = context.dataFlowInfo;
         }
 
-        if (!expressionTypes.isEmpty()) {
-            return DataFlowUtils.checkImplicitCast(CommonSupertypes.commonSupertype(expressionTypes), expression, contextWithExpectedType, isStatement, commonDataFlowInfo);
-        }
-        return JetTypeInfo.create(null, commonDataFlowInfo);
+        return TypeInfoFactoryPackage.createTypeInfo(expressionTypes.isEmpty() ? null : DataFlowUtils.checkImplicitCast(
+                                                             CommonSupertypes.commonSupertype(expressionTypes), expression,
+                                                             contextWithExpectedType, isStatement),
+                                                     commonDataFlowInfo,
+                                                     loopBreakContinuePossible,
+                                                     contextWithExpectedType.dataFlowInfo);
     }
 
     @NotNull

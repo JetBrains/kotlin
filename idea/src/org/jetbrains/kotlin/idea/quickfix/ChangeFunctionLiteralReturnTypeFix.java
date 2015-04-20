@@ -58,7 +58,7 @@ public class ChangeFunctionLiteralReturnTypeFix extends JetIntentionAction<JetFu
         functionLiteralReturnTypeRef = functionLiteralExpression.getFunctionLiteral().getTypeReference();
 
         BindingContext context = ResolvePackage.analyzeFully(functionLiteralExpression.getContainingJetFile());
-        JetType functionLiteralType = context.get(BindingContext.EXPRESSION_TYPE, functionLiteralExpression);
+        JetType functionLiteralType = context.getType(functionLiteralExpression);
         assert functionLiteralType != null : "Type of function literal not available in binding context";
 
         ClassDescriptor functionClass = KotlinBuiltIns.getInstance().getFunction(functionLiteralType.getArguments().size() - 1);

@@ -35,7 +35,7 @@ fun DeclarationDescriptorWithVisibility.isVisible(
     if (bindingContext == null || element == null) return false
 
     val receiver = element.getReceiverExpression()
-    val type = receiver?.let { bindingContext.get(BindingContext.EXPRESSION_TYPE, it) }
+    val type = receiver?.let { bindingContext.getType(it) }
     val explicitReceiver = type?.let { ExpressionReceiver(receiver, it) }
 
     if (explicitReceiver != null) {

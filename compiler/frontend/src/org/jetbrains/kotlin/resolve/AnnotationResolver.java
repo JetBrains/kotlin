@@ -280,7 +280,7 @@ public class AnnotationResolver {
             @NotNull JetType expectedType,
             @NotNull BindingTrace trace
     ) {
-        JetType expressionType = trace.get(BindingContext.EXPRESSION_TYPE, argumentExpression);
+        JetType expressionType = trace.getType(argumentExpression);
 
         if (expressionType == null || !JetTypeChecker.DEFAULT.isSubtypeOf(expressionType, expectedType)) {
             // TYPE_MISMATCH should be reported otherwise

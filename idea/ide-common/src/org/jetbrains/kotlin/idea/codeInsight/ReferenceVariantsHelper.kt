@@ -96,7 +96,7 @@ public class ReferenceVariantsHelper(
             val expressionType = if (useRuntimeReceiverType)
                                         getQualifierRuntimeType(receiverExpression)
                                     else
-                                        context[BindingContext.EXPRESSION_TYPE, receiverExpression]
+                                        context.getType(receiverExpression)
             if (expressionType != null && !expressionType.isError()) {
                 val receiverValue = ExpressionReceiver(receiverExpression, expressionType)
                 val dataFlowInfo = context.getDataFlowInfo(expression)
@@ -164,7 +164,7 @@ public class ReferenceVariantsHelper(
         val receiverData = getExplicitReceiverData(expression)
         if (receiverData != null) {
             val receiverExpression = receiverData.first
-            val expressionType = context[BindingContext.EXPRESSION_TYPE, receiverExpression] ?: return ReceiversData.Empty
+            val expressionType = context.getType(receiverExpression) ?: return ReceiversData.Empty
             return ReceiversData(listOf(ExpressionReceiver(receiverExpression, expressionType)), receiverData.second)
         }
         else {
@@ -174,7 +174,7 @@ public class ReferenceVariantsHelper(
     }
 
     private fun getQualifierRuntimeType(receiver: JetExpression): JetType? {
-        val type = context[BindingContext.EXPRESSION_TYPE, receiver]
+        val type = context.getType(receiver)
         if (type != null && TypeUtils.canHaveSubtypes(JetTypeChecker.DEFAULT, type)) {
             val evaluator = receiver.getContainingFile().getCopyableUserData(JetCodeFragment.RUNTIME_TYPE_EVALUATOR)
             return evaluator?.invoke(receiver)

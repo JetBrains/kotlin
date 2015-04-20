@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.types.Approximation;
 import org.jetbrains.kotlin.types.DeferredType;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.expressions.CaptureKind;
+import org.jetbrains.kotlin.types.expressions.JetTypeInfo;
 import org.jetbrains.kotlin.util.Box;
 import org.jetbrains.kotlin.util.slicedMap.*;
 
@@ -73,6 +74,11 @@ public interface BindingContext {
         public <K, V> ImmutableMap<K, V> getSliceContents(@NotNull ReadOnlySlice<K, V> slice) {
             return ImmutableMap.of();
         }
+
+        @Nullable
+        public JetType getType(@NotNull JetExpression expression) {
+            return null;
+        }
     };
 
     WritableSlice<AnnotationDescriptor, JetAnnotationEntry> ANNOTATION_DESCRIPTOR_TO_PSI_ELEMENT = Slices.createSimpleSlice();
@@ -82,17 +88,11 @@ public interface BindingContext {
     WritableSlice<JetExpression, CompileTimeConstant<?>> COMPILE_TIME_VALUE = Slices.createSimpleSlice();
 
     WritableSlice<JetTypeReference, JetType> TYPE = Slices.createSimpleSlice();
-    WritableSlice<JetExpression, JetType> EXPRESSION_TYPE = new BasicWritableSlice<JetExpression, JetType>(DO_NOTHING);
+    WritableSlice<JetExpression, JetTypeInfo> EXPRESSION_TYPE_INFO = new BasicWritableSlice<JetExpression, JetTypeInfo>(DO_NOTHING);
     WritableSlice<JetExpression, JetType> EXPECTED_EXPRESSION_TYPE = new BasicWritableSlice<JetExpression, JetType>(DO_NOTHING);
     WritableSlice<JetFunction, JetType> EXPECTED_RETURN_TYPE = new BasicWritableSlice<JetFunction, JetType>(DO_NOTHING);
-    WritableSlice<JetExpression, DataFlowInfo> EXPRESSION_DATA_FLOW_INFO = new BasicWritableSlice<JetExpression, DataFlowInfo>(DO_NOTHING);
     WritableSlice<JetExpression, Approximation.Info> EXPRESSION_RESULT_APPROXIMATION = new BasicWritableSlice<JetExpression, Approximation.Info>(DO_NOTHING);
     WritableSlice<JetExpression, DataFlowInfo> DATAFLOW_INFO_AFTER_CONDITION = Slices.createSimpleSlice();
-
-    /**
-     * Expression has jump out of the loop (break/continue) inside
-     */
-    WritableSlice<JetExpression, Boolean> EXPRESSION_JUMP_OUT_POSSIBLE = new BasicWritableSlice<JetExpression, Boolean>(DO_NOTHING);
 
     /**
      * A qualifier corresponds to a receiver expression (if any). For 'A.B' qualifier is recorded for 'A'.
@@ -262,4 +262,7 @@ public interface BindingContext {
     @TestOnly
     @NotNull
     <K, V> ImmutableMap<K, V> getSliceContents(@NotNull ReadOnlySlice<K, V> slice);
+
+    @Nullable
+    JetType getType(@NotNull JetExpression expression);
 }

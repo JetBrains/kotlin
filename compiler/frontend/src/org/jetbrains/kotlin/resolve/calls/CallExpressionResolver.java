@@ -44,12 +44,9 @@ import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluat
 import org.jetbrains.kotlin.resolve.scopes.receivers.*;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.JetType;
-import org.jetbrains.kotlin.types.JetTypeInfo;
 import org.jetbrains.kotlin.types.TypeUtils;
-import org.jetbrains.kotlin.types.expressions.BasicExpressionTypingVisitor;
-import org.jetbrains.kotlin.types.expressions.DataFlowUtils;
-import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
-import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
+import org.jetbrains.kotlin.types.expressions.*;
+import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryPackage;
 
 import javax.inject.Inject;
 import java.util.Collections;
@@ -136,14 +133,13 @@ public class CallExpressionResolver {
                 context, "trace to resolve as variable", nameExpression);
         JetType type =
                 getVariableType(nameExpression, receiver, callOperationNode, context.replaceTraceAndCache(temporaryForVariable), result);
-        DataFlowInfo dataFlowInfo = context.dataFlowInfo;
         // TODO: for a safe call, it's necessary to set receiver != null here, as inside ArgumentTypeResolver.analyzeArgumentsAndRecordTypes
         // Unfortunately it provokes problems with x?.y!!.foo() with the following x!!.bar():
         // x != null proceeds to successive statements
 
         if (result[0]) {
             temporaryForVariable.commit();
-            return JetTypeInfo.create(type, dataFlowInfo);
+            return TypeInfoFactoryPackage.createTypeInfo(type, context);
         }
 
         Call call = CallMaker.makeCall(nameExpression, receiver, callOperationNode, nameExpression, Collections.<ValueArgument>emptyList());
@@ -158,11 +154,11 @@ public class CallExpressionResolver {
             boolean hasValueParameters = functionDescriptor == null || functionDescriptor.getValueParameters().size() > 0;
             context.trace.report(FUNCTION_CALL_EXPECTED.on(nameExpression, nameExpression, hasValueParameters));
             type = functionDescriptor != null ? functionDescriptor.getReturnType() : null;
-            return JetTypeInfo.create(type, dataFlowInfo);
+            return TypeInfoFactoryPackage.createTypeInfo(type, context);
         }
 
         temporaryForVariable.commit();
-        return JetTypeInfo.create(null, dataFlowInfo);
+        return TypeInfoFactoryPackage.createTypeInfo(context);
     }
 
     @NotNull
@@ -172,7 +168,7 @@ public class CallExpressionResolver {
     ) {
         JetTypeInfo typeInfo = getCallExpressionTypeInfoWithoutFinalTypeCheck(callExpression, receiver, callOperationNode, context);
         if (context.contextDependency == INDEPENDENT) {
-            DataFlowUtils.checkType(typeInfo, callExpression, context);
+            DataFlowUtils.checkType(typeInfo.getType(), callExpression, context);
         }
         return typeInfo;
     }
@@ -205,7 +201,7 @@ public class CallExpressionResolver {
                 context.trace.report(FUNCTION_CALL_EXPECTED.on(callExpression, callExpression, hasValueParameters));
             }
             if (functionDescriptor == null) {
-                return JetTypeInfo.create(null, context.dataFlowInfo);
+                return TypeInfoFactoryPackage.createTypeInfo(context);
             }
             if (functionDescriptor instanceof ConstructorDescriptor &&
                 DescriptorUtils.isAnnotationClass(functionDescriptor.getContainingDeclaration())) {
@@ -216,7 +212,7 @@ public class CallExpressionResolver {
 
             JetType type = functionDescriptor.getReturnType();
 
-            return JetTypeInfo.create(type, resolvedCall.getDataFlowInfoForArguments().getResultInfo());
+            return TypeInfoFactoryPackage.createTypeInfo(type, resolvedCall.getDataFlowInfoForArguments().getResultInfo());
         }
 
         JetExpression calleeExpression = callExpression.getCalleeExpression();
@@ -230,11 +226,11 @@ public class CallExpressionResolver {
                 temporaryForVariable.commit();
                 context.trace.report(FUNCTION_EXPECTED.on(calleeExpression, calleeExpression,
                                                           type != null ? type : ErrorUtils.createErrorType("")));
-                return JetTypeInfo.create(null, context.dataFlowInfo);
+                return TypeInfoFactoryPackage.createTypeInfo(context);
             }
         }
         temporaryForFunction.commit();
-        return JetTypeInfo.create(null, context.dataFlowInfo);
+        return TypeInfoFactoryPackage.createTypeInfo(context);
     }
 
     private static boolean canInstantiateAnnotationClass(@NotNull JetCallExpression expression) {
@@ -269,7 +265,7 @@ public class CallExpressionResolver {
         else if (selectorExpression != null) {
             context.trace.report(ILLEGAL_SELECTOR.on(selectorExpression, selectorExpression.getText()));
         }
-        return JetTypeInfo.create(null, context.dataFlowInfo);
+        return TypeInfoFactoryPackage.createTypeInfo(context);
     }
 
     /**
@@ -281,8 +277,8 @@ public class CallExpressionResolver {
 
         private final DataFlowInfo safeCallChainInfo;
 
-        private JetTypeInfoInsideSafeCall(@Nullable JetType type, @NotNull DataFlowInfo dataFlowInfo, @Nullable DataFlowInfo safeCallChainInfo) {
-            super(type, dataFlowInfo);
+        private JetTypeInfoInsideSafeCall(@NotNull JetTypeInfo typeInfo, @Nullable DataFlowInfo safeCallChainInfo) {
+            super(typeInfo.getType(), typeInfo.getDataFlowInfo(), typeInfo.getJumpOutPossible(), typeInfo.getJumpFlowInfo());
             this.safeCallChainInfo = safeCallChainInfo;
         }
 
@@ -338,12 +334,13 @@ public class CallExpressionResolver {
             if (selectorReturnType != null && !KotlinBuiltIns.isUnit(selectorReturnType)) {
                 if (TypeUtils.isNullableType(receiverType)) {
                     selectorReturnType = TypeUtils.makeNullable(selectorReturnType);
+                    selectorReturnTypeInfo = selectorReturnTypeInfo.replaceType(selectorReturnType);
                 }
             }
         }
         // TODO : this is suspicious: remove this code?
-        if (selectorReturnType != null) {
-            context.trace.record(BindingContext.EXPRESSION_TYPE, selectorExpression, selectorReturnType);
+        if (selectorExpression != null && selectorReturnType != null) {
+            context.trace.recordType(selectorExpression, selectorReturnType);
         }
 
         CompileTimeConstant<?> value = ConstantExpressionEvaluator.evaluate(expression, context.trace, context.expectedType);
@@ -366,7 +363,7 @@ public class CallExpressionResolver {
                 // x?.foo(y!!)?.bar(x.field)?.gav(y.field) (like smartCasts\safecalls\longChain)
                 // Also, we should provide further safe call chain data flow information or
                 // if we are in the most left safe call then just take it from receiver
-                typeInfo = new JetTypeInfoInsideSafeCall(selectorReturnType, selectorReturnTypeInfo.getDataFlowInfo(), safeCallChainInfo);
+                typeInfo = new JetTypeInfoInsideSafeCall(selectorReturnTypeInfo, safeCallChainInfo);
             }
             else {
                 // Here we should not take selector data flow info into account because it's only one branch, see KT-7204
@@ -375,7 +372,7 @@ public class CallExpressionResolver {
                 // So we should just take safe call chain data flow information, e.g. foo(x!!)?.bar()?.gav()
                 // If it's null, we must take receiver normal info, it's a chain with length of one like foo(x!!)?.bar() and
                 // safe call chain information does not yet exist
-                typeInfo = JetTypeInfo.create(selectorReturnType, safeCallChainInfo);
+                typeInfo = selectorReturnTypeInfo.replaceDataFlowInfo(safeCallChainInfo);
             }
         }
         else {
@@ -384,17 +381,16 @@ public class CallExpressionResolver {
             if (context.insideCallChain || safeCallChainInfo == null) {
                 // Not a safe call inside call chain with safe calls OR
                 // call chain without safe calls at all
-                typeInfo = new JetTypeInfoInsideSafeCall(selectorReturnType, selectorReturnTypeInfo.getDataFlowInfo(),
-                                              selectorReturnTypeInfo.getDataFlowInfo());
+                typeInfo = new JetTypeInfoInsideSafeCall(selectorReturnTypeInfo, selectorReturnTypeInfo.getDataFlowInfo());
             }
             else {
                 // Exiting call chain with safe calls -- take data flow info from the lest-most receiver
                 // foo(x!!)?.bar().gav()
-                typeInfo = JetTypeInfo.create(selectorReturnType, safeCallChainInfo);
+                typeInfo = selectorReturnTypeInfo.replaceDataFlowInfo(safeCallChainInfo);
             }
         }
         if (context.contextDependency == INDEPENDENT) {
-            DataFlowUtils.checkType(typeInfo, expression, context);
+            DataFlowUtils.checkType(typeInfo.getType(), expression, context);
         }
         return typeInfo;
     }

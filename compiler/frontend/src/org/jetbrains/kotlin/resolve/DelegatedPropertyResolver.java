@@ -265,7 +265,7 @@ public class DelegatedPropertyResolver {
         builder.append("(");
         List<JetType> argumentTypes = Lists.newArrayList();
         for (ValueArgument argument : call.getValueArguments()) {
-            argumentTypes.add(context.get(EXPRESSION_TYPE, argument.getArgumentExpression()));
+            argumentTypes.add(context.getType(argument.getArgumentExpression()));
 
         }
         builder.append(Renderers.RENDER_COLLECTION_OF_TYPES.render(argumentTypes));

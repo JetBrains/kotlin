@@ -52,7 +52,7 @@ public class KotlinRuntimeTypeCastSurrounder: KotlinExpressionSurrounder() {
         if (file !is JetCodeFragment) return false
 
         val context = file.analyzeFully()
-        val type = context[BindingContext.EXPRESSION_TYPE, expression]
+        val type = context.getType(expression)
         if (type == null) return false
 
         return TypeUtils.canHaveSubtypes(JetTypeChecker.DEFAULT, type)

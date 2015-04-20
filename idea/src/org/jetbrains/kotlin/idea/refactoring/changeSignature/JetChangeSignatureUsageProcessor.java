@@ -322,7 +322,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
             FunctionDescriptor functionDescriptor = context.get(BindingContext.FUNCTION, functionLiteral);
             assert functionDescriptor != null : "No descriptor for " + functionLiteral.getText();
 
-            JetType samCallType = context.get(BindingContext.EXPRESSION_TYPE, callExpression);
+            JetType samCallType = context.getType(callExpression);
             if (samCallType == null) continue;
 
             result.add(new DeferredSAMUsage(functionLiteral, functionDescriptor, samCallType));

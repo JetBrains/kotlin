@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.resolve;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.psi.JetExpression;
+import org.jetbrains.kotlin.types.JetType;
 
 public class TemporaryBindingTrace extends DelegatingBindingTrace {
 

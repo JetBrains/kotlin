@@ -80,7 +80,7 @@ public class QuickFixFactoryForTypeMismatchError extends JetIntentionActionsFact
             DiagnosticWithParameters2<JetConstantExpression, String, JetType> diagnosticWithParameters =
                     Errors.CONSTANT_EXPECTED_TYPE_MISMATCH.cast(diagnostic);
             expectedType = diagnosticWithParameters.getB();
-            expressionType = context.get(BindingContext.EXPRESSION_TYPE, expression);
+            expressionType = context.getType(expression);
             if (expressionType == null) {
                 LOG.error("No type inferred: " + expression.getText());
                 return Collections.emptyList();
@@ -155,7 +155,7 @@ public class QuickFixFactoryForTypeMismatchError extends JetIntentionActionsFact
                 JetParameter correspondingParameter = QuickFixUtil.getParameterDeclarationForValueArgument(resolvedCall, valueArgument);
                 JetType valueArgumentType = diagnostic.getFactory() == Errors.NULL_FOR_NONNULL_TYPE
                                             ? expressionType
-                                            : context.get(BindingContext.EXPRESSION_TYPE, valueArgument.getArgumentExpression());
+                                            : context.getType(valueArgument.getArgumentExpression());
                 if (correspondingParameter != null && valueArgumentType != null) {
                     JetCallableDeclaration callable = PsiTreeUtil.getParentOfType(correspondingParameter, JetCallableDeclaration.class, true);
                     JetScope scope = callable != null ? JetScopeUtils.getResolutionScope(callable, context) : null;

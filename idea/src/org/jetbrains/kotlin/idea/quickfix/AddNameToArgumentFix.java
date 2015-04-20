@@ -74,7 +74,7 @@ public class AddNameToArgumentFix extends JetIntentionAction<JetValueArgument> {
         if (resolvedCall == null) return Collections.emptyList();
 
         CallableDescriptor callableDescriptor = resolvedCall.getResultingDescriptor();
-        JetType type = context.get(BindingContext.EXPRESSION_TYPE, argument.getArgumentExpression());
+        JetType type = context.getType(argument.getArgumentExpression());
         Set<String> usedParameters = QuickFixUtil.getUsedParameters(callElement, null, callableDescriptor);
         List<String> names = Lists.newArrayList();
         for (ValueParameterDescriptor parameter: callableDescriptor.getValueParameters()) {

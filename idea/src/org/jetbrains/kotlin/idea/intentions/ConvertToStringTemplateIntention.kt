@@ -39,7 +39,7 @@ public class ConvertToStringTemplateIntention : JetSelfTargetingOffsetIndependen
     override fun isApplicableTo(element: JetBinaryExpression): Boolean {
         if (element.getOperationToken() != JetTokens.PLUS) return false
 
-        val elementType = BindingContextUtils.getRecordedTypeInfo(element, element.analyze())?.getType()
+        val elementType = BindingContextUtils.getRecordedTypeInfo(element, element.analyze())?.type
         if (!KotlinBuiltIns.isString(elementType)) return false
 
         val left = element.getLeft() ?: return false
@@ -80,7 +80,7 @@ public class ConvertToStringTemplateIntention : JetSelfTargetingOffsetIndependen
                 val context = expression.analyze()
                 val constant = ConstantExpressionEvaluator.evaluate(expression, DelegatingBindingTrace(context, "Trace for evaluating constant"), null)
                 if (constant is IntegerValueTypeConstant) {
-                    val elementType = BindingContextUtils.getRecordedTypeInfo(expression, context)?.getType()!!
+                    val elementType = BindingContextUtils.getRecordedTypeInfo(expression, context)?.type!!
                     constant.getValue(elementType).toString()
                 }
                 else {

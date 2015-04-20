@@ -37,11 +37,12 @@ import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.QualifierReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.JetType;
-import org.jetbrains.kotlin.types.JetTypeInfo;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
+import org.jetbrains.kotlin.types.expressions.JetTypeInfo;
+import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryPackage;
 
 import javax.inject.Inject;
 import java.util.Collections;
@@ -191,7 +192,7 @@ public class ArgumentTypeResolver {
             @NotNull ResolveArgumentsMode resolveArgumentsMode
     ) {
         if (expression == null) {
-            return JetTypeInfo.create(null, context.dataFlowInfo);
+            return TypeInfoFactoryPackage.createTypeInfo(context);
         }
         if (isFunctionLiteralArgument(expression, context)) {
             return getFunctionLiteralTypeInfo(expression, getFunctionLiteralArgument(expression, context), context, resolveArgumentsMode);
@@ -214,7 +215,7 @@ public class ArgumentTypeResolver {
     ) {
         if (resolveArgumentsMode == SHAPE_FUNCTION_ARGUMENTS) {
             JetType type = getShapeTypeOfFunctionLiteral(functionLiteral, context.scope, context.trace, true);
-            return JetTypeInfo.create(type, context.dataFlowInfo);
+            return TypeInfoFactoryPackage.createTypeInfo(type, context);
         }
         return expressionTypingServices.getTypeInfo(expression, context.replaceContextDependency(INDEPENDENT));
     }
@@ -297,7 +298,7 @@ public class ArgumentTypeResolver {
             @NotNull ResolutionContext context,
             @NotNull JetExpression expression
     ) {
-        JetType type = context.trace.get(BindingContext.EXPRESSION_TYPE, expression);
+        JetType type = context.trace.getType(expression);
         if (type != null && !type.getConstructor().isDenotable()) {
             if (type.getConstructor() instanceof IntegerValueTypeConstructor) {
                 IntegerValueTypeConstructor constructor = (IntegerValueTypeConstructor) type.getConstructor();

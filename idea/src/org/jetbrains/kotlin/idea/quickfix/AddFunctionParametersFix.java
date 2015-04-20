@@ -138,7 +138,7 @@ public class AddFunctionParametersFix extends ChangeFunctionSignatureFix {
 
                                     if (i < parameters.size()) {
                                         validator.validateName(parameters.get(i).getName().asString());
-                                        JetType argumentType = expression != null ? bindingContext.get(BindingContext.EXPRESSION_TYPE, expression) : null;
+                                        JetType argumentType = expression != null ? bindingContext.getType(expression) : null;
                                         JetType parameterType = parameters.get(i).getType();
 
                                         if (argumentType != null && !JetTypeChecker.DEFAULT.isSubtypeOf(argumentType, parameterType)) {

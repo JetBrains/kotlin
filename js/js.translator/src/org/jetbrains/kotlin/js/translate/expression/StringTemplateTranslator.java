@@ -89,7 +89,7 @@ public final class StringTemplateTranslator extends AbstractTranslator {
                 return;
             }
 
-            JetType type = context().bindingContext().get(BindingContext.EXPRESSION_TYPE, entryExpression);
+            JetType type = context().bindingContext().getType(entryExpression);
             if (type == null || type.isMarkedNullable()) {
                 append(TopLevelFIF.TO_STRING.apply((JsExpression) null, Collections.singletonList(translatedExpression), context()));
             }

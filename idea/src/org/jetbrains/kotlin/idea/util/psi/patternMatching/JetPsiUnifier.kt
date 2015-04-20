@@ -728,7 +728,7 @@ public class JetPsiUnifier(
         }
 
         private fun PsiElement.checkType(parameter: UnifierParameter): Boolean {
-            val targetElementType = (this as? JetExpression)?.let { it.bindingContext[BindingContext.EXPRESSION_TYPE, it] }
+            val targetElementType = (this as? JetExpression)?.let { it.bindingContext.getType(it) }
             return targetElementType != null && JetTypeChecker.DEFAULT.isSubtypeOf(targetElementType, parameter.expectedType)
         }
 
