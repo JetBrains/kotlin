@@ -1,9 +1,9 @@
 fun test() {
-    <warning descr="'fun test1()' is deprecated. Use A instead">test1</warning>()
-    MyClass().<warning descr="'fun test2()' is deprecated. Use A instead">test2</warning>()
-    MyClass.<warning descr="'fun test3()' is deprecated. Use A instead">test3</warning>()
+    <warning descr="[DEPRECATED_SYMBOL_WITH_MESSAGE] 'test1(): Unit' is deprecated. Use A instead">test1</warning>()
+    MyClass().<warning descr="[DEPRECATED_SYMBOL_WITH_MESSAGE] 'test2(): Unit' is deprecated. Use A instead">test2</warning>()
+    MyClass.<warning descr="[DEPRECATED_SYMBOL_WITH_MESSAGE] 'test3(): Unit' is deprecated. Use A instead">test3</warning>()
 
-    <warning descr="'fun test4(x: kotlin.Int, y: kotlin.Int)' is deprecated. Use A instead">test4</warning>(1, 2)
+    <warning descr="[DEPRECATED_SYMBOL_WITH_MESSAGE] 'test4(Int, Int): Unit' is deprecated. Use A instead">test4</warning>(1, 2)
 }
 
 deprecated("Use A instead") fun test1() { }

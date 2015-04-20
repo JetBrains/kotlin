@@ -11,7 +11,7 @@ fun test() {
     val x1 = MyClass()
     val x2 = MyClass()
 
-    for (i in x1<warning descr="'fun rangeTo(i: MyClass)' is deprecated. Use A instead">..</warning>x2) {
+    for (i in x1<warning descr="[DEPRECATED_SYMBOL_WITH_MESSAGE] 'rangeTo(MyClass): Iterable<Int>' is deprecated. Use A instead">..</warning>x2) {
 
     }
 }

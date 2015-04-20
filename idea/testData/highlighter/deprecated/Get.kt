@@ -6,7 +6,7 @@ fun test() {
   val x1 = MyClass()
   val x2 = MyClass()
 
-  <warning descr="'fun get(i: MyClass)' is deprecated. Use A instead">x1[x2]</warning>
+  <warning descr="[DEPRECATED_SYMBOL_WITH_MESSAGE] 'get(MyClass): MyClass' is deprecated. Use A instead">x1[x2]</warning>
 }
 
 // NO_CHECK_INFOS
