@@ -4,11 +4,13 @@
       <root url="file://$PROJECT_DIR$/annotations" />
     </ANNOTATIONS>
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/js/js.tests/testLib/rhino-1.7R4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/js/js.tests/testLib/rhino1.7.6.jar!/" />
     </CLASSES>
-    <JAVADOC />
+    <JAVADOC>
+      <root url="jar://$PROJECT_DIR$/js/js.tests/testLib/rhino1.7.6-sources.zip!/rhino1.7.6/javadoc" />
+    </JAVADOC>
     <SOURCES>
-      <root url="jar://$PROJECT_DIR$/js/js.tests/testLib/src/rhino-1.7R4-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/js/js.tests/testLib/rhino1.7.6-sources.zip!/rhino1.7.6/src" />
     </SOURCES>
   </library>
 </component>
