@@ -1,3 +1,3 @@
 package org.jetbrains.kotlin.resolve.validation
 
-object DefaultSymbolUsageValidator : CompositeSymbolUsageValidator()
+object DefaultSymbolUsageValidator : CompositeSymbolUsageValidator(DeprecatedSymbolValidator())
