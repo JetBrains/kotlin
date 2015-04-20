@@ -131,17 +131,8 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
     @Override
     @NotNull
     public Set<JetType> getPossibleTypes(@NotNull DataFlowValue key) {
-        return getPossibleTypes(key, false);
-    }
-
-    @Override
-    @NotNull
-    public Set<JetType> getPossibleTypes(@NotNull DataFlowValue key, boolean withOriginalType) {
         JetType originalType = key.getType();
         Set<JetType> types = collectTypesFromMeAndParents(key);
-        if (withOriginalType) {
-            types.add(originalType);
-        }
         if (getNullability(key).canBeNull()) {
             return types;
         }
