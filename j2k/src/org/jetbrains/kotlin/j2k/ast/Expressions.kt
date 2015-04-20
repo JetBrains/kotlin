@@ -164,6 +164,12 @@ class DownToExpression(val start: Expression, val end: Expression): Expression()
     }
 }
 
+class ClassLiteralExpression(val type: Type): Expression() {
+    override fun generateCode(builder: CodeBuilder) {
+        builder.append(type).append("::class")
+    }
+}
+
 fun createArrayInitializerExpression(arrayType: ArrayType, initializers: List<Expression>, needExplicitType: Boolean = true) : MethodCallExpression {
     val elementType = arrayType.elementType
     val createArrayFunction = if (elementType is PrimitiveType)

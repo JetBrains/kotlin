@@ -566,7 +566,7 @@ class Converter private(
         if (types.isEmpty()) return Annotations.Empty
         val arguments = types.indices.map { index ->
             val convertedType = typeConverter.convertType(types[index], Nullability.NotNull)
-            null to deferredElement<Expression> { MethodCallExpression.buildNotNull(null, "javaClass", listOf(), listOf(convertedType)).assignPrototype(refElements[index]) }
+            null to deferredElement<Expression> { ClassLiteralExpression(convertedType.assignPrototype(refElements[index])) }
         }
         val annotation = Annotation(Identifier("throws").assignNoPrototype(), arguments, false, true)
         return Annotations(listOf(annotation.assignPrototype(throwsList))).assignPrototype(throwsList)

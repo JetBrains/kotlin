@@ -14,7 +14,7 @@ class X : Base() {
         return super.toString()
     }
 
-    throws(javaClass<CloneNotSupportedException>())
+    throws(CloneNotSupportedException::class)
     protected fun clone(): Any {
         return super.clone()
     }
