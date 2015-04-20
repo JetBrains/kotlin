@@ -70,6 +70,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     private final boolean includePropertyConstant;
     private final boolean secondaryConstructorsAsPrimary;
     private final Set<FqName> excludedAnnotationClasses;
+    private final boolean renderAccessors;
 
     /* package */ DescriptorRendererImpl(
             NameShortness nameShortness,
@@ -97,7 +98,8 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             @NotNull Function1<JetType, JetType> typeNormalizer,
             boolean renderDefaultValues,
             boolean flexibleTypesForCode,
-            boolean secondaryConstructorsAsPrimary
+            boolean secondaryConstructorsAsPrimary,
+            boolean renderAccessors
     ) {
         this.nameShortness = nameShortness;
         this.withDefinedIn = withDefinedIn;
@@ -114,6 +116,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         this.textFormat = textFormat;
         this.includePropertyConstant = includePropertyConstant;
         this.secondaryConstructorsAsPrimary = secondaryConstructorsAsPrimary;
+        this.renderAccessors = renderAccessors;
         this.excludedAnnotationClasses = new HashSet<FqName>(excludedAnnotationClasses);
         this.prettyFunctionTypes = prettyFunctionTypes;
         this.uninferredTypeParameterAsName = uninferredTypeParameterAsName;
@@ -1105,6 +1108,29 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         public Void visitPropertyDescriptor(PropertyDescriptor descriptor, StringBuilder builder) {
             renderProperty(descriptor, builder);
             return null;
+        }
+
+        @Override
+        public Void visitPropertyGetterDescriptor(PropertyGetterDescriptor descriptor, StringBuilder builder) {
+            if (renderAccessors) {
+                builder.append("getter for ");
+                renderProperty(descriptor.getCorrespondingProperty(), builder);
+                return null;
+            } else {
+                return super.visitPropertyGetterDescriptor(descriptor, builder);
+            }
+
+        }
+
+        @Override
+        public Void visitPropertySetterDescriptor(PropertySetterDescriptor descriptor, StringBuilder builder) {
+            if (renderAccessors) {
+                builder.append("setter for ");
+                renderProperty(descriptor.getCorrespondingProperty(), builder);
+                return null;
+            } else {
+                return super.visitPropertySetterDescriptor(descriptor, builder);
+            }
         }
 
         @Override

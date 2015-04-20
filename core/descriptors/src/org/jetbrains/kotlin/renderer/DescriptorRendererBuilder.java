@@ -59,6 +59,7 @@ public class DescriptorRendererBuilder {
     private Collection<FqName> excludedAnnotationClasses = Collections.emptyList();
     private boolean receiverAfterName = false;
     private boolean renderCompanionObjectName = false;
+    private boolean renderAccessors = false;
 
     public DescriptorRendererBuilder() {
     }
@@ -225,14 +226,20 @@ public class DescriptorRendererBuilder {
     }
 
     @NotNull
+    public DescriptorRendererBuilder setRenderAccessors(boolean renderAccessors) {
+        this.renderAccessors = renderAccessors;
+        return this;
+    }
+
+    @NotNull
     public DescriptorRenderer build() {
         return new DescriptorRendererImpl(
                 nameShortness, withDefinedIn, modifiers, startFromName, debugMode, classWithPrimaryConstructor, verbose, unitReturnType,
                 normalizedVisibilities, showInternalKeyword, prettyFunctionTypes, uninferredTypeParameterAsName,
                 overrideRenderingPolicy, valueParametersHandler, textFormat, excludedAnnotationClasses, includePropertyConstant,
                 parameterNameRenderingPolicy, withoutTypeParameters, receiverAfterName, renderCompanionObjectName, withoutSuperTypes,
-                typeNormalizer, renderDefaultValues, flexibleTypesForCode, secondaryConstructorsAsPrimary
-        );
+                typeNormalizer, renderDefaultValues, flexibleTypesForCode, secondaryConstructorsAsPrimary,
+                renderAccessors);
     }
 
 }
