@@ -130,7 +130,7 @@ public class LibrarySourcesConfig extends Config {
 
             File filePath = new File(path);
             if (!filePath.exists()) {
-                report.invoke("Path '" + path + "'does not exist");
+                report.invoke("Path '" + path + "' does not exist");
                 return true;
             }
 
@@ -142,29 +142,28 @@ public class LibrarySourcesConfig extends Config {
             }
 
             if (file == null) {
-                report.invoke("File '" + path + "'does not exist or could not be read");
+                report.invoke("File '" + path + "' does not exist or could not be read");
                 return true;
             }
+
+            String actualModuleName;
+
+            if (moduleName != null) {
+                actualModuleName = moduleName;
+            }
+            else if (isOldKotlinJavascriptLibrary(filePath)) {
+                actualModuleName = LibraryUtils.getKotlinJsModuleName(filePath);
+            }
+            else if (isKotlinJavascriptLibraryWithMetadata(filePath)) {
+                actualModuleName = null;
+            }
             else {
-                String actualModuleName;
+                report.invoke("'" + path + "' is not a valid Kotlin Javascript library");
+                return true;
+            }
 
-                if (moduleName != null) {
-                    actualModuleName = moduleName;
-                }
-                else if (isOldKotlinJavascriptLibrary(filePath)) {
-                    actualModuleName = LibraryUtils.getKotlinJsModuleName(filePath);
-                }
-                else if (isKotlinJavascriptLibraryWithMetadata(filePath)) {
-                    actualModuleName = null;
-                }
-                else {
-                    report.invoke("'" + path + "' is not a valid Kotlin Javascript library");
-                    return true;
-                }
-
-                if (action != null) {
-                    action.invoke(actualModuleName, file);
-                }
+            if (action != null) {
+                action.invoke(actualModuleName, file);
             }
             moduleName = null;
         }
