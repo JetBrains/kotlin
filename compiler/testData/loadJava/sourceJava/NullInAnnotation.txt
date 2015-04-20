@@ -7,6 +7,8 @@ public trait NullInAnnotation {
 
     public final annotation class Ann : kotlin.Annotation {
         public constructor Ann(/*0*/ a: kotlin.String, /*1*/ b: kotlin.Array<out kotlin.String>)
+        public final val a: kotlin.String
+        public final val b: kotlin.Array<kotlin.String>
         public abstract fun a(): kotlin.String
         public abstract fun b(): kotlin.Array<kotlin.String>
     }

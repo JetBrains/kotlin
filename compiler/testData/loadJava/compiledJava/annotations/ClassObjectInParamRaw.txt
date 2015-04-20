@@ -6,6 +6,8 @@ public open class ClassObjectInParamRaw {
     public final annotation class Anno : kotlin.Annotation {
         public /*synthesized*/ constructor Anno(/*0*/ value: java.lang.Class<*>, /*1*/ arg: kotlin.Array<out java.lang.Class<*>>)
         public constructor Anno(/*0*/ value: kotlin.reflect.KClass<*>, /*1*/ arg: kotlin.Array<out kotlin.reflect.KClass<*>>)
+        public final val arg: kotlin.Array<kotlin.reflect.KClass<*>>
+        public final val value: kotlin.reflect.KClass<*>
         public abstract fun arg(): kotlin.Array<kotlin.reflect.KClass<*>>
         public abstract fun value(): kotlin.reflect.KClass<*>
     }

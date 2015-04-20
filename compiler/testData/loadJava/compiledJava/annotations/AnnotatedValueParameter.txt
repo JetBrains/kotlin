@@ -6,6 +6,7 @@ public open class AnnotatedValueParameter {
 
     public final annotation class Anno : kotlin.Annotation {
         public constructor Anno(/*0*/ value: kotlin.String)
+        public final val value: kotlin.String
         public abstract fun value(): kotlin.String
     }
 }
