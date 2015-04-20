@@ -48,7 +48,6 @@ public open class KotlinClsStubBuilder : ClsStubBuilder() {
         return doBuildFileStub(file)
     }
 
-    throws(javaClass<ClsFormatException>())
     fun doBuildFileStub(file: VirtualFile): PsiFileStub<JetFile>? {
         val kotlinBinaryClass = KotlinBinaryClassCache.getKotlinBinaryClass(file)
         val header = kotlinBinaryClass.getClassHeader()

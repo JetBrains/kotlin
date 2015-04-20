@@ -92,7 +92,6 @@ public class KotlinCliJavaFileManagerTest : PsiTestCase() {
         assertCanFind(twoBucks, "foo", "\$\$")
     }
 
-    throws(javaClass<Exception>())
     public fun testTopLevelClassWithDollarsAndInners() {
         val manager = configureManager("package foo;\n\n" + "public class Top\$Level\$\$ {\n" +
                                        "public class I\$nner {" + "   public class I\$nner{}" + "   public class In\$ne\$r\${}" + "   public class Inner\$\$\$\$\${}" + "   public class \$Inner{}" + "   public class \${}" + "   public class \$\$\$\$\${}" + "}\n" + "public class Inner {" + "   public class Inner{}" + "}\n" + "\n" + "}", "Top\$Level\$\$")

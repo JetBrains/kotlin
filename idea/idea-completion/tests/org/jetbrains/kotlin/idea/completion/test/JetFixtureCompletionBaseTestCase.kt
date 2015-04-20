@@ -32,7 +32,6 @@ public abstract class JetFixtureCompletionBaseTestCase : JetLightCodeInsightFixt
 
     protected open fun defaultInvocationCount(): Int = 0
 
-    throws(javaClass<Exception>())
     public open fun doTest(testPath: String) {
         setUpFixture(testPath)
 

@@ -77,7 +77,6 @@ public class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
             templateManager.setTemplateTesting(true)
 
             object : WriteCommandAction.Simple<Any>(project) {
-                throws(javaClass<Throwable>())
                 override fun run() {
                     handler.invoke(project, editor, file, dataContext)
                 }
@@ -88,7 +87,6 @@ public class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
             val range = state!!.getCurrentVariableRange()
             assert(range != null)
             object : WriteCommandAction.Simple<Any>(project) {
-                throws(javaClass<Throwable>())
                 override fun run() {
                     editor.getDocument().replaceString(range!!.getStartOffset(), range!!.getEndOffset(), newName)
                 }
