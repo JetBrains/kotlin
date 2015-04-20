@@ -4,8 +4,8 @@ kotlin.deprecated(value = "message": kotlin.String) internal fun Obsolete(/*0*/ 
 internal fun block(): kotlin.Unit
 internal fun expression(): UsefulClass
 internal fun invoker(): kotlin.Unit
-internal fun reflection(): [ERROR : Error function type]
-internal fun reflection2(): [ERROR : Error function type]
+internal fun reflection(): kotlin.reflect.KFunction1<kotlin.Int, UsefulClass>
+internal fun reflection2(): kotlin.reflect.KMemberFunction0<UsefulClass, kotlin.Unit>
 kotlin.deprecated(value = "does nothing good": kotlin.String) internal fun kotlin.Any.doNothing(): kotlin.String
 
 internal final class Delegation {

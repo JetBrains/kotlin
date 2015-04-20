@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.builtins
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -29,7 +28,7 @@ import org.jetbrains.kotlin.types.*
 import java.util.ArrayList
 import kotlin.properties.Delegates
 
-private val KOTLIN_REFLECT_FQ_NAME = FqName("kotlin.reflect")
+val KOTLIN_REFLECT_FQ_NAME = FqName("kotlin.reflect")
 
 public class ReflectionTypes(private val module: ModuleDescriptor) {
     private val kotlinReflectScope: JetScope? by Delegates.lazy {

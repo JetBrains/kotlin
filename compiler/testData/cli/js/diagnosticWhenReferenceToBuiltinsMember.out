@@ -1,5 +1,5 @@
 WARNING: compiler/testData/cli/js/diagnosticWhenReferenceToBuiltinsMember.kt: (4, 5) The expression is unused
-ERROR: compiler/testData/cli/js/diagnosticWhenReferenceToBuiltinsMember.kt: (4, 8) Reflection types can't be loaded. Please ensure that you have Kotlin Runtime in your classpath
 WARNING: compiler/testData/cli/js/diagnosticWhenReferenceToBuiltinsMember.kt: (5, 5) The expression is unused
-ERROR: compiler/testData/cli/js/diagnosticWhenReferenceToBuiltinsMember.kt: (5, 11) Reflection types can't be loaded. Please ensure that you have Kotlin Runtime in your classpath
+ERROR: compiler/testData/cli/js/diagnosticWhenReferenceToBuiltinsMember.kt: (4, 5) Callable references for builtin members are not supported yet: 'Int::toByte'
+ERROR: compiler/testData/cli/js/diagnosticWhenReferenceToBuiltinsMember.kt: (5, 5) Callable references for builtin members are not supported yet: 'String::length'
 COMPILATION_ERROR

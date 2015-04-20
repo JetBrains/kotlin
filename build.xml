@@ -438,7 +438,6 @@
                 <fileset dir="${output}/builtins">
                     <include name="kotlin/**"/>
                     <exclude name="kotlin/internal/**"/>
-                    <exclude name="kotlin/reflect/**"/>
                 </fileset>
                 <fileset dir="${basedir}/compiler/frontend.java/src" includes="META-INF/services/**"/>
                 <fileset dir="${basedir}/compiler/backend/src" includes="META-INF/services/**"/>
@@ -741,7 +740,8 @@
                 <zipfileset dir="${output}/builtins">
                     <include name="kotlin/**"/>
                     <exclude name="kotlin/internal/**"/>
-                    <exclude name="kotlin/reflect/**"/>
+                    <!-- TODO: load metadata from @KotlinClass annotation in KotlinBuiltIns on JVM and restore this exclusion -->
+                    <!-- exclude name="kotlin/reflect/**"/ -->
                 </zipfileset>
             </jar-content>
         </pack-runtime-jar>
@@ -863,7 +863,6 @@
             <fileset dir="${output}/builtins">
                 <include name="kotlin/**"/>
                 <exclude name="kotlin/internal/**"/>
-                <exclude name="kotlin/reflect/**"/>
             </fileset>
             <fileset dir="${basedir}/compiler/frontend.java/src" includes="META-INF/services/**"/>
             <fileset dir="${basedir}/compiler/backend/src" includes="META-INF/services/**"/>

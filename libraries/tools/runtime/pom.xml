@@ -25,7 +25,6 @@
                     <include>**/*.kotlin_*</include>
                 </includes>
                 <excludes>
-                    <exclude>kotlin/reflect/**/*</exclude>
                     <exclude>kotlin/internal/**/*</exclude>
                 </excludes>
             </resource>
