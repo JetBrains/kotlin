@@ -306,7 +306,7 @@ A great aid was that the contents of each `Function` were trivial and easy to du
 which is not the case at all for `KFunction`s: they also contain code related to reflection.
 
 So for reflection there will be:
-* **fictitious** interfaces `KFunction0`, `KFunction1`, ..., `KMemberFunction0`, ..., `KMemberFunction42`, ... (defined in `kotlin`)
+* **fictitious** interfaces `KFunction0`, `KFunction1`, ..., `KMemberFunction0`, ..., `KExtensionFunction0`, ..., `KMemberFunction42`, ... (defined in `kotlin.reflect`)
 * **physical** interfaces `KFunction`, `KMemberFunction`, ... (defined in `kotlin.reflect`)
 * **physical** JVM runtime implementation classes `KFunctionImpl`, `KMemberFunctionImpl`, ... (defined in `kotlin.reflect.jvm.internal`)
 
