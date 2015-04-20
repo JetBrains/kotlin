@@ -531,3 +531,6 @@ inline fun <reified T : JetElement, R> flatMapDescendantsOfTypeVisitor(
     accumulator: MutableCollection<R>,
     noinline map: (T) -> Collection<R>
 ): JetVisitorVoid = forEachDescendantOfTypeVisitor<T> { accumulator.addAll(map(it)) }
+
+inline fun <reified T : JetElement> PsiElement.forEachDescendantsOfType(noinline block: (T) -> Unit) =
+        accept(forEachDescendantOfTypeVisitor(block))

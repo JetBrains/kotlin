@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateL
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateParameterActionFactory;
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateParameterByNamedArgumentActionFactory;
 import org.jetbrains.kotlin.idea.quickfix.replaceJavaClass.ReplaceJavaClassAsAnnotationArgumentFix;
+import org.jetbrains.kotlin.idea.quickfix.replaceJavaClass.ReplaceJavaClassAsAnnotationParameterFix;
 import org.jetbrains.kotlin.psi.JetClass;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm;
 
@@ -321,5 +322,8 @@ public class QuickFixRegistrar {
 
         QuickFixes.factories.put(ErrorsJvm.DEPRECATED_ANNOTATION_METHOD_CALL, MigrateAnnotationMethodCallFix.Companion);
         QuickFixes.factories.put(ErrorsJvm.DEPRECATED_ANNOTATION_METHOD_CALL, MigrateAnnotationMethodCallInWholeFile.Companion);
+
+        QuickFixes.factories.put(JAVA_LANG_CLASS_PARAMETER_IN_ANNOTATION, ReplaceJavaClassAsAnnotationParameterFix.Companion);
+        QuickFixes.factories.put(JAVA_LANG_CLASS_PARAMETER_IN_ANNOTATION, ReplaceJavaClassAsAnnotationParameterFix.Companion.createWholeProjectFixFactory());
     }
 }

@@ -22,7 +22,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.JetBundle
-import org.jetbrains.kotlin.idea.quickfix.*
+import org.jetbrains.kotlin.idea.quickfix.JetIntentionAction
+import org.jetbrains.kotlin.idea.quickfix.JetSingleIntentionActionFactory
+import org.jetbrains.kotlin.idea.quickfix.JetWholeProjectForEachElementOfTypeFix
+import org.jetbrains.kotlin.idea.quickfix.JetWholeProjectModalAction
 import org.jetbrains.kotlin.idea.quickfix.quickfixUtil.createIntentionFactory
 import org.jetbrains.kotlin.idea.quickfix.quickfixUtil.createIntentionForFirstParentOfType
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -31,28 +34,28 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import java.util.ArrayList
 
-public class ReplaceJavaClassAsAnnotationArgumentFix(
-        annotationEntry: JetAnnotationEntry
-) : JetIntentionAction<JetAnnotationEntry>(annotationEntry) {
+public class ReplaceJavaClassAsAnnotationParameterFix(
+        annotationClass: JetClass
+) : JetIntentionAction<JetClass>(annotationClass) {
 
-    override fun getText() = JetBundle.message("replace.java.class.argument")
-    override fun getFamilyName() = JetBundle.message("replace.java.class.argument.family")
+    override fun getText() = JetBundle.message("replace.java.class.parameter")
+    override fun getFamilyName() = JetBundle.message("replace.java.class.parameter.family")
 
     override fun invoke(project: Project, editor: Editor?, file: JetFile?) {
-        processTasks(createReplacementTasks(element))
+        processTasks(createReplacementTasksForAnnotationClass(element))
     }
 
     companion object : JetSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic) =
-                diagnostic.createIntentionForFirstParentOfType(::ReplaceJavaClassAsAnnotationArgumentFix)
+                diagnostic.createIntentionForFirstParentOfType(::ReplaceJavaClassAsAnnotationParameterFix)
 
         public fun createWholeProjectFixFactory(): JetSingleIntentionActionFactory = createIntentionFactory {
-            JetWholeProjectForEachElementOfTypeFix.createForMultiTask<JetAnnotationEntry, ReplacementTask>(
-                    tasksFactory = { createReplacementTasks(it) },
+            JetWholeProjectForEachElementOfTypeFix.createForMultiTask(
+                    tasksFactory = ::createReplacementTasksForAnnotationClass,
                     tasksProcessor = ::processTasks,
-                    modalTitle = JetBundle.message("replace.java.class.argument.in.whole.project.modal.title"),
-                    name = JetBundle.message("replace.java.class.argument.in.whole.project"),
-                    familyName = JetBundle.message("replace.java.class.argument.in.whole.project.family")
+                    modalTitle = JetBundle.message("replace.java.class.parameter.in.whole.project.modal.title"),
+                    name = JetBundle.message("replace.java.class.parameter.in.whole.project"),
+                    familyName = JetBundle.message("replace.java.class.parameter.in.whole.project.family")
             )
         }
     }

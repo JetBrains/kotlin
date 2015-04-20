@@ -3079,6 +3079,45 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @TestMetadata("idea/testData/quickfix/migration/replaceJavaClassAsAnnotationParameter")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ReplaceJavaClassAsAnnotationParameter extends AbstractQuickFixTest {
+            public void testAllFilesPresentInReplaceJavaClassAsAnnotationParameter() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/replaceJavaClassAsAnnotationParameter"), Pattern.compile("^before(\\w+)\\.kt$"), true);
+            }
+
+            @TestMetadata("beforeArrayRuntime.kt")
+            public void testArrayRuntime() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/replaceJavaClassAsAnnotationParameter/beforeArrayRuntime.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("beforeBasicRuntime.kt")
+            public void testBasicRuntime() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/replaceJavaClassAsAnnotationParameter/beforeBasicRuntime.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("beforeDefaultRuntime.kt")
+            public void testDefaultRuntime() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/replaceJavaClassAsAnnotationParameter/beforeDefaultRuntime.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("beforeUsageWithErrorRuntime.kt")
+            public void testUsageWithErrorRuntime() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/replaceJavaClassAsAnnotationParameter/beforeUsageWithErrorRuntime.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("beforeVarargRuntime.kt")
+            public void testVarargRuntime() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/replaceJavaClassAsAnnotationParameter/beforeVarargRuntime.kt");
+                doTest(fileName);
+            }
+        }
+
     }
 
     @TestMetadata("idea/testData/quickfix/modifiers")
