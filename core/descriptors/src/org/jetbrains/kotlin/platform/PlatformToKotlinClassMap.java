@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.platform;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -30,17 +29,8 @@ public interface PlatformToKotlinClassMap {
         public Collection<ClassDescriptor> mapPlatformClass(@NotNull ClassDescriptor classDescriptor) {
             return Collections.emptyList();
         }
-
-        @NotNull
-        @Override
-        public Collection<ClassDescriptor> mapPlatformClassesInside(@NotNull DeclarationDescriptor containingDeclaration) {
-            return Collections.emptyList();
-        }
     };
 
     @NotNull
     Collection<ClassDescriptor> mapPlatformClass(@NotNull ClassDescriptor classDescriptor);
-
-    @NotNull
-    Collection<ClassDescriptor> mapPlatformClassesInside(@NotNull DeclarationDescriptor containingDeclaration);
 }
