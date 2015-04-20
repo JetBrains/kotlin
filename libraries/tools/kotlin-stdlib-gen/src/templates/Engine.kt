@@ -37,96 +37,59 @@ enum class PrimitiveType(val name: String) {
 
 
 class GenericFunction(val signature: String, val keyword: String = "fun") : Comparable<GenericFunction> {
+
+    open class SpecializedProperty<TKey: Any, TValue : Any>() {
+        private val values = HashMap<TKey?, TValue>()
+
+        fun get(key: TKey): TValue? = values.getOrElse(key, { values.getOrElse(null, { null }) })
+
+        fun set(keys: Collection<TKey>, value: TValue) {
+            if (keys.isEmpty())
+                values[null] = value;
+            else
+                for (key in keys) {
+                    values[key] = value
+                    onKeySet(key)
+                }
+        }
+
+        fun invoke(vararg keys: TKey, valueBuilder: ()-> TValue) = set(keys.asList(), valueBuilder())
+        fun invoke(value: TValue, vararg keys: TKey) = set(keys.asList(), value)
+
+        protected open fun onKeySet(key: TKey) {}
+    }
+
+    open class FamilyProperty<TValue: Any>() : SpecializedProperty<Family, TValue>()
+    open class PrimitiveProperty<TValue: Any>() : SpecializedProperty<PrimitiveType, TValue>()
+
+
     val defaultFamilies = array(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives, Strings)
     val defaultPrimitives = PrimitiveType.values()
     val numericPrimitives = array(PrimitiveType.Int, PrimitiveType.Long, PrimitiveType.Byte, PrimitiveType.Short, PrimitiveType.Double, PrimitiveType.Float)
 
     var toNullableT: Boolean = false
 
-    var defaultInline = false
     var receiverAsterisk = false
-    val inlineFamilies = HashMap<Family, Boolean>()
 
     val buildFamilies = LinkedHashSet(defaultFamilies.toList())
     val buildPrimitives = LinkedHashSet(defaultPrimitives.toList())
 
-    var deprecate: String = ""
-    val deprecates = hashMapOf<Family, String>()
-
-    var doc: String = ""
-    val docs = HashMap<Family, String>()
-
-    var platformName: String? = null
-    val platformNames = hashMapOf<PrimitiveType, String>()
-
-    var defaultBody: String = ""
-    val bodies = HashMap<Family, String>()
-    val customPrimitiveBodies = HashMap<Pair<Family, PrimitiveType>, String>()
-
-    var defaultReturnType = ""
-    val returnTypes = HashMap<Family, String>()
-
+    val deprecate = FamilyProperty<String>()
+    val doc = FamilyProperty<String>()
+    val platformName = PrimitiveProperty<String>()
+    val inline = FamilyProperty<Boolean>()
     val typeParams = ArrayList<String>()
-
-    fun body(vararg families: Family, b: () -> String) {
-        if (families.isEmpty())
-            defaultBody = b()
-        else {
-            for (f in families) {
-                include(f)
-                bodies[f] = b()
-            }
-        }
+    val returns = FamilyProperty<String>()
+    val body = object : FamilyProperty<String>() {
+        override fun onKeySet(key: Family) = include(key)
     }
+    val customPrimitiveBodies = HashMap<Pair<Family, PrimitiveType>, String>()
 
     fun bodyForTypes(family: Family, vararg primitiveTypes: PrimitiveType, b: () -> String) {
         include(family)
-        for (f in primitiveTypes) {
-            customPrimitiveBodies.put(family to f, b())
+        for (primitive in primitiveTypes) {
+            customPrimitiveBodies.put(family to primitive, b())
         }
-    }
-
-    fun doc(vararg families: Family, b: () -> String) {
-        if (families.isEmpty())
-            doc = b()
-        else {
-            for (f in families) {
-                docs[f] = b()
-            }
-        }
-    }
-
-    fun deprecate(vararg families: Family, b: () -> String) {
-        if (families.isEmpty())
-            deprecate = b()
-        else {
-            for (f in families) {
-                deprecates[f] = b()
-            }
-        }
-    }
-
-    fun platformName(name: String, vararg primitives: PrimitiveType) {
-        if (primitives.isEmpty())
-            platformName = name
-        else
-            for (primitive in primitives) {
-                platformNames[primitive] = name
-            }
-    }
-
-    fun returns(vararg families: Family, b: () -> String) {
-        if (families.isEmpty())
-            defaultReturnType = b()
-        else {
-            for (f in families) {
-                returnTypes[f] = b()
-            }
-        }
-    }
-
-    fun returns(r: String) {
-        defaultReturnType = r
     }
 
     fun typeParam(t: String) {
@@ -135,14 +98,6 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
 
     fun receiverAsterisk(v: Boolean) {
         receiverAsterisk = v
-    }
-
-    fun inline(value: Boolean, vararg families: Family) {
-        if (families.isEmpty())
-            defaultInline = value
-        else
-            for (f in families)
-                inlineFamilies.put(f, value)
     }
 
     fun exclude(vararg families: Family) {
@@ -197,7 +152,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
             }.toString()
             builder.append(text)
             builder.appendln()
-            if (deprecates[f] == null && deprecate.isEmpty())
+            if (deprecate[f] == null) // (deprecates[f] == null && deprecate.isEmpty())
                 builder.appendln("deprecated(\"Migrate to using Sequence<T> and respective functions\")")
             val streamText = text
                     .replace("Sequence", "Stream")
@@ -209,9 +164,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
     }
 
     fun doBuild(builder: StringBuilder, f: Family, primitive: PrimitiveType?) {
-        val returnType = returnTypes[f] ?: defaultReturnType
-        if (returnType.isEmpty())
-            throw RuntimeException("No return type specified for $signature")
+        val returnType = returns[f] ?: throw RuntimeException("No return type specified for $signature")
 
         val isAsteriskOrT = if (receiverAsterisk) "*" else "T"
         val receiver = when (f) {
@@ -321,8 +274,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
             }
         }
 
-        val methodDoc = docs[f] ?: doc
-        if (methodDoc != "") {
+        doc[f]?.let { methodDoc ->
             builder.append("/**\n")
             StringReader(methodDoc).forEachLine {
                 val line = it.trim()
@@ -332,19 +284,19 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
             }
             builder.append(" */\n")
         }
-        val deprecated = deprecates[f] ?: deprecate
-        if (deprecated != "") {
+
+        deprecate[f]?.let { deprecated ->
             builder.append("deprecated(\"$deprecated\")\n")
         }
 
         if (!f.isPrimitiveSpecialization && primitive != null) {
-            val platformName = (platformNames[primitive] ?: platformName) ?.let { it.replace("<T>", primitive.name)}
-            if (platformName != null)
-                builder.append("platformName(\"${platformName}\")\n")
+            platformName[primitive]
+                    ?.replace("<T>", primitive.name)
+                    ?.let { platformName -> builder.append("platformName(\"${platformName}\")\n")}
         }
 
         builder.append("public ")
-        if (inlineFamilies[f] ?: defaultInline)
+        if (inline[f] == true)
             builder.append("inline ")
 
         builder.append("$keyword ")
@@ -364,14 +316,14 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
         builder.append(".${signature.renderType()}: ${returnType.renderType()}")
         if (keyword == "fun") builder.append(" {")
 
-        val body = (customPrimitiveBodies[f to primitive] ?: bodies[f] ?: defaultBody).trim("\n")
+        val body = (customPrimitiveBodies[f to primitive] ?: body[f] ?: throw RuntimeException("No body specified for $signature for ${f to primitive}")).trim('\n')
         val indent: Int = body.takeWhile { it == ' ' }.length()
 
         builder.append('\n')
         StringReader(body).forEachLine {
             var count = indent
             val line = it.dropWhile { count-- > 0 && it == ' ' }.renderType()
-            if (line.isNotEmpty()) {
+            if (!line.isEmpty()) {
                 builder.append("    ").append(line)
                 builder.append("\n")
             }
@@ -381,12 +333,6 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
     }
 
     public override fun compareTo(other: GenericFunction): Int = this.signature.compareTo(other.signature)
-}
-
-fun String.trimTrailingSpaces(): String {
-    var answer = this;
-    while (answer.endsWith(' ') || answer.endsWith('\n')) answer = answer.substring(0, answer.length() - 1)
-    return answer
 }
 
 fun f(signature: String, init: GenericFunction.() -> Unit): GenericFunction {
