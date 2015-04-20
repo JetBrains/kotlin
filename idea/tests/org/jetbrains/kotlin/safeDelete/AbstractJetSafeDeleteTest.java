@@ -44,7 +44,7 @@ public abstract class AbstractJetSafeDeleteTest extends JetLightCodeInsightFixtu
     }
 
     @Override
-    public void setUp() throws Exception {
+    public void setUp() {
         super.setUp();
         String pathBase = PluginTestCaseBase.getTestDataPathBase();
         myFixture.setTestDataPath(pathBase.substring(0, pathBase.lastIndexOf("/idea/testData")));

@@ -42,14 +42,14 @@ import java.util.Arrays;
 
 public class LiveTemplatesTest extends JetLightCodeInsightFixtureTestCase {
     @Override
-    protected void setUp() throws Exception {
+    protected void setUp() {
         super.setUp();
         myFixture.setTestDataPath(new File(PluginTestCaseBase.getTestDataPathBase(), "/templates").getPath() + File.separator);
         ((TemplateManagerImpl) TemplateManager.getInstance(getProject())).setTemplateTesting(true);
     }
 
     @Override
-    protected void tearDown() throws Exception {
+    protected void tearDown() {
         ((TemplateManagerImpl) TemplateManager.getInstance(getProject())).setTemplateTesting(false);
         super.tearDown();
     }

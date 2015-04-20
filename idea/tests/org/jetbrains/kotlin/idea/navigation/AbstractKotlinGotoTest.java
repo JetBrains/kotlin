@@ -54,7 +54,7 @@ public abstract class AbstractKotlinGotoTest extends JetLightCodeInsightFixtureT
     private String dirPath = null;
 
     @Override
-    protected void setUp() throws Exception {
+    protected void setUp() {
         TestMetadata annotation = getClass().getAnnotation(TestMetadata.class);
         dirPath = annotation.value();
 
@@ -62,7 +62,7 @@ public abstract class AbstractKotlinGotoTest extends JetLightCodeInsightFixtureT
     }
 
     @Override
-    protected void tearDown() throws Exception {
+    protected void tearDown() {
         super.tearDown();
         dirPath = null;
     }

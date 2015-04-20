@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.idea.highlighter.AbstractHighlightingTest;
 
 public abstract class AbstractKDocHighlightingTest extends AbstractHighlightingTest {
     @Override
-    protected void setUp() throws Exception {
+    protected void setUp() {
         super.setUp();
         myFixture.enableInspections(KDocUnresolvedReferenceInspection.class);
     }

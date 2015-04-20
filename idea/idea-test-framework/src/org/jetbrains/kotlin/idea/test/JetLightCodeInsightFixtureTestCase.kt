@@ -44,7 +44,6 @@ import java.io.IOException
 public abstract class JetLightCodeInsightFixtureTestCase : LightCodeInsightFixtureTestCase() {
     private var kotlinInternalModeOriginalValue = false
 
-    throws(javaClass<Exception>())
     override fun setUp() {
         super.setUp()
         (StartupManager.getInstance(getProject()) as StartupManagerImpl).runPostStartupActivities()
@@ -54,7 +53,6 @@ public abstract class JetLightCodeInsightFixtureTestCase : LightCodeInsightFixtu
         KotlinInternalMode.enabled = true
     }
 
-    throws(javaClass<Exception>())
     override fun tearDown() {
         KotlinInternalMode.enabled = kotlinInternalModeOriginalValue
         VfsRootAccess.disallowRootAccess(JetTestUtils.getHomeDirectory())

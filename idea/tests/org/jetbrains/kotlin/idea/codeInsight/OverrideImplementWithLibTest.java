@@ -25,7 +25,7 @@ public final class OverrideImplementWithLibTest extends AbstractOverrideImplemen
     private static final String TEST_PATH = PluginTestCaseBase.getTestDataPathBase() + "/codeInsight/overrideImplement/withLib";
 
     @Override
-    public void setUp() throws Exception {
+    public void setUp() {
         super.setUp();
         myFixture.setTestDataPath(TEST_PATH);
     }

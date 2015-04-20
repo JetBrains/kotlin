@@ -282,7 +282,7 @@ public abstract class AbstractJetFindUsagesTest extends JetLightCodeInsightFixtu
     }
 
     @Override
-    public void setUp() throws Exception {
+    public void setUp() {
         super.setUp();
         myFixture.setTestDataPath(PluginTestCaseBase.getTestDataPathBase() + "/findUsages");
     }

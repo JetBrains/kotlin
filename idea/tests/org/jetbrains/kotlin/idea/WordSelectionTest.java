@@ -82,7 +82,7 @@ public class WordSelectionTest extends JetLightCodeInsightFixtureTestCase {
     }
 
     @Override
-    public void setUp() throws Exception {
+    public void setUp() {
         super.setUp();
         String testRelativeDir = "wordSelection";
         myFixture.setTestDataPath(new File(PluginTestCaseBase.getTestDataPathBase(), testRelativeDir).getPath() +

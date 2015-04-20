@@ -31,7 +31,7 @@ import java.io.IOException;
 
 public abstract class AbstractOutOfBlockModificationTest extends JetLightCodeInsightFixtureTestCase {
     @Override
-    public void setUp() throws Exception {
+    public void setUp() {
         super.setUp();
         myFixture.setTestDataPath(PluginTestCaseBase.getTestDataPathBase() + "/codeInsight/outOfBlock");
     }

@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 public final class OverrideImplementTest extends AbstractOverrideImplementTest {
 
     @Override
-    public void setUp() throws Exception {
+    public void setUp() {
         super.setUp();
         myFixture.setTestDataPath(PluginTestCaseBase.getTestDataPathBase() + "/codeInsight/overrideImplement");
     }
