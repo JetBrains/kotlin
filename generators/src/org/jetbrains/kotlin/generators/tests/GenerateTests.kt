@@ -843,6 +843,11 @@ fun main(args: Array<String>) {
         testClass(javaClass<AbstractCompanionObjectTest>()) {
             model("codegen/box/objectIntrinsics", targetBackend = TargetBackend.JS)
         }
+
+        testClass(javaClass<AbstractFunctionExpressionTest>()) {
+            model("codegen/box/functions/functionExpression", targetBackend = TargetBackend.JS)
+        }
+
     }
 }
 

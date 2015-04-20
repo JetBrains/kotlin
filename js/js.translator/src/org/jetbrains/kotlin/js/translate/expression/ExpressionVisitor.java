@@ -417,7 +417,10 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
             MetadataPackage.setStaticRef(name, alias);
         }
 
-        return new JsVars(new JsVars.JsVar(name, alias)).source(expression);
+        boolean isExpression = BindingContextUtilPackage.isUsedAsExpression(expression, context.bindingContext());
+        JsNode result = isExpression ? alias : JsAstUtils.newVar(name, alias);
+
+        return result.source(expression);
     }
 
     @Override

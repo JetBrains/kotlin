@@ -21,9 +21,9 @@ fun box() : String {
     val a = [A] fun Int.name() = this + 1 // name
     if (1.a() != 2) return "test 8 failed"
     val b = ( fun Int.name() = this + 1)
-    if (1.a() != 2) return "test 9 failed"
+    if (1.b() != 2) return "test 9 failed"
     val c = (@c fun Int.name() = this + 1)
-    if (1.a() != 2) return "test 10 failed"
+    if (1.c() != 2) return "test 10 failed"
 
     val d = fun name(): Int { return@name 4}
     if (d() != 4) return "test 11 failed"

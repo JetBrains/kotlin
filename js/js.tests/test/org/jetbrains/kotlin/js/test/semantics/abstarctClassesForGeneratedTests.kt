@@ -20,15 +20,19 @@ import org.jetbrains.kotlin.js.test.AbstractSingleFileTranslationWithDirectivesT
 import org.jetbrains.kotlin.js.test.MultipleModulesTranslationTest
 import org.jetbrains.kotlin.js.test.SingleFileTranslationTest
 
-public abstract class AbstractBridgeTest : SingleFileTranslationTest("bridges/") {
+private abstract class AbstractBlackBoxTest(d: String) : SingleFileTranslationTest(d) {
     override fun doTest(filename: String) = checkBlackBoxIsOkByPath(filename)
 }
+
+public abstract class AbstractBridgeTest : AbstractBlackBoxTest("bridges/")
 
 public abstract class AbstractCallableReferenceTest(main: String) : SingleFileTranslationTest("callableReference/" + main)
 
 public abstract class AbstractCompanionObjectTest : SingleFileTranslationTest("objectIntrinsics/")
 
 public abstract class AbstractDynamicTest : SingleFileTranslationTest("dynamic/")
+
+public abstract class AbstractFunctionExpressionTest : AbstractBlackBoxTest("functionExpression/")
 
 public abstract class AbstractInlineEvaluationOrderTest : AbstractSingleFileTranslationWithDirectivesTest("inlineEvaluationOrder/")
 
