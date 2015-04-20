@@ -1000,6 +1000,429 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             }
         }
 
+        @TestMetadata("compiler/testData/diagnostics/tests/callableReference")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class CallableReference extends AbstractJetDiagnosticsTest {
+            public void testAllFilesPresentInCallableReference() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/callableReference"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("unused.kt")
+            public void testUnused() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/unused.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("compiler/testData/diagnostics/tests/callableReference/function")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Function extends AbstractJetDiagnosticsTest {
+                @TestMetadata("abstractClassConstructors.kt")
+                public void testAbstractClassConstructors() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/abstractClassConstructors.kt");
+                    doTest(fileName);
+                }
+
+                public void testAllFilesPresentInFunction() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/callableReference/function"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("ambiguityTopLevelVsTopLevel.kt")
+                public void testAmbiguityTopLevelVsTopLevel() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/ambiguityTopLevelVsTopLevel.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("callableRefrenceOnNestedObject.kt")
+                public void testCallableRefrenceOnNestedObject() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/callableRefrenceOnNestedObject.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("constructorFromClass.kt")
+                public void testConstructorFromClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/constructorFromClass.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("constructorFromExtension.kt")
+                public void testConstructorFromExtension() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/constructorFromExtension.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("constructorFromExtensionInClass.kt")
+                public void testConstructorFromExtensionInClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/constructorFromExtensionInClass.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("constructorFromTopLevel.kt")
+                public void testConstructorFromTopLevel() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/constructorFromTopLevel.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("differentPackageClass.kt")
+                public void testDifferentPackageClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/differentPackageClass.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("differentPackageExtension.kt")
+                public void testDifferentPackageExtension() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/differentPackageExtension.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("differentPackageTopLevel.kt")
+                public void testDifferentPackageTopLevel() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/differentPackageTopLevel.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("empty.kt")
+                public void testEmpty() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/empty.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("extensionFromClass.kt")
+                public void testExtensionFromClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/extensionFromClass.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("extensionFromExtension.kt")
+                public void testExtensionFromExtension() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/extensionFromExtension.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("extensionFromExtensionInClass.kt")
+                public void testExtensionFromExtensionInClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/extensionFromExtensionInClass.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("extensionFromTopLevel.kt")
+                public void testExtensionFromTopLevel() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/extensionFromTopLevel.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("extensionInClassDisallowed.kt")
+                public void testExtensionInClassDisallowed() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/extensionInClassDisallowed.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("extensionOnNullable.kt")
+                public void testExtensionOnNullable() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/extensionOnNullable.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("genericClassFromTopLevel.kt")
+                public void testGenericClassFromTopLevel() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/genericClassFromTopLevel.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("importedInnerConstructor.kt")
+                public void testImportedInnerConstructor() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/importedInnerConstructor.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("innerConstructorFromClass.kt")
+                public void testInnerConstructorFromClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/innerConstructorFromClass.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("innerConstructorFromExtension.kt")
+                public void testInnerConstructorFromExtension() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/innerConstructorFromExtension.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("innerConstructorFromTopLevel.kt")
+                public void testInnerConstructorFromTopLevel() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/innerConstructorFromTopLevel.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("javaStaticMethod.kt")
+                public void testJavaStaticMethod() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/javaStaticMethod.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("lhsNotAClass.kt")
+                public void testLhsNotAClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/lhsNotAClass.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("localConstructor.kt")
+                public void testLocalConstructor() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/localConstructor.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("localConstructorFromExtensionInLocalClass.kt")
+                public void testLocalConstructorFromExtensionInLocalClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/localConstructorFromExtensionInLocalClass.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("localConstructorFromLocalClass.kt")
+                public void testLocalConstructorFromLocalClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/localConstructorFromLocalClass.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("localConstructorFromLocalExtension.kt")
+                public void testLocalConstructorFromLocalExtension() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/localConstructorFromLocalExtension.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("localNamedFun.kt")
+                public void testLocalNamedFun() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/localNamedFun.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("localNamedFunFromExtensionInLocalClass.kt")
+                public void testLocalNamedFunFromExtensionInLocalClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/localNamedFunFromExtensionInLocalClass.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("localNamedFunFromLocalClass.kt")
+                public void testLocalNamedFunFromLocalClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/localNamedFunFromLocalClass.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("localNamedFunFromLocalExtension.kt")
+                public void testLocalNamedFunFromLocalExtension() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/localNamedFunFromLocalExtension.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("longQualifiedName.kt")
+                public void testLongQualifiedName() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/longQualifiedName.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("longQualifiedNameGeneric.kt")
+                public void testLongQualifiedNameGeneric() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/longQualifiedNameGeneric.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("memberFromClass.kt")
+                public void testMemberFromClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/memberFromClass.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("memberFromExtension.kt")
+                public void testMemberFromExtension() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/memberFromExtension.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("memberFromExtensionInClass.kt")
+                public void testMemberFromExtensionInClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/memberFromExtensionInClass.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("memberFromTopLevel.kt")
+                public void testMemberFromTopLevel() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/memberFromTopLevel.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("nestedConstructorFromClass.kt")
+                public void testNestedConstructorFromClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/nestedConstructorFromClass.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("nestedConstructorFromExtension.kt")
+                public void testNestedConstructorFromExtension() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/nestedConstructorFromExtension.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("nestedConstructorFromTopLevel.kt")
+                public void testNestedConstructorFromTopLevel() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/nestedConstructorFromTopLevel.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("noAmbiguityLocalVsTopLevel.kt")
+                public void testNoAmbiguityLocalVsTopLevel() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/noAmbiguityLocalVsTopLevel.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("noAmbiguityMemberVsExtension.kt")
+                public void testNoAmbiguityMemberVsExtension() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/noAmbiguityMemberVsExtension.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("noAmbiguityMemberVsTopLevel.kt")
+                public void testNoAmbiguityMemberVsTopLevel() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/noAmbiguityMemberVsTopLevel.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("renameOnImport.kt")
+                public void testRenameOnImport() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/renameOnImport.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("topLevelFromClass.kt")
+                public void testTopLevelFromClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/topLevelFromClass.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("topLevelFromExtension.kt")
+                public void testTopLevelFromExtension() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/topLevelFromExtension.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("topLevelFromExtensionInClass.kt")
+                public void testTopLevelFromExtensionInClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/topLevelFromExtensionInClass.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("topLevelFromTopLevel.kt")
+                public void testTopLevelFromTopLevel() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/topLevelFromTopLevel.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("unresolved.kt")
+                public void testUnresolved() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/unresolved.kt");
+                    doTest(fileName);
+                }
+            }
+
+            @TestMetadata("compiler/testData/diagnostics/tests/callableReference/property")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Property extends AbstractJetDiagnosticsTest {
+                @TestMetadata("abstractPropertyViaSubclasses.kt")
+                public void testAbstractPropertyViaSubclasses() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/property/abstractPropertyViaSubclasses.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("accessViaSubclass.kt")
+                public void testAccessViaSubclass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/property/accessViaSubclass.kt");
+                    doTest(fileName);
+                }
+
+                public void testAllFilesPresentInProperty() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/callableReference/property"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("classFromClass.kt")
+                public void testClassFromClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/property/classFromClass.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("extensionFromClass.kt")
+                public void testExtensionFromClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/property/extensionFromClass.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("extensionFromTopLevel.kt")
+                public void testExtensionFromTopLevel() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/property/extensionFromTopLevel.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("extensionPropertyOnNullable.kt")
+                public void testExtensionPropertyOnNullable() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/property/extensionPropertyOnNullable.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("genericClass.kt")
+                public void testGenericClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/property/genericClass.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("javaInstanceField.kt")
+                public void testJavaInstanceField() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/property/javaInstanceField.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("javaStaticFieldViaImport.kt")
+                public void testJavaStaticFieldViaImport() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/property/javaStaticFieldViaImport.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt7564.kt")
+                public void testKt7564() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/property/kt7564.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("localVariable.kt")
+                public void testLocalVariable() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/property/localVariable.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("memberFromExtension.kt")
+                public void testMemberFromExtension() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/property/memberFromExtension.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("memberFromTopLevel.kt")
+                public void testMemberFromTopLevel() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/property/memberFromTopLevel.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("samePriorityForFunctionsAndProperties.kt")
+                public void testSamePriorityForFunctionsAndProperties() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/property/samePriorityForFunctionsAndProperties.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("topLevelFromTopLevel.kt")
+                public void testTopLevelFromTopLevel() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/property/topLevelFromTopLevel.kt");
+                    doTest(fileName);
+                }
+            }
+        }
+
         @TestMetadata("compiler/testData/diagnostics/tests/cast")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -1464,6 +1887,45 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("SpreadVarargs.kt")
             public void testSpreadVarargs() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/checkArguments/SpreadVarargs.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("compiler/testData/diagnostics/tests/classLiteral")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ClassLiteral extends AbstractJetDiagnosticsTest {
+            public void testAllFilesPresentInClassLiteral() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/classLiteral"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("arrays.kt")
+            public void testArrays() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/classLiteral/arrays.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("genericClasses.kt")
+            public void testGenericClasses() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/classLiteral/genericClasses.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nonClassesOnLHS.kt")
+            public void testNonClassesOnLHS() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/classLiteral/nonClassesOnLHS.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simpleClassLiteral.kt")
+            public void testSimpleClassLiteral() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/classLiteral/simpleClassLiteral.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("unresolvedClass.kt")
+            public void testUnresolvedClass() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/classLiteral/unresolvedClass.kt");
                 doTest(fileName);
             }
         }

@@ -16,7 +16,7 @@ fun test() {
     checkSubtype<KExtensionProperty<String, Int>>(f)
     checkSubtype<KMutableExtensionProperty<String, Int>>(<!TYPE_MISMATCH!>f<!>)
     checkSubtype<Int>(f.get("abc"))
-    f.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>set<!>("abc", 0)
+    f.<!UNRESOLVED_REFERENCE!>set<!>("abc", 0)
 
     val g = Int::meaning
 

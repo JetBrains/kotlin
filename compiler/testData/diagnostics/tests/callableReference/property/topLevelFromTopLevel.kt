@@ -31,5 +31,5 @@ fun testY() {
 
     checkSubtype<String>(yy.name)
     checkSubtype<String>(yy.get())
-    yy.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>set<!>("yy")
+    yy.<!UNRESOLVED_REFERENCE!>set<!>("yy")
 }
