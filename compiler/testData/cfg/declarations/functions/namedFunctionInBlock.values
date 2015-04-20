@@ -1,0 +1,33 @@
+== test ==
+fun test(b: Boolean): (Int) -> Int {
+    if (b) {
+        fun foo(n: Int) = n + 1
+    }
+    else {
+        fun bar(n: Int) = n - 1
+    }
+}
+---------------------
+                                                                          <v0>: Boolean   NEW: magic[FAKE_INITIALIZER](b: Boolean) -> <v0>
+b                                                                         <v1>: Boolean   NEW: r(b) -> <v1>
+{ fun foo(n: Int) = n + 1 }                                               !<v2>: *
+{ fun bar(n: Int) = n - 1 }                                               !<v3>: *
+if (b) { fun foo(n: Int) = n + 1 } else { fun bar(n: Int) = n - 1 }       <v4>: *         NEW: merge(if (b) { fun foo(n: Int) = n + 1 } else { fun bar(n: Int) = n - 1 }|!<v2>, !<v3>) -> <v4>
+{ if (b) { fun foo(n: Int) = n + 1 } else { fun bar(n: Int) = n - 1 } }   <v4>: *         COPY
+=====================
+== foo ==
+fun foo(n: Int) = n + 1
+---------------------
+        <v0>: Int   NEW: magic[FAKE_INITIALIZER](n: Int) -> <v0>
+n       <v1>: Int   NEW: r(n) -> <v1>
+1       <v2>: Int   NEW: r(1) -> <v2>
+n + 1   <v3>: Int   NEW: call(n + 1, plus|<v1>, <v2>) -> <v3>
+=====================
+== bar ==
+fun bar(n: Int) = n - 1
+---------------------
+        <v0>: Int   NEW: magic[FAKE_INITIALIZER](n: Int) -> <v0>
+n       <v1>: Int   NEW: r(n) -> <v1>
+1       <v2>: Int   NEW: r(1) -> <v2>
+n - 1   <v3>: Int   NEW: call(n - 1, minus|<v1>, <v2>) -> <v3>
+=====================

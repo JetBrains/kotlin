@@ -345,9 +345,27 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg/declarations/functions"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("anonymousFunctionInBlock.kt")
+            public void testAnonymousFunctionInBlock() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/declarations/functions/anonymousFunctionInBlock.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("FailFunction.kt")
             public void testFailFunction() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/declarations/functions/FailFunction.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("functionAsExpression.kt")
+            public void testFunctionAsExpression() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/declarations/functions/functionAsExpression.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("namedFunctionInBlock.kt")
+            public void testNamedFunctionInBlock() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/declarations/functions/namedFunctionInBlock.kt");
                 doTest(fileName);
             }
 
