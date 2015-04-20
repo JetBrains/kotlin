@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.typeUtil.isArrayOfJavaLangClass
 import org.jetbrains.kotlin.types.typeUtil.isJavaLangClass
+import org.jetbrains.kotlin.types.typeUtil.isJavaLangClassOrArray
 
 public class JavaAnnotationCallChecker : CallChecker {
     override fun <F : CallableDescriptor?> check(resolvedCall: ResolvedCall<F>, context: BasicCallResolutionContext) {
@@ -54,8 +55,6 @@ public class JavaAnnotationCallChecker : CallChecker {
             reportOnValueArgument(context, it, ErrorsJvm.JAVA_LANG_CLASS_ARGUMENT_IN_ANNOTATION)
         }
     }
-
-    private fun JetType.isJavaLangClassOrArray() = isJavaLangClass() || isArrayOfJavaLangClass()
 
     private fun reportErrorsOnPositionedArguments(
             resolvedCall: ResolvedCall<*>,

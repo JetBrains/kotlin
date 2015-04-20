@@ -1,3 +1,4 @@
+// !DIAGNOSTICS: -JAVA_LANG_CLASS_PARAMETER_IN_ANNOTATION
 package a.b.c
 
 kotlin.deprecated("aaa")

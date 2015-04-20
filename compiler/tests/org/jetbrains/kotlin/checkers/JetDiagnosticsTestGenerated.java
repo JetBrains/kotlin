@@ -681,6 +681,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("deprecatedJavaLangClass.kt")
+            public void testDeprecatedJavaLangClass() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/deprecatedJavaLangClass.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("invalidTypesInAnnotationConstructor.kt")
             public void testInvalidTypesInAnnotationConstructor() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/invalidTypesInAnnotationConstructor.kt");

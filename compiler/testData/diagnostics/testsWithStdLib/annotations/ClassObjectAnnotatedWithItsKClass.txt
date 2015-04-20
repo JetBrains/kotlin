@@ -1,0 +1,26 @@
+package
+
+package test {
+
+    internal final annotation class AnnClass : kotlin.Annotation {
+        public constructor AnnClass(/*0*/ a: kotlin.reflect.KClass<*>)
+        internal final val a: kotlin.reflect.KClass<*>
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final class MyClass {
+        public constructor MyClass()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        test.AnnClass(a = test.MyClass::class: kotlin.reflect.KClass<test.MyClass>) internal companion object Companion {
+            private constructor Companion()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+}

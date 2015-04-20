@@ -95,3 +95,5 @@ public fun JetType.isJavaLangClass(): Boolean {
 
 public fun JetType.isArrayOfJavaLangClass(): Boolean =
         KotlinBuiltIns.isArray(this) && getArguments().firstOrNull()?.getType()?.isJavaLangClass() ?: false
+
+public fun JetType.isJavaLangClassOrArray(): Boolean = isJavaLangClass() || isArrayOfJavaLangClass()

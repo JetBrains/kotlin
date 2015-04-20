@@ -1,3 +1,4 @@
+// !DIAGNOSTICS: -JAVA_LANG_CLASS_PARAMETER_IN_ANNOTATION
 annotation class Ann(val i: IntArray)
 
 Ann(intArrayOf(<!ANNOTATION_PARAMETER_MUST_BE_CONST!>i<!>))

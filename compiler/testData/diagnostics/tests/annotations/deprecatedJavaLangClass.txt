@@ -1,0 +1,16 @@
+package
+
+internal final annotation class Ann : kotlin.Annotation {
+    public constructor Ann(/*0*/ x1: java.lang.Class<*>, /*1*/ x2: java.lang.Class<in kotlin.String?>, /*2*/ x3: java.lang.Class<out kotlin.String?>, /*3*/ x4: java.lang.Class<*>, /*4*/ x5: kotlin.Array<java.lang.Class<*>>, /*5*/ x6: kotlin.Array<in java.lang.Class<*>>, /*6*/ x7: kotlin.Array<out java.lang.Class<*>>, /*7*/ vararg x8: java.lang.Class<*> /*kotlin.Array<out java.lang.Class<*>>*/)
+    internal final val x1: java.lang.Class<*>
+    internal final val x2: java.lang.Class<in kotlin.String?>
+    internal final val x3: java.lang.Class<out kotlin.String?>
+    internal final val x4: java.lang.Class<*>
+    internal final val x5: kotlin.Array<java.lang.Class<*>>
+    internal final val x6: kotlin.Array<in java.lang.Class<*>>
+    internal final val x7: kotlin.Array<out java.lang.Class<*>>
+    internal final val x8: kotlin.Array<out java.lang.Class<*>>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

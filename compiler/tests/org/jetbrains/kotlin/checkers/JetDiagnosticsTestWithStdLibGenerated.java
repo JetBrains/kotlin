@@ -55,6 +55,12 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
             doTest(fileName);
         }
 
+        @TestMetadata("ClassObjectAnnotatedWithItsKClass.kt")
+        public void testClassObjectAnnotatedWithItsKClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/ClassObjectAnnotatedWithItsKClass.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("qualifiedCallValue.kt")
         public void testQualifiedCallValue() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/qualifiedCallValue.kt");
