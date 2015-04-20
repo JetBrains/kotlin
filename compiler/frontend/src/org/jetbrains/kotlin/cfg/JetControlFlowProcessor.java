@@ -1093,17 +1093,25 @@ public class JetControlFlowProcessor {
             return parent.getParent() instanceof JetDoWhileExpression;
         }
 
+        private void visitFunction(@NotNull JetFunction function) {
+            processLocalDeclaration(function);
+            boolean isAnonymousFunction = function instanceof JetFunctionLiteral || function.getName() == null;
+            if (isAnonymousFunction || (function.isLocal() && !(function.getParent() instanceof JetBlockExpression))) {
+                builder.createLambda(function);
+            }
+        }
+
         @Override
         public void visitNamedFunction(@NotNull JetNamedFunction function) {
-            processLocalDeclaration(function);
+            visitFunction(function);
         }
 
         @Override
         public void visitFunctionLiteralExpression(@NotNull JetFunctionLiteralExpression expression) {
             mark(expression);
             JetFunctionLiteral functionLiteral = expression.getFunctionLiteral();
-            processLocalDeclaration(functionLiteral);
-            builder.createFunctionLiteral(expression);
+            visitFunction(functionLiteral);
+            copyValue(functionLiteral, expression);
         }
 
         @Override

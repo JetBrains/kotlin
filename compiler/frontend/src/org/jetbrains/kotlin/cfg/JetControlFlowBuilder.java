@@ -111,7 +111,7 @@ public interface JetControlFlowBuilder {
     @NotNull
     InstructionWithValue createAnonymousObject(@NotNull JetObjectLiteralExpression expression);
     @NotNull
-    InstructionWithValue createFunctionLiteral(@NotNull JetFunctionLiteralExpression expression);
+    InstructionWithValue createLambda(@NotNull JetFunction expression);
     @NotNull
     InstructionWithValue loadStringTemplate(@NotNull JetStringTemplateExpression expression, @NotNull List<PseudoValue> inputValues);
 

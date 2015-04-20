@@ -102,7 +102,10 @@ public abstract class AbstractPseudocodeTest extends KotlinTestWithEnvironment {
             String label;
             assert (correspondingElement instanceof JetNamedDeclaration || correspondingElement instanceof JetPropertyAccessor) :
                     "Unexpected element class is pseudocode: " + correspondingElement.getClass();
-            if (correspondingElement instanceof JetFunctionLiteral) {
+            boolean isAnonymousFunction =
+                    correspondingElement instanceof JetFunctionLiteral
+                    || (correspondingElement instanceof JetNamedFunction && correspondingElement.getName() == null);
+            if (isAnonymousFunction) {
                 label = "anonymous_" + i++;
             }
             else if (correspondingElement instanceof JetNamedDeclaration) {

@@ -1,0 +1,63 @@
+== test ==
+fun test() {
+    val f = fun(n: Int): Int { return 1 }
+    val g = fun foo(n: Int) = 2
+}
+---------------------
+L0:
+  1 <START>
+  2 mark({ val f = fun(n: Int): Int { return 1 } val g = fun foo(n: Int) = 2 })
+    v(val f = fun(n: Int): Int { return 1 })
+    jmp?(L2)                                                                       NEXT:[r(fun(n: Int): Int { return 1 }) -> <v0>, d(fun(n: Int): Int { return 1 })]
+    d(fun(n: Int): Int { return 1 })                                               NEXT:[<SINK>]
+L2 [after local declaration]:
+    r(fun(n: Int): Int { return 1 }) -> <v0>                                       PREV:[jmp?(L2)]
+    w(f|<v0>)
+    v(val g = fun foo(n: Int) = 2)
+    jmp?(L5)                                                                       NEXT:[r(fun foo(n: Int) = 2) -> <v1>, d(fun foo(n: Int) = 2)]
+    d(fun foo(n: Int) = 2)                                                         NEXT:[<SINK>]
+L5 [after local declaration]:
+    r(fun foo(n: Int) = 2) -> <v1>                                                 PREV:[jmp?(L5)]
+    w(g|<v1>)
+L1:
+  1 <END>                                                                          NEXT:[<SINK>]
+error:
+    <ERROR>                                                                        PREV:[]
+sink:
+    <SINK>                                                                         PREV:[<ERROR>, <END>, d(fun(n: Int): Int { return 1 }), d(fun foo(n: Int) = 2)]
+=====================
+== anonymous_0 ==
+fun(n: Int): Int { return 1 }
+---------------------
+L3:
+  3 <START>
+    v(n: Int)
+    magic[FAKE_INITIALIZER](n: Int) -> <v0>
+    w(n|<v0>)
+  4 mark({ return 1 })
+    r(1) -> <v1>
+    ret(*|<v1>) L4
+L4:
+  3 <END>                                      NEXT:[<SINK>]
+error:
+    <ERROR>                                    PREV:[]
+sink:
+    <SINK>                                     PREV:[<ERROR>, <END>]
+=====================
+== foo ==
+fun foo(n: Int) = 2
+---------------------
+L6:
+  3 <START>
+    v(n: Int)
+    magic[FAKE_INITIALIZER](n: Int) -> <v0>
+    w(n|<v0>)
+    r(2) -> <v1>
+    ret(*|<v1>) L7
+L7:
+    <END>                                      NEXT:[<SINK>]
+error:
+    <ERROR>                                    PREV:[]
+sink:
+    <SINK>                                     PREV:[<ERROR>, <END>]
+=====================

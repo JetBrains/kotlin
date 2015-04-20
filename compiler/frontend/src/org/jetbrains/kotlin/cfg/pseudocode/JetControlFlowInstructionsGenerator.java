@@ -425,8 +425,8 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
 
         @NotNull
         @Override
-        public InstructionWithValue createFunctionLiteral(@NotNull JetFunctionLiteralExpression expression) {
-            return read(expression);
+        public InstructionWithValue createLambda(@NotNull JetFunction expression) {
+            return read(expression instanceof JetFunctionLiteral ? (JetFunctionLiteralExpression) expression.getParent() : expression);
         }
 
         @NotNull

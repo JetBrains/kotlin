@@ -1,0 +1,80 @@
+== test ==
+fun test(b: Boolean): (Int) -> Int {
+    if (b) {
+        fun(n: Int) = n + 1
+    }
+    else {
+        fun(n: Int) = n - 1
+    }
+}
+---------------------
+L0:
+  1 <START>
+    v(b: Boolean)
+    magic[FAKE_INITIALIZER](b: Boolean) -> <v0>
+    w(b|<v0>)
+  2 mark({ if (b) { fun(n: Int) = n + 1 } else { fun(n: Int) = n - 1 } })
+    mark(if (b) { fun(n: Int) = n + 1 } else { fun(n: Int) = n - 1 })
+    r(b) -> <v1>
+    jf(L2|<v1>)                                                                              NEXT:[mark({ fun(n: Int) = n - 1 }), mark({ fun(n: Int) = n + 1 })]
+  3 mark({ fun(n: Int) = n + 1 })
+    jmp?(L3)                                                                                 NEXT:[r(fun(n: Int) = n + 1) -> <v2>, d(fun(n: Int) = n + 1)]
+    d(fun(n: Int) = n + 1)                                                                   NEXT:[<SINK>]
+L3 [after local declaration]:
+    r(fun(n: Int) = n + 1) -> <v2>                                                           PREV:[jmp?(L3)]
+  2 jmp(L6)                                                                                  NEXT:[merge(if (b) { fun(n: Int) = n + 1 } else { fun(n: Int) = n - 1 }|<v2>, <v3>) -> <v4>]
+L2 [else branch]:
+  3 mark({ fun(n: Int) = n - 1 })                                                            PREV:[jf(L2|<v1>)]
+    jmp?(L7)                                                                                 NEXT:[r(fun(n: Int) = n - 1) -> <v3>, d(fun(n: Int) = n - 1)]
+    d(fun(n: Int) = n - 1)                                                                   NEXT:[<SINK>]
+L7 [after local declaration]:
+    r(fun(n: Int) = n - 1) -> <v3>                                                           PREV:[jmp?(L7)]
+L6 ['if' expression result]:
+  2 merge(if (b) { fun(n: Int) = n + 1 } else { fun(n: Int) = n - 1 }|<v2>, <v3>) -> <v4>    PREV:[jmp(L6), r(fun(n: Int) = n - 1) -> <v3>]
+L1:
+  1 <END>                                                                                    NEXT:[<SINK>]
+error:
+    <ERROR>                                                                                  PREV:[]
+sink:
+    <SINK>                                                                                   PREV:[<ERROR>, <END>, d(fun(n: Int) = n + 1), d(fun(n: Int) = n - 1)]
+=====================
+== anonymous_0 ==
+fun(n: Int) = n + 1
+---------------------
+L4:
+  4 <START>
+    v(n: Int)
+    magic[FAKE_INITIALIZER](n: Int) -> <v0>
+    w(n|<v0>)
+    r(n) -> <v1>
+    r(1) -> <v2>
+    mark(n + 1)
+    call(n + 1, plus|<v1>, <v2>) -> <v3>
+    ret(*|<v3>) L5
+L5:
+    <END>                                      NEXT:[<SINK>]
+error:
+    <ERROR>                                    PREV:[]
+sink:
+    <SINK>                                     PREV:[<ERROR>, <END>]
+=====================
+== anonymous_1 ==
+fun(n: Int) = n - 1
+---------------------
+L8:
+  4 <START>
+    v(n: Int)
+    magic[FAKE_INITIALIZER](n: Int) -> <v0>
+    w(n|<v0>)
+    r(n) -> <v1>
+    r(1) -> <v2>
+    mark(n - 1)
+    call(n - 1, minus|<v1>, <v2>) -> <v3>
+    ret(*|<v3>) L9
+L9:
+    <END>                                      NEXT:[<SINK>]
+error:
+    <ERROR>                                    PREV:[]
+sink:
+    <SINK>                                     PREV:[<ERROR>, <END>]
+=====================

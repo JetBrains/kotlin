@@ -55,8 +55,8 @@ public abstract class JetControlFlowBuilderAdapter implements JetControlFlowBuil
 
     @NotNull
     @Override
-    public InstructionWithValue createFunctionLiteral(@NotNull JetFunctionLiteralExpression expression) {
-        return getDelegateBuilder().createFunctionLiteral(expression);
+    public InstructionWithValue createLambda(@NotNull JetFunction expression) {
+        return getDelegateBuilder().createLambda(expression);
     }
 
     @NotNull
