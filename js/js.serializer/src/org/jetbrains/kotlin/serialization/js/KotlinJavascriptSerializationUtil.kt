@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.SerializationUtil
 import org.jetbrains.kotlin.serialization.builtins.BuiltInsSerializerExtension
 import org.jetbrains.kotlin.serialization.deserialization.FlexibleTypeCapabilitiesDeserializer
-import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -44,7 +44,7 @@ public object KotlinJavascriptSerializationUtil {
     private val PACKAGE_FILE_SUFFIX = "/.kotlin_package"
 
     platformStatic
-    public fun createPackageFragmentProvider(moduleDescriptor: ModuleDescriptor, metadata: ByteArray): PackageFragmentProvider? {
+    public fun createPackageFragmentProvider(moduleDescriptor: ModuleDescriptor, metadata: ByteArray, storageManager: StorageManager): PackageFragmentProvider? {
         val gzipInputStream = GZIPInputStream(ByteArrayInputStream(metadata))
         val content = JsProtoBuf.Library.parseFrom(gzipInputStream)
         gzipInputStream.close()
@@ -59,7 +59,7 @@ public object KotlinJavascriptSerializationUtil {
         if (packageFqNames.isEmpty()) return null
 
         return createBuiltInPackageFragmentProvider(
-                LockBasedStorageManager(), moduleDescriptor, packageFqNames, FlexibleTypeCapabilitiesDeserializer.Dynamic
+                storageManager, moduleDescriptor, packageFqNames, FlexibleTypeCapabilitiesDeserializer.Dynamic
         ) {
             path ->
             if (!contentMap.containsKey(path)) null else ByteArrayInputStream(contentMap.get(path))
