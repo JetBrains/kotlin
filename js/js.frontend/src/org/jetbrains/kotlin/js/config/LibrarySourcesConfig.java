@@ -68,12 +68,12 @@ public class LibrarySourcesConfig extends Config {
             @NotNull String moduleId,
             @NotNull List<String> files,
             @NotNull EcmaVersion ecmaVersion,
-            boolean sourcemap,
+            boolean sourceMap,
             boolean inlineEnabled,
             boolean isUnitTestConfig,
             @Nullable String metaFileOutputPath
     ) {
-        super(project, moduleId, ecmaVersion, sourcemap, inlineEnabled, metaFileOutputPath);
+        super(project, moduleId, ecmaVersion, sourceMap, inlineEnabled, metaFileOutputPath);
         this.files = files;
         this.isUnitTestConfig = isUnitTestConfig;
     }
@@ -140,7 +140,7 @@ public class LibrarySourcesConfig extends Config {
 
             File filePath = new File(path);
             if (!filePath.exists()) {
-                report.invoke("Path '" + path + "'does not exist");
+                report.invoke("Path '" + path + "' does not exist");
                 return true;
             }
 
@@ -152,26 +152,25 @@ public class LibrarySourcesConfig extends Config {
             }
 
             if (file == null) {
-                report.invoke("File '" + path + "'does not exist or could not be read");
+                report.invoke("File '" + path + "' does not exist or could not be read");
                 return true;
             }
+
+            String moduleName;
+
+            if (isOldKotlinJavascriptLibrary(filePath)) {
+                moduleName = LibraryUtils.getKotlinJsModuleName(filePath);
+            }
+            else if (isKotlinJavascriptLibraryWithMetadata(filePath)) {
+                moduleName = null;
+            }
             else {
-                String moduleName;
+                report.invoke("'" + path + "' is not a valid Kotlin Javascript library");
+                return true;
+            }
 
-                if (isOldKotlinJavascriptLibrary(filePath)) {
-                    moduleName = LibraryUtils.getKotlinJsModuleName(filePath);
-                }
-                else if (isKotlinJavascriptLibraryWithMetadata(filePath)) {
-                    moduleName = null;
-                }
-                else {
-                    report.invoke("'" + path + "' is not a valid Kotlin Javascript library");
-                    return true;
-                }
-
-                if (action != null) {
-                    action.invoke(moduleName, file);
-                }
+            if (action != null) {
+                action.invoke(moduleName, file);
             }
         }
 
@@ -184,7 +183,7 @@ public class LibrarySourcesConfig extends Config {
         List<String> files;
         @NotNull
         EcmaVersion ecmaVersion = EcmaVersion.defaultVersion();
-        boolean sourcemap = false;
+        boolean sourceMap = false;
         boolean inlineEnabled = true;
         boolean isUnitTestConfig = false;
         String metaFileOutputPath;
@@ -200,8 +199,8 @@ public class LibrarySourcesConfig extends Config {
             return this;
         }
 
-        public Builder sourceMap(boolean sourcemap) {
-            this.sourcemap = sourcemap;
+        public Builder sourceMap(boolean sourceMap) {
+            this.sourceMap = sourceMap;
             return this;
         }
 
@@ -221,7 +220,7 @@ public class LibrarySourcesConfig extends Config {
         }
 
         public Config build() {
-            return new LibrarySourcesConfig(project, moduleId, files, ecmaVersion, sourcemap, inlineEnabled, isUnitTestConfig, metaFileOutputPath);
+            return new LibrarySourcesConfig(project, moduleId, files, ecmaVersion, sourceMap, inlineEnabled, isUnitTestConfig, metaFileOutputPath);
         }
     }
 
