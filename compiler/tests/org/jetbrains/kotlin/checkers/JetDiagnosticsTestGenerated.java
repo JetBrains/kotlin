@@ -12515,6 +12515,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("Trait.kt")
+                public void testTrait() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/variance/privateToThis/Trait.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("ValReassigned.kt")
                 public void testValReassigned() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/variance/privateToThis/ValReassigned.kt");
