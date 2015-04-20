@@ -23,7 +23,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.VariableDescriptor;
-import org.jetbrains.kotlin.js.translate.context.TemporaryVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.declaration.ClassTranslator;
 import org.jetbrains.kotlin.js.translate.expression.loopTranslator.LoopTranslatorPackage;
@@ -49,7 +48,6 @@ import java.util.List;
 
 import static org.jetbrains.kotlin.js.translate.context.Namer.getCapturedVarAccessor;
 import static org.jetbrains.kotlin.js.translate.general.Translation.translateAsExpression;
-import static org.jetbrains.kotlin.js.translate.reference.CallExpressionTranslator.shouldBeInlined;
 import static org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator.translateAsFQReference;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.*;
 import static org.jetbrains.kotlin.js.translate.utils.ErrorReportingUtils.message;
@@ -290,13 +288,21 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     ) {
         JetExpression baseExpression = expression.getBaseExpression();
         assert baseExpression != null;
+
+        if (BindingContextUtilPackage.isUsedAsExpression(expression, context.bindingContext())) {
+            return Translation.translateAsExpression(baseExpression, context).source(expression);
+        }
+
         JsScope scope = context.scope();
         assert scope instanceof JsFunctionScope: "Labeled statement is unexpected outside of function scope";
         JsFunctionScope functionScope = (JsFunctionScope) scope;
+
         String labelIdent = getReferencedName(expression.getTargetLabel());
+
         JsName labelName = functionScope.enterLabel(labelIdent);
         JsStatement baseStatement = Translation.translateAsStatement(baseExpression, context);
         functionScope.exitLabel();
+
         return new JsLabel(labelName, baseStatement).source(expression);
     }
 

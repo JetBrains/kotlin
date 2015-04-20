@@ -35,6 +35,12 @@ public class LabelTestGenerated extends AbstractLabelTest {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/labels/cases"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
+    @TestMetadata("labelOnExpression.kt")
+    public void testLabelOnExpression() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/labels/cases/labelOnExpression.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("labelWithVariableClashing.kt")
     public void testLabelWithVariableClashing() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/labels/cases/labelWithVariableClashing.kt");
