@@ -16,12 +16,14 @@
 
 package org.jetbrains.kotlin.idea.core
 
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
-import org.jetbrains.kotlin.descriptors.Visibilities
+import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
@@ -51,5 +53,34 @@ fun DeclarationDescriptorWithVisibility.isVisible(
             if (Visibilities.isVisible(normalizeReceiver, this, from)) return true
         }
     }
+    return false
+}
+
+public fun compareDescriptors(project: Project, d1: DeclarationDescriptor?, d2: DeclarationDescriptor?): Boolean {
+    if (d1 == d2) return true
+    if (d1 == null || d2 == null) return false
+    if (DescriptorToSourceUtilsIde.getAllDeclarations(project, d1) == DescriptorToSourceUtilsIde.getAllDeclarations(project, d2)) return true
+    return DescriptorRenderer.FQ_NAMES_IN_TYPES.render(d1) == DescriptorRenderer.FQ_NAMES_IN_TYPES.render(d2)
+}
+
+public fun comparePossiblyOverridingDescriptors(project: Project,
+                                                currentDescriptor: DeclarationDescriptor?,
+                                                originalDescriptor: DeclarationDescriptor?): Boolean {
+    if (compareDescriptors(project, currentDescriptor, originalDescriptor)) return true
+    if (originalDescriptor is CallableDescriptor) {
+        if (!OverridingUtil.traverseOverridenDescriptors(originalDescriptor) { !compareDescriptors(project, currentDescriptor, it) }) return true
+        if (originalDescriptor !is CallableMemberDescriptor || currentDescriptor !is CallableMemberDescriptor) return false
+        val kind = originalDescriptor.getKind()
+        if (kind != CallableMemberDescriptor.Kind.FAKE_OVERRIDE && kind != CallableMemberDescriptor.Kind.DELEGATION) return false
+        if (currentDescriptor.getKind() != kind) return false
+
+        val originalOverriddenDescriptors = originalDescriptor.getOverriddenDescriptors()
+        val currentOverriddenDescriptors = currentDescriptor.getOverriddenDescriptors()
+        if (originalOverriddenDescriptors.size() != currentOverriddenDescriptors.size()) return false
+        return (currentOverriddenDescriptors zip originalOverriddenDescriptors ).all {
+            comparePossiblyOverridingDescriptors(project, it.first, it.second)
+        }
+    }
+
     return false
 }

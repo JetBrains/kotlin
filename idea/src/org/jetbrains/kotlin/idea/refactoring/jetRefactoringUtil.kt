@@ -16,19 +16,16 @@
 
 package org.jetbrains.kotlin.idea.core.refactoring
 
-import com.intellij.psi.PsiElement
 import com.intellij.openapi.util.Key
-import com.intellij.psi.PsiDirectory
 import com.intellij.openapi.roots.JavaProjectRootsUtil
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.util.ConflictsUtil
 import com.intellij.psi.PsiFileFactory
+import org.jetbrains.kotlin.psi.psiUtil.getPackage
 import org.jetbrains.kotlin.idea.JetFileType
 import com.intellij.openapi.project.Project
 import java.io.File
 import com.intellij.openapi.vfs.LocalFileSystem
-import com.intellij.psi.PsiManager
-import com.intellij.psi.PsiFile
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.psi.*
 import java.util.ArrayList
@@ -53,8 +50,8 @@ import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.ui.components.JBList
 import com.intellij.openapi.ui.popup.JBPopupAdapter
 import com.intellij.openapi.ui.popup.LightweightWindowEvent
-import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import com.intellij.psi.PsiNamedElement
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
@@ -62,22 +59,16 @@ import com.intellij.openapi.util.text.StringUtil
 import javax.swing.Icon
 import org.jetbrains.kotlin.idea.util.string.collapseSpaces
 import org.jetbrains.kotlin.asJava.KotlinLightMethod
-import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import com.intellij.psi.PsiPackage
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import com.intellij.refactoring.util.RefactoringUIUtil
-import com.intellij.psi.PsiMember
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaMemberDescriptor
-import com.intellij.psi.PsiElementFactory
-import com.intellij.psi.PsiModifier
-import com.intellij.psi.PsiTypeParameterList
 import com.intellij.refactoring.changeSignature.ChangeSignatureUtil
-import com.intellij.psi.PsiModifierList
 import org.jetbrains.kotlin.asJava.LightClassUtil
-import com.intellij.psi.PsiField
 import com.intellij.util.VisibilityUtil
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind
@@ -85,14 +76,9 @@ import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
-import com.intellij.psi.PsiReferenceList
-import com.intellij.psi.PsiTypeParameter
-import com.intellij.psi.PsiTypeParameterListOwner
-import com.intellij.psi.PsiNameIdentifierOwner
-import com.intellij.psi.PsiJavaCodeReferenceElement
 import com.intellij.lang.java.JavaLanguage
-import com.intellij.psi.PsiClass
 import com.intellij.codeInsight.daemon.impl.quickfix.CreateFromUsageUtils
+import com.intellij.psi.*
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.psi.psiUtil.*
 
@@ -400,35 +386,6 @@ public fun chooseContainerElementIfNecessary<T>(
 }
 
 public fun PsiElement.isTrueJavaMethod(): Boolean = this is PsiMethod && this !is KotlinLightMethod
-
-fun compareDescriptors(project: Project, d1: DeclarationDescriptor?, d2: DeclarationDescriptor?): Boolean {
-    if (d1 == d2) return true
-    if (d1 == null || d2 == null) return false
-    if (DescriptorToSourceUtilsIde.getAllDeclarations(project, d1) == DescriptorToSourceUtilsIde.getAllDeclarations(project, d2)) return true
-    return DescriptorRenderer.FQ_NAMES_IN_TYPES.render(d1) == DescriptorRenderer.FQ_NAMES_IN_TYPES.render(d2)
-}
-
-public fun comparePossiblyOverridingDescriptors(project: Project,
-                                                currentDescriptor: DeclarationDescriptor?,
-                                                originalDescriptor: DeclarationDescriptor?): Boolean {
-    if (compareDescriptors(project, currentDescriptor, originalDescriptor)) return true
-    if (originalDescriptor is CallableDescriptor) {
-        if (!OverridingUtil.traverseOverridenDescriptors(originalDescriptor) { !compareDescriptors(project, currentDescriptor, it) }) return true
-        if (originalDescriptor !is CallableMemberDescriptor || currentDescriptor !is CallableMemberDescriptor) return false
-        val kind = originalDescriptor.getKind()
-        if (kind != Kind.FAKE_OVERRIDE && kind != Kind.DELEGATION) return false
-        if (currentDescriptor.getKind() != kind) return false
-
-        val originalOverriddenDescriptors = originalDescriptor.getOverriddenDescriptors()
-        val currentOverriddenDescriptors = currentDescriptor.getOverriddenDescriptors()
-        if (originalOverriddenDescriptors.size() != currentOverriddenDescriptors.size()) return false
-        return (currentOverriddenDescriptors zip originalOverriddenDescriptors ).all {
-            comparePossiblyOverridingDescriptors(project, it.first, it.second)
-        }
-    }
-
-    return false
-}
 
 public fun PsiElement.canRefactor(): Boolean {
     return when {
