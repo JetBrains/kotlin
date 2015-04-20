@@ -125,7 +125,7 @@ class CollectionJVMTest {
     }
 
     test fun filterIsInstanceArray() {
-        val src: Array<Any> = array(1, 2, 3.toDouble(), "abc", "cde")
+        val src: Array<Any> = arrayOf(1, 2, 3.toDouble(), "abc", "cde")
 
         val intValues: List<Int> = src.filterIsInstance<Int>()
         assertEquals(listOf(1, 2), intValues)

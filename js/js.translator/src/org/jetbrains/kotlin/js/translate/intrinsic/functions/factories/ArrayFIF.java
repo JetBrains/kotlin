@@ -45,13 +45,13 @@ public final class ArrayFIF extends CompositeFIF {
 
     static {
         List<Name> arrayTypeNames = Lists.newArrayList();
-        List<Name> arrayFactoryMethodNames = Lists.newArrayList(Name.identifier("array"));
+        List<Name> arrayFactoryMethodNames = Lists.newArrayList(Name.identifier("arrayOf"));
         for (PrimitiveType type : PrimitiveType.values()) {
             Name arrayTypeName = type.getArrayTypeName();
             if (type != PrimitiveType.CHAR && type != PrimitiveType.BOOLEAN && type != PrimitiveType.LONG) {
                 arrayTypeNames.add(arrayTypeName);
             }
-            arrayFactoryMethodNames.add(Name.identifier(decapitalize(arrayTypeName.asString())));
+            arrayFactoryMethodNames.add(Name.identifier(decapitalize(arrayTypeName.asString() + "Of")));
         }
 
         Name arrayName = Name.identifier("Array");

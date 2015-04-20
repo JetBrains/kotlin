@@ -9,8 +9,8 @@ import org.junit.Test as test
 fun <T> List<T>.toArrayList() = this.toCollection(ArrayList<T>())
 
 class JavautilCollectionsTest {
-    val TEST_LIST = array(2, 0, 9, 7, 1).toList()
-    val SORTED_TEST_LIST = array(0, 1, 2, 7, 9).toList()
+    val TEST_LIST = arrayOf(2, 0, 9, 7, 1).toList()
+    val SORTED_TEST_LIST = arrayOf(0, 1, 2, 7, 9).toList()
     val MAX_ELEMENT = 9
     val COMPARATOR = comparator { x: Int, y: Int ->  if (x > y) 1 else if (x < y) -1 else 0 }
 

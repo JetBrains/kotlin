@@ -27,7 +27,7 @@ class ArraysTest {
     }
 
     test fun arrayLastIndex() {
-        val arr1 = intArray(0, 1, 2, 3, 4)
+        val arr1 = intArrayOf(0, 1, 2, 3, 4)
         assertEquals(4, arr1.lastIndex)
         assertEquals(4, arr1[arr1.lastIndex])
 
@@ -105,72 +105,72 @@ class ArraysTest {
     }
 
     test fun min() {
-        expect(null, { array<Int>().min() })
-        expect(1, { array(1).min() })
-        expect(2, { array(2, 3).min() })
-        expect(2000000000000, { array(3000000000000, 2000000000000).min() })
-        expect('a', { array('a', 'b').min() })
-        expect("a", { array("a", "b").min() })
+        expect(null, { arrayOf<Int>().min() })
+        expect(1, { arrayOf(1).min() })
+        expect(2, { arrayOf(2, 3).min() })
+        expect(2000000000000, { arrayOf(3000000000000, 2000000000000).min() })
+        expect('a', { arrayOf('a', 'b').min() })
+        expect("a", { arrayOf("a", "b").min() })
     }
 
     test fun max() {
-        expect(null, { array<Int>().max() })
-        expect(1, { array(1).max() })
-        expect(3, { array(2, 3).max() })
-        expect(3000000000000, { array(3000000000000, 2000000000000).max() })
-        expect('b', { array('a', 'b').max() })
-        expect("b", { array("a", "b").max() })
+        expect(null, { arrayOf<Int>().max() })
+        expect(1, { arrayOf(1).max() })
+        expect(3, { arrayOf(2, 3).max() })
+        expect(3000000000000, { arrayOf(3000000000000, 2000000000000).max() })
+        expect('b', { arrayOf('a', 'b').max() })
+        expect("b", { arrayOf("a", "b").max() })
     }
 
     test fun minBy() {
-        expect(null, { array<Int>().minBy { it } })
-        expect(1, { array(1).minBy { it } })
-        expect(3, { array(2, 3).minBy { -it } })
-        expect('a', { array('a', 'b').minBy { "x$it" } })
-        expect("b", { array("b", "abc").minBy { it.length() } })
+        expect(null, { arrayOf<Int>().minBy { it } })
+        expect(1, { arrayOf(1).minBy { it } })
+        expect(3, { arrayOf(2, 3).minBy { -it } })
+        expect('a', { arrayOf('a', 'b').minBy { "x$it" } })
+        expect("b", { arrayOf("b", "abc").minBy { it.length() } })
     }
 
     test fun maxBy() {
-        expect(null, { array<Int>().maxBy { it } })
-        expect(1, { array(1).maxBy { it } })
-        expect(2, { array(2, 3).maxBy { -it } })
-        expect('b', { array('a', 'b').maxBy { "x$it" } })
-        expect("abc", { array("b", "abc").maxBy { it.length() } })
+        expect(null, { arrayOf<Int>().maxBy { it } })
+        expect(1, { arrayOf(1).maxBy { it } })
+        expect(2, { arrayOf(2, 3).maxBy { -it } })
+        expect('b', { arrayOf('a', 'b').maxBy { "x$it" } })
+        expect("abc", { arrayOf("b", "abc").maxBy { it.length() } })
     }
 
     test fun minByEvaluateOnce() {
         var c = 0
-        expect(1, { array(5, 4, 3, 2, 1).minBy { c++; it * it } })
+        expect(1, { arrayOf(5, 4, 3, 2, 1).minBy { c++; it * it } })
         assertEquals(5, c)
     }
 
     test fun maxByEvaluateOnce() {
         var c = 0
-        expect(5, { array(5, 4, 3, 2, 1).maxBy { c++; it * it } })
+        expect(5, { arrayOf(5, 4, 3, 2, 1).maxBy { c++; it * it } })
         assertEquals(5, c)
     }
 
     test fun sum() {
-        expect(0) { array<Int>().sum() }
-        expect(14) { array(2, 3, 9).sum() }
-        expect(3.0) { array(1.0, 2.0).sum() }
-        expect(200) { array<Byte>(100, 100).sum() }
-        expect(50000) { array<Short>(20000, 30000).sum() }
-        expect(3000000000000) { array<Long>(1000000000000, 2000000000000).sum() }
-        expect(3.0.toFloat()) { array<Float>(1.0.toFloat(), 2.0.toFloat()).sum() }
+        expect(0) { arrayOf<Int>().sum() }
+        expect(14) { arrayOf(2, 3, 9).sum() }
+        expect(3.0) { arrayOf(1.0, 2.0).sum() }
+        expect(200) { arrayOf<Byte>(100, 100).sum() }
+        expect(50000) { arrayOf<Short>(20000, 30000).sum() }
+        expect(3000000000000) { arrayOf<Long>(1000000000000, 2000000000000).sum() }
+        expect(3.0.toFloat()) { arrayOf<Float>(1.0.toFloat(), 2.0.toFloat()).sum() }
     }
 
     test fun indexOf() {
-        expect(-1) { array("cat", "dog", "bird").indexOf("mouse") }
-        expect(0) { array("cat", "dog", "bird").indexOf("cat") }
-        expect(1) { array("cat", "dog", "bird").indexOf("dog") }
-        expect(2) { array("cat", "dog", "bird").indexOf("bird") }
-        expect(0) { array(null, "dog", null).indexOf(null : String?)}
+        expect(-1) { arrayOf("cat", "dog", "bird").indexOf("mouse") }
+        expect(0) { arrayOf("cat", "dog", "bird").indexOf("cat") }
+        expect(1) { arrayOf("cat", "dog", "bird").indexOf("dog") }
+        expect(2) { arrayOf("cat", "dog", "bird").indexOf("bird") }
+        expect(0) { arrayOf(null, "dog", null).indexOf(null : String?)}
 
-        expect(-1) { array("cat", "dog", "bird").indexOfFirst { it.contains("p") } }
-        expect(0) { array("cat", "dog", "bird").indexOfFirst { it.startsWith('c') } }
-        expect(1) { array("cat", "dog", "bird").indexOfFirst { it.startsWith('d') } }
-        expect(2) { array("cat", "dog", "bird").indexOfFirst { it.endsWith('d') } }
+        expect(-1) { arrayOf("cat", "dog", "bird").indexOfFirst { it.contains("p") } }
+        expect(0) { arrayOf("cat", "dog", "bird").indexOfFirst { it.startsWith('c') } }
+        expect(1) { arrayOf("cat", "dog", "bird").indexOfFirst { it.startsWith('d') } }
+        expect(2) { arrayOf("cat", "dog", "bird").indexOfFirst { it.endsWith('d') } }
 
         expect(-1) { sequenceOf("cat", "dog", "bird").indexOfFirst { it.contains("p") } }
         expect(0) { sequenceOf("cat", "dog", "bird").indexOfFirst { it.startsWith('c') } }
@@ -179,17 +179,17 @@ class ArraysTest {
     }
 
     test fun lastIndexOf() {
-        expect(-1) { array("cat", "dog", "bird").lastIndexOf("mouse") }
-        expect(0) { array("cat", "dog", "bird").lastIndexOf("cat") }
-        expect(1) { array("cat", "dog", "bird").lastIndexOf("dog") }
-        expect(2) { array(null, "dog", null).lastIndexOf(null : String?)}
-        expect(3) { array("cat", "dog", "bird", "dog").lastIndexOf("dog") }
+        expect(-1) { arrayOf("cat", "dog", "bird").lastIndexOf("mouse") }
+        expect(0) { arrayOf("cat", "dog", "bird").lastIndexOf("cat") }
+        expect(1) { arrayOf("cat", "dog", "bird").lastIndexOf("dog") }
+        expect(2) { arrayOf(null, "dog", null).lastIndexOf(null : String?)}
+        expect(3) { arrayOf("cat", "dog", "bird", "dog").lastIndexOf("dog") }
 
-        expect(-1) { array("cat", "dog", "bird").indexOfLast { it.contains("p") } }
-        expect(0) { array("cat", "dog", "bird").indexOfLast { it.startsWith('c') } }
-        expect(2) { array("cat", "dog", "cap", "bird").indexOfLast { it.startsWith('c') } }
-        expect(2) { array("cat", "dog", "bird").indexOfLast { it.endsWith('d') } }
-        expect(3) { array("cat", "dog", "bird", "red").indexOfLast { it.endsWith('d') } }
+        expect(-1) { arrayOf("cat", "dog", "bird").indexOfLast { it.contains("p") } }
+        expect(0) { arrayOf("cat", "dog", "bird").indexOfLast { it.startsWith('c') } }
+        expect(2) { arrayOf("cat", "dog", "cap", "bird").indexOfLast { it.startsWith('c') } }
+        expect(2) { arrayOf("cat", "dog", "bird").indexOfLast { it.endsWith('d') } }
+        expect(3) { arrayOf("cat", "dog", "bird", "red").indexOfLast { it.endsWith('d') } }
 
         expect(-1) { sequenceOf("cat", "dog", "bird").indexOfLast { it.contains("p") } }
         expect(0) { sequenceOf("cat", "dog", "bird").indexOfLast { it.startsWith('c') } }
@@ -199,62 +199,62 @@ class ArraysTest {
     }
 
     test fun plus() {
-        assertEquals(listOf("1", "2", "3", "4"), array("1", "2") + array("3", "4"))
-        assertEquals(listOf("1", "2", "3", "4"), listOf("1", "2") + array("3", "4"))
+        assertEquals(listOf("1", "2", "3", "4"), arrayOf("1", "2") + arrayOf("3", "4"))
+        assertEquals(listOf("1", "2", "3", "4"), listOf("1", "2") + arrayOf("3", "4"))
     }
 
     test fun plusVararg() {
-        fun onePlus(vararg a: String) = array("1") + a
+        fun onePlus(vararg a: String) = arrayOf("1") + a
         assertEquals(listOf("1", "2"), onePlus("2"))
     }
 
     test fun first() {
-        expect(1) { array(1, 2, 3).first() }
-        expect(2) { array(1, 2, 3).first { it % 2 == 0 } }
+        expect(1) { arrayOf(1, 2, 3).first() }
+        expect(2) { arrayOf(1, 2, 3).first { it % 2 == 0 } }
     }
 
     test fun last() {
-        expect(3) { array(1, 2, 3).last() }
-        expect(2) { array(1, 2, 3).last { it % 2 == 0 } }
+        expect(3) { arrayOf(1, 2, 3).last() }
+        expect(2) { arrayOf(1, 2, 3).last { it % 2 == 0 } }
     }
 
     test fun contains() {
-        assertTrue(array("1", "2", "3", "4").contains("2"))
-        assertTrue("3" in array("1", "2", "3", "4"))
-        assertTrue("0" !in array("1", "2", "3", "4"))
+        assertTrue(arrayOf("1", "2", "3", "4").contains("2"))
+        assertTrue("3" in arrayOf("1", "2", "3", "4"))
+        assertTrue("0" !in arrayOf("1", "2", "3", "4"))
     }
 
     test fun slice() {
         val iter = listOf(3, 1, 2)
 
-        assertEquals(listOf("B"), array("A", "B", "C").slice(1..1))
-        assertEquals(listOf('E', 'B', 'C'), array('A', 'B', 'C', 'E').slice(iter))
+        assertEquals(listOf("B"), arrayOf("A", "B", "C").slice(1..1))
+        assertEquals(listOf('E', 'B', 'C'), arrayOf('A', 'B', 'C', 'E').slice(iter))
 
-        assertEquals(listOf<Int>(), array<Int>().slice(5..4))
-        assertEquals(listOf<Int>(), array(1, 2, 3).slice(5..1))
-        assertEquals(listOf(2, 3, 9), array(2, 3, 9, 2, 3, 9).slice(iter))
-        assertEquals(listOf(2.0, 3.0), array(2.0, 3.0, 9.0).slice(0..1))
-        assertEquals(listOf(2f, 3f), array(2f, 3f, 9f).slice(0..1))
-        assertEquals(listOf<Byte>(127, 100), array<Byte>(50, 100, 127).slice(2 downTo 1))
-        assertEquals(listOf<Short>(200, 100), array<Short>(50, 100, 200).slice(2 downTo 1))
-        assertEquals(listOf(100L, 200L, 30L), array(50L, 100L, 200L, 30L).slice(1..3))
-        assertEquals(listOf(true, false, true), array(true, false, true, true).slice(iter))
+        assertEquals(listOf<Int>(), arrayOf<Int>().slice(5..4))
+        assertEquals(listOf<Int>(), arrayOf(1, 2, 3).slice(5..1))
+        assertEquals(listOf(2, 3, 9), arrayOf(2, 3, 9, 2, 3, 9).slice(iter))
+        assertEquals(listOf(2.0, 3.0), arrayOf(2.0, 3.0, 9.0).slice(0..1))
+        assertEquals(listOf(2f, 3f), arrayOf(2f, 3f, 9f).slice(0..1))
+        assertEquals(listOf<Byte>(127, 100), arrayOf<Byte>(50, 100, 127).slice(2 downTo 1))
+        assertEquals(listOf<Short>(200, 100), arrayOf<Short>(50, 100, 200).slice(2 downTo 1))
+        assertEquals(listOf(100L, 200L, 30L), arrayOf(50L, 100L, 200L, 30L).slice(1..3))
+        assertEquals(listOf(true, false, true), arrayOf(true, false, true, true).slice(iter))
     }
 
     test fun toSortedList() {
-        assertTrue(array<Long>().toSortedList().none())
-        assertEquals(listOf(1), array(1).toSortedList())
-        assertEquals(listOf("aab", "aba", "ac"), array("ac", "aab", "aba").toSortedList())
+        assertTrue(arrayOf<Long>().toSortedList().none())
+        assertEquals(listOf(1), arrayOf(1).toSortedList())
+        assertEquals(listOf("aab", "aba", "ac"), arrayOf("ac", "aab", "aba").toSortedList())
     }
 
     test fun asIterable() {
-        val arr1 = intArray(1, 2, 3, 4, 5)
+        val arr1 = intArrayOf(1, 2, 3, 4, 5)
         val iter1 = arr1.asIterable()
         assertEquals(arr1.toList(), iter1.toList())
         arr1[0] = 0
         assertEquals(arr1.toList(), iter1.toList())
 
-        val arr2 = array("one", "two", "three")
+        val arr2 = arrayOf("one", "two", "three")
         val iter2 = arr2.asIterable()
         assertEquals(arr2.toList(), iter2.toList())
         arr2[0] = ""
@@ -270,14 +270,14 @@ class ArraysTest {
     }
 
     test fun asList() {
-        assertEquals(listOf(1, 2, 3), intArray(1, 2, 3).asList())
-        assertEquals(listOf<Byte>(1, 2, 3), byteArray(1, 2, 3).asList())
-        assertEquals(listOf(true, false), booleanArray(true, false).asList())
+        assertEquals(listOf(1, 2, 3), intArrayOf(1, 2, 3).asList())
+        assertEquals(listOf<Byte>(1, 2, 3), byteArrayOf(1, 2, 3).asList())
+        assertEquals(listOf(true, false), booleanArrayOf(true, false).asList())
 
-        assertEquals(listOf(1, 2, 3), array(1, 2, 3).asList())
-        assertEquals(listOf("abc", "def"), array("abc", "def").asList())
+        assertEquals(listOf(1, 2, 3), arrayOf(1, 2, 3).asList())
+        assertEquals(listOf("abc", "def"), arrayOf("abc", "def").asList())
 
-        val ints = intArray(1, 5, 7)
+        val ints = intArrayOf(1, 5, 7)
         val intsAsList = ints.asList()
         assertEquals(5, intsAsList[1])
         ints[1] = 10

@@ -494,7 +494,7 @@ class CollectionTest {
     }
 
     test fun decomposeArray() {
-        val (a, b, c, d, e) = array(1, 2, 3, 4, 5)
+        val (a, b, c, d, e) = arrayOf(1, 2, 3, 4, 5)
         assertEquals(a, 1)
         assertEquals(b, 2)
         assertEquals(c, 3)
@@ -503,7 +503,7 @@ class CollectionTest {
     }
 
     test fun decomposeIntArray() {
-        val (a, b, c, d, e) = intArray(1, 2, 3, 4, 5)
+        val (a, b, c, d, e) = intArrayOf(1, 2, 3, 4, 5)
         assertEquals(a, 1)
         assertEquals(b, 2)
         assertEquals(c, 3)
