@@ -182,18 +182,30 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, E
         }
         catch (Throwable e) {
             context.trace.report(Errors.EXCEPTION_FROM_ANALYZER.on(expression, e));
-            LOG.error(
-                    "Exception while analyzing expression at " + DiagnosticUtils.atLocation(expression) + ":\n" + expression.getText() + "\n",
-                    e
-            );
+            logOrThrowException(expression, e);
             return JetTypeInfo.create(
                     ErrorUtils.createErrorType(e.getClass().getSimpleName() + " from analyzer"),
                     context.dataFlowInfo
             );
         }
-    }  
+    }
 
-//////////////////////////////////////////////////////////////////////////////////////////////
+    private static void logOrThrowException(@NotNull JetExpression expression, Throwable e) {
+        try {
+            // This trows AssertionError in CLI and reports the error in the IDE
+            LOG.error(
+                    "Exception while analyzing expression at " + DiagnosticUtils.atLocation(expression) + ":\n" + expression.getText() + "\n",
+                    e
+            );
+        }
+        catch (AssertionError errorFromLogger) {
+            // If we ended up here, we are in CLI, and the initial exception needs to be rethrown,
+            // simply throwing AssertionError causes its being wrapped over and over again
+            throw new KotlinFrontEndException(errorFromLogger.getMessage(), e);
+        }
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
     public JetTypeInfo visitFunctionLiteralExpression(@NotNull JetFunctionLiteralExpression expression, ExpressionTypingContext data) {
