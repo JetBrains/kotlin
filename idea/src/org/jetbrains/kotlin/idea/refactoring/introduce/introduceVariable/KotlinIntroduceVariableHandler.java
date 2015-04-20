@@ -77,7 +77,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
     private static final String INTRODUCE_VARIABLE = JetRefactoringBundle.message("introduce.variable");
 
     @Override
-    public void invoke(@NotNull final Project project, final Editor editor, PsiFile file, DataContext dataContext) {
+    public void invoke(@NotNull final Project project, @NotNull final Editor editor, @NotNull PsiFile file, DataContext dataContext) {
         JetRefactoringUtil.SelectExpressionCallback callback = new JetRefactoringUtil.SelectExpressionCallback() {
             @Override
             public void run(@Nullable JetExpression expression) {

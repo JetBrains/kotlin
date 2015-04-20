@@ -1266,7 +1266,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     result.addField((JetDelegatorByExpressionSpecifier) specifier, propertyDescriptor);
                 }
                 else {
-                    JetType expressionType = bindingContext.getType(expression);
+                    JetType expressionType = expression != null ? bindingContext.getType(expression) : null;
                     Type asmType =
                             expressionType != null ? typeMapper.mapType(expressionType) : typeMapper.mapType(getSuperClass(specifier));
                     result.addField((JetDelegatorByExpressionSpecifier) specifier, asmType, "$delegate_" + n);

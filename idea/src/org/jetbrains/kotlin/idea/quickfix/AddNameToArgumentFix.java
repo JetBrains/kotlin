@@ -74,7 +74,8 @@ public class AddNameToArgumentFix extends JetIntentionAction<JetValueArgument> {
         if (resolvedCall == null) return Collections.emptyList();
 
         CallableDescriptor callableDescriptor = resolvedCall.getResultingDescriptor();
-        JetType type = context.getType(argument.getArgumentExpression());
+        JetExpression argExpression = argument.getArgumentExpression();
+        JetType type = argExpression != null ? context.getType(argExpression) : null;
         Set<String> usedParameters = QuickFixUtil.getUsedParameters(callElement, null, callableDescriptor);
         List<String> names = Lists.newArrayList();
         for (ValueParameterDescriptor parameter: callableDescriptor.getValueParameters()) {
@@ -169,7 +170,7 @@ public class AddNameToArgumentFix extends JetIntentionAction<JetValueArgument> {
         return new JetSingleIntentionActionFactory() {
             @Nullable
             @Override
-            public IntentionAction createAction(Diagnostic diagnostic) {
+            public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
                 JetValueArgument argument = QuickFixUtil.getParentElementOfType(diagnostic, JetValueArgument.class);
                 if (argument == null) return null;
                 List<String> possibleNames = generatePossibleNames(argument);

@@ -130,8 +130,8 @@ public class ConvertToExpressionBodyIntention : JetSelfTargetingOffsetIndependen
 
         var child = element.getFirstChild()
         while (child != null) {
-            if (containsReturn(child!!)) return true
-            child = child!!.getNextSibling()
+            if (containsReturn(child)) return true
+            child = child.getNextSibling()
         }
 
         return false

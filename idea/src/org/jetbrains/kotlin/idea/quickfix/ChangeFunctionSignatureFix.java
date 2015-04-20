@@ -166,7 +166,7 @@ public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiE
     public static JetSingleIntentionActionFactory createFactoryForParametersNumberMismatch() {
         return new JetSingleIntentionActionFactory() {
             @Override
-            public ChangeFunctionSignatureFix createAction(Diagnostic diagnostic) {
+            public ChangeFunctionSignatureFix createAction(@NotNull Diagnostic diagnostic) {
                 DiagnosticWithParameters2<JetFunction, Integer, List<JetType>> diagnosticWithParameters =
                         EXPECTED_PARAMETERS_NUMBER_MISMATCH.cast(diagnostic);
                 JetFunction functionLiteral = diagnosticWithParameters.getPsiElement();

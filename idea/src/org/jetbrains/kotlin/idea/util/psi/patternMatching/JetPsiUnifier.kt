@@ -222,15 +222,15 @@ public class JetPsiUnifier(
             fun checkArguments(): Status? {
                 val args1 = rc1.getResultingDescriptor()?.getValueParameters()?.map { rc1.getValueArguments()[it] } ?: Collections.emptyList()
                 val args2 = rc2.getResultingDescriptor()?.getValueParameters()?.map { rc2.getValueArguments()[it] } ?: Collections.emptyList()
-                if (args1.size != args2.size) return UNMATCHED
-                if (rc1.getCall().getValueArguments().size != args1.size || rc2.getCall().getValueArguments().size != args2.size) return null
+                if (args1.size() != args2.size()) return UNMATCHED
+                if (rc1.getCall().getValueArguments().size() != args1.size() || rc2.getCall().getValueArguments().size() != args2.size()) return null
 
-                return (args1.stream() zip args2.stream()).fold(MATCHED) { s, p ->
+                return (args1.sequence() zip args2.sequence()).fold(MATCHED) { s, p ->
                     val (arg1, arg2) = p
                     s and when {
                         arg1 == arg2 -> MATCHED
                         arg1 == null || arg2 == null -> UNMATCHED
-                        else -> (arg1.getArguments().stream() zip arg2.getArguments().stream()).fold(MATCHED) { s, p ->
+                        else -> (arg1.getArguments().sequence() zip arg2.getArguments().sequence()).fold(MATCHED) { s, p ->
                             s and matchArguments(p.first, p.second)
                         }
                     }
@@ -365,7 +365,7 @@ public class JetPsiUnifier(
 
                 val args1 = type1.getArguments()
                 val args2 = type2.getArguments()
-                if (args1.size != args2.size) return UNMATCHED
+                if (args1.size() != args2.size()) return UNMATCHED
                 if (!args1.zip(args2).all {
                     it.first.getProjectionKind() == it.second.getProjectionKind() && matchTypes(it.first.getType(), it.second.getType()) == MATCHED }
                 ) return UNMATCHED
@@ -379,7 +379,7 @@ public class JetPsiUnifier(
         private fun matchTypes(types1: Collection<JetType>, types2: Collection<JetType>): Boolean {
             fun sortTypes(types: Collection<JetType>) = types.sortBy{ DescriptorRenderer.DEBUG_TEXT.renderType(it) }
 
-            if (types1.size != types2.size) return false
+            if (types1.size() != types2.size()) return false
             return (sortTypes(types1) zip sortTypes(types2)).all { matchTypes(it.first, it.second) == MATCHED }
         }
 
@@ -454,7 +454,7 @@ public class JetPsiUnifier(
         private fun matchMultiDeclarations(e1: JetMultiDeclaration, e2: JetMultiDeclaration): Boolean {
             val entries1 = e1.getEntries()
             val entries2 = e2.getEntries()
-            if (entries1.size != entries2.size) return false
+            if (entries1.size() != entries2.size()) return false
 
             return entries1.zip(entries2).all { p ->
                 val (entry1, entry2) = p
@@ -514,7 +514,7 @@ public class JetPsiUnifier(
             val params2 = desc2.getValueParameters()
             val zippedParams = params1.zip(params2)
             val parametersMatch =
-                    (params1.size == params2.size) && zippedParams.all { matchTypes(it.first.getType(), it.second.getType()) == MATCHED }
+                    (params1.size() == params2.size()) && zippedParams.all { matchTypes(it.first.getType(), it.second.getType()) == MATCHED }
             if (!parametersMatch) return UNMATCHED
 
             zippedParams.forEach { declarationPatternsToTargets.putValue(it.first, it.second) }
@@ -554,7 +554,7 @@ public class JetPsiUnifier(
                 matchPair: (Pair<T, T>) -> Boolean
         ): Boolean {
             val zippedParams = declarations1 zip declarations2
-            if (declarations1.size != declarations2.size || !zippedParams.all { matchPair(it) }) return false
+            if (declarations1.size() != declarations2.size() || !zippedParams.all { matchPair(it) }) return false
 
             zippedParams.forEach { declarationPatternsToTargets.putValue(it.first, it.second) }
             return true
@@ -607,7 +607,7 @@ public class JetPsiUnifier(
             val delegationInfo1 = getDelegationOrderInfo(decl1)
             val delegationInfo2 = getDelegationOrderInfo(decl2)
 
-            if (delegationInfo1.orderInsensitive.size != delegationInfo2.orderInsensitive.size) return UNMATCHED
+            if (delegationInfo1.orderInsensitive.size() != delegationInfo2.orderInsensitive.size()) return UNMATCHED
             @outer
             for (specifier1 in delegationInfo1.orderInsensitive) {
                 for (specifier2 in delegationInfo2.orderInsensitive) {
@@ -626,7 +626,7 @@ public class JetPsiUnifier(
 
             val sortedMembers1 = resolveAndSortDeclarationsByDescriptor(membersInfo1.orderInsensitive)
             val sortedMembers2 = resolveAndSortDeclarationsByDescriptor(membersInfo2.orderInsensitive)
-            if ((sortedMembers1.size != sortedMembers2.size)) return UNMATCHED
+            if ((sortedMembers1.size() != sortedMembers2.size())) return UNMATCHED
             if (sortedMembers1.zip(sortedMembers2).any {
                 val (d1, d2) = it
                 (matchDeclarations(d1.first, d2.first, d1.second, d2.second) ?: doUnify(d1.first, d2.first)) == UNMATCHED
@@ -735,9 +735,9 @@ public class JetPsiUnifier(
         fun doUnify(target: JetPsiRange, pattern: JetPsiRange): Status {
             val targetElements = target.elements
             val patternElements = pattern.elements
-            if (targetElements.size != patternElements.size) return UNMATCHED
+            if (targetElements.size() != patternElements.size()) return UNMATCHED
 
-            return (targetElements.stream() zip patternElements.stream()).fold(MATCHED) { s, p ->
+            return (targetElements.sequence() zip patternElements.sequence()).fold(MATCHED) { s, p ->
                 if (s != UNMATCHED) s and doUnify(p.first, p.second) else s
             }
         }
@@ -856,7 +856,7 @@ public class JetPsiUnifier(
         return with(Context(target, pattern)) {
             val status = doUnify(target, pattern)
             when {
-                substitution.size != descriptorToParameter.size ->
+                substitution.size() != descriptorToParameter.size() ->
                     Unmatched
                 status == MATCHED ->
                     if (weakMatches.isEmpty()) StronglyMatched(substitution) else WeaklyMatched(substitution, weakMatches)

@@ -61,8 +61,8 @@ public class FindImplicitNothingAction : AnAction() {
     private fun find(files: Collection<JetFile>, project: Project) {
         val progressIndicator = ProgressManager.getInstance().getProgressIndicator()
         val found = ArrayList<JetCallExpression>()
-        for ((i, file) in files.withIndices()) {
-            progressIndicator?.setText("Scanning files: $i of ${files.size} file. ${found.size} occurences found")
+        for ((i, file) in files.withIndex()) {
+            progressIndicator?.setText("Scanning files: $i of ${files.size()} file. ${found.size()} occurences found")
             progressIndicator?.setText2(file.getVirtualFile().getPath())
 
             val resolutionFacade = file.getResolutionFacade()
@@ -91,7 +91,7 @@ public class FindImplicitNothingAction : AnAction() {
                 }
             })
 
-            progressIndicator?.setFraction((i + 1) / files.size.toDouble())
+            progressIndicator?.setFraction((i + 1) / files.size().toDouble())
         }
 
         SwingUtilities.invokeLater {
@@ -102,7 +102,7 @@ public class FindImplicitNothingAction : AnAction() {
                 UsageViewManager.getInstance(project).showUsages(array<UsageTarget>(), usages, presentation)
             }
             else {
-                Messages.showInfoMessage(project, "Not found in ${files.size} file(s)", "Not Found")
+                Messages.showInfoMessage(project, "Not found in ${files.size()} file(s)", "Not Found")
             }
         }
     }
@@ -144,16 +144,16 @@ public class FindImplicitNothingAction : AnAction() {
         e.getPresentation().setEnabled(selectedKotlinFiles(e).any())
     }
 
-    private fun selectedKotlinFiles(e: AnActionEvent): Stream<JetFile> {
-        val virtualFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY) ?: return streamOf()
-        val project = CommonDataKeys.PROJECT.getData(e.getDataContext()) ?: return streamOf()
+    private fun selectedKotlinFiles(e: AnActionEvent): Sequence<JetFile> {
+        val virtualFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY) ?: return sequenceOf()
+        val project = CommonDataKeys.PROJECT.getData(e.getDataContext()) ?: return sequenceOf()
         return allKotlinFiles(virtualFiles, project)
     }
 
-    private fun allKotlinFiles(filesOrDirs: Array<VirtualFile>, project: Project): Stream<JetFile> {
+    private fun allKotlinFiles(filesOrDirs: Array<VirtualFile>, project: Project): Sequence<JetFile> {
         val manager = PsiManager.getInstance(project)
         return allFiles(filesOrDirs)
-                .stream()
+                .sequence()
                 .map { manager.findFile(it) as? JetFile }
                 .filterNotNull()
     }

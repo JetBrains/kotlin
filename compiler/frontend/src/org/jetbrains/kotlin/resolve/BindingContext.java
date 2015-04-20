@@ -76,6 +76,7 @@ public interface BindingContext {
         }
 
         @Nullable
+        @Override
         public JetType getType(@NotNull JetExpression expression) {
             return null;
         }

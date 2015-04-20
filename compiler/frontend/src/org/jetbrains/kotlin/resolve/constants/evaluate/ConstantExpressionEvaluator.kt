@@ -475,7 +475,7 @@ private fun hasLongSuffix(text: String) = text.endsWith('l') || text.endsWith('L
 
 public fun parseLong(text: String): Long? {
     try {
-        fun substringLongSuffix(s: String) = if (hasLongSuffix(text)) s.substring(0, s.length - 1) else s
+        fun substringLongSuffix(s: String) = if (hasLongSuffix(text)) s.substring(0, s.length() - 1) else s
         fun parseLong(text: String, radix: Int) = java.lang.Long.parseLong(substringLongSuffix(text), radix)
 
         return when {

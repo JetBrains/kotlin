@@ -229,7 +229,7 @@ public class CallCompleter(
         val deparenthesized = ArgumentTypeResolver.getLastElementDeparenthesized(expression, context)
         if (deparenthesized == null) return
 
-        val recordedType = context.trace.getType(expression)
+        val recordedType = expression?.let { context.trace.getType(it) }
         var updatedType: JetType? = recordedType
 
         val results = completeCallForArgument(deparenthesized, context)
@@ -297,7 +297,7 @@ public class CallCompleter(
         val expressions = ArrayList<JetExpression>()
         var expression: JetExpression? = argumentExpression
         while (expression != null) {
-            expressions.add(expression!!)
+            expressions.add(expression)
             expression = deparenthesizeOrGetSelector(expression)
         }
         expressions.forEach { expression ->

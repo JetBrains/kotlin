@@ -65,8 +65,8 @@ public class CompositeBindingContext private (
     ) : Diagnostics {
 
         override fun iterator(): Iterator<Diagnostic> {
-            val emptyStream = listOf<Diagnostic>().stream()
-            return delegates.fold(emptyStream, { r, t -> r + t.stream() }).iterator()
+            val emptyStream = listOf<Diagnostic>().sequence()
+            return delegates.fold(emptyStream, { r, t -> r + t.sequence() }).iterator()
         }
 
         override val modificationTracker = object : ModificationTracker {

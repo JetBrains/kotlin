@@ -45,7 +45,8 @@ public class DeclarationUtils {
     private static JetType getPropertyTypeIfNeeded(@NotNull JetProperty property) {
         if (property.getTypeReference() != null) return null;
 
-        JetType type = ResolvePackage.analyze(property, BodyResolveMode.FULL).getType(property.getInitializer());
+        JetExpression initializer = property.getInitializer();
+        JetType type = initializer != null ? ResolvePackage.analyze(property, BodyResolveMode.FULL).getType(initializer) : null;
         return type == null || type.isError() ? null : type;
     }
 

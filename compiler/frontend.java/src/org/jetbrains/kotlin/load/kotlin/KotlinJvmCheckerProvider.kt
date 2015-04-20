@@ -228,7 +228,7 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
                 when (expression.getOperationToken()) {
                     JetTokens.ELVIS -> {
                         val baseExpression = expression.getLeft()
-                        val baseExpressionType = c.trace.getType(baseExpression) ?: return
+                        val baseExpressionType = baseExpression?.let{ c.trace.getType(it) } ?: return
                         doIfNotNull(
                                 DataFlowValueFactory.createDataFlowValue(baseExpression, baseExpressionType, c),
                                 c

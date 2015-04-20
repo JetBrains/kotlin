@@ -130,6 +130,7 @@ abstract public class SwitchCodegen {
     }
 
     protected void generateNullCheckIfNeeded() {
+        assert expression.getSubjectExpression() != null : "subject expression can't be null";
         JetType subjectJetType = bindingContext.getType(expression.getSubjectExpression());
 
         assert subjectJetType != null : "subject type can't be null (i.e. void)";

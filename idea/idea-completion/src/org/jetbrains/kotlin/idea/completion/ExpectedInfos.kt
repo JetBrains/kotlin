@@ -248,7 +248,7 @@ class ExpectedInfos(
 
             ifExpression.getElse() -> {
                 val ifExpectedInfo = calculate(ifExpression)
-                val thenType = bindingContext.getType(ifExpression.getThen())
+                val thenType = ifExpression.getThen()?.let { bindingContext.getType(it) }
                 if (thenType != null)
                     ifExpectedInfo?.filter { it.type.isSubtypeOf(thenType) }
                 else

@@ -94,7 +94,7 @@ public fun Call.getValueArgumentForExpression(expression: JetExpression): ValueA
             else -> null
         }
     }
-    fun JetElement.isParenthesizedExpression() = stream(this) { it.deparenthesizeStructurally() }.any { it == expression }
+    fun JetElement.isParenthesizedExpression() = sequence(this) { it.deparenthesizeStructurally() }.any { it == expression }
     return getValueArguments().firstOrNull { it?.getArgumentExpression()?.isParenthesizedExpression() ?: false }
 }
 

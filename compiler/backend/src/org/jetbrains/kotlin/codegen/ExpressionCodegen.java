@@ -534,6 +534,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         JetExpression loopRange = forExpression.getLoopRange();
+        assert loopRange != null;
         JetType loopRangeType = bindingContext.getType(loopRange);
         assert loopRangeType != null;
         Type asmLoopRangeType = asmType(loopRangeType);
@@ -3531,7 +3532,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     @Override
     public StackValue visitArrayAccessExpression(@NotNull JetArrayAccessExpression expression, StackValue receiver) {
         JetExpression array = expression.getArrayExpression();
-        JetType type = bindingContext.getType(array);
+        JetType type = array != null ? bindingContext.getType(array) : null;
         Type arrayType = expressionType(array);
         List<JetExpression> indices = expression.getIndexExpressions();
         FunctionDescriptor operationDescriptor = (FunctionDescriptor) bindingContext.get(REFERENCE_TARGET, expression);

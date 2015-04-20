@@ -357,7 +357,7 @@ class SmartCompletion(
         }
         else if (descriptor is ClassDescriptor && descriptor.getModality() != Modality.ABSTRACT) {
             val constructors = descriptor.getConstructors().filter(visibilityFilter)
-            if (constructors.size == 1) {
+            if (constructors.size() == 1) {
                 //TODO: this code is to be changed if overloads to start work after ::
                 return toLookupElement(constructors.single())
             }
@@ -410,7 +410,7 @@ class SmartCompletion(
         val operationToken = binaryExpression.getOperationToken()
         if (operationToken != JetTokens.IN_KEYWORD && operationToken != JetTokens.NOT_IN || expressionWithType != binaryExpression.getRight()) return null
 
-        val leftOperandType = bindingContext.getType(binaryExpression.getLeft()) ?: return null
+        val leftOperandType = binaryExpression.getLeft()?.let { bindingContext.getType(it) } ?: return null
         val scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, expressionWithType)
         val detector = TypesWithContainsDetector(scope, leftOperandType, project, moduleDescriptor)
 
@@ -461,7 +461,7 @@ class SmartCompletion(
         val insertHandler: InsertHandler<LookupElement> = object : InsertHandler<LookupElement> {
             override fun handleInsert(context: InsertionContext, item: LookupElement) {
                 context.getDocument().replaceString(context.getStartOffset(), context.getTailOffset(), typeText)
-                context.setTailOffset(context.getStartOffset() + typeText.length)
+                context.setTailOffset(context.getStartOffset() + typeText.length())
                 shortenReferences(context, context.getStartOffset(), context.getTailOffset())
             }
         }

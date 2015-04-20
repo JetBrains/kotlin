@@ -111,8 +111,7 @@ public final class WhenChecker {
         for (JetWhenEntry entry : expression.getEntries()) {
             for (JetWhenCondition condition : entry.getConditions()) {
                 if (condition instanceof JetWhenConditionWithExpression) {
-                    JetType type = trace.getBindingContext().getType(((JetWhenConditionWithExpression) condition).getExpression()
-                    );
+                    JetType type = trace.getBindingContext().getType(((JetWhenConditionWithExpression) condition).getExpression());
                     if (type != null && KotlinBuiltIns.isNothingOrNullableNothing(type)) {
                         return true;
                     }
