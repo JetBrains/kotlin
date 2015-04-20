@@ -39,11 +39,6 @@ public class JetJavaFacadeTest extends JetLightCodeInsightFixtureTestCase {
     }
 
     @Override
-    public void setUp() throws Exception {
-        super.setUp();
-    }
-
-    @Override
     protected String getTestDataPath() {
         return PluginTestCaseBase.getTestDataPathBase() + "/javaFacade";
     }
