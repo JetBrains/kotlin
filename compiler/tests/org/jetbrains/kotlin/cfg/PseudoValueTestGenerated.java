@@ -510,6 +510,12 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("labeledExpression.kt")
+            public void testLabeledExpression() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/expressions/labeledExpression.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("LazyBooleans.kt")
             public void testLazyBooleans() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/expressions/LazyBooleans.kt");
