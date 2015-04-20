@@ -36,3 +36,6 @@ inline public fun byteArray(vararg content : Byte) : ByteArray          = byteAr
 suppress("NOTHING_TO_INLINE")
 deprecated("Use booleanArrayOf() instead.")
 inline public fun booleanArray(vararg content : Boolean) : BooleanArray = booleanArrayOf(*content)
+
+deprecated("Use toTypedArray() instead.")
+inline public fun <reified T> Collection<T>.copyToArray(): Array<T> = toTypedArray()

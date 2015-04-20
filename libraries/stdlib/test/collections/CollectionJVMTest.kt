@@ -91,7 +91,7 @@ class CollectionJVMTest {
 
     test fun toArray() {
         val data = listOf("foo", "bar")
-        val arr = data.copyToArray()
+        val arr = data.toTypedArray()
         println("Got array ${arr}")
         assertEquals(2, arr.size())
         todo {

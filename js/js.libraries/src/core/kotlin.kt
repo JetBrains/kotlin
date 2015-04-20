@@ -32,4 +32,4 @@ library
 public fun booleanArrayOf(vararg content : Boolean): BooleanArray = noImpl
 
 library("copyToArray")
-public fun <reified T> Collection<T>.copyToArray(): Array<T> = noImpl
+public fun <reified T> Collection<T>.toTypedArray(): Array<T> = noImpl

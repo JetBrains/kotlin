@@ -77,9 +77,12 @@ public fun ByteArray.toString(charset: String): String = String(this, charset)
 public fun ByteArray.toString(charset: Charset): String = String(this, charset)
 
 /**
- * Returns an array containing the elements of this collection.
+ * Returns a *typed* array containing all of the elements of this collection.
+ *
+ * Allocates an array of runtime type `T` having its size equal to the size of this collection
+ * and populates the array with the elements of this collection.
  */
-[Intrinsic("kotlin.collections.copyToArray")] public fun <reified T> Collection<T>.copyToArray(): Array<T> =
+[Intrinsic("kotlin.collections.copyToArray")] public fun <reified T> Collection<T>.toTypedArray(): Array<T> =
         throw UnsupportedOperationException()
 
 /** Returns the array if it's not null, or an empty array otherwise. */

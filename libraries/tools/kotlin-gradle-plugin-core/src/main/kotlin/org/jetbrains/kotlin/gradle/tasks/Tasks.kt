@@ -196,7 +196,7 @@ public open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArgumen
     }
 
     public fun addLibraryFiles(vararg fs: File) {
-        val strs = fs.map { it.getPath() }.copyToArray()
+        val strs = fs.map { it.getPath() }.toTypedArray()
         addLibraryFiles(*strs)
     }
 

@@ -31,7 +31,7 @@ class JavautilCollectionsTest {
     }
 
     test fun collectionToArray() {
-        val array = TEST_LIST.copyToArray()
+        val array = TEST_LIST.toTypedArray()
         assertEquals(array.toList(), TEST_LIST)
     }
 }

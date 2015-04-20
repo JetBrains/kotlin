@@ -477,8 +477,8 @@ private class SubpluginEnvironment(
         }
 
         val extraProperties = compileTask.getExtensions().getExtraProperties()
-        extraProperties.set("compilerPluginClasspaths", realPluginClasspaths.copyToArray())
-        extraProperties.set("compilerPluginArguments", pluginArguments.copyToArray())
+        extraProperties.set("compilerPluginClasspaths", realPluginClasspaths.toTypedArray())
+        extraProperties.set("compilerPluginArguments", pluginArguments.toTypedArray())
     }
 }
 
@@ -488,7 +488,7 @@ open class GradleUtils(val scriptHandler: ScriptHandler, val project: ProjectInt
         val configurationsContainer: ConfigurationContainer = scriptHandler.getConfigurations()
 
         val deps = coordinates map { dependencyHandler.create(it) }
-        val configuration = configurationsContainer.detachedConfiguration(*deps.copyToArray())
+        val configuration = configurationsContainer.detachedConfiguration(*deps.toTypedArray())
 
         return configuration.getResolvedConfiguration().getFiles { true }
     }
