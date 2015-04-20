@@ -47,16 +47,22 @@ import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.codegen.state.Progress
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.idea.JetLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.JavaResolveExtension
+import org.jetbrains.kotlin.idea.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinEvaluateExpressionCache.CompiledDataDescriptor
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinEvaluateExpressionCache.ParametersDescriptor
 import org.jetbrains.kotlin.idea.debugger.evaluate.compilingEvaluator.loadClasses
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.ExtractionResult
+import org.jetbrains.kotlin.idea.util.DebuggerUtils
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.attachment.attachmentByPsiFile
 import org.jetbrains.kotlin.idea.util.attachment.mergeAttachments
@@ -77,6 +83,7 @@ import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.Opcodes.ASM5
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
+import java.util.*
 
 private val RECEIVER_NAME = "\$receiver"
 private val THIS_NAME = "this"
@@ -159,7 +166,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
 
     companion object {
         private fun extractAndCompile(codeFragment: JetCodeFragment, sourcePosition: SourcePosition, context: EvaluationContextImpl): CompiledDataDescriptor {
-            codeFragment.checkForErrors()
+            codeFragment.checkForErrors(false)
 
             val extractionResult = getFunctionForExtractedFragment(codeFragment, sourcePosition.getFile(), sourcePosition.getLine())
             if (extractionResult == null) {
@@ -274,19 +281,36 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
             return parameterNames.zip(parameterTypes).map { this.findLocalVariable(it.first, it.second, checkType = false, failIfNotFound = true)!! }
         }
 
-        private fun createClassFileFactory(codeFragment: JetCodeFragment, extractedFunction: JetNamedFunction, context: EvaluationContextImpl): ClassFileFactory {
+        private fun createClassFileFactory(
+                codeFragment: JetCodeFragment,
+                extractedFunction: JetNamedFunction,
+                context: EvaluationContextImpl
+        ): ClassFileFactory {
             return runReadAction {
-                val file = createFileForDebugger(codeFragment, extractedFunction)
+                val jetFile = createFileForDebugger(codeFragment, extractedFunction)
 
-                val (bindingContext, moduleDescriptor) = file.checkForErrors()
+                val (bindingContext, moduleDescriptor, files) = jetFile.checkForErrors(true)
+
+                val generateClassFilter = object : GenerationState.GenerateClassFilter {
+                    override fun shouldGeneratePackagePart(file: JetFile) = file == jetFile
+                    override fun shouldAnnotateClass(classOrObject: JetClassOrObject) = true
+                    override fun shouldGenerateClass(classOrObject: JetClassOrObject) = classOrObject.getContainingJetFile() == jetFile
+                    override fun shouldGenerateScript(script: JetScript) = false
+                }
 
                 val state = GenerationState(
-                        file.getProject(),
+                        jetFile.getProject(),
                         ClassBuilderFactories.BINARIES,
+                        Progress.DEAF,
                         moduleDescriptor,
                         bindingContext,
-                        listOf(file)
-                )
+                        files,
+                        true, true,
+                        generateClassFilter,
+                        false, false,
+                        null, null,
+                        DiagnosticSink.DO_NOTHING,
+                        null)
 
                 extractedFunction.getReceiverTypeReference()?.let {
                     state.recordAnonymousType(it, THIS_NAME, context)
@@ -336,8 +360,8 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
             throw EvaluateExceptionUtil.createEvaluateException(e)
         }
 
-        private fun JetFile.checkForErrors() =
-            runReadAction {
+        private fun JetFile.checkForErrors(analyzeInlineFunctions: Boolean): ExtendedAnalysisResult {
+            return runReadAction {
                 try {
                     AnalyzingUtils.checkForSyntacticErrors(this)
                 }
@@ -345,7 +369,8 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
                     throw EvaluateExceptionUtil.createEvaluateException(e.getMessage())
                 }
 
-                val analysisResult = this.analyzeFullyAndGetResult(createFlexibleTypesFile())
+                val resolutionFacade = KotlinCacheService.getInstance(getProject()).getResolutionFacade(listOf(this, createFlexibleTypesFile()))
+                val analysisResult = resolutionFacade.analyzeFullyAndGetResult(Collections.singletonList(this))
                 if (analysisResult.isError()) {
                     throw EvaluateExceptionUtil.createEvaluateException(analysisResult.error)
                 }
@@ -355,8 +380,17 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
                     throw EvaluateExceptionUtil.createEvaluateException(DefaultErrorMessages.render(it))
                 }
 
-                analysisResult
+                if (analyzeInlineFunctions) {
+                    val (newBindingContext, files) = DebuggerUtils.analyzeInlinedFunctions(resolutionFacade, bindingContext, this, false)
+                    ExtendedAnalysisResult(newBindingContext, analysisResult.moduleDescriptor, files)
+                }
+                else {
+                    ExtendedAnalysisResult(bindingContext, analysisResult.moduleDescriptor, Collections.singletonList(this))
+                }
             }
+        }
+
+        private data class ExtendedAnalysisResult(val bindingContext: BindingContext, val moduleDescriptor: ModuleDescriptor, val files: List<JetFile>)
     }
 }
 
@@ -496,7 +530,7 @@ fun EvaluationContextImpl.findLocalVariable(name: String, asmType: Type?, checkT
                     }
                 }
 
-                fun Value.isSharedVar(): Boolean  {
+                fun Value.isSharedVar(): Boolean {
                     return this.asmType.getSort() == Type.OBJECT && this.asmType.getInternalName().startsWith(AsmTypes.REF_TYPE_PREFIX)
                 }
 
