@@ -21,22 +21,23 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
-import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.load.java.components.TypeUsage
-import org.jetbrains.kotlin.descriptors.impl.ConstructorDescriptorImpl
 import java.util.Collections
 import org.jetbrains.kotlin.utils.*
 import java.util.ArrayList
 import org.jetbrains.kotlin.load.java.lazy.types.toAttributes
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.descriptors.impl.EnumEntrySyntheticClassDescriptor
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.*
 import org.jetbrains.kotlin.load.java.lazy.resolveAnnotations
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.descriptors.JavaConstructorDescriptor
 import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils
+import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
+import org.jetbrains.kotlin.load.java.lazy.child
+import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import java.util.LinkedHashSet
@@ -78,10 +79,34 @@ public class LazyJavaClassMemberScope(
       }
 
     override fun computeNonDeclaredProperties(name: Name, result: MutableCollection<PropertyDescriptor>) {
+        if (jClass.isAnnotationType()) {
+            computeAnnotationProperties(name, result)
+        }
+
         val propertiesFromSupertypes = getPropertiesFromSupertypes(name, getContainingDeclaration())
 
         result.addAll(DescriptorResolverUtils.resolveOverrides(name, propertiesFromSupertypes, result, getContainingDeclaration(),
                                                                    c.errorReporter))
+    }
+
+    private fun computeAnnotationProperties(name: Name, result: MutableCollection<PropertyDescriptor>) {
+        val method = memberIndex().findMethodsByName(name).singleOrNull() ?: return
+        val annotations = c.resolveAnnotations(method)
+
+        val propertyDescriptor = JavaPropertyDescriptor(
+                getContainingDeclaration(), annotations, method.getVisibility(),
+                /* isVar = */ false, method.getName(), c.sourceElementFactory.source(method)
+        )
+
+        // default getter is necessary because there is no real field in annotation
+        val getter = DescriptorFactory.createDefaultGetter(propertyDescriptor)
+        propertyDescriptor.initialize(getter, null)
+
+        val returnType = computeMethodReturnType(method, annotations, c.child(propertyDescriptor, method))
+        propertyDescriptor.setType(returnType, listOf(), getDispatchReceiverParameter(), null : JetType?)
+        getter.initialize(returnType)
+
+        result.add(propertyDescriptor)
     }
 
     private fun getPropertiesFromSupertypes(name: Name, descriptor: ClassDescriptor): Set<PropertyDescriptor> {
@@ -295,13 +320,16 @@ public class LazyJavaClassMemberScope(
     override fun getClassNames(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<Name>
             = nestedClassIndex().keySet() + enumEntryIndex().keySet()
 
-    override fun getPropertyNames(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<Name> =
-            memberIndex().getAllFieldNames() +
-            getContainingDeclaration().getTypeConstructor().getSupertypes().flatMapTo(LinkedHashSet<Name>()) { supertype ->
-                supertype.getMemberScope().getDescriptors(kindFilter, nameFilter).map { variable ->
-                    variable.getName()
-                }
+    override fun getPropertyNames(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<Name> {
+        if (jClass.isAnnotationType()) return memberIndex().getMethodNames(nameFilter)
+
+        return memberIndex().getAllFieldNames() +
+        getContainingDeclaration().getTypeConstructor().getSupertypes().flatMapTo(LinkedHashSet<Name>()) { supertype ->
+            supertype.getMemberScope().getDescriptors(kindFilter, nameFilter).map { variable ->
+                variable.getName()
             }
+        }
+    }
 
     // TODO
     override fun getImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> = listOf()

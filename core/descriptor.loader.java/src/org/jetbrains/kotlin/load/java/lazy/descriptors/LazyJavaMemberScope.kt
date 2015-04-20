@@ -119,17 +119,7 @@ public abstract class LazyJavaMemberScope(
         val methodTypeParameters = method.getTypeParameters().map { p -> c.typeParameterResolver.resolveTypeParameter(p)!! }
         val valueParameters = resolveValueParameters(c, functionDescriptorImpl, method.getValueParameters())
 
-        val annotationMethod = method.getContainingClass().isAnnotationType()
-        val returnTypeAttrs = LazyJavaTypeAttributes(
-                c, method, TypeUsage.MEMBER_SIGNATURE_COVARIANT, annotations,
-                allowFlexible = !annotationMethod,
-                isForAnnotationParameter = annotationMethod
-        )
-        val returnJavaType = method.getReturnType() ?: throw IllegalStateException("Constructor passed as method: $method")
-        // Annotation arguments are never null in Java
-        val returnType = c.typeResolver.transformJavaType(returnJavaType, returnTypeAttrs).let {
-            if (annotationMethod) TypeUtils.makeNotNullable(it) else it
-        }
+        val returnType = computeMethodReturnType(method, annotations, c)
 
         val (effectiveSignature, superFunctions, signatureErrors) = resolveMethodSignature(method, methodTypeParameters, returnType, valueParameters)
 
@@ -153,6 +143,20 @@ public abstract class LazyJavaMemberScope(
         c.methodSignatureChecker.checkSignature(method, record, functionDescriptorImpl, signatureErrors, superFunctions)
 
         return functionDescriptorImpl
+    }
+
+    protected fun computeMethodReturnType(method: JavaMethod, annotations: Annotations, c: LazyJavaResolverContext): JetType {
+        val annotationMethod = method.getContainingClass().isAnnotationType()
+        val returnTypeAttrs = LazyJavaTypeAttributes(
+                c, method, TypeUsage.MEMBER_SIGNATURE_COVARIANT, annotations,
+                allowFlexible = !annotationMethod,
+                isForAnnotationParameter = annotationMethod
+        )
+        val returnJavaType = method.getReturnType() ?: throw IllegalStateException("Constructor passed as method: $method")
+        // Annotation arguments are never null in Java
+        return c.typeResolver.transformJavaType(returnJavaType, returnTypeAttrs).let {
+            if (annotationMethod) TypeUtils.makeNotNullable(it) else it
+        }
     }
 
     protected class ResolvedValueParameters(val descriptors: List<ValueParameterDescriptor>, val hasSynthesizedNames: Boolean)
