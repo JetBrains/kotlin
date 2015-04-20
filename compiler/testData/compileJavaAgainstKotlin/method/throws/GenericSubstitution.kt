@@ -3,7 +3,7 @@ package test
 class E1: Exception()
 
 trait Base<T> {
-    throws(javaClass<E1>())
+    throws(E1::class)
     fun one(t: T) {}
 }
 

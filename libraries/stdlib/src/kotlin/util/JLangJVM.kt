@@ -4,6 +4,7 @@ import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy
 import kotlin.jvm.internal.unsafe.*
 import kotlin.jvm.internal.Intrinsic
+import kotlin.reflect.KClass
 
 /**
  * This annotation indicates what exceptions should be declared by a function when compiled to a JVM method.
@@ -11,7 +12,7 @@ import kotlin.jvm.internal.Intrinsic
  * Example:
  *
  * ```
- * throws(javaClass<IOException>())
+ * throws(IOException::class)
  * fun readFile(name: String): String {...}
  * ```
  *
@@ -24,7 +25,7 @@ import kotlin.jvm.internal.Intrinsic
  * @property exceptionClasses the list of checked exception classes that may be thrown by the function.
  */
 Retention(RetentionPolicy.SOURCE)
-public annotation class throws(public vararg val exceptionClasses: Class<out Throwable>)
+public annotation class throws(public vararg val exceptionClasses: KClass<out Throwable>)
 
 /**
  * Returns the runtime Java class of this object.

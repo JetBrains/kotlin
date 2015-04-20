@@ -2,10 +2,10 @@ package test
 
 class E1: Exception()
 
-throws(javaClass<E1>()) overloads
+throws(E1::class) overloads
 fun one(a: Int = 1) {}
 
-class One [throws(javaClass<E1>())] (a: Int = 1) {
-    throws(javaClass<E1>())
+class One [throws(E1::class)] (a: Int = 1) {
+    throws(E1::class)
     fun one(a: Int = 1) {}
 }

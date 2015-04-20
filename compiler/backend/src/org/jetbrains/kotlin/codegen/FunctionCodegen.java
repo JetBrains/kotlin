@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.resolve.annotations.AnnotationsPackage;
 import org.jetbrains.kotlin.resolve.calls.CallResolverUtil;
 import org.jetbrains.kotlin.resolve.constants.ArrayValue;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
-import org.jetbrains.kotlin.resolve.constants.JavaClassValue;
+import org.jetbrains.kotlin.resolve.constants.KClassValue;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
@@ -545,8 +545,8 @@ public class FunctionCodegen {
                 new Function<CompileTimeConstant<?>, String>() {
                     @Override
                     public String fun(CompileTimeConstant<?> constant) {
-                        if (constant instanceof JavaClassValue) {
-                            JavaClassValue classValue = (JavaClassValue) constant;
+                        if (constant instanceof KClassValue) {
+                            KClassValue classValue = (KClassValue) constant;
                             ClassDescriptor classDescriptor = DescriptorUtils.getClassDescriptorForType(classValue.getValue());
                             return mapper.mapClass(classDescriptor).getInternalName();
                         }

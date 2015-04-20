@@ -6,8 +6,8 @@ class E2: Exception()
 throws()
 fun none() {}
 
-throws(javaClass<E1>())
+throws(E1::class)
 fun one() {}
 
-throws(javaClass<E1>(), javaClass<E2>())
+throws(E1::class, E2::class)
 fun two() {}
