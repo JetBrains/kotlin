@@ -3628,30 +3628,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
-        @TestMetadata("functionExpression.kt")
-        public void testFunctionExpression() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/functions/functionExpression.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("functionExpressionWithName.kt")
-        public void testFunctionExpressionWithName() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/functions/functionExpressionWithName.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("functionExpressionWithThisReference.kt")
-        public void testFunctionExpressionWithThisReference() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/functions/functionExpressionWithThisReference.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("functionLiteralExpression.kt")
-        public void testFunctionLiteralExpression() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/functions/functionLiteralExpression.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("functionNtoString.kt")
         public void testFunctionNtoString() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/functions/functionNtoString.kt");
@@ -3818,6 +3794,39 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         public void testRecursiveIncrementCall() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/functions/recursiveIncrementCall.kt");
             doTest(fileName);
+        }
+
+        @TestMetadata("compiler/testData/codegen/box/functions/functionExpression")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class FunctionExpression extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInFunctionExpression() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/functions/functionExpression"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("functionExpression.kt")
+            public void testFunctionExpression() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/functions/functionExpression/functionExpression.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("functionExpressionWithName.kt")
+            public void testFunctionExpressionWithName() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/functions/functionExpression/functionExpressionWithName.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("functionExpressionWithThisReference.kt")
+            public void testFunctionExpressionWithThisReference() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/functions/functionExpression/functionExpressionWithThisReference.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("functionLiteralExpression.kt")
+            public void testFunctionLiteralExpression() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/functions/functionExpression/functionLiteralExpression.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/functions/invoke")
