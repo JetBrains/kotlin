@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.codegen.generated;
 
-import org.jetbrains.annotations.NotNull;
 
 public abstract class AbstractBlackBoxCodegenJava8Test extends AbstractBlackBoxCodegenTest {
 
