@@ -23,7 +23,14 @@ public trait PackageFragmentProvider {
     public fun getPackageFragments(fqName: FqName): List<PackageFragmentDescriptor>
 
     /**
-     * @return declared subpackages of {@code fqName}
+     * @return declared subpackages of a package with the FQ name given by [fqName]
      */
     public fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName>
+
+
+    public object Empty : PackageFragmentProvider {
+        override fun getPackageFragments(fqName: FqName) = emptyList<PackageFragmentDescriptor>()
+
+        override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean) = emptySet<FqName>()
+    }
 }
