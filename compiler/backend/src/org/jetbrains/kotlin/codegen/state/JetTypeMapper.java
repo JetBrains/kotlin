@@ -21,6 +21,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.builtins.PrimitiveType;
 import org.jetbrains.kotlin.builtins.jvm.IntrinsicObjects;
 import org.jetbrains.kotlin.codegen.*;
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
@@ -53,6 +54,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.StringValue;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
+import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
@@ -67,8 +69,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static org.jetbrains.kotlin.codegen.AsmUtil.boxType;
-import static org.jetbrains.kotlin.codegen.AsmUtil.isStaticMethod;
+import static org.jetbrains.kotlin.codegen.AsmUtil.*;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.isVarCapturedInClosure;
@@ -166,7 +167,7 @@ public class JetTypeMapper {
 
             if (directMember instanceof DeserializedCallableMemberDescriptor) {
                 FqName packagePartFqName = PackagePartClassUtils.getPackagePartFqName((DeserializedCallableMemberDescriptor) directMember);
-                return AsmUtil.internalNameByFqNameWithoutInnerClasses(packagePartFqName);
+                return internalNameByFqNameWithoutInnerClasses(packagePartFqName);
             }
         }
 
@@ -266,15 +267,7 @@ public class JetTypeMapper {
             @NotNull JetTypeMapperMode kind,
             @NotNull Variance howThisTypeIsUsed
     ) {
-        Type known = null;
-        DeclarationDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
-
-        if (descriptor instanceof ClassDescriptor) {
-            FqNameUnsafe className = DescriptorUtils.getFqName(descriptor);
-            if (className.isSafe()) {
-                known = KotlinToJavaTypesMap.getInstance().getJavaAnalog(className.toSafe(), TypeUtils.isNullableType(jetType));
-            }
-        }
+        Type known = mapBuiltinType(jetType);
 
         boolean projectionsAllowed = kind != JetTypeMapperMode.SUPER_TYPE;
         if (known != null) {
@@ -296,6 +289,7 @@ public class JetTypeMapper {
         }
 
         TypeConstructor constructor = jetType.getConstructor();
+        DeclarationDescriptor descriptor = constructor.getDeclarationDescriptor();
         if (constructor instanceof IntersectionTypeConstructor) {
             jetType = CommonSupertypes.commonSupertype(new ArrayList<JetType>(constructor.getSupertypes()));
         }
@@ -349,7 +343,7 @@ public class JetTypeMapper {
         if (descriptor instanceof ClassDescriptor) {
             FqName companionObjectMappedFqName = IntrinsicObjects.mapType((ClassDescriptor) descriptor);
             if (companionObjectMappedFqName != null) {
-                Type asmType = AsmUtil.asmTypeByFqNameWithoutInnerClasses(companionObjectMappedFqName);
+                Type asmType = asmTypeByFqNameWithoutInnerClasses(companionObjectMappedFqName);
                 if (signatureVisitor != null) {
                     signatureVisitor.writeAsmType(asmType);
                 }
@@ -374,6 +368,22 @@ public class JetTypeMapper {
         }
 
         throw new UnsupportedOperationException("Unknown type " + jetType);
+    }
+
+    @Nullable
+    private static Type mapBuiltinType(@NotNull JetType type) {
+        DeclarationDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
+        if (!(descriptor instanceof ClassDescriptor)) return null;
+
+        FqNameUnsafe fqName = DescriptorUtils.getFqName(descriptor);
+
+        PrimitiveType primitiveType = KotlinBuiltIns.getPrimitiveTypeByFqName(fqName);
+        if (primitiveType != null) {
+            Type asmType = Type.getType(JvmPrimitiveType.get(primitiveType).getDesc());
+            return TypeUtils.isNullableType(type) ? boxType(asmType) : asmType;
+        }
+
+        return fqName.isSafe() ? KotlinToJavaTypesMap.getInstance().getJavaAnalog(fqName.toSafe()) : null;
     }
 
     @NotNull

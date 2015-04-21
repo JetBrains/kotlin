@@ -165,13 +165,13 @@ public class KotlinBuiltIns {
 
         public final FqNameUnsafe kClass = new FqName("kotlin.reflect.KClass").toUnsafe();
 
-        public final Set<FqNameUnsafe> primitiveTypes;
+        public final Map<FqNameUnsafe, PrimitiveType> fqNameToPrimitiveType;
         public final Set<FqNameUnsafe> primitiveArrays;
         {
-            primitiveTypes = new HashSet<FqNameUnsafe>(0);
+            fqNameToPrimitiveType = new HashMap<FqNameUnsafe, PrimitiveType>(0);
             primitiveArrays = new HashSet<FqNameUnsafe>(0);
             for (PrimitiveType primitiveType : PrimitiveType.values()) {
-                primitiveTypes.add(fqNameUnsafe(primitiveType.getTypeName().asString()));
+                fqNameToPrimitiveType.put(fqNameUnsafe(primitiveType.getTypeName().asString()), primitiveType);
                 primitiveArrays.add(fqNameUnsafe(primitiveType.getArrayTypeName().asString()));
             }
         }
@@ -184,7 +184,8 @@ public class KotlinBuiltIns {
             return fqName(simpleName).toUnsafe();
         }
 
-        private static FqName fqName(String simpleName) {
+        @NotNull
+        private static FqName fqName(@NotNull String simpleName) {
             return BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier(simpleName));
         }
 
@@ -588,6 +589,11 @@ public class KotlinBuiltIns {
         return primitiveJetTypeToJetArrayType.get(jetType);
     }
 
+    @Nullable
+    public static PrimitiveType getPrimitiveTypeByFqName(@NotNull FqNameUnsafe primitiveClassFqName) {
+        return FQ_NAMES.fqNameToPrimitiveType.get(primitiveClassFqName);
+    }
+
     @NotNull
     public JetType getArrayType(@NotNull Variance projectionType, @NotNull JetType argument) {
         List<TypeProjectionImpl> types = Collections.singletonList(new TypeProjectionImpl(projectionType, argument));
@@ -681,7 +687,7 @@ public class KotlinBuiltIns {
 
     public static boolean isPrimitiveType(@NotNull JetType type) {
         ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
-        return !type.isMarkedNullable() && descriptor != null && FQ_NAMES.primitiveTypes.contains(DescriptorUtils.getFqName(descriptor));
+        return !type.isMarkedNullable() && descriptor != null && getPrimitiveTypeByFqName(DescriptorUtils.getFqName(descriptor)) != null;
     }
 
     // Functions
