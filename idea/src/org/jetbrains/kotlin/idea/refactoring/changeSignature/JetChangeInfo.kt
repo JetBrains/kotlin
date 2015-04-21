@@ -17,10 +17,8 @@
 package org.jetbrains.kotlin.idea.refactoring.changeSignature
 
 import com.intellij.lang.Language
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiMethod
-import com.intellij.psi.PsiModifier
-import com.intellij.psi.PsiType
+import com.intellij.lang.java.JavaLanguage
+import com.intellij.psi.*
 import com.intellij.refactoring.changeSignature.*
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.VisibilityUtil
@@ -34,6 +32,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.idea.JetLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.*
+import org.jetbrains.kotlin.idea.core.refactoring.j2k
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.JetFunctionDefinitionUsage
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import java.util.HashMap
@@ -255,7 +254,7 @@ public class JetChangeInfo(
                     else -> -1
                 }
 
-                ParameterInfoImpl(javaOldIndex, info.getName(), type, info.defaultValueForCall)
+                ParameterInfoImpl(javaOldIndex, info.getName(), type, info.defaultValueForCall?.getText() ?: "")
             }.copyToArray()
 
             val returnType = if (isPrimaryMethodUpdated) currentPsiMethod.getReturnType() else PsiType.VOID
@@ -298,10 +297,18 @@ public fun ChangeInfo.toJetChangeInfo(originalChangeSignatureDescriptor: JetMeth
         val oldIndex = info.getOldIndex()
         val currentType = parameterDescriptors[i].getType()
 
+        val defaultValueText = info.getDefaultValue()
+        val defaultValueExpr = if (getLanguage().`is`(JavaLanguage.INSTANCE) && !defaultValueText.isNullOrEmpty()) {
+            PsiElementFactory.SERVICE.getInstance(method.getProject())
+                    .createExpressionFromText(defaultValueText!!, null)
+                    .j2k(originalChangeSignatureDescriptor.baseDeclaration)
+        }
+        else null
+
         with(JetParameterInfo(originalIndex = oldIndex,
                               name = info.getName(),
                               type = if (oldIndex >= 0) originalParameterDescriptors[oldIndex].getType() else currentType,
-                              defaultValueForCall = info.getDefaultValue() ?: "")) {
+                              defaultValueForCall = defaultValueExpr)) {
             currentTypeText = IdeDescriptorRenderers.SOURCE_CODE.renderType(currentType)
             this
         }

@@ -62,7 +62,7 @@ public object CreateParameterByNamedArgumentActionFactory: JetSingleIntentionAct
         val parameterInfo = JetParameterInfo(
                 name = name,
                 type = paramType,
-                defaultValueForCall = argumentExpression.getText() ?: ""
+                defaultValueForCall = argumentExpression
         )
         return CreateParameterFromUsageFix(functionDescriptor, context, parameterInfo, argument)
     }

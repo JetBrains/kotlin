@@ -33,7 +33,7 @@ public class JetParameterInfo(
         private var name: String,
         type: JetType? = null,
         var defaultValueForParameter: JetExpression? = null,
-        var defaultValueForCall: String = "",
+        var defaultValueForCall: JetExpression? = null,
         var valOrVar: JetValVar = JetValVar.None,
         val modifierList: JetModifierList? = null
 ): ParameterInfo {

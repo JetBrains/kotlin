@@ -151,7 +151,7 @@ public class AddFunctionParametersFix extends ChangeFunctionSignatureFix {
                                         typesToShorten.add(parameterInfo.getOriginalType());
 
                                         if (expression != null) {
-                                            parameterInfo.setDefaultValueForCall(expression.getText());
+                                            parameterInfo.setDefaultValueForCall(expression);
                                         }
 
                                         descriptor.addParameter(parameterInfo);

@@ -100,7 +100,8 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
             else
                 parametersBuilder.append(',');
 
-            String defaultValueText = parameterInfo.getDefaultValueForCall();
+            JetExpression defaultValueForCall = parameterInfo.getDefaultValueForCall();
+            String defaultValueText = defaultValueForCall != null ? defaultValueForCall.getText() : "";
 
             if (isNamedCall) {
                 String newName = parameterInfo.getInheritedName(callee);
@@ -157,7 +158,7 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
                                     : oldArgument.asElement());
             }
             // TODO: process default arguments in the middle
-            else if (parameterInfo.getDefaultValueForCall().isEmpty()) {
+            else if (parameterInfo.getDefaultValueForCall() == null) {
                 if (parameterInfo.getDefaultValueForParameter() != null) {
                     JetPsiUtil.deleteElementWithDelimiters(newArgument);
                 }
@@ -183,9 +184,10 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
             if (newReceiverInfo != null) {
                 ValueArgument receiverArgument = argumentMap.get(newReceiverInfo.getOldIndex());
                 JetExpression extensionReceiverExpression = receiverArgument != null ? receiverArgument.getArgumentExpression() : null;
+                JetExpression defaultValueForCall = newReceiverInfo.getDefaultValueForCall();
                 String receiverText = extensionReceiverExpression != null
                                       ? extensionReceiverExpression.getText()
-                                      : newReceiverInfo.getDefaultValueForCall();
+                                      : defaultValueForCall != null ? defaultValueForCall.getText() : "";
                 if (receiverText.isEmpty()) {
                     receiverText = "_";
                 }

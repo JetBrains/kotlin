@@ -23,6 +23,7 @@ import com.intellij.refactoring.changeSignature.ParameterTableModelBase;
 import com.intellij.refactoring.changeSignature.ParameterTableModelItemBase;
 import com.intellij.util.ui.ColumnInfo;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetPsiFactory;
 
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
@@ -43,11 +44,15 @@ public abstract class JetCallableParameterTableModel extends ParameterTableModel
     @Override
     protected ParameterTableModelItemBase<JetParameterInfo> createRowItem(@Nullable JetParameterInfo parameterInfo) {
         if (parameterInfo == null) {
-            parameterInfo = new JetParameterInfo(-1, "", null, null, "", JetValVar.None, null);
+            parameterInfo = new JetParameterInfo(-1, "", null, null, null, JetValVar.None, null);
         }
         JetPsiFactory psiFactory = JetPsiFactory(project);
         PsiCodeFragment paramTypeCodeFragment = psiFactory.createTypeCodeFragment(parameterInfo.getTypeText(), myTypeContext);
-        PsiCodeFragment defaultValueCodeFragment = psiFactory.createExpressionCodeFragment(parameterInfo.getDefaultValueForCall(), myDefaultValueContext);
+        JetExpression defaultValueForCall = parameterInfo.getDefaultValueForCall();
+        PsiCodeFragment defaultValueCodeFragment = psiFactory.createExpressionCodeFragment(
+                defaultValueForCall != null ? defaultValueForCall.getText() : "",
+                myDefaultValueContext
+        );
         return new ParameterTableModelItemBase<JetParameterInfo>(parameterInfo, paramTypeCodeFragment, defaultValueCodeFragment) {
             @Override
             public boolean isEllipsisType() {

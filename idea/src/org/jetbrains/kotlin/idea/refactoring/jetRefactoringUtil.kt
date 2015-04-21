@@ -80,6 +80,11 @@ import com.intellij.lang.java.JavaLanguage
 import com.intellij.codeInsight.daemon.impl.quickfix.CreateFromUsageUtils
 import com.intellij.psi.*
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
+import org.jetbrains.kotlin.idea.j2k.IdeaResolverForConverter
+import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
+import org.jetbrains.kotlin.j2k.ConverterSettings
+import org.jetbrains.kotlin.j2k.IdeaReferenceSearcher
+import org.jetbrains.kotlin.j2k.JavaToKotlinConverter
 import org.jetbrains.kotlin.psi.psiUtil.*
 
 fun <T: Any> PsiElement.getAndRemoveCopyableUserData(key: Key<T>): T? {
@@ -551,4 +556,18 @@ fun createJavaClass(klass: JetClass, targetClass: PsiClass): PsiMember {
     }
 
     return javaClass
+}
+
+fun PsiExpression.j2k(postProcessingContext: PsiElement): JetExpression? {
+    if (getLanguage() != JavaLanguage.INSTANCE) return null
+
+    val project = getProject()
+    val j2kConverter = JavaToKotlinConverter(project,
+                                             ConverterSettings.defaultSettings,
+                                             IdeaReferenceSearcher,
+                                             IdeaResolverForConverter,
+                                             J2kPostProcessor(true))
+    val inputElements = Collections.singletonList(JavaToKotlinConverter.InputElement(this, postProcessingContext))
+    val text = j2kConverter.elementsToKotlin(inputElements).results.singleOrNull()?.text ?: return null
+    return JetPsiFactory(getProject()).createExpression(text)
 }

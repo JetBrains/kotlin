@@ -125,7 +125,7 @@ fun IntroduceParameterDescriptor.performRefactoring() {
                     }
 
                     val parameterInfo = JetParameterInfo(name = newParameterName,
-                                                         defaultValueForCall = if (withDefaultValue) "" else newArgumentValue.getText(),
+                                                         defaultValueForCall = if (withDefaultValue) null else newArgumentValue,
                                                          defaultValueForParameter = if (withDefaultValue) newArgumentValue else null,
                                                          valOrVar = valVar)
                     parameterInfo.currentTypeText = newParameterTypeText
