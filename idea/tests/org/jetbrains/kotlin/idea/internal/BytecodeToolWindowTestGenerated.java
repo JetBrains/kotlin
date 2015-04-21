@@ -35,6 +35,12 @@ public class BytecodeToolWindowTestGenerated extends AbstractBytecodeToolWindowT
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/internal/toolWindow"), Pattern.compile("^([^\\.]+)$"), false);
     }
 
+    @TestMetadata("componentInlineFun")
+    public void testComponentInlineFun() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/internal/toolWindow/componentInlineFun/");
+        doTest(fileName);
+    }
+
     @TestMetadata("inlineFunctionBodyResolve")
     public void testInlineFunctionBodyResolve() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/internal/toolWindow/inlineFunctionBodyResolve/");
@@ -62,6 +68,12 @@ public class BytecodeToolWindowTestGenerated extends AbstractBytecodeToolWindowT
     @TestMetadata("inlineFunctionReifiedParam")
     public void testInlineFunctionReifiedParam() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/internal/toolWindow/inlineFunctionReifiedParam/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("iteratorFun")
+    public void testIteratorFun() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/internal/toolWindow/iteratorFun/");
         doTest(fileName);
     }
 

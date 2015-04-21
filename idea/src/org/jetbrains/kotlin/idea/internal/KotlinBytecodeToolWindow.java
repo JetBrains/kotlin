@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.codegen.KotlinCodegenFacade;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.Progress;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink;
@@ -317,6 +318,30 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
                 if (call == null) return;
 
                 ResolvedCall<?> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, call);
+                checkResolveCall(resolvedCall);
+            }
+
+            @Override
+            public void visitMultiDeclaration(@NotNull JetMultiDeclaration multiDeclaration) {
+                super.visitMultiDeclaration(multiDeclaration);
+
+                for (JetMultiDeclarationEntry entry : multiDeclaration.getEntries()) {
+                    ResolvedCall<FunctionDescriptor> resolvedCall =
+                            bindingContext.get(BindingContext.COMPONENT_RESOLVED_CALL, entry);
+                    checkResolveCall(resolvedCall);
+                }
+            }
+
+            @Override
+            public void visitForExpression(@NotNull JetForExpression expression) {
+                super.visitForExpression(expression);
+
+                checkResolveCall(bindingContext.get(BindingContext.LOOP_RANGE_ITERATOR_RESOLVED_CALL, expression.getLoopRange()));
+                checkResolveCall(bindingContext.get(BindingContext.LOOP_RANGE_HAS_NEXT_RESOLVED_CALL, expression.getLoopRange()));
+                checkResolveCall(bindingContext.get(BindingContext.LOOP_RANGE_NEXT_RESOLVED_CALL, expression.getLoopRange()));
+            }
+
+            private void checkResolveCall(ResolvedCall<?> resolvedCall) {
                 if (resolvedCall == null) return;
 
                 CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
