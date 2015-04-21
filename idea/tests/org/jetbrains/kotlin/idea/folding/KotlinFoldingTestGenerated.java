@@ -88,6 +88,12 @@ public class KotlinFoldingTestGenerated extends AbstractKotlinFoldingTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/folding/checkCollapse"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("functionLiteral.kt")
+        public void testFunctionLiteral() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/folding/checkCollapse/functionLiteral.kt");
+            doSettingsFoldingTest(fileName);
+        }
+
         @TestMetadata("headerKDoc.kt")
         public void testHeaderKDoc() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/folding/checkCollapse/headerKDoc.kt");

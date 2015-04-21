@@ -25,14 +25,12 @@ import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
-import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.JetNodeTypes
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetImportDirective
+import org.jetbrains.kotlin.psi.JetFunctionLiteral
 import org.jetbrains.kotlin.psi.JetImportList
-
 import java.util.ArrayList
 
 public class KotlinFoldingBuilder : FoldingBuilderEx(), DumbAware {
@@ -61,17 +59,38 @@ public class KotlinFoldingBuilder : FoldingBuilderEx(), DumbAware {
     }
 
     private fun appendDescriptors(node: ASTNode, document: Document, descriptors: MutableList<FoldingDescriptor>) {
-        val textRange = node.getTextRange()
-        val type = node.getElementType()
-        if ((type == JetNodeTypes.BLOCK || type == JetNodeTypes.CLASS_BODY || type == JetTokens.BLOCK_COMMENT || type == KDocTokens.KDOC) &&
-                !isOneLine(textRange, document)) {
-            descriptors.add(FoldingDescriptor(node, textRange))
+        if (needFolding(node)) {
+            val textRange = getRangeToFold(node)
+            if (!isOneLine(textRange, document)) {
+                descriptors.add(FoldingDescriptor(node, textRange))
+            }
         }
-        var child: ASTNode? = node.getFirstChildNode()
+
+        var child = node.getFirstChildNode()
         while (child != null) {
             appendDescriptors(child, document, descriptors)
             child = child.getTreeNext()
         }
+    }
+
+    private fun needFolding(node: ASTNode): Boolean {
+        val type = node.getElementType()
+        val parentType = node.getTreeParent()?.getElementType()
+        return type == JetNodeTypes.FUNCTION_LITERAL ||
+               (type == JetNodeTypes.BLOCK && parentType != JetNodeTypes.FUNCTION_LITERAL) ||
+               type == JetNodeTypes.CLASS_BODY || type == JetTokens.BLOCK_COMMENT || type == KDocTokens.KDOC
+    }
+
+    private fun getRangeToFold(node: ASTNode): TextRange {
+        if (node.getElementType() == JetNodeTypes.FUNCTION_LITERAL) {
+            val psi = node.getPsi() as? JetFunctionLiteral
+            val lbrace = psi?.getLBrace()
+            val rbrace = psi?.getRBrace()
+            if (lbrace != null && rbrace != null) {
+                return TextRange(lbrace.getTextRange().getStartOffset(), rbrace.getTextRange().getEndOffset())
+            }
+        }
+        return node.getTextRange()
     }
 
     private fun isOneLine(textRange: TextRange, document: Document) =
