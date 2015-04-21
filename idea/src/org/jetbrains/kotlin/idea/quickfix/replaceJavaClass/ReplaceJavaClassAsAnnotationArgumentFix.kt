@@ -22,9 +22,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.JetBundle
-import org.jetbrains.kotlin.idea.quickfix.JetIntentionAction
-import org.jetbrains.kotlin.idea.quickfix.JetSingleIntentionActionFactory
-import org.jetbrains.kotlin.idea.quickfix.JetWholeProjectModalAction
+import org.jetbrains.kotlin.idea.quickfix.*
+import org.jetbrains.kotlin.idea.quickfix.quickfixUtil.createIntentionFactory
 import org.jetbrains.kotlin.idea.quickfix.quickfixUtil.createIntentionForFirstParentOfType
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
@@ -36,50 +35,25 @@ public class ReplaceJavaClassAsAnnotationArgumentFix(
         annotationEntry: JetAnnotationEntry
 ) : JetIntentionAction<JetAnnotationEntry>(annotationEntry) {
 
-    private val psiFactory: JetPsiFactory = JetPsiFactory(annotationEntry)
-
     override fun getText() = JetBundle.message("replace.java.class.argument")
     override fun getFamilyName() = JetBundle.message("replace.java.class.argument.family")
 
     override fun invoke(project: Project, editor: Editor?, file: JetFile?) {
-        processTasks(createReplacementTasks(element), psiFactory)
+        processTasks(createReplacementTasks(element))
     }
 
     companion object : JetSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic) =
                 diagnostic.createIntentionForFirstParentOfType(::ReplaceJavaClassAsAnnotationArgumentFix)
-    }
-}
 
-public class ReplaceJavaClassAsAnnotationArgumentInWholeProjectFix(
-        annotationEntry: JetAnnotationEntry
-) : JetWholeProjectModalAction<JetAnnotationEntry, Collection<ReplacementTask>>(
-        annotationEntry, JetBundle.message("replace.java.class.argument.in.whole.project.modal.title")
-) {
-
-    private val psiFactory: JetPsiFactory = JetPsiFactory(annotationEntry)
-
-    override fun getText() = JetBundle.message("replace.java.class.argument.in.whole.project")
-    override fun getFamilyName() = JetBundle.message("replace.java.class.argument.in.whole.project.family")
-
-    override fun collectDataForFile(project: Project, file: JetFile): Collection<ReplacementTask>? {
-        val result = arrayListOf<ReplacementTask>()
-
-        file.accept(object : JetTreeVisitorVoid() {
-            override fun visitAnnotationEntry(annotationEntry: JetAnnotationEntry) {
-                result.addAll(createReplacementTasks(annotationEntry))
-            }
-        })
-
-        return result
-    }
-
-    override fun applyChangesForFile(project: Project, file: JetFile, data: Collection<ReplacementTask>) {
-        processTasks(data, psiFactory)
-    }
-
-    companion object : JetSingleIntentionActionFactory() {
-        override fun createAction(diagnostic: Diagnostic) =
-                diagnostic.createIntentionForFirstParentOfType<JetAnnotationEntry>(::ReplaceJavaClassAsAnnotationArgumentInWholeProjectFix)
+        public fun createWholeProjectFixFactory(): JetSingleIntentionActionFactory = createIntentionFactory {
+            JetWholeProjectForEachElementOfTypeFix.createForMultiTask(
+                    tasksFactory = ::createReplacementTasks,
+                    tasksProcessor = ::processTasks,
+                    modalTitle = JetBundle.message("replace.java.class.argument.in.whole.project.modal.title"),
+                    name = JetBundle.message("replace.java.class.argument.in.whole.project"),
+                    familyName = JetBundle.message("replace.java.class.argument.in.whole.project.family")
+            )
+        }
     }
 }

@@ -512,3 +512,22 @@ public fun PsiElement.getElementTextWithContext(): String {
             .insert(0, "File name: ${getContainingFile().getName()}\n")
             .toString()
 }
+
+// Calls `block` on each descendant of T type
+// Note, that calls happen in order of DFS-exit, so deeper nodes are applied earlier
+inline fun <reified T : JetElement> forEachDescendantOfTypeVisitor(
+    inlineOptions(InlineOption.ONLY_LOCAL_RETURN) block: (T) -> Unit
+): JetVisitorVoid =
+        object : JetTreeVisitorVoid() {
+            override fun visitJetElement(element: JetElement) {
+                super.visitJetElement(element)
+                if (element is T) {
+                    block(element)
+                }
+            }
+        }
+
+inline fun <reified T : JetElement, R> flatMapDescendantsOfTypeVisitor(
+    accumulator: MutableCollection<R>,
+    inlineOptions(InlineOption.ONLY_LOCAL_RETURN) map: (T) -> Collection<R>
+): JetVisitorVoid = forEachDescendantOfTypeVisitor<T> { accumulator.addAll(map(it)) }

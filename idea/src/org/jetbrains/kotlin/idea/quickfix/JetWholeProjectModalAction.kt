@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.quickfix
 
+import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
@@ -25,18 +26,28 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.project.PluginJetFilesProvider
 import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.JetVisitor
+import org.jetbrains.kotlin.psi.JetVisitorVoid
+import org.jetbrains.kotlin.psi.psiUtil.flatMapDescendantsOfTypeVisitor
+import org.jetbrains.kotlin.utils.singletonOrEmptyList
 import java.util.HashMap
 
-public abstract class JetWholeProjectModalAction<T : PsiElement, D: Any>(element: T, val title: String) : JetIntentionAction<T>(element) {
+public abstract class JetWholeProjectModalAction<D: Any>(val title: String) : IntentionAction {
     override final fun startInWriteAction() = false
 
-    override final fun invoke(project: Project, editor: Editor, file: JetFile) =
+    override final fun invoke(project: Project, editor: Editor?, file: PsiFile?) = invoke(project)
+
+    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile?) = true
+
+    private fun invoke(project: Project) =
         ProgressManager.getInstance().run(
             object : Task.Modal(project, title, true) {
                 override fun run(indicator: ProgressIndicator) {
@@ -84,7 +95,78 @@ public abstract class JetWholeProjectModalAction<T : PsiElement, D: Any>(element
     protected abstract fun applyChangesForFile(project: Project, file: JetFile, data: D)
 
     private companion object {
-        val LOG = Logger.getInstance(javaClass<JetWholeProjectModalAction<*, *>>());
+        val LOG = Logger.getInstance(javaClass<JetWholeProjectModalAction<*>>());
     }
 }
 
+public abstract class JetWholeProjectModalByCollectionAction<T : Any>(modalTitle: String)
+: JetWholeProjectModalAction<Collection<T>>(modalTitle) {
+    override fun collectDataForFile(project: Project, file: JetFile): Collection<T>? {
+        val accumulator = arrayListOf<T>()
+        collectTasksForFile(project, file, accumulator)
+        return accumulator
+    }
+
+    abstract fun collectTasksForFile(project: Project, file: JetFile, accumulator: MutableCollection<T>)
+}
+
+class JetWholeProjectForEachElementOfTypeFix<T> private (
+        val collectingVisitorFactory: (MutableCollection<T>) -> JetVisitorVoid,
+        val tasksProcessor: (Collection<T>) -> Unit,
+        modalTitle: String,
+        val name: String,
+        val familyNameText: String
+) : JetWholeProjectModalByCollectionAction<T>(modalTitle) {
+
+    override fun getFamilyName() = familyNameText
+    override fun getText() = name
+
+    override fun collectTasksForFile(project: Project, file: JetFile, accumulator: MutableCollection<T>) {
+        file.accept(collectingVisitorFactory(accumulator))
+    }
+    override fun applyChangesForFile(project: Project, file: JetFile, data: Collection<T>) = tasksProcessor(data)
+
+    companion object {
+        inline fun <reified E : JetElement> createByPredicate(
+                inlineOptions(InlineOption.ONLY_LOCAL_RETURN) predicate: (E) -> Boolean,
+                inlineOptions(InlineOption.ONLY_LOCAL_RETURN) taskProcessor: (E) -> Unit,
+                modalTitle: String,
+                name: String,
+                familyName: String
+        ) = createByTaskFactory<E, E>(
+                taskFactory = { if (predicate(it)) it else null },
+                taskProcessor = taskProcessor,
+                modalTitle = modalTitle,
+                name = name,
+                familyName = familyName
+        )
+
+        inline fun <reified E : JetElement, D : Any> createByTaskFactory(
+                inlineOptions(InlineOption.ONLY_LOCAL_RETURN) taskFactory: (E) -> D?,
+                inlineOptions(InlineOption.ONLY_LOCAL_RETURN) taskProcessor: (D) -> Unit,
+                modalTitle: String,
+                name: String,
+                familyName: String
+        ) = createForMultiTask<E, D>(
+                tasksFactory = { taskFactory(it).singletonOrEmptyList() },
+                tasksProcessor = { it.forEach(taskProcessor) },
+                modalTitle = modalTitle,
+                name = name,
+                familyName = familyName
+        )
+
+        inline fun <reified E : JetElement, D> createForMultiTask(
+                inlineOptions(InlineOption.ONLY_LOCAL_RETURN) tasksFactory: (E) -> Collection<D>,
+                noinline tasksProcessor: (Collection<D>) -> Unit,
+                modalTitle: String,
+                name: String,
+                familyName: String
+        ) = JetWholeProjectForEachElementOfTypeFix(
+                collectingVisitorFactory = { accumulator -> flatMapDescendantsOfTypeVisitor(accumulator, tasksFactory) },
+                tasksProcessor = tasksProcessor,
+                modalTitle = modalTitle,
+                name = name,
+                familyNameText = familyName
+        )
+    }
+}

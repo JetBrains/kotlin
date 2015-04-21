@@ -21,6 +21,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.project.PluginJetFilesProvider
+import org.jetbrains.kotlin.idea.quickfix.quickfixUtil.createIntentionFactory
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import java.util.ArrayList
@@ -31,51 +32,28 @@ public class ClassObjectToCompanionObjectFix(private val elem: JetObjectDeclarat
     override fun getFamilyName(): String = JetBundle.message("migrate.class.object.to.companion.family")
 
     override fun invoke(project: Project, editor: Editor, file: JetFile) {
-        classKeywordToCompanionModifier(elem)
+        changeClassKeywordToCompanionModifier(elem)
     }
 
     companion object Factory : JetSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic) =
                 (diagnostic.getPsiElement() as? JetObjectDeclaration)?.let { ClassObjectToCompanionObjectFix(it) }
 
-        fun classKeywordToCompanionModifier(objectDeclaration: JetObjectDeclaration) {
+        public fun createWholeProjectFixFactory(): JetSingleIntentionActionFactory = createIntentionFactory {
+            JetWholeProjectForEachElementOfTypeFix.createByPredicate<JetObjectDeclaration>(
+                predicate = { it.getClassKeyword() != null },
+                taskProcessor = { changeClassKeywordToCompanionModifier(it) },
+                modalTitle = JetBundle.message("migrate.class.object.to.companion.in.whole.project.modal.title"),
+                name = JetBundle.message("migrate.class.object.to.companion.in.whole.project"),
+                familyName = JetBundle.message("migrate.class.object.to.companion.in.whole.project.family")
+            )
+        }
+
+        private fun changeClassKeywordToCompanionModifier(objectDeclaration: JetObjectDeclaration) {
             objectDeclaration.getClassKeyword()?.delete()
             if (!objectDeclaration.hasModifier(JetTokens.COMPANION_KEYWORD)) {
                 objectDeclaration.addModifier(JetTokens.COMPANION_KEYWORD)
             }
         }
-    }
-}
-
-public class ClassObjectToCompanionObjectInWholeProjectFix(private val elem: JetObjectDeclaration)
-    : JetWholeProjectModalAction<JetObjectDeclaration, Collection<JetObjectDeclaration>>(
-        elem, JetBundle.message("migrate.class.object.to.companion.in.whole.project.modal.title")) {
-    override fun getText(): String = JetBundle.message("migrate.class.object.to.companion.in.whole.project")
-
-    override fun getFamilyName(): String = JetBundle.message("migrate.class.object.to.companion.in.whole.project.family")
-
-    override fun collectDataForFile(project: Project, file: JetFile): Collection<JetObjectDeclaration>? {
-        val classObjects = ArrayList<JetObjectDeclaration>()
-        file.accept(ClassObjectToCompanionObjectVisitor(classObjects))
-
-        return if (classObjects.isEmpty()) null else classObjects
-    }
-
-    override fun applyChangesForFile(project: Project, file: JetFile, data: Collection<JetObjectDeclaration>) {
-        data.forEach { ClassObjectToCompanionObjectFix.classKeywordToCompanionModifier(it) }
-    }
-
-    private class ClassObjectToCompanionObjectVisitor(val classObjects: MutableCollection<JetObjectDeclaration>) : JetTreeVisitorVoid() {
-        override fun visitObjectDeclaration(objectDeclaration: JetObjectDeclaration) {
-            objectDeclaration.acceptChildren(this)
-            if (objectDeclaration.getClassKeyword() != null) {
-                classObjects.add(objectDeclaration)
-            }
-        }
-    }
-
-    companion object Factory : JetSingleIntentionActionFactory() {
-        override fun createAction(diagnostic: Diagnostic) =
-                (diagnostic.getPsiElement() as? JetObjectDeclaration)?.let { ClassObjectToCompanionObjectInWholeProjectFix(it) }
     }
 }

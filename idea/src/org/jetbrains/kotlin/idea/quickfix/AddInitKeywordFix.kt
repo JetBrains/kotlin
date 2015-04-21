@@ -25,6 +25,7 @@ import com.intellij.openapi.project.*
 import com.intellij.openapi.editor.*
 import com.intellij.psi.*
 import org.jetbrains.kotlin.idea.project.PluginJetFilesProvider
+import org.jetbrains.kotlin.idea.quickfix.quickfixUtil.createIntentionFactory
 import org.jetbrains.kotlin.idea.quickfix.quickfixUtil.createIntentionForFirstParentOfType
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -41,7 +42,19 @@ public class AddInitKeywordFix(element: JetClassInitializer) : JetIntentionActio
     }
 
     companion object Factory : JetSingleIntentionActionFactory() {
-        fun addInitKeyword(element: JetClassInitializer) {
+        override fun createAction(diagnostic: Diagnostic) = diagnostic.createIntentionForFirstParentOfType(::AddInitKeywordFix)
+
+        public fun createWholeProjectFixFactory(): JetSingleIntentionActionFactory = createIntentionFactory {
+            JetWholeProjectForEachElementOfTypeFix.createByPredicate<JetClassInitializer>(
+                predicate = { !it.hasInitKeyword() },
+                taskProcessor = { addInitKeyword(it) },
+                modalTitle = JetBundle.message("add.init.keyword.in.whole.project.modal.title"),
+                name = JetBundle.message("add.init.keyword.in.whole.project"),
+                familyName = JetBundle.message("add.init.keyword.in.whole.project.family")
+            )
+        }
+
+        private fun addInitKeyword(element: JetClassInitializer) {
             if (element.hasInitKeyword()) return
 
             val psiFactory = JetPsiFactory(element)
@@ -55,39 +68,5 @@ public class AddInitKeywordFix(element: JetClassInitializer) : JetIntentionActio
                 prevLeaf!!.delete()
             }
         }
-        override fun createAction(diagnostic: Diagnostic) = diagnostic.createIntentionForFirstParentOfType(::AddInitKeywordFix)
-    }
-}
-
-public class AddInitKeywordFixInWholeProjectFix(elem: JetClassInitializer)
-: JetWholeProjectModalAction<JetClassInitializer, Collection<JetClassInitializer>>(
-        elem, JetBundle.message("add.init.keyword.in.whole.project.modal.title")) {
-    override fun getText(): String = JetBundle.message("add.init.keyword.in.whole.project")
-
-    override fun getFamilyName(): String = JetBundle.message("add.init.keyword.in.whole.project.family")
-
-    override fun collectDataForFile(project: Project, file: JetFile): Collection<JetClassInitializer>? {
-        val classInitializers = ArrayList<JetClassInitializer>()
-        file.accept(AddInitKeywordVisitor(classInitializers))
-
-        return if (classInitializers.isEmpty()) null else classInitializers
-    }
-
-    override fun applyChangesForFile(project: Project, file: JetFile, data: Collection<JetClassInitializer>) {
-        data.forEach { AddInitKeywordFix.addInitKeyword(it) }
-    }
-
-    private class AddInitKeywordVisitor(val classInitializers: MutableCollection<JetClassInitializer>) : JetTreeVisitorVoid() {
-        override fun visitAnonymousInitializer(initializer: JetClassInitializer) {
-            initializer.acceptChildren(this)
-            if (!initializer.hasInitKeyword()) {
-                classInitializers.add(initializer)
-            }
-        }
-    }
-
-    companion object Factory : JetSingleIntentionActionFactory() {
-        override fun createAction(diagnostic: Diagnostic) =
-                diagnostic.createIntentionForFirstParentOfType(::AddInitKeywordFixInWholeProjectFix)
     }
 }

@@ -28,11 +28,15 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.types.typeUtil.isArrayOfJavaLangClass
 import org.jetbrains.kotlin.types.typeUtil.isJavaLangClass
 
-private trait ReplacementTask
+private trait ReplacementTask {
+    val element: JetElement
+}
 private class JavaClassCallReplacementTask(
         val javaClassCall: JetExpression,
         val className: String
-) : ReplacementTask
+) : ReplacementTask {
+    override val element: JetElement = javaClassCall
+}
 
 fun createReplacementTasks(element: JetAnnotationEntry): List<ReplacementTask> {
     val replacementTasks = arrayListOf<ReplacementTask>()
@@ -63,7 +67,10 @@ private fun Diagnostic.isJavaLangClassArgumentInAnnotation(expression: JetCallEx
         getFactory() == ErrorsJvm.JAVA_LANG_CLASS_ARGUMENT_IN_ANNOTATION &&
         getPsiElement().isAncestor(expression)
 
-fun processTasks(replacementTasks: Collection<ReplacementTask>, psiFactory: JetPsiFactory) {
+fun processTasks(replacementTasks: Collection<ReplacementTask>) {
+    val element = replacementTasks.firstOrNull()?.element ?: return
+    val psiFactory = JetPsiFactory(element)
+
     val elementsToShorten = arrayListOf<JetElement>()
     replacementTasks.forEach {
         task ->

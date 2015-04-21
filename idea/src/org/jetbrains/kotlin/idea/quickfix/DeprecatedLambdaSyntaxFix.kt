@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.quickfix.quickfixUtil.createIntentionFactory
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.idea.util.psiModificationUtil.getFunctionLiteralArgumentName
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.idea.util.psiModificationUtil.moveInsideParenthesesA
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.utils.sure
 import java.util.ArrayList
 
 public class DeprecatedLambdaSyntaxFix(element: JetFunctionLiteralExpression) : JetIntentionAction<JetFunctionLiteralExpression>(element) {
@@ -43,64 +45,45 @@ public class DeprecatedLambdaSyntaxFix(element: JetFunctionLiteralExpression) : 
     companion object Factory : JetSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic)
                 = (diagnostic.getPsiElement() as? JetFunctionLiteralExpression)?.let { DeprecatedLambdaSyntaxFix(it) }
-    }
-}
 
-public class DeprecatedLambdaSyntaxInWholeProjectFix(element: JetFunctionLiteralExpression) :
-        JetWholeProjectModalAction<JetFunctionLiteralExpression, Collection<DeprecatedSyntaxFix>>(
-                element, JetBundle.message("migrate.lambda.syntax.in.whole.project.modal.title")) {
-
-    override fun getText() = JetBundle.message("migrate.lambda.syntax.in.whole.project")
-    override fun getFamilyName() = JetBundle.message("migrate.lambda.syntax.in.whole.project.family")
-
-    override fun collectDataForFile(project: Project, file: JetFile): Collection<DeprecatedSyntaxFix>? {
-        val lambdas = ArrayList<DeprecatedSyntaxFix>()
-        file.accept(LambdaCollectionVisitor(lambdas), 0)
-        return lambdas.sortBy { -it.level }
-    }
-
-    override fun applyChangesForFile(project: Project, file: JetFile, data: Collection<DeprecatedSyntaxFix>) {
-        data.forEach {
-            it.runFix()
+        public fun createWholeProjectFixFactory(): JetSingleIntentionActionFactory = createIntentionFactory {
+            JetWholeProjectForEachElementOfTypeFix.createByTaskFactory(
+                    taskFactory = fun (it: JetFunctionLiteralExpression) = fixTaskFactory(it),
+                    taskProcessor = { it.runFix() },
+                    modalTitle = JetBundle.message("migrate.lambda.syntax.in.whole.project.modal.title"),
+                    name = JetBundle.message("migrate.lambda.syntax.in.whole.project"),
+                    familyName = JetBundle.message("migrate.lambda.syntax.in.whole.project.family")
+            )
         }
-    }
 
-    private class LambdaCollectionVisitor(val lambdas: MutableCollection<DeprecatedSyntaxFix>) : JetTreeVisitor<Int>() {
-        override fun visitFunctionLiteralExpression(functionLiteralExpression: JetFunctionLiteralExpression, data: Int): Void? {
-            functionLiteralExpression.acceptChildren(this, data + 1)
-            if (JetPsiUtil.isDeprecatedLambdaSyntax(functionLiteralExpression)) {
-                lambdas.add(DeprecatedSyntaxFix.createFix(functionLiteralExpression, data))
+        private fun fixTaskFactory(functionLiteralExpression: JetFunctionLiteralExpression): DeprecatedSyntaxFix? {
+            return if (JetPsiUtil.isDeprecatedLambdaSyntax(functionLiteralExpression)) {
+                DeprecatedSyntaxFix.createFix(functionLiteralExpression)
             }
-            return null
+            else {
+                null
+            }
         }
-    }
-
-    companion object Factory : JetSingleIntentionActionFactory() {
-        override fun createAction(diagnostic: Diagnostic)
-                = (diagnostic.getPsiElement() as? JetFunctionLiteralExpression)?.let { DeprecatedLambdaSyntaxInWholeProjectFix(it) }
     }
 }
 
 private trait DeprecatedSyntaxFix {
-    val level: Int
-
     // you must run it under write action
     fun runFix()
 
     internal companion object {
-        fun createFix(functionLiteralExpression: JetFunctionLiteralExpression, level: Int = 0): DeprecatedSyntaxFix {
+        fun createFix(functionLiteralExpression: JetFunctionLiteralExpression): DeprecatedSyntaxFix {
             val functionLiteral = functionLiteralExpression.getFunctionLiteral()
             val hasNoReturnAndReceiverType = !functionLiteral.hasDeclaredReturnType() && functionLiteral.getReceiverTypeReference() == null
 
-            return if (hasNoReturnAndReceiverType) DeparenthesizeParameterList(functionLiteralExpression, level)
-            else LambdaToFunctionExpression(functionLiteralExpression, level)
+            return if (hasNoReturnAndReceiverType) DeparenthesizeParameterList(functionLiteralExpression)
+            else LambdaToFunctionExpression(functionLiteralExpression)
         }
     }
 }
 
 private class DeparenthesizeParameterList(
-        val functionLiteralExpression: JetFunctionLiteralExpression,
-        override val level: Int = 0
+        val functionLiteralExpression: JetFunctionLiteralExpression
 ): DeprecatedSyntaxFix {
 
     override fun runFix() {
@@ -118,8 +101,7 @@ private class DeparenthesizeParameterList(
 }
 
 private class LambdaToFunctionExpression(
-        val functionLiteralExpression: JetFunctionLiteralExpression,
-        override val level: Int = 0
+        val functionLiteralExpression: JetFunctionLiteralExpression
 ): DeprecatedSyntaxFix {
     val functionLiteralArgumentName: String?
     val receiverType: String?

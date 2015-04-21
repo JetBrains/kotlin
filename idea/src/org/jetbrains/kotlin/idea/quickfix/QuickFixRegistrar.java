@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateL
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateParameterActionFactory;
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateParameterByNamedArgumentActionFactory;
 import org.jetbrains.kotlin.idea.quickfix.replaceJavaClass.ReplaceJavaClassAsAnnotationArgumentFix;
-import org.jetbrains.kotlin.idea.quickfix.replaceJavaClass.ReplaceJavaClassAsAnnotationArgumentInWholeProjectFix;
 import org.jetbrains.kotlin.psi.JetClass;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm;
 
@@ -236,7 +235,7 @@ public class QuickFixRegistrar {
         QuickFixes.factories.put(UNUSED_PARAMETER, ChangeFunctionSignatureFix.createFactoryForUnusedParameter());
         QuickFixes.factories.put(EXPECTED_PARAMETERS_NUMBER_MISMATCH, ChangeFunctionSignatureFix.createFactoryForParametersNumberMismatch());
         QuickFixes.factories.put(DEPRECATED_LAMBDA_SYNTAX, DeprecatedLambdaSyntaxFix.Factory);
-        QuickFixes.factories.put(DEPRECATED_LAMBDA_SYNTAX, DeprecatedLambdaSyntaxInWholeProjectFix.Factory);
+        QuickFixes.factories.put(DEPRECATED_LAMBDA_SYNTAX, DeprecatedLambdaSyntaxFix.Factory.createWholeProjectFixFactory());
 
         QuickFixes.factories.put(EXPECTED_PARAMETER_TYPE_MISMATCH, ChangeTypeFix.createFactoryForExpectedParameterTypeMismatch());
         QuickFixes.factories.put(EXPECTED_RETURN_TYPE_MISMATCH, ChangeTypeFix.createFactoryForExpectedReturnTypeMismatch());
@@ -310,9 +309,9 @@ public class QuickFixRegistrar {
         QuickFixes.factories.put(UNRESOLVED_REFERENCE, CreateClassFromCallWithConstructorCalleeActionFactory.INSTANCE$);
 
         QuickFixes.factories.put(DEPRECATED_CLASS_OBJECT_SYNTAX, ClassObjectToCompanionObjectFix.Factory);
-        QuickFixes.factories.put(DEPRECATED_CLASS_OBJECT_SYNTAX, ClassObjectToCompanionObjectInWholeProjectFix.Factory);
+        QuickFixes.factories.put(DEPRECATED_CLASS_OBJECT_SYNTAX, ClassObjectToCompanionObjectFix.Factory.createWholeProjectFixFactory());
         QuickFixes.factories.put(INIT_KEYWORD_BEFORE_CLASS_INITIALIZER_EXPECTED, AddInitKeywordFix.Factory);
-        QuickFixes.factories.put(INIT_KEYWORD_BEFORE_CLASS_INITIALIZER_EXPECTED, AddInitKeywordFixInWholeProjectFix.Factory);
+        QuickFixes.factories.put(INIT_KEYWORD_BEFORE_CLASS_INITIALIZER_EXPECTED, AddInitKeywordFix.Factory.createWholeProjectFixFactory());
 
         QuickFixes.factories.put(PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED, InsertDelegationCallQuickfix.InsertThisDelegationCallFactory.INSTANCE$);
 
@@ -320,6 +319,6 @@ public class QuickFixRegistrar {
         QuickFixes.factories.put(EXPLICIT_DELEGATION_CALL_REQUIRED, InsertDelegationCallQuickfix.InsertSuperDelegationCallFactory.INSTANCE$);
 
         QuickFixes.factories.put(ErrorsJvm.JAVA_LANG_CLASS_ARGUMENT_IN_ANNOTATION, ReplaceJavaClassAsAnnotationArgumentFix.Companion);
-        QuickFixes.factories.put(ErrorsJvm.JAVA_LANG_CLASS_ARGUMENT_IN_ANNOTATION, ReplaceJavaClassAsAnnotationArgumentInWholeProjectFix.Companion);
+        QuickFixes.factories.put(ErrorsJvm.JAVA_LANG_CLASS_ARGUMENT_IN_ANNOTATION, ReplaceJavaClassAsAnnotationArgumentFix.Companion.createWholeProjectFixFactory());
     }
 }

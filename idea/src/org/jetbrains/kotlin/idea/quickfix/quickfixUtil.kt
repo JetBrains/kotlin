@@ -16,11 +16,20 @@
 
 package org.jetbrains.kotlin.idea.quickfix.quickfixUtil
 
+import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.quickfix.JetIntentionAction
+import org.jetbrains.kotlin.idea.quickfix.JetSingleIntentionActionFactory
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
 inline fun <reified T : PsiElement> Diagnostic.createIntentionForFirstParentOfType(
     factory: (T) -> JetIntentionAction<T>?
 ) = getPsiElement().getNonStrictParentOfType<T>()?.let(factory)
+
+
+inline fun createIntentionFactory(
+    inlineOptions(InlineOption.ONLY_LOCAL_RETURN) factory: (Diagnostic) -> IntentionAction?
+) = object : JetSingleIntentionActionFactory() {
+    override fun createAction(diagnostic: Diagnostic) = factory(diagnostic)
+}
