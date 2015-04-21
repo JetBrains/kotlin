@@ -65,7 +65,7 @@ public class KotlinIntroducePropertyHandler(
             val adjustedElements = (elements.singleOrNull() as? JetBlockExpression)?.getStatements() ?: elements
             if (adjustedElements.isNotEmpty()) {
                 val options = ExtractionOptions(extractAsProperty = true)
-                val extractionData = ExtractionData(file, adjustedElements.toRange(), targetSibling, options)
+                val extractionData = ExtractionData(file, adjustedElements.toRange(), targetSibling, null, options)
                 ExtractionEngine(helper).run(editor, extractionData) {
                     val property = it.declaration as JetProperty
                     val descriptor = it.config.descriptor

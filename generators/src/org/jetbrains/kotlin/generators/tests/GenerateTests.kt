@@ -617,7 +617,8 @@ fun main(args: Array<String>) {
             model("refactoring/introduceVariable", extension = "kt", testMethod = "doIntroduceVariableTest")
             model("refactoring/extractFunction", extension = "kt", testMethod = "doExtractFunctionTest")
             model("refactoring/introduceProperty", extension = "kt", testMethod = "doIntroducePropertyTest")
-            model("refactoring/introduceParameter", extension = "kt", testMethod = "doIntroduceParameterTest")
+            model("refactoring/introduceParameter", extension = "kt", testMethod = "doIntroduceSimpleParameterTest")
+            model("refactoring/introduceLambdaParameter", extension = "kt", testMethod = "doIntroduceLambdaParameterTest")
         }
 
         testClass(javaClass<AbstractSelectExpressionForDebuggerTest>()) {

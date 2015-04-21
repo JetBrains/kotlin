@@ -61,7 +61,10 @@ fun ExtractionGeneratorConfiguration.getDeclarationText(
         throw IllegalArgumentException("Can't generate ${extractionTarget.name}: ${descriptor.extractionData.codeFragmentText}")
     }
 
-    val builderTarget = if (extractionTarget == ExtractionTarget.FUNCTION) CallableBuilder.Target.FUNCTION else CallableBuilder.Target.READ_ONLY_PROPERTY
+    val builderTarget = when (extractionTarget) {
+        ExtractionTarget.FUNCTION, ExtractionTarget.FAKE_LAMBDALIKE_FUNCTION -> CallableBuilder.Target.FUNCTION
+        else -> CallableBuilder.Target.READ_ONLY_PROPERTY
+    }
     return CallableBuilder(builderTarget).let { builder ->
         builder.modifier(descriptor.visibility)
 
@@ -95,7 +98,9 @@ fun ExtractionGeneratorConfiguration.getDeclarationText(
         if (withBody) {
             val bodyText = descriptor.extractionData.codeFragmentText
             when (extractionTarget) {
-                ExtractionTarget.FUNCTION, ExtractionTarget.PROPERTY_WITH_GETTER -> builder.blockBody(bodyText)
+                ExtractionTarget.FUNCTION,
+                ExtractionTarget.FAKE_LAMBDALIKE_FUNCTION,
+                ExtractionTarget.PROPERTY_WITH_GETTER -> builder.blockBody(bodyText)
                 ExtractionTarget.PROPERTY_WITH_INITIALIZER -> builder.initializer(bodyText)
                 ExtractionTarget.LAZY_PROPERTY -> builder.lazyBody(bodyText)
             }
@@ -186,7 +191,7 @@ fun ExtractableCodeDescriptor.findDuplicates(): List<DuplicateInfo> {
 
     val unifier = JetPsiUnifier(unifierParameters, true)
 
-    val scopeElement = extractionData.targetSibling.getParent() ?: return Collections.emptyList()
+    val scopeElement = extractionData.duplicateContainer ?: extractionData.targetSibling.getParent() ?: return Collections.emptyList()
     val originalTextRange = extractionData.originalRange.getTextRange()
     return extractionData
             .originalRange
@@ -513,13 +518,15 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
         val returnExpression = descriptor.controlFlow.outputValueBoxer.getReturnExpression(getReturnArguments(defaultExpression), psiFactory)
         if (returnExpression == null) return
 
-        if (generatorOptions.target == ExtractionTarget.LAZY_PROPERTY) {
-            // In the case of lazy property absence of default value means that output values are of OutputValue.Initializer type
-            // We just add resulting expressions without return, since returns are prohibited in the body of lazy property
-            if (defaultValue == null) {
-                body.appendElement(returnExpression.getReturnedExpression()!!)
+        when(generatorOptions.target) {
+            ExtractionTarget.LAZY_PROPERTY, ExtractionTarget.FAKE_LAMBDALIKE_FUNCTION -> {
+                // In the case of lazy property absence of default value means that output values are of OutputValue.Initializer type
+                // We just add resulting expressions without return, since returns are prohibited in the body of lazy property
+                if (defaultValue == null) {
+                    body.appendElement(returnExpression.getReturnedExpression()!!)
+                }
+                return
             }
-            return
         }
 
         when {
@@ -579,7 +586,8 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
         marginalCandidate.parents().first { it.getParent() == targetParent }
     }
 
-    val declaration = createDeclaration().let { if (generatorOptions.inTempFile) it else insertDeclaration(it, anchor) }
+    val shouldInsert = !(generatorOptions.inTempFile || generatorOptions.target == ExtractionTarget.FAKE_LAMBDALIKE_FUNCTION)
+    val declaration = createDeclaration().let { if (shouldInsert) insertDeclaration(it, anchor) else it }
     adjustDeclarationBody(declaration)
 
     if (declaration is JetNamedFunction && declaration.getContainingJetFile().suppressDiagnosticsInDebugMode) {
@@ -597,7 +605,9 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
     if (generatorOptions.inTempFile) return ExtractionResult(this, declaration, Collections.emptyMap(), nameByOffset)
 
     makeCall(descriptor, declaration, descriptor.controlFlow, descriptor.extractionData.originalRange, descriptor.parameters.map { it.argumentText })
-    ShortenReferences.DEFAULT.process(declaration)
+    if (shouldInsert) {
+        ShortenReferences.DEFAULT.process(declaration)
+    }
 
     val duplicateReplacers = duplicates.map { it.range to { makeCall(descriptor, declaration, it.controlFlow, it.range, it.arguments) } }.toMap()
     return ExtractionResult(this, declaration, duplicateReplacers, nameByOffset)

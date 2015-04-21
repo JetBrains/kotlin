@@ -16,31 +16,29 @@
 
 package org.jetbrains.kotlin.idea.refactoring.introduce.introduceParameter
 
+import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiNameHelper
 import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.refactoring.ui.NameSuggestionsField
 import com.intellij.refactoring.ui.RefactoringDialog
 import com.intellij.ui.NonFocusableCheckBox
+import com.intellij.ui.TitledSeparator
 import com.intellij.usageView.BaseUsageViewDescriptor
 import com.intellij.usageView.UsageInfo
-import com.intellij.usageView.UsageViewDescriptor
 import org.jetbrains.kotlin.idea.JetFileType
+import org.jetbrains.kotlin.idea.core.refactoring.isMultiLine
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ui.KotlinExtractFunctionDialog
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ui.KotlinParameterTablePanel
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.idea.util.application.executeCommand
-import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.psi.JetParameter
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.psi.JetPsiUtil
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.types.JetType
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
 import java.awt.Insets
-import java.util.ArrayList
 import java.util.Collections
 import java.util.LinkedHashMap
 import javax.swing.JCheckBox
@@ -48,12 +46,39 @@ import javax.swing.JComponent
 import javax.swing.JLabel
 import javax.swing.JPanel
 
-public class KotlinIntroduceParameterDialog(
+public class KotlinIntroduceParameterDialog private (
         project: Project,
+        val editor: Editor,
         val descriptor: IntroduceParameterDescriptor,
+        val lambdaExtractionDescriptor: ExtractableCodeDescriptor?,
         nameSuggestions: Array<String>,
-        val typeSuggestions: List<JetType>
+        val typeSuggestions: List<JetType>,
+        val helper: KotlinIntroduceParameterHelper
 ): RefactoringDialog(project, true) {
+    constructor(
+            project: Project,
+            editor: Editor,
+            descriptor: IntroduceParameterDescriptor,
+            nameSuggestions: Array<String>,
+            typeSuggestions: List<JetType>,
+            helper: KotlinIntroduceParameterHelper
+    ): this(project, editor, descriptor, null, nameSuggestions, typeSuggestions, helper)
+
+    constructor(project: Project,
+                editor: Editor,
+                introduceParameterDescriptor: IntroduceParameterDescriptor,
+                lambdaExtractionDescriptor: ExtractableCodeDescriptor,
+                helper: KotlinIntroduceParameterHelper
+    ) : this(
+            project,
+            editor,
+            introduceParameterDescriptor,
+            lambdaExtractionDescriptor,
+            lambdaExtractionDescriptor.suggestedNames.copyToArray(),
+            listOf(lambdaExtractionDescriptor.controlFlow.outputValueBoxer.returnType),
+            helper
+    )
+
     private val typeNameSuggestions = typeSuggestions
             .map { IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(it) }
             .copyToArray()
@@ -62,9 +87,10 @@ public class KotlinIntroduceParameterDialog(
     private val typeField = NameSuggestionsField(typeNameSuggestions, project, JetFileType.INSTANCE)
     private var replaceAllCheckBox: JCheckBox? = null
     private val removeParamsCheckBoxes = LinkedHashMap<JCheckBox, JetParameter>(descriptor.parametersToRemove.size())
+    private var parameterTablePanel: KotlinParameterTablePanel? = null
 
     init {
-        setTitle(INTRODUCE_PARAMETER)
+        setTitle(if (lambdaExtractionDescriptor != null) INTRODUCE_LAMBDA_PARAMETER else INTRODUCE_PARAMETER)
         init()
 
         nameField.addDataChangedListener { validateButtons() }
@@ -87,7 +113,7 @@ public class KotlinIntroduceParameterDialog(
         gbConstraints.weightx = 0.0
         gbConstraints.weighty = 0.0
         gbConstraints.gridy = 0
-        val nameLabel = JLabel("Parameter name:")
+        val nameLabel = JLabel("Parameter name: ")
         nameLabel.setDisplayedMnemonic('n')
         nameLabel.setLabelFor(nameField)
         panel.add(nameLabel, gbConstraints)
@@ -102,9 +128,9 @@ public class KotlinIntroduceParameterDialog(
         gbConstraints.gridwidth = 1
         gbConstraints.weightx = 0.0
         gbConstraints.gridx = 0
-        gbConstraints.gridy = 1
+        gbConstraints.gridy++
         gbConstraints.fill = GridBagConstraints.NONE
-        val typeLabel = JLabel("Parameter type: ")
+        val typeLabel = JLabel(if (lambdaExtractionDescriptor != null) "Lambda return type" else "Parameter type: ")
         typeLabel.setDisplayedMnemonic('t')
         typeLabel.setLabelFor(typeField)
         panel.add(typeLabel, gbConstraints)
@@ -115,6 +141,39 @@ public class KotlinIntroduceParameterDialog(
         gbConstraints.fill = GridBagConstraints.BOTH
         panel.add(typeField, gbConstraints)
 
+        if (lambdaExtractionDescriptor != null && lambdaExtractionDescriptor.parameters.isNotEmpty()) {
+            val parameterTablePanel = object : KotlinParameterTablePanel() {
+                override fun onEnterAction() {
+                    doOKAction()
+                }
+
+                override fun onCancelAction() {
+                    doCancelAction()
+                }
+            }
+            parameterTablePanel.init(lambdaExtractionDescriptor!!.parameters)
+
+            gbConstraints.insets = Insets(4, 4, 4, 8)
+            gbConstraints.gridwidth = 1
+            gbConstraints.weightx = 0.0
+            gbConstraints.gridx = 0
+            gbConstraints.gridy++
+            gbConstraints.fill = GridBagConstraints.NONE
+            val parametersLabel = JLabel("Lambda parameters: ")
+            parametersLabel.setDisplayedMnemonic('p')
+            parametersLabel.setLabelFor(parameterTablePanel)
+            panel.add(parametersLabel, gbConstraints)
+
+            gbConstraints.gridx++
+            gbConstraints.insets = Insets(4, 4, 4, 8)
+            gbConstraints.weightx = 1.0
+            gbConstraints.fill = GridBagConstraints.BOTH
+            panel.add(parameterTablePanel, gbConstraints)
+
+            this.parameterTablePanel = parameterTablePanel
+        }
+
+        gbConstraints.fill = GridBagConstraints.HORIZONTAL
         gbConstraints.gridx = 0
         gbConstraints.insets = Insets(4, 0, 4, 8)
         gbConstraints.gridwidth = 2
@@ -169,31 +228,82 @@ public class KotlinIntroduceParameterDialog(
     }
 
     override fun doAction() {
-        val descriptorToRefactor = descriptor.copy(
-                addedParameter = JetPsiFactory(myProject).createParameter("${nameField.getEnteredName()}: ${typeField.getEnteredName()}"),
-                occurrencesToReplace = with(descriptor) {
-                    if (replaceAllCheckBox?.isSelected() ?: true) {
-                        occurrencesToReplace
-                    }
-                    else {
-                        Collections.singletonList(originalOccurrence)
-                    }
-                }
-        )
+        performRefactoring()
+    }
+
+    public fun performRefactoring() {
         invokeRefactoring(
-                object: BaseRefactoringProcessor(myProject) {
+                object : BaseRefactoringProcessor(myProject) {
                     override fun findUsages() = UsageInfo.EMPTY_ARRAY
 
                     override fun performRefactoring(usages: Array<out UsageInfo>) {
-                        descriptorToRefactor.performRefactoring(
-                                parametersToRemove =
-                                removeParamsCheckBoxes.filter { it.key.isEnabled() && it.key.isSelected() }.map { it.value }
+                        fun createLambdaForArgument(function: JetFunction): JetExpression {
+                            val statement = (function.getBodyExpression() as JetBlockExpression).getStatements().single()
+                            val space = if (statement.isMultiLine()) "\n" else " "
+                            val parameters = function.getValueParameters()
+                            val parametersText = if (parameters.isNotEmpty()) {
+                                " " + parameters.map { it.getName() }.joinToString() + " ->"
+                            } else ""
+                            val text = "{$parametersText$space${statement.getText()}$space}"
+
+                            return JetPsiFactory(myProject).createExpression(text)
+                        }
+
+                        val chosenName = nameField.getEnteredName()
+                        var chosenType = typeField.getEnteredName()
+                        var newArgumentValue = descriptor.newArgumentValue
+                        var newReplacer = descriptor.occurrenceReplacer
+
+                        lambdaExtractionDescriptor?.let { oldDescriptor ->
+                            val newDescriptor = KotlinExtractFunctionDialog.createNewDescriptor(
+                                    oldDescriptor,
+                                    chosenName,
+                                    "",
+                                    parameterTablePanel?.getParameterInfos() ?: listOf()
+                            )
+                            val options = ExtractionGeneratorOptions.DEFAULT.copy(
+                                    target = ExtractionTarget.FAKE_LAMBDALIKE_FUNCTION,
+                                    allowExpressionBody = false
+                            )
+                            with (ExtractionGeneratorConfiguration(newDescriptor, options).generateDeclaration()) {
+                                val function = declaration as JetFunction
+                                val receiverType = function.getReceiverTypeReference()?.getText()
+                                val parameterTypes = function
+                                        .getValueParameters()
+                                        .map { it.getTypeReference()!!.getText() }
+                                        .joinToString()
+                                val returnType = function.getTypeReference()?.getText() ?: "Unit"
+
+                                chosenType = (receiverType?.let { "$it." } ?: "") + "($parameterTypes) -> $returnType"
+                                newArgumentValue = createLambdaForArgument(function)
+                                newReplacer = { }
+
+                                processDuplicates(duplicateReplacers, myProject, editor)
+                            }
+                        }
+
+                        val descriptorToRefactor = descriptor.copy(
+                                newParameterName = chosenName,
+                                newParameterTypeText = chosenType,
+                                newArgumentValue = newArgumentValue,
+                                occurrencesToReplace = with(descriptor) {
+                                    if (replaceAllCheckBox?.isSelected() ?: true) {
+                                        occurrencesToReplace
+                                    }
+                                    else {
+                                        Collections.singletonList(originalOccurrence)
+                                    }
+                                },
+                                parametersToRemove = removeParamsCheckBoxes.filter { it.key.isEnabled() && it.key.isSelected() }.map { it.value },
+                                occurrenceReplacer = newReplacer
                         )
+
+                        helper.configure(descriptorToRefactor).performRefactoring()
                     }
 
                     override fun createUsageViewDescriptor(usages: Array<out UsageInfo>) = BaseUsageViewDescriptor()
 
-                    override fun getCommandName() = INTRODUCE_PARAMETER
+                    override fun getCommandName() = if (lambdaExtractionDescriptor != null) INTRODUCE_LAMBDA_PARAMETER else INTRODUCE_PARAMETER
                 }
         )
     }

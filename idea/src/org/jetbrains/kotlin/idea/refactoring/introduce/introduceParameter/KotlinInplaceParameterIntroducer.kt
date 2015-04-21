@@ -68,20 +68,22 @@ import kotlin.properties.Delegates
 
 public class KotlinInplaceParameterIntroducer(
         val originalDescriptor: IntroduceParameterDescriptor,
+        val addedParameter: JetParameter,
+        val parameterType: JetType,
         editor: Editor,
         project: Project
 ): KotlinInplaceVariableIntroducer<JetParameter>(
-        originalDescriptor.addedParameter,
+        addedParameter,
         editor,
         project,
         INTRODUCE_PARAMETER,
         JetExpression.EMPTY_ARRAY,
         null,
         false,
-        originalDescriptor.addedParameter,
+        addedParameter,
         false,
         true,
-        originalDescriptor.parameterType,
+        parameterType,
         false
 ) {
     companion object {
@@ -137,7 +139,7 @@ public class KotlinInplaceParameterIntroducer(
                     val parameterName = currentName ?: parameter.getName()
                     val parameterType = currentType ?: parameter.getTypeReference()!!.getText()
                     val modifier = if (valVar != JetValVar.None) "${valVar.name} " else ""
-                    val defaultValue = if (withDefaultValue) " = ${originalExpression.getText()}" else ""
+                    val defaultValue = if (withDefaultValue) " = ${newArgumentValue.getText()}" else ""
 
                     "$modifier$parameterName: $parameterType$defaultValue"
                 }
@@ -280,13 +282,18 @@ public class KotlinInplaceParameterIntroducer(
         return descriptor.callable
     }
 
+    private fun removeAddedParameter() {
+        runWriteAction { JetPsiUtil.deleteElementWithDelimiters(addedParameter) }
+    }
+
     override fun performRefactoring(): Boolean {
+        removeAddedParameter()
         descriptor.performRefactoring()
         return true
     }
 
     override fun performCleanup() {
-        runWriteAction { JetPsiUtil.deleteElementWithDelimiters(descriptor.addedParameter) }
+        removeAddedParameter()
     }
 
     override fun releaseResources() {
@@ -301,9 +308,11 @@ public class KotlinInplaceParameterIntroducer(
         stopIntroduce()
         with (originalDescriptor) {
             KotlinIntroduceParameterDialog(myProject,
+                                           myEditor,
                                            this,
                                            myNameSuggestions.copyToArray(),
-                                           listOf(parameterType) + parameterType.supertypes()).show()
+                                           listOf(parameterType) + parameterType.supertypes(),
+                                           KotlinIntroduceParameterHelper.Default).show()
         }
     }
 }

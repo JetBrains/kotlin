@@ -20,21 +20,21 @@ import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiReference
-import com.intellij.psi.search.LocalSearchScope
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.refactoring.JetNameSuggester
 import org.jetbrains.kotlin.idea.refactoring.JetNameValidatorImpl
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.KotlinIntroduceHandlerBase
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinInplaceVariableIntroducer
 import org.jetbrains.kotlin.idea.refactoring.introduce.selectElementsWithTargetParent
 import org.jetbrains.kotlin.idea.refactoring.introduce.showErrorHint
@@ -45,31 +45,32 @@ import org.jetbrains.kotlin.idea.search.usagesSearch.search
 import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiRange
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiUnifier
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
-import org.jetbrains.kotlin.idea.util.supertypes
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.JetScopeUtils
-import org.jetbrains.kotlin.types.JetType
 import java.util.Collections
 import kotlin.test.fail
 
 public data class IntroduceParameterDescriptor(
-        val originalExpression: JetExpression,
+        val originalRange: JetPsiRange,
         val callable: JetNamedDeclaration,
         val callableDescriptor: FunctionDescriptor,
-        val addedParameter: JetParameter,
-        val parameterType: JetType,
+        val newParameterName: String,
+        val newParameterTypeText: String,
+        val newArgumentValue: JetExpression,
         val withDefaultValue: Boolean,
         val parametersUsages: Map<JetParameter, List<PsiReference>>,
-        val occurrencesToReplace: List<JetExpression>
+        val occurrencesToReplace: List<JetPsiRange>,
+        val parametersToRemove: List<JetParameter> = getParametersToRemove(withDefaultValue, parametersUsages, occurrencesToReplace),
+        val occurrenceReplacer: (JetPsiRange) -> Unit = {}
 ) {
-    val originalOccurrence: JetExpression
-        get() = occurrencesToReplace.first { it.isAncestor(originalExpression) }
+    val originalOccurrence: JetPsiRange
+        get() = occurrencesToReplace.first { it.getTextRange().intersects(originalRange.getTextRange()) }
     val valVar: JetValVar
-    val parametersToRemove: List<JetParameter>
 
     init {
         valVar = if (callable is JetClass) {
@@ -79,47 +80,52 @@ public data class IntroduceParameterDescriptor(
                         false
                     it is JetClassInitializer ->
                         true
-                    it is JetProperty && it.getInitializer()?.getTextRange()?.intersects(originalExpression.getTextRange()) ?: false ->
+                    it is JetProperty && it.getInitializer()?.getTextRange()?.intersects(originalRange.getTextRange()) ?: false ->
                         true
                     else ->
                         false
                 }
             }
-            if (occurrencesToReplace.all { it.parents().any(modifierIsUnnecessary) }) JetValVar.None else JetValVar.Val
+            if (occurrencesToReplace.all {
+                PsiTreeUtil.findCommonParent(it.elements)?.parents()?.any(modifierIsUnnecessary) ?: false
+            }) JetValVar.None else JetValVar.Val
         }
         else JetValVar.None
-        
-        parametersToRemove =
-                if (withDefaultValue) Collections.emptyList()
-                else {
-                    val occurrenceRanges = occurrencesToReplace.map { it.getTextRange() }
-                    parametersUsages.entrySet()
-                            .filter {
-                                it.value.all { paramRef ->
-                                    occurrenceRanges.any { occurrenceRange -> occurrenceRange.contains(paramRef.getElement().getTextRange()) }
-                                }
-                            }
-                            .map { it.key }
-                }
     }
 }
 
-fun IntroduceParameterDescriptor.performRefactoring(parametersToRemove: List<JetParameter> = this.parametersToRemove) {
+fun getParametersToRemove(
+        withDefaultValue: Boolean,
+        parametersUsages: Map<JetParameter, List<PsiReference>>,
+        occurrencesToReplace: List<JetPsiRange>
+): List<JetParameter> {
+    if (withDefaultValue) return Collections.emptyList()
+
+    val occurrenceRanges = occurrencesToReplace.map { it.getTextRange() }
+    return parametersUsages.entrySet()
+            .filter {
+                it.value.all { paramRef ->
+                    occurrenceRanges.any { occurrenceRange -> occurrenceRange.contains(paramRef.getElement().getTextRange()) }
+                }
+            }
+            .map { it.key }
+}
+
+fun IntroduceParameterDescriptor.performRefactoring() {
     runWriteAction {
-        JetPsiUtil.deleteElementWithDelimiters(addedParameter)
-        
-        val config = object: JetChangeSignatureConfiguration {
+        val config = object : JetChangeSignatureConfiguration {
             override fun configure(originalDescriptor: JetMethodDescriptor, bindingContext: BindingContext): JetMethodDescriptor {
                 return originalDescriptor.modify {
-                    val parameters = callable.getValueParameters()
-                    parametersToRemove.map { parameters.indexOf(it) }.sortDescending().forEach { removeParameter(it) }
-                    
-                    val parameterInfo = JetParameterInfo(name = addedParameter.getName()!!,
-                                                         type = parameterType,
-                                                         defaultValueForCall = if (withDefaultValue) "" else originalExpression.getText(),
-                                                         defaultValueForParameter = if (withDefaultValue) originalExpression else null,
+                    if (!withDefaultValue) {
+                        val parameters = callable.getValueParameters()
+                        parametersToRemove.map { parameters.indexOf(it) }.sortDescending().forEach { removeParameter(it) }
+                    }
+
+                    val parameterInfo = JetParameterInfo(name = newParameterName,
+                                                         defaultValueForCall = if (withDefaultValue) "" else newArgumentValue.getText(),
+                                                         defaultValueForParameter = if (withDefaultValue) newArgumentValue else null,
                                                          valOrVar = valVar)
-                    parameterInfo.currentTypeText = addedParameter.getTypeReference()?.getText() ?: "Any"
+                    parameterInfo.currentTypeText = newParameterTypeText
                     addParameter(parameterInfo)
                 }
             }
@@ -127,19 +133,49 @@ fun IntroduceParameterDescriptor.performRefactoring(parametersToRemove: List<Jet
             override fun performSilently(affectedFunctions: Collection<PsiElement>): Boolean = true
         }
         if (runChangeSignature(callable.getProject(), callableDescriptor, config, callable.analyze(), callable, INTRODUCE_PARAMETER)) {
-            val paramRef = JetPsiFactory(callable).createSimpleName(addedParameter.getName()!!)
-            occurrencesToReplace.forEach { it.replace(paramRef) }
+            occurrencesToReplace.forEach(occurrenceReplacer)
         }
     }
 }
 
-public open class KotlinIntroduceParameterHandler: KotlinIntroduceHandlerBase() {
-    open fun configure(descriptor: IntroduceParameterDescriptor): IntroduceParameterDescriptor = descriptor
+private fun isObjectOrNonInnerClass(e: PsiElement): Boolean = e is JetObjectDeclaration || (e is JetClass && !e.isInner())
 
-    private fun isObjectOrNonInnerClass(e: PsiElement): Boolean =
-            e is JetObjectDeclaration || (e is JetClass && !e.isInner())
+fun selectNewParameterContext(
+        editor: Editor,
+        file: PsiFile,
+        continuation: (elements: List<PsiElement>, targetParent: PsiElement) -> Unit
+) {
+    selectElementsWithTargetParent(
+            operationName = INTRODUCE_PARAMETER,
+            editor = editor,
+            file = file,
+            getContainers = { elements, parent ->
+                val parents = parent.parents(withItself = false)
+                val stopAt = (parent.parents(withItself = false) zip parent.parents(withItself = false).drop(1))
+                        .firstOrNull { isObjectOrNonInnerClass(it.first) }
+                        ?.second
 
-    fun invoke(project: Project, editor: Editor, expression: JetExpression, targetParent: JetNamedDeclaration) {
+                (if (stopAt != null) parent.parents(withItself = false).takeWhile { it != stopAt } else parents)
+                        .filter {
+                            ((it is JetClass && !it.isTrait() && it !is JetEnumEntry) || it is JetNamedFunction || it is JetSecondaryConstructor) &&
+                            ((it as JetNamedDeclaration).getValueParameterList() != null || it.getNameIdentifier() != null)
+                        }
+                        .toList()
+            },
+            continuation = continuation
+    )
+}
+
+public trait KotlinIntroduceParameterHelper {
+    object Default: KotlinIntroduceParameterHelper
+
+    fun configure(descriptor: IntroduceParameterDescriptor): IntroduceParameterDescriptor = descriptor
+}
+
+public open class KotlinIntroduceParameterHandler(
+        val helper: KotlinIntroduceParameterHelper = KotlinIntroduceParameterHelper.Default
+): KotlinIntroduceHandlerBase() {
+    open fun invoke(project: Project, editor: Editor, expression: JetExpression, targetParent: JetNamedDeclaration) {
         val context = expression.analyze()
 
         val expressionType = context.getType(expression)
@@ -161,7 +197,7 @@ public open class KotlinIntroduceParameterHandler: KotlinIntroduceHandlerBase() 
                     is ClassDescriptor -> descriptor.getUnsubstitutedPrimaryConstructor()
                     else -> null
                 } ?: throw AssertionError("Unexpected element type: ${targetParent.getElementTextWithContext()}")
-        val parameterType = expressionType.approximateWithResolvableType(JetScopeUtils.getResolutionScope(targetParent, context), false)
+        val replacementType = expressionType.approximateWithResolvableType(JetScopeUtils.getResolutionScope(targetParent, context), false)
 
         val body = when (targetParent) {
                        is JetFunction -> targetParent.getBodyExpression()
@@ -169,18 +205,13 @@ public open class KotlinIntroduceParameterHandler: KotlinIntroduceHandlerBase() 
                        else -> null
                    } ?: throw AssertionError("Body element is not found: ${targetParent.getElementTextWithContext()}")
         val nameValidator = JetNameValidatorImpl(body, null, JetNameValidatorImpl.Target.PROPERTIES)
-        val suggestedNames = linkedSetOf(*JetNameSuggester.suggestNames(parameterType, nameValidator, "p"))
+        val suggestedNames = linkedSetOf(*JetNameSuggester.suggestNames(replacementType, nameValidator, "p"))
 
-        val parametersUsages = targetParent.getValueParameters()
-                .filter { !it.hasValOrVarNode() }
-                .map {
-                    it to DefaultSearchHelper<JetParameter>()
-                            .newRequest(UsagesSearchTarget(element = it))
-                            .search()
-                            .toList()
-                }
-                .filter { it.second.isNotEmpty() }
-                .toMap()
+        val parametersUsages = findInternalParameterUsages(targetParent)
+
+        val psiFactory = JetPsiFactory(project)
+        val renderedType = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(replacementType)
+        val newParameter = psiFactory.createParameter("${suggestedNames.first()}: $renderedType")
 
         val forbiddenRanges =
                 if (targetParent is JetClass) {
@@ -204,16 +235,12 @@ public open class KotlinIntroduceParameterHandler: KotlinIntroduceHandlerBase() 
                     } as? JetExpression
                 }
                 .filterNotNull()
+                .map { it.toRange() }
 
         project.executeCommand(
                 INTRODUCE_PARAMETER,
                 null,
                 fun() {
-                    val psiFactory = JetPsiFactory(project)
-                    
-                    val renderedType = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(parameterType)
-                    val newParameter = psiFactory.createParameter("${suggestedNames.first()}: $renderedType")
-
                     val isTestMode = ApplicationManager.getApplication().isUnitTestMode()
                     val inplaceIsAvailable = editor.getSettings().isVariableInplaceRenameEnabled() && !isTestMode
 
@@ -243,15 +270,24 @@ public open class KotlinIntroduceParameterHandler: KotlinIntroduceHandlerBase() 
                     }
                     else newParameter
 
+                    val originalExpression = JetPsiUtil.safeDeparenthesize(expression)
+                    val newParameterName = addedParameter.getName()!!
+                    val replacement = psiFactory.createExpression(newParameterName)
                     val introduceParameterDescriptor =
-                            configure(IntroduceParameterDescriptor(JetPsiUtil.deparenthesize(expression)!!,
-                                                                   targetParent,
-                                                                   functionDescriptor,
-                                                                   addedParameter,
-                                                                   parameterType,
-                                                                   false,
-                                                                   parametersUsages,
-                                                                   occurrencesToReplace))
+                            helper.configure(
+                                    IntroduceParameterDescriptor(
+                                            originalRange = originalExpression.toRange(),
+                                            callable = targetParent,
+                                            callableDescriptor = functionDescriptor,
+                                            newParameterName = newParameterName,
+                                            newParameterTypeText = renderedType,
+                                            newArgumentValue = originalExpression,
+                                            withDefaultValue = false,
+                                            parametersUsages = parametersUsages,
+                                            occurrencesToReplace = occurrencesToReplace,
+                                            occurrenceReplacer = { it.elements.single().replace(replacement) }
+                                    )
+                            )
                     if (isTestMode) {
                         introduceParameterDescriptor.performRefactoring()
                         return
@@ -263,14 +299,20 @@ public open class KotlinIntroduceParameterHandler: KotlinIntroduceHandlerBase() 
                             doPostponedOperationsAndUnblockDocument(editor.getDocument())
                         }
 
-                        if (KotlinInplaceParameterIntroducer(introduceParameterDescriptor, editor, project)
-                                .startRefactoring(suggestedNames)) return
+                        val introducer = KotlinInplaceParameterIntroducer(introduceParameterDescriptor,
+                                                                          addedParameter,
+                                                                          replacementType,
+                                                                          editor,
+                                                                          project)
+                        if (introducer.startRefactoring(suggestedNames)) return
                     }
 
                     KotlinIntroduceParameterDialog(project,
+                                                   editor,
                                                    introduceParameterDescriptor,
                                                    suggestedNames.copyToArray(),
-                                                   listOf(parameterType) + parameterType.supertypes()).show()
+                                                   listOf(replacementType) + replacementType.supertypes(),
+                                                   helper).show()
                 }
         )
     }
@@ -282,33 +324,15 @@ public open class KotlinIntroduceParameterHandler: KotlinIntroduceHandlerBase() 
         }
 
         if (file !is JetFile) return
-        selectElementsWithTargetParent(
-                operationName = INTRODUCE_PARAMETER,
-                editor = editor,
-                file = file,
-                getContainers = { elements, parent ->
-                    val parents = parent.parents(withItself = false)
-                    val stopAt = (parent.parents(withItself = false) zip parent.parents(withItself = false).drop(1))
-                            .firstOrNull { isObjectOrNonInnerClass(it.first) }
-                            ?.second
-
-                    (if (stopAt != null) parent.parents(withItself = false).takeWhile { it != stopAt } else parents)
-                            .filter {
-                                ((it is JetClass && !it.isTrait() && it !is JetEnumEntry) || it is JetNamedFunction || it is JetSecondaryConstructor) &&
-                                ((it as JetNamedDeclaration).getValueParameterList() != null || it.getNameIdentifier() != null)
-                            }
-                            .toList()
-                },
-                continuation = { elements, targetParent ->
-                    val expression = ((elements.singleOrNull() as? JetBlockExpression)?.getStatements() ?: elements).singleOrNull()
-                    if (expression is JetExpression) {
-                        invoke(project, editor, expression, targetParent as JetNamedDeclaration)
-                    }
-                    else {
-                        showErrorHintByKey(project, editor, "cannot.refactor.no.expression", INTRODUCE_PARAMETER)
-                    }
-                }
-        )
+        selectNewParameterContext(editor, file) { elements, targetParent ->
+            val expression = ((elements.singleOrNull() as? JetBlockExpression)?.getStatements() ?: elements).singleOrNull()
+            if (expression is JetExpression) {
+                invoke(project, editor, expression, targetParent as JetNamedDeclaration)
+            }
+            else {
+                showErrorHintByKey(project, editor, "cannot.refactor.no.expression", INTRODUCE_PARAMETER)
+            }
+        }
     }
 
     override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext?) {
@@ -316,4 +340,96 @@ public open class KotlinIntroduceParameterHandler: KotlinIntroduceHandlerBase() 
     }
 }
 
-val INTRODUCE_PARAMETER: String = JetRefactoringBundle.message("introduce.parameter")
+private fun findInternalParameterUsages(targetParent: JetNamedDeclaration): Map<JetParameter, List<PsiReference>> {
+    return targetParent.getValueParameters()
+            .filter { !it.hasValOrVarNode() }
+            .map {
+                it to DefaultSearchHelper<JetParameter>()
+                        .newRequest(UsagesSearchTarget(element = it))
+                        .search()
+                        .toList()
+            }
+            .filter { it.second.isNotEmpty() }
+            .toMap()
+}
+
+trait KotlinIntroduceLambdaParameterHelper: KotlinIntroduceParameterHelper {
+    object Default: KotlinIntroduceLambdaParameterHelper
+
+    fun configureExtractLambda(descriptor: ExtractableCodeDescriptor): ExtractableCodeDescriptor = descriptor
+}
+
+public open class KotlinIntroduceLambdaParameterHandler(
+        helper: KotlinIntroduceLambdaParameterHelper = KotlinIntroduceLambdaParameterHelper.Default
+): KotlinIntroduceParameterHandler(helper) {
+    val extractLambdaHelper = object: ExtractionEngineHelper(INTRODUCE_LAMBDA_PARAMETER) {
+        private fun createDialog(
+                project: Project,
+                editor: Editor,
+                lambdaExtractionDescriptor: ExtractableCodeDescriptor
+        ): KotlinIntroduceParameterDialog {
+            val callable = lambdaExtractionDescriptor.extractionData.targetSibling as JetNamedDeclaration
+            val descriptor = callable.resolveToDescriptor()
+            val callableDescriptor: FunctionDescriptor =
+                    when (descriptor) {
+                        is FunctionDescriptor -> descriptor : FunctionDescriptor
+                        is ClassDescriptor -> descriptor.getUnsubstitutedPrimaryConstructor()
+                        else -> null
+                    } ?: throw AssertionError("Unexpected element type: ${callable.getElementTextWithContext()}")
+            val originalRange = lambdaExtractionDescriptor.extractionData.originalRange
+            val introduceParameterDescriptor = IntroduceParameterDescriptor(
+                    originalRange = originalRange,
+                    callable = callable,
+                    callableDescriptor = callableDescriptor,
+                    newParameterName = "", // to be chosen in the dialog
+                    newParameterTypeText = "", // to be chosen in the dialog
+                    newArgumentValue = JetPsiFactory(project).createExpression("{}"), // substituted later
+                    withDefaultValue = false,
+                    parametersUsages = findInternalParameterUsages(callable),
+                    occurrencesToReplace = listOf(originalRange),
+                    parametersToRemove = listOf()
+            )
+
+            return KotlinIntroduceParameterDialog(project, editor, introduceParameterDescriptor, lambdaExtractionDescriptor, helper)
+        }
+
+        override fun configureAndRun(
+                project: Project,
+                editor: Editor,
+                descriptorWithConflicts: ExtractableCodeDescriptorWithConflicts,
+                onFinish: (ExtractionResult) -> Unit
+        ) {
+            val lambdaExtractionDescriptor = helper.configureExtractLambda(descriptorWithConflicts.descriptor)
+            if (!ExtractionTarget.FAKE_LAMBDALIKE_FUNCTION.isAvailable(lambdaExtractionDescriptor)) {
+                showErrorHint(project, editor, "Can't introduce lambda parameter for this expression", INTRODUCE_LAMBDA_PARAMETER)
+                return
+            }
+
+            val dialog = createDialog(project, editor, lambdaExtractionDescriptor)
+            if (ApplicationManager.getApplication()!!.isUnitTestMode()) {
+                dialog.performRefactoring()
+            }
+            else {
+                dialog.show()
+            }
+        }
+    }
+
+    override fun invoke(project: Project, editor: Editor, expression: JetExpression, targetParent: JetNamedDeclaration) {
+        val duplicateContainer =
+                when (targetParent) {
+                    is JetFunction -> targetParent.getBodyExpression()
+                    is JetClass -> targetParent.getBody()
+                    else -> null
+                } ?: throw AssertionError("Body element is not found: ${targetParent.getElementTextWithContext()}")
+        val extractionData = ExtractionData(expression.getContainingJetFile(),
+                                            expression.toRange(),
+                                            targetParent,
+                                            duplicateContainer,
+                                            ExtractionOptions.DEFAULT)
+        ExtractionEngine(extractLambdaHelper).run(editor, extractionData)
+    }
+}
+
+val INTRODUCE_PARAMETER: String = "Introduce Parameter"
+val INTRODUCE_LAMBDA_PARAMETER: String = "Introduce Lambda Parameter"

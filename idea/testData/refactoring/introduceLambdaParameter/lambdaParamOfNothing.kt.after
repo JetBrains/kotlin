@@ -1,0 +1,8 @@
+// WITH_DEFAULT_VALUE: false
+fun foo(a: Int, __dummyTestFun__: (Int) -> Unit) {
+    __dummyTestFun__(a)
+}
+
+fun test() {
+    foo(1) { a -> throw Exception("Error: $a") }
+}

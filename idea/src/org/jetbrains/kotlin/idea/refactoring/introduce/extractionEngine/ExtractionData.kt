@@ -72,6 +72,7 @@ data class ExtractionData(
         val originalFile: JetFile,
         val originalRange: JetPsiRange,
         val targetSibling: PsiElement,
+        val duplicateContainer: PsiElement? = null,
         val options: ExtractionOptions = ExtractionOptions.DEFAULT
 ) {
     val project: Project = originalFile.getProject()

@@ -313,6 +313,12 @@ enum class ExtractionTarget(val name: String) {
         override fun isAvailable(descriptor: ExtractableCodeDescriptor) = true
     }
 
+    FAKE_LAMBDALIKE_FUNCTION : ExtractionTarget("lambda parameter") {
+        override fun isAvailable(descriptor: ExtractableCodeDescriptor): Boolean {
+            return checkSimpleControlFlow(descriptor) || descriptor.controlFlow.outputValues.isEmpty()
+        }
+    }
+
     PROPERTY_WITH_INITIALIZER : ExtractionTarget("property with initializer") {
         override fun isAvailable(descriptor: ExtractableCodeDescriptor): Boolean {
             return checkSignatureAndParent(descriptor)

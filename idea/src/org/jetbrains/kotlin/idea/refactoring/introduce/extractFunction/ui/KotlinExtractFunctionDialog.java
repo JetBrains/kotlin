@@ -210,16 +210,29 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
 
     @NotNull
     private ExtractableCodeDescriptor createDescriptor() {
-        ExtractableCodeDescriptor descriptor = originalDescriptor.getDescriptor();
+        return createNewDescriptor(originalDescriptor.getDescriptor(),
+                                   getFunctionName(),
+                                   getVisibility(),
+                                   parameterTablePanel.getParameterInfos());
+    }
 
-        List<KotlinParameterTablePanel.ParameterInfo> parameterInfos = parameterTablePanel.getParameterInfos();
+    @NotNull
+    public ExtractionGeneratorConfiguration getCurrentConfiguration() {
+        return new ExtractionGeneratorConfiguration(currentDescriptor, ExtractionGeneratorOptions.DEFAULT);
+    }
 
+    public static ExtractableCodeDescriptor createNewDescriptor(
+            @NotNull ExtractableCodeDescriptor originalDescriptor,
+            @NotNull String newName,
+            @NotNull String newVisibility,
+            @NotNull List<KotlinParameterTablePanel.ParameterInfo> newParameterInfos
+    ) {
         Map<Parameter, Parameter> oldToNewParameters = ContainerUtil.newLinkedHashMap();
-        for (KotlinParameterTablePanel.ParameterInfo parameterInfo : parameterInfos) {
+        for (KotlinParameterTablePanel.ParameterInfo parameterInfo : newParameterInfos) {
             oldToNewParameters.put(parameterInfo.getOriginalParameter(), parameterInfo.toParameter());
         }
 
-        ControlFlow controlFlow = descriptor.getControlFlow();
+        ControlFlow controlFlow = originalDescriptor.getControlFlow();
         List<OutputValue> outputValues = new ArrayList<OutputValue>(controlFlow.getOutputValues());
         for (int i = 0; i < outputValues.size(); i++) {
             OutputValue outputValue = outputValues.get(i);
@@ -231,7 +244,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
         controlFlow = new ControlFlow(outputValues, controlFlow.getBoxerFactory(), controlFlow.getDeclarationsToCopy());
 
         Map<Integer, Replacement> replacementMap = ContainerUtil.newHashMap();
-        for (Map.Entry<Integer, Replacement> e : descriptor.getReplacementMap().entrySet()) {
+        for (Map.Entry<Integer, Replacement> e : originalDescriptor.getReplacementMap().entrySet()) {
             Integer offset = e.getKey();
             Replacement replacement = e.getValue();
 
@@ -250,20 +263,15 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
         }
 
         return new ExtractableCodeDescriptor(
-                descriptor.getExtractionData(),
-                descriptor.getOriginalContext(),
-                Collections.singletonList(getFunctionName()),
-                getVisibility(),
+                originalDescriptor.getExtractionData(),
+                originalDescriptor.getOriginalContext(),
+                Collections.singletonList(newName),
+                newVisibility,
                 ContainerUtil.newArrayList(oldToNewParameters.values()),
-                descriptor.getReceiverParameter(),
-                descriptor.getTypeParameters(),
+                originalDescriptor.getReceiverParameter(),
+                originalDescriptor.getTypeParameters(),
                 replacementMap,
                 controlFlow
         );
-    }
-
-    @NotNull
-    public ExtractionGeneratorConfiguration getCurrentConfiguration() {
-        return new ExtractionGeneratorConfiguration(currentDescriptor, ExtractionGeneratorOptions.DEFAULT);
     }
 }

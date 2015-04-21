@@ -27,8 +27,7 @@ import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.EXTRACT_FUNCTION
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ExtractKotlinFunctionHandler
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
-import org.jetbrains.kotlin.idea.refactoring.introduce.introduceParameter.IntroduceParameterDescriptor
-import org.jetbrains.kotlin.idea.refactoring.introduce.introduceParameter.KotlinIntroduceParameterHandler
+import org.jetbrains.kotlin.idea.refactoring.introduce.introduceParameter.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceProperty.INTRODUCE_PROPERTY
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceProperty.KotlinIntroducePropertyHandler
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler
@@ -62,21 +61,37 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
         }
     }
 
-    protected fun doIntroduceParameterTest(path: String) {
+    private fun doIntroduceParameterTest(path: String, asLambda: Boolean) {
         doTest(path) { file ->
-            val handler = object: KotlinIntroduceParameterHandler() {
+            val fileText = file.getText()
+
+            open class HelperImpl: KotlinIntroduceParameterHelper {
                 override fun configure(descriptor: IntroduceParameterDescriptor): IntroduceParameterDescriptor {
-                    val fileText = file.getText()
-                    val singleReplace = InTextDirectivesUtils.isDirectiveDefined(fileText, "// SINGLE_REPLACE")
-                    val withDefaultValue = InTextDirectivesUtils.getPrefixedBoolean(fileText, "// WITH_DEFAULT_VALUE:") ?: true
                     return with (descriptor) {
+                        val singleReplace = InTextDirectivesUtils.isDirectiveDefined(fileText, "// SINGLE_REPLACE")
+                        val withDefaultValue = InTextDirectivesUtils.getPrefixedBoolean(fileText, "// WITH_DEFAULT_VALUE:") ?: true
+
                         copy(occurrencesToReplace = if (singleReplace) Collections.singletonList(originalOccurrence) else occurrencesToReplace,
                              withDefaultValue = withDefaultValue)
                     }
                 }
             }
+
+            class LambdaHelperImpl: HelperImpl(), KotlinIntroduceLambdaParameterHelper {
+                override fun configureExtractLambda(descriptor: ExtractableCodeDescriptor): ExtractableCodeDescriptor {
+                    return with(descriptor) {
+                        if (name.isNullOrEmpty()) copy(suggestedNames = listOf("__dummyTestFun__")) else this
+                    }
+                }
+            }
+
+            val handler = if (asLambda) {
+                KotlinIntroduceLambdaParameterHandler(LambdaHelperImpl())
+            } else {
+                KotlinIntroduceParameterHandler(HelperImpl())
+            }
             with (handler) {
-                val target = file.findElementByComment("// TARGET:") as? JetNamedDeclaration
+                val target = (file as JetFile).findElementByComment("// TARGET:") as? JetNamedDeclaration
                 if (target != null) {
                     JetRefactoringUtil.selectExpression(fixture.getEditor(), file, true) { expression ->
                         invoke(fixture.getProject(), fixture.getEditor(), expression!!, target)
@@ -89,6 +104,14 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
         }
     }
 
+    protected fun doIntroduceSimpleParameterTest(path: String) {
+        doIntroduceParameterTest(path, false)
+    }
+
+    protected fun doIntroduceLambdaParameterTest(path: String) {
+        doIntroduceParameterTest(path, true)
+    }
+    
     protected fun doIntroducePropertyTest(path: String) {
         doTest(path) { file ->
             val extractionTarget = propertyTargets.single {
