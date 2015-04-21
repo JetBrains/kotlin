@@ -25,6 +25,8 @@ import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.rename.naming.AutomaticRenamer
 import com.intellij.refactoring.rename.naming.AutomaticRenamerFactory
 import com.intellij.usageView.UsageInfo
+import org.jetbrains.kotlin.asJava.LightClassUtil
+import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
@@ -37,6 +39,7 @@ import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.JetType
 import java.util.ArrayList
+import java.util.LinkedHashMap
 
 public class AutomaticVariableRenamer(klass: JetClass, newClassName: String, usages: Collection<UsageInfo>) : AutomaticRenamer() {
     private val toUnpluralize = ArrayList<JetNamedDeclaration>()
@@ -103,6 +106,19 @@ public class AutomaticVariableRenamerFactory: AutomaticRenamerFactory {
 
     override fun createRenamer(element: PsiElement, newName: String, usages: Collection<UsageInfo>) =
             AutomaticVariableRenamer(element as JetClass, newName, usages)
+
+    override fun isEnabled() = JavaRefactoringSettings.getInstance().isToRenameVariables()
+    override fun setEnabled(enabled: Boolean) = JavaRefactoringSettings.getInstance().setRenameVariables(enabled)
+
+    override fun getOptionName() = RefactoringBundle.message("rename.variables")
+}
+
+public class AutomaticVariableInJavaRenamerFactory: AutomaticRenamerFactory {
+    override fun isApplicable(element: PsiElement) = element is JetClass && element.toLightClass() != null
+
+    override fun createRenamer(element: PsiElement, newName: String, usages: Collection<UsageInfo>) =
+            // Using java variable renamer for java usages
+            com.intellij.refactoring.rename.naming.AutomaticVariableRenamer((element as JetClass).toLightClass()!!, newName, usages)
 
     override fun isEnabled() = JavaRefactoringSettings.getInstance().isToRenameVariables()
     override fun setEnabled(enabled: Boolean) = JavaRefactoringSettings.getInstance().setRenameVariables(enabled)
