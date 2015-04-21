@@ -34,17 +34,17 @@ import java.util.*
 public class KotlinIntroducePropertyHandler(
         val helper: ExtractionEngineHelper = KotlinIntroducePropertyHandler.InteractiveExtractionHelper
 ): KotlinIntroduceHandlerBase() {
-    object InteractiveExtractionHelper : ExtractionEngineHelper() {
-        override fun configureInteractively(
+    object InteractiveExtractionHelper : ExtractionEngineHelper(INTRODUCE_PROPERTY) {
+        override fun configureAndRun(
                 project: Project,
                 editor: Editor,
                 descriptorWithConflicts: ExtractableCodeDescriptorWithConflicts,
-                continuation: (ExtractionGeneratorConfiguration) -> Unit
+                onFinish: (ExtractionResult) -> Unit
         ) {
             val descriptor = descriptorWithConflicts.descriptor
             val target = propertyTargets.filter { it.isAvailable(descriptor) }.firstOrNull()
             if (target != null) {
-                continuation(ExtractionGeneratorConfiguration(descriptor, ExtractionGeneratorOptions.DEFAULT.copy(target = target)))
+                doRefactor(ExtractionGeneratorConfiguration(descriptor, ExtractionGeneratorOptions.DEFAULT.copy(target = target)), onFinish)
             }
             else {
                 showErrorHint(project, editor, "Can't introduce property for this expression", INTRODUCE_PROPERTY)
@@ -66,7 +66,7 @@ public class KotlinIntroducePropertyHandler(
             if (adjustedElements.isNotEmpty()) {
                 val options = ExtractionOptions(extractAsProperty = true)
                 val extractionData = ExtractionData(file, adjustedElements.toRange(), targetSibling, options)
-                ExtractionEngine(INTRODUCE_PROPERTY, helper).run(editor, extractionData) {
+                ExtractionEngine(helper).run(editor, extractionData) {
                     val property = it.declaration as JetProperty
                     val descriptor = it.config.descriptor
 
@@ -106,4 +106,4 @@ public class KotlinIntroducePropertyHandler(
     }
 }
 
-private val INTRODUCE_PROPERTY: String = JetRefactoringBundle.message("introduce.property")
+val INTRODUCE_PROPERTY: String = JetRefactoringBundle.message("introduce.property")

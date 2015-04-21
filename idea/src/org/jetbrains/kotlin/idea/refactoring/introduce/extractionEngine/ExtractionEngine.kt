@@ -32,32 +32,23 @@ import javax.swing.event.*
 import com.intellij.openapi.project.*
 import org.jetbrains.kotlin.idea.core.refactoring.checkConflictsInteractively
 
-public open class ExtractionEngineHelper {
+public abstract class ExtractionEngineHelper(val operationName: String) {
     open fun adjustExtractionData(data: ExtractionData): ExtractionData = data
 
-    open fun configure(
-            descriptor: ExtractableCodeDescriptor,
-            generatorOptions: ExtractionGeneratorOptions
-    ): ExtractionGeneratorConfiguration {
-        return ExtractionGeneratorConfiguration(descriptor, generatorOptions)
+    fun doRefactor(config: ExtractionGeneratorConfiguration, onFinish: (ExtractionResult) -> Unit = {}) {
+        val project = config.descriptor.extractionData.project
+        onFinish(project.executeWriteCommand<ExtractionResult>(operationName) { config.generateDeclaration() })
     }
 
-    open fun configureInteractively(
+    abstract fun configureAndRun(
             project: Project,
             editor: Editor,
             descriptorWithConflicts: ExtractableCodeDescriptorWithConflicts,
-            continuation: (ExtractionGeneratorConfiguration) -> Unit
-    ) {
-        continuation(ExtractionGeneratorConfiguration(descriptorWithConflicts.descriptor, ExtractionGeneratorOptions.DEFAULT))
-    }
-
-    companion object {
-        public val DEFAULT: ExtractionEngineHelper = ExtractionEngineHelper()
-    }
+            onFinish: (ExtractionResult) -> Unit = {}
+    )
 }
 
 public class ExtractionEngine(
-        val operationName: String,
         val helper: ExtractionEngineHelper
 ) {
     fun run(editor: Editor,
@@ -72,26 +63,17 @@ public class ExtractionEngine(
             throw BaseRefactoringProcessor.ConflictsInTestsException(analysisResult.messages.map { it.renderMessage() })
         }
 
-        fun doRefactor(config: ExtractionGeneratorConfiguration) {
-            onFinish(project.executeWriteCommand<ExtractionResult>(operationName) { config.generateDeclaration() })
-        }
-
         fun validateAndRefactor() {
             val validationResult = analysisResult.descriptor!!.validate()
             project.checkConflictsInteractively(validationResult.conflicts) {
-                if (ApplicationManager.getApplication()!!.isUnitTestMode()) {
-                    doRefactor(helper.configure(validationResult.descriptor, ExtractionGeneratorOptions.DEFAULT))
-                }
-                else {
-                    helper.configureInteractively(project, editor, validationResult, ::doRefactor)
-                }
+                helper.configureAndRun(project, editor, validationResult, onFinish)
             }
         }
 
         val message = analysisResult.messages.map { it.renderMessage() }.joinToString("\n")
         when (analysisResult.status) {
             AnalysisResult.Status.CRITICAL_ERROR -> {
-                showErrorHint(project, editor, message, operationName)
+                showErrorHint(project, editor, message, helper.operationName)
             }
 
             AnalysisResult.Status.NON_CRITICAL_ERROR -> {

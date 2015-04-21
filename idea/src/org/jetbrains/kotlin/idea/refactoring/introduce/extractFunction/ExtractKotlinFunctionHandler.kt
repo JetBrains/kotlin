@@ -37,15 +37,15 @@ public class ExtractKotlinFunctionHandler(
         public val allContainersEnabled: Boolean = false,
         private val helper: ExtractionEngineHelper = ExtractKotlinFunctionHandler.InteractiveExtractionHelper) : RefactoringActionHandler {
 
-    object InteractiveExtractionHelper : ExtractionEngineHelper() {
-        override fun configureInteractively(
+    object InteractiveExtractionHelper : ExtractionEngineHelper(EXTRACT_FUNCTION) {
+        override fun configureAndRun(
                 project: Project,
                 editor: Editor,
                 descriptorWithConflicts: ExtractableCodeDescriptorWithConflicts,
-                continuation: (ExtractionGeneratorConfiguration) -> Unit
+                onFinish: (ExtractionResult) -> Unit
         ) {
             KotlinExtractFunctionDialog(descriptorWithConflicts.descriptor.extractionData.project, descriptorWithConflicts) {
-                continuation(it.getCurrentConfiguration())
+                doRefactor(it.getCurrentConfiguration(), onFinish)
             }.show()
         }
     }
@@ -66,7 +66,7 @@ public class ExtractKotlinFunctionHandler(
         }
 
         val extractionData = ExtractionData(file, adjustElements(elements).toRange(false), targetSibling)
-        ExtractionEngine(EXTRACT_FUNCTION, helper).run(editor, extractionData) {
+        ExtractionEngine(helper).run(editor, extractionData) {
             processDuplicates(it.duplicateReplacers, file.getProject(), editor)
         }
     }
@@ -91,4 +91,4 @@ public class ExtractKotlinFunctionHandler(
     }
 }
 
-private val EXTRACT_FUNCTION: String = JetRefactoringBundle.message("extract.function")
+val EXTRACT_FUNCTION: String = JetRefactoringBundle.message("extract.function")
