@@ -53,6 +53,12 @@ public class InlineSizeReductionTestGenerated extends AbstractInlineSizeReductio
         doTest(fileName);
     }
 
+    @TestMetadata("this.kt")
+    public void testThis() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineSizeReduction/cases/this.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("valAssignment.kt")
     public void testValAssignment() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineSizeReduction/cases/valAssignment.kt");
