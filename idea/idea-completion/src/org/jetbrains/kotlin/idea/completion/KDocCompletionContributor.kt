@@ -104,6 +104,9 @@ object KDocTagCompletionProvider: CompletionProvider<CompletionParameters>() {
                 StandardPatterns.character().javaIdentifierPart() or singleCharPattern('@'),
                 StandardPatterns.character().javaIdentifierStart() or singleCharPattern('@'))
 
+        if (prefix.length() > 0 && !prefix.startsWith('@')) {
+            return
+        }
         val resultWithPrefix = result.withPrefixMatcher(prefix)
         KDocKnownTag.values().forEach {
             resultWithPrefix.addElement(LookupElementBuilder.create("@" + it.name().toLowerCase()))
