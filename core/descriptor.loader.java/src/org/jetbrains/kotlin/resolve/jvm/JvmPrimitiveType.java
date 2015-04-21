@@ -20,7 +20,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
 import org.jetbrains.kotlin.name.FqName;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public enum JvmPrimitiveType {
@@ -35,17 +37,25 @@ public enum JvmPrimitiveType {
     ;
 
     private static final Set<FqName> WRAPPERS_CLASS_NAMES;
+    private static final Map<String, JvmPrimitiveType> TYPE_BY_NAME;
 
     static {
         WRAPPERS_CLASS_NAMES = new HashSet<FqName>();
+        TYPE_BY_NAME = new HashMap<String, JvmPrimitiveType>();
 
         for (JvmPrimitiveType primitiveType : values()) {
             WRAPPERS_CLASS_NAMES.add(primitiveType.getWrapperFqName());
+            TYPE_BY_NAME.put(primitiveType.getName(), primitiveType);
         }
     }
 
     public static boolean isWrapperClassName(@NotNull FqName className) {
         return WRAPPERS_CLASS_NAMES.contains(className);
+    }
+
+    @NotNull
+    public static JvmPrimitiveType get(@NotNull String name) {
+        return TYPE_BY_NAME.get(name);
     }
 
     private final PrimitiveType primitiveType;

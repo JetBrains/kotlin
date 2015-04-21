@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType;
-import org.jetbrains.kotlin.types.JetType;
 
 import java.util.*;
 
@@ -35,7 +34,6 @@ public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements
 
     private final Map<FqName, ClassDescriptor> classDescriptorMap = new HashMap<FqName, ClassDescriptor>();
     private final Map<FqName, ClassDescriptor> classDescriptorMapForCovariantPositions = new HashMap<FqName, ClassDescriptor>();
-    private final Map<String, JetType> primitiveTypesMap = new LinkedHashMap<String, JetType>();
     private final Set<ClassDescriptor> allKotlinClasses = new LinkedHashSet<ClassDescriptor>();
 
     private JavaToKotlinClassMap() {
@@ -46,24 +44,13 @@ public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements
     private void initPrimitives() {
         KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
 
-        for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
-            PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
-            String name = jvmPrimitiveType.getName();
-
-            register(jvmPrimitiveType.getWrapperFqName(), builtIns.getPrimitiveClassDescriptor(primitiveType));
-            primitiveTypesMap.put(name, builtIns.getPrimitiveJetType(primitiveType));
-            primitiveTypesMap.put("[" + name, builtIns.getPrimitiveArrayJetType(primitiveType));
+        for (JvmPrimitiveType jvmType : JvmPrimitiveType.values()) {
+            PrimitiveType type = jvmType.getPrimitiveType();
+            register(jvmType.getWrapperFqName(), builtIns.getPrimitiveClassDescriptor(type));
+            allKotlinClasses.add(builtIns.getPrimitiveArrayClassDescriptor(type));
         }
-        primitiveTypesMap.put("void", builtIns.getUnitType());
 
-        for (JetType type : primitiveTypesMap.values()) {
-            allKotlinClasses.add((ClassDescriptor) type.getConstructor().getDeclarationDescriptor());
-        }
-    }
-
-    @Nullable
-    public JetType mapPrimitiveKotlinClass(@NotNull String name) {
-        return primitiveTypesMap.get(name);
+        allKotlinClasses.add(builtIns.getUnit());
     }
 
     @Nullable

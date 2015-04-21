@@ -55,10 +55,9 @@ class LazyJavaTypeResolver(
     public fun transformJavaType(javaType: JavaType, attr: JavaTypeAttributes): JetType {
         return when (javaType) {
             is JavaPrimitiveType -> {
-                val canonicalText = javaType.getCanonicalText()
-                val jetType = JavaToKotlinClassMap.INSTANCE.mapPrimitiveKotlinClass(canonicalText)
-                assert(jetType != null) { "Primitive type is not found: $canonicalText" }
-                jetType!!
+                val primitiveType = javaType.getType()
+                if (primitiveType != null) KotlinBuiltIns.getInstance().getPrimitiveJetType(primitiveType)
+                else KotlinBuiltIns.getInstance().getUnitType()
             }
             is JavaClassifierType ->
                 if (PLATFORM_TYPES && attr.allowFlexible && attr.howThisTypeIsUsed != SUPERTYPE)
@@ -75,13 +74,12 @@ class LazyJavaTypeResolver(
     public fun transformArrayType(arrayType: JavaArrayType, attr: JavaTypeAttributes, isVararg: Boolean = false): JetType {
         return run {
             val javaComponentType = arrayType.getComponentType()
-            if (javaComponentType is JavaPrimitiveType) {
-                val jetType = JavaToKotlinClassMap.INSTANCE.mapPrimitiveKotlinClass("[" + javaComponentType.getCanonicalText())
-                if (jetType != null) {
-                    return@run if (PLATFORM_TYPES && attr.allowFlexible)
-                                   FlexibleJavaClassifierTypeCapabilities.create(jetType, TypeUtils.makeNullable(jetType))
-                               else TypeUtils.makeNullableAsSpecified(jetType, !attr.isMarkedNotNull)
-                }
+            val primitiveType = (javaComponentType as? JavaPrimitiveType)?.getType()
+            if (primitiveType != null) {
+                val jetType = KotlinBuiltIns.getInstance().getPrimitiveArrayJetType(primitiveType)
+                return@run if (PLATFORM_TYPES && attr.allowFlexible)
+                    FlexibleJavaClassifierTypeCapabilities.create(jetType, TypeUtils.makeNullable(jetType))
+                else TypeUtils.makeNullableAsSpecified(jetType, !attr.isMarkedNotNull)
             }
 
             val componentType = transformJavaType(javaComponentType,

@@ -16,9 +16,11 @@
 
 package org.jetbrains.kotlin.load.java.structure;
 
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.PrimitiveType;
 
 public interface JavaPrimitiveType extends JavaType {
-    @NotNull
-    String getCanonicalText();
+    /** {@code null} means the {@code void} type. */
+    @Nullable
+    PrimitiveType getType();
 }

@@ -18,7 +18,10 @@ package org.jetbrains.kotlin.load.java.structure.impl;
 
 import com.intellij.psi.PsiPrimitiveType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.PrimitiveType;
 import org.jetbrains.kotlin.load.java.structure.JavaPrimitiveType;
+import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType;
 
 public class JavaPrimitiveTypeImpl extends JavaTypeImpl<PsiPrimitiveType> implements JavaPrimitiveType {
     public JavaPrimitiveTypeImpl(@NotNull PsiPrimitiveType psiPrimitiveType) {
@@ -26,8 +29,9 @@ public class JavaPrimitiveTypeImpl extends JavaTypeImpl<PsiPrimitiveType> implem
     }
 
     @Override
-    @NotNull
-    public String getCanonicalText() {
-        return getPsi().getCanonicalText();
+    @Nullable
+    public PrimitiveType getType() {
+        String text = getPsi().getCanonicalText();
+        return "void".equals(text) ? null : JvmPrimitiveType.get(text).getPrimitiveType();
     }
 }
