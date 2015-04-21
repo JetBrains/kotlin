@@ -68,7 +68,7 @@ class FunctionInlineMutator private (private val call: JsInvocation, private val
         if (!hasThisReference(body)) return
 
         var thisReplacement = getThisReplacement(call)
-        if (thisReplacement == null) return
+        if (thisReplacement == null || thisReplacement is JsLiteral.JsThisRef) return
 
         if (thisReplacement!!.needToAlias()) {
             val thisName = namingContext.getFreshName(getThisAlias())
