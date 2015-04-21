@@ -234,7 +234,7 @@
     <lang.psiStructureViewFactory language="jet" implementationClass="org.jetbrains.kotlin.idea.structureView.JetStructureViewFactory"/>
     <structureViewBuilder order="first" key="CLASS" factoryClass="org.jetbrains.kotlin.idea.structureView.JetClsStructureViewBuilderProvider"/>
 
-    <lang.foldingBuilder language="jet" implementationClass="org.jetbrains.kotlin.idea.JetFoldingBuilder"/>
+    <lang.foldingBuilder language="jet" implementationClass="org.jetbrains.kotlin.idea.KotlinFoldingBuilder"/>
     <lang.formatter language="jet" implementationClass="org.jetbrains.kotlin.idea.formatter.JetFormattingModelBuilder"/>
     <lang.findUsagesProvider language="jet" implementationClass="org.jetbrains.kotlin.idea.findUsages.JetFindUsagesProvider"/>
     <lang.elementManipulator forClass="org.jetbrains.kotlin.psi.JetStringTemplateExpression"

@@ -14,116 +14,110 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea;
+package org.jetbrains.kotlin.idea
 
-import com.intellij.codeInsight.folding.JavaCodeFoldingSettings;
-import com.intellij.lang.ASTNode;
-import com.intellij.lang.folding.FoldingBuilderEx;
-import com.intellij.lang.folding.FoldingDescriptor;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.project.DumbAware;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiWhiteSpace;
-import com.intellij.psi.tree.IElementType;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.JetNodeTypes;
-import org.jetbrains.kotlin.kdoc.lexer.KDocTokens;
-import org.jetbrains.kotlin.lexer.JetTokens;
-import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.psi.JetImportDirective;
-import org.jetbrains.kotlin.psi.JetImportList;
+import com.intellij.codeInsight.folding.JavaCodeFoldingSettings
+import com.intellij.lang.ASTNode
+import com.intellij.lang.folding.FoldingBuilderEx
+import com.intellij.lang.folding.FoldingDescriptor
+import com.intellij.openapi.editor.Document
+import com.intellij.openapi.project.DumbAware
+import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.tree.IElementType
+import org.jetbrains.kotlin.JetNodeTypes
+import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.JetImportDirective
+import org.jetbrains.kotlin.psi.JetImportList
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.ArrayList
 
-public class JetFoldingBuilder extends FoldingBuilderEx implements DumbAware {
-    @NotNull
-    @Override
-    public FoldingDescriptor[] buildFoldRegions(@NotNull PsiElement root, @NotNull Document document, boolean quick) {
-        if (!(root instanceof JetFile)) {
-            return FoldingDescriptor.EMPTY;
+public class KotlinFoldingBuilder : FoldingBuilderEx(), DumbAware {
+    override fun buildFoldRegions(root: PsiElement, document: Document, quick: Boolean): Array<FoldingDescriptor> {
+        if (root !is JetFile) {
+            return FoldingDescriptor.EMPTY
         }
-        List<FoldingDescriptor> descriptors = new ArrayList<FoldingDescriptor>();
-        JetFile file = (JetFile) root;
+        val descriptors = ArrayList<FoldingDescriptor>()
 
-        List<JetImportDirective> imports = file.getImportDirectives();
+        val imports = root.getImportDirectives()
         if (imports.size() > 1) {
-            PsiElement importKeyword = imports.get(0).getFirstChild();
-            int startOffset = importKeyword.getTextRange().getEndOffset() + 1;
+            val importKeyword = imports.get(0).getFirstChild()
+            val startOffset = importKeyword.getTextRange().getEndOffset() + 1
 
-            JetImportList importList = file.getImportList();
-            int endOffset = importList.getTextRange().getEndOffset();
+            val importList = root.getImportList()
+            if (importList != null) {
+                val endOffset = importList.getTextRange().getEndOffset()
 
-            TextRange range = new TextRange(startOffset, endOffset);
-            descriptors.add(new FoldingDescriptor(importList, range));
+                val range = TextRange(startOffset, endOffset)
+                descriptors.add(FoldingDescriptor(importList, range))
+            }
         }
 
-        appendDescriptors(root.getNode(), document, descriptors);
-        return descriptors.toArray(new FoldingDescriptor[descriptors.size()]);
+        appendDescriptors(root.getNode(), document, descriptors)
+        return descriptors.copyToArray()
     }
 
-    private static void appendDescriptors(ASTNode node, Document document, List<FoldingDescriptor> descriptors) {
-        TextRange textRange = node.getTextRange();
-        IElementType type = node.getElementType();
+    private fun appendDescriptors(node: ASTNode, document: Document, descriptors: MutableList<FoldingDescriptor>) {
+        val textRange = node.getTextRange()
+        val type = node.getElementType()
         if ((type == JetNodeTypes.BLOCK || type == JetNodeTypes.CLASS_BODY || type == JetTokens.BLOCK_COMMENT || type == KDocTokens.KDOC) &&
                 !isOneLine(textRange, document)) {
-            descriptors.add(new FoldingDescriptor(node, textRange));
+            descriptors.add(FoldingDescriptor(node, textRange))
         }
-        ASTNode child = node.getFirstChildNode();
+        var child: ASTNode? = node.getFirstChildNode()
         while (child != null) {
-          appendDescriptors(child, document, descriptors);
-          child = child.getTreeNext();
+            appendDescriptors(child, document, descriptors)
+            child = child.getTreeNext()
         }
     }
 
-    private static boolean isOneLine(TextRange textRange, Document document) {
-        return document.getLineNumber(textRange.getStartOffset()) == document.getLineNumber(textRange.getEndOffset());
-    }
+    private fun isOneLine(textRange: TextRange, document: Document) =
+        document.getLineNumber(textRange.getStartOffset()) == document.getLineNumber(textRange.getEndOffset())
 
-    @Override
-    public String getPlaceholderText(@NotNull ASTNode node) {
+    override fun getPlaceholderText(node: ASTNode): String? {
         if (node.getElementType() == JetTokens.BLOCK_COMMENT) {
-            return "/.../";
+            return "/.../"
         }
         if (node.getElementType() == KDocTokens.KDOC) {
-            return "/**...*/";
+            return "/**...*/"
         }
-        if (node.getPsi() instanceof JetImportList) {
-            return "...";
+        if (node.getPsi() is JetImportList) {
+            return "..."
         }
-        return "{...}";
+        return "{...}"
     }
 
-    @Override
-    public boolean isCollapsedByDefault(@NotNull ASTNode astNode) {
-        JavaCodeFoldingSettings settings = JavaCodeFoldingSettings.getInstance();
+    override fun isCollapsedByDefault(astNode: ASTNode): Boolean {
+        val settings = JavaCodeFoldingSettings.getInstance()
 
-        if (astNode.getPsi() instanceof JetImportList) {
-            return settings.isCollapseImports();
+        if (astNode.getPsi() is JetImportList) {
+            return settings.isCollapseImports()
         }
 
-        IElementType type = astNode.getElementType();
+        val type = astNode.getElementType()
         if (type == JetTokens.BLOCK_COMMENT || type == KDocTokens.KDOC) {
             if (isFirstElementInFile(astNode.getPsi())) {
-                return settings.isCollapseFileHeader();
+                return settings.isCollapseFileHeader()
             }
         }
 
-        return false;
+        return false
     }
 
-    private static boolean isFirstElementInFile(PsiElement element) {
-        PsiElement parent = element.getParent();
-        if (parent instanceof JetFile) {
-            PsiElement firstChild = parent.getFirstChild();
-            if (firstChild instanceof PsiWhiteSpace) {
-                firstChild = firstChild.getNextSibling();
+    private fun isFirstElementInFile(element: PsiElement): Boolean {
+        val parent = element.getParent()
+        if (parent is JetFile) {
+            var firstChild = parent.getFirstChild()
+            if (firstChild is PsiWhiteSpace) {
+                firstChild = firstChild.getNextSibling()
             }
 
-            return element == firstChild;
+            return element == firstChild
         }
 
-        return false;
+        return false
     }
 }
