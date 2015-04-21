@@ -343,17 +343,15 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
                 kotlinTask.setClasspath(javaTask.getClasspath())
                 kotlinTask.setDependsOn(javaTask.getDependsOn())
 
-                val javaSourceList = ArrayList<Any?>()
-
-                fun processSourceSet(javaSourceSet: AndroidSourceSet) {
+                fun processSourceSet(javaSourceSet: AndroidSourceSet): SourceDirectorySet {
                     val javaSrcDirs = AndroidGradleWrapper.getJavaSrcDirs(javaSourceSet)
-                    javaSourceList.addAll(javaSrcDirs)
-                    val testKotlinSource = getExtension<KotlinSourceSet>(javaSourceSet, "kotlin")
-                    val kotlinSDS = testKotlinSource.getKotlin()
+                    val kotlinSourceSet = getExtension<KotlinSourceSet>(javaSourceSet, "kotlin")
+                    val kotlinSDS = kotlinSourceSet.getKotlin()
                     for (dir in javaSrcDirs) {
                         kotlinSDS.srcDir(dir)
                     }
                     kotlinTask.source(kotlinSDS)
+                    return kotlinSDS
                 }
 
                 if (variant is TestVariant) {
@@ -362,16 +360,15 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
                     processSourceSet(mainSourceSet)
                 }
 
-                if (null != buildTypeSourceSet) {
-                    processSourceSet(buildTypeSourceSet)
+                if (buildTypeSourceSet != null) {
+                    val variantSourceDirectorySet = processSourceSet(buildTypeSourceSet)
+                    for (resourceFolder in AndroidGradleWrapper.getRClassFolder(variant)) {
+                        variantSourceDirectorySet.srcDir(resourceFolder)
+                    }
+                    variantSourceDirectorySet.srcDir(variant.getGenerateBuildConfig()?.getSourceOutputDir())
+                    variantSourceDirectorySet.srcDir(variant.getAidlCompile().getSourceOutputDir())
+                    variantSourceDirectorySet.srcDir(variant.getRenderscriptCompile().getSourceOutputDir())
                 }
-
-                for (resourceFolder in AndroidGradleWrapper.getRClassFolder(variant)) {
-                    javaSourceList.add(resourceFolder)
-                }
-                javaSourceList.add(variant.getGenerateBuildConfig()?.getSourceOutputDir())
-                javaSourceList.add(variant.getAidlCompile().getSourceOutputDir())
-                javaSourceList.add(variant.getRenderscriptCompile().getSourceOutputDir())
 
                 if (variant is ApkVariant) {
                     for (flavourName in AndroidGradleWrapper.getProductFlavorsNames(variant)) {
@@ -396,9 +393,8 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
                         plugin = project.getPlugins().findPlugin("android-library")
                     }
                     val basePlugin: BasePlugin = plugin as BasePlugin
-                    val javaSources = project.files(javaSourceList)
                     val androidRT = project.files(AndroidGradleWrapper.getRuntimeJars(basePlugin, androidExt))
-                    val fullClasspath = (javaTask.getClasspath() + (javaSources + androidRT)) - project.files(kotlinTask.property("kotlinDestinationDir"))
+                    val fullClasspath = (javaTask.getClasspath() + androidRT) - project.files(kotlinTask.property("kotlinDestinationDir"))
                     (it as AbstractCompile).setClasspath(fullClasspath)
                 }
 
