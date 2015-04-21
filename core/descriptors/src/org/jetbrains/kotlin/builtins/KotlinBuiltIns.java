@@ -101,7 +101,6 @@ public class KotlinBuiltIns {
     private final ModuleDescriptorImpl builtInsModule;
     private final BuiltinsPackageFragment builtinsPackageFragment;
 
-    private final Map<PrimitiveType, JetType> primitiveTypeToNullableJetType;
     private final Map<PrimitiveType, JetType> primitiveTypeToArrayJetType;
     private final Map<JetType, JetType> primitiveJetTypeToJetArrayType;
     private final Map<JetType, JetType> jetArrayTypeToPrimitiveJetType;
@@ -129,7 +128,6 @@ public class KotlinBuiltIns {
 
         builtinsPackageFragment = (BuiltinsPackageFragment) single(packageFragmentProvider.getPackageFragments(BUILT_INS_PACKAGE_FQ_NAME));
 
-        primitiveTypeToNullableJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);
         primitiveTypeToArrayJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);
         primitiveJetTypeToJetArrayType = new HashMap<JetType, JetType>();
         jetArrayTypeToPrimitiveJetType = new HashMap<JetType, JetType>();
@@ -145,7 +143,6 @@ public class KotlinBuiltIns {
         JetType type = getBuiltInTypeByClassName(primitiveType.getTypeName().asString());
         JetType arrayType = getBuiltInTypeByClassName(primitiveType.getArrayTypeName().asString());
 
-        primitiveTypeToNullableJetType.put(primitiveType, TypeUtils.makeNullable(type));
         primitiveTypeToArrayJetType.put(primitiveType, arrayType);
         primitiveJetTypeToJetArrayType.put(type, arrayType);
         jetArrayTypeToPrimitiveJetType.put(arrayType, type);
@@ -509,11 +506,6 @@ public class KotlinBuiltIns {
     @NotNull
     public JetType getPrimitiveJetType(@NotNull PrimitiveType type) {
         return getPrimitiveClassDescriptor(type).getDefaultType();
-    }
-
-    @NotNull
-    public JetType getNullablePrimitiveJetType(@NotNull PrimitiveType primitiveType) {
-        return primitiveTypeToNullableJetType.get(primitiveType);
     }
 
     @NotNull
