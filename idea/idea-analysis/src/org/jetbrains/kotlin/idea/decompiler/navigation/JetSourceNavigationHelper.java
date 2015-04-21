@@ -50,8 +50,8 @@ import org.jetbrains.kotlin.idea.stubindex.JetFullClassNameIndex;
 import org.jetbrains.kotlin.idea.stubindex.JetTopLevelFunctionFqnNameIndex;
 import org.jetbrains.kotlin.idea.stubindex.JetTopLevelPropertyFqnNameIndex;
 import org.jetbrains.kotlin.lexer.JetTokens;
+import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
 import org.jetbrains.kotlin.psi.*;
@@ -367,13 +367,12 @@ public class JetSourceNavigationHelper {
             assert className != null : "Class from BuiltIns should have a name";
             ClassDescriptor classDescriptor = KotlinBuiltIns.getInstance().getBuiltInClassByName(className);
 
-            FqNameUnsafe fqName = DescriptorUtils.getFqName(classDescriptor);
-            if (fqName.isSafe()) {
-                FqName javaFqName = KotlinToJavaTypesMap.getInstance().getKotlinToJavaFqName(fqName.toSafe());
-                if (javaFqName != null) {
-                    return JavaPsiFacade.getInstance(classOrObject.getProject()).findClass(
-                            javaFqName.asString(), GlobalSearchScope.allScope(classOrObject.getProject()));
-                }
+            ClassId javaClassId = KotlinToJavaTypesMap.getInstance().mapKotlinFqNameToJava(DescriptorUtils.getFqName(classDescriptor));
+            if (javaClassId != null) {
+                return JavaPsiFacade.getInstance(classOrObject.getProject()).findClass(
+                        javaClassId.asSingleFqName().asString(),
+                        GlobalSearchScope.allScope(classOrObject.getProject())
+                );
             }
         }
         return LightClassUtil.getPsiClass(classOrObject);

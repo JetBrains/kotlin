@@ -90,9 +90,9 @@ class TypeInstantiationItems(
         if (!KotlinBuiltIns.isAny(classifier)) { // do not search inheritors of Any
             inheritanceSearchers.addInheritorSearcher(classifier, classifier, typeArgs, tail)
 
-            val javaAnalogFqName = KotlinToJavaTypesMap.getInstance().getKotlinToJavaFqName(DescriptorUtils.getFqNameSafe(classifier))
-            if (javaAnalogFqName != null) {
-                val javaAnalog = moduleDescriptor.resolveTopLevelClass(javaAnalogFqName)
+            val javaClassId = KotlinToJavaTypesMap.getInstance().mapKotlinFqNameToJava(DescriptorUtils.getFqName(classifier))
+            if (javaClassId != null) {
+                val javaAnalog = moduleDescriptor.resolveTopLevelClass(javaClassId.asSingleFqName())
                 if (javaAnalog != null) {
                     inheritanceSearchers.addInheritorSearcher(javaAnalog, classifier, typeArgs, tail)
                 }

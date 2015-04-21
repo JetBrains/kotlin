@@ -166,13 +166,13 @@ public class KotlinBuiltIns {
         public final FqNameUnsafe kClass = new FqName("kotlin.reflect.KClass").toUnsafe();
 
         public final Map<FqNameUnsafe, PrimitiveType> fqNameToPrimitiveType;
-        public final Set<FqNameUnsafe> primitiveArrays;
+        public final Map<FqNameUnsafe, PrimitiveType> arrayClassFqNameToPrimitiveType;
         {
             fqNameToPrimitiveType = new HashMap<FqNameUnsafe, PrimitiveType>(0);
-            primitiveArrays = new HashSet<FqNameUnsafe>(0);
+            arrayClassFqNameToPrimitiveType = new HashMap<FqNameUnsafe, PrimitiveType>(0);
             for (PrimitiveType primitiveType : PrimitiveType.values()) {
                 fqNameToPrimitiveType.put(fqNameUnsafe(primitiveType.getTypeName().asString()), primitiveType);
-                primitiveArrays.add(fqNameUnsafe(primitiveType.getArrayTypeName().asString()));
+                arrayClassFqNameToPrimitiveType.put(fqNameUnsafe(primitiveType.getArrayTypeName().asString()), primitiveType);
             }
         }
 
@@ -582,7 +582,7 @@ public class KotlinBuiltIns {
     }
 
     /**
-     * @return <code>null</code> if not primitive
+     * @return {@code null} if not primitive
      */
     @Nullable
     public JetType getPrimitiveArrayJetTypeByPrimitiveJetType(@NotNull JetType jetType) {
@@ -592,6 +592,11 @@ public class KotlinBuiltIns {
     @Nullable
     public static PrimitiveType getPrimitiveTypeByFqName(@NotNull FqNameUnsafe primitiveClassFqName) {
         return FQ_NAMES.fqNameToPrimitiveType.get(primitiveClassFqName);
+    }
+
+    @Nullable
+    public static PrimitiveType getPrimitiveTypeByArrayClassFqName(@NotNull FqNameUnsafe primitiveArrayClassFqName) {
+        return FQ_NAMES.arrayClassFqNameToPrimitiveType.get(primitiveArrayClassFqName);
     }
 
     @NotNull
@@ -682,7 +687,7 @@ public class KotlinBuiltIns {
 
     public static boolean isPrimitiveArray(@NotNull JetType type) {
         ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
-        return descriptor != null && FQ_NAMES.primitiveArrays.contains(DescriptorUtils.getFqName(descriptor));
+        return descriptor != null && getPrimitiveTypeByArrayClassFqName(DescriptorUtils.getFqName(descriptor)) != null;
     }
 
     public static boolean isPrimitiveType(@NotNull JetType type) {

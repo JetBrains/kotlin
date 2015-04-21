@@ -36,10 +36,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.load.kotlin.nativeDeclarations.NativeDeclarationsPackage;
-import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.name.FqNameUnsafe;
-import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.name.SpecialNames;
+import org.jetbrains.kotlin.name.*;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetFunctionLiteral;
@@ -54,6 +51,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.StringValue;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
@@ -383,7 +381,17 @@ public class JetTypeMapper {
             return TypeUtils.isNullableType(type) ? boxType(asmType) : asmType;
         }
 
-        return fqName.isSafe() ? KotlinToJavaTypesMap.getInstance().getJavaAnalog(fqName.toSafe()) : null;
+        PrimitiveType arrayElementType = KotlinBuiltIns.getPrimitiveTypeByArrayClassFqName(fqName);
+        if (arrayElementType != null) {
+            return Type.getType("[" + JvmPrimitiveType.get(arrayElementType).getDesc());
+        }
+
+        ClassId classId = KotlinToJavaTypesMap.getInstance().mapKotlinFqNameToJava(fqName);
+        if (classId != null) {
+            return Type.getObjectType(JvmClassName.byClassId(classId).getInternalName());
+        }
+
+        return null;
     }
 
     @NotNull

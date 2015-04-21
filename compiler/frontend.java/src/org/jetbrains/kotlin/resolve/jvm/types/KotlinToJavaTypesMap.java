@@ -19,14 +19,14 @@ package org.jetbrains.kotlin.resolve.jvm.types;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.builtins.PrimitiveType;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
+import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.name.FqNameUnsafe;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMapBuilder;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType;
-import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,8 +42,7 @@ public class KotlinToJavaTypesMap extends JavaToKotlinClassMapBuilder {
         return instance;
     }
 
-    private final Map<FqName, Type> asmTypes = new HashMap<FqName, Type>();
-    private final Map<FqName, FqName> kotlinToJavaFqName = new HashMap<FqName, FqName>();
+    private final Map<FqNameUnsafe, ClassId> map = new HashMap<FqNameUnsafe, ClassId>();
 
     private KotlinToJavaTypesMap() {
         init();
@@ -51,20 +50,12 @@ public class KotlinToJavaTypesMap extends JavaToKotlinClassMapBuilder {
     }
 
     private void initPrimitives() {
-        FqName builtInsFqName = KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME;
         for (JvmPrimitiveType type : JvmPrimitiveType.values()) {
-            PrimitiveType primitiveType = type.getPrimitiveType();
-            FqName fqName = builtInsFqName.child(primitiveType.getTypeName());
-
-            register(fqName, type.getWrapperFqName(), Type.getType(type.getDesc()));
-
-            asmTypes.put(builtInsFqName.child(primitiveType.getArrayTypeName()), Type.getType("[" + type.getDesc()));
+            register(
+                    KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.child(type.getPrimitiveType().getTypeName()).toUnsafe(),
+                    ClassId.topLevel(type.getWrapperFqName())
+            );
         }
-    }
-
-    @Nullable
-    public Type getJavaAnalog(@NotNull FqName fqName) {
-        return asmTypes.get(fqName);
     }
 
     /**
@@ -75,18 +66,14 @@ public class KotlinToJavaTypesMap extends JavaToKotlinClassMapBuilder {
      * kotlin.IntArray -> null
      */
     @Nullable
-    public FqName getKotlinToJavaFqName(@NotNull FqName fqName) {
-        return kotlinToJavaFqName.get(fqName);
+    public ClassId mapKotlinFqNameToJava(@NotNull FqNameUnsafe kotlinFqName) {
+        return map.get(kotlinFqName);
     }
 
     @Override
     protected void register(@NotNull Class<?> javaClass, @NotNull ClassDescriptor kotlinDescriptor, @NotNull Direction direction) {
         if (direction == Direction.BOTH || direction == Direction.KOTLIN_TO_JAVA) {
-            register(
-                    DescriptorUtils.getFqNameSafe(kotlinDescriptor),
-                    new FqName(javaClass.getCanonicalName()),
-                    AsmTypes.getType(javaClass)
-            );
+            register(DescriptorUtils.getFqName(kotlinDescriptor), computeClassId(javaClass));
         }
     }
 
@@ -100,8 +87,16 @@ public class KotlinToJavaTypesMap extends JavaToKotlinClassMapBuilder {
         register(javaClass, kotlinMutableDescriptor, Direction.BOTH);
     }
 
-    private void register(@NotNull FqName kotlinFqName, @NotNull FqName javaFqName, @NotNull Type asmType) {
-        asmTypes.put(kotlinFqName, asmType);
-        kotlinToJavaFqName.put(kotlinFqName, javaFqName);
+    private void register(@NotNull FqNameUnsafe kotlinFqName, @NotNull ClassId javaClassId) {
+        map.put(kotlinFqName, javaClassId);
+    }
+
+    @NotNull
+    private static ClassId computeClassId(@NotNull Class<?> clazz) {
+        assert !clazz.isPrimitive() && !clazz.isArray() : "Invalid class: " + clazz;
+        Class<?> outer = clazz.getDeclaringClass();
+        return outer == null
+               ? ClassId.topLevel(new FqName(clazz.getCanonicalName()))
+               : computeClassId(outer).createNestedClassId(Name.identifier(clazz.getSimpleName()));
     }
 }

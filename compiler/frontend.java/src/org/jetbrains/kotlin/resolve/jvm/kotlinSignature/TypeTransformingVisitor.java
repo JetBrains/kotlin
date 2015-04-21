@@ -25,7 +25,8 @@ import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.kotlin.load.java.components.TypeUsage;
-import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.name.ClassId;
+import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
@@ -112,7 +113,7 @@ public class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
         TypeConstructor originalTypeConstructor = originalType.getConstructor();
         ClassifierDescriptor declarationDescriptor = originalTypeConstructor.getDeclarationDescriptor();
         assert declarationDescriptor != null;
-        FqName originalClassFqName = DescriptorUtils.getFqNameSafe(declarationDescriptor);
+        FqNameUnsafe originalClassFqName = DescriptorUtils.getFqName(declarationDescriptor);
         ClassDescriptor classFromLibrary = getAutoTypeAnalogWithinBuiltins(originalClassFqName, qualifiedName);
         if (!isSameName(qualifiedName, originalClassFqName.asString()) && classFromLibrary == null) {
             throw new AlternativeSignatureMismatchException("Alternative signature type mismatch, expected: %s, actual: %s",
@@ -215,11 +216,14 @@ public class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
     }
 
     @Nullable
-    private static ClassDescriptor getAutoTypeAnalogWithinBuiltins(@NotNull FqName originalClassFqName, @NotNull String qualifiedName) {
-        FqName javaFqName = KotlinToJavaTypesMap.getInstance().getKotlinToJavaFqName(originalClassFqName);
-        if (javaFqName == null) return null;
+    private static ClassDescriptor getAutoTypeAnalogWithinBuiltins(
+            @NotNull FqNameUnsafe originalClassFqName,
+            @NotNull String qualifiedName
+    ) {
+        ClassId javaClassId = KotlinToJavaTypesMap.getInstance().mapKotlinFqNameToJava(originalClassFqName);
+        if (javaClassId == null) return null;
 
-        Collection<ClassDescriptor> descriptors = JavaToKotlinClassMap.INSTANCE.mapPlatformClass(javaFqName);
+        Collection<ClassDescriptor> descriptors = JavaToKotlinClassMap.INSTANCE.mapPlatformClass(javaClassId.asSingleFqName());
         for (ClassDescriptor descriptor : descriptors) {
             String fqName = DescriptorUtils.getFqName(descriptor).asString();
             if (isSameName(qualifiedName, fqName)) {
