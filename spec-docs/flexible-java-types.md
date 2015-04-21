@@ -261,6 +261,16 @@ Enhancement rules (the result of their application is called a *propagated signa
  - apply the annotations and check compatibility with all parts from supertypes, if there's any incompatibility, issue a warning and take
    a platform type
 
+> NOTE: Only flexible types are enhanced, because we want to avoid cases like this
+``` java
+          void foo(@Nullable int x) {...}
+```
+this code is incorrect, but Java does not reject it, so if we see this as a Kotlin declaration
+``` kotlin
+          fun foo(x: Int?)
+```
+we can't even call it properly (this, in theory, can be worked around by storing pure Java signatures alongside Kotlin ones).
+
 Detecting annotations on parts from supertypes:
  - consider all types have the form of `(L..U)`, where an inflexible type `T` is written `(T..T)`
  - if `L` is nullable, say that `@Nullable` annotation is present
