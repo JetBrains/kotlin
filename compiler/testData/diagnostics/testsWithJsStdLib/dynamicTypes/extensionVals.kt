@@ -1,3 +1,4 @@
+// !DIAGNOSTICS:-USELESS_CAST
 // !MARK_DYNAMIC_CALLS
 
 fun test(d: dynamic) {
@@ -20,10 +21,10 @@ fun test(d: dynamic) {
 
     <!VAL_REASSIGNMENT!>d.onDynamicVal<!> = 1
 
-    (d: String).onStringVal
-    (d: Any).onAnyVal
-    (d: Any?).onNullableAnyVal
-    (d: Any).onDynamicVal
+    (d as String).onStringVal
+    (d as Any).onAnyVal
+    (d as Any?).onNullableAnyVal
+    (d as Any).onDynamicVal
 }
 
 fun testReassignmentWithSafeCall(d: dynamic) {
@@ -31,10 +32,10 @@ fun testReassignmentWithSafeCall(d: dynamic) {
 }
 
 fun testReassignmentWithStaticCalls(d: dynamic) {
-    <!VAL_REASSIGNMENT!>(d: String).onStringVal<!> = 1
-    <!VAL_REASSIGNMENT!>(d: Any).onAnyVal<!> = 1
-    <!VAL_REASSIGNMENT!>(d: Any?).onNullableAnyVal<!> = 1
-    <!VAL_REASSIGNMENT!>(d: Any).onDynamicVal<!> = 1
+    <!VAL_REASSIGNMENT!>(d as String).onStringVal<!> = 1
+    <!VAL_REASSIGNMENT!>(d as Any).onAnyVal<!> = 1
+    <!VAL_REASSIGNMENT!>(d as Any?).onNullableAnyVal<!> = 1
+    <!VAL_REASSIGNMENT!>(d as Any).onDynamicVal<!> = 1
 }
 
 val Any.onAnyVal: Int get() = 1

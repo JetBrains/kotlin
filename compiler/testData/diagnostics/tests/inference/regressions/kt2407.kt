@@ -1,11 +1,13 @@
+// !CHECK_TYPE
+
 package n
 
 import java.util.*
 
 fun test() {
     val foo = arrayList("").map { it -> it.length() }.fold(0, { x, y -> Math.max(x, y) })
-    foo : Int
-    <!TYPE_MISMATCH!>foo<!> : String
+    checkSubtype<Int>(foo)
+    checkSubtype<String>(<!TYPE_MISMATCH!>foo<!>)
 }
 
 //from library

@@ -2866,6 +2866,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/expressions"), Pattern.compile("^before(\\w+)\\.kt$"), true);
         }
 
+        @TestMetadata("beforeRemoveStaticTypeAssertion.kt")
+        public void testRemoveStaticTypeAssertion() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/expressions/beforeRemoveStaticTypeAssertion.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("beforeRemoveUselessCast.kt")
         public void testRemoveUselessCast() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/expressions/beforeRemoveUselessCast.kt");
@@ -2881,12 +2887,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("beforeRemoveUselessCastUnderSmartCast.kt")
         public void testRemoveUselessCastUnderSmartCast() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/expressions/beforeRemoveUselessCastUnderSmartCast.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("beforeReplaceUselessCastWithStaticAssert.kt")
-        public void testReplaceUselessCastWithStaticAssert() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/expressions/beforeReplaceUselessCastWithStaticAssert.kt");
             doTest(fileName);
         }
 
@@ -4913,12 +4913,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @TestMetadata("beforeTypeMismatch4.kt")
             public void testTypeMismatch4() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/casts/beforeTypeMismatch4.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("beforeTypeMismatch5.kt")
-            public void testTypeMismatch5() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/casts/beforeTypeMismatch5.kt");
                 doTest(fileName);
             }
 

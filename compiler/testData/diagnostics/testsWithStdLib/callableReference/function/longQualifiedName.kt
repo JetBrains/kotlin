@@ -1,3 +1,4 @@
+// !CHECK_TYPE
 // FILE: a.kt
 
 package a.b.c
@@ -13,5 +14,5 @@ import kotlin.reflect.KMemberFunction0
 fun main() {
     val x = a.b.c.D::foo
 
-    x : KMemberFunction0<a.b.c.D, Int>
+    checkSubtype<KMemberFunction0<a.b.c.D, Int>>(x)
 }

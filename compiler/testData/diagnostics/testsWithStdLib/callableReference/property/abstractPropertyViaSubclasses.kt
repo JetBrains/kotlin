@@ -1,3 +1,5 @@
+// !CHECK_TYPE
+
 import kotlin.reflect.KMemberProperty
 
 trait Base {
@@ -18,17 +20,17 @@ class C : B() {
 
 fun test() {
     val base = Base::x
-    base : KMemberProperty<Base, Any>
-    base.get(A()) : Any
-    <!TYPE_MISMATCH!>base.get(B())<!> : Number
-    <!TYPE_MISMATCH!>base.get(C())<!> : Int
+    checkSubtype<KMemberProperty<Base, Any>>(base)
+    checkSubtype<Any>(base.get(A()))
+    checkSubtype<Number>(<!TYPE_MISMATCH!>base.get(B())<!>)
+    checkSubtype<Int>(<!TYPE_MISMATCH!>base.get(C())<!>)
 
     val a = A::x
-    a : KMemberProperty<A, String>
-    a.get(A()) : String
-    <!TYPE_MISMATCH!>a.get(<!TYPE_MISMATCH!>B()<!>)<!> : Number
+    checkSubtype<KMemberProperty<A, String>>(a)
+    checkSubtype<String>(a.get(A()))
+    checkSubtype<Number>(<!TYPE_MISMATCH!>a.get(<!TYPE_MISMATCH!>B()<!>)<!>)
 
     val b = B::x
-    b : KMemberProperty<B, Number>
-    <!TYPE_MISMATCH!>b.get(C())<!> : Int
+    checkSubtype<KMemberProperty<B, Number>>(b)
+    checkSubtype<Int>(<!TYPE_MISMATCH!>b.get(C())<!>)
 }

@@ -1,18 +1,20 @@
+// !CHECK_TYPE
+
 fun f1(s: String?) {
     if (s!! == "");
-    <!DEBUG_INFO_SMARTCAST!>s<!> : String
+    checkSubtype<String>(<!DEBUG_INFO_SMARTCAST!>s<!>)
 }
 
 fun f2(s: Number?) {
     if (s is Int);
-    <!TYPE_MISMATCH!>s<!> : Int
+    checkSubtype<Int>(<!TYPE_MISMATCH!>s<!>)
     if (s as Int == 42);
-    <!DEBUG_INFO_SMARTCAST!>s<!> : Int
+    checkSubtype<Int>(<!DEBUG_INFO_SMARTCAST!>s<!>)
 }
 
 fun f3(s: Number?) {
-    if (s is Int && s <!USELESS_CAST_STATIC_ASSERT_IS_FINE!>as Int<!> == 42);
-    <!TYPE_MISMATCH!>s<!> : Int
+    if (s is Int && s <!USELESS_CAST!>as Int<!> == 42);
+    checkSubtype<Int>(<!TYPE_MISMATCH!>s<!>)
 }
 
 fun f4(s: Int?) {

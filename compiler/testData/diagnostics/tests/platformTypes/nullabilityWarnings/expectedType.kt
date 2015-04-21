@@ -1,3 +1,5 @@
+// !CHECK_TYPE
+
 // FILE: p/J.java
 package p;
 
@@ -23,11 +25,11 @@ fun test() {
     // platform type with no annotation
     val platformJ = J.staticJ
 
-    platformNN : J
-    <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!> : J
-    platformJ : J
+    checkSubtype<J>(platformNN)
+    checkSubtype<J>(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!>)
+    checkSubtype<J>(platformJ)
 
-    platformNN : J?
-    platformN : J?
-    platformJ : J?
+    checkSubtype<J?>(platformNN)
+    checkSubtype<J?>(platformN)
+    checkSubtype<J?>(platformJ)
 }

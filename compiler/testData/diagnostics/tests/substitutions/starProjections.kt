@@ -6,8 +6,8 @@ trait A<R, T: A<R, T>> {
 }
 
 fun testA(a: A<*, *>) {
-    a.r().checkType { it : _<Any?> }
-    a.t().checkType { it : _<A<*, *>> }
+    a.r().checkType { _<Any?>() }
+    a.t().checkType { _<A<*, *>>() }
 }
 
 trait B<R, T: B<List<R>, <!UPPER_BOUND_VIOLATED!>T<!>>> {
@@ -16,8 +16,8 @@ trait B<R, T: B<List<R>, <!UPPER_BOUND_VIOLATED!>T<!>>> {
 }
 
 fun testB(b: B<*, *>) {
-    b.r().checkType { it : _<Any?> }
-    b.t().checkType { it : _<B<List<*>, *>> }
+    b.r().checkType { _<Any?>() }
+    b.t().checkType { _<B<List<*>, *>>() }
 
     b.t().r().size()
 }

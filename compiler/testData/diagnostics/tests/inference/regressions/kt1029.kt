@@ -1,3 +1,5 @@
+// !CHECK_TYPE
+
 //KT-1029 Wrong type inference
 package i
 
@@ -11,5 +13,5 @@ fun a() {
     val x = 0..200
     val odd = from (x where {it%2==0}) // I believe it should infer here
 
-    odd : Iterable<Int>
+    checkSubtype<Iterable<Int>>(odd)
 }

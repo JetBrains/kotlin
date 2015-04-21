@@ -1,10 +1,12 @@
+// !CHECK_TYPE
+
 fun executeQuery(statement: java.sql.Statement, cmd: String?) {
   statement.executeQuery(cmd)
-  statement.executeQuery(cmd!!) : java.sql.ResultSet
+  checkSubtype<java.sql.ResultSet>(statement.executeQuery(cmd!!))
 }
 
 fun executeQuery(statement: java.sql.PreparedStatement) {
-  statement.executeQuery() : java.sql.ResultSet
+  checkSubtype<java.sql.ResultSet>(statement.executeQuery())
 }
 
 fun executeUpdate(statement: java.sql.Statement, cmd: String?) {

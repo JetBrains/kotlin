@@ -1,3 +1,5 @@
+// !CHECK_TYPE
+
 import kotlin.reflect.*
 
 class A {
@@ -8,16 +10,16 @@ class A {
 fun test() {
     val p = A::foo
 
-    p : KMemberProperty<A, Int>
-    <!TYPE_MISMATCH!>p<!> : KMutableMemberProperty<A, Int>
-    p.get(A()) : Int
+    checkSubtype<KMemberProperty<A, Int>>(p)
+    checkSubtype<KMutableMemberProperty<A, Int>>(<!TYPE_MISMATCH!>p<!>)
+    checkSubtype<Int>(p.get(A()))
     p.get(<!NO_VALUE_FOR_PARAMETER!>)<!>
     p.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>set<!>(A(), 239)
 
     val q = A::bar
 
-    q : KMemberProperty<A, String>
-    q : KMutableMemberProperty<A, String>
-    q.get(A()): String
+    checkSubtype<KMemberProperty<A, String>>(q)
+    checkSubtype<KMutableMemberProperty<A, String>>(q)
+    checkSubtype<String>(q.get(A()))
     q.set(A(), "q")
 }

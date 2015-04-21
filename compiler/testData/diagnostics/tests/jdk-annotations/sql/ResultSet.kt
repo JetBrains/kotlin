@@ -1,3 +1,5 @@
+// !CHECK_TYPE
+
 fun getMetaData(rs: java.sql.ResultSet) {
-  rs.getMetaData() : java.sql.ResultSetMetaData
+  checkSubtype<java.sql.ResultSetMetaData>(rs.getMetaData())
 }

@@ -569,7 +569,7 @@ public interface Errors {
     DiagnosticFactory1<JetElement, JetType> CANNOT_CHECK_FOR_ERASED = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory2<JetBinaryExpressionWithTypeRHS, JetType, JetType> UNCHECKED_CAST = DiagnosticFactory2.create(WARNING);
 
-    DiagnosticFactory0<JetBinaryExpressionWithTypeRHS> USELESS_CAST_STATIC_ASSERT_IS_FINE = DiagnosticFactory0.create(WARNING, AS_TYPE);
+    DiagnosticFactory0<JetBinaryExpressionWithTypeRHS> DEPRECATED_STATIC_ASSERT = DiagnosticFactory0.create(WARNING, AS_TYPE);
     DiagnosticFactory0<JetBinaryExpressionWithTypeRHS> USELESS_CAST = DiagnosticFactory0.create(WARNING, AS_TYPE);
     DiagnosticFactory0<JetSimpleNameExpression> CAST_NEVER_SUCCEEDS = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<JetTypeReference> DYNAMIC_NOT_ALLOWED = DiagnosticFactory0.create(ERROR);
@@ -673,7 +673,7 @@ public interface Errors {
             INVISIBLE_MEMBER, INVISIBLE_MEMBER_FROM_INLINE, INVISIBLE_REFERENCE, INVISIBLE_SETTER);
     ImmutableSet<? extends DiagnosticFactory<?>> UNUSED_ELEMENT_DIAGNOSTICS = ImmutableSet.of(
             UNUSED_VARIABLE, UNUSED_PARAMETER, ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE, VARIABLE_WITH_REDUNDANT_INITIALIZER,
-            UNUSED_FUNCTION_LITERAL, USELESS_CAST, USELESS_CAST_STATIC_ASSERT_IS_FINE);
+            UNUSED_FUNCTION_LITERAL, USELESS_CAST);
     ImmutableSet<? extends DiagnosticFactory<?>> TYPE_INFERENCE_ERRORS = ImmutableSet.of(
             TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER, TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS, TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH,
             TYPE_INFERENCE_UPPER_BOUND_VIOLATED, TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH);

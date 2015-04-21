@@ -1,3 +1,5 @@
+// !CHECK_TYPE
+
 fun test(d: dynamic) {
     d.foo {}
 
@@ -21,7 +23,7 @@ fun test(d: dynamic) {
 
     d.foo({ x -> })
 
-    d.foo({ x -> } : (Int) -> Unit)
+    d.foo(checkSubtype<(Int) -> Unit>({ x -> }))
 
     d.foo(label@ { x -> })
 

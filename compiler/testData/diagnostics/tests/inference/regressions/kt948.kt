@@ -1,3 +1,5 @@
+// !CHECK_TYPE
+
 //KT-948 Make type inference work with sure()/!!
 
 package a
@@ -11,8 +13,8 @@ fun foo() {
     val <!UNUSED_VARIABLE!>l<!> : List<Int> = emptyList()!!
     val <!UNUSED_VARIABLE!>l1<!> = <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>emptyList<!>()!!
 
-    emptyList()!! : List<Int>
-    emptyList() : List<Int>?
+    checkSubtype<List<Int>>(emptyList()!!)
+    checkSubtype<List<Int>?>(emptyList())
 
     doWithList(emptyList()!!)
 }

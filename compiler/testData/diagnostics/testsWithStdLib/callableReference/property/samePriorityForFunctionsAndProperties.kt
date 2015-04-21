@@ -9,5 +9,5 @@ class C {
 fun Int.baz() {}
 
 fun test() {
-    C::baz checkType { it : _<KMemberProperty<C, Int>>}
+    C::baz checkType { _<KMemberProperty<C, Int>>() }
 }

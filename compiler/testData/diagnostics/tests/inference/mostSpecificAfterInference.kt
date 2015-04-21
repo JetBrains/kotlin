@@ -1,3 +1,5 @@
+// !CHECK_TYPE
+
 package i
 
 //+JDK
@@ -9,7 +11,7 @@ fun <T, R> <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.lang.Iterable<T><!>.map1(<!UN
 fun test(list: List<Int>) {
     val res = list.map1 { it }
     //check res is not of error type
-    <!TYPE_MISMATCH!>res<!> : String
+    checkSubtype<String>(<!TYPE_MISMATCH!>res<!>)
 }
 
 fun <T> Collection<T>.foo() {}
@@ -18,5 +20,5 @@ fun <T> <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.lang.Iterable<T><!>.foo() {}
 fun test1(list: List<Int>) {
     val res = list.foo()
     //check res is not of error type
-    <!TYPE_MISMATCH!>res<!> : String
+    checkSubtype<String>(<!TYPE_MISMATCH!>res<!>)
 }

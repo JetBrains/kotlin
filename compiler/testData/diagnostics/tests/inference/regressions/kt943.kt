@@ -1,3 +1,5 @@
+// !CHECK_TYPE
+
 //KT-943 Type inference failed
 package maze
 
@@ -11,7 +13,7 @@ fun foo(lines: List<String>) {
         val l2 = o2.length()
         l1 - l2
     }).sure()
-    w : String
+    checkSubtype<String>(w)
 }
 
 //standard library

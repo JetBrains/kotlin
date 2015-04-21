@@ -14,7 +14,7 @@ fun test(out: Out<Int>, i: In<Int>, inv: A<Int>) {
     // T? >: Int => T = Int
     doT(1)
     val r = doOut(out)
-    r checkType { it : _<Int> }
+    r checkType { _<Int>() }
 
     // T? <: Int => error
     doIn(<!TYPE_MISMATCH!>i<!>)

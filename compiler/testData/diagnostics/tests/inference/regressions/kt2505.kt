@@ -1,3 +1,5 @@
+// !CHECK_TYPE
+
 //KT-2505 Type mismatch: inferred type is T but T was expected
 
 package a
@@ -16,5 +18,5 @@ public open class HttpResponse() {
 
 fun test<R> (httpResponse: HttpResponse, rtype: MyClass<R>) {
     val res = httpResponse.parseAs( rtype )
-    res : R //type mismatch: required R, found T
+    checkSubtype<R>(res) //type mismatch: required R, found T
 }

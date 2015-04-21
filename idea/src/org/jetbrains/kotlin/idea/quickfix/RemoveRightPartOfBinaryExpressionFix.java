@@ -69,13 +69,13 @@ public class RemoveRightPartOfBinaryExpressionFix<T extends JetExpression> exten
         return newExpression;
     }
 
-    public static JetSingleIntentionActionFactory createRemoveCastFactory() {
+    public static JetSingleIntentionActionFactory createRemoveTypeFromBinaryExpressionFactory(final String message) {
         return new JetSingleIntentionActionFactory() {
             @Override
             public JetIntentionAction<JetBinaryExpressionWithTypeRHS> createAction(Diagnostic diagnostic) {
                 JetBinaryExpressionWithTypeRHS expression = QuickFixUtil.getParentElementOfType(diagnostic, JetBinaryExpressionWithTypeRHS.class);
                 if (expression == null) return null;
-                return new RemoveRightPartOfBinaryExpressionFix<JetBinaryExpressionWithTypeRHS>(expression, JetBundle.message("remove.cast"));
+                return new RemoveRightPartOfBinaryExpressionFix<JetBinaryExpressionWithTypeRHS>(expression, message);
             }
         };
     }

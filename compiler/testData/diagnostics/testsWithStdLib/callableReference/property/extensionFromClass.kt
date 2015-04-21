@@ -1,9 +1,11 @@
+// !DIAGNOSTICS:-UNUSED_VARIABLE
+
 import kotlin.reflect.*
 
 class A {
     fun test() {
-        ::foo : KExtensionProperty<A, String>
-        ::bar : KMutableExtensionProperty<A, Int>
+        val fooRef: KExtensionProperty<A, String> = ::foo
+        val barRef: KMutableExtensionProperty<A, Int> = ::bar
     }
 }
 

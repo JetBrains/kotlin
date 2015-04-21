@@ -1,3 +1,4 @@
+// !CHECK_TYPE
 // FILE: A.java
 public enum A {
     ENTRY,
@@ -6,5 +7,5 @@ public enum A {
 
 // FILE: test.kt
 fun main() {
-     A.values(): Array<A>
+     checkSubtype<Array<A>>(A.values())
 }

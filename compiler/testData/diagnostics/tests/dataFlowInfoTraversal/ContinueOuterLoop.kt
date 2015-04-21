@@ -1,11 +1,13 @@
+// !CHECK_TYPE
+
 fun whileLoop(x: Int?) {
     outer@ while (x != 0) {
         while (x != 1) {
             if (x == 2) continue@outer
         }
-        <!TYPE_MISMATCH!>x<!> : Int
+        checkSubtype<Int>(<!TYPE_MISMATCH!>x<!>)
     }
-    <!DEBUG_INFO_SMARTCAST!>x<!> : Int
+    checkSubtype<Int>(<!DEBUG_INFO_SMARTCAST!>x<!>)
 }
 
 fun doWhileLoop(x: Int?) {
@@ -13,9 +15,9 @@ fun doWhileLoop(x: Int?) {
         do {
             if (x == 2) continue@outer
         } while (x == null)
-        <!TYPE_MISMATCH!>x<!> : Int
+        checkSubtype<Int>(<!TYPE_MISMATCH!>x<!>)
     }
-    <!DEBUG_INFO_SMARTCAST!>x<!> : Int
+    checkSubtype<Int>(<!DEBUG_INFO_SMARTCAST!>x<!>)
 }
 
 fun whileLoopContinueInnerOuter(x: Int?) {
@@ -24,9 +26,9 @@ fun whileLoopContinueInnerOuter(x: Int?) {
             while (x != 2) {
                 if (x == 3) continue@inner
             }
-            <!TYPE_MISMATCH!>x<!> : Int
+            checkSubtype<Int>(<!TYPE_MISMATCH!>x<!>)
         }
-        <!DEBUG_INFO_SMARTCAST!>x<!> : Int
+        checkSubtype<Int>(<!DEBUG_INFO_SMARTCAST!>x<!>)
     }
-    <!DEBUG_INFO_SMARTCAST!>x<!> : Int
+    checkSubtype<Int>(<!DEBUG_INFO_SMARTCAST!>x<!>)
 }

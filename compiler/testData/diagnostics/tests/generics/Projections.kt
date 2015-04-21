@@ -1,3 +1,5 @@
+// !CHECK_TYPE
+
 class In<in T>() {
     fun f(<!UNUSED_PARAMETER!>t<!> : T) : Unit {}
     fun f(<!UNUSED_PARAMETER!>t<!> : Int) : Int = 1
@@ -43,7 +45,7 @@ fun testInOut() {
     (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<*>).<!UNRESOLVED_REFERENCE!>inf<!>(1) // !!
 
     Inv<Int>().outf()
-    <!TYPE_MISMATCH!>(null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<in Int>).outf()<!> :  Int // Type mismatch
+    checkSubtype<Int>(<!TYPE_MISMATCH!>(null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<in Int>).outf()<!>) // Type mismatch
     (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<out Int>).outf()
     (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<*>).outf()
 

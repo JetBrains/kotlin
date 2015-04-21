@@ -1,3 +1,5 @@
+// !CHECK_TYPE
+
 //KT-2179 Nested function literal breaks compiler
 package i
 
@@ -9,16 +11,16 @@ fun test() {
 
     //breaks compiler
     val sample2 = sample1.map({it.map({it})})
-    sample2 : List<List<Int?>>
+    checkSubtype<List<List<Int?>>>(sample2)
 
     //breaks compiler
     val sample3 = sample1.map({row -> row.map({column -> column})})
-    sample3 : List<List<Int?>>
+    checkSubtype<List<List<Int?>>>(sample3)
 
     //doesn't break compiler
     val identity: (Int?) -> Int? = {column -> column}
     val sample4 = sample1.map({row -> row.map(identity)})
-    sample4 : List<List<Int?>>
+    checkSubtype<List<List<Int?>>>(sample4)
 }
 
 //------------

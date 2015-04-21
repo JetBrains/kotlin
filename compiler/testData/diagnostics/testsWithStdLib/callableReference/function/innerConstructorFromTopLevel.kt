@@ -1,3 +1,4 @@
+// !CHECK_TYPE
 // !DIAGNOSTICS: -UNUSED_EXPRESSION
 import kotlin.reflect.KMemberFunction0
 
@@ -9,5 +10,5 @@ fun main() {
     ::<!UNRESOLVED_REFERENCE!>Inner<!>
     val y = A::Inner
 
-    y : KMemberFunction0<A, A.Inner>
+    checkSubtype<KMemberFunction0<A, A.Inner>>(y)
 }

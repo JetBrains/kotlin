@@ -1,3 +1,4 @@
+// !CHECK_TYPE
 // !EXPLICIT_FLEXIBLE_TYPES
 
 fun foo(

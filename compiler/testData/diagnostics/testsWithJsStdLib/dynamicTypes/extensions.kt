@@ -1,3 +1,4 @@
+// !DIAGNOSTICS:-USELESS_CAST
 // !MARK_DYNAMIC_CALLS
 
 fun test(d: dynamic) {
@@ -15,10 +16,10 @@ fun test(d: dynamic) {
     d.onDynamic()
     d?.onDynamic()
 
-    (d: String).onString()
-    (d: Any).onAny()
-    (d: Any?).onNullableAny()
-    (d: Any).onDynamic()
+    (d as String).onString()
+    (d as Any).onAny()
+    (d as Any?).onNullableAny()
+    (d as Any).onDynamic()
 }
 
 fun Any.onAny() {}

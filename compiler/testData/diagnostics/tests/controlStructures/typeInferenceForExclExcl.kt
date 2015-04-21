@@ -11,10 +11,10 @@ fun <T: Any> exclExcl(t: T?): T = t!!
 
 fun test11() {
     // not 'String!'
-    exclExcl(A.foo()) checkType { it : _<String> }
-    exclExcl(A.foo()) checkType { <!TYPE_MISMATCH!>it<!> : _<String?> }
+    exclExcl(A.foo()) checkType { _<String>() }
+    exclExcl(A.foo()) checkType { <!TYPE_MISMATCH!>_<!><String?>() }
 
     // not 'String!'
-    A.foo()!! checkType { it : _<String> }
-    A.foo()!! checkType { <!TYPE_MISMATCH!>it<!> : _<String?> }
+    A.foo()!! checkType { _<String>() }
+    A.foo()!! checkType { <!TYPE_MISMATCH!>_<!><String?>() }
 }

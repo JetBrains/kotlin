@@ -212,6 +212,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         JetSimpleNameExpression operationSign = expression.getOperationReference();
         IElementType operationType = operationSign.getReferencedNameElementType();
         if (operationType == JetTokens.COLON) {
+            context.trace.report(DEPRECATED_STATIC_ASSERT.on(expression));
             return;
         }
         if (operationType != JetTokens.AS_KEYWORD && operationType != JetTokens.AS_SAFE) {
@@ -250,7 +251,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 expression.getLeft(), context.dataFlowInfo, actualType, context);
         for (JetType possibleType : possibleTypes) {
             if (typeChecker.isSubtypeOf(possibleType, targetType)) {
-                context.trace.report(USELESS_CAST_STATIC_ASSERT_IS_FINE.on(expression));
+                context.trace.report(USELESS_CAST.on(expression));
                 return;
             }
         }

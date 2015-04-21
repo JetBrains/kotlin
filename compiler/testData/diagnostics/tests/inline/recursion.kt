@@ -1,3 +1,4 @@
+// !CHECK_TYPE
 // !DIAGNOSTICS: -NOTHING_TO_INLINE -UNUSED_PARAMETER -UNUSED_VARIABLE -NOTHING_TO_INLINE -VARIABLE_EXPECTED
 
 inline fun inlineFun(s: (p: Int) -> Unit) {
@@ -10,7 +11,7 @@ inline fun <T> inlineFun(s: T) {
 
 
 inline fun <T> Function0<T>.inlineExt() {
-    ({11}:Function0<Int>).<!RECURSION_IN_INLINE!>inlineExt<!>();
+    (checkSubtype<Function0<Int>>({11})).<!RECURSION_IN_INLINE!>inlineExt<!>();
     {11}.<!RECURSION_IN_INLINE!>inlineExt<!>()
 }
 

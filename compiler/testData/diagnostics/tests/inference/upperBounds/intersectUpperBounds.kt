@@ -1,3 +1,5 @@
+// !CHECK_TYPE
+
 package s
 
 trait In<in T>
@@ -13,7 +15,7 @@ fun test(inA: In<A>, inB: In<B>, inC: In<C>) {
     <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>foo<!>(inA, inB)
 
     val r = foo(inA, inC)
-    r: C
+    checkSubtype<C>(r)
 
     val c: C = foo(inA, inB)
 
@@ -24,7 +26,7 @@ fun <T: C> bar(in1: In<T>): T = throw Exception("$in1")
 
 fun test(inA: In<A>) {
     val r = bar(inA)
-    r: C
+    checkSubtype<C>(r)
 }
 
 fun use(vararg a: Any?) = a

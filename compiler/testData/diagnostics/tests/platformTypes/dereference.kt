@@ -1,3 +1,5 @@
+// !CHECK_TYPE
+
 // FILE: p/J.java
 
 package p;
@@ -14,7 +16,7 @@ public class J {
 import p.*
 
 fun test(j: J) {
-    j.j() : J
+    checkSubtype<J>(j.j())
     j.j().j()
     j.j()!!.j()
 

@@ -1,3 +1,5 @@
+// !CHECK_TYPE
+
 // KT-1410 Compiler does automatically infer type argument when using variance
 //+JDK
 package d
@@ -17,7 +19,7 @@ fun foo(result: MutableList<in String>, collection: MutableCollection<String>, p
 
 fun test(result: MutableList<in Any>, collection: MutableCollection<String>, prefix : String){
     val c = collection.filterToMy(result, {it.startsWith(prefix)})
-    c: MutableCollection<out String>
+    checkSubtype<MutableCollection<out String>>(c)
 }
 
 //from library

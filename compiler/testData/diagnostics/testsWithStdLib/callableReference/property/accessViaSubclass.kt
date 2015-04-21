@@ -1,3 +1,5 @@
+// !CHECK_TYPE
+
 import kotlin.reflect.KMemberProperty
 
 open class Base {
@@ -8,6 +10,6 @@ open class Derived : Base()
 
 fun test() {
     val o = Base::foo
-    o : KMemberProperty<Base, Int>
-    o.get(Derived()) : Int
+    checkSubtype<KMemberProperty<Base, Int>>(o)
+    checkSubtype<Int>(o.get(Derived()))
 }

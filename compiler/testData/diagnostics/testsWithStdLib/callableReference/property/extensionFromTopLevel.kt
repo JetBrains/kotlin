@@ -1,3 +1,5 @@
+// !CHECK_TYPE
+
 import kotlin.reflect.*
 
 val String.countCharacters: Int
@@ -10,18 +12,18 @@ var Int.meaning: Long
 fun test() {
     val f = String::countCharacters
     
-    f : KTopLevelExtensionProperty<String, Int>
-    f : KExtensionProperty<String, Int>
-    <!TYPE_MISMATCH!>f<!> : KMutableExtensionProperty<String, Int>
-    f.get("abc") : Int
+    checkSubtype<KTopLevelExtensionProperty<String, Int>>(f)
+    checkSubtype<KExtensionProperty<String, Int>>(f)
+    checkSubtype<KMutableExtensionProperty<String, Int>>(<!TYPE_MISMATCH!>f<!>)
+    checkSubtype<Int>(f.get("abc"))
     f.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>set<!>("abc", 0)
 
     val g = Int::meaning
 
-    g : KTopLevelExtensionProperty<Int, Long>
-    g : KExtensionProperty<Int, Long>
-    g : KMutableTopLevelExtensionProperty<Int, Long>
-    g : KMutableExtensionProperty<Int, Long>
-    g.get(0) : Long
+    checkSubtype<KTopLevelExtensionProperty<Int, Long>>(g)
+    checkSubtype<KExtensionProperty<Int, Long>>(g)
+    checkSubtype<KMutableTopLevelExtensionProperty<Int, Long>>(g)
+    checkSubtype<KMutableExtensionProperty<Int, Long>>(g)
+    checkSubtype<Long>(g.get(0))
     g.set(1, 0L)
 }

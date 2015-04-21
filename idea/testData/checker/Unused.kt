@@ -1,7 +1,6 @@
 fun test(<warning textAttributesKey="NOT_USED_ELEMENT_ATTRIBUTES">unusedParam</warning>: Int) { // UNUSED_PARAMETER
   val str = ":)"
   str <warning textAttributesKey="NOT_USED_ELEMENT_ATTRIBUTES">as String</warning> // USELESS_CAST
-  str <warning textAttributesKey="NOT_USED_ELEMENT_ATTRIBUTES">as Any</warning>    // USELESS_CAST_STATIC_ASSERT_IS_FINE
 
   // UNUSED_FUNCTION_LITERAL
   <warning textAttributesKey="NOT_USED_ELEMENT_ATTRIBUTES">{

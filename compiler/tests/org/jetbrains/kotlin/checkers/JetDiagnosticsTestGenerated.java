@@ -6543,12 +6543,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("typed.kt")
-            public void testTyped() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inline/typed.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("unsupportedConstruction.kt")
             public void testUnsupportedConstruction() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inline/unsupportedConstruction.kt");

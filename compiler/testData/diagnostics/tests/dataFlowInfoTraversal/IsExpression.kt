@@ -1,6 +1,8 @@
+// !CHECK_TYPE
+
 fun foo(x: Number) {
     if ((x as Int) is Int) {
-        <!DEBUG_INFO_SMARTCAST!>x<!> : Int
+        checkSubtype<Int>(<!DEBUG_INFO_SMARTCAST!>x<!>)
     }
-    <!DEBUG_INFO_SMARTCAST!>x<!> : Int
+    checkSubtype<Int>(<!DEBUG_INFO_SMARTCAST!>x<!>)
 }

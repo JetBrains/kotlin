@@ -1,3 +1,4 @@
+// !CHECK_TYPE
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // FILE: p/J.java
 
@@ -23,9 +24,9 @@ class C
 fun foo(i: Int?) : C = null!!
 
 fun test(i: Int, ni: Int?) {
-    foo(2) : J.A
-    foo(i) : J.A
-    J.foo(ni) : J.B
+    checkSubtype<J.A>(foo(2))
+    checkSubtype<J.A>(foo(i))
+    checkSubtype<J.B>(J.foo(ni))
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>(ni)
 
     foo(J.getInteger())

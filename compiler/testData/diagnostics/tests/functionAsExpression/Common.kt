@@ -1,3 +1,4 @@
+// !CHECK_TYPE
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 annotation class ann(val name: String)
@@ -16,5 +17,5 @@ val withExpression = fun() = 5
 val funfun = fun() = fun() = 5
 
 val parentesized = (fun () {})
-val parentesizedWithType = (fun () {}) : () -> Unit
-val withType = (fun () {}) : () -> Unit
+val parentesizedWithType = checkSubtype<() -> Unit>((fun () {}))
+val withType = checkSubtype<() -> Unit>((fun () {}))

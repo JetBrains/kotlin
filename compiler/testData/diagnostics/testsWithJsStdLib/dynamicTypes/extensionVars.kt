@@ -1,4 +1,5 @@
 // !MARK_DYNAMIC_CALLS
+// !DIAGNOSTICS:-USELESS_CAST
 
 fun test(d: dynamic) {
     d.<!DEBUG_INFO_DYNAMIC!>onAnyVar<!>
@@ -23,15 +24,15 @@ fun test(d: dynamic) {
 
     d?.onDynamicVar = 1
 
-    (d: String).onStringVar
-    (d: Any).onAnyVar
-    (d: Any?).onNullableAnyVar
-    (d: Any).onDynamicVar
+    (d as String).onStringVar
+    (d as Any).onAnyVar
+    (d as Any?).onNullableAnyVar
+    (d as Any).onDynamicVar
 
-    (d: String).onStringVar = 1
-    (d: Any).onAnyVar = 1
-    (d: Any?).onNullableAnyVar = 1
-    (d: Any).onDynamicVar = 1
+    (d as String).onStringVar = 1
+    (d as Any).onAnyVar = 1
+    (d as Any?).onNullableAnyVar = 1
+    (d as Any).onDynamicVar = 1
 }
 
 var Any.onAnyVar: Int
