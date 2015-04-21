@@ -227,6 +227,7 @@ private fun generatorForTests() =
             publicField<ExpressionTypingServices>()
             publicField<ExpressionTypingUtils>()
             publicField<TypeResolver>()
+            publicField<QualifiedExpressionResolver>()
 
             field<GlobalContext>(init = GivenExpression("org.jetbrains.kotlin.context.ContextPackage.GlobalContext()"),
                   useAsContext = true)

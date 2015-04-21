@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.resolve.calls.CallResolver;
 import org.jetbrains.kotlin.resolve.scopes.AbstractScopeAdapter;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
+import org.jetbrains.kotlin.resolve.validation.CompositeSymbolUsageValidator;
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator;
 
 import javax.inject.Inject;
@@ -43,7 +44,14 @@ import java.util.Set;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 
 public class QualifiedExpressionResolver {
-    private SymbolUsageValidator symbolUsageValidator;
+    private SymbolUsageValidator symbolUsageValidator = new CompositeSymbolUsageValidator();
+
+    /**
+     * @deprecated Instance of this class should be obtained from the Injector
+     */
+    @Deprecated
+    public QualifiedExpressionResolver() {
+    }
 
     @Inject
     public void setSymbolUsageValidator(SymbolUsageValidator symbolUsageValidator) {

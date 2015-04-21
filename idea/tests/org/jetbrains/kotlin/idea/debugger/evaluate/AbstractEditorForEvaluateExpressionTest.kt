@@ -23,6 +23,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import org.jetbrains.kotlin.checkers.AbstractJetPsiCheckerTest
+import org.jetbrains.kotlin.di.InjectorForTests
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.completion.test.AbstractJvmBasicCompletionTest
@@ -57,7 +58,7 @@ public abstract class AbstractCodeFragmentHighlightingTest : AbstractJetPsiCheck
                 val importDirective = JetPsiFactory(getProject()).createImportDirective(it)
                 val moduleDescriptor = file.getResolutionFacade().findModuleDescriptor(file)
                 val scope = JetModuleUtil.getSubpackagesOfRootScope(moduleDescriptor)
-                val descriptor = QualifiedExpressionResolver()
+                val descriptor = InjectorForTests(getProject(), moduleDescriptor).getQualifiedExpressionResolver()
                                          .processImportReference(importDirective, scope, scope, BindingTraceContext(), LookupMode.EVERYTHING)
                                          .getAllDescriptors()
                                          .singleOrNull() ?: error("Could not resolve descriptor to import: $it")
