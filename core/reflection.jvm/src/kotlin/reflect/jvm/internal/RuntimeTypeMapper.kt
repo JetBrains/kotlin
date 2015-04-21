@@ -37,7 +37,6 @@ object RuntimeTypeMapper : JavaToKotlinClassMapBuilder() {
     private val kotlinArrayClassId = KotlinBuiltIns.getInstance().getArray().classId
 
     private val kotlinFqNameToJvmDesc = linkedMapOf<FqName, String>()
-    private val kotlinFqNameToJvmDescNullable = linkedMapOf<FqName, String>()
     private val jvmDescToKotlinClassId = linkedMapOf<String, ClassId>()
 
     init {
@@ -52,33 +51,32 @@ object RuntimeTypeMapper : JavaToKotlinClassMapBuilder() {
             val primitiveType = type.getPrimitiveType()
             val primitiveClassDescriptor = builtIns.getPrimitiveClassDescriptor(primitiveType)
 
-            recordMapping(primitiveClassDescriptor, type.getDesc())
-            recordMapping(builtIns.getPrimitiveArrayClassDescriptor(primitiveType), "[" + type.getDesc())
+            recordKotlinToJvm(primitiveClassDescriptor, type.getDesc())
+            recordKotlinToJvm(builtIns.getPrimitiveArrayClassDescriptor(primitiveType), "[" + type.getDesc())
 
-            recordNullableMapping(primitiveClassDescriptor, ClassId.topLevel(type.getWrapperFqName()).desc)
+            recordJvmToKotlin(ClassId.topLevel(type.getWrapperFqName()).desc, primitiveClassDescriptor)
         }
     }
 
-    private fun recordMapping(kotlinDescriptor: ClassDescriptor, jvmDesc: String) {
+    private fun recordKotlinToJvm(kotlinDescriptor: ClassDescriptor, jvmDesc: String) {
         kotlinFqNameToJvmDesc[DescriptorUtils.getFqNameSafe(kotlinDescriptor)] = jvmDesc
-        jvmDescToKotlinClassId[jvmDesc] = kotlinDescriptor.classId
+        recordJvmToKotlin(jvmDesc, kotlinDescriptor)
 
         val companionObject = kotlinDescriptor.getCompanionObjectDescriptor()
         if (companionObject != null) {
             val runtimeCompanionFqName = IntrinsicObjects.mapType(companionObject)
                                          ?: throw KotlinReflectionInternalError("Failed to map intrinsic companion of $kotlinDescriptor")
-            recordMapping(companionObject, ClassId.topLevel(runtimeCompanionFqName).desc)
+            recordKotlinToJvm(companionObject, ClassId.topLevel(runtimeCompanionFqName).desc)
         }
     }
 
-    private fun recordNullableMapping(kotlinDescriptor: ClassDescriptor, jvmDesc: String) {
-        kotlinFqNameToJvmDescNullable[DescriptorUtils.getFqNameSafe(kotlinDescriptor)] = jvmDesc
+    private fun recordJvmToKotlin(jvmDesc: String, kotlinDescriptor: ClassDescriptor) {
         jvmDescToKotlinClassId[jvmDesc] = kotlinDescriptor.classId
     }
 
     override fun register(javaClass: Class<*>, kotlinDescriptor: ClassDescriptor, direction: JavaToKotlinClassMapBuilder.Direction) {
         // TODO: use direction correctly
-        recordMapping(kotlinDescriptor, javaClass.classId.desc)
+        recordKotlinToJvm(kotlinDescriptor, javaClass.classId.desc)
     }
 
     override fun register(javaClass: Class<*>, kotlinDescriptor: ClassDescriptor, kotlinMutableDescriptor: ClassDescriptor) {
@@ -89,7 +87,9 @@ object RuntimeTypeMapper : JavaToKotlinClassMapBuilder() {
 
     fun mapTypeToJvmDesc(type: JetType): String {
         val classifier = type.getConstructor().getDeclarationDescriptor()
-        if (classifier is TypeParameterDescriptor) return mapTypeToJvmDesc(classifier.getUpperBounds().first())
+        if (classifier is TypeParameterDescriptor) {
+            return mapTypeToJvmDesc(classifier.getUpperBounds().first())
+        }
 
         if (KotlinBuiltIns.isArray(type)) {
             val elementType = KotlinBuiltIns.getInstance().getArrayElementType(type)
@@ -100,12 +100,14 @@ object RuntimeTypeMapper : JavaToKotlinClassMapBuilder() {
 
         val classDescriptor = classifier as ClassDescriptor
         val fqNameUnsafe = DescriptorUtils.getFqName(classDescriptor)
+
+        KotlinBuiltIns.getPrimitiveTypeByFqName(fqNameUnsafe)?.let { primitiveType ->
+            val jvmType = JvmPrimitiveType.get(primitiveType)
+            return if (TypeUtils.isNullableType(type)) ClassId.topLevel(jvmType.getWrapperFqName()).desc else jvmType.getDesc()
+        }
+
         if (fqNameUnsafe.isSafe()) {
-            val fqName = fqNameUnsafe.toSafe()
-            if (TypeUtils.isNullableType(type)) {
-                kotlinFqNameToJvmDescNullable[fqName]?.let { return it }
-            }
-            kotlinFqNameToJvmDesc[fqName]?.let { return it }
+            kotlinFqNameToJvmDesc[fqNameUnsafe.toSafe()]?.let { return it }
         }
 
         return classDescriptor.classId.desc
