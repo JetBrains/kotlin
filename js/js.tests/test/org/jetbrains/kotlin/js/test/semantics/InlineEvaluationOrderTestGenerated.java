@@ -197,6 +197,18 @@ public class InlineEvaluationOrderTestGenerated extends AbstractInlineEvaluation
         doTest(fileName);
     }
 
+    @TestMetadata("methodCallQualifierWithSideEffect.kt")
+    public void testMethodCallQualifierWithSideEffect() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/methodCallQualifierWithSideEffect.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("methodInlineCallQualifierWithSideEffect.kt")
+    public void testMethodInlineCallQualifierWithSideEffect() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/methodInlineCallQualifierWithSideEffect.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("multiDeclaration.kt")
     public void testMultiDeclaration() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/multiDeclaration.kt");

@@ -25,6 +25,7 @@ import kotlin.platform.platformStatic
 import kotlin.properties.Delegates
 
 import com.intellij.util.SmartList
+import org.jetbrains.kotlin.js.translate.context.Namer
 
 /**
  * If inline function consists of multiple statements,
@@ -259,12 +260,21 @@ class ExpressionDecomposer private (
     }
 
     private fun Callable.process() {
-        val matchedIndices = arguments.indicesOfExtractable
+        var matchedIndices = arguments.indicesOfExtractable
         if (!matchedIndices.hasNext()) return
 
         qualifier = accept(qualifier)
         if (qualifier in containsNodeWithSideEffect) {
-            qualifier = qualifier.extractToTemporary()
+            val callee = qualifier as? JsNameRef
+            val receiver = callee?.qualifier
+
+            if (callee != null && receiver != null && receiver in containsNodeWithSideEffect) {
+                val receiverTmp = receiver.extractToTemporary()
+                callee.qualifier = receiverTmp
+            }
+            else {
+                qualifier = qualifier.extractToTemporary()
+            }
         }
 
         processByIndices(arguments, matchedIndices)
