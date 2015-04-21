@@ -39,7 +39,6 @@ import com.intellij.ui.content.ContentFactory;
 import com.intellij.ui.content.ContentManager;
 import com.intellij.util.Alarm;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories;
@@ -59,8 +58,10 @@ import org.jetbrains.kotlin.idea.util.LongRunningReadTask;
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.CompositeBindingContext;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor;
 
 import javax.swing.*;
@@ -206,16 +207,11 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
         try {
             ResolutionFacade resolutionFacade = ResolvePackage.getResolutionFacade(jetFile);
 
-            Ref<Set<JetElement>> ref = Ref.create();
-            BindingContext bindingContext = processInlinedDeclarations(
-                    jetFile.getProject(),
-                    resolutionFacade,
-                    Collections.<JetElement>singleton(jetFile),
-                    1,
-                    ref,
-                    !enableInline
-            );
+            Ref<Set<JetElement>> ref = Ref.<Set<JetElement>>create(new HashSet<JetElement>());
 
+            BindingContext bindingContextForFile = resolutionFacade.analyzeFullyAndGetResult(Collections.singletonList(jetFile)).getBindingContext();
+
+            BindingContext bindingContext = analyzeElementWithInline(resolutionFacade, bindingContextForFile, jetFile, 1, ref, enableInline);
 
             //We processing another files just to annotate anonymous classes within their inline functions
             //Bytecode not produced for them cause of filtering via generateClassFilter
@@ -280,42 +276,58 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
         return answer.toString();
     }
 
-    private static BindingContext processInlinedDeclarations(
-            @NotNull Project project,
+    private static BindingContext analyzeElementWithInline(
             @NotNull ResolutionFacade resolutionFacade,
-            @NotNull Set<JetElement> originalElements,
+            @NotNull final BindingContext bindingContext,
+            @NotNull JetElement element,
             int deep,
             @NotNull Ref<Set<JetElement>> resultElements,
-            boolean processOnlyReifiedInline
+            final boolean enableInline
     ) {
-        AnalysisResult newResult = resolutionFacade.analyzeFullyAndGetResult(originalElements);
-        BindingContext bindingContext = newResult.getBindingContext();
+        final Project project = element.getProject();
+        final Set<JetNamedFunction> collectedElements = new HashSet<JetNamedFunction>();
 
-        Set<JetElement> collectedElements = new HashSet<JetElement>();
-        collectedElements.addAll(originalElements);
-        Map<Call, ResolvedCall<?>> contents = bindingContext.getSliceContents(BindingContext.RESOLVED_CALL);
-        for (ResolvedCall call : contents.values()) {
-            CallableDescriptor descriptor = call.getResultingDescriptor();
-            if (!(descriptor instanceof DeserializedSimpleFunctionDescriptor) && InlineUtil.isInline(descriptor)) {
-                if (!processOnlyReifiedInline || hasReifiedTypeParameters(descriptor)) {
+        element.accept(new JetTreeVisitorVoid() {
+            @Override
+            public void visitExpression(@NotNull JetExpression expression) {
+                super.visitExpression(expression);
+
+                Call call = bindingContext.get(BindingContext.CALL, expression);
+                if (call == null) return;
+
+                ResolvedCall<?> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, call);
+                if (resolvedCall == null) return;
+
+                CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
+                if (descriptor instanceof DeserializedSimpleFunctionDescriptor) return;
+
+                if (InlineUtil.isInline(descriptor) && (enableInline || hasReifiedTypeParameters(descriptor))) {
                     PsiElement declaration = DescriptorToSourceUtilsIde.INSTANCE$.getAnyDeclaration(project, descriptor);
-                    if (declaration != null && declaration instanceof JetElement) {
-                        collectedElements.add((JetElement) declaration);
+                    if (declaration != null && declaration instanceof JetNamedFunction) {
+                        collectedElements.add((JetNamedFunction) declaration);
                     }
                 }
             }
-        }
+        });
 
-        if (collectedElements.size() != originalElements.size()) {
-            if (newResult.isError() || deep >= 10) {
-                resultElements.set(collectedElements);
-                return bindingContext;
+        resultElements.get().add(element);
+
+        if (!collectedElements.isEmpty() && deep < 10) {
+            List<BindingContext> innerContexts = new ArrayList<BindingContext>();
+            for (JetNamedFunction inlineFunctions : collectedElements) {
+                JetExpression body = inlineFunctions.getBodyExpression();
+                assert body != null : "Inline function should have a body: " + inlineFunctions.getText();
+
+                BindingContext bindingContextForFunction = resolutionFacade.analyze(body, BodyResolveMode.FULL);
+                innerContexts.add(analyzeElementWithInline(resolutionFacade, bindingContextForFunction, inlineFunctions, deep + 1, resultElements, enableInline));
             }
 
-            return processInlinedDeclarations(project, resolutionFacade, collectedElements, deep + 1, resultElements, processOnlyReifiedInline);
+            innerContexts.add(bindingContext);
+
+            resultElements.get().addAll(collectedElements);
+            return CompositeBindingContext.Companion.create(innerContexts);
         }
 
-        resultElements.set(collectedElements);
         return bindingContext;
     }
 
