@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryPac
 
 import javax.inject.Inject;
 import java.util.Collections;
+import java.util.List;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.resolve.calls.context.ContextDependency.INDEPENDENT;
@@ -217,8 +218,20 @@ public class CallExpressionResolver {
             }
 
             JetType type = functionDescriptor.getReturnType();
-
-            return TypeInfoFactoryPackage.createTypeInfo(type, resolvedCall.getDataFlowInfoForArguments().getResultInfo());
+            // Extracting jump out possible and jump point flow info from arguments, if any
+            List<? extends ValueArgument> arguments = callExpression.getValueArguments();
+            DataFlowInfo resultFlowInfo = resolvedCall.getDataFlowInfoForArguments().getResultInfo();
+            DataFlowInfo jumpFlowInfo = resultFlowInfo;
+            boolean jumpOutPossible = false;
+            for (ValueArgument argument: arguments) {
+                JetTypeInfo argTypeInfo = context.trace.get(BindingContext.EXPRESSION_TYPE_INFO, argument.getArgumentExpression());
+                if (argTypeInfo != null && argTypeInfo.getJumpOutPossible()) {
+                    jumpOutPossible = true;
+                    jumpFlowInfo = argTypeInfo.getJumpFlowInfo();
+                    break;
+                }
+            }
+            return TypeInfoFactoryPackage.createTypeInfo(type, resultFlowInfo, jumpOutPossible, jumpFlowInfo);
         }
 
         JetExpression calleeExpression = callExpression.getCalleeExpression();

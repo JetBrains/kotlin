@@ -1,0 +1,5 @@
+package
+
+internal fun bar(): kotlin.Boolean
+public fun foo(/*0*/ x: kotlin.String?): kotlin.Int
+internal fun gav(/*0*/ arg: kotlin.Any): kotlin.String
