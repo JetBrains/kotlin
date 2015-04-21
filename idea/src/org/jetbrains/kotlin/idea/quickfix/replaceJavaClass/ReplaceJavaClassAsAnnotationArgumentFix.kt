@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.quickfix.JetIntentionAction
 import org.jetbrains.kotlin.idea.quickfix.JetSingleIntentionActionFactory
 import org.jetbrains.kotlin.idea.quickfix.JetWholeProjectModalAction
+import org.jetbrains.kotlin.idea.quickfix.quickfixUtil.createIntentionForFirstParentOfType
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.psi.*
@@ -45,10 +46,8 @@ public class ReplaceJavaClassAsAnnotationArgumentFix(
     }
 
     companion object : JetSingleIntentionActionFactory() {
-        override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-            val entry = diagnostic.getPsiElement().getNonStrictParentOfType<JetAnnotationEntry>() ?: return null
-            return ReplaceJavaClassAsAnnotationArgumentFix(entry)
-        }
+        override fun createAction(diagnostic: Diagnostic) =
+                diagnostic.createIntentionForFirstParentOfType(::ReplaceJavaClassAsAnnotationArgumentFix)
     }
 }
 
@@ -80,9 +79,7 @@ public class ReplaceJavaClassAsAnnotationArgumentInWholeProjectFix(
     }
 
     companion object : JetSingleIntentionActionFactory() {
-        override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-            val entry = diagnostic.getPsiElement().getNonStrictParentOfType<JetAnnotationEntry>() ?: return null
-            return ReplaceJavaClassAsAnnotationArgumentInWholeProjectFix(entry)
-        }
+        override fun createAction(diagnostic: Diagnostic) =
+                diagnostic.createIntentionForFirstParentOfType<JetAnnotationEntry>(::ReplaceJavaClassAsAnnotationArgumentInWholeProjectFix)
     }
 }

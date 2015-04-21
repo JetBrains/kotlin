@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
+import org.jetbrains.kotlin.idea.quickfix.quickfixUtil.createIntentionForFirstParentOfType
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.psi.JetClass
 import org.jetbrains.kotlin.psi.JetClassOrObject
@@ -59,8 +60,8 @@ public class InsertDelegationCallQuickfix(val isThis: Boolean, element: JetSecon
     }
 
     object InsertThisDelegationCallFactory : JetSingleIntentionActionFactory() {
-        override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-            val secondaryConstructor = diagnostic.getPsiElement().getNonStrictParentOfType<JetSecondaryConstructor>() ?: return null
+        override fun createAction(diagnostic: Diagnostic) = diagnostic.createIntentionForFirstParentOfType<JetSecondaryConstructor> {
+            secondaryConstructor ->
             if (secondaryConstructor.getClassOrObject().getConstructorsCount() <= 1 ||
                 !secondaryConstructor.hasImplicitDelegationCall()) return null
 

@@ -25,6 +25,7 @@ import com.intellij.openapi.project.*
 import com.intellij.openapi.editor.*
 import com.intellij.psi.*
 import org.jetbrains.kotlin.idea.project.PluginJetFilesProvider
+import org.jetbrains.kotlin.idea.quickfix.quickfixUtil.createIntentionForFirstParentOfType
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.psiUtil.*
 import java.util.ArrayList
@@ -54,9 +55,7 @@ public class AddInitKeywordFix(element: JetClassInitializer) : JetIntentionActio
                 prevLeaf!!.delete()
             }
         }
-        override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-            return AddInitKeywordFix(diagnostic.getPsiElement().getNonStrictParentOfType<JetClassInitializer>() ?: return null)
-        }
+        override fun createAction(diagnostic: Diagnostic) = diagnostic.createIntentionForFirstParentOfType(::AddInitKeywordFix)
     }
 }
 
@@ -89,8 +88,6 @@ public class AddInitKeywordFixInWholeProjectFix(elem: JetClassInitializer)
 
     companion object Factory : JetSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic) =
-                diagnostic.getPsiElement().getNonStrictParentOfType<JetClassInitializer>()?.let {
-                    AddInitKeywordFixInWholeProjectFix(it)
-                }
+                diagnostic.createIntentionForFirstParentOfType(::AddInitKeywordFixInWholeProjectFix)
     }
 }
