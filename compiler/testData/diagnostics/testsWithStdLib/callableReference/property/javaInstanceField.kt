@@ -1,3 +1,4 @@
+// !DIAGNOSTICS:-UNUSED_VARIABLE
 // FILE: JavaClass.java
 
 public class JavaClass {
@@ -16,10 +17,10 @@ public class JavaClass {
 import kotlin.reflect.*
 
 fun test() {
-    JavaClass::publicFinal : KMemberProperty<JavaClass, Int>
-    JavaClass::publicMutable : KMutableMemberProperty<JavaClass, Long>
-    JavaClass::protectedFinal : KMemberProperty<JavaClass, Double>
-    JavaClass::protectedMutable : KMutableMemberProperty<JavaClass, Char>
-    JavaClass::<!INVISIBLE_MEMBER!>privateFinal<!> : KMemberProperty<JavaClass, String?>
-    JavaClass::<!INVISIBLE_MEMBER!>privateMutable<!> : KMutableMemberProperty<JavaClass, Any?>
+    val pubFinRef: KMemberProperty<JavaClass, Int> = JavaClass::publicFinal
+    val pubMutRef: KMutableMemberProperty<JavaClass, Long> = JavaClass::publicMutable
+    val protFinRef: KMemberProperty<JavaClass, Double> = JavaClass::protectedFinal
+    val protMutRef: KMutableMemberProperty<JavaClass, Char> = JavaClass::protectedMutable
+    val privFinRef: KMemberProperty<JavaClass, String?> = JavaClass::<!INVISIBLE_MEMBER!>privateFinal<!>
+    val privMutRef: KMutableMemberProperty<JavaClass, Any?> = JavaClass::<!INVISIBLE_MEMBER!>privateMutable<!>
 }

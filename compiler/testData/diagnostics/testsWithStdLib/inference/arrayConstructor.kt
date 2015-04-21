@@ -1,3 +1,5 @@
+// !CHECK_TYPE
+
 package b
 
 fun bar() {
@@ -5,8 +7,8 @@ fun bar() {
     val a2 = Array(1, {i: Int -> "$i"})
     val a3 = Array(1, {it})
 
-    a1 : Array<Int>
-    a2 : Array<String>
-    a3 : Array<Int>
+    checkSubtype<Array<Int>>(a1)
+    checkSubtype<Array<String>>(a2)
+    checkSubtype<Array<Int>>(a3)
 }
 

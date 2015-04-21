@@ -1,3 +1,4 @@
+// !CHECK_TYPE
 // FILE: p/J.java
 
 package p;

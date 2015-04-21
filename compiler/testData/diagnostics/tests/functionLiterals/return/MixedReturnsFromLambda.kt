@@ -1,3 +1,5 @@
+// !CHECK_TYPE
+
 trait A
 trait B: A
 trait C: A
@@ -8,7 +10,7 @@ fun test(a: C, b: B) {
       if (a != b) return@f a
       b
     }
-    x: A
+    checkSubtype<A>(x)
 }
 
 fun run<T>(f: () -> T): T { return f() }

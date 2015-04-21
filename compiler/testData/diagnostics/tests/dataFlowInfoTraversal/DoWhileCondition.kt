@@ -1,18 +1,20 @@
+// !CHECK_TYPE
+
 fun simpleDoWhile(x: Int?, y0: Int) {
     var y = y0
     do {
-        x : Int?
+        checkSubtype<Int?>(x)
         y++
     } while (x!! == y)
-    <!DEBUG_INFO_SMARTCAST!>x<!> : Int
+    checkSubtype<Int>(<!DEBUG_INFO_SMARTCAST!>x<!>)
 }
 
 fun doWhileWithBreak(x: Int?, y0: Int) {
     var y = y0
     do {
-        x : Int?
+        checkSubtype<Int?>(x)
         y++
         if (y > 0) break
     } while (x!! == y)
-    <!TYPE_MISMATCH!>x<!> : Int
+    checkSubtype<Int>(<!TYPE_MISMATCH!>x<!>)
 }

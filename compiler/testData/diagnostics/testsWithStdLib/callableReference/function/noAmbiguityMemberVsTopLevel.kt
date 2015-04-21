@@ -1,3 +1,5 @@
+// !CHECK_TYPE
+
 import kotlin.reflect.KMemberFunction0
 
 fun foo() {}
@@ -8,6 +10,6 @@ class A {
     fun main() {
         val x = ::foo
 
-        x : KMemberFunction0<A, Unit>
+        checkSubtype<KMemberFunction0<A, Unit>>(x)
     }
 }

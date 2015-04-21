@@ -1,3 +1,5 @@
+// !CHECK_TYPE
+
 fun test() {
     val x = run f@{
       run ff@ {
@@ -5,7 +7,7 @@ fun test() {
       }
       return@f 1
     }
-    x: Int
+    checkSubtype<Int>(x)
 }
 
 fun run<T>(f: () -> T): T { return f() }

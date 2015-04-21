@@ -1,9 +1,9 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION
+// !DIAGNOSTICS: -UNUSED_EXPRESSION,-UNUSED_VARIABLE
 fun foo(x: Int, <!UNUSED_PARAMETER!>y<!>: Any) = x
 fun foo(<!UNUSED_PARAMETER!>x<!>: Any, y: Int) = y
 
 fun main() {
     ::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
     
-    ::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!> : (Int, Any) -> Unit
+    val fooRef: (Int, Any) -> Unit = ::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
 }

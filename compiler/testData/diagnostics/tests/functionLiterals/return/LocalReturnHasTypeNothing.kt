@@ -1,6 +1,8 @@
+// !CHECK_TYPE
+
 fun test() {
     run1 f@{
-        (return@f 1)<!UNREACHABLE_CODE!>: Nothing<!>
+        <!UNREACHABLE_CODE!>checkSubtype<Nothing>(<!>return@f 1<!UNREACHABLE_CODE!>)<!>
     }
 }
 

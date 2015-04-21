@@ -4,5 +4,5 @@
 fun <T> foo(a: Array<T>): T = null!!
 
 fun test(a: Array<in Int>) {
-    foo(a) checkType { it : _<Any?> }
+    foo(a) checkType { _<Any?>() }
 }

@@ -1,3 +1,5 @@
+// !CHECK_TYPE
+
 package d
 
 fun <T: Any> joinT(<!UNUSED_PARAMETER!>x<!>: Int, vararg <!UNUSED_PARAMETER!>a<!>: T): T? {
@@ -10,6 +12,6 @@ fun <T: Any> joinT(<!UNUSED_PARAMETER!>x<!>: Any, <!UNUSED_PARAMETER!>y<!>: T): 
 
 fun test() {
     val x2 = joinT(<!NON_VARARG_SPREAD!>*<!>1, "2")
-    x2 : String?
+    checkSubtype<String?>(x2)
 }
 

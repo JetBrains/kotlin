@@ -11,5 +11,5 @@ public class J {
 import p.*
 
 fun test(j: J) {
-    j.s()?.length().checkType { it : _<Int?> }
+    j.s()?.length().checkType { _<Int?>() }
 }

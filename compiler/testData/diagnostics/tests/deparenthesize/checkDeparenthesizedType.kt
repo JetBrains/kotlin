@@ -1,3 +1,5 @@
+// !CHECK_TYPE
+
 package m
 
 fun test(i: Int?) {
@@ -10,14 +12,14 @@ fun test(i: Int?) {
 
     val a: Int = l4@ <!TYPE_MISMATCH!>""<!>
     val b: Int = (<!TYPE_MISMATCH!>""<!>)
-    val c: Int = <!TYPE_MISMATCH!>""<!>: Int
-    val d: Int = <!TYPE_MISMATCH!><!TYPE_MISMATCH!>""<!>: Long<!>
+    val c: Int = checkSubtype<Int>(<!TYPE_MISMATCH!>""<!>)
+    val d: Int = <!TYPE_MISMATCH!>checkSubtype<Long>(<!TYPE_MISMATCH!>""<!>)<!>
 
 
     foo(l4@ <!TYPE_MISMATCH!>""<!>)
     foo((<!TYPE_MISMATCH!>""<!>))
-    foo(<!TYPE_MISMATCH!>""<!>: Int)
-    foo(<!TYPE_MISMATCH!><!TYPE_MISMATCH!>""<!>: Long<!>)
+    foo(checkSubtype<Int>(<!TYPE_MISMATCH!>""<!>))
+    foo(<!TYPE_MISMATCH!>checkSubtype<Long>(<!TYPE_MISMATCH!>""<!>)<!>)
     
     use(a, b, c, d)
 }

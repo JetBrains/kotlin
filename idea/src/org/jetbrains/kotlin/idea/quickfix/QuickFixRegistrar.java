@@ -17,11 +17,11 @@
 package org.jetbrains.kotlin.idea.quickfix;
 
 import org.jetbrains.kotlin.idea.core.codeInsight.ImplementMethodsHandler;
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable.*;
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromCallWithConstructorCalleeActionFactory;
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromConstructorCallActionFactory;
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromReferenceExpressionActionFactory;
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromTypeReferenceActionFactory;
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable.*;
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateLocalVariableActionFactory;
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateParameterActionFactory;
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateParameterByNamedArgumentActionFactory;
@@ -88,9 +88,10 @@ public class QuickFixRegistrar {
         QuickFixes.factories.put(NOTHING_TO_OVERRIDE, AddFunctionToSupertypeFix.createFactory());
         QuickFixes.factories.put(VIRTUAL_MEMBER_HIDDEN, AddModifierFix.createFactory(OVERRIDE_KEYWORD));
 
-        QuickFixes.factories.put(USELESS_CAST_STATIC_ASSERT_IS_FINE, ReplaceOperationInBinaryExpressionFix.createChangeCastToStaticAssertFactory());
-        QuickFixes.factories.put(USELESS_CAST, RemoveRightPartOfBinaryExpressionFix.createRemoveCastFactory());
-        QuickFixes.factories.put(USELESS_CAST_STATIC_ASSERT_IS_FINE, RemoveRightPartOfBinaryExpressionFix.createRemoveCastFactory());
+        QuickFixes.factories.put(USELESS_CAST, RemoveRightPartOfBinaryExpressionFix.createRemoveTypeFromBinaryExpressionFactory(
+                "Remove cast"));
+        QuickFixes.factories.put(DEPRECATED_STATIC_ASSERT, RemoveRightPartOfBinaryExpressionFix.createRemoveTypeFromBinaryExpressionFactory(
+                "Remove static type assertion"));
 
         JetSingleIntentionActionFactory changeAccessorTypeFactory = ChangeAccessorTypeFix.createFactory();
         QuickFixes.factories.put(WRONG_SETTER_PARAMETER_TYPE, changeAccessorTypeFactory);

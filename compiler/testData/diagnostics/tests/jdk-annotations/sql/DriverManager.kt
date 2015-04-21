@@ -1,25 +1,27 @@
+// !CHECK_TYPE
+
 import java.sql.DriverManager
 
 fun getConnection(url: String?) {
   DriverManager.getConnection(url)
-  DriverManager.getConnection(url!!) : java.sql.Connection
+  checkSubtype<java.sql.Connection>(DriverManager.getConnection(url!!))
 }
 
 fun getConnection(url: String?, props: java.util.Properties?) {
   DriverManager.getConnection(url, props)
-  DriverManager.getConnection(url!!, props) : java.sql.Connection
+  checkSubtype<java.sql.Connection>(DriverManager.getConnection(url!!, props))
 }
 
 fun getConnection(url: String?, user: String?, password: String?) {
   DriverManager.getConnection(url, user!!, password!!)
   DriverManager.getConnection(url!!, user, password<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>)
   DriverManager.getConnection(url<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>, user<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>, password)
-  DriverManager.getConnection(url<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>, user<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>, password<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>) : java.sql.Connection
+  checkSubtype<java.sql.Connection>(DriverManager.getConnection(url<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>, user<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>, password<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>))
 }
 
 fun getDriver(url: String?) {
   DriverManager.getDriver(url)
-  DriverManager.getDriver(url!!) : java.sql.Driver
+  checkSubtype<java.sql.Driver>(DriverManager.getDriver(url!!))
 }
 
 fun registerDriver(driver: java.sql.Driver?) {
@@ -28,5 +30,5 @@ fun registerDriver(driver: java.sql.Driver?) {
 }
 
 fun getDrivers() {
-   DriverManager.getDrivers() : java.util.Enumeration<java.sql.Driver>
+   checkSubtype<java.util.Enumeration<java.sql.Driver>>(DriverManager.getDrivers())
 }

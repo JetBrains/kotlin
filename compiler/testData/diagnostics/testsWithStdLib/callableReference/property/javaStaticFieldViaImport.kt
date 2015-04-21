@@ -1,3 +1,5 @@
+// !CHECK_TYPE
+// !DIAGNOSTICS:-UNUSED_VARIABLE
 // FILE: JavaClass.java
 
 public class JavaClass {
@@ -18,10 +20,10 @@ import JavaClass.*
 import kotlin.reflect.*
 
 fun test() {
-    ::publicFinal : KTopLevelProperty<String>
-    ::publicMutable : KMutableTopLevelProperty<Any?>
-    ::protectedFinal : KProperty<Double>
-    ::protectedMutable : KMutableProperty<Char>
-    ::<!INVISIBLE_MEMBER!>privateFinal<!> : KProperty<JavaClass?>
-    ::<!INVISIBLE_MEMBER!>privateMutable<!> : KMutableProperty<Throwable?>
+    val pubFinRef: KTopLevelProperty<String> = ::publicFinal
+    val pubMutRef: KMutableTopLevelProperty<Any?> = ::publicMutable
+    val protFinRef: KProperty<Double> = ::protectedFinal
+    val protMutRef: KMutableProperty<Char> = ::protectedMutable
+    val privFinRef: KProperty<JavaClass?> = ::<!INVISIBLE_MEMBER!>privateFinal<!>
+    val privMutRef: KMutableProperty<Throwable?> = ::<!INVISIBLE_MEMBER!>privateMutable<!>
 }

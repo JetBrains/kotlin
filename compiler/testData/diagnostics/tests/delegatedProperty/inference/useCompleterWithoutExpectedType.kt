@@ -1,8 +1,10 @@
+// !CHECK_TYPE
+
 class A {
     val a by MyProperty()
 
     fun test() {
-        a: Int
+        checkSubtype<Int>(a)
     }
 }
 

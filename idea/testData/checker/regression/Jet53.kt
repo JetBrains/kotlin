@@ -1,3 +1,5 @@
 import java.util.Collections
 
-val ab = Collections.emptyList<Int>() : List<Int>?
+fun <T> checkSubtype(t: T) = t
+
+val ab = checkSubtype<List<Int>?>(Collections.emptyList<Int>())

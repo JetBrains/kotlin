@@ -3,6 +3,6 @@
 // !CHECK_TYPE
 
 fun foo(f: ft<Int, Int?>) {
-    f.checkType { it : _<Int> }
-    f.checkType { it : _<Int?> }
+    f.checkType { _<Int>() }
+    f.checkType { _<Int?>() }
 }

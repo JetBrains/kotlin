@@ -1,3 +1,4 @@
+// !CHECK_TYPE
 // !DIAGNOSTICS: -UNUSED_EXPRESSION
 import kotlin.reflect.KFunction0
 
@@ -8,8 +9,8 @@ class A {
         val x = ::Nested
         val y = A::Nested
 
-        x : KFunction0<Nested>
-        y : KFunction0<Nested>
+        checkSubtype<KFunction0<Nested>>(x)
+        checkSubtype<KFunction0<Nested>>(y)
     }
     
     companion object {
@@ -17,7 +18,7 @@ class A {
             ::Nested
             val y = A::Nested
 
-            y : KFunction0<A.Nested>
+            checkSubtype<KFunction0<A.Nested>>(y)
         }
     }
 }
@@ -27,6 +28,6 @@ class B {
         ::<!UNRESOLVED_REFERENCE!>Nested<!>
         val y = A::Nested
 
-        y : KFunction0<A.Nested>
+        checkSubtype<KFunction0<A.Nested>>(y)
     }
 }

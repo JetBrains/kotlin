@@ -1,3 +1,5 @@
+// !CHECK_TYPE
+
 fun test() {
-  return Unit : Unit
+  return checkSubtype<Unit>(Unit)
 }

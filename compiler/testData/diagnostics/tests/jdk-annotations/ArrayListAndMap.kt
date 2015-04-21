@@ -1,3 +1,4 @@
+// !CHECK_TYPE
 
 package kotlin1
 
@@ -10,13 +11,13 @@ fun main(args : Array<String>) {
 //
 //    }
     val <!UNUSED_VARIABLE!>al2<!> = ArrayList<Int>(ArrayList<Int>())
-    al : RandomAccess
-    al.clear() : Unit
-    al.add(1) : Boolean
-    al.add(0, 1) : Unit
-    al.addAll(al1) : Boolean
-    al.addAll(0, al1) : Boolean
-    al.get(0) : Int
+    checkSubtype<RandomAccess>(al)
+    checkSubtype<Unit>(al.clear())
+    checkSubtype<Boolean>(al.add(1))
+    checkSubtype<Unit>(al.add(0, 1))
+    checkSubtype<Boolean>(al.addAll(al1))
+    checkSubtype<Boolean>(al.addAll(0, al1))
+    checkSubtype<Int>(al.get(0))
     val m = HashMap<String, Int>()
     m.put("", 1)
     test(al, m)

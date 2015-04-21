@@ -1,3 +1,5 @@
+// !CHECK_TYPE
+
 import kotlin.reflect.*
 
 var x: Int = 42
@@ -5,29 +7,29 @@ val y: String get() = "y"
 
 fun testX() {
     val xx = ::x
-    xx : KMutableTopLevelProperty<Int>
-    xx : KMutableTopLevelVariable<Int>
-    xx : KTopLevelProperty<Int>
-    xx : KTopLevelVariable<Int>
-    xx : KMutableProperty<Int>
-    xx : KMutableVariable<Int>
-    xx : KProperty<Int>
-    xx : KCallable<Int>
+    checkSubtype<KMutableTopLevelProperty<Int>>(xx)
+    checkSubtype<KMutableTopLevelVariable<Int>>(xx)
+    checkSubtype<KTopLevelProperty<Int>>(xx)
+    checkSubtype<KTopLevelVariable<Int>>(xx)
+    checkSubtype<KMutableProperty<Int>>(xx)
+    checkSubtype<KMutableVariable<Int>>(xx)
+    checkSubtype<KProperty<Int>>(xx)
+    checkSubtype<KCallable<Int>>(xx)
 
-    xx.name : String
-    xx.get() : Int
+    checkSubtype<String>(xx.name)
+    checkSubtype<Int>(xx.get())
     xx.set(239)
 }
 
 fun testY() {
     val yy = ::y
-    <!TYPE_MISMATCH!>yy<!> : KMutableTopLevelProperty<String>
-    yy : KTopLevelVariable<String>
-    <!TYPE_MISMATCH!>yy<!> : KMutableProperty<String>
-    yy : KProperty<String>
-    yy : KCallable<String>
+    checkSubtype<KMutableTopLevelProperty<String>>(<!TYPE_MISMATCH!>yy<!>)
+    checkSubtype<KTopLevelVariable<String>>(yy)
+    checkSubtype<KMutableProperty<String>>(<!TYPE_MISMATCH!>yy<!>)
+    checkSubtype<KProperty<String>>(yy)
+    checkSubtype<KCallable<String>>(yy)
 
-    yy.name : String
-    yy.get() : String
+    checkSubtype<String>(yy.name)
+    checkSubtype<String>(yy.get())
     yy.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>set<!>("yy")
 }

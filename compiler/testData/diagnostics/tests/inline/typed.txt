@@ -1,5 +1,0 @@
-package
-
-kotlin.inline() internal fun inlineFunWithInvoke(/*0*/ s: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
-kotlin.inline() internal fun inlineFunWithInvoke2(/*0*/ s: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
-kotlin.inline() internal fun ((kotlin.Int) -> kotlin.Unit).inlineExt(): kotlin.Unit

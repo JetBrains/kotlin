@@ -1,8 +1,10 @@
+// !CHECK_TYPE
+
 val Any?.meaning: Int
     get() = 42
 
 fun test() {
     val f = Any?::meaning
-    f.get(null) : Int
-    f.get("") : Int
+    checkSubtype<Int>(f.get(null))
+    checkSubtype<Int>(f.get(""))
 }

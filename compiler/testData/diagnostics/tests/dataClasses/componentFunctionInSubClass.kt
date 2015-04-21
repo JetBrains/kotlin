@@ -1,3 +1,5 @@
+// !CHECK_TYPE
+
 open data class A(private val x: Int)
 
 class B : A(1) {
@@ -6,6 +8,6 @@ class B : A(1) {
 
 fun foo() {
     val b = B()
-    b.component1() : String
-    (b : A).<!INVISIBLE_MEMBER!>component1<!>() : Int
+    checkSubtype<String>(b.component1())
+    checkSubtype<Int>((checkSubtype<A>(b)).<!INVISIBLE_MEMBER!>component1<!>())
 }

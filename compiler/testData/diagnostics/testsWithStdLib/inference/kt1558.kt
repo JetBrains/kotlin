@@ -1,3 +1,5 @@
+// !CHECK_TYPE
+
 //KT-1558 Exception while analyzing
 package j
 
@@ -16,9 +18,9 @@ fun testArrays(ci: List<Int?>, cii: List<Int?>?) {
 
     val c5 = ci.toArray(Array<Int?>(<!NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!>)<!>)
 
-    c1 : Array<Int?>
-    c2 : Array<Int?>
-    c3 : Array<Int?>
-    c4 : Array<Int?>
-    c5 : Array<Int?>
+    checkSubtype<Array<Int?>>(c1)
+    checkSubtype<Array<Int?>>(c2)
+    checkSubtype<Array<Int?>>(c3)
+    checkSubtype<Array<Int?>>(c4)
+    checkSubtype<Array<Int?>>(c5)
 }

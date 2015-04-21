@@ -54,7 +54,7 @@ public class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
     override fun fixForProblem(problem: Diagnostic): (() -> Unit)? {
         val psiElement = problem.getPsiElement()
         return when (problem.getFactory()) {
-            Errors.USELESS_CAST, Errors.USELESS_CAST_STATIC_ASSERT_IS_FINE -> { ->
+            Errors.USELESS_CAST -> { ->
                 val expression = RemoveRightPartOfBinaryExpressionFix(psiElement as JetBinaryExpressionWithTypeRHS, "").invoke()
 
                 val variable = expression.getParent() as? JetProperty

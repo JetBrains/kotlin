@@ -1,3 +1,5 @@
+// !CHECK_TYPE
+
 import kotlin.reflect.KFunction0
 
 class A {
@@ -7,5 +9,5 @@ class A {
 fun main() {
     val x = A::Nested
 
-    x : KFunction0<A.Nested>
+    checkSubtype<KFunction0<A.Nested>>(x)
 }

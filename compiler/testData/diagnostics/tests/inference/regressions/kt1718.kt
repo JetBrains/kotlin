@@ -1,3 +1,5 @@
+// !CHECK_TYPE
+
 //KT-1718 compiler error when not using temporary variable
 package n
 
@@ -5,9 +7,9 @@ import java.util.ArrayList
 
 fun test() {
     val list = arrayList("foo", "bar") + arrayList("cheese", "wine")
-    list: List<String>
+    checkSubtype<List<String>>(list)
     //check it's not an error type
-    <!TYPE_MISMATCH!>list<!>: Int
+    checkSubtype<Int>(<!TYPE_MISMATCH!>list<!>)
 }
 
 //from library

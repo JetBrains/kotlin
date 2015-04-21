@@ -1,9 +1,11 @@
+// !CHECK_TYPE
+
 class A(val a:Int) {
 
   inner class B() {
-    val x = this@B : B
-    val y = this@A : A
-    val z = this : B
-    val Int.xx : Int get() = this : Int
+    val x = checkSubtype<B>(this@B)
+    val y = checkSubtype<A>(this@A)
+    val z = checkSubtype<B>(this)
+    val Int.xx : Int get() = checkSubtype<Int>(this)
   }
 }

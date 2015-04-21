@@ -1,3 +1,5 @@
+// !CHECK_TYPE
+
 package foo
 
 fun Any.foo() : () -> Unit {
@@ -38,10 +40,10 @@ fun main(args : Array<String>) {
     foo2()({<!EXPECTED_PARAMETERS_NUMBER_MISMATCH, CANNOT_INFER_PARAMETER_TYPE!>x<!> -> })
 
     val a = fooT1(1)()
-    a : Int
+    checkSubtype<Int>(a)
 
     val b = fooT2<Int>()(1)
-    b : Int
+    checkSubtype<Int>(b)
     <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>fooT2<!>()(1) // : Any?
 
     <!FUNCTION_EXPECTED!>1<!>()

@@ -291,7 +291,7 @@ public class DefaultErrorMessages {
         MAP.put(ABSTRACT_SUPER_CALL, "Abstract member cannot be accessed directly");
         MAP.put(NOT_A_SUPERTYPE, "Not a supertype");
         MAP.put(TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER, "Type arguments do not need to be specified in a 'super' qualifier");
-        MAP.put(USELESS_CAST_STATIC_ASSERT_IS_FINE, "No cast needed. You can use ':' if you need a cast to a super type");
+        MAP.put(DEPRECATED_STATIC_ASSERT, "Static type assertions are deprecated, consider using a cast instead");
         MAP.put(USELESS_CAST, "No cast needed");
         MAP.put(CAST_NEVER_SUCCEEDS, "This cast can never succeed");
         MAP.put(DYNAMIC_NOT_ALLOWED, "Dynamic types are not allowed in this position");

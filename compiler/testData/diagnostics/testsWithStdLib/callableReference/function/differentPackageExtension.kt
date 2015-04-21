@@ -1,3 +1,4 @@
+// !CHECK_TYPE
 // !DIAGNOSTICS: -UNUSED_EXPRESSION
 // FILE: a.kt
 
@@ -23,5 +24,5 @@ fun main() {
     first.A::<!UNRESOLVED_REFERENCE!>bar<!>
     A::<!UNRESOLVED_REFERENCE!>baz<!>
 
-    x : KExtensionFunction0<A, Unit>
+    checkSubtype<KExtensionFunction0<A, Unit>>(x)
 }

@@ -1,3 +1,5 @@
+// !CHECK_TYPE
+
 fun foo() {
     val a = object {
         val b = object {
@@ -5,5 +7,5 @@ fun foo() {
         }
     }
 
-    a.b.c : Int
+    checkSubtype<Int>(a.b.c)
 }

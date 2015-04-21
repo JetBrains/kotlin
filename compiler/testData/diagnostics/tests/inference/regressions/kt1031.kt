@@ -1,3 +1,5 @@
+// !CHECK_TYPE
+
 //KT-1031 Can't infer type of `it` with two lambdas
 package i
 
@@ -14,6 +16,6 @@ fun a() {
     val z = x where { i: Int -> i % 2 == 0 }
     val yielder = select(x where { it%2==0 }, { it.toString() })
 
-    z : () -> Iterable<Int>
-    yielder : () -> Iterable<String>
+    checkSubtype<() -> Iterable<Int>>(z)
+    checkSubtype<() -> Iterable<String>>(yielder)
 }

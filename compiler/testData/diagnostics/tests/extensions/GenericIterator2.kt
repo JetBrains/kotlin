@@ -1,3 +1,5 @@
+// !CHECK_TYPE
+
 import java.util.Enumeration
 
 fun <T> java.util.Enumeration<T>.iterator() = object : Iterator<T> {
@@ -8,6 +10,6 @@ fun <T> java.util.Enumeration<T>.iterator() = object : Iterator<T> {
 
 fun a(e : java.util.Enumeration<Int>) {
     for (i in e) {
-        i : Int
+        checkSubtype<Int>(i)
     }
 }

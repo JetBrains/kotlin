@@ -1,3 +1,4 @@
+// !CHECK_TYPE
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 val a = fun (<!CANNOT_INFER_PARAMETER_TYPE!>x<!>) = <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!>
@@ -13,7 +14,7 @@ val e: (Int, String) -> Int = <!TYPE_MISMATCH!>fun <!EXPECTED_PARAMETERS_NUMBER_
 val f: (Int) -> Int = <!TYPE_MISMATCH!>fun (<!EXPECTED_PARAMETER_TYPE_MISMATCH!>x: String<!>) = 3<!>
 
 fun test1(a: (Int) -> Unit) {
-    test1(fun (x) { x : Int})
+    test1(fun (x) { checkSubtype<Int>(x)})
 }
 
 fun test2(a: (Int) -> Unit) {

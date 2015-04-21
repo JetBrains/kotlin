@@ -1,29 +1,31 @@
+// !CHECK_TYPE
+
 fun ifThen(x: Int?) {
     if (x!! == 0) {
-        <!DEBUG_INFO_SMARTCAST!>x<!> : Int
+        checkSubtype<Int>(<!DEBUG_INFO_SMARTCAST!>x<!>)
     }
-    <!DEBUG_INFO_SMARTCAST!>x<!> : Int
+    checkSubtype<Int>(<!DEBUG_INFO_SMARTCAST!>x<!>)
 }
 
 fun ifElse(x: Int?) {
     if (x!! == 0) else {
-        <!DEBUG_INFO_SMARTCAST!>x<!> : Int
+        checkSubtype<Int>(<!DEBUG_INFO_SMARTCAST!>x<!>)
     }
-    <!DEBUG_INFO_SMARTCAST!>x<!> : Int
+    checkSubtype<Int>(<!DEBUG_INFO_SMARTCAST!>x<!>)
 }
 
 fun ifThenElse(x: Int?) {
     if (x!! == 0) {
-        <!DEBUG_INFO_SMARTCAST!>x<!> : Int
+        checkSubtype<Int>(<!DEBUG_INFO_SMARTCAST!>x<!>)
     } else {
-        <!DEBUG_INFO_SMARTCAST!>x<!> : Int
+        checkSubtype<Int>(<!DEBUG_INFO_SMARTCAST!>x<!>)
     }
-    <!DEBUG_INFO_SMARTCAST!>x<!> : Int
+    checkSubtype<Int>(<!DEBUG_INFO_SMARTCAST!>x<!>)
 }
 
 fun ifIs(x: Int?, cond: Boolean) {
     if ((x is Int) == cond) {
-        <!TYPE_MISMATCH!>x<!> : Int
+        checkSubtype<Int>(<!TYPE_MISMATCH!>x<!>)
     }
-    <!TYPE_MISMATCH!>x<!> : Int
+    checkSubtype<Int>(<!TYPE_MISMATCH!>x<!>)
 }

@@ -1,3 +1,4 @@
+// !CHECK_TYPE
 // FILE: A.java
 public enum A {
 
@@ -11,5 +12,5 @@ public enum A {
 
 // FILE: test.kt
 fun main() {
-    A.ENTRY.s(): String?
+    checkSubtype<String?>(A.ENTRY.s())
 }

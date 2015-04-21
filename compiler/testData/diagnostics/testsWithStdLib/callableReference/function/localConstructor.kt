@@ -1,8 +1,10 @@
+// !CHECK_TYPE
+
 import kotlin.reflect.KFunction0
 
 fun main() {
     class A
     
     val x = ::A
-    x : KFunction0<A>
+    checkSubtype<KFunction0<A>>(x)
 }

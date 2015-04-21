@@ -1,10 +1,12 @@
+// !CHECK_TYPE
+
 //KT-1145 removing explicit generics on a call to Iterable<T>.map(...) seems to generate an odd bytecode/runtime error
 
 package d
 
 fun test(numbers: Iterable<Int>) {
     val s = numbers.map{it.toString()}.fold(""){it, it2 -> it + it2}
-    <!TYPE_MISMATCH!>s<!>: Int
+    checkSubtype<Int>(<!TYPE_MISMATCH!>s<!>)
 }
 
 //from library

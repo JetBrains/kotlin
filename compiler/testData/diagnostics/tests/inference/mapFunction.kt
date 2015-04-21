@@ -1,3 +1,5 @@
+// !CHECK_TYPE
+
 package a
 
 //+JDK
@@ -8,17 +10,17 @@ fun foo() {
 
     val u = v map { it * 2 }
 
-    u : List<Int>
+    checkSubtype<List<Int>>(u)
 
     val a = 1..5
 
     val b = a.map { it * 2 }
 
-    b : List<Int>
+    checkSubtype<List<Int>>(b)
 
     //check for non-error types
-    <!TYPE_MISMATCH!>u<!> : String
-    <!TYPE_MISMATCH!>b<!> : String
+    checkSubtype<String>(<!TYPE_MISMATCH!>u<!>)
+    checkSubtype<String>(<!TYPE_MISMATCH!>b<!>)
 }
 
 

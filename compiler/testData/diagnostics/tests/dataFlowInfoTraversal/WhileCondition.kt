@@ -1,24 +1,26 @@
+// !CHECK_TYPE
+
 fun simpleWhile(x: Int?, y0: Int) {
     var y = y0
     while (x!! == y) {
-        <!DEBUG_INFO_SMARTCAST!>x<!> : Int
+        checkSubtype<Int>(<!DEBUG_INFO_SMARTCAST!>x<!>)
         y++
     }
-    <!DEBUG_INFO_SMARTCAST!>x<!> : Int
+    checkSubtype<Int>(<!DEBUG_INFO_SMARTCAST!>x<!>)
 }
 
 fun whileWithBreak(x: Int?, y0: Int) {
     var y = y0
     while (x!! == y) {
-        <!DEBUG_INFO_SMARTCAST!>x<!> : Int
+        checkSubtype<Int>(<!DEBUG_INFO_SMARTCAST!>x<!>)
         break
     }
-    <!DEBUG_INFO_SMARTCAST!>x<!> : Int
+    checkSubtype<Int>(<!DEBUG_INFO_SMARTCAST!>x<!>)
 }
 
 fun whileWithNoCondition(x: Int?) {
     while (<!SYNTAX!><!>) {
         x!!
     }
-    <!TYPE_MISMATCH!>x<!> : Int
+    checkSubtype<Int>(<!TYPE_MISMATCH!>x<!>)
 }

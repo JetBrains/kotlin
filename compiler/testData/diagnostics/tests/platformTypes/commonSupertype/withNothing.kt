@@ -19,6 +19,6 @@ fun <T> out(t: T): Out<MutableList<T>> = null!!
 
 fun test(a: Out<Nothing>, b: Out<MutableList<J>>) {
     val v = f(a, b, out(J.j()))
-    v checkType { it : _<MutableList<J>>}
-    v checkType { it : _<MutableList<J?>>}
+    v checkType { _<MutableList<J>>() }
+    v checkType { _<MutableList<J?>>() }
 }

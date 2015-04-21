@@ -11,13 +11,13 @@ fun <T> doOut(o: Out<T?>): T = throw Exception("$o")
 fun test(a: A<Int>, aN: A<Int?>, o: Out<Int?>) {
     val out = doOut(o)
     //T? >: Int? => T >: Int
-    out checkType { it : _<Int> }
+    out checkType { _<Int>() }
 
     val nullable = foo(aN, o)
     //T = Int?, T? >: Int? => T = Int?
-    nullable checkType { it : _<Int?> }
+    nullable checkType { _<Int?>() }
 
     val notNullable = foo(a, o)
     //T = Int, T? >: Int? => T = Int
-    notNullable checkType { it : _<Int> }
+    notNullable checkType { _<Int>() }
 }

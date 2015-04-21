@@ -1,6 +1,8 @@
+// !CHECK_TYPE
+
 data class A(val x: Int, val y: String)
 
 fun foo(a: A) {
-    a.component1() : Int
-    a.component2() : String
+    checkSubtype<Int>(a.component1())
+    checkSubtype<String>(a.component2())
 }

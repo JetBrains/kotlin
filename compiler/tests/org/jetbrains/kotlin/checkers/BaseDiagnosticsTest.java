@@ -65,8 +65,10 @@ public abstract class BaseDiagnosticsTest extends
     public static final String CHECK_TYPE_DIRECTIVE = "CHECK_TYPE";
     public static final String CHECK_TYPE_PACKAGE = "tests._checkType";
     private static final String CHECK_TYPE_DECLARATIONS = "\npackage " + CHECK_TYPE_PACKAGE +
-                                                          "\nclass _<T>" +
-                                                          "\nfun <T> T.checkType(f: (_<T>) -> Unit) = f";
+                                                          "\nfun <T> checkSubtype(t: T) = t" +
+                                                          "\nclass Inv<T>" +
+                                                          "\nfun <E> Inv<E>._() {}" +
+                                                          "\nfun <T> T.checkType(f: Inv<T>.() -> Unit) {}";
     public static final String CHECK_TYPE_IMPORT = "import " + CHECK_TYPE_PACKAGE + ".*";
 
     public static final String EXPLICIT_FLEXIBLE_TYPES_DIRECTIVE = "EXPLICIT_FLEXIBLE_TYPES";

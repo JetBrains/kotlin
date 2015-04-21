@@ -1,3 +1,5 @@
+// !CHECK_TYPE
+
 import kotlin.reflect.KFunction0
 
 class A
@@ -7,6 +9,6 @@ fun A.ext() {
     val x = ::A
     val y = ::B
 
-    x : KFunction0<A>
-    y : KFunction0<B>
+    checkSubtype<KFunction0<A>>(x)
+    checkSubtype<KFunction0<B>>(y)
 }

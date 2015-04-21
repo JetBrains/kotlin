@@ -6,5 +6,5 @@ fun test() {
     } else {
         { 2 }
     }
-    a checkType { it : _<() -> Int> }
+    a checkType {  _<() -> Int>() }
 }

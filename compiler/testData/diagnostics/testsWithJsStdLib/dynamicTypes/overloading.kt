@@ -13,11 +13,11 @@ fun test(d: dynamic) {
     dyn(1)
     dyn("")
 
-    foo(1).checkType { it : _<Int> }
-    foo("").checkType { it : _<String> }
+    foo(1).checkType { _<Int>() }
+    foo("").checkType { _<String>() }
 
     // Checking specificity of `dynamic` vs `Nothing`
-    nothing(d).checkType { it : _<String> }
-    nothing("").checkType { it : _<Int> }
-    [suppress("UNREACHABLE_CODE")] nothing(null!!).checkType { it : _<String> }
+    nothing(d).checkType { _<String>() }
+    nothing("").checkType { _<Int>() }
+    [suppress("UNREACHABLE_CODE")] nothing(null!!).checkType { _<String>() }
 }

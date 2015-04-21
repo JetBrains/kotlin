@@ -1,3 +1,5 @@
+// !CHECK_TYPE
+
 //KT-2324 Can't resolve generic by type of function result
 package i
 
@@ -13,11 +15,11 @@ fun <T, K> someFunction(list: List<T>, transform: (T) -> K): List<K> {
 }
 
 fun testSomeFunction() {
-    val result1 = someFunction(arrayList<Int>(1, 2), {it : Int}) //type of result1 is List<Int>
+    val result1 = someFunction(arrayList<Int>(1, 2), {checkSubtype<Int>(it)}) //type of result1 is List<Int>
     assertEquals(1, result1.get(0)); //OK
 
     val result2 = someFunction(arrayList<Int>(1, 2), {it}) // type of result2 is List<DONT_CARE>
-    result2 : List<Int>
+    checkSubtype<List<Int>>(result2)
     assertEquals(1, result2.get(0)); //resolved to error element
 }
 

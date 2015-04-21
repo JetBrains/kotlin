@@ -1,3 +1,5 @@
+// !CHECK_TYPE
+
 import kotlin.reflect.*
 
 class A {
@@ -13,9 +15,9 @@ fun A.test() {
     val y = ::bar
     val z = ::self
 
-    x : KMemberProperty<A, Unit>
-    y : KMutableMemberProperty<A, String>
-    z : KMutableMemberProperty<A, A>
+    checkSubtype<KMemberProperty<A, Unit>>(x)
+    checkSubtype<KMutableMemberProperty<A, String>>(y)
+    checkSubtype<KMutableMemberProperty<A, A>>(z)
 
     y.set(z.get(A()), x.get(A()).toString())
 }

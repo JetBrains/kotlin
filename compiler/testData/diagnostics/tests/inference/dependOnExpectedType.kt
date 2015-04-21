@@ -1,3 +1,5 @@
+// !CHECK_TYPE
+
 package h
 //+JDK
 import java.util.*
@@ -16,28 +18,28 @@ fun test1() {
     val a = elem(list(2))
     val b = id(elem(list(2)))
     val c = id(id1(id(id1(list(33)))))
-    a : Int
-    b : Int
-    c : List<Int>
+    checkSubtype<Int>(a)
+    checkSubtype<Int>(b)
+    checkSubtype<List<Int>>(c)
 
     val d : ArrayList<Int> = newList()
     val e : ArrayList<Int> = id(newList())
     val f : ArrayList<Int> = id(id1(id(id1(newList()))))
 
-    d : List<Int>
-    e : List<Int>
-    f : List<Int>
+    checkSubtype<List<Int>>(d)
+    checkSubtype<List<Int>>(e)
+    checkSubtype<List<Int>>(f)
 
     val g = elemAndList("", newList())
     val h = elemAndList<Long>(1, newList<Long>())
 
-    g : String
-    h : Long
+    checkSubtype<String>(g)
+    checkSubtype<Long>(h)
 
     val i = both(1, "")
     val j = both(id(1), id(""))
-    i : Comparable<*>
-    j : Comparable<*>
+    checkSubtype<Comparable<*>>(i)
+    checkSubtype<Comparable<*>>(j)
 }
 
 fun list<T>(value: T) : ArrayList<T> {

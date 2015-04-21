@@ -5,5 +5,5 @@ trait Tr<T> {
 
 fun test(t: Tr<*>) {
     t.v = t
-    t.v checkType { it : _<Tr<*>> }
+    t.v checkType { _<Tr<*>>() }
 }

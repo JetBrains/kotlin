@@ -1,3 +1,5 @@
+// !CHECK_TYPE
+
 fun varargByte(vararg v: Byte) = v
 
 fun varargShort(vararg v: Short) = v
@@ -13,29 +15,29 @@ fun varargDouble(vararg v: Double) = v
 fun <T> testFun(<!UNUSED_PARAMETER!>p<!>: T) {}
 
 fun test() {
-    1: Byte
-    1: Short
-    1: Int
-    1: Long
+    checkSubtype<Byte>(1)
+    checkSubtype<Short>(1)
+    checkSubtype<Int>(1)
+    checkSubtype<Long>(1)
 
-    0x001: Long
-    0b001: Int
+    checkSubtype<Long>(0x001)
+    checkSubtype<Int>(0b001)
 
-    0.1: Double
-    0.1.toFloat(): Float
+    checkSubtype<Double>(0.1)
+    checkSubtype<Float>(0.1.toFloat())
 
-    1e5: Double
-    1e-5.toFloat(): Float
+    checkSubtype<Double>(1e5)
+    checkSubtype<Float>(1e-5.toFloat())
 
-    <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>: Double
-    <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>: Float
+    checkSubtype<Double>(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>)
+    checkSubtype<Float>(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>)
     
     1 <!CAST_NEVER_SUCCEEDS!>as<!> Byte
     1 <!USELESS_CAST!>as Int<!>
     0xff <!CAST_NEVER_SUCCEEDS!>as<!> Long
     
     1.1 <!CAST_NEVER_SUCCEEDS!>as<!> Int
-    <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1.1<!>: Int
+    checkSubtype<Int>(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1.1<!>)
 
     varargByte(0x77, 1, 3, <!CONSTANT_EXPECTED_TYPE_MISMATCH!>200<!>, 0b111)
     varargShort(0x777, 1, 2, 3, <!CONSTANT_EXPECTED_TYPE_MISMATCH!>200000<!>, 0b111)

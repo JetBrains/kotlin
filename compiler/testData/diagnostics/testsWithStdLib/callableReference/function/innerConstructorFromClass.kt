@@ -1,3 +1,4 @@
+// !CHECK_TYPE
 // !DIAGNOSTICS: -UNUSED_EXPRESSION
 import kotlin.reflect.KMemberFunction0
 
@@ -8,8 +9,8 @@ class A {
         val x = ::Inner
         val y = A::Inner
 
-        x : KMemberFunction0<A, A.Inner>
-        y : KMemberFunction0<A, Inner>
+        checkSubtype<KMemberFunction0<A, A.Inner>>(x)
+        checkSubtype<KMemberFunction0<A, Inner>>(y)
     }
     
     companion object {
@@ -17,7 +18,7 @@ class A {
             ::<!INACCESSIBLE_OUTER_CLASS_EXPRESSION!>Inner<!>
             val y = A::Inner
 
-            y : KMemberFunction0<A, A.Inner>
+            checkSubtype<KMemberFunction0<A, A.Inner>>(y)
         }
     }
 }
@@ -27,6 +28,6 @@ class B {
         ::<!UNRESOLVED_REFERENCE!>Inner<!>
         val y = A::Inner
 
-        y : KMemberFunction0<A, A.Inner>
+        checkSubtype<KMemberFunction0<A, A.Inner>>(y)
     }
 }

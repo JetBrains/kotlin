@@ -7,5 +7,5 @@ trait Tr<T> {
 
 fun test(t: Tr<*>) {
     t.<!SETTER_PROJECTED_OUT!>v<!> = null!!
-    t.v checkType { it : _<Any?> }
+    t.v checkType { _<Any?>() }
 }

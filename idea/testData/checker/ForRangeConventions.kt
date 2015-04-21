@@ -1,5 +1,7 @@
 import java.util.*;
 
+fun <T> checkSubtype(t: T) = t
+
 class NotRange1() {
 
 }
@@ -76,6 +78,6 @@ fun test(notRange1: NotRange1, notRange2: NotRange2, notRange3: NotRange3, notRa
   for (i in range0);
   for (i in range1);
 
-  for (i in (ArrayList<Int>() : List<Int>));
+  for (i in (checkSubtype<List<Int>>(ArrayList<Int>())));
 }
 

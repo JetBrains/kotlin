@@ -6,6 +6,8 @@ import <error>utils</error>.*
 import java.io.PrintStream
 import <warning>java.lang.Comparable</warning> as Com
 
+fun <T> checkSubtype(t: T) = t
+
 val l : MutableList<in Int> = ArrayList<Int>()
 
 fun test(<warning>l</warning> : List<Int>) {
@@ -22,7 +24,7 @@ fun test(<warning>l</warning> : List<Int>) {
   Collections.emptyList<Int>()
   Collections.<error>emptyList</error>()
 
-  Collections.singleton<Int>(1) : Set<Int>?
+  checkSubtype<Set<Int>?>(Collections.singleton<Int>(1))
   Collections.singleton<Int>(<error>1.0</error>)
 
   <error>List</error><Int>
@@ -41,7 +43,7 @@ fun test(<warning>l</warning> : List<Int>) {
 
   val c : <warning>Com<Int></warning>? = null
 
-  c : <warning>java.lang.Comparable<Int></warning>?
+  checkSubtype<<warning>java.lang.Comparable<Int></warning>?>(c)
 
 //  Collections.sort<Integer>(ArrayList<Integer>())
 }

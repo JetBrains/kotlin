@@ -1,3 +1,4 @@
+// !CHECK_TYPE
 // FILE: a.kt
 
 package other
@@ -23,7 +24,7 @@ fun main() {
     val y = AA::bar
     val z = AA::bazbaz
 
-    x : KFunction0<Unit>
-    y : KMemberFunction0<AA, Int>
-    z : KExtensionFunction1<AA, String, Unit>
+    checkSubtype<KFunction0<Unit>>(x)
+    checkSubtype<KMemberFunction0<AA, Int>>(y)
+    checkSubtype<KExtensionFunction1<AA, String, Unit>>(z)
 }
