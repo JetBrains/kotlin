@@ -41,6 +41,12 @@ public class KDocCompletionTestGenerated extends AbstractJvmBasicCompletionTest 
         doTest(fileName);
     }
 
+    @TestMetadata("NotTagName.kt")
+    public void testNotTagName() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/kdoc/NotTagName.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ParamTag.kt")
     public void testParamTag() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/kdoc/ParamTag.kt");
