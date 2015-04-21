@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.idea.internal;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
@@ -33,7 +31,6 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowFactory;
-import com.intellij.psi.PsiElement;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.ui.content.ContentManager;
 import com.intellij.util.Alarm;
@@ -45,31 +42,27 @@ import org.jetbrains.kotlin.codegen.CompilationErrorHandler;
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.Progress;
-import org.jetbrains.kotlin.descriptors.CallableDescriptor;
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
-import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde;
+import org.jetbrains.kotlin.idea.util.DebuggerUtils;
 import org.jetbrains.kotlin.idea.util.InfinitePeriodicalTask;
 import org.jetbrains.kotlin.idea.util.LongRunningReadTask;
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil;
-import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.JetClassOrObject;
+import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.JetScript;
 import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.CompositeBindingContext;
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.resolve.inline.InlineUtil;
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Scanner;
 
 public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
     private static final int UPDATE_DELAY = 1000;
@@ -209,7 +202,7 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
 
             BindingContext bindingContextForFile = resolutionFacade.analyzeFullyAndGetResult(Collections.singletonList(jetFile)).getBindingContext();
 
-            kotlin.Pair<BindingContext, List<JetFile>> result = analyzeInlinedFunctions(
+            kotlin.Pair<BindingContext, List<JetFile>> result = DebuggerUtils.analyzeInlinedFunctions(
                     resolutionFacade, bindingContextForFile, jetFile, !enableInline
             );
 
@@ -266,125 +259,6 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
         }
 
         return answer.toString();
-    }
-
-    @NotNull
-    public static kotlin.Pair<BindingContext, List<JetFile>> analyzeInlinedFunctions(
-            @NotNull ResolutionFacade resolutionFacadeForFile,
-            @NotNull BindingContext bindingContextForFile,
-            @NotNull JetFile file,
-            boolean analyzeOnlyReifiedInlineFunctions
-    ) {
-        Set<JetElement> analyzedElements = new HashSet<JetElement>();
-        BindingContext context = analyzeElementWithInline(
-                resolutionFacadeForFile,
-                bindingContextForFile,
-                file,
-                1,
-                analyzedElements,
-                !analyzeOnlyReifiedInlineFunctions);
-
-        //We processing another files just to annotate anonymous classes within their inline functions
-        //Bytecode not produced for them cause of filtering via generateClassFilter
-        Set<JetFile> toProcess = new LinkedHashSet<JetFile>();
-        toProcess.add(file);
-
-        for (JetElement collectedElement : analyzedElements) {
-            JetFile containingFile = collectedElement.getContainingJetFile();
-            toProcess.add(containingFile);
-        }
-
-        return new kotlin.Pair<BindingContext, List<JetFile>>(context, new ArrayList<JetFile>(toProcess));
-    }
-
-    @NotNull
-    private static BindingContext analyzeElementWithInline(
-            @NotNull ResolutionFacade resolutionFacade,
-            @NotNull final BindingContext bindingContext,
-            @NotNull JetElement element,
-            int deep,
-            @NotNull final Set<JetElement> analyzedElements,
-            final boolean analyzeInlineFunctions
-    ) {
-        final Project project = element.getProject();
-        final Set<JetNamedFunction> collectedElements = new HashSet<JetNamedFunction>();
-
-        element.accept(new JetTreeVisitorVoid() {
-            @Override
-            public void visitExpression(@NotNull JetExpression expression) {
-                super.visitExpression(expression);
-
-                Call call = bindingContext.get(BindingContext.CALL, expression);
-                if (call == null) return;
-
-                ResolvedCall<?> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, call);
-                checkResolveCall(resolvedCall);
-            }
-
-            @Override
-            public void visitMultiDeclaration(@NotNull JetMultiDeclaration multiDeclaration) {
-                super.visitMultiDeclaration(multiDeclaration);
-
-                for (JetMultiDeclarationEntry entry : multiDeclaration.getEntries()) {
-                    ResolvedCall<FunctionDescriptor> resolvedCall =
-                            bindingContext.get(BindingContext.COMPONENT_RESOLVED_CALL, entry);
-                    checkResolveCall(resolvedCall);
-                }
-            }
-
-            @Override
-            public void visitForExpression(@NotNull JetForExpression expression) {
-                super.visitForExpression(expression);
-
-                checkResolveCall(bindingContext.get(BindingContext.LOOP_RANGE_ITERATOR_RESOLVED_CALL, expression.getLoopRange()));
-                checkResolveCall(bindingContext.get(BindingContext.LOOP_RANGE_HAS_NEXT_RESOLVED_CALL, expression.getLoopRange()));
-                checkResolveCall(bindingContext.get(BindingContext.LOOP_RANGE_NEXT_RESOLVED_CALL, expression.getLoopRange()));
-            }
-
-            private void checkResolveCall(ResolvedCall<?> resolvedCall) {
-                if (resolvedCall == null) return;
-
-                CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
-                if (descriptor instanceof DeserializedSimpleFunctionDescriptor) return;
-
-                if (InlineUtil.isInline(descriptor) && (analyzeInlineFunctions || hasReifiedTypeParameters(descriptor))) {
-                    PsiElement declaration = DescriptorToSourceUtilsIde.INSTANCE$.getAnyDeclaration(project, descriptor);
-                    if (declaration != null && declaration instanceof JetNamedFunction && !analyzedElements.contains(declaration)) {
-                        collectedElements.add((JetNamedFunction) declaration);
-                    }
-                }
-            }
-        });
-
-        analyzedElements.add(element);
-
-        if (!collectedElements.isEmpty() && deep < 10) {
-            List<BindingContext> innerContexts = new ArrayList<BindingContext>();
-            for (JetNamedFunction inlineFunctions : collectedElements) {
-                JetExpression body = inlineFunctions.getBodyExpression();
-                assert body != null : "Inline function should have a body: " + inlineFunctions.getText();
-
-                BindingContext bindingContextForFunction = resolutionFacade.analyze(body, BodyResolveMode.FULL);
-                innerContexts.add(analyzeElementWithInline(resolutionFacade, bindingContextForFunction, inlineFunctions, deep + 1,
-                                                           analyzedElements, analyzeInlineFunctions));
-            }
-
-            innerContexts.add(bindingContext);
-
-            analyzedElements.addAll(collectedElements);
-            return CompositeBindingContext.Companion.create(innerContexts);
-        }
-
-        return bindingContext;
-    }
-
-    private static boolean hasReifiedTypeParameters(CallableDescriptor descriptor) {
-        return Iterables.any(descriptor.getTypeParameters(), new Predicate<TypeParameterDescriptor>() {
-            @Override
-            public boolean apply(TypeParameterDescriptor input) {
-                return input.isReified();
-            }
-        });
     }
 
     private static Pair<Integer, Integer> mapLines(String text, int startLine, int endLine) {
