@@ -100,7 +100,7 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
 
                 // Simple PSI-based checks
                 val isCompanionObject = declaration is JetObjectDeclaration && declaration.isCompanion()
-                if (declaration.getNameIdentifier() == null && !isCompanionObject) return
+                if (declaration.getName() == null) return
                 if (declaration is JetEnumEntry) return
                 if (declaration.hasModifier(JetTokens.OVERRIDE_KEYWORD)) return
                 if (declaration is JetProperty && declaration.isLocal()) return
