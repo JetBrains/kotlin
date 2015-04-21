@@ -320,5 +320,8 @@ public class QuickFixRegistrar {
 
         QuickFixes.factories.put(ErrorsJvm.JAVA_LANG_CLASS_ARGUMENT_IN_ANNOTATION, ReplaceJavaClassAsAnnotationArgumentFix.Companion);
         QuickFixes.factories.put(ErrorsJvm.JAVA_LANG_CLASS_ARGUMENT_IN_ANNOTATION, ReplaceJavaClassAsAnnotationArgumentFix.Companion.createWholeProjectFixFactory());
+
+        QuickFixes.factories.put(ErrorsJvm.DEPRECATED_ANNOTATION_METHOD_CALL, MigrateAnnotationMethodCallFix.Companion);
+        QuickFixes.factories.put(ErrorsJvm.DEPRECATED_ANNOTATION_METHOD_CALL, MigrateAnnotationMethodCallInWholeFile.Companion);
     }
 }

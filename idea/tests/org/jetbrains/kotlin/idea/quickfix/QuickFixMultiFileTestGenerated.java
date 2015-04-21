@@ -879,6 +879,27 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             }
         }
 
+        @TestMetadata("idea/testData/quickfix/migration/migrateJavaAnnotationMethodCall")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class MigrateJavaAnnotationMethodCall extends AbstractQuickFixMultiFileTest {
+            public void testAllFilesPresentInMigrateJavaAnnotationMethodCall() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/migrateJavaAnnotationMethodCall"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+            }
+
+            @TestMetadata("basicMultiple.before.Main.kt")
+            public void testBasicMultiple() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/migrateJavaAnnotationMethodCall/basicMultiple.before.Main.kt");
+                doTestWithExtraFile(fileName);
+            }
+
+            @TestMetadata("wholeFileMultiple.before.Main.kt")
+            public void testWholeFileMultiple() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/migrateJavaAnnotationMethodCall/wholeFileMultiple.before.Main.kt");
+                doTestWithExtraFile(fileName);
+            }
+        }
+
         @TestMetadata("idea/testData/quickfix/migration/replaceJavaClassWithKClassForJavaAnnotation")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
