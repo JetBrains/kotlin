@@ -210,7 +210,7 @@ public final class BindingUtils {
     @NotNull
     public static JetType getTypeForExpression(@NotNull BindingContext context,
             @NotNull JetExpression expression) {
-        return BindingContextUtils.getNotNullType(context, expression);
+        return BindingContextUtils.getTypeNotNull(context, expression);
     }
 
     @NotNull

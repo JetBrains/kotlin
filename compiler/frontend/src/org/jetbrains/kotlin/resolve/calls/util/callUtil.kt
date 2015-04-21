@@ -66,7 +66,7 @@ public fun <D : CallableDescriptor> ResolvedCall<D>.getParameterForArgument(valu
 // call
 
 public fun <C: ResolutionContext<C>> Call.hasUnresolvedArguments(context: ResolutionContext<C>): Boolean {
-    val arguments = getValueArguments().map { it?.getArgumentExpression() }
+    val arguments = getValueArguments().map { it.getArgumentExpression() }
     return arguments.any {
         argument ->
         val expressionType = argument?.let { context.trace.getBindingContext().getType(it) }
@@ -135,7 +135,7 @@ public fun JetElement.getCall(context: BindingContext): Call? {
 }
 
 public fun JetElement.getParentCall(context: BindingContext, strict: Boolean = true): Call? {
-    val callExpressionTypes = array<Class<out JetElement>?>(
+    val callExpressionTypes = arrayOf<Class<out JetElement>?>(
             javaClass<JetSimpleNameExpression>(), javaClass<JetCallElement>(), javaClass<JetBinaryExpression>(),
             javaClass<JetUnaryExpression>(), javaClass<JetArrayAccessExpression>())
 

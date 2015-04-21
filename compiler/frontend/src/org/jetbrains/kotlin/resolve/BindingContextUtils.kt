@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
-import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
+import org.jetbrains.kotlin.types.expressions.typeInfoFactory.noTypeInfo
 
 public fun JetReturnExpression.getTargetFunctionDescriptor(context: BindingContext): FunctionDescriptor? {
     val targetLabel = getTargetLabel()
@@ -63,7 +63,8 @@ public fun <C : ResolutionContext<C>> ResolutionContext<C>.recordScopeAndDataFlo
         trace.record(BindingContext.EXPRESSION_TYPE_INFO, expression, typeInfo.replaceDataFlowInfo(dataFlowInfo))
     }
     else if (dataFlowInfo != DataFlowInfo.EMPTY) {
-        trace.record(BindingContext.EXPRESSION_TYPE_INFO, expression, createTypeInfo(dataFlowInfo))
+        // Don't store anything in BindingTrace if it's simply an empty DataFlowInfo
+        trace.record(BindingContext.EXPRESSION_TYPE_INFO, expression, noTypeInfo(dataFlowInfo))
     }
 }
 

@@ -192,7 +192,7 @@ public class ArgumentTypeResolver {
             @NotNull ResolveArgumentsMode resolveArgumentsMode
     ) {
         if (expression == null) {
-            return TypeInfoFactoryPackage.createTypeInfo(context);
+            return TypeInfoFactoryPackage.noTypeInfo(context);
         }
         if (isFunctionLiteralArgument(expression, context)) {
             return getFunctionLiteralTypeInfo(expression, getFunctionLiteralArgument(expression, context), context, resolveArgumentsMode);

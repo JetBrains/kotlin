@@ -155,7 +155,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             }
         }
         else {
-            typeInfo = TypeInfoFactoryPackage.createTypeInfo(context);
+            typeInfo = TypeInfoFactoryPackage.noTypeInfo(context);
         }
 
         {
@@ -176,13 +176,13 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         JetExpression initializer = multiDeclaration.getInitializer();
         if (initializer == null) {
             context.trace.report(INITIALIZER_REQUIRED_FOR_MULTIDECLARATION.on(multiDeclaration));
-            return TypeInfoFactoryPackage.createTypeInfo(context);
+            return TypeInfoFactoryPackage.noTypeInfo(context);
         }
         ExpressionReceiver expressionReceiver = ExpressionTypingUtils.getExpressionReceiver(
                 facade, initializer, context.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT));
         JetTypeInfo typeInfo = facade.getTypeInfo(initializer, context);
         if (expressionReceiver == null) {
-            return TypeInfoFactoryPackage.createTypeInfo(context);
+            return TypeInfoFactoryPackage.noTypeInfo(context);
         }
         components.expressionTypingUtils.defineLocalVariablesFromMultiDeclaration(scope, multiDeclaration, expressionReceiver, initializer, context);
         return typeInfo.replaceType(DataFlowUtils.checkStatementType(multiDeclaration, context));
@@ -339,7 +339,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         JetExpression right = expression.getRight();
         if (left instanceof JetArrayAccessExpression) {
             JetArrayAccessExpression arrayAccessExpression = (JetArrayAccessExpression) left;
-            if (right == null) return TypeInfoFactoryPackage.createTypeInfo(context);
+            if (right == null) return TypeInfoFactoryPackage.noTypeInfo(context);
             JetTypeInfo typeInfo = basic.resolveArrayAccessSetMethod(arrayAccessExpression, right, context, context.trace);
             basic.checkLValue(context.trace, context, arrayAccessExpression, right);
             return typeInfo.replaceType(checkAssignmentType(typeInfo.getType(), expression, contextWithExpectedType));
@@ -347,25 +347,25 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         JetTypeInfo leftInfo = ExpressionTypingUtils.getTypeInfoOrNullType(left, context, facade);
         JetType leftType = leftInfo.getType();
         DataFlowInfo dataFlowInfo = leftInfo.getDataFlowInfo();
-        JetTypeInfo rightInfo;
+        JetTypeInfo resultInfo;
         if (right != null) {
-            rightInfo = facade.getTypeInfo(right, context.replaceDataFlowInfo(dataFlowInfo).replaceExpectedType(leftType));
-            dataFlowInfo = rightInfo.getDataFlowInfo();
-            JetType rightType = rightInfo.getType();
+            resultInfo = facade.getTypeInfo(right, context.replaceDataFlowInfo(dataFlowInfo).replaceExpectedType(leftType));
+            dataFlowInfo = resultInfo.getDataFlowInfo();
+            JetType rightType = resultInfo.getType();
             if (left != null && leftType != null && rightType != null) {
                 DataFlowValue leftValue = DataFlowValueFactory.createDataFlowValue(left, leftType, context);
                 DataFlowValue rightValue = DataFlowValueFactory.createDataFlowValue(right, rightType, context);
                 // We cannot say here anything new about rightValue except it has the same value as leftValue
-                rightInfo = rightInfo.replaceDataFlowInfo(dataFlowInfo.assign(leftValue, rightValue));
+                resultInfo = resultInfo.replaceDataFlowInfo(dataFlowInfo.assign(leftValue, rightValue));
             }
         }
         else {
-            rightInfo = leftInfo;
+            resultInfo = leftInfo;
         }
         if (leftType != null && leftOperand != null) { //if leftType == null, some other error has been generated
             basic.checkLValue(context.trace, context, leftOperand, right);
         }
-        return rightInfo.replaceType(DataFlowUtils.checkStatementType(expression, contextWithExpectedType));
+        return resultInfo.replaceType(DataFlowUtils.checkStatementType(expression, contextWithExpectedType));
     }
 
 
@@ -377,7 +377,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
     @Override
     public JetTypeInfo visitJetElement(@NotNull JetElement element, ExpressionTypingContext context) {
         context.trace.report(UNSUPPORTED.on(element, "in a block"));
-        return TypeInfoFactoryPackage.createTypeInfo(context);
+        return TypeInfoFactoryPackage.noTypeInfo(context);
     }
 
     @Override

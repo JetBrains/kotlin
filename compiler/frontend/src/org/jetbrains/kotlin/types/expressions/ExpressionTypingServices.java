@@ -315,13 +315,13 @@ public class ExpressionTypingServices {
             @NotNull ExpressionTypingContext context
     ) {
         if (block.isEmpty()) {
-            return new JetTypeInfo(builtIns.getUnitType(), context.dataFlowInfo, false, context.dataFlowInfo);
+            return TypeInfoFactoryPackage.createTypeInfo(builtIns.getUnitType(), context);
         }
 
         ExpressionTypingInternals blockLevelVisitor = ExpressionTypingVisitorDispatcher.createForBlock(expressionTypingComponents, scope);
         ExpressionTypingContext newContext = context.replaceScope(scope).replaceExpectedType(NO_EXPECTED_TYPE);
 
-        JetTypeInfo result = TypeInfoFactoryPackage.createTypeInfo(context);
+        JetTypeInfo result = TypeInfoFactoryPackage.noTypeInfo(context);
         // Jump point data flow info
         DataFlowInfo beforeJumpInfo = newContext.dataFlowInfo;
         boolean jumpOutPossible = false;

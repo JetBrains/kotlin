@@ -22,22 +22,22 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.expressions.JetTypeInfo
 
-/**
+/*
  * Functions in this file are intended to create type info instances in different circumstances
  */
 
-public fun createTypeInfo(type: JetType?): JetTypeInfo = createTypeInfo(type, DataFlowInfo.EMPTY)
-
-public fun createTypeInfo(dataFlowInfo: DataFlowInfo): JetTypeInfo = JetTypeInfo(null, dataFlowInfo)
-
-public fun createTypeInfo(context: ResolutionContext<*>): JetTypeInfo = createTypeInfo(context.dataFlowInfo)
-
 public fun createTypeInfo(type: JetType?, dataFlowInfo: DataFlowInfo): JetTypeInfo = JetTypeInfo(type, dataFlowInfo)
-
-public fun createTypeInfo(type: JetType?, context: ResolutionContext<*>): JetTypeInfo = createTypeInfo(type, context.dataFlowInfo)
 
 public fun createTypeInfo(type: JetType?, dataFlowInfo: DataFlowInfo, jumpPossible: Boolean, jumpFlowInfo: DataFlowInfo): JetTypeInfo =
         JetTypeInfo(type, dataFlowInfo, jumpPossible, jumpFlowInfo)
+
+public fun createTypeInfo(type: JetType?): JetTypeInfo = createTypeInfo(type, DataFlowInfo.EMPTY)
+
+public fun createTypeInfo(type: JetType?, context: ResolutionContext<*>): JetTypeInfo = createTypeInfo(type, context.dataFlowInfo)
+
+public fun noTypeInfo(dataFlowInfo: DataFlowInfo): JetTypeInfo = createTypeInfo(null, dataFlowInfo)
+
+public fun noTypeInfo(context: ResolutionContext<*>): JetTypeInfo = noTypeInfo(context.dataFlowInfo)
 
 public fun createCheckedTypeInfo(type: JetType?, context: ResolutionContext<*>, expression: JetExpression): JetTypeInfo =
         createTypeInfo(type, context).checkType(expression, context)

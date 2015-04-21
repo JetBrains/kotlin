@@ -356,7 +356,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         assert right != null;
 
         JetType rightType = BindingContextUtils.getNotNull(context.bindingContext(), BindingContext.TYPE, right);
-        JetType leftType = BindingContextUtils.getNotNullType(context.bindingContext(), expression.getLeft());
+        JetType leftType = BindingContextUtils.getTypeNotNull(context.bindingContext(), expression.getLeft());
         if (TypeUtils.isNullableType(rightType) || !TypeUtils.isNullableType(leftType)) {
             return jsExpression.source(expression);
         }

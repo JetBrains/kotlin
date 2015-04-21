@@ -336,7 +336,7 @@ public class ExpressionTypingUtils {
     ) {
         return expression != null
                ? facade.getTypeInfo(expression, context)
-               : TypeInfoFactoryPackage.createTypeInfo(context);
+               : TypeInfoFactoryPackage.noTypeInfo(context);
     }
 
     @SuppressWarnings("SuspiciousMethodCalls")

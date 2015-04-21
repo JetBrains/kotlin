@@ -51,8 +51,9 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
 
     @Override
     public JetTypeInfo visitIsExpression(@NotNull JetIsExpression expression, ExpressionTypingContext contextWithExpectedType) {
-        ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(
-                INDEPENDENT);
+        ExpressionTypingContext context = contextWithExpectedType
+                                            .replaceExpectedType(NO_EXPECTED_TYPE)
+                                            .replaceContextDependency(INDEPENDENT);
         JetExpression leftHandSide = expression.getLeftHandSide();
         JetTypeInfo typeInfo = facade.safeGetTypeInfo(leftHandSide, context.replaceScope(context.scope));
         JetType knownType = typeInfo.getType();

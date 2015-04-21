@@ -158,7 +158,7 @@ public class CallExpressionResolver {
         }
 
         temporaryForVariable.commit();
-        return TypeInfoFactoryPackage.createTypeInfo(context);
+        return TypeInfoFactoryPackage.noTypeInfo(context);
     }
 
     @NotNull
@@ -201,7 +201,7 @@ public class CallExpressionResolver {
                 context.trace.report(FUNCTION_CALL_EXPECTED.on(callExpression, callExpression, hasValueParameters));
             }
             if (functionDescriptor == null) {
-                return TypeInfoFactoryPackage.createTypeInfo(context);
+                return TypeInfoFactoryPackage.noTypeInfo(context);
             }
             if (functionDescriptor instanceof ConstructorDescriptor &&
                 DescriptorUtils.isAnnotationClass(functionDescriptor.getContainingDeclaration())) {
@@ -226,11 +226,11 @@ public class CallExpressionResolver {
                 temporaryForVariable.commit();
                 context.trace.report(FUNCTION_EXPECTED.on(calleeExpression, calleeExpression,
                                                           type != null ? type : ErrorUtils.createErrorType("")));
-                return TypeInfoFactoryPackage.createTypeInfo(context);
+                return TypeInfoFactoryPackage.noTypeInfo(context);
             }
         }
         temporaryForFunction.commit();
-        return TypeInfoFactoryPackage.createTypeInfo(context);
+        return TypeInfoFactoryPackage.noTypeInfo(context);
     }
 
     private static boolean canInstantiateAnnotationClass(@NotNull JetCallExpression expression) {
@@ -265,7 +265,7 @@ public class CallExpressionResolver {
         else if (selectorExpression != null) {
             context.trace.report(ILLEGAL_SELECTOR.on(selectorExpression, selectorExpression.getText()));
         }
-        return TypeInfoFactoryPackage.createTypeInfo(context);
+        return TypeInfoFactoryPackage.noTypeInfo(context);
     }
 
     /**

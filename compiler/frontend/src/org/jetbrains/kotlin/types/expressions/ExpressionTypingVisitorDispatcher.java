@@ -99,8 +99,9 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, E
         if (typeInfo.getType() != null) {
             return typeInfo;
         }
-        return typeInfo.replaceType(ErrorUtils.createErrorType("Type for " + expression.getText())).replaceDataFlowInfo(
-                context.dataFlowInfo);
+        return typeInfo
+                .replaceType(ErrorUtils.createErrorType("Type for " + expression.getText()))
+                .replaceDataFlowInfo(context.dataFlowInfo);
     }
 
     @Override
@@ -131,7 +132,7 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, E
     }
 
     @NotNull
-    static private JetTypeInfo getTypeInfo(@NotNull JetExpression expression, ExpressionTypingContext context, JetVisitor<JetTypeInfo, ExpressionTypingContext> visitor) {
+    private static JetTypeInfo getTypeInfo(@NotNull JetExpression expression, ExpressionTypingContext context, JetVisitor<JetTypeInfo, ExpressionTypingContext> visitor) {
         try {
             JetTypeInfo recordedTypeInfo = BindingContextUtils.getRecordedTypeInfo(expression, context.trace.getBindingContext());
             if (recordedTypeInfo != null) {
@@ -141,7 +142,8 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, E
             try {
                 result = expression.accept(visitor, context);
                 // Some recursive definitions (object expressions) must put their types in the cache manually:
-                if (Boolean.TRUE.equals(context.trace.get(BindingContext.PROCESSED, expression))) {
+                //noinspection ConstantConditions
+                if (context.trace.get(BindingContext.PROCESSED, expression)) {
                     JetType type = context.trace.getBindingContext().getType(expression);
                     return result.replaceType(type);
                 }
@@ -153,7 +155,7 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, E
             }
             catch (ReenteringLazyValueComputationException e) {
                 context.trace.report(TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM.on(expression));
-                result = TypeInfoFactoryPackage.createTypeInfo(context);
+                result = TypeInfoFactoryPackage.noTypeInfo(context);
             }
 
             context.trace.record(BindingContext.PROCESSED, expression);

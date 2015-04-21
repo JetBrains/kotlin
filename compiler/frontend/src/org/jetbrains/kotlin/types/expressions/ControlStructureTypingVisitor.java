@@ -111,8 +111,8 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                        : result;
             }
             return TypeInfoFactoryPackage.createTypeInfo(DataFlowUtils.checkImplicitCast(
-                                                                    components.builtIns.getUnitType(), ifExpression,
-                                                                    contextWithExpectedType, isStatement
+                                                                 components.builtIns.getUnitType(), ifExpression,
+                                                                 contextWithExpectedType, isStatement
                                                          ),
                                                          thenInfo.or(elseInfo)
             );
@@ -221,8 +221,9 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             bodyTypeInfo = components.expressionTypingServices.getBlockReturnedTypeWithWritableScope(
                     scopeToExtend, Collections.singletonList(body),
                     CoercionStrategy.NO_COERCION, context.replaceDataFlowInfo(conditionInfo));
-        } else {
-            bodyTypeInfo = TypeInfoFactoryPackage.createTypeInfo(conditionInfo);
+        }
+        else {
+            bodyTypeInfo = TypeInfoFactoryPackage.noTypeInfo(conditionInfo);
         }
 
         // Condition is false at this point only if there is no jumps outside
@@ -331,7 +332,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                     writableScope, block, CoercionStrategy.NO_COERCION, context);
         }
         else {
-            bodyTypeInfo = TypeInfoFactoryPackage.createTypeInfo(context);
+            bodyTypeInfo = TypeInfoFactoryPackage.noTypeInfo(context);
         }
         JetExpression condition = expression.getCondition();
         DataFlowInfo conditionDataFlowInfo = checkCondition(conditionScope, condition, context);
@@ -380,7 +381,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             }
         }
         else {
-            loopRangeInfo = TypeInfoFactoryPackage.createTypeInfo(context);
+            loopRangeInfo = TypeInfoFactoryPackage.noTypeInfo(context);
         }
 
         WritableScope loopScope = newWritableScopeImpl(context, "Scope with for-loop index");
@@ -480,7 +481,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             }
         }
 
-        JetTypeInfo result = TypeInfoFactoryPackage.createTypeInfo(context);
+        JetTypeInfo result = TypeInfoFactoryPackage.noTypeInfo(context);
         if (finallyBlock != null) {
             result = facade.getTypeInfo(finallyBlock.getFinalExpression(),
                                         context.replaceExpectedType(NO_EXPECTED_TYPE));

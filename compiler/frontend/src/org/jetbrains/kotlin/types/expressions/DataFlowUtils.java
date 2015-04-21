@@ -225,7 +225,7 @@ public class DataFlowUtils {
         facade.checkStatementType(
                 expression, context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT));
         context.trace.report(EXPRESSION_EXPECTED.on(expression, expression));
-        return TypeInfoFactoryPackage.createTypeInfo(context);
+        return TypeInfoFactoryPackage.noTypeInfo(context);
     }
 
     @NotNull

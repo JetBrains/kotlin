@@ -55,7 +55,7 @@ public final class UnaryOperationTranslator {
         IElementType operationToken = expression.getOperationReference().getReferencedNameElementType();
         if (operationToken == JetTokens.EXCLEXCL) {
             JetExpression baseExpression = getBaseExpression(expression);
-            JetType type = BindingContextUtils.getNotNullType(context.bindingContext(), baseExpression);
+            JetType type = BindingContextUtils.getTypeNotNull(context.bindingContext(), baseExpression);
             JsExpression translatedExpression = translateAsExpression(baseExpression, context);
             return type.isMarkedNullable() ? sure(translatedExpression, context) : translatedExpression;
         }
