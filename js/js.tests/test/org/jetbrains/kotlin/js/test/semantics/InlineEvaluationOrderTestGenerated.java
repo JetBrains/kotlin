@@ -119,6 +119,12 @@ public class InlineEvaluationOrderTestGenerated extends AbstractInlineEvaluation
         doTest(fileName);
     }
 
+    @TestMetadata("callQualifierComplex.kt")
+    public void testCallQualifierComplex() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/callQualifierComplex.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("conditional.kt")
     public void testConditional() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/conditional.kt");

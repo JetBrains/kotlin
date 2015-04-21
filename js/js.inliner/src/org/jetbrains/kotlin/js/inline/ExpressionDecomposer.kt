@@ -260,10 +260,10 @@ class ExpressionDecomposer private (
     }
 
     private fun Callable.process() {
+        qualifier = accept(qualifier)
         var matchedIndices = arguments.indicesOfExtractable
         if (!matchedIndices.hasNext()) return
 
-        qualifier = accept(qualifier)
         if (qualifier in containsNodeWithSideEffect) {
             val callee = qualifier as? JsNameRef
             val receiver = callee?.qualifier
