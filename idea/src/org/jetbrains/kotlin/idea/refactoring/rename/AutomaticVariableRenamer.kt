@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.refactoring.rename
 
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.util.PsiTreeUtil
@@ -37,16 +38,19 @@ import org.jetbrains.kotlin.psi.JetParameter
 import org.jetbrains.kotlin.psi.JetVariableDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.types.JetType
 import java.util.ArrayList
 import java.util.LinkedHashMap
 
-public class AutomaticVariableRenamer(klass: JetClass, newClassName: String, usages: Collection<UsageInfo>) : AutomaticRenamer() {
+public class AutomaticVariableRenamer(
+        klass: PsiNamedElement, // PsiClass or JetClass
+        newClassName: String,
+        usages: Collection<UsageInfo>
+) : AutomaticRenamer() {
     private val toUnpluralize = ArrayList<JetNamedDeclaration>()
 
     init {
-        val classType = (klass.resolveToDescriptor() as ClassDescriptor).getDefaultType()
-
         for (usage in usages) {
             val usageElement = usage.getElement() ?: continue
 
@@ -58,7 +62,7 @@ public class AutomaticVariableRenamer(klass: JetClass, newClassName: String, usa
 
             if (parameterOrVariable.getTypeReference()?.isAncestor(usageElement) != true) continue
             val type = (parameterOrVariable.resolveToDescriptor() as VariableDescriptor).getType()
-            if (type.isCollectionLikeOf(classType)) {
+            if (type.isCollectionLikeOf(klass)) {
                 toUnpluralize.add(parameterOrVariable)
             }
 
@@ -91,21 +95,22 @@ public class AutomaticVariableRenamer(klass: JetClass, newClassName: String, usa
     }
 }
 
-private fun JetType.isCollectionLikeOf(elementType: JetType): Boolean {
+private fun JetType.isCollectionLikeOf(classPsiElement: PsiNamedElement): Boolean {
     val klass = this.getConstructor().getDeclarationDescriptor() as? ClassDescriptor ?: return false
     if (KotlinBuiltIns.isArray(this) || DescriptorUtils.isSubclass(klass, KotlinBuiltIns.getInstance().getCollection())) {
         val typeArgument = this.getArguments().singleOrNull()?.getType() ?: return false
-        return elementType == typeArgument || typeArgument.isCollectionLikeOf(elementType)
+        val typePsiElement = ((typeArgument.getConstructor().getDeclarationDescriptor() as? ClassDescriptor)?.getSource() as? PsiSourceElement)?.psi
+        return classPsiElement == typePsiElement || typeArgument.isCollectionLikeOf(classPsiElement)
     }
     return false
 }
 
 
 public class AutomaticVariableRenamerFactory: AutomaticRenamerFactory {
-    override fun isApplicable(element: PsiElement) = element is JetClass
+    override fun isApplicable(element: PsiElement) = element is JetClass || element is PsiClass
 
     override fun createRenamer(element: PsiElement, newName: String, usages: Collection<UsageInfo>) =
-            AutomaticVariableRenamer(element as JetClass, newName, usages)
+            AutomaticVariableRenamer(element as PsiNamedElement, newName, usages)
 
     override fun isEnabled() = JavaRefactoringSettings.getInstance().isToRenameVariables()
     override fun setEnabled(enabled: Boolean) = JavaRefactoringSettings.getInstance().setRenameVariables(enabled)
