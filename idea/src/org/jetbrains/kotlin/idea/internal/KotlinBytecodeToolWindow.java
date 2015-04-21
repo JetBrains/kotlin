@@ -30,7 +30,6 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowFactory;
@@ -207,22 +206,14 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
         try {
             ResolutionFacade resolutionFacade = ResolvePackage.getResolutionFacade(jetFile);
 
-            Ref<Set<JetElement>> ref = Ref.<Set<JetElement>>create(new HashSet<JetElement>());
-
             BindingContext bindingContextForFile = resolutionFacade.analyzeFullyAndGetResult(Collections.singletonList(jetFile)).getBindingContext();
 
-            BindingContext bindingContext = analyzeElementWithInline(resolutionFacade, bindingContextForFile, jetFile, 1, ref, enableInline);
+            kotlin.Pair<BindingContext, List<JetFile>> result = analyzeInlinedFunctions(
+                    resolutionFacade, bindingContextForFile, jetFile, !enableInline
+            );
 
-            //We processing another files just to annotate anonymous classes within their inline functions
-            //Bytecode not produced for them cause of filtering via generateClassFilter
-            Set<JetFile> toProcess = new LinkedHashSet<JetFile>();
-            toProcess.add(jetFile);
-            if (ref.get() != null) {
-                for (JetElement element: ref.get()) {
-                    JetFile file = element.getContainingJetFile();
-                    toProcess.add(file);
-                }
-            }
+            BindingContext bindingContext = result.getFirst();
+            List<JetFile> toProcess = result.getSecond();
 
             GenerationState.GenerateClassFilter generateClassFilter = new GenerationState.GenerateClassFilter() {
 
@@ -250,7 +241,7 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
             ModuleDescriptor moduleDescriptor = resolutionFacade.findModuleDescriptor(jetFile);
             state = new GenerationState(jetFile.getProject(), ClassBuilderFactories.TEST, Progress.DEAF,
                                         moduleDescriptor, bindingContext,
-                                        new ArrayList<JetFile>(toProcess), !enableAssertions, !enableAssertions,
+                                        toProcess, !enableAssertions, !enableAssertions,
                                         generateClassFilter,
                                         !enableInline, !enableOptimization, null, null,
                                         DiagnosticSink.DO_NOTHING, null);
@@ -276,13 +267,43 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
         return answer.toString();
     }
 
+    @NotNull
+    public static kotlin.Pair<BindingContext, List<JetFile>> analyzeInlinedFunctions(
+            @NotNull ResolutionFacade resolutionFacadeForFile,
+            @NotNull BindingContext bindingContextForFile,
+            @NotNull JetFile file,
+            boolean analyzeOnlyReifiedInlineFunctions
+    ) {
+        Set<JetElement> analyzedElements = new HashSet<JetElement>();
+        BindingContext context = analyzeElementWithInline(
+                resolutionFacadeForFile,
+                bindingContextForFile,
+                file,
+                1,
+                analyzedElements,
+                !analyzeOnlyReifiedInlineFunctions);
+
+        //We processing another files just to annotate anonymous classes within their inline functions
+        //Bytecode not produced for them cause of filtering via generateClassFilter
+        Set<JetFile> toProcess = new LinkedHashSet<JetFile>();
+        toProcess.add(file);
+
+        for (JetElement collectedElement : analyzedElements) {
+            JetFile containingFile = collectedElement.getContainingJetFile();
+            toProcess.add(containingFile);
+        }
+
+        return new kotlin.Pair<BindingContext, List<JetFile>>(context, new ArrayList<JetFile>(toProcess));
+    }
+
+    @NotNull
     private static BindingContext analyzeElementWithInline(
             @NotNull ResolutionFacade resolutionFacade,
             @NotNull final BindingContext bindingContext,
             @NotNull JetElement element,
             int deep,
-            @NotNull Ref<Set<JetElement>> resultElements,
-            final boolean enableInline
+            @NotNull final Set<JetElement> analyzedElements,
+            final boolean analyzeInlineFunctions
     ) {
         final Project project = element.getProject();
         final Set<JetNamedFunction> collectedElements = new HashSet<JetNamedFunction>();
@@ -301,16 +322,16 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
                 CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
                 if (descriptor instanceof DeserializedSimpleFunctionDescriptor) return;
 
-                if (InlineUtil.isInline(descriptor) && (enableInline || hasReifiedTypeParameters(descriptor))) {
+                if (InlineUtil.isInline(descriptor) && (analyzeInlineFunctions || hasReifiedTypeParameters(descriptor))) {
                     PsiElement declaration = DescriptorToSourceUtilsIde.INSTANCE$.getAnyDeclaration(project, descriptor);
-                    if (declaration != null && declaration instanceof JetNamedFunction) {
+                    if (declaration != null && declaration instanceof JetNamedFunction && !analyzedElements.contains(declaration)) {
                         collectedElements.add((JetNamedFunction) declaration);
                     }
                 }
             }
         });
 
-        resultElements.get().add(element);
+        analyzedElements.add(element);
 
         if (!collectedElements.isEmpty() && deep < 10) {
             List<BindingContext> innerContexts = new ArrayList<BindingContext>();
@@ -319,12 +340,13 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
                 assert body != null : "Inline function should have a body: " + inlineFunctions.getText();
 
                 BindingContext bindingContextForFunction = resolutionFacade.analyze(body, BodyResolveMode.FULL);
-                innerContexts.add(analyzeElementWithInline(resolutionFacade, bindingContextForFunction, inlineFunctions, deep + 1, resultElements, enableInline));
+                innerContexts.add(analyzeElementWithInline(resolutionFacade, bindingContextForFunction, inlineFunctions, deep + 1,
+                                                           analyzedElements, analyzeInlineFunctions));
             }
 
             innerContexts.add(bindingContext);
 
-            resultElements.get().addAll(collectedElements);
+            analyzedElements.addAll(collectedElements);
             return CompositeBindingContext.Companion.create(innerContexts);
         }
 
