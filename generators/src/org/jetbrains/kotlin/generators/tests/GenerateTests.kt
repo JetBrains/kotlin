@@ -73,6 +73,7 @@ import org.jetbrains.kotlin.idea.highlighter.AbstractHighlightingTest
 import org.jetbrains.kotlin.idea.imports.AbstractOptimizeImportsTest
 import org.jetbrains.kotlin.idea.intentions.AbstractIntentionTest
 import org.jetbrains.kotlin.idea.intentions.declarations.AbstractJoinLinesTest
+import org.jetbrains.kotlin.idea.internal.AbstractBytecodeToolWindowTest
 import org.jetbrains.kotlin.idea.kdoc.AbstractKDocHighlightingTest
 import org.jetbrains.kotlin.idea.kdoc.AbstractKDocTypingTest
 import org.jetbrains.kotlin.idea.navigation.AbstractGotoSuperTest
@@ -626,6 +627,10 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractKotlinCoverageOutputFilesTest>()) {
             model("coverage/outputFiles")
+        }
+
+        testClass(javaClass<AbstractBytecodeToolWindowTest>()) {
+            model("internal/toolWindow", recursive = false, extension = null)
         }
 
         testClass(javaClass<AbstractReferenceResolveTest>(), "org.jetbrains.kotlin.idea.kdoc.KdocResolveTestGenerated") {

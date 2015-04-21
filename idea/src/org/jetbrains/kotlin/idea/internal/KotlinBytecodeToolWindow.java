@@ -194,8 +194,9 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
         setText(DEFAULT_TEXT);
     }
 
+    // public for tests
     @NotNull
-    private static String getBytecodeForFile(
+    public static String getBytecodeForFile(
             final JetFile jetFile,
             boolean enableInline,
             boolean enableAssertions,
