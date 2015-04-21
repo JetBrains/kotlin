@@ -15,13 +15,13 @@ import java.util.Collections // TODO: it's temporary while we have java.util.Col
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  */
-public fun <T, A : Appendable> Array<out T>.joinTo(buffer: A, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): A {
+public fun <T, A : Appendable> Array<out T>.joinTo(buffer: A, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((T) -> String)? = null): A {
     buffer.append(prefix)
     var count = 0
     for (element in this) {
         if (++count > 1) buffer.append(separator)
         if (limit < 0 || count <= limit) {
-            val text = if (element == null) "null" else element.toString()
+            val text = if (transform != null) transform(element) else if (element == null) "null" else element.toString()
             buffer.append(text)
         } else break
     }
@@ -35,13 +35,13 @@ public fun <T, A : Appendable> Array<out T>.joinTo(buffer: A, separator: String 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  */
-public fun <A : Appendable> BooleanArray.joinTo(buffer: A, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): A {
+public fun <A : Appendable> BooleanArray.joinTo(buffer: A, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((Boolean) -> String)? = null): A {
     buffer.append(prefix)
     var count = 0
     for (element in this) {
         if (++count > 1) buffer.append(separator)
         if (limit < 0 || count <= limit) {
-            val text = element.toString()
+            val text = if (transform != null) transform(element) else element.toString()
             buffer.append(text)
         } else break
     }
@@ -55,13 +55,13 @@ public fun <A : Appendable> BooleanArray.joinTo(buffer: A, separator: String = "
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  */
-public fun <A : Appendable> ByteArray.joinTo(buffer: A, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): A {
+public fun <A : Appendable> ByteArray.joinTo(buffer: A, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((Byte) -> String)? = null): A {
     buffer.append(prefix)
     var count = 0
     for (element in this) {
         if (++count > 1) buffer.append(separator)
         if (limit < 0 || count <= limit) {
-            val text = element.toString()
+            val text = if (transform != null) transform(element) else element.toString()
             buffer.append(text)
         } else break
     }
@@ -75,13 +75,13 @@ public fun <A : Appendable> ByteArray.joinTo(buffer: A, separator: String = ", "
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  */
-public fun <A : Appendable> CharArray.joinTo(buffer: A, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): A {
+public fun <A : Appendable> CharArray.joinTo(buffer: A, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((Char) -> String)? = null): A {
     buffer.append(prefix)
     var count = 0
     for (element in this) {
         if (++count > 1) buffer.append(separator)
         if (limit < 0 || count <= limit) {
-            val text = element.toString()
+            val text = if (transform != null) transform(element) else element.toString()
             buffer.append(text)
         } else break
     }
@@ -95,13 +95,13 @@ public fun <A : Appendable> CharArray.joinTo(buffer: A, separator: String = ", "
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  */
-public fun <A : Appendable> DoubleArray.joinTo(buffer: A, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): A {
+public fun <A : Appendable> DoubleArray.joinTo(buffer: A, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((Double) -> String)? = null): A {
     buffer.append(prefix)
     var count = 0
     for (element in this) {
         if (++count > 1) buffer.append(separator)
         if (limit < 0 || count <= limit) {
-            val text = element.toString()
+            val text = if (transform != null) transform(element) else element.toString()
             buffer.append(text)
         } else break
     }
@@ -115,13 +115,13 @@ public fun <A : Appendable> DoubleArray.joinTo(buffer: A, separator: String = ",
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  */
-public fun <A : Appendable> FloatArray.joinTo(buffer: A, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): A {
+public fun <A : Appendable> FloatArray.joinTo(buffer: A, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((Float) -> String)? = null): A {
     buffer.append(prefix)
     var count = 0
     for (element in this) {
         if (++count > 1) buffer.append(separator)
         if (limit < 0 || count <= limit) {
-            val text = element.toString()
+            val text = if (transform != null) transform(element) else element.toString()
             buffer.append(text)
         } else break
     }
@@ -135,13 +135,13 @@ public fun <A : Appendable> FloatArray.joinTo(buffer: A, separator: String = ", 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  */
-public fun <A : Appendable> IntArray.joinTo(buffer: A, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): A {
+public fun <A : Appendable> IntArray.joinTo(buffer: A, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((Int) -> String)? = null): A {
     buffer.append(prefix)
     var count = 0
     for (element in this) {
         if (++count > 1) buffer.append(separator)
         if (limit < 0 || count <= limit) {
-            val text = element.toString()
+            val text = if (transform != null) transform(element) else element.toString()
             buffer.append(text)
         } else break
     }
@@ -155,13 +155,13 @@ public fun <A : Appendable> IntArray.joinTo(buffer: A, separator: String = ", ",
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  */
-public fun <A : Appendable> LongArray.joinTo(buffer: A, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): A {
+public fun <A : Appendable> LongArray.joinTo(buffer: A, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((Long) -> String)? = null): A {
     buffer.append(prefix)
     var count = 0
     for (element in this) {
         if (++count > 1) buffer.append(separator)
         if (limit < 0 || count <= limit) {
-            val text = element.toString()
+            val text = if (transform != null) transform(element) else element.toString()
             buffer.append(text)
         } else break
     }
@@ -175,13 +175,13 @@ public fun <A : Appendable> LongArray.joinTo(buffer: A, separator: String = ", "
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  */
-public fun <A : Appendable> ShortArray.joinTo(buffer: A, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): A {
+public fun <A : Appendable> ShortArray.joinTo(buffer: A, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((Short) -> String)? = null): A {
     buffer.append(prefix)
     var count = 0
     for (element in this) {
         if (++count > 1) buffer.append(separator)
         if (limit < 0 || count <= limit) {
-            val text = element.toString()
+            val text = if (transform != null) transform(element) else element.toString()
             buffer.append(text)
         } else break
     }
@@ -195,13 +195,13 @@ public fun <A : Appendable> ShortArray.joinTo(buffer: A, separator: String = ", 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  */
-public fun <T, A : Appendable> Iterable<T>.joinTo(buffer: A, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): A {
+public fun <T, A : Appendable> Iterable<T>.joinTo(buffer: A, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((T) -> String)? = null): A {
     buffer.append(prefix)
     var count = 0
     for (element in this) {
         if (++count > 1) buffer.append(separator)
         if (limit < 0 || count <= limit) {
-            val text = if (element == null) "null" else element.toString()
+            val text = if (transform != null) transform(element) else if (element == null) "null" else element.toString()
             buffer.append(text)
         } else break
     }
@@ -215,13 +215,13 @@ public fun <T, A : Appendable> Iterable<T>.joinTo(buffer: A, separator: String =
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  */
-public fun <T, A : Appendable> Sequence<T>.joinTo(buffer: A, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): A {
+public fun <T, A : Appendable> Sequence<T>.joinTo(buffer: A, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((T) -> String)? = null): A {
     buffer.append(prefix)
     var count = 0
     for (element in this) {
         if (++count > 1) buffer.append(separator)
         if (limit < 0 || count <= limit) {
-            val text = if (element == null) "null" else element.toString()
+            val text = if (transform != null) transform(element) else if (element == null) "null" else element.toString()
             buffer.append(text)
         } else break
     }
@@ -237,13 +237,13 @@ deprecated("Migrate to using Sequence<T> and respective functions")
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  */
-public fun <T, A : Appendable> Stream<T>.joinTo(buffer: A, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): A {
+public fun <T, A : Appendable> Stream<T>.joinTo(buffer: A, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((T) -> String)? = null): A {
     buffer.append(prefix)
     var count = 0
     for (element in this) {
         if (++count > 1) buffer.append(separator)
         if (limit < 0 || count <= limit) {
-            val text = if (element == null) "null" else element.toString()
+            val text = if (transform != null) transform(element) else if (element == null) "null" else element.toString()
             buffer.append(text)
         } else break
     }
@@ -257,8 +257,8 @@ public fun <T, A : Appendable> Stream<T>.joinTo(buffer: A, separator: String = "
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  */
-public fun <T> Array<out T>.joinToString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): String {
-    return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated).toString()
+public fun <T> Array<out T>.joinToString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((T) -> String)? = null): String {
+    return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
 }
 
 /**
@@ -266,8 +266,8 @@ public fun <T> Array<out T>.joinToString(separator: String = ", ", prefix: Strin
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  */
-public fun BooleanArray.joinToString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): String {
-    return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated).toString()
+public fun BooleanArray.joinToString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((Boolean) -> String)? = null): String {
+    return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
 }
 
 /**
@@ -275,8 +275,8 @@ public fun BooleanArray.joinToString(separator: String = ", ", prefix: String = 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  */
-public fun ByteArray.joinToString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): String {
-    return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated).toString()
+public fun ByteArray.joinToString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((Byte) -> String)? = null): String {
+    return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
 }
 
 /**
@@ -284,8 +284,8 @@ public fun ByteArray.joinToString(separator: String = ", ", prefix: String = "",
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  */
-public fun CharArray.joinToString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): String {
-    return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated).toString()
+public fun CharArray.joinToString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((Char) -> String)? = null): String {
+    return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
 }
 
 /**
@@ -293,8 +293,8 @@ public fun CharArray.joinToString(separator: String = ", ", prefix: String = "",
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  */
-public fun DoubleArray.joinToString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): String {
-    return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated).toString()
+public fun DoubleArray.joinToString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((Double) -> String)? = null): String {
+    return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
 }
 
 /**
@@ -302,8 +302,8 @@ public fun DoubleArray.joinToString(separator: String = ", ", prefix: String = "
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  */
-public fun FloatArray.joinToString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): String {
-    return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated).toString()
+public fun FloatArray.joinToString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((Float) -> String)? = null): String {
+    return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
 }
 
 /**
@@ -311,8 +311,8 @@ public fun FloatArray.joinToString(separator: String = ", ", prefix: String = ""
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  */
-public fun IntArray.joinToString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): String {
-    return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated).toString()
+public fun IntArray.joinToString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((Int) -> String)? = null): String {
+    return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
 }
 
 /**
@@ -320,8 +320,8 @@ public fun IntArray.joinToString(separator: String = ", ", prefix: String = "", 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  */
-public fun LongArray.joinToString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): String {
-    return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated).toString()
+public fun LongArray.joinToString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((Long) -> String)? = null): String {
+    return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
 }
 
 /**
@@ -329,8 +329,8 @@ public fun LongArray.joinToString(separator: String = ", ", prefix: String = "",
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  */
-public fun ShortArray.joinToString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): String {
-    return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated).toString()
+public fun ShortArray.joinToString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((Short) -> String)? = null): String {
+    return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
 }
 
 /**
@@ -338,8 +338,8 @@ public fun ShortArray.joinToString(separator: String = ", ", prefix: String = ""
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  */
-public fun <T> Iterable<T>.joinToString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): String {
-    return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated).toString()
+public fun <T> Iterable<T>.joinToString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((T) -> String)? = null): String {
+    return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
 }
 
 /**
@@ -347,8 +347,8 @@ public fun <T> Iterable<T>.joinToString(separator: String = ", ", prefix: String
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  */
-public fun <T> Sequence<T>.joinToString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): String {
-    return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated).toString()
+public fun <T> Sequence<T>.joinToString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((T) -> String)? = null): String {
+    return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
 }
 
 
@@ -358,7 +358,7 @@ deprecated("Migrate to using Sequence<T> and respective functions")
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  */
-public fun <T> Stream<T>.joinToString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): String {
-    return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated).toString()
+public fun <T> Stream<T>.joinToString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((T) -> String)? = null): String {
+    return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
 }
 

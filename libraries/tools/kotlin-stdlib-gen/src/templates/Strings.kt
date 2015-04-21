@@ -5,7 +5,7 @@ import templates.Family.*
 fun strings(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
 
-    templates add f("joinTo(buffer: A, separator: String = \", \", prefix: String = \"\", postfix: String = \"\", limit: Int = -1, truncated: String = \"...\")") {
+    templates add f("joinTo(buffer: A, separator: String = \", \", prefix: String = \"\", postfix: String = \"\", limit: Int = -1, truncated: String = \"...\", transform: ((T) -> String)? = null)") {
         doc {
             """
             Appends the string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
@@ -23,7 +23,7 @@ fun strings(): List<GenericFunction> {
             for (element in this) {
                 if (++count > 1) buffer.append(separator)
                 if (limit < 0 || count <= limit) {
-                    val text = if (element == null) "null" else element.toString()
+                    val text = if (transform != null) transform(element) else if (element == null) "null" else element.toString()
                     buffer.append(text)
                 } else break
             }
@@ -40,7 +40,7 @@ fun strings(): List<GenericFunction> {
             for (element in this) {
                 if (++count > 1) buffer.append(separator)
                 if (limit < 0 || count <= limit) {
-                    val text = element.toString()
+                    val text = if (transform != null) transform(element) else element.toString()
                     buffer.append(text)
                 } else break
             }
@@ -51,7 +51,7 @@ fun strings(): List<GenericFunction> {
         }
     }
 
-    templates add f("joinToString(separator: String = \", \", prefix: String = \"\", postfix: String = \"\", limit: Int = -1, truncated: String = \"...\")") {
+    templates add f("joinToString(separator: String = \", \", prefix: String = \"\", postfix: String = \"\", limit: Int = -1, truncated: String = \"...\", transform: ((T) -> String)? = null)") {
         doc {
             """
             Creates a string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
@@ -65,7 +65,7 @@ fun strings(): List<GenericFunction> {
         returns("String")
         body {
             """
-            return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated).toString()
+            return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
             """
         }
     }

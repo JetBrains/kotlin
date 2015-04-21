@@ -73,6 +73,10 @@ public class SequenceTest {
         }
     }
 
+    test fun mapAndJoinToString() {
+        assertEquals("3, 5, 8", fibonacci().withIndex().filter { it.index > 3 }.take(3).joinToString { it.value.toString() })
+    }
+
     test fun withIndex() {
         val data = sequenceOf("foo", "bar")
         val indexed = data.withIndex().map { it.value.substring(0..it.index) }.toList()

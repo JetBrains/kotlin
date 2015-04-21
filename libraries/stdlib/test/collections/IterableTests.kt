@@ -267,4 +267,10 @@ abstract class IterableTests<T : Iterable<String>>(val data: T, val empty: T) {
         assertEquals(6, reduced.length())
         assertTrue(reduced == "foobar" || reduced == "barfoo")
     }
+
+    Test
+    fun mapAndJoinToString() {
+        val result = data.joinToString(separator = "-") { it.toUpperCase() }
+        assertEquals("FOO-BAR", result)
+    }
 }
