@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.idea.highlighter.markers
 
-import com.google.common.collect.Maps
-import com.google.common.collect.Sets
 import com.intellij.codeHighlighting.Pass
 import com.intellij.codeInsight.daemon.LineMarkerInfo
 import com.intellij.codeInsight.daemon.LineMarkerProvider
@@ -39,7 +37,7 @@ import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isOverridable
 import java.awt.event.MouseEvent
-import java.util.HashSet
+import java.util.*
 import javax.swing.Icon
 
 public class KotlinLineMarkerProvider : LineMarkerProvider {
@@ -114,7 +112,7 @@ private fun isImplementsAndNotOverrides(descriptor: CallableMemberDescriptor, ov
 }
 
 private fun collectSuperDeclarationMarkers(declaration: JetDeclaration, result: MutableCollection<LineMarkerInfo<*>>) {
-    assert((declaration is JetNamedFunction || declaration is JetProperty))
+    assert(declaration is JetNamedFunction || declaration is JetProperty)
 
     if (!declaration.hasModifier(JetTokens.OVERRIDE_KEYWORD)) return
 
@@ -160,7 +158,7 @@ private fun collectInheritedClassMarker(element: JetClass, result: MutableCollec
 }
 
 private fun collectOverriddenPropertyAccessors(properties: Collection<JetProperty>, result: MutableCollection<LineMarkerInfo<*>>) {
-    val mappingToJava = Maps.newHashMap<PsiMethod, JetProperty>()
+    val mappingToJava = HashMap<PsiMethod, JetProperty>()
     for (property in properties) {
         if (property.isOverridable()) {
             val accessorsPsiMethods = LightClassUtil.getLightClassPropertyMethods(property)
@@ -175,12 +173,11 @@ private fun collectOverriddenPropertyAccessors(properties: Collection<JetPropert
     for (property in getOverriddenDeclarations(mappingToJava, classes)) {
         ProgressManager.checkCanceled()
 
-        var anchor = property.getNameIdentifier()
-        if (anchor == null) anchor = property
+        val anchor = property.getNameIdentifier() ?: property
 
         result.add(LineMarkerInfo(
                 anchor,
-                anchor!!.getTextOffset(),
+                anchor.getTextOffset(),
                 if (isImplemented(property)) IMPLEMENTED_MARK else OVERRIDDEN_MARK,
                 Pass.UPDATE_OVERRIDEN_MARKERS,
                 OVERRIDDEN_PROPERTY.getTooltip(),
@@ -191,7 +188,7 @@ private fun collectOverriddenPropertyAccessors(properties: Collection<JetPropert
 }
 
 private fun collectOverriddenFunctions(functions: Collection<JetNamedFunction>, result: MutableCollection<LineMarkerInfo<*>>) {
-    val mappingToJava = Maps.newHashMap<PsiMethod, JetNamedFunction>()
+    val mappingToJava = HashMap<PsiMethod, JetNamedFunction>()
     for (function in functions) {
         if (function.isOverridable()) {
             val method = LightClassUtil.getLightClassMethod(function)
@@ -210,7 +207,7 @@ private fun collectOverriddenFunctions(functions: Collection<JetNamedFunction>, 
 
         result.add(LineMarkerInfo(
                 anchor,
-                anchor!!.getTextOffset(),
+                anchor.getTextOffset(),
                 if (isImplemented(function)) IMPLEMENTED_MARK else OVERRIDDEN_MARK,
                 Pass.UPDATE_OVERRIDEN_MARKERS, OVERRIDDEN_FUNCTION.getTooltip(),
                 OVERRIDDEN_FUNCTION.getNavigationHandler(),
