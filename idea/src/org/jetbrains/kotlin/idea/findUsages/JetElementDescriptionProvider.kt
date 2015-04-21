@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.findUsages
 
+import com.intellij.codeInsight.highlighting.HighlightUsagesDescriptionLocation
 import com.intellij.psi.ElementDescriptionLocation
 import com.intellij.psi.ElementDescriptionProvider
 import com.intellij.psi.PsiElement
@@ -25,6 +26,7 @@ import com.intellij.refactoring.util.RefactoringDescriptionLocation
 import com.intellij.usageView.UsageViewLongNameLocation
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -44,6 +46,14 @@ public class JetElementDescriptionProvider : ElementDescriptionProvider {
             else -> null
         }
 
+        fun targetDescriptor(): DeclarationDescriptor? {
+            val descriptor = (targetElement as JetDeclaration).descriptor ?: return null
+            if (descriptor is ConstructorDescriptor) {
+                return descriptor.getContainingDeclaration()
+            }
+            return descriptor
+        }
+
         if (targetElement !is PsiNamedElement || targetElement !is JetElement) return null
 
         val name = (targetElement : PsiNamedElement).getName()
@@ -53,10 +63,7 @@ public class JetElementDescriptionProvider : ElementDescriptionProvider {
                 name
             is RefactoringDescriptionLocation -> {
                 val kind = elementKind() ?: return null
-                var descriptor = (targetElement as JetDeclaration).descriptor ?: return null
-                if (descriptor is ConstructorDescriptor) {
-                    descriptor = (descriptor as ConstructorDescriptor).getContainingDeclaration()
-                }
+                val descriptor = targetDescriptor() ?: return null
                 val desc =
                         if (location.includeParent() && targetElement !is JetTypeParameter && targetElement !is JetParameter) {
                             DescriptorUtils.getFqName(descriptor).asString()
@@ -66,6 +73,11 @@ public class JetElementDescriptionProvider : ElementDescriptionProvider {
                         }
 
                 "$kind ${CommonRefactoringUtil.htmlEmphasize(desc)}"
+            }
+            is HighlightUsagesDescriptionLocation -> {
+                val kind = elementKind() ?: return null
+                val descriptor = targetDescriptor() ?: return null
+                "$kind ${descriptor.getName().asString()}"
             }
             else -> null
         }
