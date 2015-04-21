@@ -87,6 +87,7 @@
         <include name="compiler/builtins-serializer/src"/>
         <include name="compiler/cli/src"/>
         <include name="compiler/cli/cli-common/src"/>
+        <include name="compiler/container/src"/>
         <include name="compiler/frontend/src"/>
         <include name="compiler/frontend.java/src"/>
         <include name="compiler/light-classes/src"/>
@@ -105,6 +106,7 @@
     <property name="idea.out" value="${basedir}/out/production"/>
     <patternset id="compilerClassesFromIDEA.fileset">
         <include name="frontend/**"/>
+        <include name="container/**"/>
         <include name="descriptors/**"/>
         <include name="deserialization/**"/>
         <include name="serialization/**"/>
@@ -199,6 +201,7 @@
             <fileset dir="compiler/builtins-serializer/src"/>
             <fileset dir="compiler/cli/src"/>
             <fileset dir="compiler/cli/cli-common/src"/>
+            <fileset dir="compiler/container/src"/>
             <fileset dir="compiler/frontend/src"/>
             <fileset dir="compiler/frontend.java/src"/>
             <fileset dir="compiler/light-classes/src"/>
