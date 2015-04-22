@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetParameter;
-import org.jetbrains.kotlin.psi.JetPsiUtil;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 
 public class RemoveValVarFromParameterFix extends JetIntentionAction<JetParameter> {
     private final String varOrVal;
@@ -36,7 +36,7 @@ public class RemoveValVarFromParameterFix extends JetIntentionAction<JetParamete
     public RemoveValVarFromParameterFix(@NotNull JetParameter element) {
         super(element);
         ASTNode valOrVarNode = element.getValOrVarNode();
-        assert valOrVarNode != null : "Val or var node not found for " + JetPsiUtil.getElementTextWithContext(element);
+        assert valOrVarNode != null : "Val or var node not found for " + PsiUtilPackage.getElementTextWithContext(element);
         varOrVal = valOrVarNode.getText();
     }
 

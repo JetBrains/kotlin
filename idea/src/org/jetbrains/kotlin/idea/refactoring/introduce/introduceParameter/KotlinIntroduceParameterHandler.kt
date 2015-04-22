@@ -49,12 +49,7 @@ import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiUnifier
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
 import org.jetbrains.kotlin.idea.util.supertypes
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.getValueParameterList
-import org.jetbrains.kotlin.psi.psiUtil.getValueParameters
-import org.jetbrains.kotlin.psi.psiUtil.isAncestor
-import org.jetbrains.kotlin.psi.psiUtil.parents
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.JetScopeUtils
 import org.jetbrains.kotlin.types.JetType
@@ -165,14 +160,14 @@ public open class KotlinIntroduceParameterHandler: KotlinIntroduceHandlerBase() 
                     is FunctionDescriptor -> descriptor : FunctionDescriptor
                     is ClassDescriptor -> descriptor.getUnsubstitutedPrimaryConstructor()
                     else -> null
-                } ?: throw AssertionError("Unexpected element type: ${JetPsiUtil.getElementTextWithContext(targetParent)}")
+                } ?: throw AssertionError("Unexpected element type: ${targetParent.getElementTextWithContext()}")
         val parameterType = expressionType.approximateWithResolvableType(JetScopeUtils.getResolutionScope(targetParent, context), false)
 
         val body = when (targetParent) {
                        is JetFunction -> targetParent.getBodyExpression()
                        is JetClass -> targetParent.getBody()
                        else -> null
-                   } ?: throw AssertionError("Body element is not found: ${JetPsiUtil.getElementTextWithContext(targetParent)}")
+                   } ?: throw AssertionError("Body element is not found: ${targetParent.getElementTextWithContext()}")
         val nameValidator = JetNameValidatorImpl(body, null, JetNameValidatorImpl.Target.PROPERTIES)
         val suggestedNames = linkedSetOf(*JetNameSuggester.suggestNames(parameterType, nameValidator, "p"))
 
@@ -228,7 +223,7 @@ public open class KotlinIntroduceParameterHandler: KotlinIntroduceHandlerBase() 
                                     if (parameterList == null) {
                                         val klass = targetParent as? JetClass
                                         val anchor = klass?.getTypeParameterList() ?: klass?.getNameIdentifier()
-                                        assert(anchor != null, "Invalid declaration: ${JetPsiUtil.getElementTextWithContext(targetParent)}")
+                                        assert(anchor != null, "Invalid declaration: ${targetParent.getElementTextWithContext()}")
 
                                         val constructor = targetParent.addAfter(psiFactory.createPrimaryConstructor(), anchor) as JetPrimaryConstructor
                                         constructor.getValueParameterList()!!

@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.CreateFromUsageFixBase
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
 import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import java.util.Collections
 import java.util.HashSet
 
@@ -41,7 +42,7 @@ public class CreateCallableFromUsageFix(
                 isExtension: Boolean) : this(originalExpression, Collections.singletonList(callableInfo), isExtension) { }
 
     init {
-        assert (callableInfos.isNotEmpty()) { "No CallableInfos: ${JetPsiUtil.getElementTextWithContext(originalElement)}" }
+        assert (callableInfos.isNotEmpty()) { "No CallableInfos: ${originalElement.getElementTextWithContext()}" }
         if (callableInfos.size() > 1) {
             val receiverSet = callableInfos.mapTo(HashSet<TypeInfo>()) { it.receiverTypeInfo }
             if (receiverSet.size() > 1) throw AssertionError("All functions must have common receiver: $receiverSet")

@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import com.intellij.lang.ASTNode
+import com.intellij.openapi.util.Condition
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.PsiComment
 import org.jetbrains.kotlin.resolve.calls.CallTransformer.CallForImplicitInvoke
@@ -490,4 +491,24 @@ fun JetNamedDeclaration.getValueParameterList(): JetParameterList? {
         is JetClass -> getPrimaryConstructorParameterList()
         else -> null
     }
+}
+
+public fun PsiElement.getElementTextWithContext(): String {
+    if (this is PsiFile) {
+        return getContainingFile().getText()
+    }
+
+    // Find parent for element among file children
+    val topLevelElement = PsiTreeUtil.findFirstParent(this, { it.getParent() is PsiFile }) ?:
+        throw AssertionError("For non-file element we should always be able to find parent in file children")
+
+    val startContextOffset = topLevelElement.getTextRange().getStartOffset()
+    val elementContextOffset = getTextRange().getStartOffset()
+
+    val inFileParentOffset = elementContextOffset - startContextOffset
+
+    return StringBuilder(topLevelElement.getText())
+            .insert(inFileParentOffset, "<caret>")
+            .insert(0, "File name: ${getContainingFile().getName()}\n")
+            .toString()
 }

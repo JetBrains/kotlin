@@ -30,6 +30,7 @@ import com.intellij.psi.PsiErrorElement
 import org.jetbrains.kotlin.psi.JetPsiUtil
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.decompiler.JetClsFile
+import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 
 public abstract class AbstractDecompiledTextTest() : JetLightCodeInsightFixtureTestCase() {
 
@@ -53,7 +54,7 @@ public abstract class AbstractDecompiledTextTest() : JetLightCodeInsightFixtureT
     private fun checkThatFileWasParsedCorrectly(clsFile: PsiFile) {
         clsFile.accept(object : PsiRecursiveElementVisitor() {
             override fun visitErrorElement(element: PsiErrorElement) {
-                fail("Decompiled file should not contain error elements!\n${JetPsiUtil.getElementTextWithContext(element)}")
+                fail("Decompiled file should not contain error elements!\n${element.getElementTextWithContext()}")
             }
         })
     }

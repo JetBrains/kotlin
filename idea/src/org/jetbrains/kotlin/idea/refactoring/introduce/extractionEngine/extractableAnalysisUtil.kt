@@ -61,10 +61,7 @@ import org.jetbrains.kotlin.idea.util.approximateWithResolvableType
 import org.jetbrains.kotlin.idea.util.isResolvableInScope
 import org.jetbrains.kotlin.idea.util.makeNullable
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.isInsideOf
-import org.jetbrains.kotlin.psi.psiUtil.parents
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -840,7 +837,7 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
 
     val enclosingPseudocode = PseudocodeUtil.generatePseudocode(enclosingPseudocodeDeclaration, bindingContext)
     val pseudocode = enclosingPseudocode.getPseudocodeByElement(pseudocodeDeclaration)
-                     ?: throw AssertionError("Can't find nested pseudocode for element: ${JetPsiUtil.getElementTextWithContext(pseudocodeDeclaration)}")
+                     ?: throw AssertionError("Can't find nested pseudocode for element: ${pseudocodeDeclaration.getElementTextWithContext()}")
     val localInstructions = getLocalInstructions(pseudocode)
 
     val modifiedVarDescriptorsWithExpressions = localInstructions.getModifiedVarDescriptors(bindingContext)
@@ -949,7 +946,7 @@ private fun JetNamedDeclaration.getGeneratedBody() =
                     call?.getFunctionLiteralArguments()?.singleOrNull()?.getFunctionLiteral()?.getBodyExpression()
                 }
             }
-        } ?: throw AssertionError("Couldn't get block body for this declaration: ${JetPsiUtil.getElementTextWithContext(this)}")
+        } ?: throw AssertionError("Couldn't get block body for this declaration: ${getElementTextWithContext()}")
 
 fun ExtractableCodeDescriptor.validate(): ExtractableCodeDescriptorWithConflicts {
     fun getDeclarationMessage(declaration: PsiNamedElement, messageKey: String, capitalize: Boolean = true): String {

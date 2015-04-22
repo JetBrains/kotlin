@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.idea.search.usagesSearch.*
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
 import java.awt.GridBagConstraints
@@ -166,7 +167,7 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
             var zeroOccurrences = true
 
             for (name in listOf(declaration.getName()) + declaration.getAccessorNames() + declaration.getClassNameForCompanionObject().singletonOrEmptyList()) {
-                assert(name != null) { "Name is null for " + JetPsiUtil.getElementTextWithContext(declaration) }
+                assert(name != null) { "Name is null for " + declaration.getElementTextWithContext() }
                 when (psiSearchHelper.isCheapEnoughToSearch(name, useScope, null, null)) {
                     ZERO_OCCURRENCES -> {} // go on, check other names
                     FEW_OCCURRENCES -> zeroOccurrences = false
@@ -195,8 +196,8 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
         val query = UsagesSearch.search(request)
 
         return !query.forEach(Processor {
-            assert(it != null, { "Found reference is null, was looking for: " + JetPsiUtil.getElementTextWithContext(declaration) +
-                                 " findAll(): " + query.findAll().map { it?.getElement()?.let{ JetPsiUtil.getElementTextWithContext(it) } } })
+            assert(it != null, { "Found reference is null, was looking for: " + declaration.getElementTextWithContext() +
+                                 " findAll(): " + query.findAll().map { it?.getElement()?.let{ it.getElementTextWithContext() } } })
             declaration.isAncestor(it.getElement())
         })
     }

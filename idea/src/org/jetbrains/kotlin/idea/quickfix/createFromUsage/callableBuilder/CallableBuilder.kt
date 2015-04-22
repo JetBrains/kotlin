@@ -53,10 +53,7 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getValueParameters
-import org.jetbrains.kotlin.psi.psiUtil.isAncestor
-import org.jetbrains.kotlin.psi.psiUtil.parents
-import org.jetbrains.kotlin.psi.psiUtil.siblings
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -681,7 +678,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             val templateName = when (func) {
                 is JetSecondaryConstructor -> TEMPLATE_FROM_USAGE_SECONDARY_CONSTRUCTOR_BODY
                 is JetNamedFunction -> TEMPLATE_FROM_USAGE_FUNCTION_BODY
-                else -> throw AssertionError("Unexpected declaration: " + JetPsiUtil.getElementTextWithContext(func))
+                else -> throw AssertionError("Unexpected declaration: " + func.getElementTextWithContext())
             }
             val fileTemplate = FileTemplateManager.getInstance()!!.getCodeTemplate(templateName)
             val properties = Properties()

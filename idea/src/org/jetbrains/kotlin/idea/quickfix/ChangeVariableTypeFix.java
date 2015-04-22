@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
@@ -144,7 +145,7 @@ public class ChangeVariableTypeFix extends JetIntentionAction<JetVariableDeclara
                     DeclarationDescriptor descriptor = context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, property);
                     if (!(descriptor instanceof PropertyDescriptor)) {
                         // Probably can happen in incomplete code.
-                        LOG.error("Property descriptor is expected: " + JetPsiUtil.getElementTextWithContext(property));
+                        LOG.error("Property descriptor is expected: " + PsiUtilPackage.getElementTextWithContext(property));
                         return actions;
                     }
 

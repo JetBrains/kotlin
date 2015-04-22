@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
@@ -62,7 +63,7 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
         if (element instanceof JetFunctionLiteral) {
             JetFunctionLiteralExpression functionLiteralExpression = PsiTreeUtil.getParentOfType(element, JetFunctionLiteralExpression.class);
             assert functionLiteralExpression != null : "FunctionLiteral outside any FunctionLiteralExpression: " +
-                                                       JetPsiUtil.getElementTextWithContext(element);
+                                                       PsiUtilPackage.getElementTextWithContext(element);
             changeFunctionLiteralReturnTypeFix = new ChangeFunctionLiteralReturnTypeFix(functionLiteralExpression, type);
         }
         else {

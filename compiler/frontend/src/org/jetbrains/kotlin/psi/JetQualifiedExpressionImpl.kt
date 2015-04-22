@@ -37,7 +37,7 @@ object JetQualifiedExpressionImpl {
     }
 
     public fun JetQualifiedExpression.getReceiverExpression(): JetExpression {
-        return getExpression(false) ?: throw AssertionError("No receiver found: ${JetPsiUtil.getElementTextWithContext(this)}")
+        return getExpression(false) ?: throw AssertionError("No receiver found: ${getElementTextWithContext()}")
     }
 
     public fun JetQualifiedExpression.getSelectorExpression(): JetExpression? {

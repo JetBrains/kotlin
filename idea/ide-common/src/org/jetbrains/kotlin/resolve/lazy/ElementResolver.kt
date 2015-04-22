@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.di.InjectorForBodyResolve
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
@@ -159,7 +160,7 @@ public abstract class ElementResolver protected(
                     packageRefAdditionalResolve(resolveSession, trace, resolveElement)
                 }
                 else {
-                    error("Invalid type of the topmost parent: $resolveElement\n${JetPsiUtil.getElementTextWithContext(resolveElement)}")
+                    error("Invalid type of the topmost parent: $resolveElement\n${resolveElement.getElementTextWithContext()}")
                 }
             }
         }
@@ -360,7 +361,7 @@ public abstract class ElementResolver protected(
 
         val classDescriptor = resolveSession.resolveToDescriptor(klass) as ClassDescriptor
         val constructorDescriptor = classDescriptor.getUnsubstitutedPrimaryConstructor()
-                                    ?: error("Can't get primary constructor for descriptor '$classDescriptor' in from class '${JetPsiUtil.getElementTextWithContext(klass)}'")
+                                    ?: error("Can't get primary constructor for descriptor '$classDescriptor' in from class '${klass.getElementTextWithContext()}'")
 
         val bodyResolver = createBodyResolver(resolveSession, trace, file, statementFilter)
         bodyResolver.resolveConstructorParameterDefaultValuesAndAnnotations(createEmptyContext(resolveSession), trace, klass, constructorDescriptor, scope)

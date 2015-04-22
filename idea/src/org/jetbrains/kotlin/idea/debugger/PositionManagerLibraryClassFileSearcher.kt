@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import com.intellij.util.indexing.FileBasedIndex
+import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 
 private val LOG = Logger.getInstance("org.jetbrains.kotlin.idea.debugger")
 
@@ -135,7 +136,7 @@ private fun render(desc: DeclarationDescriptor) = DescriptorRenderer.FQ_NAMES_IN
 
 private fun reportError(element: JetElement, descriptor: CallableDescriptor?) {
     LOG.error("Couldn't calculate class name for element in library scope:\n" +
-              JetPsiUtil.getElementTextWithContext(element) +
+              element.getElementTextWithContext() +
               if (descriptor != null) "\ndescriptor = ${render(descriptor)}" else ""
     )
 }

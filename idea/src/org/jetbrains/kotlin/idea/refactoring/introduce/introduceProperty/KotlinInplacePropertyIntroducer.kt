@@ -46,7 +46,7 @@ public class KotlinInplacePropertyIntroducer(
         property, editor, project, title, JetExpression.EMPTY_ARRAY, null, false, property, false, doNotChangeVar, exprType, false
 ) {
     init {
-        assert(availableTargets.isNotEmpty(), "No targets available: ${JetPsiUtil.getElementTextWithContext(property)}")
+        assert(availableTargets.isNotEmpty(), "No targets available: ${property.getElementTextWithContext()}")
     }
 
     private var extractionResult = extractionResult

@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.types.ErrorUtils;
@@ -195,7 +196,7 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
             @NotNull JetType exprType
     ) {
         assert !exprType.isError() : "Unexpected error type, should have been checked before: "
-                                     + JetPsiUtil.getElementTextWithContext(declaration) + ", type = " + exprType;
+                                     + PsiUtilPackage.getElementTextWithContext(declaration) + ", type = " + exprType;
 
         Expression expression = createTypeExpressionForTemplate(exprType);
 

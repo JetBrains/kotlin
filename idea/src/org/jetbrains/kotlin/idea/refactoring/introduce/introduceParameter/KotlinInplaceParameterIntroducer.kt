@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.psi.JetParameter
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.JetPsiUtil
+import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.getValueParameterList
 import org.jetbrains.kotlin.psi.psiUtil.getValueParameters
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
@@ -159,7 +160,7 @@ public class KotlinInplaceParameterIntroducer(
             builder.append(")")
 
             if (addedRange == null) {
-                LOG.error("Added parameter not found: ${JetPsiUtil.getElementTextWithContext(callable)}")
+                LOG.error("Added parameter not found: ${callable.getElementTextWithContext()}")
             }
 
             val document = previewer!!.getDocument()

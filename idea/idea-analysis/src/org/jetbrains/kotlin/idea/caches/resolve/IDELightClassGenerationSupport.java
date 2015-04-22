@@ -49,11 +49,11 @@ import org.jetbrains.kotlin.idea.stubindex.JetFullClassNameIndex;
 import org.jetbrains.kotlin.idea.stubindex.JetTopLevelClassByPackageIndex;
 import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil;
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil;
-import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
@@ -105,7 +105,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
             ClassDescriptor descriptor = bindingContext.get(BindingContext.CLASS, classOrObject);
 
             if (descriptor == null) {
-                LOG.warn("No class descriptor in context for class: " + JetPsiUtil.getElementTextWithContext(classOrObject));
+                LOG.warn("No class descriptor in context for class: " + PsiUtilPackage.getElementTextWithContext(classOrObject));
                 return new LightClassConstructionContext(bindingContext, session.getModuleDescriptor());
             }
 

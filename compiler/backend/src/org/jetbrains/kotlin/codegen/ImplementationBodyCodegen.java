@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -321,7 +322,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             if (specifier instanceof JetDelegatorToSuperClass || specifier instanceof JetDelegatorToSuperCall) {
                 JetType superType = bindingContext.get(BindingContext.TYPE, specifier.getTypeReference());
                 assert superType != null :
-                        String.format("No type recorded for \n---\n%s\n---\n", JetPsiUtil.getElementTextWithContext(specifier));
+                        String.format("No type recorded for \n---\n%s\n---\n", PsiUtilPackage.getElementTextWithContext(specifier));
 
                 ClassifierDescriptor classifierDescriptor = superType.getConstructor().getDeclarationDescriptor();
                 if (!(classifierDescriptor instanceof ClassDescriptor)) continue;

@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.JetPsiUtil
 import org.jetbrains.kotlin.psi.JetReferenceExpression
+import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererBuilder
@@ -122,7 +123,7 @@ public class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() 
             val declarationDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration]
 
             if (declarationDescriptor == null) {
-                LOG.info("Failed to find descriptor for declaration " + JetPsiUtil.getElementTextWithContext(declaration))
+                LOG.info("Failed to find descriptor for declaration " + declaration.getElementTextWithContext())
                 return "No documentation available"
             }
 

@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorFactory;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
@@ -373,7 +374,7 @@ public class PropertyCodegen {
             }
         }
 
-        throw new IllegalStateException("Delegated property not found in its parent: " + JetPsiUtil.getElementTextWithContext(property));
+        throw new IllegalStateException("Delegated property not found in its parent: " + PsiUtilPackage.getElementTextWithContext(property));
     }
 
 

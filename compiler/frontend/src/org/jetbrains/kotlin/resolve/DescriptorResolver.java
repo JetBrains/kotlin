@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant;
@@ -1109,7 +1110,7 @@ public class DescriptorResolver {
         if (TypesPackage.isFlexible(type) && !TypesPackage.isDynamic(type)) {
             assert jetTypeArguments.size() == 2
                     : "Flexible type cannot be denoted in Kotlin otherwise than as ft<T1, T2>, but was: "
-                      + JetPsiUtil.getElementTextWithContext(typeReference);
+                      + PsiUtilPackage.getElementTextWithContext(typeReference);
             // it's really ft<Foo, Bar>
             Flexibility flexibility = TypesPackage.flexibility(type);
             checkBounds(jetTypeArguments.get(0), flexibility.getLowerBound(), trace);

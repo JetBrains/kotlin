@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.lazy;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
@@ -69,7 +70,7 @@ public class DeclarationScopeProviderImpl implements DeclarationScopeProvider {
         }
 
         throw new IllegalStateException("Don't call this method for local declarations: " + jetDeclaration + "\n" +
-                                        JetPsiUtil.getElementTextWithContext(jetDeclaration));
+                                        PsiUtilPackage.getElementTextWithContext(jetDeclaration));
     }
 
     @NotNull

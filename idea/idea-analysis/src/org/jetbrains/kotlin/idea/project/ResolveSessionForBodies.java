@@ -23,6 +23,7 @@ import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
@@ -83,7 +84,7 @@ public class ResolveSessionForBodies implements KotlinCodeAnalyzer {
         BindingContext context = resolveElementCache.resolveToElement(declaration, BodyResolveMode.FULL);
         return BindingContextUtils.getNotNull(context, BindingContext.DECLARATION_TO_DESCRIPTOR, declaration,
                                               "Descriptor wasn't found for declaration " + declaration.toString() + "\n" +
-                                              JetPsiUtil.getElementTextWithContext(declaration));
+                                              PsiUtilPackage.getElementTextWithContext(declaration));
     }
 
     @Override

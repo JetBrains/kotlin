@@ -25,14 +25,13 @@ import org.jetbrains.kotlin.codegen.SamType;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.when.WhenByEnumsMapping;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.util.slicedMap.BasicWritableSlice;
 import org.jetbrains.kotlin.util.slicedMap.Slices;
@@ -197,7 +196,7 @@ public class CodegenBinding {
     public static void registerClassNameForScript(@NotNull BindingTrace trace, @NotNull JetScript script, @NotNull Type asmType) {
         ScriptDescriptor descriptor = trace.getBindingContext().get(SCRIPT, script);
         if (descriptor == null) {
-            throw new IllegalStateException("Script descriptor is not found for PSI: " + JetPsiUtil.getElementTextWithContext(script));
+            throw new IllegalStateException("Script descriptor is not found for PSI: " + PsiUtilPackage.getElementTextWithContext(script));
         }
 
         String simpleName = asmType.getInternalName().substring(asmType.getInternalName().lastIndexOf('/') + 1);

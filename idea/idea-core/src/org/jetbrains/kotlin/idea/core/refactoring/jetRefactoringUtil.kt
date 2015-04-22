@@ -22,7 +22,6 @@ import com.intellij.psi.PsiDirectory
 import com.intellij.openapi.roots.JavaProjectRootsUtil
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.util.ConflictsUtil
-import org.jetbrains.kotlin.psi.psiUtil.getPackage
 import com.intellij.psi.PsiFileFactory
 import org.jetbrains.kotlin.idea.JetFileType
 import com.intellij.openapi.project.Project
@@ -56,7 +55,6 @@ import com.intellij.openapi.ui.popup.JBPopupAdapter
 import com.intellij.openapi.ui.popup.LightweightWindowEvent
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import com.intellij.psi.PsiNamedElement
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
@@ -68,10 +66,8 @@ import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import com.intellij.psi.PsiPackage
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
-import org.jetbrains.kotlin.psi.psiUtil.parents
 import com.intellij.refactoring.util.RefactoringUIUtil
 import com.intellij.psi.PsiMember
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaMemberDescriptor
@@ -98,6 +94,7 @@ import com.intellij.lang.java.JavaLanguage
 import com.intellij.psi.PsiClass
 import com.intellij.codeInsight.daemon.impl.quickfix.CreateFromUsageUtils
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
+import org.jetbrains.kotlin.psi.psiUtil.*
 
 fun <T: Any> PsiElement.getAndRemoveCopyableUserData(key: Key<T>): T? {
     val data = getCopyableUserData(key)
@@ -483,7 +480,7 @@ private fun copyTypeParameters<T: PsiTypeParameterListOwner>(
 
 public fun createJavaMethod(function: JetFunction, targetClass: PsiClass): PsiMethod {
     val template = LightClassUtil.getLightClassMethod(function)
-                   ?: throw AssertionError("Can't generate light method: ${JetPsiUtil.getElementTextWithContext(function)}")
+                   ?: throw AssertionError("Can't generate light method: ${function.getElementTextWithContext()}")
     return createJavaMethod(template, targetClass)
 }
 
@@ -528,7 +525,7 @@ public fun createJavaMethod(template: PsiMethod, targetClass: PsiClass): PsiMeth
 
 fun createJavaField(property: JetProperty, targetClass: PsiClass): PsiField {
     val template = LightClassUtil.getLightClassPropertyMethods(property).getGetter()
-                   ?: throw AssertionError("Can't generate light method: ${JetPsiUtil.getElementTextWithContext(property)}")
+                   ?: throw AssertionError("Can't generate light method: ${property.getElementTextWithContext()}")
 
     val factory = PsiElementFactory.SERVICE.getInstance(template.getProject())
     val field = targetClass.add(factory.createField(property.getName(), template.getReturnType())) as PsiField
@@ -554,12 +551,12 @@ fun createJavaClass(klass: JetClass, targetClass: PsiClass): PsiMember {
         ClassKind.TRAIT -> factory.createInterface(klass.getName())
         ClassKind.ANNOTATION_CLASS -> factory.createAnnotationType(klass.getName())
         ClassKind.ENUM_CLASS -> factory.createEnum(klass.getName())
-        else -> throw AssertionError("Unexpected class kind: ${JetPsiUtil.getElementTextWithContext(klass)}")
+        else -> throw AssertionError("Unexpected class kind: ${klass.getElementTextWithContext()}")
     }
     val javaClass = targetClass.add(javaClassToAdd) as PsiClass
 
     val template = LightClassUtil.getPsiClass(klass)
-                   ?: throw AssertionError("Can't generate light class: ${JetPsiUtil.getElementTextWithContext(klass)}")
+                   ?: throw AssertionError("Can't generate light class: ${klass.getElementTextWithContext()}")
 
     copyModifierListItems(template.getModifierList(), javaClass.getModifierList())
     if (template.isInterface()) {

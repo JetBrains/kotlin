@@ -778,33 +778,6 @@ public class JetPsiUtil {
         return element;
     }
 
-    @NotNull
-    public static String getElementTextWithContext(@NotNull PsiElement element) {
-        if (element instanceof PsiFile) {
-            return element.getContainingFile().getText();
-        }
-
-        // Find parent for element among file children
-        PsiElement inFileParent = PsiTreeUtil.findFirstParent(element, new Condition<PsiElement>() {
-            @Override
-            public boolean value(PsiElement parentCandidate) {
-                return parentCandidate != null && parentCandidate.getParent() instanceof PsiFile;
-            }
-        });
-
-        assert inFileParent != null : "For non-file element we should always be able to find parent in file children";
-
-        int startContextOffset = inFileParent.getTextRange().getStartOffset();
-        int elementContextOffset = element.getTextRange().getStartOffset();
-
-        int inFileParentOffset = elementContextOffset - startContextOffset;
-
-        return new StringBuilder(inFileParent.getText())
-                .insert(inFileParentOffset, "<caret>")
-                .insert(0, String.format("File name: %s\n", element.getContainingFile().getName()))
-                .toString();
-    }
-
     @Nullable
     public static JetModifierList replaceModifierList(@NotNull JetModifierListOwner owner, @Nullable JetModifierList modifierList) {
         JetModifierList oldModifierList = owner.getModifierList();

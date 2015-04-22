@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.inline.InlineAnalyzerExtension
@@ -335,7 +336,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
                 val elementAtForLibraryFile = getElementToCreateTypeMapperForLibraryFile(notPositionedElement)
                 assert(elementAtForLibraryFile != null) {
                     "Couldn't find element at breakpoint for library file " + file.getName() +
-                         (if (notPositionedElement == null) "" else ", notPositionedElement = " + JetPsiUtil.getElementTextWithContext(notPositionedElement))
+                         (if (notPositionedElement == null) "" else ", notPositionedElement = " + notPositionedElement.getElementTextWithContext())
                 }
                 return PositionedElement(findPackagePartInternalNameForLibraryFile(elementAtForLibraryFile!!), elementAtForLibraryFile)
             }

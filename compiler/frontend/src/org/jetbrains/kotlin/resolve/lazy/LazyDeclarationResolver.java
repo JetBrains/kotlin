@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
@@ -77,7 +78,7 @@ public class LazyDeclarationResolver {
             throw new IllegalArgumentException(
                    String.format("Could not find a classifier for %s.\n" +
                                  "Found descriptor: %s (%s).\n",
-                                 JetPsiUtil.getElementTextWithContext(classOrObject),
+                                 PsiUtilPackage.getElementTextWithContext(classOrObject),
                                  scopeDescriptor != null ? DescriptorRenderer.DEBUG_TEXT.render(scopeDescriptor) : "null",
                                  scopeDescriptor != null ? (scopeDescriptor.getContainingDeclaration().getClass()) : null));
         }
@@ -202,12 +203,12 @@ public class LazyDeclarationResolver {
             @Override
             public DeclarationDescriptor visitJetElement(@NotNull JetElement element, Void data) {
                 throw new IllegalArgumentException("Unsupported declaration type: " + element + " " +
-                                                   JetPsiUtil.getElementTextWithContext(element));
+                                                   PsiUtilPackage.getElementTextWithContext(element));
             }
         }, null);
         if (result == null) {
             throw new IllegalStateException("No descriptor resolved for " + declaration + ":\n" +
-                                            JetPsiUtil.getElementTextWithContext(declaration));
+                                            PsiUtilPackage.getElementTextWithContext(declaration));
         }
         return result;
     }

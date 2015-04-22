@@ -26,6 +26,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.lexer.JetTokens;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.psi.stubs.KotlinFunctionStub;
 import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.kotlin.psi.typeRefHelpers.TypeRefHelpersPackage;
@@ -80,7 +81,7 @@ public class JetNamedFunction extends JetTypeParameterListOwnerStub<KotlinFuncti
     @NotNull
     public PsiElement getFunToken() {
         PsiElement element = findChildByType(JetTokens.FUN_KEYWORD);
-        assert element != null : "'fun' must be present: " + JetPsiUtil.getElementTextWithContext(this);
+        assert element != null : "'fun' must be present: " + PsiUtilPackage.getElementTextWithContext(this);
         return element;
     }
 

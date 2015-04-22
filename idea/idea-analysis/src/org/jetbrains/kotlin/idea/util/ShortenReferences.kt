@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.idea.util.ShortenReferences.Options
 import org.jetbrains.kotlin.idea.imports.*
 import org.jetbrains.kotlin.resolve.*
 import com.intellij.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 
 public class ShortenReferences(val options: (JetElement) -> Options = { Options.DEFAULT }) {
     public data class Options(
@@ -402,7 +403,7 @@ public class ShortenReferences(val options: (JetElement) -> Options = { Options.
         }
 
         override fun qualifier(element: JetThisExpression): JetElement =
-                throw AssertionError("Qualifier requested: ${JetPsiUtil.getElementTextWithContext(element)}")
+                throw AssertionError("Qualifier requested: ${element.getElementTextWithContext()}")
 
         override fun shortenElement(element: JetThisExpression): JetElement {
             return element.replace(simpleThis) as JetElement
