@@ -52,23 +52,25 @@ public abstract class JetWholeProjectModalAction<D: Any>(val title: String) : In
             object : Task.Modal(project, title, true) {
                 override fun run(indicator: ProgressIndicator) {
                     val filesToData = HashMap<JetFile, D>()
-                    val files = runReadAction { PluginJetFilesProvider.allFilesInProject(project) }
+                    runReadAction (fun() {
+                        val files = PluginJetFilesProvider.allFilesInProject(project)
 
-                    for ((i, currentFile) in files.withIndex()) {
-                        indicator.setText("Checking file $i of ${files.size()}...")
-                        indicator.setText2(currentFile.getVirtualFile().getPath())
-                        indicator.setFraction((i + 1) / files.size().toDouble())
-                        try {
-                            val data = runReadAction { collectDataForFile(project, currentFile) }
-                            if (data != null) filesToData[currentFile] = data
+                        for ((i, currentFile) in files.withIndex()) {
+                            indicator.setText("Checking file $i of ${files.size()}...")
+                            indicator.setText2(currentFile.getVirtualFile().getPath())
+                            indicator.setFraction((i + 1) / files.size().toDouble())
+                            try {
+                                val data = collectDataForFile(project, currentFile)
+                                if (data != null) filesToData[currentFile] = data
+                            }
+                            catch (e: ProcessCanceledException) {
+                                return
+                            }
+                            catch (e: Throwable) {
+                                LOG.error(e)
+                            }
                         }
-                        catch (e: ProcessCanceledException) {
-                            return
-                        }
-                        catch (e: Throwable) {
-                            LOG.error(e)
-                        }
-                    }
+                    })
                     applyAll(project, filesToData)
                 }
             })
@@ -76,12 +78,14 @@ public abstract class JetWholeProjectModalAction<D: Any>(val title: String) : In
     private fun applyAll(project: Project, filesToData: Map<JetFile, D>) {
         UIUtil.invokeLaterIfNeeded {
             project.executeCommand(getText()) {
-                filesToData.forEach {
-                    try {
-                        runWriteAction { applyChangesForFile(project, it.getKey(), it.getValue()) }
-                    }
-                    catch (e: Throwable) {
-                        LOG.error(e)
+                runWriteAction {
+                    filesToData.forEach {
+                        try {
+                            applyChangesForFile(project, it.getKey(), it.getValue())
+                        }
+                        catch (e: Throwable) {
+                            LOG.error(e)
+                        }
                     }
                 }
             }
@@ -104,7 +108,7 @@ public abstract class JetWholeProjectModalByCollectionAction<T : Any>(modalTitle
     override fun collectDataForFile(project: Project, file: JetFile): Collection<T>? {
         val accumulator = arrayListOf<T>()
         collectTasksForFile(project, file, accumulator)
-        return accumulator
+        return if (!accumulator.isEmpty()) return accumulator else null
     }
 
     abstract fun collectTasksForFile(project: Project, file: JetFile, accumulator: MutableCollection<T>)
