@@ -21,8 +21,10 @@ import org.jetbrains.kotlin.builtins.createBuiltInPackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.serialization.deserialization.FlexibleTypeCapabilitiesDeserializer
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.util.zip.GZIPInputStream
@@ -30,7 +32,7 @@ import java.util.zip.GZIPOutputStream
 import kotlin.platform.platformStatic
 
 public object KotlinJavascriptSerializationUtil {
-    private val PACKAGE_FILE_SUFFIX = "/.kotlin_package"
+    private val PACKAGE_FILE_EXT = ".kotlin_package"
 
     platformStatic
     public fun createPackageFragmentProvider(moduleDescriptor: ModuleDescriptor, metadata: ByteArray): PackageFragmentProvider? {
@@ -70,6 +72,12 @@ public object KotlinJavascriptSerializationUtil {
         return byteStream.toByteArray()
     }
 
+    private fun getPackageName(filePath: String): String {
+        val lastIndexOfSep = filePath.lastIndexOf('/')
+        assert(lastIndexOfSep >= 0, "expected / in $filePath")
+        return filePath.substring(0, lastIndexOfSep).replace('/', '.')
+    }
+
     private fun getPackages(contentMap: Map<String, ByteArray>): List<String> =
-            contentMap.keySet().filter { it.endsWith(PACKAGE_FILE_SUFFIX) } map { it.substring(0, it.length() - PACKAGE_FILE_SUFFIX.length()).replace('/', '.') }
+            contentMap.keySet().filter { it.endsWith(PACKAGE_FILE_EXT) }.map { getPackageName(it) }
 }
