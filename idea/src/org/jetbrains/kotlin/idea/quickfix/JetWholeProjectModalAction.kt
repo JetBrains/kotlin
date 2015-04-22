@@ -128,8 +128,8 @@ class JetWholeProjectForEachElementOfTypeFix<T> private (
 
     companion object {
         inline fun <reified E : JetElement> createByPredicate(
-                inlineOptions(InlineOption.ONLY_LOCAL_RETURN) predicate: (E) -> Boolean,
-                inlineOptions(InlineOption.ONLY_LOCAL_RETURN) taskProcessor: (E) -> Unit,
+                noinline predicate: (E) -> Boolean,
+                noinline taskProcessor: (E) -> Unit,
                 modalTitle: String,
                 name: String,
                 familyName: String
@@ -142,8 +142,8 @@ class JetWholeProjectForEachElementOfTypeFix<T> private (
         )
 
         inline fun <reified E : JetElement, D : Any> createByTaskFactory(
-                inlineOptions(InlineOption.ONLY_LOCAL_RETURN) taskFactory: (E) -> D?,
-                inlineOptions(InlineOption.ONLY_LOCAL_RETURN) taskProcessor: (D) -> Unit,
+                noinline taskFactory: (E) -> D?,
+                noinline taskProcessor: (D) -> Unit,
                 modalTitle: String,
                 name: String,
                 familyName: String
@@ -156,7 +156,7 @@ class JetWholeProjectForEachElementOfTypeFix<T> private (
         )
 
         inline fun <reified E : JetElement, D> createForMultiTask(
-                inlineOptions(InlineOption.ONLY_LOCAL_RETURN) tasksFactory: (E) -> Collection<D>,
+                noinline tasksFactory: (E) -> Collection<D>,
                 noinline tasksProcessor: (Collection<D>) -> Unit,
                 modalTitle: String,
                 name: String,

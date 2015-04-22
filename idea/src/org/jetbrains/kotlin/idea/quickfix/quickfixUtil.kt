@@ -28,8 +28,8 @@ inline fun <reified T : PsiElement> Diagnostic.createIntentionForFirstParentOfTy
 ) = getPsiElement().getNonStrictParentOfType<T>()?.let(factory)
 
 
-inline fun createIntentionFactory(
-    inlineOptions(InlineOption.ONLY_LOCAL_RETURN) factory: (Diagnostic) -> IntentionAction?
+fun createIntentionFactory(
+    factory: (Diagnostic) -> IntentionAction?
 ) = object : JetSingleIntentionActionFactory() {
     override fun createAction(diagnostic: Diagnostic) = factory(diagnostic)
 }

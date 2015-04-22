@@ -516,7 +516,7 @@ public fun PsiElement.getElementTextWithContext(): String {
 // Calls `block` on each descendant of T type
 // Note, that calls happen in order of DFS-exit, so deeper nodes are applied earlier
 inline fun <reified T : JetElement> forEachDescendantOfTypeVisitor(
-    inlineOptions(InlineOption.ONLY_LOCAL_RETURN) block: (T) -> Unit
+    noinline block: (T) -> Unit
 ): JetVisitorVoid =
         object : JetTreeVisitorVoid() {
             override fun visitJetElement(element: JetElement) {
@@ -529,5 +529,5 @@ inline fun <reified T : JetElement> forEachDescendantOfTypeVisitor(
 
 inline fun <reified T : JetElement, R> flatMapDescendantsOfTypeVisitor(
     accumulator: MutableCollection<R>,
-    inlineOptions(InlineOption.ONLY_LOCAL_RETURN) map: (T) -> Collection<R>
+    noinline map: (T) -> Collection<R>
 ): JetVisitorVoid = forEachDescendantOfTypeVisitor<T> { accumulator.addAll(map(it)) }
