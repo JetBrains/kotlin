@@ -1,3 +1,13 @@
+Updating version of gradle-api.jar
+
+ * change version in build.gradle file
+
+ * change gradle.api.jar.version in pom.xml
+
+ * run command: gradlew wrapper
+
+ * deploy gradle api to maven
+
 Deploying gradle api to maven
 
  * gradlew build
