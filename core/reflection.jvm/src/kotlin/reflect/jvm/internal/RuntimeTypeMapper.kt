@@ -55,15 +55,15 @@ object RuntimeTypeMapper : JavaToKotlinClassMapBuilder() {
         kotlinFqNameToJvmDesc[DescriptorUtils.getFqNameSafe(kotlinDescriptor)] = jvmDesc
     }
 
-    override fun register(javaClass: Class<*>, kotlinDescriptor: ClassDescriptor, direction: JavaToKotlinClassMapBuilder.Direction) {
+    override fun register(javaClassId: ClassId, kotlinDescriptor: ClassDescriptor, direction: JavaToKotlinClassMapBuilder.Direction) {
         if (direction == BOTH || direction == KOTLIN_TO_JAVA) {
-            recordKotlinToJvm(kotlinDescriptor, javaClass.classId.desc)
+            recordKotlinToJvm(kotlinDescriptor, javaClassId.desc)
         }
     }
 
-    override fun register(javaClass: Class<*>, kotlinDescriptor: ClassDescriptor, kotlinMutableDescriptor: ClassDescriptor) {
-        register(javaClass, kotlinMutableDescriptor, JavaToKotlinClassMapBuilder.Direction.BOTH)
-        register(javaClass, kotlinDescriptor, JavaToKotlinClassMapBuilder.Direction.BOTH)
+    override fun register(javaClassId: ClassId, kotlinDescriptor: ClassDescriptor, kotlinMutableDescriptor: ClassDescriptor) {
+        register(javaClassId, kotlinMutableDescriptor, JavaToKotlinClassMapBuilder.Direction.BOTH)
+        register(javaClassId, kotlinDescriptor, JavaToKotlinClassMapBuilder.Direction.BOTH)
     }
 
     // TODO: this logic must be shared with JetTypeMapper

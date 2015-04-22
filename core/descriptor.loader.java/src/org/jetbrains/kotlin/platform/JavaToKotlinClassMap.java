@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
+import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -43,7 +44,7 @@ public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements
         KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
 
         for (JvmPrimitiveType jvmType : JvmPrimitiveType.values()) {
-            register(jvmType.getWrapperFqName(), builtIns.getPrimitiveClassDescriptor(jvmType.getPrimitiveType()));
+            register(ClassId.topLevel(jvmType.getWrapperFqName()), builtIns.getPrimitiveClassDescriptor(jvmType.getPrimitiveType()));
         }
     }
 
@@ -57,35 +58,29 @@ public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements
         return classDescriptorMapForCovariantPositions.get(fqName);
     }
 
-    @NotNull
-    private static FqName fqNameByClass(@NotNull Class<?> clazz) {
-        return new FqName(clazz.getCanonicalName());
-    }
-
     @Override
-    protected void register(@NotNull Class<?> javaClass, @NotNull ClassDescriptor kotlinDescriptor, @NotNull Direction direction) {
+    protected void register(@NotNull ClassId javaClassId, @NotNull ClassDescriptor kotlinDescriptor, @NotNull Direction direction) {
         if (direction == Direction.BOTH || direction == Direction.JAVA_TO_KOTLIN) {
-            register(fqNameByClass(javaClass), kotlinDescriptor);
+            register(javaClassId, kotlinDescriptor);
         }
     }
 
     @Override
     protected void register(
-            @NotNull Class<?> javaClass,
+            @NotNull ClassId javaClassId,
             @NotNull ClassDescriptor kotlinDescriptor,
             @NotNull ClassDescriptor kotlinMutableDescriptor
     ) {
-        FqName javaClassName = fqNameByClass(javaClass);
-        register(javaClassName, kotlinDescriptor);
-        registerCovariant(javaClassName, kotlinMutableDescriptor);
+        register(javaClassId, kotlinDescriptor);
+        registerCovariant(javaClassId, kotlinMutableDescriptor);
     }
 
-    private void register(@NotNull FqName javaClassName, @NotNull ClassDescriptor kotlinDescriptor) {
-        classDescriptorMap.put(javaClassName, kotlinDescriptor);
+    private void register(@NotNull ClassId javaClassId, @NotNull ClassDescriptor kotlinDescriptor) {
+        classDescriptorMap.put(javaClassId.asSingleFqName(), kotlinDescriptor);
     }
 
-    private void registerCovariant(@NotNull FqName javaClassName, @NotNull ClassDescriptor kotlinDescriptor) {
-        classDescriptorMapForCovariantPositions.put(javaClassName, kotlinDescriptor);
+    private void registerCovariant(@NotNull ClassId javaClassId, @NotNull ClassDescriptor kotlinDescriptor) {
+        classDescriptorMapForCovariantPositions.put(javaClassId.asSingleFqName(), kotlinDescriptor);
     }
 
     @NotNull

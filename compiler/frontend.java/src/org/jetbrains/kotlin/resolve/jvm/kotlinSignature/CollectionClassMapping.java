@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.jvm.kotlinSignature;
 import com.google.common.collect.ImmutableBiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
+import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMapBuilder;
 
 public class CollectionClassMapping extends JavaToKotlinClassMapBuilder {
@@ -42,13 +43,13 @@ public class CollectionClassMapping extends JavaToKotlinClassMapBuilder {
     }
 
     @Override
-    protected void register(@NotNull Class<?> javaClass, @NotNull ClassDescriptor kotlinDescriptor, @NotNull Direction direction) {
+    protected void register(@NotNull ClassId javaClassId, @NotNull ClassDescriptor kotlinDescriptor, @NotNull Direction direction) {
         // do nothing
     }
 
     @Override
     protected void register(
-            @NotNull Class<?> javaClass,
+            @NotNull ClassId javaClassId,
             @NotNull ClassDescriptor kotlinDescriptor,
             @NotNull ClassDescriptor kotlinMutableDescriptor
     ) {

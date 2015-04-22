@@ -21,9 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.name.ClassId;
-import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
-import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMapBuilder;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType;
@@ -71,32 +69,23 @@ public class KotlinToJavaTypesMap extends JavaToKotlinClassMapBuilder {
     }
 
     @Override
-    protected void register(@NotNull Class<?> javaClass, @NotNull ClassDescriptor kotlinDescriptor, @NotNull Direction direction) {
+    protected void register(@NotNull ClassId javaClassId, @NotNull ClassDescriptor kotlinDescriptor, @NotNull Direction direction) {
         if (direction == Direction.BOTH || direction == Direction.KOTLIN_TO_JAVA) {
-            register(DescriptorUtils.getFqName(kotlinDescriptor), computeClassId(javaClass));
+            register(DescriptorUtils.getFqName(kotlinDescriptor), javaClassId);
         }
     }
 
     @Override
     protected void register(
-            @NotNull Class<?> javaClass,
+            @NotNull ClassId javaClassId,
             @NotNull ClassDescriptor kotlinDescriptor,
             @NotNull ClassDescriptor kotlinMutableDescriptor
     ) {
-        register(javaClass, kotlinDescriptor, Direction.BOTH);
-        register(javaClass, kotlinMutableDescriptor, Direction.BOTH);
+        register(javaClassId, kotlinDescriptor, Direction.BOTH);
+        register(javaClassId, kotlinMutableDescriptor, Direction.BOTH);
     }
 
     private void register(@NotNull FqNameUnsafe kotlinFqName, @NotNull ClassId javaClassId) {
         map.put(kotlinFqName, javaClassId);
-    }
-
-    @NotNull
-    private static ClassId computeClassId(@NotNull Class<?> clazz) {
-        assert !clazz.isPrimitive() && !clazz.isArray() : "Invalid class: " + clazz;
-        Class<?> outer = clazz.getDeclaringClass();
-        return outer == null
-               ? ClassId.topLevel(new FqName(clazz.getCanonicalName()))
-               : computeClassId(outer).createNestedClassId(Name.identifier(clazz.getSimpleName()));
     }
 }
