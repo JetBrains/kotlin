@@ -7,12 +7,13 @@
     <properties>
         <maven-plugin-anno.version>1.4.1</maven-plugin-anno.version>
         <maven.version>3.0.4</maven.version>
+        <gradle.api.jar.version>2.3</gradle.api.jar.version>
     </properties>
 
     <groupId>org.jetbrains.kotlin</groupId>
     <artifactId>gradle-api</artifactId>
     <packaging>pom</packaging>
-    <version>1.6</version>
+    <version>${gradle.api.jar.version}</version>
 
     <build>
         <plugins>
@@ -30,7 +31,7 @@
                         <configuration>
                             <artifacts>
                                 <artifact>
-                                    <file>build/libs/gradle-api-1.6.jar</file>
+                                    <file>build/libs/gradle-api-${gradle.api.jar.version}.jar</file>
                                     <type>jar</type>
                                 </artifact>
                             </artifacts>
