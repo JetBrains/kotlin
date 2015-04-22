@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.load.java.structure.reflect.classId
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMapBuilder
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMapBuilder.Direction.BOTH
@@ -36,28 +36,15 @@ import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
 
 object RuntimeTypeMapper : JavaToKotlinClassMapBuilder() {
-    private val kotlinFqNameToJvmDesc = linkedMapOf<FqName, String>()
+    private val kotlinFqNameToJvmDesc = linkedMapOf<FqNameUnsafe, String>()
 
     init {
         init()
-        initPrimitives()
-    }
-
-    private fun initPrimitives() {
-        val builtIns = KotlinBuiltIns.getInstance()
-
-        for (type in JvmPrimitiveType.values()) {
-            recordKotlinToJvm(builtIns.getPrimitiveClassDescriptor(type.getPrimitiveType()), type.getDesc())
-        }
-    }
-
-    private fun recordKotlinToJvm(kotlinDescriptor: ClassDescriptor, jvmDesc: String) {
-        kotlinFqNameToJvmDesc[DescriptorUtils.getFqNameSafe(kotlinDescriptor)] = jvmDesc
     }
 
     override fun register(javaClassId: ClassId, kotlinDescriptor: ClassDescriptor, direction: JavaToKotlinClassMapBuilder.Direction) {
         if (direction == BOTH || direction == KOTLIN_TO_JAVA) {
-            recordKotlinToJvm(kotlinDescriptor, javaClassId.desc)
+            kotlinFqNameToJvmDesc[DescriptorUtils.getFqName(kotlinDescriptor)] = javaClassId.desc
         }
     }
 
@@ -81,20 +68,18 @@ object RuntimeTypeMapper : JavaToKotlinClassMapBuilder() {
         }
 
         val classDescriptor = classifier as ClassDescriptor
-        val fqNameUnsafe = DescriptorUtils.getFqName(classDescriptor)
+        val fqName = DescriptorUtils.getFqName(classDescriptor)
 
-        KotlinBuiltIns.getPrimitiveTypeByFqName(fqNameUnsafe)?.let { primitiveType ->
+        KotlinBuiltIns.getPrimitiveTypeByFqName(fqName)?.let { primitiveType ->
             val jvmType = JvmPrimitiveType.get(primitiveType)
             return if (TypeUtils.isNullableType(type)) ClassId.topLevel(jvmType.getWrapperFqName()).desc else jvmType.getDesc()
         }
 
-        KotlinBuiltIns.getPrimitiveTypeByArrayClassFqName(fqNameUnsafe)?.let { primitiveType ->
+        KotlinBuiltIns.getPrimitiveTypeByArrayClassFqName(fqName)?.let { primitiveType ->
             return "[" + JvmPrimitiveType.get(primitiveType).getDesc()
         }
 
-        if (fqNameUnsafe.isSafe()) {
-            kotlinFqNameToJvmDesc[fqNameUnsafe.toSafe()]?.let { return it }
-        }
+        kotlinFqNameToJvmDesc[fqName]?.let { return it }
 
         if (classDescriptor.isCompanionObject()) {
             IntrinsicObjects.mapType(classDescriptor)?.let { fqName ->

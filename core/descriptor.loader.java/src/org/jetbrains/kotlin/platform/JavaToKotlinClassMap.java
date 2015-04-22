@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType;
 
 import java.util.*;
 
@@ -37,15 +36,6 @@ public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements
 
     private JavaToKotlinClassMap() {
         init();
-        initPrimitives();
-    }
-
-    private void initPrimitives() {
-        KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
-
-        for (JvmPrimitiveType jvmType : JvmPrimitiveType.values()) {
-            register(ClassId.topLevel(jvmType.getWrapperFqName()), builtIns.getPrimitiveClassDescriptor(jvmType.getPrimitiveType()));
-        }
     }
 
     @Nullable

@@ -18,13 +18,11 @@ package org.jetbrains.kotlin.resolve.jvm.types;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMapBuilder;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -44,16 +42,6 @@ public class KotlinToJavaTypesMap extends JavaToKotlinClassMapBuilder {
 
     private KotlinToJavaTypesMap() {
         init();
-        initPrimitives();
-    }
-
-    private void initPrimitives() {
-        for (JvmPrimitiveType type : JvmPrimitiveType.values()) {
-            register(
-                    KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.child(type.getPrimitiveType().getTypeName()).toUnsafe(),
-                    ClassId.topLevel(type.getWrapperFqName())
-            );
-        }
     }
 
     /**
@@ -71,7 +59,7 @@ public class KotlinToJavaTypesMap extends JavaToKotlinClassMapBuilder {
     @Override
     protected void register(@NotNull ClassId javaClassId, @NotNull ClassDescriptor kotlinDescriptor, @NotNull Direction direction) {
         if (direction == Direction.BOTH || direction == Direction.KOTLIN_TO_JAVA) {
-            register(DescriptorUtils.getFqName(kotlinDescriptor), javaClassId);
+            map.put(DescriptorUtils.getFqName(kotlinDescriptor), javaClassId);
         }
     }
 
@@ -83,9 +71,5 @@ public class KotlinToJavaTypesMap extends JavaToKotlinClassMapBuilder {
     ) {
         register(javaClassId, kotlinDescriptor, Direction.BOTH);
         register(javaClassId, kotlinMutableDescriptor, Direction.BOTH);
-    }
-
-    private void register(@NotNull FqNameUnsafe kotlinFqName, @NotNull ClassId javaClassId) {
-        map.put(kotlinFqName, javaClassId);
     }
 }

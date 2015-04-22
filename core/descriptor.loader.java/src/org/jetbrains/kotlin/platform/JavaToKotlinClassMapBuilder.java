@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType;
 
 import java.lang.annotation.Annotation;
 import java.util.*;
@@ -55,6 +56,14 @@ public abstract class JavaToKotlinClassMapBuilder {
         register(Map.class, kotlinBuiltIns.getMap(), kotlinBuiltIns.getMutableMap());
         register(Map.Entry.class, kotlinBuiltIns.getMapEntry(), kotlinBuiltIns.getMutableMapEntry());
         register(ListIterator.class, kotlinBuiltIns.getListIterator(), kotlinBuiltIns.getMutableListIterator());
+
+        for (JvmPrimitiveType jvmType : JvmPrimitiveType.values()) {
+            register(
+                    ClassId.topLevel(jvmType.getWrapperFqName()),
+                    kotlinBuiltIns.getPrimitiveClassDescriptor(jvmType.getPrimitiveType()),
+                    Direction.BOTH
+            );
+        }
 
         register(classId(Deprecated.class), kotlinBuiltIns.getDeprecatedAnnotation(), Direction.JAVA_TO_KOTLIN);
 
