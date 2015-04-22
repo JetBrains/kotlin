@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.platform.JavaToKotlinClassMap;
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.AdditionalCheckerProvider;
@@ -60,7 +61,6 @@ import org.jetbrains.kotlin.resolve.BindingTraceContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM;
-import org.jetbrains.kotlin.resolve.jvm.types.KotlinToJavaTypesMap;
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
@@ -367,7 +367,7 @@ public class JetSourceNavigationHelper {
             assert className != null : "Class from BuiltIns should have a name";
             ClassDescriptor classDescriptor = KotlinBuiltIns.getInstance().getBuiltInClassByName(className);
 
-            ClassId javaClassId = KotlinToJavaTypesMap.getInstance().mapKotlinFqNameToJava(DescriptorUtils.getFqName(classDescriptor));
+            ClassId javaClassId = JavaToKotlinClassMap.INSTANCE.mapKotlinToJava(DescriptorUtils.getFqName(classDescriptor));
             if (javaClassId != null) {
                 return JavaPsiFacade.getInstance(classOrObject.getProject()).findClass(
                         javaClassId.asSingleFqName().asString(),

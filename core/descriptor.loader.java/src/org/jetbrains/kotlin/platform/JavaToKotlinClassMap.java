@@ -31,27 +31,57 @@ import java.util.*;
 public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements PlatformToKotlinClassMap {
     public static final JavaToKotlinClassMap INSTANCE = new JavaToKotlinClassMap();
 
-    private final Map<FqName, ClassDescriptor> classDescriptorMap = new HashMap<FqName, ClassDescriptor>();
-    private final Map<FqName, ClassDescriptor> classDescriptorMapForCovariantPositions = new HashMap<FqName, ClassDescriptor>();
+    private final Map<FqName, ClassDescriptor> javaToKotlin = new HashMap<FqName, ClassDescriptor>();
+    private final Map<FqName, ClassDescriptor> javaToKotlinCovariant = new HashMap<FqName, ClassDescriptor>();
+    private final Map<FqNameUnsafe, ClassId> kotlinToJava = new HashMap<FqNameUnsafe, ClassId>();
 
     private JavaToKotlinClassMap() {
         init();
     }
 
+    /**
+     * E.g.
+     * java.lang.String -> kotlin.String
+     * java.lang.Deprecated -> kotlin.deprecated
+     * java.lang.Integer -> kotlin.Int
+     * java.util.List -> kotlin.List
+     * java.lang.Void -> null
+     */
     @Nullable
     public ClassDescriptor mapJavaToKotlin(@NotNull FqName fqName) {
-        return classDescriptorMap.get(fqName);
+        return javaToKotlin.get(fqName);
     }
 
+    /**
+     * E.g.
+     * java.util.Collection -> kotlin.MutableCollection
+     * java.util.Map.Entry -> kotlin.MutableMap.MutableEntry
+     * java.lang.String -> null
+     */
     @Nullable
     public ClassDescriptor mapJavaToKotlinCovariant(@NotNull FqName fqName) {
-        return classDescriptorMapForCovariantPositions.get(fqName);
+        return javaToKotlinCovariant.get(fqName);
+    }
+
+    /**
+     * E.g.
+     * kotlin.Throwable -> java.lang.Throwable
+     * kotlin.Int -> java.lang.Integer
+     * kotlin.Nothing -> java.lang.Void
+     * kotlin.IntArray -> null
+     */
+    @Nullable
+    public ClassId mapKotlinToJava(@NotNull FqNameUnsafe kotlinFqName) {
+        return kotlinToJava.get(kotlinFqName);
     }
 
     @Override
     protected void register(@NotNull ClassId javaClassId, @NotNull ClassDescriptor kotlinDescriptor, @NotNull Direction direction) {
         if (direction == Direction.BOTH || direction == Direction.JAVA_TO_KOTLIN) {
-            register(javaClassId, kotlinDescriptor);
+            addJavaToKotlin(javaClassId, kotlinDescriptor);
+        }
+        if (direction == Direction.BOTH || direction == Direction.KOTLIN_TO_JAVA) {
+            addKotlinToJava(javaClassId, kotlinDescriptor);
         }
     }
 
@@ -61,16 +91,22 @@ public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements
             @NotNull ClassDescriptor kotlinDescriptor,
             @NotNull ClassDescriptor kotlinMutableDescriptor
     ) {
-        register(javaClassId, kotlinDescriptor);
-        registerCovariant(javaClassId, kotlinMutableDescriptor);
+        addJavaToKotlin(javaClassId, kotlinDescriptor);
+        addJavaToKotlinCovariant(javaClassId, kotlinMutableDescriptor);
+        addKotlinToJava(javaClassId, kotlinDescriptor);
+        addKotlinToJava(javaClassId, kotlinMutableDescriptor);
     }
 
-    private void register(@NotNull ClassId javaClassId, @NotNull ClassDescriptor kotlinDescriptor) {
-        classDescriptorMap.put(javaClassId.asSingleFqName(), kotlinDescriptor);
+    private void addJavaToKotlin(@NotNull ClassId javaClassId, @NotNull ClassDescriptor kotlinDescriptor) {
+        javaToKotlin.put(javaClassId.asSingleFqName(), kotlinDescriptor);
     }
 
-    private void registerCovariant(@NotNull ClassId javaClassId, @NotNull ClassDescriptor kotlinDescriptor) {
-        classDescriptorMapForCovariantPositions.put(javaClassId.asSingleFqName(), kotlinDescriptor);
+    private void addJavaToKotlinCovariant(@NotNull ClassId javaClassId, @NotNull ClassDescriptor kotlinDescriptor) {
+        javaToKotlinCovariant.put(javaClassId.asSingleFqName(), kotlinDescriptor);
+    }
+
+    private void addKotlinToJava(@NotNull ClassId javaClassId, @NotNull ClassDescriptor kotlinDescriptor) {
+        kotlinToJava.put(DescriptorUtils.getFqName(kotlinDescriptor), javaClassId);
     }
 
     @NotNull
@@ -103,8 +139,8 @@ public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements
         KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
 
         List<ClassDescriptor> result = new ArrayList<ClassDescriptor>();
-        result.addAll(classDescriptorMap.values());
-        result.addAll(classDescriptorMapForCovariantPositions.values());
+        result.addAll(javaToKotlin.values());
+        result.addAll(javaToKotlinCovariant.values());
 
         for (PrimitiveType type : PrimitiveType.values()) {
             result.add(builtIns.getPrimitiveArrayClassDescriptor(type));

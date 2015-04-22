@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.TypeResolver;
 import org.jetbrains.kotlin.resolve.jvm.JvmPackage;
-import org.jetbrains.kotlin.resolve.jvm.types.KotlinToJavaTypesMap;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.types.*;
 
@@ -220,7 +219,7 @@ public class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
             @NotNull FqNameUnsafe originalClassFqName,
             @NotNull String qualifiedName
     ) {
-        ClassId javaClassId = KotlinToJavaTypesMap.getInstance().mapKotlinFqNameToJava(originalClassFqName);
+        ClassId javaClassId = JavaToKotlinClassMap.INSTANCE.mapKotlinToJava(originalClassFqName);
         if (javaClassId == null) return null;
 
         Collection<ClassDescriptor> descriptors = JavaToKotlinClassMap.INSTANCE.mapPlatformClass(javaClassId.asSingleFqName());

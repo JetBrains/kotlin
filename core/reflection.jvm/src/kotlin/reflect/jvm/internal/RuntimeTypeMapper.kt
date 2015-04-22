@@ -23,11 +23,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.load.java.structure.reflect.classId
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
-import org.jetbrains.kotlin.platform.JavaToKotlinClassMapBuilder
-import org.jetbrains.kotlin.platform.JavaToKotlinClassMapBuilder.Direction.BOTH
-import org.jetbrains.kotlin.platform.JavaToKotlinClassMapBuilder.Direction.KOTLIN_TO_JAVA
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
@@ -35,24 +31,7 @@ import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
 
-object RuntimeTypeMapper : JavaToKotlinClassMapBuilder() {
-    private val kotlinFqNameToJvmDesc = linkedMapOf<FqNameUnsafe, String>()
-
-    init {
-        init()
-    }
-
-    override fun register(javaClassId: ClassId, kotlinDescriptor: ClassDescriptor, direction: JavaToKotlinClassMapBuilder.Direction) {
-        if (direction == BOTH || direction == KOTLIN_TO_JAVA) {
-            kotlinFqNameToJvmDesc[DescriptorUtils.getFqName(kotlinDescriptor)] = javaClassId.desc
-        }
-    }
-
-    override fun register(javaClassId: ClassId, kotlinDescriptor: ClassDescriptor, kotlinMutableDescriptor: ClassDescriptor) {
-        register(javaClassId, kotlinMutableDescriptor, JavaToKotlinClassMapBuilder.Direction.BOTH)
-        register(javaClassId, kotlinDescriptor, JavaToKotlinClassMapBuilder.Direction.BOTH)
-    }
-
+object RuntimeTypeMapper {
     // TODO: this logic must be shared with JetTypeMapper
     fun mapTypeToJvmDesc(type: JetType): String {
         val classifier = type.getConstructor().getDeclarationDescriptor()
@@ -79,7 +58,7 @@ object RuntimeTypeMapper : JavaToKotlinClassMapBuilder() {
             return "[" + JvmPrimitiveType.get(primitiveType).getDesc()
         }
 
-        kotlinFqNameToJvmDesc[fqName]?.let { return it }
+        JavaToKotlinClassMap.INSTANCE.mapKotlinToJava(fqName)?.let { return it.desc }
 
         if (classDescriptor.isCompanionObject()) {
             IntrinsicObjects.mapType(classDescriptor)?.let { fqName ->

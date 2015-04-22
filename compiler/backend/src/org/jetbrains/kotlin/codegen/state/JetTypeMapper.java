@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.load.kotlin.nativeDeclarations.NativeDeclarationsPackage;
 import org.jetbrains.kotlin.name.*;
+import org.jetbrains.kotlin.platform.JavaToKotlinClassMap;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetFunctionLiteral;
@@ -56,7 +57,6 @@ import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
-import org.jetbrains.kotlin.resolve.jvm.types.KotlinToJavaTypesMap;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -386,7 +386,7 @@ public class JetTypeMapper {
             return Type.getType("[" + JvmPrimitiveType.get(arrayElementType).getDesc());
         }
 
-        ClassId classId = KotlinToJavaTypesMap.getInstance().mapKotlinFqNameToJava(fqName);
+        ClassId classId = JavaToKotlinClassMap.INSTANCE.mapKotlinToJava(fqName);
         if (classId != null) {
             return Type.getObjectType(JvmClassName.byClassId(classId).getInternalName());
         }
