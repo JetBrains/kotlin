@@ -36,7 +36,10 @@ public class BuiltinsPackageFragment(
         private val loadResource: (path: String) -> InputStream?
 ) : PackageFragmentDescriptorImpl(module, fqName) {
 
-    val nameResolver = NameResolver.read(loadResourceSure(BuiltInsSerializationUtil.getStringTableFilePath(fqName)))
+    val nameResolver = NameResolver.read(
+            loadResource(BuiltInsSerializationUtil.getStringTableFilePath(fqName))
+            ?: loadResourceSure(BuiltInsSerializationUtil.FallbackPaths.getStringTableFilePath(fqName))
+    )
 
     private var components: DeserializationComponents by Delegates.notNull()
 
@@ -46,7 +49,8 @@ public class BuiltinsPackageFragment(
     }
 
     private val memberScope = storageManager.createLazyValue {
-        val stream = loadResourceSure(BuiltInsSerializationUtil.getPackageFilePath(fqName))
+        val stream = loadResource(BuiltInsSerializationUtil.getPackageFilePath(fqName))
+                     ?: loadResourceSure(BuiltInsSerializationUtil.FallbackPaths.getPackageFilePath(fqName))
         val proto = ProtoBuf.Package.parseFrom(stream, BuiltInsSerializationUtil.EXTENSION_REGISTRY)
         DeserializedPackageMemberScope(this, proto, nameResolver, components, classNames = {
             proto.getExtension(BuiltInsProtoBuf.className)?.map { id -> nameResolver.getName(id) } ?: listOf()

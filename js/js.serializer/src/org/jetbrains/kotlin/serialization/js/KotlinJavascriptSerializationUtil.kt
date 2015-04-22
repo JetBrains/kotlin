@@ -117,12 +117,13 @@ public object KotlinJavascriptSerializationUtil {
         val fragments = module.getPackageFragmentProvider().getPackageFragments(fqName)
         val packageProto = serializer.packageProto(fragments, skip).build() ?: error("Package fragments not serialized: $fragments")
         packageProto.writeTo(packageStream)
-        writeFun(BuiltInsSerializationUtil.getPackageFilePath(fqName), packageStream)
+        // TODO: don't use fallback paths here
+        writeFun(BuiltInsSerializationUtil.FallbackPaths.getPackageFilePath(fqName), packageStream)
 
         val nameStream = ByteArrayOutputStream()
         val strings = serializer.getStringTable()
         SerializationUtil.serializeStringTable(nameStream, strings.serializeSimpleNames(), strings.serializeQualifiedNames())
-        writeFun(BuiltInsSerializationUtil.getStringTableFilePath(fqName), nameStream)
+        writeFun(BuiltInsSerializationUtil.FallbackPaths.getStringTableFilePath(fqName), nameStream)
     }
 
     fun getFileName(classDescriptor: ClassDescriptor): String {
