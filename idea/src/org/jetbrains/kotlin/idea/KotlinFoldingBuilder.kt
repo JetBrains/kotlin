@@ -87,7 +87,7 @@ public class KotlinFoldingBuilder : FoldingBuilderEx(), DumbAware {
             val lbrace = psi?.getLBrace()
             val rbrace = psi?.getRBrace()
             if (lbrace != null && rbrace != null) {
-                return TextRange(lbrace.getTextRange().getStartOffset() + 1, rbrace.getTextRange().getEndOffset() - 1)
+                return TextRange(lbrace.getTextRange().getStartOffset(), rbrace.getTextRange().getEndOffset())
             }
         }
         return node.getTextRange()
