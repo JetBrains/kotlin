@@ -7,7 +7,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="js-test-libs" level="project" />
+    <orderEntry type="library" name="Rhino" level="project" />
     <orderEntry type="module" module-name="js.translator" />
     <orderEntry type="module" module-name="compiler-tests" />
     <orderEntry type="module" module-name="frontend" />

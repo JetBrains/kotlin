@@ -198,6 +198,9 @@
         <!-- CLI Parser -->
         <get-maven-library prefix="com/github/spullara/cli-parser" lib="cli-parser" version="1.1.1"/>
 
+        <!-- Rhino -->
+        <get-maven-library prefix="org/mozilla" lib="rhino" version="1.7.6"/>
+
         <!-- Closure Compiler -->
         <!-- A download url taken from http://code.google.com/p/closure-compiler/wiki/BinaryDownloads -->
         <get src="http://dl.google.com/closure-compiler/compiler-20131014.zip"
