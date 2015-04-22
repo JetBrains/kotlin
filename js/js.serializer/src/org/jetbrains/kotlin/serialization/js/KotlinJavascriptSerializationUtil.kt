@@ -41,7 +41,7 @@ import java.util.zip.GZIPOutputStream
 import kotlin.platform.platformStatic
 
 public object KotlinJavascriptSerializationUtil {
-    private val PACKAGE_FILE_SUFFIX = "/.kotlin_package"
+    private val PACKAGE_FILE_EXT = ".kotlin_package"
 
     platformStatic
     public fun createPackageFragmentProvider(moduleDescriptor: ModuleDescriptor, metadata: ByteArray, storageManager: StorageManager): PackageFragmentProvider? {
@@ -117,19 +117,25 @@ public object KotlinJavascriptSerializationUtil {
         val fragments = module.getPackageFragmentProvider().getPackageFragments(fqName)
         val packageProto = serializer.packageProto(fragments, skip).build() ?: error("Package fragments not serialized: $fragments")
         packageProto.writeTo(packageStream)
-        // TODO: don't use fallback paths here
-        writeFun(BuiltInsSerializationUtil.FallbackPaths.getPackageFilePath(fqName), packageStream)
+        writeFun(BuiltInsSerializationUtil.getPackageFilePath(fqName), packageStream)
 
         val nameStream = ByteArrayOutputStream()
         val strings = serializer.getStringTable()
         SerializationUtil.serializeStringTable(nameStream, strings.serializeSimpleNames(), strings.serializeQualifiedNames())
-        writeFun(BuiltInsSerializationUtil.FallbackPaths.getStringTableFilePath(fqName), nameStream)
+        writeFun(BuiltInsSerializationUtil.getStringTableFilePath(fqName), nameStream)
     }
 
     fun getFileName(classDescriptor: ClassDescriptor): String {
         return BuiltInsSerializationUtil.getClassMetadataPath(classDescriptor.classId)
     }
 
+    private fun getPackageName(filePath: String): String {
+        val lastIndexOfSep = filePath.lastIndexOf('/')
+        assert(lastIndexOfSep >= 0, "expected / in $filePath")
+        return filePath.substring(0, lastIndexOfSep).replace('/', '.')
+
+    }
+
     private fun getPackages(contentMap: Map<String, ByteArray>): List<String> =
-            contentMap.keySet().filter { it.endsWith(PACKAGE_FILE_SUFFIX) } map { it.substring(0, it.length() - PACKAGE_FILE_SUFFIX.length()).replace('/', '.') }
+            contentMap.keySet().filter { it.endsWith(PACKAGE_FILE_EXT) }.map { getPackageName(it) }
 }
