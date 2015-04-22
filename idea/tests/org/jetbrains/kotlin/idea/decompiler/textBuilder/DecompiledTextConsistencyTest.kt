@@ -16,63 +16,37 @@
 
 package org.jetbrains.kotlin.idea.decompiler.textBuilder
 
-import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinder
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
-import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.BindingTraceContext
-import org.jetbrains.kotlin.resolve.MemberComparator
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
-import org.junit.Assert
+import kotlin.properties.Delegates
 
-public class DecompiledTextConsistencyTest : JetLightCodeInsightFixtureTestCase() {
+public class DecompiledTextConsistencyTest : TextConsistencyBaseTest() {
 
-    private val STANDARD_LIBRARY_FQNAME = FqName("kotlin")
+    override val packages: List<FqName> = listOf(FqName("kotlin"))
 
-    public fun testConsistencyWithJavaDescriptorResolver() {
-        val project = getProject()
-        val virtualFileFinder = JvmVirtualFileFinder.SERVICE.getInstance(getProject())
-        val kotlinPackageFile = virtualFileFinder.findVirtualFileWithHeader(PackageClassUtils.getPackageClassId(STANDARD_LIBRARY_FQNAME))!!
-        val projectBasedText = buildDecompiledText(kotlinPackageFile, ProjectBasedResolverForDecompiler(project)).text
-        val deserializedText = buildDecompiledText(kotlinPackageFile).text
-        Assert.assertEquals(projectBasedText, deserializedText)
-        // sanity checks
-        Assert.assertTrue(projectBasedText.contains("linkedListOf"))
-        Assert.assertFalse(projectBasedText.contains("ERROR"))
+    override val topLevelMembers: Map<String, String> = mapOf("kotlin" to "linkedListOf")
+
+    override val virtualFileFinder: VirtualFileFinder by Delegates.lazy() {
+        JvmVirtualFileFinder.SERVICE.getInstance(getProject())
     }
+
+    override fun getDecompiledText(packageFile: VirtualFile, resolver: ResolverForDecompiler?): String =
+            (resolver?.let { buildDecompiledText(packageFile, it) } ?: buildDecompiledText(packageFile)).text
+
+    override fun getModuleDescriptor(): ModuleDescriptor =
+            TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(
+                    TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(getProject()),
+                    listOf(), BindingTraceContext(), null, null
+            ).moduleDescriptor
 
     override fun getProjectDescriptor() = object : JetWithJdkAndRuntimeLightProjectDescriptor() {
         override fun getSdk() = PluginTestCaseBase.fullJdk()
-    }
-}
-
-class ProjectBasedResolverForDecompiler(project: Project) : ResolverForDecompiler {
-    val module: ModuleDescriptor = run {
-        TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(
-                TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project),
-                listOf(), BindingTraceContext(), null, null
-        ).moduleDescriptor
-    }
-
-    override fun resolveTopLevelClass(classId: ClassId): ClassDescriptor? {
-        return module.resolveTopLevelClass(classId.asSingleFqName())
-    }
-
-    override fun resolveDeclarationsInPackage(packageFqName: FqName): Collection<DeclarationDescriptor> {
-        val packageView = module.getPackage(packageFqName) ?: return listOf()
-        return packageView.getMemberScope().getAllDescriptors() filter {
-            it is CallableMemberDescriptor && it.module != KotlinBuiltIns.getInstance().getBuiltInsModule()
-        } sortBy MemberComparator.INSTANCE
     }
 }
