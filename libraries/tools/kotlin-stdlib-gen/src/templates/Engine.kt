@@ -84,6 +84,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
         override fun onKeySet(key: Family) = include(key)
     }
     val customPrimitiveBodies = HashMap<Pair<Family, PrimitiveType>, String>()
+    val annotations = FamilyProperty<String>()
 
     fun bodyForTypes(family: Family, vararg primitiveTypes: PrimitiveType, b: () -> String) {
         include(family)
@@ -294,6 +295,8 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
                     ?.replace("<T>", primitive.name)
                     ?.let { platformName -> builder.append("platformName(\"${platformName}\")\n")}
         }
+
+        annotations[f]?.let { builder.append(it).append('\n') }
 
         builder.append("public ")
         if (inline[f] == true)
