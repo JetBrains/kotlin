@@ -21,7 +21,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.load.java.components.TypeUsage;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -49,14 +48,13 @@ public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements
     }
 
     @Nullable
-    public ClassDescriptor mapKotlinClass(@NotNull FqName fqName, @NotNull TypeUsage typeUsage) {
-        if (typeUsage == TypeUsage.MEMBER_SIGNATURE_COVARIANT || typeUsage == TypeUsage.SUPERTYPE) {
-            ClassDescriptor descriptor = classDescriptorMapForCovariantPositions.get(fqName);
-            if (descriptor != null) {
-                return descriptor;
-            }
-        }
+    public ClassDescriptor mapJavaToKotlin(@NotNull FqName fqName) {
         return classDescriptorMap.get(fqName);
+    }
+
+    @Nullable
+    public ClassDescriptor mapJavaToKotlinCovariant(@NotNull FqName fqName) {
+        return classDescriptorMapForCovariantPositions.get(fqName);
     }
 
     @NotNull
@@ -92,8 +90,8 @@ public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements
 
     @NotNull
     public Collection<ClassDescriptor> mapPlatformClass(@NotNull FqName fqName) {
-        ClassDescriptor kotlinAnalog = classDescriptorMap.get(fqName);
-        ClassDescriptor kotlinCovariantAnalog = classDescriptorMapForCovariantPositions.get(fqName);
+        ClassDescriptor kotlinAnalog = mapJavaToKotlin(fqName);
+        ClassDescriptor kotlinCovariantAnalog = mapJavaToKotlinCovariant(fqName);
         List<ClassDescriptor> descriptors = new ArrayList<ClassDescriptor>(2);
         if (kotlinAnalog != null) {
             descriptors.add(kotlinAnalog);

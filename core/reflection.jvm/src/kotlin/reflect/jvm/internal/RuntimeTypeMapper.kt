@@ -17,27 +17,26 @@
 package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.jvm.IntrinsicObjects
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.load.java.structure.reflect.classId
-import org.jetbrains.kotlin.load.java.structure.reflect.desc
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMapBuilder
+import org.jetbrains.kotlin.platform.JavaToKotlinClassMapBuilder.Direction.BOTH
+import org.jetbrains.kotlin.platform.JavaToKotlinClassMapBuilder.Direction.KOTLIN_TO_JAVA
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
-import kotlin.reflect.KotlinReflectionInternalError
 
 object RuntimeTypeMapper : JavaToKotlinClassMapBuilder() {
-    private val kotlinArrayClassId = KotlinBuiltIns.getInstance().getArray().classId
-
     private val kotlinFqNameToJvmDesc = linkedMapOf<FqName, String>()
-    private val jvmDescToKotlinClassId = linkedMapOf<String, ClassId>()
 
     init {
         init()
@@ -48,43 +47,26 @@ object RuntimeTypeMapper : JavaToKotlinClassMapBuilder() {
         val builtIns = KotlinBuiltIns.getInstance()
 
         for (type in JvmPrimitiveType.values()) {
-            val primitiveType = type.getPrimitiveType()
-            val primitiveClassDescriptor = builtIns.getPrimitiveClassDescriptor(primitiveType)
-
-            recordKotlinToJvm(primitiveClassDescriptor, type.getDesc())
-            recordKotlinToJvm(builtIns.getPrimitiveArrayClassDescriptor(primitiveType), "[" + type.getDesc())
-
-            recordJvmToKotlin(ClassId.topLevel(type.getWrapperFqName()).desc, primitiveClassDescriptor)
+            recordKotlinToJvm(builtIns.getPrimitiveClassDescriptor(type.getPrimitiveType()), type.getDesc())
         }
     }
 
     private fun recordKotlinToJvm(kotlinDescriptor: ClassDescriptor, jvmDesc: String) {
         kotlinFqNameToJvmDesc[DescriptorUtils.getFqNameSafe(kotlinDescriptor)] = jvmDesc
-        recordJvmToKotlin(jvmDesc, kotlinDescriptor)
-
-        val companionObject = kotlinDescriptor.getCompanionObjectDescriptor()
-        if (companionObject != null) {
-            val runtimeCompanionFqName = IntrinsicObjects.mapType(companionObject)
-                                         ?: throw KotlinReflectionInternalError("Failed to map intrinsic companion of $kotlinDescriptor")
-            recordKotlinToJvm(companionObject, ClassId.topLevel(runtimeCompanionFqName).desc)
-        }
-    }
-
-    private fun recordJvmToKotlin(jvmDesc: String, kotlinDescriptor: ClassDescriptor) {
-        jvmDescToKotlinClassId[jvmDesc] = kotlinDescriptor.classId
     }
 
     override fun register(javaClass: Class<*>, kotlinDescriptor: ClassDescriptor, direction: JavaToKotlinClassMapBuilder.Direction) {
-        // TODO: use direction correctly
-        recordKotlinToJvm(kotlinDescriptor, javaClass.classId.desc)
+        if (direction == BOTH || direction == KOTLIN_TO_JAVA) {
+            recordKotlinToJvm(kotlinDescriptor, javaClass.classId.desc)
+        }
     }
 
     override fun register(javaClass: Class<*>, kotlinDescriptor: ClassDescriptor, kotlinMutableDescriptor: ClassDescriptor) {
-        // TODO: readonly collection mapping just rewrites the mutable one, improve readability here
         register(javaClass, kotlinMutableDescriptor, JavaToKotlinClassMapBuilder.Direction.BOTH)
         register(javaClass, kotlinDescriptor, JavaToKotlinClassMapBuilder.Direction.BOTH)
     }
 
+    // TODO: this logic must be shared with JetTypeMapper
     fun mapTypeToJvmDesc(type: JetType): String {
         val classifier = type.getConstructor().getDeclarationDescriptor()
         if (classifier is TypeParameterDescriptor) {
@@ -106,20 +88,49 @@ object RuntimeTypeMapper : JavaToKotlinClassMapBuilder() {
             return if (TypeUtils.isNullableType(type)) ClassId.topLevel(jvmType.getWrapperFqName()).desc else jvmType.getDesc()
         }
 
+        KotlinBuiltIns.getPrimitiveTypeByArrayClassFqName(fqNameUnsafe)?.let { primitiveType ->
+            return "[" + JvmPrimitiveType.get(primitiveType).getDesc()
+        }
+
         if (fqNameUnsafe.isSafe()) {
             kotlinFqNameToJvmDesc[fqNameUnsafe.toSafe()]?.let { return it }
+        }
+
+        if (classDescriptor.isCompanionObject()) {
+            IntrinsicObjects.mapType(classDescriptor)?.let { fqName ->
+                return ClassId.topLevel(fqName).desc
+            }
         }
 
         return classDescriptor.classId.desc
     }
 
     fun mapJvmClassToKotlinClassId(klass: Class<*>): ClassId {
-        if (klass.isArray() && !klass.getComponentType().isPrimitive()) {
-            return kotlinArrayClassId
+        if (klass.isArray()) {
+            klass.getComponentType().primitiveType?.let {
+                return KotlinBuiltIns.getInstance().getPrimitiveArrayClassDescriptor(it).classId
+            }
+            return ClassId.topLevel(KotlinBuiltIns.FQ_NAMES.array.toSafe())
         }
 
-        return jvmDescToKotlinClassId[klass.desc] ?: klass.classId
+        klass.primitiveType?.let {
+            return KotlinBuiltIns.getInstance().getPrimitiveClassDescriptor(it).classId
+        }
+
+        val classId = klass.classId
+        if (!classId.isLocal()) {
+            val fqName = classId.asSingleFqName()
+            val kotlinClass = JavaToKotlinClassMap.INSTANCE.mapJavaToKotlin(fqName)
+            kotlinClass?.let { return it.classId }
+
+            InverseIntrinsicObjectsMapping.mapJvmClassToKotlinDescriptor(fqName)?.let { return it.classId }
+        }
+
+        return classId
     }
+
+    private val Class<*>.primitiveType: PrimitiveType?
+        get() = if (isPrimitive()) JvmPrimitiveType.get(getSimpleName()).getPrimitiveType() else null
 
     private val ClassId.desc: String
         get() = "L${JvmClassName.byClassId(this).getInternalName()};"

@@ -1,14 +1,12 @@
+import kotlin.test.assertEquals
+
 class Klass
 
 fun box(): String {
-    val x = Klass::class
-    if (x.simpleName != "Klass") return "Fail x: ${x.simpleName}"
-
-    val y = java.util.Date::class
-    if (y.simpleName != "Date") return "Fail y: ${y.simpleName}"
-
-    val z = kotlin.jvm.internal.KotlinSyntheticClass.Kind::class
-    if (z.simpleName != "Kind") return "Fail z: ${z.simpleName}"
+    assertEquals("Klass", Klass::class.simpleName)
+    assertEquals("Date", java.util.Date::class.simpleName)
+    assertEquals("Kind", kotlin.jvm.internal.KotlinSyntheticClass.Kind::class.simpleName)
+    assertEquals("Void", java.lang.Void::class.simpleName)
 
     return "OK"
 }

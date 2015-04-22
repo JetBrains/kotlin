@@ -146,7 +146,7 @@ class LazyJavaTypeResolver(
                 return c.reflectionTypes.kClass
             }
 
-            val javaToKotlinClassMap = JavaToKotlinClassMap.INSTANCE
+            val javaToKotlin = JavaToKotlinClassMap.INSTANCE
 
             val howThisTypeIsUsedEffectively = when {
                 attr.flexibility == FLEXIBLE_LOWER_BOUND -> MEMBER_SIGNATURE_COVARIANT
@@ -154,13 +154,19 @@ class LazyJavaTypeResolver(
 
                 // This case has to be checked before isMarkedReadOnly/isMarkedMutable, because those two are slow
                 // not mapped, we don't care about being marked mutable/read-only
-                javaToKotlinClassMap.mapPlatformClass(fqName).isEmpty() -> attr.howThisTypeIsUsed
+                javaToKotlin.mapPlatformClass(fqName).isEmpty() -> attr.howThisTypeIsUsed
 
                 // Read (possibly external) annotations
                 else -> attr.howThisTypeIsUsedAccordingToAnnotations
             }
 
-            return javaToKotlinClassMap.mapKotlinClass(fqName, howThisTypeIsUsedEffectively)
+            if (howThisTypeIsUsedEffectively == MEMBER_SIGNATURE_COVARIANT || howThisTypeIsUsedEffectively == SUPERTYPE) {
+                javaToKotlin.mapJavaToKotlinCovariant(fqName)?.let { mutableCollectionDescriptor ->
+                    return mutableCollectionDescriptor
+                }
+            }
+
+            return javaToKotlin.mapJavaToKotlin(fqName)
         }
 
         private fun isConstructorTypeParameter(): Boolean {
