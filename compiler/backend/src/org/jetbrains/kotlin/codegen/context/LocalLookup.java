@@ -62,8 +62,8 @@ public interface LocalLookup {
                 String fieldName = "$" + vd.getName();
                 StackValue.Local thiz = StackValue.LOCAL_0;
                 StackValue.StackValueWithSimpleReceiver innerValue = sharedVarType != null
-                                        ? StackValue.fieldForSharedVar(localType, classType, fieldName, thiz)
-                                        : StackValue.field(type, classType, fieldName, false, thiz);
+                                        ? StackValue.fieldForSharedVar(localType, classType, fieldName, thiz, vd)
+                                        : StackValue.field(type, classType, fieldName, false, thiz, vd);
 
                 closure.recordField(fieldName, type);
                 closure.captureVariable(new EnclosedValueDescriptor(fieldName, d, innerValue, type));
@@ -98,12 +98,12 @@ public interface LocalLookup {
                 if (localFunClosure != null && JvmCodegenUtil.isConst(localFunClosure)) {
                     // This is an optimization: we can obtain an instance of a const closure simply by GETSTATIC ...$instance
                     // (instead of passing this instance to the constructor and storing as a field)
-                    return StackValue.field(localType, localType, JvmAbi.INSTANCE_FIELD, true, StackValue.LOCAL_0);
+                    return StackValue.field(localType, localType, JvmAbi.INSTANCE_FIELD, true, StackValue.LOCAL_0, vd);
                 }
 
                 String fieldName = "$" + vd.getName();
                 StackValue.StackValueWithSimpleReceiver innerValue = StackValue.field(localType, classType, fieldName, false,
-                                                                                      StackValue.LOCAL_0);
+                                                                                      StackValue.LOCAL_0, vd);
 
                 closure.recordField(fieldName, localType);
                 closure.captureVariable(new EnclosedValueDescriptor(fieldName, d, innerValue, localType));
@@ -133,7 +133,7 @@ public interface LocalLookup {
                 JetType receiverType = closure.getEnclosingReceiverDescriptor().getType();
                 Type type = state.getTypeMapper().mapType(receiverType);
                 StackValue.StackValueWithSimpleReceiver innerValue = StackValue.field(type, classType, CAPTURED_RECEIVER_FIELD, false,
-                                                                                      StackValue.LOCAL_0);
+                                                                                      StackValue.LOCAL_0, d);
                 closure.setCaptureReceiver();
 
                 return innerValue;

@@ -206,12 +206,24 @@ public abstract class StackValue {
 
     @NotNull
     public static Field field(@NotNull Type type, @NotNull Type owner, @NotNull String name, boolean isStatic, @NotNull StackValue receiver) {
-        return new Field(type, owner, name, isStatic, receiver);
+        return field(type, owner, name, isStatic, receiver, null);
+    }
+
+    @NotNull
+    public static Field field(
+            @NotNull Type type,
+            @NotNull Type owner,
+            @NotNull String name,
+            boolean isStatic,
+            @NotNull StackValue receiver,
+            @Nullable DeclarationDescriptor descriptor
+    ) {
+        return new Field(type, owner, name, isStatic, receiver, descriptor);
     }
 
     @NotNull
     public static Field field(@NotNull StackValue.Field field, @NotNull StackValue newReceiver) {
-        return new Field(field.type, field.owner, field.name, field.isStaticPut, newReceiver);
+        return field(field.type, field.owner, field.name, field.isStaticPut, newReceiver, field.descriptor);
     }
 
     @NotNull
@@ -402,8 +414,14 @@ public abstract class StackValue {
         return None.INSTANCE;
     }
 
-    public static FieldForSharedVar fieldForSharedVar(@NotNull Type localType, @NotNull Type classType, @NotNull String fieldName, @NotNull StackValue receiver) {
-        Field receiverWithRefWrapper = field(sharedTypeForType(localType), classType, fieldName, false, receiver);
+    public static FieldForSharedVar fieldForSharedVar(
+            @NotNull Type localType,
+            @NotNull Type classType,
+            @NotNull String fieldName,
+            @NotNull StackValue receiver,
+            @Nullable DeclarationDescriptor descriptor
+    ) {
+        Field receiverWithRefWrapper = field(sharedTypeForType(localType), classType, fieldName, false, receiver, descriptor);
         return new FieldForSharedVar(localType, classType, fieldName, receiverWithRefWrapper);
     }
 
@@ -986,11 +1004,20 @@ public abstract class StackValue {
     public static class Field extends StackValueWithSimpleReceiver {
         public final Type owner;
         public final String name;
+        public final DeclarationDescriptor descriptor;
 
-        public Field(Type type, Type owner, String name, boolean isStatic, StackValue receiver) {
+        public Field(
+                @NotNull Type type,
+                @NotNull Type owner,
+                @NotNull String name,
+                boolean isStatic,
+                @NotNull StackValue receiver,
+                @Nullable DeclarationDescriptor descriptor
+        ) {
             super(type, isStatic, isStatic, receiver, receiver.canHaveSideEffects());
             this.owner = owner;
             this.name = name;
+            this.descriptor = descriptor;
         }
 
         @Override

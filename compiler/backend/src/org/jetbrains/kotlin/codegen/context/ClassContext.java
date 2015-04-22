@@ -56,7 +56,8 @@ public class ClassContext extends FieldOwnerContext<ClassDescriptor> {
                 typeMapper.mapType(getContextDescriptor()),
                 CAPTURED_THIS_FIELD,
                 /* isStatic = */ false,
-                StackValue.LOCAL_0
+                StackValue.LOCAL_0,
+                enclosingClass
         );
     }
 

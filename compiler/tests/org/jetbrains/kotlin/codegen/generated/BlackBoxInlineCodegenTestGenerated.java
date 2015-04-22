@@ -66,6 +66,30 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/anonymousObjectOnDeclarationSiteSuperParams.1.kt");
             doTestMultiFileWithInlineCheck(fileName);
         }
+
+        @TestMetadata("capturedLambdaInInline.1.kt")
+        public void testCapturedLambdaInInline() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/capturedLambdaInInline.1.kt");
+            doTestMultiFileWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("capturedLambdaInInline2.1.kt")
+        public void testCapturedLambdaInInline2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/capturedLambdaInInline2.1.kt");
+            doTestMultiFileWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("capturedLambdaInInline3.1.kt")
+        public void testCapturedLambdaInInline3() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/capturedLambdaInInline3.1.kt");
+            doTestMultiFileWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("capturedLambdaInInlineObject.1.kt")
+        public void testCapturedLambdaInInlineObject() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/capturedLambdaInInlineObject.1.kt");
+            doTestMultiFileWithInlineCheck(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/boxInline/builders")
@@ -686,6 +710,18 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
     public static class Reified extends AbstractBlackBoxInlineCodegenTest {
         public void testAllFilesPresentInReified() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/reified"), Pattern.compile("^(.+)\\.1.kt$"), true);
+        }
+
+        @TestMetadata("capturedLambda.1.kt")
+        public void testCapturedLambda() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/reified/capturedLambda.1.kt");
+            doTestMultiFileWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("capturedLambda2.1.kt")
+        public void testCapturedLambda2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/reified/capturedLambda2.1.kt");
+            doTestMultiFileWithInlineCheck(fileName);
         }
 
         @TestMetadata("packages.1.kt")

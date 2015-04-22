@@ -1962,7 +1962,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 DeclarationDescriptor enumClass = classDescriptor.getContainingDeclaration();
                 assert DescriptorUtils.isEnumClass(enumClass) : "Enum entry should be declared in enum class: " + descriptor;
                 Type type = typeMapper.mapType((ClassDescriptor) enumClass);
-                return StackValue.field(type, type, descriptor.getName().asString(), true, StackValue.none());
+                return StackValue.field(type, type, descriptor.getName().asString(), true, StackValue.none(), classDescriptor);
             }
             ClassDescriptor companionObjectDescriptor = classDescriptor.getCompanionObjectDescriptor();
             if (companionObjectDescriptor != null) {
@@ -1983,7 +1983,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             ClassDescriptor scriptClass = bindingContext.get(CLASS_FOR_SCRIPT, scriptDescriptor);
             StackValue script = StackValue.thisOrOuter(this, scriptClass, false, false);
             Type fieldType = typeMapper.mapType(valueParameterDescriptor);
-            return StackValue.field(fieldType, scriptClassType, valueParameterDescriptor.getName().getIdentifier(), false, script);
+            return StackValue.field(fieldType, scriptClassType, valueParameterDescriptor.getName().getIdentifier(), false, script, valueParameterDescriptor);
         }
 
         throw new UnsupportedOperationException("don't know how to generate reference " + descriptor);
@@ -2490,15 +2490,16 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             if (cur instanceof ScriptContext) {
                 ScriptContext scriptContext = (ScriptContext) cur;
 
-                if (scriptContext.getScriptDescriptor() == receiver.getDeclarationDescriptor()) {
+                ScriptDescriptor receiverDeclarationDescriptor = receiver.getDeclarationDescriptor();
+                if (scriptContext.getScriptDescriptor() == receiverDeclarationDescriptor) {
                     //TODO lazy
                     return result;
                 }
                 else {
                     Type currentScriptType = asmTypeForScriptDescriptor(bindingContext, scriptContext.getScriptDescriptor());
-                    Type classType = asmTypeForScriptDescriptor(bindingContext, receiver.getDeclarationDescriptor());
-                    String fieldName = scriptContext.getScriptFieldName(receiver.getDeclarationDescriptor());
-                    return StackValue.field(classType, currentScriptType, fieldName, false, result);
+                    Type classType = asmTypeForScriptDescriptor(bindingContext, receiverDeclarationDescriptor);
+                    String fieldName = scriptContext.getScriptFieldName(receiverDeclarationDescriptor);
+                    return StackValue.field(classType, currentScriptType, fieldName, false, result, receiverDeclarationDescriptor);
                 }
             }
 
@@ -3440,7 +3441,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             JetScript scriptPsi = JetPsiUtil.getScript(variableDeclaration);
             assert scriptPsi != null;
             Type scriptClassType = asmTypeForScriptPsi(bindingContext, scriptPsi);
-            storeTo = StackValue.field(varType, scriptClassType, variableDeclaration.getName(), false, StackValue.LOCAL_0);
+            storeTo = StackValue.field(varType, scriptClassType, variableDeclaration.getName(), false, StackValue.LOCAL_0, variableDescriptor);
         }
         else if (sharedVarType == null) {
             storeTo = StackValue.local(index, varType);

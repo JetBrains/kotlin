@@ -454,21 +454,21 @@ public class InlineCodegen extends CallGenerator {
             return false;
         }
 
-        //skip direct capturing fields
-        StackValue receiver = null;
-        if (stackValue instanceof StackValue.Field) {
-            receiver = ((StackValue.Field) stackValue).receiver;
-        }
-        else if (stackValue instanceof StackValue.FieldForSharedVar) {
-            receiver = ((StackValue.Field) ((StackValue.FieldForSharedVar) stackValue).receiver).receiver;
+        StackValue field = stackValue;
+        if (stackValue instanceof StackValue.FieldForSharedVar) {
+            field = ((StackValue.FieldForSharedVar) stackValue).receiver;
         }
 
-        if (!(receiver instanceof StackValue.Local)) {
-            return true;
+        //check that value corresponds to captured inlining parameter
+        if (field instanceof StackValue.Field) {
+            DeclarationDescriptor varDescriptor = ((StackValue.Field) field).descriptor;
+            //check that variable is inline function parameter
+            return !(varDescriptor instanceof CallableDescriptor &&
+                     InlineUtil.isInlineLambdaParameter((CallableDescriptor) varDescriptor) &&
+                     InlineUtil.isInline(varDescriptor.getContainingDeclaration()));
         }
 
-        //TODO: check type of context
-        return !(codegen.getContext().isInliningLambda() && descriptor != null && !KotlinBuiltIns.isNoinline(descriptor));
+        return true;
     }
 
     private void putParameterOnStack(ParameterInfo... infos) {
