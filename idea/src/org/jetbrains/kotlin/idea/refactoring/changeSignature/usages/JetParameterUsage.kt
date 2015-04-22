@@ -43,10 +43,10 @@ public abstract class JetExplicitReferenceUsage<T: JetElement>(element: T) : Jet
 }
 
 public class JetParameterUsage(
-        element: JetSimpleNameExpression,
+        element: JetElement,
         private val parameterInfo: JetParameterInfo,
         val containingFunction: JetFunctionDefinitionUsage<*>
-) : JetExplicitReferenceUsage<JetSimpleNameExpression>(element) {
+) : JetExplicitReferenceUsage<JetElement>(element) {
     override fun processReplacedElement(element: JetElement) {
         val qualifiedExpression = element.getParent() as? JetQualifiedExpression
         val elementToShorten = if (qualifiedExpression?.getReceiverExpression() == element) qualifiedExpression!! else element

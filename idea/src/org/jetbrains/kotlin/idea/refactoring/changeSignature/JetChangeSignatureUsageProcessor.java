@@ -54,6 +54,7 @@ import org.jetbrains.kotlin.idea.core.refactoring.RefactoringPackage;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.*;
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference;
 import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchPackage;
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocName;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
@@ -73,7 +74,10 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeUtils;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsageProcessor {
     @Override
@@ -172,11 +176,11 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
                     for (PsiReference reference : ReferencesSearch.search(oldParam, oldParam.getUseScope())) {
                         PsiElement element = reference.getElement();
 
-                        if (element instanceof JetSimpleNameExpression &&
+                        if ((element instanceof JetSimpleNameExpression || element instanceof KDocName) &&
                             !(element.getParent() instanceof JetValueArgumentName)) // Usages in named arguments of the calls usage will be changed when the function call is changed
                         {
                             JetParameterUsage parameterUsage =
-                                    new JetParameterUsage((JetSimpleNameExpression) element, parameterInfo, functionUsageInfo);
+                                    new JetParameterUsage((JetElement) element, parameterInfo, functionUsageInfo);
                             result.add(parameterUsage);
                         }
                     }
@@ -445,6 +449,8 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
 
             String newExprText = ((JetParameterUsage) usageInfo).getReplacementText(changeInfo);
             if (!newExprText.startsWith("this@")) continue;
+
+            if (usageInfo.getElement() instanceof KDocName) continue; // TODO support converting parameter to receiver in KDoc
 
             JetExpression originalExpr = (JetExpression) usageInfo.getElement();
             JetScope scope = ResolvePackage.analyze(originalExpr, BodyResolveMode.FULL)

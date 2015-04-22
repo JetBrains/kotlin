@@ -71,6 +71,12 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("automaticRenamerParameter/parameter.test")
+    public void testAutomaticRenamerParameter_Parameter() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/automaticRenamerParameter/parameter.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("defaultObject/defaultObject.test")
     public void testDefaultObject_DefaultObject() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/defaultObject/defaultObject.test");

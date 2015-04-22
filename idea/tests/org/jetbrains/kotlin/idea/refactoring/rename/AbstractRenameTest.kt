@@ -24,10 +24,9 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.JavaPsiFacade
-import com.intellij.psi.PsiDocumentManager
-import com.intellij.psi.PsiElement
+import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsException
 import com.intellij.refactoring.rename.RenameProcessor
@@ -44,6 +43,9 @@ import org.jetbrains.kotlin.idea.test.KotlinMultiFileTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.JetNamedDeclaration
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
@@ -57,6 +59,7 @@ private enum class RenameType {
     KOTLIN_FUNCTION,
     KOTLIN_PROPERTY,
     KOTLIN_PACKAGE
+    MARKED_ELEMENT
 }
 
 public abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
@@ -85,6 +88,7 @@ public abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
                 RenameType.KOTLIN_FUNCTION -> renameKotlinFunctionTest(renameObject, context)
                 RenameType.KOTLIN_PROPERTY -> renameKotlinPropertyTest(renameObject, context)
                 RenameType.KOTLIN_PACKAGE -> renameKotlinPackageTest(renameObject, context)
+                RenameType.MARKED_ELEMENT -> renameMarkedElement(renameObject, context)
             }
 
             if (hintDirective != null) {
@@ -101,6 +105,25 @@ public abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
             else {
                 Assert.fail("""Unexpected "hint: $hintExceptionUnquoted" """)
             }
+        }
+    }
+
+    private fun renameMarkedElement(renameParamsObject: JsonObject, context: TestContext) {
+        val mainFilePath = renameParamsObject.getString("mainFile")
+        val newName = renameParamsObject.getString("newName")
+
+        doTestCommittingDocuments { rootDir, rootAfter ->
+            val mainFile = rootDir.findChild(mainFilePath)!!
+            val psiFile = PsiManager.getInstance(context.project).findFile(mainFile)!!
+
+            val MARKER_TEXT = "/*rename*/"
+            val marker = psiFile.getText().indexOf(MARKER_TEXT)
+            assert(marker != -1)
+
+            val toRename = psiFile.findElementAt(marker + MARKER_TEXT.length())!!.getNonStrictParentOfType<PsiNamedElement>()!!
+            val substitution = RenamePsiElementProcessor.forElement(toRename).substituteElementToRename(toRename, null)
+
+            runRenameProcessor(context, newName, substitution, true, true)
         }
     }
 
