@@ -60,7 +60,11 @@ class LazyJavaTypeParameterResolver(
     }
 }
 
-data class JavaClassLookupResult(val jClass: JavaClass? = null, val kClass: ClassDescriptor? = null)
+data class JavaClassLookupResult(val jClass: JavaClass? = null, val kClass: ClassDescriptor? = null) {
+    companion object {
+        val EMPTY = JavaClassLookupResult()
+    }
+}
 
 fun LazyJavaResolverContext.lookupBinaryClass(javaClass: JavaClass): ClassDescriptor? {
     val kotlinJvmBinaryClass = kotlinClassFinder.findKotlinClass(javaClass)
@@ -75,7 +79,7 @@ fun LazyJavaResolverContext.findClassInJava(classId: ClassId): JavaClassLookupRe
     val javaClass = finder.findClass(classId)
     if (javaClass != null) return JavaClassLookupResult(javaClass)
 
-    return JavaClassLookupResult()
+    return JavaClassLookupResult.EMPTY
 }
 
 private fun LazyJavaResolverContext.resolveBinaryClass(kotlinClass: KotlinJvmBinaryClass?): JavaClassLookupResult? {
@@ -93,7 +97,7 @@ private fun LazyJavaResolverContext.resolveBinaryClass(kotlinClass: KotlinJvmBin
     }
     else {
         // This is a package or trait-impl or something like that
-        return JavaClassLookupResult()
+        return JavaClassLookupResult.EMPTY
     }
 
     return null
