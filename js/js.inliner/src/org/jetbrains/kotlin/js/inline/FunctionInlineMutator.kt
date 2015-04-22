@@ -93,6 +93,11 @@ class FunctionInlineMutator private (private val call: JsInvocation, private val
     }
 
     private fun processReturns() {
+        if (currentStatement is JsReturn && currentStatement.getExpression() === call) {
+            inliningContext.statementContext.removeMe()
+            return
+        }
+
         val returnCount = collectInstances(javaClass<JsReturn>(), body).size()
         if (returnCount == 0) {
             // TODO return Unit (KT-5647)
