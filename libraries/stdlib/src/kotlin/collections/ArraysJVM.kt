@@ -82,8 +82,10 @@ public fun ByteArray.toString(charset: Charset): String = String(this, charset)
  * Allocates an array of runtime type `T` having its size equal to the size of this collection
  * and populates the array with the elements of this collection.
  */
-[Intrinsic("kotlin.collections.copyToArray")] public fun <reified T> Collection<T>.toTypedArray(): Array<T> =
-        throw UnsupportedOperationException()
+public inline fun <reified T> Collection<T>.toTypedArray(): Array<T> {
+    val thisCollection = this as java.util.Collection<T>
+    return thisCollection.toArray(arrayOfNulls<T>(thisCollection.size())) as Array<T>
+}
 
 /** Returns the array if it's not null, or an empty array otherwise. */
 public inline fun <reified T> Array<out T>?.orEmpty(): Array<out T> = this ?: arrayOf<T>()

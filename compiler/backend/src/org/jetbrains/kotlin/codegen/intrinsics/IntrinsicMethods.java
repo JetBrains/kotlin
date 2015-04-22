@@ -68,7 +68,6 @@ public class IntrinsicMethods {
         namedMethods.put("kotlin.javaClass.function", new JavaClassFunction());
         namedMethods.put("kotlin.javaClass.property", new JavaClassProperty());
         namedMethods.put("kotlin.arrays.array", new JavaClassArray());
-        namedMethods.put("kotlin.collections.copyToArray", new CopyToArray());
         namedMethods.put("kotlin.jvm.internal.unsafe.monitorEnter", MonitorInstruction.MONITOR_ENTER);
         namedMethods.put("kotlin.jvm.internal.unsafe.monitorExit", MonitorInstruction.MONITOR_EXIT);
 
