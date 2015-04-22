@@ -132,20 +132,25 @@ public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
         val fragments = module.getPackageFragmentProvider().getPackageFragments(fqName)
         val packageProto = serializer.packageProto(fragments).build() ?: error("Package fragments not serialized: $fragments")
         packageProto.writeTo(packageStream)
-        write(destDir, BuiltInsSerializationUtil.getPackageFilePath(fqName), packageStream)
+        write(destDir, BuiltInsSerializationUtil.getPackageFilePath(fqName), packageStream,
+              BuiltInsSerializationUtil.FallbackPaths.getPackageFilePath(fqName))
 
         val nameStream = ByteArrayOutputStream()
         val strings = serializer.getStringTable()
         SerializationUtil.serializeStringTable(nameStream, strings.serializeSimpleNames(), strings.serializeQualifiedNames())
-        write(destDir, BuiltInsSerializationUtil.getStringTableFilePath(fqName), nameStream)
+        write(destDir, BuiltInsSerializationUtil.getStringTableFilePath(fqName), nameStream,
+              BuiltInsSerializationUtil.FallbackPaths.getStringTableFilePath(fqName))
     }
 
-    private fun write(destDir: File, fileName: String, stream: ByteArrayOutputStream) {
+    internal /* KT-5786 */ fun write(destDir: File, fileName: String, stream: ByteArrayOutputStream, legacyFileName: String? = null) {
         totalSize += stream.size()
         totalFiles++
-        val file = File(destDir, fileName)
-        file.getParentFile()?.mkdirs()
-        file.writeBytes(stream.toByteArray())
+        File(destDir, fileName).getParentFile().mkdirs()
+        File(destDir, fileName).writeBytes(stream.toByteArray())
+
+        legacyFileName?.let { fileName ->
+            File(destDir, fileName).writeBytes(stream.toByteArray())
+        }
     }
 
     private fun serializeClass(

@@ -20,7 +20,6 @@ import com.google.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf
-import kotlin.platform.platformStatic
 
 public object BuiltInsSerializationUtil {
     public val EXTENSION_REGISTRY: ExtensionRegistryLite
@@ -31,20 +30,33 @@ public object BuiltInsSerializationUtil {
     }
 
     private val CLASS_METADATA_FILE_EXTENSION = "kotlin_class"
-    private val PACKAGE_FILE_NAME = ".kotlin_package"
-    private val STRING_TABLE_FILE_NAME = ".kotlin_string_table"
+    private val PACKAGE_FILE_EXTENSION = "kotlin_package"
+    private val STRING_TABLE_FILE_EXTENSION = "kotlin_string_table"
 
-    platformStatic public fun getClassMetadataPath(classId: ClassId): String {
+    // TODO: remove this after M12
+    public object FallbackPaths {
+        public fun getPackageFilePath(fqName: FqName): String =
+                packageFqNameToPath(fqName) + "/.kotlin_package"
+
+        public fun getStringTableFilePath(fqName: FqName): String =
+                packageFqNameToPath(fqName) + "/.kotlin_string_table"
+    }
+
+    public fun getClassMetadataPath(classId: ClassId): String {
         return packageFqNameToPath(classId.getPackageFqName()) + "/" + classId.getRelativeClassName().asString() +
                "." + CLASS_METADATA_FILE_EXTENSION
     }
 
-    platformStatic public fun getPackageFilePath(fqName: FqName): String =
-            packageFqNameToPath(fqName) + "/" + PACKAGE_FILE_NAME
+    public fun getPackageFilePath(fqName: FqName): String =
+            packageFqNameToPath(fqName) + "/" + shortName(fqName) + "." + PACKAGE_FILE_EXTENSION
 
-    platformStatic public fun getStringTableFilePath(fqName: FqName): String =
-            packageFqNameToPath(fqName) + "/" + STRING_TABLE_FILE_NAME
+    public fun getStringTableFilePath(fqName: FqName): String =
+            packageFqNameToPath(fqName) + "/" + shortName(fqName) + "." + STRING_TABLE_FILE_EXTENSION
+
 
     private fun packageFqNameToPath(fqName: FqName): String =
             fqName.asString().replace('.', '/')
+
+    private fun shortName(fqName: FqName): String =
+            if (fqName.isRoot()) "default-package" else fqName.shortName().asString()
 }
