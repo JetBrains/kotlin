@@ -145,12 +145,26 @@
         </sequential>
     </macrodef>
 
-    <target name="printStatistics">
-        <length file="${kotlin-home}/lib/kotlin-runtime.jar" property="runtime.jar.size"/>
-        <print-statistic key="kotlin-runtime.jar size" value="${runtime.jar.size}"/>
+    <macrodef name="print-file-size-statistic">
+        <attribute name="path"/>
+        <attribute name="file-name"/>
 
-        <length file="${kotlin-home}/lib/kotlin-reflect.jar" property="reflect.jar.size"/>
-        <print-statistic key="kotlin-reflect.jar size" value="${reflect.jar.size}"/>
+        <sequential>
+            <length file="@{path}/@{file-name}" property="file.size"/>
+            <print-statistic key="@{file-name} size" value="${file.size}"/>
+        </sequential>
+    </macrodef>
+
+    <target name="printStatistics">
+        <print-file-size-statistic path="${kotlin-home}/lib" file-name="kotlin-runtime.jar"/>
+        <print-file-size-statistic path="${kotlin-home}/lib" file-name="kotlin-reflect.jar"/>
+
+        <print-file-size-statistic path="${kotlin-home}/lib" file-name="kotlin-jslib.jar"/>
+        <print-file-size-statistic path="${output}" file-name="kotlin.js"/>
+        <print-file-size-statistic path="${output}" file-name="builtins.js"/>
+        <print-file-size-statistic path="${output}" file-name="builtins.meta.js"/>
+        <print-file-size-statistic path="${output}" file-name="stdlib.js"/>
+        <print-file-size-statistic path="${output}" file-name="stdlib.meta.js"/>
     </target>
 
     <target name="post_build" depends="zipArtifacts, revertTemplateFiles, printStatistics"/>
