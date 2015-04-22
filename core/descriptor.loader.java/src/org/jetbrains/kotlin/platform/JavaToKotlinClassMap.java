@@ -24,11 +24,14 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType;
 
+import java.lang.annotation.Annotation;
 import java.util.*;
 
-public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements PlatformToKotlinClassMap {
+public class JavaToKotlinClassMap implements PlatformToKotlinClassMap {
     public static final JavaToKotlinClassMap INSTANCE = new JavaToKotlinClassMap();
 
     private final Map<FqName, ClassDescriptor> javaToKotlin = new HashMap<FqName, ClassDescriptor>();
@@ -39,7 +42,34 @@ public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements
     private final Map<ClassDescriptor, ClassDescriptor> readOnlyToMutable = new HashMap<ClassDescriptor, ClassDescriptor>();
 
     private JavaToKotlinClassMap() {
-        init();
+        KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
+
+        add(Object.class, builtIns.getAny());
+        add(String.class, builtIns.getString());
+        add(CharSequence.class, builtIns.getCharSequence());
+        add(Throwable.class, builtIns.getThrowable());
+        add(Cloneable.class, builtIns.getCloneable());
+        add(Number.class, builtIns.getNumber());
+        add(Comparable.class, builtIns.getComparable());
+        add(Enum.class, builtIns.getEnum());
+        add(Annotation.class, builtIns.getAnnotation());
+
+        add(Iterable.class, builtIns.getIterable(), builtIns.getMutableIterable());
+        add(Iterator.class, builtIns.getIterator(), builtIns.getMutableIterator());
+        add(Collection.class, builtIns.getCollection(), builtIns.getMutableCollection());
+        add(List.class, builtIns.getList(), builtIns.getMutableList());
+        add(Set.class, builtIns.getSet(), builtIns.getMutableSet());
+        add(Map.class, builtIns.getMap(), builtIns.getMutableMap());
+        add(Map.Entry.class, builtIns.getMapEntry(), builtIns.getMutableMapEntry());
+        add(ListIterator.class, builtIns.getListIterator(), builtIns.getMutableListIterator());
+
+        for (JvmPrimitiveType jvmType : JvmPrimitiveType.values()) {
+            add(ClassId.topLevel(jvmType.getWrapperFqName()), builtIns.getPrimitiveClassDescriptor(jvmType.getPrimitiveType()));
+        }
+
+        addJavaToKotlin(classId(Deprecated.class), builtIns.getDeprecatedAnnotation());
+
+        addKotlinToJava(classId(Void.class), builtIns.getNothing());
     }
 
     /**
@@ -78,29 +108,29 @@ public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements
         return kotlinToJava.get(kotlinFqName);
     }
 
-    @Override
-    protected void register(@NotNull ClassId javaClassId, @NotNull ClassDescriptor kotlinDescriptor, @NotNull Direction direction) {
-        if (direction == Direction.BOTH || direction == Direction.JAVA_TO_KOTLIN) {
-            addJavaToKotlin(javaClassId, kotlinDescriptor);
-        }
-        if (direction == Direction.BOTH || direction == Direction.KOTLIN_TO_JAVA) {
-            addKotlinToJava(javaClassId, kotlinDescriptor);
-        }
-    }
-
-    @Override
-    protected void register(
-            @NotNull ClassId javaClassId,
+    private void add(
+            @NotNull Class<?> javaClass,
             @NotNull ClassDescriptor kotlinDescriptor,
             @NotNull ClassDescriptor kotlinMutableDescriptor
     ) {
-        addJavaToKotlin(javaClassId, kotlinDescriptor);
+        ClassId javaClassId = classId(javaClass);
+
+        add(javaClassId, kotlinDescriptor);
+
         addJavaToKotlinCovariant(javaClassId, kotlinMutableDescriptor);
-        addKotlinToJava(javaClassId, kotlinDescriptor);
         addKotlinToJava(javaClassId, kotlinMutableDescriptor);
 
         mutableToReadOnly.put(kotlinMutableDescriptor, kotlinDescriptor);
         readOnlyToMutable.put(kotlinDescriptor, kotlinMutableDescriptor);
+    }
+
+    private void add(@NotNull ClassId javaClassId, @NotNull ClassDescriptor kotlinDescriptor) {
+        addJavaToKotlin(javaClassId, kotlinDescriptor);
+        addKotlinToJava(javaClassId, kotlinDescriptor);
+    }
+
+    private void add(@NotNull Class<?> javaClass, @NotNull ClassDescriptor kotlinDescriptor) {
+        add(classId(javaClass), kotlinDescriptor);
     }
 
     private void addJavaToKotlin(@NotNull ClassId javaClassId, @NotNull ClassDescriptor kotlinDescriptor) {
@@ -113,6 +143,15 @@ public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements
 
     private void addKotlinToJava(@NotNull ClassId javaClassId, @NotNull ClassDescriptor kotlinDescriptor) {
         kotlinToJava.put(DescriptorUtils.getFqName(kotlinDescriptor), javaClassId);
+    }
+
+    @NotNull
+    private static ClassId classId(@NotNull Class<?> clazz) {
+        assert !clazz.isPrimitive() && !clazz.isArray() : "Invalid class: " + clazz;
+        Class<?> outer = clazz.getDeclaringClass();
+        return outer == null
+               ? ClassId.topLevel(new FqName(clazz.getCanonicalName()))
+               : classId(outer).createNestedClassId(Name.identifier(clazz.getSimpleName()));
     }
 
     @NotNull
