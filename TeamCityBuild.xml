@@ -150,6 +150,7 @@
         <attribute name="file-name"/>
 
         <sequential>
+            <local name="file.size" />
             <length file="@{path}/@{file-name}" property="file.size"/>
             <print-statistic key="@{file-name} size" value="${file.size}"/>
         </sequential>
