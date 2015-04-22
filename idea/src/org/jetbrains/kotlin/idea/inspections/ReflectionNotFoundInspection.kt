@@ -45,6 +45,8 @@ import org.jetbrains.kotlin.psi.JetVisitorVoid
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.builtins.ReflectionTypes
+import org.jetbrains.kotlin.psi.JetAnnotationEntry
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
@@ -74,6 +76,8 @@ public class ReflectionNotFoundInspection : AbstractKotlinInspection() {
             override fun visitDoubleColonExpression(expression: JetDoubleColonExpression) {
                 val expectedType = expression.analyze().get(BindingContext.EXPECTED_EXPRESSION_TYPE, expression)
                 if (expectedType != null && !ReflectionTypes.isReflectionType(expectedType)) return
+
+                if (expression.getStrictParentOfType<JetAnnotationEntry>() != null) return
 
                 // If a callable reference is used where a KFunction/KProperty/... expected, we should report that usage as dangerous
                 // because reflection features will fail without kotlin-reflect.jar in the classpath.
