@@ -16,16 +16,16 @@
 
 package org.jetbrains.kotlin.idea.util
 
-import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.resolve.jvm.kotlinSignature.CollectionClassMapping
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.resolve.scopes.JetScope
-import java.util.LinkedHashSet
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.substitute
+import java.util.LinkedHashSet
 
 fun JetType.makeNullable() = TypeUtils.makeNullable(this)
 fun JetType.makeNotNullable() = TypeUtils.makeNotNullable(this)
@@ -41,7 +41,7 @@ public fun approximateFlexibleTypes(jetType: JetType, outermost: Boolean = true)
     if (jetType.isFlexible()) {
         val flexible = jetType.flexibility()
         val lowerClass = flexible.lowerBound.getConstructor().getDeclarationDescriptor() as? ClassDescriptor?
-        val isCollection = lowerClass != null && CollectionClassMapping.getInstance().isMutableCollection(lowerClass)
+        val isCollection = lowerClass != null && JavaToKotlinClassMap.INSTANCE.isMutableCollection(lowerClass)
         // (Mutable)Collection<T>! -> MutableCollection<T>?
         // Foo<(Mutable)Collection<T>!>! -> Foo<Collection<T>>?
         // Foo! -> Foo?

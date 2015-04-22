@@ -35,6 +35,9 @@ public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements
     private final Map<FqName, ClassDescriptor> javaToKotlinCovariant = new HashMap<FqName, ClassDescriptor>();
     private final Map<FqNameUnsafe, ClassId> kotlinToJava = new HashMap<FqNameUnsafe, ClassId>();
 
+    private final Map<ClassDescriptor, ClassDescriptor> mutableToReadOnly = new HashMap<ClassDescriptor, ClassDescriptor>();
+    private final Map<ClassDescriptor, ClassDescriptor> readOnlyToMutable = new HashMap<ClassDescriptor, ClassDescriptor>();
+
     private JavaToKotlinClassMap() {
         init();
     }
@@ -95,6 +98,9 @@ public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements
         addJavaToKotlinCovariant(javaClassId, kotlinMutableDescriptor);
         addKotlinToJava(javaClassId, kotlinDescriptor);
         addKotlinToJava(javaClassId, kotlinMutableDescriptor);
+
+        mutableToReadOnly.put(kotlinMutableDescriptor, kotlinDescriptor);
+        readOnlyToMutable.put(kotlinDescriptor, kotlinMutableDescriptor);
     }
 
     private void addJavaToKotlin(@NotNull ClassId javaClassId, @NotNull ClassDescriptor kotlinDescriptor) {
@@ -131,6 +137,32 @@ public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements
             return Collections.emptyList();
         }
         return mapPlatformClass(className.toSafe());
+    }
+
+    public boolean isMutableCollection(@NotNull ClassDescriptor mutable) {
+        return mutableToReadOnly.containsKey(mutable);
+    }
+
+    public boolean isReadOnlyCollection(@NotNull ClassDescriptor readOnly) {
+        return readOnlyToMutable.containsKey(readOnly);
+    }
+
+    @NotNull
+    public ClassDescriptor convertMutableToReadOnly(@NotNull ClassDescriptor mutable) {
+        ClassDescriptor readOnly = mutableToReadOnly.get(mutable);
+        if (readOnly == null) {
+            throw new IllegalArgumentException("Given class " + mutable + " is not a mutable collection");
+        }
+        return readOnly;
+    }
+
+    @NotNull
+    public ClassDescriptor convertReadOnlyToMutable(@NotNull ClassDescriptor readOnly) {
+        ClassDescriptor mutable = readOnlyToMutable.get(readOnly);
+        if (mutable == null) {
+            throw new IllegalArgumentException("Given class " + readOnly + " is not a read-only collection");
+        }
+        return mutable;
     }
 
     // TODO: get rid of this method, it's unclear what it does

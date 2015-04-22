@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor;
 import org.jetbrains.kotlin.load.java.structure.JavaMethod;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.platform.JavaToKotlinClassMap;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.jvm.JavaResolverUtils;
@@ -619,8 +620,6 @@ public class SignaturesPropagationData {
         }
         ClassDescriptor klass = (ClassDescriptor) classifier;
 
-        CollectionClassMapping collectionMapping = CollectionClassMapping.getInstance();
-
         boolean someSupersMutable = false;
         boolean someSupersCovariantReadOnly = false;
         boolean someSupersNotCovariantReadOnly = false;
@@ -629,10 +628,10 @@ public class SignaturesPropagationData {
             if (classifierFromSuper instanceof ClassDescriptor) {
                 ClassDescriptor classFromSuper = (ClassDescriptor) classifierFromSuper;
 
-                if (collectionMapping.isMutableCollection(classFromSuper)) {
+                if (JavaToKotlinClassMap.INSTANCE.isMutableCollection(classFromSuper)) {
                     someSupersMutable = true;
                 }
-                else if (collectionMapping.isReadOnlyCollection(classFromSuper)) {
+                else if (JavaToKotlinClassMap.INSTANCE.isReadOnlyCollection(classFromSuper)) {
                     if (typeFromSuper.varianceOfPosition == Variance.OUT_VARIANCE) {
                         someSupersCovariantReadOnly = true;
                     }
@@ -648,13 +647,13 @@ public class SignaturesPropagationData {
             return classifier;
         }
         else if (someSupersMutable) {
-            if (collectionMapping.isReadOnlyCollection(klass)) {
-                return collectionMapping.convertReadOnlyToMutable(klass);
+            if (JavaToKotlinClassMap.INSTANCE.isReadOnlyCollection(klass)) {
+                return JavaToKotlinClassMap.INSTANCE.convertReadOnlyToMutable(klass);
             }
         }
         else if (someSupersNotCovariantReadOnly || someSupersCovariantReadOnly) {
-            if (collectionMapping.isMutableCollection(klass)) {
-                return collectionMapping.convertMutableToReadOnly(klass);
+            if (JavaToKotlinClassMap.INSTANCE.isMutableCollection(klass)) {
+                return JavaToKotlinClassMap.INSTANCE.convertMutableToReadOnly(klass);
             }
         }
 
