@@ -184,8 +184,8 @@ public class JsInliner extends JsVisitorWithContextImpl {
         JsExpression resultExpression = inlineableResult.getResultExpression();
         JsContext<JsStatement> statementContext = inliningContext.getStatementContext();
         // body of inline function can contain call to lambdas that need to be inlined
-        JsStatement statement = accept(inlineableBody);
-        assert inlineableBody == statement;
+        JsStatement inlineableBodyWithLambdasInlined = accept(inlineableBody);
+        assert inlineableBody == inlineableBodyWithLambdasInlined;
 
         statementContext.addPrevious(flattenStatement(inlineableBody));
 
@@ -199,7 +199,17 @@ public class JsInliner extends JsVisitorWithContextImpl {
         }
 
         resultExpression = accept(resultExpression);
-        context.replaceMe(resultExpression);
+        JsStatement currentStatement = statementContext.getCurrentNode();
+
+        if (currentStatement instanceof JsExpressionStatement &&
+            ((JsExpressionStatement) currentStatement).getExpression() == call &&
+            (resultExpression == null || !canHaveSideEffect(resultExpression))
+        ) {
+            statementContext.removeMe();
+        }
+        else {
+            context.replaceMe(resultExpression);
+        }
     }
 
     @NotNull
