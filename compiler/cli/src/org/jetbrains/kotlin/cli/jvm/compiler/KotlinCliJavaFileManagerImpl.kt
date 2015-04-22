@@ -78,7 +78,8 @@ public class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager)
 
     override fun findPackage(packageName: String): PsiPackage? {
         var found = false
-        index.traverseDirectoriesInPackage(FqName(packageName)) { _, __ ->
+        val packageFqName = packageName.toSafeFqName() ?: return null
+        index.traverseDirectoriesInPackage(packageFqName) { _, __ ->
             found = true
             //abort on first found
             false
@@ -149,8 +150,8 @@ public class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager)
 }
 
 // a sad workaround to avoid throwing exception when called from inside IDEA code
-private fun String.toSafeTopLevelClassId(): ClassId? = try {
-    ClassId.topLevel(FqName(this))
+private fun <T : Any> safely(compute: () -> T): T? = try {
+    compute()
 }
 catch (e: IllegalArgumentException) {
     null
@@ -158,3 +159,6 @@ catch (e: IllegalArgumentException) {
 catch (e: AssertionError) {
     null
 }
+
+private fun String.toSafeFqName(): FqName? = safely { FqName(this) }
+private fun String.toSafeTopLevelClassId(): ClassId? = safely { ClassId.topLevel(FqName(this)) }
