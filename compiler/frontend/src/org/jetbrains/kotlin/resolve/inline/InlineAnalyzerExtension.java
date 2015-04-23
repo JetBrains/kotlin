@@ -132,14 +132,13 @@ public class InlineAnalyzerExtension implements FunctionAnalyzerExtension.Analyz
     }
 
     public static boolean checkInlinableParameter(
-            @NotNull CallableDescriptor parameter,
+            @NotNull ParameterDescriptor parameter,
             @NotNull JetElement expression,
             @NotNull CallableDescriptor functionDescriptor,
             @Nullable BindingTrace trace
     ) {
-        JetType type = parameter.getReturnType();
-        if (type != null && InlineUtil.isInlineLambdaParameter(parameter)) {
-            if (type.isMarkedNullable()) {
+        if (InlineUtil.isInlineLambdaParameter(parameter)) {
+            if (parameter.getType().isMarkedNullable()) {
                 if (trace != null) {
                     trace.report(Errors.NULLABLE_INLINE_PARAMETER.on(expression, expression, functionDescriptor));
                 }

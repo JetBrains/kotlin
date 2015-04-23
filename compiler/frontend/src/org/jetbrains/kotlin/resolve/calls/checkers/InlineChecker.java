@@ -218,11 +218,8 @@ class InlineChecker implements CallChecker {
         }
     }
 
-    private static boolean isInlinableParameter(@NotNull CallableDescriptor descriptor) {
-        JetType type = descriptor.getReturnType();
-        return type != null &&
-               InlineUtil.isInlineLambdaParameter(descriptor) &&
-               !type.isMarkedNullable();
+    private static boolean isInlinableParameter(@NotNull ParameterDescriptor descriptor) {
+        return InlineUtil.isInlineLambdaParameter(descriptor) && !descriptor.getType().isMarkedNullable();
     }
 
     private static boolean isInvokeOrInlineExtension(@NotNull CallableDescriptor descriptor) {

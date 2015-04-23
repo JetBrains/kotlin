@@ -17,20 +17,17 @@
 package org.jetbrains.kotlin.descriptors;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.kotlin.types.TypeSubstitutor;
+import org.jetbrains.kotlin.types.JetType;
 
-public interface ReceiverParameterDescriptor extends ParameterDescriptor {
+public interface ParameterDescriptor extends CallableDescriptor {
+    @NotNull
+    JetType getType();
 
-    // This field exists for better readability of the client code
-    @Nullable
-    ReceiverParameterDescriptor NO_RECEIVER_PARAMETER = null;
+    @Override
+    @NotNull
+    DeclarationDescriptor getContainingDeclaration();
 
     @NotNull
-    ReceiverValue getValue();
-
-    @Nullable
     @Override
-    ReceiverParameterDescriptor substitute(@NotNull TypeSubstitutor substitutor);
+    ParameterDescriptor getOriginal();
 }

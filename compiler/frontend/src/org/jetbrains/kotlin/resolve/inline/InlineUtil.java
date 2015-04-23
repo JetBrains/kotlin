@@ -35,16 +35,13 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.constants.ArrayValue;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.EnumValue;
-import org.jetbrains.kotlin.types.JetType;
 
 import static kotlin.KotlinPackage.firstOrNull;
 
 public class InlineUtil {
-    public static boolean isInlineLambdaParameter(@NotNull CallableDescriptor valueParameterOrReceiver) {
-        JetType type = valueParameterOrReceiver.getOriginal().getReturnType();
-        return type != null &&
-               !KotlinBuiltIns.isNoinline(valueParameterOrReceiver) &&
-               KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(type);
+    public static boolean isInlineLambdaParameter(@NotNull ParameterDescriptor valueParameterOrReceiver) {
+        return !KotlinBuiltIns.isNoinline(valueParameterOrReceiver) &&
+               KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(valueParameterOrReceiver.getOriginal().getType());
     }
 
     public static boolean isInline(@Nullable DeclarationDescriptor descriptor) {

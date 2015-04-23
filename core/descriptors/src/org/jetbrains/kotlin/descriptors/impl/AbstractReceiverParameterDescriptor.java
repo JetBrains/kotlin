@@ -106,7 +106,7 @@ public abstract class AbstractReceiverParameterDescriptor extends DeclarationDes
 
     @NotNull
     @Override
-    public CallableDescriptor getOriginal() {
+    public ParameterDescriptor getOriginal() {
         return this;
     }
 

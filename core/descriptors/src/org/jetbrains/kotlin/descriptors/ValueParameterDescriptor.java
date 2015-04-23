@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.types.JetType;
 
 import java.util.Set;
 
-public interface ValueParameterDescriptor extends VariableDescriptor {
+public interface ValueParameterDescriptor extends VariableDescriptor, ParameterDescriptor {
     /**
      * Returns the 0-based index of the value parameter in the parameter list of its containing function.
      *
@@ -47,10 +47,6 @@ public interface ValueParameterDescriptor extends VariableDescriptor {
     boolean declaresDefaultValue();
 
     @Nullable JetType getVarargElementType();
-
-    @Override
-    @NotNull
-    JetType getType();
 
     @NotNull
     @Override

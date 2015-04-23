@@ -21,10 +21,7 @@ import com.google.gwt.dev.js.ThrowExceptionOnErrorReporter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.descriptors.CallableDescriptor;
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor;
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.js.parser.ParserPackage;
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
@@ -83,7 +80,8 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
         }
 
         if (descriptor instanceof ValueParameterDescriptor) {
-            return InlineUtil.isInline(descriptor.getContainingDeclaration()) && InlineUtil.isInlineLambdaParameter(descriptor);
+            return InlineUtil.isInline(descriptor.getContainingDeclaration()) &&
+                   InlineUtil.isInlineLambdaParameter((ParameterDescriptor) descriptor);
         }
 
         return false;

@@ -22,7 +22,6 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.codegen.*;
 import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.context.FieldOwnerContext;
@@ -463,8 +462,8 @@ public class InlineCodegen extends CallGenerator {
         if (field instanceof StackValue.Field) {
             DeclarationDescriptor varDescriptor = ((StackValue.Field) field).descriptor;
             //check that variable is inline function parameter
-            return !(varDescriptor instanceof CallableDescriptor &&
-                     InlineUtil.isInlineLambdaParameter((CallableDescriptor) varDescriptor) &&
+            return !(varDescriptor instanceof ParameterDescriptor &&
+                     InlineUtil.isInlineLambdaParameter((ParameterDescriptor) varDescriptor) &&
                      InlineUtil.isInline(varDescriptor.getContainingDeclaration()));
         }
 
