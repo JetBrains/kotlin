@@ -18,7 +18,8 @@ package org.jetbrains.kotlin.resolve;
 
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.Pair;
-import kotlin.Function1;
+import kotlin.jvm.functions.*;
+import kotlin.*;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

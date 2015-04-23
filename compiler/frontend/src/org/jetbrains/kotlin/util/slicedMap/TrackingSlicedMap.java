@@ -18,7 +18,8 @@ package org.jetbrains.kotlin.util.slicedMap;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import kotlin.Function3;
+import kotlin.jvm.functions.*;
+import kotlin.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.utils.Printer;

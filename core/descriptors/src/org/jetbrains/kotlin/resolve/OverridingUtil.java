@@ -16,7 +16,8 @@
 
 package org.jetbrains.kotlin.resolve;
 
-import kotlin.Function1;
+import kotlin.jvm.functions.*;
+import kotlin.*;
 import kotlin.KotlinPackage;
 import kotlin.Unit;
 import kotlin.jvm.KotlinSignature;

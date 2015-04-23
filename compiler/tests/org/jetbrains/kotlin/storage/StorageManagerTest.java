@@ -17,8 +17,10 @@
 package org.jetbrains.kotlin.storage;
 
 import junit.framework.TestCase;
-import kotlin.Function0;
-import kotlin.Function1;
+import kotlin.jvm.functions.*;
+import kotlin.*;
+import kotlin.jvm.functions.*;
+import kotlin.*;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

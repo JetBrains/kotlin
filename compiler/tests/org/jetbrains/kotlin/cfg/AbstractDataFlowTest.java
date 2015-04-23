@@ -18,7 +18,8 @@ package org.jetbrains.kotlin.cfg;
 
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.text.StringUtil;
-import kotlin.Function3;
+import kotlin.jvm.functions.*;
+import kotlin.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeImpl;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction;

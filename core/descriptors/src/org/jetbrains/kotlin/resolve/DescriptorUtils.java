@@ -16,7 +16,8 @@
 
 package org.jetbrains.kotlin.resolve;
 
-import kotlin.Function1;
+import kotlin.jvm.functions.*;
+import kotlin.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;

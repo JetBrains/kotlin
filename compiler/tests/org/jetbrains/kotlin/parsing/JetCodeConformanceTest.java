@@ -19,7 +19,8 @@ package org.jetbrains.kotlin.parsing;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import junit.framework.TestCase;
-import kotlin.Function1;
+import kotlin.jvm.functions.*;
+import kotlin.*;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
 

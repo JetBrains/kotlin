@@ -22,7 +22,8 @@ import com.google.common.collect.Multimap;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.UserDataHolder;
 import gnu.trove.THashMap;
-import kotlin.Function3;
+import kotlin.jvm.functions.*;
+import kotlin.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;

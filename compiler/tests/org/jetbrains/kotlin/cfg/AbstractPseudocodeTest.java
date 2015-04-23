@@ -18,7 +18,8 @@ package org.jetbrains.kotlin.cfg;
 
 import com.google.common.collect.Sets;
 import com.intellij.openapi.util.text.StringUtil;
-import kotlin.Function3;
+import kotlin.jvm.functions.*;
+import kotlin.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;

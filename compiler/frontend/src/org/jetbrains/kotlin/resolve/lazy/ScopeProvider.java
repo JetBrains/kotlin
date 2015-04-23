@@ -17,8 +17,10 @@
 package org.jetbrains.kotlin.resolve.lazy;
 
 import com.intellij.psi.PsiElement;
-import kotlin.Function0;
-import kotlin.Function1;
+import kotlin.jvm.functions.*;
+import kotlin.*;
+import kotlin.jvm.functions.*;
+import kotlin.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
 import org.jetbrains.kotlin.name.FqName;
