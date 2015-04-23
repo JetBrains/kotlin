@@ -160,13 +160,15 @@ class LazyJavaTypeResolver(
                 else -> attr.howThisTypeIsUsedAccordingToAnnotations
             }
 
+            val kotlinDescriptor = javaToKotlin.mapJavaToKotlin(fqName) ?: return null
+
             if (howThisTypeIsUsedEffectively == MEMBER_SIGNATURE_COVARIANT || howThisTypeIsUsedEffectively == SUPERTYPE) {
-                javaToKotlin.mapJavaToKotlinCovariant(fqName)?.let { mutableCollectionDescriptor ->
-                    return mutableCollectionDescriptor
+                if (javaToKotlin.isReadOnlyCollection(kotlinDescriptor)) {
+                    return javaToKotlin.convertReadOnlyToMutable(kotlinDescriptor)
                 }
             }
 
-            return javaToKotlin.mapJavaToKotlin(fqName)
+            return kotlinDescriptor
         }
 
         private fun isConstructorTypeParameter(): Boolean {

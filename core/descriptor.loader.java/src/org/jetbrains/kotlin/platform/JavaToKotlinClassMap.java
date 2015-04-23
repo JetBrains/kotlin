@@ -36,7 +36,6 @@ public class JavaToKotlinClassMap implements PlatformToKotlinClassMap {
     public static final JavaToKotlinClassMap INSTANCE = new JavaToKotlinClassMap();
 
     private final Map<FqName, ClassDescriptor> javaToKotlin = new HashMap<FqName, ClassDescriptor>();
-    private final Map<FqName, ClassDescriptor> javaToKotlinCovariant = new HashMap<FqName, ClassDescriptor>();
     private final Map<FqNameUnsafe, ClassId> kotlinToJava = new HashMap<FqNameUnsafe, ClassId>();
 
     private final Map<ClassDescriptor, ClassDescriptor> mutableToReadOnly = new HashMap<ClassDescriptor, ClassDescriptor>();
@@ -86,22 +85,12 @@ public class JavaToKotlinClassMap implements PlatformToKotlinClassMap {
      * java.lang.Integer -> kotlin.Int
      * kotlin.jvm.internal.IntCompanionObject -> kotlin.Int.Companion
      * java.util.List -> kotlin.List
+     * java.util.Map.Entry -> kotlin.Map.Entry
      * java.lang.Void -> null
      */
     @Nullable
     public ClassDescriptor mapJavaToKotlin(@NotNull FqName fqName) {
         return javaToKotlin.get(fqName);
-    }
-
-    /**
-     * E.g.
-     * java.util.Collection -> kotlin.MutableCollection
-     * java.util.Map.Entry -> kotlin.MutableMap.MutableEntry
-     * java.lang.String -> null
-     */
-    @Nullable
-    public ClassDescriptor mapJavaToKotlinCovariant(@NotNull FqName fqName) {
-        return javaToKotlinCovariant.get(fqName);
     }
 
     /**
@@ -125,8 +114,6 @@ public class JavaToKotlinClassMap implements PlatformToKotlinClassMap {
         ClassId javaClassId = classId(javaClass);
 
         add(javaClassId, kotlinDescriptor);
-
-        addJavaToKotlinCovariant(javaClassId, kotlinMutableDescriptor);
         addKotlinToJava(javaClassId, kotlinMutableDescriptor);
 
         mutableToReadOnly.put(kotlinMutableDescriptor, kotlinDescriptor);
@@ -146,10 +133,6 @@ public class JavaToKotlinClassMap implements PlatformToKotlinClassMap {
         javaToKotlin.put(javaClassId.asSingleFqName(), kotlinDescriptor);
     }
 
-    private void addJavaToKotlinCovariant(@NotNull ClassId javaClassId, @NotNull ClassDescriptor kotlinDescriptor) {
-        javaToKotlinCovariant.put(javaClassId.asSingleFqName(), kotlinDescriptor);
-    }
-
     private void addKotlinToJava(@NotNull ClassId javaClassId, @NotNull ClassDescriptor kotlinDescriptor) {
         kotlinToJava.put(DescriptorUtils.getFqName(kotlinDescriptor), javaClassId);
     }
@@ -166,25 +149,19 @@ public class JavaToKotlinClassMap implements PlatformToKotlinClassMap {
     @NotNull
     public Collection<ClassDescriptor> mapPlatformClass(@NotNull FqName fqName) {
         ClassDescriptor kotlinAnalog = mapJavaToKotlin(fqName);
-        ClassDescriptor kotlinCovariantAnalog = mapJavaToKotlinCovariant(fqName);
-        List<ClassDescriptor> descriptors = new ArrayList<ClassDescriptor>(2);
-        if (kotlinAnalog != null) {
-            descriptors.add(kotlinAnalog);
-        }
-        if (kotlinCovariantAnalog != null) {
-            descriptors.add(kotlinCovariantAnalog);
-        }
-        return descriptors;
+        if (kotlinAnalog == null) return Collections.emptySet();
+
+        ClassDescriptor kotlinMutableAnalog = readOnlyToMutable.get(kotlinAnalog);
+        if (kotlinMutableAnalog == null) return Collections.singleton(kotlinAnalog);
+
+        return Arrays.asList(kotlinAnalog, kotlinMutableAnalog);
     }
 
     @Override
     @NotNull
     public Collection<ClassDescriptor> mapPlatformClass(@NotNull ClassDescriptor classDescriptor) {
         FqNameUnsafe className = DescriptorUtils.getFqName(classDescriptor);
-        if (!className.isSafe()) {
-            return Collections.emptyList();
-        }
-        return mapPlatformClass(className.toSafe());
+        return className.isSafe() ? mapPlatformClass(className.toSafe()) : Collections.<ClassDescriptor>emptySet();
     }
 
     public boolean isMutableCollection(@NotNull ClassDescriptor mutable) {
@@ -220,7 +197,7 @@ public class JavaToKotlinClassMap implements PlatformToKotlinClassMap {
 
         List<ClassDescriptor> result = new ArrayList<ClassDescriptor>();
         result.addAll(javaToKotlin.values());
-        result.addAll(javaToKotlinCovariant.values());
+        result.addAll(readOnlyToMutable.values());
 
         for (PrimitiveType type : PrimitiveType.values()) {
             result.add(builtIns.getPrimitiveArrayClassDescriptor(type));
