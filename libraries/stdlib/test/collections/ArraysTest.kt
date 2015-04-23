@@ -22,7 +22,7 @@ class ArraysTest {
         val arr1 = IntArray(0)
         assertEquals(-1, arr1.lastIndex)
 
-        val arr2 = Array<String>(0, { "$it" })
+        val arr2 = emptyArray<String>()
         assertEquals(-1, arr2.lastIndex)
     }
 
