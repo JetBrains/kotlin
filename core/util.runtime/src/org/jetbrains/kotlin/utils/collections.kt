@@ -105,3 +105,5 @@ public fun <T> Collection<T>.toReadOnlyList(): List<T> =
         if (isEmpty()) Collections.emptyList() else ArrayList(this)
 
 public fun <T: Any> T?.singletonOrEmptyList(): List<T> = if (this != null) Collections.singletonList(this) else Collections.emptyList()
+
+public inline fun <T> List<T>.getOrDefault(index: Int, default: (Int) -> T): T = if (index in 0..size() - 1) this[index] else default(index)
