@@ -228,7 +228,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         else {
             return facade.getTypeInfo(expression, context);
         }
-        return result.checkType(expression, context);
+        return DataFlowUtils.checkType(result, expression, context);
     }
 
     @NotNull

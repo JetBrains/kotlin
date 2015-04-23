@@ -189,8 +189,12 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         } else {
             dataFlowInfo = typeInfo.getDataFlowInfo().or(otherInfo);
         }
-        return typeInfo.replaceType(components.builtIns.getUnitType()).checkType(ifExpression, context).
-                checkImplicitCast(ifExpression, context, isStatement).replaceDataFlowInfo(dataFlowInfo);
+        return DataFlowUtils.checkImplicitCast(DataFlowUtils.checkType(typeInfo.replaceType(components.builtIns.getUnitType()),
+                                                                       ifExpression,
+                                                                       context),
+                                               ifExpression,
+                                               context,
+                                               isStatement).replaceDataFlowInfo(dataFlowInfo);
     }
 
     @Override
@@ -240,8 +244,9 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             // but without affecting changing variables
             dataFlowInfo = dataFlowInfo.and(loopVisitor.clearDataFlowInfoForAssignedLocalVariables(bodyTypeInfo.getJumpFlowInfo()));
         }
-        return bodyTypeInfo.replaceType(components.builtIns.getUnitType()).checkType(expression, contextWithExpectedType).replaceDataFlowInfo(
-                dataFlowInfo);
+        return DataFlowUtils
+                .checkType(bodyTypeInfo.replaceType(components.builtIns.getUnitType()), expression, contextWithExpectedType)
+                .replaceDataFlowInfo(dataFlowInfo);
     }
 
     private boolean containsJumpOutOfLoop(final JetLoopExpression loopExpression, final ExpressionTypingContext context) {
@@ -337,13 +342,16 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         // Here we must record data flow information at the end of the body (or at the first jump, to be precise) and
         // .and it with entrance data flow information, because do-while body is executed at least once
         // See KT-6283
+        // NB: it's really important to do it for non-empty body which is not a function literal
+        // If it's a function literal, it appears always unused so it's no matter what we do at this point
         if (body != null) {
             // We should take data flow info from the first jump point,
             // but without affecting changing variables
             dataFlowInfo = dataFlowInfo.and(loopVisitor.clearDataFlowInfoForAssignedLocalVariables(bodyTypeInfo.getJumpFlowInfo()));
         }
-        return bodyTypeInfo.replaceType(components.builtIns.getUnitType()).checkType(expression, contextWithExpectedType).replaceDataFlowInfo(
-                dataFlowInfo);
+        return DataFlowUtils
+                .checkType(bodyTypeInfo.replaceType(components.builtIns.getUnitType()), expression, contextWithExpectedType)
+                .replaceDataFlowInfo(dataFlowInfo);
     }
 
     @Override
@@ -402,8 +410,9 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             bodyTypeInfo = loopRangeInfo;
         }
 
-        return bodyTypeInfo.replaceType(components.builtIns.getUnitType()).checkType(expression, contextWithExpectedType).replaceDataFlowInfo(
-                loopRangeInfo.getDataFlowInfo());
+        return DataFlowUtils
+                .checkType(bodyTypeInfo.replaceType(components.builtIns.getUnitType()), expression, contextWithExpectedType)
+                .replaceDataFlowInfo(loopRangeInfo.getDataFlowInfo());
     }
 
     private VariableDescriptor createLoopParameterDescriptor(

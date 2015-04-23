@@ -42,12 +42,6 @@ import org.jetbrains.kotlin.types.JetType
 
     fun clearType() = replaceType(null)
 
-    fun checkType(expression: JetExpression, context: ResolutionContext<*>) =
-            replaceType(DataFlowUtils.checkType(type, expression, context))
-
-    fun checkImplicitCast(expression: JetExpression, context: ResolutionContext<*>, isStatement: Boolean) =
-            replaceType(DataFlowUtils.checkImplicitCast(type, expression, context, isStatement))
-
     // NB: do not compare type with this.type because this comparison is complex and unstabld
     fun replaceType(type: JetType?) = JetTypeInfo(type, dataFlowInfo, jumpOutPossible, jumpFlowInfo)
 
@@ -57,10 +51,12 @@ import org.jetbrains.kotlin.types.JetType
     fun replaceJumpFlowInfo(jumpFlowInfo: DataFlowInfo) =
             if (jumpFlowInfo == this.jumpFlowInfo) this else JetTypeInfo(type, dataFlowInfo, jumpOutPossible, jumpFlowInfo)
 
-    fun replaceDataFlowInfo(dataFlowInfo: DataFlowInfo) =
-            if (dataFlowInfo == this.dataFlowInfo) this
-            // If jump flow information was the same, it should be changed together
-            else if (this.dataFlowInfo == jumpFlowInfo) JetTypeInfo(type, dataFlowInfo, jumpOutPossible, dataFlowInfo)
-            // Otherwise they are changed separately
-            else JetTypeInfo(type, dataFlowInfo, jumpOutPossible, jumpFlowInfo)
+    fun replaceDataFlowInfo(dataFlowInfo: DataFlowInfo) = when (this.dataFlowInfo) {
+        // Nothing changed
+        dataFlowInfo -> this
+        // Jump info is the same as data flow info: change both
+        jumpFlowInfo -> JetTypeInfo(type, dataFlowInfo, jumpOutPossible, dataFlowInfo)
+        // Jump info is not the same: change data flow info only
+        else -> JetTypeInfo(type, dataFlowInfo, jumpOutPossible, jumpFlowInfo)
+    }
 }

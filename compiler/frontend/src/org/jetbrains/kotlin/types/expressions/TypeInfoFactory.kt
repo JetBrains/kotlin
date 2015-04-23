@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.expressions.DataFlowUtils
 import org.jetbrains.kotlin.types.expressions.JetTypeInfo
 
 /*
@@ -40,4 +41,4 @@ public fun noTypeInfo(dataFlowInfo: DataFlowInfo): JetTypeInfo = createTypeInfo(
 public fun noTypeInfo(context: ResolutionContext<*>): JetTypeInfo = noTypeInfo(context.dataFlowInfo)
 
 public fun createCheckedTypeInfo(type: JetType?, context: ResolutionContext<*>, expression: JetExpression): JetTypeInfo =
-        createTypeInfo(type, context).checkType(expression, context)
+        DataFlowUtils.checkType(createTypeInfo(type, context), expression, context)

@@ -63,7 +63,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             DataFlowInfo newDataFlowInfo = conditionInfo.and(typeInfo.getDataFlowInfo());
             context.trace.record(BindingContext.DATAFLOW_INFO_AFTER_CONDITION, expression, newDataFlowInfo);
         }
-        return typeInfo.replaceType(KotlinBuiltIns.getInstance().getBooleanType()).checkType(expression, contextWithExpectedType);
+        return DataFlowUtils.checkType(typeInfo.replaceType(KotlinBuiltIns.getInstance().getBooleanType()), expression, contextWithExpectedType);
     }
 
     @Override

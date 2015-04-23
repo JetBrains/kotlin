@@ -104,7 +104,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         // TODO : type substitutions???
         CallExpressionResolver callExpressionResolver = components.expressionTypingServices.getCallExpressionResolver();
         JetTypeInfo typeInfo = callExpressionResolver.getSimpleNameExpressionTypeInfo(expression, NO_RECEIVER, null, context);
-        return typeInfo.checkType(expression, context); // TODO : Extensions to this
+        return DataFlowUtils.checkType(typeInfo, expression, context); // TODO : Extensions to this
     }
 
     @Override
@@ -158,7 +158,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
             JetTypeInfo typeInfo = facade.getTypeInfo(left, contextWithNoExpectedType.replaceExpectedType(targetType));
             checkBinaryWithTypeRHS(expression, context, targetType, typeInfo.getType());
-            return typeInfo.replaceType(targetType).checkType(expression, context);
+            return DataFlowUtils.checkType(typeInfo.replaceType(targetType), expression, context);
         }
 
         JetTypeInfo typeInfo = facade.getTypeInfo(left, contextWithNoExpectedType);
@@ -176,7 +176,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
 
         JetType result = operationType == AS_SAFE ? TypeUtils.makeNullable(targetType) : targetType;
-        return typeInfo.replaceType(result).checkType(expression, context);
+        return DataFlowUtils.checkType(typeInfo.replaceType(result), expression, context);
     }
 
     private void checkBinaryWithTypeRHS(
@@ -582,7 +582,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                                                                                      }
                                                                                  });
                     result[0] = defaultType;
-                    if (Boolean.FALSE.equals(context.trace.get(PROCESSED, expression))) {
+                    // noinspection ConstantConditions
+                    if (!context.trace.get(PROCESSED, expression)) {
                         temporaryTrace.recordType(expression, defaultType);
                         temporaryTrace.record(PROCESSED, expression);
                     }
@@ -887,7 +888,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             return createCompileTimeConstantTypeInfo(value, expression, contextWithExpectedType);
         }
 
-        return typeInfo.replaceType(result).checkType(expression, contextWithExpectedType);
+        return DataFlowUtils.checkType(typeInfo.replaceType(result), expression, contextWithExpectedType);
     }
 
     @NotNull
@@ -936,7 +937,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
 
         // The call to checkType() is only needed here to execute additionalTypeCheckers, hence the NO_EXPECTED_TYPE
-        return baseTypeInfo.replaceType(resultingType).checkType(expression, context.replaceExpectedType(NO_EXPECTED_TYPE));
+        return DataFlowUtils.checkType(baseTypeInfo.replaceType(resultingType), expression, context.replaceExpectedType(NO_EXPECTED_TYPE));
     }
 
     @Override
@@ -1087,7 +1088,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (value != null) {
             return createCompileTimeConstantTypeInfo(value, expression, contextWithExpectedType);
         }
-        return result.checkType(expression, contextWithExpectedType);
+        return DataFlowUtils.checkType(result, expression, contextWithExpectedType);
     }
 
     private JetTypeInfo visitEquality(
@@ -1357,7 +1358,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
     @Override
     public JetTypeInfo visitArrayAccessExpression(@NotNull JetArrayAccessExpression expression, ExpressionTypingContext context) {
-        return resolveArrayAccessGetMethod(expression, context).checkType(expression, context);
+        return DataFlowUtils.checkType(resolveArrayAccessGetMethod(expression, context), expression, context);
     }
 
     @NotNull
@@ -1409,45 +1410,37 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         return TypeInfoFactoryPackage.noTypeInfo(context);
     }
 
-    private class StringTemplateVisitor extends JetVisitorVoid {
-
-        final ExpressionTypingContext context;
-
-        JetTypeInfo typeInfo;
-
-        StringTemplateVisitor(ExpressionTypingContext context) {
-            this.context = context;
-            this.typeInfo = TypeInfoFactoryPackage.noTypeInfo(context);
-        }
-
-        @Override
-        public void visitStringTemplateEntryWithExpression(@NotNull JetStringTemplateEntryWithExpression entry) {
-            JetExpression entryExpression = entry.getExpression();
-            if (entryExpression != null) {
-                typeInfo = facade.getTypeInfo(entryExpression, context.replaceDataFlowInfo(typeInfo.getDataFlowInfo()));
-            }
-        }
-
-        @Override
-        public void visitEscapeStringTemplateEntry(@NotNull JetEscapeStringTemplateEntry entry) {
-            CompileTimeConstantChecker.CharacterWithDiagnostic value = CompileTimeConstantChecker.escapedStringToCharacter(entry.getText(), entry);
-            Diagnostic diagnostic = value.getDiagnostic();
-            if (diagnostic != null) {
-                context.trace.report(diagnostic);
-            }
-        }
-
-    }
-
     @Override
     public JetTypeInfo visitStringTemplateExpression(@NotNull JetStringTemplateExpression expression, ExpressionTypingContext contextWithExpectedType) {
-        ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT);
-        StringTemplateVisitor visitor = new StringTemplateVisitor(context);
+        final ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT);
+        class StringTemplateVisitor extends JetVisitorVoid {
+            private JetTypeInfo typeInfo = TypeInfoFactoryPackage.noTypeInfo(context);
+
+            @Override
+            public void visitStringTemplateEntryWithExpression(@NotNull JetStringTemplateEntryWithExpression entry) {
+                JetExpression entryExpression = entry.getExpression();
+                if (entryExpression != null) {
+                    typeInfo = facade.getTypeInfo(entryExpression, context.replaceDataFlowInfo(typeInfo.getDataFlowInfo()));
+                }
+            }
+
+            @Override
+            public void visitEscapeStringTemplateEntry(@NotNull JetEscapeStringTemplateEntry entry) {
+                CompileTimeConstantChecker.CharacterWithDiagnostic value = CompileTimeConstantChecker.escapedStringToCharacter(entry.getText(), entry);
+                Diagnostic diagnostic = value.getDiagnostic();
+                if (diagnostic != null) {
+                    context.trace.report(diagnostic);
+                }
+            }
+        }
+        StringTemplateVisitor visitor = new StringTemplateVisitor();
         for (JetStringTemplateEntry entry : expression.getEntries()) {
             entry.accept(visitor);
         }
         ConstantExpressionEvaluator.evaluate(expression, context.trace, contextWithExpectedType.expectedType);
-        return visitor.typeInfo.replaceType(components.builtIns.getStringType()).checkType(expression, contextWithExpectedType);
+        return DataFlowUtils.checkType(visitor.typeInfo.replaceType(components.builtIns.getStringType()),
+                                       expression,
+                                       contextWithExpectedType);
     }
 
     @Override

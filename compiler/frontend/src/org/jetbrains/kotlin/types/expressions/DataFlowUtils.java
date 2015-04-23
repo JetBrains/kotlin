@@ -149,6 +149,11 @@ public class DataFlowUtils {
         return checkType(expressionType, expression, context, null);
     }
 
+    @NotNull
+    public static JetTypeInfo checkType(@NotNull JetTypeInfo typeInfo, @NotNull JetExpression expression, @NotNull ResolutionContext context) {
+        return typeInfo.replaceType(checkType(typeInfo.getType(), expression, context));
+    }
+
     @Nullable
     public static JetType checkType(
             @Nullable JetType expressionType,
@@ -218,6 +223,11 @@ public class DataFlowUtils {
             context.trace.report(IMPLICIT_CAST_TO_UNIT_OR_ANY.on(expression, expressionType));
         }
         return expressionType;
+    }
+
+    @NotNull
+    public static JetTypeInfo checkImplicitCast(@NotNull JetTypeInfo typeInfo, @NotNull JetExpression expression, @NotNull ResolutionContext context, boolean isStatement) {
+        return typeInfo.replaceType(checkImplicitCast(typeInfo.getType(), expression, context, isStatement));
     }
 
     @NotNull
