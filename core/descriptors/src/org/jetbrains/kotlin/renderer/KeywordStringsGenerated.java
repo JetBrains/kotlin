@@ -52,6 +52,7 @@ public class KeywordStringsGenerated {
         "do",
         "when",
         "trait",
+        "interface",
         "This"
     ));
 }
