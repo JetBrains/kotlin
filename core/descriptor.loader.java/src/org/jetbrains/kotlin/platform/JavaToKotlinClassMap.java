@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.platform;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.CompanionObjectMapping;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
@@ -67,6 +68,12 @@ public class JavaToKotlinClassMap implements PlatformToKotlinClassMap {
             add(ClassId.topLevel(jvmType.getWrapperFqName()), builtIns.getPrimitiveClassDescriptor(jvmType.getPrimitiveType()));
         }
 
+        for (ClassDescriptor descriptor : CompanionObjectMapping.allClassesWithIntrinsicCompanions()) {
+            ClassDescriptor companion = descriptor.getCompanionObjectDescriptor();
+            assert companion != null : "No companion object found for " + descriptor;
+            add(ClassId.topLevel(new FqName("kotlin.jvm.internal." + descriptor.getName().asString() + "CompanionObject")), companion);
+        }
+
         addJavaToKotlin(classId(Deprecated.class), builtIns.getDeprecatedAnnotation());
 
         addKotlinToJava(classId(Void.class), builtIns.getNothing());
@@ -77,6 +84,7 @@ public class JavaToKotlinClassMap implements PlatformToKotlinClassMap {
      * java.lang.String -> kotlin.String
      * java.lang.Deprecated -> kotlin.deprecated
      * java.lang.Integer -> kotlin.Int
+     * kotlin.jvm.internal.IntCompanionObject -> kotlin.Int.Companion
      * java.util.List -> kotlin.List
      * java.lang.Void -> null
      */
@@ -100,6 +108,7 @@ public class JavaToKotlinClassMap implements PlatformToKotlinClassMap {
      * E.g.
      * kotlin.Throwable -> java.lang.Throwable
      * kotlin.Int -> java.lang.Integer
+     * kotlin.Int.Companion -> kotlin.jvm.internal.IntCompanionObject
      * kotlin.Nothing -> java.lang.Void
      * kotlin.IntArray -> null
      */

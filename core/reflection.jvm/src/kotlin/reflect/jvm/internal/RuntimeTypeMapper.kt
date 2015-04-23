@@ -18,7 +18,6 @@ package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
-import org.jetbrains.kotlin.builtins.jvm.IntrinsicObjects
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.load.java.structure.reflect.classId
@@ -60,12 +59,6 @@ object RuntimeTypeMapper {
 
         JavaToKotlinClassMap.INSTANCE.mapKotlinToJava(fqName)?.let { return it.desc }
 
-        if (classDescriptor.isCompanionObject()) {
-            IntrinsicObjects.mapType(classDescriptor)?.let { fqName ->
-                return ClassId.topLevel(fqName).desc
-            }
-        }
-
         return classDescriptor.classId.desc
     }
 
@@ -83,11 +76,7 @@ object RuntimeTypeMapper {
 
         val classId = klass.classId
         if (!classId.isLocal()) {
-            val fqName = classId.asSingleFqName()
-            val kotlinClass = JavaToKotlinClassMap.INSTANCE.mapJavaToKotlin(fqName)
-            kotlinClass?.let { return it.classId }
-
-            InverseIntrinsicObjectsMapping.mapJvmClassToKotlinDescriptor(fqName)?.let { return it.classId }
+            JavaToKotlinClassMap.INSTANCE.mapJavaToKotlin(classId.asSingleFqName())?.let { return it.classId }
         }
 
         return classId

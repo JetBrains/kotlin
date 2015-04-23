@@ -22,7 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
-import org.jetbrains.kotlin.builtins.jvm.IntrinsicObjects;
 import org.jetbrains.kotlin.codegen.*;
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.binding.MutableClosure;
@@ -339,16 +338,6 @@ public class JetTypeMapper {
         }
 
         if (descriptor instanceof ClassDescriptor) {
-            FqName companionObjectMappedFqName = IntrinsicObjects.mapType((ClassDescriptor) descriptor);
-            if (companionObjectMappedFqName != null) {
-                Type asmType = asmTypeByFqNameWithoutInnerClasses(companionObjectMappedFqName);
-                if (signatureVisitor != null) {
-                    signatureVisitor.writeAsmType(asmType);
-                }
-
-                return asmType;
-            }
-
             Type asmType = kind.isForAnnotation() && KotlinBuiltIns.isKClass((ClassDescriptor) descriptor) ?
                            AsmTypes.JAVA_CLASS_TYPE :
                            computeAsmType((ClassDescriptor) descriptor.getOriginal());

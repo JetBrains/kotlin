@@ -1,0 +1,8 @@
+package test
+
+public trait IntrinsicCompanionObject {
+    public abstract fun testChar(/*0*/ p0: kotlin.Char.Companion!): kotlin.Unit
+    public abstract fun testEnum(/*0*/ p0: kotlin.Enum.Companion!): kotlin.Unit
+    public abstract fun testInt(/*0*/ p0: kotlin.Int.Companion!): kotlin.Unit
+    public abstract fun testString(/*0*/ p0: kotlin.String.Companion!): kotlin.Unit
+}

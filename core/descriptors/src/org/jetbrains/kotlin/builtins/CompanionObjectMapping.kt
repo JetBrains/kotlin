@@ -18,16 +18,26 @@ package org.jetbrains.kotlin.builtins
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import java.util.Collections
+import kotlin.platform.platformStatic
 
-public abstract class CompanionObjectMapping {
-    public fun hasMappingToObject(classDescriptor: ClassDescriptor): Boolean {
-        if (!DescriptorUtils.isCompanionObject(classDescriptor)) return false
+public object CompanionObjectMapping {
+    private val classes = linkedSetOf<ClassDescriptor>()
 
-        val containingDeclaration = classDescriptor.getContainingDeclaration()
-        if (containingDeclaration !is ClassDescriptor) return false
+    init {
+        val builtIns = KotlinBuiltIns.getInstance()
+        for (type in PrimitiveType.NUMBER_TYPES) {
+            classes.add(builtIns.getPrimitiveClassDescriptor(type))
+        }
+        classes.add(builtIns.getString())
+        classes.add(builtIns.getEnum())
+    }
 
-        return KotlinBuiltIns.isPrimitiveType(containingDeclaration.getDefaultType()) ||
-               KotlinBuiltIns.getInstance().getString() == containingDeclaration ||
-               KotlinBuiltIns.getInstance().getEnum() == containingDeclaration
+    public platformStatic fun allClassesWithIntrinsicCompanions(): Set<ClassDescriptor> =
+            Collections.unmodifiableSet(classes)
+
+    public platformStatic fun hasMappingToObject(classDescriptor: ClassDescriptor): Boolean {
+        return DescriptorUtils.isCompanionObject(classDescriptor) &&
+               classDescriptor.getContainingDeclaration() in classes
     }
 }

@@ -3151,6 +3151,12 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
             doTest(fileName);
         }
 
+        @TestMetadata("IntrinsicCompanionObject.java")
+        public void testIntrinsicCompanionObject() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/IntrinsicCompanionObject.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("MethodReferencesOuterClassTP.java")
         public void testMethodReferencesOuterClassTP() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/MethodReferencesOuterClassTP.java");
