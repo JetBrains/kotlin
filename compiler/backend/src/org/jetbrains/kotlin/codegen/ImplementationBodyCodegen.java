@@ -1050,7 +1050,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     private void generateCompanionObjectInitializer(@NotNull ClassDescriptor companionObject) {
         ExpressionCodegen codegen = createOrGetClInitCodegen();
-        FunctionDescriptor constructor = codegen.accessibleFunctionDescriptor(KotlinPackage.single(companionObject.getConstructors()));
+        FunctionDescriptor constructor = context.accessibleFunctionDescriptor(KotlinPackage.single(companionObject.getConstructors()));
         generateMethodCallTo(constructor, codegen.v);
         codegen.v.dup();
         StackValue instance = StackValue.onStack(typeMapper.mapClass(companionObject));

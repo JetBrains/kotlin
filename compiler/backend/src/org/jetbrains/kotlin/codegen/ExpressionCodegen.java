@@ -2165,21 +2165,15 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     @Override
     public StackValue visitCallExpression(@NotNull JetCallExpression expression, StackValue receiver) {
         ResolvedCall<?> resolvedCall = getResolvedCallWithAssert(expression, bindingContext);
-        CallableDescriptor funDescriptor = resolvedCall.getResultingDescriptor();
+        FunctionDescriptor descriptor = accessibleFunctionDescriptor(resolvedCall);
 
-        if (!(funDescriptor instanceof FunctionDescriptor)) {
-            throw new UnsupportedOperationException("unknown type of callee descriptor: " + funDescriptor);
-        }
-
-        funDescriptor = accessibleFunctionDescriptor((FunctionDescriptor) funDescriptor);
-
-        if (funDescriptor instanceof ConstructorDescriptor) {
+        if (descriptor instanceof ConstructorDescriptor) {
             return generateNewCall(expression, resolvedCall);
         }
 
-        if (funDescriptor.getOriginal() instanceof SamConstructorDescriptor) {
+        if (descriptor.getOriginal() instanceof SamConstructorDescriptor) {
             JetExpression argumentExpression = bindingContext.get(SAM_CONSTRUCTOR_TO_ARGUMENT, expression);
-            assert argumentExpression != null : "Argument expression is not saved for a SAM constructor: " + funDescriptor;
+            assert argumentExpression != null : "Argument expression is not saved for a SAM constructor: " + descriptor;
             return genSamInterfaceValue(argumentExpression, this);
         }
 
@@ -2233,13 +2227,26 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @NotNull
-    private PropertyDescriptor accessiblePropertyDescriptor(PropertyDescriptor propertyDescriptor) {
+    private PropertyDescriptor accessiblePropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor) {
         return context.accessiblePropertyDescriptor(propertyDescriptor);
     }
 
     @NotNull
-    protected FunctionDescriptor accessibleFunctionDescriptor(FunctionDescriptor fd) {
-        return context.accessibleFunctionDescriptor(fd);
+    private FunctionDescriptor accessibleFunctionDescriptor(@NotNull ResolvedCall<?> resolvedCall) {
+        FunctionDescriptor descriptor = (FunctionDescriptor) resolvedCall.getResultingDescriptor();
+        // $default method is not private, so you need no accessor to call it
+        return usesDefaultArguments(resolvedCall) ? descriptor : context.accessibleFunctionDescriptor(descriptor);
+    }
+
+    private static boolean usesDefaultArguments(@NotNull ResolvedCall<?> resolvedCall) {
+        List<ResolvedValueArgument> valueArguments = resolvedCall.getValueArgumentsByIndex();
+        if (valueArguments == null) return false;
+
+        for (ResolvedValueArgument argument : valueArguments) {
+            if (argument instanceof DefaultValueArgument) return true;
+        }
+
+        return false;
     }
 
     @NotNull
@@ -2253,7 +2260,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             return invokeFunction(call, ((VariableAsFunctionResolvedCall) resolvedCall).getFunctionCall(), receiver);
         }
 
-        FunctionDescriptor fd = (FunctionDescriptor) resolvedCall.getResultingDescriptor();
+        FunctionDescriptor fd = accessibleFunctionDescriptor(resolvedCall);
         JetSuperExpression superCallExpression = getSuperCallExpression(call);
         boolean superCall = superCallExpression != null;
 
@@ -2266,8 +2273,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             }
         }
 
-        FunctionDescriptor accessibleFunctionDescriptor = accessibleFunctionDescriptor(fd);
-        Callable callable = resolveToCallable(accessibleFunctionDescriptor, superCall, resolvedCall);
+        Callable callable = resolveToCallable(fd, superCall, resolvedCall);
 
         return callable.invokeMethodWithArguments(resolvedCall, receiver, this);
     }

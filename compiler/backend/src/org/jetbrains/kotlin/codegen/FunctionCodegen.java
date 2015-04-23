@@ -578,8 +578,12 @@ public class FunctionCodegen {
 
         int flags = getVisibilityAccessFlag(functionDescriptor) |
                     getDeprecatedAccessFlag(functionDescriptor) |
-                    ACC_SYNTHETIC |
-                    (functionDescriptor instanceof ConstructorDescriptor ? 0 : ACC_STATIC);
+                    ACC_SYNTHETIC;
+        if (!(functionDescriptor instanceof ConstructorDescriptor)) {
+            flags |= ACC_STATIC;
+        }
+        // $default methods are never private to be accessible from other class files (e.g. inner) without the need of synthetic accessors
+        flags &= ~ACC_PRIVATE;
 
         Method defaultMethod = typeMapper.mapDefaultMethod(functionDescriptor, kind, owner);
 

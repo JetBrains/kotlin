@@ -2391,6 +2391,39 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest(fileName);
             }
         }
+
+        @TestMetadata("compiler/testData/codegen/box/defaultArguments/private")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Private extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInPrivate() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/defaultArguments/private"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("memberExtensionFunction.kt")
+            public void testMemberExtensionFunction() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/defaultArguments/private/memberExtensionFunction.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("memberFunction.kt")
+            public void testMemberFunction() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/defaultArguments/private/memberFunction.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("primaryConstructor.kt")
+            public void testPrimaryConstructor() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/defaultArguments/private/primaryConstructor.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("secondaryConstructor.kt")
+            public void testSecondaryConstructor() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/defaultArguments/private/secondaryConstructor.kt");
+                doTest(fileName);
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/delegatedProperty")
