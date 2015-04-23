@@ -100,8 +100,8 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
                     result.putAll(key, info.typeInfo.get(key));
                 }
             }
-            if (valueWithGivenTypeInfo != null) {
-                withGivenTypeInfo.add(valueWithGivenTypeInfo);
+            if (info.valueWithGivenTypeInfo != null) {
+                withGivenTypeInfo.add(info.valueWithGivenTypeInfo);
             }
             info = (DelegatingDataFlowInfo) info.parent;
         }
