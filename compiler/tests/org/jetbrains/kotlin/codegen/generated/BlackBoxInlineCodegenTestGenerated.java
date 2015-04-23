@@ -287,6 +287,21 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/boxInline/functionExpression")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class FunctionExpression extends AbstractBlackBoxInlineCodegenTest {
+        public void testAllFilesPresentInFunctionExpression() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/functionExpression"), Pattern.compile("^(.+)\\.1.kt$"), true);
+        }
+
+        @TestMetadata("extension.1.kt")
+        public void testExtension() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/functionExpression/extension.1.kt");
+            doTestMultiFileWithInlineCheck(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/boxInline/lambdaClassClash")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -358,21 +373,6 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
         @TestMetadata("localFunInLambda.1.kt")
         public void testLocalFunInLambda() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/localFunInLambda/localFunInLambda.1.kt");
-            doTestMultiFileWithInlineCheck(fileName);
-        }
-    }
-
-    @TestMetadata("compiler/testData/codegen/boxInline/nameless")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class Nameless extends AbstractBlackBoxInlineCodegenTest {
-        public void testAllFilesPresentInNameless() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nameless"), Pattern.compile("^(.+)\\.1.kt$"), true);
-        }
-
-        @TestMetadata("extension.1.kt")
-        public void testExtension() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nameless/extension.1.kt");
             doTestMultiFileWithInlineCheck(fileName);
         }
     }
@@ -457,6 +457,12 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
         @TestMetadata("propertyAccessors.1.kt")
         public void testPropertyAccessors() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/propertyAccessors.1.kt");
+            doTestMultiFileWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("returnFromFunctionExpr.1.kt")
+        public void testReturnFromFunctionExpr() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/returnFromFunctionExpr.1.kt");
             doTestMultiFileWithInlineCheck(fileName);
         }
 

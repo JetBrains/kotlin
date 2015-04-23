@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
+import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
@@ -272,16 +273,27 @@ public class InlineCodegen extends CallGenerator {
 
             final CallableMemberDescriptor descriptor = codegen.getContext().getContextDescriptor();
 
-            final boolean isLambda = isFunctionExpression(descriptor) || isFunctionLiteral(descriptor);
-
             @Override
             public boolean isMyLabel(@NotNull String name) {
                 if (InlineCodegenUtil.ROOT_LABEL.equals(name)) {
-                    return !isLambda;
+                    return !isFunctionLiteral(descriptor);
                 }
-                else {
-                    return descriptor.getName().asString().equals(name);
+
+                //check function name if exists
+                if (descriptor.getName().asString().equals(name)) {
+                    return true;
                 }
+
+                //check functional expression labels
+                if (isFunctionExpression(descriptor)) {
+                    PsiElement element = DescriptorToSourceUtils.descriptorToDeclaration(descriptor);
+                    if (element != null && element.getParent() instanceof JetLabeledExpression) {
+                        String labelName = ((JetLabeledExpression) element.getParent()).getLabelName();
+                        return name.equals(labelName);
+                    }
+                }
+
+                return false;
             }
         };
         List<MethodInliner.PointForExternalFinallyBlocks> infos = MethodInliner.processReturns(adapter, labelOwner, true, null);
