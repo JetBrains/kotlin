@@ -2256,10 +2256,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     @NotNull
     public StackValue invokeFunction(@NotNull Call call, @NotNull ResolvedCall<?> resolvedCall, @NotNull StackValue receiver) {
-        if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
-            return invokeFunction(call, ((VariableAsFunctionResolvedCall) resolvedCall).getFunctionCall(), receiver);
-        }
-
         FunctionDescriptor fd = accessibleFunctionDescriptor(resolvedCall);
         JetSuperExpression superCallExpression = getSuperCallExpression(call);
         boolean superCall = superCallExpression != null;
@@ -2323,10 +2319,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             @NotNull ResolvedCall<?> resolvedCall,
             @NotNull StackValue receiver
     ) {
-        if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
-            resolvedCall = ((VariableAsFunctionResolvedCall) resolvedCall).getFunctionCall();
-        }
-
         CallGenerator callGenerator = getOrCreateCallGenerator(resolvedCall);
         CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
 
