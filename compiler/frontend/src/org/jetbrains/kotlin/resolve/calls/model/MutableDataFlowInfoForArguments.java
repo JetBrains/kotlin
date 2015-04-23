@@ -26,7 +26,7 @@ public interface MutableDataFlowInfoForArguments extends DataFlowInfoForArgument
 
     void updateInfo(@NotNull ValueArgument valueArgument, @NotNull DataFlowInfo dataFlowInfo);
 
-    MutableDataFlowInfoForArguments WITHOUT_ARGUMENTS_CHECK = new MutableDataFlowInfoForArguments() {
+    class WithoutArgumentsCheck implements MutableDataFlowInfoForArguments {
         private DataFlowInfo dataFlowInfo;
 
         @Override

@@ -66,7 +66,7 @@ public abstract class CallResolutionContext<Context extends CallResolutionContex
             this.dataFlowInfoForArguments = new DataFlowInfoForArgumentsImpl(call);
         }
         else {
-            this.dataFlowInfoForArguments = MutableDataFlowInfoForArguments.WITHOUT_ARGUMENTS_CHECK;
+            this.dataFlowInfoForArguments = new MutableDataFlowInfoForArguments.WithoutArgumentsCheck();
         }
     }
 
