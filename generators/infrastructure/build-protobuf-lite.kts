@@ -50,7 +50,7 @@ fun main(args: Array<String>) {
     val keepClasses = arrayListOf<String>()
 
     val pomBytes = allFiles[POM_PATH]?.second ?: error("pom.xml is not found in protobuf jar at $POM_PATH")
-    val lines = String(pomBytes).split("\n")
+    val lines = String(pomBytes).lines()
 
     var liteProfileReached = false
     for (lineUntrimmed in lines) {
@@ -65,7 +65,7 @@ fun main(args: Array<String>) {
         }
 
         if (liteProfileReached && line.startsWith(INCLUDE_START) && line.endsWith(INCLUDE_END)) {
-            keepClasses.add(line.substringAfter(INCLUDE_START).substringBeforeLast(INCLUDE_END))
+            keepClasses.add(line.removeSurrounding(INCLUDE_START, INCLUDE_END))
         }
     }
 
