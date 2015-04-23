@@ -86,8 +86,8 @@ class RegexTest {
 
     test fun matchMultiline() {
         val regex = "^[a-z]*$".toRegex(setOf(RegexOption.IGNORE_CASE, RegexOption.MULTILINE))
-        val matchedValues = regex.matchAll("test\r\nLine").map { it.value }.toList()
-        assertEquals(listOf("test", "Line"), matchedValues)
+        val matchedValues = regex.matchAll("test\n\nLine").map { it.value }.toList()
+        assertEquals(listOf("test", "", "Line"), matchedValues)
     }
 
     test fun escapeLiteral() {

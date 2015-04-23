@@ -244,7 +244,7 @@ private fun Matcher.findNext(from: Int): MatchResult? {
         }
 
 
-        override fun next(): MatchResult? = this@findNext.findNext(matchResult.end())
+        override fun next(): MatchResult? = this@findNext.findNext(matchResult.end() + if (matchResult.end() == matchResult.start()) 1 else 0)
     }
 }
 

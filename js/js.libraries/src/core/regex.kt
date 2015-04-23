@@ -188,6 +188,6 @@ private fun RegExp.findNext(input: String, from: Int): MatchResult? {
             override fun get(index: Int): MatchGroup? = match[index]?.let { MatchGroup(it) }
         }
 
-        override fun next(): MatchResult? = this@findNext.findNext(input, range.end + 1)
+        override fun next(): MatchResult? = this@findNext.findNext(input, if (range.isEmpty()) range.start + 1 else range.end + 1)
     }
 }
