@@ -231,8 +231,8 @@ public class TypeResolver(
                 val returnTypeRef = type.getReturnTypeReference()
                 val returnType = if (returnTypeRef != null)
                                      resolveType(c.noBareTypes(), returnTypeRef)
-                                 else KotlinBuiltIns.getInstance().getUnitType()
-                result = type(KotlinBuiltIns.getInstance().getFunctionType(annotations, receiverType, parameterTypes, returnType))
+                                 else moduleDescriptor.builtIns.getUnitType()
+                result = type(moduleDescriptor.builtIns.getFunctionType(annotations, receiverType, parameterTypes, returnType))
             }
 
             override fun visitDynamicType(type: JetDynamicType) {

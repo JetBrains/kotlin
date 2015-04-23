@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
-import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMapping;
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch;
@@ -71,9 +70,7 @@ public class InlineUtil {
     }
 
     private static boolean hasInlineOption(@NotNull ValueParameterDescriptor descriptor, @NotNull InlineOption option) {
-        AnnotationDescriptor annotation = descriptor.getAnnotations().findAnnotation(
-                DescriptorUtils.getFqNameSafe(KotlinBuiltIns.getInstance().getInlineOptionsClassAnnotation())
-        );
+        AnnotationDescriptor annotation = descriptor.getAnnotations().findAnnotation(KotlinBuiltIns.FQ_NAMES.inlineOptions);
         if (annotation != null) {
             CompileTimeConstant<?> argument = firstOrNull(annotation.getAllValueArguments().values());
             if (argument instanceof ArrayValue) {

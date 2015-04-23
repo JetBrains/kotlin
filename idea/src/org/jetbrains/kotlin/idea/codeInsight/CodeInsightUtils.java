@@ -34,6 +34,8 @@ import org.jetbrains.kotlin.types.JetType;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.*;
+
 public class CodeInsightUtils {
 
     @Nullable
@@ -186,30 +188,28 @@ public class CodeInsightUtils {
 
     @Nullable
     public static String defaultInitializer(JetType type) {
-        KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
         if (type.isMarkedNullable()) {
             return "null";
         }
-        else if (type.equals(builtIns.getIntType()) || type.equals(builtIns.getLongType()) ||
-                 type.equals(builtIns.getShortType()) || type.equals(builtIns.getByteType())) {
+        else if (isInt(type) || isLong(type) || isShort(type) || isByte(type)) {
             return "0";
         }
-        else if (type.equals(builtIns.getFloatType())) {
+        else if (isFloat(type)) {
             return "0.0f";
         }
-        else if (type.equals(builtIns.getDoubleType())) {
+        else if (isDouble(type)) {
             return "0.0";
         }
-        else if (type.equals(builtIns.getCharType())) {
+        else if (isChar(type)) {
             return "'\\u0000'";
         }
-        else if (type.equals(builtIns.getBooleanType())) {
+        else if (isBoolean(type)) {
             return "false";
         }
-        else if (type.equals(builtIns.getUnitType())) {
+        else if (isUnit(type)) {
             return "Unit";
         }
-        else if (type.equals(builtIns.getStringType())) {
+        else if (isString(type)) {
             return "\"\"";
         }
 

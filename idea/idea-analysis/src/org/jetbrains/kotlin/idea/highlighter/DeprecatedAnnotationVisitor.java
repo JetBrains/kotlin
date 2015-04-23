@@ -49,7 +49,6 @@ public class DeprecatedAnnotationVisitor extends AfterAnalysisHighlightingVisito
             TokenSet.create(JetTokens.EQ, JetTokens.PLUSEQ, JetTokens.MINUSEQ, JetTokens.MULTEQ,
                             JetTokens.DIVEQ, JetTokens.PERCEQ, JetTokens.PLUSPLUS, JetTokens.MINUSMINUS);
     private static final FqName JAVA_DEPRECATED = new FqName(Deprecated.class.getName());
-    private static final FqName KOTLIN_DEPRECATED = DescriptorUtils.getFqNameSafe(KotlinBuiltIns.getInstance().getDeprecatedAnnotation());
 
     protected DeprecatedAnnotationVisitor(AnnotationHolder holder, BindingContext bindingContext) {
         super(holder, bindingContext);
@@ -221,7 +220,7 @@ public class DeprecatedAnnotationVisitor extends AfterAnalysisHighlightingVisito
 
     @Nullable
     private static AnnotationDescriptor getDeprecated(DeclarationDescriptor descriptor) {
-        AnnotationDescriptor kotlinDeprecated = descriptor.getAnnotations().findAnnotation(KOTLIN_DEPRECATED);
+        AnnotationDescriptor kotlinDeprecated = descriptor.getAnnotations().findAnnotation(KotlinBuiltIns.FQ_NAMES.deprecated);
         return kotlinDeprecated != null ? kotlinDeprecated : descriptor.getAnnotations().findAnnotation(JAVA_DEPRECATED);
     }
 

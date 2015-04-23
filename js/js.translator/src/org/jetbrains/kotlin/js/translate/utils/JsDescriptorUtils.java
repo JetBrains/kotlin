@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsPackage;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver;
@@ -43,11 +42,12 @@ import static org.jetbrains.kotlin.js.config.LibrarySourcesConfig.BUILTINS_JS_MO
 import static org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.isNativeObject;
 import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
+import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getBuiltIns;
 
 public final class JsDescriptorUtils {
     // TODO: maybe we should use external annotations or something else.
     private static final Set<String> FAKE_CLASSES = ContainerUtil.immutableSet(
-            getFqNameSafe(KotlinBuiltIns.getInstance().getAny()).asString()
+            KotlinBuiltIns.FQ_NAMES.any.asString()
     );
 
     private JsDescriptorUtils() {
@@ -157,7 +157,7 @@ public final class JsDescriptorUtils {
 
     public static boolean isBuiltin(@NotNull DeclarationDescriptor descriptor) {
         PackageFragmentDescriptor containingPackageFragment = DescriptorUtils.getParentOfType(descriptor, PackageFragmentDescriptor.class);
-        return containingPackageFragment == KotlinBuiltIns.getInstance().getBuiltInsPackageFragment();
+        return containingPackageFragment == getBuiltIns(descriptor).getBuiltInsPackageFragment();
     }
 
     @Nullable

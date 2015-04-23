@@ -22,6 +22,7 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory;
@@ -29,6 +30,9 @@ import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
+import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver;
+import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
+import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant;
 import org.jetbrains.kotlin.resolve.scopes.WritableScope;
 import org.jetbrains.kotlin.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ClassReceiver;
@@ -43,6 +47,7 @@ import java.util.List;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 import static org.jetbrains.kotlin.resolve.BindingContext.PROCESSED;
+import static org.jetbrains.kotlin.resolve.calls.context.ContextDependency.INDEPENDENT;
 
 public class ExpressionTypingUtils {
 
@@ -235,5 +240,21 @@ public class ExpressionTypingUtils {
     }
 
     private ExpressionTypingUtils() {
+    }
+
+    @NotNull
+    public static JetTypeInfo createCompileTimeConstantTypeInfo(
+            @NotNull CompileTimeConstant<?> value,
+            @NotNull JetExpression expression,
+            @NotNull ExpressionTypingContext context,
+            @NotNull KotlinBuiltIns kotlinBuiltIns
+    ) {
+        JetType expressionType = value.getType(kotlinBuiltIns);
+        if (value instanceof IntegerValueTypeConstant && context.contextDependency == INDEPENDENT) {
+            expressionType = ((IntegerValueTypeConstant) value).getType(context.expectedType);
+            ArgumentTypeResolver.updateNumberType(expressionType, expression, context);
+        }
+
+        return TypeInfoFactoryPackage.createCheckedTypeInfo(expressionType, context, expression);
     }
 }

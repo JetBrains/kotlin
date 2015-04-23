@@ -102,10 +102,13 @@ public fun ClassDescriptor.getSuperClassNotAny(): ClassDescriptor? {
     return null
 }
 
-public fun ClassDescriptor.getSuperClassOrAny(): ClassDescriptor = getSuperClassNotAny() ?: KotlinBuiltIns.getInstance().getAny()
+public fun ClassDescriptor.getSuperClassOrAny(): ClassDescriptor = getSuperClassNotAny() ?: builtIns.getAny()
 
 public val ClassDescriptor.secondaryConstructors: List<ConstructorDescriptor>
     get() = getConstructors().filterNot { it.isPrimary() }
+
+public val DeclarationDescriptor.builtIns: KotlinBuiltIns
+    get() = module.builtIns
 
 /**
  * Returns containing declaration of dispatch receiver for callable adjusted to fake-overridden cases

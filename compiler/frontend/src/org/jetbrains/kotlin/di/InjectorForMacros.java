@@ -112,7 +112,7 @@ public class InjectorForMacros {
         this.defaultProvider = DefaultProvider.INSTANCE$;
         this.symbolUsageValidator = defaultProvider.getSymbolUsageValidator();
         this.statementFilter = new StatementFilter();
-        this.callExpressionResolver = new CallExpressionResolver(getCallResolver());
+        this.callExpressionResolver = new CallExpressionResolver(getCallResolver(), kotlinBuiltIns);
         this.controlStructureTypingUtils = new ControlStructureTypingUtils(getCallResolver());
         this.descriptorResolver = new DescriptorResolver();
         this.delegatedPropertyResolver = new DelegatedPropertyResolver();

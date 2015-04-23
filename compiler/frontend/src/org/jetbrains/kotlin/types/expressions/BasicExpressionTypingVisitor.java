@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
-import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver;
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.context.CheckValueArgumentsMode;
@@ -66,6 +65,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
+import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryPackage;
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
 import org.jetbrains.kotlin.utils.ThrowingList;
 
@@ -89,7 +89,6 @@ import static org.jetbrains.kotlin.types.TypeUtils.noExpectedType;
 import static org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils.createCallForSpecialConstruction;
 import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.*;
 import static org.jetbrains.kotlin.types.expressions.TypeReconstructionUtil.reconstructBareType;
-import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryPackage;
 
 @SuppressWarnings("SuspiciousMethodCalls")
 public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
@@ -132,7 +131,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
 
         assert value != null : "CompileTimeConstant should be evaluated for constant expression or an error should be recorded " + expression.getText();
-        return createCompileTimeConstantTypeInfo(value, expression, context);
+        return createCompileTimeConstantTypeInfo(value, expression, context, components.builtIns);
     }
 
     @NotNull
@@ -188,7 +187,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         JetTypeInfo typeInfo = facade.getTypeInfo(left, contextWithNoExpectedType);
 
         JetType subjectType = typeInfo.getType();
-        JetType targetType = reconstructBareType(right, possiblyBareTarget, subjectType, context.trace);
+        JetType targetType = reconstructBareType(right, possiblyBareTarget, subjectType, context.trace, components.builtIns);
 
         if (subjectType != null) {
             checkBinaryWithTypeRHS(expression, contextWithNoExpectedType, targetType, subjectType);
@@ -911,25 +910,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         CompileTimeConstant<?> value = ConstantExpressionEvaluator.evaluate(expression, contextWithExpectedType.trace,
                                                                                     contextWithExpectedType.expectedType);
         if (value != null) {
-            return createCompileTimeConstantTypeInfo(value, expression, contextWithExpectedType);
+            return createCompileTimeConstantTypeInfo(value, expression, contextWithExpectedType, components.builtIns);
         }
 
         return DataFlowUtils.checkType(typeInfo.replaceType(result), expression, contextWithExpectedType);
-    }
-
-    @NotNull
-    public static JetTypeInfo createCompileTimeConstantTypeInfo(
-            @NotNull CompileTimeConstant<?> value,
-            @NotNull JetExpression expression,
-            @NotNull ExpressionTypingContext context
-    ) {
-        JetType expressionType = value.getType(KotlinBuiltIns.getInstance());
-        if (value instanceof IntegerValueTypeConstant && context.contextDependency == INDEPENDENT) {
-            expressionType = ((IntegerValueTypeConstant) value).getType(context.expectedType);
-            ArgumentTypeResolver.updateNumberType(expressionType, expression, context);
-        }
-
-        return TypeInfoFactoryPackage.createCheckedTypeInfo(expressionType, context, expression);
     }
 
     private JetTypeInfo visitExclExclExpression(@NotNull JetUnaryExpression expression, @NotNull ExpressionTypingContext context) {
@@ -1120,7 +1104,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 expression, contextWithExpectedType.trace, contextWithExpectedType.expectedType
         );
         if (value != null) {
-            return createCompileTimeConstantTypeInfo(value, expression, contextWithExpectedType);
+            return createCompileTimeConstantTypeInfo(value, expression, contextWithExpectedType, components.builtIns);
         }
         return DataFlowUtils.checkType(result, expression, contextWithExpectedType);
     }

@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetParenthesizedExpression;
 import org.jetbrains.kotlin.psi.JetPrefixExpression;
-import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.types.JetType;
 
@@ -43,7 +42,7 @@ public class KotlinNotSurrounder extends KotlinExpressionSurrounder {
     @Override
     public boolean isApplicable(@NotNull JetExpression expression) {
         JetType type = ResolvePackage.analyze(expression, BodyResolveMode.PARTIAL).getType(expression);
-        return KotlinBuiltIns.getInstance().getBooleanType().equals(type);
+        return type != null && KotlinBuiltIns.isBoolean(type);
     }
 
     @Nullable

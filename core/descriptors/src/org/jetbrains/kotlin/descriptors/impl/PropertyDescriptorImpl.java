@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.descriptors.impl;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
@@ -30,6 +29,8 @@ import org.jetbrains.kotlin.types.TypeSubstitutor;
 import org.jetbrains.kotlin.types.Variance;
 
 import java.util.*;
+
+import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getBuiltIns;
 
 public class PropertyDescriptorImpl extends VariableDescriptorImpl implements PropertyDescriptor {
     private final Modality modality;
@@ -263,7 +264,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
                 // it can not be assigned to because of the projection
                 substitutedDescriptor.setSetterProjectedOut(true);
                 substitutedValueParameters = Collections.<ValueParameterDescriptor>singletonList(
-                        PropertySetterDescriptorImpl.createSetterParameter(newSetter, KotlinBuiltIns.getInstance().getNothingType())
+                        PropertySetterDescriptorImpl.createSetterParameter(newSetter, getBuiltIns(newOwner).getNothingType())
                 );
             }
             if (substitutedValueParameters.size() != 1) {

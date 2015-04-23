@@ -16,27 +16,27 @@
 
 package org.jetbrains.kotlin.load.java.lazy.descriptors
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.load.java.structure.JavaClass
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorBase
-import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.types.TypeConstructor
+import org.jetbrains.kotlin.load.java.components.TypeUsage
+import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.lazy.child
-import org.jetbrains.kotlin.load.java.components.TypeUsage
 import org.jetbrains.kotlin.load.java.lazy.resolveAnnotations
 import org.jetbrains.kotlin.load.java.lazy.types.toAttributes
-import org.jetbrains.kotlin.resolve.scopes.InnerClassesScopeWrapper
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.types.AbstractClassTypeConstructor
-import java.util.ArrayList
-import org.jetbrains.kotlin.utils.toReadOnlyList
-import org.jetbrains.kotlin.load.java.structure.JavaType
+import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+import org.jetbrains.kotlin.load.java.structure.JavaType
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.scopes.InnerClassesScopeWrapper
+import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.types.AbstractClassTypeConstructor
+import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.TypeConstructor
+import org.jetbrains.kotlin.utils.toReadOnlyList
+import java.util.ArrayList
 
 class LazyJavaClassDescriptor(
         private val outerC: LazyJavaResolverContext,
@@ -138,7 +138,7 @@ class LazyJavaClassDescriptor(
                 })
             }
 
-            if (result.isNotEmpty()) result.toReadOnlyList() else listOf(KotlinBuiltIns.getInstance().getAnyType())
+            if (result.isNotEmpty()) result.toReadOnlyList() else listOf(c.module.builtIns.getAnyType())
         }
 
         override fun getSupertypes(): Collection<JetType> = supertypes()

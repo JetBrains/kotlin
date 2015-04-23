@@ -20,7 +20,6 @@ import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.JetNodeTypes;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.psi.*;
@@ -34,6 +33,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.*;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeUtils;
 
+import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isNullableNothing;
 import static org.jetbrains.kotlin.resolve.BindingContext.REFERENCE_TARGET;
 
 /**
@@ -66,7 +66,7 @@ public class DataFlowValueFactory {
             if (constantExpression.getNode().getElementType() == JetNodeTypes.NULL) return DataFlowValue.NULL;
         }
         if (type.isError()) return DataFlowValue.ERROR;
-        if (KotlinBuiltIns.getInstance().getNullableNothingType().equals(type)) {
+        if (isNullableNothing(type)) {
             return DataFlowValue.NULL; // 'null' is the only inhabitant of 'Nothing?'
         }
         IdentifierInfo result = getIdForStableIdentifier(expression, bindingContext, containingDeclarationOrModule);

@@ -64,19 +64,18 @@ private fun getIntegerValue(
         return IntegerValueTypeConstant(value, canBeUsedInAnnotation, usesVariableAsConstant)
     }
 
-    val builtIns = KotlinBuiltIns.getInstance()
-
-    return when (TypeUtils.makeNotNullable(expectedType)) {
-        builtIns.getLongType() -> LongValue(value, canBeUsedInAnnotation, isPureIntConstant, usesVariableAsConstant)
-        builtIns.getShortType() -> when (value) {
+    val notNullExpected = TypeUtils.makeNotNullable(expectedType)
+    return when {
+        KotlinBuiltIns.isLong(notNullExpected) -> LongValue(value, canBeUsedInAnnotation, isPureIntConstant, usesVariableAsConstant)
+        KotlinBuiltIns.isShort(notNullExpected) -> when (value) {
             value.toShort().toLong() -> ShortValue(value.toShort(), canBeUsedInAnnotation, isPureIntConstant, usesVariableAsConstant)
             else -> defaultIntegerValue(value)
         }
-        builtIns.getByteType() -> when (value) {
+        KotlinBuiltIns.isByte(notNullExpected) -> when (value) {
             value.toByte().toLong() -> ByteValue(value.toByte(), canBeUsedInAnnotation, isPureIntConstant, usesVariableAsConstant)
             else -> defaultIntegerValue(value)
         }
-        builtIns.getCharType() -> IntValue(value.toInt(), canBeUsedInAnnotation, isPureIntConstant, usesVariableAsConstant)
+        KotlinBuiltIns.isChar(notNullExpected) -> IntValue(value.toInt(), canBeUsedInAnnotation, isPureIntConstant, usesVariableAsConstant)
         else -> defaultIntegerValue(value)
     }
 }

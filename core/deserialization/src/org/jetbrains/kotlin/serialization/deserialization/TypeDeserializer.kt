@@ -103,7 +103,7 @@ public class TypeDeserializer(
     fun typeArgument(parameter: TypeParameterDescriptor?, typeArgumentProto: ProtoBuf.Type.Argument): TypeProjection {
         return if (typeArgumentProto.getProjection() == ProtoBuf.Type.Argument.Projection.STAR)
             if (parameter == null)
-                TypeBasedStarProjectionImpl(KotlinBuiltIns.getInstance().getNullableAnyType())
+                TypeBasedStarProjectionImpl(c.components.moduleDescriptor.builtIns.getNullableAnyType())
             else
                 StarProjectionImpl(parameter)
         else TypeProjectionImpl(variance(typeArgumentProto.getProjection()), type(typeArgumentProto.getType()))

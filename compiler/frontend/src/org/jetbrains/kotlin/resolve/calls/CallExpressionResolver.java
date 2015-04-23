@@ -60,9 +60,11 @@ import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 public class CallExpressionResolver {
 
     private final CallResolver callResolver;
+    private final KotlinBuiltIns builtIns;
 
-    public CallExpressionResolver(@NotNull CallResolver callResolver) {
+    public CallExpressionResolver(@NotNull CallResolver callResolver, @NotNull KotlinBuiltIns builtIns) {
         this.callResolver = callResolver;
+        this.builtIns = builtIns;
     }
 
     private ExpressionTypingServices expressionTypingServices;
@@ -349,7 +351,7 @@ public class CallExpressionResolver {
 
         CompileTimeConstant<?> value = ConstantExpressionEvaluator.evaluate(expression, context.trace, context.expectedType);
         if (value instanceof IntegerValueConstant && ((IntegerValueConstant) value).isPure()) {
-            return BasicExpressionTypingVisitor.createCompileTimeConstantTypeInfo(value, expression, context);
+            return ExpressionTypingUtils.createCompileTimeConstantTypeInfo(value, expression, context, builtIns);
         }
 
         JetTypeInfo typeInfo;

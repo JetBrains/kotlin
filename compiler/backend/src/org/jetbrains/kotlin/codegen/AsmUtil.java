@@ -57,6 +57,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isBoolean;
+import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isPrimitiveClass;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isInterface;
 import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.ABI_VERSION_FIELD_NAME;
 import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass;
@@ -66,16 +68,6 @@ import static org.jetbrains.kotlin.types.TypeUtils.isNullableType;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class AsmUtil {
-    private static final Set<ClassDescriptor> PRIMITIVE_NUMBER_CLASSES = Sets.newHashSet(
-            KotlinBuiltIns.getInstance().getByte(),
-            KotlinBuiltIns.getInstance().getShort(),
-            KotlinBuiltIns.getInstance().getInt(),
-            KotlinBuiltIns.getInstance().getLong(),
-            KotlinBuiltIns.getInstance().getFloat(),
-            KotlinBuiltIns.getInstance().getDouble(),
-            KotlinBuiltIns.getInstance().getChar()
-    );
-
     private static final Set<Type> STRING_BUILDER_OBJECT_APPEND_ARG_TYPES = Sets.newHashSet(
             getType(String.class),
             getType(StringBuffer.class),
@@ -150,7 +142,7 @@ public class AsmUtil {
         if (!(descriptor instanceof ClassDescriptor)) {
             return false;
         }
-        return PRIMITIVE_NUMBER_CLASSES.contains(descriptor);
+        return isPrimitiveClass((ClassDescriptor) descriptor) && !isBoolean((ClassDescriptor) descriptor);
     }
 
     public static Type correctElementType(Type type) {

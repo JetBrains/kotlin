@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 public class DeprecatedSymbolValidator : SymbolUsageValidator {
     private val JAVA_DEPRECATED = FqName(javaClass<Deprecated>().getName())
-    private val KOTLIN_DEPRECATED = DescriptorUtils.getFqNameSafe(KotlinBuiltIns.getInstance().getDeprecatedAnnotation())
 
     override fun validateCall(targetDescriptor: CallableDescriptor, trace: BindingTrace, element: PsiElement) {
         val deprecated = targetDescriptor.getDeprecatedAnnotation()
@@ -86,7 +85,7 @@ public class DeprecatedSymbolValidator : SymbolUsageValidator {
     }
 
     private fun DeclarationDescriptor.getDeclaredDeprecatedAnnotation(): AnnotationDescriptor? {
-        return getAnnotations().findAnnotation(KOTLIN_DEPRECATED) ?: getAnnotations().findAnnotation(JAVA_DEPRECATED)
+        return getAnnotations().findAnnotation(KotlinBuiltIns.FQ_NAMES.deprecated) ?: getAnnotations().findAnnotation(JAVA_DEPRECATED)
     }
 
     private fun createDeprecationDiagnostic(element: PsiElement, descriptor: DeclarationDescriptor, deprecated: AnnotationDescriptor): Diagnostic {

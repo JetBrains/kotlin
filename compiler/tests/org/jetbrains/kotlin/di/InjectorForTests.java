@@ -119,7 +119,7 @@ public class InjectorForTests {
         this.callCompleter = new CallCompleter(argumentTypeResolver, candidateResolver);
         this.taskPrioritizer = new TaskPrioritizer(storageManager);
         this.delegatedPropertyResolver = new DelegatedPropertyResolver();
-        this.callExpressionResolver = new CallExpressionResolver(callResolver);
+        this.callExpressionResolver = new CallExpressionResolver(callResolver, kotlinBuiltIns);
         this.controlStructureTypingUtils = new ControlStructureTypingUtils(callResolver);
         this.forLoopConventionsChecker = new ForLoopConventionsChecker();
         this.localClassifierAnalyzer = new LocalClassifierAnalyzer(getDescriptorResolver(), getFunctionDescriptorResolver(), getTypeResolver(), annotationResolver);

@@ -85,6 +85,7 @@ import org.jetbrains.org.objectweb.asm.commons.Method;
 
 import java.util.*;
 
+import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isInt;
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.*;
@@ -97,6 +98,7 @@ import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isObject;
 import static org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage.getResolvedCall;
 import static org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage.getResolvedCallWithAssert;
+import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getBuiltIns;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.OtherOrigin;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.TraitImpl;
@@ -105,8 +107,6 @@ import static org.jetbrains.kotlin.serialization.deserialization.Deserialization
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implements LocalLookup {
-    private static final Set<DeclarationDescriptor> INTEGRAL_RANGES = KotlinBuiltIns.getInstance().getIntegralRanges();
-
     private final GenerationState state;
     final JetTypeMapper typeMapper;
     private final BindingContext bindingContext;
@@ -791,8 +791,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             StackValue result = invokeFunction(fakeCall, hasNextCall, StackValue.local(iteratorVarIndex, asmTypeForIterator));
             result.put(result.type, v);
 
-            JetType type = hasNextCall.getResultingDescriptor().getReturnType();
-            assert type != null && JetTypeChecker.DEFAULT.isSubtypeOf(type, KotlinBuiltIns.getInstance().getBooleanType());
+            FunctionDescriptor hasNext = hasNextCall.getResultingDescriptor();
+            JetType type = hasNext.getReturnType();
+            assert type != null && JetTypeChecker.DEFAULT.isSubtypeOf(type, getBuiltIns(hasNext).getBooleanType());
 
             Type asmType = asmType(type);
             StackValue.coerce(asmType, Type.BOOLEAN_TYPE, v);
@@ -3190,7 +3191,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         Type lhsType = expressionType(lhs);
 
         boolean keepReturnValue = Boolean.TRUE.equals(bindingContext.get(VARIABLE_REASSIGNMENT, expression))
-                || !KotlinBuiltIns.getInstance().getUnitType().equals(descriptor.getReturnType());
+                || !KotlinBuiltIns.isUnit(descriptor.getReturnType());
 
         callAugAssignMethod(expression, resolvedCall, callable, lhsType, keepReturnValue);
 
@@ -3527,7 +3528,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         assert operationDescriptor != null;
         if (arrayType.getSort() == Type.ARRAY &&
             indices.size() == 1 &&
-            operationDescriptor.getValueParameters().get(0).getType().equals(KotlinBuiltIns.getInstance().getIntType())) {
+            isInt(operationDescriptor.getValueParameters().get(0).getType())) {
             assert type != null;
             Type elementType;
             if (KotlinBuiltIns.isArray(type)) {
@@ -4043,7 +4044,7 @@ The "returned" value of try expression with no finally is either the last expres
                 JetType jetType = bindingContext.getType(rangeExpression);
                 assert jetType != null;
                 DeclarationDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
-                return INTEGRAL_RANGES.contains(descriptor);
+                return getBuiltIns(descriptor).getIntegralRanges().contains(descriptor);
             }
         }
         return false;

@@ -477,9 +477,8 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
             return false;
         }
 
-        ClassDescriptor deprecatedAnnotation = KotlinBuiltIns.getInstance().getDeprecatedAnnotation();
-        String deprecatedName = deprecatedAnnotation.getName().asString();
-        FqNameUnsafe deprecatedFqName = DescriptorUtils.getFqName(deprecatedAnnotation);
+        FqName deprecatedFqName = KotlinBuiltIns.FQ_NAMES.deprecated;
+        String deprecatedName = deprecatedFqName.shortName().asString();
 
         for (JetAnnotationEntry annotationEntry : jetModifierList.getAnnotationEntries()) {
             JetTypeReference typeReference = annotationEntry.getTypeReference();
@@ -491,7 +490,7 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
             FqName fqName = JetPsiUtil.toQualifiedName((JetUserType) typeElement);
             if (fqName == null) continue;
 
-            if (deprecatedFqName.equals(fqName.toUnsafe())) return true;
+            if (deprecatedFqName.equals(fqName)) return true;
             if (deprecatedName.equals(fqName.asString())) return true;
         }
         return false;

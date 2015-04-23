@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.descriptors.impl;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.SourceElement;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
@@ -34,6 +33,8 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getBuiltIns;
+
 public class TypeParameterDescriptorImpl extends AbstractTypeParameterDescriptor {
     public static TypeParameterDescriptor createWithDefaultBound(
             @NotNull DeclarationDescriptor containingDeclaration,
@@ -45,7 +46,7 @@ public class TypeParameterDescriptorImpl extends AbstractTypeParameterDescriptor
     ) {
         TypeParameterDescriptorImpl typeParameterDescriptor =
                 createForFurtherModification(containingDeclaration, annotations, reified, variance, name, index, SourceElement.NO_SOURCE);
-        typeParameterDescriptor.addUpperBound(KotlinBuiltIns.getInstance().getDefaultBound());
+        typeParameterDescriptor.addUpperBound(getBuiltIns(containingDeclaration).getDefaultBound());
         typeParameterDescriptor.setInitialized();
         return typeParameterDescriptor;
     }
@@ -125,7 +126,7 @@ public class TypeParameterDescriptorImpl extends AbstractTypeParameterDescriptor
         checkUninitialized();
 
         if (upperBounds.isEmpty()) {
-            doAddUpperBound(KotlinBuiltIns.getInstance().getDefaultBound());
+            doAddUpperBound(getBuiltIns(getContainingDeclaration()).getDefaultBound());
         }
     }
 

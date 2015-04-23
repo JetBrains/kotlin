@@ -56,8 +56,8 @@ class LazyJavaTypeResolver(
         return when (javaType) {
             is JavaPrimitiveType -> {
                 val primitiveType = javaType.getType()
-                if (primitiveType != null) KotlinBuiltIns.getInstance().getPrimitiveJetType(primitiveType)
-                else KotlinBuiltIns.getInstance().getUnitType()
+                if (primitiveType != null) c.module.builtIns.getPrimitiveJetType(primitiveType)
+                else c.module.builtIns.getUnitType()
             }
             is JavaClassifierType ->
                 if (PLATFORM_TYPES && attr.allowFlexible && attr.howThisTypeIsUsed != SUPERTYPE)
@@ -76,7 +76,7 @@ class LazyJavaTypeResolver(
             val javaComponentType = arrayType.getComponentType()
             val primitiveType = (javaComponentType as? JavaPrimitiveType)?.getType()
             if (primitiveType != null) {
-                val jetType = KotlinBuiltIns.getInstance().getPrimitiveArrayJetType(primitiveType)
+                val jetType = c.module.builtIns.getPrimitiveArrayJetType(primitiveType)
                 return@run if (PLATFORM_TYPES && attr.allowFlexible)
                     FlexibleJavaClassifierTypeCapabilities.create(jetType, TypeUtils.makeNullable(jetType))
                 else TypeUtils.makeNullableAsSpecified(jetType, !attr.isMarkedNotNull)
@@ -87,12 +87,12 @@ class LazyJavaTypeResolver(
 
             if (PLATFORM_TYPES && attr.allowFlexible) {
                 return@run FlexibleJavaClassifierTypeCapabilities.create(
-                        KotlinBuiltIns.getInstance().getArrayType(INVARIANT, componentType),
-                        TypeUtils.makeNullable(KotlinBuiltIns.getInstance().getArrayType(OUT_VARIANCE, componentType)))
+                        c.module.builtIns.getArrayType(INVARIANT, componentType),
+                        TypeUtils.makeNullable(c.module.builtIns.getArrayType(OUT_VARIANCE, componentType)))
             }
 
             val projectionKind = if (attr.howThisTypeIsUsed == MEMBER_SIGNATURE_CONTRAVARIANT || isVararg) OUT_VARIANCE else INVARIANT
-            val result = KotlinBuiltIns.getInstance().getArrayType(projectionKind, componentType)
+            val result = c.module.builtIns.getArrayType(projectionKind, componentType)
             return@run TypeUtils.makeNullableAsSpecified(result, !attr.isMarkedNotNull)
         }.replaceAnnotations(attr.annotations)
     }
@@ -214,7 +214,7 @@ class LazyJavaTypeResolver(
                         // C<*> = C<out C<out C<...>>>
                         // this way we lose some type information, even when the case is not so bad, but it doesn't seem to matter
                         val projectionKind = if (parameter.getVariance() == OUT_VARIANCE) INVARIANT else OUT_VARIANCE
-                        TypeProjectionImpl(projectionKind, KotlinBuiltIns.getInstance().getNullableAnyType())
+                        TypeProjectionImpl(projectionKind, c.module.builtIns.getNullableAnyType())
                     }
                     else
                         makeStarProjection(parameter, attr)

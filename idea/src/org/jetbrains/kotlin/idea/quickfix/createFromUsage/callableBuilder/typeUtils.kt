@@ -92,12 +92,11 @@ fun JetExpression.guessTypes(
         module: ModuleDescriptor,
         coerceUnusedToUnit: Boolean = true
 ): Array<JetType> {
-    val builtIns = KotlinBuiltIns.getInstance()
 
     if (coerceUnusedToUnit
         && this !is JetDeclaration
         && isUsedAsStatement(context)
-        && getNonStrictParentOfType<JetAnnotationEntry>() == null) return array(builtIns.getUnitType())
+        && getNonStrictParentOfType<JetAnnotationEntry>() == null) return array(module.builtIns.getUnitType())
 
     // if we know the actual type of the expression
     val theType1 = context.getType(this)
@@ -166,14 +165,14 @@ fun JetExpression.guessTypes(
             val property = context[BindingContext.DECLARATION_TO_DESCRIPTOR, parent.getParent() as JetProperty] as PropertyDescriptor
             val delegateClassName = if (property.isVar()) "ReadWriteProperty" else "ReadOnlyProperty"
             val delegateClass = module.resolveTopLevelClass(FqName("kotlin.properties.$delegateClassName"))
-                                ?: return array(builtIns.getAnyType())
+                                ?: return array(module.builtIns.getAnyType())
             val receiverType = (property.getExtensionReceiverParameter() ?: property.getDispatchReceiverParameter())?.getType()
-                               ?: builtIns.getNullableNothingType()
+                               ?: module.builtIns.getNullableNothingType()
             val typeArguments = listOf(TypeProjectionImpl(receiverType), TypeProjectionImpl(property.getType()))
             array(TypeUtils.substituteProjectionsForParameters(delegateClass, typeArguments))
         }
         parent is JetStringTemplateEntryWithExpression && parent.getExpression() == this -> {
-            array(KotlinBuiltIns.getInstance().getStringType())
+            array(module.builtIns.getStringType())
         }
         else -> array() // can't infer anything
     }

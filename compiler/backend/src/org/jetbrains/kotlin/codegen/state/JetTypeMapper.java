@@ -67,11 +67,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isUnit;
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.isVarCapturedInClosure;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
+import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getBuiltIns;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class JetTypeMapper {
@@ -186,9 +188,7 @@ public class JetTypeMapper {
             return Type.VOID_TYPE;
         }
 
-        if (returnType.equals(KotlinBuiltIns.getInstance().getUnitType())
-            && !TypeUtils.isNullableType(returnType)
-            && !(descriptor instanceof PropertyGetterDescriptor)) {
+        if (isUnit(returnType) && !TypeUtils.isNullableType(returnType) && !(descriptor instanceof PropertyGetterDescriptor)) {
             if (sw != null) {
                 sw.writeAsmType(Type.VOID_TYPE);
             }
@@ -936,8 +936,8 @@ public class JetTypeMapper {
 
         ClassDescriptor containingDeclaration = descriptor.getContainingDeclaration();
         if (containingDeclaration.getKind() == ClassKind.ENUM_CLASS || containingDeclaration.getKind() == ClassKind.ENUM_ENTRY) {
-            writeParameter(sw, JvmMethodParameterKind.ENUM_NAME_OR_ORDINAL, KotlinBuiltIns.getInstance().getStringType());
-            writeParameter(sw, JvmMethodParameterKind.ENUM_NAME_OR_ORDINAL, KotlinBuiltIns.getInstance().getIntType());
+            writeParameter(sw, JvmMethodParameterKind.ENUM_NAME_OR_ORDINAL, getBuiltIns(descriptor).getStringType());
+            writeParameter(sw, JvmMethodParameterKind.ENUM_NAME_OR_ORDINAL, getBuiltIns(descriptor).getIntType());
         }
 
         if (closure == null) return;

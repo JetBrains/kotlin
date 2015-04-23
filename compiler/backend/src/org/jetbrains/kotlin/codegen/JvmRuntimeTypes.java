@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.codegen;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.builtins.ReflectionTypes;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.MutableClassDescriptor;
@@ -27,13 +27,13 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
-import org.jetbrains.kotlin.builtins.ReflectionTypes;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getBuiltIns;
 import static org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM.createJavaModule;
 
 public class JvmRuntimeTypes {
@@ -110,7 +110,7 @@ public class JvmRuntimeTypes {
                 classDescriptor.getMemberScope(typeArguments)
         );
 
-        JetType functionType = KotlinBuiltIns.getInstance().getFunctionType(
+        JetType functionType = getBuiltIns(descriptor).getFunctionType(
                 Annotations.EMPTY,
                 receiverParameter == null ? null : receiverParameter.getType(),
                 ExpressionTypingUtils.getValueParametersTypes(descriptor.getValueParameters()),

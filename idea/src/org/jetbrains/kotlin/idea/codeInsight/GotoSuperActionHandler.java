@@ -44,6 +44,8 @@ import org.jetbrains.kotlin.types.JetType;
 import java.util.Collection;
 import java.util.List;
 
+import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isAny;
+
 public class GotoSuperActionHandler implements CodeInsightActionHandler {
     @Override
     public void invoke(@NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file) {
@@ -96,7 +98,7 @@ public class GotoSuperActionHandler implements CodeInsightActionHandler {
         List<PsiElement> superDeclarations = ContainerUtil.mapNotNull(superDescriptors, new Function<DeclarationDescriptor, PsiElement>() {
             @Override
             public PsiElement fun(DeclarationDescriptor descriptor) {
-                if (KotlinBuiltIns.getInstance().getAny() == descriptor) {
+                if (descriptor instanceof ClassDescriptor && isAny((ClassDescriptor) descriptor)) {
                     return null;
                 }
                 return DescriptorToSourceUtils.descriptorToDeclaration(descriptor);

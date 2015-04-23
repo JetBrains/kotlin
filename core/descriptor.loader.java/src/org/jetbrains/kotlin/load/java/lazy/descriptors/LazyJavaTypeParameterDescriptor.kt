@@ -45,7 +45,7 @@ class LazyJavaTypeParameterDescriptor(
     override fun resolveUpperBounds(): Set<JetType> {
         val bounds = javaTypeParameter.getUpperBounds()
         if (bounds.isEmpty()) {
-            return setOf(KotlinBuiltIns.getInstance().getDefaultBound())
+            return setOf(c.module.builtIns.getDefaultBound())
         }
         else {
             return bounds.map {

@@ -128,7 +128,7 @@ public class InjectorForBodyResolve {
         this.argumentTypeResolver = new ArgumentTypeResolver();
         this.expressionTypingComponents = new ExpressionTypingComponents();
         this.expressionTypingServices = new ExpressionTypingServices(expressionTypingComponents);
-        this.callExpressionResolver = new CallExpressionResolver(callResolver);
+        this.callExpressionResolver = new CallExpressionResolver(callResolver, kotlinBuiltIns);
         this.controlStructureTypingUtils = new ControlStructureTypingUtils(callResolver);
         this.descriptorResolver = new DescriptorResolver();
         this.delegatedPropertyResolver = new DelegatedPropertyResolver();

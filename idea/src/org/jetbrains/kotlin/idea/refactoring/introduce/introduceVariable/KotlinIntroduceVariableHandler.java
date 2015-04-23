@@ -37,12 +37,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.analyzer.AnalyzerPackage;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils;
+import org.jetbrains.kotlin.idea.core.refactoring.JetNameSuggester;
 import org.jetbrains.kotlin.idea.intentions.ConvertToBlockBodyIntention;
 import org.jetbrains.kotlin.idea.intentions.RemoveCurlyBracesFromTemplateIntention;
-import org.jetbrains.kotlin.idea.core.refactoring.JetNameSuggester;
 import org.jetbrains.kotlin.idea.refactoring.JetNameValidatorImpl;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil;
@@ -151,7 +150,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
             return;
         }
         if (expressionType != null &&
-            JetTypeChecker.DEFAULT.equalTypes(KotlinBuiltIns.getInstance().getUnitType(), expressionType)) {
+            JetTypeChecker.DEFAULT.equalTypes(analysisResult.getModuleDescriptor().getBuiltIns().getUnitType(), expressionType)) {
             showErrorHint(project, editor, JetRefactoringBundle.message("cannot.refactor.expression.has.unit.type"));
             return;
         }

@@ -34,6 +34,8 @@ import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 import java.util.Collection;
 import java.util.List;
 
+import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getBuiltIns;
+
 public class MainFunctionDetector {
     private final NotNullFunction<JetNamedFunction, FunctionDescriptor> getFunctionDescriptor;
 
@@ -69,14 +71,13 @@ public class MainFunctionDetector {
 
         ValueParameterDescriptor parameter = parameters.get(0);
         JetType parameterType = parameter.getType();
-        KotlinBuiltIns kotlinBuiltIns = KotlinBuiltIns.getInstance();
         if (!KotlinBuiltIns.isArray(parameterType)) return false;
 
         List<TypeProjection> typeArguments = parameterType.getArguments();
         if (typeArguments.size() != 1) return false;
 
         JetType typeArgument = typeArguments.get(0).getType();
-        if (!JetTypeChecker.DEFAULT.equalTypes(typeArgument, kotlinBuiltIns.getStringType())) return false;
+        if (!JetTypeChecker.DEFAULT.equalTypes(typeArgument, getBuiltIns(functionDescriptor).getStringType())) return false;
 
         if (DescriptorUtils.isTopLevelDeclaration(functionDescriptor)) return true;
 

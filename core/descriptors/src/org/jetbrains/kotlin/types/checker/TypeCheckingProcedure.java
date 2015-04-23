@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.types.*;
 
 import java.util.List;
 
+import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getBuiltIns;
 import static org.jetbrains.kotlin.types.Variance.*;
 
 public class TypeCheckingProcedure {
@@ -57,9 +58,9 @@ public class TypeCheckingProcedure {
         return isOutProjected ? parameter.getUpperBoundsAsType() : argument.getType();
     }
 
-    public static JetType getInType(TypeParameterDescriptor parameter, TypeProjection argument) {
+    public static JetType getInType(@NotNull TypeParameterDescriptor parameter, @NotNull TypeProjection argument) {
         boolean isOutProjected = argument.getProjectionKind() == OUT_VARIANCE || parameter.getVariance() == OUT_VARIANCE;
-        return isOutProjected ? KotlinBuiltIns.getInstance().getNothingType() : argument.getType();
+        return isOutProjected ? getBuiltIns(parameter).getNothingType() : argument.getType();
     }
 
     private final TypeCheckingProcedureCallbacks constraints;

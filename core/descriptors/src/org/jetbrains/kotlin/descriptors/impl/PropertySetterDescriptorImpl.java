@@ -22,11 +22,12 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.types.JetType;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+
+import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getBuiltIns;
 
 public class PropertySetterDescriptorImpl extends PropertyAccessorDescriptorImpl implements PropertySetterDescriptor {
 
@@ -87,7 +88,7 @@ public class PropertySetterDescriptorImpl extends PropertyAccessorDescriptorImpl
     @NotNull
     @Override
     public JetType getReturnType() {
-        return KotlinBuiltIns.getInstance().getUnitType();
+        return getBuiltIns(this).getUnitType();
     }
 
     @Override

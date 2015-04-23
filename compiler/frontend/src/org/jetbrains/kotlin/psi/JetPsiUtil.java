@@ -20,7 +20,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
-import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -241,7 +240,7 @@ public class JetPsiUtil {
             List<JetAnnotationEntry> annotationEntries = modifierList.getAnnotationEntries();
             for (JetAnnotationEntry annotation : annotationEntries) {
                 Name shortName = getShortName(annotation);
-                if (KotlinBuiltIns.getInstance().getDeprecatedAnnotation().getName().equals(shortName)) {
+                if (KotlinBuiltIns.FQ_NAMES.deprecated.shortName().equals(shortName)) {
                     return true;
                 }
             }
@@ -330,14 +329,6 @@ public class JetPsiUtil {
         if (!(parent instanceof JetQualifiedExpression)) return false;
         JetQualifiedExpression qualifiedParent = (JetQualifiedExpression) parent;
         return qualifiedParent.getReceiverExpression() == expression || isLHSOfDot(qualifiedParent);
-    }
-
-    public static boolean isVoidType(@Nullable JetTypeReference typeReference) {
-        if (typeReference == null) {
-            return false;
-        }
-
-        return KotlinBuiltIns.getInstance().getUnit().getName().asString().equals(typeReference.getText());
     }
 
     // SCRIPT: is declaration in script?
@@ -726,16 +717,6 @@ public class JetPsiUtil {
     public static PsiElement skipSiblingsBackwardByPredicate(@Nullable PsiElement element, Predicate<PsiElement> elementsToSkip) {
         if (element == null) return null;
         for (PsiElement e = element.getPrevSibling(); e != null; e = e.getPrevSibling()) {
-            if (elementsToSkip.apply(e)) continue;
-            return e;
-        }
-        return null;
-    }
-
-    @Nullable
-    public static PsiElement skipSiblingsForwardByPredicate(@Nullable PsiElement element, Predicate<PsiElement> elementsToSkip) {
-        if (element == null) return null;
-        for (PsiElement e = element.getNextSibling(); e != null; e = e.getNextSibling()) {
             if (elementsToSkip.apply(e)) continue;
             return e;
         }

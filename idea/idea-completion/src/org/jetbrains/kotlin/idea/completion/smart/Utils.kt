@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.idea.util.makeNotNullable
 import org.jetbrains.kotlin.idea.util.nullability
 import org.jetbrains.kotlin.idea.util.TypeNullability
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 
 class ArtificialElementInsertHandler(
         val textBeforeCaret: String, val textAfterCaret: String, val shortenRefs: Boolean) : InsertHandler<LookupElement>{
@@ -233,10 +234,11 @@ fun functionType(function: FunctionDescriptor): JetType? {
         null
     else
         extensionReceiverType ?: memberReceiverType
-    return KotlinBuiltIns.getInstance().getFunctionType(function.getAnnotations(),
-                                                        receiverType,
-                                                        function.getValueParameters().map { it.getType() },
-                                                        function.getReturnType() ?: return null)
+    return function.builtIns.getFunctionType(
+            function.getAnnotations(), receiverType,
+            function.getValueParameters().map { it.getType() },
+            function.getReturnType() ?: return null
+    )
 }
 
 fun LookupElementFactory.createLookupElement(

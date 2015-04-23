@@ -42,6 +42,7 @@ import java.util.*;
 
 import static kotlin.KotlinPackage.single;
 import static org.jetbrains.kotlin.builtins.PrimitiveType.*;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName;
 
 public class KotlinBuiltIns {
     public static final Name BUILT_INS_PACKAGE_NAME = Name.identifier("kotlin");
@@ -157,11 +158,23 @@ public class KotlinBuiltIns {
         public final FqNameUnsafe string = fqNameUnsafe("String");
         public final FqNameUnsafe array = fqNameUnsafe("Array");
 
+        public final FqNameUnsafe _boolean = fqNameUnsafe("Boolean");
+
+        public final FqNameUnsafe _char = fqNameUnsafe("Char");
+        public final FqNameUnsafe _byte = fqNameUnsafe("Byte");
+        public final FqNameUnsafe _short = fqNameUnsafe("Short");
+        public final FqNameUnsafe _int = fqNameUnsafe("Int");
+        public final FqNameUnsafe _long = fqNameUnsafe("Long");
+
+        public final FqNameUnsafe _float = fqNameUnsafe("Float");
+        public final FqNameUnsafe _double = fqNameUnsafe("Double");
+
         public final FqName data = fqName("data");
         public final FqName deprecated = fqName("deprecated");
         public final FqName tailRecursive = fqName("tailRecursive");
         public final FqName inline = fqName("inline");
         public final FqName noinline = fqName("noinline");
+        public final FqName inlineOptions = fqName("inlineOptions");
 
         public final FqNameUnsafe kClass = new FqName("kotlin.reflect.KClass").toUnsafe();
 
@@ -348,11 +361,6 @@ public class KotlinBuiltIns {
     @NotNull
     public ClassDescriptor getDataClassAnnotation() {
         return getBuiltInClassByName("data");
-    }
-
-    @NotNull
-    public ClassDescriptor getInlineOptionsClassAnnotation() {
-        return getBuiltInClassByName("inlineOptions");
     }
 
     @NotNull
@@ -687,12 +695,16 @@ public class KotlinBuiltIns {
 
     public static boolean isPrimitiveArray(@NotNull JetType type) {
         ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
-        return descriptor != null && getPrimitiveTypeByArrayClassFqName(DescriptorUtils.getFqName(descriptor)) != null;
+        return descriptor != null && getPrimitiveTypeByArrayClassFqName(getFqName(descriptor)) != null;
     }
 
     public static boolean isPrimitiveType(@NotNull JetType type) {
         ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
-        return !type.isMarkedNullable() && descriptor != null && getPrimitiveTypeByFqName(DescriptorUtils.getFqName(descriptor)) != null;
+        return !type.isMarkedNullable() && descriptor instanceof ClassDescriptor && isPrimitiveClass((ClassDescriptor) descriptor);
+    }
+
+    public static boolean isPrimitiveClass(@NotNull ClassDescriptor descriptor) {
+        return getPrimitiveTypeByFqName(getFqName(descriptor)) != null;
     }
 
     // Functions
@@ -746,7 +758,7 @@ public class KotlinBuiltIns {
 
         if (declarationDescriptor == null) return false;
 
-        FqNameUnsafe fqName = DescriptorUtils.getFqName(declarationDescriptor);
+        FqNameUnsafe fqName = getFqName(declarationDescriptor);
         return classes.contains(fqName);
     }
 
@@ -799,7 +811,7 @@ public class KotlinBuiltIns {
 
     private static boolean isConstructedFromGivenClass(@NotNull JetType type, @NotNull FqNameUnsafe fqName) {
         ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
-        return descriptor != null && fqName.equals(DescriptorUtils.getFqName(descriptor));
+        return descriptor != null && fqName.equals(getFqName(descriptor));
     }
 
     private static boolean isNotNullConstructedFromGivenClass(@NotNull JetType type, @NotNull FqNameUnsafe fqName) {
@@ -807,12 +819,52 @@ public class KotlinBuiltIns {
     }
 
     public static boolean isSpecialClassWithNoSupertypes(@NotNull ClassDescriptor descriptor) {
-        FqNameUnsafe fqName = DescriptorUtils.getFqName(descriptor);
+        FqNameUnsafe fqName = getFqName(descriptor);
         return FQ_NAMES.any.equals(fqName) || FQ_NAMES.nothing.equals(fqName);
     }
 
     public static boolean isAny(@NotNull ClassDescriptor descriptor) {
-        return isAny(DescriptorUtils.getFqName(descriptor));
+        return isAny(getFqName(descriptor));
+    }
+
+    public static boolean isBoolean(@NotNull JetType type) {
+        return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES._boolean);
+    }
+
+    public static boolean isBoolean(@NotNull ClassDescriptor classDescriptor) {
+        return FQ_NAMES._boolean.equals(getFqName(classDescriptor));
+    }
+
+    public static boolean isChar(@NotNull JetType type) {
+        return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES._char);
+    }
+
+    public static boolean isInt(@NotNull JetType type) {
+        return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES._int);
+    }
+
+    public static boolean isByte(@NotNull JetType type) {
+        return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES._byte);
+    }
+
+    public static boolean isLong(@NotNull JetType type) {
+        return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES._long);
+    }
+
+    public static boolean isShort(@NotNull JetType type) {
+        return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES._short);
+    }
+
+    public static boolean isFloat(@NotNull JetType type) {
+        return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES._float);
+    }
+
+    public static boolean isDouble(@NotNull JetType type) {
+        return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES._double);
+    }
+
+    private static boolean isConstructedFromGivenClassAndNotNullable(@NotNull JetType type, @NotNull FqNameUnsafe fqName) {
+        return isConstructedFromGivenClass(type, fqName) && !type.isMarkedNullable();
     }
 
     public static boolean isAny(@NotNull FqNameUnsafe fqName) {
@@ -854,15 +906,15 @@ public class KotlinBuiltIns {
     }
 
     public static boolean isKClass(@NotNull ClassDescriptor descriptor) {
-        return FQ_NAMES.kClass.equals(DescriptorUtils.getFqName(descriptor));
+        return FQ_NAMES.kClass.equals(getFqName(descriptor));
     }
 
     public static boolean isNonPrimitiveArray(@NotNull ClassDescriptor descriptor) {
-        return FQ_NAMES.array.equals(DescriptorUtils.getFqName(descriptor));
+        return FQ_NAMES.array.equals(getFqName(descriptor));
     }
 
     public static boolean isCloneable(@NotNull ClassDescriptor descriptor) {
-        return FQ_NAMES.cloneable.equals(DescriptorUtils.getFqName(descriptor));
+        return FQ_NAMES.cloneable.equals(getFqName(descriptor));
     }
 
     public static boolean isData(@NotNull ClassDescriptor classDescriptor) {

@@ -37,11 +37,12 @@ public class TypeReconstructionUtil {
             @NotNull JetTypeReference right,
             @NotNull PossiblyBareType possiblyBareTarget,
             @Nullable JetType subjectType,
-            @NotNull BindingTrace trace
+            @NotNull BindingTrace trace,
+            @NotNull KotlinBuiltIns builtIns
     ) {
         if (subjectType == null) {
             // Recovery: let's reconstruct as if we were casting from Any, to get some type there
-            subjectType = KotlinBuiltIns.getInstance().getAnyType();
+            subjectType = builtIns.getAnyType();
         }
         TypeReconstructionResult reconstructionResult = possiblyBareTarget.reconstruct(subjectType);
         if (!reconstructionResult.isAllArgumentsInferred()) {

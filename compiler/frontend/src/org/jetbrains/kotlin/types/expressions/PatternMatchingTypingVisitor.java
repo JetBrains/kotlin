@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryPac
 import java.util.Collections;
 import java.util.Set;
 
+import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isBoolean;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.resolve.calls.context.ContextDependency.INDEPENDENT;
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
@@ -63,7 +64,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             DataFlowInfo newDataFlowInfo = conditionInfo.and(typeInfo.getDataFlowInfo());
             context.trace.record(BindingContext.DATAFLOW_INFO_AFTER_CONDITION, expression, newDataFlowInfo);
         }
-        return DataFlowUtils.checkType(typeInfo.replaceType(KotlinBuiltIns.getInstance().getBooleanType()), expression, contextWithExpectedType);
+        return DataFlowUtils.checkType(typeInfo.replaceType(components.builtIns.getBooleanType()), expression, contextWithExpectedType);
     }
 
     @Override
@@ -189,7 +190,8 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
                                                                 argumentForSubject, rangeExpression, context);
                 DataFlowInfo dataFlowInfo = typeInfo.getDataFlowInfo();
                 newDataFlowInfo.set(new DataFlowInfos(dataFlowInfo, dataFlowInfo));
-                if (!KotlinBuiltIns.getInstance().getBooleanType().equals(typeInfo.getType())) {
+                JetType type = typeInfo.getType();
+                if (type == null || !isBoolean(type)) {
                     context.trace.report(TYPE_MISMATCH_IN_RANGE.on(condition));
                 }
             }
@@ -258,7 +260,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         }
         context = context.replaceDataFlowInfo(typeInfo.getDataFlowInfo());
         if (conditionExpected) {
-            JetType booleanType = KotlinBuiltIns.getInstance().getBooleanType();
+            JetType booleanType = components.builtIns.getBooleanType();
             if (!JetTypeChecker.DEFAULT.equalTypes(booleanType, type)) {
                 context.trace.report(TYPE_MISMATCH_IN_CONDITION.on(expression, type));
             }
@@ -291,7 +293,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         }
         TypeResolutionContext typeResolutionContext = new TypeResolutionContext(context.scope, context.trace, true, /*allowBareTypes=*/ true);
         PossiblyBareType possiblyBareTarget = components.typeResolver.resolvePossiblyBareType(typeResolutionContext, typeReferenceAfterIs);
-        JetType targetType = TypeReconstructionUtil.reconstructBareType(typeReferenceAfterIs, possiblyBareTarget, subjectType, context.trace);
+        JetType targetType = TypeReconstructionUtil.reconstructBareType(typeReferenceAfterIs, possiblyBareTarget, subjectType, context.trace, components.builtIns);
 
         if (TypesPackage.isDynamic(targetType)) {
             context.trace.report(DYNAMIC_NOT_ALLOWED.on(typeReferenceAfterIs));

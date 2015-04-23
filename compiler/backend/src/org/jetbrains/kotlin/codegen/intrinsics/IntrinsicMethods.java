@@ -22,10 +22,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
-import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils;
-import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 
@@ -56,9 +54,6 @@ public class IntrinsicMethods {
     private static final StringPlus STRING_PLUS = new StringPlus();
     private static final ToString TO_STRING = new ToString();
     private static final Clone CLONE = new Clone();
-
-    private static final FqNameUnsafe KOTLIN_ANY_FQ_NAME = DescriptorUtils.getFqName(KotlinBuiltIns.getInstance().getAny());
-    private static final FqNameUnsafe KOTLIN_STRING_FQ_NAME = DescriptorUtils.getFqName(KotlinBuiltIns.getInstance().getString());
 
     private final Map<String, IntrinsicMethod> namedMethods = new HashMap<String, IntrinsicMethod>();
     private static final IntrinsicMethod ARRAY_ITERATOR = new ArrayIterator();
@@ -116,9 +111,9 @@ public class IntrinsicMethods {
 
         declareIntrinsicFunction("Cloneable", "clone", 0, CLONE);
 
-        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, KOTLIN_ANY_FQ_NAME, "toString", 0, TO_STRING);
-        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, KOTLIN_ANY_FQ_NAME, "identityEquals", 1, IDENTITY_EQUALS);
-        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, KOTLIN_STRING_FQ_NAME, "plus", 1, STRING_PLUS);
+        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, KotlinBuiltIns.FQ_NAMES.any, "toString", 0, TO_STRING);
+        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, KotlinBuiltIns.FQ_NAMES.any, "identityEquals", 1, IDENTITY_EQUALS);
+        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, KotlinBuiltIns.FQ_NAMES.string, "plus", 1, STRING_PLUS);
         intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, null, "arrayOfNulls", 1, new NewArray());
 
         for (PrimitiveType type : PrimitiveType.values()) {

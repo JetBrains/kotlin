@@ -23,14 +23,14 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.psi.JetCallExpression;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetQualifiedExpression;
-import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.types.JetType;
+
+import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isUnit;
 
 public abstract class KotlinExpressionSurrounder implements Surrounder {
 
@@ -45,7 +45,7 @@ public abstract class KotlinExpressionSurrounder implements Surrounder {
             return false;
         }
         JetType type = ResolvePackage.analyze(expression, BodyResolveMode.PARTIAL).getType(expression);
-        if (type == null || type.equals(KotlinBuiltIns.getInstance().getUnitType())) {
+        if (type == null || isUnit(type)) {
             return false;
         }
         return isApplicable(expression);

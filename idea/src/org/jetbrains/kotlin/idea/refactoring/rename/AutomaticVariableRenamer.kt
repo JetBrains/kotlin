@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.psi.JetParameter
 import org.jetbrains.kotlin.psi.JetVariableDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.types.JetType
 import java.util.ArrayList
@@ -97,7 +98,7 @@ public class AutomaticVariableRenamer(
 
 private fun JetType.isCollectionLikeOf(classPsiElement: PsiNamedElement): Boolean {
     val klass = this.getConstructor().getDeclarationDescriptor() as? ClassDescriptor ?: return false
-    if (KotlinBuiltIns.isArray(this) || DescriptorUtils.isSubclass(klass, KotlinBuiltIns.getInstance().getCollection())) {
+    if (KotlinBuiltIns.isArray(this) || DescriptorUtils.isSubclass(klass, klass.builtIns.getCollection())) {
         val typeArgument = this.getArguments().singleOrNull()?.getType() ?: return false
         val typePsiElement = ((typeArgument.getConstructor().getDeclarationDescriptor() as? ClassDescriptor)?.getSource() as? PsiSourceElement)?.psi
         return classPsiElement == typePsiElement || typeArgument.isCollectionLikeOf(classPsiElement)
