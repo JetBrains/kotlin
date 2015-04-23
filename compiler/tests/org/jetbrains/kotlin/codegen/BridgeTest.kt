@@ -17,10 +17,12 @@
 package org.jetbrains.kotlin.codegen
 
 import junit.framework.TestCase
-import org.jetbrains.kotlin.backend.common.bridges.*
-import kotlin.test.assertEquals
-import java.util.HashSet
+import org.jetbrains.kotlin.backend.common.bridges.Bridge
+import org.jetbrains.kotlin.backend.common.bridges.FunctionHandle
+import org.jetbrains.kotlin.backend.common.bridges.generateBridges
 import org.jetbrains.kotlin.utils.DFS
+import java.util.HashSet
+import kotlin.test.assertEquals
 
 class BridgeTest : TestCase() {
     private class Fun(val text: String) : FunctionHandle {
@@ -42,11 +44,12 @@ class BridgeTest : TestCase() {
     }
 
     private fun v(text: String): Fun {
-        assert(text.length() == 3, "Function vertex representation should consist of 3 characters: $text")
-        assert(text[0] in setOf('-', '+'), "First character should be '-' for abstract functions or '+' for concrete ones: $text")
-        assert(text[1] in setOf('D', 'F'), "Second character should be 'D' for declarations or 'F' for fake overrides: $text")
-        assert(text[2].isDigit(),
-               "Third character should be a number that represents a signature (same numbers mean the same method signatures)")
+        assert(text.length() == 3) { "Function vertex representation should consist of 3 characters: $text" }
+        assert(text[0] in setOf('-', '+')) { "First character should be '-' for abstract functions or '+' for concrete ones: $text" }
+        assert(text[1] in setOf('D', 'F')) { "Second character should be 'D' for declarations or 'F' for fake overrides: $text" }
+        assert(text[2].isDigit()) {
+            "Third character should be a number that represents a signature (same numbers mean the same method signatures)"
+        }
         return Fun(text)
     }
 
@@ -91,15 +94,16 @@ class BridgeTest : TestCase() {
 
         for (vertex in vertices) {
             val directConcreteSuperFunctions = vertex.overriddenFunctions.filter { !it.isAbstract }
-            assert(directConcreteSuperFunctions.size() <= 1,
-                   "Incorrect test data: function $vertex has more than one direct concrete super-function: ${vertex.overriddenFunctions}\n" +
-                   "This is not allowed because only classes can contain implementations (concrete functions), and having more than one " +
-                   "concrete super-function means having more than one superclass, which is prohibited in Kotlin")
+            assert(directConcreteSuperFunctions.size() <= 1) {
+                "Incorrect test data: function $vertex has more than one direct concrete super-function: ${vertex.overriddenFunctions}\n" +
+                "This is not allowed because only classes can contain implementations (concrete functions), and having more than one " +
+                "concrete super-function means having more than one superclass, which is prohibited in Kotlin"
+            }
 
             if (vertex.isDeclaration) continue
 
             val superDeclarations = findAllReachableDeclarations(vertex)
-            assert(!superDeclarations.isEmpty(), "Incorrect test data: fake override vertex $vertex has no super-declarations")
+            assert(superDeclarations.isNotEmpty()) { "Incorrect test data: fake override vertex $vertex has no super-declarations" }
 
             // Remove all declarations inherited by other declarations
             val toRemove = HashSet<Fun>()
@@ -110,20 +114,23 @@ class BridgeTest : TestCase() {
             val concreteDeclarations = superDeclarations.filter { !it.isAbstract }
 
             if (!vertex.isAbstract) {
-                assert(!concreteDeclarations.isEmpty(),
-                       "Incorrect test data: concrete fake override vertex $vertex has no concrete super-declarations")
-                assert(concreteDeclarations.size() == 1,
-                       "Incorrect test data: concrete fake override vertex $vertex has more than one concrete super-declaration: " +
-                       "$concreteDeclarations")
+                assert(concreteDeclarations.isNotEmpty()) {
+                    "Incorrect test data: concrete fake override vertex $vertex has no concrete super-declarations"
+                }
+                assert(concreteDeclarations.size() == 1) {
+                    "Incorrect test data: concrete fake override vertex $vertex has more than one concrete super-declaration: " +
+                    "$concreteDeclarations"
+                }
             }
         }
     }
 
     private fun doTest(function: Fun, expectedBridges: Set<Bridge<Meth>>) {
         val actualBridges = generateBridges(function, ::Meth)
-        assert(actualBridges.firstOrNull { it.from == it.to } == null,
-               "A bridge invoking itself was generated, which makes no sense, since it will result in StackOverflowError once called" +
-               ": $actualBridges")
+        assert(actualBridges.firstOrNull { it.from == it.to } == null) {
+            "A bridge invoking itself was generated, which makes no sense, since it will result in StackOverflowError" +
+            " once called: $actualBridges"
+        }
         assertEquals(expectedBridges, actualBridges, "Expected and actual bridge sets differ for function $function")
     }
 

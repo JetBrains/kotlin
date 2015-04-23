@@ -16,22 +16,29 @@
 
 package org.jetbrains.kotlin.idea.refactoring.introduce.introduceProperty
 
-import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.*
-import org.jetbrains.kotlin.psi.*
-import com.intellij.openapi.project.*
-import com.intellij.openapi.editor.*
-import org.jetbrains.kotlin.types.*
-import javax.swing.*
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
+import com.intellij.codeInsight.template.TemplateBuilderImpl
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Pass
+import com.intellij.psi.PsiElement
+import com.intellij.ui.NonFocusableCheckBox
+import com.intellij.ui.PopupMenuListenerAdapter
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.ExtractionResult
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.ExtractionTarget
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.generateDeclaration
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.processDuplicatesSilently
+import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinInplaceVariableIntroducer
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinInplaceVariableIntroducer.ControlWrapper
-import com.intellij.openapi.util.*
-import com.intellij.ui.*
-import javax.swing.event.*
-import com.intellij.openapi.application.*
-import com.intellij.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.*
-import com.intellij.codeInsight.template.*
-import org.jetbrains.kotlin.idea.intentions.*
+import org.jetbrains.kotlin.psi.JetClassOrObject
+import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
+import org.jetbrains.kotlin.psi.psiUtil.parents
+import org.jetbrains.kotlin.types.JetType
+import javax.swing.*
+import javax.swing.event.PopupMenuEvent
 
 public class KotlinInplacePropertyIntroducer(
         property: JetProperty,
@@ -46,7 +53,7 @@ public class KotlinInplacePropertyIntroducer(
         property, editor, project, title, JetExpression.EMPTY_ARRAY, null, false, property, false, doNotChangeVar, exprType, false
 ) {
     init {
-        assert(availableTargets.isNotEmpty(), "No targets available: ${property.getElementTextWithContext()}")
+        assert(availableTargets.isNotEmpty()) { "No targets available: ${property.getElementTextWithContext()}" }
     }
 
     private var extractionResult = extractionResult

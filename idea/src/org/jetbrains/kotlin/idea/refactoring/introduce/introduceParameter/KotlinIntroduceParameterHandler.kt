@@ -49,7 +49,10 @@ import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiRange
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiUnifier
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
+import org.jetbrains.kotlin.psi.psiUtil.getValueParameterList
+import org.jetbrains.kotlin.psi.psiUtil.getValueParameters
+import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.JetScopeUtils
 import java.util.Collections
@@ -250,7 +253,7 @@ public open class KotlinIntroduceParameterHandler(
                                     if (parameterList == null) {
                                         val klass = targetParent as? JetClass
                                         val anchor = klass?.getTypeParameterList() ?: klass?.getNameIdentifier()
-                                        assert(anchor != null, "Invalid declaration: ${targetParent.getElementTextWithContext()}")
+                                        assert(anchor != null) { "Invalid declaration: ${targetParent.getElementTextWithContext()}" }
 
                                         val constructor = targetParent.addAfter(psiFactory.createPrimaryConstructor(), anchor) as JetPrimaryConstructor
                                         constructor.getValueParameterList()!!

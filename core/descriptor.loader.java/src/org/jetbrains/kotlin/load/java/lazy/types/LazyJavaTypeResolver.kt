@@ -57,7 +57,7 @@ class LazyJavaTypeResolver(
             is JavaPrimitiveType -> {
                 val canonicalText = javaType.getCanonicalText()
                 val jetType = JavaToKotlinClassMap.INSTANCE.mapPrimitiveKotlinClass(canonicalText)
-                assert(jetType != null, "Primitive type is not found: " + canonicalText)
+                assert(jetType != null) { "Primitive type is not found: $canonicalText" }
                 jetType!!
             }
             is JavaClassifierType ->

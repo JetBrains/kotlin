@@ -18,28 +18,33 @@ package org.jetbrains.kotlin.load.java.lazy.descriptors
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.load.java.structure.*
-import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
-import org.jetbrains.kotlin.load.java.components.TypeUsage
-import java.util.Collections
-import org.jetbrains.kotlin.utils.*
-import java.util.ArrayList
-import org.jetbrains.kotlin.load.java.lazy.types.toAttributes
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.impl.*
-import org.jetbrains.kotlin.load.java.lazy.resolveAnnotations
+import org.jetbrains.kotlin.descriptors.impl.ConstructorDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.EnumEntrySyntheticClassDescriptor
+import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
-import org.jetbrains.kotlin.load.java.descriptors.JavaConstructorDescriptor
 import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils
+import org.jetbrains.kotlin.load.java.components.TypeUsage
+import org.jetbrains.kotlin.load.java.descriptors.JavaConstructorDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
+import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.lazy.child
+import org.jetbrains.kotlin.load.java.lazy.resolveAnnotations
+import org.jetbrains.kotlin.load.java.lazy.types.toAttributes
+import org.jetbrains.kotlin.load.java.structure.*
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorFactory
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.ifEmpty
+import org.jetbrains.kotlin.utils.singletonOrEmptyList
+import org.jetbrains.kotlin.utils.valuesToMap
+import java.util.ArrayList
+import java.util.Collections
 import java.util.LinkedHashSet
 
 public class LazyJavaClassMemberScope(
@@ -234,7 +239,7 @@ public class LazyJavaClassMemberScope(
         val (methodsNamedValue, otherMethods) = methods.
                 partition { it.getName() == JvmAnnotationNames.DEFAULT_ANNOTATION_MEMBER_NAME }
 
-        assert(methodsNamedValue.size() <= 1, "There can't be to methods named 'value' in annotation class: " + jClass)
+        assert(methodsNamedValue.size() <= 1) { "There can't be more than one method named 'value' in annotation class: $jClass" }
         val methodNamedValue = methodsNamedValue.firstOrNull()
         if (methodNamedValue != null) {
             val parameterNamedValueJavaType = methodNamedValue.getAnnotationMethodReturnJavaType()
@@ -258,8 +263,8 @@ public class LazyJavaClassMemberScope(
     }
 
     private fun JavaMethod.getAnnotationMethodReturnJavaType(): JavaType {
-        assert(getValueParameters().isEmpty(), "Annotation method can't have parameters: " + this)
-        return getReturnType() ?: throw AssertionError("Annotation method has no return type: " + this)
+        assert(getValueParameters().isEmpty()) { "Annotation method can't have parameters: $this" }
+        return getReturnType() ?: throw AssertionError("Annotation method has no return type: $this")
     }
 
     private fun MutableList<ValueParameterDescriptor>.addAnnotationValueParameter(

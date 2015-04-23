@@ -154,7 +154,7 @@ public class MultiModuleJavaAnalysisCustomTest : UsefulTestCase() {
     }
 
     private fun checkDescriptor(referencedDescriptor: ClassifierDescriptor, context: DeclarationDescriptor) {
-        assert(!ErrorUtils.isError(referencedDescriptor), "Error descriptor: $referencedDescriptor")
+        assert(!ErrorUtils.isError(referencedDescriptor)) { "Error descriptor: $referencedDescriptor" }
 
         val descriptorName = referencedDescriptor.getName().asString()
         val expectedModuleName = "<${descriptorName.toLowerCase().first().toString()}>"

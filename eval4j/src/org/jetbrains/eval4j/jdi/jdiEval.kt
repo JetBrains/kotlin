@@ -16,13 +16,12 @@
 
 package org.jetbrains.eval4j.jdi
 
-import org.jetbrains.eval4j.*
-import org.jetbrains.org.objectweb.asm.Type
 import com.sun.jdi
 import com.sun.jdi.ClassNotLoadedException
-import com.sun.tools.jdi.ReferenceTypeImpl
-import com.sun.jdi.ObjectReference
 import com.sun.jdi.Method
+import com.sun.jdi.ObjectReference
+import org.jetbrains.eval4j.*
+import org.jetbrains.org.objectweb.asm.Type
 
 val CLASS = Type.getType(javaClass<Class<*>>())
 val BOOTSTRAP_CLASS_DESCRIPTORS = setOf("Ljava/lang/String;", "Ljava/lang/ClassLoader;", "Ljava/lang/Class;")
@@ -88,7 +87,9 @@ public class JDIEval(
     }
 
     override fun isInstanceOf(value: Value, targetType: Type): Boolean {
-        assert(targetType.getSort() == Type.OBJECT || targetType.getSort() == Type.ARRAY, "Can't check isInstanceOf() for non-object type $targetType")
+        assert(targetType.getSort() == Type.OBJECT || targetType.getSort() == Type.ARRAY) {
+            "Can't check isInstanceOf() for non-object type $targetType"
+        }
 
         val _class = loadClass(targetType)
         return invokeMethod(
@@ -112,7 +113,7 @@ public class JDIEval(
 
     private val Type.arrayElementType: Type
         get(): Type {
-            assert(getSort() == Type.ARRAY, "Not an array type: $this")
+            assert(getSort() == Type.ARRAY) { "Not an array type: $this" }
             return Type.getType(getDescriptor().substring(1))
         }
 

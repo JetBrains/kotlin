@@ -70,8 +70,9 @@ public class IfThenToElvisIntention : JetSelfTargetingOffsetIndependentIntention
         val resultingExprString = "${left.getText()} ?: ${right.getText()}"
         val resultingExpression = JetPsiUtil.deparenthesize(element.replace(resultingExprString) as? JetExpression)
 
-        assert(resultingExpression is JetBinaryExpression,
-               "Unexpected expression type: ${resultingExpression?.javaClass}, expected JetBinaryExpression, element = '${element.getText()}'")
+        assert(resultingExpression is JetBinaryExpression) {
+               "Unexpected expression type: ${resultingExpression?.javaClass}, expected JetBinaryExpression, element = '${element.getText()}'"
+        }
 
         return resultingExpression as JetBinaryExpression
     }

@@ -16,17 +16,13 @@
 
 package org.jetbrains.eval4j
 
-import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
-import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
-import org.jetbrains.org.objectweb.asm.tree.MethodNode
-import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.org.objectweb.asm.Opcodes.*
-import org.jetbrains.org.objectweb.asm.tree.JumpInsnNode
-import org.jetbrains.org.objectweb.asm.tree.VarInsnNode
-import org.jetbrains.org.objectweb.asm.util.Printer
-import org.jetbrains.org.objectweb.asm.tree.TryCatchBlockNode
-import java.util.ArrayList
 import org.jetbrains.eval4j.ExceptionThrown.ExceptionKind
+import org.jetbrains.org.objectweb.asm.Opcodes.*
+import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.tree.*
+import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
+import org.jetbrains.org.objectweb.asm.util.Printer
+import java.util.ArrayList
 
 public trait InterpreterResult {
     override fun toString(): String
@@ -179,7 +175,7 @@ public fun interpreterLoop(
                                 return ValueReturned(coerced)
                             }
                             if (value.asmType != expectedType) {
-                                assert(insnOpcode == IRETURN, "Only ints should be coerced: " + Printer.OPCODES[insnOpcode])
+                                assert(insnOpcode == IRETURN) { "Only ints should be coerced: ${Printer.OPCODES[insnOpcode]}" }
 
                                 val coerced = when (expectedType.getSort()) {
                                     Type.BOOLEAN -> boolean(value.boolean)

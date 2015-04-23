@@ -16,21 +16,21 @@
 
 package org.jetbrains.kotlin.js.translate.callTranslator
 
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import com.google.dart.compiler.backend.js.ast.JsExpression
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
-import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
-import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
-import org.jetbrains.kotlin.js.translate.reference.CallArgumentTranslator
 import org.jetbrains.kotlin.js.translate.general.Translation
+import org.jetbrains.kotlin.js.translate.reference.CallArgumentTranslator
+import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
+import org.jetbrains.kotlin.psi.Call.CallType
+import org.jetbrains.kotlin.resolve.calls.CallResolverUtil
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
+import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.NO_EXPLICIT_RECEIVER
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.resolve.calls.CallResolverUtil
-import org.jetbrains.kotlin.psi.Call.CallType
 import kotlin.test.assertNotNull
 
 object CallTranslator {
@@ -120,7 +120,7 @@ fun computeExplicitReceiversForInvoke(
         explicitReceivers: ExplicitReceivers
 ): ExplicitReceivers {
     val callElement = resolvedCall.getCall().getCallElement()
-    assert(explicitReceivers.extensionReceiver == null, "'Invoke' call must have one receiver: $callElement")
+    assert(explicitReceivers.extensionReceiver == null) { "'Invoke' call must have one receiver: $callElement" }
 
     fun translateReceiverAsExpression(receiver: ReceiverValue): JsExpression? =
             (receiver as? ExpressionReceiver)?.let { Translation.translateAsExpression(it.getExpression(), context) }
@@ -132,9 +132,10 @@ fun computeExplicitReceiversForInvoke(
         assertNotNull(explicitReceivers.extensionOrDispatchReceiver, "No explicit receiver for 'invoke' resolved call with both receivers: $callElement")
     }
     else {
-        assert(explicitReceivers.extensionOrDispatchReceiver == null,
-               "Non trivial explicit receiver ${explicitReceivers.extensionOrDispatchReceiver}\n for 'invoke' resolved call: $callElement\n"
-               + "Dispatch receiver: $dispatchReceiver Extension receiver: $extensionReceiver")
+        assert(explicitReceivers.extensionOrDispatchReceiver == null) {
+               "Non trivial explicit receiver ${explicitReceivers.extensionOrDispatchReceiver}\n for 'invoke' resolved call: $callElement\n" +
+               "Dispatch receiver: $dispatchReceiver Extension receiver: $extensionReceiver"
+        }
     }
 
     val dispatchReceiverExpression = translateReceiverAsExpression(dispatchReceiver)

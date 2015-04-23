@@ -18,21 +18,29 @@ package org.jetbrains.kotlin.js.translate.expression.loopTranslator
 
 import com.google.dart.compiler.backend.js.ast.*
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.DescriptorUtils.getClassDescriptorForType
-import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator
 import org.jetbrains.kotlin.js.translate.context.TemporaryVariable
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.expression.MultiDeclarationTranslator
 import org.jetbrains.kotlin.js.translate.general.Translation
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.factories.CompositeFIF
-import org.jetbrains.kotlin.js.translate.utils.BindingUtils.*
+import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getHasNextCallable
+import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getIteratorFunction
+import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getNextFunction
+import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getTypeForExpression
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*
-import org.jetbrains.kotlin.js.translate.utils.PsiUtils.*
+import org.jetbrains.kotlin.js.translate.utils.PsiUtils.getLoopBody
+import org.jetbrains.kotlin.js.translate.utils.PsiUtils.getLoopParameter
+import org.jetbrains.kotlin.js.translate.utils.PsiUtils.getLoopRange
 import org.jetbrains.kotlin.js.translate.utils.TemporariesUtils.temporariesInitialization
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.psi.JetBinaryExpression
+import org.jetbrains.kotlin.psi.JetForExpression
+import org.jetbrains.kotlin.psi.JetMultiDeclaration
+import org.jetbrains.kotlin.psi.JetWhileExpressionBase
+import org.jetbrains.kotlin.resolve.DescriptorUtils.getClassDescriptorForType
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 
 public fun createWhile(doWhile: Boolean, expression: JetWhileExpressionBase, context: TranslationContext): JsNode {
     val conditionExpression = expression.getCondition() ?:
@@ -113,7 +121,7 @@ public fun translateForExpression(expression: JetForExpression, context: Transla
         if (loopParameter != null) {
             return context.getNameForElement(loopParameter)
         }
-        assert(multiParameter != null, "If loopParameter is null, multi parameter must be not null ${expression.getText()}")
+        assert(multiParameter != null) { "If loopParameter is null, multi parameter must be not null ${expression.getText()}" }
         return context.scope().declareTemporary()
     }
 

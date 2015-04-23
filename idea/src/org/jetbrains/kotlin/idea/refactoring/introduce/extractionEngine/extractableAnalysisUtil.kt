@@ -496,12 +496,12 @@ private class MutableParameter(
     var refCount: Int = 0
 
     fun addDefaultType(jetType: JetType) {
-        assert(writable, "Can't add type to non-writable parameter $currentName")
+        assert(writable) { "Can't add type to non-writable parameter $currentName" }
         defaultTypes.add(jetType)
     }
 
     fun addTypePredicate(predicate: TypePredicate) {
-        assert(writable, "Can't add type predicate to non-writable parameter $currentName")
+        assert(writable) { "Can't add type predicate to non-writable parameter $currentName" }
         typePredicates.add(predicate)
     }
 

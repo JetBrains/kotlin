@@ -16,61 +16,52 @@
 
 package org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations
 
-import com.intellij.refactoring.BaseRefactoringProcessor
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
-import com.intellij.usageView.UsageInfo
-import com.intellij.usageView.UsageViewDescriptor
+import com.intellij.openapi.util.Ref
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.*
+import com.intellij.psi.search.searches.ReferencesSearch
+import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.refactoring.move.MoveCallback
 import com.intellij.refactoring.move.MoveMultipleElementsViewDescriptor
-import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesUtil
-import com.intellij.usageView.UsageViewUtil
-import com.intellij.openapi.diagnostic.Logger
-import com.intellij.psi.PsiElement
-import com.intellij.refactoring.util.NonCodeUsageInfo
-import com.intellij.util.IncorrectOperationException
-import com.intellij.refactoring.util.RefactoringUIUtil
-import org.jetbrains.kotlin.utils.keysToMap
-import com.intellij.refactoring.rename.RenameUtil
-import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle
-import com.intellij.openapi.util.text.StringUtil
-import com.intellij.psi.PsiDirectory
-import org.jetbrains.kotlin.psi.psiUtil.getPackage
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.idea.refactoring.move.PackageNameInfo
-import org.jetbrains.kotlin.idea.core.refactoring.createKotlinFile
-import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
-import org.jetbrains.kotlin.idea.refactoring.move.getFileNameAfterMove
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
-import org.jetbrains.kotlin.asJava.toLightElements
-import java.util.HashMap
-import java.util.ArrayList
-import java.util.HashSet
-import com.intellij.psi.PsiReference
-import com.intellij.psi.search.searches.ReferencesSearch
-import com.intellij.refactoring.util.MoveRenameUsageInfo
-import com.intellij.refactoring.util.TextOccurrencesUtil
 import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassHandler
+import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesUtil
+import com.intellij.refactoring.rename.RenameUtil
+import com.intellij.refactoring.util.MoveRenameUsageInfo
+import com.intellij.refactoring.util.NonCodeUsageInfo
+import com.intellij.refactoring.util.RefactoringUIUtil
+import com.intellij.refactoring.util.TextOccurrencesUtil
+import com.intellij.usageView.UsageInfo
+import com.intellij.usageView.UsageViewDescriptor
+import com.intellij.usageView.UsageViewUtil
+import com.intellij.util.IncorrectOperationException
+import com.intellij.util.VisibilityUtil
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
-import org.jetbrains.kotlin.psi.psiUtil.isPrivate
-import org.jetbrains.kotlin.idea.core.refactoring.getUsageContext
-import org.jetbrains.kotlin.psi.psiUtil.isInsideOf
-import org.jetbrains.kotlin.idea.codeInsight.JetFileReferencesResolver
-import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.asJava.toLightElements
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.psi.JetModifierListOwner
-import com.intellij.psi.PsiModifierListOwner
-import com.intellij.psi.PsiModifier
-import com.intellij.util.VisibilityUtil
-import com.intellij.openapi.util.Ref
-import org.jetbrains.kotlin.idea.search.projectScope
-import org.jetbrains.kotlin.idea.refactoring.move.getInternalReferencesToUpdateOnPackageNameChange
-import org.jetbrains.kotlin.idea.refactoring.move.createMoveUsageInfoIfPossible
-import org.jetbrains.kotlin.idea.refactoring.move.postProcessMoveUsages
-import org.jetbrains.kotlin.idea.references.JetSimpleNameReference.ShorteningMode
-import org.jetbrains.kotlin.psi.psiUtil.isAncestor
-import org.jetbrains.kotlin.idea.refactoring.move.MoveRenameUsageInfoForExtension
+import org.jetbrains.kotlin.idea.codeInsight.JetFileReferencesResolver
+import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
+import org.jetbrains.kotlin.idea.core.refactoring.createKotlinFile
+import org.jetbrains.kotlin.idea.core.refactoring.getUsageContext
+import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
+import org.jetbrains.kotlin.idea.refactoring.move.*
+import org.jetbrains.kotlin.idea.references.JetSimpleNameReference.ShorteningMode
+import org.jetbrains.kotlin.idea.search.projectScope
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.JetModifierListOwner
+import org.jetbrains.kotlin.psi.JetNamedDeclaration
+import org.jetbrains.kotlin.psi.psiUtil.getPackage
+import org.jetbrains.kotlin.psi.psiUtil.isAncestor
+import org.jetbrains.kotlin.psi.psiUtil.isInsideOf
+import org.jetbrains.kotlin.psi.psiUtil.isPrivate
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.utils.keysToMap
+import java.util.ArrayList
+import java.util.HashMap
+import java.util.HashSet
 
 trait Mover: (originalElement: JetNamedDeclaration, targetFile: JetFile) -> JetNamedDeclaration {
     object Default: Mover {
@@ -240,7 +231,7 @@ public class MoveKotlinTopLevelDeclarationsProcessor(
                 usagesToProcessAfterMove: MutableList<UsageInfo>
         ): JetNamedDeclaration? {
             val file = declaration.getContainingFile() as? JetFile
-            assert (file != null, "${declaration.javaClass}: ${declaration.getText()}")
+            assert(file != null) { "${declaration.javaClass}: ${declaration.getText()}" }
 
             val targetPsi = moveTarget.getOrCreateTargetPsi(declaration)
             val targetFile =
@@ -250,7 +241,7 @@ public class MoveKotlinTopLevelDeclarationsProcessor(
                     }
                     else targetPsi
 
-            assert(targetFile is JetFile, "Couldn't create Koltin file for: ${declaration.javaClass}: ${declaration.getText()}")
+            assert(targetFile is JetFile) { "Couldn't create Kotlin file for: ${declaration.javaClass}: ${declaration.getText()}" }
             targetFile as JetFile
 
             if (options.updateInternalReferences) {

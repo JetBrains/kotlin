@@ -88,7 +88,7 @@ object CallableReferenceTranslator {
 
     private fun translateForTopLevelProperty(descriptor: PropertyDescriptor, context: TranslationContext): JsExpression {
         val packageDescriptor = JsDescriptorUtils.getContainingDeclaration(descriptor)
-        assert(packageDescriptor is PackageFragmentDescriptor, "Expected PackageFragmentDescriptor: ${packageDescriptor}")
+        assert(packageDescriptor is PackageFragmentDescriptor) { "Expected PackageFragmentDescriptor: $packageDescriptor" }
 
         val jsPackageNameRef = context.getQualifiedReference(packageDescriptor)
         val jsPropertyName = context.getNameForDescriptor(descriptor)

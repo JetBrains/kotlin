@@ -16,16 +16,16 @@
 
 package org.jetbrains.kotlin.descriptors.impl
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
-import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
-import java.util.ArrayList
 import org.jetbrains.kotlin.resolve.ImportPath
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import kotlin.properties.Delegates
+import java.util.ArrayList
 import java.util.LinkedHashSet
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import kotlin.properties.Delegates
 
 public class ModuleDescriptorImpl(
         moduleName: Name,
@@ -46,7 +46,7 @@ public class ModuleDescriptorImpl(
     public fun seal() {
         if (isSealed) return
 
-        assert(this in dependencies, "Module $id is not contained in his own dependencies, this is probably a misconfiguration")
+        assert(this in dependencies) { "Module $id is not contained in his own dependencies, this is probably a misconfiguration" }
         isSealed = true
     }
 
@@ -57,7 +57,9 @@ public class ModuleDescriptorImpl(
         seal()
         dependencies.forEach {
             dependency ->
-            assert(dependency.isInitialized, "Dependency module ${dependency.id} was not initialized by the time contents of dependent module ${this.id} were queried")
+            assert(dependency.isInitialized) {
+                "Dependency module ${dependency.id} was not initialized by the time contents of dependent module ${this.id} were queried"
+            }
         }
         CompositePackageFragmentProvider(dependencies.map {
             it.packageFragmentProviderForModuleContent!!
@@ -68,8 +70,10 @@ public class ModuleDescriptorImpl(
         get() = packageFragmentProviderForModuleContent != null
 
     public fun addDependencyOnModule(dependency: ModuleDescriptorImpl) {
-        assert(!isSealed, "Can't modify dependencies of sealed module $id")
-        assert(dependency !in dependencies, "Trying to add dependency on module ${dependency.id} a second time for module ${this.id}, this is probably a misconfiguration")
+        assert(!isSealed) { "Can't modify dependencies of sealed module $id" }
+        assert(dependency !in dependencies) {
+            "Trying to add dependency on module ${dependency.id} a second time for module ${this.id}, this is probably a misconfiguration"
+        }
         dependencies.add(dependency)
     }
 
@@ -81,7 +85,7 @@ public class ModuleDescriptorImpl(
      * Initialize() and seal() can be called in any order.
      */
     public fun initialize(providerForModuleContent: PackageFragmentProvider) {
-        assert(!isInitialized, "Attempt to initialize module $id twice")
+        assert(!isInitialized) { "Attempt to initialize module $id twice" }
         packageFragmentProviderForModuleContent = providerForModuleContent
     }
 
@@ -92,8 +96,8 @@ public class ModuleDescriptorImpl(
     override fun isFriend(other: ModuleDescriptor) = other == this || other in friendModules
 
     public fun addFriend(friend: ModuleDescriptorImpl): Unit {
-        assert(friend != this, "Attempt to make module $id a friend to itself")
-        assert(!isSealed, "Attempt to add friend module ${friend.id} to sealed module $id")
+        assert(friend != this) { "Attempt to make module $id a friend to itself" }
+        assert(!isSealed) { "Attempt to add friend module ${friend.id} to sealed module $id" }
         friendModules.add(friend)
     }
 
